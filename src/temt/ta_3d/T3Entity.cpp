@@ -90,6 +90,7 @@ void T3Entity::removeAllChildren() {
     Qt3D::QNode* nd = dynamic_cast<Qt3D::QNode*>(ol.at(i));
     if(nd) {
       nd->setParent((QNode*)NULL);
+      // nd->deleteLater(); // no deleting -- causes crashes -- threads still have these guys hanging around -- not sure what to do about the orphans though?  surely we'll be getting leaks?
     }
   }
 }

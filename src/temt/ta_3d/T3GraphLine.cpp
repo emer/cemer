@@ -141,50 +141,35 @@ String T3GraphLine::markerAtSvg(const iVec3f& pt, MarkerStyle style) {
 #ifdef TA_QT3D
 
 #include <T3LineStrip>
+#include <T3TwoDText>
 
-T3GraphLine::T3GraphLine(Qt3DNode* parent, T3DataView* dataView_, float fnt_sz, bool zo)
+T3GraphLine::T3GraphLine(Qt3DNode* parent, T3DataView* dataView_, float fnt_sz,
+                         float wdth, bool zo)
   : inherited(parent, dataView_)
   , font_size(fnt_sz)
+  , width(wdth)
   , z_on(zo)
   , lines(new T3LineStrip(this))
   , errbars(new T3LineStrip(this))
   , markers(new T3LineStrip(this))
+  , text(new T3Entity(this))
 {
   if(z_on) {
-    translate->setTranslation(QVector3D(-0.5f, -0.5f, 0.5f));
+    translate->setTranslation(QVector3D(-0.5f*width, -0.5f, 0.5f));
   }
   else {
-    translate->setTranslation(QVector3D(-0.5f, -0.5f, 0.0f));
+    translate->setTranslation(QVector3D(-0.5f*width, -0.5f, 0.0f));
   }
 }
 
 T3GraphLine::~T3GraphLine() {
 }
 
-void T3GraphLine::assertText() {
-  // if (textSep_) return;
-  // textSep_ = new SoSeparator();
-  // textSep_->addChild(complexity_);
-  // textSep_->addChild(labelFont_);
-
-  // textColor_ = new SoPackedColor();
-  // textColor_->orderedRGBA.setValue(defColor_);
-  // textSep_->addChild(textColor_);
-  // shapeSeparator()->addChild(textSep_);
-}
-
 void T3GraphLine::clear() {
   lines->restart();
   errbars->restart();
   markers->restart();
-
-  // // easiest for text is just to nuke
-  // if (textSep_) {
-  //   shapeSeparator()->removeChild(textSep_); // unrefs, and thus nukes
-  //   textSep_ = NULL;
-  //   textColor_ = NULL;
-  //   lastText_ = 0.0f;
-  // }
+  text->removeAllChildren();
   inherited::clear();
 }
 
@@ -362,17 +347,10 @@ void T3GraphLine::setValueColorMode(bool value) {
 }
 
 void T3GraphLine::textAt(const iVec3f& pt, const char* str) {
-  // assertText();
-  // SoTranslation* tr = new SoTranslation();
-  // tr->translation.setValue(
-  //   pt.x - lastText_.x,
-  //   pt.y - lastText_.y,
-  //   -(pt.z - lastText_.z));
-  // textSep_->addChild(tr);
-  // SoAsciiText* at = new SoAsciiText();
-  // at->string.setValue(str);
-  // textSep_->addChild(at);
-  // lastText_ = pt;
+  T3TwoDText* txt = new T3TwoDText(text);
+  txt->scale->setScale(font_size);
+  txt->setText(str);
+  txt->TranslateXLeftTo(QVector3D(pt.x, pt.y, -pt.z));
 }
 
 #else // TA_QT3D

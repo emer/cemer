@@ -38,7 +38,6 @@ T3GraphViewNode::T3GraphViewNode(Qt3DNode* parent, T3DataView* dataView_, float 
   , graphs(new T3Entity(this))
 {
   frame = new T3LineBox(this);
-  // graphs->translate->setTranslation(QVector3D(-0.5f,-0.5f,0.0f));
   updateNode();
 }
 
@@ -60,8 +59,8 @@ void T3GraphViewNode::updateNode() {
 
 void T3GraphViewNode::setDefaultCaptionTransform() {
   if(!caption) return;
-  caption->TranslateYTopTo(QVector3D(0.0f, -0.5f - frame_margin * 1.4f, 0.0f));
   inherited::setDefaultCaptionTransform();
+  caption->TranslateXLeftTo(QVector3D(-0.5f * width, -0.7f, 0.0f));
 }
 
 #else // TA_QT3D

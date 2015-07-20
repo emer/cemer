@@ -1030,6 +1030,7 @@ void taiMisc::DeleteWidgetsLater(QObject* obj) {
     if(chobj->inherits("QWidget")) {
       ((QWidget*)chobj)->hide();
     }
+    chobj->setParent(NULL);
     chobj->deleteLater();
   }
 }
@@ -1040,6 +1041,7 @@ void taiMisc::DeleteChildrenLater(QObject* obj) {
   const QObjectList& ol = obj->children();
   for(int i = ol.count()-1; i >= 0; i--) {
     chobj = ol.at(i);
+    chobj->setParent(NULL);
     chobj->deleteLater();
   }
 }
@@ -1052,6 +1054,7 @@ void taiMisc::DeleteChildrenNow(QObject* obj) {
   while (ol.count() > 0) {
     i = ol.size() - 1;
     chobj = ol.at(i);
+    chobj->setParent(NULL);
     delete chobj;
   }
 }

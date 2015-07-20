@@ -46,7 +46,7 @@ public:
   Axis			axis;
   float                 font_size;
   int			axis_n;	// number of axis (can be multiple Y axes..)
-  iVec3f 		last_label_at; // used so we just need to issue delta translates
+  float                 width;
   QColor                color;
 
   T3Entity*             labels;
@@ -67,7 +67,7 @@ public:
   void setNodeUpdating(bool updating) override;
 
   T3Axis(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, Axis axis = X, 
-         float fnt_sz=.05f, int n_axis = 0);
+         float fnt_sz=.05f, float width = 1.0f, int n_axis = 0);
   ~T3Axis();
 };
 

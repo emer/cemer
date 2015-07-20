@@ -79,11 +79,13 @@ public:
   LineStyle             lineStyle;
   float                 marker_size;
   float	                font_size;
+  float                 width;  // width of graph
   bool                  z_on;   // is z axis on or not?
   QColor                color;  // line color
   T3LineStrip*          lines;
   T3LineStrip*          errbars;
   T3LineStrip*          markers;
+  T3Entity*             text;
 
   inline float          mark_pt(int idx, int xy)
   { return marker_size * mark_pts[idx * 2 + xy]; }
@@ -128,21 +130,11 @@ public:
   // string of SVG commands for drawing marker at given point -- just the move, line guys
 
   T3GraphLine(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, float fnt_sz = .05f,
-              bool z_on = false);
+              float width = 1.0f, bool z_on = false);
   ~T3GraphLine();
 
 protected:
-  // uint32_t		defColor_; // def is black
-  // SoSeparator*		line_sep;
-  // SoDrawStyle*		lineDrawStyle_;
-  // SoSeparator*		textSep_; // optional text separator
-  // SoComplexity*		complexity_;
-  // SoFont*		labelFont_;
-  // SoPackedColor*	textColor_;
-  // iVec3f		lastText_; // where last text was rendered, for our next translate
 
-  void			assertText();
-    // makes sure text separator is created;
   void			initValueColorMode(); // called in several places
   void			setDefaultCaptionTransform() override; // sets text justif and transform for 3D
 };

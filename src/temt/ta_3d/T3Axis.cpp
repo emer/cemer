@@ -26,15 +26,17 @@
 #include <T3TwoDText>
 #include <T3LineStrip>
 
-T3Axis::T3Axis(Qt3DNode* parent, T3DataView* dataView_, Axis ax, float fnt_sz, int axn)
+T3Axis::T3Axis(Qt3DNode* parent, T3DataView* dataView_, Axis ax, float fnt_sz,
+               float wdth, int axn)
   : inherited(parent, dataView_)
   , axis(ax)
   , font_size(fnt_sz)
+  , width(wdth)
   , axis_n(axn)
   , labels(new T3Entity(this))
   , lines(new T3LineStrip(this))
 {
-  translate->setTranslation(QVector3D(-0.5f, -0.5f, 0.0f));
+  translate->setTranslation(QVector3D(-0.5f * width, -0.5f, 0.0f));
 }
 
 T3Axis::~T3Axis() {

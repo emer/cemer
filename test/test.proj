@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.1.0 rev8433
+// ta_Dump File v3.0 -- code v7.8.1.0 rev8441
 LeabraProject .projects["test"] { 
  Doc_Group @.docs = [0] {
  };
@@ -17543,7 +17543,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9957559704780579;
+     value 6 0=0.9936339259147644;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -17995,7 +17995,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
-	  width=1;
+	  width=2;
 	  depth=1;
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
@@ -18015,14 +18015,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
-	   axis_length=1;
+	   axis_length=2;
 	   row_num=0;
 	  };
 	  z_axis {
 	   name="z_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
-	   on=1;
+	   on=0;
 	   axis=Z;
 	   col_name="batch";
 	   is_string=0;
@@ -18046,14 +18046,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    name="EpochOutputData_Graph_plot_1";
 	    m_data=NULL;
 	    m_transform=NULL;
-	    on=0;
+	    on=1;
 	    axis=Y;
 	    col_name="avg_sse";
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=8.06164: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=8.061643: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -18069,12 +18069,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
-	    col_name="avg_sse";
+	    col_name="cnt_err";
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=8.061643: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=6: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
@@ -18088,14 +18088,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    name="EpochOutputData_Graph_plot_3";
 	    m_data=NULL;
 	    m_transform=NULL;
-	    on=0;
+	    on=1;
 	    axis=Y;
 	    col_name="avg_cycles";
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=5.83333: fix_max=0: max=8.5: };
+	    fixed_range {fix_min=0: min=5.833333: fix_max=0: max=8.5: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
@@ -18408,7 +18408,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    name="EpochOutputData_Graph_err_2";
 	    m_data=NULL;
 	    m_transform=NULL;
-	    on=1;
+	    on=0;
 	    axis=Y;
 	    col_name="pct_err";
 	    is_string=0;
@@ -18801,9 +18801,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	T3SavedView @["Vw_1"] {
 	 name="Vw_1";
 	 view_saved=1;
-	 pos {x=-1.040131e-7: y=2.174579: z=5.584352: };
+	 pos {x=-6.501896e-7: y=3.736847: z=4.685054: };
 	 look_at {x=0: y=0: z=0: };
-	 up {x=3.632906e-8: y=0.9318419: z=-0.3628646: };
+	 up {x=8.17011e-8: y=0.7817793: z=-0.6235552: };
 	};
 	T3SavedView @["Vw_2"] {
 	 name="Vw_2";
@@ -18814,10 +18814,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
 	T3SavedView @["Vw_3"] {
 	 name="Vw_3";
-	 view_saved=0;
-	 pos {x=0: y=0: z=0: };
+	 view_saved=1;
+	 pos {x=-3.363329e-7: y=0.420835: z=7.19929: };
 	 look_at {x=0: y=0: z=0: };
-	 up {x=0: y=1: z=0: };
+	 up {x=-6.481034e-8: y=0.9982958: z=-0.05835546: };
 	};
 	T3SavedView @["Vw_4"] {
 	 name="Vw_4";
