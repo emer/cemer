@@ -25,7 +25,7 @@
 
 #ifdef TA_QT3D
 
-#include <T3LineBox>
+class T3LineBox;
 
 class TA_API T3GraphViewNode: public T3NodeParent {
   Q_OBJECT
@@ -47,8 +47,6 @@ public:
   void		        updateNode() override;
   virtual void		setWidth(float wdth);
   void		        setDefaultCaptionTransform() override;
-
-  // SoScrollBar*		RowScrollBar() const { return row_scroll_bar_; } // #IGNORE 
 
   T3GraphViewNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, float wdth=1.0f,
                   bool show_draggers = true);

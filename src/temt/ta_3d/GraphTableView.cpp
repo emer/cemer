@@ -38,6 +38,10 @@
 
 #ifdef TA_QT3D
 
+#include <T3LineStrip>
+#include <T3TwoDText>
+#include <T3LineBox>
+
 #else // TA_QT3D
 
 #include <SoLineBox3d>

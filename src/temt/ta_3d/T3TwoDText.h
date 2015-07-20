@@ -57,9 +57,13 @@ enum T3AlignText {              // for abstracting over Qt3D and SoAsciiText
   T3_ALIGN_LEFT  =  Qt::AlignLeft,
   T3_ALIGN_RIGHT = Qt::AlignRight,
   T3_ALIGN_CENTER = Qt::AlignHCenter,
-  T3_ALIGN_JUSTIFY = Qt::AlignJustify,
 };
 
+enum T3VPosition {
+  T3_VPOS_BOTTOM,             // current translation specifies bottom of text -- adds an extra 0.5 * height to shift up
+  T3_VPOS_CENTER,             // current translation indicates center of text
+  T3_VPOS_TOP,                // current translation specifies top of text -- adds an extra -0.5 * height to shift down
+};
 
 class TA_API T3TwoDText : public T3Entity {
   // flat two-d text element that projects a QLabel onto a plane and shows that -- by default it is upright in the XY plane, size.y = 1.0, size.x = required width, size.z = tiny
@@ -68,6 +72,8 @@ class TA_API T3TwoDText : public T3Entity {
 public:
   QLabel         label;          // label containing full info for what text to render and how
   QColor         bg_color;       // background color of the text -- defaults to white, but Qt::Transparent is useful if the rendering pass supports it..
+  T3AlignText    align;          // how to align the text horizontally -- does an extra translation of the plane based on setting e.g., LEFT will cause text to start at current translation position, while RIGHT causes it to end there.
+  T3VPosition    v_pos;          // how to position the text relative to current overall translation
   T3Entity*      plane;          // text plane object
   T3TwoDTexture* texture;        // texture for rendering
 

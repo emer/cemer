@@ -36,8 +36,9 @@ void T3LineStripMesh::setNodeUpdating(bool updating) {
   if(!updating && node_updating) should_render = true;
   node_updating = updating;
   blockNotifications(node_updating); // block if updating
-  if(should_render)
+  // if(should_render)
     emit nodeUpdatingChanged();
+    emit parentChanged();
 }
 
 void T3LineStripMesh::restart() {

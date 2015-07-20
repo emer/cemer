@@ -24,6 +24,8 @@
 
 T3TwoDText::T3TwoDText(Qt3DNode* parent)
   : T3Entity(parent)
+  , align(T3_ALIGN_CENTER)
+  , v_pos(T3_VPOS_CENTER)
 {
   bg_color = Qt::white;
   QFont fnt("Arial", 24);       // 24 gives decent resolution for rendering
@@ -75,6 +77,31 @@ void T3TwoDText::updateRender() {
     pmesh->setHeight(1.0f);
   if(pmesh->width() != wd)
     pmesh->setWidth(wd);
+  float scx = scale->scale3D().x();
+  float scy = scale->scale3D().y();
+  float xoff = 0.0f;
+  float yoff = 0.0f;
+  switch(align) {
+  case T3_ALIGN_LEFT:
+    xoff = 0.5f * wd * scx;
+    break;
+  case T3_ALIGN_RIGHT:
+    xoff = -0.5f * wd * scx;
+    break;
+  default:
+    break;
+  }
+  switch(v_pos) {
+  case T3_VPOS_BOTTOM:
+    yoff = 0.5f * scy;
+    break;
+  case T3_VPOS_TOP:
+    yoff = -0.5f * scy;
+    break;
+  default:
+    break;
+  }
+  plane->translate->setTranslation(QVector3D(xoff, yoff, 0.0f));
   texture->renderLabel(*this);
 }
 

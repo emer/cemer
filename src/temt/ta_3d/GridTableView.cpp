@@ -32,6 +32,14 @@
 
 #include <taMisc>
 
+#ifdef TA_QT3D
+
+#include <T3LineStrip>
+#include <T3TwoDText>
+#include <T3LineBox>
+
+#else // TA_QT3D
+
 #include <SoScrollBar>
 #include <SoImageEx>
 #include <SoMatrixGrid>
@@ -58,6 +66,9 @@
 #include <Inventor/actions/SoRayPickAction.h>
 #include <Inventor/SoPickedPoint.h>
 #include <Inventor/SoEventManager.h>
+
+#endif // TA_QT3D
+
 
 TA_BASEFUNS_CTORS_DEFN(GridTableView);
 
@@ -592,6 +603,7 @@ void GridTableView::GetScaleRange() {
   }
 }
 
+#ifndef TA_QT3D
 void GridTableView_ColScrollCB(SoScrollBar* sb, int val, void* user_data) {
   GridTableView* gtv = (GridTableView*)user_data;
   gtv->scrolling_ = true;
@@ -605,6 +617,7 @@ void GridTableView_RowScrollCB(SoScrollBar* sb, int val, void* user_data) {
   gtv->ViewRow_At(val);
   gtv->scrolling_ = false;
 }
+#endif // TA_QT3D
 
 void GridTableView::SetScrollBars() {
   if(scrolling_) return;                     // do't redo if currently doing!
@@ -658,6 +671,7 @@ void GridTableView::RemoveGrid() {
   T3GridViewNode* node_so = this->node_so();
   if (node_so) {
 #ifdef TA_QT3D
+    node_so->grid->restart();
 #else // TA_QT3D
     node_so->grid()->removeAllChildren();
 #endif // TA_QT3D
@@ -668,6 +682,7 @@ void GridTableView::RemoveHeader() {
   T3GridViewNode* node_so = this->node_so();
   if (node_so) {
 #ifdef TA_QT3D
+    node_so->header->removeAllChildren();
 #else // TA_QT3D
     node_so->header()->removeAllChildren();
 #endif // TA_QT3D
@@ -678,6 +693,7 @@ void GridTableView::RemoveLines(){
   T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
 #ifdef TA_QT3D
+  node_so->body->removeAllChildren();
 #else // TA_QT3D
   node_so->body()->removeAllChildren();
 #endif // TA_QT3D
@@ -704,16 +720,20 @@ void GridTableView::RenderGrid() {
   if (!node_so) return;
 
 #ifdef TA_QT3D
-
-
+  T3LineStrip* grid = node_so->grid;
+  grid->setNodeUpdating(true);
+  grid->translate->setTranslation(QVector3D(-0.5f * width, -0.5f, 0.0f));
 #else // TA_QT3D
   SoGroup* grid = node_so->grid();
   grid->removeAllChildren(); // should have been done
+#endif // TA_QT3D
   if (!grid_on) return;
 
   float gr_ln_sz = grid_line_size;
 
   // vertical lines
+#ifdef TA_QT3D
+#else // TA_QT3D
   SoSeparator* vert = new SoSeparator;
   // note: VERY unlikely to not need at least one line, so always make it
   SoCube* ln = new SoCube;
@@ -721,10 +741,10 @@ void GridTableView::RenderGrid() {
   ln->width = gr_ln_sz;
   ln->depth = gr_ln_sz; //note: give it depth to try to avoid disappearing lines issue
   ln->height = 1.0f;
-
   SoTranslation* tr = new SoTranslation();
   vert->addChild(tr);
   tr->translation.setValue(0.0f, -.5f, 0.0f);
+#endif // TA_QT3D
 
   int col_idx = 0;
   float col_wd_lst = 0.0f; // width of last col
@@ -733,10 +753,15 @@ void GridTableView::RenderGrid() {
   if (row_num_on) {
     col_wd_lst = col_widths[col_idx++];
     col_pos += col_wd_lst;
+#ifdef TA_QT3D
+    grid->moveTo(QVector3D(col_pos, 0.0f, 0.0f));
+    grid->lineTo(QVector3D(col_pos, 1.0f, 0.0f));
+#else // TA_QT3D
     SoTranslation* tr = new SoTranslation();
     vert->addChild(tr);
     tr->translation.setValue(col_wd_lst, 0.0f, 0.0f);
     vert->addChild(ln);
+#endif // TA_QT3D
 
     if(render_svg) {
       svg_str << taSvg::Path(iColor(), 1.0f) // gr_ln_sz 
@@ -751,10 +776,15 @@ void GridTableView::RenderGrid() {
     if (!cvs) continue;
     col_wd_lst = col_widths[col_idx++];
     col_pos += col_wd_lst;
+#ifdef TA_QT3D
+    grid->moveTo(QVector3D(col_pos, 0.0f, 0.0f));
+    grid->lineTo(QVector3D(col_pos, 1.0f, 0.0f));
+#else // TA_QT3D
     SoTranslation* tr = new SoTranslation();
     vert->addChild(tr);
     tr->translation.setValue(col_wd_lst, 0.0f, 0.0f);
     vert->addChild(ln);
+#endif // TA_QT3D
 
     if(render_svg) {
       svg_str << taSvg::Path(iColor(), 1.0f) // gr_ln_sz
@@ -763,10 +793,13 @@ void GridTableView::RenderGrid() {
               << taSvg::PathEnd();
     }
   }
+
+  // horizontal lines
+#ifdef TA_QT3D
+#else // TA_QT3D
   grid->addChild(vert);
   ln->unref(); // deleted if not used
 
-  // horizontal lines
   SoSeparator* horiz = new SoSeparator;
   // note: VERY unlikely to not need at least one line, so always make it
   ln = new SoCube;
@@ -777,15 +810,21 @@ void GridTableView::RenderGrid() {
   tr = new SoTranslation();
   horiz->addChild(tr);
   tr->translation.setValue(.5f * width, 0.0f, 0.0f);
+#endif // TA_QT3D
 
   float row_pos = 0.0f;
 
   if (header_on) {
-    SoTranslation* tr = new SoTranslation;
     row_pos += head_height;
+#ifdef TA_QT3D
+    grid->moveTo(QVector3D(0.0f, 1.0f-row_pos, 0.0f));
+    grid->lineTo(QVector3D(width, 1.0f-row_pos, 0.0f));
+#else // TA_QT3D
+    SoTranslation* tr = new SoTranslation;
     horiz->addChild(tr);
     tr->translation.setValue(0.0f, -head_height, 0.0f);
     horiz->addChild(ln);
+#endif // TA_QT3D
 
     if(render_svg) {
       svg_str << taSvg::Path(iColor(), 1.0f) // gr_ln_sz
@@ -796,11 +835,16 @@ void GridTableView::RenderGrid() {
   }
 
   for (int data_row = view_range.min; data_row <= view_range.max; ++data_row) {
+    row_pos += row_height;
+#ifdef TA_QT3D
+    grid->moveTo(QVector3D(0.0f, 1.0f-row_pos, 0.0f));
+    grid->lineTo(QVector3D(width, 1.0f-row_pos, 0.0f));
+#else // TA_QT3D
     SoTranslation* tr = new SoTranslation();
     horiz->addChild(tr);
     tr->translation.setValue(0.0f, -row_height, 0.0f);
     horiz->addChild(ln);
-    row_pos += row_height;
+#endif // TA_QT3D
 
     if(render_svg) {
       svg_str << taSvg::Path(iColor(), 1.0f) // gr_ln_sz
@@ -809,6 +853,9 @@ void GridTableView::RenderGrid() {
               << taSvg::PathEnd();
     }
   }
+#ifdef TA_QT3D
+  grid->setNodeUpdating(false);
+#else // TA_QT3D
   grid->addChild(horiz);
   ln->unref(); // deleted if not used
 #endif // TA_QT3D
@@ -819,11 +866,13 @@ void GridTableView::RenderHeader() {
   if (!node_so) return;
 
 #ifdef TA_QT3D
-
+  T3Entity* hdr = node_so->header;
 #else // TA_QT3D
   // safely/correctly clear all the column headers
   // we remove first manually from us...
   SoSeparator* hdr = node_so->header();
+#endif // TA_QT3D
+
   hdr->removeAllChildren();
   // and then remove ref in the ColView guys
   for (int i = 0; i < colViewCount(); i++) {
@@ -833,6 +882,8 @@ void GridTableView::RenderHeader() {
 
   if(!header_on || dataTable()->data.size == 0) return; // normally shouldn't be called if off
 
+#ifdef TA_QT3D
+#else // TA_QT3D
   SoComplexity* cplx = new SoComplexity;
   cplx->value.setValue(taMisc::text_complexity);
   hdr->addChild(cplx);
@@ -844,6 +895,7 @@ void GridTableView::RenderHeader() {
   else
     fnt->size.setValue(font_scale);
   hdr->addChild(fnt);
+#endif // TA_QT3D
 
   if(render_svg) {
     svg_str << taSvg::Group();
@@ -855,10 +907,15 @@ void GridTableView::RenderHeader() {
   float gr_mg_sz = grid_margin;
   float gr_mg_sz2 = 2.0f * gr_mg_sz;
   // margin and baseline adj
+  float base_adj = (head_height * T3Misc::char_base_fract);
+#ifdef TA_QT3D
+  hdr->translate->setTranslation
+    (QVector3D(-0.5f * width, -0.5f + (head_height - base_adj), -gr_mg_sz));
+#else // TA_QT3D
   SoTranslation* tr = new SoTranslation();
   hdr->addChild(tr);
-  float base_adj = (head_height * T3Misc::char_base_fract);
   tr->translation.setValue(0.0f, - (head_height - base_adj), -gr_mg_sz); // set back just a hair
+#endif // TA_QT3D
 
   float row_pos = head_height - base_adj;
 
@@ -868,6 +925,14 @@ void GridTableView::RenderHeader() {
 
   if (row_num_on) {
     col_wd_lst = col_widths[col_idx++];
+#ifdef TA_QT3D
+    T3TwoDText* txt = new T3TwoDText(hdr);
+    txt->setText("#");
+    txt->setTextColor(txtcolr);
+    txt->scale->setScale(font_scale);
+    txt->translate->setTranslation
+      (QVector3D(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -gr_mg_sz));
+#else // TA_QT3D
     SoSeparator* txsep = new SoSeparator;
     hdr->addChild(txsep);
     SoTranslation* ttr = new SoTranslation();
@@ -885,32 +950,47 @@ void GridTableView::RenderHeader() {
       txsep->addChild(txt);
       txt->string.setValue("#");
     }
+#endif // TA_QT3D
 
     if(render_svg) {
       svg_str << taSvg::Text(String("#"), col_pos + .5f * col_wd_lst, 1.0f - row_pos,
                              -gr_mg_sz, iColor(), font_scale, taSvg::CENTER);
     }
+    col_pos += col_wd_lst;
   }
 
   for (int col = col_range.min; col <= col_range.max; ++col) {
     GridColView* cvs = (GridColView*)colVis(col);
     if (!cvs) continue;
     if (col_wd_lst > 0.0f) {
+#ifdef TA_QT3D
+#else // TA_QT3D
       tr = new SoTranslation();
       hdr->addChild(tr);
       tr->translation.setValue(col_wd_lst, 0.0f, 0.0f);
-      col_pos += col_wd_lst;
+#endif // TA_QT3D
     }
     col_wd_lst = col_widths[col_idx++]; // note incr
+    int max_chars = (int)(T3Misc::char_ht_to_wd_pts * col_wd_lst / font_scale) + 1;
+    String cnm = cvs->GetDisplayName().elidedTo(max_chars);
+
+#ifdef TA_QT3D
+    T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
+    T3TwoDText* txt = new T3TwoDText(hdr);
+    txt->setText(cnm);
+    txt->setTextColor(txtcolr);
+    txt->scale->setScale(font_scale);
+    txt->translate->setTranslation
+      (QVector3D(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -gr_mg_sz));
+#else // TA_QT3D
     T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
     SoSeparator* colsep = colnd->topSeparator();
-    colnd->material()->diffuseColor.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
+    colnd->material()->diffuseColor.setValue(txtcolr.redf(), txtcolr.greenf(),
+                                             txtcolr.bluef());
     SoTranslation* ttr = new SoTranslation();
     ttr->translation.setValue(.5f * col_wd_lst, 0.0f, 0.0f);
     colsep->addChild(ttr);
     hdr->addChild(colnd);
-    int max_chars = (int)(T3Misc::char_ht_to_wd_pts * col_wd_lst / font_scale) + 1;
-    String cnm = cvs->GetDisplayName().elidedTo(max_chars);
     if(two_d_font) {
       SoText2* txt = new SoText2;
       txt->justification = SoText2::CENTER;
@@ -923,6 +1003,7 @@ void GridTableView::RenderHeader() {
       colsep->addChild(txt);
       txt->string.setValue(cnm.chars());
     }
+#endif // TA_QT3D
 
     if(render_svg) {
       svg_str << taSvg::Text(cnm, col_pos + .5f * col_wd_lst, 1.0f - row_pos,
@@ -930,6 +1011,8 @@ void GridTableView::RenderHeader() {
     }
 
     // light aqua transparent background
+#ifdef TA_QT3D
+#else // TA_QT3D
     SoTranslation* rectr = new SoTranslation();
     colnd->addChild(rectr);
     rectr->translation.setValue(0.0f, .5f * head_height-base_adj, 0.0f);
@@ -943,8 +1026,10 @@ void GridTableView::RenderHeader() {
     rect->depth = gr_mg_sz;
     colnd->topSeparator()->addChild(rect);
     cvs->setNode(colnd);
-  }
 #endif // TA_QT3D
+
+    col_pos += col_wd_lst;
+  }
 
   if(render_svg) {
     svg_str << taSvg::GroupEnd();
@@ -959,33 +1044,36 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   float gr_mg_sz = grid_margin;
   float gr_mg_sz2 = 2.0f * gr_mg_sz;
   // origin is top-left of body area
-  // make line container
+  DataTable* dt = dataTable(); //cache
+  String el;
+
+  float row_pos = head_height + (row_height * (float)view_idx);
+  float text_ht = font_scale;
+  // following metrics will be adjusted for mat font scale, when necessary
+  float txt_base_adj = text_ht * T3Misc::char_base_fract;
+
+  T3Panel* fr = GetFrame();
+  iColor txtcolr = fr->GetTextColor();
+
+  float y_offs = ((row_height - text_ht) * 0.5f) + text_ht - txt_base_adj;
 
 #ifdef TA_QT3D
-
+  T3Entity* body = node_so->body;
+  T3Entity* ln = new T3Entity(body);
+  ln->translate->setTranslation
+    (QVector3D(0.0f, 1.0f - (row_pos + y_offs), 0.0f));
 #else // TA_QT3D
 
   SoSeparator* ln = new SoSeparator();
-
-  DataTable* dt = dataTable(); //cache
-  String el;
   // place row and first margin here, simplifies everything...
   SoTranslation* tr = new SoTranslation();
   ln->addChild(tr);
   // 1st tr places origin for the row
   tr->translation.setValue(0.0f, -(row_height * (float)view_idx), 0.0f);
-
-  float row_pos = head_height + (row_height * (float)view_idx);
-
-  float text_ht = font_scale;
-
-  T3Panel* fr = GetFrame();
-  iColor txtcolr = fr->GetTextColor();
+#endif // TA_QT3D
 
   int col_idx = 0;
   float col_wd_lst = 0.0f; // width of last col
-  // following metrics will be adjusted for mat font scale, when necessary
-  float txt_base_adj = text_ht * T3Misc::char_base_fract;
 
   float row_ht = row_height - gr_mg_sz2;
   float mat_rot_rad = mat_rot * taMath_float::rad_per_deg;
@@ -999,14 +1087,21 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   // render row_num cell, if on
   if (row_num_on) {
     col_wd_lst = col_widths[col_idx++];
+    el = String(data_row);
+#ifdef TA_QT3D
+    T3TwoDText* txt = new T3TwoDText(ln);
+    txt->setText(el);
+    txt->setTextColor(txtcolr);
+    txt->scale->setScale(font_scale);
+    txt->translate->setTranslation
+      (QVector3D(col_pos + 0.5f * col_wd_lst, 0.5f * text_ht, 0.0f));
+#else // TA_QT3D
     SoSeparator* row_sep = new SoSeparator;
     tr = new SoTranslation;
     row_sep->addChild(tr);
     SoBaseColor* bc = new SoBaseColor;
     bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
     row_sep->addChild(bc);
-    float y_offs = ((row_height - text_ht) * 0.5f) + text_ht - txt_base_adj;
-    el = String(data_row);
     tr->translation.setValue(.5 * col_wd_lst, -y_offs, 0.0f);
     if(two_d_font) {
       SoText2* txt = new SoText2;
@@ -1021,6 +1116,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       txt->string.setValue(el.chars());
     }
     ln->addChild(row_sep);
+#endif // TA_QT3D
 
     if(render_svg) {
       svg_str << taSvg::Text(el, col_pos + .5f * col_wd_lst, 1.0f - (row_pos + y_offs),
@@ -1038,17 +1134,22 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     dt->idx(data_row, act_idx);
 
     // translate the col to proper location
+#ifdef TA_QT3D
+#else // TA_QT3D
     if (col_wd_lst > 0.0f) {
       tr = new SoTranslation();
       ln->addChild(tr);
       tr->translation.setValue(col_wd_lst, 0.0f, 0.0f);
     }
+#endif // TA_QT3D
     col_wd_lst = col_widths[col_idx++]; // index is now +1 already..
 
     float col_wd = col_wd_lst - gr_mg_sz2;
 
     if(dc->is_matrix) {
       if(cvs->mat_image && !render_svg) { // svg does not handle images..
+#ifdef TA_QT3D
+#else // TA_QT3D
         SoSeparator* img = new SoSeparator;
         ln->addChild(img);
         SoTransform* tr = new SoTransform();
@@ -1068,21 +1169,24 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           img_so->setImage(*cell_mat, top_zero);
           taBase::UnRef(cell_mat);
         }
+#endif // TA_QT3D
       }
       else {
         float mat_ht = row_ht;
         if(col_wd > mat_ht)     // make it more square as height increases..
           mat_ht += (col_wd - mat_ht) * fabsf(sinf(mat_rot_rad));
-        SoSeparator* grsep = new SoSeparator;
-        ln->addChild(grsep);
-        SoTransform* tr = new SoTransform(); // todo: add this to image object! get rid of extra
-        grsep->addChild(tr);
-        tr->scaleFactor.setValue(col_wd, mat_ht, 1.0f);
-        tr->translation.setValue(gr_mg_sz, -(row_height-gr_mg_sz), 0.0f);
-        tr->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), mat_rot_rad);
-
         taMatrix* cell_mat =  dc->AR();
         if(cell_mat) {
+#ifdef TA_QT3D
+#else // TA_QT3D
+          SoSeparator* grsep = new SoSeparator;
+          ln->addChild(grsep);
+          SoTransform* tr = new SoTransform(); // todo: add this to image object! get rid of extra
+          grsep->addChild(tr);
+          tr->scaleFactor.setValue(col_wd, mat_ht, 1.0f);
+          tr->translation.setValue(gr_mg_sz, -(row_height-gr_mg_sz), 0.0f);
+          tr->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), mat_rot_rad);
+
           SoMatrixGrid* sogr = new SoMatrixGrid
             (cell_mat, act_idx, cvs->mat_odd_vert, &colorscale, 
              (SoMatrixGrid::MatrixLayout)cvs->mat_layout, mat_val_text);
@@ -1102,31 +1206,40 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 
           sogr->render();
           grsep->addChild(sogr);
+#endif // TA_QT3D
         }
       }
     }
     else {                      // scalar: always text
+      float x_offs = gr_mg_sz; // default for left
+      int just = T3_ALIGN_LEFT;
+      if (dc->isNumeric()) {
+        just = T3_ALIGN_RIGHT;
+        x_offs = col_wd - gr_mg_sz2;
+        el = Variant::formatNumber(dc->GetValAsVar(act_idx),6); // 6 = precision
+      }
+      else {
+        int max_chars = (int)(T3Misc::char_ht_to_wd_pts * col_wd / font_scale) + 1;
+        el = dc->GetValAsString(act_idx).elidedTo(max_chars);
+      }
+#ifdef TA_QT3D
+      T3TwoDText* txt = new T3TwoDText(ln);
+      txt->align = (T3AlignText)just;
+      txt->setText(el);
+      txt->setTextColor(txtcolr);
+      txt->scale->setScale(font_scale);
+      txt->translate->setTranslation
+        (QVector3D(col_pos + x_offs, 0.5f * text_ht, 0.0f));
+#else // TA_QT3D
       SoSeparator* txt_sep = new SoSeparator;
       ln->addChild(txt_sep);
       // text origin is bottom left (Left) or bottom right (Right)
       // and we want to center vertically when  height is greater than txt height
-      SoAsciiText::Justification just = SoAsciiText::LEFT;
-      float x_offs = gr_mg_sz; // default for left
       tr = new SoTranslation;
       txt_sep->addChild(tr);
       SoBaseColor* bc = new SoBaseColor;
       bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
       txt_sep->addChild(bc);
-      float y_offs = ((row_height - text_ht) *.5f) +
-        text_ht - txt_base_adj;
-      if (dc->isNumeric()) {
-        just = SoAsciiText::RIGHT;
-        x_offs = col_wd - gr_mg_sz2;
-        el = Variant::formatNumber(dc->GetValAsVar(act_idx),6); // 6 = precision
-      } else {
-        int max_chars = (int)(T3Misc::char_ht_to_wd_pts * col_wd / font_scale) + 1;
-        el = dc->GetValAsString(act_idx).elidedTo(max_chars);
-      }
       tr->translation.setValue(x_offs, -y_offs, 0.0f);
       if(two_d_font) {
         SoText2* txt = new SoText2;
@@ -1140,9 +1253,10 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
         txt->justification = just;
         txt->string.setValue(el.chars());
       }
+#endif // TA_QT3D
 
       if(render_svg) {
-        if(just == SoAsciiText::LEFT) {
+        if(just == T3_ALIGN_LEFT) {
           svg_str << taSvg::Text(el, col_pos + x_offs, 1.0f - (row_pos + y_offs),
                                  0.0f, iColor(), font_scale, taSvg::LEFT);
         }
@@ -1156,8 +1270,9 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 
     col_pos += col_wd_lst;
   }
+#ifdef TA_QT3D
+#else // TA_QT3D
   node_so->body()->addChild(ln);
-
 #endif // TA_QT3D
 
   if(render_svg) {
@@ -1171,16 +1286,22 @@ void GridTableView::RenderLines(){
   if (!node_so) return;
 
 #ifdef TA_QT3D
-
+  T3Entity* body = node_so->body;
+  float hh = 0.0f;
+  body->translate->setTranslation
+    (QVector3D(-0.5f * width, -0.5f, 0.0f));
 #else // TA_QT3D
-
   SoSeparator* body = node_so->body(); // cache
+#endif // TA_QT3D
+  
   body->removeAllChildren(); //should already have been done
 
   if(dataTable()->data.size == 0) return;
 
   // master font -- we only add a child font if different
   // doesn't seem to make much diff:
+#ifdef TA_QT3D
+#else // TA_QT3D
   SoComplexity* cplx = new SoComplexity;
   cplx->value.setValue(taMisc::text_complexity);
   body->addChild(cplx);
@@ -1192,14 +1313,13 @@ void GridTableView::RenderLines(){
   else
     fnt->size.setValue(font_scale);
   body->addChild(fnt);
-//   FontSpec& fs = viewSpec()->font;
-//   fs.copyTo(fnt);
   body->addChild(fnt);
   if (header_on) {
     SoTranslation* tr = new SoTranslation;
     body->addChild(tr);
     tr->translation.setValue(0.0f, -head_height, 0.0f);
   }
+#endif // TA_QT3D
 
   // this is the index (in view_range units) of the first view line of data in the buffer
   int view_idx = 0;
@@ -1207,7 +1327,6 @@ void GridTableView::RenderLines(){
     RenderLine(view_idx, data_row);
     ++view_idx;
   }
-#endif // TA_QT3D
 }
 
 void GridTableView::SetColorSpec(ColorScaleSpec* color_spec) {

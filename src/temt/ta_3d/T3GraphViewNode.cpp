@@ -20,6 +20,7 @@
 
 #ifdef TA_QT3D
 
+#include <T3LineBox>
 #include <T3TwoDText>
 
 float T3GraphViewNode::frame_margin = .2f;
@@ -30,14 +31,13 @@ T3GraphViewNode::T3GraphViewNode(Qt3DNode* parent, T3DataView* dataView_, float 
   : inherited(parent, dataView_)
   , width(wd)
   , show_drag(show_drg)
-  , frame(NULL)
+  , frame(new T3LineBox(this))
   , x_axis(new T3Entity(this))
   , y_axes(new T3Entity(this))
   , z_axis(new T3Entity(this))
   , legend(new T3Entity(this))
   , graphs(new T3Entity(this))
 {
-  frame = new T3LineBox(this);
   updateNode();
 }
 
@@ -53,7 +53,7 @@ void T3GraphViewNode::updateNode() {
   inherited::updateNode();
   float frmg2 = 2.0f * frame_margin;
 
-  QVector3D fr_sz(width + frmg2, 1.0f + frmg2 * 1.4f, .1f);
+  QVector3D fr_sz(width + frmg2, 1.0f + frmg2 * 1.4f, frame_width);
   frame->setSize(fr_sz);
 }
 

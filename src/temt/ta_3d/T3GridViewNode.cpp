@@ -21,6 +21,10 @@
 
 #ifdef TA_QT3D
 
+#include <T3LineBox>
+#include <T3LineStrip>
+#include <T3TwoDText>
+
 float T3GridViewNode::frame_margin = .05f;
 float T3GridViewNode::frame_width = .02f;
 
@@ -29,10 +33,34 @@ T3GridViewNode::T3GridViewNode(Qt3DNode* parent, T3DataView* dataView_, float wd
   : inherited(parent, dataView_)
   , width(wd)
   , show_drag(show_drg)
+  , frame(new T3LineBox(this))
+  , grid(new T3LineStrip(this))
+  , header(new T3Entity(this))
+  , body(new T3Entity(this))
 {
+  updateNode();
 }
 
 T3GridViewNode::~T3GridViewNode() {
+}
+
+void T3GridViewNode::setWidth(float wdth) {
+  width = wdth;
+  updateNode();
+}
+
+void T3GridViewNode::updateNode() {
+  inherited::updateNode();
+  float frmg2 = 2.0f * frame_margin;
+
+  QVector3D fr_sz(width + frmg2 + 2.0f*frame_width, 1.0f + frmg2 * 2.0f, frame_width);
+  frame->setSize(fr_sz);
+}
+
+void T3GridViewNode::setDefaultCaptionTransform() {
+  if(!caption) return;
+  inherited::setDefaultCaptionTransform();
+  caption->TranslateXLeftTo(QVector3D(-0.5f * width, -0.7f, 0.0f));
 }
 
 #else // TA_QT3D

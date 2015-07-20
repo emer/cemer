@@ -640,8 +640,16 @@ LeabraProject .projects["test"] {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["Hidden_lay_net_sd"] { };
-     float_Data @["Output_lay_net_sd"] { };
+     float_Data @["Hidden_lay_net_sd"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_net_sd"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
@@ -2255,7 +2263,7 @@ LeabraProject .projects["test"] {
       UserDataItem @["view_panel_selected"] { };
      };
 
-     T3Panel_List @.panels = [1] {
+     T3Panel_List @.panels = [2] {
       T3Panel @["EpochOutputData"] { 
        T3DataView_List @.root_view.children = [1] {
 	GraphTableView @["EpochOutputData_Graph"] { 
@@ -2344,6 +2352,53 @@ LeabraProject .projects["test"] {
 	  GraphPlotView @["EpochOutputData_Graph_err_14"] { };
 	  GraphPlotView @["EpochOutputData_Graph_err_15"] { };
 	  GraphPlotView @["EpochOutputData_Graph_err_16"] { };
+	 };
+	};
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+      T3Panel @["TestTrialOutputData"] { 
+       T3DataView_List @.root_view.children = [1] {
+	GridTableView @["TestTrialOutputData_Grid"] { 
+	 T3DataView_List @.children = [20] {
+	  GridColView @["batch"] { };
+	  GridColView @["epoch"] { };
+	  GridColView @["train_mode"] { };
+	  GridColView @["group"] { };
+	  GridColView @["trial"] { };
+	  GridColView @["tick"] { };
+	  GridColView @["time"] { };
+	  GridColView @["trial_name"] { };
+	  GridColView @["group_name"] { };
+	  GridColView @["output_name"] { };
+	  GridColView @["rt_cycles"] { };
+	  GridColView @["sse"] { };
+	  GridColView @["norm_err"] { };
+	  GridColView @["cos_err"] { };
+	  GridColView @["ext_rew"] { };
+	  GridColView @["Output_lay_sse"] { };
+	  GridColView @["Output_lay_norm_err"] { };
+	  GridColView @["Output_lay_cos_err"] { };
+	  GridColView @["Hidden_lay_net_sd"] { };
+	  GridColView @["Output_lay_net_sd"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
 	 };
 	};
        };
@@ -6879,7 +6934,7 @@ LeabraProject .projects["test"] {
        };
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -6893,10 +6948,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 0;0;0;0;0;0;      };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -6910,7 +6965,7 @@ LeabraProject .projects["test"] {
        };
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -6924,10 +6979,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 0;0;0;0;0;0;      };
      };
      String_Data @["train_mode"] {
       UserDataItem_List @*(.user_data_) {
@@ -6936,7 +6991,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -6950,10 +7005,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] "TEST";"TEST";"TEST";"TEST";"TEST";"TEST";      };
      };
      int_Data @["group"] {
       UserDataItem_List @*(.user_data_) {
@@ -6967,7 +7022,7 @@ LeabraProject .projects["test"] {
        };
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -6981,10 +7036,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 0;0;0;0;0;0;      };
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
@@ -6998,7 +7053,7 @@ LeabraProject .projects["test"] {
        };
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7012,10 +7067,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 0;1;2;3;4;5;      };
      };
      int_Data @["tick"] {
       UserDataItem_List @*(.user_data_) {
@@ -7029,7 +7084,7 @@ LeabraProject .projects["test"] {
        };
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7043,10 +7098,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 0;0;0;0;0;0;      };
      };
      float_Data @["time"] {
       UserDataItem_List @*(.user_data_) {
@@ -7055,7 +7110,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7069,10 +7124,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 0.1;0.2;0.30000001;0.40000001;0.5;0.60000002;      };
      };
      String_Data @["trial_name"] {
       UserDataItem_List @*(.user_data_) {
@@ -7081,7 +7136,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7095,10 +7150,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";"random";      };
      };
      String_Data @["group_name"] {
       UserDataItem_List @*(.user_data_) {
@@ -7107,7 +7162,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7121,10 +7176,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] ;;;;;;      };
      };
      String_Data @["output_name"] {
       UserDataItem_List @*(.user_data_) {
@@ -7133,7 +7188,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7147,10 +7202,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] ;;;;;;      };
      };
      float_Data @["rt_cycles"] {
       UserDataItem_List @*(.user_data_) {
@@ -7159,7 +7214,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7173,10 +7228,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 6;6;6;6;6;6;      };
      };
      float_Data @["sse"] {
       UserDataItem_List @*(.user_data_) {
@@ -7185,7 +7240,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7199,10 +7254,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 7.2741518;6.1752162;6.6570358;5.7778769;5.6687012;9.5572281;      };
      };
      float_Data @["norm_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -7211,7 +7266,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7225,10 +7280,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 0.80000001;0.69999999;0.80000001;0.69999999;0.69999999;1;      };
      };
      float_Data @["cos_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -7237,7 +7292,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7251,10 +7306,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 0.19455558;0.35480297;0.32054648;0.36050785;0.38394713;0.0057982164;      };
      };
      float_Data @["ext_rew"] {
       UserDataItem_List @*(.user_data_) {
@@ -7263,7 +7318,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7277,10 +7332,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 0;0;0;0;0;0;      };
      };
      float_Data @["Output_lay_sse"] {
       UserDataItem_List @*(.user_data_) {
@@ -7289,7 +7344,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7303,10 +7358,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 7.2741518;6.1752162;6.6570358;5.7778769;5.6687012;9.5572281;      };
      };
      float_Data @["Output_lay_norm_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -7315,7 +7370,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7329,10 +7384,10 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 0.80000001;0.69999999;0.80000001;0.69999999;0.69999999;1;      };
      };
      float_Data @["Output_lay_cos_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -7341,7 +7396,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.156739816069603;
+	value 6 0=0.1559055149555206;
 	val_type_fixed=0;
        };
       };
@@ -7355,12 +7410,22 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
-      [0]       };
+      [6] 0.19455558;0.35480297;0.32054648;0.36050785;0.38394713;0.0057982164;      };
      };
      float_Data @["Hidden_lay_net_sd"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_154";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.15748031437397;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_lay_net_sd";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7374,9 +7439,19 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [6] 0.33495593;0.50591934;0.52274436;0.40574497;0.43389741;0.52280283;      };
      };
      float_Data @["Output_lay_net_sd"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_155";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.15748031437397;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_net_sd";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7390,7 +7465,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [6] 0.42866009;0.5035122;0.53276145;0.52227116;0.41332027;0.60328066;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -7399,7 +7474,7 @@ LeabraProject .projects["test"] {
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [0]     };
+    [6] 0;1;2;3;4;5;    };
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -7445,7 +7520,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0;      };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -7476,7 +7551,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0;      };
      };
      float_Data @["avg_sse"] {
       UserDataItem_List @*(.user_data_) {
@@ -7502,7 +7577,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 6.8517017;      };
      };
      float_Data @["cnt_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -7528,7 +7603,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 6;      };
      };
      float_Data @["pct_cor"] {
       UserDataItem_List @*(.user_data_) {
@@ -7554,7 +7629,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0;      };
      };
      float_Data @["pct_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -7580,7 +7655,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 1;      };
      };
      float_Data @["avg_norm_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -7606,7 +7681,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0.7833333;      };
      };
      float_Data @["avg_cos_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -7632,7 +7707,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0.27002636;      };
      };
      float_Data @["avg_ext_rew"] {
       UserDataItem_List @*(.user_data_) {
@@ -7658,7 +7733,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0;      };
      };
      float_Data @["avg_cycles"] {
       UserDataItem_List @*(.user_data_) {
@@ -7684,7 +7759,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 6;      };
      };
      float_Data @["epoch_time_tot"] {
       UserDataItem_List @*(.user_data_) {
@@ -7710,7 +7785,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0.30000001;      };
      };
      float_Data @["epoch_time_usr"] {
       UserDataItem_List @*(.user_data_) {
@@ -7736,7 +7811,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0.28999999;      };
      };
      float_Data @["Output_lay_avg_sse"] {
       UserDataItem_List @*(.user_data_) {
@@ -7762,7 +7837,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 6.8517017;      };
      };
      float_Data @["Output_lay_cnt_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -7788,7 +7863,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 6;      };
      };
      float_Data @["Output_lay_pct_cor"] {
       UserDataItem_List @*(.user_data_) {
@@ -7814,7 +7889,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0;      };
      };
      float_Data @["Output_lay_pct_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -7840,7 +7915,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 1;      };
      };
      float_Data @["Output_lay_avg_norm_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -7866,7 +7941,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0.7833333;      };
      };
      float_Data @["Output_lay_avg_cos_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -7892,7 +7967,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0.27002636;      };
      };
      float_Data @["Hidden_avg_net_sd"] {
       name="Hidden_avg_net_sd";
@@ -7908,7 +7983,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0.45434415;      };
      };
      float_Data @["Output_avg_net_sd"] {
       name="Output_avg_net_sd";
@@ -7924,7 +7999,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0.50063425;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -7933,7 +8008,7 @@ LeabraProject .projects["test"] {
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [0]     };
+    [1] 0;    };
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -14329,7 +14404,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      ProgVar @["trial"] {
       name="trial";
       var_type=T_Int;
-      int_val=0;
+      int_val=5;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14966,7 +15041,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      ProgVar @["cycle"] {
       name="cycle";
       var_type=T_Int;
-      int_val=0;
+      int_val=100;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -17533,22 +17608,22 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0;
+     value 6 0=0.003181336214765906;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.02378929406404495;
+     value 6 0=0.01614273525774479;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9936339259147644;
+     value 6 0=0.9931070804595947;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.8181818127632141;
+     value 6 0=0.799490213394165;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -17995,7 +18070,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
-	  width=2;
+	  width=1;
 	  depth=1;
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
@@ -18015,7 +18090,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
-	   axis_length=2;
+	   axis_length=1;
 	   row_num=0;
 	  };
 	  z_axis {
@@ -18863,6 +18938,382 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
        };
       };
+      T3Panel @["TestTrialOutputData"] {
+       name="TestTrialOutputData";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="root_view";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="children";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @["TestTrialOutputData_Grid"] {
+	  name="TestTrialOutputData_Grid";
+	  m_data=$.projects["test"].data.gp["OutputData"]["TestTrialOutputData"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name="children";
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @["batch"] {
+	    name="batch";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["batch"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["epoch"] {
+	    name="epoch";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["epoch"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["train_mode"] {
+	    name="train_mode";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["train_mode"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["group"] {
+	    name="group";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["group"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["trial"] {
+	    name="trial";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["trial"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["tick"] {
+	    name="tick";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["tick"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["time"] {
+	    name="time";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["time"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["trial_name"] {
+	    name="trial_name";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["trial_name"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["group_name"] {
+	    name="group_name";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["group_name"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["output_name"] {
+	    name="output_name";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["output_name"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["rt_cycles"] {
+	    name="rt_cycles";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["rt_cycles"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["sse"] {
+	    name="sse";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["sse"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["norm_err"] {
+	    name="norm_err";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["norm_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["cos_err"] {
+	    name="cos_err";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["cos_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["ext_rew"] {
+	    name="ext_rew";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["ext_rew"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Output_lay_sse"] {
+	    name="Output_lay_sse";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["Output_lay_sse"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Output_lay_norm_err"] {
+	    name="Output_lay_norm_err";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["Output_lay_norm_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Output_lay_cos_err"] {
+	    name="Output_lay_cos_err";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["Output_lay_cos_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Hidden_lay_net_sd"] {
+	    name="Hidden_lay_net_sd";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["Hidden_lay_net_sd"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Output_lay_net_sd"] {
+	    name="Output_lay_net_sd";
+	    m_data=.projects["test"].data.gp["OutputData"]["TestTrialOutputData"].data["Output_lay_net_sd"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  annotations {
+	   name="annotations";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name="annote_children";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=10;
+	  view_range {min=0: max=5: };
+	  page_rows=10;
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  view_cols=5;
+	  page_cols=5;
+	  col_range {min=0: max=4: };
+	  need_scale_update=1;
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="colorscale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   last_min=-1;
+	   last_max=1;
+	   range=1;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.002;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.02: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
+	  use_custom_paging=0;
+	 };
+	};
+       };
+       bg_color {r=1: g=1: b=1: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="saved_views";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=0: y=0: z=5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+       };
+      };
      };
     };
    };
@@ -18887,12 +19338,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04031830281019211;
+       value 6 0=0.04029692336916924;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7544605135917664;
+       value 6 0=0.7357689142227173;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {

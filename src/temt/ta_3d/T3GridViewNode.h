@@ -25,6 +25,9 @@
 
 #ifdef TA_QT3D
 
+class T3LineStrip;
+class T3LineBox;
+
 class TA_API T3GridViewNode: public T3NodeParent {
   Q_OBJECT
   INHERITED(T3NodeParent)
@@ -34,43 +37,18 @@ public:
 
   float                 width;
   bool                  show_drag;
+  T3LineBox*            frame;
+  T3LineStrip*          grid;
+  T3Entity*             header;
+  T3Entity*             body;
 
-  virtual void		setWidth(float wdth) { }
-  
-  // SoFrame*		frame() const {return frame_;} // #IGNORE 
-  // SoGroup*		grid() const {return grid_;}  // #IGNORE 
-  // SoMaterial*		matStage() const {return mat_stage_;}  // #IGNORE 
-  // SoSeparator*		header() const {return header_;}  // #IGNORE 
-  // SoSeparator*		body() const {return body_;}  // #IGNORE 
+  void		        updateNode() override;
+  virtual void		setWidth(float wdth);
+  void		        setDefaultCaptionTransform() override;
 
-  // SoScrollBar*		ColScrollBar() const { return col_scroll_bar_; }  // #IGNORE 
-  // SoScrollBar*		RowScrollBar() const { return row_scroll_bar_; }  // #IGNORE 
-
-  // virtual void		render();
-  // virtual void		setWidth(float wdth);
-  // virtual float		getWidth() { return width_; }
-
-  //  void		addRemoveChildNode(SoNode* node, bool adding) override {}
-  
   T3GridViewNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
                  float wdth=1.0f, bool show_draggers = true);
   ~T3GridViewNode();
-
-protected:
-  // SoSeparator*		stage_;
-  // SoMaterial*		mat_stage_;
-  // SoTranslation*	  txlt_stage_;
-  // SoSeparator*		  header_;
-  // SoSeparator*		  body_;//
-  // SoSeparator*		  grid_;
-  // SoFrame*		frame_; 
-
-  // T3TransformBoxDragger* drag_;	// my position dragger
-
-  // SoScrollBar*		col_scroll_bar_;
-  // SoTransform*		col_sb_tx_; // col scrollbar transform
-  // SoScrollBar*		row_scroll_bar_;
-
 };
 
 #else // TA_QT3D
