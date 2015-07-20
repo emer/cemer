@@ -25,6 +25,8 @@
 #include <QAbstractSocket>
 #include <QJsonObject>
 #include <QJsonDocument>
+#else
+class QJsonObject; // #IGNORE
 #endif
 
 #include <NameVar_PArray>
@@ -194,9 +196,12 @@ protected:
   void          ParseCommandNATIVE(const String& cl);
   void          ParseCommandJSON(const String& cl);
   
-  bool          ValidateJSON_HasMember(const QJsonObject& n, const String& member_name); // check for member name in json string
-  bool          ValidateJSON_ColumnName(DataTable* dt, const QJsonObject& n);  // validate name of a particular column
-  bool          ValidateJSON_ColumnNames(DataTable* dt, const QJsonObject& n); // validate all column names
+  bool          ValidateJSON_HasMember(const QJsonObject& n, const String& member_name);
+  // #IGNORE check for member name in json string
+  bool          ValidateJSON_ColumnName(DataTable* dt, const QJsonObject& n);
+  // #IGNORE validate name of a particular column
+  bool          ValidateJSON_ColumnNames(DataTable* dt, const QJsonObject& n);
+  // #IGNORE validate all column names
   
 private:
   void	Copy_(const TemtClient& cp);
