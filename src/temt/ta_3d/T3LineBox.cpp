@@ -39,12 +39,10 @@ T3LineBox::T3LineBox(Qt3DNode* parent, const QVector3D& sz)
 void T3LineBox::init() {
   addMesh(new T3LineBoxMesh(NULL, &size));
 
+  color = Qt::green;
   Qt3D::QPhongMaterial* mt = new Qt3D::QPhongMaterial();
-  QColor frmc;
-  frmc.setRgbF(T3Misc::frame_clr_r, T3Misc::frame_clr_g, T3Misc::frame_clr_b,
-               1.0f - T3Misc::frame_clr_tr), 
-  mt->setAmbient(frmc);
-  mt->setDiffuse(frmc);
+  mt->setAmbient(color);
+  mt->setDiffuse(color);
   addMaterial(mt);
 }
 
@@ -60,6 +58,21 @@ void T3LineBox::setSize(const QVector3D& sz) {
 void T3LineBox::updateSize() {
   ((T3LineBoxMesh*)mesh)->setSize(size);
 }
+
+void T3LineBox::setColor(const QColor& clr) {
+  color = clr;
+  updateColor();
+}
+
+void T3LineBox::updateColor() {
+  Qt3D::QPhongMaterial* mt = dynamic_cast<Qt3D::QPhongMaterial*>(material);
+  if(mt) {
+    mt->setAmbient(color);
+    mt->setDiffuse(color);
+  }
+}
+
+
 
 ///////////////////////////
 

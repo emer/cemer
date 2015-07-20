@@ -31,6 +31,8 @@
 
 #ifdef TA_QT3D
 
+#include <T3Node>
+
 #else // TA_QT3D
 #include <Inventor/SoOutput.h>
 #include <Inventor/actions/SoWriteAction.h>
@@ -153,6 +155,8 @@ void iT3Panel::Render_impl() {
 
 void iT3Panel::Render_post() {
 #ifdef TA_QT3D
+  root()->node_so()->setNodeUpdating(true);
+  root()->node_so()->setNodeUpdating(false);
   // m_t3viewer->render->renderSynchronous(); // crashes
 #endif // TA_QT3D
 }
