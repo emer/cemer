@@ -15,11 +15,3 @@
 
 #include "T3Color.h"
 
-uint32_t T3Color::makePackedRGBA(float r, float g, float b, float a) {
-  return makePackedRGBA((int)(r * 255), (int)(g * 255), (int)(b * 255), (int)(a * 255));
-}
-
-uint32_t T3Color::makePackedRGBA(int r, int g, int b, int a) {
-  return ((r & 0xff) << 24) | ((g & 0xff) << 16) | ((b & 0xff) << 8) | (a & 0xff);
-}
-

@@ -18,14 +18,12 @@
 
 // parent includes:
 #include <T3Entity>
+
+// member includes:
 #include <Qt3dRenderer/QAbstractMesh>
 #include <float_Matrix>
 #include <int_Array>
 #include <taVector3f>
-
-#include <QColor>
-
-// member includes:
 
 // declare all other types mentioned but not required to include:
 
@@ -40,6 +38,7 @@ public:
   bool  nodeUpdating()  { return node_updating; }
 
   float_Matrix  points; // 3d points (verticies) for lines -- geom is 3 x n (outer is the "frame" dimension which can be increased dynamically)
+  int_Array     colors; // optional per-vertex colors in 1-to-1 correspondence with the point data -- these are packed RGBA colors, each component taking one byte
   int_Array     indexes; // lines defined by sequential indexes into points -- use 0xFFFF to stop one line strip and then start another
     
   Qt3D::QAbstractMeshFunctorPtr meshFunctor() const override;
@@ -61,6 +60,11 @@ public:
   void  lineTo(const taVector3f& pos);
   // add given point to points, and index of it to indexes
   
+  int  addColor(uint32_t clr);
+  // add given color -- must keep in sync with adding points!
+  int  addColor(const QColor& clr);
+  // add given color -- must keep in sync with adding points!
+
   explicit T3LineStripMesh(Qt3DNode* parent = 0);
   ~T3LineStripMesh(); 
 
@@ -77,15 +81,13 @@ private:
 };
 
 
-class TA_API T3LineStrip : public T3Entity {
-  // strip of lines
+class TA_API T3LineStrip : public T3ColorEntity {
+  // strip of lines, either all one color or with per-vertex color
   Q_OBJECT
-  INHERITED(T3Entity)
+  INHERITED(T3ColorEntity)
 public:
-  QColor               color;
+  bool  per_vertex_color;       // if true, then using per-vertex color
   T3LineStripMesh*     lines;
-
-  virtual void  setColor(const QColor& clr);
 
   void setNodeUpdating(bool updating) override;
   
@@ -99,6 +101,19 @@ public:
   void  moveTo(const taVector3f& pos)  { lines->moveTo(pos); }  
   void  lineTo(const taVector3f& pos)  { lines->lineTo(pos); }   
 
+  int  addColor(uint32_t clr)
+  { return lines->addColor(clr); }
+  int  addColor(const QColor& clr)
+  { return lines->addColor(clr); }
+
+  void  setColor(const QColor& clr, float amb = 1.0f,
+                 float spec = 0.95f, float shin = 150.0f) override
+  { inherited::setColor(clr, amb, spec, shin); }
+  // lines are all ambient, so change that default..
+
+  virtual void  setPerVertexColor(bool per_vtx);
+  // set whether we're using per-vertex color or not
+  
   T3LineStrip(Qt3DNode* parent = 0);
   ~T3LineStrip();
 

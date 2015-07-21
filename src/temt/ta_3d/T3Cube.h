@@ -20,21 +20,16 @@
 #include <T3Entity>
 
 // member includes:
-#include <QColor>
 
 // declare all other types mentioned but not required to include:
 
-class TA_API T3Cube : public T3Entity {
-  // a 3D cube -- manages a cube mesh, and adds a Phong Material for rendering of given color
+class TA_API T3Cube : public T3ColorEntity {
+  // a 3D cube -- manages a cube mesh
   Q_OBJECT
-  INHERITED(T3Entity)
+  INHERITED(T3ColorEntity)
 public:
-  QColor        color;          // color -- applies to all color types
-    
-  void  setSize(const QVector3D& sz);
+  virtual void  setSize(const QVector3D& sz);
   // set new size and update
-  virtual void  setColor(const QColor& color);
-  // set the color and update display
   
   T3Cube(Qt3DNode* parent = 0);
   T3Cube(Qt3DNode* parent, const QVector3D& sz);
@@ -42,7 +37,6 @@ public:
 
 public slots:
   virtual void  updateSize(); // update to new size
-  virtual void  updateColor(); // update to new color
 
 protected:
   void init();

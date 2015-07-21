@@ -20,29 +20,36 @@
 #include <T3Entity>
 
 // member includes:
-#include <QColor>
 
 // declare all other types mentioned but not required to include:
 
-class TA_API T3Plane : public T3Entity {
-  // a 3D cube -- manages a cube mesh, and adds a Phong Material for rendering of given color
+class TA_API T3Plane : public T3ColorEntity {
+  // a 2D plane, oriented in the specified axes with specified plane_size -- updates the corresponding values of the size vector
   Q_OBJECT
-  INHERITED(T3Entity)
+  INHERITED(T3ColorEntity)
 public:
-  QColor        color;          // color -- applies to all color types
-    
-  void  setSize(const QVector3D& sz);
+  enum PlaneAxis {              // what axis to orient the plane in
+    XZ,                         // x is width, z is height
+    XY,                         // x is width, y is height
+    YZ,                         // y is width, z is height
+  };
+
+  T3Entity*     sub;            // plane lives in sub-entity to encapsulate axis rotation
+  PlaneAxis     axis;           // axis along which plane is oriented -- default is XZ
+  QSize         plane_size;     // size of the plane -- this then updates size according to axis (null axis has an infinitessimal size of 1.0e-6)
+
+  virtual void  setAxis(PlaneAxis axis);
+  // set a new axis and update
+  virtual void  setSize(const QSize& sz);
   // set new size and update
-  virtual void  setColor(const QColor& color);
-  // set the color and update display
   
   T3Plane(Qt3DNode* parent = 0);
-  T3Plane(Qt3DNode* parent, const QVector3D& sz);
+  T3Plane(Qt3DNode* parent, PlaneAxis axis, const QSize& sz);
   ~T3Plane();
 
 public slots:
+  virtual void  updateAxis(); // update to new axis
   virtual void  updateSize(); // update to new size
-  virtual void  updateColor(); // update to new color
 
 protected:
   void init();

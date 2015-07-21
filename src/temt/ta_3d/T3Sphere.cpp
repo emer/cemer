@@ -16,63 +16,40 @@
 #include "T3Sphere.h"
 
 #include <Qt3DRenderer/QSphereMesh>
-#include <Qt3DRenderer/QPhongMaterial>
 
 
 T3Sphere::T3Sphere(Qt3DNode* parent)
   : inherited(parent)
 {
-  size = QVector3D(1.0f, 1.0f, 1.0f);
+  radius = 1.0f;
   init();
 }
 
-T3Sphere::T3Sphere(Qt3DNode* parent, const QVector3D& sz)
+T3Sphere::T3Sphere(Qt3DNode* parent, float rad)
   : inherited(parent)
 {
-  size = sz;
+  radius = rad;
   init();
 }
 
 void T3Sphere::init() {
   Qt3D::QSphereMesh* cb = new Qt3D::QSphereMesh();
   addMesh(cb);
-  // cb->setXExtent(size.x());
-  // cb->setYExtent(size.y());
-  // cb->setZExtent(size.z());
-
-  Qt3D::QPhongMaterial* mt = new Qt3D::QPhongMaterial();
-  mt->setAmbient(color);
-  mt->setDiffuse(color);
-  addMaterial(mt);
+  updateRadius();
 }
 
 T3Sphere::~T3Sphere() {
   
 }
 
-void T3Sphere::setSize(const QVector3D& sz) {
-  size = sz;
-  updateSize();
+void T3Sphere::setRadius(float rad) {
+  radius = rad;
+  updateRadius();
 }
 
-void T3Sphere::updateSize() {
+void T3Sphere::updateRadius() {
+  size = QVector3D(radius, radius, radius);
   Qt3D::QSphereMesh* cb = dynamic_cast<Qt3D::QSphereMesh*>(mesh);
- //  cb->setXExtent(size.x());
-//   cb->setYExtent(size.y());
-//   cb->setZExtent(size.z());
+  cb->setRadius(radius);
 }
-
-void T3Sphere::setColor(const QColor& clr) {
-  color = clr;
-  updateColor();
-}
-
-void T3Sphere::updateColor() {
-  Qt3D::QPhongMaterial* mt = dynamic_cast<Qt3D::QPhongMaterial*>(material);
-  if(mt) {
-    mt->setAmbient(color);
-    mt->setDiffuse(color);
-  }
-}
-
 

@@ -55,6 +55,7 @@ void T3GraphViewNode::updateNode() {
 
   QVector3D fr_sz(width + frmg2, 1.0f + frmg2 * 1.4f, frame_width);
   frame->setSize(fr_sz);
+  frame->setColor(T3Misc::frame_clr());
 }
 
 void T3GraphViewNode::setDefaultCaptionTransform() {

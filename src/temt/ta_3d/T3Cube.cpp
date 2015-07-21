@@ -16,7 +16,6 @@
 #include "T3Cube.h"
 
 #include <Qt3DRenderer/QCuboidMesh>
-#include <Qt3DRenderer/QPhongMaterial>
 
 
 T3Cube::T3Cube(Qt3DNode* parent)
@@ -36,14 +35,8 @@ T3Cube::T3Cube(Qt3DNode* parent, const QVector3D& sz)
 void T3Cube::init() {
   Qt3D::QCuboidMesh* cb = new Qt3D::QCuboidMesh();
   addMesh(cb);
-  cb->setXExtent(size.x());
-  cb->setYExtent(size.y());
-  cb->setZExtent(size.z());
 
-  Qt3D::QPhongMaterial* mt = new Qt3D::QPhongMaterial();
-  mt->setAmbient(color);
-  mt->setDiffuse(color);
-  addMaterial(mt);
+  updateSize();
 }
 
 T3Cube::~T3Cube() {
@@ -61,19 +54,4 @@ void T3Cube::updateSize() {
   cb->setYExtent(size.y());
   cb->setZExtent(size.z());
 }
-
-void T3Cube::setColor(const QColor& clr) {
-  color = clr;
-  updateColor();
-}
-
-void T3Cube::updateColor() {
-  Qt3D::QPhongMaterial* mt = dynamic_cast<Qt3D::QPhongMaterial*>(material);
-  if(mt) {
-    mt->setAmbient(color);
-    mt->setDiffuse(color);
-  }
-}
-
-
 

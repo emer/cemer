@@ -105,6 +105,7 @@ set(ta_3d_HEADS_QT3D_MOC
   T3Cylinder.h
   T3Capsule.h
   T3Plane.h
+  T3TriangleStrip.h
 )
 
 # COIN only headers
@@ -269,6 +270,7 @@ set(ta_3d_SRCS_QT3D
   T3Cylinder.cpp
   T3Capsule.cpp
   T3Plane.cpp
+  T3TriangleStrip.cpp
 )
 
 # COIN specific files

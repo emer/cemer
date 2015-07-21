@@ -50,25 +50,25 @@ private:
 };
 
 
-class TA_API T3LineBox : public T3Entity {
+class TA_API T3LineBox : public T3ColorEntity {
   // a 3D box of lines -- sets mesh to T3LineBoxMesh -- good for bounding boxes etc
   Q_OBJECT
-  INHERITED(T3Entity)
+  INHERITED(T3ColorEntity)
 public:
-  QColor        color;          // color -- applies to all color types
-
-  void  setSize(const QVector3D& sz);
+  virtual void  setSize(const QVector3D& sz);
   // set new size and update
-  virtual void  setColor(const QColor& color);
-  // set the color and update display
   
+  void  setColor(const QColor& clr, float amb = 1.0f,
+                 float spec = 0.95f, float shin = 150.0f) override
+  { inherited::setColor(clr, amb, spec, shin); }
+  // lines are all ambient, so change that default..
+
   T3LineBox(Qt3DNode* parent = 0);
   T3LineBox(Qt3DNode* parent, const QVector3D& sz);
   ~T3LineBox();
 
 public slots:
   virtual void  updateSize(); // update to new size
-  virtual void  updateColor(); // update to new color
 
 protected:
   void init();

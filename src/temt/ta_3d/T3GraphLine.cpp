@@ -154,6 +154,10 @@ T3GraphLine::T3GraphLine(Qt3DNode* parent, T3DataView* dataView_, float fnt_sz,
   , markers(new T3LineStrip(this))
   , text(new T3Entity(this))
 {
+  value_color_mode = false;
+  lineStyle = SOLID;
+  marker_size = 0.04f;
+  
   if(z_on) {
     translate->setTranslation(QVector3D(-0.5f*width, -0.5f, 0.5f));
   }
@@ -165,52 +169,20 @@ T3GraphLine::T3GraphLine(Qt3DNode* parent, T3DataView* dataView_, float fnt_sz,
 T3GraphLine::~T3GraphLine() {
 }
 
+void T3GraphLine::setValueColorMode(bool value) {
+  if(value_color_mode == value) return;
+  value_color_mode = value;
+  lines->setPerVertexColor(value_color_mode);
+  errbars->setPerVertexColor(value_color_mode);
+  markers->setPerVertexColor(value_color_mode);
+}
+  
 void T3GraphLine::clear() {
   lines->restart();
   errbars->restart();
   markers->restart();
   text->removeAllChildren();
   inherited::clear();
-}
-
-void T3GraphLine::initValueColorMode() {
-  // called when vcm changes, def color changes, or on clear lines
-  // SoVertexProperty* vp = (SoVertexProperty*)lines->vertexProperty.getValue();
-  // SoSFEnum& mb = vp->materialBinding;
-  // SoMFUInt32& orderedRGBA = vp->orderedRGBA;
-
-  // SoVertexProperty* evp = (SoVertexProperty*)errbars->vertexProperty.getValue();
-  // SoSFEnum& emb = evp->materialBinding;
-  // SoMFUInt32& eorderedRGBA = evp->orderedRGBA;
-
-  // SoVertexProperty* mvp = (SoVertexProperty*)markers->vertexProperty.getValue();
-  // SoSFEnum& mmb = mvp->materialBinding;
-  // SoMFUInt32& morderedRGBA = mvp->orderedRGBA;
-
-  // if (valueColorMode()) {
-  //   mb.setValue(SoVertexProperty::PER_VERTEX);
-  //   orderedRGBA.setNum(0); // must supply colors explicitly
-  //   emb.setValue(SoVertexProperty::PER_VERTEX);
-  //   eorderedRGBA.setNum(0); // must supply colors explicitly
-  //   mmb.setValue(SoVertexProperty::PER_VERTEX);
-  //   morderedRGBA.setNum(0); // must supply colors explicitly
-  // }
-  // else {
-  //   mb.setValue(SoVertexProperty::OVERALL);
-  //   // set one and only color
-  //   orderedRGBA.setNum(1);
-  //   orderedRGBA.set1Value(0, defColor_);
-
-  //   emb.setValue(SoVertexProperty::OVERALL);
-  //   // set one and only color
-  //   eorderedRGBA.setNum(1);
-  //   eorderedRGBA.set1Value(0, defColor_);
-
-  //   mmb.setValue(SoVertexProperty::OVERALL);
-  //   // set one and only color
-  //   morderedRGBA.setNum(1);
-  //   morderedRGBA.set1Value(0, defColor_);
-  // }
 }
 
 void T3GraphLine::startBatch() {
@@ -233,12 +205,14 @@ void T3GraphLine::lineTo(const iVec3f& pt) {
   lines->lineTo(QVector3D(pt.x, pt.y, -pt.z));
 }
 
-void T3GraphLine::moveTo(const iVec3f& pt, const T3Color& c) {
+void T3GraphLine::moveTo(const iVec3f& pt, const QColor& c) {
   lines->moveTo(QVector3D(pt.x, pt.y, -pt.z));
+  lines->addColor(c);
 }
 
-void T3GraphLine::lineTo(const iVec3f& pt, const T3Color& c) {
+void T3GraphLine::lineTo(const iVec3f& pt, const QColor& c) {
   lines->lineTo(QVector3D(pt.x, pt.y, -pt.z));
+  lines->addColor(c);
 }
 
 void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd) {
@@ -255,33 +229,21 @@ void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd) {
   errbars->lineTo(QVector3D(pt.x, pt.y+err, -pt.z));
 }
 
-void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd, const T3Color& c) {
-  // uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
-
-  // uint32_t vals[6];
-  // for(int i=0;i<6;i++) vals[i] = new_col;
-
-  // // always add the new color, then add the point
-  // SoMFUInt32& eorderedRGBA = ((SoVertexProperty*)errbars->vertexProperty.getValue())->orderedRGBA;
-
-  // int lidx = eorderedRGBA.getNum();
-  // eorderedRGBA.setValues(lidx, 6, vals);
+void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd, const QColor& c) {
+  for(int i=0; i< 6; i++) {
+    errbars->addColor(c);
+  }
   errBar(pt, err, bwd);
 }
 
-void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& c) {
+void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style, const QColor& c) {
   if(style < MarkerStyle_MIN) style = MarkerStyle_MIN;
   if(style > MarkerStyle_MAX) style = MarkerStyle_MAX;
 
-  // uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
-
-  // uint32_t vals[17];            // worst case
-  // for(int i=0;i<17;i++) vals[i] = new_col;
-
-  // SoMFUInt32& orderedRGBA = ((SoVertexProperty*)markers->vertexProperty.getValue())->orderedRGBA;
-  // int lidx = orderedRGBA.getNum();
-
-  // orderedRGBA.setValues(lidx, mark_n[style], vals);
+  int n = mark_n[style];
+  for(int i=0; i< n; i++) {
+    markers->addColor(c);
+  }
   
   markerAt(pt, style);
 }
@@ -338,12 +300,6 @@ void T3GraphLine::setLineStyle(LineStyle value, float line_width) {
 
 void T3GraphLine::setMarkerSize(float sz) {
   marker_size = sz;
-}
-
-void T3GraphLine::setValueColorMode(bool value) {
-  if (value_color_mode == value) return;
-  value_color_mode = value;
-  initValueColorMode();
 }
 
 void T3GraphLine::textAt(const iVec3f& pt, const char* str) {

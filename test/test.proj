@@ -275,9 +275,21 @@ LeabraProject .projects["test"] {
   DataTable_Group @.gp["InputData"] = [1] { 
    DataTable @["StdInputData"] { 
     DataTableCols @.data = [3] {
-     String_Data @["Name"] { };
-     float_Data @["Input"] { };
-     float_Data @["Output"] { };
+     String_Data @["Name"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Input"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
@@ -2263,7 +2275,7 @@ LeabraProject .projects["test"] {
       UserDataItem @["view_panel_selected"] { };
      };
 
-     T3Panel_List @.panels = [2] {
+     T3Panel_List @.panels = [3] {
       T3Panel @["EpochOutputData"] { 
        T3DataView_List @.root_view.children = [1] {
 	GraphTableView @["EpochOutputData_Graph"] { 
@@ -2393,6 +2405,36 @@ LeabraProject .projects["test"] {
 	  GridColView @["Output_lay_cos_err"] { };
 	  GridColView @["Hidden_lay_net_sd"] { };
 	  GridColView @["Output_lay_net_sd"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+	};
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+      T3Panel @["StdInputData"] { 
+       T3DataView_List @.root_view.children = [1] {
+	GridTableView @["StdInputData_Grid"] { 
+	 T3DataView_List @.children = [3] {
+	  GridColView @["Name"] { };
+	  GridColView @["Input"] { };
+	  GridColView @["Output"] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -4634,6 +4676,16 @@ LeabraProject .projects["test"] {
      el_typ=String_Data;
      el_def=0;
      String_Data @["Name"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_156";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1563981026411057;
+	val_type_fixed=0;
+       };
+      };
       name="Name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4644,12 +4696,22 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
       [6] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";"random";      };
      };
      float_Data @["Input"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_157";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1563981026411057;
+	val_type_fixed=0;
+       };
+      };
       name="Input";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=1;
@@ -4660,7 +4722,7 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [2] ;;      };
-      width=0;
+      width=99;
       ar {
        name="ar";
       [5 5 6] 1;0;0;0;1;0;0;0;0;0;
@@ -4681,6 +4743,16 @@ LeabraProject .projects["test"] {
       };
      };
      float_Data @["Output"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_158";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1563981026411057;
+	val_type_fixed=0;
+       };
+      };
       name="Output";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=1;
@@ -4691,7 +4763,7 @@ LeabraProject .projects["test"] {
       dim_names {
        name="dim_names";
       [2] ;;      };
-      width=0;
+      width=99;
       ar {
        name="ar";
       [5 5 6] 1;0;0;0;1;0;0;0;0;0;
@@ -17116,17 +17188,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.00318302377127111;
+     value 6 0=0.009018567390739918;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.01614273525774479;
+     value 6 0=0.05352591350674629;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9931034445762634;
+     value 6 0=0.9883289337158203;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -17244,7 +17316,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=27: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=23: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["avg_sse"] {
@@ -17252,7 +17324,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=8.06164: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=7.0765: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["cnt_err"] {
@@ -17308,7 +17380,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_cycles"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=5.83333: fix_max=0: max=8.5: };
+	    fixed_range {fix_min=0: min=6: fix_max=0: max=7.16667: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["epoch_time_tot"] {
@@ -18822,6 +18894,195 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
        };
       };
+      T3Panel @["StdInputData"] {
+       name="StdInputData";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="root_view";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="children";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @["StdInputData_Grid"] {
+	  name="StdInputData_Grid";
+	  m_data=$.projects["test"].data.gp["InputData"]["StdInputData"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name="children";
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @["Name"] {
+	    name="Name";
+	    m_data=.projects["test"].data.gp["InputData"]["StdInputData"].data["Name"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Input"] {
+	    name="Input";
+	    m_data=.projects["test"].data.gp["InputData"]["StdInputData"].data["Input"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Output"] {
+	    name="Output";
+	    m_data=.projects["test"].data.gp["InputData"]["StdInputData"].data["Output"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  annotations {
+	   name="annotations";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name="annote_children";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=2;
+	  view_range {min=0: max=1: };
+	  page_rows=2;
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  view_cols=5;
+	  page_cols=5;
+	  col_range {min=0: max=2: };
+	  need_scale_update=1;
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="colorscale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   last_min=-1;
+	   last_max=1;
+	   range=1;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.002;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=1;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
+	  use_custom_paging=0;
+	 };
+	};
+       };
+       bg_color {r=1: g=1: b=1: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="saved_views";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=0: y=0: z=5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=-5: };
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
+	};
+       };
+      };
      };
     };
    };
@@ -19321,9 +19582,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1688305;
-     acts_p_avg=0.1688305;
-     acts_p_avg_eff=0.1688305;
+     acts_m_avg=0.1;
+     acts_p_avg=0.1;
+     acts_p_avg_eff=0.1;
      spec {type=LeabraLayerSpec: spec=.projects["test"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
     };
     LeabraLayer @["Hidden"] {
@@ -19407,9 +19668,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1774627;
-     acts_p_avg=0.1774399;
-     acts_p_avg_eff=0.1774399;
+     acts_m_avg=0.1;
+     acts_p_avg=0.1;
+     acts_p_avg_eff=0.1;
      spec {type=LeabraLayerSpec: spec=.projects["test"].networks["Network_0"].specs["HiddenLayer"]$$: };
     };
     LeabraLayer @["Output"] {
@@ -19475,9 +19736,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.172601;
-     acts_p_avg=0.1688305;
-     acts_p_avg_eff=0.1688305;
+     acts_m_avg=0.1;
+     acts_p_avg=0.1;
+     acts_p_avg_eff=0.1;
      spec {type=LeabraLayerSpec: spec=$.projects["test"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
     };
    };

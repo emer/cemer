@@ -35,11 +35,11 @@ T3TwoDText::T3TwoDText(Qt3DNode* parent)
   plane->addMesh(new Qt3D::QPlaneMesh());
   Qt3D::QDiffuseMapMaterial* mat = new Qt3D::QDiffuseMapMaterial();
   mat->setSpecular(QColor::fromRgbF(0.2f, 0.2f, 0.2f, 1.0f));
-  mat->setShininess(2.0f);
+  mat->setShininess(0.0f);
   mat->diffuse()->addTextureImage(texture);
   plane->addMaterial(mat);
   plane->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f)); // flip up by default
-  plane->rotate->setAngleDeg(90);
+  plane->rotate->setAngleDeg(90.0f);
 }
 
 T3TwoDText::~T3TwoDText() {

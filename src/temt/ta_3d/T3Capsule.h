@@ -20,29 +20,34 @@
 #include <T3Entity>
 
 // member includes:
-#include <QColor>
 
 // declare all other types mentioned but not required to include:
 
-class TA_API T3Capsule : public T3Entity {
-  // a 3D cube -- manages a cube mesh, and adds a Phong Material for rendering of given color
+class TA_API T3Capsule : public T3ColorEntity {
+  // a 3D capsule -- cylinder with rounded caps -- useful for limbs etc
   Q_OBJECT
-  INHERITED(T3Entity)
+  INHERITED(T3ColorEntity)
 public:
-  QColor        color;          // color -- applies to all color types
-    
-  void  setSize(const QVector3D& sz);
-  // set new size and update
-  virtual void  setColor(const QColor& color);
-  // set the color and update display
+  enum LongAxis {
+    LONG_X=1,                   // long axis is in X direction
+    LONG_Y,                     // long axis is in Y direction
+    LONG_Z,                     // long axis is in Z direction
+  };
+
+  T3Entity*     sub;            // capsule lives in sub-entity to encapsulate axis rotation
+  LongAxis      axis;
+  float         radius;
+  float         length;
+  
+  virtual void  setGeom(LongAxis axis, float radius, float length);
+  // set new geometry of cylinder and update
   
   T3Capsule(Qt3DNode* parent = 0);
-  T3Capsule(Qt3DNode* parent, const QVector3D& sz);
+  T3Capsule(Qt3DNode* parent, LongAxis axis, float radius, float length);
   ~T3Capsule();
 
 public slots:
-  virtual void  updateSize(); // update to new size
-  virtual void  updateColor(); // update to new color
+  virtual void  updateGeom(); // update to new geom
 
 protected:
   void init();

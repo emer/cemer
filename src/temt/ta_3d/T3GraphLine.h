@@ -75,7 +75,7 @@ public:
   static int            mark_start[16]; // [MarkerStyle_MAX] -- for each MakerStyle, starting index into mark_pts
   static int            mark_n[16]; // [MarkerStyle_MAX] -- for each MakerStyle, number of mark_pts used
 
-  bool	                value_color_mode;
+  bool                  value_color_mode;
   LineStyle             lineStyle;
   float                 marker_size;
   float	                font_size;
@@ -93,8 +93,6 @@ public:
 
   void 			setLineStyle(LineStyle value, float line_width = 0.0f);
   void			setMarkerSize(float sz);
-  void			setValueColorMode(bool value);
-  // not sure if we can support this!
 
   void			clear(); //
 
@@ -107,6 +105,7 @@ public:
   void			finishBatch();
   // done with batch update -- turn notification back on and do a touch
 
+  void			setValueColorMode(bool value);
   // non valueColor drawing api
   void			setDefaultColor(const QColor& color); // call after reset to set default color (black if not called)
   void			moveTo(const iVec3f& pt); // use to start a new line segment
@@ -115,15 +114,15 @@ public:
   void			markerAt(const iVec3f& pt, MarkerStyle style); // render a marker at indicated location in default color
 
   // valueColor drawing api
-  void			moveTo(const iVec3f& pt, const T3Color& color);
+  void			moveTo(const iVec3f& pt, const QColor& color);
   // use to start a new line segment in valueColor mode
-  void			lineTo(const iVec3f& to, const T3Color& color);
+  void			lineTo(const iVec3f& to, const QColor& color);
   //  add arc to current line, in valueColor mode
   void			errBar(const iVec3f& pt, float err, float bar_width,
-                               const T3Color& color);
+                               const QColor& color);
   // render error bar at given point
   void			markerAt(const iVec3f& pt, MarkerStyle style,
-                                 const T3Color& color);
+                                 const QColor& color);
   // render a marker at indicated location in valueColor mode
 
   String                markerAtSvg(const iVec3f& pt, MarkerStyle style);
@@ -133,9 +132,6 @@ public:
               float width = 1.0f, bool z_on = false);
   ~T3GraphLine();
 
-protected:
-
-  void			initValueColorMode(); // called in several places
   void			setDefaultCaptionTransform() override; // sets text justif and transform for 3D
 };
 

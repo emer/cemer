@@ -621,7 +621,7 @@ void SoMatrixGrid::renderValues() {
       for(int i=0;i<4;i++)
 	vertex_dat[v_idx++][2] = zp; // 00_v = 1, 10_v = 2, 01_v = 3, 11_v = 4
       float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
-      color_dat[c_idx++] = T3Color::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
+      color_dat[c_idx++] = T3Misc::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
       if(val_text) {
 	SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);

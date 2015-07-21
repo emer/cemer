@@ -37,6 +37,7 @@
 #include <T3LineStrip>
 #include <T3TwoDText>
 #include <T3LineBox>
+#include <T3MatrixGrid>
 
 #else // TA_QT3D
 
@@ -1178,6 +1179,21 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
         taMatrix* cell_mat =  dc->AR();
         if(cell_mat) {
 #ifdef TA_QT3D
+          T3MatrixGrid* sogr = new T3MatrixGrid
+            (ln, cell_mat, act_idx, cvs->mat_odd_vert, &colorscale, 
+             (T3MatrixGrid::MatrixLayout)cvs->mat_layout, mat_val_text);
+          sogr->translate->setTranslation
+            (QVector3D(col_pos + gr_mg_sz, -0.5f * row_height + 2.0f * gr_mg_sz, 0.0f));
+          sogr->scale->setScale3D(QVector3D(col_wd, mat_ht, 1.0f));
+          if(mat_rot_rad > 0.0f) {
+            sogr->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
+            sogr->rotate->setAngleRad(mat_rot_rad);
+          }
+          sogr->spacing = mat_block_spc;
+          sogr->block_height = mat_block_height;
+          sogr->trans_max = mat_trans;
+          sogr->user_data = dc; // needed for point picking
+          
 #else // TA_QT3D
           SoSeparator* grsep = new SoSeparator;
           ln->addChild(grsep);
@@ -1190,10 +1206,12 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           SoMatrixGrid* sogr = new SoMatrixGrid
             (cell_mat, act_idx, cvs->mat_odd_vert, &colorscale, 
              (SoMatrixGrid::MatrixLayout)cvs->mat_layout, mat_val_text);
+          grsep->addChild(sogr);
           sogr->spacing = mat_block_spc;
           sogr->block_height = mat_block_height;
           sogr->trans_max = mat_trans;
           sogr->user_data = dc; // needed for point picking
+#endif // TA_QT3D
 
           if(render_svg) {
             sogr->render_svg = true;
@@ -1205,8 +1223,6 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           }
 
           sogr->render();
-          grsep->addChild(sogr);
-#endif // TA_QT3D
         }
       }
     }

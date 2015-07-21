@@ -20,6 +20,7 @@
 #include "ta_def.h"
 
 // member includes:
+#include <QColor>
 
 // declare all other types mentioned but not required to include:
 
@@ -48,6 +49,16 @@ public:
   static const float frame_clr_g;
   static const float frame_clr_b;
   static const float frame_clr_tr;
+
+  static QColor drag_inact_clr();
+  static QColor drag_activ_clr();
+  static QColor frame_clr();
+
+  // this is the official color type to use for opengl
+  static uint32_t makePackedRGBA(float r_, float g_, float b_, float a_ = 1.0f);
+  static uint32_t makePackedRGBA(int r_, int g_, int b_, int a_ = 255);
+  static uint32_t makePackedRGBA(const QColor& clr);
+
 };
 
 #endif // T3Misc_h

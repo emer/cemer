@@ -55,6 +55,7 @@ void T3GridViewNode::updateNode() {
 
   QVector3D fr_sz(width + frmg2 + 2.0f*frame_width, 1.0f + frmg2 * 2.0f, frame_width);
   frame->setSize(fr_sz);
+  frame->setColor(T3Misc::frame_clr());
 }
 
 void T3GridViewNode::setDefaultCaptionTransform() {

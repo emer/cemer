@@ -2156,7 +2156,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       if(first || (new_trace && !negative_draw) || (new_trace_z && !negative_draw_z))
       { // just starting out
         if(clr_ok)
-          t3gl->moveTo(plt, (T3Color)(clr));
+          t3gl->moveTo(plt, clr);
         else
           t3gl->moveTo(plt);
         if(render_svg) {
@@ -2165,7 +2165,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       }
       else {
         if(clr_ok)
-          t3gl->lineTo(plt, (T3Color)(clr));
+          t3gl->lineTo(plt, clr);
         else
           t3gl->lineTo(plt);
         if(render_svg) {
@@ -2178,8 +2178,8 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
         th_st = plt;  th_st.x = x_axis.DataToPlot(dat.x - thr_line_len);
         th_ed = plt;  th_ed.x = x_axis.DataToPlot(dat.x + thr_line_len);
         if(clr_ok) {
-          t3gl->moveTo(th_st, (T3Color)(clr));
-          t3gl->lineTo(th_ed, (T3Color)(clr));
+          t3gl->moveTo(th_st, clr);
+          t3gl->lineTo(th_ed, clr);
         }
         else {
           t3gl->moveTo(th_st);
@@ -2194,7 +2194,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
     else if(plot_style == THRESH_POINT) {
       if(yval >= thresh) {
         if(clr_ok)
-          t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, (T3Color)(clr));
+          t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, clr);
         else
           t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style);
         if(render_svg) {
@@ -2211,7 +2211,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       
       if(row % point_spacing == 0 || out_of_bounds) {
         if(clr_ok)
-          t3gl->markerAt(plt, mrk, (T3Color)(clr));
+          t3gl->markerAt(plt, mrk, clr);
         else
           t3gl->markerAt(plt, mrk);
         if(render_svg) {
@@ -2232,7 +2232,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       if(yax.range.Range() > 0.0f) err_plt /= yax.range.Range();
       
       if(clr_ok)
-        t3gl->errBar(plt, err_plt, err_bar_width, (T3Color)(clr));
+        t3gl->errBar(plt, err_plt, err_bar_width, clr);
       else
         t3gl->errBar(plt, err_plt, err_bar_width);
       
@@ -2422,7 +2422,7 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
 #ifdef TA_QT3D
     T3GraphBar* bar = new T3GraphBar(NULL, &plv);
     if(clr_ok) {
-      bar->SetBar(pt, size, (T3Color)(clr));
+      bar->SetBar(pt, size, clr);
     }
     else {
       bar->SetBar(pt, size, (T3Color)(plv.color.color()));
@@ -2430,7 +2430,7 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
 #else // TA_QT3D
     T3GraphBar* bar = new T3GraphBar(&plv);
     if(clr_ok) {
-      bar->SetBar(pt, size, (T3Color)(clr));
+      bar->SetBar(pt, size, clr);
     }
     else {
       bar->SetBar(pt, size, (T3Color)(plv.color.color()));
@@ -2463,7 +2463,7 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
       pt = plt;  pt.x += bar_off_plt + bar_wd_plt * 0.5f;
       
       if(clr_ok)
-        t3gl->errBar(pt, err_plt, err_bar_width, (T3Color)(clr));
+        t3gl->errBar(pt, err_plt, err_bar_width, clr);
       else
         t3gl->errBar(pt, err_plt, err_bar_width);
       

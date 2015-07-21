@@ -16,62 +16,72 @@
 #include "T3Plane.h"
 
 #include <Qt3DRenderer/QPlaneMesh>
-#include <Qt3DRenderer/QPhongMaterial>
 
 
 T3Plane::T3Plane(Qt3DNode* parent)
   : inherited(parent)
 {
-  size = QVector3D(1.0f, 1.0f, 1.0f);
+  axis = XZ;
+  plane_size.setWidth(1.0f);
+  plane_size.setHeight(1.0f);
   init();
 }
 
-T3Plane::T3Plane(Qt3DNode* parent, const QVector3D& sz)
+T3Plane::T3Plane(Qt3DNode* parent, PlaneAxis ax, const QSize& sz)
   : inherited(parent)
 {
-  size = sz;
+  axis = ax;
+  plane_size = sz;
   init();
 }
 
 void T3Plane::init() {
+  sub = new T3Entity(this);
   Qt3D::QPlaneMesh* cb = new Qt3D::QPlaneMesh();
-  addMesh(cb);
-  // cb->setXExtent(size.x());
-  // cb->setYExtent(size.y());
-  // cb->setZExtent(size.z());
+  sub->addMesh(cb);
 
-  Qt3D::QPhongMaterial* mt = new Qt3D::QPhongMaterial();
-  mt->setAmbient(color);
-  mt->setDiffuse(color);
-  addMaterial(mt);
+  updateSize();
+  updateAxis();
 }
 
 T3Plane::~T3Plane() {
   
 }
 
-void T3Plane::setSize(const QVector3D& sz) {
-  size = sz;
+void T3Plane::setAxis(PlaneAxis ax) {
+  axis = ax;
+  updateAxis();
+}
+
+void T3Plane::setSize(const QSize& sz) {
+  plane_size = sz;
   updateSize();
 }
 
 void T3Plane::updateSize() {
-  Qt3D::QPlaneMesh* cb = dynamic_cast<Qt3D::QPlaneMesh*>(mesh);
-  // cb->setXExtent(size.x());
-  // cb->setYExtent(size.y());
-  // cb->setZExtent(size.z());
+  Qt3D::QPlaneMesh* cb = dynamic_cast<Qt3D::QPlaneMesh*>(sub->mesh);
+  cb->setWidth(plane_size.width());
+  cb->setHeight(plane_size.height());
 }
 
-void T3Plane::setColor(const QColor& clr) {
-  color = clr;
-  updateColor();
-}
-
-void T3Plane::updateColor() {
-  Qt3D::QPhongMaterial* mt = dynamic_cast<Qt3D::QPhongMaterial*>(material);
-  if(mt) {
-    mt->setAmbient(color);
-    mt->setDiffuse(color);
+void T3Plane::updateAxis() {
+  switch(axis) {
+  case XZ:
+    size = QVector3D(plane_size.width(), 1.0e-06f, plane_size.height());
+    sub->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
+    sub->rotate->setAngleDeg(0.0f);
+    break;
+  case XY:
+    size = QVector3D(plane_size.width(), plane_size.height(), 1.0e-06f);
+    sub->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
+    sub->rotate->setAngleDeg(90.0f);
+    break;
+  case YZ:
+    size = QVector3D(1.0e-06f, plane_size.width(), plane_size.height());
+    sub->rotate->setAxis(QVector3D(0.0f, 0.0f, 1.0f));
+    sub->rotate->setAngleDeg(90.0f);
+    break;
   }
+  sub->size = size;             // todo: does sub need color??
 }
 

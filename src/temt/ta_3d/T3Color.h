@@ -54,9 +54,6 @@ public:
     float	rgb[3];
   };
 #endif
-  static uint32_t makePackedRGBA(float r_, float g_, float b_, float a_ = 1.0f); // #IGNORE
-  static uint32_t makePackedRGBA(int r_, int g_, int b_, int a_ = 255); // #IGNORE
-
   void		setValue(float r_, float g_, float b_) {r = r_; g = g_; b = b_;}
   T3Color() {r = g = b = 0.0f;}
   T3Color(float r_, float g_, float b_) {r = r_; g = g_; b = b_;}

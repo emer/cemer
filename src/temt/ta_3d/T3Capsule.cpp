@@ -16,63 +16,66 @@
 #include "T3Capsule.h"
 
 #include <Qt3DRenderer/QCylinderMesh>
-#include <Qt3DRenderer/QPhongMaterial>
-
 
 T3Capsule::T3Capsule(Qt3DNode* parent)
   : inherited(parent)
 {
-  size = QVector3D(1.0f, 1.0f, 1.0f);
+  axis = LONG_Z;
+  radius = 1.0f;
+  length = 1.0f;
   init();
 }
 
-T3Capsule::T3Capsule(Qt3DNode* parent, const QVector3D& sz)
+T3Capsule::T3Capsule(Qt3DNode* parent, LongAxis ax, float rad, float len)
   : inherited(parent)
 {
-  size = sz;
+  axis = ax;
+  radius = rad;
+  length = len;
   init();
 }
 
 void T3Capsule::init() {
+  // todo: will color automatically inherit down to sub-entity??  should..
+  sub = new T3Entity(this);
+  // todo: update to capsule!
   Qt3D::QCylinderMesh* cb = new Qt3D::QCylinderMesh();
-  addMesh(cb);
-  // cb->setXExtent(size.x());
-  // cb->setYExtent(size.y());
-  // cb->setZExtent(size.z());
-
-  Qt3D::QPhongMaterial* mt = new Qt3D::QPhongMaterial();
-  mt->setAmbient(color);
-  mt->setDiffuse(color);
-  addMaterial(mt);
+  sub->addMesh(cb);
+  updateGeom();
 }
 
 T3Capsule::~T3Capsule() {
   
 }
 
-void T3Capsule::setSize(const QVector3D& sz) {
-  size = sz;
-  updateSize();
+void T3Capsule::setGeom(LongAxis ax, float rad, float len) {
+  axis = ax;
+  radius = rad;
+  length = len;
+  updateGeom();
 }
 
-void T3Capsule::updateSize() {
-  Qt3D::QCylinderMesh* cb = dynamic_cast<Qt3D::QCylinderMesh*>(mesh);
-  // cb->setXExtent(size.x());
-  // cb->setYExtent(size.y());
-  // cb->setZExtent(size.z());
+void T3Capsule::updateGeom() {
+  Qt3D::QCylinderMesh* cb = dynamic_cast<Qt3D::QCylinderMesh*>(sub->mesh);
+  cb->setRadius(radius);
+  cb->setLength(length);
+  switch(axis) {
+  case LONG_X:
+    size = QVector3D(length, 2.0f*radius, 2.0f*radius);
+    sub->rotate->setAxis(QVector3D(0.0f, 1.0f, 0.0f));
+    sub->rotate->setAngleDeg(-90);
+    break;
+  case LONG_Y:
+    size = QVector3D(2.0f*radius, length, 2.0f*radius);
+    sub->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
+    sub->rotate->setAngleDeg(-90);
+    break;
+  case LONG_Z:
+    size = QVector3D(2.0f*radius, 2.0f*radius, length);
+    sub->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
+    sub->rotate->setAngleDeg(0.0f);
+    break;
+  }    
+  sub->size = size;             // todo: does sub need color??
 }
-
-void T3Capsule::setColor(const QColor& clr) {
-  color = clr;
-  updateColor();
-}
-
-void T3Capsule::updateColor() {
-  Qt3D::QPhongMaterial* mt = dynamic_cast<Qt3D::QPhongMaterial*>(material);
-  if(mt) {
-    mt->setAmbient(color);
-    mt->setDiffuse(color);
-  }
-}
-
 
