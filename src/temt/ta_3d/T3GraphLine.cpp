@@ -525,7 +525,7 @@ void T3GraphLine::lineTo(const iVec3f& to) {
 }
 
 void T3GraphLine::moveTo(const iVec3f& pt, const T3Color& c) {
-  uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
+  uint32_t new_col = T3Misc::makePackedRGBA(c.r, c.g, c.b);
   // always add the new color, then add the point
   SoMFUInt32& orderedRGBA = ((SoVertexProperty*)lines->vertexProperty.getValue())->orderedRGBA;
   orderedRGBA.set1Value(orderedRGBA.getNum(), new_col);
@@ -533,7 +533,7 @@ void T3GraphLine::moveTo(const iVec3f& pt, const T3Color& c) {
 }
 
 void T3GraphLine::lineTo(const iVec3f& to, const T3Color& c) {
-  uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
+  uint32_t new_col = T3Misc::makePackedRGBA(c.r, c.g, c.b);
   SoMFUInt32& orderedRGBA = ((SoVertexProperty*)lines->vertexProperty.getValue())->orderedRGBA;
   orderedRGBA.set1Value(orderedRGBA.getNum(), new_col);
   lineTo(to);
@@ -562,7 +562,7 @@ void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd) {
 }
 
 void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd, const T3Color& c) {
-  uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
+  uint32_t new_col = T3Misc::makePackedRGBA(c.r, c.g, c.b);
 
   uint32_t vals[6];
   for(int i=0;i<6;i++) vals[i] = new_col;
@@ -579,7 +579,7 @@ void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& c
   if(style < MarkerStyle_MIN) style = MarkerStyle_MIN;
   if(style > MarkerStyle_MAX) style = MarkerStyle_MAX;
 
-  uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
+  uint32_t new_col = T3Misc::makePackedRGBA(c.r, c.g, c.b);
 
   uint32_t vals[17];            // worst case
   for(int i=0;i<17;i++) vals[i] = new_col;
@@ -634,7 +634,7 @@ void T3GraphLine::setDefaultCaptionTransform() {
 } */
 
 void T3GraphLine::setDefaultColor(const T3Color& c) {
-  uint32_t tmp_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
+  uint32_t tmp_col = T3Misc::makePackedRGBA(c.r, c.g, c.b);
   if (defColor_ == tmp_col) return;
   defColor_ = tmp_col;
   initValueColorMode();

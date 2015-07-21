@@ -23,6 +23,7 @@
 #include <BrainAtlas>
 #include <taMath_float>
 
+#include <T3Misc>
 #include <taMisc>
 
 #include <QColor>
@@ -940,7 +941,7 @@ void BrainVolumeView::CreateFaceSets()
                                      rk+half_voxel-half_dims.z,
                                      rj-s+shim);
       }
-      color_dat[c_idx++] = T3Color::makePackedRGBA(1.0f, 0.0f, 0.0f, 0.5f);
+      color_dat[c_idx++] = T3Misc::makePackedRGBA(1.0f, 0.0f, 0.0f, 0.5f);
     }
     vertex.finishEditing();
     color.finishEditing();
@@ -1146,7 +1147,7 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
                                      rk+half_voxel-half_dims.z,
                                      rj-s+shim);
       }
-      color_dat[c_idx++] = T3Color::makePackedRGBA(area_color.r, area_color.g, area_color.b, 0.8f);
+      color_dat[c_idx++] = T3Misc::makePackedRGBA(area_color.r, area_color.g, area_color.b, 0.8f);
     }
     vertex.finishEditing();
     color.finishEditing();
@@ -1278,7 +1279,7 @@ void BrainVolumeView::UpdateUnitValues_blocks() {
       else {
         alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
       }
-      color_dat[idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
+      color_dat[idx++] = T3Misc::makePackedRGBA(col.r, col.g, col.b, alpha);
     }
 
     color.finishEditing();

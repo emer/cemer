@@ -35,6 +35,7 @@
 #include <QApplication>
 #include <taSvg>
 
+#include <T3Misc>
 #include <taMisc>
 
 #include <Inventor/nodes/SoMaterial.h>
@@ -1518,7 +1519,7 @@ void NetView::Render_wt_lines() {
       GetUnitColor(wt, tc, sc_val);
       col.setValue(tc.redf(), tc.greenf(), tc.bluef());
       float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-      color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
+      color_dat[c_idx++] = T3Misc::makePackedRGBA(col.r, col.g, col.b, alpha);
     }
   }
 
@@ -1557,7 +1558,7 @@ void NetView::Render_wt_lines() {
       GetUnitColor(wt, tc, sc_val);
       col.setValue(tc.redf(), tc.greenf(), tc.bluef());
       float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-      color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
+      color_dat[c_idx++] = T3Misc::makePackedRGBA(col.r, col.g, col.b, alpha);
     }
   }
 

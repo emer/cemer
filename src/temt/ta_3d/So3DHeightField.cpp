@@ -20,8 +20,8 @@
 #include <T3Color>
 #include <ColorScale>
 
+#include <T3Misc>
 #include <taMisc>
-
 
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoVertexProperty.h>
@@ -391,7 +391,7 @@ void So3DHeightField::renderValues() {
 	// a = mscd.min_a + mscd.max_a * mscd.min_a_c * fabs(val - .5);
 
 	float alpha = max_alpha * (1.0f - ((1.0f - fabsf(sc_val)) * max_trans));
-	color_dat[c_idx++] = T3Color::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
+	color_dat[c_idx++] = T3Misc::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
 	if(val_text) {
 	  SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	  SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
@@ -423,7 +423,7 @@ void So3DHeightField::renderValues() {
 	float zp = sc_val * eff_vht + (float)pos.z * cl_z;
 	vertex_dat[v_idx++][1] = zp;
 	float alpha = max_alpha * (1.0f - ((1.0f - fabsf(sc_val)) * max_trans));
-	color_dat[c_idx++] = T3Color::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
+	color_dat[c_idx++] = T3Misc::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
       }
     }
   }
@@ -690,7 +690,7 @@ void So3DHeightField::renderVectorValues() {
 	v_idx++;
 
 // 	float alpha = max_alpha * (1.0f - ((1.0f - fabsf(sc_val)) * max_trans));
-// 	color_dat[c_idx] = T3Color::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
+// 	color_dat[c_idx] = T3Misc::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
 
 	float vec_mag = vec.Mag();
 	if(vec_mag > 1.0f) vec_mag = 1.0f;
@@ -703,7 +703,7 @@ void So3DHeightField::renderVectorValues() {
 // 	alpha = max_alpha * (1.0f - ((1.0f - fabsf(vec_mag)) * max_trans));
 	// just keeping the same color, no transparency..
 	float alpha = 1.0f;
-	uint32_t clr = T3Color::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
+	uint32_t clr = T3Misc::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
  	color_dat[c_idx] = clr;
 	color_dat[n_geom + c_idx] = clr;
 	

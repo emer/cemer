@@ -26,6 +26,7 @@
 #include <T3ExaminerViewer>
 #include <taSvg>
 
+#include <T3Misc>
 #include <taMisc>
 
 #include <Inventor/nodes/SoTranslation.h>
@@ -947,7 +948,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
       if(unit && unit->lesioned()) {
         alpha = 0.0f;
       }
-      color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
+      color_dat[c_idx++] = T3Misc::makePackedRGBA(col.r, col.g, col.b, alpha);
 
       if(nv->unit_text_disp & NetView::UTD_VALUES) {
         SoSeparator* tsep = (SoSeparator*)un_txt->getChild(t_idx);
@@ -1246,7 +1247,7 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
       col.setValue(tc.redf(), tc.greenf(), tc.bluef());
 
       float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-      color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
+      color_dat[c_idx++] = T3Misc::makePackedRGBA(col.r, col.g, col.b, alpha);
     }
   }
 

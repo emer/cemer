@@ -18,6 +18,8 @@
 #include <T3Color>
 #include <math.h>
 
+#include <T3Misc>
+
 int T3ColorBar::blocks() {
   int rval = (scale) ? scale->chunks : 1;
   if (rval == 0) rval = 1;  // for robustness
@@ -101,7 +103,7 @@ void T3ColorBar::SetDimensions(float wd, float ht) {
   //   iColor col = scale->GetColor(i, &ok);
   //   if (!ok) break; // shouldn't happen
   //   // color
-  //   pcol = T3Color::makePackedRGBA(col.red(), col.green(), col.blue());
+  //   pcol = T3Misc::makePackedRGBA(col.red(), col.green(), col.blue());
   //   vp->orderedRGBA.set1Value(idx_rct, pcol);
   //   // num of vertices
   //   bars_->numVertices.set1Value(idx_rct++, 4); // always 4 per face
@@ -241,7 +243,7 @@ void T3ColorBar::render() {
     iColor col = scale->GetColor(i, &ok);
     if (!ok) break; // shouldn't happen
     // color
-    pcol = T3Color::makePackedRGBA(col.red(), col.green(), col.blue());
+    pcol = T3Misc::makePackedRGBA(col.red(), col.green(), col.blue());
     vp->orderedRGBA.set1Value(idx_rct, pcol);
     // num of vertices
     bars_->numVertices.set1Value(idx_rct++, 4); // always 4 per face
