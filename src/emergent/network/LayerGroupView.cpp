@@ -25,12 +25,20 @@
 #include <taProject>
 #include <taSvg>
 
+#ifdef TA_QT3D
+
+#include <T3LineBox>
+
+#else // TA_QT3D
+
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/draggers/SoTranslate1Dragger.h>
 #include <Inventor/draggers/SoTranslate2Dragger.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
+
+#endif // TA_QT3D
 
 TA_BASEFUNS_CTORS_DEFN(LayerGroupView);
 

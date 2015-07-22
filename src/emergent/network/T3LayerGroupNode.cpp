@@ -19,6 +19,9 @@
 
 #ifdef TA_QT3D
 
+#include <T3LineBox>
+#include <T3Misc>
+
 T3LayerGroupNode::T3LayerGroupNode(Qt3DNode* parent, T3DataView* dataView_,
                                    bool show_drg, bool hideln, bool md2d)
   : inherited(parent, dataView_)
@@ -26,6 +29,10 @@ T3LayerGroupNode::T3LayerGroupNode(Qt3DNode* parent, T3DataView* dataView_,
   , hide_lines(hideln)
   , mode_2d(md2d)
 {
+  if(!hide_lines) {
+    frame = new T3LineBox(this);
+    frame->setColor(T3Misc::frame_clr());
+  }
 }
 
 T3LayerGroupNode::~T3LayerGroupNode() {
@@ -37,8 +44,29 @@ void T3LayerGroupNode::setGeom(int px, int py, int pz,
   pos.setValue(px, py, pz);
   max_size.setValue(max_x, max_y, max_z);
   lgp_max_size.setValue((int)lg_max_x, (int)lg_max_y, (int)lg_max_z);
-  // render();
+  updateNode();
 }
+
+void T3LayerGroupNode::updateNode() {
+  if(!hide_lines) {
+    float fx = ((float)lgp_max_size.x + 2.0f * T3LayerNode::width) / max_size.x;
+    float fy = ((float)lgp_max_size.y + 2.0f * T3LayerNode::width) / max_size.y;
+    float fz = ((float)(lgp_max_size.z-1) + 4.0f * T3LayerNode::height) / max_size.z;
+    float lay_wd_x = (T3LayerNode::width / max_size.x);
+    float lay_wd_y = (T3LayerNode::width / max_size.y);
+    lay_wd_x = MIN(lay_wd_x, T3LayerNode::max_width);
+    lay_wd_y = MIN(lay_wd_y, T3LayerNode::max_width);
+    float lay_ht_z = 2.0f * (T3LayerNode::height / max_size.z);
+    float xfrac = (.5f * fx) - lay_wd_x;
+    float yfrac = (.5f * fy) - lay_wd_y;
+    float zfrac = (.5f * fz) - lay_ht_z;
+
+    frame->setSize(QVector3D(fx, fz, fy));
+    frame->translate->setTranslation(QVector3D(-0.5f + xfrac, -0.5f + zfrac,
+                                               0.5 + -yfrac)); // move to 0,0
+  }
+}  
+
 
 #else // TA_QT3D
 

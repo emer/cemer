@@ -29,13 +29,17 @@
 
 #ifdef TA_QT3D
 
+#include <T3TwoDText>
+
 #else // TA_QT3D
+
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/SbLinear.h>
 #include <Inventor/draggers/SoTranslate1Dragger.h>
 #include <Inventor/draggers/SoTranslate2Dragger.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
 #include <Inventor/nodes/SoTransform.h>
+
 #endif // TA_QT3D
 
 TA_BASEFUNS_CTORS_DEFN(LayerView);
@@ -259,6 +263,8 @@ void LayerView::Render_impl() {
 
   if(nv->lay_layout == NetView::THREE_D) {
 #ifdef TA_QT3D
+    node_so->caption->TranslateXLeftTo(QVector3D(-0.5f, -0.5f - eff_lay_font_size,
+                                                          0.5f + lay_wd));
 #else // TA_QT3D
     SbVec3f tran(0.0f, -eff_lay_font_size, lay_wd);
     node_so->transformCaption(tran);
@@ -272,6 +278,10 @@ void LayerView::Render_impl() {
   }
   else {
 #ifdef TA_QT3D
+    node_so->caption->TranslateXLeftTo(QVector3D(-0.5f, -0.5f + 0.5f * lay_wd,
+                                                          0.5f + 1.1f * eff_lay_font_size));
+    node_so->caption->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
+    node_so->caption->rotate->setAngleDeg(-90.0f);
 #else // TA_QT3D
     SbVec3f tran(0.0f, 0.5f * lay_wd, 1.1f * eff_lay_font_size);
     SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);

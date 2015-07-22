@@ -25,7 +25,7 @@
 
 // declare all other types mentioned but not required to include:
 #ifdef TA_QT3D
-
+class T3Entity; // #IGNORE
 #else // TA_QT3D
 class SoTransform; // #IGNORE
 #endif // TA_QT3D
@@ -42,7 +42,7 @@ public:
 
   TA_BASEFUNS_LITE(taTransform);
 #ifdef TA_QT3D
-
+  void                  CopyTo(T3Entity* txfm); // #IGNORE txfers values to qt3d entity
 #else // TA_QT3D
   void                  CopyTo(SoTransform* txfm); // #IGNORE txfers values to an inventor txfm -- note, does a transfer, not an accumulate
 #endif // TA_QT3D

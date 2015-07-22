@@ -20,6 +20,9 @@
 
 #ifdef TA_QT3D
 
+#include <T3LineBox>
+#include <T3Misc>
+
 const float T3LayerNode::height = 0.05f;
 const float T3LayerNode::width = 0.5f;
 const float T3LayerNode::max_width = 0.05f;
@@ -29,10 +32,12 @@ T3LayerNode::T3LayerNode(Qt3DNode* parent, T3DataView* dataView_, bool shw_drg,
   : inherited(parent, dataView_)
   , show_drag(shw_drg)
   , mode_2d(md2d)
+  , frame(new T3LineBox(this))
 {
 }
 
 T3LayerNode::~T3LayerNode() {
+  frame->setColor(T3Misc::frame_clr());
 }
 
 void T3LayerNode::setGeom(int x, int y, float max_x, float max_y, float max_z,
@@ -42,7 +47,22 @@ void T3LayerNode::setGeom(int x, int y, float max_x, float max_y, float max_z,
   max_size.setValue(max_x, max_y, max_z);
   disp_scale = disp_sc;
   scaled_geom.setValue((int)ceil(disp_scale * (float)x), (int)ceil(disp_scale * (float)y));
-  // render();
+  updateNode();
+}
+
+void T3LayerNode::updateNode() {
+  float fx = disp_scale * ((float)geom.x / max_size.x);
+  float fy = disp_scale * ((float)geom.y / max_size.y);
+  float max_xy = MAX(max_size.x, max_size.y);
+  float lay_wd = width / max_xy;
+  lay_wd = MIN(lay_wd, max_width);
+  
+  float xfrac = .5f * fx;
+  float yfrac = .5f * fy;
+
+  frame->setSize(QVector3D(fx, height / max_xy, fy));
+  // note: LayerView already translates us up into vertical center of cell
+  frame->translate->setTranslation(QVector3D(-0.5f + xfrac, -0.5f, 0.5f + -yfrac));
 }
 
 #else // TA_QT3D

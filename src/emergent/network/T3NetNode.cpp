@@ -18,18 +18,45 @@
 
 #ifdef TA_QT3D
 
+#include <T3LineBox>
+#include <T3LineStrip>
+#include <T3TwoDText>
+#include <T3Misc>
+
 T3NetNode::T3NetNode(Qt3DNode* parent, T3DataView* dataView_, bool show_dr,
                        bool net_txt, bool show_n_drg, bool md2d)
   : inherited(parent, dataView_)
   , show_drag(show_dr)
   , show_net_text_drag(show_n_drg)
   , mode_2d(md2d)
+  , frame(new T3LineBox(this))
+  , net_text(new T3Entity(this))
+  , wt_lines(new T3LineStrip(this))
 {
+  frame->setColor(T3Misc::frame_clr());
+
+  float net_margin = 0.05f;
+  float two_net_marg = 2.0f * net_margin;
+  float tnm1 = 1.0f + two_net_marg;
+
+  if(mode_2d) {
+    QVector3D fr_sz(tnm1, two_net_marg, tnm1);
+    frame->setSize(fr_sz);
+  }
+  else {
+    QVector3D fr_sz(tnm1, tnm1, tnm1);
+    frame->setSize(fr_sz);
+  }
 }
 
 T3NetNode::~T3NetNode() {
 }
 
+void T3NetNode::setDefaultCaptionTransform() {
+  if(!caption) return;
+  caption->TranslateXLeftTo(QVector3D(-0.5f, -0.7f, 0.5f));
+  caption->scale->setScale(0.05f);
+}
 
 #else // TA_QT3D
 

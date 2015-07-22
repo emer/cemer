@@ -388,7 +388,7 @@ void GridTableView::Render_pre() {
     ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), T3GridViewNode_MouseCB, this);
     node_so()->addChild(ecb);
   }
-#endif
+#endif // TA_QT3D
   
   colorscale.SetColorSpec(colorscale.spec);  // Call set to force the saved color to be restored
   UpdatePanel();                // otherwise doesn't get updated without explicit click..
@@ -1188,7 +1188,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           if(mat_rot_rad != 0.0f) {
             // todo: this is not working for some reason, even when applied to lines
             sogr->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
-            sogr->rotate->setAngleRad(mat_rot_rad);
+            sogr->rotate->setAngleDeg(mat_rot);
           }
           sogr->spacing = mat_block_spc;
           sogr->block_height = mat_block_height;

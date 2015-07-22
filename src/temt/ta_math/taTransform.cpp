@@ -19,7 +19,18 @@ TA_BASEFUNS_CTORS_LITE_DEFN(taTransform);
 
 #ifdef TA_QT3D
 
+#include <T3Entity>
+
+void taTransform::CopyTo(T3Entity* ent) {
+  if (!ent) return;
+  ent->translate->setTranslation(translate);
+  ent->rotate->setAxis(rotate);
+  ent->rotate->setAngleRad(rotate.rot);
+  ent->scale->setScale3D(scale);
+}
+
 #else // TA_QT3D
+
 #include <Inventor/SbLinear.h>
 #include <Inventor/nodes/SoTransform.h>
 

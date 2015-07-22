@@ -379,7 +379,12 @@ void T3DataView::Render_impl() {
   }
 
   T3Node* node = node_so();
-#ifndef TA_QT3D
+#ifdef TA_QT3D
+  if (m_transform && node) {
+    fixTransformAxis();         // make sure
+    m_transform->CopyTo(node);
+  }
+#else 
   // todo: may need to do this!
   if (m_transform && node) {
     fixTransformAxis();         // make sure

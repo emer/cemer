@@ -28,6 +28,8 @@
 
 #ifdef TA_QT3D
 
+class T3LineBox;
+
 class E_API T3LayerNode: public T3NodeParent {
   Q_OBJECT
   INHERITED(T3NodeParent)
@@ -43,28 +45,16 @@ public:
   bool			show_drag;
   bool			mode_2d;
 
-  void 			setGeom(int px, int py, float max_x, float max_y, float max_z,
-                                float disp_scale);
+  T3LineBox*            frame;
+
+  void 	setGeom(int px, int py, float max_x, float max_y, float max_z,
+                float disp_scale);
+  void  updateNode() override;
+
   
   T3LayerNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
               bool show_draggers = true,  bool mode_2d = false);
   ~T3LayerNode();
-
-  // void			render(); // called after pos/geom changes
-
-  //private:
-
-  // SoFrame*		shape_;
-
-  // SoSeparator*		xy_drag_sep_;
-  // SoTransform*		xy_drag_xf_;
-  // SoTranslate2Dragger*	xy_dragger_;
-  // SoCalculator*		xy_drag_calc_;
-
-  // SoSeparator*		z_drag_sep_;
-  // SoTransform*		z_drag_xf_;
-  // SoTranslate1Dragger*	z_dragger_;
-  // SoCalculator*		z_drag_calc_;
 };
 
 #else // TA_QT3D

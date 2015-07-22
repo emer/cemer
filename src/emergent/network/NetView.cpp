@@ -38,6 +38,13 @@
 #include <T3Misc>
 #include <taMisc>
 
+#ifdef TA_QT3D
+
+#include <T3TwoDText>
+#include <T3LineStrip>
+
+#else // TA_QT3D
+
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoDrawStyle.h>
@@ -56,6 +63,7 @@
 #include <Inventor/SoEventManager.h>
 #include <Inventor/actions/SoRayPickAction.h>
 #include <Inventor/SoPickedPoint.h>
+#endif // TA_QT3D
 
 TA_BASEFUNS_CTORS_DEFN(NetViewParams);
 
@@ -1220,7 +1228,7 @@ void NetView::Render_impl() {
 
   if(net_text) {
 #ifdef TA_QT3D
-
+    net_text_xform.CopyTo(node_so->net_text);
 #else // TA_QT3D
     SoTransform* tx = node_so->netTextXform();
     net_text_xform.CopyTo(tx);
@@ -1239,16 +1247,16 @@ void NetView::Render_impl() {
   Render_wt_lines();
 
   inherited::Render_impl();
-  //  taiMisc::RunPending();
 }
 
 void NetView::Render_net_text() {
   T3NetNode* node_so = this->node_so(); //cache
 #ifdef TA_QT3D
-
+  T3Entity* net_txt = node_so->net_text;
 #else // TA_QT3D
   SoSeparator* net_txt = node_so->netText();
   if(!net_txt) return;          // screwup
+#endif // TA_QT3D
 
   TypeDef* td = net()->GetTypeDef();
   int per_row = 2;
@@ -1280,15 +1288,25 @@ void NetView::Render_net_text() {
   int n_rows = cur_row;
 //  int n_texts = chld_idx;
 
+#ifdef TA_QT3D
+  int txt_st_off = 0;
+#else // TA_QT3D
   int txt_st_off = 3 + 1;       // 3 we add below + 1 transform
   if(node_so->netTextDrag())
     txt_st_off+=2;              // dragger + extra xform
+#endif // TA_QT3D
 
   bool build_text = false;
 
+  T3Panel* fr = GetFrame();
+  iColor txtcolr = fr->GetTextColor();
+#ifdef TA_QT3D
+  if(net_txt->children().count() != chld_idx) {
+    net_txt->removeAllChildren();
+    build_text = true;
+  }
+#else // TA_QT3D
   if(net_txt->getNumChildren() < txt_st_off) { // haven't made basic guys yet
-    T3Panel* fr = GetFrame();
-    iColor txtcolr = fr->GetTextColor();
     build_text = true;
     SoBaseColor* bc = new SoBaseColor;
     bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
@@ -1310,8 +1328,9 @@ void NetView::Render_net_text() {
     }
     build_text = true;
   }
+#endif // TA_QT3D
 
-  float rot_rad = net_text_rot / taMath_float::deg_per_rad;
+  float rot_rad = net_text_rot * taMath_float::rad_per_deg;
 
   chld_idx = 0;
   cur_row = 0;
@@ -1322,10 +1341,15 @@ void NetView::Render_net_text() {
     if(!md->HasOption("VIEW")) continue;
     if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
     if(build_text) {
+#ifdef TA_QT3D
+      T3TwoDText* txt = new T3TwoDText(net_txt);
+      txt->align = T3_ALIGN_LEFT;
+#else // TA_QT3D
       SoSeparator* tsep = new SoSeparator;
       net_txt->addChild(tsep);
       SoTransform* tr = new SoTransform;
       tsep->addChild(tr);
+#endif // TA_QT3D
       bool cur_str = false;
       if((md->type->InheritsFrom(&TA_taString) || md->type->IsEnum())) {
         cur_str = true;
@@ -1336,11 +1360,18 @@ void NetView::Render_net_text() {
       }
       float xv = 0.05f + (float)cur_col / (float)(per_row);
       float yv = ((float)(cur_row+1.0f) / (float)(n_rows + 2.0f));
+#ifdef TA_QT3D
+      txt->translate->setTranslation(QVector3D(xv, 0.0f, -yv));
+      txt->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
+      txt->rotate->setAngleDeg(net_text_rot);
+      txt->scale->setScale(font_sizes.net_vals);
+#else // TA_QT3D
       tr->translation.setValue(xv, 0.0f, -yv);
       tr->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), rot_rad);
       SoAsciiText* txt = new SoAsciiText();
       txt->justification = SoAsciiText::LEFT;
       tsep->addChild(txt);
+#endif // TA_QT3D
       if(cur_str) {
         cur_row++;
         cur_col=0;
@@ -1353,8 +1384,12 @@ void NetView::Render_net_text() {
         }
       }
     }
+#ifdef TA_QT3D
+    T3TwoDText* txt = dynamic_cast<T3TwoDText*>(net_txt->children().at(chld_idx));
+#else // TA_QT3D
     SoSeparator* tsep = (SoSeparator*)net_txt->getChild(chld_idx + txt_st_off);
     SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
+#endif // TA_QT3D
     String el = md->name + ": ";
     String val = md->GetValStr((void*)net());
     if(hist_idx > 0) {
@@ -1365,10 +1400,13 @@ void NetView::Render_net_text() {
       }
     }
     el += val;
+#ifdef TA_QT3D
+    txt->setText(el);
+#else // TA_QT3D
     txt->string.setValue(el.chars());
+#endif // TA_QT3D
     chld_idx++;
   }
-#endif // TA_QT3D
 }
 
 void NetView::Render_wt_lines() {

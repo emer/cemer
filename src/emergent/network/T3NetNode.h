@@ -26,6 +26,9 @@
 
 #ifdef TA_QT3D
 
+class T3LineStrip;
+class T3LineBox;
+
 class E_API T3NetNode: public T3NodeParent {
   Q_OBJECT
   INHERITED(T3NodeParent)
@@ -34,26 +37,16 @@ public:
   bool			show_net_text_drag;
   bool			mode_2d;
 
+  T3LineBox*            frame;
+  T3Entity*             net_text;
+  T3LineStrip*          wt_lines;
+
+  void	setDefaultCaptionTransform() override;
+  
   T3NetNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, bool show_draggers = true,
 	    bool show_net_text = true, bool show_nt_drag = true,
 	    bool mode_2d = false);
   ~T3NetNode();
-
-  // void		setDefaultCaptionTransform(); // override
-
-// protected:
-  // SoDrawStyle*		shape_draw_;
-  // SoLineBox3d*		shape_; //#IGNORE
-  // SoSeparator* 		net_text_; // network text variables
-  // SoSeparator* 		wt_lines_; // weight lines
-  // SoDrawStyle*		wt_lines_draw_;
-  // SoIndexedLineSet*	wt_lines_set_;
-  // SoVertexProperty*	wt_lines_vtx_prop_;
-
-  // T3TransformBoxDragger* drag_;	// my position dragger
-  // T3TransformBoxDragger* net_text_drag_;	// my net text dragger
-  // SoTransform*		net_text_xform_;
-  // SoTransform*		net_text_drag_xform_;
 };
 
 #else // TA_QT3D

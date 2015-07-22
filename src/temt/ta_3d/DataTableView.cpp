@@ -40,7 +40,7 @@ void DataTableView::Initialize() {
   display_on = true;
   manip_ctrl_on = true;
 
-  main_xform.translate.x = 1.0f;
+  // main_xform.translate.x = 1.0f;
 
   updating = 0;
   m_lvp = NULL;
