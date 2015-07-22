@@ -14,17 +14,18 @@
 //   Lesser General Public License for more details.
 
 #include "iTabView.h"
-#include <iPanelBase>
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
-
+#include <iPanelBase>
+#include <iTreeView>
+#include <iTreeViewItem>
 #include <taiMisc>
-
 
 #include <QVBoxLayout>
 #include <QStackedWidget>
 #include <QMenu>
 #include <QKeyEvent>
+#include <QItemSelectionModel>
 
 
 iTabView::iTabView(QWidget* parent)
@@ -93,8 +94,9 @@ bool iTabView::ActivatePanel(taiSigLink* dl) {
 }
 
 bool iTabView::AddPanel(iPanelBase* panel) {
-  if (!panels.AddUnique(panel)) return false; // refs us on add
-  wsPanels->addWidget(panel);
+  if (!panels.AddUnique(panel))
+    return false; // refs us on add
+    wsPanels->addWidget(panel);
   if (panels.size == 1) wsPanels->setCurrentWidget(panel); // always show first
   iPanelViewer* itv = tabViewerWin();
   if (itv) panel->OnWindowBind(itv);
@@ -267,15 +269,31 @@ int iTabView::panelCount() const {
 
 void iTabView::panelSelected(int idx) {
   iPanelBase* panel = NULL;
-  if (idx >= 0) panel = tbPanels->panel(idx);
-  ++(tabViewerWin()->tab_changing);
+  if (idx >= 0) {
+    panel = tbPanels->panel(idx);
+  }
+  // select the tree item that goes with the panel
   if (panel) {
+    taiSigLink* sig_link = panel->link();
+    if (sig_link) {
+      iTreeView* tree_view = viewerWindow()->GetMainTreeView();
+      if (tree_view) {
+        iTreeViewItem* item = tree_view->AssertItem(sig_link);
+        if (item) {  // if T3 panel item will be null
+          tree_view->setCurrentItem(item, 0, QItemSelectionModel::ClearAndSelect);
+        }
+        tree_view->update();
+      }
+    }
     wsPanels->setCurrentWidget(panel);
-  } else {
+  }
+  else {
     wsPanels->setCurrentIndex(-1);
   }
-  if (m_viewer_win)
+  ++(tabViewerWin()->tab_changing);
+  if (m_viewer_win) {
     m_viewer_win->TabView_Selected(this);
+  }
   --(tabViewerWin()->tab_changing);
 }
 
