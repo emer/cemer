@@ -15,6 +15,7 @@
 
 #include "T3UnitNode.h"
 #include <iColor>
+#include <NetView>
 
 #include <math.h>
 
@@ -88,6 +89,7 @@ void T3UnitNode::setPicked(bool value) {
 
 #else // TA_QT3D
 
+#include <T3Color>
 #include <iVec3f>
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoDrawStyle.h>
@@ -117,7 +119,7 @@ T3UnitNode::~T3UnitNode()
 {
 }
 
-void T3UnitNode::setAppearance(float act, const T3Color& color, float max_z, float trans) {
+void T3UnitNode::setAppearance(NetView* nv, float act, const iColor& color, float max_z) {
   bool act_invalid = false;
   if (isnan(act) || isinf(act)) {
     act_invalid = true;
@@ -125,13 +127,13 @@ void T3UnitNode::setAppearance(float act, const T3Color& color, float max_z, flo
   }
   else if (act < -1.0f) act = -1.0f;
   else if (act > 1.0f) act = 1.0f;
-  setAppearance_impl(act, color, max_z, trans, act_invalid);
+  setAppearance_impl(nv, act, color, max_z, act_invalid);
 }
 
 void T3UnitNode::setAppearance_impl(NetView* nv, float act, const iColor& color,
                                     float max_z, bool act_invalid) 
 {
-  material()->diffuseColor = (SbColor)color;
+  material()->diffuseColor = (SbColor)(T3Color)color;
   //  material()->specularColor = (SbColor)color;
   //  material()->emissiveColor = (SbColor)color;
   //  material()->ambientColor = (SbColor)color;

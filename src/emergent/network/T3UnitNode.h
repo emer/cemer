@@ -41,7 +41,7 @@ public:
   void	        setDefaultCaptionTransform() override;
   //  sets text justif and
   void		setAppearance(NetView* nv, float act, const iColor& color, float max_z);
-  // act is -1:1; max_z is net->max_size.z; trans is transparency
+  // act is -1:1; max_z is net->max_size.z
   virtual void 	setPicked(bool value);
 
   T3UnitNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
@@ -68,8 +68,8 @@ public:
 
   static void	initClass();
 
-  void		setAppearance(float act, const T3Color& color, float max_z, float trans);
-  // act is -1:1; max_z is net->max_size.z; trans is transparency
+  void		setAppearance(NetView* nv, float act, const iColor& color, float max_z);
+  // act is -1:1; max_z is net->max_size.z
   virtual void 	setPicked(bool value);
   T3UnitNode(T3DataView* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
 	     float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
@@ -78,8 +78,8 @@ protected:
   float			spacing;		      // unit spacing
   float			disp_scale;		      // overall scaling
   void			setDefaultCaptionTransform(); // override, sets text justif and transform for 3D
-  virtual void	setAppearance_impl(float act, const T3Color& color, float max_z,
-    float trans, bool act_invalid);
+  virtual void	setAppearance_impl(NetView* nv, float act, const iColor& color,
+                                   float max_z, bool act_invalid);
   // act is -1:1; max_z is net->max_size.z; trans is transparency; act_invalid true for nan/inf -- act has been set to 0.0f
   ~T3UnitNode();
 };
