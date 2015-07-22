@@ -14,7 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "T3UnitNode_Block.h"
-#include <T3Color>
+#include <iColor>
 
 #ifdef TA_QT3D
 
@@ -28,15 +28,15 @@ T3UnitNode_Block::T3UnitNode_Block(Qt3DNode* parent, T3DataView* dataView_,
 T3UnitNode_Block::~T3UnitNode_Block() {
 }
 
-void T3UnitNode_Block::setAppearance_impl(float act, const T3Color& color, float max_z,
-  float trans, bool act_invalid) 
+void T3UnitNode_Block::setAppearance_impl(NetView* nv, float act, const iColor& color,
+                                          float max_z, bool act_invalid) 
 {
   // shape_->height = (base_height + ((max_height - base_height) * fabs(act))) / max_z;
   // float dz; float x; float y;
   // transform()->translation.getValue().getValue(x, dz, y);
   // dz = (((max_height - base_height) * act) * 0.5f) / max_z;
   // transform()->translation.setValue(x, dz, y);
-  inherited::setAppearance_impl(act, color, max_z, trans, act_invalid);
+  //  inherited::setAppearance_impl(act, color, max_z, trans, act_invalid);
 }
 
 
@@ -67,7 +67,7 @@ T3UnitNode_Block::T3UnitNode_Block(T3DataView* dataView_, float max_x, float max
 
   // bake in the shape offset right into our origin offset, to avoid an additional txfm
 //  SetOrigin(pos.x + 0.5f, pos.y + 0.5f, h/2.0f);
-  setAppearance(0.0f, T3Color(.25f, .25f, .0f), 100.0, 0.0f); //dk gray
+//  setAppearance(0.0f, T3Color(.25f, .25f, .0f), 100.0, 0.0f); //dk gray
 }
 
 T3UnitNode_Block::~T3UnitNode_Block()
@@ -75,15 +75,15 @@ T3UnitNode_Block::~T3UnitNode_Block()
   shape_ = NULL;
 }
 
-void T3UnitNode_Block::setAppearance_impl(float act, const T3Color& color, float max_z,
-  float trans, bool act_invalid) 
+void T3UnitNode_Block::setAppearance_impl(NetView* nv, float act, const iColor& color,
+                                          float max_z, bool act_invalid) 
 {
   shape_->height = (base_height + ((max_height - base_height) * fabs(act))) / max_z;
   float dz; float x; float y;
   transform()->translation.getValue().getValue(x, dz, y);
   dz = (((max_height - base_height) * act) * 0.5f) / max_z;
   transform()->translation.setValue(x, dz, y);
-  inherited::setAppearance_impl(act, color, max_z, trans, act_invalid);
+  inherited::setAppearance_impl(nv, act, color, max_z, act_invalid);
 }
 
 #endif // TA_QT3D

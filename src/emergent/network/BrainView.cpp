@@ -404,32 +404,29 @@ void BrainView::GetUnitColor(float val,  iColor& col, float& sc_val) {
   col = fl;
 }
 
-void BrainView::GetUnitDisplayVals(BrainVolumeView* bvv, Unit* u, float& val, T3Color& col, float& sc_val) {
+void BrainView::GetUnitDisplayVals(BrainVolumeView* bvv, Unit* u, float& val, iColor& col, float& sc_val) {
   sc_val = scale.zero;
   void* base = NULL;
   if(unit_disp_md && unit_md_flags != MD_UNKNOWN)
     val = bvv->GetUnitDisplayVal(u, base);
   if(!u) {
-    col.setValue(.8f, .8f, .8f); // lt gray
+    col.setRgb(.8f, .8f, .8f); // lt gray
     return;
   }
-  iColor tc;
-  GetUnitColor(val, tc, sc_val);
-  col.setValue(tc.redf(), tc.greenf(), tc.bluef());
+  GetUnitColor(val, col, sc_val);
 }
 
-void BrainView::GetUnitDisplayVals(BrainVolumeView* bvv, taVector2i& co, float& val, T3Color& col, float& sc_val) {
+void BrainView::GetUnitDisplayVals(BrainVolumeView* bvv, taVector2i& co, float& val,
+                                   iColor& col, float& sc_val) {
 //  sc_val = scale.zero;
 //  void* base = NULL;
 //  if(unit_disp_md && unit_md_flags != MD_UNKNOWN)
 //    val = bvv->GetUnitDisplayVal(co, base);
 //  if(!base) {
-//    col.setValue(.8f, .8f, .8f); // lt gray
+//    col.setRgb(.8f, .8f, .8f); // lt gray
 //    return;
 //  }
-//  iColor tc;
-//  GetUnitColor(val, tc, sc_val);
-//  col.setValue(tc.redf(), tc.greenf(), tc.bluef());
+//  GetUnitColor(val, col, sc_val);
 }
 
 void BrainView::InitDisplay(bool init_panel) {

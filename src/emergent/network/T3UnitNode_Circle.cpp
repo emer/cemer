@@ -14,7 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "T3UnitNode_Circle.h"
-#include <T3Color>
+#include <iColor>
 
 #ifdef TA_QT3D
 
@@ -54,7 +54,7 @@ T3UnitNode_Circle::T3UnitNode_Circle(T3DataView* dataView_, float max_x, float m
 
   // bake in the shape offset right into our origin offset, to avoid an additional txfm
 //  SetOrigin(pos.x + 0.5f, pos.y + 0.5f, h/2.0f);
-  setAppearance(0.0f, T3Color(.25f, .25f, .25f), 100.0, 0.0f); //dk gray
+  // setAppearance(0.0f, T3Color(.25f, .25f, .25f), 100.0, 0.0f); //dk gray
 }
 
 T3UnitNode_Circle::~T3UnitNode_Circle()

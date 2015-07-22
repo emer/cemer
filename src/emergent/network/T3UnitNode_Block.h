@@ -34,8 +34,8 @@ public:
 		   float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
   ~T3UnitNode_Block();
 
-  void	 setAppearance_impl(float act, const T3Color& color,
-                            float max_z, float trans, bool act_invalid) override;
+  void	 setAppearance_impl(NetView* nv, float act, const iColor& color,
+                            float max_z, bool act_invalid) override;
 // private:
 //   SoCube*		shape_; //#IGNORE
 };
@@ -57,8 +57,8 @@ public:
 		   float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
 protected:
-  void	 setAppearance_impl(float act, const T3Color& color,
-    float max_z, float trans, bool act_invalid) override;
+  void	 setAppearance_impl(NetView* nv, float act, const iColor& color,
+                            float max_z, bool act_invalid) override;
   ~T3UnitNode_Block();
 private:
   SoCube*		shape_; //#IGNORE

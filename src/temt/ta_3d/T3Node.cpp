@@ -51,12 +51,12 @@ void T3Node::createCaption() {
 void T3Node::setDefaultCaptionTransform() {
   if(!caption) return;
   caption->TranslateXLeftTo(QVector3D(-0.5f, -0.7f, 0.02f));
-  caption->scale->setScale(0.05f);
+  caption->Scale(0.05f);
 }
 
 void T3Node::resizeCaption(float sz) {
   if(!caption) return;
-  caption->scale->setScale(sz);
+  caption->Scale(sz);
 }
 
 #else

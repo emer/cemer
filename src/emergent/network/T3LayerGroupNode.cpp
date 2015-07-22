@@ -62,8 +62,7 @@ void T3LayerGroupNode::updateNode() {
     float zfrac = (.5f * fz) - lay_ht_z;
 
     frame->setSize(QVector3D(fx, fz, fy));
-    frame->translate->setTranslation(QVector3D(-0.5f + xfrac, -0.5f + zfrac,
-                                               0.5 + -yfrac)); // move to 0,0
+    frame->TranslateLLFSz1To(QVector3D(xfrac, zfrac, 0.5f + -yfrac)); // move to 0,0
   }
 }  
 

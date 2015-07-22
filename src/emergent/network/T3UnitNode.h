@@ -23,7 +23,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class T3Color; //
+class iColor; //
+class NetView; //
 
 #ifdef TA_QT3D
 
@@ -39,7 +40,7 @@ public:
   
   void	        setDefaultCaptionTransform() override;
   //  sets text justif and
-  void		setAppearance(float act, const T3Color& color, float max_z, float trans);
+  void		setAppearance(NetView* nv, float act, const iColor& color, float max_z);
   // act is -1:1; max_z is net->max_size.z; trans is transparency
   virtual void 	setPicked(bool value);
 
@@ -48,8 +49,8 @@ public:
 	     float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
   ~T3UnitNode();
 
-  virtual void	setAppearance_impl(float act, const T3Color& color, float max_z,
-                                   float trans, bool act_invalid);
+  virtual void	setAppearance_impl(NetView* nv, float act, const iColor& color, float max_z,
+                                   bool act_invalid);
   // act is -1:1; max_z is net->max_size.z; trans is transparency; act_invalid true for nan/inf -- act has been set to 0.0f
 };
 

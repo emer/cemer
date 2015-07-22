@@ -36,7 +36,7 @@ T3Axis::T3Axis(Qt3DNode* parent, T3DataView* dataView_, Axis ax, float fnt_sz,
   , labels(new T3Entity(this))
   , lines(new T3LineStrip(this))
 {
-  translate->setTranslation(QVector3D(-0.5f * width, -0.5f, 0.0f));
+  TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.0f), width, 0.0f);
 }
 
 T3Axis::~T3Axis() {
@@ -67,7 +67,7 @@ void T3Axis::addLabel(const char* text, const iVec3f& at, int just) {
   T3TwoDText* lbl = new T3TwoDText(labels);
   lbl->setText(text);
   lbl->setTextColor(color);
-  lbl->scale->setScale(font_size);
+  lbl->Scale(font_size);
   QVector3D pos(at.x, at.y + 0.5f * font_size, -at.z);
   if(just == T3_ALIGN_RIGHT) {
     lbl->TranslateXRightTo(pos);
@@ -76,7 +76,7 @@ void T3Axis::addLabel(const char* text, const iVec3f& at, int just) {
     lbl->TranslateXLeftTo(pos);
   }
   else if(just == T3_ALIGN_CENTER) {
-    lbl->translate->setTranslation(pos);
+    lbl->Translate(pos);
   }
 }
 
@@ -85,7 +85,7 @@ void T3Axis::addLabelRot(const char* text, const iVec3f& at, int just,
   T3TwoDText* lbl = new T3TwoDText(labels);
   lbl->setText(text);
   lbl->setTextColor(color);
-  lbl->scale->setScale(font_size);
+  lbl->Scale(font_size);
   QVector3D pos(at.x, at.y + 0.5f * font_size, -at.z);
   if(just == T3_ALIGN_RIGHT) {
     lbl->TranslateXRightTo(pos);
@@ -94,10 +94,9 @@ void T3Axis::addLabelRot(const char* text, const iVec3f& at, int just,
     lbl->TranslateXLeftTo(pos);
   }
   else if(just == T3_ALIGN_CENTER) {
-    lbl->translate->setTranslation(pos);
+    lbl->Translate(pos);
   }
-  lbl->rotate->setAxis(rot_ax);
-  lbl->rotate->setAngleRad(rot_ang);
+  lbl->RotateRad(rot_ax, rot_ang);
 }
 
 void T3Axis::addLine(const iVec3f& from, const iVec3f to) {

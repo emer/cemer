@@ -231,8 +231,8 @@ public:
 
   void                  GetUnitColor(float val, iColor& col, float& sc_val);
   // #IGNORE 
-  virtual void          GetUnitDisplayVals(UnitGroupView* ugrv, taVector2i& co, float& val,
-                                           T3Color& col, float& sc_val);
+  virtual void          GetUnitDisplayVals
+    (UnitGroupView* ugrv, const taVector2i& co, float& val, iColor& col, float& sc_val);
   void                  InitScaleRange(ScaleRange& sr);
   // initialize sr to its defaults; used when creating, and if user clicks 'default' button for the scale
 

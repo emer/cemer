@@ -62,18 +62,15 @@ void T3Capsule::updateGeom() {
   switch(axis) {
   case LONG_X:
     size = QVector3D(length, 2.0f*radius, 2.0f*radius);
-    sub->rotate->setAxis(QVector3D(0.0f, 1.0f, 0.0f));
-    sub->rotate->setAngleDeg(-90);
+    sub->RotateDeg(QVector3D(0.0f, 1.0f, 0.0f), -90.0f);
     break;
   case LONG_Y:
     size = QVector3D(2.0f*radius, length, 2.0f*radius);
-    sub->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
-    sub->rotate->setAngleDeg(-90);
+    sub->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), -90.0f);
     break;
   case LONG_Z:
     size = QVector3D(2.0f*radius, 2.0f*radius, length);
-    sub->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
-    sub->rotate->setAngleDeg(0.0f);
+    sub->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), 0.0f);
     break;
   }    
   sub->size = size;             // todo: does sub need color??

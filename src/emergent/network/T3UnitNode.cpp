@@ -14,7 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "T3UnitNode.h"
-#include <T3Color>
+#include <iColor>
 
 #include <math.h>
 
@@ -38,7 +38,8 @@ T3UnitNode::T3UnitNode(Qt3DNode* parent, T3DataView* dataView_,
 T3UnitNode::~T3UnitNode() {
 }
 
-void T3UnitNode::setAppearance(float act, const T3Color& color, float max_z, float trans) {
+void T3UnitNode::setAppearance(NetView* nv, float act, const iColor& color,
+                               float max_z) {
   bool act_invalid = false;
   if (isnan(act) || isinf(act)) {
     act_invalid = true;
@@ -46,11 +47,11 @@ void T3UnitNode::setAppearance(float act, const T3Color& color, float max_z, flo
   }
   else if (act < -1.0f) act = -1.0f;
   else if (act > 1.0f) act = 1.0f;
-  setAppearance_impl(act, color, max_z, trans, act_invalid);
+  setAppearance_impl(nv, act, color, max_z, act_invalid);
 }
 
-void T3UnitNode::setAppearance_impl(float act, const T3Color& color,
-  float max_z, float trans, bool act_invalid) 
+void T3UnitNode::setAppearance_impl(NetView* nv, float act, const iColor& color,
+  float max_z, bool act_invalid) 
 {
   // material()->diffuseColor = (SbColor)color;
   // //  material()->specularColor = (SbColor)color;
@@ -127,13 +128,14 @@ void T3UnitNode::setAppearance(float act, const T3Color& color, float max_z, flo
   setAppearance_impl(act, color, max_z, trans, act_invalid);
 }
 
-void T3UnitNode::setAppearance_impl(float act, const T3Color& color,
-  float max_z, float trans, bool act_invalid) 
+void T3UnitNode::setAppearance_impl(NetView* nv, float act, const iColor& color,
+                                    float max_z, bool act_invalid) 
 {
   material()->diffuseColor = (SbColor)color;
   //  material()->specularColor = (SbColor)color;
   //  material()->emissiveColor = (SbColor)color;
   //  material()->ambientColor = (SbColor)color;
+  float trans = nv->view_params.unit_trans;
   material()->transparency = (1.0f - fabsf(act)) * trans;
 }
 

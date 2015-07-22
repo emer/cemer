@@ -19,42 +19,29 @@
 
 #ifdef TA_QT3D
 
+#include <T3TriangleStrip>
+#include <T3LineStrip>
+
 float T3UnitGroupNode::height = 0.0f;
 float T3UnitGroupNode::inset = 0.05f;
 
-T3UnitGroupNode::T3UnitGroupNode(Qt3DNode* parent, T3DataView* dataView_, bool noun)
+T3UnitGroupNode::T3UnitGroupNode(Qt3DNode* parent, T3DataView* dataView_, bool noun, bool md2)
   : inherited(parent, dataView_)
   , no_units(noun)
+  , mode_2d(md2)
+  , tris(new T3TriangleStrip(this))
+  , snap_bord(new T3LineStrip(this))
+  , unit_text(new T3Entity(this))
 {
+  if(mode_2d) {
+    Translate(QVector3D(-0.5f, 0.0f, 0.5f));
+  }
+  else {
+    TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.0f), 1.0f, 0.0f);
+  }
 }
 
 T3UnitGroupNode::~T3UnitGroupNode() {
-}
-
-void T3UnitGroupNode::drawGrid(T3UnitGroupNode* node) {
-  float sw = 0.02f; // strip width
-  float disp_scale = node->disp_scale;
-  float x_end = disp_scale * ((float)node->geom.x / node->max_size.x);
-  float y_end = disp_scale * ((float)(-node->geom.y) / node->max_size.y);
-
-  // GLbitfield attribs = (GLbitfield)(GL_LIGHTING_BIT | GL_TRANSFORM_BIT);
-  // glPushMatrix();
-  // glPushAttrib(attribs); //note: doesn't seem to push matrix properly
-  // glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-  // glDisable(GL_LIGHTING);
-  // glColor3f(0.4f, 0.4f, 0.4f);
-  // // vert lines
-  // for (int x = 1; x < node->geom.x; ++x) {
-  //   glRectf((disp_scale * (float)(x - sw)) / node->max_size.x, 0.0f,
-  //           (disp_scale * (float)(x + sw)) / node->max_size.x, y_end);
-  // }
-  // // hor lines
-  // for (int y = 1; y < node->geom.y; ++y) {
-  //   glRectf(0.0f, (disp_scale * (float)-(y - sw)) / node->max_size.y,
-  //           x_end, (disp_scale * (float)-(y + sw)) / node->max_size.y);
-  // }
-  // glPopAttrib();
-  // glPopMatrix();
 }
 
 void T3UnitGroupNode::setGeom(int x, int y, float max_x, float max_y, float max_z,

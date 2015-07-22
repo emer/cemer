@@ -61,8 +61,12 @@ void T3LayerNode::updateNode() {
   float yfrac = .5f * fy;
 
   frame->setSize(QVector3D(fx, height / max_xy, fy));
-  // note: LayerView already translates us up into vertical center of cell
-  frame->translate->setTranslation(QVector3D(-0.5f + xfrac, -0.5f, 0.5f + -yfrac));
+  if(mode_2d) {
+    frame->Translate(QVector3D(-0.5f + xfrac, 0.0f, 0.5f + -yfrac));
+  }
+  else {
+    frame->TranslateLLFSz1To(QVector3D(xfrac, 0.0f, 0.5f + -yfrac));
+  }
 }
 
 #else // TA_QT3D

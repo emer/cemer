@@ -1248,7 +1248,7 @@ void BrainVolumeView::UpdateUnitValues_blocks() {
     bool make_transparent = false;
     float val, sc_val,alpha,trans = bv->view_params.unit_trans;
     int idx(0);
-    T3Color col;
+    iColor col;
     Voxel* v(0);
 
     uint32_t* color_dat = color.startEditing();
@@ -1279,7 +1279,8 @@ void BrainVolumeView::UpdateUnitValues_blocks() {
       else {
         alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
       }
-      color_dat[idx++] = T3Misc::makePackedRGBA(col.r, col.g, col.b, alpha);
+      col.setAlpha(alpha);
+      color_dat[idx++] = T3Misc::makePackedRGBA(col);
     }
 
     color.finishEditing();

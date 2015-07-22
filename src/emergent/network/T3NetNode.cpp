@@ -47,6 +47,12 @@ T3NetNode::T3NetNode(Qt3DNode* parent, T3DataView* dataView_, bool show_dr,
     QVector3D fr_sz(tnm1, tnm1, tnm1);
     frame->setSize(fr_sz);
   }
+  if(mode_2d) {
+    frame->Translate(QVector3D(0.0f, 0.0f, 0.0f));
+  }
+  else {
+    frame->TranslateZFrontTo(QVector3D(0.0f, 0.0f, 0.0f));
+  }
 }
 
 T3NetNode::~T3NetNode() {
@@ -54,8 +60,9 @@ T3NetNode::~T3NetNode() {
 
 void T3NetNode::setDefaultCaptionTransform() {
   if(!caption) return;
-  caption->TranslateXLeftTo(QVector3D(-0.5f, -0.7f, 0.5f));
-  caption->scale->setScale(0.05f);
+  inherited::setDefaultCaptionTransform();
+  // caption->TranslateXLeftTo(QVector3D(-0.5f, -0.7f, 0.5f));
+  // caption->Scale(0.05f);
 }
 
 #else // TA_QT3D

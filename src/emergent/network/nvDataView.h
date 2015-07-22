@@ -36,7 +36,7 @@ public:
 
   virtual void          setDefaultColor() {} // restore to its default color
   virtual void          setHighlightColor(const T3Color& color) {}
-    // used for highlighting in gui, esp lay/prjn
+  // used for highlighting in gui, esp lay/prjn
 
   void         CutLinks() override;
 

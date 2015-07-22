@@ -376,8 +376,8 @@ void T3MatrixGrid::renderText(float xp0, float xp1, float yp0, float yp1, float 
   float xfp = .5f * (xp0 + xp1);
   float yfp = .5f * (yp0 + yp1) - .5f * ufontsz;
   float zfp = MAX(zp1,0.0f) + .01f;
-  txt->translate->setTranslation(QVector3D(xfp, yfp, zfp));
-  txt->scale->setScale(ufontsz);
+  txt->Translate(QVector3D(xfp, yfp, zfp));
+  txt->Scale(ufontsz);
 }
 
 void T3MatrixGrid::renderValue(taMatrix* matptr, float val, int& c_idx, iColor& clr,

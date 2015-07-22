@@ -17,7 +17,7 @@
 #include <NetView>
 #include <Network>
 #include <LayerView>
-#include <T3Color>
+#include <iColor>
 
 #include <T3UnitNode_Circle>
 #include <T3UnitNode_Rect>

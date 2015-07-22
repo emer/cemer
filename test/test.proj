@@ -17511,7 +17511,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  lay_mv=0;
 	  net_text=1;
 	  show_iconified=0;
-	  net_text_xform {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=1: y=0: z=0: rot=1.57: }: translate={x=0: y=0: z=-0.5: }: };
+	  net_text_xform {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=1: y=0: z=0: rot=1.57: }: translate={x=0: y=0: z=-1: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
 	  unit_src_path=".layers[2].units[0]";

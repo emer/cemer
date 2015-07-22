@@ -79,6 +79,17 @@ public:
   { material = mat; addComponent(material); }
   // adds material component, records the last one added
 
+  inline void   Translate(const QVector3D& pos)
+  { translate->setTranslation(pos); }
+  inline void   Scale(float sc)
+  { scale->setScale(sc); }
+  inline void   Scale3D(const QVector3D& sc)
+  { scale->setScale3D(sc); }
+  inline void   RotateDeg(const QVector3D& axis, float ang_deg)
+  { rotate->setAxis(axis); rotate->setAngleDeg(ang_deg); }
+  inline void   RotateRad(const QVector3D& axis, float ang_rad)
+  { rotate->setAxis(axis); rotate->setAngleRad(ang_rad); }
+
   virtual void TranslateXLeftTo(const QVector3D& pos);
   // move the X dim left edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set
   virtual void TranslateXRightTo(const QVector3D& pos);
@@ -91,6 +102,10 @@ public:
   // move the Z dim front edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set
   virtual void TranslateZBackTo(const QVector3D& pos);
   // move the Z dim back edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set
+  virtual void TranslateLLFTo(const QVector3D& pos);
+  // move the lower-left-front point of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set
+  virtual void TranslateLLFSz1To(const QVector3D& pos, float width = 1.0f, float depth = 1.0f);
+  // move the lower-left-front point of object to given position -- assumes zero point position of entity is at center of object, and assumes size is 1.0 (with optional variable width and depth parameters) -- this is for co-registering an entity within a unit-sized larger entity to position relative to the 0,0,0 coordinate of that larger entity
 
   virtual void  addChild(T3Entity* chld)
   { chld->setParent(this); }

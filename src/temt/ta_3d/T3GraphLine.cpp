@@ -159,10 +159,10 @@ T3GraphLine::T3GraphLine(Qt3DNode* parent, T3DataView* dataView_, float fnt_sz,
   marker_size = 0.04f;
   
   if(z_on) {
-    translate->setTranslation(QVector3D(-0.5f*width, -0.5f, 0.5f));
+    TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 1.0f), width);
   }
   else {
-    translate->setTranslation(QVector3D(-0.5f*width, -0.5f, 0.0f));
+    TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 1.0f), width, 0.0f);
   }
 }
 
@@ -304,7 +304,7 @@ void T3GraphLine::setMarkerSize(float sz) {
 
 void T3GraphLine::textAt(const iVec3f& pt, const char* str) {
   T3TwoDText* txt = new T3TwoDText(text);
-  txt->scale->setScale(font_size);
+  txt->Scale(font_size);
   txt->setText(str);
   txt->TranslateXLeftTo(QVector3D(pt.x, pt.y, -pt.z));
 }

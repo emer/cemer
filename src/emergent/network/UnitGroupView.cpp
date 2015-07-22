@@ -20,7 +20,7 @@
 #include <NetView>
 #include <UnitView>
 #include <LayerView>
-#include <T3Color>
+#include <iColor>
 #include <MemberDef>
 #include <T3Panel>
 #include <T3ExaminerViewer>
@@ -28,6 +28,14 @@
 
 #include <T3Misc>
 #include <taMisc>
+
+#ifdef TA_QT3D
+
+#include <T3TriangleStrip>
+#include <T3LineStrip>
+#include <T3TwoDText>
+
+#else // TA_QT3D
 
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
@@ -39,6 +47,8 @@
 #include <Inventor/events/SoMouseButtonEvent.h>
 #include <Inventor/nodes/SoIndexedLineSet.h>
 #include <Inventor/nodes/SoDrawStyle.h>
+
+#endif // TA_QT3D
 
 TA_BASEFUNS_CTORS_DEFN(UnitGroupView);
 
@@ -315,9 +325,6 @@ void UnitGroupView::UpdateAutoScale(bool& updated) {
   }
 }
 
-// this callback is registered in NetView::Render_pre, defined in NetView.cpp
-// void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
-
 void UnitGroupView::Render_pre() {
   NetView* nv = getNetView();
   Layer* lay = this->layer(); //cache
@@ -331,7 +338,7 @@ void UnitGroupView::Render_pre() {
     no_units = false;
 
 #ifdef TA_QT3D
-  setNode(new T3UnitGroupNode(NULL, this, no_units));
+  setNode(new T3UnitGroupNode(NULL, this, no_units, nv->lay_layout == NetView::TWO_D));
 
 #else // TA_QT3D
   setNode(new T3UnitGroupNode(this, no_units));
@@ -381,6 +388,25 @@ void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
   inherited::DoActionChildren_impl(acts);
 }
 
+void UnitGroupView::GetUnitColor(NetView* nv, const taVector2i& pos, Unit* unit,
+                                 iColor& col, float max_z, float& zp1, float& sc_val,
+                                 float& val) {
+  float trans = nv->view_params.unit_trans;
+  nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
+  if(nv->unit_con_md && (unit == nv->unit_src.ptr())) {
+    col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
+  }
+  if(unit && unit->lesioned()) {
+    sc_val = 0.0f;
+  }
+  zp1 = .5f * sc_val / max_z;
+  float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+  if(unit && unit->lesioned()) {
+    alpha = 0.0f;
+  }
+  col.setAlpha(alpha);
+}
+
 void UnitGroupView::Render_impl_children() {
   NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
@@ -412,25 +438,25 @@ void UnitGroupView::Render_impl_children() {
   taVector2i co;
   float val;
   float sc_val;
-  T3Color col;
+  float zp;
+  iColor col;
   String val_str;
   // if displaying unit text, set up the viewing props in the unitgroup
-
-#ifdef TA_QT3D
-
-#else // TA_QT3D
-  
-  if (nv->unit_text_disp != NetView::UTD_NONE) {
-    SoFont* font = node_so->unitCaptionFont(true);
-    font->size.setValue(nv->font_sizes.unit);
-  }
 
   float max_z = MIN(nv->eff_max_size.x, nv->eff_max_size.y); // smallest XY
   max_z = MAX(max_z, nv->eff_max_size.z); // make sure Z isn't bigger
   float font_y = .45f / nv->eff_max_size.y;
-  float trans = nv->view_params.unit_trans;
   float font_z = nv->font_sizes.unit*2.0f;
+
+#ifdef TA_QT3D
+  QVector3D cap_xlate(0.0f, font_z, font_y);
+#else // TA_QT3D
+  if (nv->unit_text_disp != NetView::UTD_NONE) {
+    SoFont* font = node_so->unitCaptionFont(true);
+    font->size.setValue(nv->font_sizes.unit);
+  }
   SbVec3f font_xform(0.0f, font_z, font_y);
+#endif // TA_QT3D
 
   int ui = 0;
   taVector2i coord;
@@ -442,14 +468,41 @@ void UnitGroupView::Render_impl_children() {
       UnitView* uv = (UnitView*)children.FastEl(ui++);
       unit_so = uv->node_so();
       if(!unit_so) continue; // shouldn't happen
-      nv->GetUnitDisplayVals(this, coord, val, col, sc_val);
+
+      GetUnitColor(nv, coord, unit, col, max_z, zp, sc_val, val);
       // Value
-      unit_so->setAppearance(sc_val, col, max_z, trans);
+      unit_so->setAppearance(nv, sc_val, col, max_z);
       //TODO: we maybe shouldn't alter picked here, because that is expensive -- do only when select changes
       // except that might be complicated, ex. when Render() called,
       unit_so->setPicked(uv->picked);
 
       // Text (if any)
+#ifdef TA_QT3D
+      if (nv->unit_text_disp == NetView::UTD_NONE) {
+        if(unit_so->caption)
+          unit_so->setCaption("");
+      }
+      else {
+        if (nv->unit_text_disp & NetView::UTD_VALUES) {
+          ValToDispText(val, val_str);
+        }
+        String un_str;
+        switch (nv->unit_text_disp) {
+        case NetView::UTD_VALUES:
+          un_str = val_str;
+          break;
+        case NetView::UTD_NAMES:
+          un_str = unit->name.chars();
+          break;
+        case NetView::UTD_BOTH:
+          un_str = val_str + "\n" + unit->name;
+          break;
+        default: break; // compiler food, won't happen
+        }
+        unit_so->setCaption(un_str);
+        unit_so->caption->Translate(cap_xlate);
+      }
+#else // TA_QT3D
       SoAsciiText* at = unit_so->captionNode(false);
       if (nv->unit_text_disp == NetView::UTD_NONE) {
         if (at)
@@ -483,11 +536,9 @@ void UnitGroupView::Render_impl_children() {
         default: break; // compiler food, won't happen
         }
       }
+#endif // TA_QT3D
     }
   }
-
-#endif // TA_QT3D
-
 }
 
 // Set up vertices, normals, and coordinate indices for a collection of
@@ -500,8 +551,201 @@ void UnitGroupView::Render_impl_blocks() {
   if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
-#ifdef TA_QT3D
+  const float disp_scale = lay->disp_scale;
 
+  int n_geom = lay->flat_geom.Product();
+  float spacing = nv->view_params.unit_spacing;
+  float max_z = MIN(nv->eff_max_size.x, nv->eff_max_size.y); // smallest XY
+  max_z = MAX(max_z, nv->eff_max_size.z); // make sure Z isn't bigger
+  float max_xy = MAX(nv->eff_max_size.x, nv->eff_max_size.y);
+
+  if(nv->snap_bord_disp) {
+    spacing += max_xy * 0.0005f * nv->snap_bord_width;
+    if(spacing > 0.25f) spacing = 0.25f;
+  }
+  float ufontsz = nv->font_sizes.unit;
+
+  if(nv->render_svg) {
+    nv->svg_str << taSvg::Group();
+  }
+
+  // SVG render stuff:
+  int svg_below_thr_cnt = 0;    // rll optimization for below thr runs
+  taVector3i svg_pos;
+  taVector3f svg_posn;
+  float val;
+  float sc_val;
+  iColor col;
+  if(nv->render_svg) {
+    if(nv->lay_layout == NetView::THREE_D) {
+      lay->GetAbsPos(svg_pos);
+      svg_posn = nv->LayerPosToCoin3D(svg_pos);
+    }
+    else {
+      lay->GetAbsPos2d(svg_pos);
+      svg_posn = nv->LayerPosToCoin3D(svg_pos);
+      svg_posn.y = 0.0f;
+    }
+  }
+
+  String val_str = "0.0";       // initial default
+  String unit_name;
+  taVector2i pos;
+  taVector2i upos;
+
+#ifdef TA_QT3D
+  // y and z are switched for these normals..
+  QVector3D norm_bk(0.0f,  0.0f, -1.0f);   // back = y up
+  QVector3D norm_fr(0.0f,  0.0f , 1.0f); // front = y down
+  QVector3D norm_lf(-1.0f, 0.0f , 0.0f);  // left = x left
+  QVector3D norm_rt(1.0f,  0.0f , 0.0f);  // right = x right
+  QVector3D norm_tp(0.0f,  1.0f , 0.0f);  // top = z up
+
+  T3Entity* unit_text = node_so->unit_text;
+  unit_text->removeAllChildren();
+  bool build_text = (nv->unit_text_disp != NetView::UTD_NONE);
+
+  T3TriangleStrip* tris = node_so->tris;
+  tris->setNodeUpdating(true);
+  tris->restart();
+  
+  for(pos.y=lay->flat_geom.y-1; pos.y>=0; pos.y--) { // go back to front
+    for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
+      Unit* unit = lay->UnitAtCoord(pos);
+      if(unit)
+        lay->UnitDispPos(unit, upos);
+
+      float xp0 = disp_scale * (((float)upos.x + spacing) / nv->eff_max_size.x);
+      float yp0 = -disp_scale * (((float)upos.y + spacing) / nv->eff_max_size.y);
+      float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->eff_max_size.x);
+      float yp1 = -disp_scale * (((float)upos.y+1 - spacing) / nv->eff_max_size.y);
+      float zp1 = .5f / max_z;
+      float zp0 = 0.0f;
+
+      int st_idx = tris->vertexCount();
+
+      // y and z are switched!
+      // front is yp0, back is yp1
+      // left is xp0, right is xp0
+      // bottom is zp0, top is zp1
+
+      // triangle strip order is 0 1 2, 2 1 3
+      // front order: clockwise
+      // 1 3  10 11 = 00, 10, 01, 11
+      // 0 2  00 01
+      // back order: counter-clockwise
+      // 2 3        = 00, 01, 10, 11
+      // 0 1
+
+      // have to do this face-by-face to make the normals work out -- go back to front
+      // back face = yp1, x,z -- counter
+      tris->addVertex(QVector3D(xp0, zp0, yp1), norm_bk); // 00
+      tris->addVertex(QVector3D(xp0, zp1, yp1), norm_bk); // 01
+      tris->addVertex(QVector3D(xp1, zp0, yp1), norm_bk); // 10
+      tris->addVertex(QVector3D(xp1, zp1, yp1), norm_bk); // 11
+
+      // left face = xp0, y,z -- counter
+      tris->addVertex(QVector3D(xp0, zp0, yp0), norm_lf); // 00
+      tris->addVertex(QVector3D(xp0, zp1, yp0), norm_lf); // 01
+      tris->addVertex(QVector3D(xp0, zp0, yp1), norm_lf); // 10
+      tris->addVertex(QVector3D(xp0, zp1, yp1), norm_lf); // 11
+
+      // right face = xp1, y,z -- clock
+      tris->addVertex(QVector3D(xp1, zp0, yp0), norm_rt); // 00
+      tris->addVertex(QVector3D(xp1, zp0, yp1), norm_rt); // 10
+      tris->addVertex(QVector3D(xp1, zp1, yp0), norm_rt); // 01
+      tris->addVertex(QVector3D(xp1, zp1, yp1), norm_rt); // 11
+
+      // front face = yp0, x,z -- clock
+      tris->addVertex(QVector3D(xp0, zp0, yp0), norm_fr); // 00
+      tris->addVertex(QVector3D(xp1, zp0, yp0), norm_fr); // 10
+      tris->addVertex(QVector3D(xp0, zp1, yp0), norm_fr); // 01
+      tris->addVertex(QVector3D(xp1, zp1, yp0), norm_fr); // 11
+
+      // top face = zp1, x,y -- clock
+      tris->addVertex(QVector3D(xp0, zp1, yp0), norm_tp); // 00
+      tris->addVertex(QVector3D(xp1, zp1, yp0), norm_tp); // 10
+      tris->addVertex(QVector3D(xp0, zp1, yp1), norm_tp); // 01
+      tris->addVertex(QVector3D(xp1, zp1, yp1), norm_tp); // 11
+
+      for(int i=0;i<20;i++) {        
+        tris->addColor((uint32_t)0); // place holder..
+        tris->addIndex(st_idx++);    // indexes are 1-to-1..
+        if((i+1) % 4 == 0) {
+          tris->addBreak();         // all we really are using them for is the break..
+        }
+      }
+      if(build_text) {
+        float xfp = .5f * (xp0 + xp1);
+        T3TwoDText* txt = new T3TwoDText(unit_text);
+        txt->align = T3_ALIGN_CENTER;
+        txt->Translate(QVector3D(xfp, MAX(zp1,0.0f) + .01f, yp0));
+        txt->Scale(ufontsz);
+        if(nv->unit_text_disp == NetView::UTD_NAMES) {
+          txt->setText(unit->name);
+        }
+      }
+
+      if(nv->render_svg) {
+        GetUnitColor(nv, pos, unit, col, max_z, zp1, sc_val, val);
+        iColor drk = (iColor)((QColor)col).darker(150);
+        iColor drker = (iColor)((QColor)drk).darker(150);
+
+        if(sc_val < .01f) { // optimize for near-zero
+          if(svg_below_thr_cnt == 0) { // start a new path
+            nv->svg_str
+              << taSvg::Path(drk, -1.0f, true, drk); // fill
+          }
+          svg_below_thr_cnt++;
+          if(svg_below_thr_cnt % 8 == 0)
+            nv->svg_str << "\n";
+          nv->svg_str          // top surface:
+            << "M " << taSvg::Coords(svg_posn.x + xp0, svg_posn.y + zp1, svg_posn.z + yp0)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp1, svg_posn.z + yp0)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp1, svg_posn.z + yp1)
+            << "L " << taSvg::Coords(svg_posn.x + xp0, svg_posn.y + zp1, svg_posn.z + yp1);
+        }
+        else {
+          if(svg_below_thr_cnt > 0) {
+            svg_below_thr_cnt = 0;
+            nv->svg_str << taSvg::PathEnd(); // we have a dangling path
+          }
+          nv->svg_str
+            << taSvg::Path(drker, -1.0f, true, drker) // fill
+            // left side wall: note: the order matters for self-intersection
+            << "M " << taSvg::Coords(svg_posn.x + xp0, svg_posn.y + zp0, svg_posn.z + yp0)
+            << "L " << taSvg::Coords(svg_posn.x + xp0, svg_posn.y + zp0, svg_posn.z + yp1)
+            << "L " << taSvg::Coords(svg_posn.x + xp0, svg_posn.y + zp1, svg_posn.z + yp1)
+            << "L " << taSvg::Coords(svg_posn.x + xp0, svg_posn.y + zp1, svg_posn.z + yp0)
+            // right side wall:
+            << "M " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp0, svg_posn.z + yp0)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp1, svg_posn.z + yp0)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp1, svg_posn.z + yp1)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp0, svg_posn.z + yp1)
+            << taSvg::PathEnd();
+          nv->svg_str
+            << taSvg::Path(drk, -1.0f, true, drk) // fill
+            // top surface:
+            << "M " << taSvg::Coords(svg_posn.x + xp0, svg_posn.y + zp1, svg_posn.z + yp0)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp1, svg_posn.z + yp0)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp1, svg_posn.z + yp1)
+            << "L " << taSvg::Coords(svg_posn.x + xp0, svg_posn.y + zp1, svg_posn.z + yp1)
+            << taSvg::PathEnd();
+          nv->svg_str
+            << taSvg::Path(col, -1.0f, true, col) // fill
+            // front wall:
+            << "M " << taSvg::Coords(svg_posn.x + xp0, svg_posn.y + zp0, svg_posn.z + yp0)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp0, svg_posn.z + yp0)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp1, svg_posn.z + yp0)
+            << "L " << taSvg::Coords(svg_posn.x + xp0, svg_posn.y + zp1, svg_posn.z + yp0)
+            << taSvg::PathEnd();
+        }
+      }
+    }
+  }
+
+  // don't call setNodeUpdating(false) -- will happen after render values..
+  
 #else // TA_QT3D
   
   SoIndexedTriangleStripSet* sits = node_so->shape();
@@ -511,6 +755,11 @@ void UnitGroupView::Render_impl_blocks() {
   SoMFVec3f& vertex = vtx_prop->vertex;
   SoMFVec3f& normal = vtx_prop->normal;
   SoMFUInt32& color = vtx_prop->orderedRGBA;
+
+  int n_per_vtx = 8;
+  int tot_vtx =  n_geom * n_per_vtx;
+  vertex.setNum(tot_vtx);
+  color.setNum(n_geom);
 
   vtx_prop->normalBinding.setValue(SoNormalBinding::PER_FACE_INDEXED);
   vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_PART_INDEXED);
@@ -525,31 +774,8 @@ void UnitGroupView::Render_impl_blocks() {
   normal_dat[idx++].setValue(0.0f, 1.0f, 0.0f); // top = 4
   normal.finishEditing();
 
-  const float disp_scale = lay->disp_scale;
-
-  int n_geom = lay->flat_geom.Product();
-  int n_per_vtx = 8;
-  int tot_vtx =  n_geom * n_per_vtx;
-  vertex.setNum(tot_vtx);
-  color.setNum(n_geom);
-
-  float spacing = nv->view_params.unit_spacing;
-  float max_z = MIN(nv->eff_max_size.x, nv->eff_max_size.y); // smallest XY
-  max_z = MAX(max_z, nv->eff_max_size.z); // make sure Z isn't bigger
-  float max_xy = MAX(nv->eff_max_size.x, nv->eff_max_size.y);
-
-  if(nv->snap_bord_disp) {
-    spacing += max_xy * 0.0005f * nv->snap_bord_width;
-    if(spacing > 0.25f) spacing = 0.25f;
-  }
-
-  if(nv->render_svg) {
-    nv->svg_str << taSvg::Group();
-  }
-
   bool build_text = false;
   SoSeparator* un_txt = NULL;
-  float ufontsz = nv->font_sizes.unit;
   if(nv->unit_text_disp == NetView::UTD_NONE) {
     un_txt = node_so->unitText();
     if(un_txt) {
@@ -579,29 +805,8 @@ void UnitGroupView::Render_impl_blocks() {
     fnt->size.setValue(ufontsz);
   }
 
-  // SVG render stuff:
-  taVector3i svg_pos;
-  taVector3f svg_posn;
-  T3Color col;
-  float trans = nv->view_params.unit_trans;
-  if(nv->render_svg) {
-    if(nv->lay_layout == NetView::THREE_D) {
-      lay->GetAbsPos(svg_pos);
-      svg_posn = nv->LayerPosToCoin3D(svg_pos);
-    }
-    else {
-      lay->GetAbsPos2d(svg_pos);
-      svg_posn = nv->LayerPosToCoin3D(svg_pos);
-      svg_posn.y = 0.0f;
-    }
-  }
-
   SbVec3f* vertex_dat = vertex.startEditing();
 
-  String val_str = "0.0";       // initial default
-  String unit_name;
-  taVector2i pos;
-  taVector2i upos;
   int v_idx = 0;
   int t_idx = 3;                // base color + complexity + font
   // these go in normal order; indexes are backwards
@@ -697,8 +902,6 @@ void UnitGroupView::Render_impl_blocks() {
 
   // triangle strip order is 0 1 2, 2 1 3, 2 3 4
 
-  int svg_below_thr_cnt = 0;    // rll optimization for below thr runs
-
   int32_t* coords_dat = coords.startEditing();
   int32_t* norms_dat = norms.startEditing();
   int32_t* mats_dat = mats.startEditing();
@@ -792,28 +995,9 @@ void UnitGroupView::Render_impl_blocks() {
         float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->eff_max_size.x);
         float yp1 = -disp_scale * (((float)upos.y+1 - spacing) / nv->eff_max_size.y);
 
-        float val;
-        float sc_val;
-        // this is from UpdateUnitValues_blocks()
-        nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
-        if(nv->unit_con_md && (unit == nv->unit_src.ptr())) {
-          col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
-        }
-        if(unit && unit->lesioned()) {
-          sc_val = 0.0f;
-        }
-        float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-        if(unit && unit->lesioned()) {
-          alpha = 0.0f;
-        }
-
-        iColor icol = (iColor)col;
-        icol.a = iColor::fc2ic(alpha);
-
-        iColor drk = (iColor)((QColor)icol).darker(150);
+        GetUnitColor(nv, pos, unit, col, max_z, zp, sc_val, val);
+        iColor drk = (iColor)((QColor)col).darker(150);
         iColor drker = (iColor)((QColor)drk).darker(150);
-
-        float zp = .5f * sc_val / max_z;
 
         if(sc_val < .01f) { // optimize for near-zero
           if(svg_below_thr_cnt == 0) { // start a new path
@@ -868,16 +1052,16 @@ void UnitGroupView::Render_impl_blocks() {
     }
   }
 
+  coords.finishEditing();
+  norms.finishEditing();
+  mats.finishEditing();
+  
+#endif // TA_QT3D
+
   if(nv->render_svg && svg_below_thr_cnt > 0) {
     nv->svg_str << taSvg::PathEnd(); // we have a dangling path
   }
 
-  coords.finishEditing();
-  norms.finishEditing();
-  mats.finishEditing();
-
-#endif // TA_QT3D
-  
   UpdateUnitValues_blocks(); // hand off to next guy to adjust block heights
 
   if(nv->render_svg) {
@@ -895,7 +1079,65 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   T3UnitGroupNode* node_so = this->node_so(); // cache
   if(!node_so) return;
 
+  float max_z = MIN(nv->eff_max_size.x, nv->eff_max_size.y); // smallest XY
+  max_z = MAX(max_z, nv->eff_max_size.z); // make sure Z isn't bigger
+
+  String val_str;
+  String unit_name;
+  iColor col;
+  float val;
+  float sc_val;
+  taVector2i pos;
+  float zp1;
+
 #ifdef TA_QT3D
+
+  float t_idx = 0;
+  float c_idx = 0;
+  const int n_zverts = 12;
+  int zverts[n_zverts] = {1,3,5,7,10,11,14,15,16,17,18,19};
+
+  T3Entity* unit_text = node_so->unit_text;
+  T3TriangleStrip* tris = node_so->tris;
+  tris->setNodeUpdating(true);
+  
+  for(pos.y=lay->flat_geom.y-1; pos.y>=0; pos.y--) { // go back to front
+    for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
+      Unit* unit = lay->UnitAtCoord(pos);
+
+      GetUnitColor(nv, pos, unit, col, max_z, zp1, sc_val, val);
+      int pclr = T3Misc::makePackedRGBA(col);
+      for(int i=0;i<20;i++) {
+        tris->tris->colors.FastEl(c_idx + i) = pclr;
+      }
+      
+      // update verticies
+      for(int i=0;i<n_zverts;i++) {
+        tris->tris->vndata.FastEl3d(1, 0, c_idx + zverts[i]) = zp1;
+      }
+      c_idx += 20;
+
+      if(nv->unit_text_disp & NetView::UTD_VALUES) {
+        ValToDispText(val, val_str);
+        T3TwoDText* txt = dynamic_cast<T3TwoDText*>(unit_text->children().at(t_idx++));
+        switch (nv->unit_text_disp) {
+        case NetView::UTD_VALUES:
+          txt->setText(val_str);
+          break;
+        case NetView::UTD_NAMES:
+          break;
+        case NetView::UTD_BOTH: {
+          String un_txt = unit->name + "\n" + val_str;
+          txt->setText(un_txt);
+          break;
+        }
+        default: break; // compiler food, won't happen
+        }
+      }
+    }
+  }
+
+  tris->setNodeUpdating(false);
 
 #else // TA_QT3D
   
@@ -909,18 +1151,9 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   SbVec3f* vertex_dat = vertex.startEditing();
   uint32_t* color_dat = color.startEditing();
 
-  float trans = nv->view_params.unit_trans;
-  float max_z = MIN(nv->eff_max_size.x, nv->eff_max_size.y); // smallest XY
-  max_z = MAX(max_z, nv->eff_max_size.z); // make sure Z isn't bigger
-
   SoSeparator* un_txt = node_so->unitText();
 
-  String val_str;
-  String unit_name;
-  float val;
-  float sc_val;
-  T3Color col;
-  taVector2i pos;
+  float zp;
   int v_idx = 0;
   int c_idx = 0;
   int t_idx = 3;                // base color + font
@@ -929,26 +1162,15 @@ void UnitGroupView::UpdateUnitValues_blocks() {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
       nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
       Unit* unit = lay->UnitAtCoord(pos);
-      if(nv->unit_con_md && (unit == nv->unit_src.ptr())) {
-        col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
-      }
-      if(unit && unit->lesioned()) {
-        sc_val = 0.0f;
-      }
 
-      float zp = .5f * sc_val / max_z;
+      GetUnitColor(nv, pos, unit, col, max_z, zp, sc_val, val);
+      color_dat[c_idx++] = T3Misc::makePackedRGBA(col);
+      
       v_idx+=4;                 // skip the _0 cases
-
       vertex_dat[v_idx++][1] = zp; // 00_v = 1
       vertex_dat[v_idx++][1] = zp; // 10_v = 2
       vertex_dat[v_idx++][1] = zp; // 01_v = 3
       vertex_dat[v_idx++][1] = zp; // 11_v = 4
-
-      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-      if(unit && unit->lesioned()) {
-        alpha = 0.0f;
-      }
-      color_dat[c_idx++] = T3Misc::makePackedRGBA(col.r, col.g, col.b, alpha);
 
       if(nv->unit_text_disp & NetView::UTD_VALUES) {
         SoSeparator* tsep = (SoSeparator*)un_txt->getChild(t_idx);
@@ -1212,6 +1434,8 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
   if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
+  float trans = nv->view_params.unit_trans;
+  
 #ifdef TA_QT3D
 
 #else // TA_QT3D
@@ -1228,11 +1452,9 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
   if(!md) return;               // shouldn't happen
   nv->unit_disp_idx = nv->membs.FindEl(md);
 
-  float trans = nv->view_params.unit_trans;
-  float val;
   float sc_val;
-  iColor tc;
-  T3Color col;
+  float val;
+  iColor col;
   taVector2i pos;
   int c_idx = 0;
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
@@ -1243,11 +1465,10 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
         void* base;
         val = GetUnitDisplayVal(pos, base);
       }
-      nv->GetUnitColor(val, tc, sc_val);
-      col.setValue(tc.redf(), tc.greenf(), tc.bluef());
-
+      nv->GetUnitColor(val, col, sc_val);
       float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-      color_dat[c_idx++] = T3Misc::makePackedRGBA(col.r, col.g, col.b, alpha);
+      col.setAlpha(alpha);
+      color_dat[c_idx++] = T3Misc::makePackedRGBA(col);
     }
   }
 

@@ -51,37 +51,53 @@ void T3Entity::setNodeUpdating(bool updating) {
 void T3Entity::TranslateXLeftTo(const QVector3D& pos) {
   QVector3D ps = pos;
   ps.setX(pos.x() + 0.5f * size.x() * scale->scale3D().x());
-  translate->setTranslation(ps);
+  Translate(ps);
 }
 
 void T3Entity::TranslateXRightTo(const QVector3D& pos) {
   QVector3D ps = pos;
   ps.setX(pos.x() - 0.5f * size.x() * scale->scale3D().x());
-  translate->setTranslation(ps);
+  Translate(ps);
 }
 
 void T3Entity::TranslateYBotTo(const QVector3D& pos) {
   QVector3D ps = pos;
   ps.setY(pos.y() + 0.5f * size.y() * scale->scale3D().y());
-  translate->setTranslation(ps);
+  Translate(ps);
 }
 
 void T3Entity::TranslateYTopTo(const QVector3D& pos) {
   QVector3D ps = pos;
   ps.setY(pos.y() - 0.5f * size.y() * scale->scale3D().y());
-  translate->setTranslation(ps);
+  Translate(ps);
 }
 
 void T3Entity::TranslateZFrontTo(const QVector3D& pos) {
   QVector3D ps = pos;
   ps.setZ(pos.z() - 0.5f * size.z() * scale->scale3D().z());
-  translate->setTranslation(ps);
+  Translate(ps);
 }
 
 void T3Entity::TranslateZBackTo(const QVector3D& pos) {
   QVector3D ps = pos;
   ps.setZ(pos.z() + 0.5f * size.z() * scale->scale3D().z());
-  translate->setTranslation(ps);
+  Translate(ps);
+}
+
+void T3Entity::TranslateLLFTo(const QVector3D& pos) {
+  QVector3D ps = pos;
+  ps.setX(pos.x() - 0.5f * size.x() * scale->scale3D().x());
+  ps.setY(pos.y() - 0.5f * size.y() * scale->scale3D().y());
+  ps.setZ(pos.z() - 0.5f * size.z() * scale->scale3D().z());
+  Translate(ps);
+}
+
+void T3Entity::TranslateLLFSz1To(const QVector3D& pos, float width, float depth) {
+  QVector3D ps = pos;
+  ps.setX(pos.x() - 0.5f * width);
+  ps.setY(pos.y() - 0.5f);
+  ps.setZ(pos.z() - 0.5f * depth);
+  Translate(ps);
 }
 
 void T3Entity::removeAllChildren() {

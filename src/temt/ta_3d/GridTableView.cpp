@@ -723,7 +723,7 @@ void GridTableView::RenderGrid() {
 #ifdef TA_QT3D
   T3LineStrip* grid = node_so->grid;
   grid->setNodeUpdating(true);
-  grid->translate->setTranslation(QVector3D(-0.5f * width, -0.5f, 0.0f));
+  grid->TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.0f), width, 0.0f);
 #else // TA_QT3D
   SoGroup* grid = node_so->grid();
   grid->removeAllChildren(); // should have been done
@@ -910,8 +910,7 @@ void GridTableView::RenderHeader() {
   // margin and baseline adj
   float base_adj = (head_height * T3Misc::char_base_fract);
 #ifdef TA_QT3D
-  hdr->translate->setTranslation
-    (QVector3D(-0.5f * width, -0.5f + (head_height - base_adj), -gr_mg_sz));
+  hdr->TranslateLLFSz1To(QVector3D(0.0f, (head_height - base_adj), -gr_mg_sz), width, 0.0f);
 #else // TA_QT3D
   SoTranslation* tr = new SoTranslation();
   hdr->addChild(tr);
@@ -930,8 +929,8 @@ void GridTableView::RenderHeader() {
     T3TwoDText* txt = new T3TwoDText(hdr);
     txt->setText("#");
     txt->setTextColor(txtcolr);
-    txt->scale->setScale(font_scale);
-    txt->translate->setTranslation
+    txt->Scale(font_scale);
+    txt->Translate
       (QVector3D(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -gr_mg_sz));
 #else // TA_QT3D
     SoSeparator* txsep = new SoSeparator;
@@ -980,9 +979,8 @@ void GridTableView::RenderHeader() {
     T3TwoDText* txt = new T3TwoDText(hdr);
     txt->setText(cnm);
     txt->setTextColor(txtcolr);
-    txt->scale->setScale(font_scale);
-    txt->translate->setTranslation
-      (QVector3D(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -gr_mg_sz));
+    txt->Scale(font_scale);
+    txt->Translate(QVector3D(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -gr_mg_sz));
 #else // TA_QT3D
     T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
     SoSeparator* colsep = colnd->topSeparator();
@@ -1061,8 +1059,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 #ifdef TA_QT3D
   T3Entity* body = node_so->body;
   T3Entity* ln = new T3Entity(body);
-  ln->translate->setTranslation
-    (QVector3D(0.0f, 1.0f - (row_pos + y_offs), 0.0f));
+  ln->Translate(QVector3D(0.0f, 1.0f - (row_pos + y_offs), 0.0f));
 #else // TA_QT3D
 
   SoSeparator* ln = new SoSeparator();
@@ -1093,9 +1090,8 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     T3TwoDText* txt = new T3TwoDText(ln);
     txt->setText(el);
     txt->setTextColor(txtcolr);
-    txt->scale->setScale(font_scale);
-    txt->translate->setTranslation
-      (QVector3D(col_pos + 0.5f * col_wd_lst, 0.5f * text_ht, 0.0f));
+    txt->Scale(font_scale);
+    txt->Translate(QVector3D(col_pos + 0.5f * col_wd_lst, 0.5f * text_ht, 0.0f));
 #else // TA_QT3D
     SoSeparator* row_sep = new SoSeparator;
     tr = new SoTranslation;
@@ -1182,13 +1178,11 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           T3MatrixGrid* sogr = new T3MatrixGrid
             (ln, cell_mat, act_idx, cvs->mat_odd_vert, &colorscale, 
              (T3MatrixGrid::MatrixLayout)cvs->mat_layout, mat_val_text);
-          sogr->translate->setTranslation
-            (QVector3D(col_pos + gr_mg_sz, -0.5f * row_height + 2.0f * gr_mg_sz, 0.0f));
-          sogr->scale->setScale3D(QVector3D(col_wd, mat_ht, 1.0f));
+          sogr->Translate(QVector3D(col_pos + gr_mg_sz, -0.5f * row_height + 2.0f * gr_mg_sz, 0.0f));
+          sogr->Scale3D(QVector3D(col_wd, mat_ht, 1.0f));
           if(mat_rot_rad != 0.0f) {
             // todo: this is not working for some reason, even when applied to lines
-            sogr->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
-            sogr->rotate->setAngleDeg(mat_rot);
+            sogr->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), mat_rot);
           }
           sogr->spacing = mat_block_spc;
           sogr->block_height = mat_block_height;
@@ -1244,9 +1238,8 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       txt->align = (T3AlignText)just;
       txt->setText(el);
       txt->setTextColor(txtcolr);
-      txt->scale->setScale(font_scale);
-      txt->translate->setTranslation
-        (QVector3D(col_pos + x_offs, 0.5f * text_ht, 0.0f));
+      txt->Scale(font_scale);
+      txt->Translate(QVector3D(col_pos + x_offs, 0.5f * text_ht, 0.0f));
 #else // TA_QT3D
       SoSeparator* txt_sep = new SoSeparator;
       ln->addChild(txt_sep);
@@ -1305,8 +1298,7 @@ void GridTableView::RenderLines(){
 #ifdef TA_QT3D
   T3Entity* body = node_so->body;
   float hh = 0.0f;
-  body->translate->setTranslation
-    (QVector3D(-0.5f * width, -0.5f, 0.0f));
+  body->TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.0f), width, 0.0f);
 #else // TA_QT3D
   SoSeparator* body = node_so->body(); // cache
 #endif // TA_QT3D

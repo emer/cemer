@@ -890,19 +890,17 @@ void NetView::GetUnitColor(float val,  iColor& col, float& sc_val) {
   col = fl;
 }
 
-void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, taVector2i& co, float& val, T3Color& col,
-                                 float& sc_val) {
+void NetView::GetUnitDisplayVals
+(UnitGroupView* ugrv, const taVector2i& co, float& val, iColor& col, float& sc_val) {
   sc_val = scale.zero;
   void* base = NULL;
   if(unit_disp_md && unit_md_flags != MD_UNKNOWN)
     val = ugrv->GetUnitDisplayVal(co, base);
   if(!base) {
-    col.setValue(.8f, .8f, .8f); // lt gray
+    col.setRgb(.8f, .8f, .8f); // lt gray
     return;
   }
-  iColor tc;
-  GetUnitColor(val, tc, sc_val);
-  col.setValue(tc.redf(), tc.greenf(), tc.bluef());
+  GetUnitColor(val, col, sc_val);
 }
 
 void NetView::InitDisplay(bool init_panel) {
@@ -1211,7 +1209,8 @@ void NetView::Render_impl() {
 
   if(lay_layout == NetView::TWO_D) {
 #ifdef TA_QT3D
-
+    node_so->caption->TranslateXLeftTo(QVector3D(-0.5f, 0.0f, 0.5f));
+    node_so->caption->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), -90.0f);
 #else // TA_QT3D
     SbVec3f tran(0.0f, 0.0f, 0.05f);
     SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
@@ -1361,10 +1360,9 @@ void NetView::Render_net_text() {
       float xv = 0.05f + (float)cur_col / (float)(per_row);
       float yv = ((float)(cur_row+1.0f) / (float)(n_rows + 2.0f));
 #ifdef TA_QT3D
-      txt->translate->setTranslation(QVector3D(xv, 0.0f, -yv));
-      txt->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
-      txt->rotate->setAngleDeg(net_text_rot);
-      txt->scale->setScale(font_sizes.net_vals);
+      txt->Translate(QVector3D(xv, 0.0f, -yv));
+      txt->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), net_text_rot);
+      txt->Scale(font_sizes.net_vals);
 #else // TA_QT3D
       tr->translation.setValue(xv, 0.0f, -yv);
       tr->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), rot_rad);

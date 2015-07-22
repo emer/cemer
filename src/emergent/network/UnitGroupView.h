@@ -90,6 +90,9 @@ protected:
   virtual void          Render_impl_outnm(); // output name
   virtual void          Render_impl_snap_bord(); // snap border
 
+  void          GetUnitColor(NetView* nv, const taVector2i& pos, Unit* unit, iColor& col,
+                             float max_z, float& zp1, float& sc_val, float& val);
+  
   void         Render_pre() override; // #IGNORE
   void         Render_impl() override; // #IGNORE
   void         Reset_impl() override; // #IGNORE

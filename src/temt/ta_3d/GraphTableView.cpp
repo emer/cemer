@@ -1423,7 +1423,7 @@ void GraphTableView::RenderLegend() {
 #ifdef TA_QT3D
   T3Entity* leg = node_so->legend;
   leg->removeAllChildren();
-  leg->translate->setTranslation
+  leg->Translate
     (QVector3D(-0.5f * width, 0.5f * ylen + (0.3f + (float)n_down * 1.1f) * label_font_size,
                0.0f));
 #else // TA_QT3D
@@ -1466,7 +1466,7 @@ void GraphTableView::RenderLegend() {
         ypos = lidx % n_down;
         lidx++;
         cur_tr.SetXY(over_amt * xpos, dn_amt * ypos);
-        ln->translate->setTranslation(QVector3D(cur_tr.x, cur_tr.y, 0.0f));
+        ln->Translate(QVector3D(cur_tr.x, cur_tr.y, 0.0f));
 #else // TA_QT3D
         tr = new SoTranslation();  leg->addChild(tr);
         if(mv_dn > 1) {
@@ -1500,7 +1500,7 @@ void GraphTableView::RenderLegend() {
       ypos = lidx % n_down;
       lidx++;
       cur_tr.SetXY(over_amt * xpos, dn_amt * ypos);
-      ln->translate->setTranslation(QVector3D(cur_tr.x, cur_tr.y, 0.0f));
+      ln->Translate(QVector3D(cur_tr.x, cur_tr.y, 0.0f));
 #else // TA_QT3D
       tr = new SoTranslation();  leg->addChild(tr);
       if(mv_dn > 1) {
@@ -1530,7 +1530,7 @@ void GraphTableView::RenderLegend() {
       ypos = lidx % n_down;
       lidx++;
       cur_tr.SetXY(over_amt * xpos, dn_amt * ypos);
-      ln->translate->setTranslation(QVector3D(cur_tr.x, cur_tr.y, 0.0f));
+      ln->Translate(QVector3D(cur_tr.x, cur_tr.y, 0.0f));
 #else // TA_QT3D
       tr = new SoTranslation();  leg->addChild(tr);
       if(mv_dn > 1) {
