@@ -57,10 +57,19 @@ public:
 
   float		max_xy;		// max of unit x,y cell size
   float		cl_spc;		// computed cell spacing
+  float		cl_x;		// computed cell size
+  float		cl_y;		// computed cell size
+  float         ufontsz;        // computed font sz
   float		blk_ht;		// computed block height
 
   T3TriangleStrip*      tris;
   T3Entity*             cell_text;
+
+  QVector3D norm_bk;
+  QVector3D norm_rt;
+  QVector3D norm_lf;
+  QVector3D norm_fr;
+  QVector3D norm_tp;
   
   virtual void		setMatrix(taMatrix* mat, bool oddy, int slice = -1);
   virtual void		setColorScale(ColorScale* cs);
@@ -83,12 +92,11 @@ public:
   ~T3MatrixGrid();
 
 protected:
-  void render_block_verts(float xp, float yp, float xp1, float yp1, float zp);
-  void render_block_idx(int c00_0);
-  // render one set of block indicies
-  void  render_text(bool build_text, int& t_idx, float xp, float xp1, float yp,
-                    float yp1, float zp, float ufontsz);
-  // setup all the cell_text_ stuff
+  void renderBlock(const taVector2i& pos);
+  void renderText(float xp, float xp1, float yp, float yp1, float zp);
+  void renderValue(taMatrix* matptr, float val, int& c_idx, iColor& clr, int& t_idx,
+                   bool use_str_val, const String& str_val);
+  void renderSvg(taMatrix* matptr, const taVector2i& pos, iColor& clr);
 };
 
 #endif // T3MatrixGrid_h

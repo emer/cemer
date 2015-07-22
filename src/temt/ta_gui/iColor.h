@@ -104,9 +104,12 @@ struct {
   void		setRgba(int r, int g, int b, int a);
   void		setRgba(float r_, float g_, float b_, float a_)
   		  {setRgba(fc2ic(r_), fc2ic(g_), fc2ic(b_), fc2ic(a_));}
+  void          setAlpha(int alpha) { a = alpha & 0xFF; }
+  void          setAlpha(float alpha) { setAlpha(fc2ic(alpha)); }
   int		red() const {return r;}
   int		green() const {return g;}
   int		blue() const {return b;}
+  int           alpha() const {return a;}
   float		redf() const {return ic2fc(r);}
   float		greenf() const {return ic2fc(g);}
   float		bluef() const {return ic2fc(b);}

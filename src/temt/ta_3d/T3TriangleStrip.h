@@ -50,6 +50,10 @@ public:
 
   void  restart();
   // set sizes back to 0
+
+  int  vertexCount() { return vndata.Frames(); } // number of vertexes
+  int  colorCount()  { return colors.size; } // number of colors
+  int  indexCount()  { return indexes.size; } // number of indexes
   
   int  addVertex(const QVector3D& pos, const QVector3D& norm);
   // add given vertex, normal at that vertex, return index to that point
@@ -96,6 +100,10 @@ public:
   
   void  restart()                      { tris->restart(); }
 
+  int  vertexCount() { return tris->vertexCount(); } // number of vertexes
+  int  colorCount()  { return tris->colorCount(); } // number of colors
+  int  indexCount()  { return tris->indexCount(); } // number of indexes
+  
   int  addVertex(const QVector3D& pos, const QVector3D& norm)
   { return tris->addVertex(pos, norm); }
   // add given vertex, normal at that vertex, return index to that point

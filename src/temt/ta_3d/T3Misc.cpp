@@ -63,3 +63,7 @@ uint32_t T3Misc::makePackedRGBA(int r, int g, int b, int a) {
 uint32_t T3Misc::makePackedRGBA(const QColor& clr) {
   return makePackedRGBA(clr.red(), clr.green(), clr.blue(), clr.alpha());
 }
+
+uint32_t T3Misc::makePackedRGBA(const iColor& clr) {
+  return makePackedRGBA(clr.red(), clr.green(), clr.blue(), clr.alpha());
+}

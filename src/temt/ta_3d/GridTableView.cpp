@@ -1174,8 +1174,8 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       }
       else {
         float mat_ht = row_ht;
-        if(col_wd > mat_ht)     // make it more square as height increases..
-          mat_ht += (col_wd - mat_ht) * fabsf(sinf(mat_rot_rad));
+        // if(col_wd > mat_ht)     // make it more square as height increases..
+        //   mat_ht += (col_wd - mat_ht) * fabsf(sinf(mat_rot_rad));
         taMatrix* cell_mat =  dc->AR();
         if(cell_mat) {
 #ifdef TA_QT3D
@@ -1185,7 +1185,8 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           sogr->translate->setTranslation
             (QVector3D(col_pos + gr_mg_sz, -0.5f * row_height + 2.0f * gr_mg_sz, 0.0f));
           sogr->scale->setScale3D(QVector3D(col_wd, mat_ht, 1.0f));
-          if(mat_rot_rad > 0.0f) {
+          if(mat_rot_rad != 0.0f) {
+            // todo: this is not working for some reason, even when applied to lines
             sogr->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
             sogr->rotate->setAngleRad(mat_rot_rad);
           }

@@ -21,6 +21,7 @@
 
 // member includes:
 #include <QColor>
+#include <iColor>
 
 // declare all other types mentioned but not required to include:
 
@@ -58,6 +59,7 @@ public:
   static uint32_t makePackedRGBA(float r_, float g_, float b_, float a_ = 1.0f);
   static uint32_t makePackedRGBA(int r_, int g_, int b_, int a_ = 255);
   static uint32_t makePackedRGBA(const QColor& clr);
+  static uint32_t makePackedRGBA(const iColor& clr);
 
 };
 
