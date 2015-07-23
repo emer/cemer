@@ -376,7 +376,7 @@ void T3MatrixGrid::renderText(float xp0, float xp1, float yp0, float yp1, float 
   float xfp = .5f * (xp0 + xp1);
   float yfp = .5f * (yp0 + yp1) - .5f * ufontsz;
   float zfp = MAX(zp1,0.0f) + .01f;
-  txt->Translate(QVector3D(xfp, yfp, zfp));
+  txt->Translate(xfp, yfp, zfp);
   txt->Scale(ufontsz);
 }
 

@@ -680,7 +680,7 @@ void UnitGroupView::Render_impl_blocks() {
         float xfp = .5f * (xp0 + xp1);
         T3TwoDText* txt = new T3TwoDText(unit_text);
         txt->align = T3_ALIGN_CENTER;
-        txt->Translate(QVector3D(xfp, MAX(zp1,0.0f) + .01f, yp0));
+        txt->Translate(xfp, MAX(zp1,0.0f) + .01f, yp0);
         txt->Scale(ufontsz);
         if(nv->unit_text_disp == NetView::UTD_NAMES) {
           txt->setText(unit->name);

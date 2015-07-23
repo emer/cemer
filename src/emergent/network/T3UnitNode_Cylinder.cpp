@@ -18,25 +18,35 @@
 
 #ifdef TA_QT3D
 
+#include <math.h>
+#include <T3Cylinder>
+
 T3UnitNode_Cylinder::T3UnitNode_Cylinder(Qt3DNode* parent, T3DataView* dataView_,
                                  float max_x, float max_y, float max_z,
 				 float un_spc, float disp_sc)
   : inherited(parent, dataView_, max_x, max_y, max_z, un_spc, disp_sc )
+  , cylinder(new T3Cylinder(this))
 {
+  float max_xy = MAX(max_x, max_y);
+  float rad = disp_scale * ((.5f - spacing) / max_xy);
+  cylinder->setGeom(T3Cylinder::LONG_Z, rad, 0.01f);
 }
 
 T3UnitNode_Cylinder::~T3UnitNode_Cylinder() {
 }
 
-void T3UnitNode_Cylinder::setAppearance_impl(NetView* nv, float act, const iColor& color,
+void T3UnitNode_Cylinder::setAppearance_impl(NetView* nv, float act, const iColor& clr,
                                              float max_z, bool act_invalid) 
 {
-  // shape_->height = (base_height + ((max_height - base_height) * fabs(act))) / max_z;
-  // float dz; float x; float y;
-  // transform()->translation.getValue().getValue(x, dz, y);
-  // dz = (((max_height - base_height) * act) * 0.5f) / max_z;
-  // transform()->translation.setValue(x, dz, y);
-  inherited::setAppearance_impl(nv, act, color, max_z, act_invalid);
+  float ht = (base_height + ((max_height - base_height) * fabs(act))) / max_z;
+  cylinder->setColor(clr, 1.0f, 0.5f, 2.0f);
+  cylinder->setLength(ht);
+
+  float xp = translate->dx();
+  float zp = translate->dz();
+  float dy = ((max_height - base_height) * act * 0.5f) / max_z;
+  // cylinder->Translate(xp, yp, dz);
+  Translate(xp, dy, zp);
 }
 
 #else // TA_QT3D

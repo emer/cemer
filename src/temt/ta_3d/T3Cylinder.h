@@ -41,6 +41,12 @@ public:
   
   virtual void  setGeom(LongAxis axis, float radius, float length);
   // set new geometry of cylinder and update
+  virtual void  setAxis(LongAxis axis);
+  // set new geometry of cylinder and update
+  virtual void  setRadius(float radius);
+  // set new geometry of cylinder and update
+  virtual void  setLength(float length);
+  // set new geometry of cylinder and update
   
   T3Cylinder(Qt3DNode* parent = 0);
   T3Cylinder(Qt3DNode* parent, LongAxis axis, float radius, float length);

@@ -980,7 +980,7 @@ void GridTableView::RenderHeader() {
     txt->setText(cnm);
     txt->setTextColor(txtcolr);
     txt->Scale(font_scale);
-    txt->Translate(QVector3D(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -gr_mg_sz));
+    txt->Translate(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -gr_mg_sz);
 #else // TA_QT3D
     T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
     SoSeparator* colsep = colnd->topSeparator();
@@ -1059,7 +1059,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 #ifdef TA_QT3D
   T3Entity* body = node_so->body;
   T3Entity* ln = new T3Entity(body);
-  ln->Translate(QVector3D(0.0f, 1.0f - (row_pos + y_offs), 0.0f));
+  ln->Translate(0.0f, 1.0f - (row_pos + y_offs), 0.0f);
 #else // TA_QT3D
 
   SoSeparator* ln = new SoSeparator();
@@ -1091,7 +1091,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     txt->setText(el);
     txt->setTextColor(txtcolr);
     txt->Scale(font_scale);
-    txt->Translate(QVector3D(col_pos + 0.5f * col_wd_lst, 0.5f * text_ht, 0.0f));
+    txt->Translate(col_pos + 0.5f * col_wd_lst, 0.5f * text_ht, 0.0f);
 #else // TA_QT3D
     SoSeparator* row_sep = new SoSeparator;
     tr = new SoTranslation;
@@ -1178,12 +1178,9 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           T3MatrixGrid* sogr = new T3MatrixGrid
             (ln, cell_mat, act_idx, cvs->mat_odd_vert, &colorscale, 
              (T3MatrixGrid::MatrixLayout)cvs->mat_layout, mat_val_text);
-          sogr->Translate(QVector3D(col_pos + gr_mg_sz, -0.5f * row_height + 2.0f * gr_mg_sz, 0.0f));
-          sogr->Scale3D(QVector3D(col_wd, mat_ht, 1.0f));
-          if(mat_rot_rad != 0.0f) {
-            // todo: this is not working for some reason, even when applied to lines
-            sogr->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), mat_rot);
-          }
+          sogr->Translate(col_pos + gr_mg_sz, -0.5f * row_height + 2.0f * gr_mg_sz, 0.0f);
+          sogr->Scale3D(col_wd, mat_ht, 1.0f);
+          sogr->RotateDeg(1.0f, 0.0f, 0.0f, mat_rot);
           sogr->spacing = mat_block_spc;
           sogr->block_height = mat_block_height;
           sogr->trans_max = mat_trans;
@@ -1239,7 +1236,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       txt->setText(el);
       txt->setTextColor(txtcolr);
       txt->Scale(font_scale);
-      txt->Translate(QVector3D(col_pos + x_offs, 0.5f * text_ht, 0.0f));
+      txt->Translate(col_pos + x_offs, 0.5f * text_ht, 0.0f);
 #else // TA_QT3D
       SoSeparator* txt_sep = new SoSeparator;
       ln->addChild(txt_sep);

@@ -68,15 +68,15 @@ void T3Plane::updateAxis() {
   switch(axis) {
   case XZ:
     size = QVector3D(plane_size.width(), 1.0e-06f, plane_size.height());
-    sub->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), 0.0f);
+    sub->RotateDeg(1.0f, 0.0f, 0.0f, 0.0f);
     break;
   case XY:
     size = QVector3D(plane_size.width(), plane_size.height(), 1.0e-06f);
-    sub->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), 90.0f);
+    sub->RotateDeg(1.0f, 0.0f, 0.0f, 90.0f);
     break;
   case YZ:
     size = QVector3D(1.0e-06f, plane_size.width(), plane_size.height());
-    sub->RotateDeg(QVector3D(0.0f, 0.0f, 1.0f), 90.0f);
+    sub->RotateDeg(0.0f, 0.0f, 1.0f, 90.0f);
     break;
   }
   sub->size = size;             // todo: does sub need color??

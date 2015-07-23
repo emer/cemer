@@ -38,7 +38,7 @@ T3TwoDText::T3TwoDText(Qt3DNode* parent)
   mat->setShininess(0.0f);
   mat->diffuse()->addTextureImage(texture);
   plane->addMaterial(mat);
-  plane->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), 90.0f); // flip up by default
+  plane->RotateDeg(1.0f, 0.0f, 0.0f, 90.0f); // flip up by default
 }
 
 T3TwoDText::~T3TwoDText() {
@@ -100,7 +100,7 @@ void T3TwoDText::updateRender() {
   default:
     break;
   }
-  plane->Translate(QVector3D(xoff, yoff, 0.0f));
+  plane->Translate(xoff, yoff, 0.0f);
   texture->renderLabel(*this);
 }
 

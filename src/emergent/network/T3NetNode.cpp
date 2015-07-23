@@ -48,7 +48,7 @@ T3NetNode::T3NetNode(Qt3DNode* parent, T3DataView* dataView_, bool show_dr,
     frame->setSize(fr_sz);
   }
   if(mode_2d) {
-    frame->Translate(QVector3D(0.0f, 0.0f, 0.0f));
+    frame->Translate(0.0f, 0.0f, 0.0f);
   }
   else {
     frame->TranslateZFrontTo(QVector3D(0.0f, 0.0f, 0.0f));

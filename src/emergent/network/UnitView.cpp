@@ -62,6 +62,7 @@ void UnitView::Render_pre()
   Unit* unit = this->unit(); //cache
   Layer* lay = unit->own_lay();
   float disp_scale = lay->disp_scale;
+  taVector2i upos;  unit->LayerDispPos(upos);
 
 #ifdef TA_QT3D
 
@@ -80,6 +81,9 @@ void UnitView::Render_pre()
     break;
   }
 
+  node_so()->Translate(disp_scale * ((float)(upos.x + 0.5f) / max_x), 0.0f,
+                       -disp_scale * (((float)(upos.y + 0.5f) / max_y)));
+  
 #else // TA_QT3D
 
   switch (nv->unit_disp_mode) {
@@ -96,13 +100,12 @@ void UnitView::Render_pre()
     setNode(new T3UnitNode_Cylinder(this, max_x, max_y, max_z, un_spc, disp_scale));
     break;
   }
-
-  taVector2i upos;  unit->LayerDispPos(upos);
   node_so()->transform()->translation.setValue
     (disp_scale * ((float)(upos.x + 0.5f) / max_x), 0.0f,
      -disp_scale * (((float)(upos.y + 0.5f) / max_y)));
-#endif // TA_QT3D
   
+#endif // TA_QT3D
+
   inherited::Render_pre();
 }
 

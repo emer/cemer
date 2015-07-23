@@ -20,7 +20,7 @@
 #include <T3Entity>
 
 // member includes:
-#include <Qt3dRenderer/QAbstractMesh>
+#include <Qt3DRenderer/QAbstractMesh>
 #include <float_Matrix>
 #include <int_Array>
 #include <taVector3f>

@@ -34,7 +34,7 @@ T3UnitGroupNode::T3UnitGroupNode(Qt3DNode* parent, T3DataView* dataView_, bool n
   , unit_text(new T3Entity(this))
 {
   if(mode_2d) {
-    Translate(QVector3D(-0.5f, 0.0f, 0.5f));
+    Translate(-0.5f, 0.0f, 0.5f);
   }
   else {
     TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.0f), 1.0f, 0.0f);

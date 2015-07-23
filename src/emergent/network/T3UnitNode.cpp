@@ -39,8 +39,7 @@ T3UnitNode::T3UnitNode(Qt3DNode* parent, T3DataView* dataView_,
 T3UnitNode::~T3UnitNode() {
 }
 
-void T3UnitNode::setAppearance(NetView* nv, float act, const iColor& color,
-                               float max_z) {
+void T3UnitNode::setAppearance(NetView* nv, float act, const iColor& clr, float max_z) {
   bool act_invalid = false;
   if (isnan(act) || isinf(act)) {
     act_invalid = true;
@@ -48,17 +47,13 @@ void T3UnitNode::setAppearance(NetView* nv, float act, const iColor& color,
   }
   else if (act < -1.0f) act = -1.0f;
   else if (act > 1.0f) act = 1.0f;
-  setAppearance_impl(nv, act, color, max_z, act_invalid);
+  setAppearance_impl(nv, act, clr, max_z, act_invalid);
 }
 
-void T3UnitNode::setAppearance_impl(NetView* nv, float act, const iColor& color,
+void T3UnitNode::setAppearance_impl(NetView* nv, float act, const iColor& clr,
   float max_z, bool act_invalid) 
 {
-  // material()->diffuseColor = (SbColor)color;
-  // //  material()->specularColor = (SbColor)color;
-  // //  material()->emissiveColor = (SbColor)color;
-  // //  material()->ambientColor = (SbColor)color;
-  // material()->transparency = (1.0f - fabsf(act)) * trans;
+  // happens all in derived
 }
 
 

@@ -55,6 +55,20 @@ void T3Cylinder::setGeom(LongAxis ax, float rad, float len) {
   updateGeom();
 }
 
+void T3Cylinder::setAxis(LongAxis ax) {
+  axis = ax;
+  updateGeom();
+}
+
+void T3Cylinder::setRadius(float rad) {
+  radius = rad;
+  updateGeom();
+}
+
+void T3Cylinder::setLength(float len) {
+  length = len;
+  updateGeom();
+}
 
 void T3Cylinder::updateGeom() {
   Qt3D::QCylinderMesh* cb = dynamic_cast<Qt3D::QCylinderMesh*>(sub->mesh);
@@ -63,15 +77,15 @@ void T3Cylinder::updateGeom() {
   switch(axis) {
   case LONG_X:
     size = QVector3D(length, 2.0f*radius, 2.0f*radius);
-    sub->RotateDeg(QVector3D(0.0f, 1.0f, 0.0f), -90.0f);
+    sub->RotateDeg(0.0f, 1.0f, 0.0f, -90.0f);
     break;
   case LONG_Y:
     size = QVector3D(2.0f*radius, length, 2.0f*radius);
-    sub->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), -90.0f);
+    sub->RotateDeg(1.0f, 0.0f, 0.0f, -90.0f);
     break;
   case LONG_Z:
     size = QVector3D(2.0f*radius, 2.0f*radius, length);
-    sub->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), 0.0f);
+    sub->RotateDeg(1.0f, 0.0f, 0.0f, 0.0f);
     break;
   }    
   sub->size = size;             // todo: does sub need color??

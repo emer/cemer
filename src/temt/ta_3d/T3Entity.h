@@ -81,14 +81,22 @@ public:
 
   inline void   Translate(const QVector3D& pos)
   { translate->setTranslation(pos); }
+  inline void   Translate(float dx, float dy, float dz)
+  { translate->setTranslation(QVector3D(dx, dy, dz)); }
   inline void   Scale(float sc)
   { scale->setScale(sc); }
   inline void   Scale3D(const QVector3D& sc)
   { scale->setScale3D(sc); }
+  inline void   Scale3D(float sx, float sy, float sz)
+  { scale->setScale3D(QVector3D(sx, sy, sz)); }
   inline void   RotateDeg(const QVector3D& axis, float ang_deg)
   { rotate->setAxis(axis); rotate->setAngleDeg(ang_deg); }
   inline void   RotateRad(const QVector3D& axis, float ang_rad)
   { rotate->setAxis(axis); rotate->setAngleRad(ang_rad); }
+  inline void   RotateDeg(float ax, float ay, float az, float ang_deg)
+  { rotate->setAxis(QVector3D(ax, ay, az)); rotate->setAngleDeg(ang_deg); }
+  inline void   RotateRad(float ax, float ay, float az, float ang_rad)
+  { rotate->setAxis(QVector3D(ax, ay, az)); rotate->setAngleRad(ang_rad); }
 
   virtual void TranslateXLeftTo(const QVector3D& pos);
   // move the X dim left edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set

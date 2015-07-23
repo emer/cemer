@@ -62,7 +62,7 @@ void T3LayerNode::updateNode() {
 
   frame->setSize(QVector3D(fx, height / max_xy, fy));
   if(mode_2d) {
-    frame->Translate(QVector3D(-0.5f + xfrac, 0.0f, 0.5f + -yfrac));
+    frame->Translate(-0.5f + xfrac, 0.0f, 0.5f + -yfrac);
   }
   else {
     frame->TranslateLLFSz1To(QVector3D(xfrac, 0.0f, 0.5f + -yfrac));

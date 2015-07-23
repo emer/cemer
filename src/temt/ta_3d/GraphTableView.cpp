@@ -1466,7 +1466,7 @@ void GraphTableView::RenderLegend() {
         ypos = lidx % n_down;
         lidx++;
         cur_tr.SetXY(over_amt * xpos, dn_amt * ypos);
-        ln->Translate(QVector3D(cur_tr.x, cur_tr.y, 0.0f));
+        ln->Translate(cur_tr.x, cur_tr.y, 0.0f);
 #else // TA_QT3D
         tr = new SoTranslation();  leg->addChild(tr);
         if(mv_dn > 1) {
@@ -1500,7 +1500,7 @@ void GraphTableView::RenderLegend() {
       ypos = lidx % n_down;
       lidx++;
       cur_tr.SetXY(over_amt * xpos, dn_amt * ypos);
-      ln->Translate(QVector3D(cur_tr.x, cur_tr.y, 0.0f));
+      ln->Translate(cur_tr.x, cur_tr.y, 0.0f);
 #else // TA_QT3D
       tr = new SoTranslation();  leg->addChild(tr);
       if(mv_dn > 1) {
@@ -1530,7 +1530,7 @@ void GraphTableView::RenderLegend() {
       ypos = lidx % n_down;
       lidx++;
       cur_tr.SetXY(over_amt * xpos, dn_amt * ypos);
-      ln->Translate(QVector3D(cur_tr.x, cur_tr.y, 0.0f));
+      ln->Translate(cur_tr.x, cur_tr.y, 0.0f);
 #else // TA_QT3D
       tr = new SoTranslation();  leg->addChild(tr);
       if(mv_dn > 1) {

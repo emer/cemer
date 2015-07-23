@@ -1360,8 +1360,8 @@ void NetView::Render_net_text() {
       float xv = 0.05f + (float)cur_col / (float)(per_row);
       float yv = ((float)(cur_row+1.0f) / (float)(n_rows + 2.0f));
 #ifdef TA_QT3D
-      txt->Translate(QVector3D(xv, 0.0f, -yv));
-      txt->RotateDeg(QVector3D(1.0f, 0.0f, 0.0f), net_text_rot);
+      txt->Translate(xv, 0.0f, -yv);
+      txt->RotateDeg(1.0f, 0.0f, 0.0f, net_text_rot);
       txt->Scale(font_sizes.net_vals);
 #else // TA_QT3D
       tr->translation.setValue(xv, 0.0f, -yv);

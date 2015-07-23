@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <T3Entity>
-#include <Qt3dRenderer/QAbstractMesh>
+#include <Qt3DRenderer/QAbstractMesh>
 #include <QColor>
 
 // member includes:

@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class T3Cylinder;
 
 #ifdef TA_QT3D
 
@@ -29,6 +30,8 @@ class E_API T3UnitNode_Cylinder: public T3UnitNode { // 2d color
   Q_OBJECT
   INHERITED(T3UnitNode)
 public:
+  T3Cylinder* cylinder;
+    
   T3UnitNode_Cylinder(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
                       float max_x = 1.0f, float max_y = 1.0f,
 		      float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
@@ -36,8 +39,6 @@ public:
 
   void	 setAppearance_impl(NetView* nv, float act, const iColor& color,
                             float max_z, bool act_invalid) override;
-// private:
-//   SoCylinder*		shape_; //#IGNORE
 };
 
 #else // TA_QT3D
