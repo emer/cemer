@@ -46,7 +46,7 @@ void T3TriangleStripMesh::setNodeUpdating(bool updating) {
                       String(colors.size), " vs. ", String(vndata.Frames()));
     }
     emit nodeUpdatingChanged();
-    emit parentChanged();
+    //    emit parentChanged();
   }
 }
 
