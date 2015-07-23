@@ -96,6 +96,8 @@ set(ta_3d_HEADS_T3
 # QT3D only headers
 set(ta_3d_HEADS_QT3D_MOC
   T3Entity.h
+  T3Texture.h
+  T3ColorEntity.h
   T3TwoDText.h
   T3LineBox.h
   T3LineStrip.h
@@ -106,6 +108,8 @@ set(ta_3d_HEADS_QT3D_MOC
   T3Capsule.h
   T3Plane.h
   T3TriangleStrip.h
+  T3SceneLoader.h
+  T3Image.h
 )
 
 # COIN only headers
@@ -261,6 +265,8 @@ set(ta_3d_SRCS_T3
 # Qt3D specific files
 set(ta_3d_SRCS_QT3D
   T3Entity.cpp
+  T3Texture.cpp
+  T3ColorEntity.cpp
   T3TwoDText.cpp
   T3LineBox.cpp
   T3LineStrip.cpp
@@ -271,6 +277,8 @@ set(ta_3d_SRCS_QT3D
   T3Capsule.cpp
   T3Plane.cpp
   T3TriangleStrip.cpp
+  T3SceneLoader.cpp
+  T3Image.cpp
 )
 
 # COIN specific files

@@ -17,9 +17,8 @@
 #define T3LineBox_h 1
 
 // parent includes:
-#include <T3Entity>
+#include <T3ColorEntity>
 #include <Qt3DRenderer/QAbstractMesh>
-#include <QColor>
 
 // member includes:
 

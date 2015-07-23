@@ -79,6 +79,10 @@ public:
   { material = mat; addComponent(material); }
   // adds material component, records the last one added
 
+  void  removeMaterial(Qt3D::QMaterial* mat)
+  { removeComponent(mat); if(material == mat) material = NULL; }
+  // remove material component
+
   inline void   Translate(const QVector3D& pos)
   { translate->setTranslation(pos); }
   inline void   Translate(float dx, float dy, float dz)
@@ -126,29 +130,6 @@ public:
 
 signals:
   void  nodeUpdatingChanged();
-};
-
-class TA_API T3ColorEntity : public T3Entity {
-  // manages color for a T3Entity, e.g., using a Phong Material
-  Q_OBJECT
-  INHERITED(T3Entity)
-public:
-  Qt3D::QPhongMaterial* phong;  // phong material -- guaranteed to exist
-  QColor        color;          // basic color of the object
-  float         ambient;        // how much to diminish the color values to create ambient color -- always based off of color -- a value of 0 means ambient is black
-  float         specular;       // how bright is the specular (shiny reflection) component (always white)
-  float         shininess;      // how shiny is the surface -- larger values create smaller specular highlight, and vice-versa
-  
-  virtual void  setColor(const QColor& color, float ambient = 0.2f,
-                         float specular = 0.95f, float shininess = 150.0f);
-  // set the color parameters and update display
-  
-  T3ColorEntity(Qt3DNode* parent = 0);
-  ~T3ColorEntity();
-
-public slots:
-  virtual void  updateColor(); // update to new color
-
 };
 
 #endif  // __MAKETA__

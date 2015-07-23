@@ -30,6 +30,7 @@
 #include <T3Cube>
 #include <T3Cylinder>
 #include <T3Capsule>
+#include <T3SceneLoader>
 
 #else // TA_QT3D
 
@@ -89,23 +90,20 @@ void VEBodyView::Render_pre() {
   setNode(obv);
 
   if(ob) {
-//     if(ob->HasBodyFlag(VEBody::FM_FILE) && !ob->obj_fname.empty()) {
-//       SoInput in;
-//       QFileInfo qfi(ob->obj_fname);
-//       if(qfi.isFile() && qfi.isReadable() && in.openFile(ob->obj_fname)) {
-//         SoSeparator* root = SoDB::readAll(&in);
-//         if (root) {
-//           ssep->addChild(root);
-//           SoTransform* tx = obv->txfm_shape();
-//           ob->obj_xform.CopyTo(tx);
-//           goto finish;
-//         }
-//       }
-//       String msg;
-//       msg << "object file: " << ob->obj_fname << " not found, reverting to shape";
-//       taMisc::ConsoleOutput(msg, true, false); // straight msg
-//       // NOTE: do NOT use Info or Error here: ProcessEvents at this point is BAD
-// //       ob->ClearBodyFlag(VEBody::FM_FILE);
+    if(ob->HasBodyFlag(VEBody::FM_FILE) && !ob->obj_fname.empty()) {
+      T3SceneLoader* sp = new T3SceneLoader(obv);
+      obv->obj = sp;
+      sp->setSource((QString)ob->obj_fname.chars());
+      goto finish;
+      // QFileInfo qfi(ob->obj_fname);
+      // if(qfi.isFile() && qfi.isReadable() && in.openFile(ob->obj_fname)) {
+      // }
+      // String msg;
+      // msg << "object file: " << ob->obj_fname << " not found, reverting to shape";
+      // taMisc::ConsoleOutput(msg, true, false); // straight msg
+      // NOTE: do NOT use Info or Error here: ProcessEvents at this point is BAD
+//       ob->ClearBodyFlag(VEBody::FM_FILE);
+    }
 
     if((bool)ob->texture && wv) {
       // SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
@@ -330,15 +328,11 @@ void VEBodyView::Render_impl() {
 
   if(ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
     if(ob->HasBodyFlag(VEBody::FM_FILE)) {
-      // SoTransform* tx = node_so()->txfm_shape();
-      // if(ob->HasBodyFlag(VEBody::OFF)) {
-      //   taTransform off_tx = ob->obj_xform;
-      //   off_tx.scale.SetXYZ(off_size, off_size, off_size);
-      //   off_tx.CopyTo(tx);
-      // }
-      // else {
-      //   ob->obj_xform.CopyTo(tx);
-      // }
+      T3SceneLoader* sp = dynamic_cast<T3SceneLoader*>(obv->obj);
+      sp->setSource((QString)ob->obj_fname.chars());
+      if(ob->HasBodyFlag(VEBody::OFF)) {
+        sp->Scale(off_size);
+      }
     }
     else {
       switch(ob->shape) {

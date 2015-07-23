@@ -13,35 +13,15 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef T3Cube_h
-#define T3Cube_h 1
+#include "T3Image.h"
 
-// parent includes:
-#include <T3ColorEntity>
+T3Image::T3Image(Qt3DNode* parent)
+  : inherited(parent)
+{
+  color_type = TEXTURE;
+  updateColor();
+}
 
-// member includes:
+T3Image::~T3Image() {
+}
 
-// declare all other types mentioned but not required to include:
-
-class TA_API T3Cube : public T3ColorEntity {
-  // a 3D cube -- manages a cube mesh
-  Q_OBJECT
-  INHERITED(T3ColorEntity)
-public:
-  virtual void  setSize(const QVector3D& sz);
-  // set new size and update
-  void  setSize(float xs, float ys, float zs)
-  { setSize(QVector3D(xs, ys, zs)); }
-  
-  T3Cube(Qt3DNode* parent = 0);
-  T3Cube(Qt3DNode* parent, const QVector3D& sz);
-  ~T3Cube();
-
-public slots:
-  virtual void  updateSize(); // update to new size
-
-protected:
-  void init();
-};
-
-#endif // T3Cube_h

@@ -14,7 +14,6 @@
 //   Lesser General Public License for more details.
 
 #include "T3Entity.h"
-#include <Qt3DRenderer/QPhongMaterial>
 
 #include <taiMisc>
 
@@ -112,44 +111,3 @@ void T3Entity::removeAllChildren() {
   }
 }
 
-
-//////////////////////////////////////
-
-T3ColorEntity::T3ColorEntity(Qt3DNode* parent)
-  : inherited(parent)
-{
-  color = Qt::green;
-  ambient = 0.2f;
-  specular = 0.95f;
-  shininess = 150.0f;
-
-  phong = new Qt3D::QPhongMaterial();
-  addMaterial(phong);
-
-  updateColor();
-}
-
-T3ColorEntity::~T3ColorEntity() {
-  
-}
-
-void T3ColorEntity::setColor(const QColor& clr, float amb,
-                             float spec, float shin) {
-  color = clr;
-  ambient = MAX(amb, 0.0f);
-  specular = spec;
-  shininess = shin;
-  updateColor();
-}
-
-void T3ColorEntity::updateColor() {
-  phong->setDiffuse(color);
-  if(ambient <= 0.0f) {
-    phong->setAmbient(QColor(0,0,0));
-  }
-  else {
-    phong->setAmbient(color.darker((int)(100.0f / ambient)));
-  }
-  phong->setSpecular(QColor::fromRgbF(specular, specular, specular, color.alphaF()));
-  phong->setShininess(shininess);
-}

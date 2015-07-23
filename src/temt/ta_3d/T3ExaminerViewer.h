@@ -44,6 +44,18 @@ class SbViewportRegion; //
 
 #ifndef __MAKETA__
 #ifdef TA_QT3D
+
+namespace Qt3D {
+class QAspectEngine;
+class QRenderAspect;
+class QInputAspect;
+class QEntity;
+class QCamera;
+class QFrameGraph;
+class QForwardRenderer;
+class QEntity;
+}
+
 #include <Qt3DCore>
 #include <Qt3DRenderer>
 #include <Qt3DInput>

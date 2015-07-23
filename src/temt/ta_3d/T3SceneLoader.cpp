@@ -13,35 +13,25 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef T3Cube_h
-#define T3Cube_h 1
+#include "T3SceneLoader.h"
 
-// parent includes:
-#include <T3ColorEntity>
+T3SceneLoader::T3SceneLoader(Qt3DNode* parent)
+  : inherited(parent)
+  , loader(new Qt3D::QSceneLoader(this))
+{
+  addComponent(loader);
+}
 
-// member includes:
-
-// declare all other types mentioned but not required to include:
-
-class TA_API T3Cube : public T3ColorEntity {
-  // a 3D cube -- manages a cube mesh
-  Q_OBJECT
-  INHERITED(T3ColorEntity)
-public:
-  virtual void  setSize(const QVector3D& sz);
-  // set new size and update
-  void  setSize(float xs, float ys, float zs)
-  { setSize(QVector3D(xs, ys, zs)); }
+T3SceneLoader::~T3SceneLoader() {
   
-  T3Cube(Qt3DNode* parent = 0);
-  T3Cube(Qt3DNode* parent, const QVector3D& sz);
-  ~T3Cube();
+}
 
-public slots:
-  virtual void  updateSize(); // update to new size
+void T3SceneLoader::setSource(const QUrl& src) {
+  source = src;
+  updateSource();
+}
 
-protected:
-  void init();
-};
+void T3SceneLoader::updateSource() {
+  loader->setSource(source);
+}
 
-#endif // T3Cube_h

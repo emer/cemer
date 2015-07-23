@@ -1042,11 +1042,12 @@ LeabraProject .projects["test"] {
     VEWorld @["TestWorld"] { 
      VEObject_Group @.objects = [1] {
       VEObject @["VEObject_1"] { 
-       VEBody_Group @.bodies = [4] {
+       VEBody_Group @.bodies = [5] {
 	VEBody @["Cube"] { };
 	VEBody @["Cylinder"] { };
 	VEBody @["Capsule"] { };
 	VEBody @["Sphere"] { };
+	VEBody @["Object"] { };
        };
 
        VEJoint_Group @.joints = [0] {
@@ -2457,11 +2458,12 @@ LeabraProject .projects["test"] {
 	VEWorldView @["TestWorld_View"] { 
 	 T3DataView_List @.children = [1] {
 	  VEObjectView @["VEObject_1"] { 
-	   T3DataView_List @.children = [4] {
+	   T3DataView_List @.children = [5] {
 	    VEBodyView @["Cube"] { };
 	    VEBodyView @["Cylinder"] { };
 	    VEBodyView @["Capsule"] { };
 	    VEBodyView @["Sphere"] { };
+	    VEBodyView @["Object"] { };
 	   };
 	  };
 	 };
@@ -9142,6 +9144,64 @@ LeabraProject .projects["test"] {
 	 box {x=1: y=1: z=1: };
 	 obj_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	 obj_fname=;
+	 set_color=1;
+	 color {r=0.9294118: g=0.7764706: b=0.1882353: a=1: };
+	 phong_color {ambient=0.2: specular=0.95: shininess=150: };
+	 texture=NULL;
+	 surface {
+	  friction=1e+22;
+	  bounce=0;
+	  bounce_vel=0.01;
+	 };
+	 softness {
+	  erp=0.2;
+	  cfm=1e-5;
+	 };
+	 damp {
+	  on=0;
+	  lin=0;
+	  lin_thr=0;
+	  ang=0;
+	  ang_thr=0;
+	  ang_speed=0;
+	 };
+	 finite_rotation {
+	  on=0;
+	  axis {x=0: y=0: z=0: };
+	 };
+	};
+	VEBody @["Object"] {
+	 name="Object";
+	 desc=;
+	 flags=EULER_ROT|FM_FILE|CUR_FM_FILE|GRAVITY_ON;
+	 init_rel=0;
+	 rel_body=NULL;
+	 rel_pos {x=0: y=0: z=0: };
+	 rel_rot {x=0: y=0: z=1: rot=0: };
+	 rel_euler {x=0: y=0: z=0: };
+	 rel_lin_vel {x=0: y=0: z=0: };
+	 rel_ang_vel {x=0: y=0: z=0: };
+	 init_pos {x=0: y=0: z=1: };
+	 init_rot {x=0: y=0: z=1: rot=0: };
+	 init_euler {x=0: y=0: z=0: };
+	 init_quat {s=1: x=0: y=0: z=0: };
+	 init_lin_vel {x=0: y=0: z=0: };
+	 init_ang_vel {x=0: y=0: z=0: };
+	 cur_pos {x=0: y=0: z=1: };
+	 cur_rot {x=0: y=0: z=1: rot=0: };
+	 cur_euler {x=0: y=-0: z=0: };
+	 cur_quat {s=1: x=0: y=0: z=0: };
+	 cur_quat_raw {s=1: x=0: y=0: z=0: };
+	 cur_lin_vel {x=0: y=0: z=0: };
+	 cur_ang_vel {x=0: y=0: z=0: };
+	 shape=SPHERE;
+	 mass=1;
+	 radius=0.2;
+	 length=1;
+	 long_axis=LONG_X;
+	 box {x=1: y=1: z=1: };
+	 obj_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+	 obj_fname="/Users/oreilly/ccn_images/CU3D_100_models/good/wrench/wrench_001.3ds";
 	 set_color=1;
 	 color {r=0.9294118: g=0.7764706: b=0.1882353: a=1: };
 	 phong_color {ambient=0.2: specular=0.95: shininess=150: };
@@ -17834,7 +17894,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.009018567390739918;
+     value 6 0=0.009013785980641842;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -17844,12 +17904,12 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9877983927726746;
+     value 6 0=0.9872746467590332;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.8181818127632141;
+     value 6 0=0.799490213394165;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -18138,7 +18198,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	    m_data=.projects["test"].programs["Env"].objs["TestWorld"].objects["VEObject_1"]$$;
 	    m_transform=NULL;
 	    children {
-	     name="children";
+	     name="T3DataView_List_1";
 	     el_typ=T3DataView;
 	     el_def=0;
 	     VEBodyView @["Cube"] {
@@ -18159,6 +18219,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	     VEBodyView @["Sphere"] {
 	      name="Sphere";
 	      m_data=.projects["test"].programs["Env"].objs["TestWorld"].objects["VEObject_1"].bodies["Sphere"]$$;
+	      m_transform=NULL;
+	     };
+	     VEBodyView @["Object"] {
+	      name="Object";
+	      m_data=.projects["test"].programs["Env"].objs["TestWorld"].objects["VEObject_1"].bodies["Object"]$$;
 	      m_transform=NULL;
 	     };
 	    };
@@ -18199,10 +18264,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	};
 	T3SavedView @["Vw_1"] {
 	 name="Vw_1";
-	 view_saved=0;
-	 pos {x=0: y=0: z=-5: };
-	 look_at {x=0: y=0: z=0: };
-	 up {x=0: y=1: z=0: };
+	 view_saved=1;
+	 pos {x=7.333434e-7: y=8.139726: z=45.74617: };
+	 look_at {x=0: y=-0.8760008: z=0: };
+	 up {x=-1.811113e-8: y=0.9811274: z=-0.1933621: };
 	};
 	T3SavedView @["Vw_2"] {
 	 name="Vw_2";
@@ -18286,12 +18351,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04031830281019211;
+       value 6 0=0.04029692336916924;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7544605135917664;
+       value 6 0=0.7357689142227173;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {

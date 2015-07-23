@@ -17,7 +17,7 @@
 #define T3LineStrip_h 1
 
 // parent includes:
-#include <T3Entity>
+#include <T3ColorEntity>
 
 // member includes:
 #include <Qt3DRenderer/QAbstractMesh>

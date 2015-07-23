@@ -13,35 +13,34 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef T3Cube_h
-#define T3Cube_h 1
+#ifndef T3Texture_h
+#define T3Texture_h 1
 
 // parent includes:
-#include <T3ColorEntity>
+#include <T3Entity>
+#include <Qt3DRenderer/QDiffuseMapMaterial>
 
 // member includes:
+#include <Qt3DRenderer/QTextureImage>
 
 // declare all other types mentioned but not required to include:
 
-class TA_API T3Cube : public T3ColorEntity {
-  // a 3D cube -- manages a cube mesh
+class TA_API T3Texture : public Qt3D::QDiffuseMapMaterial {
+  // a texture material
   Q_OBJECT
-  INHERITED(T3ColorEntity)
+  INHERITED(Qt3D::QDiffuseMapMaterial)
 public:
-  virtual void  setSize(const QVector3D& sz);
-  // set new size and update
-  void  setSize(float xs, float ys, float zs)
-  { setSize(QVector3D(xs, ys, zs)); }
+  QUrl          source;         // path to texture image
+  float         specular;       // how bright is the specular (shiny reflection) component (always white)
+  float         shininess;      // how shiny is the surface -- larger values create smaller specular highlight, and vice-versa
+  Qt3D::QTextureImage* texture;
   
-  T3Cube(Qt3DNode* parent = 0);
-  T3Cube(Qt3DNode* parent, const QVector3D& sz);
-  ~T3Cube();
+  virtual void  setSource(const QUrl& src);
 
+  T3Texture(Qt3DNode* parent = 0);
+  ~T3Texture();
 public slots:
-  virtual void  updateSize(); // update to new size
-
-protected:
-  void init();
+  virtual void  updateSource(); // update to new source
 };
 
-#endif // T3Cube_h
+#endif // T3Texture_h
