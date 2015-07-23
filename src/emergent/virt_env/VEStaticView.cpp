@@ -491,7 +491,7 @@ void VEStaticView::Render_impl() {
   if(ob->set_color) {
     taColor amb;
     taColor spec;
-    ob->phong_color.GetAmbient(amb, color);
+    ob->phong_color.GetAmbient(amb, ob->color);
     ob->phong_color.GetSpecular(spec);
 
     SoMaterial* mat = obv->material();
@@ -500,7 +500,7 @@ void VEStaticView::Render_impl() {
 
     mat->ambientColor.setValue(amb.r, amb.g, amb.b);
     mat->specularColor.setValue(spec.r, spec.g, spec.b);
-    mat->shininess.setValue(ob->shininess);
+    mat->shininess.setValue(ob->phong_color.shininess);
   }
 
   SoSeparator* ssep = obv->shapeSeparator();
