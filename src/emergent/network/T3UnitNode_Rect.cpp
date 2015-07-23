@@ -18,14 +18,28 @@
 
 #ifdef TA_QT3D
 
+#include <T3Cube>
+
 T3UnitNode_Rect::T3UnitNode_Rect(Qt3DNode* parent, T3DataView* dataView_,
                                  float max_x, float max_y, float max_z,
 				 float un_spc, float disp_sc)
   : inherited(parent, dataView_, max_x, max_y, max_z, un_spc, disp_sc )
+  , cube(new T3Cube(this))
 {
+  float max_xy = MAX(max_x, max_y);
+  float rad = disp_scale * ((.5f - spacing) / max_xy);
+  cube->setSize(disp_scale * ((1.0f - spacing) / max_x),
+                0.0f,
+                disp_scale * ((1.0f - spacing) / max_y));
 }
 
 T3UnitNode_Rect::~T3UnitNode_Rect() {
+}
+
+void T3UnitNode_Rect::setAppearance_impl(NetView* nv, float act, const iColor& clr,
+                                         float max_z, bool act_invalid) 
+{
+  cube->setColor(clr, 0.2f, 0.95f, 150.0f);
 }
 
 

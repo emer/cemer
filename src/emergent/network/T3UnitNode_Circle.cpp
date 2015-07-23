@@ -18,14 +18,26 @@
 
 #ifdef TA_QT3D
 
+#include <T3Cylinder>
+
 T3UnitNode_Circle::T3UnitNode_Circle(Qt3DNode* parent, T3DataView* dataView_,
                                  float max_x, float max_y, float max_z,
 				 float un_spc, float disp_sc)
   : inherited(parent, dataView_, max_x, max_y, max_z, un_spc, disp_sc )
+  , cylinder(new T3Cylinder(this))
 {
+  float max_xy = MAX(max_x, max_y);
+  float rad = disp_scale * ((.5f - spacing) / max_xy);
+  cylinder->setGeom(T3Cylinder::LONG_Z, rad, 0.01f);
 }
 
 T3UnitNode_Circle::~T3UnitNode_Circle() {
+}
+
+void T3UnitNode_Circle::setAppearance_impl(NetView* nv, float act, const iColor& clr,
+                                           float max_z, bool act_invalid) 
+{
+  cylinder->setColor(clr, .2f, 0.95f, 150.0f);
 }
 
 #else // TA_QT3D

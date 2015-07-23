@@ -35,7 +35,6 @@ T3Cube::T3Cube(Qt3DNode* parent, const QVector3D& sz)
 void T3Cube::init() {
   Qt3D::QCuboidMesh* cb = new Qt3D::QCuboidMesh();
   addMesh(cb);
-
   updateSize();
 }
 

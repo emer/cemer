@@ -21,6 +21,7 @@ T3VEBody::T3VEBody(Qt3DNode* parent, T3DataView* dataView_, bool show_drg,
                    float drg_sz)
   : T3NodeLeaf(parent)
   , show_drag(show_drg)
+  , obj(NULL)
 {
 }
 

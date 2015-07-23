@@ -138,7 +138,7 @@ public:
   float         ambient;        // how much to diminish the color values to create ambient color -- always based off of color -- a value of 0 means ambient is black
   float         specular;       // how bright is the specular (shiny reflection) component (always white)
   float         shininess;      // how shiny is the surface -- larger values create smaller specular highlight, and vice-versa
-    
+  
   virtual void  setColor(const QColor& color, float ambient = 0.2f,
                          float specular = 0.95f, float shininess = 150.0f);
   // set the color parameters and update display

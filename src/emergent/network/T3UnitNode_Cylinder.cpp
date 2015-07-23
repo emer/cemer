@@ -39,7 +39,7 @@ void T3UnitNode_Cylinder::setAppearance_impl(NetView* nv, float act, const iColo
                                              float max_z, bool act_invalid) 
 {
   float ht = (base_height + ((max_height - base_height) * fabs(act))) / max_z;
-  cylinder->setColor(clr, 1.0f, 0.5f, 2.0f);
+  cylinder->setColor(clr, .2f, 0.95f, 150.0f);
   cylinder->setLength(ht);
 
   float xp = translate->dx();

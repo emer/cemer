@@ -18,6 +18,7 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_LITE_DEFN(taColor);
+TA_BASEFUNS_CTORS_LITE_DEFN(taColorPhong);
 
 const iColor taColor::color() const {
   iColor rval(r,g,b,a);

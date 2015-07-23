@@ -20,12 +20,22 @@
 #include <T3ExaminerViewer>
 #include <VEWorldView>
 #include <T3VEWorld>
-#include <T3TransformBoxDragger>
 
 #include <taMisc>
 
 #include <QFileInfo>
 
+#ifdef TA_QT3D
+
+#include <T3Sphere>
+#include <T3Cube>
+#include <T3Cylinder>
+#include <T3Capsule>
+#include <T3Plane>
+
+#else // TA_QT3D
+
+#include <T3TransformBoxDragger>
 #include <SoCapsule>
 
 #include <Inventor/nodes/SoSwitch.h>
@@ -39,6 +49,8 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
+
+#endif // TA_QT3D
 
 TA_BASEFUNS_CTORS_DEFN(VEStaticView);
 
@@ -73,15 +85,88 @@ void VEStaticView::Render_pre() {
     show_drag = vw->interactionModeOn();
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
+  VEStatic* ob = Static();
 
 #ifdef TA_QT3D
-  setNode(new T3VEStatic(NULL, this, show_drag, wv->drag_size));
-  
+  T3VEStatic* obv = new T3VEStatic(NULL, this, show_drag, wv->drag_size);
+  setNode(obv);
+  if(ob) {
+//     if(ob->HasStaticFlag(VEStatic::FM_FILE) && !ob->obj_fname.empty()) {
+//       SoInput in;
+//       QFileInfo qfi(ob->obj_fname);
+//       if(qfi.isFile() && qfi.isReadable() && in.openFile(ob->obj_fname)) {
+//         SoSeparator* root = SoDB::readAll(&in);
+//         if (root) {
+//           ssep->addChild(root);
+//           SoTransform* tx = obv->txfm_shape();
+//           ob->obj_xform.CopyTo(tx);
+//           goto finish;
+//         }
+//       }
+//       String msg;
+//       msg << "object file: " << ob->obj_fname << " not found, reverting to shape";
+//       taMisc::ConsoleOutput(msg, true, false); // straight msg
+//       // NOTE: do NOT use Info or Error here: ProcessEvents at this point is BAD
+// //       ob->ClearStaticFlag(VEStatic::FM_FILE);
+
+    if((bool)ob->texture && wv) {
+      // SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
+      // SoSwitch* txfsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
+      // VETexture* vtex = ob->texture.ptr();
+      // int idx = vtex->GetIndex();
+      // if(idx >= 0 && tsw->getNumChildren() > idx) {
+      //   SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
+      //   ssep->addChild(tex);
+      //   // taMisc::Info("tex idx:", (String)(((int)ssep->getNumChildren())-1));
+      //   if(vtex->NeedsTransform()) {
+      //     SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
+      //     ssep->addChild(ttx);
+      //   }
+      // }
+    }
+
+    switch(ob->shape) {
+    case VEStatic::SPHERE: {
+      T3Sphere* sp = new T3Sphere(obv);
+      obv->obj = sp;
+      sp->setRadius(ob->radius);
+      break;
+    }
+    case VEStatic::CAPSULE: {
+      T3Capsule* sp = new T3Capsule(obv);
+      obv->obj = sp;
+      sp->setGeom(T3Capsule::LONG_Z, ob->radius, ob->length);
+      break;
+    }
+    case VEStatic::CYLINDER: {
+      T3Cylinder* sp = new T3Cylinder(obv);
+      obv->obj = sp;
+      sp->setGeom(T3Cylinder::LONG_Z, ob->radius, ob->length);
+      break;
+    }
+    case VEStatic::BOX: {
+      T3Cube* sp = new T3Cube(obv);
+      obv->obj = sp;
+      sp->setSize(ob->box);
+      break;
+    }
+    case VEStatic::PLANE: {
+      T3Plane* sp = new T3Plane(obv);
+      obv->obj = sp;
+      sp->setSize(ob->plane_vis_size.x, ob->plane_vis_size.y);
+      sp->setAxis((T3Plane::PlaneAxis)ob->plane_norm);
+      break;
+    }
+    case VEStatic::NO_SHAPE: {
+      obv->obj = NULL;
+      break;
+    }
+    }
+  }
 #else // TA_QT3D
   setNode(new T3VEStatic(this, show_drag, wv->drag_size));
   SoSeparator* ssep = node_so()->shapeSeparator();
 
-  VEStatic* ob = Static();
   if(ob) {
     if(ob->HasStaticFlag(VEStatic::FM_FILE) && !ob->obj_fname.empty()) {
       SoInput in;
@@ -178,8 +263,8 @@ void VEStaticView::Render_pre() {
     }
     }
   }
- finish:
 #endif // TA_QT3D
+ finish:
 
   SetDraggerPos();
 
@@ -232,9 +317,156 @@ void VEStaticView::Render_impl() {
   if(!obv) return;
   VEStatic* ob = Static();
   if(!ob) return;
+  VEWorldView* wv = parent();
 
 #ifdef TA_QT3D
+  if(ob->shape == VEStatic::PLANE) {
+    switch (ob->plane_norm) {
+    case VEStatic::NORM_X:
+      obv->Translate(ob->plane_height, 0.0f, 0.0f);
+      break;
+    case VEStatic::NORM_Y:
+      obv->Translate(0.0f, ob->plane_height, 0.0f);
+      break;
+    case VEStatic::NORM_Z:
+      obv->Translate(0.0f, 0.0f, ob->plane_height);
+      break;
+    }
+  }
+  else {
+    obv->Translate(ob->pos.x, ob->pos.y, ob->pos.z);
+  }
+  obv->RotateRad(ob->rot.x, ob->rot.y, ob->rot.z, ob->rot.rot);
+   
+  if((bool)ob->texture && wv) {
+    // int tex_idx = show_drag ? 4 : 3; // NOTE: this may need to be updated if structure changes -- should probably have a better solution to this..
+    // SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
+    // SoSwitch* txfsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
+    // VETexture* vtex = ob->texture.ptr();
+    // int idx = vtex->GetIndex();
+    // if(idx >= 0 && tsw->getNumChildren() > idx && ssep->getNumChildren() > tex_idx) {
+    //   SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
+    //   SoTexture2* curtex = (SoTexture2*)ssep->getChild(tex_idx);
+    //   if(tex != curtex && curtex->getClassTypeId() == tex->getClassTypeId()) {
+    //     ssep->replaceChild(tex_idx, tex);
+    //     if(vtex->NeedsTransform() && ssep->getNumChildren() > tex_idx + 1) {
+    //       // note: transform only works if previously also had a transform.. Init will fix
+    //       SoTexture2Transform* curttx = (SoTexture2Transform*)ssep->getChild(tex_idx + 1);
+    //       SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
+    //       if(ttx != curttx && curttx->getClassTypeId() == ttx->getClassTypeId()) {
+    //         ssep->replaceChild(tex_idx + 1, ttx);
+    //       }
+    //     }
+    //   }
+    // }
+  }
 
+  float off_size = 1.0e-12f;    // tiny size if it is turned off..
+
+  if(ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
+    if(ob->HasStaticFlag(VEStatic::FM_FILE)) {
+      // SoTransform* tx = node_so()->txfm_shape();
+      // if(ob->HasStaticFlag(VEStatic::OFF)) {
+      //   taTransform off_tx = ob->obj_xform;
+      //   off_tx.scale.SetXYZ(off_size, off_size, off_size);
+      //   off_tx.CopyTo(tx);
+      // }
+      // else {
+      //   ob->obj_xform.CopyTo(tx);
+      // }
+    }
+    else {
+      switch(ob->shape) {
+      case VEStatic::SPHERE: {
+        T3Sphere* sp = dynamic_cast<T3Sphere*>(obv->obj);
+        if(sp) {
+          if(ob->set_color) {
+            sp->setColor(ob->color.color(),
+                         ob->phong_color.ambient, ob->phong_color.specular,
+                         ob->phong_color.shininess);
+          }
+          if(ob->HasStaticFlag(VEStatic::OFF))
+            sp->setRadius(off_size);
+          else
+            sp->setRadius(ob->radius);
+        }
+        break;
+      }
+      case VEStatic::CAPSULE: {
+        T3Capsule* sp = dynamic_cast<T3Capsule*>(obv->obj);
+        if(sp) {
+          if(ob->set_color) {
+            sp->setColor(ob->color.color(),
+                         ob->phong_color.ambient, ob->phong_color.specular,
+                         ob->phong_color.shininess);
+          }
+          if(ob->HasStaticFlag(VEStatic::OFF)) {
+            sp->setGeom(T3Capsule::LONG_Z, off_size, off_size);
+          }
+          else {
+            sp->setGeom(T3Capsule::LONG_Z, ob->radius, ob->length);
+          }
+        }
+        break;
+      }
+      case VEStatic::CYLINDER: {
+        T3Cylinder* sp = dynamic_cast<T3Cylinder*>(obv->obj);
+        if(sp) {
+          if(ob->set_color) {
+            sp->setColor(ob->color.color(),
+                         ob->phong_color.ambient, ob->phong_color.specular,
+                         ob->phong_color.shininess);
+          }
+          if(ob->HasStaticFlag(VEStatic::OFF)) {
+            sp->setGeom(T3Cylinder::LONG_Z, off_size, off_size);
+          }
+          else {
+            sp->setGeom(T3Cylinder::LONG_Z, ob->radius, ob->length);
+          }
+        }
+        break;
+      }
+      case VEStatic::BOX: {
+        T3Cube* sp = dynamic_cast<T3Cube*>(obv->obj);
+        if(sp) {
+          if(ob->set_color) {
+            sp->setColor(ob->color.color(),
+                         ob->phong_color.ambient, ob->phong_color.specular,
+                         ob->phong_color.shininess);
+          }
+          if(ob->HasStaticFlag(VEStatic::OFF)) {
+            sp->setSize(off_size, off_size, off_size);
+          }
+          else {
+            sp->setSize(ob->box);
+          }
+        }
+        break;
+      }
+      case VEStatic::PLANE: {
+        T3Plane* sp = dynamic_cast<T3Plane*>(obv->obj);
+        if(sp) {
+          if(ob->set_color) {
+            sp->setColor(ob->color.color(),
+                         ob->phong_color.ambient, ob->phong_color.specular,
+                         ob->phong_color.shininess);
+          }
+          sp->setAxis((T3Plane::PlaneAxis)ob->plane_norm);
+          if(ob->HasStaticFlag(VEStatic::OFF)) {
+            sp->setSize(off_size, off_size);
+          }
+          else {
+            sp->setSize(ob->plane_vis_size.x, ob->plane_vis_size.y);
+          }
+        }
+        break;
+      }
+      case VEStatic::NO_SHAPE: {
+        break;
+      }
+      }
+    }
+  }
 #else // TA_QT3D
   
   SoTransform* tx = obv->transform();
@@ -257,21 +489,18 @@ void VEStaticView::Render_impl() {
   tx->rotation.setValue(ob->rot_quat.x, ob->rot_quat.y, ob->rot_quat.z, ob->rot_quat.s);
 
   if(ob->set_color) {
+    taColor amb;
+    taColor spec;
+    ob->phong_color.GetAmbient(amb, color);
+    ob->phong_color.GetSpecular(spec);
+
     SoMaterial* mat = obv->material();
     mat->diffuseColor.setValue(ob->color.r, ob->color.g, ob->color.b);
     mat->transparency.setValue(1.0f - ob->color.a);
 
-    if(ob->full_colors) {
-      mat->ambientColor.setValue(ob->ambient_color.r, ob->ambient_color.g,
-				 ob->ambient_color.b);
-      if(ob->specular_color.a > 0.0f) {
-        mat->specularColor.setValue(ob->specular_color.r, ob->specular_color.g,
-				    ob->specular_color.b);
-        mat->shininess.setValue(ob->specular_color.a);
-      }
-      mat->emissiveColor.setValue(ob->emissive_color.r, ob->emissive_color.g,
-				  ob->emissive_color.b);
-    }
+    mat->ambientColor.setValue(amb.r, amb.g, amb.b);
+    mat->specularColor.setValue(spec.r, spec.g, spec.b);
+    mat->shininess.setValue(ob->shininess);
   }
 
   SoSeparator* ssep = obv->shapeSeparator();

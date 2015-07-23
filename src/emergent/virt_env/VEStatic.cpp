@@ -38,12 +38,6 @@ void VEStatic::Initialize() {
   plane_vis_size = 100.0f;
   set_color = true;
   color.Set(0.4f, 0.3f, .1f, 1.0f);     // brownish..
-  full_colors = false;
-  ambient_color.Set(0.2f, 0.2f, .2f);
-  ambient_color.no_a = true;
-  specular_color.Set(1.0f, 1.0f, 1.0f, 0.0f);
-  emissive_color.Set(0.0f, 0.0f, 0.0f);
-  emissive_color.no_a = true;
 }
 
 void VEStatic::Destroy() {
@@ -479,10 +473,7 @@ void VEStatic::CopyColorFrom(VEStatic* cpy_fm) {
   if(!cpy_fm) return;
   set_color = cpy_fm->set_color;
   color = cpy_fm->color;
-  full_colors = cpy_fm->full_colors;
-  ambient_color = cpy_fm->ambient_color;
-  specular_color = cpy_fm->specular_color;
-  emissive_color = cpy_fm->emissive_color;
+  phong_color = cpy_fm->phong_color;
   texture = cpy_fm->texture;
   UpdateAfterEdit();
 }

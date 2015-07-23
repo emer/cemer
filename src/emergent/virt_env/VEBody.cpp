@@ -56,12 +56,6 @@ void VEBody::Initialize() {
   box = 1.0f;
   set_color = true;
   color.Set(0.2f, 0.2f, .5f, .5f);      // transparent blue.. why not..
-  full_colors = false;
-  ambient_color.Set(0.2f, 0.2f, .2f);
-  ambient_color.no_a = true;
-  specular_color.Set(1.0f, 1.0f, 1.0f, 0.0f);
-  emissive_color.Set(0.0f, 0.0f, 0.0f);
-  emissive_color.no_a = true;
   fixed_joint_id = NULL;
 }
 
@@ -754,10 +748,7 @@ void VEBody::CopyColorFrom(VEBody* cpy_fm) {
   if(!cpy_fm) return;
   set_color = cpy_fm->set_color;
   color = cpy_fm->color;
-  full_colors = cpy_fm->full_colors;
-  ambient_color = cpy_fm->ambient_color;
-  specular_color = cpy_fm->specular_color;
-  emissive_color = cpy_fm->emissive_color;
+  phong_color = cpy_fm->phong_color;
   texture = cpy_fm->texture;
   UpdateAfterEdit();
 }

@@ -24,18 +24,17 @@
 
 // declare all other types mentioned but not required to include:
 
-
 taTypeDef_Of(taColor);
 
 class TA_API taColor : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Display Red Green Blue Alpha color value
 INHERITED(taBase)
 public:
-  bool                  no_a; // #NO_SHOW #NO_SAVE control using a, by context
-  float                 r; // red
-  float                 g; // green
-  float                 b; // blue
-  float                 a; // #CONDSHOW_ON_no_a:false alpha (intensity, ratio of fg to bg)
+  bool    no_a; // #NO_SHOW #NO_SAVE control using a, by context
+  float   r; // red
+  float   g; // green
+  float   b; // blue
+  float   a; // #CONDSHOW_ON_no_a:false alpha (intensity, ratio of fg to bg)
 
   const iColor          color() const;
   // #IGNORE return the internal value-based color object -- common currency for color reps
@@ -57,6 +56,30 @@ private:
   void  Destroy() {}
 };
 
+taTypeDef_Of(taColorPhong);
+
+class TA_API taColorPhong : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Display phong-type color parameters -- ambient downscaling of regular diffuse color, plus specular brightness and shininess
+INHERITED(taBase)
+public:
+   float        ambient;        // how much to diminish the color values to create ambient color -- always based off of basic color -- a value of 0 means ambient is black
+  float         specular;       // how bright is the specular (shiny reflection) component (always white)
+  float         shininess;      // how shiny is the surface -- larger values create smaller specular highlight, and vice-versa -- default of 150 makes a fairly small spot
+
+  void          GetAmbient(taColor& amb, const taColor& clr)
+  { amb.Set(clr.r * ambient, clr.g * ambient, clr.b * ambient, clr.a); }
+  // get the ambient color values from basic diffuse color
+  void          GetSpecular(taColor& spec)
+  { spec.Set(specular, specular, specular, 1.0f); }
+  // get the specular color as a color
+  
+  TA_BASEFUNS_LITE(taColorPhong);
+private:
+  void  Copy_(const taColorPhong& cp)
+  { ambient = cp.ambient; specular = cp.specular; shininess = cp.shininess; }
+  void  Initialize() { ambient = 0.2f; specular = 0.95f; shininess = 150.0f; }
+  void  Destroy() {}
+};
 
 
 #endif // taColor_h

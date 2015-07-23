@@ -31,14 +31,12 @@ class E_API T3VEStatic : public T3NodeLeaf {
   Q_OBJECT
   INHERITED(T3NodeLeaf)
 public:
-  bool                   show_drag;
+  bool         show_drag;
+  T3Entity*    obj;             // object rep of body
   
   T3VEStatic(Qt3DNode* par = NULL, T3DataView* stat = NULL,
              bool show_drag = false, float drag_size = 0.06f);
   ~T3VEStatic();
-
-protected:
-  // T3TransformBoxDragger* drag_; // my position dragger
 };
 
 #else // TA_QT3D

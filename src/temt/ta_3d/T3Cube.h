@@ -30,6 +30,8 @@ class TA_API T3Cube : public T3ColorEntity {
 public:
   virtual void  setSize(const QVector3D& sz);
   // set new size and update
+  void  setSize(float xs, float ys, float zs)
+  { setSize(QVector3D(xs, ys, zs)); }
   
   T3Cube(Qt3DNode* parent = 0);
   T3Cube(Qt3DNode* parent, const QVector3D& sz);

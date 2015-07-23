@@ -16,7 +16,7 @@
 #include "T3Plane.h"
 
 #include <Qt3DRenderer/QPlaneMesh>
-
+#include <Qt3DRenderer/QPhongMaterial>
 
 T3Plane::T3Plane(Qt3DNode* parent)
   : inherited(parent)
@@ -40,6 +40,8 @@ void T3Plane::init() {
   Qt3D::QPlaneMesh* cb = new Qt3D::QPlaneMesh();
   sub->addMesh(cb);
 
+  sub->addMaterial(phong);
+  
   updateSize();
   updateAxis();
 }

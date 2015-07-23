@@ -29,9 +29,9 @@ class TA_API T3Plane : public T3ColorEntity {
   INHERITED(T3ColorEntity)
 public:
   enum PlaneAxis {              // what axis to orient the plane in
-    XZ,                         // x is width, z is height
-    XY,                         // x is width, y is height
-    YZ,                         // y is width, z is height
+    YZ=1,                       // x is norm, y is width, z is height
+    XZ,                         // y is norm, x is width, z is height
+    XY,                         // z is norm, x is width, y is height
   };
 
   T3Entity*     sub;            // plane lives in sub-entity to encapsulate axis rotation
@@ -41,6 +41,9 @@ public:
   virtual void  setAxis(PlaneAxis axis);
   // set a new axis and update
   virtual void  setSize(const QSize& sz);
+  // set new size and update
+  inline void  setSize(float wd, float ht)
+  { setSize(QSize(wd, ht)); }
   // set new size and update
   
   T3Plane(Qt3DNode* parent = 0);

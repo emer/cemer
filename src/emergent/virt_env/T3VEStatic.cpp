@@ -21,6 +21,7 @@ T3VEStatic::T3VEStatic(Qt3DNode* parent, T3DataView* dataView_, bool show_drg,
                        float drg_sz)
   : T3NodeLeaf(parent)
   , show_drag(show_drg)
+  , obj(NULL)
 {
 }
 

@@ -16,6 +16,7 @@
 #include "T3Cylinder.h"
 
 #include <Qt3DRenderer/QCylinderMesh>
+#include <Qt3DRenderer/QPhongMaterial>
 
 T3Cylinder::T3Cylinder(Qt3DNode* parent)
   : inherited(parent)
@@ -36,12 +37,13 @@ T3Cylinder::T3Cylinder(Qt3DNode* parent, LongAxis ax, float rad, float len)
 }
 
 void T3Cylinder::init() {
-  // todo: will color automatically inherit down to sub-entity??  should..
   sub = new T3Entity(this);
   
   Qt3D::QCylinderMesh* cb = new Qt3D::QCylinderMesh();
   sub->addMesh(cb);
   updateGeom();
+
+  sub->addMaterial(phong);      // shares it!
 }
 
 T3Cylinder::~T3Cylinder() {
@@ -77,15 +79,15 @@ void T3Cylinder::updateGeom() {
   switch(axis) {
   case LONG_X:
     size = QVector3D(length, 2.0f*radius, 2.0f*radius);
-    sub->RotateDeg(0.0f, 1.0f, 0.0f, -90.0f);
+    sub->RotateDeg(0.0f, 0.0f, 1.0f, -90.0f);
     break;
   case LONG_Y:
     size = QVector3D(2.0f*radius, length, 2.0f*radius);
-    sub->RotateDeg(1.0f, 0.0f, 0.0f, -90.0f);
+    sub->RotateDeg(1.0f, 0.0f, 0.0f, 0.0f); // native
     break;
   case LONG_Z:
     size = QVector3D(2.0f*radius, 2.0f*radius, length);
-    sub->RotateDeg(1.0f, 0.0f, 0.0f, 0.0f);
+    sub->RotateDeg(1.0f, 0.0f, 0.0f, -90.0f);
     break;
   }    
   sub->size = size;             // todo: does sub need color??

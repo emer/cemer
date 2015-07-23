@@ -25,16 +25,22 @@
 
 #ifdef TA_QT3D
 
+class T3Cube;
+
 class E_API T3UnitNode_Rect: public T3UnitNode {
   Q_OBJECT
   INHERITED(T3UnitNode)
 public:
+  T3Cube* cube;
+    
   T3UnitNode_Rect(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
                   float max_x = 1.0f, float max_y = 1.0f,
 		  float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
   ~T3UnitNode_Rect();
-// private:
-//   SoCube*		shape_; //#IGNORE
+
+
+  void	 setAppearance_impl(NetView* nv, float act, const iColor& color,
+                            float max_z, bool act_invalid) override;
 };
 
 #else // TA_QT3D
