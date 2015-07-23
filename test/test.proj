@@ -17834,7 +17834,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.009013785980641842;
+     value 6 0=0.009018567390739918;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -17844,12 +17844,12 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9878048896789551;
+     value 6 0=0.9877983927726746;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.799490213394165;
+     value 6 0=0.8181818127632141;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -18057,9 +18057,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	};
 	T3SavedView @["Vw_2"] {
 	 name="Vw_2";
-	 view_saved=0;
-	 pos {x=0: y=0: z=-5: };
-	 look_at {x=0: y=0: z=0: };
+	 view_saved=1;
+	 pos {x=0.5560005: y=-0.03399995: z=5: };
+	 look_at {x=0.5560005: y=-0.03399995: z=0: };
 	 up {x=0: y=1: z=0: };
 	};
 	T3SavedView @["Vw_3"] {
@@ -18138,7 +18138,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	    m_data=.projects["test"].programs["Env"].objs["TestWorld"].objects["VEObject_1"]$$;
 	    m_transform=NULL;
 	    children {
-	     name="T3DataView_List_1";
+	     name="children";
 	     el_typ=T3DataView;
 	     el_def=0;
 	     VEBodyView @["Cube"] {
@@ -18286,12 +18286,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04029692336916924;
+       value 6 0=0.04031830281019211;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7357689142227173;
+       value 6 0=0.7544605135917664;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {

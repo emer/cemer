@@ -40,7 +40,7 @@ void T3LineStripMesh::setNodeUpdating(bool updating) {
   blockNotifications(node_updating); // block if updating
   // if(should_render)
     emit nodeUpdatingChanged();
-    emit parentChanged();
+    //    emit parentChanged();
 }
 
 void T3LineStripMesh::restart() {

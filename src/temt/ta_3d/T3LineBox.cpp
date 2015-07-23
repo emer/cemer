@@ -153,7 +153,6 @@ Qt3D::QMeshDataPtr createLineBox(const QVector3D& size) {
 
   // Create the index data. 
   const int indicies = 24;
-  Q_ASSERT(indicies < std::numeric_limits<quint16>::max());
   QByteArray indexBytes;
   indexBytes.resize(indicies * sizeof(quint16));
   quint16* idxPtr = reinterpret_cast<quint16*>(indexBytes.data());

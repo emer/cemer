@@ -1102,7 +1102,8 @@ void T3ExaminerViewer::vertRotateView(const float rot_value) {
 
 void T3ExaminerViewer::horizPanView(const float pan_value) {
 #ifdef TA_QT3D
-  camera->pan(-pan_value);
+  // camera->pan(-pan_value);
+  PanView(QVector3D(-1.0f, 0.0f, 0.0f), pan_value);
 #else
   PanView(SbVec3f(-1.0f, 0.0f, 0.0f), pan_value);
 #endif
@@ -1110,7 +1111,8 @@ void T3ExaminerViewer::horizPanView(const float pan_value) {
 
 void T3ExaminerViewer::vertPanView(const float pan_value) {
 #ifdef TA_QT3D
-  camera->tilt(pan_value);
+  // camera->tilt(pan_value);
+  PanView(QVector3D(0.0f, 1.0f, 0.0f), pan_value);
 #else
   PanView(SbVec3f(0.0f, 1.0f, 0.0f), pan_value);
 #endif
@@ -1128,6 +1130,8 @@ void T3ExaminerViewer::PanView(const QVector3D& dir, const float dist) {
   QVector3D mvec = dir * dist;
   QVector3D newpos = camera->position() + mvec;
   camera->setPosition(newpos);
+  QVector3D newview = camera->viewCenter() + mvec;
+  camera->setViewCenter(newview);
   syncViewerMode();             // keep it sync'd -- this tends to throw it off
 }
 
