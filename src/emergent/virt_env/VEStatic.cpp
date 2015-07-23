@@ -38,6 +38,7 @@ void VEStatic::Initialize() {
   plane_vis_size = 100.0f;
   set_color = true;
   color.Set(0.4f, 0.3f, .1f, 1.0f);     // brownish..
+  phong_color.specular = 0.0f;          // specular is distracting..
 }
 
 void VEStatic::Destroy() {

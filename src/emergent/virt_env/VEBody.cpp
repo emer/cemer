@@ -56,6 +56,7 @@ void VEBody::Initialize() {
   box = 1.0f;
   set_color = true;
   color.Set(0.2f, 0.2f, .5f, .5f);      // transparent blue.. why not..
+  phong_color.specular = 0.0f;          // specular is distracting..
   fixed_joint_id = NULL;
 }
 
