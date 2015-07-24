@@ -162,7 +162,7 @@ T3GraphLine::T3GraphLine(Qt3DNode* parent, T3DataView* dataView_, float fnt_sz,
     TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 1.0f), width);
   }
   else {
-    TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 1.0f), width, 0.0f);
+    TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.0f), width, 0.0f);
   }
 }
 

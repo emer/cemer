@@ -23,22 +23,28 @@
 #include <iVec3f>
 
 // declare all other types mentioned but not required to include:
-class T3Color; // 
-
 #ifdef TA_QT3D
+
+#include <T3Cube>
+class iColor;
 
 class TA_API T3GraphBar : public T3NodeLeaf {
   // a graph bar for bar graphs -- data is GraphColView
   Q_OBJECT
   INHERITED(T3NodeLeaf)
 public:
-  virtual void          SetBar(iVec3f& pos, iVec3f& size, const T3Color& color);
+  bool                  z_on;   // is z axis on or not?
+  T3Cube*       cube;
+    
+  virtual void          SetBar(iVec3f& pos, iVec3f& size, const iColor& color);
 
-  T3GraphBar(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL);
+  T3GraphBar(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, bool z_on = false);
   ~T3GraphBar();
 };
 
 #else // TA_QT3D
+
+class T3Color;
 
 taTypeDef_Of(T3GraphBar);
 

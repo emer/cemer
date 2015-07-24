@@ -1660,8 +1660,17 @@ void GraphTableView::RenderGraph_Bar() {
   DataCol* da_1 = mainy->GetDAPtr();
   if(!da_1) return;
   
+  float boxd = 0.0f;
+  if(z_axis.on)
+    boxd = depth;
+  
 #ifdef TA_QT3D
-
+  node_so->graphs->removeAllChildren(); // todo: try to re-use instead of destroy!
+  T3Entity* gr1 = new T3Entity(node_so->graphs);
+  T3LineBox* lbox = new T3LineBox(gr1, QVector3D(width, 1.0f, boxd));
+  if(z_axis.on) {
+    lbox->TranslateZFrontTo(QVector3D(0,0,0));
+  }
 #else // TA_QT3D
   SoSeparator* graphs = node_so->graphs();
   graphs->removeAllChildren();
@@ -1669,9 +1678,11 @@ void GraphTableView::RenderGraph_Bar() {
   SoSeparator* gr1 = new SoSeparator;
   graphs->addChild(gr1);
   
-  float boxd = 0.0f;
-  if(z_axis.on)
-    boxd = depth;
+  // each graph has a box and lines..
+  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd, false); // not centered
+  gr1->addChild(lbox);
+
+#endif // TA_QT3D
   
   int n_tot = 0;
   for(int i=0;i<plots.size;i++) {
@@ -1690,14 +1701,10 @@ void GraphTableView::RenderGraph_Bar() {
   bar_width = (1.0f - bar_space) / ((float)n_tot);
   float bar_off = - .5f * (1.0f - bar_space);
   
-  // each graph has a box and lines..
-  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd, false); // not centered
-  gr1->addChild(lbox);
-  
   for(int i=0;i<main_y_plots.size;i++) {
     GraphPlotView* pl = plots[main_y_plots[i]];
 #ifdef TA_QT3D
-    T3GraphLine* ln = new T3GraphLine(pl, label_font_size, width);
+    T3GraphLine* ln = new T3GraphLine(lbox, pl, label_font_size, width, z_axis.on);
 #else // TA_QT3D
     T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
     gr1->addChild(ln);
@@ -1726,7 +1733,7 @@ void GraphTableView::RenderGraph_Bar() {
   for(int i=0;i<alt_y_plots.size;i++) {
     GraphPlotView* pl = plots[alt_y_plots[i]];
 #ifdef TA_QT3D
-    T3GraphLine* ln = new T3GraphLine(pl, label_font_size, width);
+    T3GraphLine* ln = new T3GraphLine(lbox, pl, label_font_size, width, z_axis.on);
 #else // TA_QT3D
     T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
     gr1->addChild(ln);
@@ -1750,7 +1757,6 @@ void GraphTableView::RenderGraph_Bar() {
       bar_off += bar_width;
     }
   }
-#endif // TA_QT3D
 }
 
 void GraphTableView::RenderGraph_Matrix_Zi() {
@@ -1765,7 +1771,10 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
   if(!da_1) return;
   
 #ifdef TA_QT3D
-
+  node_so->graphs->removeAllChildren(); // todo: try to re-use instead of destroy!
+  T3Entity* gr1 = new T3Entity(node_so->graphs);
+  T3LineBox* lbox = new T3LineBox(gr1, QVector3D(width, 1.0f, depth));
+  lbox->TranslateZFrontTo(QVector3D(0,0,0));
 #else // TA_QT3D
   SoSeparator* graphs = node_so->graphs();
   graphs->removeAllChildren();
@@ -1776,17 +1785,18 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
   // each graph has a box and lines..
   SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, depth, false); // not centered
   gr1->addChild(lbox);
+#endif // TA_QT3D
   
   for(int i=0;i<da_1->cell_size();i++) {
 #ifdef TA_QT3D
-    T3GraphLine* ln = new T3GraphLine(mainy, label_font_size, width);
+    T3GraphLine* ln = new T3GraphLine(lbox, mainy, label_font_size, width, true);
 #else // TA_QT3D
     T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
     gr1->addChild(ln);
 #endif // TA_QT3D
     PlotData_XY(*mainy, *errbars[main_y_plots[0]], *mainy, ln, i);
   }
-#endif // TA_QT3D
+
 }
 
 void GraphTableView::RenderGraph_Matrix_Sep() {
@@ -1806,12 +1816,6 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
   if(z_axis.on)
     boxd = depth;
   
-#ifdef TA_QT3D
-
-#else // TA_QT3D
-  SoSeparator* graphs = node_so->graphs();
-  graphs->removeAllChildren();
-  
   MatrixGeom& mgeom = da_1->cell_geom;
   
   int geom_x, geom_y;
@@ -1819,6 +1823,14 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
   float cl_x = 1.0f / (float)geom_x;    // how big each cell is
   float cl_y = 1.0f / (float)geom_y;
   float max_xy = MAX(cl_x, cl_y);
+  
+#ifdef TA_QT3D
+  node_so->graphs->removeAllChildren(); // todo: try to re-use instead of destroy!
+  T3Entity* gr1 = new T3Entity(node_so->graphs);
+#else // TA_QT3D
+  SoSeparator* graphs = node_so->graphs();
+  graphs->removeAllChildren();
+#endif // TA_QT3D
   
   taVector2i pos;
   int idx = 0;
@@ -1828,6 +1840,19 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
         float xp = ((float)pos.x) * cl_x;
         float yp = ((float)pos.y) * cl_y;
         
+#ifdef TA_QT3D
+        T3LineBox* lbox = new T3LineBox(gr1, QVector3D(width, 1.0f, boxd));
+        lbox->Scale3D(cl_x, cl_y, max_xy);
+        if(z_axis.on) {
+          lbox->TranslateZFrontTo(QVector3D(-0.5f + xp + 0.5f * cl_x, -0.5f + yp + 0.5f * cl_y, 0));
+        }
+        else {
+          lbox->Translate(-0.5f + xp + 0.5f * cl_x, -0.5f + yp + 0.5f * cl_y, 0.0f);
+        }
+        T3GraphLine* ln = new T3GraphLine(lbox, mainy, label_font_size, width, z_axis.on);
+        // todo: need scale factor here..
+        
+#else // TA_QT3D
         SoSeparator* gr = new SoSeparator;
         graphs->addChild(gr);
         
@@ -1841,12 +1866,10 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
         SoTransform* tx = new SoTransform();
         gr->addChild(tx);
         tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
-#ifdef TA_QT3D
-        T3GraphLine* ln = new T3GraphLine(mainy, label_font_size, width);
-#else // TA_QT3D
         T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
         gr->addChild(ln);
 #endif // TA_QT3D
+        
         if(mat_layout == taMisc::TOP_ZERO) {
           if(mgeom.dims() == 1)
             idx = MAX(geom_y-1-pos.y, pos.x);
@@ -1878,6 +1901,17 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
           float xp = ((float)apos.x) * cl_x;
           float yp = ((float)apos.y) * cl_y;
           
+#ifdef TA_QT3D
+          T3LineBox* lbox = new T3LineBox(gr1, QVector3D(width, 1.0f, boxd));
+          lbox->Scale3D(cl_x, cl_y, max_xy);
+          if(z_axis.on) {
+            lbox->TranslateZFrontTo(QVector3D(-0.5f + xp + 0.5f * cl_x, -0.5f + yp + 0.5f * cl_y, 0));
+          }
+          else {
+            lbox->Translate(-0.5f + xp + 0.5f * cl_x, -0.5f + yp + 0.5f * cl_y, 0.0f);
+          }
+          T3GraphLine* ln = new T3GraphLine(lbox, mainy, label_font_size, width, z_axis.on);
+#else // TA_QT3D
           SoSeparator* gr = new SoSeparator;
           graphs->addChild(gr);
           
@@ -1891,9 +1925,6 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
           SoTransform* tx = new SoTransform();
           gr->addChild(tx);
           tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
-#ifdef TA_QT3D
-          T3GraphLine* ln = new T3GraphLine(mainy, label_font_size, width);
-#else // TA_QT3D
           T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
           gr->addChild(ln);
 #endif // TA_QT3D
@@ -1922,6 +1953,18 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
             float xp = ((float)apos.x) * cl_x;
             float yp = ((float)apos.y) * cl_y;
             
+#ifdef TA_QT3D
+            T3LineBox* lbox = new T3LineBox(gr1, QVector3D(width, 1.0f, boxd));
+            lbox->Scale3D(cl_x, cl_y, max_xy);
+            if(z_axis.on) {
+              lbox->TranslateZFrontTo(QVector3D(-0.5f + xp + 0.5f * cl_x, -0.5f + yp + 0.5f * cl_y, 0));
+            }
+            else {
+              lbox->Translate(-0.5f + xp + 0.5f * cl_x, -0.5f + yp + 0.5f * cl_y, 0.0f);
+            }
+            T3GraphLine* ln = new T3GraphLine(lbox, mainy, label_font_size, width, z_axis.on);
+            
+#else // TA_QT3D
             SoSeparator* gr = new SoSeparator;
             graphs->addChild(gr);
             
@@ -1935,9 +1978,6 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
             SoTransform* tx = new SoTransform();
             gr->addChild(tx);
             tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
-#ifdef TA_QT3D
-            T3GraphLine* ln = new T3GraphLine(mainy, label_font_size, width);
-#else // TA_QT3D
             T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
             gr->addChild(ln);
 #endif // TA_QT3D
@@ -1951,7 +1991,6 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
       }
     }
   }
-#endif // TA_QT3D
 }
 
 const iColor GraphTableView::GetValueColor(GraphAxisBase* ax_clr, float val) {
@@ -2420,7 +2459,7 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
     size.z = bar_depth;
 
 #ifdef TA_QT3D
-    T3GraphBar* bar = new T3GraphBar(NULL, &plv);
+    T3GraphBar* bar = new T3GraphBar(gr1, &plv, z_axis.on);
     if(clr_ok) {
       bar->SetBar(pt, size, clr);
     }

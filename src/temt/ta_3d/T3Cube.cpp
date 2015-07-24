@@ -43,7 +43,11 @@ T3Cube::~T3Cube() {
 }
 
 void T3Cube::setSize(const QVector3D& sz) {
+  const float min_size = 1.0e-6f;
   size = sz;
+  size.setX(MAX(min_size, size.x()));
+  size.setY(MAX(min_size, size.y()));
+  size.setZ(MAX(min_size, size.z()));
   updateSize();
 }
 
