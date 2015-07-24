@@ -17,16 +17,60 @@
 
 #ifdef TA_QT3D
 
-T3PrjnNode::T3PrjnNode(Qt3DNode* parent, T3DataView* dataView_, bool prjcted, float rad)
+T3PrjnNode::T3PrjnNode(Qt3DNode* parent, T3DataView* dataView_, bool prjcted, float rad,
+                       bool md2d)
   : inherited(parent, dataView_)
   , projected(prjcted)
-  , radius(rad)
+  , mode_2d(md2d)
+  , line(new T3LineStrip(this))
 {
+  line->line_width = rad;
+
+  //     2
+  // 0---1 3
+  //     4
+  
+  line->moveTo(0.0f, 0.0f, 0.0f);
+  int p1idx = line->pointCount();
+  line->lineTo(1.0f, 1.0f, 1.0f);  
+  line->lineTo(1.0f, 1.0f, 1.0f);
+  line->lineTo(1.0f, 1.0f, 1.0f);
+  line->lineTo(1.0f, 1.0f, 1.0f);
+  line->lineToIdx(p1idx); // 5 = 1
+  
+  if(mode_2d) {
+    line->Translate(-0.5f, 0.0f, 0.5f);
+  }
+  else {
+    line->TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.5f));
+  }
 }
 
 T3PrjnNode::~T3PrjnNode() {
 }
 
+void T3PrjnNode::SetEndPoint(float xp, float yp, float zp) {
+  //     2
+  // 0---1 3
+  //     4
+
+  const float arrow_prop = .02f;
+  const float apm1 = 1.0f - arrow_prop;
+  
+  taVector3f pos3(xp, yp, zp);
+  taVector3f pos1 = pos3 * apm1;
+  taVector3f pos2 = pos1;
+  pos2.y += xp * arrow_prop;
+  pos2.x -= yp * arrow_prop;
+  taVector3f pos4 = pos1;
+  pos4.y -= xp * arrow_prop;
+  pos4.x += yp * arrow_prop;
+
+  line->setPoint(1, pos1);
+  line->setPoint(2, pos2);
+  line->setPoint(3, pos3);
+  line->setPoint(4, pos4);
+}
 
 #else // TA_QT3D
 

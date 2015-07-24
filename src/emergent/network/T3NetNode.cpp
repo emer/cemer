@@ -52,6 +52,7 @@ T3NetNode::T3NetNode(Qt3DNode* parent, T3DataView* dataView_, bool show_dr,
   }
   else {
     frame->TranslateZFrontTo(QVector3D(0.0f, 0.0f, 0.0f));
+    wt_lines->TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.5f));
   }
 }
 

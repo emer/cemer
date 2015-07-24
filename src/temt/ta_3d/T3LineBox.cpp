@@ -42,7 +42,7 @@ void T3LineBox::init() {
 }
 
 T3LineBox::~T3LineBox() {
-  
+
 }
 
 void T3LineBox::setSize(const QVector3D& sz) {
@@ -65,7 +65,7 @@ T3LineBoxMesh::T3LineBoxMesh(Qt3DNode* parent, const QVector3D* sz)
 }
 
 T3LineBoxMesh::~T3LineBoxMesh() {
-  
+  Qt3D::QNode::cleanup();
 }
 
 void T3LineBoxMesh::setSize(const QVector3D& sz) {

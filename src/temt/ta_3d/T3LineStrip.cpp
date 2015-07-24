@@ -30,7 +30,7 @@ T3LineStripMesh::T3LineStripMesh(Qt3DNode* parent)
 }
 
 T3LineStripMesh::~T3LineStripMesh() {
-
+  Qt3D::QNode::cleanup();
 }
 
 void T3LineStripMesh::setNodeUpdating(bool updating) {
@@ -99,6 +99,16 @@ void T3LineStripMesh::lineTo(const taVector3f& pos) {
   indexes.Add(idx);
 }
 
+void T3LineStripMesh::moveToIdx(int idx) {
+  if(indexes.size > 0)
+    indexes.Add(0xFFFF);        // stop
+  indexes.Add(idx);
+}
+
+void T3LineStripMesh::lineToIdx(int idx) {
+  indexes.Add(idx);
+}
+
 int T3LineStripMesh::addColor(uint32_t clr) {
   colors.Add(clr);
   return colors.size -1;
@@ -107,6 +117,20 @@ int T3LineStripMesh::addColor(uint32_t clr) {
 int T3LineStripMesh::addColor(const QColor& clr) {
   colors.Add(T3Misc::makePackedRGBA(clr));
   return colors.size -1;
+}
+
+void T3LineStripMesh::setPoint(int idx, const QVector3D& pos) {
+  if(idx < 0 || idx >= points.Frames()) return;
+  points.Set(pos.x(), 0, idx);
+  points.Set(pos.y(), 1, idx);
+  points.Set(pos.z(), 2, idx);
+}
+
+void T3LineStripMesh::setPoint(int idx, const taVector3f& pos) {
+  if(idx < 0 || idx >= points.Frames()) return;
+  points.Set(pos.x, 0, idx);
+  points.Set(pos.y, 1, idx);
+  points.Set(pos.z, 2, idx);
 }
 
 void T3LineStripMesh::updateLines() {
@@ -223,6 +247,7 @@ Qt3D::QAbstractMeshFunctorPtr T3LineStripMesh::meshFunctor() const {
 T3LineStrip::T3LineStrip(Qt3DNode* parent)
   : inherited(parent)
 {
+  line_width = 1.0f;
   ambient = 1.0f;               // lines are all ambient..
   per_vertex_color = false;
   lines = new T3LineStripMesh();

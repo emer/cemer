@@ -28,7 +28,7 @@ T3UnitNode_Circle::T3UnitNode_Circle(Qt3DNode* parent, T3DataView* dataView_,
 {
   float max_xy = MAX(max_x, max_y);
   float rad = disp_scale * ((.5f - spacing) / max_xy);
-  cylinder->setGeom(T3Cylinder::LONG_Z, rad, 0.01f);
+  cylinder->setGeom(T3Cylinder::LONG_Y, rad, 0.01f);
 }
 
 T3UnitNode_Circle::~T3UnitNode_Circle() {

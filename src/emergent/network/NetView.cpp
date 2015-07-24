@@ -1384,6 +1384,7 @@ void NetView::Render_net_text() {
     }
 #ifdef TA_QT3D
     T3TwoDText* txt = dynamic_cast<T3TwoDText*>(net_txt->children().at(chld_idx));
+    txt->align = T3_ALIGN_LEFT;
 #else // TA_QT3D
     SoSeparator* tsep = (SoSeparator*)net_txt->getChild(chld_idx + txt_st_off);
     SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
@@ -1416,7 +1417,134 @@ void NetView::Render_wt_lines() {
     src_lay =GET_OWNER(unit_src, Layer);
   if(!src_lay || src_lay->Iconified()) do_lines = false;
 
+  taVector3i src_lay_pos;
+  if(src_lay)
+    src_lay->GetAbsPos(src_lay_pos);
+
+  Network* nt = net();
+  bool swt = wt_line_swt;
+  
+  // note: only want layer_rel for ru_pos
+  taVector2i ru_pos;
+  if(unit_src)
+    unit_src->LayerDispPos(ru_pos);
+  taVector3f src;             // source and dest coords
+  taVector3f dst;
+
+  float max_xy = MAX(max_size.x, max_size.y);
+  float lay_ht = T3LayerNode::height / max_xy;
+
+  float trans = view_params.unit_trans;
+
+  iColor tc;
+  float sc_val;
+
 #ifdef TA_QT3D
+
+  T3LineStrip* ls = node_so->wt_lines;
+  ls->restart();
+  
+  if(!do_lines || wt_line_width < 0.0f) {
+    return;
+  }
+
+  ls->setNodeUpdating(true);
+  ls->line_width = MAX(wt_line_width, 0.0f);
+
+  for(int g=0;g<(swt ? unit_src->NSendConGps() : unit_src->NRecvConGps());g++) {
+    ConGroup* cg = (swt ? unit_src->SendConGroup(g) : unit_src->RecvConGroup(g));
+    Projection* prjn = cg->prjn;
+    if(!prjn || !prjn->IsActive()) continue;
+    if(prjn->from->Iconified()) continue;
+    Layer* lay_fr = (swt ? prjn->layer : prjn->from);
+    Layer* lay_to = (swt ? prjn->from : prjn->layer);
+    taVector3i lay_fr_pos; lay_fr->GetAbsPos(lay_fr_pos);
+    taVector3i lay_to_pos; lay_to->GetAbsPos(lay_to_pos);
+
+    // y = network z coords -- same for all cases
+    src.y = ((float)lay_to_pos.z) / max_size.z;
+    dst.y = ((float)lay_fr_pos.z) / max_size.z;
+
+    // move above/below layer plane
+    if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
+    else if(src.y > dst.y) { src.y -= lay_ht; dst.y += lay_ht; }
+    else { src.y += lay_ht; dst.y += lay_ht; }
+
+    src.x = ((float)lay_to_pos.x + (float)ru_pos.x + .5f) / max_size.x;
+    src.z = -((float)lay_to_pos.y + (float)ru_pos.y + .5f) / max_size.y;
+
+    int ru_idx = ls->pointCount();
+    ls->moveTo(src);
+
+    for(int i=0;i< cg->size; i++) {
+      Unit* su = cg->Un(i,nt);
+      float wt = cg->Cn(i, ConGroup::WT, nt);
+      if(fabsf(wt) < wt_line_thr) continue;
+
+      // note: only want layer_rel for ru_pos
+      taVector2i su_pos; su->LayerDispPos(su_pos);
+      dst.x = ((float)lay_fr_pos.x + (float)su_pos.x + .5f) / max_size.x;
+      dst.z = -((float)lay_fr_pos.y + (float)su_pos.y + .5f) / max_size.y;
+
+      ls->lineTo(dst);
+      if(i < cg->size-1) {
+        ls->moveToIdx(ru_idx);
+      }
+      // color
+      GetUnitColor(wt, tc, sc_val);
+      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+      tc.setAlpha(alpha);
+      uint32_t pclr = T3Misc::makePackedRGBA(tc);
+      ls->addColor(pclr);
+      if(i == 0)
+        ls->addColor(pclr);
+    }
+  }
+
+  if((bool)wt_prjn_lay) {
+    taVector3i wt_prjn_lay_pos; wt_prjn_lay->GetAbsPos(wt_prjn_lay_pos);
+
+    // y = network z coords -- same for all cases
+    src.y = ((float)src_lay_pos.z) / max_size.z;
+    dst.y = ((float)wt_prjn_lay_pos.z) / max_size.z;
+
+    // move above/below layer plane
+    if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
+    else if(src.y > dst.y) { src.y -= lay_ht; dst.y += lay_ht; }
+    else { src.y += lay_ht; dst.y += lay_ht; }
+
+    src.x = ((float)src_lay_pos.x + (float)ru_pos.x + .5f) / max_size.x;
+    src.z = -((float)src_lay_pos.y + (float)ru_pos.y + .5f) / max_size.y;
+
+    int ru_idx = ls->pointCount();
+    ls->moveTo(src);
+    bool first = true;
+
+    FOREACH_ELEM_IN_GROUP(Unit, su, wt_prjn_lay->units) {
+      float wt = su->wt_prjn;
+      if(fabsf(wt) < wt_line_thr) continue;
+
+      taVector2i su_pos; su->LayerDispPos(su_pos);
+      dst.x = ((float)wt_prjn_lay_pos.x + (float)su_pos.x + .5f) / max_size.x;
+      dst.z = -((float)wt_prjn_lay_pos.y + (float)su_pos.y + .5f) / max_size.y;
+
+      ls->lineTo(dst);
+      ls->moveToIdx(ru_idx);
+
+      // color
+      GetUnitColor(wt, tc, sc_val);
+      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+      tc.setAlpha(alpha);
+      uint32_t pclr = T3Misc::makePackedRGBA(tc);
+      ls->addColor(pclr);
+      if(first) {
+        ls->addColor(pclr);
+        first = false;
+      }
+    }
+  }
+
+  ls->setNodeUpdating(false);
 
 #else // TA_QT3D
 
@@ -1429,16 +1557,13 @@ void NetView::Render_wt_lines() {
   SoMFInt32& coords = ils->coordIndex;
   SoMFInt32& mats = ils->materialIndex;
 
-  if(!do_lines) {
+  if(!do_lines ||  wt_line_width < 0.0f) {
     vertex.setNum(0);
     color.setNum(0);
     coords.setNum(0);
     mats.setNum(0);
     return;
   }
-  taVector3i src_lay_pos; src_lay->GetAbsPos(src_lay_pos);
-
-  Network* nt = net();
 
   drw->style = SoDrawStyleElement::LINES;
   drw->lineWidth = MAX(wt_line_width, 0.0f);
@@ -1449,8 +1574,6 @@ void NetView::Render_wt_lines() {
   int n_vtx = 0;
   int n_coord = 0;
   int n_mat = 0;
-
-  bool swt = wt_line_swt;
 
   if(wt_line_width >= 0.0f) {
     for(int g=0;g<(swt ? unit_src->NSendConGps() : unit_src->NRecvConGps());g++) {
@@ -1487,8 +1610,6 @@ void NetView::Render_wt_lines() {
   color.setNum(n_mat);
   mats.setNum(n_mat);
 
-  if(wt_line_width < 0.0f) return;
-
   SbVec3f* vertex_dat = vertex.startEditing();
   int32_t* coords_dat = coords.startEditing();
   uint32_t* color_dat = color.startEditing();
@@ -1497,19 +1618,6 @@ void NetView::Render_wt_lines() {
   int c_idx = 0;
   int cidx = 0;
   int midx = 0;
-
-  // note: only want layer_rel for ru_pos
-  taVector2i ru_pos; unit_src->LayerDispPos(ru_pos);
-  taVector3f src;             // source and dest coords
-  taVector3f dst;
-
-  float max_xy = MAX(max_size.x, max_size.y);
-  float lay_ht = T3LayerNode::height / max_xy;
-
-  iColor tc;
-  T3Color col;
-  float sc_val;
-  float trans = view_params.unit_trans;
 
   for(int g=0;g<(swt ? unit_src->NSendConGps() : unit_src->NRecvConGps());g++) {
     ConGroup* cg = (swt ? unit_src->SendConGroup(g) : unit_src->RecvConGroup(g));
@@ -1553,9 +1661,9 @@ void NetView::Render_wt_lines() {
 
       // color
       GetUnitColor(wt, tc, sc_val);
-      col.setValue(tc.redf(), tc.greenf(), tc.bluef());
       float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-      color_dat[c_idx++] = T3Misc::makePackedRGBA(col.r, col.g, col.b, alpha);
+      tc.setAlpha(alpha);
+      color_dat[c_idx++] = T3Misc::makePackedRGBA(tc);
     }
   }
 
@@ -1592,9 +1700,9 @@ void NetView::Render_wt_lines() {
 
       // color
       GetUnitColor(wt, tc, sc_val);
-      col.setValue(tc.redf(), tc.greenf(), tc.bluef());
       float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-      color_dat[c_idx++] = T3Misc::makePackedRGBA(col.r, col.g, col.b, alpha);
+      tc.setAlpha(alpha);
+      color_dat[c_idx++] = T3Misc::makePackedRGBA(tc);
     }
   }
 

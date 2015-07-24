@@ -31,7 +31,7 @@ T3TriangleStripMesh::T3TriangleStripMesh(Qt3DNode* parent)
 }
 
 T3TriangleStripMesh::~T3TriangleStripMesh() {
-
+  Qt3D::QNode::cleanup();
 }
 
 void T3TriangleStripMesh::setNodeUpdating(bool updating) {

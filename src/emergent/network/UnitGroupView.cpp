@@ -1345,10 +1345,56 @@ void UnitGroupView::Render_impl_snap_bord() {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
 
+  bool do_lines = nv->snap_bord_disp;
+
+  float disp_scale = lay->disp_scale;
+  int n_geom = lay->flat_geom.Product();
+
+  float max_xy = MAX(nv->eff_max_size.x, nv->eff_max_size.y);
+  float max_z = MAX(max_xy, nv->eff_max_size.z); // make sure Z isn't bigger
+
+  float spacing = 0.5f * max_xy * 0.0005f * nv->snap_bord_width;
+  if(spacing > .1f) spacing = .1f;
+  float zp = (spacing * 2.0f) / max_z;
+
 #ifdef TA_QT3D
 
+  T3LineStrip* sb = node_so->snap_bord;
+  sb->setPerVertexColor(true);
+  sb->restart();
+
+  if(!do_lines)
+    return;
+  
+  sb->setNodeUpdating(true);
+  
+  taVector2i pos;
+  taVector2i upos;
+  for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
+    for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
+      Unit* unit = lay->UnitAtCoord(pos);
+      if(unit) {
+        lay->UnitDispPos(unit, upos);
+        float xp0 = disp_scale * (((float)upos.x + spacing) / nv->eff_max_size.x);
+        float yp0 = -disp_scale * (((float)upos.y + spacing) / nv->eff_max_size.y);
+        float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->eff_max_size.x);
+        float yp1 = -disp_scale * (((float)upos.y+1 - spacing) / nv->eff_max_size.y);
+
+        int p00idx = sb->pointCount();
+        sb->moveTo(xp0, zp, yp0);
+        sb->lineTo(xp1, zp, yp0);
+        sb->lineTo(xp1, zp, yp1);
+        sb->lineTo(xp0, zp, yp1);
+        sb->lineToIdx(p00idx);
+
+        for(int i=0; i<4; i++) {
+          sb->addColor(0);
+        }
+      }
+    }
+  }
+
 #else // TA_QT3D
-  bool do_lines = nv->snap_bord_disp;
   SoIndexedLineSet* ils = node_so->snapBordSet();
   SoDrawStyle* drw = node_so->snapBordDraw();
   SoVertexProperty* vtx_prop = node_so->snapBordVtxProp();
@@ -1371,9 +1417,6 @@ void UnitGroupView::Render_impl_snap_bord() {
   // FACE = polyline, PART = line segment!!
   vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_FACE_INDEXED);
 
-  float disp_scale = lay->disp_scale;
-
-  int n_geom = lay->flat_geom.Product();
 
   vertex.setNum(n_geom * 4);    // 4 virtex per
   coords.setNum(n_geom * 6);    // 6 coords per
@@ -1386,13 +1429,6 @@ void UnitGroupView::Render_impl_snap_bord() {
   int v_idx = 0;
   int cidx = 0;
   int midx = 0;
-
-  float max_xy = MAX(nv->eff_max_size.x, nv->eff_max_size.y);
-  float max_z = MAX(max_xy, nv->eff_max_size.z); // make sure Z isn't bigger
-
-  float spacing = 0.5f * max_xy * 0.0005f * nv->snap_bord_width;
-  if(spacing > .1f) spacing = .1f;
-  float zp = (spacing * 2.0f) / max_z;
 
   taVector2i pos;
   taVector2i upos;
@@ -1437,8 +1473,43 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
 
   float trans = nv->view_params.unit_trans;
   
+  MemberDef* md = (MemberDef*)nv->membs.FindName("snap");
+  if(!md) return;               // shouldn't happen
+  nv->unit_disp_idx = nv->membs.FindEl(md);
+
+  float sc_val;
+  float val;
+  iColor col;
+  taVector2i pos;
+
 #ifdef TA_QT3D
 
+  T3LineStrip* sb = node_so->snap_bord;
+  int c_idx = 0;
+
+  sb->setNodeUpdating(true);
+  
+  for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
+    for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
+      val = 0.0f;
+      Unit* unit = lay->UnitAtCoord(pos);
+      if(unit) {
+        void* base;
+        val = GetUnitDisplayVal(pos, base);
+        nv->GetUnitColor(val, col, sc_val);
+        float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+        col.setAlpha(alpha);
+        uint32_t pclr = T3Misc::makePackedRGBA(col);
+
+        for(int i=0; i<4; i++) {
+          sb->setPointColor(c_idx++, pclr);
+        }
+      }
+    }
+  }
+  
+  sb->setNodeUpdating(false);
+  
 #else // TA_QT3D
   
   SoVertexProperty* vtx_prop = node_so->snapBordVtxProp();
@@ -1449,14 +1520,6 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
 
   int cur_disp_idx = nv->unit_disp_idx;
 
-  MemberDef* md = (MemberDef*)nv->membs.FindName("snap");
-  if(!md) return;               // shouldn't happen
-  nv->unit_disp_idx = nv->membs.FindEl(md);
-
-  float sc_val;
-  float val;
-  iColor col;
-  taVector2i pos;
   int c_idx = 0;
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left

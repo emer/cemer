@@ -18,26 +18,19 @@
 
 T3ColorEntity::T3ColorEntity(Qt3DNode* parent)
   : inherited(parent)
+  , phong(NULL)
+  , texture(NULL)
 {
-  color_type = PHONG;
-  prev_color_type = 0;          // trigger update at first
+  color_type = NO_COLOR;               // don't start with anything
   color = Qt::green;
   ambient = 0.2f;
   specular = 0.95f;
   shininess = 150.0f;
 
-  phong = new Qt3D::QPhongMaterial();
-  texture = new T3Texture;
-
   updateColor();
 }
 
 T3ColorEntity::~T3ColorEntity() {
-  // todo: delete texture!
-  removeComponent(phong);
-  removeComponent(texture);
-  delete phong;
-  delete texture;
 }
 
 void T3ColorEntity::setColor(const QColor& clr, float amb,
@@ -51,32 +44,56 @@ void T3ColorEntity::setColor(const QColor& clr, float amb,
 }
 
 void T3ColorEntity::setTexture(const QUrl& source) {
-  texture->setSource(source);
+  color_type = TEXTURE;
+  texture_src = source;
+  updateColor();
+}
+
+void T3ColorEntity::setTexture(const QString& source) {
+  color_type = TEXTURE;
+  texture_src = source;
   updateColor();
 }
 
 void T3ColorEntity::updateColor() {
-  texture->specular = specular;
-  texture->shininess = shininess;
-  
-  if(color_type != prev_color_type) {
-    if(prev_color_type == PHONG)
-      removeMaterial(phong);
-    else if(prev_color_type == TEXTURE)
+  if(color_type == PHONG) {
+    if(texture) {
       removeMaterial(texture);
-    if(color_type == PHONG)
+      delete texture;
+    }
+    bool add = false;
+    if(!phong) {
+      phong = new Qt3D::QPhongMaterial();
+      add = true;
+    }
+    phong->setDiffuse(color);
+    if(ambient <= 0.0f) {
+      phong->setAmbient(QColor(0,0,0));
+    }
+    else {
+      phong->setAmbient(color.darker((int)(100.0f / ambient)));
+    }
+    phong->setSpecular(QColor::fromRgbF(specular, specular, specular, color.alphaF()));
+    phong->setShininess(shininess);
+    if(add) {
       addMaterial(phong);
-    else if(color_type == TEXTURE)
+    }
+  }
+  else if(color_type == TEXTURE) {
+    if(phong) {
+      removeMaterial(phong);    // this is currently crashing..
+      delete phong;
+    }
+    bool add = false;
+    if(!texture) {
+      texture = new T3Texture;
+      add = true;
+    }
+    texture->specular = specular;
+    texture->shininess = shininess;
+    texture->setSource(texture_src);
+    if(add) {
       addMaterial(texture);
-    prev_color_type = color_type;
+    }
   }
-  phong->setDiffuse(color);
-  if(ambient <= 0.0f) {
-    phong->setAmbient(QColor(0,0,0));
-  }
-  else {
-    phong->setAmbient(color.darker((int)(100.0f / ambient)));
-  }
-  phong->setSpecular(QColor::fromRgbF(specular, specular, specular, color.alphaF()));
-  phong->setShininess(shininess);
 }

@@ -114,6 +114,7 @@ T3TwoDTexture::T3TwoDTexture(Qt3DNode* parent)
 }
 
 T3TwoDTexture::~T3TwoDTexture() {
+  Qt3D::QNode::cleanup();
   // no!
   // if(image)
   //   delete image;

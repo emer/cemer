@@ -21,8 +21,16 @@
 #include <Layer>
 #include <taVector3i>
 
+#ifdef TA_QT3D
+
+#include <T3TwoDText>
+
+#else // TA_QT3D
+
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTransform.h>
+
+#endif // TA_QT3D
 
 TA_BASEFUNS_CTORS_DEFN(PrjnView);
 
@@ -44,6 +52,7 @@ void PrjnView::DoHighlightColor(bool apply) {
     prjn_trans = .8f;
 
 #ifdef TA_QT3D
+  nd->line->setColor(prjn->prjn_clr.color());
 #else // TA_QT3D
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
@@ -66,7 +75,8 @@ void PrjnView::Render_pre() {
   NetView* nv = getNetView();
   Projection* prjn = this->prjn(); // cache
 #ifdef TA_QT3D
-  setNode(new T3PrjnNode(NULL, this, prjn->projected, nv->view_params.prjn_width));
+  setNode(new T3PrjnNode(NULL, this, prjn->projected, nv->view_params.prjn_width,
+                         nv->lay_layout == NetView::TWO_D));
 #else // TA_QT3D
   setNode(new T3PrjnNode(this, prjn->projected, nv->view_params.prjn_width));
 #endif // TA_QT3D
@@ -129,6 +139,8 @@ void PrjnView::Render_impl() {
     src.y += lay_ht; dst.y += lay_ht;
   }
 
+  // todo: with new Qt3D, we can draw better projection lines!
+  
   if(nv->view_params.prjn_disp == NetViewParams::B_F) {
     // origin is *back* center
     src.x = ((float)lay_fr_pos.x + .5f * (float)lay_fr->scaled_disp_geom.x) /
@@ -181,6 +193,7 @@ void PrjnView::Render_impl() {
 
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);
 #ifdef TA_QT3D
+  node_so->SetEndPoint(dst.x - src.x, dst.y - src.y, dst.z - src.z);
 #else // TA_QT3D
   node_so->setEndPoint(SbVec3f(dst.x - src.x, dst.y - src.y, dst.z - src.z));
 #endif // TA_QT3D
@@ -190,6 +203,7 @@ void PrjnView::Render_impl() {
     taVector3f cap((dst.x - src.x) / 2.0f - .05f, (dst.y - src.y) / 2.0f, (dst.z - src.z) / 2.0f);
     node_so->setCaption(prjn->name.chars());
 #ifdef TA_QT3D
+    node_so->caption->Translate(cap);
 #else // TA_QT3D
     node_so->transformCaption(cap);
 #endif // TA_QT3D

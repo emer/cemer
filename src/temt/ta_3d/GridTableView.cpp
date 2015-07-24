@@ -755,8 +755,8 @@ void GridTableView::RenderGrid() {
     col_wd_lst = col_widths[col_idx++];
     col_pos += col_wd_lst;
 #ifdef TA_QT3D
-    grid->moveTo(QVector3D(col_pos, 0.0f, 0.0f));
-    grid->lineTo(QVector3D(col_pos, 1.0f, 0.0f));
+    grid->moveTo(col_pos, 0.0f, 0.0f);
+    grid->lineTo(col_pos, 1.0f, 0.0f);
 #else // TA_QT3D
     SoTranslation* tr = new SoTranslation();
     vert->addChild(tr);
@@ -778,8 +778,8 @@ void GridTableView::RenderGrid() {
     col_wd_lst = col_widths[col_idx++];
     col_pos += col_wd_lst;
 #ifdef TA_QT3D
-    grid->moveTo(QVector3D(col_pos, 0.0f, 0.0f));
-    grid->lineTo(QVector3D(col_pos, 1.0f, 0.0f));
+    grid->moveTo(col_pos, 0.0f, 0.0f);
+    grid->lineTo(col_pos, 1.0f, 0.0f);
 #else // TA_QT3D
     SoTranslation* tr = new SoTranslation();
     vert->addChild(tr);
@@ -818,8 +818,8 @@ void GridTableView::RenderGrid() {
   if (header_on) {
     row_pos += head_height;
 #ifdef TA_QT3D
-    grid->moveTo(QVector3D(0.0f, 1.0f-row_pos, 0.0f));
-    grid->lineTo(QVector3D(width, 1.0f-row_pos, 0.0f));
+    grid->moveTo(0.0f, 1.0f-row_pos, 0.0f);
+    grid->lineTo(width, 1.0f-row_pos, 0.0f);
 #else // TA_QT3D
     SoTranslation* tr = new SoTranslation;
     horiz->addChild(tr);
@@ -838,8 +838,8 @@ void GridTableView::RenderGrid() {
   for (int data_row = view_range.min; data_row <= view_range.max; ++data_row) {
     row_pos += row_height;
 #ifdef TA_QT3D
-    grid->moveTo(QVector3D(0.0f, 1.0f-row_pos, 0.0f));
-    grid->lineTo(QVector3D(width, 1.0f-row_pos, 0.0f));
+    grid->moveTo(0.0f, 1.0f-row_pos, 0.0f);
+    grid->lineTo(width, 1.0f-row_pos, 0.0f);
 #else // TA_QT3D
     SoTranslation* tr = new SoTranslation();
     horiz->addChild(tr);

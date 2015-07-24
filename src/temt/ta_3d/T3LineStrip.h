@@ -24,6 +24,7 @@
 #include <float_Matrix>
 #include <int_Array>
 #include <taVector3f>
+#include <T3Misc>
 
 // declare all other types mentioned but not required to include:
 
@@ -46,6 +47,10 @@ public:
   void  restart();
   // set sizes back to 0
   
+  int  pointCount() { return points.Frames(); } // number of points
+  int  colorCount()  { return colors.size; } // number of colors
+  int  indexCount()  { return indexes.size; } // number of indexes
+  
   int  addPoint(const QVector3D& pos);
   // add given point, return index to that point
   void  moveTo(const QVector3D& pos);
@@ -59,12 +64,23 @@ public:
   // add given point to points, and index of it to indexes -- starts a new line if indexes.size > 0 by adding a stop
   void  lineTo(const taVector3f& pos);
   // add given point to points, and index of it to indexes
+
+  void  moveToIdx(int idx);
+  void  lineToIdx(int idx);
   
   int  addColor(uint32_t clr);
   // add given color -- must keep in sync with adding points!
   int  addColor(const QColor& clr);
   // add given color -- must keep in sync with adding points!
 
+  void setPointColor(int idx, const QColor& clr)
+  { colors.FastEl(idx) = T3Misc::makePackedRGBA(clr); }
+  void setPointolor(int idx, uint32_t clr)
+  { colors.FastEl(idx) = clr; }
+
+  void  setPoint(int idx, const QVector3D& pos);
+  void  setPoint(int idx, const taVector3f& pos);
+  
   explicit T3LineStripMesh(Qt3DNode* parent = 0);
   ~T3LineStripMesh(); 
 
@@ -86,13 +102,18 @@ class TA_API T3LineStrip : public T3ColorEntity {
   Q_OBJECT
   INHERITED(T3ColorEntity)
 public:
-  bool  per_vertex_color;       // if true, then using per-vertex color
+  bool          per_vertex_color;       // if true, then using per-vertex color
+  float         line_width;             // width of lines to draw
   T3LineStripMesh*     lines;
 
   void setNodeUpdating(bool updating) override;
   
   void  restart()                      { lines->restart(); }
 
+  int  pointCount()  { return lines->pointCount(); } // number of vertexes
+  int  colorCount()  { return lines->colorCount(); } // number of colors
+  int  indexCount()  { return lines->indexCount(); } // number of indexes
+  
   int   addPoint(const QVector3D& pos) { return lines->addPoint(pos); }
   void  moveTo(const QVector3D& pos)   { lines->moveTo(pos); }
   void  lineTo(const QVector3D& pos)   { lines->lineTo(pos); }   
@@ -101,11 +122,28 @@ public:
   void  moveTo(const taVector3f& pos)  { lines->moveTo(pos); }  
   void  lineTo(const taVector3f& pos)  { lines->lineTo(pos); }   
 
+  void  moveTo(float xp, float yp, float zp)   { lines->moveTo(QVector3D(xp, yp, zp)); }
+  void  lineTo(float xp, float yp, float zp)   { lines->lineTo(QVector3D(xp, yp, zp)); }   
+
+  // just add an index to an existing point!
+  void  moveToIdx(int idx)              { lines->moveToIdx(idx); }
+  void  lineToIdx(int idx)              { lines->lineToIdx(idx); }
+  
   int  addColor(uint32_t clr)
   { return lines->addColor(clr); }
   int  addColor(const QColor& clr)
   { return lines->addColor(clr); }
 
+  void setPointColor(int idx, const QColor& clr)
+  { lines->setPointColor(idx, clr); }
+  void setPointColor(int idx, uint32_t clr)
+  { lines->setPointColor(idx, clr); }
+
+  void setPoint(int idx, const QVector3D& pos)
+  { lines->setPoint(idx, pos); }
+  void setPoint(int idx, float xp, float yp, float zp)
+  { lines->setPoint(idx, QVector3D(xp, yp, yp)); }   
+  
   void  setColor(const QColor& clr, float amb = 1.0f,
                  float spec = 0.95f, float shin = 150.0f) override
   { inherited::setColor(clr, amb, spec, shin); }

@@ -30,17 +30,17 @@ class TA_API T3ColorEntity : public T3Entity {
   INHERITED(T3Entity)
 public:
   enum ColorType {
-    PHONG=1,
+    NO_COLOR,
+    PHONG,
     TEXTURE,
   };
 
   ColorType     color_type;     // where does the color come from?
-  Qt3D::QPhongMaterial* phong;  // phong material
-  T3Texture*    texture;        // texture
   QColor        color;          // basic color of the object
   float         ambient;        // how much to diminish the color values to create ambient color -- always based off of color -- a value of 0 means ambient is black
   float         specular;       // how bright is the specular (shiny reflection) component (always white)
   float         shininess;      // how shiny is the surface -- larger values create smaller specular highlight, and vice-versa
+  QUrl          texture_src;    // location of texture
   
   virtual void  setColor(const QColor& color, float ambient = 0.2f,
                          float specular = 0.95f, float shininess = 150.0f);
@@ -48,15 +48,18 @@ public:
 
   virtual void  setTexture(const QUrl& source);
   // set texture and update display -- selects color_type = TEXTURE
+  virtual void  setTexture(const QString& source);
+  // set texture and update display -- selects color_type = TEXTURE
   
   T3ColorEntity(Qt3DNode* parent = 0);
   ~T3ColorEntity();
 
 public slots:
   virtual void  updateColor(); // update to new color
-
 protected:
-  int prev_color_type;
+  Qt3D::QPhongMaterial* phong;  // phong material -- null if using texture mode
+  T3Texture*    texture;        // texture -- null if using phong mode
+
 };
 
 #endif // T3ColorEntity_h

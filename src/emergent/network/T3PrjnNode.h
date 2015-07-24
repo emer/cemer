@@ -26,30 +26,22 @@
 
 #ifdef TA_QT3D
 
+#include <T3LineStrip>
+
 class E_API T3PrjnNode: public T3NodeParent {
   Q_OBJECT
   INHERITED(T3NodeParent)
 public:
   bool			projected;
-  float			radius;
+  bool                  mode_2d;
+  T3LineStrip*          line;
 
-  // void		setEndPoint(const SbVec3f& value) { };
-  // #IGNORE sets endpoint, relative to its origin
-  // void		setArrowColor(const SbColor& clr, float transp);
-  // #IGNORE set arrow color
-
+  void  SetEndPoint(float xp, float yp, float zp);
+  // set the end point and draw the arrow..
+  
   T3PrjnNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
-             bool projted = true, float rad = .01f);
+             bool projted = true, float rad = .01f, bool mode_2d = false);
   ~T3PrjnNode();
-
-protected:
-  // SoComplexity*		complexity;
-  // SoTransform*		trln_prjn; // #IGNORE
-  // SoTransform*		rot_prjn; // #IGNORE
-  // SoTransform*		trln_arr; // #IGNORE
-  // SoCone*		arr_prjn;  // #IGNORE arrow head
-  // SoCylinder*		line_prjn;  // #IGNORE line
-  // SoMaterial*		arr_mat;  // #IGNORE arrow material (color)
 };
 
 

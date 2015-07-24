@@ -37,13 +37,11 @@ T3Cylinder::T3Cylinder(Qt3DNode* parent, LongAxis ax, float rad, float len)
 }
 
 void T3Cylinder::init() {
-  sub = new T3Entity(this);
-  
+  axis_rotate = new Qt3D::QRotateTransform;
+  transform->addTransform(axis_rotate);
   Qt3D::QCylinderMesh* cb = new Qt3D::QCylinderMesh();
-  sub->addMesh(cb);
+  addMesh(cb);
   updateGeom();
-
-  sub->addMaterial(phong);      // shares it!
 }
 
 T3Cylinder::~T3Cylinder() {
@@ -73,23 +71,25 @@ void T3Cylinder::setLength(float len) {
 }
 
 void T3Cylinder::updateGeom() {
-  Qt3D::QCylinderMesh* cb = dynamic_cast<Qt3D::QCylinderMesh*>(sub->mesh);
+  Qt3D::QCylinderMesh* cb = dynamic_cast<Qt3D::QCylinderMesh*>(mesh);
   cb->setRadius(radius);
   cb->setLength(length);
   switch(axis) {
   case LONG_X:
     size = QVector3D(length, 2.0f*radius, 2.0f*radius);
-    sub->RotateDeg(0.0f, 0.0f, 1.0f, -90.0f);
+    axis_rotate->setAxis(QVector3D(0.0f, 0.0f, 1.0f));
+    axis_rotate->setAngleDeg(-90.0f);
     break;
   case LONG_Y:
     size = QVector3D(2.0f*radius, length, 2.0f*radius);
-    sub->RotateDeg(1.0f, 0.0f, 0.0f, 0.0f); // native
+    axis_rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
+    axis_rotate->setAngleDeg(0.0f);
     break;
   case LONG_Z:
     size = QVector3D(2.0f*radius, 2.0f*radius, length);
-    sub->RotateDeg(1.0f, 0.0f, 0.0f, -90.0f);
+    axis_rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
+    axis_rotate->setAngleDeg(-90.0f);
     break;
   }    
-  sub->size = size;             // todo: does sub need color??
 }
 

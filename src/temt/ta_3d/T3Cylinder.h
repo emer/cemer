@@ -34,7 +34,7 @@ public:
     LONG_Z,                     // long axis is in Z direction
   };
 
-  T3Entity*     sub;            // cylinder lives in sub-entity to encapsulate axis rotation
+  Qt3D::QRotateTransform*    axis_rotate;    // extra axis rotation
   LongAxis      axis;
   float         radius;
   float         length;

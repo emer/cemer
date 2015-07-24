@@ -93,7 +93,7 @@ void VEBodyView::Render_pre() {
     if(ob->HasBodyFlag(VEBody::FM_FILE) && !ob->obj_fname.empty()) {
       T3SceneLoader* sp = new T3SceneLoader(obv);
       obv->obj = sp;
-      sp->setSource((QString)ob->obj_fname.chars());
+      sp->setSource((QString)ob->obj_fname.chars()); // currently not working!
       goto finish;
       // QFileInfo qfi(ob->obj_fname);
       // if(qfi.isFile() && qfi.isReadable() && in.openFile(ob->obj_fname)) {
@@ -103,22 +103,6 @@ void VEBodyView::Render_pre() {
       // taMisc::ConsoleOutput(msg, true, false); // straight msg
       // NOTE: do NOT use Info or Error here: ProcessEvents at this point is BAD
 //       ob->ClearBodyFlag(VEBody::FM_FILE);
-    }
-
-    if((bool)ob->texture && wv) {
-      // SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
-      // SoSwitch* txfsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
-      // VETexture* vtex = ob->texture.ptr();
-      // int idx = vtex->GetIndex();
-      // if(idx >= 0 && tsw->getNumChildren() > idx) {
-      //   SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
-      //   ssep->addChild(tex);
-      //   // taMisc::Info("tex idx:", (String)(((int)ssep->getNumChildren())-1));
-      //   if(vtex->NeedsTransform()) {
-      //     SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
-      //     ssep->addChild(ttx);
-      //   }
-      // }
     }
 
     switch(ob->shape) {
@@ -301,37 +285,19 @@ void VEBodyView::Render_impl() {
   obv->Translate(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
   obv->RotateRad(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z, ob->cur_rot.rot);
    
-  if((bool)ob->texture && wv) {
-    // int tex_idx = show_drag ? 4 : 3; // NOTE: this may need to be updated if structure changes -- should probably have a better solution to this..
-    // SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
-    // SoSwitch* txfsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
-    // VETexture* vtex = ob->texture.ptr();
-    // int idx = vtex->GetIndex();
-    // if(idx >= 0 && tsw->getNumChildren() > idx && ssep->getNumChildren() > tex_idx) {
-    //   SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
-    //   SoTexture2* curtex = (SoTexture2*)ssep->getChild(tex_idx);
-    //   if(tex != curtex && curtex->getClassTypeId() == tex->getClassTypeId()) {
-    //     ssep->replaceChild(tex_idx, tex);
-    //     if(vtex->NeedsTransform() && ssep->getNumChildren() > tex_idx + 1) {
-    //       // note: transform only works if previously also had a transform.. Init will fix
-    //       SoTexture2Transform* curttx = (SoTexture2Transform*)ssep->getChild(tex_idx + 1);
-    //       SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
-    //       if(ttx != curttx && curttx->getClassTypeId() == ttx->getClassTypeId()) {
-    //         ssep->replaceChild(tex_idx + 1, ttx);
-    //       }
-    //     }
-    //   }
-    // }
-  }
-
   float off_size = 1.0e-12f;    // tiny size if it is turned off..
 
+  // todo: once switched over to Qt3D, remove whole texture apparatus..
+  // just need local params
+  
   if(ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
     if(ob->HasBodyFlag(VEBody::FM_FILE)) {
       T3SceneLoader* sp = dynamic_cast<T3SceneLoader*>(obv->obj);
-      sp->setSource((QString)ob->obj_fname.chars());
-      if(ob->HasBodyFlag(VEBody::OFF)) {
-        sp->Scale(off_size);
+      if(sp) {
+        sp->setSource((QString)ob->obj_fname.chars());
+        if(ob->HasBodyFlag(VEBody::OFF)) {
+          sp->Scale(off_size);
+        }
       }
     }
     else {
@@ -339,7 +305,10 @@ void VEBodyView::Render_impl() {
       case VEBody::SPHERE: {
         T3Sphere* sp = dynamic_cast<T3Sphere*>(obv->obj);
         if(sp) {
-          if(ob->set_color) {
+          if(ob->texture) {
+            sp->setTexture(QString(ob->texture->fname.chars()));
+          }
+          else if(ob->set_color) {
             sp->setColor(ob->color.color(),
                          ob->phong_color.ambient, ob->phong_color.specular,
                          ob->phong_color.shininess);
@@ -354,7 +323,10 @@ void VEBodyView::Render_impl() {
       case VEBody::CAPSULE: {
         T3Capsule* sp = dynamic_cast<T3Capsule*>(obv->obj);
         if(sp) {
-          if(ob->set_color) {
+          if(ob->texture) {
+            sp->setTexture(QString(ob->texture->fname.chars()));
+          }
+          else if(ob->set_color) {
             sp->setColor(ob->color.color(),
                          ob->phong_color.ambient, ob->phong_color.specular,
                          ob->phong_color.shininess);
@@ -371,7 +343,10 @@ void VEBodyView::Render_impl() {
       case VEBody::CYLINDER: {
         T3Cylinder* sp = dynamic_cast<T3Cylinder*>(obv->obj);
         if(sp) {
-          if(ob->set_color) {
+          if(ob->texture) {
+            sp->setTexture(QString(ob->texture->fname.chars()));
+          }
+          else if(ob->set_color) {
             sp->setColor(ob->color.color(),
                          ob->phong_color.ambient, ob->phong_color.specular,
                          ob->phong_color.shininess);
@@ -388,7 +363,10 @@ void VEBodyView::Render_impl() {
       case VEBody::BOX: {
         T3Cube* sp = dynamic_cast<T3Cube*>(obv->obj);
         if(sp) {
-          if(ob->set_color) {
+          if(ob->texture) {
+            sp->setTexture(QString(ob->texture->fname.chars()));
+          }
+          else if(ob->set_color) {
             sp->setColor(ob->color.color(),
                          ob->phong_color.ambient, ob->phong_color.specular,
                          ob->phong_color.shininess);
