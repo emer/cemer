@@ -28,8 +28,9 @@
 #include <taiMiscCore>
 
 #include <QTimer>
-
-
+#include <QLocale>
+#include <QString>
+#include <QStringList>
 
 using namespace std;
 
@@ -619,13 +620,13 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
 }
 
 int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
-   //NOTE: this routine can be called in either of two loading contexts:
-   // 1) loading the Path portion
-   // 2) loading the Value portion
-   // Variants of pointer subtypes stream their type info during the Path phase
-//NOTE: BA 2006-12-01 we shouldn't check on load: if it is in dump file, then
+  //NOTE: this routine can be called in either of two loading contexts:
+  // 1) loading the Path portion
+  // 2) loading the Value portion
+  // Variants of pointer subtypes stream their type info during the Path phase
+  //NOTE: BA 2006-12-01 we shouldn't check on load: if it is in dump file, then
   // we should load it, otherwise many dynamic and regression issues arise
-//  if(!DumpMember(par)) return false;
+  //  if(!DumpMember(par)) return false;
 
   if(taMisc::verbose_load >= taMisc::TRACE) {
     String msg;
@@ -704,23 +705,53 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
     // in 4.x, we let the stream tell us if a quoted string is coming...
     if (c == '\"') {
       c = taMisc::skip_till_start_quote_or_semi(strm); // duh, has to succeed!
-      c = taMisc::read_till_end_quote_semi(strm); // 
+      c = taMisc::read_till_end_quote_semi(strm); //
       
     } else {
       c = taMisc::read_till_rb_or_semi(strm);
     }
-  
+    
     if (c != ';') {
       taMisc::Warning("Missing ';' in dump file for member:", name,
-                    "in eff_type:",GetOwnerType()->name);
+                      "in eff_type:",GetOwnerType()->name);
       return true;		// don't scan any more after this err..
     }
+    
+    // dealing with bug 1290 - decimal symbol issue
+    // breakup the expression to isolate tne numeric parts
+    // convert each numeric part, using system locale language, into a double
+    // and then back into a non-localized string
+    // and reconstitue the expression
+    QLocale sys_locale = QLocale::system();
+    if (sys_locale.language() != QLocale::English) {
+      if (name == "expr") {
+        String piece;
+        String whole;
+        QStringList parts = QString(taMisc::LexBuf.chars()).split(' ');
+        for (int i=0; i<parts.size(); i++) {
+          piece = String(parts.at(i));
+          if (piece.length() > 0 && parts.at(i).at(0).isDigit()) {
+            double expr_double = sys_locale.toDouble(parts.at(i));
+            piece = String(expr_double);
+          }
+          if (i == 0) {
+            whole += piece;
+          }
+          else {
+            whole += ' ';
+            whole += piece;
+          }
+        }
+        taMisc::LexBuf = whole;
+      }
+    }
+    
     eff_type->SetValStr(taMisc::LexBuf, new_base, base, this);
     if(taMisc::verbose_load >= taMisc::TRACE) {
       String msg;
       msg << "Leaving MemberDef::Dump_Load, member: " << name
-          << ", par = " << String((ta_intptr_t)par) << ", base = "
-	  << String((ta_intptr_t)base);
+      << ", par = " << String((ta_intptr_t)par) << ", base = "
+      << String((ta_intptr_t)base);
       taMisc::Info(msg);
     }
     return true;
@@ -728,15 +759,15 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
 }
 
 int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
-			    TypeDef*& td, String& path, const char* typnm)
+                            TypeDef*& td, String& path, const char* typnm)
 {
   if(taMisc::verbose_load >= taMisc::TRACE) {
     const char* nm = (typnm != NULL) ? typnm : "NULL";
     String msg;
     msg << "Entering TypeDef::Dump_Load_Path, type: " << name
-	<< ", path = " << path
-	<< ", par = " << String((ta_intptr_t)par) << ", base = "
-	<< String((ta_intptr_t)base) << ", typnm = " << nm;
+    << ", path = " << path
+    << ", par = " << String((ta_intptr_t)par) << ", base = "
+    << String((ta_intptr_t)base) << ", typnm = " << nm;
     taMisc::Info(msg);
   }
   td = NULL;
@@ -747,7 +778,7 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
       taMisc::Warning("<<< EOF in Dump_Load_Path:", name, taMisc::LexBuf);
     return EOF;
   }
-
+  
   // the format is usually: type path, but if tpnm is passed, then it is used
   bool has_type = true;
   if(taMisc::LexBuf.length() == 0)

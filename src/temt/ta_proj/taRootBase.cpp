@@ -2035,21 +2035,6 @@ bool taRootBase::Startup_Run() {
     }
   }
   
-  if(taMisc::gui_active) {
-    QLocale sys_locale = QLocale::system();
-    if (sys_locale.language() != QLocale::English) {
-      QString language = sys_locale.languageToString(sys_locale.language());
-      
-      String msg = "Emergent detected that your system language is " + String(language) +
-      ". If this locale setting uses '.' as a numeric group separator emergent may freeze. Change application locale to English/United States? This will only apply to the emergent application.";
-      
-      int choice = taMisc::Choice(msg, "Continue", "Change Locale");
-      if (choice == 1) {
-        QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
-      }
-    }
-  }
-  
   // first thing to do upon entering event loop:
   QTimer::singleShot(0, root_adapter, SLOT(Startup_ProcessArgs()));
   
