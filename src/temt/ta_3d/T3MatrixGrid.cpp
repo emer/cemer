@@ -309,10 +309,10 @@ void T3MatrixGrid::renderBlock(const taVector2i& pos) {
   // bottom is zp0, top is zp1
 
   // triangle strip order is 0 1 2, 2 1 3
-  // front order: clockwise
+  // back order: clockwise
   // 1 3  10 11 = 00, 10, 01, 11
   // 0 2  00 01
-  // back order: counter-clockwise
+  // front order: counter-clockwise
   // 2 3        = 00, 01, 10, 11
   // 0 1
   

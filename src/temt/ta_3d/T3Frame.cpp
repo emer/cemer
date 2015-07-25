@@ -1,0 +1,477 @@
+// Copyright, 1995-2013, Regents of the University of Colorado,
+// Carnegie Mellon University, Princeton University.
+//
+// This file is part of The Emergent Toolkit
+//
+//   This library is free software; you can redistribute it and/or
+//   modify it under the terms of the GNU Lesser General Public
+//   License as published by the Free Software Foundation; either
+//   version 2.1 of the License, or (at your option) any later version.
+//
+//   This library is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//   Lesser General Public License for more details.
+
+#include "T3Frame.h"
+
+#include <Qt3DRenderer/Buffer>
+#include <Qt3DRenderer/QMeshData>
+#include <Qt3DRenderer/QPerVertexColorMaterial>
+#include <Qt3DRenderer/QPhongMaterial>
+#include <Qt3DRenderer/Attribute>
+
+
+T3FrameMesh::T3FrameMesh(Qt3DNode* parent)
+  : Qt3D::QAbstractMesh(parent)
+{
+  width = 1.0f;
+  height = 1.0f;
+  depth = 0.05f;
+  frame_width = 0.1f;
+}
+
+T3FrameMesh::~T3FrameMesh() {
+  Qt3D::QNode::cleanup();
+}
+
+void T3FrameMesh::setNodeUpdating(bool updating) {
+  bool should_render = false;
+  if(!updating && node_updating) should_render = true;
+  node_updating = updating;
+  blockNotifications(node_updating); // block if updating
+  // nothing seems to work here...
+  if(should_render) {
+    emit nodeUpdatingChanged();
+    //    emit parentChanged();
+  }
+}
+
+void T3FrameMesh::updateMesh() {
+  setNodeUpdating(true);
+  setNodeUpdating(false);
+}
+
+void T3FrameMesh::copy(const Qt3DNode *ref) {
+  Qt3D::QAbstractMesh::copy(ref);
+  const T3FrameMesh* mesh = static_cast<const T3FrameMesh*>(ref);
+  width = mesh->width;
+  height = mesh->height;
+  depth = mesh->depth;
+  frame_width = mesh->frame_width;
+}
+
+Qt3D::QMeshDataPtr createFrame(float width, float height, float depth, float frame_width);
+
+class FrameFunctor : public Qt3D::QAbstractMeshFunctor {
+public:
+  float		width;          // overall x dimension
+  float		height;         // y dimension
+  float		depth;          // z dimension
+  float		frame_width;    // width of the frame -- goes in this amount from overall
+  
+  FrameFunctor(const T3FrameMesh& mesh)
+    : width(mesh.width)
+    , height(mesh.height)
+    , depth(mesh.depth)
+    , frame_width(mesh.frame_width)
+  {
+  }
+
+  Qt3D::QMeshDataPtr operator ()() override {
+    return createFrame(width, height, depth, frame_width);
+  }
+
+  bool operator ==(const Qt3D::QAbstractMeshFunctor &other) const {
+    const FrameFunctor *otherFunctor = dynamic_cast<const FrameFunctor *>(&other);
+    if (otherFunctor != Q_NULLPTR)
+      return ((otherFunctor->width == width) &&
+              (otherFunctor->height == height) &&
+              (otherFunctor->depth == depth) &&
+              (otherFunctor->frame_width == frame_width));
+    return false;
+  }
+};
+
+// generates one plane -- from qcuboidmesh.cpp
+
+enum PlaneNormal {
+  PositiveX,
+  NegativeX,
+  PositiveY,
+  NegativeY,
+  PositiveZ,
+  NegativeZ
+};
+
+
+//
+//  a2,b2    a3,b3
+//
+//  a0,b0    a1,b1
+//
+
+void generatePlaneData
+(float a0, float b0, float a1, float b1, float a2, float b2, float a3, float b3, 
+ float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3,
+ PlaneNormal normal, float planeDistance, float*& vertices, quint16*& indices,
+ quint16 &baseVertex)
+{
+  const float as[4] = {a0, a1, a2, a3};
+  const float bs[4] = {b0, b1, b2, b3};
+  const float us[4] = {u0, u1, u2, u3};
+  const float vs[4] = {v0, v1, v2, v3};
+
+  float n = 1.0f;
+
+  switch (normal) {
+  case NegativeX:
+    n = -1.0f; // fall through
+  case PositiveX: {
+    // Iterate over z
+    int idx = 0;
+    for (int j = 0; j < 2; ++j) {
+      // Iterate over y
+      for (int i = 0; i < 2; ++i, ++idx) {
+        const float b = bs[idx];
+        const float v = vs[idx];
+        const float a = as[idx];
+        const float u = us[idx];
+
+        // position
+        *vertices++ = planeDistance;
+        *vertices++ = a;
+        *vertices++ = b;
+
+        // texture coordinates
+        *vertices++ = u;
+        *vertices++ = v;
+
+        // normal
+        *vertices++ = n;
+        *vertices++ = 0.0f;
+        *vertices++ = 0.0f;
+
+        // tangent
+        *vertices++ = 0.0f;
+        *vertices++ = 0.0f;
+        *vertices++ = 1.0f;
+        *vertices++ = 1.0f;
+      }
+    }
+    break;
+  }
+
+  case NegativeY:
+    n = -1.0f;
+  case PositiveY: {
+    // Iterate over z
+    for (int j = 0; j < 2; ++j) {
+      // Iterate over x
+      // This iterates in the opposite sense to the other directions
+      // so that the winding order is correct
+      for (int i = 1; i >= 0; --i) {
+        int idx = j*2 + i;
+        const float b = bs[idx];
+        const float v = vs[idx];
+        const float a = as[idx];
+        const float u = us[idx];
+
+        // position
+        *vertices++ = a;
+        *vertices++ = planeDistance;
+        *vertices++ = b;
+
+        // texture coordinates
+        *vertices++ = u;
+        *vertices++ = v;
+
+        // normal
+        *vertices++ = 0.0f;
+        *vertices++ = n;
+        *vertices++ = 0.0f;
+
+        // tangent
+        *vertices++ = 1.0f;
+        *vertices++ = 0.0f;
+        *vertices++ = 0.0f;
+        *vertices++ = 1.0f;
+      }
+    }
+    break;
+  }
+
+  case NegativeZ:
+    n = -1.0f;
+  case PositiveZ: {
+    // Iterate over y
+    int idx = 0;
+    for (int j = 0; j < 2; ++j) {
+      // Iterate over x
+      for (int i = 0; i < 2; ++i, ++idx) {
+        const float b = bs[idx];
+        const float v = vs[idx];
+        const float a = as[idx];
+        const float u = us[idx];
+
+        // position
+        *vertices++ = a;
+        *vertices++ = b;
+        *vertices++ = planeDistance;
+
+        // texture coordinates
+        *vertices++ = u;
+        *vertices++ = v;
+
+        // normal
+        *vertices++ = 0.0f;
+        *vertices++ = 0.0f;
+        *vertices++ = n;
+
+        // tangent
+        *vertices++ = 1.0f;
+        *vertices++ = 0.0f;
+        *vertices++ = 0.0f;
+        *vertices++ = 1.0f;
+      }
+    }
+    break;
+  }
+  } // switch (normal)
+
+    // Populate indices taking care to get correct CCW winding on all faces
+  if (n > 0.0) {
+    for (int j = 0; j < 1; ++j) {
+      const int rowStartIndex = j * 2 + baseVertex;
+      const int nextRowStartIndex = (j + 1) * 2 + baseVertex;
+
+      // Iterate over x
+      for (int i = 0; i < 2 - 1; ++i) {
+        // Split quad into two triangles
+        *indices++ = rowStartIndex + i;
+        *indices++ = rowStartIndex + i + 1;
+        *indices++ = nextRowStartIndex + i;
+
+        *indices++ = nextRowStartIndex + i;
+        *indices++ = rowStartIndex + i + 1;
+        *indices++ = nextRowStartIndex + i + 1;
+      }
+    }
+  } else {
+    for (int j = 0; j < 1; ++j) {
+      const int rowStartIndex = j * 2 + baseVertex;
+      const int nextRowStartIndex = (j + 1) * 2 + baseVertex;
+
+      // Iterate over x
+      for (int i = 0; i < 1; ++i) {
+        // Split quad into two triangles
+        *indices++ = rowStartIndex + i;
+        *indices++ = nextRowStartIndex + i;
+        *indices++ = rowStartIndex + i + 1;
+
+        *indices++ = nextRowStartIndex + i;
+        *indices++ = nextRowStartIndex + i + 1;
+        *indices++ = rowStartIndex + i + 1;
+      }
+    }
+  }
+
+  baseVertex += 4;
+}
+
+Qt3D::QMeshDataPtr createFrame(float w, float h, float d, float fw) {
+
+  //  x0,y1          x1,y1
+  //    xf0,yf1  xf1,yf1    
+  //            
+  //    xf0,yf0  xf1,yf0  
+  //  x0,y0          x1,y0
+
+  const float z0 = -0.5f * d;
+  const float z1 = 0.5f * d;
+  
+  const float x0 = -0.5f * w;
+  const float y0 = -0.5f * h;
+  const float x1 = 0.5f * w;
+  const float y1 = 0.5f * h;
+
+  const float xf0 = -0.5f * (w - fw);
+  const float yf0 = -0.5f * (h - fw);
+  const float xf1 = 0.5f * (w - fw);
+  const float yf1 = 0.5f * (h - fw);
+
+  const float u0 = 0.0f;
+  const float v0 = 0.0f;
+  const float u1 = 1.0f;
+  const float v1 = 1.0f;
+
+  const float uf0 = w / fw;
+  const float vf0 = h / fw;
+  const float uf1 = 1.0f - (w / fw);
+  const float vf1 = 1.0f - (h / fw);
+
+  // planes: fr*4, bk*4, tp, bt, lf, rt, itp, ibt, ilf, irt
+  const int nPlanes = 16;
+  const int nVerts = nPlanes * 4;     // 4 verts per plane
+
+  // Allocate a buffer with the interleaved per-vertex data with
+  // vec3 pos, vec2 texCoord, vec3 normal, vec4 tangent
+  const quint32 elementSize = 3 + 2 + 3 + 4;
+  const quint32 stride = elementSize * sizeof(float);
+  QByteArray vertexBytes;
+  vertexBytes.resize(stride * nVerts);
+  float* vertices = reinterpret_cast<float*>(vertexBytes.data());
+
+  // Allocate a buffer for the index data
+  const int idxperpln = 2 * 3;
+  const int indexCount = nPlanes * idxperpln;
+  Q_ASSERT(indexCount < (std::numeric_limits<quint16>::max)());
+  QByteArray indexBytes;
+  indexBytes.resize(indexCount * sizeof(quint16));
+  quint16* indices = reinterpret_cast<quint16*>(indexBytes.data());
+
+  // Populate vertex and index buffers
+  quint16 baseVertex = 0;
+  // back, left
+  generatePlaneData(x0, y0, xf0, yf0, x0,y1, xf0, yf1,
+                    u0, v0, uf0, vf0, u0,v1, uf0, vf1,
+                    NegativeZ, z0, vertices, indices, baseVertex);
+  // back, top
+  generatePlaneData(xf0, yf1, xf1, yf1, x0,y1, x1, y1,
+                    uf0, vf1, uf1, vf1, u0,v1, u1, v1,
+                    NegativeZ, z0, vertices, indices, baseVertex);
+  // back, right
+  generatePlaneData(xf1, yf0, x1, y0, xf1,yf1, x1, y1,
+                    uf1, vf0, u1, v0, uf1,vf1, u1, v1,
+                    NegativeZ, z0, vertices, indices, baseVertex);
+  // back, bottom
+  generatePlaneData(x0, y0, x1, y0, xf0,yf0, xf1, yf0,
+                    u0, v0, u1, v0, uf0,vf0, uf1, vf0,
+                    NegativeZ, z0, vertices, indices, baseVertex);
+
+  // left edge
+  generatePlaneData(y0 , z0, y1, z0, y0,z1, y1, z1,
+                    u0, v0, u1, v0, u0,v1, u1, v1,
+                    NegativeX, x0, vertices, indices, baseVertex);
+  // top edge
+  generatePlaneData(x0, z0, x1, z0, x0,z1, x1, z1,
+                    u0, v0, u1, v0, u0,v1, u1, v1,
+                    PositiveY, y1, vertices, indices, baseVertex);
+  // right edge
+  generatePlaneData(y0, z0, y1, z0, y0,z1, y1, z1,
+                    u0, v0, u1, v0, u0,v1, u1, v1,
+                    PositiveX, x1, vertices, indices, baseVertex);
+  // bottom edge
+  generatePlaneData(x0, z0, x1, z0, x0,z1, x1, z1,
+                    u0, v0, u1, v0, u0,v1, u1, v1,
+                    NegativeY, y0, vertices, indices, baseVertex);
+
+  // left inside edge
+  generatePlaneData(yf0, z0, yf1, z0, yf0,z1, yf1, z1,
+                    u0, v0, u1, v0, u0,v1, u1, v1,
+                    PositiveX, xf0, vertices, indices, baseVertex);
+  // top inside edge
+  generatePlaneData(xf0, z0, xf1, z0, xf0,z1, xf1, z1,
+                    u0, v0, u1, v0, u0,v1, u1, v1,
+                    NegativeY, yf1, vertices, indices, baseVertex);
+  // right inside edge
+  generatePlaneData(yf0, z0, yf1, z0, yf0,z1, yf1, z1,
+                    u0, v0, u1, v0, u0,v1, u1, v1,
+                    NegativeX, xf1, vertices, indices, baseVertex);
+  // bottom inside edge
+  generatePlaneData(xf0, z0, xf1, z0, xf0,z1, xf1, z1,
+                    u0, v0, u1, v0, u0,v1, u1, v1,
+                    PositiveY, yf0, vertices, indices, baseVertex);
+
+  // front, left
+  generatePlaneData(x0, y0, xf0, yf0, x0,y1, xf0, yf1,
+                    u0, v0, uf0, vf0, u0,v1, uf0, vf1,
+                    PositiveZ, z1, vertices, indices, baseVertex);
+  // front, top
+  generatePlaneData(xf0, yf1, xf1, yf1, x0,y1, x1, y1,
+                    uf0, vf1, uf1, vf1, u0,v1, u1, v1,
+                    PositiveZ, z1, vertices, indices, baseVertex);
+  // front, right
+  generatePlaneData(xf1, yf0, x1, y0, xf1,yf1, x1, y1,
+                    uf1, vf0, u1, v0, uf1,vf1, u1, v1,
+                    PositiveZ, z1, vertices, indices, baseVertex);
+  // front, bottom
+  generatePlaneData(x0, y0, x1, y0, xf0,yf0, xf1, yf0,
+                    u0, v0, u1, v0, uf0,vf0, uf1, vf0,
+                    PositiveZ, z1, vertices, indices, baseVertex);
+
+  // Wrap the raw bytes in buffers and set attributes/indices on the mesh
+  Qt3D::BufferPtr vertexBuffer(new Qt3D::Buffer(QOpenGLBuffer::VertexBuffer));
+  vertexBuffer->setUsage(QOpenGLBuffer::StaticDraw);
+  vertexBuffer->setData(vertexBytes);
+
+  Qt3D::BufferPtr indexBuffer(new Qt3D::Buffer(QOpenGLBuffer::IndexBuffer));
+  indexBuffer->setUsage(QOpenGLBuffer::StaticDraw);
+  indexBuffer->setData(indexBytes);
+
+  Qt3D::QMeshDataPtr mesh(new Qt3D::QMeshData(Qt3D::QMeshData::Triangles));
+  quint32 offset = 0;
+  mesh->addAttribute(Qt3D::QMeshData::defaultPositionAttributeName(),
+                     Qt3D::AttributePtr(new Qt3D::Attribute(vertexBuffer, GL_FLOAT_VEC3, nVerts, offset, stride)));
+  offset += 3 * sizeof(float);
+
+  mesh->addAttribute(Qt3D::QMeshData::defaultTextureCoordinateAttributeName(),
+                     Qt3D::AttributePtr(new Qt3D::Attribute(vertexBuffer, GL_FLOAT_VEC2, nVerts, offset, stride)));
+  offset += 2 * sizeof(float);
+
+  mesh->addAttribute(Qt3D::QMeshData::defaultNormalAttributeName(),
+                     Qt3D::AttributePtr(new Qt3D::Attribute(vertexBuffer, GL_FLOAT_VEC3, nVerts, offset, stride)));
+  offset += 3 * sizeof(float);
+
+  mesh->addAttribute(Qt3D::QMeshData::defaultTangentAttributeName(),
+                     Qt3D::AttributePtr(new Qt3D::Attribute(vertexBuffer, GL_FLOAT_VEC4, nVerts, offset, stride)));
+
+  mesh->setIndexAttribute(Qt3D::AttributePtr(new Qt3D::Attribute(indexBuffer, GL_UNSIGNED_SHORT, indexCount, 0, 0)));
+
+  mesh->computeBoundsFromAttribute(Qt3D::QMeshData::defaultPositionAttributeName());
+
+  return mesh;
+  
+}
+
+Qt3D::QAbstractMeshFunctorPtr T3FrameMesh::meshFunctor() const {
+  return Qt3D::QAbstractMeshFunctorPtr(new FrameFunctor(*this));
+}
+
+///////////////////////
+
+T3Frame::T3Frame(Qt3DNode* parent)
+  : inherited(parent)
+{
+  width = 1.0f;
+  height = 1.0f;
+  depth = 0.05f;
+  frame_width = 0.1f;
+  frame = new T3FrameMesh();
+  addMesh(frame);
+}
+
+T3Frame::~T3Frame() {
+  
+}
+
+void T3Frame::setGeom(float wd, float ht, float dp, float frwd) {
+  width = wd;
+  height = ht;
+  depth = dp;
+  frame_width = frwd;
+  updateGeom();
+}
+
+void T3Frame::setNodeUpdating(bool updating) {
+  frame->setNodeUpdating(updating);
+  inherited::setNodeUpdating(updating);
+}
+
+void T3Frame::updateGeom() {
+  frame->width = width;
+  frame->height = height;
+  frame->depth = depth;
+  frame->frame_width = frame_width;
+  frame->updateMesh();
+}
