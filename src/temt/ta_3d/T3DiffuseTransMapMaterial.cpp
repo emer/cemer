@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "T3TransparentMaterial.h"
+#include "T3DiffuseTransMapMaterial.h"
 
 #include <Qt3DRenderer/QMaterial>
 #include <Qt3DRenderer/QEffect>
@@ -27,18 +27,20 @@
 #include <Qt3DRenderer/QDepthMask>
 #include <Qt3DRenderer/QBlendState>
 #include <Qt3DRenderer/QBlendEquation>
+#include <Qt3DRenderer/QTexture>
 #include <QUrl>
 #include <QVector3D>
 #include <QVector4D>
 
-T3TransparentMaterial::T3TransparentMaterial(Qt3D::QNode *parent)
+T3DiffuseTransMapMaterial::T3DiffuseTransMapMaterial(Qt3D::QNode *parent)
   : inherited(parent)
   , m_transEffect(new Qt3D::QEffect())
+  , m_diffuseTexture(new Qt3D::QTexture2D())
   , m_ambientParameter(new Qt3D::QParameter(QStringLiteral("ka"), QColor::fromRgbF(0.05f, 0.05f, 0.05f, 1.0f)))
-  , m_diffuseParameter(new Qt3D::QParameter(QStringLiteral("kd"), QColor::fromRgbF(0.7f, 0.7f, 0.7f, 1.0f)))
+  , m_diffuseParameter(new Qt3D::QParameter(QStringLiteral("diffuseTexture"), m_diffuseTexture))
   , m_specularParameter(new Qt3D::QParameter(QStringLiteral("ks"), QColor::fromRgbF(0.95f, 0.95f, 0.95f, 1.0f)))
   , m_shininessParameter(new Qt3D::QParameter(QStringLiteral("shininess"), 150.0f))
-  , m_alphaParameter(new Qt3D::QParameter(QStringLiteral("alpha"), 0.5f))
+    , m_textureScaleParameter(new Qt3D::QParameter(QStringLiteral("texCoordScale"), 1.0f))
   , m_lightPositionParameter(new Qt3D::QParameter(QStringLiteral("lightPosition"), QVector4D(1.0f, 1.0f, 0.0f, 1.0f)))
   , m_lightIntensityParameter(new Qt3D::QParameter(QStringLiteral("lightIntensity"), QVector3D(1.0f, 1.0f, 1.0f)))
   , m_transGL3Technique(new Qt3D::QTechnique())
@@ -54,87 +56,94 @@ T3TransparentMaterial::T3TransparentMaterial(Qt3D::QNode *parent)
   QObject::connect(m_diffuseParameter, SIGNAL(valueChanged()), this, SIGNAL(diffuseChanged()));
   QObject::connect(m_specularParameter, SIGNAL(valueChanged()), this, SIGNAL(specularChanged()));
   QObject::connect(m_shininessParameter, SIGNAL(valueChanged()), this, SIGNAL(shininessChanged()));
-  QObject::connect(m_alphaParameter, SIGNAL(valueChanged()), this, SIGNAL(alphaChanged()));
+  QObject::connect(m_textureScaleParameter, SIGNAL(valueChanged()), this, SIGNAL(textureScaleChanged()));
+
+  m_diffuseTexture->setMagnificationFilter(Qt3D::QAbstractTextureProvider::Linear);
+  m_diffuseTexture->setMinificationFilter(Qt3D::QAbstractTextureProvider::LinearMipMapLinear);
+  m_diffuseTexture->setWrapMode(Qt3D::QTextureWrapMode(Qt3D::QTextureWrapMode::Repeat));
+  m_diffuseTexture->setGenerateMipMaps(true);
+  m_diffuseTexture->setMaximumAnisotropy(16.0f);
+  
   init();
 }
 
 /*!
-  \fn Qt3D::T3TransparentMaterial::~T3TransparentMaterial()
+  \fn Qt3D::T3DiffuseTransMapMaterial::~T3DiffuseTransMapMaterial()
 
-  Destroys the T3TransparentMaterial.
+  Destroys the T3DiffuseTransMapMaterial.
 */
-T3TransparentMaterial::~T3TransparentMaterial()
+T3DiffuseTransMapMaterial::~T3DiffuseTransMapMaterial()
 {
 }
 
 /*!
-  \property Qt3D::T3TransparentMaterial::ambient
+  \property Qt3D::T3DiffuseTransMapMaterial::ambient
 
   Holds the ambient color.
 */
-QColor T3TransparentMaterial::ambient() const
+QColor T3DiffuseTransMapMaterial::ambient() const
 {
   return m_ambientParameter->value().value<QColor>();
 }
 
 /*!
-  \property Qt3D::T3TransparentMaterial::diffuse
+  \property Qt3D::T3DiffuseTransMapMaterial::diffuse
 
   Holds the diffuse color.
 */
-QColor T3TransparentMaterial::diffuse() const
+Qt3D::QAbstractTextureProvider* T3DiffuseTransMapMaterial::diffuse() const
 {
-  return m_diffuseParameter->value().value<QColor>();
+  return m_diffuseParameter->value().value<Qt3D::QAbstractTextureProvider *>();
 }
 
 /*!
-  \property QColor Qt3D::T3TransparentMaterial::specular
+  \property QColor Qt3D::T3DiffuseTransMapMaterial::specular
 
   Holds the specular color.
 */
-QColor T3TransparentMaterial::specular() const
+QColor T3DiffuseTransMapMaterial::specular() const
 {
   return m_specularParameter->value().value<QColor>();
 }
 
 /*!
-  \property Qt3D::T3TransparentMaterial::shininess
+  \property Qt3D::T3DiffuseTransMapMaterial::shininess
 
   Holds the shininess exponent.
 */
-float T3TransparentMaterial::shininess() const
+float T3DiffuseTransMapMaterial::shininess() const
 {
   return m_shininessParameter->value().toFloat();
 }
 
-float T3TransparentMaterial::alpha() const
+float T3DiffuseTransMapMaterial::textureScale() const
 {
-  return m_alphaParameter->value().toFloat();
+    return m_textureScaleParameter->value().toFloat();
 }
 
-void T3TransparentMaterial::setAmbient(const QColor &ambient)
+void T3DiffuseTransMapMaterial::setAmbient(const QColor &ambient)
 {
   m_ambientParameter->setValue(ambient);
 }
 
-void T3TransparentMaterial::setDiffuse(const QColor &diffuse)
-{
-  m_diffuseParameter->setValue(diffuse);
-}
-
-void T3TransparentMaterial::setSpecular(const QColor &specular)
+void T3DiffuseTransMapMaterial::setSpecular(const QColor &specular)
 {
   m_specularParameter->setValue(specular);
 }
 
-void T3TransparentMaterial::setShininess(float shininess)
+void T3DiffuseTransMapMaterial::setShininess(float shininess)
 {
   m_shininessParameter->setValue(shininess);
 }
 
-void T3TransparentMaterial::setAlpha(float alpha)
+void T3DiffuseTransMapMaterial::setDiffuse(Qt3D::QAbstractTextureProvider *diffuseMap)
 {
-  m_alphaParameter->setValue(alpha);
+  m_diffuseParameter->setValue(QVariant::fromValue(diffuseMap));
+}
+
+void T3DiffuseTransMapMaterial::setTextureScale(float textureScale)
+{
+  m_textureScaleParameter->setValue(textureScale);
 }
 
 
@@ -152,7 +161,7 @@ void T3TransparentMaterial::setAlpha(float alpha)
 //     shaderProgram: alphaPhong
 
 
-void T3TransparentMaterial::init_render_pass(Qt3D::QRenderPass* pass) {
+void T3DiffuseTransMapMaterial::init_render_pass(Qt3D::QRenderPass* pass) {
   // this is how we separate these out
   Qt3D::QAnnotation* techannote = new Qt3D::QAnnotation;
   techannote->setName("renderingStyle");
@@ -183,9 +192,9 @@ void T3TransparentMaterial::init_render_pass(Qt3D::QRenderPass* pass) {
 }
 
 // TODO: Define how lights are properties are set in the shaders. Ideally using a QShaderData
-void T3TransparentMaterial::init() {
-  m_transGL3Shader->setVertexShaderCode(Qt3D::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/phongalpha.vert"))));
-  m_transGL3Shader->setFragmentShaderCode(Qt3D::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/phongalpha.frag"))));
+void T3DiffuseTransMapMaterial::init() {
+  m_transGL3Shader->setVertexShaderCode(Qt3D::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap.vert"))));
+  m_transGL3Shader->setFragmentShaderCode(Qt3D::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap.frag"))));
   // m_transGL2ES2Shader->setVertexShaderCode(Qt3D::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/phongalpha.vert"))));
   // m_transGL2ES2Shader->setFragmentShaderCode(Qt3D::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/phongalpha.frag"))));
 
@@ -224,12 +233,11 @@ void T3TransparentMaterial::init() {
   m_transEffect->addParameter(m_diffuseParameter);
   m_transEffect->addParameter(m_specularParameter);
   m_transEffect->addParameter(m_shininessParameter);
-  m_transEffect->addParameter(m_alphaParameter);
+  m_transEffect->addParameter(m_textureScaleParameter);
   m_transEffect->addParameter(m_lightPositionParameter);
   m_transEffect->addParameter(m_lightIntensityParameter);
 
   setEffect(m_transEffect);
 }
-
 
 

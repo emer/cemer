@@ -4,5 +4,7 @@
         <file>phongalpha.frag</file>
         <file>pervertextrans.vert</file>
         <file>pervertextrans.frag</file>
+        <file>diffusetransmap.vert</file>
+        <file>diffusetransmap.frag</file>
     </qresource>
 </RCC>

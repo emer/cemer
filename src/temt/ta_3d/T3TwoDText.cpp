@@ -15,7 +15,7 @@
 
 #include "T3TwoDText.h"
 
-#include <Qt3DRenderer/QDiffuseMapMaterial>
+#include <T3DiffuseTransMapMaterial>
 #include <Qt3DRenderer/QPlaneMesh>
 #include <QPalette>
 #include <QPainter>
@@ -27,15 +27,16 @@ T3TwoDText::T3TwoDText(Qt3DNode* parent)
   , align(T3_ALIGN_CENTER)
   , v_pos(T3_VPOS_CENTER)
 {
-  bg_color = Qt::white;
+  // bg_color = Qt::white;
+  bg_color = Qt::transparent;
   QFont fnt("Arial", 24);       // 24 gives decent resolution for rendering
   label.setFont(fnt);
   texture = new T3TwoDTexture();
   plane = new T3Entity(this);
   plane->addMesh(new Qt3D::QPlaneMesh());
-  Qt3D::QDiffuseMapMaterial* mat = new Qt3D::QDiffuseMapMaterial();
+  T3DiffuseTransMapMaterial* mat = new T3DiffuseTransMapMaterial;
   mat->setSpecular(QColor::fromRgbF(0.2f, 0.2f, 0.2f, 1.0f));
-  mat->setShininess(150.0f);
+  mat->setShininess(10000.0f);
   mat->diffuse()->addTextureImage(texture);
   plane->addMaterial(mat);
   plane->RotateDeg(1.0f, 0.0f, 0.0f, 90.0f); // flip up by default

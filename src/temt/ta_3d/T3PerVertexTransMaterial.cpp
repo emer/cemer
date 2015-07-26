@@ -105,10 +105,10 @@ void T3PerVertexTransMaterial::setShininess(float shininess)
 
 void T3PerVertexTransMaterial::init_render_pass(Qt3D::QRenderPass* pass) {
   // this is how we separate these out
-  // Qt3D::QAnnotation* techannote = new Qt3D::QAnnotation;
-  // techannote->setName("renderingStyle");
-  // techannote->setValue("transparent");
-  // pass->addAnnotation(techannote);
+  Qt3D::QAnnotation* techannote = new Qt3D::QAnnotation;
+  techannote->setName("renderingStyle");
+  techannote->setValue("transparent");
+  pass->addAnnotation(techannote);
   
   Qt3D::QCullFace* cf = new Qt3D::QCullFace;
   cf->setMode(Qt3D::QCullFace::Back);
