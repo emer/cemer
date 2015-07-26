@@ -46,14 +46,14 @@ class SbViewportRegion; //
 #ifdef TA_QT3D
 
 namespace Qt3D {
-class QAspectEngine;
-class QRenderAspect;
-class QInputAspect;
-class QEntity;
-class QCamera;
-class QFrameGraph;
-class QForwardRenderer;
-class QEntity;
+  class QAspectEngine;
+  class QRenderAspect;
+  class QInputAspect;
+  class QEntity;
+  class QCamera;
+  class QFrameGraph;
+  class QEntity;
+  class QViewport;
 }
 
 #include <Qt3DCore>
@@ -121,7 +121,7 @@ public:
   Qt3D::QEntity*       root_entity;  // root of entire scenegraph, containing camera, then scene
   Qt3D::QCamera*       camera;       // camera
   Qt3D::QFrameGraph*   framegraph;   // framegraph for rendering
-  Qt3D::QForwardRenderer* forward_renderer; // temp basic renderer
+  Qt3D::QViewport*     viewport;     // viewport for rendering
   Qt3D::QEntity*       scene;        // root of the actual objects being viewed -- below camera
   QColor               bg_color;     // background color
 #endif

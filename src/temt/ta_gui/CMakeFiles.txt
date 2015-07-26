@@ -995,7 +995,10 @@ set(ta_gui_SRCS
   ${ta_gui_SRCS_MAKETA}
   ${ta_gui_SRCS_NOMAKETA}
   ${ta_gui_SRCS_mac}
-  ta_qrc.cpp
+)
+
+set(ta_gui_QRC
+  ta_gui.qrc
 )
 
 set(ta_gui_FILES ${ta_gui_HEADS} ${ta_gui_SRCS})

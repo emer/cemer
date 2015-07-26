@@ -64,6 +64,8 @@ ADD_PATH_TO_FILES(temt_ta_gui_SRCS_UI ${mypath}/ta_gui "${ta_gui_SRCS_UI}")
 ADD_PATH_TO_FILES(temt_ta_gui_HEADS_MAKETA_MI ${mypath}/ta_gui "${ta_gui_HEADS_MAKETA_MI}")
 ADD_PATH_TO_FILES(temt_ta_gui_HEADS_MAKETA_MI_DEPS ${mypath}/ta_gui "${ta_gui_HEADS_MAKETA_MI_DEPS}")
 
+ADD_PATH_TO_FILES(temt_ta_gui_QRC ${mypath}/ta_gui "${ta_gui_QRC}")
+
 # ta_3d
 include(${PROJECT_SOURCE_DIR}/src/temt/ta_3d/CMakeFiles.txt)
 ADD_PATH_TO_FILES(temt_ta_3d_SRCS ${mypath}/ta_3d "${ta_3d_SRCS}")
@@ -73,6 +75,8 @@ ADD_PATH_TO_FILES(temt_ta_3d_HEADS ${mypath}/ta_3d "${ta_3d_HEADS}")
 
 ADD_PATH_TO_FILES(temt_ta_3d_HEADS_MAKETA_MI ${mypath}/ta_3d "${ta_3d_HEADS_MAKETA_MI}")
 ADD_PATH_TO_FILES(temt_ta_3d_HEADS_MAKETA_MI_DEPS ${mypath}/ta_3d "${ta_3d_HEADS_MAKETA_MI_DEPS}")
+
+ADD_PATH_TO_FILES(temt_ta_3d_QRC ${mypath}/ta_3d "${ta_3d_QRC}")
 
 # css
 include(${PROJECT_SOURCE_DIR}/src/temt/css/CMakeFiles.txt)
@@ -105,6 +109,10 @@ if (QT_USE_5)
   qt5_wrap_cpp(temt_ta_gui_SRCS_MOC ${temt_ta_gui_HEADS_MOC})
   qt5_wrap_cpp(temt_ta_3d_SRCS_MOC ${temt_ta_3d_HEADS_MOC})
   qt5_wrap_cpp(temt_css_SRCS_MOC ${temt_css_HEADS_MOC})
+
+  qt5_add_resources(temt_ta_gui_SRCS_QRC ${temt_ta_gui_QRC})
+  qt5_add_resources(temt_ta_3d_SRCS_QRC ${temt_ta_3d_QRC})
+  
 else (QT_USE_5)
   QT4_WRAP_UI(temt_ta_gui_SRCS_UIC ${temt_ta_gui_SRCS_UI})
   # math, program, data don't have MOC files
@@ -138,6 +146,9 @@ set(temtlib_SRCS
   ${temt_ta_gui_HEADS}
   ${temt_ta_3d_HEADS}
   ${temt_css_HEADS}
+
+  ${temt_ta_gui_SRCS_QRC}
+  ${temt_ta_3d_SRCS_QRC}
 )
 
 EMERGENT_ADD_LIBRARY(temt SHARED ${temtlib_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/svnrev.h)

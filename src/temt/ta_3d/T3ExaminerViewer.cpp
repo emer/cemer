@@ -54,8 +54,14 @@
 
 #include <Qt3DRenderer/QRenderAspect>
 #include <Qt3DRenderer/QFrameGraph>
-#include <Qt3DRenderer/QForwardRenderer>
 #include <Qt3DRenderer/QPhongMaterial>
+
+#include <Qt3DRenderer/QViewport>
+#include <Qt3DRenderer/QCameraSelector>
+#include <Qt3DRenderer/QClearBuffer>
+#include <Qt3DRenderer/QTechniqueFilter>
+#include <Qt3DRenderer/QRenderPassFilter>
+#include <Qt3DRenderer/QAnnotation>
 
 #include <QKeyEvent>
 #include <QOpenGLContext>
@@ -196,10 +202,30 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   input->setCamera(camera);
 
   framegraph = new Qt3D::QFrameGraph();
-  forward_renderer = new Qt3D::QForwardRenderer();
-  forward_renderer->setClearColor(bg_color);
-  forward_renderer->setCamera(camera);
-  framegraph->setActiveFrameGraph(forward_renderer);
+
+  viewport = new Qt3D::QViewport; // head node -- common stuff
+  viewport->setRect(QRectF(0.0f, 0.0f, 1.0f, 1.0f));
+  viewport->setClearColor(bg_color);
+  Qt3D::QClearBuffer* cb = new Qt3D::QClearBuffer(viewport);
+  cb->setBuffers(Qt3D::QClearBuffer::ColorDepthBuffer);
+
+  // Qt3D::QRenderPassFilter* trans_rend = new Qt3D::QRenderPassFilter(cb);
+  // Qt3D::QAnnotation* transAnno = new Qt3D::QAnnotation(trans_rend);
+  // transAnno->setName(QStringLiteral("renderingStyle"));
+  // transAnno->setValue(QStringLiteral("transparent"));
+  // trans_rend->addInclude(transAnno);
+  Qt3D::QCameraSelector* cam = new Qt3D::QCameraSelector(cb);
+  cam->setCamera(camera);
+  
+  // Qt3D::QRenderPassFilter* opaque_rend = new Qt3D::QRenderPassFilter(cb);
+  // Qt3D::QAnnotation* opaqueAnno = new Qt3D::QAnnotation(opaque_rend);
+  // opaqueAnno->setName(QStringLiteral("renderingStyle"));
+  // opaqueAnno->setValue(QStringLiteral("opaque"));
+  // opaque_rend->addInclude(opaqueAnno);
+  // Qt3D::QCameraSelector* cam2 = new Qt3D::QCameraSelector(opaque_rend);
+  // cam2->setCamera(camera);
+
+  framegraph->setActiveFrameGraph(viewport);
   
   root_entity->addComponent(framegraph);
   engine->setRootEntity(root_entity);
@@ -939,7 +965,7 @@ void T3ExaminerViewer::setSceneGraph(Qt3D::QEntity* root) {
 
 void T3ExaminerViewer::setBackgroundColor(const QColor & color) {
   bg_color = color;
-  forward_renderer->setClearColor(bg_color);
+  viewport->setClearColor(bg_color);
 }
 
 #else

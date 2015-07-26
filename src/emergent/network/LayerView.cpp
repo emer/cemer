@@ -263,7 +263,8 @@ void LayerView::Render_impl() {
 
   if(nv->lay_layout == NetView::THREE_D) {
 #ifdef TA_QT3D
-    node_so->caption->TranslateXLeftTo(QVector3D(-0.5f, -0.5f - eff_lay_font_size,lay_wd));
+    node_so->caption->TranslateXLeftTo
+      (QVector3D(-0.5f, -0.5f -0.5f*eff_lay_font_size,lay_wd));
 #else // TA_QT3D
     SbVec3f tran(0.0f, -eff_lay_font_size, lay_wd);
     node_so->transformCaption(tran);

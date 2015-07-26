@@ -609,6 +609,8 @@ void UnitGroupView::Render_impl_blocks() {
   T3TriangleStrip* tris = node_so->tris;
   tris->setNodeUpdating(true);
   tris->restart();
+
+  QColor blnkc;
   
   for(pos.y=lay->flat_geom.y-1; pos.y>=0; pos.y--) { // go back to front
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
@@ -670,7 +672,7 @@ void UnitGroupView::Render_impl_blocks() {
       tris->addVertex(QVector3D(xp1, zp1, yp1), norm_tp); // 11
 
       for(int i=0;i<20;i++) {        
-        tris->addColor((uint32_t)0); // place holder..
+        tris->addColor(blnkc); // place holder..
         tris->addIndex(st_idx++);    // indexes are 1-to-1..
         if((i+1) % 4 == 0) {
           tris->addBreak();         // all we really are using them for is the break..
@@ -1107,9 +1109,8 @@ void UnitGroupView::UpdateUnitValues_blocks() {
       Unit* unit = lay->UnitAtCoord(pos);
 
       GetUnitColor(nv, pos, unit, col, max_z, zp1, sc_val, val);
-      int pclr = T3Misc::makePackedRGBA(col);
       for(int i=0;i<20;i++) {
-        tris->tris->colors.FastEl(c_idx + i) = pclr;
+        tris->setPointColor(c_idx + i, col);
       }
       
       // update verticies
@@ -1367,6 +1368,8 @@ void UnitGroupView::Render_impl_snap_bord() {
     return;
   
   sb->setNodeUpdating(true);
+
+  QColor bclr;
   
   taVector2i pos;
   taVector2i upos;
@@ -1388,7 +1391,7 @@ void UnitGroupView::Render_impl_snap_bord() {
         sb->lineToIdx(p00idx);
 
         for(int i=0; i<4; i++) {
-          sb->addColor(0);
+          sb->addColor(bclr);
         }
       }
     }

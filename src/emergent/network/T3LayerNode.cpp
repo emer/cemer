@@ -20,7 +20,7 @@
 
 #ifdef TA_QT3D
 
-#include <T3LineBox>
+#include <T3Frame>
 #include <T3Misc>
 
 const float T3LayerNode::height = 0.05f;
@@ -32,12 +32,14 @@ T3LayerNode::T3LayerNode(Qt3DNode* parent, T3DataView* dataView_, bool shw_drg,
   : inherited(parent, dataView_)
   , show_drag(shw_drg)
   , mode_2d(md2d)
-  , frame(new T3LineBox(this))
+  , frame(new T3Frame(this))
 {
+  frame->setColor(T3Misc::frame_clr());
+  frame->RotateDeg(1.0f, 0.0f, 0.0f, -90);
 }
 
 T3LayerNode::~T3LayerNode() {
-  frame->setColor(T3Misc::frame_clr());
+  
 }
 
 void T3LayerNode::setGeom(int x, int y, float max_x, float max_y, float max_z,
@@ -60,7 +62,7 @@ void T3LayerNode::updateNode() {
   float xfrac = .5f * fx;
   float yfrac = .5f * fy;
 
-  frame->setSize(QVector3D(fx, height / max_xy, fy));
+  frame->setGeom(fx + 2.0f * lay_wd, fy + 2.0f * lay_wd, height / max_xy, lay_wd);
   if(mode_2d) {
     frame->Translate(-0.5f + xfrac, 0.0f, 0.5f + -yfrac);
   }

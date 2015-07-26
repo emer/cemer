@@ -23,6 +23,12 @@
 #include <T3Texture>
 
 // declare all other types mentioned but not required to include:
+class T3TransparentMaterial;
+class T3PerVertexTransMaterial;
+
+namespace Qt3D {
+  class QPerVertexColorMaterial;
+}
 
 class TA_API T3ColorEntity : public T3Entity {
   // manages color for a T3Entity, e.g., using a Phong Material or a texture
@@ -31,8 +37,11 @@ class TA_API T3ColorEntity : public T3Entity {
 public:
   enum ColorType {
     NO_COLOR,
-    PHONG,
-    TEXTURE,
+    PHONG,                      // solid, phong
+    TRANS,                      // transparent
+    TEXTURE,                    // texture
+    PER_VERTEX,                 // color specified per vertex
+    PER_VERTEX_TRANS,           // color specified per vertex, transparency supported
   };
 
   ColorType     color_type;     // where does the color come from?
@@ -57,9 +66,13 @@ public:
 public slots:
   virtual void  updateColor(); // update to new color
 protected:
-  Qt3D::QPhongMaterial* phong;  // phong material -- null if using texture mode
-  T3Texture*    texture;        // texture -- null if using phong mode
 
+  void removeAllBut(ColorType typ);
+  Qt3D::QPhongMaterial* phong;  // phong material -- null if using texture mode
+  T3TransparentMaterial* trans;
+  T3Texture*    texture;        // texture -- null if using phong mode
+  Qt3D::QPerVertexColorMaterial* per_vertex;
+  T3PerVertexTransMaterial* per_vertex_trans;
 };
 
 #endif // T3ColorEntity_h

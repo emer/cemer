@@ -27,6 +27,7 @@ T3LineStripMesh::T3LineStripMesh(Qt3DNode* parent)
   : Qt3D::QAbstractMesh(parent)
 {
   points.SetGeom(2,3,0);        // 0 = extensible frames
+  colors.SetGeom(2,4,0);
 }
 
 T3LineStripMesh::~T3LineStripMesh() {
@@ -46,7 +47,7 @@ void T3LineStripMesh::setNodeUpdating(bool updating) {
 void T3LineStripMesh::restart() {
   points.EnforceFrames(0);
   indexes.SetSize(0);
-  colors.SetSize(0);
+  colors.EnforceFrames(0);
 }
 
 int T3LineStripMesh::addPoint(const QVector3D& pos) {
@@ -109,14 +110,26 @@ void T3LineStripMesh::lineToIdx(int idx) {
   indexes.Add(idx);
 }
 
-int T3LineStripMesh::addColor(uint32_t clr) {
-  colors.Add(clr);
-  return colors.size -1;
+int T3LineStripMesh::addColor(const QColor& clr) {
+  colors.AddFrame();
+  int idx = colors.Frames()-1;
+  if(idx == 0xFFFF) {
+    colors.AddFrame();          // skip!!!
+    idx = colors.Frames()-1;
+  }
+  colors.Set(clr.redF(), 0, idx);
+  colors.Set(clr.greenF(), 1, idx);
+  colors.Set(clr.blueF(), 2, idx);
+  colors.Set(clr.alphaF(), 3, idx);
+  return idx;
 }
 
-int T3LineStripMesh::addColor(const QColor& clr) {
-  colors.Add(T3Misc::makePackedRGBA(clr));
-  return colors.size -1;
+void T3LineStripMesh::setPointColor(int idx, const QColor& clr) {
+  if(idx < 0 || idx >= colors.Frames()) return;
+  colors.Set(clr.redF(), 0, idx);
+  colors.Set(clr.greenF(), 1, idx);
+  colors.Set(clr.blueF(), 2, idx);
+  colors.Set(clr.alphaF(), 3, idx);
 }
 
 void T3LineStripMesh::setPoint(int idx, const QVector3D& pos) {
@@ -147,7 +160,7 @@ void T3LineStripMesh::copy(const Qt3DNode *ref) {
 }
 
 Qt3D::QMeshDataPtr createLineStrip(int n_points, float* points, int n_indexes,
-                                   int* indexes, int n_colors, int* colors);
+                                   int* indexes, int n_colors, float* colors);
 
 class LineStripFunctor : public Qt3D::QAbstractMeshFunctor {
 public:
@@ -156,7 +169,7 @@ public:
   int     n_indexes;
   int*    indexes;
   int     n_colors;
-  int*    colors;
+  float*  colors;
   
   LineStripFunctor(const T3LineStripMesh& mesh)
     : points(mesh.points.el)
@@ -170,7 +183,7 @@ public:
     // else {
     n_points = mesh.points.Frames();
     n_indexes = mesh.indexes.size;
-    n_colors = mesh.colors.size;
+    n_colors = mesh.colors.Frames();
     // }
   }
 
@@ -192,7 +205,7 @@ public:
 };
 
 Qt3D::QMeshDataPtr createLineStrip(int n_points, float* points, int n_indexes,
-                                   int* indexes, int n_colors, int* colors) {
+                                   int* indexes, int n_colors, float* colors) {
   // Populate a buffer with the interleaved per-vertex data with
   // vec3 pos; // not: vec2 texCoord, vec3 normal, vec4 tangent
   const quint32 elementSize = 3; // + 2 + 3 + 4;
@@ -200,7 +213,7 @@ Qt3D::QMeshDataPtr createLineStrip(int n_points, float* points, int n_indexes,
 
   // Wrap the raw bytes in a buffer
   Qt3D::BufferPtr buf(new Qt3D::Buffer(QOpenGLBuffer::VertexBuffer));
-  buf->setUsage(QOpenGLBuffer::StaticDraw);
+  buf->setUsage(QOpenGLBuffer::DynamicDraw);
   QByteArray bufferBytes = QByteArray::fromRawData((const char*)points, stride * n_points);
   buf->setData(bufferBytes);
 
@@ -212,18 +225,18 @@ Qt3D::QMeshDataPtr createLineStrip(int n_points, float* points, int n_indexes,
 
   if(n_colors > 0) {
     Qt3D::BufferPtr colorBuffer(new Qt3D::Buffer(QOpenGLBuffer::VertexBuffer));
-    colorBuffer->setUsage(QOpenGLBuffer::StaticDraw);
+    colorBuffer->setUsage(QOpenGLBuffer::DynamicDraw);
     QByteArray colorBytes = QByteArray::fromRawData((const char*)colors,
-                                                    n_colors *  sizeof(int));
+                                                    n_colors * 4 * sizeof(float));
     colorBuffer->setData(colorBytes);
     mesh->addAttribute(Qt3D::QMeshData::defaultColorAttributeName(),
-     Qt3D::AttributePtr(new Qt3D::Attribute(colorBuffer, GL_UNSIGNED_BYTE,
-                                            n_colors*4, 0, 0)));
+     Qt3D::AttributePtr(new Qt3D::Attribute(colorBuffer, GL_FLOAT_VEC4,
+                                            n_colors, 0, 0)));
   }
   
   // Wrap the index bytes in a buffer
   Qt3D::BufferPtr indexBuffer(new Qt3D::Buffer(QOpenGLBuffer::IndexBuffer));
-  indexBuffer->setUsage(QOpenGLBuffer::StaticDraw);
+  indexBuffer->setUsage(QOpenGLBuffer::DynamicDraw);
   QByteArray indexBytes = QByteArray::fromRawData((const char*)indexes, n_indexes *  sizeof(int));
   indexBuffer->setData(indexBytes);
 
@@ -269,15 +282,12 @@ void T3LineStrip::updateLines() {
 
 void T3LineStrip::setPerVertexColor(bool per_vtx) {
   per_vertex_color = per_vtx;
-  // per vertex is not working!
-  // if(per_vertex_color) {
-  //   if(phong) {
-  //     removeComponent(phong);
-  //     phong = NULL;
-  //     addMaterial(new Qt3D::QPerVertexColorMaterial);
-  //   }
-  // }
-  // else {
-  //   // assume phong still there..
-  // }
+  if(per_vertex_color) {
+    color_type = PER_VERTEX;
+    updateColor();
+  }
+  else {
+    color_type = PHONG;
+    updateColor();
+  }
 }

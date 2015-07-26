@@ -39,7 +39,7 @@ public:
   bool  nodeUpdating()  { return node_updating; }
 
   float_Matrix  points; // 3d points (verticies) for lines -- geom is 3 x n (outer is the "frame" dimension which can be increased dynamically)
-  int_Array     colors; // optional per-vertex colors in 1-to-1 correspondence with the point data -- these are packed RGBA colors, each component taking one byte
+  float_Matrix  colors; // optional per-vertex colors in 1-to-1 correspondence with the point data -- these are 4 full floating-point colors RGBA per point -- packed RGBA not supported in shaders it seems..
   int_Array     indexes; // lines defined by sequential indexes into points -- use 0xFFFF to stop one line strip and then start another
     
   Qt3D::QAbstractMeshFunctorPtr meshFunctor() const override;
@@ -47,8 +47,8 @@ public:
   void  restart();
   // set sizes back to 0
   
-  int  pointCount() { return points.Frames(); } // number of points
-  int  colorCount()  { return colors.size; } // number of colors
+  int  pointCount()  { return points.Frames(); } // number of points
+  int  colorCount()  { return colors.Frames(); } // number of colors
   int  indexCount()  { return indexes.size; } // number of indexes
   
   int  addPoint(const QVector3D& pos);
@@ -58,7 +58,7 @@ public:
   void  lineTo(const QVector3D& pos);
   // add given point to points, and index of it to indexes
 
-  int  addPoint(const taVector3f& pos);
+  int   addPoint(const taVector3f& pos);
   // add given point, return index to that point
   void  moveTo(const taVector3f& pos);
   // add given point to points, and index of it to indexes -- starts a new line if indexes.size > 0 by adding a stop
@@ -68,16 +68,10 @@ public:
   void  moveToIdx(int idx);
   void  lineToIdx(int idx);
   
-  int  addColor(uint32_t clr);
-  // add given color -- must keep in sync with adding points!
-  int  addColor(const QColor& clr);
+  int   addColor(const QColor& clr);
   // add given color -- must keep in sync with adding points!
 
-  void setPointColor(int idx, const QColor& clr)
-  { colors.FastEl(idx) = T3Misc::makePackedRGBA(clr); }
-  void setPointolor(int idx, uint32_t clr)
-  { colors.FastEl(idx) = clr; }
-
+  void  setPointColor(int idx, const QColor& clr);
   void  setPoint(int idx, const QVector3D& pos);
   void  setPoint(int idx, const taVector3f& pos);
   
@@ -129,14 +123,10 @@ public:
   void  moveToIdx(int idx)              { lines->moveToIdx(idx); }
   void  lineToIdx(int idx)              { lines->lineToIdx(idx); }
   
-  int  addColor(uint32_t clr)
-  { return lines->addColor(clr); }
   int  addColor(const QColor& clr)
   { return lines->addColor(clr); }
 
   void setPointColor(int idx, const QColor& clr)
-  { lines->setPointColor(idx, clr); }
-  void setPointColor(int idx, uint32_t clr)
   { lines->setPointColor(idx, clr); }
 
   void setPoint(int idx, const QVector3D& pos)

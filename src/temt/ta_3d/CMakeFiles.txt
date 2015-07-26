@@ -97,6 +97,8 @@ set(ta_3d_HEADS_T3
 set(ta_3d_HEADS_QT3D_MOC
   T3Entity.h
   T3Texture.h
+  T3TransparentMaterial.h
+  T3PerVertexTransMaterial.h
   T3ColorEntity.h
   T3TwoDText.h
   T3LineBox.h
@@ -267,6 +269,8 @@ set(ta_3d_SRCS_T3
 set(ta_3d_SRCS_QT3D
   T3Entity.cpp
   T3Texture.cpp
+  T3TransparentMaterial.cpp
+  T3PerVertexTransMaterial.cpp
   T3ColorEntity.cpp
   T3TwoDText.cpp
   T3LineBox.cpp
@@ -304,6 +308,10 @@ set(ta_3d_SRCS_COIN
   SoGroup.cpp
   SoPtr.cpp
   SoOffscreenRendererQt.cpp
+)
+
+set(ta_3d_QRC
+  ta_3d.qrc
 )
 
 # 

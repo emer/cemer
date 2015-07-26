@@ -15,11 +15,17 @@
 
 #include "T3ColorEntity.h"
 #include <Qt3DRenderer/QPhongMaterial>
+#include <Qt3DRenderer/QPerVertexColorMaterial>
+#include <T3TransparentMaterial>
+#include <T3PerVertexTransMaterial>
 
 T3ColorEntity::T3ColorEntity(Qt3DNode* parent)
   : inherited(parent)
   , phong(NULL)
+  , trans(NULL)
   , texture(NULL)
+  , per_vertex(NULL)
+  , per_vertex_trans(NULL)
 {
   color_type = NO_COLOR;               // don't start with anything
   color = Qt::green;
@@ -35,11 +41,20 @@ T3ColorEntity::~T3ColorEntity() {
 
 void T3ColorEntity::setColor(const QColor& clr, float amb,
                              float spec, float shin) {
-  color_type = PHONG;
-  color = clr;
-  ambient = MAX(amb, 0.0f);
-  specular = spec;
-  shininess = shin;
+  if(clr.alpha() < 255) {
+    color_type = TRANS;
+    color = clr;
+    ambient = MAX(amb, 0.0f);
+    specular = spec;
+    shininess = shin;
+  }
+  else {
+    color_type = PHONG;
+    color = clr;
+    ambient = MAX(amb, 0.0f);
+    specular = spec;
+    shininess = shin;
+  }
   updateColor();
 }
 
@@ -55,12 +70,37 @@ void T3ColorEntity::setTexture(const QString& source) {
   updateColor();
 }
 
+void T3ColorEntity::removeAllBut(ColorType typ) {
+  if(typ != TEXTURE && texture) {
+    removeMaterial(texture);
+    delete texture;
+  }
+  if(typ != TRANS && trans) {
+    removeMaterial(trans);
+    delete trans;
+  }
+  if(typ != PHONG && phong) {
+    removeMaterial(phong);
+    delete phong;
+  }
+  if(typ != PER_VERTEX && per_vertex) {
+    removeMaterial(per_vertex);
+    delete per_vertex;
+  }
+  if(typ != PER_VERTEX_TRANS && per_vertex_trans) {
+    removeMaterial(per_vertex_trans);
+    delete per_vertex_trans;
+  }
+}
+
 void T3ColorEntity::updateColor() {
-  if(color_type == PHONG) {
-    if(texture) {
-      removeMaterial(texture);
-      delete texture;
-    }
+  switch(color_type) {
+  case NO_COLOR: {
+    removeAllBut(NO_COLOR);
+    break;
+  }
+  case PHONG: {
+    removeAllBut(PHONG);
     bool add = false;
     if(!phong) {
       phong = new Qt3D::QPhongMaterial();
@@ -78,12 +118,32 @@ void T3ColorEntity::updateColor() {
     if(add) {
       addMaterial(phong);
     }
+    break;
   }
-  else if(color_type == TEXTURE) {
-    if(phong) {
-      removeMaterial(phong);    // this is currently crashing..
-      delete phong;
+  case TRANS: {
+    removeAllBut(TRANS);
+    bool add = false;
+    if(!trans) {
+      trans = new T3TransparentMaterial();
+      add = true;
     }
+    trans->setDiffuse(color);
+    trans->setAlpha(color.alphaF());
+    if(ambient <= 0.0f) {
+      trans->setAmbient(QColor(0,0,0));
+    }
+    else {
+      trans->setAmbient(color.darker((int)(100.0f / ambient)));
+    }
+    trans->setSpecular(QColor::fromRgbF(specular, specular, specular, color.alphaF()));
+    trans->setShininess(shininess);
+    if(add) {
+      addMaterial(trans);
+    }
+    break;
+  }
+  case TEXTURE: {
+    removeAllBut(TEXTURE);
     bool add = false;
     if(!texture) {
       texture = new T3Texture;
@@ -95,5 +155,31 @@ void T3ColorEntity::updateColor() {
     if(add) {
       addMaterial(texture);
     }
+    break;
+  }
+  case PER_VERTEX: {
+    removeAllBut(PER_VERTEX);
+    if(!per_vertex) {
+      per_vertex = new Qt3D::QPerVertexColorMaterial;
+      addMaterial(per_vertex);
+    }
+    break;
+  }
+  case PER_VERTEX_TRANS: {
+    removeAllBut(PER_VERTEX_TRANS);
+    bool add = false;
+    if(!per_vertex_trans) {
+      per_vertex_trans = new T3PerVertexTransMaterial;
+      add = true;
+    }
+    per_vertex_trans->setSpecular
+      (QColor::fromRgbF(specular, specular, specular, color.alphaF()));
+    per_vertex_trans->setAmbient(ambient);
+    per_vertex_trans->setShininess(shininess);
+    if(add) {
+      addMaterial(per_vertex_trans);
+    }
+    break;
+  }
   }
 }

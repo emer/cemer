@@ -17,7 +17,7 @@
 #define T3TriangleStrip_h 1
 
 // parent includes:
-#include <T3Entity>
+#include <T3ColorEntity>
 
 // member includes:
 #include <Qt3DRenderer/QAbstractMesh>
@@ -43,7 +43,7 @@ public:
   bool  nodeUpdating()  { return node_updating; }
 
   float_Matrix  vndata; // verticies and normal data -- geom is 3 x 2 x n (3d coords, vertex and normal, then outer is the "frame" dimension of points which can be increased dynamically)
-  int_Array     colors; // optional per-vertex colors in 1-to-1 correspondence with the vertex data -- these are packed RGBA colors, each component taking one byte
+  float_Matrix  colors; // optional per-vertex colors in 1-to-1 correspondence with the vertex data -- these are 4 full floating-point colors RGBA per point -- packed RGBA not supported in shaders it seems..
   int_Array     indexes; // triangles defined by sequential indexes into vndata -- use 0xFFFF to stop one triangle strip and then start another
     
   Qt3D::QAbstractMeshFunctorPtr meshFunctor() const override;
@@ -52,7 +52,7 @@ public:
   // set sizes back to 0
 
   int  vertexCount() { return vndata.Frames(); } // number of vertexes
-  int  colorCount()  { return colors.size; } // number of colors
+  int  colorCount()  { return colors.Frames(); } // number of colors
   int  indexCount()  { return indexes.size; } // number of indexes
   
   int  addVertex(const QVector3D& pos, const QVector3D& norm);
@@ -60,8 +60,6 @@ public:
   int  addVertex(const taVector3f& pos, const taVector3f& norm);
   // add given vertex, normal at that vertex, return index to that point
 
-  int  addColor(uint32_t color);
-  // add given color, return index to that point -- must keep in sync with adding points!
   int  addColor(const QColor& clr);
   // add given color, return index to that point -- must keep in sync with adding points!
 
@@ -72,6 +70,7 @@ public:
   void  addBreak();
   // add a break between triangles -- restart a new triangle strip
     
+  void  setPointColor(int idx, const QColor& clr);
   
   explicit T3TriangleStripMesh(Qt3DNode* parent = 0);
   ~T3TriangleStripMesh(); 
@@ -89,16 +88,16 @@ private:
 };
 
 
-class TA_API T3TriangleStrip : public T3Entity {
+class TA_API T3TriangleStrip : public T3ColorEntity {
   // strip of triangles, either all one color or with per-vertex color
   Q_OBJECT
-  INHERITED(T3Entity)
+  INHERITED(T3ColorEntity)
 public:
   T3TriangleStripMesh*     tris;
 
   void setNodeUpdating(bool updating) override;
   
-  void  restart()                      { tris->restart(); }
+  void  restart()    { tris->restart(); }
 
   int  vertexCount() { return tris->vertexCount(); } // number of vertexes
   int  colorCount()  { return tris->colorCount(); } // number of colors
@@ -111,9 +110,6 @@ public:
   { return tris->addVertex(pos, norm); }
   // add given vertex, normal at that vertex, return index to that point
 
-  int  addColor(uint32_t clr)
-  { return tris->addColor(clr); }
-  // add given color, return index to that point
   int  addColor(const QColor& clr)
   { return tris->addColor(clr); }
 
@@ -125,6 +121,9 @@ public:
   void  addBreak()
   { tris->addBreak(); }
   // add a break between triangles -- restart a new triangle strip
+
+  void setPointColor(int idx, const QColor& clr)
+  { tris->setPointColor(idx, clr); }
 
   T3TriangleStrip(Qt3DNode* parent = 0);
   ~T3TriangleStrip();

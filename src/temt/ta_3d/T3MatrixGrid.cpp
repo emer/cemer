@@ -390,9 +390,8 @@ void T3MatrixGrid::renderValue(taMatrix* matptr, float val, int& c_idx, iColor& 
 
   float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
   clr.setAlpha(alpha);
-  int pclr = T3Misc::makePackedRGBA(clr);
   for(int i=0;i<20;i++) {
-    tris->tris->colors.FastEl(c_idx + i) = pclr;
+    tris->setPointColor(c_idx + i, clr);
   }
 
   // update verticies

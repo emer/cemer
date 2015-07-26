@@ -21,6 +21,7 @@
 #include <Qt3DRenderer/QPhongMaterial>
 #include <Qt3DRenderer/Attribute>
 
+#include <T3PerVertexTransMaterial>
 #include <T3Misc>
 #include <taMisc>
 
@@ -28,6 +29,7 @@ T3TriangleStripMesh::T3TriangleStripMesh(Qt3DNode* parent)
   : Qt3D::QAbstractMesh(parent)
 {
   vndata.SetGeom(3,3,2,0);        // 0 = extensible frames
+  colors.SetGeom(2,4,0);
 }
 
 T3TriangleStripMesh::~T3TriangleStripMesh() {
@@ -41,9 +43,9 @@ void T3TriangleStripMesh::setNodeUpdating(bool updating) {
   blockNotifications(node_updating); // block if updating
   // nothing seems to work here...
   if(should_render) {
-    if(colors.size > 0 && colors.size != vndata.Frames()) {
+    if(colors.Frames() > 0 && colors.Frames() != vndata.Frames()) {
       taMisc::Warning("T3TriangleStripMesh: colors != vndata vertices",
-                      String(colors.size), " vs. ", String(vndata.Frames()));
+                      String(colors.Frames()), " vs. ", String(vndata.Frames()));
     }
     emit nodeUpdatingChanged();
     //    emit parentChanged();
@@ -52,7 +54,7 @@ void T3TriangleStripMesh::setNodeUpdating(bool updating) {
 
 void T3TriangleStripMesh::restart() {
   vndata.EnforceFrames(0);
-  colors.SetSize(0);
+  colors.EnforceFrames(0);
   indexes.SetSize(0);
 }
 
@@ -104,14 +106,26 @@ void T3TriangleStripMesh::addBreak() {
   indexes.Add(0xFFFF);        // stop
 }
 
-int T3TriangleStripMesh::addColor(uint32_t clr) {
-  colors.Add(clr);
-  return colors.size -1;
+int T3TriangleStripMesh::addColor(const QColor& clr) {
+  colors.AddFrame();
+  int idx = colors.Frames()-1;
+  if(idx == 0xFFFF) {
+    colors.AddFrame();          // skip!!!
+    idx = colors.Frames()-1;
+  }
+  colors.Set(clr.redF(), 0, idx);
+  colors.Set(clr.greenF(), 1, idx);
+  colors.Set(clr.blueF(), 2, idx);
+  colors.Set(clr.alphaF(), 3, idx);
+  return idx;
 }
 
-int T3TriangleStripMesh::addColor(const QColor& clr) {
-  colors.Add(T3Misc::makePackedRGBA(clr));
-  return colors.size -1;
+void T3TriangleStripMesh::setPointColor(int idx, const QColor& clr) {
+  if(idx < 0 || idx >= colors.Frames()) return;
+  colors.Set(clr.redF(), 0, idx);
+  colors.Set(clr.greenF(), 1, idx);
+  colors.Set(clr.blueF(), 2, idx);
+  colors.Set(clr.alphaF(), 3, idx);
 }
 
 void T3TriangleStripMesh::updateMesh() {
@@ -120,15 +134,15 @@ void T3TriangleStripMesh::updateMesh() {
 }
   
 void T3TriangleStripMesh::copy(const Qt3DNode *ref) {
-    Qt3D::QAbstractMesh::copy(ref);
-    const T3TriangleStripMesh* mesh = static_cast<const T3TriangleStripMesh*>(ref);
-    vndata = mesh->vndata;
-    indexes = mesh->indexes;
-    colors = mesh->colors;
+  Qt3D::QAbstractMesh::copy(ref);
+  const T3TriangleStripMesh* mesh = static_cast<const T3TriangleStripMesh*>(ref);
+  vndata = mesh->vndata;
+  indexes = mesh->indexes;
+  colors = mesh->colors;
 }
 
 Qt3D::QMeshDataPtr createTriangleStrip(int n_vndata, float* vndata, int n_indexes,
-                                       int* indexes, int n_colors, int* colors);
+                                       int* indexes, int n_colors, float* colors);
 
 class TriangleStripFunctor : public Qt3D::QAbstractMeshFunctor {
 public:
@@ -137,7 +151,7 @@ public:
   int     n_indexes;
   int*    indexes;
   int     n_colors;
-  int*    colors;
+  float*    colors;
   
   TriangleStripFunctor(const T3TriangleStripMesh& mesh)
     : vndata(mesh.vndata.el)
@@ -151,7 +165,7 @@ public:
     // else {
     n_vndata = mesh.vndata.Frames();
     n_indexes = mesh.indexes.size;
-    n_colors = mesh.colors.size;
+    n_colors = mesh.colors.Frames();
     // }
   }
 
@@ -173,7 +187,7 @@ public:
 };
 
 Qt3D::QMeshDataPtr createTriangleStrip(int n_vndata, float* vndata, int n_indexes,
-                                       int* indexes, int n_colors, int* colors) {
+                                       int* indexes, int n_colors, float* colors) {
   // Populate a buffer with the interleaved per-vertex data with
   // vec3 pos + vec3 normal; // not: vec2 texCoord, vec3 normal, vec4 tangent
   const quint32 elementSize = 3 + 3; // + 2 + 3 + 4;
@@ -187,7 +201,7 @@ Qt3D::QMeshDataPtr createTriangleStrip(int n_vndata, float* vndata, int n_indexe
   
   // Wrap the raw bytes in a buffer
   Qt3D::BufferPtr buf(new Qt3D::Buffer(QOpenGLBuffer::VertexBuffer));
-  buf->setUsage(QOpenGLBuffer::StaticDraw);
+  buf->setUsage(QOpenGLBuffer::DynamicDraw);
   QByteArray bufferBytes = QByteArray::fromRawData((const char*)vndata, stride * n_vndata);
   buf->setData(bufferBytes);
 
@@ -202,18 +216,18 @@ Qt3D::QMeshDataPtr createTriangleStrip(int n_vndata, float* vndata, int n_indexe
 
   if(n_colors > 0) {
     Qt3D::BufferPtr colorBuffer(new Qt3D::Buffer(QOpenGLBuffer::VertexBuffer));
-    colorBuffer->setUsage(QOpenGLBuffer::StaticDraw);
+    colorBuffer->setUsage(QOpenGLBuffer::DynamicDraw);
     QByteArray colorBytes = QByteArray::fromRawData((const char*)colors,
-                                                    n_colors *  sizeof(int));
+                                                    n_colors *  4 * sizeof(float));
     colorBuffer->setData(colorBytes);
     mesh->addAttribute(Qt3D::QMeshData::defaultColorAttributeName(),
-     Qt3D::AttributePtr(new Qt3D::Attribute(colorBuffer, GL_UNSIGNED_INT,
+     Qt3D::AttributePtr(new Qt3D::Attribute(colorBuffer, GL_FLOAT_VEC4,
                                             n_colors, 0, 0)));
   }
 
   // Wrap the index bytes in a buffer
   Qt3D::BufferPtr indexBuffer(new Qt3D::Buffer(QOpenGLBuffer::IndexBuffer));
-  indexBuffer->setUsage(QOpenGLBuffer::StaticDraw);
+  indexBuffer->setUsage(QOpenGLBuffer::DynamicDraw);
   QByteArray indexBytes = QByteArray::fromRawData((const char*)indexes, n_indexes *  sizeof(int));
   indexBuffer->setData(indexBytes);
 
@@ -237,20 +251,15 @@ Qt3D::QAbstractMeshFunctorPtr T3TriangleStripMesh::meshFunctor() const {
 T3TriangleStrip::T3TriangleStrip(Qt3DNode* parent)
   : inherited(parent)
 {
-  // temp -- not working!
-  // addMaterial(new Qt3D::QPerVertexColorMaterial);
-
-  Qt3D::QPhongMaterial* phong = new Qt3D::QPhongMaterial;
-  addMaterial(phong);
-
-  QColor color = Qt::green;
-  phong->setDiffuse(color);
-  phong->setAmbient(color.darker((int)(100.0f / 0.2f)));
-  phong->setSpecular(QColor(250, 250, 250, 255));
-  phong->setShininess(2);
-  
   tris = new T3TriangleStripMesh();
   addMesh(tris);
+
+  // not too big of a spot..
+  shininess = 10000.0f;
+  specular = 0.5f;
+  
+  color_type = PER_VERTEX_TRANS; // default
+  updateColor();
 }
 
 T3TriangleStrip::~T3TriangleStrip() {

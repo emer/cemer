@@ -28,7 +28,7 @@
 
 #ifdef TA_QT3D
 
-class T3LineBox;
+class T3Frame;
 
 class E_API T3LayerNode: public T3NodeParent {
   Q_OBJECT
@@ -45,7 +45,7 @@ public:
   bool			show_drag;
   bool			mode_2d;
 
-  T3LineBox*            frame;
+  T3Frame*              frame;
 
   void 	setGeom(int px, int py, float max_x, float max_y, float max_z,
                 float disp_scale);
