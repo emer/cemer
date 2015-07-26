@@ -41,14 +41,15 @@ void T3TriangleStripMesh::setNodeUpdating(bool updating) {
   if(!updating && node_updating) should_render = true;
   node_updating = updating;
   blockNotifications(node_updating); // block if updating
-  // nothing seems to work here...
   if(should_render) {
+#ifdef DEBUG
+    //    taMisc::Info("TriangleStrip mesh update");
     if(colors.Frames() > 0 && colors.Frames() != vndata.Frames()) {
-      taMisc::Warning("T3TriangleStripMesh: colors != vndata vertices",
-                      String(colors.Frames()), " vs. ", String(vndata.Frames()));
+      taMisc::Warning("T3TriangleStripMesh: colors != vndata vertices, colors:",
+                      String(colors.Frames()), " vs. verticies:", String(vndata.Frames()));
     }
-    emit nodeUpdatingChanged();
-    //    emit parentChanged();
+#endif
+    update();
   }
 }
 
@@ -174,15 +175,16 @@ public:
   }
 
   bool operator ==(const Qt3D::QAbstractMeshFunctor &other) const {
-    const TriangleStripFunctor *otherFunctor = dynamic_cast<const TriangleStripFunctor *>(&other);
-    if (otherFunctor != Q_NULLPTR)
-      return ((otherFunctor->n_vndata == n_vndata) &&
-              (otherFunctor->n_indexes == n_indexes) &&
-              (otherFunctor->vndata == vndata) &&
-              (otherFunctor->indexes == indexes) &&
-              (otherFunctor->n_colors == n_colors) &&
-              (otherFunctor->colors == colors));
-    return false;
+    return false;               // always update!!
+    // const TriangleStripFunctor *otherFunctor = dynamic_cast<const TriangleStripFunctor *>(&other);
+    // if (otherFunctor != Q_NULLPTR)
+    //   return ((otherFunctor->n_vndata == n_vndata) &&
+    //           (otherFunctor->n_indexes == n_indexes) &&
+    //           (otherFunctor->vndata == vndata) &&
+    //           (otherFunctor->indexes == indexes) &&
+    //           (otherFunctor->n_colors == n_colors) &&
+    //           (otherFunctor->colors == colors));
+    // return false;
   }
 };
 

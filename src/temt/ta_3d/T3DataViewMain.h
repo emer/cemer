@@ -55,6 +55,7 @@ public:
   void         CloseChild(taDataView* child) override;
 
   bool         isTopLevelView() const override {return true;}
+  void                  Render_impl() override;
 
   virtual void          CopyFromViewFrame(T3DataViewPar* cp);
   // copy key view frame parameters from other view object

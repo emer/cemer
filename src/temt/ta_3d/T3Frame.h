@@ -27,27 +27,44 @@ class TA_API T3FrameMesh : public Qt3D::QAbstractMesh {
   // a picture-frame shape -- rectangular with a width and thickness, oriented in XY plane
   Q_OBJECT
   INHERITED(Qt3D::QAbstractMesh)
-public:
-  Q_PROPERTY(bool node_updating READ nodeUpdating WRITE setNodeUpdating NOTIFY nodeUpdatingChanged)
-  bool  node_updating;          // is the node currently updating its structure, and thus rendering should be blocked, or not?
-  virtual void setNodeUpdating(bool updating);
-  bool  nodeUpdating()  { return node_updating; }
 
-  float		width;          // overall x dimension
-  float		height;         // y dimension
-  float		depth;          // z dimension
-  float		frame_width;    // width of the frame -- goes in this amount from overall width, height
+  Q_PROPERTY(float width READ width WRITE setWidth NOTIFY widthChanged)
+  Q_PROPERTY(float height READ height WRITE setHeight NOTIFY heightChanged)
+  Q_PROPERTY(float depth READ depth WRITE setDepth NOTIFY depthChanged)
+  Q_PROPERTY(float frame_width READ frameWidth WRITE setFrameWidth NOTIFY frameWidthChanged)
+
+public:
+  float		m_width;          // overall x dimension
+  float		m_height;         // y dimension
+  float		m_depth;          // z dimension
+  float		m_frame_width;    // width of the frame -- goes in this amount from overall width, height
+
+  void setWidth(float wd)
+  { if(m_width != wd) { m_width = wd; update(); } }
+  float width() const { return m_width; }
+
+  void setHeight(float wd)
+  { if(m_height != wd) { m_height = wd; update(); } }
+  float height() const { return m_height; }
+
+  void setDepth(float wd)
+  { if(m_depth != wd) { m_depth = wd; update(); } }
+  float depth() const { return m_depth; }
+
+  void setFrameWidth(float wd)
+  { if(m_frame_width != wd) { m_frame_width = wd; update(); } }
+  float frameWidth() const { return m_frame_width; }
 
   explicit T3FrameMesh(Qt3DNode *parent = 0);
   ~T3FrameMesh();
 
   Qt3D::QAbstractMeshFunctorPtr meshFunctor() const override;
 
-public slots:
-  void  updateMesh();
-  
 signals:
-  void  nodeUpdatingChanged();
+  void  widthChanged();
+  void  heightChanged();
+  void  depthChanged();
+  void  frameWidthChanged();
   
 protected:
   void copy(const Qt3DNode *ref) override;
@@ -73,8 +90,6 @@ public:
 
   T3Frame(Qt3DNode* parent = 0);
   ~T3Frame();
-
-  void setNodeUpdating(bool updating) override;
             
 public slots:
   virtual void  updateGeom(); // update to new geometry

@@ -39,9 +39,6 @@ public:
   explicit T3LineBoxMesh(Qt3DNode* parent = 0, const QVector3D* sz = 0);
   ~T3LineBoxMesh(); 
 
-public slots:
-  virtual void  updateSize(); // update the mesh when size is updated
-  
 protected:
   void copy(const Qt3DNode* ref) override;
 private:

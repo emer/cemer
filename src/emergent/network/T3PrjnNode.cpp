@@ -54,6 +54,8 @@ void T3PrjnNode::SetEndPoint(float xp, float yp, float zp) {
   // 0---1 3
   //     4
 
+  line->setNodeUpdating(true);
+  
   const float arrow_prop = .02f;
   const float apm1 = 1.0f - arrow_prop;
   
@@ -70,6 +72,8 @@ void T3PrjnNode::SetEndPoint(float xp, float yp, float zp) {
   line->setPoint(2, pos2);
   line->setPoint(3, pos3);
   line->setPoint(4, pos4);
+
+  line->setNodeUpdating(false);
 }
 
 #else // TA_QT3D

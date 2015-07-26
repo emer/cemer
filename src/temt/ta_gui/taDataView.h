@@ -106,6 +106,7 @@ public:
   virtual TypeDef*      parentType() const {return &TA_taDataView;} // the controlling parent -- note that when in a list, this is the list owner, not the list; overrride for strong check in SetOwner
   virtual bool          isRootLevelView() const {return false;} // #IGNORE controls the default clip behavior, whereby root = allow child ops (cut, dup, etc.); not = do almost nothing
   virtual bool          isTopLevelView() const {return false;} // #IGNORE controls the default clip behavior, whereby top = do most stuff; not = do almost nothing
+  virtual int           visCount() const { return m_vis_cnt; }
 
   virtual MemberDef*    GetDataMemberDef() {return NULL;} // returns md if known and/or knowable (ex. NULL for list members)
   virtual String        GetLabel() const; // returns a label suitable for tabview tabs, etc.

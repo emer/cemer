@@ -33,16 +33,15 @@ class TA_API T3LineStripMesh : public Qt3D::QAbstractMesh {
   Q_OBJECT
   INHERITED(Qt3D::QAbstractMesh)
 public:
-  Q_PROPERTY(bool node_updating READ nodeUpdating WRITE setNodeUpdating NOTIFY nodeUpdatingChanged)
   bool  node_updating;          // is the node currently updating its structure, and thus rendering should be blocked, or not?
   virtual void setNodeUpdating(bool updating);
-  bool  nodeUpdating()  { return node_updating; }
 
   float_Matrix  points; // 3d points (verticies) for lines -- geom is 3 x n (outer is the "frame" dimension which can be increased dynamically)
   float_Matrix  colors; // optional per-vertex colors in 1-to-1 correspondence with the point data -- these are 4 full floating-point colors RGBA per point -- packed RGBA not supported in shaders it seems..
   int_Array     indexes; // lines defined by sequential indexes into points -- use 0xFFFF to stop one line strip and then start another
     
   Qt3D::QAbstractMeshFunctorPtr meshFunctor() const override;
+  void setMeshFunctor(Qt3D::QAbstractMeshFunctorPtr& fn) { }; // nop -- just want signal
 
   void  restart();
   // set sizes back to 0
@@ -82,7 +81,7 @@ public slots:
   virtual void  updateLines(); // update the rendered lines
   
 signals:
-  void  nodeUpdatingChanged();
+  void  meshFunctorChanged();
   
 protected:
   void copy(const Qt3DNode* ref) override;

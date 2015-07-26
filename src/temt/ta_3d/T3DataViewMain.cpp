@@ -21,6 +21,10 @@
 
 #include <taMisc>
 
+#ifdef TA_QT3D
+#include <T3Node>
+#endif
+
 TA_BASEFUNS_CTORS_DEFN(T3DataViewMain);
 
 void T3DataViewMain::Initialize() {
@@ -93,6 +97,21 @@ void T3DataViewMain::ReInit_impl() {
     item->ReInit();
   }
   inherited::ReInit_impl();
+}
+
+void T3DataViewMain::Render_impl() {
+  inherited::Render_impl();
+
+#ifdef TA_QT3D
+  // Qt3D::QNode* par = dynamic_cast<Qt3D::QNode*>(node_so()->parent());
+  // node_so()->setParent((Qt3D::QNode*)NULL); // update trigger?
+  // node_so()->setParent(par);
+  if(node_so()) {
+    node_so()->setNodeUpdating(true);
+    node_so()->setNodeUpdating(false);
+  }
+#endif
+  
 }
 
 void T3DataViewMain::BuildAnnotations() {

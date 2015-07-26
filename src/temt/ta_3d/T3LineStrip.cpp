@@ -21,7 +21,7 @@
 #include <Qt3DRenderer/QPhongMaterial>
 #include <Qt3DRenderer/QPerVertexColorMaterial>
 
-#include <T3Misc>
+#include <taMisc>
 
 T3LineStripMesh::T3LineStripMesh(Qt3DNode* parent)
   : Qt3D::QAbstractMesh(parent)
@@ -39,9 +39,16 @@ void T3LineStripMesh::setNodeUpdating(bool updating) {
   if(!updating && node_updating) should_render = true;
   node_updating = updating;
   blockNotifications(node_updating); // block if updating
-  // if(should_render)
-    emit nodeUpdatingChanged();
-    //    emit parentChanged();
+  if(should_render) {
+#ifdef DEBUG    
+    // taMisc::Info("LineStrip mesh update");
+    if(colors.Frames() > 0 && colors.Frames() != points.Frames()) {
+      taMisc::Warning("T3LineStripMesh: colors != points vertices, colors:",
+                      String(colors.Frames()), " vs. points:", String(points.Frames()));
+    }
+#endif
+    update();
+  }
 }
 
 void T3LineStripMesh::restart() {
@@ -192,15 +199,16 @@ public:
   }
 
   bool operator ==(const Qt3D::QAbstractMeshFunctor &other) const {
-    const LineStripFunctor *otherFunctor = dynamic_cast<const LineStripFunctor *>(&other);
-    if (otherFunctor != Q_NULLPTR)
-      return ((otherFunctor->n_points == n_points) &&
-              (otherFunctor->n_indexes == n_indexes) &&
-              (otherFunctor->points == points) &&
-              (otherFunctor->indexes == indexes) &&
-              (otherFunctor->n_colors == n_colors) &&
-              (otherFunctor->colors == colors));
-    return false;
+    return false;               // always update!!!
+    // const LineStripFunctor *otherFunctor = dynamic_cast<const LineStripFunctor *>(&other);
+    // if (otherFunctor != Q_NULLPTR)
+    //   return ((otherFunctor->n_points == n_points) &&
+    //           (otherFunctor->n_indexes == n_indexes) &&
+    //           (otherFunctor->points == points) &&
+    //           (otherFunctor->indexes == indexes) &&
+    //           (otherFunctor->n_colors == n_colors) &&
+    //           (otherFunctor->colors == colors));
+    // return false;
   }
 };
 

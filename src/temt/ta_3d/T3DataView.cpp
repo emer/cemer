@@ -392,6 +392,13 @@ void T3DataView::Render_impl() {
   }
 #endif // TA_QT3D
   inherited::Render_impl();
+
+#ifdef TA_QT3D
+  // Qt3D::QNode* par = dynamic_cast<Qt3D::QNode*>(node_so()->parent());
+  // root()->node_so()->setParent((Qt3D::QNode*)NULL); // update trigger?
+  // root()->node_so()->setParent(par);
+#endif
+  
 }
 
 void T3DataView::Render_pre() {

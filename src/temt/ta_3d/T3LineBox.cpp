@@ -69,14 +69,12 @@ T3LineBoxMesh::~T3LineBoxMesh() {
 }
 
 void T3LineBoxMesh::setSize(const QVector3D& sz) {
-  size = sz;
-  updateSize();
+  if(size != sz) {
+    size = sz;
+    update();
+  }
 }
 
-void T3LineBoxMesh::updateSize() {
-  // todo??
-}
-  
 void T3LineBoxMesh::copy(const Qt3DNode *ref) {
     Qt3D::QAbstractMesh::copy(ref);
     const T3LineBoxMesh* mesh = static_cast<const T3LineBoxMesh*>(ref);

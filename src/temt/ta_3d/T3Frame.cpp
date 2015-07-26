@@ -25,40 +25,23 @@
 T3FrameMesh::T3FrameMesh(Qt3DNode* parent)
   : Qt3D::QAbstractMesh(parent)
 {
-  width = 1.0f;
-  height = 1.0f;
-  depth = 0.05f;
-  frame_width = 0.1f;
+  m_width = 1.0f;
+  m_height = 1.0f;
+  m_depth = 0.05f;
+  m_frame_width = 0.1f;
 }
 
 T3FrameMesh::~T3FrameMesh() {
   Qt3D::QNode::cleanup();
 }
 
-void T3FrameMesh::setNodeUpdating(bool updating) {
-  bool should_render = false;
-  if(!updating && node_updating) should_render = true;
-  node_updating = updating;
-  blockNotifications(node_updating); // block if updating
-  // nothing seems to work here...
-  if(should_render) {
-    emit nodeUpdatingChanged();
-    //    emit parentChanged();
-  }
-}
-
-void T3FrameMesh::updateMesh() {
-  setNodeUpdating(true);
-  setNodeUpdating(false);
-}
-
 void T3FrameMesh::copy(const Qt3DNode *ref) {
   Qt3D::QAbstractMesh::copy(ref);
   const T3FrameMesh* mesh = static_cast<const T3FrameMesh*>(ref);
-  width = mesh->width;
-  height = mesh->height;
-  depth = mesh->depth;
-  frame_width = mesh->frame_width;
+  m_width = mesh->m_width;
+  m_height = mesh->m_height;
+  m_depth = mesh->m_depth;
+  m_frame_width = mesh->m_frame_width;
 }
 
 Qt3D::QMeshDataPtr createFrame(float width, float height, float depth, float frame_width);
@@ -71,10 +54,10 @@ public:
   float		frame_width;    // width of the frame -- goes in this amount from overall
   
   FrameFunctor(const T3FrameMesh& mesh)
-    : width(mesh.width)
-    , height(mesh.height)
-    , depth(mesh.depth)
-    , frame_width(mesh.frame_width)
+    : width(mesh.m_width)
+    , height(mesh.m_height)
+    , depth(mesh.m_depth)
+    , frame_width(mesh.m_frame_width)
   {
   }
 
@@ -463,15 +446,9 @@ void T3Frame::setGeom(float wd, float ht, float dp, float frwd) {
   updateGeom();
 }
 
-void T3Frame::setNodeUpdating(bool updating) {
-  frame->setNodeUpdating(updating);
-  inherited::setNodeUpdating(updating);
-}
-
 void T3Frame::updateGeom() {
-  frame->width = width;
-  frame->height = height;
-  frame->depth = depth;
-  frame->frame_width = frame_width;
-  frame->updateMesh();
+  frame->setWidth(width);
+  frame->setHeight(height);
+  frame->setDepth(depth);
+  frame->setFrameWidth(frame_width);
 }

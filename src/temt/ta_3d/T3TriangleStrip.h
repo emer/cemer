@@ -37,17 +37,15 @@ public:
     NRM,                        // normal data
   };
     
-  Q_PROPERTY(bool node_updating READ nodeUpdating WRITE setNodeUpdating NOTIFY nodeUpdatingChanged)
   bool  node_updating;          // is the node currently updating its structure, and thus rendering should be blocked, or not?
   virtual void setNodeUpdating(bool updating);
-  bool  nodeUpdating()  { return node_updating; }
 
   float_Matrix  vndata; // verticies and normal data -- geom is 3 x 2 x n (3d coords, vertex and normal, then outer is the "frame" dimension of points which can be increased dynamically)
   float_Matrix  colors; // optional per-vertex colors in 1-to-1 correspondence with the vertex data -- these are 4 full floating-point colors RGBA per point -- packed RGBA not supported in shaders it seems..
   int_Array     indexes; // triangles defined by sequential indexes into vndata -- use 0xFFFF to stop one triangle strip and then start another
     
   Qt3D::QAbstractMeshFunctorPtr meshFunctor() const override;
-
+  
   void  restart();
   // set sizes back to 0
 
@@ -79,7 +77,7 @@ public slots:
   virtual void  updateMesh(); // update the rendered mesh
   
 signals:
-  void  nodeUpdatingChanged();
+  void  meshFunctorChanged();
   
 protected:
   void copy(const Qt3DNode* ref) override;

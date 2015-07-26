@@ -155,9 +155,16 @@ void iT3Panel::Render_impl() {
 
 void iT3Panel::Render_post() {
 #ifdef TA_QT3D
-  root()->node_so()->setNodeUpdating(true);
-  root()->node_so()->setNodeUpdating(false);
-  // m_t3viewer->render->renderSynchronous(); // crashes
+  taMisc::Info("viscount:", String(root()->visCount()));
+  if(root()->visCount() > 1) {
+    Qt3D::QNode* par = dynamic_cast<Qt3D::QNode*>(root()->node_so()->parent());
+    root()->node_so()->setParent((Qt3D::QNode*)NULL);
+    root()->node_so()->setParent(par);
+    taMisc::Info("post render updt");
+    root()->node_so()->setNodeUpdating(true);
+    root()->node_so()->setNodeUpdating(false);
+  }
+  //  m_t3viewer->render->renderSynchronous(); // crashes
 #endif // TA_QT3D
 }
 
