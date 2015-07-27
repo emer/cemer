@@ -30,6 +30,7 @@
 #ifdef TA_QT3D
 
 #include <T3TwoDText>
+#include <T3Frame>
 
 #else // TA_QT3D
 
@@ -123,7 +124,16 @@ void LayerView::DoHighlightColor(bool apply) {
   NetView* nv = getNetView();
 
 #ifdef TA_QT3D
-
+  float trans =  nv->view_params.lay_trans;
+  Layer* lay = layer();
+  if((lay && lay->lesioned()) || !lay)
+    nd->frame->setColor(QColor::fromRgbF(0.5f, 0.5f, 0.5f, trans)); // grey
+  else if(lay->layer_type == Layer::INPUT)
+    nd->frame->setColor(QColor::fromRgbF(0.2f, 0.8f, 0.2f, trans)); // green
+  else if(lay->layer_type == Layer::HIDDEN)
+    nd->frame->setColor(QColor::fromRgbF(0.0f, 0.5f, 0.5f, trans)); // aqua
+  else 
+    nd->frame->setColor(QColor::fromRgbF(0.8f, 0.2f, 0.2f, trans)); // red for output / target
 #else // TA_QT3D
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {

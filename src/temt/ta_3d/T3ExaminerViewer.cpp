@@ -41,6 +41,8 @@
 #ifdef TA_QT3D
 #include <T3Entity>
 
+#include <T3CameraParams>
+
 #include <Qt3DCore/QCamera>
 #include <Qt3DCore/QCameraLens>
 #include <Qt3DCore/QTransform>
@@ -171,6 +173,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
 
 #ifdef TA_QT3D
+  T3Panel* panl = GetPanel();
   scene = NULL;
   bg_color = QColor::fromRgbF(0.0, 0.5, 1.0, 1.0);
   
@@ -178,7 +181,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   QWidget* container = QWidget::createWindowContainer(view3d);
   main_hbox->addWidget(container, 1);
   engine = new Qt3D::QAspectEngine;
-  render = new Qt3D::QRenderAspect(); // Qt3D::QRenderAspect::Synchronous); // hangs
+  render = new Qt3D::QRenderAspect();
   engine->registerAspect(render);
   input = new Qt3D::QInputAspect;
   engine->registerAspect(input);
@@ -195,8 +198,11 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   QSize sz = container->size();
   float aspect_ratio = (float)sz.width() / (float)sz.height();
   
-  camera->lens()->setPerspectiveProjection(20.0f, aspect_ratio, 0.1f, 1000.0f);
-  camera->setPosition(QVector3D(0.0f, 0.0f, 5.0f));
+  camera->lens()->setPerspectiveProjection(45.0f, aspect_ratio, 0.1f, 1000.0f);
+  if(panl) {
+    setCameraParams(panl->camera_params);
+  }
+  camera->setPosition(QVector3D(0.0f, 0.0f, 2.0f));
   camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
   camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
   input->setCamera(camera);
@@ -968,6 +974,12 @@ void T3ExaminerViewer::setBackgroundColor(const QColor & color) {
   viewport->setClearColor(bg_color);
 }
 
+void T3ExaminerViewer::setCameraParams(const T3CameraParams& cps) {
+  camera->lens()->setFieldOfView(cps.field_of_view);
+  camera->lens()->setNearPlane(cps.near);
+  camera->lens()->setFarPlane(cps.far);
+}
+
 #else
 
 SoCamera* T3ExaminerViewer::getViewerCamera() const {
@@ -986,7 +998,7 @@ const SbViewportRegion& T3ExaminerViewer::getViewportRegion() const {
 void T3ExaminerViewer::viewAll() {
 #ifdef TA_QT3D
   camera->setUpVector(QVector3D(0, 1.0f, 0));
-  camera->setPosition(QVector3D(0.0f, 0.0f, 5.0f));
+  camera->setPosition(QVector3D(0.0f, 0.0f, 2.0f));
   camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
 #else
   SoCamera* cam = getViewerCamera();
@@ -1020,6 +1032,9 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
     const QVector3D oldpos = camera->position();
     const QVector3D newpos = oldpos + multiplicator * direction;
     camera->setPosition(newpos);
+
+    QVector3D newview = camera->viewCenter() + multiplicator * direction;
+    camera->setViewCenter(newview);
 
     // this kinda works but then doesn't after a while..
     

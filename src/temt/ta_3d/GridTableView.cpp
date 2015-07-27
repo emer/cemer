@@ -38,6 +38,7 @@
 #include <T3TwoDText>
 #include <T3LineBox>
 #include <T3MatrixGrid>
+#include <T3Cube>
 
 #else // TA_QT3D
 
@@ -855,7 +856,7 @@ void GridTableView::RenderGrid() {
     }
   }
 #ifdef TA_QT3D
-  grid->setNodeUpdating(false);
+   grid->setNodeUpdating(false);
 #else // TA_QT3D
   grid->addChild(horiz);
   ln->unref(); // deleted if not used
@@ -1011,6 +1012,10 @@ void GridTableView::RenderHeader() {
 
     // light aqua transparent background
 #ifdef TA_QT3D
+    T3Cube* rect = new T3Cube(hdr);
+    rect->setSize(col_wd_lst - gr_mg_sz2, head_height, gr_mg_sz);
+    rect->Translate(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -2.0 * gr_mg_sz);
+    rect->setColor(QColor::fromRgbF(0.0f, 1.0f, 1.0f, 0.4f));
 #else // TA_QT3D
     SoTranslation* rectr = new SoTranslation();
     colnd->addChild(rectr);

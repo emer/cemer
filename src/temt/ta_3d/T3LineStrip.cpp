@@ -39,16 +39,16 @@ void T3LineStripMesh::setNodeUpdating(bool updating) {
   if(!updating && node_updating) should_render = true;
   node_updating = updating;
   blockNotifications(node_updating); // block if updating
-  if(should_render) {
+  // if(should_render) {
 #ifdef DEBUG    
-    // taMisc::Info("LineStrip mesh update");
+  // taMisc::Info("LineStrip mesh update");
     if(colors.Frames() > 0 && colors.Frames() != points.Frames()) {
       taMisc::Warning("T3LineStripMesh: colors != points vertices, colors:",
                       String(colors.Frames()), " vs. points:", String(points.Frames()));
     }
 #endif
     update();
-  }
+  // }
 }
 
 void T3LineStripMesh::restart() {
@@ -154,16 +154,15 @@ void T3LineStripMesh::setPoint(int idx, const taVector3f& pos) {
 }
 
 void T3LineStripMesh::updateLines() {
-  setNodeUpdating(true);
-  setNodeUpdating(false);
+  update();
 }
   
 void T3LineStripMesh::copy(const Qt3DNode *ref) {
-    Qt3D::QAbstractMesh::copy(ref);
-    const T3LineStripMesh* mesh = static_cast<const T3LineStripMesh*>(ref);
-    points = mesh->points;
-    indexes = mesh->indexes;
-    colors = mesh->colors;
+  Qt3D::QAbstractMesh::copy(ref);
+  const T3LineStripMesh* mesh = static_cast<const T3LineStripMesh*>(ref);
+  points = mesh->points;
+  indexes = mesh->indexes;
+  colors = mesh->colors;
 }
 
 Qt3D::QMeshDataPtr createLineStrip(int n_points, float* points, int n_indexes,
@@ -183,15 +182,16 @@ public:
     , indexes(mesh.indexes.el)
     , colors(mesh.colors.el)
   {
-    // if(mesh.node_updating) {
-    //   n_points = 0;
-    //   n_indexes = 0;
-    // }
-    // else {
-    n_points = mesh.points.Frames();
-    n_indexes = mesh.indexes.size;
-    n_colors = mesh.colors.Frames();
-    // }
+    if(mesh.node_updating) {
+      n_points = 0;
+      n_indexes = 0;
+      n_colors = 0;
+    }
+    else {
+      n_points = mesh.points.Frames();
+      n_indexes = mesh.indexes.size;
+      n_colors = mesh.colors.Frames();
+    }
   }
 
   Qt3D::QMeshDataPtr operator ()() override {

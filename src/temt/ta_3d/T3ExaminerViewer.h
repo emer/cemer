@@ -56,6 +56,8 @@ namespace Qt3D {
   class QViewport;
 }
 
+class T3CameraParams; //
+
 #include <Qt3DCore>
 #include <Qt3DRenderer>
 #include <Qt3DInput>
@@ -190,16 +192,14 @@ public:
   //   Functions that actually do stuff
 
 #ifdef TA_QT3D
-  Qt3D::QCamera*        getViewerCamera() const
-  { return camera; }
+  Qt3D::QCamera*        getViewerCamera() const  { return camera; }
   void                  setSceneGraph(Qt3D::QEntity* root);
   // set scene graph to given new root -- added under root_entity
-  Qt3D::QEntity*        getSceneGraph() const
-  { return scene; }
+  Qt3D::QEntity*        getSceneGraph() const  { return scene; }
   // current scene being viewed
-  void setBackgroundColor(const QColor & color);
-  QColor backgroundColor() const
-  { return bg_color; }
+  void                  setBackgroundColor(const QColor & color);
+  QColor                backgroundColor() const { return bg_color; }
+  void                  setCameraParams(const T3CameraParams& cps);
 #else
   SoCamera*             getViewerCamera() const;
   // helper function get the quarter viewer camera (not immediately avail on quarter widget)

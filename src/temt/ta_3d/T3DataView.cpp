@@ -318,26 +318,10 @@ ISelectableHost* T3DataView::host() const {
 }
 
 bool T3DataView::isMapped() const {
+  // this is for non-main nodes -- just check if the node_so is rendered
   if(!m_node_so) {
-    // taMisc::Info("view:",name,"not mapped because no node_so");
     return false;
   }
-  if(taMisc::gui_no_win) return true; // bypass these further checks for no_win case
-  T3ExaminerViewer* vw = GetViewer();
-  if(!vw) {
-    // taMisc::Info("view:",name,"not mapped because no GetViewer");
-    return false;
-  }
-#ifndef TA_QT3D
-  if(!vw->quarter) {
-    // taMisc::Info("view:",name,"not mapped because no quarter");
-    return false;
-  }
-  if(!vw->quarter->isValid()) {
-    // taMisc::Info("view:",name,"not mapped because no quarter->isValid()");
-    return false;
-  }
-#endif
   return true;
 }
 
@@ -392,13 +376,6 @@ void T3DataView::Render_impl() {
   }
 #endif // TA_QT3D
   inherited::Render_impl();
-
-#ifdef TA_QT3D
-  // Qt3D::QNode* par = dynamic_cast<Qt3D::QNode*>(node_so()->parent());
-  // root()->node_so()->setParent((Qt3D::QNode*)NULL); // update trigger?
-  // root()->node_so()->setParent(par);
-#endif
-  
 }
 
 void T3DataView::Render_pre() {

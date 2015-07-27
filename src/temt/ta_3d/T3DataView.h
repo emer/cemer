@@ -98,8 +98,8 @@ public:
 
   bool                  isMapped() const override;
   // only true if in gui mode and gui stuff exists
-  virtual T3DataViewRoot* root();
-  virtual T3Panel* GetFrame() const;
+  virtual               T3DataViewRoot* root();
+  virtual T3Panel*      GetFrame() const;
   // get the T3Panel that owns us
   virtual T3ExaminerViewer* GetViewer() const;
   // #IGNORE get the Viewer that contains us
@@ -123,10 +123,10 @@ public:
   virtual void          CloseChild(taDataView* child) {}
   virtual void          BuildAll() {}
   // subclass-dependent operation -- reinvoked after major update -- builds any sub-dataview objects, but not the corresponding So guys (which is done in render)
-  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
-  void         SigDestroying() override; // called by data when it is destroying -- usual action is to destroy ourself
-  void         ChildClearing(taDataView* child) override; // NOTE: child is always a T3DataView
-  void         ChildRendered(taDataView* child) override; //  NOTE: child is always a T3DataView
+  void                  SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
+  void                  SigDestroying() override; // called by data when it is destroying -- usual action is to destroy ourself
+  void                  ChildClearing(taDataView* child) override; // NOTE: child is always a T3DataView
+  void                  ChildRendered(taDataView* child) override; //  NOTE: child is always a T3DataView
 
   virtual void          OnWindowBind(iT3Panel* vw);
   // #IGNORE called after the viewer creates/fills the main window (for dataviews embedded in main viewer only), or when DataView added to existing viewer
@@ -146,8 +146,8 @@ public: // ISelectable interface (only not in ISigLinkClient)
   GuiContext   shType() const override {return GC_DUAL_DEF_DATA;}
   taiSigLink* clipParLink(GuiContext sh_typ = GC_DEFAULT) const override; // not par_link
 protected:
-  void         QueryEditActionsS_impl_(int& allowed, int& forbidden,
-                                       GuiContext sh_typ) const override;
+  void                  QueryEditActionsS_impl_(int& allowed, int& forbidden,
+                        GuiContext sh_typ) const override;
 
 protected:
   MemberDef*            m_md; // memberdef of this item in its parent
@@ -160,13 +160,13 @@ protected:
   virtual void          AddRemoveChildNode_impl(SoNode* node, bool adding); // generic base uses SoSeparator->addChild()/removeChild()-- replace to change
 #endif
 
-  void         ChildRemoving(taDataView* child) override; // #IGNORE called from list; we also forward to taViewer; we also remove visually
+  void                  ChildRemoving(taDataView* child) override; // #IGNORE called from list; we also forward to taViewer; we also remove visually
   virtual void          Constr_Node_impl() {} // create the node_so rep -- called in RenderPre, null'ed in Clear
 
   virtual void          OnWindowBind_impl(iT3Panel* vw) {} // override for something this class
   void                  Clear_impl() override;
   virtual void          ReInit_impl(); // default just calls clear() on the so, if it exists
-  void                  Render_pre() override; //
+  void                  Render_pre() override;
   void                  Render_impl() override;
 
   void                  SigRecvStructUpdateEnd_impl() override;

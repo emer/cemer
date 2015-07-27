@@ -23,6 +23,7 @@
 #include <T3DataViewRoot>
 #include <T3SavedView_List>
 #include <taColor>
+#include <T3CameraParams>
 
 // declare all other types mentioned but not required to include:
 class T3DataView; //
@@ -73,6 +74,7 @@ public:
   taColor               bg_color; // background color of the panel note: alpha transparency value is also used and will be reflected in saved images!
   taColor               text_color; // color to use for text in the panel -- may need to change this from default of black depending on the bg_color
   bool                  headlight_on; // turn the camera headlight on for illuminating the scene -- turn off only if there is another source of light within the scenegraph -- otherwise it will be dark!
+  T3CameraParams        camera_params; // parameters affecting how the camera works
   StereoView            stereo_view;  // what type of stereo display to render, if any
   T3SavedView_List      saved_views;  // saved camera position views from viewer -- this is the persitent version copied from camera
 
@@ -144,8 +146,8 @@ public:
   virtual void          EditView(T3DataViewMain* view);
   // #CAT_Display #BUTTON #FROM_GROUP_root_views edit given view within this panel -- can provide more detailed view control information than what is present in the middle view control panel
 
-  QPixmap      GrabImage(bool& got_image) override;
-  bool         SaveImageAs(const String& fname = "", ImageFormat img_fmt = SVG) override;
+  QPixmap               GrabImage(bool& got_image) override;
+  bool                  SaveImageAs(const String& fname = "", ImageFormat img_fmt = SVG) override;
   virtual  void         SetImageSize(int width, int height);
   // #CAT_Display #BUTTON set size of 3d viewer (and thus SaveImageAs image) to given size parameters
   virtual  void         SetColorScheme(ColorScheme color_scheme);
@@ -153,6 +155,8 @@ public:
   virtual  void         GridLayout(int n_horiz = 2, float horiz_space = 0.2,
                                    float vert_space = 0.2, bool save_views=false);
   // #CAT_Display #BUTTON layout the elements within this view in a grid, starting with the first item in the lower left corner, moving horizontally and up through the items, with given number of items along the horizontal axis, and given spacing between items (can be negative to pack closer together)  -- if save_views then the saved views 1-n will be aligned with each of the elements in turn
+  virtual  void         SetCameraParams();
+  // #CAT_Display #BUTTON set the current camera_params to the viewer camera
 
 #ifdef TA_QT3D
   virtual void          DebugViewNodes();
@@ -185,16 +189,18 @@ protected:
   IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) override; // #IGNORE
   void         Constr_post() override;
   void         WindowClosing(CancelOp& cancel_op) override; // #IGNORE
+  bool         DoClearOnHide() override { return false; }
+  bool         DoRender_pre() override; // decide if we should do render pre
   void         Clear_impl() override; // #IGNORE
   void         Render_pre() override; // #IGNORE
   void         Render_impl() override;  // #IGNORE
   void         Render_post() override; // #IGNORE
   void         Reset_impl() override; //  #IGNORE
 private:
-  void  SetTextBgColor(const String &new_text_color, const String &new_bg_color);
-  void  Copy_(const T3Panel& cp);
-  void                  Initialize();
-  void                  Destroy();
+  void         SetTextBgColor(const String &new_text_color, const String &new_bg_color);
+  void         Copy_(const T3Panel& cp);
+  void         Initialize();
+  void         Destroy();
 };
 
 #endif // T3Panel_h

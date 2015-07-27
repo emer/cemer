@@ -93,6 +93,9 @@ void taDataView::SetVisible_impl(DataViewAction act) {
     if (TestError((--m_vis_cnt < 0), "taDataView::SetVisible_impl",
       "m_vis_cnt went -ve, indicates show/hide issues"))
       m_vis_cnt = 0;
+    if(m_vis_cnt == 0 && DoClearOnHide()) {
+      Clear();                  // reset anything that is not visible
+    }
   }
 
   DoActionChildren_impl(act);
@@ -225,7 +228,6 @@ void taDataView::DoActions(DataViewAction acts) {
   }
   // never do any rendering during load or copying,
   if (!(taMisc::is_loading || taMisc::is_duplicating)) {
-
     if (acts & CONSTR_POST) {
       // note: only ever called manually
       Constr_post();
@@ -236,7 +238,7 @@ void taDataView::DoActions(DataViewAction acts) {
   }
   if (acts & CLEAR_IMPL) {
     // must be mapped to do clear
-    if (isMapped())
+    if (DoClear_impl())
       Clear_impl();
   }
   if (acts & RESET_IMPL) {
@@ -247,12 +249,10 @@ void taDataView::DoActions(DataViewAction acts) {
   // no rendering should ever get done if not in gui mode, incl during late shutdown
   if (taMisc::gui_active || taMisc::gui_no_win) {
     if (acts & RENDER_PRE) {
-/*obs      // must not already be constructed
-      if (!isMapped())*/
-      Render_pre();
+      if(DoRender_pre())
+        Render_pre();
     }
-    // must be mapped for other render steps
-    if (isMapped()) {
+    if (DoRender_impl()) {
       if (acts & RENDER_IMPL) {
         Render_impl();
       }

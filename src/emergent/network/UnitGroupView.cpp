@@ -1112,12 +1112,29 @@ void UnitGroupView::UpdateUnitValues_blocks() {
       for(int i=0;i<20;i++) {
         tris->setPointColor(c_idx + i, col);
       }
-      
-      // update verticies
-      for(int i=0;i<n_zverts;i++) {
-        tris->tris->vndata.FastEl3d(1, 0, c_idx + zverts[i]) = zp1;
+
+      if(c_idx <= 0xFFFF && c_idx + 20 > 0xFFFF) { // got skip over that guy..
+        tris->setPointColor(c_idx + 20, col);
+
+        // update verticies
+        int lst_vidx = c_idx-1;
+        for(int i=0;i<n_zverts;i++) {
+          int vidx = c_idx + zverts[i];
+          if(lst_vidx < 0xFFFF && vidx >= 0xFFFF) {
+            c_idx++; vidx++;
+          }
+          tris->tris->vndata.FastEl3d(1, 0, vidx) = zp1;
+          lst_vidx = vidx;
+        }
+        c_idx += 20;
       }
-      c_idx += 20;
+      else {
+        // update verticies
+        for(int i=0;i<n_zverts;i++) {
+          tris->tris->vndata.FastEl3d(1, 0, c_idx + zverts[i]) = zp1;
+        }
+        c_idx += 20;
+      }
 
       if(nv->unit_text_disp & NetView::UTD_VALUES) {
         ValToDispText(val, val_str);

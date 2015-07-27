@@ -49,7 +49,7 @@ QColor T3Misc::drag_activ_clr() {
 }
 
 QColor T3Misc::frame_clr() {
-  return QColor::fromRgbF(frame_clr_r, frame_clr_g, frame_clr_b, 1.0f - frame_clr_tr);
+  return QColor::fromRgbF(frame_clr_r, frame_clr_g, frame_clr_b, frame_clr_tr);
 }
 
 uint32_t T3Misc::makePackedRGBA(float r, float g, float b, float a) {

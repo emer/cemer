@@ -32,6 +32,7 @@ set(ta_3d_HEADS_MAKETA_NOMOC_base
   T3Annotation_List.h
   T3AnnotationView.h
 
+  T3CameraParams.h
   T3SavedView.h
   T3SavedView_List.h
 
@@ -220,6 +221,7 @@ set(ta_3d_SRCS_MAKETA
   T3Annotation_List.cpp
   T3AnnotationView.cpp
 
+  T3CameraParams.cpp
   T3SavedView.cpp
   T3SavedView_List.cpp
 

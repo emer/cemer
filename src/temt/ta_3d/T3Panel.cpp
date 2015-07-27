@@ -185,12 +185,19 @@ const iColor T3Panel::GetTextColor() const {
   return text_color;  // no actual logic required it seems
 }
 
+bool T3Panel::DoRender_pre() {
+  // doesn't work to do visibility test here -- it is in T3DataViewMain
+  // if(visCount() <= 0)           // not if not visible
+  //   return false;
+  return true;
+}
+
 void T3Panel::Render_pre() {
   inherited::Render_pre();
+  T3ExaminerViewer* viewer = widget()->t3viewer();
   widget()->Render_pre();
   root_view.Render_pre();
 
-  T3ExaminerViewer* viewer = widget()->t3viewer();
   if(viewer) {
     if(viewer->cur_view_no < 0) {
       SetAllSavedViews();               // init from us
@@ -458,7 +465,10 @@ bool T3Panel::SaveImageSVG(const String& fname) {
 void T3Panel::SetImageSize(int width, int height) {
   if(!widget()) return;
   T3ExaminerViewer* viewer = widget()->t3viewer();
-#ifndef TA_QT3D
+#ifdef TA_QT3D
+  if(!viewer) return;
+  viewer->view3d->resize(width, height);
+#else
   if(!viewer || !viewer->quarter) return;
   // note: these may not be the same on all platforms!! works for me on my mac.. :)
   viewer->quarter->resize(width, height);
@@ -480,6 +490,14 @@ void T3Panel::SetColorScheme(ColorScheme color_scheme) {
     case BLUE_ON_BLACK:  SetTextBgColor("blue",  "black"); break;
   }
   UpdateAfterEdit();
+}
+
+void T3Panel::SetCameraParams() {
+  T3ExaminerViewer* viewer = widget()->t3viewer();
+  if(!viewer) return;
+#ifdef TA_QT3D
+  viewer->setCameraParams(camera_params);
+#endif
 }
 
 void T3Panel::EditView(T3DataViewMain* view) {

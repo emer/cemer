@@ -99,19 +99,53 @@ void T3DataViewMain::ReInit_impl() {
   inherited::ReInit_impl();
 }
 
-void T3DataViewMain::Render_impl() {
-  inherited::Render_impl();
+// bool T3DataViewMain::isMapped() const {
+// #ifndef TA_QT3D
+//   if(!m_node_so) {
+//     // taMisc::Info("view:",name,"not mapped because no node_so");
+//     return false;
+//   }
+// #endif
+//   if(taMisc::gui_no_win) return true; // bypass these further checks for no_win case
 
-#ifdef TA_QT3D
-  // Qt3D::QNode* par = dynamic_cast<Qt3D::QNode*>(node_so()->parent());
-  // node_so()->setParent((Qt3D::QNode*)NULL); // update trigger?
-  // node_so()->setParent(par);
-  if(node_so()) {
-    node_so()->setNodeUpdating(true);
-    node_so()->setNodeUpdating(false);
-  }
-#endif
+//   T3ExaminerViewer* vw = GetViewer();
+//   if(!vw) {
+//     // taMisc::Info("view:",name,"not mapped because no GetViewer");
+//     return false;
+//   }
   
+//   taMisc::Info(name, "isMapped viscount:", String(visCount()));
+//   if(visCount() <= 0)
+//     return false;
+
+// #ifndef TA_QT3D
+//   if(!vw->quarter) {
+//     // taMisc::Info("view:",name,"not mapped because no quarter");
+//     return false;
+//   }
+//   if(!vw->quarter->isValid()) {
+//     // taMisc::Info("view:",name,"not mapped because no quarter->isValid()");
+//     return false;
+//   }
+// #endif
+//   return true;
+// }
+
+bool T3DataViewMain::DoRender_pre() {
+  if(taMisc::gui_no_win) return true;
+  if(visCount() <= 0)           // not if not visible
+    return false;
+  return true;
+}
+
+void T3DataViewMain::Render_pre() {
+  // taMisc::DebugInfo(name, "Render_pre()");
+  inherited::Render_pre();
+}
+
+void T3DataViewMain::Render_impl() {
+  // taMisc::DebugInfo(name, "Render_impl()");
+  inherited::Render_impl();
 }
 
 void T3DataViewMain::BuildAnnotations() {

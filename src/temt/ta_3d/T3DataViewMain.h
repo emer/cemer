@@ -49,12 +49,17 @@ public:
   String                svg_str;
   // #IGNORE string of svg code that is rendered to
 
-  bool         hasChildren() const override {return (children.size > 0 || annote_children.size > 0);}
+  bool                  hasChildren() const override
+  { return (children.size > 0 || annote_children.size > 0); }
 
-  void         OnWindowBind(iT3Panel* vw) override;
-  void         CloseChild(taDataView* child) override;
+  bool                  isTopLevelView() const override {return true;}
 
-  bool         isTopLevelView() const override {return true;}
+  void                  OnWindowBind(iT3Panel* vw) override;
+  void                  CloseChild(taDataView* child) override;
+
+  bool                  DoClearOnHide() override { return false; }
+  bool                  DoRender_pre() override; // decide if we should do render pre
+  void                  Render_pre() override;
   void                  Render_impl() override;
 
   virtual void          CopyFromViewFrame(T3DataViewPar* cp);
