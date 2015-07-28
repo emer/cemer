@@ -379,6 +379,7 @@ void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int
   String dat_files;
   String params;
   String notes;
+  String label;
   String user = m_cm->GetUsername();
   String clust = cluster;
   if(table.name == "file_list") {
@@ -388,19 +389,22 @@ void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int
     if(lkup >= 0) {
       params = jobs_done.GetValAsString("params", lkup);
       notes = jobs_done.GetValAsString("notes", lkup);
+      label = jobs_done.GetValAsString("label", lkup);
     }
     else {
       lkup = jobs_running.FindVal(tag, "tag");
       if(lkup >= 0) {
         params = jobs_running.GetValAsString("params", lkup);
         notes = jobs_running.GetValAsString("notes", lkup);
+        label = jobs_running.GetValAsString("label", lkup);
       }
       else {
         lkup = jobs_archive.FindVal(tag, "tag");
         if(lkup >= 0) {
           params = jobs_archive.GetValAsString("params", lkup);
           notes = jobs_archive.GetValAsString("notes", lkup);
-        } 
+          label = jobs_archive.GetValAsString("label", lkup);
+        }
       }
     }
   }
@@ -408,6 +412,7 @@ void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int
     dat_files = table.GetValAsString("dat_files", row);
     params = table.GetValAsString("params", row);
     notes = table.GetValAsString("notes", row);
+    label = table.GetValAsString("label", row);
     user = table.GetValAsString("user", row);
     clust = table.GetValAsString("cluster", row);
   }
@@ -433,13 +438,13 @@ void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int
       dat->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these by default!!
     }
     dat->LoadData(res_path + "/" + fl);
-    AddParamsToTable(dat, tag, tag_svn, tag_job, params, notes);
+    AddParamsToTable(dat, tag, tag_svn, tag_job, params, notes, label);
   }
 }
 
 void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
                                   const String& tag_svn, const String& tag_job,
-                                  const String& params, const String& notes) {
+                                  const String& params, const String& notes, const String& label) {
   if(params.empty()) return;
   String_Array pars;
   pars.FmDelimString(params, " ");
@@ -459,9 +464,13 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
     DataCol* cl = dat->FindMakeCol("params", VT_STRING);
     cl->InitVals(params);
   }
-  { 
+  {
     DataCol* cl = dat->FindMakeCol("notes", VT_STRING);
     cl->InitVals(notes);
+  }
+  {
+    DataCol* cl = dat->FindMakeCol("label", VT_STRING);
+    cl->InitVals(label);
   }
   for(int i=0; i<pars.size; i++) {
     String pv = pars[i];
@@ -928,6 +937,7 @@ void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
   String tag = table.GetValAsString("tag", row);
   String params = table.GetValAsString("params", row);
   String notes = table.GetValAsString("notes", row);
+  String label = table.GetValAsString("label", row);
 
   ps->name = String("tag_") + tag;
   ps->desc = notes;
@@ -1116,6 +1126,8 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   int tag_idx = dc->col_idx;
   dc = dt.FindMakeCol("notes", VT_STRING);
   dc->desc = "notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+  dc = dt.FindMakeCol("label", VT_STRING);
+  dc->desc = "label for the job -- a brief description that you can use to label this job's results on your graph";
   dc = dt.FindMakeCol("filename", VT_STRING);
   dc->desc = "name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
   dc = dt.FindMakeCol("params", VT_STRING);
@@ -1227,6 +1239,8 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
     dc->SetColFlag(DataCol::READ_ONLY);
   }
   dc = dt.FindColName("notes");
+  dc->ClearColFlag(DataCol::READ_ONLY);
+  dc = dt.FindColName("label");
   dc->ClearColFlag(DataCol::READ_ONLY);
   }
 
@@ -1487,7 +1501,8 @@ ClusterRun::AddJobRow_impl(const String& cmd, const String& params, int cmd_id) 
   jobs_submit.SetVal(cmd,         "command",    row);
   jobs_submit.SetVal(params,      "params",     row);
   jobs_submit.SetVal(notes,       "notes",      row);
-
+  jobs_submit.SetVal(label,       "label",      row);
+  
   jobs_submit.SetVal(repo_url,    "repo_url",   row);
   jobs_submit.SetVal(cluster,     "cluster",    row);
   jobs_submit.SetVal(queue,       "queue",      row);
@@ -1581,6 +1596,7 @@ ClusterRun::SubmitUpdateNote(const DataTable& table, int tab_row)
     jobs_submit.SetVal("UPDATENOTE", "status", dst_row);
     jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
     jobs_submit.CopyCell("notes", dst_row, table, "notes", tab_row);
+    jobs_submit.CopyCell("label", dst_row, table, "label", tab_row);
     jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
 }
 

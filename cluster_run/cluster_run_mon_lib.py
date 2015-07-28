@@ -1653,17 +1653,21 @@ class SubversionPoller(object):
     def _update_note(self, filename, rev, row):
         tag = self.jobs_submit.get_val(row, "tag")
         note = self.jobs_submit.get_val(row, "notes")
+        label = self.jobs_submit.get_val(row, "label")
     	run_row = self.jobs_running.find_val("tag", tag)
         if run_row >= 0:
         	self.jobs_running.set_val(run_row, "notes", note)
+        	self.jobs_running.set_val(run_row, "label", label)
         	return
         done_row = self.jobs_done.find_val("tag", tag)
         if done_row >= 0:
         	self.jobs_done.set_val(done_row, "notes", note)
+        	self.jobs_done.set_val(done_row, "label", label)
         	return
     	arch_row = self.jobs_archive.find_val("tag", tag)
         if arch_row >= 0:
         	self.jobs_archive.set_val(arch_row, "notes", note)
+        	self.jobs_archive.set_val(arch_row, "label", label)
 			
     def _cancel_job(self, filename, rev, row):
         if (submit_mode == "cluster"):

@@ -81,6 +81,7 @@ public:
   int           cur_svn_rev;    // #READ_ONLY #SHOW #NO_SAVE #METHBOX_LABEL the current svn revision that we've updated to (-1 if not yet updated)
   String        last_submit_time; // #READ_ONLY #SHOW #SAVE time stamp when jobs were last submitted -- important also for ensuring that there is a diff to trigger svn commit of project!
   String        notes;          // notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results
+  String        label;          // label -- useful for labeling results when graphing
   String        extra_files;    // space separated list of extra files to check into the repository along with this project
   String        svn_repo;       // svn repository to use for file exchange with the cluster -- this should be the name of a svn_repo as listed in the Preferences / Options settings (when you Run a job you can pick from a dropdown list)
   String        repo_url;       // #READ_ONLY #SHOW svn repository url to use for file exchange with the cluster -- this is looked up from svn_repo name from options listed in the Preferences / Options settings
@@ -188,7 +189,7 @@ public:
   static void AddParamsToTable(DataTable* dat, 
                                const String& tag, const String& tag_svn, 
                                const String& tag_job, const String& params,
-                               const String& notes);
+                               const String& notes, const String& label);
   // add parameter values to data table as extra columns -- params is space-separated list of name=value pairs -- also adds the tag and two separate sub-tag columns: tag_svn, tag_job, notes
 
   ////////////////////////////////////////////
