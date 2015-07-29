@@ -202,9 +202,12 @@ public:
   inline float& noise()
   { return ((LeabraUnitVars*)GetUnitVars())->noise; }
   // #CAT_UnitVar noise value added to unit (noise_type on unit spec determines where it is added) -- this can be used in learning in some cases
-  inline float& dav()
-  { return ((LeabraUnitVars*)GetUnitVars())->dav; }
-  // #VIEW_HOT #CAT_UnitVar dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning
+  inline float& da_p()
+  { return ((LeabraUnitVars*)GetUnitVars())->da_p; }
+  // #VIEW_HOT #CAT_UnitVar positive-valence oriented dopamine value -- this typically exhibits phasic bursts (positive values) with unanticipated increases in reward outcomes / expectations, and phasic dips (negative values) with unanticipated decreases thereof.  This value can drive dopaminergic learning rules and activation changes in receiving neurons -- typically sent by VTAUnitSpec units -- see also da_n
+  inline float& da_n()
+  { return ((LeabraUnitVars*)GetUnitVars())->da_n; }
+  // #VIEW_HOT #CAT_UnitVar negative-valence oriented dopamine value -- this typically exhibits phasic bursts (positive values) with unanticipated increases in negative outcomes / expectations, and phasic dips (negative values) with unanticipated decreases thereof.  This value can drive dopaminergic learning rules and activation changes in receiving neurons -- typically sent by VTAUnitSpec units with appropriate flags set -- see also da_p
   inline float& sev()
   { return ((LeabraUnitVars*)GetUnitVars())->sev; }
   // #CAT_UnitVar serotonin value 

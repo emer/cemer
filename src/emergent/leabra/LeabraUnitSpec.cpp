@@ -588,7 +588,8 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->syn_pr = 0.2f;
   u->syn_kre = 0.0f;
   u->noise = 0.0f;
-  u->dav = 0.0f;
+  u->da_p = 0.0f;
+  u->da_n = 0.0f;
   u->sev = 0.0f;
 
   u->bias_scale = 0.0f;
@@ -711,7 +712,8 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->syn_pr = stp.p0;
   u->syn_kre = 0.0f;
   u->noise = 0.0f;
-  u->dav = 0.0f;
+  u->da_p = 0.0f;
+  u->da_n = 0.0f;
   // u->sev = 0.0f; // longer time-course
 
   // not the scales
@@ -875,7 +877,8 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnitVars* u, LeabraNetwork* net, int
   // trials, and save some compute time, but the delta-based netin has enough
   // error accumulation that this does NOT work well in practice, so we always do it here
   Init_Netins(u, net, thr_no); 
-  u->dav = 0.0f;
+  u->da_p = 0.0f;
+  u->da_n = 0.0f;
   //  u->sev = 0.0f; // longer time-course
   u->lrnmod = 0.0f;
   // reset all the time vars so it isn't ambiguous as these update
@@ -1277,10 +1280,10 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   }
   if(da_mod.on) {
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
-      net_ex += da_mod.plus * u->dav * net_syn;
+      net_ex += da_mod.plus * u->da_p * net_syn;
     }
     else {                      // MINUS_PHASE
-      net_ex += da_mod.minus * u->dav * net_syn;
+      net_ex += da_mod.minus * u->da_p * net_syn;
     }
   }
   return net_ex;

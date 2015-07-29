@@ -492,8 +492,8 @@ class E_API DaModSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// whether to add dopamine factor to net input
-  float         minus;          // #CONDSHOW_ON_on how much to multiply dav in the minus phase to add to netinput -- use negative values for NoGo/indirect pathway/D2 type neurons
-  float		plus;		// #CONDSHOW_ON_on #AKA_gain how much to multiply dav in the plus phase to add to netinput -- use negative values for NoGo/indirect pathway/D2 type neurons
+  float         minus;          // #CONDSHOW_ON_on how much to multiply da_p in the minus phase to add to netinput -- use negative values for NoGo/indirect pathway/D2 type neurons
+  float		plus;		// #CONDSHOW_ON_on #AKA_gain how much to multiply da_p in the plus phase to add to netinput -- use negative values for NoGo/indirect pathway/D2 type neurons
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -710,7 +710,7 @@ public:
 
   // main function is Compute_Act_Rate or _Spike which calls all the various sub-functions
   // below derived types that send activation directly to special unit variables (e.g.,
-  // VTAUnitSpec -> dav) should do this here, so they can be processed in Compute_Act_Post
+  // VTAUnitSpec -> da_p) should do this here, so they can be processed in Compute_Act_Post
 
   // IMPORTANT: the following function is NOT called -- Network calls _Rate or _Spike
   // directly!!

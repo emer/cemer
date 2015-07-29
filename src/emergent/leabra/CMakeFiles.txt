@@ -70,6 +70,8 @@ set(leabra_HEADS_MAKETA
   # TDRewIntegLayerSpec.h
   # TdLayerSpec.h
 
+  LatAmygConSpec.h
+  BasAmygConSpec.h
   LearnModUnitSpec.h
   LearnModDeltaConSpec.h
   LearnModHebbConSpec.h
@@ -190,6 +192,8 @@ set(leabra_SRCS
   # TDRewIntegLayerSpec.cpp
   # TdLayerSpec.cpp
                    
+  LatAmygConSpec.cpp
+  BasAmygConSpec.cpp
   LearnModUnitSpec.cpp
   LearnModDeltaConSpec.cpp
   LearnModHebbConSpec.cpp

@@ -39,16 +39,16 @@ void T3LineStripMesh::setNodeUpdating(bool updating) {
   if(!updating && node_updating) should_render = true;
   node_updating = updating;
   blockNotifications(node_updating); // block if updating
-  // if(should_render) {
+  if(should_render) {
 #ifdef DEBUG    
-  // taMisc::Info("LineStrip mesh update");
+    // taMisc::Info("LineStrip mesh update");
     if(colors.Frames() > 0 && colors.Frames() != points.Frames()) {
       taMisc::Warning("T3LineStripMesh: colors != points vertices, colors:",
                       String(colors.Frames()), " vs. points:", String(points.Frames()));
     }
 #endif
     update();
-  // }
+  }
 }
 
 void T3LineStripMesh::restart() {

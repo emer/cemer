@@ -26,7 +26,7 @@
 eTypeDef_Of(LearnModUnitSpec);
 
 class E_API LearnModUnitSpec : public LeabraUnitSpec {
-  // activity on this unit drives special lrnmod value in the units of connections that it projects to (subject to threshold) -- used for Primary Value layers in gdPVLV architecture, to drive learning at time of PV in other layers
+  // activity on this unit drives special lrnmod value in the units of connections that it projects to (subject to threshold) -- used for Primary Value layers in PVLV architecture, to drive learning at time of PV in other layers
 INHERITED(LeabraUnitSpec)
 public:
   float         learn_thr;      // #DEF_0.1 Threshold value of unit activation to set the learning flag on

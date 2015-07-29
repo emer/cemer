@@ -44,7 +44,7 @@ void DRNUnitSpec::HelpConfig() {
  - Computes SE value based on inputs from PV and State layers.\n\
  - No Learning\n\
  \nDRNUnitSpec Configuration:\n\
- - Use the Wizard gdPVLV button to automatically configure layers.\n\
+ - Use the Wizard PVLV button to automatically configure layers.\n\
  - Recv cons marked with a MarkerConSpec from inputs";
   taMisc::Confirm(help);
 }

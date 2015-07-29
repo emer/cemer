@@ -373,6 +373,7 @@ void GraphAxisBase::RenderAxis(T3Axis* t3ax, const iVec3f& off,
 #ifdef TA_QT3D
   t3ax->lines->setColor(color.color());
   t3ax->color = color.color();
+  t3ax->lines->setNodeUpdating(true);
 #else // TA_QT3D
   SoMaterial* mat = t3ax->material();
   color.color().copyTo(mat->diffuseColor);
@@ -391,6 +392,11 @@ void GraphAxisBase::RenderAxis(T3Axis* t3ax, const iVec3f& off,
     break;
   }
 
+#ifdef TA_QT3D
+  t3ax->lines->setNodeUpdating(false);
+#endif
+
+  
   if(rnd_svg && ticks_only) {
     *rnd_svg << taSvg::PathEnd();
   }

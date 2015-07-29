@@ -277,7 +277,7 @@ void ExtRewLayerSpec::Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net) {
     (lay,
      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
      LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-     float er = uv->dav;
+     float er = uv->da_p;
      if(er == rew.norew_val) {
        uv->ext = rew.norew_val;  // this is appropriate to set here..
        ClampValue_ugp(lay, net, acc_md, gpidx);
@@ -303,8 +303,8 @@ void ExtRewLayerSpec::Compute_UnitDa
 (LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx,
  float er, LeabraUnit* u) {
   LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-  uv->dav = er;
-  uv->ext = uv->dav;
+  uv->da_p = er;
+  uv->ext = uv->da_p;
   ClampValue_ugp(lay, net, acc_md, gpidx);
 }
 

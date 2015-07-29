@@ -89,7 +89,8 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   // syn_pr = cp.syn_pr;
   // syn_kre = cp.syn_kre;
   // noise = cp.noise;
-  // dav = cp.dav;
+  // da_p = cp.da_p;
+  // da_n = cp.da_n;
   // sev = cp.sev;
 
   // bias_scale = cp.bias_scale;

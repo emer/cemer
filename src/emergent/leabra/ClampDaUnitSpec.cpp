@@ -21,6 +21,7 @@ TA_BASEFUNS_CTORS_DEFN(ClampDaUnitSpec);
 
 void ClampDaUnitSpec::Initialize() {
   send_da = CYCLE;
+  da_val = DA_P;
 }
 
 void ClampDaUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -30,7 +31,10 @@ void ClampDaUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->dav = snd_val;
+      if(da_val == DA_P)
+        ((LeabraUnitVars*)send_gp->UnVars(j,net))->da_p = snd_val;
+      else
+        ((LeabraUnitVars*)send_gp->UnVars(j,net))->da_n = snd_val;
     }
   }
 }

@@ -134,7 +134,7 @@ bool TdLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 }
 
 void TdLayerSpec::Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork*) {
-  lay->dav = 0.0f;
+  lay->da_p = 0.0f;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     u->ext = 0.0f;
     u->SetExtFlag(Unit::EXT);
@@ -147,14 +147,14 @@ void TdLayerSpec::Compute_Td(LeabraLayer* lay, LeabraNetwork* net) {
   // just taking the first unit = scalar val
   LeabraTdUnit* su = (LeabraTdUnit*)ri_lay->units.SafeEl(0);
 
-  lay->dav = 0.0f;
+  lay->da_p = 0.0f;
   FOREACH_ELEM_IN_GROUP(LeabraTdUnit, u, lay->units) {
-    u->dav = su->act_eq - su->act_m; // subtract current minus previous!
-    u->ext = u->dav;
+    u->da_p = su->act_eq - su->act_m; // subtract current minus previous!
+    u->ext = u->da_p;
     u->act_eq = u->act_nd = u->act = u->net = u->ext;
-    lay->dav += u->dav;
+    lay->da_p += u->da_p;
   }
-  if(lay->units.leaves > 0) lay->dav /= (float)lay->units.leaves;
+  if(lay->units.leaves > 0) lay->da_p /= (float)lay->units.leaves;
 }
 
 void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork* net) {
@@ -165,7 +165,7 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork* net) {
       if(send_gp->NotActive()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       for(int j=0;j<send_gp->size; j++) {
-        ((LeabraTdUnit*)send_gp->Un(j,net))->dav = u->act;
+        ((LeabraTdUnit*)send_gp->Un(j,net))->da_p = u->act;
       }
     }
   }

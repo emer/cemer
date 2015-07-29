@@ -24,10 +24,10 @@
 // declare all other types mentioned but not required to include:
 class LeabraLayer; //
 
-eTypeDef_Of(gdPVLVDaSpec);
+eTypeDef_Of(PVLVDaSpec);
 
-class E_API gdPVLVDaSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for gdPVLV da parameters
+class E_API PVLVDaSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
 INHERITED(SpecMemberBase)
 public:
   float         da_gain;        // #DEF_0:2 #MIN_0 multiplier for dopamine values
@@ -41,7 +41,7 @@ public:
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
-  TA_SIMPLE_BASEFUNS(gdPVLVDaSpec);
+  TA_SIMPLE_BASEFUNS(PVLVDaSpec);
 protected:
   SPEC_DEFAULTS;
 private:
@@ -76,11 +76,16 @@ private:
 eTypeDef_Of(VTAUnitSpec);
 
 class E_API VTAUnitSpec : public LeabraUnitSpec {
-  // Models the Ventral Tegmental Area: computes gdPVLV dopamine (Da) signal from PPTg and LHbRMTg input projections, and also a direct input from a positive valence PV layer, and shunting inhibition from VS Patch Indirect -- uses deep_qtr to determine when to send dopamine values
+  // Models the Ventral Tegmental Area: computes PVLV dopamine (Da) signal from PPTg and LHbRMTg input projections, and also a direct input from a positive valence PV layer, and shunting inhibition from VS Patch Indirect -- uses deep_qtr to determine when to send dopamine values
 INHERITED(LeabraUnitSpec)
 public:
-  gdPVLVDaSpec    da;             // parameters for the pvlv da computation
-  LVBlockSpec     lv_block;       // how LV signals are blocked by PV and LHbRMTg dip signals -- there are good reasons for these signals to block LV, because they reflect a stronger overall signal about outcomes, compared to the more "speculative" LV signal
+  enum  DaValence {             // which valence of dopamine should we compute?
+    DA_P,                       // positive-valence oriented dopamine -- burst for positive valence outcomes better than expected, dip for worse than expected, dip for negative valence outcomes and (maybe) burst for for less negative than expected
+    DA_N,                       // negative-valence oriented dopamine -- burst for negative valence outcomes worse than expected, dip for opposite, and dip for positive outcomes(?)
+  };
+  DaValence       da_val;       // what valence of dopamine should we compute?
+  PVLVDaSpec      da;           // parameters for the pvlv da computation
+  LVBlockSpec     lv_block;     // how LV signals are blocked by PV and LHbRMTg dip signals -- there are good reasons for these signals to block LV, because they reflect a stronger overall signal about outcomes, compared to the more "speculative" LV signal
 
   virtual void  Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // send the da value to sending projections: every cycle

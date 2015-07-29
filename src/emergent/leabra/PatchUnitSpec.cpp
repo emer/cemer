@@ -34,7 +34,7 @@ void PatchUnitSpec::Send_DAShunt(LeabraUnitVars* u, LeabraNetwork* net, int thr_
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->dav *= shunt_factor; // shunt!
+      ((LeabraUnitVars*)send_gp->UnVars(j,net))->da_p *= shunt_factor; // shunt!
     }
   }
 }

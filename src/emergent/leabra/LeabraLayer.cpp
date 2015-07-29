@@ -28,7 +28,8 @@ void LeabraLayer::Initialize() {
 
   Inhib_Initialize();
   hard_clamped = false;
-  dav = 0.0f;
+  da_p = 0.0f;
+  da_n = 0.0f;
   sev = 0.0f;
   norm_err = 0.0f;
   cos_err = 0.0f;
@@ -85,7 +86,8 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   Inhib_Copy_(cp);
   spec = cp.spec;
   hard_clamped = cp.hard_clamped;
-  dav = cp.dav;
+  da_p = cp.da_p;
+  da_n = cp.da_n;
   sev = cp.sev;
   norm_err = cp.norm_err;
   cos_err = cp.cos_err;

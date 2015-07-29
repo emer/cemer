@@ -25,11 +25,11 @@
 
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(gdPVLVDaSpec);
+TA_BASEFUNS_CTORS_DEFN(PVLVDaSpec);
 TA_BASEFUNS_CTORS_DEFN(LVBlockSpec);
 TA_BASEFUNS_CTORS_DEFN(VTAUnitSpec);
 
-void gdPVLVDaSpec::Initialize() {
+void PVLVDaSpec::Initialize() {
   da_gain = 1.0f;
   tonic_da = 0.0f;
   burst_gain = 1.0f;
@@ -47,6 +47,7 @@ void LVBlockSpec::Initialize() {
 }
 
 void VTAUnitSpec::Initialize() {
+  da_val = DA_P;
   SetUnique("deep_qtr", true);
   deep_qtr = Q4;
   SetUnique("act_range", true);
@@ -61,10 +62,10 @@ void VTAUnitSpec::Initialize() {
 
 void VTAUnitSpec::HelpConfig() {
   String help = "VTAUnitSpec (DA value) Computation:\n\
- - Computes DA value based on inputs from gdPVLV layers: PPTg (bursts) and LHbRMTg (dips).\n\
+ - Computes DA value based on inputs from PVLV layers: PPTg (bursts) and LHbRMTg (dips).\n\
  - No Learning\n\
  \nVTAUnitSpec Configuration:\n\
- - Use the Wizard gdPVLV button to automatically configure layers.\n\
+ - Use the Wizard PVLV button to automatically configure layers.\n\
  - Recv cons marked with a MarkerConSpec from inputs\n\
  - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
      (because negative da = negative activation signal here";
@@ -197,22 +198,30 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   //   net->pv_detected = false;
   // }
 
-  // net->pvlv_dav = net_da;
-  //  lay->dav = net_da;
-  u->dav = net_da;
-  u->ext = da.tonic_da + u->dav;
+  // net->pvlv_da_p = net_da;
+  //  lay->da_p = net_da;
+  u->da_p = net_da;
+  u->ext = da.tonic_da + u->da_p;
   u->act_eq = u->act_nd = u->act = u->net = u->ext;
   u->da = 0.0f;
 }
 
 void VTAUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  const float snd_val = u->act;
+  float snd_val = u->act;
+  if(da_val == DA_N) {
+    snd_val = -snd_val;         // just simple negation..
+  }
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->dav = snd_val;
+      if(da_val == DA_P) {
+        ((LeabraUnitVars*)send_gp->UnVars(j,net))->da_p = snd_val;
+      }
+      else {
+        ((LeabraUnitVars*)send_gp->UnVars(j,net))->da_n = snd_val;
+      }
     }
   }
 }

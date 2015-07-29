@@ -27,13 +27,13 @@
 eTypeDef_Of(LearnModHebbConSpec);
 
 class E_API LearnModHebbConSpec : public LeabraConSpec {
-  // requires recv unit to have LEARN flag activated, and also includes optional dopamine modulation, on top of a basic hebbian rule -- used for gdPVLV learning in subcortical areas
+  // requires recv unit to have LEARN flag activated, and also includes optional dopamine modulation, on top of a basic hebbian rule -- used for PVLV learning in subcortical areas
 INHERITED(LeabraConSpec)
 public:
   enum DaModType {
-    NO_DA_MOD,                  // do not modulate the learning by recv unit dopamine value (dav)
-    DA_MOD,                     // modulate the learning by multiplying directly by the recv unit dopamine value (dav) -- this will change the sign of learning as a function of the sign of the dopamine value
-    DA_MOD_ABS,                 // modulate the learning by multiplying by the absolute value of the recv unit dopamine (abs(dav)) -- this does not change the sign, only the magnitude of learning
+    NO_DA_MOD,                  // do not modulate the learning by recv unit dopamine value (da_p)
+    DA_MOD,                     // modulate the learning by multiplying directly by the recv unit dopamine value (da_p) -- this will change the sign of learning as a function of the sign of the dopamine value
+    DA_MOD_ABS,                 // modulate the learning by multiplying by the absolute value of the recv unit dopamine (abs(da_p)) -- this does not change the sign, only the magnitude of learning
   };
 
   enum SendAct {                // what var to use for sending activation
@@ -57,8 +57,8 @@ public:
   // #IGNORE no dopamine
   inline void	C_Compute_dWt_Hebb_Da(float& dwt, const float cg_savg_cor,
                                       const float lin_wt, const float ru_act,
-                                      const float su_act, const float dav) {
-    dwt += cur_lrate * dav * ru_act * 
+                                      const float su_act, const float da_p) {
+    dwt += cur_lrate * da_p * ru_act * 
       (su_act * (cg_savg_cor - lin_wt) - (1.0f - su_act) * lin_wt);
   }
   // #IGNORE with dopamine
@@ -95,7 +95,7 @@ public:
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
         if(ru->lrnmod == 0.0f) continue; // must have this to learn
         const float lin_wt = LinFmSigWt(fwts[i]);
-        C_Compute_dWt_Hebb_Da(dwts[i], /* cg->savg_cor */ .1f, lin_wt, ru->act_p, su_act, ru->dav);
+        C_Compute_dWt_Hebb_Da(dwts[i], /* cg->savg_cor */ .1f, lin_wt, ru->act_p, su_act, ru->da_p);
       }
     }
     else {                      // DA_MOD_ABS
@@ -104,7 +104,7 @@ public:
         if(ru->lrnmod == 0.0f) continue; // must have this to learn
         const float lin_wt = LinFmSigWt(fwts[i]);
         C_Compute_dWt_Hebb_Da(dwts[i], /* cg->savg_cor */ .1f, lin_wt, ru->act_p, su_act,
-                                fabsf(ru->dav));
+                                fabsf(ru->da_p));
       }
     }
   }

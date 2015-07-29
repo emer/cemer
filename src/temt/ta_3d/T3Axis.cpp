@@ -42,11 +42,6 @@ T3Axis::T3Axis(Qt3DNode* parent, T3DataView* dataView_, Axis ax, float fnt_sz,
 T3Axis::~T3Axis() {
 }
 
-void T3Axis::setNodeUpdating(bool updating) {
-  inherited::setNodeUpdating(updating);
-  lines->setNodeUpdating(updating);
-}
-
 void T3Axis::addLabel(const char* text, const iVec3f& at) {
   int just;
   switch (axis) {

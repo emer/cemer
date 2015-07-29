@@ -32,7 +32,7 @@ public:
   float         shunt_factor;   // #DEF_0 multiplies the dopamine value by this factor -- 0 = complete shunting -- should be a factor < 1.0 
 
   virtual void  Send_DAShunt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
-  // if activation is over opt_thresh.send threshold, we shunt dav in sending targets
+  // if activation is over opt_thresh.send threshold, we shunt da_p in sending targets
 
   void	Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 

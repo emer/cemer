@@ -26,7 +26,7 @@
 eTypeDef_Of(ClampDaUnitSpec);
 
 class E_API ClampDaUnitSpec : public LeabraUnitSpec {
-  // a dopamine unit that you can just clamp to any value and it will send it to other layer's dav values
+  // a dopamine unit that you can just clamp to any value and it will send it to other unit's da_p or da_v values
 INHERITED(LeabraUnitSpec)
 public:
   enum  SendDaMode {            // when to send da values to other layers
@@ -34,8 +34,13 @@ public:
     PLUS_START,                 // start sending at start of plus phase
     PLUS_END,                   // send only at the end of plus phase
   };
+  enum  SendDaVal {             // what da to send
+    DA_P,                       // positive-valence oriented dopamine 
+    DA_N,                       // negative-valence oriented dopamine 
+  };
 
   SendDaMode    send_da;        // when to send da values
+  SendDaVal     da_val;         // what da value to send to
 
   virtual void  Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // send the da value to sending projections

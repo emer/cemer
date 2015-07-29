@@ -54,7 +54,7 @@ private:
 eTypeDef_Of(MatrixConSpec);
 
 class E_API MatrixConSpec : public LeabraConSpec {
-  // Learning of matrix input connections based on sender * receiver activation product and (optionally) thal gating activation signal, which accumulate in an ongoing synaptic trace over time, until they are multiplied by a later dopamine dav value that is typically driven by primary value (US) outcome at end of a sequence of actions -- dwt = dav * tr; tr = [thal] * su * ru - otr_lrate * su * ru, representing a contrast between gated activations that go one way, and other non-gated activations that go the opposite way (which supports engagement of alternative gating strategies, and avoids overall reductions in weights) -- the trace is reset when this weight change is computed, as a result of an over-threshold level of dopamine.  Patch units shunt dopamine from actively maintaining stripes / information processing channels, to prevent this clearing.
+  // Learning of matrix input connections based on sender * receiver activation product and (optionally) thal gating activation signal, which accumulate in an ongoing synaptic trace over time, until they are multiplied by a later dopamine da_p value that is typically driven by primary value (US) outcome at end of a sequence of actions -- dwt = da_p * tr; tr = [thal] * su * ru - otr_lrate * su * ru, representing a contrast between gated activations that go one way, and other non-gated activations that go the opposite way (which supports engagement of alternative gating strategies, and avoids overall reductions in weights) -- the trace is reset when this weight change is computed, as a result of an over-threshold level of dopamine.  Patch units shunt dopamine from actively maintaining stripes / information processing channels, to prevent this clearing.
 INHERITED(LeabraConSpec)
 public:
   enum MtxConVars {
@@ -159,17 +159,17 @@ public:
     if(matrix.use_thal) {
       for(int i=0; i<sz; i++) {
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-        float dav = ((nogo) ? -ru->dav : ru->dav);
+        float da_p = ((nogo) ? -ru->da_p : ru->da_p);
         C_Compute_dWt_Matrix_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
-                                  dav, ru->thal, ru->act_eq, su->act_eq);
+                                  da_p, ru->thal, ru->act_eq, su->act_eq);
       }
     }
     else {
       for(int i=0; i<sz; i++) {
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-        float dav = ((nogo) ? -ru->dav : ru->dav);
+        float da_p = ((nogo) ? -ru->da_p : ru->da_p);
         C_Compute_dWt_Matrix_NoThal(dwts[i], ntrs[i], trs[i], 
-                                    dav, ru->act_eq, su->act_eq);
+                                    da_p, ru->act_eq, su->act_eq);
       }
     }
   }

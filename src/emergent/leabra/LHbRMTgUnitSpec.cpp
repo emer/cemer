@@ -44,7 +44,7 @@ void LHbRMTgUnitSpec::HelpConfig() {
   String help = "LHbRMTgUnitSpec (DA value) Computation:\n\
  - Computes DA dips based on inputs from VS Matrix, Patch Direct and Indirect, and PV Pos & Neg.\n\
  \nLHbRMTgUnitSpec Configuration:\n\
- - Use the Wizard gdPVLV button to automatically configure layers.\n\
+ - Use the Wizard PVLV button to automatically configure layers.\n\
  - Recv cons should be standard, with no learning";
   taMisc::Confirm(help);
 }
