@@ -30,11 +30,11 @@ class E_API LatAmygConSpec : public LeabraConSpec {
   // simulates learning in the lateral amygdala, based on CS-specific input weights, with learning modulated by phasic dopamine from either da_p (positive-valence) or da_n (negative valence), but predominantly the positive values of these signals. To prevent CS self-training positive feedback, the CS must generally have been active in the prior trial, using act_q0.  there is no dependence on postsynaptic activation
 INHERITED(LeabraConSpec)
 public:
-  float         max_neg_da;     // maximum negative dopamine magnitude (specified as a positive value) -- controls how much LTD unlearning can take place from DA dips -- applies separately to da_p and da_n
+  float         neg_da_gain;     // multiplicative gain factor applied to negative dopamine signals -- this value should be < 1 to cause negative da to be reduced relative to positive, thus reducing the level of unlearning and extinction in this pathway
 
   inline float  GetDa(float da)
-  { return (da < -max_neg_da) ? -max_neg_da : da; }
-  // get truncated dopamine value
+  { return (da < 0.0f) ? -neg_da_gain * da : da; }
+  // get neg-modulated dopamine value
   
   inline void C_Compute_dWt_LatAmyg(float& dwt, const float su_act,
                                     const float da_p, const float da_n) {
