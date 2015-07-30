@@ -154,6 +154,7 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   LeabraLayer* vspatch_lay = NULL;
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
   GetRecvLayers(un, pptg_lay, lhb_lay, pospv_lay, vspatch_lay);
+  LeabraLayer* lay = un->own_lay();
 
   // use avg act over layer..
   float burst_da = pptg_lay->acts_eq.avg;
@@ -174,8 +175,30 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
 
   net_da *= da.da_gain;
 
+  if(da_val == DA_N) {
+    net_da *= -1.0f;
+    u->da_n = net_da;
+    lay->da_n = u->da_n;
+    u->ext = da.tonic_da + u->da_n;
+    u->act_eq = u->act_nd = u->act = u->net = u->ext;
+    u->da = 0.0f;
+  }
+  else {
+    u->da_p = net_da;
+    lay->da_p = u->da_p;
+    u->ext = da.tonic_da + u->da_p;
+    u->act_eq = u->act_nd = u->act = u->net = u->ext;
+    u->da = 0.0f;
+
+    // also set the network ext rew pv settings
+    // bool pv_over_thr = (pospv >= da.pv_thr);
+    // bool vsp_over_thr = (vspvi >= da.vsp_thr);
+
+    net->ext_rew_avail = true;    // always record pv values -- todo: why??
+    net->ext_rew = pospv;
+  }
+
   if(lv_block.rec_data) {
-    LeabraLayer* lay = un->own_lay();
     lay->SetUserData("burst_da", burst_da);
     lay->SetUserData("dip_da", dip_da);
     lay->SetUserData("pos_pv", pospv);
@@ -184,33 +207,10 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
     lay->SetUserData("net_block", net_block);
     lay->SetUserData("net_da", net_da);
   }
-
-  // also set the network ext rew pv settings
-  bool pv_over_thr = (pospv >= da.pv_thr);
-  bool vsp_over_thr = (vspvi >= da.vsp_thr);
-
-  net->ext_rew_avail = true;    // always record pv values
-  net->ext_rew = pospv;
-  // if(pv_over_thr || vsp_over_thr) {
-  //   net->pv_detected = true;
-  // }
-  // else {
-  //   net->pv_detected = false;
-  // }
-
-  // net->pvlv_da_p = net_da;
-  //  lay->da_p = net_da;
-  u->da_p = net_da;
-  u->ext = da.tonic_da + u->da_p;
-  u->act_eq = u->act_nd = u->act = u->net = u->ext;
-  u->da = 0.0f;
 }
 
 void VTAUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   float snd_val = u->act;
-  if(da_val == DA_N) {
-    snd_val = -snd_val;         // just simple negation..
-  }
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
