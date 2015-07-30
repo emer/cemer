@@ -1375,7 +1375,9 @@ void TemtClient::SendOkNATIVE(const String& msg) {
 void TemtClient::SendOkJSON(const String& msg) {
   QJsonObject root_object = QJsonObject();
   root_object.insert("status", QString("OK"));
-  root_object.insert("result", QString(msg.chars()));
+  if (!msg.empty()) {
+    root_object.insert("result", QString(msg.chars()));
+  }
   
   QJsonDocument json_doc(root_object);
   QByteArray theString = json_doc.toJson(json_format);  // status always indented format
