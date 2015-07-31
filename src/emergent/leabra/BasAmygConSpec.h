@@ -36,17 +36,22 @@ public:
   };
 
   BasAmygType   ba_type;        // type of basal amgydala neuron
+  float         neg_da_gain;    // multiplicative gain factor applied to negative dopamine signals -- this value should be < 1 to cause negative da to be reduced relative to positive, thus reducing the level of unlearning and extinction in this pathway -- applies to negative of da for the extinction pathway (i.e., to positive da values)
+
+  inline float  GetDa(float da)
+  { return (da < 0.0f) ? -neg_da_gain * da : da; }
+  // get neg-modulated dopamine value
 
   inline void C_Compute_dWt_BasAmyg_Acq
     (float& dwt, const float su_act, const float ru_act,
      const float da_p, const float da_n) {
-    dwt += cur_lrate * su_act * ru_act * (da_p +  da_n);
+    dwt += cur_lrate * su_act * ru_act * (GetDa(da_p) +  GetDa(da_n));
   }
   // #IGNORE acquisition
   inline void C_Compute_dWt_BasAmyg_Ext
     (float& dwt, const float su_act, const float lrnmod,
      const float da_p, const float da_n) {
-    dwt += cur_lrate * su_act * lrnmod * -(da_p + da_n);
+    dwt += cur_lrate * su_act * lrnmod * (GetDa(-da_p) + GetDa(-da_n));
   }
   // #IGNORE extinction
 
