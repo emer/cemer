@@ -39,6 +39,7 @@ int Variant_Matrix::Dump_Load_Item(istream& strm, int idx) {
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
+  case Variant::T_Float:
   case Variant::T_Double:
     c = taMisc::read_till_semi(strm);
     val.updateFromString(taMisc::LexBuf);
@@ -92,6 +93,7 @@ void Variant_Matrix::Dump_Save_Item(ostream& strm, int idx) {
   case Variant::T_UInt64:
     strm << ' ' << val.toString();
     break;
+  case Variant::T_Float:
   case Variant::T_Double:
     strm << ' ' << String(val.toDouble(), "%.16lg");
     break;

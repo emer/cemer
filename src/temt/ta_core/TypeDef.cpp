@@ -2148,7 +2148,7 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
       }
       else if(IsFloat()) {
         if(DerivesFrom(TA_float)) {
-          return *((float*)base); // T_Double
+          return *((float*)base); // T_Float
         }
         else if(DerivesFrom(TA_double)) {
           return *((double*)base); // T_Double
@@ -2292,7 +2292,7 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
       }
       else if(IsFloat()) {
         if(DerivesFrom(TA_float)) {
-          return (*((float*)base) == 0); // T_Double
+          return (*((float*)base) == 0); // T_Float
         }
         else if(DerivesFrom(TA_double)) {
           return (*((double*)base) == 0); // T_Double

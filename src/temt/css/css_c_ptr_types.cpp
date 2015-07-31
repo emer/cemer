@@ -1295,6 +1295,7 @@ cssEl::cssTypes cssCPtr_Variant::GetPtrType() const {
   case Variant::T_UInt64:
     return T_LongLong;
   case Variant::T_Double:
+  case Variant::T_Float:
     return T_Real;
   case Variant::T_Char:
     return T_Char;

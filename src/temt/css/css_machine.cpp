@@ -770,6 +770,7 @@ void cssEl::operator=(const Variant& val) {
     operator=(val.toInt64());
     break;
   case Variant::T_Double:
+  case Variant::T_Float:
     operator=(val.toDouble());
     break;
   case Variant::T_String:
@@ -815,6 +816,7 @@ cssEl* cssEl::GetElFromVar(const Variant& var, const String& nm, MemberDef* md,
     return new cssInt64(var.toInt64(), nm);
     break;
   case Variant::T_Double:
+  case Variant::T_Float:
     return new cssReal(var.toDouble(), nm);
     break;
   case Variant::T_String:

@@ -169,6 +169,7 @@ void taiWidgetVariantBase::cmbVarType_itemChanged(int itm) {
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
+  case Variant::T_Float:
   case Variant::T_Double:
   case Variant::T_Char:
   case Variant::T_String:
@@ -218,6 +219,7 @@ void taiWidgetVariantBase::GetImage_Variant(const Variant& var) {
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
+  case Variant::T_Float:
   case Variant::T_Double:
   case Variant::T_Char:
   case Variant::T_String:
@@ -273,6 +275,7 @@ void taiWidgetVariantBase::GetValue_Variant(Variant& var) const {
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
+  case Variant::T_Float:
   case Variant::T_Double:
   case Variant::T_Char:
   case Variant::T_String:

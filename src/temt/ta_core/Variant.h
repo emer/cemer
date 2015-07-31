@@ -59,6 +59,7 @@ public:
     T_UInt64 = 5,       // #LABEL_UInt64
     T_Double = 6,       // #LABEL_Real
     T_Char = 7,         // #LABEL_Char
+    T_Float = 8,        // #LABEL_Float  -- added 7/29/2015
     T_String = 9,       // #LABEL_String
     
     T_Ptr = 10,         // #LABEL_Ptr void*
@@ -149,7 +150,7 @@ public:
   uint            toUInt() const;
   ta_int64_t      toInt64() const;
   ta_uint64_t     toUInt64() const; //
-  float           toFloat() const {return (float)toDouble();}
+  float           toFloat() const;
   double          toDouble() const;
   char            toChar() const;
   void*           toPtr() const; // must be a void*, Base, or Matrix, otherwise returns NULL
@@ -176,7 +177,7 @@ public:
   operator uint() const {return toUInt();}
   operator ta_int64_t() const {return toInt64();}
   operator ta_uint64_t() const {return toUInt64();} //
-//  operator float() const {return toFloat();}
+  operator float() const {return toFloat();}
   operator float() const {return (float)toDouble();}
   operator double() const {return toDouble();}
   operator char() const {return toChar();}
@@ -197,7 +198,7 @@ public:
   bool            eqUInt64(ta_uint64_t val) const;
   bool            eqIntPtr(intptr_t val) const
     {if (sizeof(intptr_t) == sizeof(int)) return eqInt((int)val); else return eqInt64(val);}
-  bool            eqFloat(float val) const {return eqDouble(val);}
+  bool            eqFloat(float val) const;
   bool            eqDouble(double val) const;
   bool            eqChar(char val) const;
   bool            eqString(const String& val) const; // handles eqting of a string 
@@ -220,7 +221,7 @@ public:
   int             cmpUInt64(ta_uint64_t val) const;
   int             cmpIntPtr(intptr_t val) const
     {if (sizeof(intptr_t) == sizeof(int)) return cmpInt((int)val); else return cmpInt64(val);}
-  int             cmpFloat(float val) const {return cmpDouble(val);}
+  int             cmpFloat(float val) const;
   int             cmpDouble(double val) const;
   int             cmpChar(char val) const;
   int             cmpString(const String& val) const; // handles cmpting of a string 
@@ -267,6 +268,7 @@ public:
   Variant&     operator+=(uint rhs);
   Variant&     operator+=(ta_int64_t rhs);
   Variant&     operator+=(ta_uint64_t rhs);
+  Variant&     operator+=(float rhs);
   Variant&     operator+=(double rhs);
   Variant&     operator+=(const Variant& rhs);
   
@@ -275,6 +277,7 @@ public:
   Variant&     operator-=(uint rhs);
   Variant&     operator-=(ta_int64_t rhs);
   Variant&     operator-=(ta_uint64_t rhs);
+  Variant&     operator-=(float rhs);
   Variant&     operator-=(double rhs);
   Variant&     operator-=(const Variant& rhs);
   
@@ -283,6 +286,7 @@ public:
   Variant&     operator*=(uint rhs);
   Variant&     operator*=(ta_int64_t rhs);
   Variant&     operator*=(ta_uint64_t rhs);
+  Variant&     operator*=(float rhs);
   Variant&     operator*=(double rhs);
   Variant&     operator*=(const Variant& rhs);
   
@@ -291,6 +295,7 @@ public:
   Variant&     operator/=(uint rhs);
   Variant&     operator/=(ta_int64_t rhs);
   Variant&     operator/=(ta_uint64_t rhs);
+  Variant&     operator/=(float rhs);
   Variant&     operator/=(double rhs);
   Variant&     operator/=(const Variant& rhs); //
   
@@ -403,6 +408,7 @@ protected:
     uint u; // 32 -- also for byte
     ta_int64_t i64; // 64
     ta_uint64_t u64; // 64
+    float f; // 32
     double d; // 64
     char c;
     intptr_t str; // 32/64 note: this is an in-place taString, NOT a pointer
@@ -456,7 +462,7 @@ inline Variant::Variant(long val):m_type(T_Int), m_is_null(false) {d.i = val;}
 inline Variant::Variant(unsigned long val):m_type(T_UInt), m_is_null(false) {d.u = val;}
 inline Variant::Variant(ta_int64_t val):m_type(T_Int64), m_is_null(false) {d.i64 = val;}
 inline Variant::Variant(ta_uint64_t val):m_type(T_UInt64), m_is_null(false) {d.u64 = val;}
-inline Variant::Variant(float val):m_type(T_Double), m_is_null(false) {d.d = val;}
+inline Variant::Variant(float val):m_type(T_Float), m_is_null(false) {d.f = val;}
 inline Variant::Variant(double val):m_type(T_Double), m_is_null(false) {d.d = val;}
 inline Variant::Variant(char val):m_type(T_Char), m_is_null(false) {d.c = val;}
 inline Variant::Variant(void* val):m_type(T_Ptr) {m_is_null = (val == NULL); d.ptr = val;}
@@ -470,6 +476,7 @@ inline Variant operator+(const Variant& a, int b) {Variant r(a); r += b; return 
 inline Variant operator+(const Variant& a, uint b) {Variant r(a); r += b; return r;}
 inline Variant operator+(const Variant& a, ta_int64_t b) {Variant r(a); r += b; return r;}
 inline Variant operator+(const Variant& a, ta_uint64_t b) {Variant r(a); r += b; return r;}
+inline Variant operator+(const Variant& a, float b) {Variant r(a); r += b; return r;}
 inline Variant operator+(const Variant& a, double b) {Variant r(a); r += b; return r;}
 inline Variant operator+(const Variant& a, char b) {Variant r(a); r += b; return r;}
 inline Variant operator+(const Variant& a, const String b) {Variant r(a); r += b; return r;}
@@ -477,6 +484,7 @@ inline Variant operator+(int a, const Variant& b) {Variant r(a); r += b; return 
 inline Variant operator+(uint a, const Variant& b) {Variant r(a); r += b; return r;}
 inline Variant operator+(ta_int64_t a, const Variant& b) {Variant r(a); r += b; return r;}
 inline Variant operator+(ta_uint64_t a, const Variant& b) {Variant r(a); r += b; return r;}
+inline Variant operator+(float a, const Variant& b) {Variant r(a); r += b; return r;}
 inline Variant operator+(double a, const Variant& b) {Variant r(a); r += b; return r;}
 inline Variant operator+(char a, const Variant& b) {Variant r(a); r += b; return r;}
 inline Variant operator+(const String a, const Variant& b) {Variant r(a); r += b; return r;}
@@ -486,12 +494,14 @@ inline Variant operator-(const Variant& a, int b) {Variant r(a); r -= b; return 
 inline Variant operator-(const Variant& a, uint b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(const Variant& a, ta_int64_t b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(const Variant& a, ta_uint64_t b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(const Variant& a, float b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(const Variant& a, double b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(const Variant& a, char b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(int a, const Variant& b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(uint a, const Variant& b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(ta_int64_t a, const Variant& b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(ta_uint64_t a, const Variant& b) {Variant r(a); r -= b; return r;}
+inline Variant operator-(float a, const Variant& b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(double a, const Variant& b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(char a, const Variant& b) {Variant r(a); r -= b; return r;}
 Variant operator-(const Variant& a, const Variant& b);
@@ -500,12 +510,14 @@ inline Variant operator*(const Variant& a, int b) {Variant r(a); r *= b; return 
 inline Variant operator*(const Variant& a, uint b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(const Variant& a, ta_int64_t b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(const Variant& a, ta_uint64_t b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(const Variant& a, float b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(const Variant& a, double b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(const Variant& a, char b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(int a, const Variant& b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(uint a, const Variant& b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(ta_int64_t a, const Variant& b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(ta_uint64_t a, const Variant& b) {Variant r(a); r *= b; return r;}
+inline Variant operator*(float a, const Variant& b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(double a, const Variant& b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(char a, const Variant& b) {Variant r(a); r *= b; return r;}
 Variant operator*(const Variant& a, const Variant& b);
@@ -514,12 +526,14 @@ inline Variant operator/(const Variant& a, int b) {Variant r(a); r /= b; return 
 inline Variant operator/(const Variant& a, uint b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(const Variant& a, ta_int64_t b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(const Variant& a, ta_uint64_t b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(const Variant& a, float b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(const Variant& a, double b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(const Variant& a, char b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(int a, const Variant& b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(uint a, const Variant& b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(ta_int64_t a, const Variant& b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(ta_uint64_t a, const Variant& b) {Variant r(a); r /= b; return r;}
+inline Variant operator/(float a, const Variant& b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(double a, const Variant& b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(char a, const Variant& b) {Variant r(a); r /= b; return r;}
 Variant operator/(const Variant& a, const Variant& b);
@@ -774,8 +788,7 @@ public:
   operator uint() const {return v.toUInt();}
   operator ta_int64_t() const {return v.toInt64();}
   operator ta_uint64_t() const {return v.toUInt64();} //
-//  operator float() const {return v.toFloat();}
-  operator float() const {return (float)v.toDouble();}
+  operator float() const {return v.toFloat();}
   operator double() const {return v.toDouble();}
   operator char() const {return v.toChar();}
   operator void*() const {return v.toPtr();}
