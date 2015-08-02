@@ -177,7 +177,7 @@ void GraphTableView::Initialize() {
   point_spacing = 1;
   bar_space = .2f;
   bar_depth = 0.01f;
-  color_mode = BY_VALUE;
+  color_mode = BY_VARIABLE;
   negative_draw = false;
   negative_draw_z = true;
   axis_font_size = .05f;
