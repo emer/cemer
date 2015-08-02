@@ -488,15 +488,17 @@ void GraphTableView::UpdateAfterEdit_impl(){
     }
   }
   
-  if(color_mode == BY_VARIABLE || color_mode == BY_GROUP) {
-    color_axis.on = true;
-    color_axis.UpdateOnFlag();
-    if(!color_axis.on) {
-      if(!no_cols) {
-        taMisc::Warning("GraphTableView -- color_mode = BY_VARIABLE and no valid col_name found for color_axis -- nothing will be plotted!");
-      }
-    }
-  }
+  
+  // commenting out this warning until I understand the condition
+//  if(color_mode == BY_VARIABLE || color_mode == BY_GROUP) {
+//    color_axis.on = true;
+//    color_axis.UpdateOnFlag();
+//    if(!color_axis.on) {
+//      if(!no_cols) {
+//        taMisc::Warning("GraphTableView -- color_mode = BY_VARIABLE and no valid col_name found for color_axis -- nothing will be plotted!");
+//      }
+//    }
+//  }
   
   if (!color_axis.group_by_initialized || last_color_axis.GetColPtr() != color_axis.GetColPtr()) {
     GraphColView* gcv = color_axis.GetColPtr();
