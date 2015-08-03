@@ -1526,6 +1526,7 @@ bool TemtClient::CalcRowParams(String operation, DataTable* table, int& row_from
   return true;
 }
 
+#if (QT_VERSION >= 0x050000)
 bool TemtClient::ValidateJSON_HasMember(const QJsonObject& n, const String& member_name) {
   bool rval = true;
   bool has_member = false;
@@ -1550,7 +1551,6 @@ bool TemtClient::ValidateJSON_HasMember(const QJsonObject& n, const String& memb
   return rval;
 }
 
-#if (QT_VERSION >= 0x050000)
 bool TemtClient::ValidateJSON_ColumnNames(DataTable* dt, const QJsonObject& n) { // check for unknown column names
   bool rval = true;
   bool has_column_node = false;
