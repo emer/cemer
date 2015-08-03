@@ -72,6 +72,8 @@ private:
   void  Defaults_init() { Initialize(); }
 };
 
+// todo: right now VTAn is just - of VTAp -- should be its own
+// thing with separate patterns of connections!
 
 eTypeDef_Of(VTAUnitSpec);
 

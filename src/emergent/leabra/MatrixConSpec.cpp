@@ -29,7 +29,7 @@ void MatrixLearnSpec::Defaults_init() {
   otr_lrate = 0.5f;
   protect_pos = false;
   thal_mult = false;
-  tr_max = 10.0f;
+  tr_max = 1.0f;
 }
 
 void MatrixLearnSpec::UpdateAfterEdit_impl() {

@@ -61,6 +61,8 @@ void LeabraWizard::Initialize() {
 #include <LeabraDeltaConSpec>
 #include <LearnModDeltaConSpec>
 #include <LearnModHebbConSpec>
+#include <BasAmygConSpec>
+#include <LatAmygConSpec>
 
 #include <PatchUnitSpec>
 #include <GPiInvUnitSpec>
@@ -876,24 +878,31 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMChild(LearnModUnitSpec, pv_units, pvlv_units, "PVUnits");
   FMChild(LHbRMTgUnitSpec, lhbrmtg_units, pvlv_units, "LHbRMTgUnits");
   FMChild(PPTgUnitSpec, pptg_units, pvlv_units, "PPTgUnits");
-  FMChild(VTAUnitSpec, vta_units, pvlv_units, "VTAUnits");
+  FMChild(VTAUnitSpec, vtap_units, pvlv_units, "VTAUnits_p");
+  FMChild(VTAUnitSpec, vtan_units, vtap_units, "VTAUnits_n");
   FMChild(DRNUnitSpec, drn_units, pvlv_units, "DRNUnits");
   FMChild(LeabraUnitSpec, cem_units, pvlv_units, "CeMUnits");
   FMChild(LeabraUnitSpec, bla_units, pvlv_units, "BLAUnits");
+  FMChild(LearnModUnitSpec, baa_units, pvlv_units, "BAacqUnits");
   FMChild(VSPatchUnitSpec, vspd_units, pvlv_units, "VSPatchDirectUnits");
   FMChild(VSPatchUnitSpec, vspi_units, pvlv_units, "VSPatchIndirUnits");
   FMChild(LeabraUnitSpec, vsmd_units, pvlv_units, "VSMatrixDirectUnits");
   FMChild(LeabraUnitSpec, vsmi_units, pvlv_units, "VSMatrixIndirUnits");
 
   FMSpec(LeabraConSpec, pvlv_cons, pvlvspgp, "PVLVLrnCons");
-  FMChild(LearnModDeltaConSpec, lrnfmpv_cons, pvlv_cons, "LearnFromPV");
-  FMChild(LearnModHebbConSpec, lrnfmpv_hebb_cons, pvlv_cons, "LearnFromPVHebb");
+  FMChild(LatAmygConSpec, la_cons, pvlv_cons, "LatAmygCons");
+  FMChild(BasAmygConSpec, baa_cons, pvlv_cons, "BasAmygCons_acq");
+  FMChild(BasAmygConSpec, bae_cons, baa_cons, "BasAmygCons_ext");
   FMChild(LeabraDeltaConSpec, vspatch_cons, pvlv_cons, "VSPatchCons");
-  FMChild(LeabraDeltaConSpec, vsmatrix_cons, pvlv_cons, "VSMatrixCons");
+  FMChild(MatrixConSpec, matrix_dir_cons, pvlv_cons, "MatrixCons_dir");
+  FMChild(MatrixConSpec, matrix_indir_cons, matrix_dir_cons, "MatrixCons_indir");
 
   FMSpec(LeabraConSpec, fix_cons, pvlvspgp, "PVLVFixedCons");
   FMChild(LeabraBiasSpec, fix_bias, fix_cons, "PVLVFixedBias");
   FMChild(LeabraConSpec, fix_strong, fix_cons, "PVLVFixedStrong");
+  FMChild(LeabraConSpec, bae_to_cem_inh, fix_cons, "BAextToCeM_Inhib");
+  FMChild(LeabraConSpec, bae_to_baa_inh, fix_cons, "BAextToBAacq_Inhib");
+  FMChild(LeabraConSpec, baa_to_bae_inh, fix_cons, "BAacqToBAext_Inhib");
 
   FMSpec(MarkerConSpec, marker_con, pvlvspgp, "PVLVMarkerCons");
 
@@ -919,27 +928,12 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   pvlv_units->UpdateAfterEdit();
   pvlv_units->bias_spec.SetSpec(fix_bias);
 
-  cem_units->SetUnique("da_mod", true);
-  cem_units->da_mod.on = true;
-  cem_units->da_mod.minus = 0.0f;
-  cem_units->da_mod.plus = 0.0f; // todo: could add da modulation..
-
-  bla_units->SetUnique("da_mod", true);
-  bla_units->da_mod.on = true;
-  bla_units->da_mod.minus = 0.0f;
-  bla_units->da_mod.plus = 0.0f; // todo: could add da modulation..
-
-  // todo: could add vspatch da mod
-
-  vsmd_units->SetUnique("da_mod", true);
-  vsmd_units->da_mod.on = true;
-  vsmd_units->da_mod.minus = 0.0f;
-  vsmd_units->da_mod.plus = 0.01f;
-
-  vsmi_units->SetUnique("da_mod", true);
-  vsmi_units->da_mod.on = true;
-  vsmi_units->da_mod.minus = 0.0f;
-  vsmi_units->da_mod.plus = -0.01f; // nogo / opposite sign
+  vtap_units->SetUnique("deep_qtr", true);
+  vtap_units->deep_qtr = LeabraUnitSpec::Q4;
+  vtap_units->SetUnique("da_val", true);
+  vtap_units->da_val = VTAUnitSpec::DA_P;
+  vtan_units->SetUnique("da_val", true);
+  vtan_units->da_val = VTAUnitSpec::DA_N;
 
   //////  Cons
   pvlv_cons->UpdateAfterEdit();
@@ -950,10 +944,29 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   pvlv_cons->rnd.var = 0.0f;
   pvlv_cons->wt_limits.sym = false;
 
+  la_cons->SetUnique("lrate", true);
+  la_cons->lrate = 0.1f;
+  baa_cons->SetUnique("lrate", true);
+  baa_cons->lrate = 0.1f;
+  baa_cons->SetUnique("ba_type", true);
+  baa_cons->ba_type = BasAmygConSpec::ACQ;
+  // bae_cons->SetUnique("lrate", true);
+  // bae_cons->lrate = 0.1f;
+  bae_cons->SetUnique("ba_type", true);
+  bae_cons->ba_type = BasAmygConSpec::EXT;
+
   vspatch_cons->SetUnique("wt_scale", true);
   vspatch_cons->wt_scale.abs = 4.0f;
-  vsmatrix_cons->SetUnique("wt_scale", true);
-  vsmatrix_cons->wt_scale.abs = 4.0f;
+  matrix_dir_cons->SetUnique("wt_scale", true);
+  matrix_dir_cons->wt_scale.abs = 4.0f;
+  matrix_dir_cons->SetUnique("nogo", true);
+  matrix_dir_cons->nogo = false;
+  matrix_dir_cons->SetUnique("matrix", true);
+  matrix_dir_cons->matrix.use_thal = false;
+  matrix_dir_cons->matrix.tr_max = 1.0f;
+  
+  matrix_indir_cons->SetUnique("nogo", true);
+  matrix_indir_cons->nogo = true;
 
   fix_cons->UpdateAfterEdit();
   // fix_cons->xcal.raw_l_mix = true;
@@ -984,7 +997,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   ersp->unit_range.min = 0.0f;
   ersp->unit_range.max = 1.0f;
-  ersp->rew_type = ExtRewLayerSpec::OUT_ERR_REW;
+  // ersp->rew_type = ExtRewLayerSpec::OUT_ERR_REW;
+  ersp->rew_type = ExtRewLayerSpec::EXT_REW;
 
   /////// Prjns
   
@@ -1010,11 +1024,13 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   if(cp) {
      // cp->SetUserData("user_pinned", true);
 
-    pvlv_cons->AddToControlPanelNm("lrate", cp, "pvlv");
+    pvlv_cons->AddToControlPanelNm("lrate", cp, "pvlv"); 
+    la_cons->AddToControlPanelNm("lrate", cp, "lat amyg"); 
+    baa_cons->AddToControlPanelNm("lrate", cp, "bas amyg"); 
     lhbrmtg_units->AddToControlPanelNm("gains", cp, "lhb_rmtg");
     pptg_units->AddToControlPanelNm("d_net_gain", cp, "pptg");
-    vta_units->AddToControlPanelNm("da", cp, "vta");
-    vta_units->AddToControlPanelNm("lv_block", cp, "vta");
+    vtap_units->AddToControlPanelNm("da", cp, "vta");
+    vtap_units->AddToControlPanelNm("lv_block", cp, "vta");
     drn_units->AddToControlPanelNm("se", cp, "drn");
     vsmd_units->AddToControlPanelNm("da_mod", cp, "vs_matrix_dir");
     vsmi_units->AddToControlPanelNm("da_mod", cp, "vs_matrix_ind");
@@ -1087,19 +1103,24 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   bool new_amyg = false;
   LeabraLayer* poslv_cem = (LeabraLayer*)amyg_gp->FindMakeLayer("PosLV_CeM", NULL,
                                                                 new_amyg);
-  LeabraLayer* poslv_bla = (LeabraLayer*)amyg_gp->FindMakeLayer("PosLV_BLA");
-  LeabraLayer* neglv_bla = (LeabraLayer*)amyg_gp->FindMakeLayer("NegLV_BLA");
+  LeabraLayer* neglv_cem = (LeabraLayer*)amyg_gp->FindMakeLayer("NetLV_CeM");
+  LeabraLayer* poslv_bae = (LeabraLayer*)amyg_gp->FindMakeLayer("PosLV_BAext");
+  LeabraLayer* neglv_bae = (LeabraLayer*)amyg_gp->FindMakeLayer("NegLV_BAext");
+  LeabraLayer* poslv_baa = (LeabraLayer*)amyg_gp->FindMakeLayer("PosLV_BAacq");
+  LeabraLayer* neglv_baa = (LeabraLayer*)amyg_gp->FindMakeLayer("NegLV_BAacq");
+  LeabraLayer* lat_amyg = (LeabraLayer*)amyg_gp->FindMakeLayer("LatAmyg");
 
   bool new_vs = false;
-  LeabraLayer* vspd = (LeabraLayer*)vs_gp->FindMakeLayer("VSPatchDirect_Pos");
+  LeabraLayer* vspd = (LeabraLayer*)vs_gp->FindMakeLayer("VSPatchDirect_Pos", NULL, new_vs);
   LeabraLayer* vspi = (LeabraLayer*)vs_gp->FindMakeLayer("VSPatchIndir_Neg");
-  LeabraLayer* vsmd = (LeabraLayer*)vs_gp->FindMakeLayer("VSMatrixDirect_Pos", NULL, new_vs);
+  LeabraLayer* vsmd = (LeabraLayer*)vs_gp->FindMakeLayer("VSMatrixDirect_Pos");
   LeabraLayer* vsmi = (LeabraLayer*)vs_gp->FindMakeLayer("VSMatrixIndir_Neg");
 
   bool new_da = false;
   LeabraLayer* pptg = (LeabraLayer*)da_gp->FindMakeLayer("PPTg", NULL, new_da);
   LeabraLayer* lhb = (LeabraLayer*)da_gp->FindMakeLayer("LHbRMTg");
-  LeabraLayer* vta = (LeabraLayer*)da_gp->FindMakeLayer("VTA");
+  LeabraLayer* vtap = (LeabraLayer*)da_gp->FindMakeLayer("VTAp");
+  LeabraLayer* vtan = (LeabraLayer*)da_gp->FindMakeLayer("VTAn");
   LeabraLayer* drn = (LeabraLayer*)da_gp->FindMakeLayer("DRN");
  
   //////////////////////////////////////////////////////////////////////////////////
@@ -1151,8 +1172,12 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   rew_targ->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
 
   poslv_cem->brain_area = ".*/.*/.*/.*/Amygdala Central Nucleus CNA";
-  poslv_bla->brain_area = ".*/.*/.*/.*/Amygdala";
-  neglv_bla->brain_area = ".*/.*/.*/.*/Amygdala";
+  neglv_cem->brain_area = ".*/.*/.*/.*/Amygdala Central Nucleus CNA";
+  poslv_bae->brain_area = ".*/.*/.*/.*/Amygdala";
+  neglv_bae->brain_area = ".*/.*/.*/.*/Amygdala";
+  poslv_baa->brain_area = ".*/.*/.*/.*/Amygdala";
+  neglv_baa->brain_area = ".*/.*/.*/.*/Amygdala";
+  lat_amyg->brain_area = ".*/.*/.*/.*/Amygdala";
 
   vspd->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
   vspi->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
@@ -1161,7 +1186,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
 
   pptg->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA"; // todo
   lhb->brain_area = ".*/.*/.*/.*/Lateral Habenula LHB";
-  vta->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA";
+  vtap->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA";
+  vtan->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA";
   drn->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA"; // todo
 
   int sp = 2;
@@ -1181,25 +1207,30 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   if(new_amyg) {
     amyg_gp->pos.SetXYZ(0, 0, 0);
     poslv_cem->pos.SetXYZ(0,2*sp,0);
-    poslv_bla->pos.SetXYZ(0,3*sp,0);
-    neglv_bla->pos.SetXYZ(neg_st,3*sp,0);
+    neglv_cem->pos.SetXYZ(neg_st,2*sp,0);
+    poslv_bae->pos.SetXYZ(0,3*sp,0);
+    neglv_bae->pos.SetXYZ(neg_st,3*sp,0);
+    poslv_baa->pos.SetXYZ(0,4*sp,0);
+    neglv_baa->pos.SetXYZ(neg_st,4*sp,0);
+    lat_amyg->pos.SetXYZ(neg_st / 2,5*sp,0);
   }
 
   if(new_vs) {
     vs_gp->pos.SetXYZ(da_st, 0, 0);
     vspd->pos.SetXYZ(0, 2*sp, 0);
-    vspi->pos.SetXYZ(0, 3*sp, 0);
+    vspi->pos.SetXYZ(neg_st, 2*sp, 0);
 
-    vsmd->pos.SetXYZ(neg_st, 2*sp, 0);
+    vsmd->pos.SetXYZ(0, 3*sp, 0);
     vsmi->pos.SetXYZ(neg_st, 3*sp, 0);
   }
 
   if(new_da) { 
     da_gp->pos.z = 0;
     pptg->pos.SetXYZ(da_st, 0, 0);
-    vta->pos.SetXYZ(da_st + 1 + sp, 0, 0);
-    lhb->pos.SetXYZ(da_st + 2*(sp+1), 0, 0);
-    drn->pos.SetXYZ(da_st + 3*(sp+1), 0, 0);
+    vtap->pos.SetXYZ(da_st + 1 + sp, 0, 0);
+    vtan->pos.SetXYZ(da_st + 2*(sp+1), 0, 0);
+    lhb->pos.SetXYZ(da_st + 3*(sp+1), 0, 0);
+    drn->pos.SetXYZ(da_st + 4*(sp+1), 0, 0);
   }
 
   pos_pv->un_geom.SetXYN(1,1,1);
@@ -1220,11 +1251,23 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   poslv_cem->un_geom.SetXYN(1,1,1);
   poslv_cem->gp_geom.SetXY(n_pos_pv, 1);  poslv_cem->unit_groups = true;
 
-  poslv_bla->un_geom.SetXYN(1,1,1);
-  poslv_bla->gp_geom.SetXY(n_pos_pv, 1);  poslv_bla->unit_groups = true;
+  neglv_cem->un_geom.SetXYN(1,1,1);
+  neglv_cem->gp_geom.SetXY(n_neg_pv, 1);  neglv_cem->unit_groups = true;
 
-  neglv_bla->un_geom.SetXYN(1,1,1);
-  neglv_bla->gp_geom.SetXY(n_neg_pv, 1);  neglv_bla->unit_groups = true;
+  poslv_bae->un_geom.SetXYN(1,1,1);
+  poslv_bae->gp_geom.SetXY(n_pos_pv, 1);  poslv_bae->unit_groups = true;
+
+  neglv_bae->un_geom.SetXYN(1,1,1);
+  neglv_bae->gp_geom.SetXY(n_neg_pv, 1);  neglv_bae->unit_groups = true;
+
+  poslv_baa->un_geom.SetXYN(1,1,1);
+  poslv_baa->gp_geom.SetXY(n_pos_pv, 1);  poslv_baa->unit_groups = true;
+
+  neglv_baa->un_geom.SetXYN(1,1,1);
+  neglv_baa->gp_geom.SetXY(n_neg_pv, 1);  neglv_baa->unit_groups = true;
+
+  lat_amyg->un_geom.SetXYN(n_pos_pv + n_neg_pv,1,n_pos_pv + n_neg_pv);
+  lat_amyg->unit_groups = true;
 
   vspd->un_geom.SetXYN(1,1,1);
   vspd->gp_geom.SetXY(n_pos_pv, 1);  vspd->unit_groups = true;
@@ -1240,7 +1283,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
 
   pptg->un_geom.SetXYN(1,1,1);
   lhb->un_geom.SetXYN(1,1,1);
-  vta->un_geom.SetXYN(1,1,1);
+  vtap->un_geom.SetXYN(1,1,1);
+  vtan->un_geom.SetXYN(1,1,1);
   drn->un_geom.SetXYN(1,1,1);
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -1264,13 +1308,21 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   ext_rew->SetLayerSpec(PvlvSp("ExtRewLayer", ExtRewLayerSpec));
 
   poslv_cem->SetUnitSpec(PvlvSp("CeMUnits", LeabraUnitSpec));
-  poslv_bla->SetUnitSpec(PvlvSp("BLAUnits", LeabraUnitSpec));
-  neglv_bla->SetUnitSpec(PvlvSp("BLAUnits", LeabraUnitSpec));
+  neglv_cem->SetUnitSpec(PvlvSp("CeMUnits", LeabraUnitSpec));
+  poslv_bae->SetUnitSpec(PvlvSp("BLAUnits", LeabraUnitSpec));
+  neglv_bae->SetUnitSpec(PvlvSp("BLAUnits", LeabraUnitSpec));
+  poslv_baa->SetUnitSpec(PvlvSp("BAacqUnits", LearnModUnitSpec));
+  neglv_baa->SetUnitSpec(PvlvSp("BAacqUnits", LearnModUnitSpec));
+  lat_amyg->SetUnitSpec(PvlvSp("BLAUnits", LeabraUnitSpec));
 
   LeabraLayerSpec* amygsp = PvlvSp("AmygLayer", LeabraLayerSpec);
   poslv_cem->SetLayerSpec(amygsp);
-  poslv_bla->SetLayerSpec(amygsp);
-  neglv_bla->SetLayerSpec(amygsp);
+  neglv_cem->SetLayerSpec(amygsp);
+  poslv_bae->SetLayerSpec(amygsp);
+  neglv_bae->SetLayerSpec(amygsp);
+  poslv_baa->SetLayerSpec(amygsp);
+  neglv_baa->SetLayerSpec(amygsp);
+  lat_amyg->SetLayerSpec(amygsp);
 
   vspd->SetUnitSpec(PvlvSp("VSPatchDirectUnits", VSPatchUnitSpec));
   vspi->SetUnitSpec(PvlvSp("VSPatchIndirUnits", VSPatchUnitSpec));
@@ -1289,8 +1341,10 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   lhb->SetUnitSpec(PvlvSp("LHbRMTgUnits", LHbRMTgUnitSpec));
   lhb->SetLayerSpec(dasp);
 
-  vta->SetUnitSpec(PvlvSp("VTAUnits", VTAUnitSpec));
-  vta->SetLayerSpec(dasp);
+  vtap->SetUnitSpec(PvlvSp("VTAUnits_p", VTAUnitSpec));
+  vtap->SetLayerSpec(dasp);
+  vtan->SetUnitSpec(PvlvSp("VTAUnits_n", VTAUnitSpec));
+  vtan->SetLayerSpec(dasp);
 
   drn->SetUnitSpec(PvlvSp("DRNUnits", DRNUnitSpec));
   drn->SetLayerSpec(dasp);
@@ -1306,43 +1360,71 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
 
   // net->FindMakePrjn(Layer* recv, Layer* send, prjn, conspec)
 
-  // all basic PV driver projections:
   net->FindMakePrjn(poslv_cem, pos_pv, gponetoone, fix_cons);
-  net->FindMakePrjn(poslv_bla, pos_pv, gponetoone, fix_cons);
-  net->FindMakePrjn(neglv_bla, neg_pv, gponetoone, fix_cons);
+  net->FindMakePrjn(poslv_cem, poslv_baa, gponetoone, fix_cons);
+  net->FindMakePrjn(poslv_cem, poslv_bae, gponetoone, PvlvSp("BAextToCeM_Inhib", LeabraConSpec));
+
+  net->FindMakePrjn(neglv_cem, neg_pv, gponetoone, fix_cons);
+  net->FindMakePrjn(neglv_cem, neglv_baa, gponetoone, fix_cons);
+  net->FindMakePrjn(neglv_cem, neglv_bae, gponetoone, PvlvSp("BAextToCeM_Inhib", LeabraConSpec));
+  
+  net->FindMakePrjn(poslv_bae, poslv_baa, gponetoone, marker_cons);
+  net->FindMakePrjn(poslv_bae, vtap, fullprjn, marker_cons);
+  net->FindMakePrjn(poslv_bae, lat_amyg, fullprjn, PvlvSp("BasAmygCons_ext", BasAmygConSpec));
+  net->FindMakePrjn(poslv_bae, poslv_baa, gponetoone, PvlvSp("BAacqToBAext_Inhib", LeabraConSpec));
+  
+  net->FindMakePrjn(neglv_bae, neglv_baa, gponetoone, marker_cons);
+  net->FindMakePrjn(neglv_bae, vtan, fullprjn, marker_cons);
+  net->FindMakePrjn(neglv_bae, lat_amyg, fullprjn, PvlvSp("BasAmygCons_ext", BasAmygConSpec));
+  net->FindMakePrjn(neglv_bae, neglv_baa, gponetoone, PvlvSp("BAacqToBAext_Inhib", LeabraConSpec));
+  
+  net->FindMakePrjn(poslv_baa, pos_pv, gponetoone, fix_cons);
+  net->FindMakePrjn(poslv_baa, vtap, fullprjn, marker_cons);
+  net->FindMakePrjn(poslv_baa, lat_amyg, fullprjn, PvlvSp("BasAmygCons_acq", BasAmygConSpec));
+  net->FindMakePrjn(poslv_baa, poslv_bae, gponetoone, PvlvSp("BAextToBAacq_Inhib", LeabraConSpec));
+  
+  net->FindMakePrjn(neglv_baa, neg_pv, gponetoone, fix_cons);
+  net->FindMakePrjn(neglv_baa, vtan, fullprjn, marker_cons);
+  net->FindMakePrjn(neglv_baa, lat_amyg, fullprjn, PvlvSp("BasAmygCons_acq", BasAmygConSpec));
+  net->FindMakePrjn(neglv_baa, neglv_bae, gponetoone, PvlvSp("BAextToBAacq_Inhib", LeabraConSpec));
+  
+  net->FindMakePrjn(lat_amyg, vtan, fullprjn, marker_cons);
+  net->FindMakePrjn(lat_amyg, vtap, fullprjn, marker_cons);
 
   // user can lesion this if they want..
   net->FindMakePrjn(pos_pv, ext_rew, PvlvSp("PVFmExtRew", TesselPrjnSpec), fix_cons);
   net->FindMakePrjn(ext_rew, rew_targ, fullprjn, marker_cons);
 
+  // patch, matrix:
   net->FindMakePrjn(vspd, pos_pv, gponetoone, marker_cons);
   net->FindMakePrjn(vspi, neg_pv, gponetoone, marker_cons);
-  net->FindMakePrjn(vsmd, poslv_bla, gponetoone, fix_cons);
-  net->FindMakePrjn(vsmi, neglv_bla, gponetoone, fix_cons);
+
+  // vta neuromodulation -- todo: add bla, cem??
+  net->FindMakePrjn(vspd, vtap, fullprjn, marker_cons);
+  net->FindMakePrjn(vspi, vtap, fullprjn, marker_cons);
+  net->FindMakePrjn(vsmd, vtap, fullprjn, marker_cons);
+  net->FindMakePrjn(vsmi, vtap, fullprjn, marker_cons);
 
   // patch gets both direct PV drivers and bla-drivers..?
   LeabraDeltaConSpec* vsp_cons = PvlvSp("VSPatchCons", LeabraDeltaConSpec);
-  net->FindMakePrjn(vspi, poslv_bla, gponetoone, vsp_cons);
-  net->FindMakePrjn(vsmi, neglv_bla, gponetoone, vsp_cons);
+  net->FindMakePrjn(vspd, poslv_baa, gponetoone, vsp_cons);
+  net->FindMakePrjn(vspi, neglv_baa, gponetoone, vsp_cons);
 
-  // vta neuromodulation -- todo: add bla, cem??
-  net->FindMakePrjn(vspd, vta, fullprjn, marker_cons);
-  net->FindMakePrjn(vspi, vta, fullprjn, marker_cons);
-  net->FindMakePrjn(vsmd, vta, fullprjn, marker_cons);
-  net->FindMakePrjn(vsmi, vta, fullprjn, marker_cons);
+  net->FindMakePrjn(vsmd, poslv_baa, gponetoone, fix_cons);
+  net->FindMakePrjn(vsmi, neglv_baa, gponetoone, fix_cons);
 
-  LearnModDeltaConSpec* lfmpv_cons = PvlvSp("LearnFromPV", LearnModDeltaConSpec);
-  LeabraDeltaConSpec* vsm_cons = PvlvSp("VSMatrixCons", LeabraDeltaConSpec);
+  net->FindMakePrjn(vspi, vspd, gponetoone, fix_cons); // dir to indir
+  net->FindMakePrjn(vsmi, vsmd, gponetoone, fix_cons); // dir to indir
+  
+  LatAmygConSpec* la_cons = PvlvSp("LatAmygCons", LatAmygConSpec);
   for(i=0;i<input_lays.size;i++) {
     Layer* il = (Layer*)input_lays[i];
-    net->FindMakePrjn(poslv_cem, il, fullprjn, lfmpv_cons);
-    net->FindMakePrjn(poslv_bla, il, fullprjn, lfmpv_cons);
-    net->FindMakePrjn(neglv_bla, il, fullprjn, lfmpv_cons);
+    net->FindMakePrjn(lat_amyg, il, fullprjn, la_cons);
 
     net->FindMakePrjn(vspd, il, fullprjn, vsp_cons);
     net->FindMakePrjn(vspi, il, fullprjn, vsp_cons);
-    net->FindMakePrjn(vsmd, il, fullprjn, vsm_cons);
-    net->FindMakePrjn(vsmi, il, fullprjn, vsm_cons);
+    net->FindMakePrjn(vsmd, il, fullprjn, PvlvSp("MatrixCons_dir", MatrixConSpec));
+    net->FindMakePrjn(vsmi, il, fullprjn, PvlvSp("MatrixCons_indir", MatrixConSpec));
   }
 
   for(i=0;i<output_lays.size;i++) {
@@ -1360,10 +1442,17 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   net->FindMakePrjn(lhb, pos_pv, fullprjn, fix_cons);
   net->FindMakePrjn(lhb, neg_pv, fullprjn, fix_cons);
   
-  net->FindMakePrjn(vta, pptg, fullprjn, marker_cons);
-  net->FindMakePrjn(vta, lhb, fullprjn, marker_cons);
-  net->FindMakePrjn(vta, pos_pv, fullprjn, marker_cons);
-  net->FindMakePrjn(vta, vspi, fullprjn, marker_cons);
+  net->FindMakePrjn(vtap, pptg, fullprjn, marker_cons);
+  net->FindMakePrjn(vtap, lhb, fullprjn, marker_cons);
+  net->FindMakePrjn(vtap, pos_pv, fullprjn, marker_cons);
+  net->FindMakePrjn(vtap, vspi, fullprjn, marker_cons);
+
+  // todo: right now VTAn is just - of VTAp -- should be its own
+  // thing with separate patterns of connections!
+  net->FindMakePrjn(vtan, pptg, fullprjn, marker_cons);
+  net->FindMakePrjn(vtan, lhb, fullprjn, marker_cons);
+  net->FindMakePrjn(vtan, pos_pv, fullprjn, marker_cons);
+  net->FindMakePrjn(vtan, vspi, fullprjn, marker_cons);
 
   net->FindMakePrjn(drn, pos_pv, fullprjn, marker_cons);
   net->FindMakePrjn(drn, neg_pv, fullprjn, marker_cons);
@@ -1417,6 +1506,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
 
 bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
                                       bool disconnect) {
+  taMisc::Error("PVLV_ConnectLayer: not yet implemented for latest PVLV version");
 //   if(TestError(!net || !sending_layer, "PVLV_ConnectLayer", "must specify a network and a sending layer!")) return false;
 
 //   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
@@ -1476,12 +1566,14 @@ bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_la
 
 bool LeabraWizard::PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
                                      bool disconnect) {
-  if(TestError(!net || !output_layer, "PVLV_OutToPVe", "must specify a network and an output layer!")) return false;
+  taMisc::Error("PVLV_OutToPVe: not yet implemented for latest PVLV version");
 
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToPVe before -- actually saves network specifically");
-  }
+  // if(TestError(!net || !output_layer, "PVLV_OutToPVe", "must specify a network and an output layer!")) return false;
+
+  // LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  // if(proj) {
+  //   proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToPVe before -- actually saves network specifically");
+  // }
 
   // String pvenm = "PVe";
   // LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
