@@ -39,11 +39,13 @@
 #include <iDialogChoice>
 #include <taVector2i_List>
 
+#if (QT_VERSION >= 0x050000)
 #include <QJsonDocument>
 #include <QJsonParseError>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
+#endif
 
 taTypeDef_Of(float_Data);
 taTypeDef_Of(double_Data);
@@ -2165,6 +2167,7 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
   strm << endl;
 }
 
+#if (QT_VERSION >= 0x050000)
 void DataTable::ExportDataJSON(const String& fname) {  // write the entire table to file
   // note: don't get file name when exporting
   taFiler* flr = GetSaveFiler(fname, ".json", false);
@@ -2445,6 +2448,7 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
   json_obj.insert("result", result);
   return true;
 }
+#endif
 
 void DataTable::SaveDataRows_strm(ostream& strm, Delimiters delim, bool quote_str, bool row_mark) {
   for(int row=0;row <rows; row++) {
@@ -2968,6 +2972,7 @@ DataCol::ValType DataTable::StrToValType(String valTypeStr) {
   }
 }
 
+#if (QT_VERSION >= 0x050000)
 void DataTable::ImportDataJSON(const String& fname) {
   QFile file;
   file.setFileName(fname);
@@ -3318,6 +3323,7 @@ void DataTable::ParseJSONMatrixVariantToFlat(const QJsonArray& aMatrix, Variant_
     valueArray++;
   }
 }
+#endif
 
 void DataTable::LoadAnyData_stream(istream &stream, bool append, bool has_header_line)
 {

@@ -23,10 +23,14 @@
 #ifndef __MAKETA__
 #include <QPointer>
 #include <QAbstractSocket>
-#include <QJsonObject>
-#include <QJsonDocument>
+  #if (QT_VERSION >= 0x050000)
+  #include <QJsonObject>
+  #include <QJsonDocument>
+  #endif
 #else
-class QJsonObject; // #IGNORE
+  #if (QT_VERSION >= 0x050000)
+  class QJsonObject; // #IGNORE
+  #endif
 #endif
 
 #include <NameVar_PArray>
@@ -70,8 +74,10 @@ public:
      };
 
   MsgFormat                     msg_format; // #READ_ONLY #NO_SAVE format of the message (command) from the client - native or json
-  QJsonDocument::JsonFormat     json_format; // #READ_ONLY #NO_SAVE return to client document format - compact or indented
-
+  #if (QT_VERSION >= 0x050000)
+    QJsonDocument::JsonFormat     json_format; // #READ_ONLY #NO_SAVE return to client document format - compact or indented
+  #endif
+  
   ClientState		state; // #READ_ONLY #SHOW #NO_SAVE comm state
   bool			isConnected() const {return (state != CS_DISCONNECTED);}
   
@@ -85,13 +91,15 @@ public:
 
   void      SendError(const String& err_msg, TemtClient::ServerError err = UNSPECIFIED); // relay to SendError in format of received message
   void      SendErrorNATIVE(const String& err_msg, TemtClient::ServerError err = UNSPECIFIED); // send error reply in ascii
-  void      SendErrorJSON(const String& err_msg, TemtClient::ServerError err = UNSPECIFIED); // send error reply in json format
   void      SendReply(const String& r); // relay to SendReply in format of received message
   void      SendReplyNATIVE(const String& r); // send reply ascii
-  void      SendReplyJSON(const String& r); // send reply json
   void      SendOk(const String& msg = _nilString); // relay to SendOk in format of received message
   void      SendOkNATIVE(const String& msg = _nilString); // send ok, w/ optional msg or data (should not have an eol)
+#if (QT_VERSION >= 0x050000)
+  void      SendErrorJSON(const String& err_msg, TemtClient::ServerError err = UNSPECIFIED); // send error reply in json format
+  void      SendReplyJSON(const String& r); // send reply json
   void      SendOkJSON(const String& msg = _nilString); // send ok, w/ optional msg or data - json format
+#endif
   
   void      WriteLine(const String& ln); // low level write, note: adds eol
   void			Write(const String& txt); // low level write
@@ -117,8 +125,9 @@ public: // commands, all are cmdXXX where XXX is exact command name
   virtual void    cmdCollectConsoleOutput();
   virtual void    cmdGetConsoleOutput();
   virtual void    cmdClearConsoleOutput();
+#if (QT_VERSION >= 0x050000)
   virtual void    cmdSetJsonFormat();
-  
+#endif
   
 public: // slot forwardees
   void 			sock_readyRead();
@@ -183,8 +192,9 @@ protected:
   String_PArray		pos_params; // positional (no "=") parameters, if any; str quoting/escaping already done (used by ascii parser)
   NameVar_PArray	name_params; // name params; str quoting/escaping already done
   taProjectRef		cur_proj; // set by OpenProject cmd, or to proj0
+#if (QT_VERSION >= 0x050000)
   QJsonObject     tableData;  // #IGNORE this is the json data table data
-  
+#endif
   taProject*		GetCurrentProject(); // gets, and maybe asserts
   DataTable* 		GetAssertTable(const String& nm); // gets, and sends errs if not found; supports <GlobalTableName> or <ProgName>.<LocalTableName> formats
   Program* 		  GetAssertProgram(const String& pnm); // gets, and sends errs if not found
@@ -196,12 +206,14 @@ protected:
   void          ParseCommandNATIVE(const String& cl);
   void          ParseCommandJSON(const String& cl);
   
+#if (QT_VERSION >= 0x050000)
   bool          ValidateJSON_HasMember(const QJsonObject& n, const String& member_name);
   // #IGNORE check for member name in json string
   bool          ValidateJSON_ColumnName(DataTable* dt, const QJsonObject& n);
   // #IGNORE validate name of a particular column
   bool          ValidateJSON_ColumnNames(DataTable* dt, const QJsonObject& n);
   // #IGNORE validate all column names
+#endif
   
 private:
   void	Copy_(const TemtClient& cp);
