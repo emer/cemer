@@ -204,9 +204,9 @@ protected:
   void			    HandleLines(); // line handling loop
   void          ParseCommand(const String& cl);
   void          ParseCommandNATIVE(const String& cl);
+#if (QT_VERSION >= 0x050000)
   void          ParseCommandJSON(const String& cl);
   
-#if (QT_VERSION >= 0x050000)
   bool          ValidateJSON_HasMember(const QJsonObject& n, const String& member_name);
   // #IGNORE check for member name in json string
   bool          ValidateJSON_ColumnName(DataTable* dt, const QJsonObject& n);

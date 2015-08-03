@@ -1132,6 +1132,7 @@ void TemtClient::ParseCommandNATIVE(const String& cmd_string) {
   RunCommand(cmd);
 }
 
+#if (QT_VERSION >= 0x050000)
 void TemtClient::ParseCommandJSON(const String& cmd_string) {
   QJsonParseError json_error;
   QString q_string = QString(cmd_string.chars());
@@ -1206,6 +1207,7 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
     RunCommand(cmd);
   }
 }
+#endif
 
 void TemtClient::RunCommand(const String& cmd) {
   if (cmd == "AppendData") {
@@ -1262,10 +1264,11 @@ void TemtClient::RunCommand(const String& cmd) {
   else if (cmd == "ClearConsoleOutput") {
     cmdClearConsoleOutput();
   }
+#if (QT_VERSION >= 0x050000)
   else if (cmd == "SetJsonFormat") {
     cmdSetJsonFormat();
   }
-  
+#endif
   else
   {
     String err_msg = "Unknown command: " + cmd + "-- remember everything is case sensitive";
@@ -1273,9 +1276,11 @@ void TemtClient::RunCommand(const String& cmd) {
       SendError(err_msg);
       
     }
+#if (QT_VERSION >= 0x050000)
     else {
       SendErrorJSON(err_msg, TemtClient::UNKNOWN_COMMAND);
     }
+#endif
   }
   
   //TODO: we can (should!) look up and dispatch via name!
@@ -1367,9 +1372,11 @@ void TemtClient::sock_stateChanged(QAbstractSocket::SocketState socketState) {
 }
 
 void TemtClient::SendError(const String& err_msg, TemtClient::ServerError err) {
+#if (QT_VERSION >= 0x050000)
   if (msg_format == TemtClient::JSON)
     SendErrorJSON(err_msg, err);
   else
+#endif
     SendErrorNATIVE(err_msg);
 }
 
@@ -1395,9 +1402,11 @@ void TemtClient::SendErrorJSON(const String& err_msg, TemtClient::ServerError er
 #endif
 
 void TemtClient::SendOk(const String& msg) {
+#if (QT_VERSION >= 0x050000)
   if (msg_format == TemtClient::JSON)
     SendOkJSON(msg);
   else
+#endif
     SendOkNATIVE(msg);
 }
 
@@ -1425,9 +1434,11 @@ void TemtClient::SendOkJSON(const String& msg) {
 #endif
 
 void TemtClient::SendReply(const String& r) {
+#if (QT_VERSION >= 0x050000)
   if (msg_format == TemtClient::JSON)
     SendErrorJSON(r);
   else
+#endif
     SendErrorNATIVE(r);
 }
 
@@ -1659,9 +1670,11 @@ void TemtClient::cmdCollectConsoleOutput() {
     taMisc::SetConsoleHoldState(enable);
     SendOk();
   }
+#if (QT_VERSION >= 0x050000)
   else {
     SendErrorJSON("enable param not found", TemtClient::MISSING_PARAM);
   }
+#endif
 }
 
 void TemtClient::cmdClearConsoleOutput() {
