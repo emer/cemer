@@ -177,7 +177,7 @@ void GraphTableView::Initialize() {
   point_spacing = 1;
   bar_space = .2f;
   bar_depth = 0.01f;
-  color_mode = BY_VARIABLE;
+  color_mode = FIXED;
   negative_draw = false;
   negative_draw_z = true;
   axis_font_size = .05f;
@@ -489,16 +489,21 @@ void GraphTableView::UpdateAfterEdit_impl(){
   }
   
   
-  // commenting out this warning until I understand the condition
-//  if(color_mode == BY_VARIABLE || color_mode == BY_GROUP) {
-//    color_axis.on = true;
-//    color_axis.UpdateOnFlag();
-//    if(!color_axis.on) {
-//      if(!no_cols) {
-//        taMisc::Warning("GraphTableView -- color_mode = BY_VARIABLE and no valid col_name found for color_axis -- nothing will be plotted!");
-//      }
-//    }
-//  }
+  // 8/3/2015 (rohrlich - this warning is wrong - the plot is made
+  // if you have BY_VARIABLE and a NULL color axis the colors are what you get with FIXED
+  // if you have BY_GROUP and NULL the lines are all black or whatever is the first color of default list
+  // so the plot is drawn, just not colored using a y_variable value to determine the color
+#if 0
+  if(color_mode == BY_VARIABLE || color_mode == BY_GROUP) {
+    color_axis.on = true;
+    color_axis.UpdateOnFlag();
+    if(!color_axis.on) {
+      if(!no_cols) {
+        taMisc::Warning("GraphTableView -- color_mode = BY_VARIABLE and no valid col_name found for color_axis -- nothing will be plotted!");
+      }
+    }
+  }
+#endif
   
   if (!color_axis.group_by_initialized || last_color_axis.GetColPtr() != color_axis.GetColPtr()) {
     GraphColView* gcv = color_axis.GetColPtr();
@@ -870,7 +875,7 @@ void GraphTableView::FindDefaultXZAxes() {
     }
     if(da->HasUserData("Z_AXIS")) {
       z_axis.col_name = cvs->name;
-      z_axis.on = true;
+      z_axis.on = false;  // don't turn on by default - most graphs are 2D
       z_axis.InitFromUserData();
       z_axis.row_num = false;
     }
@@ -884,7 +889,7 @@ void GraphTableView::FindDefaultXZAxes() {
     if(da->is_matrix || da->valType() != VT_INT) continue;
     if(set_x) {                 // must be Z
       z_axis.col_name = cvs->name;
-      z_axis.on = true;         // found one
+      z_axis.on = false;  // don't turn on by default - most graphs are 2D
       z_axis.InitFromUserData();
       break;                    // done
     }
