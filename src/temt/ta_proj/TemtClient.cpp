@@ -37,6 +37,7 @@
 #include <QJsonDocument>
 #include <QJsonParseError>
 #include <QJsonObject>
+#include <QJsonValue>
 #endif
 
 TA_BASEFUNS_CTORS_DEFN(TemtClient);
@@ -892,7 +893,7 @@ void TemtClient::cmdGetVar() {
         json_root_obj.insert("result", QJsonValue(var->real_val));
         break;
       case ProgVar::T_String:
-        json_root_obj.insert("result", QJsonValue(var->string_val.chars()));
+        json_root_obj.insert("result", QJsonValue(QString(var->string_val.chars())));
         break;
       case ProgVar::T_HardEnum:
       case ProgVar::T_DynEnum:
