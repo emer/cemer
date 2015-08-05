@@ -878,19 +878,40 @@ void TemtClient::cmdGetVar() {
 #if (QT_VERSION >= 0x050000)
   // Send the message from here because the result is not in JSON format yet
   else if (msg_format == TemtClient::JSON) {
-    String  val;
+    bool error = false;
     QJsonObject json_root_obj;
-    if (var->var_type == ProgVar::T_String) {
-      val = var->string_val;
-    }
-    else {
-      val = var->GetVar().toString();
-    }
     json_root_obj.insert("status", QString("OK"));
-    json_root_obj.insert("result", QString(val.chars()));
-    QJsonDocument json_doc(json_root_obj);
-    QByteArray theString = json_doc.toJson(json_format);
-    Write(theString.data());
+    switch (var->var_type) {
+      case ProgVar::T_Bool:
+        json_root_obj.insert("result", QJsonValue(var->bool_val));
+        break;
+      case ProgVar::T_Int:
+        json_root_obj.insert("result", QJsonValue(var->int_val));
+        break;
+      case ProgVar::T_Real:
+        json_root_obj.insert("result", QJsonValue(var->real_val));
+        break;
+      case ProgVar::T_String:
+        json_root_obj.insert("result", QJsonValue(var->string_val.chars()));
+        break;
+      case ProgVar::T_HardEnum:
+      case ProgVar::T_DynEnum:
+        json_root_obj.insert("result", QJsonValue(var->int_val));
+        break;
+      case ProgVar::T_Object:
+        SendErrorJSON("Program variable is an object pointer", TemtClient::RUNTIME);
+        error = true;
+        break;
+      default:
+        SendErrorJSON("ProgVar type unknown - report as bug", TemtClient::RUNTIME);
+        error = true;
+        break;
+    }
+    if (!error) {
+      QJsonDocument json_doc(json_root_obj);
+      QByteArray theString = json_doc.toJson(json_format);
+      Write(theString.data());
+    }
   }
 #endif
 }
