@@ -2329,30 +2329,32 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
         for (int row=start_row; row < stop_row; row++) {
           QJsonArray matrixDim_1Values;
           for(int k = 0; k < dc->cell_geom.size(1); k++) {
+            QJsonArray matrixDim_0Values;
             for(int j = 0; j < dc->cell_geom.size(0); j++) {
               switch (dc->valType()) {
                 case VT_STRING:
-                  matrixDim_1Values.append(QString(dc->GetValAsStringMDims(row, j, k).chars()));
+                  matrixDim_0Values.append(QString(dc->GetValAsStringMDims(row, j, k).chars()));
                   break;
                 case VT_DOUBLE:
-                  matrixDim_1Values.append(dc->GetValAsDoubleMDims(row, j, k));
+                  matrixDim_0Values.append(dc->GetValAsDoubleMDims(row, j, k));
                   break;
                 case VT_FLOAT:
-                  matrixDim_1Values.append(QJsonValue(dc->GetValAsFloatMDims(row, j, k)));
+                  matrixDim_0Values.append(QJsonValue(dc->GetValAsFloatMDims(row, j, k)));
                   break;
                 case VT_INT:
-                  matrixDim_1Values.append(dc->GetValAsIntMDims(row, j, k));
+                  matrixDim_0Values.append(dc->GetValAsIntMDims(row, j, k));
                   break;
                 case VT_BYTE:
-                  matrixDim_1Values.append(dc->GetValAsByteMDims(row, j, k));
+                  matrixDim_0Values.append(dc->GetValAsByteMDims(row, j, k));
                   break;
                 case VT_VARIANT:
-                  matrixDim_1Values.append(QString(dc->GetValAsStringMDims(row, j, k).chars()));
+                  matrixDim_0Values.append(QString(dc->GetValAsStringMDims(row, j, k).chars()));
                   break;
                 default:
-                  matrixDim_1Values.append(QString(dc->GetValAsStringMDims(row, j, k).chars()));
+                  matrixDim_0Values.append(QString(dc->GetValAsStringMDims(row, j, k).chars()));
               }
             }
+            matrixDim_1Values.append(matrixDim_0Values);
           }
           matrixValues.append(matrixDim_1Values);
         }
@@ -2366,30 +2368,32 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
           for(int l = 0; l < dc->cell_geom.size(2); l++) {
             QJsonArray matrixDim_1Values;
             for(int k = 0; k < dc->cell_geom.size(1); k++) {
+              QJsonArray matrixDim_0Values;
               for(int j = 0; j < dc->cell_geom.size(0); j++) {
                 switch (dc->valType()) {
                   case VT_STRING:
-                    matrixDim_1Values.append(QString(dc->GetValAsStringMDims(row,j, k, l).chars()));
+                    matrixDim_0Values.append(QString(dc->GetValAsStringMDims(row,j, k, l).chars()));
                     break;
                   case VT_DOUBLE:
-                    matrixDim_1Values.append(dc->GetValAsDoubleMDims(row,j, k, l));
+                    matrixDim_0Values.append(dc->GetValAsDoubleMDims(row,j, k, l));
                     break;
                   case VT_FLOAT:
-                    matrixDim_1Values.append(dc->GetValAsFloatMDims(row,j, k, l));
+                    matrixDim_0Values.append(dc->GetValAsFloatMDims(row,j, k, l));
                     break;
                   case VT_INT:
-                    matrixDim_1Values.append(dc->GetValAsIntMDims(row,j, k, l));
+                    matrixDim_0Values.append(dc->GetValAsIntMDims(row,j, k, l));
                     break;
                   case VT_BYTE:
-                    matrixDim_1Values.append(dc->GetValAsByteMDims(row,j, k, l));
+                    matrixDim_0Values.append(dc->GetValAsByteMDims(row,j, k, l));
                     break;
                   case VT_VARIANT:
-                    matrixDim_1Values.append(QString(dc->GetValAsStringMDims(row,j, k, l).chars()));
+                    matrixDim_0Values.append(QString(dc->GetValAsStringMDims(row,j, k, l).chars()));
                     break;
                   default:
-                    matrixDim_1Values.append(QString(dc->GetValAsStringMDims(row,j, k, l).chars()));
+                    matrixDim_0Values.append(QString(dc->GetValAsStringMDims(row,j, k, l).chars()));
                 }
               }
+              matrixDim_1Values.append(matrixDim_0Values);
             }
             matrixDim_2Values.append(matrixDim_1Values);
           }
@@ -2407,30 +2411,32 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
             for(int l = 0; l < dc->cell_geom.size(2); l++) {
               QJsonArray matrixDim_1Values;
               for(int k = 0; k < dc->cell_geom.size(1); k++) {
+                QJsonArray matrixDim_0Values;
                 for(int j = 0; j < dc->cell_geom.size(0); j++) {
                   switch (dc->valType()) {
                     case VT_STRING:
-                      matrixDim_1Values.append(QString(dc->GetValAsStringMDims(row, j, k, l, m).chars()));
+                      matrixDim_0Values.append(QString(dc->GetValAsStringMDims(row, j, k, l, m).chars()));
                       break;
                     case VT_DOUBLE:
-                      matrixDim_1Values.append(dc->GetValAsDoubleMDims(row, j, k, l, m));
+                      matrixDim_0Values.append(dc->GetValAsDoubleMDims(row, j, k, l, m));
                       break;
                     case VT_FLOAT:
-                      matrixDim_1Values.append(dc->GetValAsFloatMDims(row, j, k, l, m));
+                      matrixDim_0Values.append(dc->GetValAsFloatMDims(row, j, k, l, m));
                       break;
                     case VT_INT:
-                      matrixDim_1Values.append(dc->GetValAsIntMDims(row, j, k, l, m));
+                      matrixDim_0Values.append(dc->GetValAsIntMDims(row, j, k, l, m));
                       break;
                     case VT_BYTE:
-                      matrixDim_1Values.append(dc->GetValAsByteMDims(row, j, k, l, m));
+                      matrixDim_0Values.append(dc->GetValAsByteMDims(row, j, k, l, m));
                       break;
                     case VT_VARIANT:
-                      matrixDim_1Values.append(QString(dc->GetValAsStringMDims(row, j, k, l, m).chars()));
+                      matrixDim_0Values.append(QString(dc->GetValAsStringMDims(row, j, k, l, m).chars()));
                       break;
                     default:
-                      matrixDim_1Values.append(QString(dc->GetValAsStringMDims(row, j, k, l, m).chars()));
+                      matrixDim_0Values.append(QString(dc->GetValAsStringMDims(row, j, k, l, m).chars()));
                   }
                 }
+                matrixDim_1Values.append(matrixDim_0Values);
               }
               matrixDim_2Values.append(matrixDim_1Values);
             }
