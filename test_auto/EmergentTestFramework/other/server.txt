@@ -1,4 +1,4 @@
-*** Settings ***
+** Settings ***
 
 Library          Telnet
 Library          HttpLibrary.HTTP
@@ -200,6 +200,7 @@ GetData Full Table
     Json Value Should Equal    ${output}             /result/columns/1/values/2/2/2  1
     Json Value Should Equal    ${output}             /result/columns/1/values/2/1/0  0
 
+
 GetData Column
     Ensure Emergent Free
     ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "column": "Name"}
@@ -262,7 +263,7 @@ SetData Row Specified
     Column Value Should Match    ${output}      0      trial    3
     Column Value Should Match    ${output}      0      epoch    6
     Column Value Should Match    ${output}      0      trial_name       letrial
-    Column Value Should Match    ${output}      0      sse              4.4
+    Column Float Value Should Match    ${output}      0      sse              4.4
 
 RemoveData First Two Rows
     Ensure Emergent Free
@@ -284,7 +285,7 @@ SetData No Row Specified
     Column Value Should Match    ${output}      0       epoch   6
     Column Value Should Match    ${output}      0       trial   2
     Column Value Should Match    ${output}      0       trial_name      letrial
-    Column Value Should Match    ${output}      0       sse             4.4
+    Column Float Value Should Match    ${output}      0       sse             4.4
 
 RemoveData All Rows                    
     Ensure Emergent Free
@@ -303,7 +304,7 @@ AppendData
     Column Value Should Match    ${output}      0       batch   7
     Column Value Should Match    ${output}      0       epoch   9
     Column Value Should Match    ${output}      0       trial_name      mytrial
-    Column Value Should Match    ${output}      0       sse             10.2
+    Column Float Value Should Match    ${output}      0       sse             10.2
 
 SetData Add Column
     Ensure Emergent Free
@@ -314,7 +315,7 @@ SetData Add Column
     Column Value Should Match    ${output}      0       batch   8
     Column Value Should Match    ${output}      0       epoch   10
     Column Value Should Match    ${output}      0       trial_name      mytrial2
-    Column Value Should Match    ${output}      0       sse             10.3
+    Column Float Value Should Match    ${output}      0       sse             10.3
     Column Value Should Match    ${output}      0       new_col         new_col_value
 
 SetData Matrix Cell

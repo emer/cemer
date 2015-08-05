@@ -93,6 +93,12 @@ Column Value Should Match
     ${value_str}    Convert To String                   ${value}
     Should Match    '${value_str}'                      '${expected}'
 
+Column Float Value Should Match
+    [Arguments]     ${json}                             ${row}          ${columnname}   ${expected}
+    ${value}        Get Column Value by Name            ${json}         ${row}          ${columnname}
+    ${value_str}    Convert To String                   ${value}
+    Should Be Equal As Numbers    ${value}                      ${expected}
+
 Print
     [Arguments]        ${text}
     Run Keyword If     ${verbose}                Log                ${text}    WARN
