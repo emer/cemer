@@ -136,7 +136,7 @@ public:
 //  taVector2i            found_cell_item;
   
   // #HIDDEN #NO_SAVE When searching for cell values this is the list of cells that match
-  String                error_msg;
+  String                json_error_msg;
   // #HIDDEN #NO_SAVE Holds last error message so client can check message if error returned
   String                cell_view;
   // #HIDDEN #NO_SAVE contents of a given cell, for viewing purposes (View menu action)

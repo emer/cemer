@@ -2191,25 +2191,25 @@ bool DataTable::GetDataMatrixCellAsJSON(QJsonObject& json_obj, const String& col
   }
   
   if (row <0 || row >= rows) {
-    error_msg = "row out of range";
+    json_error_msg += " row out of range;";
     return false;
   }
   
   
   int col_idx = this->FindColNameIdx(column_name);
   if (col_idx == -1) {
-    error_msg = "column not found";
+    json_error_msg += " column not found;";
     return false;
   }
   
   DataCol* dc = data.FastEl(col_idx);
   if (!dc->is_matrix) {
-    error_msg = "asking for a cell of non-matrix column ";
+    json_error_msg += " asking for a cell of non-matrix column;";
     return false;
   }
   
   if (cell <0 || cell >= dc->cell_size()) {
-    error_msg = "cell out of range error";
+    json_error_msg += " cell out of range error;";
     return false;
   }
   
@@ -2249,7 +2249,7 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
   }
   
   if (start_row < 0 || start_row > rows) {  // start_row could still be negative if we were passed -20 when there were only 10 rows
-    error_msg = "row out of range";
+    json_error_msg += " row out of range;";
     return false;
   }
   
@@ -2270,7 +2270,7 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
   else {
     int col_idx = this->FindColNameIdx(column_name);
     if (col_idx == -1) {
-      error_msg = "column not found";
+      json_error_msg += " column not found;";
       return false;
     }
     else {
@@ -3017,7 +3017,8 @@ void DataTable::ImportDataJSONString(const String& json_as_string) {
 }
 
 bool DataTable::SetDataFromJSON(const QJsonObject& root_object, int start_row, int start_cell) { // // row -1 means append, anything else overwrites starting at row
-  bool rval = true;
+  json_error_msg = ""; // reset the message
+  bool any_errors = false;
   bool has_column_node = false;
   QJsonObject::const_iterator obj_iter = root_object.constBegin();
   while (obj_iter != root_object.constEnd()) {
@@ -3027,9 +3028,9 @@ bool DataTable::SetDataFromJSON(const QJsonObject& root_object, int start_row, i
           has_column_node = true;
           break;
       }
-      rval = SetDataFromJSON(obj_iter.value().toObject());
+      bool rval = SetDataFromJSON(obj_iter.value().toObject());
       if (rval == false) {
-        return rval;
+        return false;
       }
     }
     ++obj_iter;
@@ -3044,15 +3045,18 @@ bool DataTable::SetDataFromJSON(const QJsonObject& root_object, int start_row, i
     while (columns != obj_iter.value().toArray().constEnd()) {
       QJsonValue value = *columns;
       const QJsonObject aCol = value.toObject();
-      rval = SetColumnFromJSON(aCol, start_row, start_cell);
+      bool rval = SetColumnFromJSON(aCol, start_row, start_cell);
+      if (rval == false) {
+        any_errors = true;
+      }
       columns++;
     }
   }
   else {
-    error_msg = "No 'column' member' in data";
+    json_error_msg += " No 'column' member' in data;";
     return false;
   }
-  return rval;
+  return !any_errors;
 }
 
 
@@ -3086,11 +3090,26 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
     columnData++;
   }
 
+  if (columnName.empty()) {
+    json_error_msg += " missing column name;";
+    return false;
+  }
+  
   if (theValues.empty()) {
-    error_msg = "values empty";
+    json_error_msg += " values empty;";
     return false;
   }
 
+  if (isMatrix && theDimensions.empty()) {
+    json_error_msg += " missing matrix dimensions;";
+    return false;
+  }
+  
+  if (!isMatrix && !theDimensions.empty()) {
+    json_error_msg += " dimensions set but 'matrix' not set to true;";
+    return false;
+  }
+  
   // make/find columns & write to the data table
   bool makeNew = true;
   dc = this->data.FindName(columnName);
@@ -3100,7 +3119,7 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
     }
     else {
       if (theDimensions.empty()) {
-        error_msg = "matrix dimensions empty";
+        json_error_msg += " matrix dimensions empty;";
         return false;
       }
       
@@ -3215,11 +3234,11 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
 
     
     if (start_cell < 0 || start_cell > (mg.Product()*rowCount)) {
-      error_msg = "cell range error";
+      json_error_msg += " cell range error;";
       return false;
     }
     if (valueCount + start_cell > (mg.Product()*rowCount)) {
-      error_msg = "more values than cells";
+      json_error_msg += " more values than cells;";
       return false;
     }
     

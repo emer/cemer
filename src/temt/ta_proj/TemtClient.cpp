@@ -335,7 +335,7 @@ void TemtClient::cmdSetData() {
       SendOk();
     }
     else {
-      SendError("SetData: " + tab->error_msg, TemtClient::RUNTIME);
+      SendError("SetData: " + tab->json_error_msg, TemtClient::RUNTIME);
     }
   }
 #endif
@@ -558,7 +558,7 @@ void TemtClient::cmdAppendData() {
       SendOk();
     }
     else {
-      SendError("AppendData: " + tab->error_msg, TemtClient::RUNTIME);
+      SendError("AppendData: " + tab->json_error_msg, TemtClient::RUNTIME);
     }
   }
   else {
@@ -669,7 +669,7 @@ void TemtClient::cmdGetData() {
       Write(theString.data());
     }
     else {
-      SendError("GetData: " + tab->error_msg, TemtClient::RUNTIME);
+      SendError("GetData: " + tab->json_error_msg, TemtClient::RUNTIME);
     }
   }
   else {
@@ -751,7 +751,7 @@ void TemtClient::cmdGetDataMatrixCell() {
       Write(theString.data());
     }
     else {
-      SendError("GetDataMatrixCell: " + tab->error_msg, TemtClient::RUNTIME);
+      SendError("GetDataMatrixCell: " + tab->json_error_msg, TemtClient::RUNTIME);
     }
   }
   else {
