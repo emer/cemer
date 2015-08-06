@@ -259,7 +259,7 @@ class PBSJobManager( ClusterJobManager ):
         file.write("# need to 'use' proper dotkits\n")
         file.write(". /curc/tools/utils/dkinit\n")
         #file.write("reuse .openmpi-1.4.3_ib\n")
-        #file.write("reuse /projects/oreillyr/bin/emergent\n")
+        file.write("reuse " + job.pathSetupScript() + "\n")
 
         #file.write("export DISPLAY=:0.0\n\n")
         file.write("# change to working dir\n")
@@ -389,7 +389,8 @@ class SlurmJobManager( ClusterJobManager ):
 
         file.write("\n")
 
-        file.write(". /projects/oreillyr/bin/emergent_setup.sh\n")
+        if job.pathSetupScript() != None:
+            file.write(". " + job.pathSetupScript() + "\n")
 
         #file.write("export DISPLAY=:0.0\n\n")
         file.write("# change to working dir\n")
@@ -485,6 +486,7 @@ class ClusterJob:
         self.mail_user = None
         self.mail_type = "FAIL"
         self.job_launcher = "mpirun" # hardcode program name so fails gracefully
+        self.path_setup_script = None
     def isThreaded(self):
         return self.threaded
     def enableThreaded( self ):
@@ -608,6 +610,10 @@ class ClusterJob:
         self.job_launcher = cmd
     def jobLauncher( self ):
         return self.job_launcher
+    def setPathSetupScript( self, scriptname):
+        self.path_setup_script = scriptname
+    def pathSetupScript( self ):
+        return self.path_setup_script
     def lastErr( self ):
         return "error: " + self.last_err
     def usage( self ):

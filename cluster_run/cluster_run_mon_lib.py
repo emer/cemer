@@ -42,6 +42,11 @@ dm_qsub_args = "--threaded --quick --jobtype dm_qsub_q"
 job_launcher = "mpirun"
 #job_launcher = 'mpirun --bind-to none --mca btl_tcp_if_include bond0'
 
+# specify a setup script that is run at the beginning of a job on the node the job is executed,
+# this allows to ensure that all of the enivronment variables, paths and other resources necessary
+# on the compute node is available and correctly setup.
+# path_setup = "/path/to/setup/script.sh"
+
 # it is essential that these scripts return the cluster job number in the format
 # created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
 # further (you can of course do this in some other way if necessary)
@@ -1305,6 +1310,11 @@ class SubversionPoller(object):
                         args_eff = args_eff + ["-y", mail_type]
                     else:
                         args_eff = ["-y", mail_type]
+            if (('path_setup' in globals()) and (path_setup != None)):
+                if len(args_eff) > 0:
+                    args_eff = args_eff + ["-s", path_setup]
+                else:
+                    args_eff = ["-s", path_setup]
             if len(args_eff) > 0:
                 args_eff = args_eff + ["-j", job_launcher]
             else:
@@ -1332,6 +1342,11 @@ class SubversionPoller(object):
                         args_eff = args_eff + ["-y", mail_type]
                     else:
                         args_eff = ["-y", mail_type]
+            if (('path_setup' in globals()) and (path_setup != None)):
+                if len(args_eff) > 0:
+                    args_eff = args_eff + ["-s", path_setup]
+                else:
+                    args_eff = ["-s", path_setup]
             if len(args_eff) > 0:
                 args_eff = args_eff + [" -j", job_launcher]
             else:

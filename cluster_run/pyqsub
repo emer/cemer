@@ -46,6 +46,8 @@ def submitJob(jm, opts, args):
                     job.setTaskThrottle( int(opts.throttle) )
             if opts.joblauncher != None:
                 job.setJobLauncher(opts.joblauncher)
+            if opts.pathsetup != None:
+                job.setPathSetupScrip(opts.pathsetup)
             if False == job.setNumNodes(int(args[0])):
                 print job.lastErr()
                 print job.usage()
@@ -103,6 +105,8 @@ def submitJob(jm, opts, args):
                     job.setTaskThrottle( int(opts.throttle) )
             if opts.joblauncher != None:
                 job.setJobLauncher(opts.joblauncher)
+            if opts.pathsetup != None:
+                job.setPathSetupScript(opts.pathsetup)
             if False == job.setNumCores(int(args[0])):
                 print job.lastErr()
                 print job.usage()
@@ -138,8 +142,9 @@ def submitJob(jm, opts, args):
     return True
 
 if __name__ == "__main__":
-    print sys.argv
+    
     logging.basicConfig(level=logging.DEBUG)
+    logging.info(sys.argv)
     ''' Main function - generates and submits a job to PBS or SGE for Emergent-like jobs'''
     p = optparse.OptionParser( description="Cluster job submission program",
                                prog="pyqsub",
@@ -157,6 +162,7 @@ if __name__ == "__main__":
     p.add_option("--mailtype", "-y", action="store", help="specify the type of events resulting in an email notification", default='FAIL')
     p.add_option("--mailuser", "-u", action="store", help="specify the email address to email notifications", default=None)
     p.add_option("--joblauncher", "-j", action="store", help="specify the (mpi) job launcher command", default=None)
+    p.add_option("--pathsetup", "-s", action="store", help="specify the shell script to run at the beginning of a job to ensure that the environment is correctly setup to execute emergent", default=None)
     opts, args = p.parse_args()
 
 
