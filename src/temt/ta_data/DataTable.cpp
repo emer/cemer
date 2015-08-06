@@ -3064,7 +3064,7 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
   QJsonArray theValues;
   QJsonArray theDimensions;
   String columnName("");
-  DataCol::ValType columnType = VT_STRING;
+  DataCol::ValType columnType = VT_VARIANT;
   DataCol* dc;
   bool isMatrix = false;
   MatrixGeom mg;
@@ -3097,16 +3097,6 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
   
   if (theValues.empty()) {
     json_error_msg += " values empty;";
-    return false;
-  }
-
-  if (isMatrix && theDimensions.empty()) {
-    json_error_msg += " missing matrix dimensions;";
-    return false;
-  }
-  
-  if (!isMatrix && !theDimensions.empty()) {
-    json_error_msg += " dimensions set but 'matrix' not set to true;";
     return false;
   }
   
@@ -3180,10 +3170,13 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
           dc->SetValAsInt(value.toInt(), row);
           break;
         case VT_VARIANT:
-          dc->SetValAsVar(value.toString(), row);
+        {
+          Variant emer_variant;
+          emer_variant.setVariant(value.toVariant());
+          dc->SetValAsVar(emer_variant, row);
+        }
           break;
         default:
-          dc->SetValAsString(value.toString(), row);
           taMisc::Info("DataTable::ParseJSONColumn -- column type undefined - should not happen");
       }
       row++;
