@@ -3091,7 +3091,7 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
   }
 
   if (columnName.empty()) {
-    json_error_msg += " missing column name;";
+    json_error_msg += " Column member 'name' not found;";
     return false;
   }
   
