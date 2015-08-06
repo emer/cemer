@@ -14,7 +14,6 @@ class ClusterJobManager:
         self.subCmd = ["qsub -h"]
         self.script_filename = os.getcwd() + "/JOB.TMP.SH"
         self.script_shell = "/bin/bash"
-        self.job_launcher = "mpirun" # hardcode program name so fails gracefully
         self.last_err = ""
     def enableVerbose(self):
         self.verbose = True
@@ -30,8 +29,6 @@ class ClusterJobManager:
         return self.quick
     def jobID(self):
         return self.job_id
-    def jobLauncher(self):
-        return self.job_launcher
     def scriptFileName(self):
         return self.script_filename
     def setScriptFileName(self, name):
@@ -136,9 +133,9 @@ class SGEJobManager( ClusterJobManager ):
         file.write("\n")
 
         if job.isThreaded():
-            file.write("%s -np %d -machinefile ${SGE_O_WORKDIR}/.tempfiles/$$/hostfile %s \n" % (self.job_launcher, job.numNodesTotal(), job.userCmd()))
+            file.write("%s -np %d -machinefile ${SGE_O_WORKDIR}/.tempfiles/$$/hostfile %s \n" % (job.jobLauncher(), job.numNodesTotal(), job.userCmd()))
         else :       
-            file.write("%s -np %d -machinefile ${SGE_O_WORKDIR}/.tempfiles/$$/hostfile %s \n" % (self.job_launcher, job.numNodesTotal()*job.numCores(), job.userCmd()))
+            file.write("%s -np %d -machinefile ${SGE_O_WORKDIR}/.tempfiles/$$/hostfile %s \n" % (job.jobLauncher, job.numNodesTotal()*job.numCores(), job.userCmd()))
 
         file.write("\n")
         file.write("# remove our temp hostfile\n")
@@ -262,7 +259,7 @@ class PBSJobManager( ClusterJobManager ):
         file.write("# need to 'use' proper dotkits\n")
         file.write(". /curc/tools/utils/dkinit\n")
         #file.write("reuse .openmpi-1.4.3_ib\n")
-        file.write("reuse /projects/oreillyr/bin/emergent\n")
+        #file.write("reuse /projects/oreillyr/bin/emergent\n")
 
         #file.write("export DISPLAY=:0.0\n\n")
         file.write("# change to working dir\n")
@@ -283,9 +280,9 @@ class PBSJobManager( ClusterJobManager ):
         file.write("\n")
 
         if job.isThreaded():
-            file.write("%s -np %d -machinefile ${PBS_O_WORKDIR}/.tempfiles/$$/hostfile %s \n" % (self.job_launcher, job.numNodes(), job.userCmd()))
+            file.write("%s -np %d -machinefile ${PBS_O_WORKDIR}/.tempfiles/$$/hostfile %s \n" % (job.jobLauncher(), job.numNodes(), job.userCmd()))
         else :       
-            file.write("%s -np %d -machinefile ${PBS_O_WORKDIR}/.tempfiles/$$/hostfile %s \n" % (self.job_launcher, job.numNodes()*job.numCores(), job.userCmd()))
+            file.write("%s -np %d -machinefile ${PBS_O_WORKDIR}/.tempfiles/$$/hostfile %s \n" % (job.jobLauncher(), job.numNodes()*job.numCores(), job.userCmd()))
     
         file.write("\n")
         file.write("# we're done...so remove the hostfile\n")
@@ -355,7 +352,7 @@ class SlurmJobManager( ClusterJobManager ):
     '''Cluster job manager interface for Slurm'''
     def __init__(self, verbose=False, quick=False):
         ClusterJobManager.__init__(self, verbose, quick)
-        self.job_launcher = 'mpirun --bind-to none --mca btl_tcp_if_include bond0'
+        #self.job_launcher = 'mpirun --bind-to none --mca btl_tcp_if_include bond0'
         self.subCmd = ["sbatch -H"]
         
     def generateJobScript( self, job ):
@@ -399,7 +396,7 @@ class SlurmJobManager( ClusterJobManager ):
         file.write("cd $PBS_O_WORKDIR\n")
         file.write("\n")
 
-        file.write("%s %s" % (self.job_launcher, job.userCmd()))
+        file.write("%s %s" % (job.jobLauncher(), job.userCmd()))
         file.write("\n")
         file.close()
         return True
@@ -487,6 +484,7 @@ class ClusterJob:
         self.last_err =""
         self.mail_user = None
         self.mail_type = "FAIL"
+        self.job_launcher = "mpirun" # hardcode program name so fails gracefully
     def isThreaded(self):
         return self.threaded
     def enableThreaded( self ):
@@ -606,6 +604,10 @@ class ClusterJob:
         else:
             self.user_cmd = string.join( cmd, " ")
             return True
+    def setJobLauncher( self, cmd ):
+        self.job_launcher = cmd
+    def jobLauncher( self ):
+        return self.job_launcher
     def lastErr( self ):
         return "error: " + self.last_err
     def usage( self ):

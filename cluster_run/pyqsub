@@ -44,6 +44,8 @@ def submitJob(jm, opts, args):
                 #job.setTaskStep( int(r.split(args[1])[2]) )
                 if opts.throttle:
                     job.setTaskThrottle( int(opts.throttle) )
+            if opts.joblauncher != None:
+                job.setJobLauncher(opts.joblauncher)
             if False == job.setNumNodes(int(args[0])):
                 print job.lastErr()
                 print job.usage()
@@ -99,6 +101,8 @@ def submitJob(jm, opts, args):
                 #job.setTaskStep( int(r.split(args[1])[2]) )
                 if opts.throttle:
                     job.setTaskThrottle( int(opts.throttle) )
+            if opts.joblauncher != None:
+                job.setJobLauncher(opts.joblauncher)
             if False == job.setNumCores(int(args[0])):
                 print job.lastErr()
                 print job.usage()
@@ -134,6 +138,7 @@ def submitJob(jm, opts, args):
     return True
 
 if __name__ == "__main__":
+    print sys.argv
     logging.basicConfig(level=logging.DEBUG)
     ''' Main function - generates and submits a job to PBS or SGE for Emergent-like jobs'''
     p = optparse.OptionParser( description="Cluster job submission program",
@@ -151,6 +156,7 @@ if __name__ == "__main__":
     p.add_option("--throttle", "-r", action="store", help="specify throttle for array job tasks", default=None)
     p.add_option("--mailtype", "-y", action="store", help="specify the type of events resulting in an email notification", default='FAIL')
     p.add_option("--mailuser", "-u", action="store", help="specify the email address to email notifications", default=None)
+    p.add_option("--joblauncher", "-j", action="store", help="specify the (mpi) job launcher command", default=None)
     opts, args = p.parse_args()
 
 
@@ -160,8 +166,8 @@ if __name__ == "__main__":
     #opts.throttle = None
     ###############################################################################
 
-    #print "Opts: %s" % opts
-    #print "Args: %s" % args
+    #logging.info("Opts: %s" % opts)
+    #logging.info("Args: %s" % args)
 
     # create the proper job manager (PBS or SGE)        
     if ( os.environ.get("SGE_ROOT") ):

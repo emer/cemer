@@ -25,17 +25,22 @@ clust_queue = ""
 # emergent/cluster_run/ directory (where this script lives as well)
 #
 # the sp_qsub_cmd takes args of <n_threads> <run_time> <full_command>
-sp_qsub_cmd = 'sp_qsub_q'
+sp_qsub_cmd = 'pyqsub'
 # can add an automatic -q <queue> arg here to specify a queue
 # in general it is best to have a different script for each queue
 # because the emergent preferences have relevant settings for them
-sp_qsub_args = ""
+sp_qsub_args = "--threaded --quick --jobtype sp_qsub_q"
 # sp_qsub_args = "-q " + clust_queue
 
 # the dm_qsub_cmd takes args of <mpi_nodes> <per_node> <n_threads> <run_time> <full_command>
-dm_qsub_cmd = 'dm_qsub_q'
-dm_qsub_args = ""
+dm_qsub_cmd = 'pyqsub'
+dm_qsub_args = "--threaded --quick --jobtype dm_qsub_q"
 # dm_qsub_args = "-q " + clust_queue
+
+# specify the job launcher command with all of its parameters. The parameters might be
+# specific to the cluster environment, such as the network interface the MPI libraries should use
+job_launcher = "mpirun"
+#job_launcher = 'mpirun --bind-to none --mca btl_tcp_if_include bond0'
 
 # it is essential that these scripts return the cluster job number in the format
 # created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
@@ -1285,21 +1290,25 @@ class SubversionPoller(object):
             args_eff = sp_qsub_args.split()
             if ram_gb > 0:
                 if len(args_eff) > 0:
-                    args_eff = args_eff + [" -m", str(ram_gb) + "GB"]
+                    args_eff = args_eff + ["-m", str(ram_gb) + "GB"]
                 else:
-                    args_eff = [" -m", str(ram_gb) + "GB"]
+                    args_eff = ["-m", str(ram_gb) + "GB"]
             if (('mail_user' in globals()) and (mail_user != None)):
                 if (mail_user == "$USER"):
                     mail_user = getpass.getuser()
                 if len(args_eff) > 0:
-                    args_eff = args_eff + [" -u", mail_user]
+                    args_eff = args_eff + ["-u", mail_user]
                 else:
-                    args_eff = [" -u", mail_user]
+                    args_eff = ["-u", mail_user]
                 if ('mail_type' in globals()):
                     if len(args_eff) > 0:
-                        args_eff = args_eff + [" -y", mail_type]
+                        args_eff = args_eff + ["-y", mail_type]
                     else:
-                        args_eff = [" -y", mail_type]
+                        args_eff = ["-y", mail_type]
+            if len(args_eff) > 0:
+                args_eff = args_eff + ["-j", job_launcher]
+            else:
+                args_eff = ["-j",job_launcher]
             if len(args_eff) > 0:
                 cmdsub = [sp_qsub_cmd] + args_eff + [str(n_threads), run_time, cmd, params]
             else:
@@ -1308,21 +1317,25 @@ class SubversionPoller(object):
             args_eff = dm_qsub_args.split()
             if ram_gb > 0:
                 if len(args_eff) > 0:
-                    args_eff = args_eff + [" -m", str(ram_gb) + "GB"]
+                    args_eff = args_eff + ["-m", str(ram_gb) + "GB"]
                 else:
-                    args_eff = [" -m", str(ram_gb) + "GB"]
+                    args_eff = ["-m", str(ram_gb) + "GB"]
             if (('mail_user' in globals()) and (mail_user != None)):
                 if (mail_user == "$USER"):
                     mail_user = getpass.getuser()
                 if len(args_eff) > 0:
-                    args_eff = args_eff + [" -u", mail_user]
+                    args_eff = args_eff + ["-u", mail_user]
                 else:
-                    args_eff = [" -u", mail_user]
+                    args_eff = ["-u", mail_user]
                 if ('mail_type' in globals()):
                     if len(args_eff) > 0:
-                        args_eff = args_eff + [" -y", mail_type]
+                        args_eff = args_eff + ["-y", mail_type]
                     else:
-                        args_eff = [" -y", mail_type]
+                        args_eff = ["-y", mail_type]
+            if len(args_eff) > 0:
+                args_eff = args_eff + [" -j", job_launcher]
+            else:
+                args_eff = ["-j", job_launcher]
             if len(args_eff) > 0:
                 cmdsub = [dm_qsub_cmd] + args_eff + [str(mpi_nodes), str(mpi_per_node), str(n_threads), run_time, cmd, params]
             else:
