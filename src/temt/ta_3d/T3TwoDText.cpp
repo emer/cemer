@@ -137,6 +137,7 @@ void T3TwoDTexture::renderLabel(T3TwoDText& txt) {
   image->fill(txt.bg_color); 
   QPainter painter(image);
   txt.label.render(&painter, QPoint(), QRegion(), QWidget::DrawChildren);
+  update();
 }
 
 class T3TwoDTextureDataFunctor : public Qt3D::QTextureDataFunctor {

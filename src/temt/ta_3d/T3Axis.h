@@ -62,11 +62,15 @@ public:
   // #IGNORE add the label text, with explicit justification (used for axis title, and unit labels)
   void			addLine(const iVec3f& from, const iVec3f to);
 
+  void                  setNodeUpdating(bool updating) override;
   void			setDefaultCaptionTransform() override; // sets text justif and transform for 3D
 
   T3Axis(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, Axis axis = X, 
          float fnt_sz=.05f, float width = 1.0f, int n_axis = 0);
   ~T3Axis();
+
+protected:
+  int                   n_labels; // number of active labels
 };
 
 

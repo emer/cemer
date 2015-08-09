@@ -157,6 +157,7 @@ T3GraphLine::T3GraphLine(Qt3DNode* parent, T3DataView* dataView_, float fnt_sz,
   value_color_mode = false;
   lineStyle = SOLID;
   marker_size = 0.04f;
+  n_text = 0;
   
   if(z_on) {
     TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 1.0f), width);
@@ -181,20 +182,27 @@ void T3GraphLine::clear() {
   lines->restart();
   errbars->restart();
   markers->restart();
-  text->removeAllChildren();
+  n_text = 0;
+  // text->removeAllChildren();
   inherited::clear();
 }
 
 void T3GraphLine::startBatch() {
-  lines->setNodeUpdating(true);
-  errbars->setNodeUpdating(true);
-  markers->setNodeUpdating(true);
+  setNodeUpdating(true);
 }
 
 void T3GraphLine::finishBatch() {
-  lines->setNodeUpdating(false);
-  errbars->setNodeUpdating(false);
-  markers->setNodeUpdating(false);
+  setNodeUpdating(false);
+}
+
+void T3GraphLine::setNodeUpdating(bool updating) {
+  inherited::setNodeUpdating(updating);
+  lines->setNodeUpdating(updating);
+  errbars->setNodeUpdating(updating);
+  markers->setNodeUpdating(updating);
+  if(!updating) {
+    text->removeChildrenFrom(n_text);
+  }
 }
 
 void T3GraphLine::moveTo(const iVec3f& pt) {
@@ -303,7 +311,15 @@ void T3GraphLine::setMarkerSize(float sz) {
 }
 
 void T3GraphLine::textAt(const iVec3f& pt, const char* str) {
-  T3TwoDText* txt = new T3TwoDText(text);
+  T3TwoDText* txt = NULL;
+  const QObjectList& ol = text->children();
+  if(n_text < ol.count()) {
+    txt = dynamic_cast<T3TwoDText*>(ol.at(n_text++));
+  }
+  if(!txt) {
+    txt = new T3TwoDText(text);
+    n_text++;
+  }
   txt->Scale(font_size);
   txt->setText(str);
   txt->TranslateXLeftTo(QVector3D(pt.x, pt.y, -pt.z));

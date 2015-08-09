@@ -124,6 +124,8 @@ public:
   // add a child to this graph
   virtual void  removeAllChildren();
   // remove all the children of this node, deleting them
+  virtual void  removeChildrenFrom(int idx);
+  // remove all the children of this node starting from given index, deleting them (i.e., number of children will now be equal to idx)
   
   T3Entity(Qt3DNode* parent = 0);
   ~T3Entity();

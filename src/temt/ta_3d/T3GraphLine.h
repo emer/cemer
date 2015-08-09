@@ -128,11 +128,14 @@ public:
   String                markerAtSvg(const iVec3f& pt, MarkerStyle style);
   // string of SVG commands for drawing marker at given point -- just the move, line guys
 
+  void                  setNodeUpdating(bool updating) override;
+  void			setDefaultCaptionTransform() override;
+  
   T3GraphLine(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, float fnt_sz = .05f,
               float width = 1.0f, bool z_on = false);
   ~T3GraphLine();
-
-  void			setDefaultCaptionTransform() override; // sets text justif and transform for 3D
+protected:
+  int           n_text;         // number of active text elements
 };
 
 #else // TA_QT3D

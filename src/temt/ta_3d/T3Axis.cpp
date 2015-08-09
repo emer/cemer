@@ -36,6 +36,7 @@ T3Axis::T3Axis(Qt3DNode* parent, T3DataView* dataView_, Axis ax, float fnt_sz,
   , labels(new T3Entity(this))
   , lines(new T3LineStrip(this))
 {
+  n_labels = 0;
   TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.0f), width, 0.0f);
 }
 
@@ -59,7 +60,15 @@ void T3Axis::addLabel(const char* text, const iVec3f& at) {
 }
 
 void T3Axis::addLabel(const char* text, const iVec3f& at, int just) {
-  T3TwoDText* lbl = new T3TwoDText(labels);
+  T3TwoDText* lbl = NULL;
+  const QObjectList& ol = labels->children();
+  if(n_labels < ol.count()) {
+    lbl = dynamic_cast<T3TwoDText*>(ol.at(n_labels++));
+  }
+  if(!lbl) {
+    lbl = new T3TwoDText(labels);
+    n_labels++;
+  }
   lbl->setText(text);
   lbl->setTextColor(color);
   lbl->Scale(font_size);
@@ -77,7 +86,15 @@ void T3Axis::addLabel(const char* text, const iVec3f& at, int just) {
 
 void T3Axis::addLabelRot(const char* text, const iVec3f& at, int just,
                          const QVector3D& rot_ax, float rot_ang) {
-  T3TwoDText* lbl = new T3TwoDText(labels);
+  T3TwoDText* lbl = NULL;
+  const QObjectList& ol = labels->children();
+  if(n_labels < ol.count()) {
+    lbl = dynamic_cast<T3TwoDText*>(ol.at(n_labels++));
+  }
+  if(!lbl) {
+    lbl = new T3TwoDText(labels);
+    n_labels++;
+  }
   lbl->setText(text);
   lbl->setTextColor(color);
   lbl->Scale(font_size);
@@ -101,9 +118,18 @@ void T3Axis::addLine(const iVec3f& from, const iVec3f to) {
 
 void T3Axis::clear() {
   lines->restart();
-  labels->removeAllChildren();
+  n_labels = 0;
   inherited::clear();
 }
+
+void T3Axis::setNodeUpdating(bool updating) {
+  inherited::setNodeUpdating(updating);
+  lines->setNodeUpdating(updating);
+  if(!updating) {
+    labels->removeChildrenFrom(n_labels);
+  }
+}
+
 
 void T3Axis::setDefaultCaptionTransform() {
   //note: this is the one for 3d objects -- 2d replace this

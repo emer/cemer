@@ -1146,16 +1146,22 @@ void GraphTableView::RenderAxes() {
 #ifdef TA_QT3D
   T3Entity* xax = node_so->x_axis;
   xax->setNodeUpdating(true);
-  xax->removeAllChildren();
   T3Entity* zax = node_so->z_axis;
   zax->setNodeUpdating(true);
-  zax->removeAllChildren();
   T3Entity* yax = node_so->y_axes;
   yax->setNodeUpdating(true);
-  yax->removeAllChildren();
-  
-  t3_x_axis = new T3Axis(xax, &x_axis, (T3Axis::Axis)x_axis.axis, axis_font_size, width);
-  t3_x_axis_top = new T3Axis(xax, &x_axis, (T3Axis::Axis)x_axis.axis, axis_font_size, width);
+
+  t3_x_axis = xax->findChild<T3Axis*>("x_bot");
+  if(!t3_x_axis) {
+    t3_x_axis = new T3Axis(xax, &x_axis, (T3Axis::Axis)x_axis.axis, axis_font_size, width);
+    t3_x_axis->setObjectName("x_bot");
+    t3_x_axis_top = new T3Axis(xax, &x_axis, (T3Axis::Axis)x_axis.axis, axis_font_size,
+                               width);
+    t3_x_axis_top->setObjectName("x_top");
+  }
+  else {
+    t3_x_axis_top = xax->findChild<T3Axis*>("x_top");
+  }
   
 #else // TA_QT3D
   SoSeparator* xax = node_so->x_axis();
@@ -1172,8 +1178,6 @@ void GraphTableView::RenderAxes() {
   xax->addChild(t3_x_axis_top);
   
 #endif // TA_QT3D
-  
-  
   float ylen = plots[0]->axis_length;
   
   x_axis.RenderAxis(t3_x_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, false, rnd_svg);
@@ -1186,28 +1190,44 @@ void GraphTableView::RenderAxes() {
 
   if(z_axis.on) {
 #ifdef TA_QT3D
-    t3_x_axis_far = new T3Axis(xax, &x_axis, (T3Axis::Axis)x_axis.axis, axis_font_size, width);
-    t3_x_axis_far_top = new T3Axis(xax, &x_axis, (T3Axis::Axis)x_axis.axis, 
-                                   axis_font_size, width);
+    t3_x_axis_far = xax->findChild<T3Axis*>("x_far_bot");
+    if(!t3_x_axis_far) {
+      t3_x_axis_far = new T3Axis(xax, &x_axis, (T3Axis::Axis)x_axis.axis, axis_font_size,
+                                 width);
+      t3_x_axis_far->setObjectName("x_far_bot");
+      t3_x_axis_far_top = new T3Axis(xax, &x_axis, (T3Axis::Axis)x_axis.axis, 
+                                     axis_font_size, width);
+      t3_x_axis_far_top->setObjectName("x_far_top");
+
+      /////////////  Z
+      t3_z_axis = new T3Axis(zax, &z_axis, (T3Axis::Axis)z_axis.axis, axis_font_size,
+                             width);
+      t3_z_axis->setObjectName("z_bot");
+      t3_z_axis_rt = new T3Axis(zax, &z_axis, (T3Axis::Axis)z_axis.axis, axis_font_size,
+                                width);
+      t3_z_axis_rt->setObjectName("z_rt");
+      t3_z_axis_top = new T3Axis(zax, &z_axis, (T3Axis::Axis)z_axis.axis, axis_font_size,
+                                 width);
+      t3_z_axis_top->setObjectName("z_top");
+      t3_z_axis_top_rt = new T3Axis(zax, &z_axis, (T3Axis::Axis)z_axis.axis,
+                                    axis_font_size, width);
+      t3_z_axis_top_rt->setObjectName("z_top_rt");
+    }
+    else {
+      t3_x_axis_far_top = xax->findChild<T3Axis*>("x_far_top");
+      t3_z_axis = zax->findChild<T3Axis*>("z_bot");
+      t3_z_axis_rt = zax->findChild<T3Axis*>("z_rt");
+      t3_z_axis_top = zax->findChild<T3Axis*>("z_top");
+      t3_z_axis_top_rt = zax->findChild<T3Axis*>("z_top_rt");
+    }
+    
 #else // TA_QT3D
     t3_x_axis_far = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, axis_font_size);
     t3_x_axis_far_top = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, axis_font_size);
     xax->addChild(t3_x_axis_far_top);
     xax->addChild(t3_x_axis_far);
-#endif // TA_QT3D
-    
-    x_axis.RenderAxis(t3_x_axis_far_top, iVec3f(0.0f, ylen, z_axis.axis_length), 0,
-                      true, rnd_svg); // ticks only
-    x_axis.RenderAxis(t3_x_axis_far, iVec3f(0.0f, 0.0f, z_axis.axis_length), 0,
-                      true, rnd_svg); // ticks only
-    
+
     /////////////  Z
-#ifdef TA_QT3D
-    t3_z_axis = new T3Axis(zax, &z_axis, (T3Axis::Axis)z_axis.axis, axis_font_size, width);
-    t3_z_axis_rt = new T3Axis(zax, &z_axis, (T3Axis::Axis)z_axis.axis, axis_font_size, width);
-    t3_z_axis_top = new T3Axis(zax, &z_axis, (T3Axis::Axis)z_axis.axis, axis_font_size, width);
-    t3_z_axis_top_rt = new T3Axis(zax, &z_axis, (T3Axis::Axis)z_axis.axis, axis_font_size, width);
-#else // TA_QT3D
     t3_z_axis = new T3Axis((T3Axis::Axis)z_axis.axis, &z_axis, axis_font_size);
     t3_z_axis_rt = new T3Axis((T3Axis::Axis)z_axis.axis, &z_axis, axis_font_size);
     t3_z_axis_top = new T3Axis((T3Axis::Axis)z_axis.axis, &z_axis, axis_font_size);
@@ -1217,7 +1237,13 @@ void GraphTableView::RenderAxes() {
     zax->addChild(t3_z_axis_rt);
     zax->addChild(t3_z_axis_top_rt);
     zax->addChild(t3_z_axis_top);
+
 #endif // TA_QT3D
+    
+    x_axis.RenderAxis(t3_x_axis_far_top, iVec3f(0.0f, ylen, z_axis.axis_length), 0,
+                      true, rnd_svg); // ticks only
+    x_axis.RenderAxis(t3_x_axis_far, iVec3f(0.0f, 0.0f, z_axis.axis_length), 0,
+                      true, rnd_svg); // ticks only
     
     z_axis.RenderAxis(t3_z_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, false, rnd_svg);
     if(rnd_svg) {                 // svg needs separate ticks-only pass
@@ -1254,7 +1280,11 @@ void GraphTableView::RenderAxes() {
   }
   else {
 #ifdef TA_QT3D
-    t3_y_axis = new T3Axis(yax, mainy, (T3Axis::Axis)mainy->axis, axis_font_size, width);
+    t3_y_axis = yax->findChild<T3Axis*>("y_main");
+    if(!t3_y_axis) {
+      t3_y_axis = new T3Axis(yax, mainy, (T3Axis::Axis)mainy->axis, axis_font_size, width);
+      t3_y_axis->setObjectName("y_main");
+    }
 #else // TA_QT3D
     t3_y_axis = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
     yax->addChild(t3_y_axis);
@@ -1267,7 +1297,12 @@ void GraphTableView::RenderAxes() {
     
     if(z_axis.on) {
 #ifdef TA_QT3D
-      t3_y_axis_far = new T3Axis(yax, mainy, (T3Axis::Axis)mainy->axis, axis_font_size, width);
+      t3_y_axis_far = yax->findChild<T3Axis*>("y_main_far");
+      if(!t3_y_axis_far) {
+        t3_y_axis_far = new T3Axis(yax, mainy, (T3Axis::Axis)mainy->axis, axis_font_size,
+                                   width);
+        t3_y_axis_far->setObjectName("y_main_far");
+      }
 #else // TA_QT3D
       t3_y_axis_far = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
       yax->addChild(t3_y_axis_far);
@@ -1281,14 +1316,18 @@ void GraphTableView::RenderAxes() {
     
     if(alty) { // second Y = 1
 #ifdef TA_QT3D
-      t3_y_axis_rt = new T3Axis(yax, alty, (T3Axis::Axis)alty->axis, axis_font_size, 1);
+      t3_y_axis_rt = yax->findChild<T3Axis*>("y_alt");
+      if(!t3_y_axis_rt) {
+        t3_y_axis_rt = new T3Axis(yax, alty, (T3Axis::Axis)alty->axis, axis_font_size, 1);
+        t3_y_axis_rt->setObjectName("y_alt");
+      }
 #else // TA_QT3D
       t3_y_axis_rt = new T3Axis((T3Axis::Axis)alty->axis, alty, axis_font_size, 1); 
       yax->addChild(t3_y_axis_rt);
 #endif // TA_QT3D
       
       alty->RenderAxis(t3_y_axis_rt, iVec3f(x_axis.axis_length, 0.0f, 0.0f), 1,
-                       false, rnd_svg); // indicate second axis!
+                         false, rnd_svg); // indicate second axis!
       
       if(rnd_svg) {
         alty->RenderAxis(t3_y_axis_rt, iVec3f(x_axis.axis_length, 0.0f, 0.0f),
@@ -1297,7 +1336,12 @@ void GraphTableView::RenderAxes() {
       
       if(z_axis.on) {
 #ifdef TA_QT3D
-        t3_y_axis_far_rt = new T3Axis(yax, alty, (T3Axis::Axis)alty->axis, axis_font_size, 1);
+        t3_y_axis_far_rt = yax->findChild<T3Axis*>("y_alt_far");
+        if(!t3_y_axis_far_rt) {
+          t3_y_axis_far_rt = new T3Axis(yax, alty, (T3Axis::Axis)alty->axis,
+                                        axis_font_size, 1);
+          t3_y_axis_far_rt->setObjectName("y_alt_far");
+        }
 #else // TA_QT3D
         t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)alty->axis, alty, axis_font_size, 1);
         yax->addChild(t3_y_axis_far_rt);
@@ -1314,7 +1358,12 @@ void GraphTableView::RenderAxes() {
     else {
       // rt
 #ifdef TA_QT3D
-      t3_y_axis_rt = new T3Axis(yax, mainy, (T3Axis::Axis)mainy->axis, axis_font_size, width);
+      t3_y_axis_rt = yax->findChild<T3Axis*>("y_main_rt");
+      if(!t3_y_axis_rt) {
+        t3_y_axis_rt = new T3Axis(yax, mainy, (T3Axis::Axis)mainy->axis, axis_font_size,
+                                  width);
+        t3_y_axis_rt->setObjectName("y_main_rt");
+      }
 #else // TA_QT3D
       t3_y_axis_rt = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
       yax->addChild(t3_y_axis_rt);
@@ -1325,8 +1374,12 @@ void GraphTableView::RenderAxes() {
       
       if(z_axis.on) {
 #ifdef TA_QT3D
-        t3_y_axis_far_rt = new T3Axis(yax, mainy, (T3Axis::Axis)mainy->axis, 
-                                      axis_font_size, width);
+        t3_y_axis_far_rt = yax->findChild<T3Axis*>("y_main_far_rt");
+        if(!t3_y_axis_far_rt) {
+          t3_y_axis_far_rt = new T3Axis(yax, mainy, (T3Axis::Axis)mainy->axis, 
+                                        axis_font_size, width);
+          t3_y_axis_far_rt->setObjectName("y_main_far_rt");
+        }
 #else // TA_QT3D
         t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
         yax->addChild(t3_y_axis_far_rt);
@@ -1429,7 +1482,8 @@ void GraphTableView::RenderLegend() {
   
 #ifdef TA_QT3D
   T3Entity* leg = node_so->legend;
-  leg->removeAllChildren();
+  const QObjectList& leg_ol = leg->children();
+  int leg_n = 0;
   leg->Translate
     (QVector3D(-0.5f * width, 0.5f * ylen + (0.3f + (float)n_down * 1.1f) * label_font_size,
                0.0f));
@@ -1461,7 +1515,15 @@ void GraphTableView::RenderLegend() {
       if (main_y_plots.size > 0) {  // only draw legend for y plot - all the same when color is by group
         GraphPlotView* pl = plots[main_y_plots[0]];
 #ifdef TA_QT3D
-        T3GraphLine* ln = new T3GraphLine(leg, pl, label_font_size, width);
+        T3GraphLine* ln = NULL;
+        if(leg_n < leg_ol.count()) {
+          ln = dynamic_cast<T3GraphLine*>(leg_ol.at(leg_n++));
+        }
+        if(!ln) {
+          ln = new T3GraphLine(leg, pl, label_font_size, width);
+          leg_n++;
+        }
+        ln->clear();
 #else // TA_QT3D
         T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
         leg->addChild(ln);
@@ -1496,7 +1558,15 @@ void GraphTableView::RenderLegend() {
     for(int i=0;i<main_y_plots.size;i++) {
       GraphPlotView* pl = plots[main_y_plots[i]];
 #ifdef TA_QT3D
-      T3GraphLine* ln = new T3GraphLine(leg, pl, label_font_size, width);
+      T3GraphLine* ln = NULL;
+      if(leg_n < leg_ol.count()) {
+        ln = dynamic_cast<T3GraphLine*>(leg_ol.at(leg_n++));
+      }
+      if(!ln) {
+        ln = new T3GraphLine(leg, pl, label_font_size, width);
+        leg_n++;
+      }
+      ln->clear();
 #else // TA_QT3D
       T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
       leg->addChild(ln);
@@ -1526,7 +1596,15 @@ void GraphTableView::RenderLegend() {
     for(int i=0;i<alt_y_plots.size;i++) {
       GraphPlotView* pl = plots[alt_y_plots[i]];
 #ifdef TA_QT3D
-      T3GraphLine* ln = new T3GraphLine(leg, pl, label_font_size, width);
+      T3GraphLine* ln = NULL;
+      if(leg_n < leg_ol.count()) {
+        ln = dynamic_cast<T3GraphLine*>(leg_ol.at(leg_n++));
+      }
+      if(!ln) {
+        ln = new T3GraphLine(leg, pl, label_font_size, width);
+        leg_n++;
+      }
+      ln->clear();
 #else // TA_QT3D
       T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
       leg->addChild(ln);
