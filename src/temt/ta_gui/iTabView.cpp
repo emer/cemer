@@ -274,15 +274,18 @@ void iTabView::panelSelected(int idx) {
   }
   // select the tree item that goes with the panel
   if (panel) {
-    taiSigLink* sig_link = panel->link();
-    if (sig_link) {
-      iTreeView* tree_view = viewerWindow()->GetMainTreeView();
-      if (tree_view) {
-        iTreeViewItem* item = tree_view->AssertItem(sig_link);
-        if (item) {  // if T3 panel item will be null
-          tree_view->setCurrentItem(item, 0, QItemSelectionModel::ClearAndSelect);
+    if (tbPanels->TabWasSelected()) {  // only do this selection if the user clicked on the tab
+      tbPanels->ClearTabWasSelected();
+      taiSigLink* sig_link = panel->link();
+      if (sig_link) {
+        iTreeView* tree_view = viewerWindow()->GetMainTreeView();
+        if (tree_view) {
+          iTreeViewItem* item = tree_view->AssertItem(sig_link);
+          if (item) {  // if T3 panel item will be null
+            tree_view->setCurrentItem(item, 0, QItemSelectionModel::ClearAndSelect);
+          }
+          tree_view->update();
         }
-        tree_view->update();
       }
     }
     wsPanels->setCurrentWidget(panel);
@@ -489,5 +492,3 @@ void iTabView::keyPressEvent(QKeyEvent* key_event) {
       QWidget::keyPressEvent(key_event);
   }
 }
-
-

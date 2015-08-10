@@ -39,9 +39,16 @@ public slots:
   // select the next tab in the list
   virtual void  selectPrevTab();
   // select the previous tab in the list
+  
+  virtual void  ClearTabWasSelected() { tab_was_selected = false; }
+  virtual bool  TabWasSelected() { return tab_was_selected; }
 
 protected:
-  void keyPressEvent(QKeyEvent* e) override;
+  void          keyPressEvent(QKeyEvent* e) override;
+  void          mouseReleaseEvent(QMouseEvent * event) override;
+  
+  bool          tab_was_selected;   // need to distinguish tab selection done by user and tab selection that is a by-product
+                                    // of some other action such as deletion of the corresponding tree item
 };
 
 #endif // iTabBarBase_h

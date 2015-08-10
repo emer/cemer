@@ -1,4 +1,4 @@
-// Copyright, 1995-2013, Regents of the University of Colorado,
+  // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -22,6 +22,7 @@
 
 
 iTabBarBase::iTabBarBase(QWidget* parent_) : inherited(parent_) {
+  tab_was_selected = false;
 }
 
 void iTabBarBase::selectNextTab() {
@@ -70,3 +71,11 @@ void iTabBarBase::keyPressEvent(QKeyEvent* key_event) {
       inherited::keyPressEvent(key_event);
   }
 }
+
+void iTabBarBase::mouseReleaseEvent(QMouseEvent * event) {
+  tab_was_selected = true;
+  inherited::mouseReleaseEvent(event);
+}
+
+
+
