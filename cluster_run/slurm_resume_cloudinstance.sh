@@ -7,6 +7,9 @@ echo "Calling resume.sh" $@
 
 HOSTNAMES=`scontrol show hostnames $@`
 
+#Make sure our VPN tunnel is open and working...
+ping -c 3 -W 1 172.31.1.1
+
 IFS=$'\n'
 for host in $HOSTNAMES
 do
