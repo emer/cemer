@@ -369,8 +369,12 @@ protected:
                                             bool quiet = false);
 
   virtual void          ComputeRowsTotal();
-  // recompute rows_total based on actual data 
-
+  // recompute rows_total based on actual data
+  
+  void                  AppendJsonErrorMsg(String msg);
+  // #IGNORE
+  void                  ClearJsonErrorMsg() { json_error_msg = ""; };
+  // #IGNORE
 public:
 
   /////////////////////////////////////////////////////////

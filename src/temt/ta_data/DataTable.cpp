@@ -2167,6 +2167,15 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
   strm << endl;
 }
 
+void DataTable::AppendJsonErrorMsg(String msg) {
+  if (json_error_msg.empty()) {
+    json_error_msg = msg;
+  }
+  else {
+    json_error_msg = json_error_msg + "; " + msg;
+  }
+}
+
 #if (QT_VERSION >= 0x050000)
 void DataTable::ExportDataJSON(const String& fname) {  // write the entire table to file
   // note: don't get file name when exporting
@@ -2191,25 +2200,25 @@ bool DataTable::GetDataMatrixCellAsJSON(QJsonObject& json_obj, const String& col
   }
   
   if (row <0 || row >= rows) {
-    json_error_msg += " row out of range;";
+   AppendJsonErrorMsg("row out of range");
     return false;
   }
   
   
   int col_idx = this->FindColNameIdx(column_name);
   if (col_idx == -1) {
-    json_error_msg += " column not found;";
+   AppendJsonErrorMsg("column not found");
     return false;
   }
   
   DataCol* dc = data.FastEl(col_idx);
   if (!dc->is_matrix) {
-    json_error_msg += " asking for a cell of non-matrix column;";
+   AppendJsonErrorMsg("asking for a cell of non-matrix column");
     return false;
   }
   
   if (cell <0 || cell >= dc->cell_size()) {
-    json_error_msg += " cell out of range error;";
+   AppendJsonErrorMsg("cell out of range error");
     return false;
   }
   
@@ -2241,15 +2250,16 @@ bool DataTable::GetDataMatrixCellAsJSON(QJsonObject& json_obj, const String& col
 }
 
 bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, int start_row, int n_rows) {
+  ClearJsonErrorMsg(); // reset the message
+
   QJsonArray columns;
-  
   int stop_row;
   if (start_row < 0) {
     start_row = rows + start_row;  // so for -1 you get the last row
   }
   
   if (start_row < 0 || start_row > rows) {  // start_row could still be negative if we were passed -20 when there were only 10 rows
-    json_error_msg += " row out of range;";
+   AppendJsonErrorMsg("row out of range");
     return false;
   }
   
@@ -2270,7 +2280,7 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
   else {
     int col_idx = this->FindColNameIdx(column_name);
     if (col_idx == -1) {
-      json_error_msg += " column not found;";
+     AppendJsonErrorMsg("column not found");
       return false;
     }
     else {
@@ -3017,7 +3027,8 @@ void DataTable::ImportDataJSONString(const String& json_as_string) {
 }
 
 bool DataTable::SetDataFromJSON(const QJsonObject& root_object, int start_row, int start_cell) { // // row -1 means append, anything else overwrites starting at row
-  json_error_msg = ""; // reset the message
+  ClearJsonErrorMsg(); // reset the message
+  
   bool any_errors = false;
   bool has_column_node = false;
   QJsonObject::const_iterator obj_iter = root_object.constBegin();
@@ -3053,7 +3064,7 @@ bool DataTable::SetDataFromJSON(const QJsonObject& root_object, int start_row, i
     }
   }
   else {
-    json_error_msg += " No 'column' member' in data;";
+   AppendJsonErrorMsg("No 'column' member' in data");
     return false;
   }
   return !any_errors;
@@ -3091,12 +3102,12 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
   }
 
   if (columnName.empty()) {
-    json_error_msg += " Column member 'name' not found;";
+   AppendJsonErrorMsg("Column member 'name' not found");
     return false;
   }
   
   if (theValues.empty()) {
-    json_error_msg += " values empty;";
+   AppendJsonErrorMsg("values empty");
     return false;
   }
   
@@ -3109,7 +3120,7 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
     }
     else {
       if (theDimensions.empty()) {
-        json_error_msg += " matrix dimensions empty;";
+       AppendJsonErrorMsg("matrix dimensions empty");
         return false;
       }
       
@@ -3227,11 +3238,11 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
 
     
     if (start_cell < 0 || start_cell > (mg.Product()*rowCount)) {
-      json_error_msg += " cell range error;";
+     AppendJsonErrorMsg("cell range error");
       return false;
     }
     if (valueCount + start_cell > (mg.Product()*rowCount)) {
-      json_error_msg += " more values than cells;";
+     AppendJsonErrorMsg("more values than cells");
       return false;
     }
     
