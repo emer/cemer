@@ -188,8 +188,8 @@ void taiTreeNodeTaBasePar::SigEmit_impl(int sls, void* op1_, void* op2_) {
     moveChild(fm_idx, to_idx);
     // only scroll to it if parent is visible
     if(tv) {
-      if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
-	tv->scrollTo(moved_node);
+//      if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
+//	tv->scrollTo(moved_node);
       tv->EmitTreeStructUpdated();
     }
     break;
