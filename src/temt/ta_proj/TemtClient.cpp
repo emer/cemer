@@ -37,6 +37,7 @@
 #include <QJsonDocument>
 #include <QJsonParseError>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QJsonValue>
 #endif
 
@@ -1593,9 +1594,10 @@ bool TemtClient::ValidateJSON_ColumnNames(DataTable* dt, const QJsonObject& n) {
   }
   
   if (has_column_node) {
-    QJsonObject::const_iterator columns = i.value().toObject().constBegin();
-    while (columns != i.value().toObject().constEnd() && rval == true) {
-      const QJsonObject aCol = columns.value().toObject();
+    QJsonArray::const_iterator columns = i.value().toArray().constBegin();
+    while (columns != i.value().toArray().constEnd() && rval == true) {
+      QJsonValue value = *columns;
+      const QJsonObject aCol = value.toObject();
       rval = ValidateJSON_ColumnName(dt, aCol);
       if (!rval)
         break;
