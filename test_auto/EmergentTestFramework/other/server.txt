@@ -414,7 +414,7 @@ GetDataTableCell Column Not Found Error
 
 GetDataMatrixCell Column Not Found Error
     ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn", "cell": 12}
-    Status Error Match         ${output}             7                  GetDataMatrixCell: column not found
+    Status Error Match         ${output}             7                  GetDataMatrixCell: column not found; column not found
 
 AppendData Column Not Found Error
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
