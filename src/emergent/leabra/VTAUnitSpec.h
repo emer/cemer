@@ -78,7 +78,7 @@ private:
 eTypeDef_Of(VTAUnitSpec);
 
 class E_API VTAUnitSpec : public LeabraUnitSpec {
-  // Models the Ventral Tegmental Area: computes PVLV dopamine (Da) signal from PPTg and LHbRMTg input projections, and also a direct input from a positive valence PV layer, and shunting inhibition from VS Patch Indirect -- uses deep_qtr to determine when to send dopamine values
+  // Models DA cells of the Ventral Tegmental Area: if DA_P models classic Schultzian behavior and computes PVLV dopamine (Da) signal from PPTg and LHbRMTg input projections, and also a direct input from a positive valence PV layer, and shunting inhibition from VS Patch Indirect -- uses deep_qtr to determine when to send dopamine values; if DA_N models newly discovered small subpopulation that bursts for negative valence and projects to ONLY dedicated fear-related circuits
 INHERITED(LeabraUnitSpec)
 public:
   enum  DaValence {             // which valence of dopamine should we compute?
@@ -94,10 +94,13 @@ public:
   virtual void  Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // compute the da value based on recv projections from PPTg and LHbRMTg
 
-  virtual bool  GetRecvLayers(LeabraUnit* u,
+  virtual bool  GetRecvLayers_P(LeabraUnit* u,
                               LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,
                               LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay);
-  // get the recv layers..
+    // get the recv layers to VTAp (DA_P case)
+  
+  virtual bool  GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay);
+  // get the recv layers to VTAn (DA_N case)
 
   void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
   void	Compute_ApplyInhib
