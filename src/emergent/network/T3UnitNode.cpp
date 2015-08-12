@@ -41,7 +41,7 @@ T3UnitNode::~T3UnitNode() {
 
 void T3UnitNode::setAppearance(NetView* nv, float act, const iColor& clr, float max_z) {
   bool act_invalid = false;
-  if (isnan(act) || isinf(act)) {
+  if (taMath_float::isnan(act)) {
     act_invalid = true;
     act = 0.0f;
   }
@@ -116,7 +116,7 @@ T3UnitNode::~T3UnitNode()
 
 void T3UnitNode::setAppearance(NetView* nv, float act, const iColor& color, float max_z) {
   bool act_invalid = false;
-  if (isnan(act) || isinf(act)) {
+  if (taMath_float::isnan(act)) {
     act_invalid = true;
     act = 0.0f;
   }
