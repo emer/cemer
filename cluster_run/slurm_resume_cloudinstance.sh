@@ -15,6 +15,16 @@ for host in $HOSTNAMES
 do
   echo "Starting " $host
   logger "Starting " $host
-  python /etc/slurm-llnl/launch_ec2_instance.py $host
+  python /etc/slurm-llnl/launch_ec2_instance.py $host &
 done
 
+jobs=`jobs -p`
+echo $jobs
+
+for job in $jobs
+do
+  echo "Waiting for " + $job
+  wait $job || let "FAIL+=1"
+done
+
+echo $FAIL

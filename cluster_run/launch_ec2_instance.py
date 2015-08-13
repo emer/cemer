@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-import sys, subprocess, re, time, bsddb, json, syslog
+import sys, subprocess, re, time, json, syslog, bsddb3
 
 ################################
 # These variables are user specific and need to be adjusted to the users EC2 account
 ################################
 basedir="/var/lib/slurm-llnl/"
 
-ec2_ami = "ami-d17278e1"
+ec2_ami = "ami-97e4eea7"
 ec2_sg = ""
 ec2_sshkey = "standard_key"
 ec2_region = "us-west-2"
@@ -18,20 +18,27 @@ ec2_3xl_price = "0.10"
 ################################
 ################################
 
- 
-
 #Test to see if the host is already launch and if not register the name in a persistend database to keep track of which slurm names fit with which ec2 instance ids
-db = bsddb.hashopen(basedir + 'ec2instances.db', 'c')
+
+db =  bsddb3.db.DB()
+db.set_cachesize(1,0)
+db.open(basedir + 'ec2instances.db', None, bsddb3.db.DB_HASH, bsddb3.db.DB_CREATE)
+#db = bsddb.hashopen(basedir + 'ec2instances.db', 'c')
+
+print db
+
 
 syslog.syslog(str(db.keys()))
 print str(db.keys())
 
 if (sys.argv[1] in db):
-    syslog.syslog("Instance already launched " + sys.argv[1])
+    syslog.syslog("Instance already launched" + sys.argv[1])
     print db[sys.argv[1]]
+    db.sync()
+    db.close()
     exit()
 else:
-    syslog.syslog("Launching new instance " + sys.argv[1])
+    syslog.syslog("Launching new instance" + sys.argv[1])
     db[sys.argv[1]] = "launching"
     db.sync()
 
@@ -94,6 +101,7 @@ elif sys.argv[1].startswith("ec2-mpis-"):
     instance_name = launch_spot(sys.argv[1], "c4.8xlarge",0.50)
 else:
     syslog.syslog("Using an instance type we don't know about, failing")
+    db.close()
     exit(1)
 
 
@@ -136,8 +144,11 @@ while (True):
         server_info["publicip"] = publicip
         server_info["privateip"] = privateip
 
+        db.sync()
         db[sys.argv[1]] = json.dumps(server_info)
+        db.sync()
         syslog.syslog(db[sys.argv[1]])
 
         break
     time.sleep(10)
+db.close()
