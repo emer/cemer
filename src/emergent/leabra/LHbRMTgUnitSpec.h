@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class LeabraLayer; //
 
 eTypeDef_Of(LHbRMTgGains);
 
@@ -56,8 +57,23 @@ class E_API LHbRMTgUnitSpec : public LeabraUnitSpec {
 INHERITED(LeabraUnitSpec)
 public:
   LHbRMTgGains   gains;         // gain parameters (multiplicative constants) for various sources of inputs
-
-  void	Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  virtual void	Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // compute the LHb value based on recv projections from VSMatrix_dir/ind, VSPatch_dir/ind, and PV_pos/neg
+  
+  virtual bool  GetRecvLayers(LeabraUnit* u,
+                              LeabraLayer*& patch_dir_lay,
+                              LeabraLayer*& patch_ind_lay,
+                              LeabraLayer*& matrix_dir_lay,
+                              LeabraLayer*& matrix_ind_lay,
+                              LeabraLayer*& pv_pos_lay,
+                              LeabraLayer*& pv_neg_lay);
+  // get the recv layers..
+  
+  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_ApplyInhib(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no,
+                           LeabraLayerSpec* lspec, LeabraInhib* thr, float ival) override { };
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void	Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   bool  CheckConfig_Unit(Unit* un, bool quiet=false) override;
