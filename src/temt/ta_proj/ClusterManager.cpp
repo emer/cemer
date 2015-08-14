@@ -899,8 +899,15 @@ ClusterManager::ShowRepoDialog()
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("notesLbl", widget, row, "label=* Notes: ;");
   dlg.AddStringField(&m_cluster_run.notes, "notes", widget, row,
-    "tooltip=Notes about this run, used as a checkin comment and visible in job lists -- very good idea to be specific here.;");
-
+                     "tooltip=Notes about this run, used as a checkin comment and visible in job lists -- very good idea to be specific here.;");
+  
+  row = "labelRow";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("labelLbl", widget, row, "label=Label: ;");
+  dlg.AddStringField(&m_cluster_run.label, "label", widget, row,
+                     "tooltip=A label that can be used when plotting data to distinguish this run from another;");
+  
   row = "queueRow";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
