@@ -25,8 +25,8 @@
 
 taiWidgetListElChooser::taiWidgetListElChooser(TypeDef* typ_, IWidgetHost* host,
 				   taiWidget* par, QWidget* gui_parent_, int flags_,
-				   const String& flt_start_txt)
- :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
+				   const String& flt_start_txt, int button_width)
+ :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt, button_width)
 {
   list = NULL;
 }

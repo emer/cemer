@@ -44,9 +44,11 @@ class TA_API iViewPanelOfGraphTable: public iViewPanelOfDataTable {
   Q_OBJECT
 INHERITED(iViewPanelOfDataTable)
 public:
-  static const int      max_plots = 64; // maximum number of y axis data plots that can be displayed in the control panel
-
-  QHBoxLayout*            layTopCtrls;
+  static const int          max_plots = 64; // maximum number of y axis data plots that can be displayed in the control panel
+  static const int          axis_chooser_width;
+  static const int          axis_label_width;
+  
+  QHBoxLayout*              layTopCtrls;
   QCheckBox*                chkDisplay;
   QCheckBox*                chkManip;
   QLabel*                   lblGraphType;
@@ -97,10 +99,10 @@ public:
   QLabel*                   lblcellZAxis;
   taiWidgetFieldIncr*       cellZAxis; // matrix cell
 
-  iStripeWidget*          plotsWidg; // plot holding widget
-  iFormLayout*            layPlots; // all the plots
-  int                     cur_built_plots; // number of plots that are currently built
-  int                     row_height;
+  iStripeWidget*            plotsWidg; // plot holding widget
+  iFormLayout*              layPlots; // all the plots
+  int                       cur_built_plots; // number of plots that are currently built
+  int                       row_height;
 
   QHBoxLayout*            layYAxis[max_plots];
   iCheckBox*                oncYAxis[max_plots];
@@ -151,20 +153,20 @@ public:
   ~iViewPanelOfGraphTable();
 
 protected:
-  void         InitPanel_impl() override; // called on structural changes
-  void         UpdatePanel_impl() override; // called on structural changes
-  void         GetValue_impl() override;
-  void         CopyFrom_impl() override;
-  virtual bool          BuildPlots();
+  void              InitPanel_impl() override; // called on structural changes
+  void              UpdatePanel_impl() override; // called on structural changes
+  void              GetValue_impl() override;
+  void              CopyFrom_impl() override;
+  virtual bool      BuildPlots();
 
 public: // ISigLinkClient interface
-  void*        This() override {return (void*)this;}
-  TypeDef*     GetTypeDef() const override {return &TA_iViewPanelOfGraphTable;}
+  void*             This() override {return (void*)this;}
+  TypeDef*          GetTypeDef() const override {return &TA_iViewPanelOfGraphTable;}
 
 protected slots:
-  void          butRefresh_pressed();
-  void          butClear_pressed();
-  void          butSetColor_pressed();
+  void              butRefresh_pressed();
+  void              butClear_pressed();
+  void              butSetColor_pressed();
 
 };
 

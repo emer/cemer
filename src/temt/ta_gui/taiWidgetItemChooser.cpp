@@ -27,7 +27,7 @@
 taiWidgetItemChooser::taiWidgetItemChooser(TypeDef* typ_,
                                IWidgetHost* host_, taiWidget* par,
                                QWidget* gui_parent_, int flags_,
-                               const String& flt_start_txt)
+                               const String& flt_start_txt, int button_width)
   : taiWidget(typ_, host_, par, gui_parent_, flags_)
 {
   item_filter = NULL;
@@ -58,6 +58,9 @@ taiWidgetItemChooser::taiWidgetItemChooser(TypeDef* typ_,
   }
   else {
     m_but = new QToolButton(gui_parent_);
+    if (button_width != -1) {
+      m_but->setFixedWidth(button_width);
+    }
     SetRep(m_but);
   }
   taiM->FormatButton(m_but, _nilString, defSize());

@@ -114,7 +114,7 @@ protected:
 
   taiWidgetItemChooser(TypeDef* typ_, IWidgetHost* host,
                  taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
-                 const String& flt_start_txt = ""); // typ_
+                 const String& flt_start_txt = "", int button_width = -1); // typ_
 };
 
 #endif // taiWidgetItemChooser_h

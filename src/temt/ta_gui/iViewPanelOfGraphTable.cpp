@@ -35,6 +35,9 @@
 #include <QCheckBox>
 #include <QPushButton>
 
+const int iViewPanelOfGraphTable::axis_chooser_width = 160;
+const int iViewPanelOfGraphTable::axis_label_width = 25;
+
 String iViewPanelOfGraphTable::panel_type() const {
   static String str("Graph Log");
   return str;
@@ -200,9 +203,11 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   int list_flags = taiWidget::flgNullOk | taiWidget::flgAutoApply | taiWidget::flgNoHelp;
 
   lblXAxis = taiM->NewLabel("X:", widg, font_spec);
+  lblXAxis->setFixedWidth(axis_label_width);
   lblXAxis->setToolTip(taiMisc::ToolTipPreProcess("Column of data to plot for the X Axis"));
   layXAxis->addWidget(lblXAxis);
-  lelXAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
+  String start_text = "";
+  lelXAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags, start_text, axis_chooser_width));
   layXAxis->addWidget(lelXAxis->GetRep());
 
   rncXAxis = new QCheckBox("Row\nNum", widg); rncXAxis->setObjectName("rncXAxis");
@@ -227,9 +232,10 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layZAxis = new QHBoxLayout; layWidg->addLayout(layZAxis);
 
   lblZAxis = taiM->NewLabel("Z:", widg, font_spec);
+  lblZAxis->setFixedWidth(axis_label_width);
   lblZAxis->setToolTip(taiMisc::ToolTipPreProcess("Column of data to plot for the Z Axis"));
   layZAxis->addWidget(lblZAxis);
-  lelZAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
+  lelZAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags, start_text, axis_chooser_width));
   layZAxis->addWidget(lelZAxis->GetRep());
   layZAxis->addSpacing(taiM->hsep_c);
 
@@ -418,11 +424,13 @@ bool iViewPanelOfGraphTable::BuildPlots() {
 
     String lbl = "Y" + String(i+1) + ":";
     lblYAxis[i] = taiM->NewLabel(lbl, widg, font_spec);
+    lblYAxis[i]->setFixedWidth(axis_label_width);
     lblYAxis[i]->setToolTip(taiMisc::ToolTipPreProcess("Column of data to plot (optional)"));
     lblYAxis[i]->setFixedHeight(row_height);
     layYAxis[i]->addWidget(lblYAxis[i]);
-    lelYAxis[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg,
-                                                    list_flags));
+    // fix the button width so all of the checkboxes and other control align
+    String start_text = "";
+    lelYAxis[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags, start_text, axis_chooser_width));
     QWidget* lw = lelYAxis[i]->GetRep();
     lw->setFixedHeight(row_height);
     layYAxis[i]->addWidget(lw);

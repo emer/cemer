@@ -38,7 +38,7 @@ public:
 
   taiWidgetListElChooser(TypeDef* typ, IWidgetHost* host, taiWidget* par,
                    QWidget* gui_parent_, int flags_ = 0,
-                   const String& flt_start_txt = ""); //note: typ is type of list
+                   const String& flt_start_txt = "", int button_width = -1); //note: typ is type of list
 };
 
 #endif // taiWidgetListElChooser_h

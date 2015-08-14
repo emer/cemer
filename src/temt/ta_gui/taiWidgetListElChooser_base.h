@@ -37,7 +37,7 @@ public:
 
   taiWidgetListElChooser_base(TypeDef* typ_, IWidgetHost* host,
                        taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
-                       const String& flt_start_txt = "");
+                       const String& flt_start_txt = "", int button_width = -1);
 protected:
   const String          labelNameNonNull() const;
 
