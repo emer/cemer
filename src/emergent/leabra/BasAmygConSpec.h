@@ -46,12 +46,17 @@ public:
     (float& dwt, const float su_act, const float ru_act,
      const float da_p, const float da_n) {
     dwt += cur_lrate * su_act * ru_act * (GetDa(da_p) +  GetDa(da_n));
+      // when BA_ext suppresses during extinction, ru_act == 0.0f will prevent learning
+      //LTD fm phaDA dips/extinction should be weaker than LTP fm phaDA bursts/acquisition - the latter is known to be fast, particularly fear cond.
   }
   // #IGNORE acquisition
   inline void C_Compute_dWt_BasAmyg_Ext
     (float& dwt, const float su_act, const float lrnmod,
      const float da_p, const float da_n) {
     dwt += cur_lrate * su_act * lrnmod * (GetDa(-da_p) + GetDa(-da_n));
+//      dwt += cur_lrate * su_act * (GetDa(-da_p) + GetDa(-da_n));
+      // lrnmod makes dependent on occurrence of PosPV/NegPV; but then how learn fm phaDA dips? A: BA_acq also uses LearnModUnitSpec and presummably passes lrnmod via its MarkerCon
+      //no ru_act dependence could promote bootstrapped learning - but non-specific as to US-modality (food, H2O, etc.)?
   }
   // #IGNORE extinction
 
