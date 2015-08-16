@@ -553,8 +553,12 @@ void iTreeView::ItemDestroyingCb(iTreeViewItem* item) {
   if(selItems().FindEl((ISelectable*)item) >= 0) {
     // if we are selected, select next guy..
     QTreeWidgetItem* nxt = getNextItem(item);
-    if(nxt)
+    if (!nxt) {
+      nxt = getPrevItem(item);
+    }
+    if(nxt) {
       selectItem(nxt);
+    }
     RemoveSelectedItem((ISelectable*)item, false); // not forced, because it is gui
   }
 }
