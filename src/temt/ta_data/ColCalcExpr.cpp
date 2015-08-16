@@ -75,6 +75,10 @@ String ColCalcExpr::GetName() const {
   return _nilString;
 }
 
+String ColCalcExpr::GetDisplayName() const {
+  return GetFullExpr();
+}
+
 String ColCalcExpr::GetFullExpr() const {
   return expr;
 }
