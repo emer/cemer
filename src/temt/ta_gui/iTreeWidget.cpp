@@ -370,6 +370,14 @@ QTreeWidgetItem* iTreeWidget::getPrevItem(QTreeWidgetItem* itm, int n_up) const 
   return itemFromIndex(pi);
 }
 
+QTreeWidgetItem* iTreeWidget::GetParentItem(QTreeWidgetItem* itm) const {
+  QModelIndex mi = indexFromItem(itm);
+  QModelIndex pi = mi.parent();
+  if(!pi.isValid())
+    return NULL;
+  return itemFromIndex(pi);
+}
+
 QTreeWidgetItem* iTreeWidget::getNextItem(QTreeWidgetItem* itm, int n_dn) const {
   QModelIndex mi = indexFromItem(itm);
   QModelIndex pi = mi.sibling(mi.row()+n_dn, mi.column());

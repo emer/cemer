@@ -555,6 +555,12 @@ void iTreeView::ItemDestroyingCb(iTreeViewItem* item) {
     QTreeWidgetItem* nxt = getNextItem(item);
     if (!nxt) {
       nxt = getPrevItem(item);
+      if (nxt && nxt->isHidden()) {
+        nxt = NULL;
+      }
+    }
+    if (!nxt) {
+      nxt = GetParentItem(item);
     }
     if(nxt) {
       selectItem(nxt);

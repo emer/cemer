@@ -31,91 +31,88 @@ class TA_API iTreeWidget: public QTreeWidget {
 INHERITED(QTreeWidget)
   Q_OBJECT
 public:
-  int           move_after_edit; // direction to move after edit
-  int           edit_start_pos;  // position to start when editing
-  bool          edit_start_kill; // kill to end of line at edit start?
+  int               move_after_edit; // direction to move after edit
+  int               edit_start_pos;  // position to start when editing
+  bool              edit_start_kill; // kill to end of line at edit start?
 
-  bool		hasHighlightColor(int idx) const;
-  void		setHighlightColor(int idx, const QColor& base);
+  bool              hasHighlightColor(int idx) const;
+  void              setHighlightColor(int idx, const QColor& base);
     // synthesizes the darker highlight color
-  void		setHighlightColor(int idx, const QColor& base,  const QColor& hilight);
+  void              setHighlightColor(int idx, const QColor& base,  const QColor& hilight);
     // sets the color for idx >= 1 (0 undefined); base should be fairly light, hilight darker, if NULL, then it is computed
     
-  bool		highlightRows() const {return m_highlightRows;}
+  bool              highlightRows() const {return m_highlightRows;}
     // whether we use the highlight information from items
-  void		setHighlightRows(bool value);
+  void              setHighlightRows(bool value);
 
-  bool		siblingSel() const {return m_sibling_sel;}
+  bool              siblingSel() const {return m_sibling_sel;}
   // whether we enforce sibling-only selection
-  void		setSiblingSel(bool value);
-  QModelIndex   indexFromItem(QTreeWidgetItem* itm, int column = 0) const;
+  void              setSiblingSel(bool value);
+  QModelIndex       indexFromItem(QTreeWidgetItem* itm, int column = 0) const;
   // get the model index of this item -- promoting this function to public
-  bool          selectItem(QTreeWidgetItem* itm, int column = 0);
+  bool              selectItem(QTreeWidgetItem* itm, int column = 0);
   // select given item
-  QTreeWidgetItem* getPrevItem(QTreeWidgetItem* itm, int n_up = 1) const;
+  QTreeWidgetItem*  getPrevItem(QTreeWidgetItem* itm, int n_up = 1) const;
   // get the previous item in the tree before given itm, if avail
-  QTreeWidgetItem* getNextItem(QTreeWidgetItem* itm, int n_dn = 1) const;
+  QTreeWidgetItem*  getNextItem(QTreeWidgetItem* itm, int n_dn = 1) const;
   // get the next item in the tree after given itm, if avail
+  QTreeWidgetItem*  GetParentItem(QTreeWidgetItem* itm) const;
+  // get the parent item in the tree for given itm, if avail
 
-  void 		resizeColumnsToContents(); // convenience: resizes all but last col
-  virtual void	clearExtSelection();	   // clear extended selection mode and also clear any existing selection
+  void              resizeColumnsToContents(); // convenience: resizes all but last col
+  virtual void      clearExtSelection();	   // clear extended selection mode and also clear any existing selection
 
 #ifndef __MAKETA__
-  void 		scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible);
-  void		scrollTo(QTreeWidgetItem* item, ScrollHint hint = EnsureVisible);
+  void              scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible);
+  void              scrollTo(QTreeWidgetItem* item, ScrollHint hint = EnsureVisible);
 #endif
 
-  void 	keyboardSearch(const QString &search) override;
+  void              keyboardSearch(const QString &search) override;
   
   iTreeWidget(QWidget* parent = 0);
   ~iTreeWidget();
   
 signals:
-  void 		contextMenuRequested(QTreeWidgetItem* item, const QPoint& pos, int col);
-  void          itemEdited(const QModelIndex& index, int move_after = 0) const;
+  void              contextMenuRequested(QTreeWidgetItem* item, const QPoint& pos, int col);
+  void              itemEdited(const QModelIndex& index, int move_after = 0) const;
   // signal when given item was edited -- emitted by itemWasEdited slot -- move_after is direction to move down (+1) or up (-1) or nowhere 0
 
 public slots:
-  virtual void  itemWasEdited(const QModelIndex& index) const;
+  virtual void      itemWasEdited(const QModelIndex& index) const;
   // called by delegate when item data at given index was edited
-  virtual void  lookupKeyPressed(iLineEdit* le) const;
+  virtual void      lookupKeyPressed(iLineEdit* le) const;
   // called by editor for lookup key
 
 protected:
   DropIndicatorPosition drop_ind; // we capture this from the dragMove event
-  QPoint		drop_pos; // we capture this from the drop event
-  int			key_mods; // we captur this from the drop event
-  bool			m_highlightRows;
-  bool			m_sibling_sel; // if true, only siblings (items at same level) can be selected -- items at different levels of the tree will not be selected -- true by default
-  bool			ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
-  mutable void*		m_highlightColors; // a QMap
-  int                   scrollTimerId;
+  QPoint            drop_pos; // we capture this from the drop event
+  int               key_mods; // we captur this from the drop event
+  bool              m_highlightRows;
+  bool              m_sibling_sel; // if true, only siblings (items at same level) can be selected -- items at different levels of the tree will not be selected -- true by default
+  bool              ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
+  mutable void*     m_highlightColors; // a QMap
+  int               scrollTimerId;
   
-  void*		highlightColors() const; // insures map exists
-  void 	        drawRow(QPainter* painter, const QStyleOptionViewItem& option,
-                        const QModelIndex& index) const override;
-  void 	        dragMoveEvent(QDragMoveEvent* ev) override;
-  void		dropEvent(QDropEvent* e) override;
-  bool 	        dropMimeData(QTreeWidgetItem* parent, int index, 
-                             const QMimeData* data, Qt::DropAction action) override;
+  void*             highlightColors() const; // insures map exists
+  void              drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+  void              dragMoveEvent(QDragMoveEvent* ev) override;
+  void              dropEvent(QDropEvent* e) override;
+  bool              dropMimeData(QTreeWidgetItem* parent, int index, const QMimeData* data, Qt::DropAction action) override;
   // we always delegate to the item, and always return false (we handle item manipulation manually)
-  void 	        contextMenuEvent(QContextMenuEvent* e) override;
-  void		doItemExpanded(QTreeWidgetItem* item, bool expanded);
-  void          timerEvent(QTimerEvent* e) override;
-  Qt::DropActions supportedDropActions() const;
-  void 		setSelection(const QRect &rect,
-			     QItemSelectionModel::SelectionFlags command);
+  void              contextMenuEvent(QContextMenuEvent* e) override;
+  void              doItemExpanded(QTreeWidgetItem* item, bool expanded);
+  void              timerEvent(QTimerEvent* e) override;
+  Qt::DropActions   supportedDropActions() const;
+  void              setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command);
   // this is workaround for drag scrolling bug in qt5.2
-  virtual  void dragScroll();
-
-  void 	        keyPressEvent(QKeyEvent* e) override;
-  // bool          event(QEvent* ev) override;
+  virtual void      dragScroll();
+  void              keyPressEvent(QKeyEvent* e) override;
 
 protected slots:
-  void		this_itemExpanded(QTreeWidgetItem* item);
-  void		this_itemCollapsed(QTreeWidgetItem* item);
+  void              this_itemExpanded(QTreeWidgetItem* item);
+  void              this_itemCollapsed(QTreeWidgetItem* item);
 private:
-  void		init();
+  void              init();
 };
 
 class TA_API iTreeWidgetDefaultDelegate: public QStyledItemDelegate {
@@ -123,18 +120,18 @@ class TA_API iTreeWidgetDefaultDelegate: public QStyledItemDelegate {
 INHERITED(QStyledItemDelegate)
 Q_OBJECT
 public:
-  iTreeWidget*   own_tree_widg;
+  iTreeWidget*      own_tree_widg;
  
   iTreeWidgetDefaultDelegate(iTreeWidget* own_tw);
 
-  QWidget*     createEditor(QWidget *parent,
+  QWidget*          createEditor(QWidget *parent,
                             const QStyleOptionViewItem &option,
                             const QModelIndex &index) const override;
 
-  void         setModelData(QWidget* editor, QAbstractItemModel* model,
+  void              setModelData(QWidget* editor, QAbstractItemModel* model,
                             const QModelIndex& index) const override;
 
-  bool          eventFilter(QObject *object, QEvent *event);
+  bool               eventFilter(QObject *object, QEvent *event);
 };
 
 #endif // iTreeWidget_h
