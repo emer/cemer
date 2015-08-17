@@ -920,7 +920,7 @@ void NetView::InitDisplay(bool init_panel) {
 
   hist_reset_req = false;       // this flag is used to sync history index resetting among
                                 // all the history elements in unit groups and network
-  InitCtrHist();
+//  InitCtrHist();
 
   if (init_panel) {
     InitPanel();
@@ -1795,7 +1795,8 @@ void NetView::setUnitSrc(UnitView* uv, Unit* unit) {
       uv->picked = true;
     unit_src_path = unit_src->GetPath(NULL, net());
   }
-  hist_idx = 0;                 // reset index to current time for new unit selection
+  // Rohrlich 8/16/2015 - reset reported as bug and I agree - can't see why we would reset history here
+//  hist_idx = 0;    // reset index to current time for new unit selection
 }
 
 void NetView::setUnitDisp(int value) {
