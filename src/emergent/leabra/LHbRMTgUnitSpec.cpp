@@ -28,6 +28,7 @@ void LHbRMTgGains::Initialize() {
   patch_ind = 1.0f;
   matrix = 1.0f;
   matrix_td = false;
+  min_pvneg = 0.1f;
   rec_data = false;
 }
 
@@ -35,6 +36,16 @@ void LHbRMTgGains::Defaults_init() {
 }
 
 void LHbRMTgUnitSpec::Initialize() {
+    SetUnique("deep_qtr", true);
+    deep_qtr = Q4;
+    SetUnique("act_range", true);
+    act_range.max = 2.0f;
+    act_range.min = -2.0f;
+    act_range.UpdateAfterEdit();
+    SetUnique("clamp_range", true);
+    clamp_range.max = 2.0f;
+    clamp_range.min = -2.0f;
+    clamp_range.UpdateAfterEdit();
 }
 
 void LHbRMTgUnitSpec::Defaults_init() {
@@ -242,16 +253,8 @@ bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u,                             L
   return true;
 }
 
-
-
-
-
-
-//void LHbRMTgUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+// modeled after VTAUnitSpec::Compute_da()
 void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-// Model this whole fn after VTAUnitSpec::Compute_da()
-  // take act_eq.avg of sending layers
-  //
   LeabraLayer* patch_dir_lay = NULL;
   LeabraLayer* patch_ind_lay = NULL;
   LeabraLayer* matrix_dir_lay = NULL;
@@ -269,7 +272,6 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   float pv_pos = pv_pos_lay->acts_eq.avg;
   float pv_neg = pv_neg_lay->acts_eq.avg;
   
-  
 //  float pospv_da = pospv - da.pvi_gain * vspvi; // higher pvi_gain == more shunting
 //  // probably need a lhb_gains class and object to hold individual gain params
 //  float pospv_lhb = MAX(pv_pos, matrix_dir) - patch_dir;
@@ -280,6 +282,9 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   float net_lhb = (gains.patch_dir * patch_dir) - (gains.patch_ind * patch_ind) + gains.matrix * (matrix_ind - matrix_dir) + pv_neg - pv_pos;
   
+  if(pv_neg >= 0.01f) { // only if actual PVNeg occurs
+    net_lhb = MAX(net_lhb, gains.min_pvneg * pv_neg);
+  }
   net_lhb *=gains.all;
   // TODO: tweak the gains.params here and for initialization, defaults, etc.
   
@@ -291,8 +296,6 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   u->act_eq = u->act_nd = u->act = u->net = u->ext = net_lhb;
   
   //u->da = 0.0f;
-  
-  
   
  ///////////////////////////
 //  int nt = net->n_thrs_built;
@@ -383,6 +386,7 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
     lay->SetUserData("matrix_dir", matrix_dir);
     lay->SetUserData("matrix_ind", matrix_ind);
     //lay->SetUserData("matrix_net", matrix_net);
+    lay->SetUserData("net_lhb", net_lhb);
   }
 }
 

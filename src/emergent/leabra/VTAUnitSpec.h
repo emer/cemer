@@ -32,8 +32,10 @@ INHERITED(SpecMemberBase)
 public:
   float         da_gain;        // #DEF_0:2 #MIN_0 multiplier for dopamine values
   float         tonic_da;       // #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
-  float         burst_gain;     // #DEF_1 gain on bursts from PPTg
-  float         dip_gain;       // #DEF_1 gain on dips from LHbRMTg
+  float         pptg_gain;     // #DEF_1 gain on bursts from PPTg
+  //TODO: probably need separate pptg_p and pptg_n_ gain factors
+  
+  float         lhb_gain;       // #DEF_1 gain on dips from LHbRMTg
   float         pv_gain;        // #DEF_1 gain on positive PV component of total phasic DA signal (net after subtracting VSPatchIndir (PVi) shunt signal)
   float         pv_thr;         // #DEF_0.1 threshold on pv max act for setting pv_detected
   float         pvi_gain;       // #DEF_1 gain on VSPatchIndir (PVi) shunt signal - higher pvi_gain == more shunting
@@ -58,7 +60,7 @@ class E_API LVBlockSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         pos_pv;         // #DEF_2;5 down-regulate LV by factor of: (1 - pos_pv * pv) for positive pv signals (e.g., from LHA etc) -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
-  float         dip;            // #DEF_2 down-regulate LV by factor of: (1 - dip * lhb_rmtg) for da dip signals coming from the LHbRMTg sytem -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
+  float         lhb_dip;            // #DEF_2 down-regulate LV by factor of: (1 - dip * lhb_rmtg) for da dip signals coming from the LHbRMTg sytem -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
   bool          rec_data;       // record all the internal computations in user data on the VTA layer
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
@@ -99,7 +101,7 @@ public:
                               LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay);
     // get the recv layers to VTAp (DA_P case)
   
-  virtual bool  GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay);
+  virtual bool  GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay, LeabraLayer*& pptg_lay_n);
   // get the recv layers to VTAn (DA_N case)
 
   void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
