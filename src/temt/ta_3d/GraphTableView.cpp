@@ -171,7 +171,7 @@ void GraphTableView::Initialize() {
   
   graph_type = XY;
   plot_style = LINE;
-  line_width = 2.0f;
+  line_width = 1.0f;
   dev_pix_ratio = 1.0f;
   point_size = .01f;
   point_spacing = 1;
