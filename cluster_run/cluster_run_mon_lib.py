@@ -57,6 +57,7 @@ pb_qsub_cmd = 'pb_qsub.bynode'
 # qstat-like command -- for quering a specific job_no 
 # sge = qstat -j <job_no>
 # moab = qstat <job_no>
+# slurm = scontrol show JobId
 # job_no will automatically be appended to end of command
 qstat_cmd = "qstat"
 qstat_args = ""  # here is where you put the -j if needed
@@ -66,16 +67,15 @@ qstat_args = ""  # here is where you put the -j if needed
 qstat_parser = "moab"
 
 # qdel-like command -- for kililng a job
-# killjob is a special command that also deletes the JOB.* files -- see pykilljob
-# be sure to use the _f version that does not prompt!
-# in emergent/cluster_run directory
 # job_no will automatically be appended to end of command
-qdel_cmd = "killjob_f"
+qdel_cmd = "qdel"
+#qdel_cmd = "scancel"
 qdel_args = ""
 
 # showq-like command -- this should return overall status of all users jobs
 # and general info on status of cluster
 # moab = showq 
+# slurm = squeue
 # pyshowq for SGE (checked into emergent/cluster_run showq)
 showq_cmd = "showq"
 showq_args = ""
@@ -1348,7 +1348,7 @@ class SubversionPoller(object):
                 else:
                     args_eff = ["-s", path_setup]
             if len(args_eff) > 0:
-                args_eff = args_eff + [" -j", job_launcher]
+                args_eff = args_eff + ["-j", job_launcher]
             else:
                 args_eff = ["-j", job_launcher]
             if len(args_eff) > 0:
@@ -2246,6 +2246,9 @@ class SubversionPoller(object):
         jsh = "JOB." + job_no + ".sh"   # another likely suspect
         if os.path.exists(jsh):
             os.remove(jsh)
+        self._remove_proj_tag_file(job_no, tag)
+
+    def _remove_proj_tag_file(self, job_no, tag):
         self._get_tag_proj_file(tag)
         try: os.remove(self.cur_tag_proj_file)
         except: pass
@@ -2279,6 +2282,7 @@ class SubversionPoller(object):
         job_no = self.jobs_running.get_val(row, "job_no") 
         job_no_split = job_no.split(".")
         tag = self.jobs_running.get_val(row, "tag")
+        status = self.jobs_running.get_val(row, "status")
 
         # datetime.strptime is only in 2.5
         # datetime.strptime(start_time, time_format)
@@ -2302,6 +2306,8 @@ class SubversionPoller(object):
                 # always get the data files whenever they change -- GetData is obsolete..
                 self._getdata_job_tag(tag)
             self.jobs_running.set_val(row, "other_files", all_files[1])
+            if status == "RUNNING":
+                self._remove_proj_tag_file(job_no, tag)
         
         if (submit_mode == "ec2_compute"):
             print "Checking if job is done..."

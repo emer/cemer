@@ -37,13 +37,13 @@ runmon.pb_qsub_cmd = 'pb_qsub.bynode'
 
 # specify the job launcher command with all of its parameters. The parameters might be
 # specific to the cluster environment, such as the network interface the MPI libraries should use
-job_launcher = "mpirun"
-#job_launcher = 'mpirun --bind-to none --mca btl_tcp_if_include bond0'
+runmon.job_launcher = "mpirun"
+#runmon.job_launcher = 'mpirun --bind-to none --mca btl_tcp_if_include bond0'
 
 # specify a setup script that is run at the beginning of a job on the node the job is executed,
 # this allows to ensure that all of the enivronment variables, paths and other resources necessary
 # on the compute node is available and correctly setup.
-# path_setup = "/path/to/setup/script.sh"
+# runmon.path_setup = "/path/to/setup/script.sh"
 
 # qstat-like command -- for quering a specific job_no 
 # sge = qstat -j <job_no>
@@ -57,11 +57,8 @@ runmon.qstat_args = "-j"  # here is where you put the -j if needed
 runmon.qstat_parser = "sge"
 
 # qdel-like command -- for killing a job
-# killjob is a special command that also deletes the JOB.* files -- see pykilljob
-# be sure to use the _f version that does not prompt!
-# in emergent/cluster_run directory
 # job_no will automatically be appended to end of command
-runmon.qdel_cmd = "killjob_f"
+runmon.qdel_cmd = "qdel"
 runmon.qdel_args = ""
 
 # showq-like command -- this should return overall status of all users jobs

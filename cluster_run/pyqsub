@@ -47,7 +47,7 @@ def submitJob(jm, opts, args):
             if opts.joblauncher != None:
                 job.setJobLauncher(opts.joblauncher)
             if opts.pathsetup != None:
-                job.setPathSetupScrip(opts.pathsetup)
+                job.setPathSetupScript(opts.pathsetup)
             if False == job.setNumNodes(int(args[0])):
                 print job.lastErr()
                 print job.usage()

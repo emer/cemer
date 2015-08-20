@@ -600,12 +600,12 @@ class ClusterJob:
         return self.user_cmd
     def setUserCmd( self, cmd ):
          # only check that path to user requested program exists
-        if "" == os.popen("which " + cmd[0],"r").read()[:-1]:
-            self.last_err = "cannot locate user program: %s" % cmd[0]
-            return False
-        else:
-            self.user_cmd = string.join( cmd, " ")
-            return True
+        # if "" == os.popen("which " + cmd[0],"r").read()[:-1]:
+        #     self.last_err = "cannot locate user program: %s" % cmd[0]
+        #     return False
+        # else:
+        self.user_cmd = string.join( cmd, " ")
+        return True
     def setJobLauncher( self, cmd ):
         self.job_launcher = cmd
     def jobLauncher( self ):
