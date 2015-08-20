@@ -265,12 +265,13 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   GetRecvLayers(un, patch_dir_lay, patch_ind_lay, matrix_dir_lay, matrix_ind_lay, pv_pos_lay, pv_neg_lay);
   
   // use avg act over layer..
-  float patch_dir = patch_dir_lay->acts_eq.avg;
-  float patch_ind = patch_ind_lay->acts_eq.avg;
-  float matrix_dir = matrix_dir_lay->acts_eq.avg;
-  float matrix_ind = matrix_ind_lay->acts_eq.avg;
-  float pv_pos = pv_pos_lay->acts_eq.avg;
-  float pv_neg = pv_neg_lay->acts_eq.avg;
+  float patch_dir = patch_dir_lay->acts_eq.avg * patch_dir_lay->units.size;
+  float patch_ind = patch_ind_lay->acts_eq.avg * patch_ind_lay->units.size;
+  float matrix_dir = matrix_dir_lay->acts_eq.avg * matrix_dir_lay->units.size;
+  float matrix_ind = matrix_ind_lay->acts_eq.avg * matrix_ind_lay->units.size;
+  float pv_pos = pv_pos_lay->acts_eq.avg * pv_pos_lay->units.size;
+  float pv_neg = pv_neg_lay->acts_eq.avg * pv_neg_lay->units.size;
+  
   
 //  float pospv_da = pospv - da.pvi_gain * vspvi; // higher pvi_gain == more shunting
 //  // probably need a lhb_gains class and object to hold individual gain params
