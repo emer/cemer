@@ -37,26 +37,27 @@ public:
 
   BasAmygType   ba_type;        // type of basal amgydala neuron
   float         neg_da_gain;    // multiplicative gain factor applied to negative dopamine signals -- this value should be < 1 to cause negative da to be reduced relative to positive, thus reducing the level of unlearning and extinction in this pathway -- applies to negative of da for the extinction pathway (i.e., to positive da values)
+  bool          invert_da;   // if true, wt changes go in opposite direction to the standard case; analogous to NoGo guys in striatum; generally, for PosLV_BasAmyg layers/units should be false; for NegPV_ guys should be true
 
-  inline float  GetDa(float da)
-  { return (da < 0.0f) ? neg_da_gain * da : da; }
+  inline float  GetDa(float da) {
+    if(!invert_da) { return (da < 0.0f) ? neg_da_gain * da : da; }
+    else { return (da >= 0.0f) ? neg_da_gain * da : da; }
+  }
   // get neg-modulated dopamine value
 
-  inline void C_Compute_dWt_BasAmyg_Acq
-    (float& dwt, const float su_act, const float ru_act,
-     const float da_p, const float da_n) {
-    dwt += cur_lrate * su_act * ru_act * (GetDa(da_p) +  GetDa(da_n));
-      // when BA_ext suppresses during extinction, ru_act == 0.0f will prevent learning
-      //LTD fm phaDA dips/extinction should be weaker than LTP fm phaDA bursts/acquisition - the latter is known to be fast, particularly fear cond.
+  inline void C_Compute_dWt_BasAmyg_Acq(float& dwt, const float su_act,
+                                        const float ru_act, const float da_p,
+                                        const float da_n) {
+      dwt += cur_lrate * su_act * ru_act * (GetDa(da_p) +  GetDa(da_n));
+      if(invert_da) dwt = -dwt;
   }
   // #IGNORE acquisition
-  inline void C_Compute_dWt_BasAmyg_Ext
-    (float& dwt, const float su_act, const float lrnmod,
-     const float da_p, const float da_n) {
-    dwt += cur_lrate * su_act * lrnmod * (GetDa(-da_p) + GetDa(-da_n));
+  inline void C_Compute_dWt_BasAmyg_Ext(float& dwt, const float su_act,
+                                        const float lrnmod, const float da_p,
+                                        const float da_n) {
+      dwt += cur_lrate * su_act * lrnmod * (GetDa(-da_p) + GetDa(-da_n));
 //      dwt += cur_lrate * su_act * (GetDa(-da_p) + GetDa(-da_n));
-      // lrnmod makes dependent on occurrence of PosPV/NegPV; but then how learn fm phaDA dips? A: BA_acq also uses LearnModUnitSpec and presummably passes lrnmod via its MarkerCon
-      //no ru_act dependence could promote bootstrapped learning - but non-specific as to US-modality (food, H2O, etc.)?
+    if(invert_da) dwt = -dwt;
   }
   // #IGNORE extinction
 
