@@ -16,17 +16,17 @@ clust_queue = ""
 # emergent/cluster_run/ directory (where this script lives as well)
 #
 # the sp_qsub_cmd takes args of <n_threads> <run_time> <full_command>
-runmon.sp_qsub_cmd = 'sp_qsub_q'
+runmon.sp_qsub_cmd = 'pyqsub'
 # can add an automatic -q <queue> arg here to specify a queue
 # in general it is best to have a different script for each queue
 # because the emergent preferences have relevant settings for them
 # runmon.sp_qsub_args = "-q " + clust_queue
-runmon.sp_qsub_args = ""
+runmon.sp_qsub_args = "--threaded --quick --jobtype sp_qsub_q"
 
 # the dm_qsub_cmd takes args of <mpi_nodes> <per_node> <n_threads> <run_time> <full_command>
-runmon.dm_qsub_cmd = 'dm_qsub_q'
+runmon.dm_qsub_cmd = 'pyqsub'
 # runmon.dm_qsub_args = "-q " + clust_queue
-runmon.dm_qsub_args = ""
+runmon.dm_qsub_args = "--threaded --quick --jobtype dm_qsub_q"
 
 # it is essential that these scripts return the cluster job number in the format
 # created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
@@ -34,6 +34,16 @@ runmon.dm_qsub_args = ""
 
 # for bynode pb_qsub commands -- if pb_batches and pb_nodes > 0
 runmon.pb_qsub_cmd = 'pb_qsub.bynode'
+
+# specify the job launcher command with all of its parameters. The parameters might be
+# specific to the cluster environment, such as the network interface the MPI libraries should use
+job_launcher = "mpirun"
+#job_launcher = 'mpirun --bind-to none --mca btl_tcp_if_include bond0'
+
+# specify a setup script that is run at the beginning of a job on the node the job is executed,
+# this allows to ensure that all of the enivronment variables, paths and other resources necessary
+# on the compute node is available and correctly setup.
+# path_setup = "/path/to/setup/script.sh"
 
 # qstat-like command -- for quering a specific job_no 
 # sge = qstat -j <job_no>
