@@ -39,7 +39,7 @@ public:
   float         neg_da_gain;    // multiplicative gain factor applied to negative dopamine signals -- this value should be < 1 to cause negative da to be reduced relative to positive, thus reducing the level of unlearning and extinction in this pathway -- applies to negative of da for the extinction pathway (i.e., to positive da values)
 
   inline float  GetDa(float da)
-  { return (da < 0.0f) ? -neg_da_gain * da : da; }
+  { return (da < 0.0f) ? neg_da_gain * da : da; }
   // get neg-modulated dopamine value
 
   inline void C_Compute_dWt_BasAmyg_Acq
