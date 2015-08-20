@@ -28,6 +28,8 @@
 #include <QString>
 #include <QTextStream>
 #include <QUrl>
+#include <QTextEdit>
+#include <QBoxLayout>
 
 #include <cstring>
 #include <iostream>
@@ -1924,45 +1926,52 @@ SubversionClient::notifyProgress(apr_off_t progress, apr_off_t total)
   // TODO.
 }
 
-String
-SubversionClient::getCommitMessage(const String& com_itm_str)
-{
+String SubversionClient::getCommitMessage(const String& com_itm_str) {
   if(m_commit_message.nonempty())
     return m_commit_message;
   
   taGuiDialog dlg;
   taBase::Ref(dlg);   // no need to UnRef - will be deleted at end of method
-
+  
   dlg.win_title = "Svn Commit Message";
   dlg.width = 400;
   dlg.height = 200;
-
+  
   String widget("main");
   String vbox("mainv");
   dlg.AddWidget(widget);
   dlg.AddVBoxLayout(vbox, "", widget);
-
+  
   String row("");
   int space = 5;
-
+  
   row = "prompt";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("prmpt_lbl", widget, row, "label=Provide Commit Message:;");
-
+  
   row = "itms";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("itms_lbl", widget, row, "label=" + com_itm_str +";");
-
+  
   row = "msg";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddStringField(&m_commit_message, "commit_message", widget, row, "tooltip=Enter the message describing what is happening on this commit; edit_dialog=true;");
-
+  // use a text field not a single line edit box
+  QTextEdit* text_edit = new QTextEdit();
+  // Get the hbox for this row so we can add our combobox to it.
+  taGuiLayout *hboxEmer = dlg.FindLayout(row);
+  if (!hboxEmer)
+    return false;
+  QBoxLayout *hbox = hboxEmer->layout;
+  if (!hbox)
+    return false;
+  hbox->addWidget(text_edit);
+  
   int drval = dlg.PostDialog(true);
   if(drval) {
-    return m_commit_message;
+    return String(text_edit->toPlainText());  // convert QString
   }
   return "";
 }
