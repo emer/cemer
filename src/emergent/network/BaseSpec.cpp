@@ -280,11 +280,17 @@ String BaseSpec::WhereUsed() {
   taSigLinkItr i;
   FOR_DLC_EL_OF_TYPE(taSmartRef, sref, dl, i) {
     taBase* sown = sref->GetOwner();
-    if(!sown) continue;
-    if(!sown->InheritsFrom(&TA_SpecPtr_impl)) continue;
+    if(!sown)
+      continue;
+    if(!sown->InheritsFrom(&TA_SpecPtr_impl))
+      continue;
     taBase* ownown = sown->GetOwner();
     if(ownown)
       rval += ownown->GetPathNames() + " \n";
+  }
+  
+  for (int i=0; i<children.size; i++) {
+    rval += children.SafeEl(i)->WhereUsed();
   }
   return rval;
 }
