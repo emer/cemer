@@ -272,7 +272,7 @@ bool BaseSpec::CheckObjectType_impl(taBase* obj) {
   return true;
 }
 
-String BaseSpec::WhereUsed() {
+String BaseSpec::WhereUsed(bool child) {
   String rval;
   taSigLink* dl = sig_link();
   if(!dl) return rval;
@@ -285,12 +285,20 @@ String BaseSpec::WhereUsed() {
     if(!sown->InheritsFrom(&TA_SpecPtr_impl))
       continue;
     taBase* ownown = sown->GetOwner();
-    if(ownown)
-      rval += ownown->GetPathNames() + " \n";
+    if(ownown) {
+      SpecPtr_impl* sptr = dynamic_cast<SpecPtr_impl*>(sown);
+      if (child) {
+        rval += "[Child  " + sptr->GetSpec()->GetName() + "]  ";
+      }
+      else {
+        rval += "[" + sptr->GetSpec()->GetName() + "]  ";
+      }
+      rval += ownown->GetPathNames() + " \n\n";
+    }
   }
   
   for (int i=0; i<children.size; i++) {
-    rval += children.SafeEl(i)->WhereUsed();
+    rval += children.SafeEl(i)->WhereUsed(true);
   }
   return rval;
 }

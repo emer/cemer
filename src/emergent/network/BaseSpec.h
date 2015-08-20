@@ -101,8 +101,8 @@ public:
   // #BUTTON #CONFIRM #CAT_ObjectMgmt restore specs to their default original parameter values, for parameters that have a strong default value -- WARNING: you will lose any unique parameters for anything that has a strong default value
   // note: typically do NOT redefine basic Defaults function -- see SPEC_DEFAULTS comment above
 
-  virtual String  WhereUsed();
-  // #BUTTON #USE_RVAL returns a list of objects where this spec is used
+  virtual String  WhereUsed(bool child = false);
+  // #BUTTON #USE_RVAL #ARGC_0 returns a list of objects where this spec is used - if searching for child specs of the original spec pass true (additional feedback to user)
 
   virtual void  SetParam(const String& param_path, const String& value);
   // #DYN1 Set parameter at given path to given value, for all the specs within this group, and all the child specs underneath these specs
