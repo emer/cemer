@@ -1832,7 +1832,7 @@ bool ClusterRun::WaitProcAutoUpdate() {
   taDateTime curtime;
   curtime.currentDateTime();
   int delay = wait_proc_last_updt.secsTo(curtime);
-  if(delay < 10) {
+  if(delay < 5) {
     return false;
   }
   if(QApplication::activeModalWidget() != NULL) {

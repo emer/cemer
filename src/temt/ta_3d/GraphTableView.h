@@ -189,6 +189,7 @@ public:
 
 protected:
   int                   first_mat;              // which is the matrix guy to plot
+  int                   graphs_n;               // graphs number -- while building graphs
 
   float                 bar_width; // width of bar for bar charts
   T3Axis*               t3_x_axis;

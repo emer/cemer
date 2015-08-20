@@ -211,6 +211,7 @@ void GraphTableView::Initialize() {
   children.SetBaseType(&TA_GraphColView); // subclasses need to set this to their type!
   
   first_mat = -1;
+  graphs_n = 0;
   
   n_plots = 1;
   t3_x_axis = NULL;
@@ -1093,6 +1094,7 @@ void GraphTableView::SaveImageSVG(const String& svg_fname) {
 
 void GraphTableView::RenderGraph() {
   //   taMisc::Info("render graph");
+  graphs_n = 0;
   UpdateAfterEdit_impl();
   if(n_plots == 0 || !x_axis.on) return;
   
@@ -1654,9 +1656,22 @@ void GraphTableView::RenderGraph_XY() {
     boxd = depth;
   
 #ifdef TA_QT3D
-  node_so->graphs->removeAllChildren(); // todo: try to re-use instead of destroy!
-  T3Entity* gr1 = new T3Entity(node_so->graphs);
-  T3LineBox* lbox = new T3LineBox(gr1, QVector3D(width, 1.0f, boxd));
+  const QObjectList& gr_ol = node_so->graphs->children();
+  T3Entity* gr1 = NULL;
+  if(graphs_n < gr_ol.count()) {
+    gr1 = dynamic_cast<T3Entity*>(gr_ol.at(graphs_n++));
+  }
+  if(!gr1) {
+    gr1 = new T3Entity(node_so->graphs);
+  }
+  const QObjectList& gr1_ol = gr1->children();
+  T3LineBox* lbox = NULL;
+  if(gr1_ol.count() == 1) {
+    lbox = dynamic_cast<T3LineBox*>(gr1_ol.at(0));
+  }
+  if(!lbox) {
+    lbox = new T3LineBox(gr1, QVector3D(width, 1.0f, boxd));
+  }
   if(z_axis.on) {
     lbox->TranslateZFrontTo(QVector3D(0,0,0));
   }
