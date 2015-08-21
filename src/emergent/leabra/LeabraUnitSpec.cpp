@@ -212,6 +212,7 @@ void LeabraAvgLSpec::Defaults_init() {
   err_mod = true;
   err_min = 0.01f;
   act_thr = 0.2f;
+  lay_act_thr = 0.01f;
   
   dt = 1.0f / tau;
   lrn_fact = (lrn_max - lrn_min) / (max - min);
@@ -853,12 +854,14 @@ void LeabraUnitSpec::Trial_Init_PrvVals(LeabraUnitVars* u, LeabraNetwork* net, i
 
 void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-  float lval = u->avg_m;
-  if(lval > avg_l.act_thr) { // above threshold, raise it up
-    u->avg_l += avg_l.dt * (avg_l.max - u->avg_l);
-  }
-  else {
-    u->avg_l += avg_l.dt * (avg_l.min - u->avg_l);
+  if(lay->acts_p.avg >= avg_l.lay_act_thr) {
+    float lval = u->avg_m;
+    if(lval > avg_l.act_thr) { // above threshold, raise it up
+      u->avg_l += avg_l.dt * (avg_l.max - u->avg_l);
+    }
+    else {
+      u->avg_l += avg_l.dt * (avg_l.min - u->avg_l);
+    }
   }
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   if(avg_l.err_mod) {
