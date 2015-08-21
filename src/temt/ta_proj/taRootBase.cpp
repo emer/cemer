@@ -59,6 +59,7 @@ taTypeDef_Of(StartupWizard);
 #include <QTimer>
 #include <QGLFormat>
 #include <QBrush>
+#include <QLocale>
 
 #include <css_machine.h>
 #include <css_qtconsole.h>
@@ -920,7 +921,8 @@ static CoinImageReaderCB* coin_image_reader_cb_obj = NULL;
 #endif // TA_QT3D
 
 bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
-  setlocale(LC_ALL, "");
+  //  setlocale(LC_ALL, "");
+  setlocale(LC_ALL, "C");       // we are a C language program.. sorry..
 
 #ifdef TA_GUI
   if(taMisc::use_gui) {
@@ -963,6 +965,8 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 #endif
   // probably as good a place as any to init ODE
   dInitODE();
+
+  QLocale::setDefault(QLocale::c()); // make sure Qt is on same locale page as everything else
   return true;
 }
 
