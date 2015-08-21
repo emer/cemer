@@ -145,35 +145,6 @@ bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u,                             L
   pv_neg_lay = NULL;
   
   const int nrg = u->NRecvConGps();
-  // why no args here, but below? (net, thr_no)
-  //const int nrg = u->NRecvConGps(net, thr_no); // so TRY the arg'd version...
-  
-//  for(int g=0; g<nrg; g++) {
-//    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
-//    if(recv_gp->NotActive()) continue;
-//    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-//    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-//    LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
-//    LeabraUnitSpec* us = (LeabraUnitSpec*)fmlay->GetUnitSpec();
-//    if(!cs->InheritsFrom(TA_MarkerConSpec)) {
-//      // report error that should..
-//      return false;
-//    }
-//    
-//    if(us->InheritsFrom(TA_VSPatchUnitSpec) && from->name.contains("Patch"))
-//          if(from->name.contains("Ind") || from->name.contains("NoGo") || from->name.contains("D2R")) patch_ind_lay = fmlay;
-//          else patch_dir_lay = fmlay;
-//          else (us->InheritsFrom(TA_VSMatrixUnitSpec)) {
-//            
-//          }contains matrix, dir)) matrix_dir_lay = fmlay;
-//      else if(us->contains matrix, ind)) matrix_ind_lay = fmlay;
-//      else if(us->InheritsFrom(TA_VSPatchUnitSpec)) matrix_ind_lay = fmlay;
-//      else if(us->InheritsFrom(TA_LearnModUnitSpec)) pv_pos_lay = fmlay;
-//      else if(us->InheritsFrom(TA_VSPatchUnitSpec)) pv_neg_lay = fmlay;
-//    }
-  
-  
-  //const int nrg = u->NRecvConGps(net, thr_no);
   for(int g=0; g<nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
     if(recv_gp->NotActive()) continue;
@@ -265,40 +236,29 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   GetRecvLayers(un, patch_dir_lay, patch_ind_lay, matrix_dir_lay, matrix_ind_lay, pv_pos_lay, pv_neg_lay);
   
   // use avg act over layer..
-  float patch_dir = patch_dir_lay->acts_eq.avg * patch_dir_lay->units.size;
-  float patch_ind = patch_ind_lay->acts_eq.avg * patch_ind_lay->units.size;
-  float matrix_dir = matrix_dir_lay->acts_eq.avg * matrix_dir_lay->units.size;
-  float matrix_ind = matrix_ind_lay->acts_eq.avg * matrix_ind_lay->units.size;
-  float pv_pos = pv_pos_lay->acts_eq.avg * pv_pos_lay->units.size;
-  float pv_neg = pv_neg_lay->acts_eq.avg * pv_neg_lay->units.size;
+  float patch_dir = patch_dir_lay->acts_eq.avg; // * patch_dir_lay->units.size;
+  float patch_ind = patch_ind_lay->acts_eq.avg; // * patch_ind_lay->units.size;
+  float matrix_dir = matrix_dir_lay->acts_eq.avg; // * matrix_dir_lay->units.size;
+  float matrix_ind = matrix_ind_lay->acts_eq.avg; // * matrix_ind_lay->units.size;
+  float pv_pos = pv_pos_lay->acts_eq.avg; // * pv_pos_lay->units.size;
+  float pv_neg = pv_neg_lay->acts_eq.avg; // * pv_neg_lay->units.size;
   
+  // punishments should never be completely predicted away...
+  //float residual_pvneg = 0.0f; // no residual if nothing there to start with
+  float residual_pvneg = gains.min_pvneg * pv_neg;
+  residual_pvneg = MAX(residual_pvneg, 0.0f); // just a precaution
   
-//  float pospv_da = pospv - da.pvi_gain * vspvi; // higher pvi_gain == more shunting
-//  // probably need a lhb_gains class and object to hold individual gain params
-//  float pospv_lhb = MAX(pv_pos, matrix_dir) - patch_dir;
-//  float negpv_lhb = MAX(pv_neg, matrix_ind) - patch_ind;
-//  
-//  float poslv_lhb = matrix_dir;
-//  float neglv_lhb = matrix_ind;
-  
-  float net_lhb = (gains.patch_dir * patch_dir) - (gains.patch_ind * patch_ind) + gains.matrix * (matrix_ind - matrix_dir) + pv_neg - pv_pos;
-  
-  if(pv_neg >= 0.01f) { // only if actual PVNeg occurs
-    net_lhb = MAX(net_lhb, gains.min_pvneg * pv_neg);
-  }
+  float net_lhb = pv_neg - (gains.patch_ind * patch_ind) - pv_pos +
+                           (gains.patch_dir * patch_dir) + gains.matrix *
+                           (matrix_ind - matrix_dir) + residual_pvneg;
   net_lhb *=gains.all;
   // TODO: tweak the gains.params here and for initialization, defaults, etc.
   
-  // net->pvlv_dav = net_da;
-  //  lay->dav = net_da;
-  //u->dav = net_da;
-  //u->ext = da.tonic_da + u->dav;
-  
   u->act_eq = u->act_nd = u->act = u->net = u->ext = net_lhb;
-  
-  //u->da = 0.0f;
-  
- ///////////////////////////
+
+  ////////////////////////////
+  // original code
+  ///////////////////////////
 //  int nt = net->n_thrs_built;
 //  int flat_idx = u->UnFlatIdx(net, thr_no);
 //#ifdef CUDA_COMPILE
