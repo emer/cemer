@@ -27,6 +27,7 @@ bool BaseSpec::nw_itm_def_arg = false;
 
 void BaseSpec::Initialize() {
   min_obj_type = &TA_taBase;
+  is_used = false;
 }
 
 void BaseSpec::Copy_(const BaseSpec& cp) {
@@ -61,6 +62,7 @@ void BaseSpec::CutLinks() {
 void BaseSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) {
+    is_used = IsUsed();
     TypeDef* td = GetTypeDef();
     for(int i=TA_BaseSpec.members.size; i< td->members.size; i++) {
       MemberDef* md = td->members.FastEl(i);
@@ -301,6 +303,27 @@ String BaseSpec::WhereUsed(bool child) {
     rval += children.SafeEl(i)->WhereUsed(true);
   }
   return rval;
+}
+
+bool BaseSpec::IsUsed() {
+  taSigLink* dl = sig_link();
+  if(!dl) {
+    return false;
+  }
+  taSmartRef* sref;
+  taSigLinkItr i;
+  FOR_DLC_EL_OF_TYPE(taSmartRef, sref, dl, i) {
+    taBase* sown = sref->GetOwner();
+    if(!sown)
+      continue;
+    if(!sown->InheritsFrom(&TA_SpecPtr_impl))
+      continue;
+    taBase* ownown = sown->GetOwner();
+    if(ownown) {
+      return true;
+    }
+  }
+  return false;
 }
 
 void BaseSpec::SetParam(const String& param_path, const String& value) {

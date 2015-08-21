@@ -149,13 +149,13 @@ bool SpecPtr_impl::CheckObjTypeForSpec(TypeDef* obj_td) {
 void SpecPtr_impl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   // don't do so much automatic -- just check for wrong owner and type stuff
-
+  
   Network* net = GET_MY_OWNER(Network);
   if(!net || net->isDestroying()) return;
-
+  
   Network* owner_net = GET_OWNER(owner, Network);
   if(!owner_net || owner_net->isDestroying()) return;
-
+  
   if(TestError(type && base_type && !type->InheritsFrom(base_type),
                "UpdateAfterEdit",
                "spec type:", type->name, "does not inherit from base_type:",
@@ -163,9 +163,9 @@ void SpecPtr_impl::UpdateAfterEdit_impl() {
                "Reverting type to base_type")) {
     type = base_type;
   }
-
+  
   BaseSpec* sp = GetSpec();
-
+  
   if(sp && (owner_net != net)) {        // oops!
     // try to find same name one first:
     BaseSpec_Group* spgp = GetSpecGroup();
@@ -178,6 +178,7 @@ void SpecPtr_impl::UpdateAfterEdit_impl() {
       SetSpec(NULL);            // get rid of existing -- will try to find new one later
     }
   }
+  net->specs.UpdateAllSpecs();
 }
 
 void SpecPtr_impl::SetBaseType(TypeDef* td) {

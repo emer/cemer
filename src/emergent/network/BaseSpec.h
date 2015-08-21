@@ -48,20 +48,21 @@ friend class BaseSpec_Group;
 friend class SpecMemberBase;
 INHERITED(taNBase)
 public:
-  static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
+  static bool       nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
-  String		desc;	// #EDIT_DIALOG #NO_INHERIT Description of what this variable is for
-  String_Array          unique; // #HIDDEN string list of unique members
-  TypeDef*		min_obj_type;
+  bool              is_used; // #READ_ONLY #HIDDEN
+  String            desc;	// #EDIT_DIALOG #NO_INHERIT Description of what this variable is for
+  String_Array      unique; // #HIDDEN string list of unique members
+  TypeDef*          min_obj_type;
   // #READ_ONLY #HIDDEN #NO_SAVE #TYPE_taBase mimimal object type required for spec
-  BaseSpec_Group 	children;
+  BaseSpec_Group    children;
   // #NO_INHERIT #IN_GPMENU #DIFF_LAST sub-specs descending from this one and inheriting values
   
-  taList_impl*	children_() override {return &children;}	
-  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
-  { return children.Elem(idx, mode); }
+  taList_impl*      children_() override {return &children;}
+  Variant           Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
+            { return children.Elem(idx, mode); }
 
-  bool			SpecInheritsFrom(BaseSpec* spec) const;
+  bool              SpecInheritsFrom(BaseSpec* spec) const;
     // returns true if this spec is the spec, or is one of its children
   virtual BaseSpec*	FindParent();
   // #MENU #USE_RVAL #MENU_ON_Actions Find the parent spec of this one
@@ -93,9 +94,9 @@ public:
   virtual bool 	    RemoveChild(const char* nm, TypeDef* td = NULL);
   // remove a child based on name or type
 
-  bool	  UAEProgramDefault() override { return true; }
-  void	  MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) override;
-  String GetDesc() const override { return desc; }
+  bool            UAEProgramDefault() override { return true; }
+  void            MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) override;
+  String          GetDesc() const override { return desc; }
 
   virtual void	  Defaults();
   // #BUTTON #CONFIRM #CAT_ObjectMgmt restore specs to their default original parameter values, for parameters that have a strong default value -- WARNING: you will lose any unique parameters for anything that has a strong default value
@@ -104,11 +105,16 @@ public:
   virtual String  WhereUsed(bool child = false);
   // #BUTTON #USE_RVAL #ARGC_0 returns a list of objects where this spec is used - if searching for child specs of the original spec pass true (additional feedback to user)
 
-  virtual void  SetParam(const String& param_path, const String& value);
+  virtual bool    IsUsed();
+  //  is the spec used anywhere
+  
+  String          GetStateDecoKey() const override { return (is_used ? "" : "NotEnabled"); }
+ 
+  virtual void    SetParam(const String& param_path, const String& value);
   // #DYN1 Set parameter at given path to given value, for all the specs within this group, and all the child specs underneath these specs
 
-  taBase*      ChooseNew(taBase* origin) override;
-  bool         HasChooseNew() override { return true; }
+  taBase*         ChooseNew(taBase* origin) override;
+  bool            HasChooseNew() override { return true; }
 
   void	InitLinks();
   void	CutLinks();
