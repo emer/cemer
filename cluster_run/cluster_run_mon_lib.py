@@ -2306,8 +2306,6 @@ class SubversionPoller(object):
                 # always get the data files whenever they change -- GetData is obsolete..
                 self._getdata_job_tag(tag)
             self.jobs_running.set_val(row, "other_files", all_files[1])
-            if status == "RUNNING":
-                self._remove_proj_tag_file(job_no, tag)
         
         if (submit_mode == "ec2_compute"):
             print "Checking if job is done..."
@@ -2355,7 +2353,7 @@ class SubversionPoller(object):
         deadtime = datetime.now() - eddt
         
         if force_updt or deadtime.seconds < job_update_window * 60:
-            # print "job %s running for %d seconds -- updating" % (tag, deadtime.seconds)
+            # print "job %s done for %d seconds -- updating" % (tag, deadtime.seconds)
             job_out = self._get_job_out(job_out_file)
             if len(job_out) > 0:
                 self.jobs_done.set_val(row, "job_out", job_out)
@@ -2367,9 +2365,12 @@ class SubversionPoller(object):
 #            self._remove_job_files(job_out_file, job_no, tag)
 
     def _move_job_to_done(self, row):
+        job_no = self.jobs_running.get_val(row, "job_no") 
+        tag = self.jobs_running.get_val(row, "tag")
         self.status_change = True
         self.jobs_done.append_row_from(self.jobs_running, row)
         self.jobs_running.remove_row(row)
+        self._remove_proj_tag_file(job_no, tag)
 
     # go through all the jobs in jobs_done and if all the items from 
     # a pb_batches run are done, with status DONE, then they can be
