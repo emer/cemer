@@ -722,29 +722,29 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
     // convert each numeric part, using system locale language, into a double
     // and then back into a non-localized string
     // and reconstitue the expression
-    QLocale sys_locale = QLocale::system();
-    if (sys_locale.language() != QLocale::English) {
-      if (name == "expr") {
-        String piece;
-        String whole;
-        QStringList parts = QString(taMisc::LexBuf.chars()).split(' ');
-        for (int i=0; i<parts.size(); i++) {
-          piece = String(parts.at(i));
-          if (piece.length() > 0 && parts.at(i).at(0).isDigit()) {
-            double expr_double = sys_locale.toDouble(parts.at(i));
-            piece = String(expr_double);
-          }
-          if (i == 0) {
-            whole += piece;
-          }
-          else {
-            whole += ' ';
-            whole += piece;
-          }
-        }
-        taMisc::LexBuf = whole;
-      }
-    }
+    // QLocale sys_locale = QLocale::system();
+    // if (sys_locale.language() != QLocale::English) {
+    //   if (name == "expr") {
+    //     String piece;
+    //     String whole;
+    //     QStringList parts = QString(taMisc::LexBuf.chars()).split(' ');
+    //     for (int i=0; i<parts.size(); i++) {
+    //       piece = String(parts.at(i));
+    //       if (piece.length() > 0 && parts.at(i).at(0).isDigit()) {
+    //         double expr_double = sys_locale.toDouble(parts.at(i));
+    //         piece = String(expr_double);
+    //       }
+    //       if (i == 0) {
+    //         whole += piece;
+    //       }
+    //       else {
+    //         whole += ' ';
+    //         whole += piece;
+    //       }
+    //     }
+    //     taMisc::LexBuf = whole;
+    //   }
+    // }
     
     eff_type->SetValStr(taMisc::LexBuf, new_base, base, this);
     if(taMisc::verbose_load >= taMisc::TRACE) {
