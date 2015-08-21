@@ -921,8 +921,6 @@ static CoinImageReaderCB* coin_image_reader_cb_obj = NULL;
 #endif // TA_QT3D
 
 bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
-  //  setlocale(LC_ALL, "");
-  setlocale(LC_ALL, "C");       // we are a C language program.. sorry..
 
 #ifdef TA_GUI
   if(taMisc::use_gui) {
@@ -966,7 +964,8 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
   // probably as good a place as any to init ODE
   dInitODE();
 
-  QLocale::setDefault(QLocale::c()); // make sure Qt is on same locale page as everything else
+  // dealing with bug 1290 - decimal symbol issue
+  setlocale(LC_NUMERIC, "C");
   return true;
 }
 
