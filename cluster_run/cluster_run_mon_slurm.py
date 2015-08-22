@@ -22,12 +22,12 @@ runmon.sp_qsub_cmd = 'pyqsub'
 # in general it is best to have a different script for each queue
 # because the emergent preferences have relevant settings for them
 # runmon.sp_qsub_args = "-q " + clust_queue
-runmon.sp_qsub_args = "--threaded --quick --jobtype sp_qsub_q"
+runmon.sp_qsub_args = "--threaded --quick --jobtype sp_qsub_q -q " + clust_queue
 
 # the dm_qsub_cmd takes args of <mpi_nodes> <per_node> <n_threads> <run_time> <full_command>
 runmon.dm_qsub_cmd = 'pyqsub'
 # runmon.dm_qsub_args = "-q " + clust_queue
-runmon.dm_qsub_args = "--threaded --quick --jobtype dm_qsub_q"
+runmon.dm_qsub_args = "--threaded --quick --jobtype dm_qsub_q -q " + clust_queue
 
 # it is essential that these scripts return the cluster job number in the format
 # created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
