@@ -30,11 +30,13 @@ class TA_API taVector2i_List : public taList<taVector2i> {
   // ##NO_TOKENS #NO_UPDATE_AFTER 
 INHERITED(taList<taVector2i>)
 public:
+  virtual bool              Contains(taVector2i* pair) const;
 
   TA_BASEFUNS_NOCOPY(taVector2i_List);
+  
 private:
-void Initialize()  { SetBaseType(&TA_taVector2i);};
-void Destroy()     { };
+  void Initialize()  { SetBaseType(&TA_taVector2i);};
+  void Destroy()     { };
 };
 
 #endif // taVector2i_List_h

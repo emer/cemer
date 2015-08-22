@@ -1027,6 +1027,8 @@ public:
   // #CAT_DataProc filter the table rows by specifying which rows to retain in the table (hiding the ones that do not match).  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual void          FindAllScalar(taVector2i_List* found_list, const String& search_str, bool contains);
   // #CAT_DataProc search for all instances of value, non-matrix columns - contains false means match full string
+  virtual void          FindAll(taVector2i_List* found_list, const String& search_str, bool contains);
+  // #CAT_DataProc search for all instances of value, matrix and non-matrix columns - contains false means match full string
 
   virtual bool          GroupMeanSEM(DataTable* dest_data,
                                      DataCol* gp_col1, DataCol* gp_col2 = NULL,

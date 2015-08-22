@@ -4504,3 +4504,72 @@ void DataTable::FindAllScalar(taVector2i_List* found_list, const String& search_
   DataUpdate(false);
 }
 
+void DataTable::FindAll(taVector2i_List* found_list, const String& search_str, bool contains) {
+  DataUpdate(true);
+  for (int col_idx = 0; col_idx < cols(); ++col_idx) {
+    DataCol* col = data.FastEl(col_idx);
+    if (!col->is_matrix) {
+      bool keep_searching = true;
+      int start_row = 0;
+      while (keep_searching) {
+        int row;
+        if (contains) {
+          row = col->FindValPartial(search_str, start_row);
+        }
+        else {
+          row = col->FindVal(search_str, start_row);
+        }
+        if (row != -1) {
+          taVector2i* cell = new taVector2i;
+          cell->x = row;
+          cell->y = col_idx;
+          found_list->Add_(cell);
+          if (row != rows - 1) {  // are we at the last row?
+            start_row = row + 1;
+          }
+          else {
+            keep_searching = false;
+            break;
+          }
+        }
+        else {
+          keep_searching = false;
+          break;
+        }
+      }
+    }
+    if (col->is_matrix) {
+      bool keep_searching = true;
+      int start_row = 0;
+      while (keep_searching) {
+        int row;
+        if (contains) {
+          row = col->AR()->FindVal_Flat(Variant(search_str), start_row);
+        }
+        else {
+          row = col->AR()->FindVal_Flat(Variant(search_str), start_row);
+        }
+        if (row != -1) {
+          taVector2i* cell = new taVector2i;
+          cell->x = row;
+          cell->y = col_idx;
+          found_list->Add_(cell);
+          if (row != rows - 1) {  // are we at the last row?
+            start_row = row + 1;
+          }
+          else {
+            keep_searching = false;
+            break;
+          }
+        }
+        else {
+          keep_searching = false;
+          break;
+        }
+      }
+    }
+  }
+  DataUpdate(false);
+}
+
+

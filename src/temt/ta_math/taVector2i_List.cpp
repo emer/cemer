@@ -16,3 +16,15 @@
 #include "taVector2i_List.h"
 
 TA_BASEFUNS_CTORS_DEFN(taVector2i_List);
+
+bool taVector2i_List::Contains(taVector2i* pair) const {
+  for (int i=0; i<size; i++) {
+    taVector2i* it = (taVector2i*)el[i];
+    if (pair->x == it->x) {
+      if (pair->y == it->y) {
+        return true;
+      }
+    }
+  }
+  return false;
+}

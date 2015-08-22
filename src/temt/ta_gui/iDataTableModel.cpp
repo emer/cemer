@@ -32,7 +32,7 @@ iDataTableModel::iDataTableModel(DataTable* dt_)
 {
   m_dt = dt_;
   current_found = -1;
-  items_found.clear();
+  items_found.Reset();
 }
 
 iDataTableModel::~iDataTableModel() {
@@ -103,15 +103,20 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
         return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
     } break;
     case Qt::BackgroundColorRole : //-- QColor
+    {
+      taVector2i pair;
+      pair.x = index.row();
+      pair.y = index.column();
+      if (items_found.Contains(&pair)) {
+        return QColor(Qt::yellow);
+      }
+    }
       /* note: only used when !(option.showDecorationSelected && (option.state
        & QStyle::State_Selected)) */
       // note: only make it actual ro color if ro (not for "(matrix)" cells)
       if ((col->col_flags & DataCol::READ_ONLY) || col->isGuiReadOnly())
         return QColor(247, 247, 247);  // very light gray
       //    else if (index.column() == 2 && index.row() == 3)
-      if (items_found.contains(index)) {
-        return QColor(Qt::yellow);
-      }
       break;
     case Qt::TextColorRole: { // QColor: color of text
       if (col->is_matrix)
@@ -131,8 +136,8 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
         }
       }
     }
-    break;
-    //Qt::CheckStateRole
+      break;
+      //Qt::CheckStateRole
     default:
       break;
   }
@@ -257,42 +262,42 @@ bool iDataTableModel::ValidateIndex(const QModelIndex& index) const {
 }
 
 void iDataTableModel::AddToFoundList(int row, int col) {
-  QModelIndex indexA = index(row, col, QModelIndex());
-  items_found.append(indexA);
+  taVector2i* row_col_pair = new taVector2i(row, col);
+  items_found.Add(row_col_pair);
 }
 
 void iDataTableModel::ClearFoundList() {
-  if (items_found.size() != 0) {
-    items_found.clear();
+  if (items_found.size != 0) {
+    items_found.Reset();
   }
   current_found = -1;
 }
 
-const QModelIndex* iDataTableModel::GetNextFound() {
-  if (items_found.size() == 0) {
+const taVector2i* iDataTableModel::GetNextFound() {
+  if (items_found.size == 0) {
     return NULL;
   }
-  if (current_found == items_found.size() - 1) {
+  if (current_found == items_found.size - 1) {
     current_found = 0;
-    return &items_found.at(current_found);
+    return items_found.SafeEl(current_found);
   }
   else {
     current_found += 1;
-    return &items_found.at(current_found);
+    return items_found.SafeEl(current_found);
   }
 }
 
-const QModelIndex* iDataTableModel::GetPreviousFound() {
-  if (items_found.size() == 0) {
+const taVector2i* iDataTableModel::GetPreviousFound() {
+  if (items_found.size == 0) {
     return NULL;
   }
   if (current_found == 0) {
-    current_found = items_found.size() - 1;
-    return &items_found.at(current_found);
+    current_found = items_found.size - 1;
+    return items_found.SafeEl(current_found);
   }
   else {
     current_found -= 1;
-    return &items_found.at(current_found);
+    return items_found.SafeEl(current_found);
   }
 }
 

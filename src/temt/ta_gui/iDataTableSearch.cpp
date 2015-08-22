@@ -119,6 +119,7 @@ void iDataTableSearch::Search(iDataTableSearch::SearchMode mode) {
   found_list = new taVector2i_List();
   bool contains = (search_mode == CONTAINS);
   table_view->dataTable()->FindAllScalar(found_list, srch_text->text(), contains);
+//  table_view->dataTable()->FindAll(found_list, srch_text->text(), contains);
 
   table_view->dataTable()->DataUpdate(true);
   for (int i=0; i<found_list->size; i++) {
@@ -137,9 +138,17 @@ void iDataTableSearch::SelectNext() {
   if (table_model == NULL) {
     return;
   }
-  const QModelIndex* model_index = table_model->GetNextFound();
-  if (model_index) {
-    table_view->SetCurrentAndSelect(model_index->row(), model_index->column());
+  const taVector2i* row_col_pair = table_model->GetNextFound();
+  if (row_col_pair) {
+    int row;
+    DataCol* column = table_view->dataTable()->GetColData(row_col_pair->y);
+    if (column->isMatrix()) {
+      row = row_col_pair->x / column->cell_size();
+    }
+    else {
+      row = row_col_pair->x;
+    }
+    table_view->SetCurrentAndSelect(row, row_col_pair->y);
   }
 }
 
@@ -147,14 +156,22 @@ void iDataTableSearch::SelectPrevious() {
   if (table_model == NULL) {
     return;
   }
-  const QModelIndex* model_index = table_model->GetPreviousFound();
-  if (model_index) {
-    table_view->SetCurrentAndSelect(model_index->row(), model_index->column());
+  const taVector2i* row_col_pair = table_model->GetPreviousFound();
+  if (row_col_pair) {
+    int row;
+    DataCol* column = table_view->dataTable()->GetColData(row_col_pair->y);
+    if (column->isMatrix()) {
+      row = row_col_pair->x / column->cell_size();
+    }
+    else {
+      row = row_col_pair->x;
+    }
+    table_view->SetCurrentAndSelect(row, row_col_pair->y);
   }
 }
 
-void iDataTableSearch::SearchClear() {
-  if (table_model == NULL) {
+  void iDataTableSearch::SearchClear() {
+    if (table_model == NULL) {
     return;
   }
   table_view->dataTable()->DataUpdate(true);
