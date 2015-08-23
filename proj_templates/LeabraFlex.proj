@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.1.0 rev8371
+// ta_Dump File v3.0 -- code v7.8.1.0 rev8526
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -47,18 +47,20 @@ LeabraProject .projects["LeabraFlex"] {
    EditMthItem_Group @.mths = [0] {
    };
 
-   DataTableCols @.jobs_running.data = [29] {
+   DataTableCols @.jobs_running.data = [31] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["status"] { };
     String_Data @["notes"] { };
+    String_Data @["label"] { };
     String_Data @["filename"] { };
     String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -110,18 +112,20 @@ LeabraProject .projects["LeabraFlex"] {
    DataOpList @.jobs_running.last_sort_spec.ops = [0] {
    };
 
-   DataTableCols @.jobs_done.data = [29] {
+   DataTableCols @.jobs_done.data = [31] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["status"] { };
     String_Data @["notes"] { };
+    String_Data @["label"] { };
     String_Data @["filename"] { };
     String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -173,18 +177,20 @@ LeabraProject .projects["LeabraFlex"] {
    DataOpList @.jobs_done.last_sort_spec.ops = [0] {
    };
 
-   DataTableCols @.jobs_archive.data = [29] {
+   DataTableCols @.jobs_archive.data = [31] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["status"] { };
     String_Data @["notes"] { };
+    String_Data @["label"] { };
     String_Data @["filename"] { };
     String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -2866,7 +2872,7 @@ mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonema
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
 }</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=vector&amp;version=20150419T081543Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CdelayedBind%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup%7Cskins.vector.js&amp;skin=vector&amp;version=20150419T081544Z&amp;*\"></script>
-<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20150419T081545Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20150208T001329Z&amp;*\"></script></head>
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20150809T180531Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20150208T001329Z&amp;*\"></script></head>
 <body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlex skin-vector action-view vector-animateLayout\">
 		<div id=\"mw-page-base\" class=\"noprint\"><a href=\"http://grey.colorado.edu/emergent\"><img src=\"http://grey.colorado.edu/mediawiki/sites/emergent/images/6/6b/emergent_small.png\"></a></div>
 		<div id=\"mw-head-base\" class=\"noprint\"></div>
@@ -2949,8 +2955,8 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.036 seconds
-Real time usage: 0.038 seconds
+CPU time usage: 0.014 seconds
+Real time usage: 0.017 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -2959,7 +2965,7 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20150623182638
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20150820225657
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11088\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11088</a>\"				</div>
@@ -3062,7 +3068,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 10 May 2015, at 01:14.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 13,244 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 13,485 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -3082,7 +3088,7 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.500 secs. -->
+<!-- Served in 0.155 secs. -->
 	
 
 </body></html>";
@@ -3354,6 +3360,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
@@ -3428,6 +3448,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3854,6 +3888,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
@@ -3928,6 +3976,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4354,6 +4416,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
@@ -4428,6 +4504,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -5075,6 +5165,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    users=;
    last_submit_time=;
    notes=;
+   label=;
    extra_files=;
    svn_repo=;
    repo_url=;
@@ -9315,7 +9406,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [6] 0;4;1;2;5;3;      };
+      [0]       };
       last_sort_spec {
        name="last_sort_spec";
        ops {
@@ -12786,7 +12877,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
-      desc="after the trial is over, do final computations: Compute_dWt (learn weights), compute stats";
+      desc="after the trial is over, do final computations: Compute_AbsRelNetin";
       flags=0;
       orig_prog_code=;
       result_var=NULL;
@@ -13896,17 +13987,17 @@ also save specs.";
      desc="startup args specifically for fixation training parameters";
      flags=NO_STOP_STEP;
      objs {
-      name="ProgObjList_32";
+      name="objs";
       el_typ=taNBase;
       el_def=0;
      };
      types {
-      name="ProgType_List_1";
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name="ProgVar_List_1";
+      name="args";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["network"] {
@@ -13922,7 +14013,7 @@ also save specs.";
       };
      };
      vars {
-      name="ProgVar_List_1";
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["tag"] {
@@ -13989,17 +14080,17 @@ also save specs.";
       };
      };
      functions {
-      name="Function_List_32";
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name="ProgEl_List_240";
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name="ProgEl_List_241";
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       LocalVars @[0] {
@@ -14261,6 +14352,7 @@ also save specs.";
 	el_def=0;
 	NetMonItem @["batch"] {
 	 name="batch";
+	 monitor=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14295,6 +14387,7 @@ also save specs.";
 	};
 	NetMonItem @["epoch"] {
 	 name="epoch";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14329,6 +14422,7 @@ also save specs.";
 	};
 	NetMonItem @["train_mode"] {
 	 name="train_mode";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14363,6 +14457,7 @@ also save specs.";
 	};
 	NetMonItem @["group"] {
 	 name="group";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14397,6 +14492,7 @@ also save specs.";
 	};
 	NetMonItem @["trial"] {
 	 name="trial";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14431,6 +14527,7 @@ also save specs.";
 	};
 	NetMonItem @["tick"] {
 	 name="tick";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14465,6 +14562,7 @@ also save specs.";
 	};
 	NetMonItem @["time"] {
 	 name="time";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14499,6 +14597,7 @@ also save specs.";
 	};
 	NetMonItem @["trial_name"] {
 	 name="trial_name";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14533,6 +14632,7 @@ also save specs.";
 	};
 	NetMonItem @["group_name"] {
 	 name="group_name";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14567,6 +14667,7 @@ also save specs.";
 	};
 	NetMonItem @["output_name"] {
 	 name="output_name";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14601,6 +14702,7 @@ also save specs.";
 	};
 	NetMonItem @["rt_cycles"] {
 	 name="rt_cycles";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14635,6 +14737,7 @@ also save specs.";
 	};
 	NetMonItem @["sse"] {
 	 name="sse";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14669,6 +14772,7 @@ also save specs.";
 	};
 	NetMonItem @["norm_err"] {
 	 name="norm_err";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14703,6 +14807,7 @@ also save specs.";
 	};
 	NetMonItem @["cos_err"] {
 	 name="cos_err";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14737,6 +14842,7 @@ also save specs.";
 	};
 	NetMonItem @["ext_rew"] {
 	 name="ext_rew";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14771,6 +14877,7 @@ also save specs.";
 	};
 	NetMonItem @["lay_sse"] {
 	 name="lay_sse";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14805,6 +14912,7 @@ also save specs.";
 	};
 	NetMonItem @["lay_norm_err"] {
 	 name="lay_norm_err";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14839,6 +14947,7 @@ also save specs.";
 	};
 	NetMonItem @["lay_cos_err"] {
 	 name="lay_cos_err";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14873,6 +14982,7 @@ also save specs.";
 	};
 	NetMonItem @["lay_net_sd"] {
 	 name="lay_net_sd";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14907,6 +15017,7 @@ also save specs.";
 	};
 	NetMonItem @["net_cos_diff"] {
 	 name="net_cos_diff";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14941,6 +15052,7 @@ also save specs.";
 	};
 	NetMonItem @["net_trial_cos_diff"] {
 	 name="net_trial_cos_diff";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -14975,6 +15087,7 @@ also save specs.";
 	};
 	NetMonItem @["net_avg_act_diff"] {
 	 name="net_avg_act_diff";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15009,6 +15122,7 @@ also save specs.";
 	};
 	NetMonItem @["cos_diff"] {
 	 name="cos_diff";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15043,6 +15157,7 @@ also save specs.";
 	};
 	NetMonItem @["trial_cos_diff"] {
 	 name="trial_cos_diff";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15077,6 +15192,7 @@ also save specs.";
 	};
 	NetMonItem @["avg_act_diff"] {
 	 name="avg_act_diff";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15155,7 +15271,7 @@ also save specs.";
        name="trial_netmon";
        var_type=T_Object;
        object_type=NetMonitor;
-       object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$$;
+       object_val=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -15446,6 +15562,7 @@ also save specs.";
 	el_def=0;
 	NetMonItem @["batch"] {
 	 name="batch";
+	 monitor=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15480,6 +15597,7 @@ also save specs.";
 	};
 	NetMonItem @["epoch"] {
 	 name="epoch";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15514,6 +15632,7 @@ also save specs.";
 	};
 	NetMonItem @["avg_sse"] {
 	 name="avg_sse";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15548,6 +15667,7 @@ also save specs.";
 	};
 	NetMonItem @["cnt_err"] {
 	 name="cnt_err";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15582,6 +15702,7 @@ also save specs.";
 	};
 	NetMonItem @["pct_cor"] {
 	 name="pct_cor";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15616,6 +15737,7 @@ also save specs.";
 	};
 	NetMonItem @["pct_err"] {
 	 name="pct_err";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15650,6 +15772,7 @@ also save specs.";
 	};
 	NetMonItem @["avg_norm_err"] {
 	 name="avg_norm_err";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15684,6 +15807,7 @@ also save specs.";
 	};
 	NetMonItem @["avg_cos_err"] {
 	 name="avg_cos_err";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15718,6 +15842,7 @@ also save specs.";
 	};
 	NetMonItem @["avg_ext_rew"] {
 	 name="avg_ext_rew";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15752,6 +15877,7 @@ also save specs.";
 	};
 	NetMonItem @["avg_cycles"] {
 	 name="avg_cycles";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15786,6 +15912,7 @@ also save specs.";
 	};
 	NetMonItem @["epoch_time_tot"] {
 	 name="epoch_time_tot";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=1;
 	 object_type=NULL;
 	 object=NULL;
@@ -15820,6 +15947,7 @@ also save specs.";
 	};
 	NetMonItem @["epoch_time_usr"] {
 	 name="epoch_time_usr";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=1;
 	 object_type=NULL;
 	 object=NULL;
@@ -15854,6 +15982,7 @@ also save specs.";
 	};
 	NetMonItem @["lay_avg_sse"] {
 	 name="lay_avg_sse";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15888,6 +16017,7 @@ also save specs.";
 	};
 	NetMonItem @["lay_cnt_err"] {
 	 name="lay_cnt_err";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15922,6 +16052,7 @@ also save specs.";
 	};
 	NetMonItem @["lay_pct_cor"] {
 	 name="lay_pct_cor";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15956,6 +16087,7 @@ also save specs.";
 	};
 	NetMonItem @["lay_pct_err"] {
 	 name="lay_pct_err";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -15990,6 +16122,7 @@ also save specs.";
 	};
 	NetMonItem @["lay_avg_norm_err"] {
 	 name="lay_avg_norm_err";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16024,6 +16157,7 @@ also save specs.";
 	};
 	NetMonItem @["lay_avg_cos_err"] {
 	 name="lay_avg_cos_err";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16058,6 +16192,7 @@ also save specs.";
 	};
 	NetMonItem @["net_avg_cos_diff"] {
 	 name="net_avg_cos_diff";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16092,6 +16227,7 @@ also save specs.";
 	};
 	NetMonItem @["net_avg_trial_cos_diff"] {
 	 name="net_avg_trial_cos_diff";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16126,6 +16262,7 @@ also save specs.";
 	};
 	NetMonItem @["net_avg_avg_act_diff"] {
 	 name="net_avg_avg_act_diff";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16160,6 +16297,7 @@ also save specs.";
 	};
 	NetMonItem @["avg_cos_diff"] {
 	 name="avg_cos_diff";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16194,6 +16332,7 @@ also save specs.";
 	};
 	NetMonItem @["avg_trial_cos_diff"] {
 	 name="avg_trial_cos_diff";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16228,6 +16367,7 @@ also save specs.";
 	};
 	NetMonItem @["avg_avg_act_diff"] {
 	 name="avg_avg_act_diff";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16262,6 +16402,7 @@ also save specs.";
 	};
 	NetMonItem @["avg_net_sd"] {
 	 name="avg_net_sd";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16296,6 +16437,7 @@ also save specs.";
 	};
 	NetMonItem @["hog_pct"] {
 	 name="hog_pct";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16330,6 +16472,7 @@ also save specs.";
 	};
 	NetMonItem @["dead_pct"] {
 	 name="dead_pct";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16364,6 +16507,7 @@ also save specs.";
 	};
 	NetMonItem @["netmax"] {
 	 name="netmax";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16398,6 +16542,7 @@ also save specs.";
 	};
 	NetMonItem @["avg_act"] {
 	 name="avg_act";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16432,6 +16577,7 @@ also save specs.";
 	};
 	NetMonItem @["netrel"] {
 	 name="netrel";
+	 monitor=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
@@ -16510,7 +16656,7 @@ also save specs.";
        name="epoch_netmon";
        var_type=T_Object;
        object_type=NetMonitor;
-       object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$$;
+       object_val=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -16923,22 +17069,22 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.002652519848197699;
+     value 8 0=0.007427056;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9973474740982056;
+     value 8 0=0.9973475;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7986406087875366;
+     value 8 0=0.7986406;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -17130,6 +17276,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       camera_params {
+	field_of_view=45;
+	near=0.1;
+	focal=5;
+	far=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -18365,6 +18517,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       camera_params {
+	field_of_view=45;
+	near=0.1;
+	focal=5;
+	far=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -18456,22 +18614,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 6 0=0;
+       value 8 0=0;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.008496176451444626;
+       value 8 0=0.008496176;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04031830281019211;
+       value 8 0=0.0403183;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7349193096160889;
+       value 8 0=0.7349193;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -18751,7 +18909,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=2: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: dt=0.1: lrn_fact=0.02368421: };
+     avg_l {init=0.4: max=2: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.02368421: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      adapt {

@@ -299,6 +299,10 @@ DataTable* Projection::ConVarsToTable(DataTable* dt, const String& var1, const S
   return dt;
 }
 
+void Projection::ToggleOff() {
+  off = !off;
+}
+
 void Projection::SetFrom() {
   if(!(bool)layer) {
     from = NULL;

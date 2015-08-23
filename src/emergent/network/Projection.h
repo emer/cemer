@@ -97,9 +97,12 @@ public:
 
   virtual void  UpdateName();
   // #CAT_Structure update the name of projection to reflect any changes in where it receives from
+
+  virtual void  ToggleOff();
+  // #MENU #MENU_ON_Object #DYN1 #CAT_Structure toggle the off status of this projection -- if on, turn off, if off, turn on
+  
   virtual void  SetFrom();
   // #CAT_Structure set where to receive from based on selections
-
   virtual void  SetCustomFrom(Layer* from_lay);
   // #MENU #MENU_ON_Actions #MENU_CONTEXT #DROP1 #DYN1 #CAT_Structure #INIT_ARGVAL_ON_from set a CUSTOM projection from given layer (if from_lay == layer, turns into SELF)
 

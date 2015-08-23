@@ -7,8 +7,8 @@ if [[ "$rtnm" == "" ]]; then
     exit 1
 fi
 
-set pkgnm="$rtnm".pkg
-set dmgnm="$rtnm".dmg
+pkgnm="$rtnm".pkg
+dmgnm="$rtnm".dmg
 
 echo "making dmg: $dmgnm from package: $pkgnm"
 
