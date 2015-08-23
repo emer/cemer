@@ -89,14 +89,19 @@ void FunctionCall::UpdateArgs() {
 
 bool FunctionCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   String code_dn = code; code_dn.downcase();
+  // if assignment of return value from func you may not see funcall
   if(code_dn.startsWith("funcall ")) return true; // definitely
   if(code_dn.startsWith("func ")) return true; // definitely
   if(code_dn.startsWith("fun ")) return true; // definitely
-  if(!code.contains('(')) return false;
-  String lhs = code.before('(');
+  String lhs = code;
   String funm = lhs;
-  if(lhs.contains('='))
+  if(code.contains('(')) {
+    lhs = code.before('(');
+  }
+  if(lhs.contains('=')) {
     funm = trim(lhs.after('='));
+  }
+  
   if((funm.freq('.') + funm.freq("->")) > 0) return false; // exclude method call
   if(!scope_el) return false;
   Program* prog = GET_OWNER(scope_el, Program);
