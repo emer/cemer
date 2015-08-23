@@ -219,22 +219,6 @@ void cssiMethMenu::ShowReturnVal(cssEl* rval) {
   iDialogChoice::information(NULL, "Return Value", val);
 }
 
-void cssiMethMenu::ApplyBefore() {
-//  if ((host == NULL) || (host->state != IWidgetHost::ACTIVE))
-  if (host == NULL) return;
-  if (css_fun->HasOption("NO_APPLY_BEFORE") || !host->HasChanged())
-    return;
-  if (taMisc::auto_revert == taMisc::CONFIRM_REVERT) {
-    int chs = taMisc::Choice
-      ("Auto Apply/Revert: You have edited the data --apply or revert and lose changes?","&Apply","&Revert");
-    if(chs == 0)
-      host->GetValue();
-  }
-  else {
-    host->GetValue();
-  }
-}
-
 void cssiMethMenu::UpdateAfter() {
   if (css_fun->HasOption("NO_REVERT_AFTER"))
      return;

@@ -109,12 +109,6 @@ public:
     SOURCE                      // and show the source of the load as its loaded
   };
 
-  enum AutoRevert {
-    AUTO_APPLY,                 // automatically apply changes before auto-reverting
-    AUTO_REVERT,                // automatically revert, losing changes
-    CONFIRM_REVERT              // put up a confirmatory message before reverting
-  };
-
   enum QuitFlag { // helps during shutdown to know whether we can cancel
     QF_RUNNING          = 0, //
     QF_USER_QUIT,       // we can still cancel while in this state of quitting
@@ -298,7 +292,7 @@ public:
   static KeepTokens     keep_tokens;    // #SAVE #CAT_GUI #EXPERT default for keeping tokens
   static SaveFormat     save_format;    // #SAVE #CAT_GUI #EXPERT format to use when saving things (dump files)
   static bool           auto_edit;      // #SAVE #CAT_GUI #EXPERT automatic edit dialog after creation?
-  static AutoRevert     auto_revert;    // #SAVE #CAT_GUI #EXPERT when dialogs are automatically updated (reverted), what to do about changes?
+
   static MatrixView     matrix_view;    // #SAVE #CAT_GUI #EXPERT #DEF_BOT_ZERO whether to show matrices with 0 row at top or bottom of view
   static bool           beep_on_error; // #SAVE #DEF_false #CAT_GUI #EXPERT beep when an error message is printed on the console
   static short          num_recent_files; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent files to save

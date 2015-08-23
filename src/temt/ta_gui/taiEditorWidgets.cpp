@@ -369,22 +369,6 @@ bool taiEditorWidgets::ReShow(bool force) {
   return true;
 }
 
-void taiEditorWidgets::Revert_force() {
-  if (modified && (taMisc::auto_revert == taMisc::CONFIRM_REVERT)) {
-    int chs = taMisc::Choice
-      ("Revert: You have edited the data -- apply, or revert and lose changes?",
-      "Apply", "Revert", "Cancel");
-    if(chs == 2)
-      return;
-    if(chs == 0) {
-      Apply();
-      return;
-    }
-  }
-  Unchanged();
-  Revert();                     // use real revert to be sure..
-}
-
 TypeItem::ShowMembs taiEditorWidgets::show() const {
   return taMisc::show_gui;
 }

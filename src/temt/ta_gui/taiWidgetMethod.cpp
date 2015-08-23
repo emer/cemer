@@ -222,11 +222,6 @@ void taiWidgetMethod::ApplyBefore() {
   if (host == NULL) return;
   if (meth->HasOption("NO_APPLY_BEFORE") /*|| !host->HasChanged()*/)
     return;
-  // we no longer check about applying, because auto apply is supposed to be automatic!
-/*obs  if (taMisc::auto_revert == taMisc::CONFIRM_REVERT) {
-    int chs = taMisc::Choice("Auto Apply/Revert: You have edited the dialog--apply or revert and lose changes?", "Apply", "Revert");
-    if (chs != 0) return;
-  }*/
 
 /*was:  applyNow();
   // note: applyNow is async, so we have to do event loop

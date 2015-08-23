@@ -256,7 +256,6 @@ TypeItem::ShowMembs     taMisc::show_gui = TypeItem::NORM_MEMBS;
 taMisc::TypeInfo        taMisc::type_info_ = taMisc::NO_OPTIONS_LISTS;
 taMisc::KeepTokens      taMisc::keep_tokens = taMisc::Tokens;
 bool                    taMisc::auto_edit = false;
-taMisc::AutoRevert      taMisc::auto_revert = taMisc::AUTO_APPLY;
 taMisc::MatrixView      taMisc::matrix_view = taMisc::BOT_ZERO;
 bool                    taMisc::beep_on_error = false;
 short                   taMisc::num_recent_files = 10;

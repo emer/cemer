@@ -64,14 +64,13 @@ public:
    // prepare dialog for rebuilding Body to show new contents
 
   virtual void          Iconify(bool value);    // for dialogs: iconify/deiconify
-  void         ReConstr_Body() override; // called when show has changed and body should be reconstructed -- this is a deferred call
-  virtual void          Revert_force();
-   // forcibly (automatically) revert buffer (prompts)
+  void                  ReConstr_Body() override; // called when show has changed and body should be reconstructed -- this is a deferred call
+
   virtual void          SetRevert();    // set the revert button on
   virtual void          UnSetRevert();  // set the revert button off
-  bool         ReShow(bool force = false) override; // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
+  bool                  ReShow(bool force = false) override; // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
   virtual void          Raise() {if (isDialog()) DoRaise_Dialog();}     // bring dialog or panel (in new tab) to the front
-  void         GetImage(bool force) override {inherited::GetImage(force);} // scope ugh
+  void                  GetImage(bool force) override {inherited::GetImage(force);} // scope ugh
 
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*         This() override {return this;}

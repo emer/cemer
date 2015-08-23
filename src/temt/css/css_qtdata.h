@@ -73,7 +73,6 @@ public:
 //  ~cssiMethMenu();
 
   void          ShowReturnVal(cssEl* rval);
-  void          ApplyBefore();  // apply changes before performing menu call
   void          UpdateAfter();  // update display after performing menu call
 
   void          GenerateScript(); // output script code equivalent if recording
