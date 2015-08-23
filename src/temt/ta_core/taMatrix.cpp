@@ -1357,7 +1357,23 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
 int taMatrix::FindVal_Flat(const Variant& val, int st_idx) const {
   for(int i=st_idx;i<size; i++) {
     Variant mval = FastElAsVar_Flat(i);
-    if(mval == val) return i;
+    if(mval == val)
+      return i;
+  }
+  return -1;
+}
+
+int taMatrix::FindValAsString_Flat(const String& val, int st_idx, bool contains) const {
+  for(int i=st_idx;i<size; i++) {
+    Variant mval = FastElAsVar_Flat(i);
+    if (contains) {
+      if(mval.toString().contains(val))
+        return i;
+    }
+    else {
+      if(mval.toString() == val)
+        return i;
+    }
   }
   return -1;
 }

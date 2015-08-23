@@ -103,14 +103,9 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
         return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
     } break;
     case Qt::BackgroundColorRole : //-- QColor
-    {
-      taVector2i pair;
-      pair.x = index.row();
-      pair.y = index.column();
-      if (items_found.Contains(&pair)) {
+      if (TableCellHasMatch(index)) {
         return QColor(Qt::yellow);
       }
-    }
       /* note: only used when !(option.showDecorationSelected && (option.state
        & QStyle::State_Selected)) */
       // note: only make it actual ro color if ro (not for "(matrix)" cells)
@@ -299,5 +294,17 @@ const taVector2i* iDataTableModel::GetPreviousFound() {
     current_found -= 1;
     return items_found.SafeEl(current_found);
   }
+}
+
+bool iDataTableModel::TableCellHasMatch(const QModelIndex& index) const {
+  DataCol* column = dataTable()->GetColData(index.column());
+  int cells_per_row = column->cell_size();
+  int start_cell = index.row()*cells_per_row;
+  for (int i=start_cell; i<start_cell+cells_per_row; i++) {
+    taVector2i pair(i, index.column());
+    if (items_found.Contains(&pair))
+      return true;
+  }
+  return false;
 }
 

@@ -57,14 +57,14 @@ public:
   void                  emit_dataChanged(const QModelIndex& topLeft,
                                          const QModelIndex& bottomRight); // #IGNORE
     
-    void                AddToFoundList(int row, int col);
-    // add the row/col pair of a data table to found_list - for non-matrix columns
-    void                ClearFoundList();
-    // remove all the previously found items from the list
-    const taVector2i*  GetNextFound();
-    // #IGNORE get the row/col of the next item from the current search
-    const taVector2i*  GetPreviousFound();
-    // #IGNORE get the row/col of the previous item from the current search
+  void               AddToFoundList(int row, int col);
+  // add the row/col pair of a data table to found_list - for non-matrix columns
+  void               ClearFoundList();
+  // remove all the previously found items from the list
+  const taVector2i*  GetNextFound();
+  // #IGNORE get the row/col of the next item from the current search
+  const taVector2i*  GetPreviousFound();
+  // #IGNORE get the row/col of the previous item from the current search
 
 public slots:
   void                  matSigEmit(int col_idx); // mat editor calls when data changes
@@ -73,9 +73,15 @@ protected:
   iDataTableModel(DataTable* dt);
   ~iDataTableModel(); //
     
-  taVector2i_List       items_found;  // we don't use QList<QModelIndex> because we need to track matrix columns
+  taVector2i_List       items_found;
+  // we don't use QList<QModelIndex> because we need to track matrix columns
   int                   current_found;
-  
+  // the current item in the list of matching items (those found in search of table)
+#ifndef __MAKETA__
+  bool                  TableCellHasMatch(const QModelIndex& index) const;
+  // is the cell in the row - cell number is flat value for entire column
+#endif
+    
   public: // required implementations
 #ifndef __MAKETA__
   int                   columnCount(const QModelIndex& parent = QModelIndex()) const override; 
@@ -84,8 +90,8 @@ protected:
   QVariant              headerData(int section, Qt::Orientation orientation,
                                    int role = Qt::DisplayRole) const override;
   int                   rowCount(const QModelIndex& parent = QModelIndex()) const override;
-  bool                  setData(const QModelIndex& index, const QVariant& value,
-                                int role = Qt::EditRole) override; // for editing
+  bool                  setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
+  // for editing
 #endif
     
 public: // ISigLinkClient i/f
