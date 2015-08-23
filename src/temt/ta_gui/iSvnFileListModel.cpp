@@ -55,9 +55,6 @@ bool iSvnFileListModel::AddFile(const String& file_path, const String& name, con
   svn_file_model->setWcPath(file_path);
   String wc_url;
   bool rval = svn_file_model->addFile(name);
-  if (rval) {
-    rval = svn_file_model->commit(msg);
-  }
   delete svn_file_model;
   return rval;
 }
@@ -493,12 +490,13 @@ bool iSvnFileListModel::refresh() {
   file_kinds.Reset();
   file_authors.Reset();
 
+  
   try {
     svn_client->List(file_names, file_paths, file_sizes, file_revs, file_times,
                      file_kinds, file_authors, svn_url_full.toLatin1(), svn_rev, false); // no recurse
   }
   catch (const SubversionClient::Exception &ex) {
-    taMisc::Error("Error doing List in SubversionClient.\n", ex.what());
+    taMisc::Error("Error doing List in SubversionClient.\nIgnore if doing Add", ex.what());
     emit layoutChanged();
     return false;
   }

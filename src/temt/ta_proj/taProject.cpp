@@ -903,7 +903,7 @@ void taProject::SvnBrowser() {
   }
 }
 
-void taProject::SvnAdd() {
+bool taProject::SvnAdd() {
   Save();
   bool in_repo = true;
   String path = GetFileName();
@@ -912,10 +912,14 @@ void taProject::SvnAdd() {
     if (in_repo) {
       String msg = "The project " + path + " is already in the repository";
       taMisc::Warning(msg);
-      return;
+      return false;
     }
-    iSvnFileListModel::AddFile(taMisc::GetDirFmPath(GetFileName()), taMisc::GetFileFmPath(GetFileName()));
+    if (iSvnFileListModel::AddFile(taMisc::GetDirFmPath(GetFileName()), taMisc::GetFileFmPath(GetFileName()))) {
+      bool project_file_only = true;
+      return iSvnFileListModel::CommitFile(path, project_file_only); // true means project file only
+    }
   }
+  return false;
 }
 
 void taProject::SvnCommit(bool project_file_only) {
