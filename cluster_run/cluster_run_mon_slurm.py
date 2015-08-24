@@ -10,8 +10,7 @@ import cluster_run_mon_lib as runmon
 runmon.submit_mode = "cluster"
 
 # name of queue -- used for a few things -- replace with actual!
-clust_queue = "blanca-ccn"
-
+runmon.clust_queue = "blanca-ccn"
 # full path to single processor job submission script
 # STRONGLY recommend using the pyqsub based commands avail in 
 # emergent/cluster_run/ directory (where this script lives as well)
@@ -22,12 +21,12 @@ runmon.sp_qsub_cmd = 'pyqsub'
 # in general it is best to have a different script for each queue
 # because the emergent preferences have relevant settings for them
 # runmon.sp_qsub_args = "-q " + clust_queue
-runmon.sp_qsub_args = "--threaded --quick --jobtype sp_qsub_q -q " + clust_queue
+runmon.sp_qsub_args = "--threaded --quick --jobtype sp_qsub_q"
 
 # the dm_qsub_cmd takes args of <mpi_nodes> <per_node> <n_threads> <run_time> <full_command>
 runmon.dm_qsub_cmd = 'pyqsub'
 # runmon.dm_qsub_args = "-q " + clust_queue
-runmon.dm_qsub_args = "--threaded --quick --jobtype dm_qsub_q -q " + clust_queue
+runmon.dm_qsub_args = "--threaded --quick --jobtype dm_qsub_q"
 
 # it is essential that these scripts return the cluster job number in the format
 # created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
@@ -67,7 +66,7 @@ runmon.qdel_args = ""
 # moab = showq 
 # pyshowq for SGE (checked into emergent/cluster_run showq)
 runmon.showq_cmd = "squeue"
-runmon.showq_args = ['-a', '-h', '-p', clust_queue, '-o', "%.18i %.14P %.30j %.10u %.8T %.10M %.9l %.6D %.10C %.10m %.10p %R"]
+runmon.showq_args = ['-a', '-h', '-p', runmon.clust_queue, '-o', "%.18i %.14P %.30j %.10u %.8T %.10M %.9l %.6D %.10C %.10m %.10p %R"]
 # parser function to use for showq output -- complex enough that this is most efficient way to do it
 runmon.showq_parser = "slurm"
 

@@ -1265,12 +1265,13 @@ class SubversionPoller(object):
         return
     
     def _start_job_cluster(self, filename, rev, row):
-        global mail_user
+        global mail_user, clust_queue
         proj = self.model_files[0]  
         proj = os.path.abspath(proj)
         self.cur_proj_file = proj
 
         cmd = self.jobs_submit.get_val(row, "command")
+        queue = self.jobs_submit.get_val(row, "queue")
         params = self.jobs_submit.get_val(row, "params")
         run_time = self.jobs_submit.get_val(row, "run_time")
         n_threads = self.jobs_submit.get_val(row, "n_threads")
@@ -1315,6 +1316,16 @@ class SubversionPoller(object):
                     args_eff = args_eff + ["-s", path_setup]
                 else:
                     args_eff = ["-s", path_setup]
+            if len(queue) > 0:
+                if (len(args_eff) > 0):
+                    args_eff = args_eff + ["-q", queue]
+                else:
+                    args_eff = ["-q", queue]
+            else:
+                if (len(args_eff) > 0):
+                    args_eff = args_eff + ["-q", clust_queue]
+                else:
+                    args_eff = ["-q", clust_queue] 
             if len(args_eff) > 0:
                 args_eff = args_eff + ["-j", job_launcher]
             else:
@@ -1347,6 +1358,16 @@ class SubversionPoller(object):
                     args_eff = args_eff + ["-s", path_setup]
                 else:
                     args_eff = ["-s", path_setup]
+            if len(queue) > 0:
+                if (len(args_eff) > 0):
+                    args_eff = args_eff + ["-q", queue]
+                else:
+                    args_eff = ["-q", queue]
+            else:
+                if (len(args_eff) > 0):
+                    args_eff = args_eff + ["-q", clust_queue]
+                else:
+                    args_eff = ["-q", clust_queue]
             if len(args_eff) > 0:
                 args_eff = args_eff + ["-j", job_launcher]
             else:
