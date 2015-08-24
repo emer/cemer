@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.1.0 rev8540
+// ta_Dump File v3.0 -- code v7.8.1.0 rev8541
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -897,10 +897,11 @@ LeabraProject .projects["LeabraFlex"] {
 
     ProgType_List @.types = [1] {
      DynEnumType @["StopStepGrain"] { 
-      DynEnumItem_List @.enums = [3] {
+      DynEnumItem_List @.enums = [4] {
        DynEnumItem @["TRIAL"] { };
        DynEnumItem @["EPOCH"] { };
        DynEnumItem @["ERROR"] { };
+       DynEnumItem @["CORRECT"] { };
       };
      };
     };
@@ -927,7 +928,7 @@ LeabraProject .projects["LeabraFlex"] {
 	};
        };
        Switch @[1] { 
-	ProgEl_List @.cases = [3] {
+	ProgEl_List @.cases = [4] {
 	 CaseBlock @[0] { 
 	  ProgEl_List @.prog_code = [1] {
 	   ReturnExpr @[0] { };
@@ -939,6 +940,11 @@ LeabraProject .projects["LeabraFlex"] {
 	  };
 	 };
 	 CaseBlock @[2] { 
+	  ProgEl_List @.prog_code = [1] {
+	   ReturnExpr @[0] { };
+	  };
+	 };
+	 CaseBlock @[3] { 
 	  ProgEl_List @.prog_code = [1] {
 	   ReturnExpr @[0] { };
 	  };
@@ -3208,7 +3214,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 10 May 2015, at 01:14.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 13,493 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 13,495 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -3228,7 +3234,7 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.137 secs. -->
+<!-- Served in 0.099 secs. -->
 	
 
 </body></html>";
@@ -8742,6 +8748,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	value=2;
 	desc="stop /step after there is an error (sse > 0)";
        };
+       DynEnumItem @["CORRECT"] {
+	name="CORRECT";
+	value=3;
+	desc="stop /step after there is a correct trial (sse == 0)";
+       };
       };
       bits=0;
      };
@@ -8911,6 +8922,27 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	  case_val {
 	   expr="ERROR";
+	  };
+	 };
+	 CaseBlock @[3] {
+	  desc=;
+	  flags=0;
+	  orig_prog_code=;
+	  prog_code {
+	   name="prog_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   ReturnExpr @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    orig_prog_code="return network->sse > 0.0f";
+	    expr {
+	     expr="(network->sse == 0.0f)";
+	    };
+	   };
+	  };
+	  case_val {
+	   expr="CORRECT";
 	  };
 	 };
 	};
@@ -10003,7 +10035,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [6] 2;0;3;4;5;1;      };
+      [0]       };
       last_sort_spec {
        name="last_sort_spec";
        ops {

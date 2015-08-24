@@ -85,17 +85,19 @@ void Switch::CasesFmEnum(bool add_default) {
   else
     CasesFmEnum_dyn();
 
-  CaseBlock* pe;
-  bool got_def = false;
-  for (int i = cases.size - 1; i >= 0; --i) {
-    pe = dynamic_cast<CaseBlock*>(cases.FastEl(i));
-    if(pe->case_val.expr.empty()) { // default
-      got_def = true;
-      break;
+  if(add_default) {
+    CaseBlock* pe;
+    bool got_def = false;
+    for (int i = cases.size - 1; i >= 0; --i) {
+      pe = dynamic_cast<CaseBlock*>(cases.FastEl(i));
+      if(pe->case_val.expr.empty()) { // default
+        got_def = true;
+        break;
+      }
     }
-  }
-  if(!got_def) {
-    pe = (CaseBlock*)cases.New(1, &TA_CaseBlock);
+    if(!got_def) {
+      pe = (CaseBlock*)cases.New(1, &TA_CaseBlock);
+    }
   }
   
   if(taMisc::gui_active) {
