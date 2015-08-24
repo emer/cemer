@@ -301,6 +301,7 @@ DataTable* Projection::ConVarsToTable(DataTable* dt, const String& var1, const S
 
 void Projection::ToggleOff() {
   off = !off;
+  SigEmitUpdated();
 }
 
 void Projection::SetFrom() {
