@@ -354,6 +354,7 @@ int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
     this->Copy(obj);
     this->SetName(saved_name);  // restore the name
     if (proj) {
+      proj->undo_mgr.SaveUndo(obj, "ASSIGN", NULL, false, this);
       proj->no_dialogs = false;
     }
     UpdateAfterEdit();
