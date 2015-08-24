@@ -23,13 +23,34 @@ TA_BASEFUNS_CTORS_DEFN(StopStepPoint);
 void StopStepPoint::Initialize() {
 }
 
+void StopStepPoint::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+//   CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
+  CheckEqualsError(cond.expr, quiet, rval);
+}
+
 void StopStepPoint::GenCssBody_impl(Program* prog) {
-  prog->AddLine(this, "StopCheck(); // check for Stop or Step button", ProgLine::MAIN_LINE);
+  cond.ParseExpr();             // re-parse just to be sure!
+  String fexp = cond.GetFullExpr();
+  if(fexp.nonempty()) {
+    prog->AddLine(this, "if(" + fexp + ") {", ProgLine::MAIN_LINE);
+    prog->IncIndent();
+    prog->AddLine(this, "StopCheck(); // check for Stop or Step button");
+    prog->DecIndent();
+    prog->AddLine(this, "}");
+  }
+  else {
+    prog->AddLine(this, "StopCheck(); // check for Stop or Step button",
+                  ProgLine::MAIN_LINE);
+  }
   prog->AddVerboseLine(this);
 }
 
 String StopStepPoint::GetDisplayName() const {
-  return "Stop/Step Point";
+  if(cond.expr.empty())
+    return "Stop/Step Point";
+  else
+    return "if(" + cond.GetFullExpr() + ") Stop/Step Point";
 }
 
 void StopStepPoint::InitLinks() {

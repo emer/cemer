@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.1.0 rev8526
+// ta_Dump File v3.0 -- code v7.8.1.0 rev8540
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -22,11 +22,12 @@ LeabraProject .projects["LeabraFlex"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [4] {
+   EditMbrItem_Group @.mbrs = [5] {
     EditMbrItem @[0] { };
     EditMbrItem @[1] { };
     EditMbrItem @[2] { };
     EditMbrItem @[3] { };
+    EditMbrItem @[4] { };
    };
 
    EditMthItem_Group @.mths = [4] {
@@ -298,52 +299,153 @@ LeabraProject .projects["LeabraFlex"] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
       };
      };
      int_Data @["epoch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
       };
      };
-     String_Data @["train_mode"] { };
+     String_Data @["train_mode"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
      int_Data @["group"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
       };
      };
      int_Data @["trial"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
       };
      };
      int_Data @["tick"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["time"] { };
-     String_Data @["trial_name"] { };
-     String_Data @["group_name"] { };
-     String_Data @["output_name"] { };
-     float_Data @["rt_cycles"] { };
-     float_Data @["sse"] { };
-     float_Data @["norm_err"] { };
-     float_Data @["cos_err"] { };
-     float_Data @["ext_rew"] { };
-     float_Data @["Output_lay_sse"] { };
-     float_Data @["Output_lay_norm_err"] { };
-     float_Data @["Output_lay_cos_err"] { };
-     float_Data @["Hidden_lay_net_sd"] { };
-     float_Data @["Output_lay_net_sd"] { };
-     float_Data @["net_cos_diff"] { };
-     float_Data @["net_trial_cos_diff"] { };
-     float_Data @["net_avg_act_diff"] { };
-     float_Data @["Hidden_cos_diff"] { };
-     float_Data @["Output_cos_diff"] { };
-     float_Data @["Hidden_trial_cos_diff"] { };
-     float_Data @["Output_trial_cos_diff"] { };
-     float_Data @["Hidden_avg_act_diff"] { };
-     float_Data @["Output_avg_act_diff"] { };
+     float_Data @["time"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     String_Data @["trial_name"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     String_Data @["group_name"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     String_Data @["output_name"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["rt_cycles"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["sse"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["norm_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["cos_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["ext_rew"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_sse"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_norm_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_cos_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_lay_net_sd"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_net_sd"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["net_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["net_trial_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["net_avg_act_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_trial_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_trial_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_avg_act_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_avg_act_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
@@ -793,7 +895,14 @@ LeabraProject .projects["LeabraFlex"] {
     ProgObjList @.objs = [0] {
     };
 
-    ProgType_List @.types = [0] {
+    ProgType_List @.types = [1] {
+     DynEnumType @["StopStepGrain"] { 
+      DynEnumItem_List @.enums = [3] {
+       DynEnumItem @["TRIAL"] { };
+       DynEnumItem @["EPOCH"] { };
+       DynEnumItem @["ERROR"] { };
+      };
+     };
     };
 
     ProgVar_List @.args = [3] {
@@ -802,11 +911,42 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["run_prog"] { };
     };
 
-    ProgVar_List @.vars = [1] {
+    ProgVar_List @.vars = [2] {
      ProgVar @["Config"] { };
+     ProgVar @["stop_step_grain"] { };
     };
 
-    Function_List @.functions = [0] {
+    Function_List @.functions = [1] {
+     Function @["StopStepTest"] { 
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgEl_List @.fun_code = [2] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [0] {
+	};
+       };
+       Switch @[1] { 
+	ProgEl_List @.cases = [3] {
+	 CaseBlock @[0] { 
+	  ProgEl_List @.prog_code = [1] {
+	   ReturnExpr @[0] { };
+	  };
+	 };
+	 CaseBlock @[1] { 
+	  ProgEl_List @.prog_code = [1] {
+	   ReturnExpr @[0] { };
+	  };
+	 };
+	 CaseBlock @[2] { 
+	  ProgEl_List @.prog_code = [1] {
+	   ReturnExpr @[0] { };
+	  };
+	 };
+	};
+       };
+      };
+     };
     };
 
     ProgEl_List @.init_code = [0] {
@@ -2955,8 +3095,8 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.014 seconds
-Real time usage: 0.017 seconds
+CPU time usage: 0.022 seconds
+Real time usage: 0.025 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -2965,7 +3105,7 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20150820225657
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20150824071751
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11088\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11088</a>\"				</div>
@@ -3068,7 +3208,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 10 May 2015, at 01:14.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 13,485 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 13,493 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -3088,7 +3228,7 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.155 secs. -->
+<!-- Served in 0.137 secs. -->
 	
 
 </body></html>";
@@ -3157,6 +3297,28 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     EditMbrItem @[1] {
+     label="mstr_run_stop_step_grain";
+     desc="what grain to stop / step for the MasterRun program (MstrRun) -- can expand this by editing MasterRun program";
+     cust_desc=1;
+     base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].vars["stop_step_grain"].dyn_enum_val$$;
+     mbr=DynEnum::value;
+     is_numeric=0;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1;
+     };
+     param_set_value {
+      saved_value=;
+     };
+     notes {
+      notes=;
+     };
+    };
+    EditMbrItem @[2] {
      label="Cycle_update_net_view";
      desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
      cust_desc=1;
@@ -3178,7 +3340,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       notes=;
      };
     };
-    EditMbrItem @[2] {
+    EditMbrItem @[3] {
      label="cycle_qtr";
      desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
      cust_desc=0;
@@ -3200,7 +3362,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       notes=;
      };
     };
-    EditMbrItem @[3] {
+    EditMbrItem @[4] {
      label="LeabraConSpec_0_lrate";
      desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
      cust_desc=0;
@@ -5327,6 +5489,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
       };
       name="batch";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5350,6 +5517,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
       };
       name="epoch";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5364,6 +5536,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      String_Data @["train_mode"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_100";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="train_mode";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5384,6 +5566,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
 	val_type_fixed=0;
        };
       };
@@ -5409,6 +5596,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
       };
       name="trial";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5432,6 +5624,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
       };
       name="tick";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5446,6 +5643,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["time"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_101";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="time";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5459,6 +5666,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      String_Data @["trial_name"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_102";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="trial_name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5472,6 +5689,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      String_Data @["group_name"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_103";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="group_name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5485,6 +5712,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      String_Data @["output_name"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_104";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="output_name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5498,6 +5735,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["rt_cycles"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_105";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="rt_cycles";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5511,6 +5758,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["sse"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_106";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="sse";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5524,6 +5781,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["norm_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_107";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="norm_err";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5537,6 +5804,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["cos_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_108";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="cos_err";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5550,6 +5827,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["ext_rew"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_109";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="ext_rew";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5563,6 +5850,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["Output_lay_sse"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_110";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_sse";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5576,6 +5873,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["Output_lay_norm_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_111";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_norm_err";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5589,6 +5896,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["Output_lay_cos_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_112";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_cos_err";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5602,6 +5919,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["Hidden_lay_net_sd"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_113";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_lay_net_sd";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5615,6 +5942,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["Output_lay_net_sd"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_114";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_net_sd";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5628,6 +5965,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["net_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_115";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="net_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5641,6 +5988,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["net_trial_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_116";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="net_trial_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5654,6 +6011,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["net_avg_act_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_117";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="net_avg_act_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5667,6 +6034,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["Hidden_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_118";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5680,6 +6057,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["Output_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_119";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="Output_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5693,6 +6080,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["Hidden_trial_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_120";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_trial_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5706,6 +6103,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["Output_trial_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_121";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="Output_trial_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5719,6 +6126,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["Hidden_avg_act_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_122";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_avg_act_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5732,6 +6149,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
      };
      float_Data @["Output_avg_act_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_123";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1328021;
+	val_type_fixed=0;
+       };
+      };
       name="Output_avg_act_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -6788,6 +7215,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 
 command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xxx]";
    flags=STARTUP_RUN;
+   stop_step_cond {
+    expr=;
+   };
    objs {
     name="objs";
     el_typ=taNBase;
@@ -7673,6 +8103,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags="Leabra, Startup";
     desc="startup args specifically for fixation training parameters";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -7756,6 +8189,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags="Leabra, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -7938,6 +8374,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="modular event-based train program";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -8269,6 +8708,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="modular run code -- forks off to RunProgs based on run_prog -- only neccessary to provide common step point for all run progs";
     flags=0;
+    stop_step_cond {
+     expr="StopStepTest()";
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -8278,6 +8720,31 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="types";
      el_typ=DynEnumType;
      el_def=0;
+     DynEnumType @["StopStepGrain"] {
+      name="StopStepGrain";
+      desc=;
+      enums {
+       name="enums";
+       el_typ=DynEnumItem;
+       el_def=0;
+       DynEnumItem @["TRIAL"] {
+	name="TRIAL";
+	value=0;
+	desc="stop / step after each time through the master run program, which generally corresponds to a trial";
+       };
+       DynEnumItem @["EPOCH"] {
+	name="EPOCH";
+	value=1;
+	desc="stop / step after an entire epoch of processing (when network.trial is reset back to 0)";
+       };
+       DynEnumItem @["ERROR"] {
+	name="ERROR";
+	value=2;
+	desc="stop /step after there is an error (sse > 0)";
+       };
+      };
+      bits=0;
+     };
     };
     args {
      name="args";
@@ -8330,11 +8797,126 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+     ProgVar @["stop_step_grain"] {
+      name="stop_step_grain";
+      var_type=T_DynEnum;
+      dyn_enum_val {
+       enum_type=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].types["StopStepGrain"]$$;
+       value=0;
+      };
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
      el_typ=Function;
      el_def=0;
+     Function @["StopStepTest"] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      name="StopStepTest";
+      return_type=T_Bool;
+      object_type=taOBase;
+      args {
+       name="ProgVar_List_1";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+      fun_code {
+       name="ProgEl_List_248";
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	local_vars {
+	 name="local_vars";
+	 el_typ=ProgVar;
+	 el_def=0;
+	};
+       };
+       Switch @[1] {
+	desc=;
+	flags=0;
+	orig_prog_code="switch(stop_step_grain)";
+	switch_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].vars["stop_step_grain"]$$;
+	cases {
+	 name="cases";
+	 el_typ=CaseBlock;
+	 el_def=0;
+	 CaseBlock @[0] {
+	  desc=;
+	  flags=0;
+	  orig_prog_code=;
+	  prog_code {
+	   name="prog_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   ReturnExpr @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    orig_prog_code="return true";
+	    expr {
+	     expr="true";
+	    };
+	   };
+	  };
+	  case_val {
+	   expr="TRIAL";
+	  };
+	 };
+	 CaseBlock @[1] {
+	  desc=;
+	  flags=0;
+	  orig_prog_code=;
+	  prog_code {
+	   name="prog_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   ReturnExpr @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    orig_prog_code="return network->trial == 0";
+	    expr {
+	     expr="(network->trial == 0)";
+	    };
+	   };
+	  };
+	  case_val {
+	   expr="EPOCH";
+	  };
+	 };
+	 CaseBlock @[2] {
+	  desc=;
+	  flags=0;
+	  orig_prog_code=;
+	  prog_code {
+	   name="prog_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   ReturnExpr @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    orig_prog_code="return network->sse > 0.0f";
+	    expr {
+	     expr="(network->sse > 0.0f)";
+	    };
+	   };
+	  };
+	  case_val {
+	   expr="ERROR";
+	  };
+	 };
+	};
+       };
+      };
+     };
     };
     init_code {
      name="init_code";
@@ -8396,6 +8978,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      tags=;
      desc="initialization for basic training";
      flags=NO_STOP_STEP;
+     stop_step_cond {
+      expr=;
+     };
      objs {
       name="objs";
       el_typ=taNBase;
@@ -8615,6 +9200,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      tags=;
      desc="run basic training -- does ";
      flags=NO_STOP_STEP;
+     stop_step_cond {
+      expr=;
+     };
      objs {
       name="objs";
       el_typ=taNBase;
@@ -8944,11 +9532,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="basic training -- this is a standard Leabra minus-plus trial";
     flags=2;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=1174: sys=360: tot=143201938679: }: end={usr=1174: sys=360: tot=143201938679: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=5248: sys=1861: tot=144040474071: }: end={usr=5248: sys=1861: tot=144040474071: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -9224,6 +9815,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=0;
       orig_prog_code=;
+      cond {
+       expr=;
+      };
      };
      Comment @[10] {
       desc="=== Run Plus Phase ===";
@@ -9365,6 +9959,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags="InputData, Permuted, FlexProgs, ApplyInput";
     desc="choose next event in input data in either sequential or permuted order according to its own internal counter-- starts over (re-permutes) when the end is reached -- is automatically dmem compatible for allocating different events to different processors";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=DataTable;
@@ -9406,7 +10003,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [0]       };
+      [6] 2;0;3;4;5;1;      };
       last_sort_spec {
        name="last_sort_spec";
        ops {
@@ -10076,6 +10673,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="choose an event at random to present on current trial";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -10202,6 +10802,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=LayerWriter;
@@ -10471,6 +11074,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="initialize standard global params, which live here too -- set other programs to init_from these guys";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -10730,6 +11336,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="select random seed based on network batch number";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -10930,6 +11539,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="configure the network -- basically selectively lesion different parts that are not needed for a given task";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=String_Matrix;
@@ -11437,6 +12049,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="toggle lesion status on or off in network -- for dynamic speedup..";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=String_Matrix;
@@ -11867,6 +12482,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="basic stuff (init weights, load weights etc) at start of training -- also calls EpochStart -- most init progs will call this";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -12248,6 +12866,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="end training -- save weights if needed, compute final summary stats -- and set stop_train";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -12397,6 +13018,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="Start a new epoch";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -12542,6 +13166,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="end of epoch -- relnet and basic stats compute, calls only the core standard monitor, save weights if doing that";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -12697,6 +13324,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="start of trial before any input data applied -- prepares for input data to be applied (Init_InputData)";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -12821,6 +13451,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="standard end-of-trial code -- no monitor calls at all";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -12908,6 +13541,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="settle network in the minus phase -- enough different logic in two phases to warrant making them separate";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -13042,6 +13678,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags=;
     desc="settle network in the minus phase -- enough different logic in two phases to warrant making them separate";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -13147,6 +13786,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags="Leabra, Std";
     desc="Leabra processing of a single input/output event or external information, over a single alpha frequency cycle (100 msec / 10 Hz) -- iterates over gamma-frequency (25 msec / 40 Hz) quarter-trials";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -13344,6 +13986,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags="Leabra, Std";
     desc="iterates over cycles of activation updating for a gamma-frequency (25 msec / 40 Hz) quarter of an alpha frequency (100 msec / 10 Hz) trial";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -13581,6 +14226,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     tags="Leabra, Std";
     desc="runs one cycle of leabra processing (updating net inputs and activations)";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -13681,6 +14329,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 
 also save specs.";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -13986,6 +14637,9 @@ also save specs.";
      tags="Leabra, Startup";
      desc="startup args specifically for fixation training parameters";
      flags=NO_STOP_STEP;
+     stop_step_cond {
+      expr=;
+     };
      objs {
       name="objs";
       el_typ=taNBase;
@@ -14340,6 +14994,9 @@ also save specs.";
      tags="Leabra, Std, Monitor";
      desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
      flags=NO_STOP_STEP;
+     stop_step_cond {
+      expr=;
+     };
      objs {
       name="objs";
       el_typ=NetMonitor;
@@ -15550,6 +16207,9 @@ also save specs.";
      tags="Leabra, Std, Monitor";
      desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
      flags=NO_STOP_STEP;
+     stop_step_cond {
+      expr=;
+     };
      objs {
       name="objs";
       el_typ=NetMonitor;
@@ -17069,7 +17729,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.007427056;
+     value 8 0=0.00265252;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -18824,6 +19484,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_def=0;
     LeabraLayerSpec @["HiddenLayer"] {
      name="HiddenLayer";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -18832,6 +19493,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       LeabraLayerSpec @["Input_Output"] {
        name="Input_Output";
+       is_used=1;
        desc=;
        unique{        };
        children {
@@ -18878,6 +19540,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -18950,6 +19613,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     LeabraConSpec @["LeabraConSpec_0"] {
      name="LeabraConSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -18958,6 +19622,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       LeabraBiasSpec @["LeabraBiasSpec_0"] {
        name="LeabraBiasSpec_0";
+       is_used=1;
        desc=;
        unique{ rnd;wt_limits;wt_scale;wt_scale_init;       };
        children {
@@ -19033,6 +19698,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       LeabraConSpec @["TopDownCons"] {
        name="TopDownCons";
+       is_used=1;
        desc="top-down connections from output layers down to hidden etc typically need to be weaker than bottom-up";
        unique{ wt_scale;       };
        children {
@@ -19173,6 +19839,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      name="FullPrjnSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {

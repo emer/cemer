@@ -33,7 +33,7 @@ class TA_API Switch: public ProgEl {
   // ##DEF_CHILD_cases switches execution based on the value of given variable -- each case expression is matched to a corresponding case_code item one-to-one
 INHERITED(ProgEl)
 public:
-  ProgVarRef	    switch_var;	// #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable to switch on
+  ProgVarRef	    switch_var;	 // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable to switch on
 
   ProgEl_List	    cases; 	// #SHOW_TREE variable value and code to execute for each case (list of CaseBlock objects)
 
@@ -41,8 +41,8 @@ public:
 
   virtual void	    NewCase() 	{ cases.New(1); }
   // #BUTTON make a new case item
-  virtual void	    CasesFmEnum();
-  // #BUTTON #CONFIRM add all the cases for an enumerated type (switch_var must be either HARD_ENUM or DYN_ENUM)
+  virtual void	    CasesFmEnum(bool add_default = false);
+  // #BUTTON #CONFIRM add all the cases for an enumerated type (switch_var must be either HARD_ENUM or DYN_ENUM) -- if add_default is true then add a default case at the end as well
 
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;

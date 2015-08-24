@@ -90,6 +90,7 @@ void Program::Destroy() {
 
 void Program::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(stop_step_cond, this);
   taBase::Own(objs, this);
   taBase::Own(types, this);
   taBase::Own(args, this);
@@ -1349,7 +1350,18 @@ const String Program::scriptString() {
   AddLine(this, "// prog_code", ProgLine::COMMENT);
   prog_code.GenCss(this);
   if(!(flags & NO_STOP_STEP)) {
-    AddLine(this, "StopCheck(); // process pending events, including Stop and Step events");
+    if(stop_step_cond.expr.nonempty()) {
+      stop_step_cond.ParseExpr();             // re-parse just to be sure!
+      String fexp = stop_step_cond.GetFullExpr();
+      AddLine(this, "if(" + fexp + ") {");
+      IncIndent();
+      AddLine(this, "StopCheck(); // process pending events, including Stop and Step events");
+      DecIndent();
+      AddLine(this, "}");
+    }
+    else {
+      AddLine(this, "StopCheck(); // process pending events, including Stop and Step events");
+    }
   }
   DecIndent();
   AddLine(this, "}");

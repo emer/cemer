@@ -34,9 +34,9 @@ void IfReturn::GenCssBody_impl(Program* prog) {
   String fexp = cond.GetFullExpr();
   if(fexp.nonempty()) {
     prog->AddLine(this, "if(" + fexp + ") {", ProgLine::MAIN_LINE);
-    prog->AddLine(this, "return;");
     prog->AddVerboseLine(this, true, "\"before if\"");
     prog->IncIndent();
+    prog->AddLine(this, "return;");
     prog->AddVerboseLine(this, false, "\"inside if -- returning\"");
     prog->DecIndent();
     prog->AddLine(this, "}");

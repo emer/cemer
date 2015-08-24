@@ -73,7 +73,7 @@ ProgVar* Switch::FindVarName(const String& var_nm) const {
   return cases.FindVarName(var_nm);
 }
 
-void Switch::CasesFmEnum() {
+void Switch::CasesFmEnum(bool add_default) {
   if(TestError(!switch_var, "CasesFmEnum", "switch_var not set!"))
     return;
   if(TestError(((switch_var->var_type != ProgVar::T_DynEnum) &&
@@ -85,6 +85,19 @@ void Switch::CasesFmEnum() {
   else
     CasesFmEnum_dyn();
 
+  CaseBlock* pe;
+  bool got_def = false;
+  for (int i = cases.size - 1; i >= 0; --i) {
+    pe = dynamic_cast<CaseBlock*>(cases.FastEl(i));
+    if(pe->case_val.expr.empty()) { // default
+      got_def = true;
+      break;
+    }
+  }
+  if(!got_def) {
+    pe = (CaseBlock*)cases.New(1, &TA_CaseBlock);
+  }
+  
   if(taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
   }
@@ -100,7 +113,13 @@ void Switch::CasesFmEnum_hard() {
   EnumDef* ei;
   // delete ones that no longer exist
   for (i = cases.size - 1; i >= 0; --i) {
-    pe = (CaseBlock*)cases.FastEl(i);
+    pe = dynamic_cast<CaseBlock*>(cases.FastEl(i));
+    if(!pe) {
+      cases.RemoveIdx(i);
+      continue;
+    }
+    if(pe->case_val.expr.empty()) // default -- leave it
+      continue;
     ei = et->enum_vals.FindName(pe->case_val.expr);
     if(!ei) {
       cases.RemoveIdx(i);
@@ -111,14 +130,15 @@ void Switch::CasesFmEnum_hard() {
     ei = et->enum_vals.FastEl(ti);
     String einm = enm + ei->name;
     for(i=0;i<cases.size;i++) {
-      pe = (CaseBlock*)cases.FastEl(i);
+      pe = dynamic_cast<CaseBlock*>(cases.FastEl(i));
       if(pe->case_val.expr == einm) break;
     }
     if(i==cases.size) {
       pe = new CaseBlock();
       pe->case_val.SetExpr(einm);
       cases.Insert(pe, ti);
-    } else if (i != ti) {
+    }
+    else if (i != ti) {
       cases.MoveIdx(i, ti);
     }
   }
@@ -133,7 +153,13 @@ void Switch::CasesFmEnum_dyn() {
   DynEnumItem* ei;
   // delete ones that no longer exist
   for (i = cases.size - 1; i >= 0; --i) {
-    pe = (CaseBlock*)cases.FastEl(i);
+    pe = dynamic_cast<CaseBlock*>(cases.FastEl(i));
+    if(!pe) {
+      cases.RemoveIdx(i);
+      continue;
+    }
+    if(pe->case_val.expr.empty()) // default -- leave it
+      continue;
     ei = et->enums.FindName(pe->case_val.expr);
     if(!ei) {
       cases.RemoveIdx(i);
@@ -143,14 +169,15 @@ void Switch::CasesFmEnum_dyn() {
   for (ti = 0; ti < et->enums.size; ++ti) {
     ei = et->enums.FastEl(ti);
     for(i=0;i<cases.size;i++) {
-      pe = (CaseBlock*)cases.FastEl(i);
+      pe = dynamic_cast<CaseBlock*>(cases.FastEl(i));
       if(pe->case_val.expr == ei->name) break;
     }
     if(i==cases.size) {
       pe = new CaseBlock();
       pe->case_val.SetExpr(ei->name);
       cases.Insert(pe, ti);
-    } else if (i != ti) {
+    }
+    else if (i != ti) {
       cases.MoveIdx(i, ti);
     }
   }

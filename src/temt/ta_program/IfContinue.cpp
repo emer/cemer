@@ -34,9 +34,9 @@ void IfContinue::GenCssBody_impl(Program* prog) {
   String fexp = cond.GetFullExpr();
   if(fexp.nonempty()) {
     prog->AddLine(this, "if(" + fexp + ") {", ProgLine::MAIN_LINE);
-    prog->AddLine(this, "continue;");
     prog->AddVerboseLine(this, true, "\"before if\"");
     prog->IncIndent();
+    prog->AddLine(this, "continue;");
     prog->AddVerboseLine(this, false, "\"inside if -- continuing\"");
     prog->DecIndent();
     prog->AddLine(this, "}");

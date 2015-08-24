@@ -94,7 +94,7 @@ void taiEditorOfProgramCtrl::Constr_Widget_Labels() {
       if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
       // just have a fixed list of guys we show
       if ((md->name == "name") || (md->name == "desc") || (md->name == "short_nm")
-          || (md->name == "flags")) {
+          || (md->name == "flags") || (md->name == "stop_step_cond")) {
         memb_el(MS_PROG).Add(md);
       }
     }
