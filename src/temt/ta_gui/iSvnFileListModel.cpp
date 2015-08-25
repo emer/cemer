@@ -498,7 +498,7 @@ bool iSvnFileListModel::refresh() {
                      file_kinds, file_authors, svn_url_full.toLatin1(), svn_rev, false); // no recurse
   }
   catch (const SubversionClient::Exception &ex) {
-    taMisc::Error("Error doing List in SubversionClient.\nIgnore if doing Add", ex.what());
+    taMisc::Error("Error doing List in SubversionClient.\n", ex.what());
     emit layoutChanged();
     return false;
   }
