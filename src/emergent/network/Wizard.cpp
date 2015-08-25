@@ -283,7 +283,7 @@ bool Wizard::TestProgs(Program* call_test_from, bool call_in_loop, int call_modu
 
 Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  taBase* rval = proj->programs.AddFromLibByName(prog_nm);
+  taBase* rval = proj->programs.AddFromProgLibByName(prog_nm);
   if(!rval) return NULL;
   if(!rval->InheritsFrom(&TA_Program_Group)) {
     taMisc::Error("Wizard::StdProgs_impl program named:", prog_nm,
@@ -316,7 +316,7 @@ Program_Group* Wizard::TestProgs_impl(const String& prog_nm, Program* call_test_
     proj->GetNewOutputDataTable("EpochTestOutputData", true);
   }
 
-  taBase* rval = proj->programs.AddFromLibByName(prog_nm);
+  taBase* rval = proj->programs.AddFromProgLibByName(prog_nm);
   if(!rval) return NULL;
   if(!rval->InheritsFrom(&TA_Program_Group)) {
     taMisc::Error("Wizard::TestProgs_impl program named:", prog_nm,

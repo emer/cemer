@@ -1498,6 +1498,10 @@ void Program::SaveToProgLib(ProgLibs library) {
   Program_Group::prog_lib.FindPrograms();
 }
 
+taBase* Program::AddFromProgLib(ProgLibEl* prog_type) {
+  return prog_gp->AddFromProgLib(prog_type);
+}
+
 Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
   if(fun_name != "LoadFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);
   if(!prog_lib) return  _nilVariant;
@@ -1517,7 +1521,7 @@ int Program::GetSpecialState() const {
 void Program::UpdateFromProgLib(ProgLibEl* prog_type) {
   if(TestError(!prog_type, "LoadFromProgLib", "program type is null")) return;
   if(TestError(prog_type->is_group, "LoadFromProgLib",
-               "cannot load a program group file into a single program! Select a program group and choose 'Add From Lib'")) return;
+               "cannot load a program group file into a single program! Select a program group and choose 'Add From Prog Lib'")) return;
   //   Reset();
   prog_type->LoadProgram(this);
 }
