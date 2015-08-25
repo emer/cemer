@@ -50,9 +50,9 @@ public:
   
   bool                  debug_mode; // ProgEls can check this to conditionally turn on/off elements
 
-  taBase* NewFromLib(ProgLibEl* prog_type);
+  taBase* AddFromLib(ProgLibEl* prog_type);
   // #BUTTON #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL #CAT_Program create a new program from a library of existing program types
-  taBase* NewFromLibByName(const String& prog_nm);
+  taBase* AddFromLibByName(const String& prog_nm);
   // #CAT_Program create a new program from a library of existing program types, looking up by name (NULL if name not found)
 
   void          SaveToProgLib(ProgLibs library = USER_LIB);

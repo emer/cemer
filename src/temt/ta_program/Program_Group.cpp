@@ -73,11 +73,11 @@ void Program_Group::SetProgsStale() {
 
 ProgLib Program_Group::prog_lib;
 
-taBase* Program_Group::NewFromLib(ProgLibEl* prog_type) {
+taBase* Program_Group::AddFromLib(ProgLibEl* prog_type) {
   return prog_lib.NewProgram(prog_type, this);
 }
 
-taBase* Program_Group::NewFromLibByName(const String& prog_nm) {
+taBase* Program_Group::AddFromLibByName(const String& prog_nm) {
   return prog_lib.NewProgramFmName(prog_nm, this);
 }
 

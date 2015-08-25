@@ -1514,10 +1514,10 @@ int Program::GetSpecialState() const {
   return 0;
 }
 
-void Program::LoadFromProgLib(ProgLibEl* prog_type) {
+void Program::UpdateFromProgLib(ProgLibEl* prog_type) {
   if(TestError(!prog_type, "LoadFromProgLib", "program type is null")) return;
   if(TestError(prog_type->is_group, "LoadFromProgLib",
-               "cannot load a program group file into a single program!")) return;
+               "cannot load a program group file into a single program! Select a program group and choose 'Add From Lib'")) return;
   //   Reset();
   prog_type->LoadProgram(this);
 }

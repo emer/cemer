@@ -318,7 +318,7 @@ public:
 
   virtual void          SaveToProgLib(ProgLibs library = USER_LIB);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #CAT_ProgLib save the program to given program library -- file name = object name -- be sure to add good desc comments!!
-  virtual void          LoadFromProgLib(ProgLibEl* prog_type);
+  virtual void          UpdateFromProgLib(ProgLibEl* prog_type);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #ARG_VAL_FM_FUN #CAT_ProgLib (re)load the program from the program library element of given type
 
   virtual void          RunLoadInitCode();
