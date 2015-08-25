@@ -40,7 +40,7 @@ class TA_API iSvnFileListModel : public QAbstractItemModel {
 INHERITED(QAbstractItemModel)
   Q_OBJECT
 public:
-  static bool   CommitFile(const String& file_path, bool single_file, const String& msg = "");
+  static bool   CommitFile(const String& file_path, bool single_file, const String& msg = "", bool first_commit = false);
   // commit file at given file_path to its repository, or all modified files in directory if single file is false, with optional commit message (will prompt if empty) -- uses the model to manage the svn_client
   static bool   FileInRepo(const String& file_path);
   // is the file in the repository - single file only

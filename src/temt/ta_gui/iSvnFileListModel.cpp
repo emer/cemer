@@ -29,7 +29,7 @@
 
 #define SVN_N_COLS 5
 
-bool iSvnFileListModel::CommitFile(const String& file_path, bool single_file, const String& msg) {
+bool iSvnFileListModel::CommitFile(const String& file_path, bool single_file, const String& msg, bool first_commit) {
   iSvnFileListModel* svn_file_model = new iSvnFileListModel();
   String path;
   if (single_file == false) {
@@ -42,7 +42,9 @@ bool iSvnFileListModel::CommitFile(const String& file_path, bool single_file, co
   String wc_url;
   bool rval = false;
   if(svn_file_model->getUrlFromPath(wc_url, path)) {
-    svn_file_model->setUrl(wc_url);
+    if (!first_commit) {
+      svn_file_model->setUrl(wc_url);
+    }
     svn_file_model->commit(msg);
     rval = true;
   }

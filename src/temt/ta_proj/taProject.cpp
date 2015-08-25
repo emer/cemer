@@ -916,7 +916,8 @@ bool taProject::SvnAdd() {
     }
     if (iSvnFileListModel::AddFile(taMisc::GetDirFmPath(GetFileName()), taMisc::GetFileFmPath(GetFileName()))) {
       bool project_file_only = true;
-      return iSvnFileListModel::CommitFile(path, project_file_only); // true means project file only
+      bool first_commit = true;
+      return iSvnFileListModel::CommitFile(path, project_file_only, "", first_commit);
     }
   }
   return false;
