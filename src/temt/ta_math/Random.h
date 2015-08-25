@@ -18,11 +18,14 @@
 
 // parent includes:
 #include <taINBase>
+#include <double_Matrix>
 
 // member includes:
 #include <MTRnd>
 
 #include <math.h>
+
+#include <taMath_double>
 
 // declare all other types mentioned but not required to include:
 
@@ -63,8 +66,10 @@ public:
   // #CAT_Int uniform random integer in range between min and max, exclusive of max: [min,max) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
   static int    IntMeanRange(int mean, int range, int thr_no = 0)
   { return mean + (IntZeroN(2 * range + 1, thr_no) - range); }
-  // #CAT_Int uniform random integer with given range on either side of the mean: [mean - range, mean + range] -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // #CAT_Int Discrete distribtion. Samples from a discrete distribution with probabilities given -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  static int    Discrete(double_Matrix* distribution, int thr_no = 0);
 
+  // #CAT_Int uniform random integer with given range on either side of the mean: [mean - range, mean + range] -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
   static double ZeroOne(int thr_no = 0)
   { return MTRnd::GenRandRes53(thr_no); }
   // #CAT_Float uniform random number between zero and one (inclusive of 1 due to rounding!) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)

@@ -14,9 +14,34 @@
 //   Lesser General Public License for more details.
 
 #include "Random.h"
-#include <taMath_double>
+
 
 TA_BASEFUNS_CTORS_DEFN(Random);
+
+int Random::Discrete(double_Matrix* distribution, int thr_no) {
+  double z = 0.0;
+  double * cum_dist;
+  double r;
+  // Renormalize the input distribution
+  for (int i = 0; i < distribution->size; i++) {
+    z += distribution->FastEl_Flat(i);
+  }
+  cum_dist = (double *)calloc(sizeof(double),distribution->size);
+  cum_dist[0] = 0;
+  r = MTRnd::GenRandRes53(thr_no);
+  for (int i = 0; i < distribution->size; i++) {
+    if (i > 0) {
+      cum_dist[i] = cum_dist[i - 1];
+    }
+    cum_dist[i] += distribution->FastEl_Flat(i) / z;
+    if (r < cum_dist[i]) {
+      free(cum_dist);
+      return i + 1;
+    }
+  }
+  free(cum_dist);
+  return distribution->size;
+}
 
 double Random::Binom(int n, double p, int thr_no) {
   return taMath_double::binom_dev(n,p,thr_no);
