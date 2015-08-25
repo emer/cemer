@@ -114,7 +114,7 @@ public:
   bool SaveProject();
 
   int  UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_path,
-                              const String& user, const String& clust,
+                              const String& user, const String& clust, const String& projname,
                               bool main_svn);
   // implementation of wc update
   

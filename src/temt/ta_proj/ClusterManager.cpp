@@ -569,21 +569,23 @@ ClusterManager::UpdateWorkingCopy() {
   String_Array users;
   users.Split(m_cluster_run.users, " ");
 
+  QFileInfo fi(GetFilename());
+  String projname = fi.completeBaseName();
+
   for(int cl = 0; cl < clusts.size; cl++) {
     String clust = clusts[cl];
     for(int us = 0; us < users.size; us++) {
       String user = users[us];
       String wcp = GetWcPath_UserClust(m_wc_path, user, clust);
-
       bool main_svn = ((clust == clust_nm) && (user == username));
       if(main_svn) {
-        m_cur_svn_rev = UpdateWorkingCopy_impl(m_svn_client, m_wc_path, user,
-                                               clust, main_svn);
+        m_cur_svn_rev = UpdateWorkingCopy_impl(m_svn_client, m_wc_path, user, clust, projname,
+                                                main_svn);
       }
       else {
         m_svn_other->SetWorkingCopyPath(wcp);
-        int rev = UpdateWorkingCopy_impl(m_svn_other, wcp, user,
-                                         clust, main_svn);
+        int rev = UpdateWorkingCopy_impl(m_svn_other, wcp, user, clust, projname,
+                                          main_svn);
       }
     }
   }
@@ -592,7 +594,7 @@ ClusterManager::UpdateWorkingCopy() {
 
 int
 ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_path,
-                                       const String& user, const String& clust,
+                                       const String& user, const String& clust, const String& projname,
                                        bool main_svn)
 {
   // If the user already has a working copy, update it.  Otherwise, create
@@ -625,6 +627,18 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
   else {
     // Update the existing wc.
     taMisc::Busy();
+    if (projname.length() > 0) {
+      //If we have a specific project, only check out a sub section of the repository to save time
+      //We also need the cluster_info.dat from the top level directory though.
+      String_PArray files;
+      files.Add(wc_path + "/cluster_info.dat");
+      try {
+	sc->UpdateFiles(files, -1);
+      } catch (const ClusterManager::Exception &ex) {
+	taMisc::Error("Could not get cluster_info", ex.what());
+      }
+      sc->SetWorkingCopyPath(wc_path + "/" + projname);
+    } 
     rev_rval = sc->Update();
     taMisc::DoneBusy();
     if(main_svn) {
