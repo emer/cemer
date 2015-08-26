@@ -160,7 +160,6 @@ public:
   String                unit_src_path;  // ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading
   String                last_sel_unit_val;   // #READ_ONLY #SHOW #NO_SAVE value of last selected unit (for display)
 
-  bool                  unit_con_md;    // #NO_SAVE #NO_COPY #READ_ONLY true if memberdef is from a connection as opposed to a direct unit var
   ConType               con_type;       // what type of connections should be shown (where there are multiple connections between two units)
   String                prjn_starts_with; // #NO_SAVE #NO_COPY #READ_ONLY based on the con_type setting, what the projection name should start with
   MemberDef*            unit_disp_md;   // #NO_SAVE #NO_COPY #READ_ONLY memberdef (if any) of Unit (or Connection) to display
@@ -176,6 +175,8 @@ public:
 
   ScaleRange*           unit_scrng;     // #NO_SAVE #NO_COPY #READ_ONLY scalerange of disp_md
   MDFlags               unit_md_flags;  // #NO_SAVE #READ_ONLY type to display in units
+  bool                  unit_con_md;    // #NO_SAVE #NO_COPY #READ_ONLY true if memberdef is from a connection as opposed to a direct unit var
+  bool                  unit_wt_act;    // #NO_SAVE #NO_COPY #READ_ONLY true if memberdef is r.wt*act 
   UnitDisplayMode       unit_disp_mode; // how to display unit values
   UnitTextDisplay       unit_text_disp; // what labels to display with units
   taVector3f            max_size;       // #NO_COPY #READ_ONLY maximum size in each dimension of the net

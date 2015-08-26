@@ -151,15 +151,24 @@ float UnitGroupView::GetUnitDisplayVal(const taVector2i& co, void*& base) {
     }
   }
   else {
-    switch (nv->unit_md_flags) {
-    case NetView::MD_FLOAT:
-      val = *((float*)base); break;
-    case NetView::MD_DOUBLE:
-      val = *((double*)base); break;
-    case NetView::MD_INT:
-      val = *((int*)base); break;
-    default:
-      val = 0.0f; break;
+    if(nv->unit_wt_act) {
+      val = *((float*)base);    // weight
+      Unit* unit = lay->UnitAtCoord(co);
+      if(unit) {
+        val *= unit->act();
+      }
+    }
+    else {
+      switch (nv->unit_md_flags) {
+      case NetView::MD_FLOAT:
+        val = *((float*)base); break;
+      case NetView::MD_DOUBLE:
+        val = *((double*)base); break;
+      case NetView::MD_INT:
+        val = *((int*)base); break;
+      default:
+        val = 0.0f; break;
+      }
     }
   }
   return val;
@@ -246,13 +255,26 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl
           if(check_prjn && tcong->prjn && tcong->prjn->IsActive() &&
              !tcong->prjn->name.startsWith(prjn_starts_with))
             continue;
-          MemberDef* act_md = tcong->ConType()->members.FindName(nm);
-          if (!act_md)  continue;
-          int con = tcong->FindConFromIdx(src_u);
-          if (con < 0) continue;
-          // have to use safe b/c could be PtrCon and other side might be gone..
-          uvd_bases.Set(&tcong->SafeFastCn(con, act_md->idx, net), coord.x, coord.y, midx);
-          break;                // once you've got one, done!
+          if(nm == "wt*act") {
+            MemberDef* act_md = tcong->ConType()->members.FindName("wt");
+            if (!act_md)  continue;
+            int con = tcong->FindConFromIdx(src_u);
+            if (con < 0) continue;
+            // have to use safe b/c could be PtrCon and other side might be gone..
+            uvd_bases.Set(&tcong->SafeFastCn(con, act_md->idx, net), coord.x, coord.y,
+                          midx);
+            break;                // once you've got one, done!
+          }
+          else {
+            MemberDef* act_md = tcong->ConType()->members.FindName(nm);
+            if (!act_md)  continue;
+            int con = tcong->FindConFromIdx(src_u);
+            if (con < 0) continue;
+            // have to use safe b/c could be PtrCon and other side might be gone..
+            uvd_bases.Set(&tcong->SafeFastCn(con, act_md->idx, net), coord.x, coord.y,
+                          midx);
+            break;                // once you've got one, done!
+          }
         }
       }
     }

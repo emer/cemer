@@ -395,7 +395,6 @@ void NetView::Initialize() {
   net_text_xform.scale = 0.5f;
   net_text_rot = -90.0f;
 
-  unit_con_md = false;
   con_type = ANY_CON;
   prjn_starts_with = "";
   unit_disp_md = NULL;
@@ -408,6 +407,8 @@ void NetView::Initialize() {
 
   unit_scrng = NULL;
   unit_md_flags = MD_UNKNOWN;
+  unit_con_md = false;
+  unit_wt_act = false;
   unit_disp_mode = UDM_BLOCK;
   unit_text_disp = UTD_NONE;
   wt_line_disp = false;
@@ -837,6 +838,13 @@ void NetView::GetMembs() {
               nmd->name = nm;
               membs.Add(nmd);
               nmd->idx = smd->idx;
+              if(smd->name == "wt") {
+                nmd = smd->Clone();
+                nmd->name = "r.wt*act";
+                nmd->desc = "receiving weight times the sending activation value -- shows the net input contribution from each sending unit";
+                membs.Add(nmd);
+                nmd->idx = smd->idx;
+              }
             }
             nm = "s." + smd->name;
             if(membs.FindName(nm)==NULL) {
@@ -1832,6 +1840,7 @@ void NetView::setUnitDispMd(MemberDef* md) {
   unit_scrng = NULL;
   unit_md_flags = MD_UNKNOWN;
   unit_con_md = false;
+  unit_wt_act = false;
   if (!unit_disp_md) return;
   if (unit_disp_md) {
     if (unit_disp_md->type->InheritsFrom(&TA_float))
@@ -1841,8 +1850,12 @@ void NetView::setUnitDispMd(MemberDef* md) {
     else if (unit_disp_md->type->InheritsFrom(&TA_int))
       unit_md_flags = MD_INT;
   }
-  if(unit_disp_md->name.startsWith("r.") || md->name.startsWith("s."))
+  if(unit_disp_md->name.startsWith("r.") || md->name.startsWith("s.")) {
     unit_con_md = true;
+  }
+  if(unit_disp_md->name == "r.wt*act") {
+    unit_wt_act = true;
+  }
   String nm = unit_disp_md->name;
   unit_scrng = scale_ranges.FindName(nm);
   if (unit_scrng == NULL) {
