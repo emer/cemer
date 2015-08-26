@@ -61,7 +61,7 @@ void BaseSpec::CutLinks() {
 
 void BaseSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  is_used = IsUsed();
+  UpdtIsUsed();
   if(taMisc::is_loading) {
     TypeDef* td = GetTypeDef();
     for(int i=TA_BaseSpec.members.size; i< td->members.size; i++) {
@@ -104,7 +104,6 @@ void BaseSpec::DefaultsMembers() {
 }
 
 void BaseSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
-  is_used = IsUsed();
   inherited::CheckChildConfig_impl(quiet, rval);
   children.CheckConfig(quiet, rval);
 }
@@ -275,8 +274,17 @@ bool BaseSpec::CheckObjectType_impl(taBase* obj) {
   return true;
 }
 
+void BaseSpec::SpecSet(taBase* obj) {
+  UpdtIsUsed();
+  SigEmitUpdated();
+}
+
+void BaseSpec::SpecUnSet(taBase* obj) {
+  UpdtIsUsed();
+  SigEmitUpdated();
+}
+
 String BaseSpec::WhereUsed(bool child) {
-  is_used = IsUsed();
   String rval;
   taSigLink* dl = sig_link();
   if(!dl) return rval;
@@ -307,10 +315,11 @@ String BaseSpec::WhereUsed(bool child) {
   return rval;
 }
 
-bool BaseSpec::IsUsed() {
+bool BaseSpec::UpdtIsUsed() {
+  is_used = false;
   taSigLink* dl = sig_link();
   if(!dl) {
-    return false;
+    return is_used;
   }
   taSmartRef* sref;
   taSigLinkItr i;
@@ -322,10 +331,11 @@ bool BaseSpec::IsUsed() {
       continue;
     taBase* ownown = sown->GetOwner();
     if(ownown) {
-      return true;
+      is_used = true;
+      return is_used;
     }
   }
-  return false;
+  return is_used;
 }
 
 void BaseSpec::SetParam(const String& param_path, const String& value) {

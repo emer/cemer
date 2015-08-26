@@ -50,7 +50,7 @@ INHERITED(taNBase)
 public:
   static bool       nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
-  bool              is_used; // #READ_ONLY #HIDDEN
+  bool              is_used;    // #READ_ONLY #HIDDEN #NO_INHERIT is this spec used anywhere?
   String            desc;	// #EDIT_DIALOG #NO_INHERIT Description of what this variable is for
   String_Array      unique; // #HIDDEN string list of unique members
   TypeDef*          min_obj_type;
@@ -86,8 +86,10 @@ public:
   // checks typedef type, issues error and returns false if not sufficient
   virtual bool	CheckObjectType(taBase* obj);
   // checks object type, issues error and returns false if not sufficient
-  virtual void	SpecSet(taBase* obj) {}
-  // #IGNORE called just after the spec was was set but before obj->UAE
+  virtual void	SpecSet(taBase* obj);
+  // #IGNORE called just after the spec was set but before obj->UAE
+  virtual void	SpecUnSet(taBase* obj);
+  // #IGNORE called just after the spec was un-set from given object
 
   virtual BaseSpec* FindMakeChild(const char* nm, TypeDef* td = NULL, bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
   // find a child spec of given name, and if not, make it (if nm is not found and alt_nm != NULL, it is searched for)
@@ -105,9 +107,9 @@ public:
   virtual String  WhereUsed(bool child = false);
   // #BUTTON #USE_RVAL #ARGC_0 returns a list of objects where this spec is used - if searching for child specs of the original spec pass true (additional feedback to user)
 
-  virtual bool    IsUsed();
-  //  is the spec used anywhere
-  
+  virtual bool    UpdtIsUsed();
+  // update the is_used flag 
+
   String          GetStateDecoKey() const override { return (is_used ? "" : "NotEnabled"); }
  
   virtual void    SetParam(const String& param_path, const String& value);

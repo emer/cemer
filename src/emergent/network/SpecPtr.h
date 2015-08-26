@@ -82,8 +82,10 @@ public:
     if (spec.ptr() == es) return true; // low level setting, ex. streaming, handled in UAE
     if(!owner) return false;
     if(!es || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {
+      BaseSpec* prv_spec = spec.ptr();
       spec.set(es);
       if(es) { type = es->GetTypeDef(); es->SpecSet(owner);}
+      if(prv_spec) { prv_spec->SpecUnSet(owner); }
       owner->UpdateAfterEdit();	// owner might need to apply this change to all sub guys
       return true;
     }

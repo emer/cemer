@@ -178,7 +178,6 @@ void SpecPtr_impl::UpdateAfterEdit_impl() {
       SetSpec(NULL);            // get rid of existing -- will try to find new one later
     }
   }
-  net->specs.UpdateAllSpecs();
 }
 
 void SpecPtr_impl::SetBaseType(TypeDef* td) {

@@ -28,7 +28,7 @@
 eTypeDef_Of(ScriptPrjnSpec);
 
 class E_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
-  // Script-controlled connectivity (see also ProgramPrjnSpec): use prjn and make_cons variables in script code to refer to current projection and make_cons state that script is operating on; recv layer is prjn->layer, send layer is prjn->from; if(!make_cons), must do ru->RecvConsPreAlloc and su->SendConsPreAlloc calls pprior to making connections -- else use ru->ConnectFrom(su, prjn) or ru->ConnectFromCk to make connections
+  // Script-controlled connectivity (see also ProgramPrjnSpec): use prjn and make_cons variables in script code to refer to current projection and make_cons state that script is operating on; recv layer is prjn->layer, send layer is prjn->from; if(!make_cons), must do ru->RecvConsPreAlloc and su->SendConsPreAlloc calls prior to making connections -- else use ru->ConnectFrom(su, prjn) or ru->ConnectFromCk to make connections -- if you allow init_wts you must set wts in your script
 INHERITED(ProjectionSpec)
 public:
   Projection*	prjn;		// #READ_ONLY #NO_SAVE this holds the argument to the prjn
@@ -36,11 +36,9 @@ public:
   bool          do_init_wts;    // #READ_ONLY #NO_SAVE this is true when Init_Weights_Prjn is called
   SArg_Array	s_args;		// string-valued arguments to pass to script
 
-  void	Connect_impl(Projection* prj, bool make_cns) override;
-  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
-                          int thr_no) override;
-  // NOTE: if you allow init_wts you must set wts in your script
-
+  void          Connect_impl(Projection* prj, bool make_cns) override;
+  void	        Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+                                  int thr_no) override;
 
   TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
   void*		GetThisPtr()		{ return (void*)this; }

@@ -131,7 +131,7 @@ set(network_HEADS_MAKETA_MI
 # note: there must be exactly same number of dependencies for each item
 # you can just add redundant ones to make it all work out
 set(network_HEADS_MAKETA_MI_DEPS
-  "../../temt/ta_core/taBase.h;../../temt/ta_program/ScriptBase.h;ProjectionSpec.h"
+  "../../temt/ta_core/taBase.h;../../temt/ta_program/ScriptBase.h;ProjectionSpec.h;BaseSpec.h"
 )
 
 set(network_HEADS_NOMAKETA
