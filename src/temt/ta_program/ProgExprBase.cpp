@@ -498,7 +498,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       delim_pos[1] += shift;
       expr_start += shift;
       prepend_before = txt.before(expr_start);
-      lookup_seed = txt.after(delim_pos[0]);
+      lookup_seed = txt.after(delim_pos[1]);
       lookup_type = 2;
       delims_used = 2;
     }
@@ -512,7 +512,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       delim_pos[1] += shift;
       expr_start += shift;
       prepend_before = txt.before(expr_start);
-      lookup_seed = txt.after(delim_pos[0]);
+      lookup_seed = txt.after(delim_pos[1]);
       lookup_type = 3;
       delims_used = 2;
     }
