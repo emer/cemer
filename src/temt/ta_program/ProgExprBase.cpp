@@ -95,9 +95,11 @@ void ProgExprBase::UpdateAfterEdit_impl() {
   ParseExpr();
   if(!HasExprFlag(NO_VAR_ERRS)) {
     ProgEl* pel = GET_MY_OWNER(ProgEl);
-    if(!taMisc::is_loading && bad_vars.size > 0) {
-      for(int i=0; i<bad_vars.size; i++) {
-        pel->FindVarNameInScope(bad_vars[i], true);
+    if (pel) {
+      if(!taMisc::is_loading && bad_vars.size > 0) {
+        for(int i=0; i<bad_vars.size; i++) {
+          pel->FindVarNameInScope(bad_vars[i], true);
+        }
       }
     }
   }
