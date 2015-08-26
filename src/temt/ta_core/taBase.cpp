@@ -3874,8 +3874,9 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       }
     }
   }
-  if(mychg > 0)
-    UpdateAfterEdit();          // uae me: i changed
+  // if(mychg > 0) {
+  //   tabMisc::DelayedUpdateAfterEdit(this); // uae me: i changed
+  // }
   return nchg;
 }
 

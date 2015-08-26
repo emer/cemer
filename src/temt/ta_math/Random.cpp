@@ -18,29 +18,22 @@
 
 TA_BASEFUNS_CTORS_DEFN(Random);
 
-int Random::Discrete(double_Matrix* distribution, int thr_no) {
+int Random::Discrete(taMatrix* distribution, int thr_no) {
   double z = 0.0;
-  double * cum_dist;
-  double r;
   // Renormalize the input distribution
   for (int i = 0; i < distribution->size; i++) {
-    z += distribution->FastEl_Flat(i);
+    z += distribution->FastElAsDouble_Flat(i);
   }
-  cum_dist = (double *)calloc(sizeof(double),distribution->size);
-  cum_dist[0] = 0;
-  r = MTRnd::GenRandRes53(thr_no);
+  double r = MTRnd::GenRandRes53(thr_no);
+  double psum;
   for (int i = 0; i < distribution->size; i++) {
-    if (i > 0) {
-      cum_dist[i] = cum_dist[i - 1];
-    }
-    cum_dist[i] += distribution->FastEl_Flat(i) / z;
-    if (r < cum_dist[i]) {
-      free(cum_dist);
-      return i + 1;
+    double pval = distribution->FastElAsDouble_Flat(i) / z;
+    psum += pval;
+    if (r < psum) {
+      return i;                 // shouldn't this be i?
     }
   }
-  free(cum_dist);
-  return distribution->size;
+  return distribution->size-1;
 }
 
 double Random::Binom(int n, double p, int thr_no) {
