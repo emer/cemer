@@ -61,8 +61,8 @@ void BaseSpec::CutLinks() {
 
 void BaseSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  is_used = IsUsed();
   if(taMisc::is_loading) {
-    is_used = IsUsed();
     TypeDef* td = GetTypeDef();
     for(int i=TA_BaseSpec.members.size; i< td->members.size; i++) {
       MemberDef* md = td->members.FastEl(i);
@@ -104,6 +104,7 @@ void BaseSpec::DefaultsMembers() {
 }
 
 void BaseSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
+  is_used = IsUsed();
   inherited::CheckChildConfig_impl(quiet, rval);
   children.CheckConfig(quiet, rval);
 }
@@ -275,6 +276,7 @@ bool BaseSpec::CheckObjectType_impl(taBase* obj) {
 }
 
 String BaseSpec::WhereUsed(bool child) {
+  is_used = IsUsed();
   String rval;
   taSigLink* dl = sig_link();
   if(!dl) return rval;
