@@ -445,24 +445,17 @@ void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int
 void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
                                   const String& tag_svn, const String& tag_job,
                                   const String& params, const String& notes, const String& label) {
-  if(params.empty()) return;
-  String_Array pars;
-  pars.FmDelimString(params, " ");
-  { 
+  {
     DataCol* cl = dat->FindMakeCol("tag", VT_STRING);
     cl->InitVals(tag);
   }
-  { 
+  {
     DataCol* cl = dat->FindMakeCol("tag_svn", VT_STRING);
     cl->InitVals(tag_svn);
   }
-  { 
+  {
     DataCol* cl = dat->FindMakeCol("tag_job", VT_STRING);
     cl->InitVals(tag_job);
-  }
-  { // first add the params as a whole string -- useful for grouping..
-    DataCol* cl = dat->FindMakeCol("params", VT_STRING);
-    cl->InitVals(params);
   }
   {
     DataCol* cl = dat->FindMakeCol("notes", VT_STRING);
@@ -472,6 +465,17 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
     DataCol* cl = dat->FindMakeCol("label", VT_STRING);
     cl->InitVals(label);
   }
+  
+  String_Array pars;
+  pars.FmDelimString(params, " ");
+  if(params.empty())
+    return;
+  
+  { // first add the params as a whole string -- useful for grouping..
+    DataCol* cl = dat->FindMakeCol("params", VT_STRING);
+    cl->InitVals(params);
+  }
+  
   for(int i=0; i<pars.size; i++) {
     String pv = pars[i];
     String nm = pv.before('=');
