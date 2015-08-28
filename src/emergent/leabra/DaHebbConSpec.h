@@ -57,10 +57,10 @@ public:
   }    
   
   inline void C_Compute_dWt_Hebb_Da(float& dwt, const float ru_act, const float su_act,
-                                    const float da_p) {
+                                    const float da_p, const float lrnmod) {
     float eff_da = da_p;
     if(d2r) eff_da *= -1.0f; // invert direction of learning
-    dwt += cur_lrate * eff_da * ru_act * su_act;
+    dwt += cur_lrate * eff_da * ru_act * su_act * lrnmod;
   }
   // #IGNORE dopamine multiplication
 
@@ -77,7 +77,7 @@ public:
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
       float ru_act = GetActVal(ru, ru_act_var);
-      C_Compute_dWt_Hebb_Da(dwts[i], ru_act, su_act, ru->da_p);
+      C_Compute_dWt_Hebb_Da(dwts[i], ru_act, su_act, ru->da_p, ru->lrnmod);
     }
   }
 
