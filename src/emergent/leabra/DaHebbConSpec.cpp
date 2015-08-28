@@ -20,6 +20,7 @@ TA_BASEFUNS_CTORS_DEFN(DaHebbConSpec);
 void DaHebbConSpec::Initialize() {
   su_act_var = PREV_TRIAL;
   ru_act_var = ACT_P;
+  d2r = false;
 }
 
 void DaHebbConSpec::Defaults_init() {

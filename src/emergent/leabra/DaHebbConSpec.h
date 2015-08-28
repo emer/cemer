@@ -37,7 +37,9 @@ public:
   };
   
   LearnActVal         su_act_var;     // what variable to use for sending unit activation
-  LearnActVal         ru_act_var;     // what variable to use for receiving unit activation
+  LearnActVal         ru_act_var;     // what variable to use for recv unit activation
+  
+  bool                d2r;            // if true, exhibits inverted D2 receptor-driven learning - LTD from phaDA bursts; LTP from dips; i.e., NoGo- / indirect-like pattern
 
   inline float GetActVal(LeabraUnitVars* u, const LearnActVal& val) {
     switch(val) {
@@ -56,7 +58,9 @@ public:
   
   inline void C_Compute_dWt_Hebb_Da(float& dwt, const float ru_act, const float su_act,
                                     const float da_p) {
-    dwt += cur_lrate * da_p * ru_act * su_act;
+    float eff_da = da_p;
+    if(d2r) eff_da *= -1.0f; // invert direction of learning
+    dwt += cur_lrate * eff_da * ru_act * su_act;
   }
   // #IGNORE dopamine multiplication
 
