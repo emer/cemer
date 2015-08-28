@@ -253,7 +253,7 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
     pptg_da_p = pptg_lay_p->acts_eq.avg * pptg_lay_p->units.size;
     lhb_da = lhb_lay->acts_eq.avg * lhb_lay->units.size;
     pospv = pospv_lay->acts_eq.avg * pospv_lay->units.size;
-    vspvi = vspatch_lay->acts_eq.avg * vspatch_lay->units.size;
+    vspvi = vspatch_lay->acts_q0.avg * vspatch_lay->units.size;
     
     pospv_da = 0.0f;
     net_block = 0.0f;
