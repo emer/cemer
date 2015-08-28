@@ -173,53 +173,6 @@ bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u,                             L
     else if(fmlay->name.contains("NegPV")) {
       pv_neg_lay = fmlay;
     }
-    
-    ////////////////////////////////////
-    
-    // const int nrg = u->NRecvConGps(net, thr_no);
-    //  for(int g=0; g<nrg; g++) {
-    //    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
-    //    if(recv_gp->NotActive()) continue;
-    //    LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
-    //
-    //    float g_nw_nt = 0.0f;
-    //    for(int j=0;j<nt;j++) {
-    //      float& ndval = net->ThrSendNetinTmpPerPrjn(j, g)[flat_idx];
-    //      g_nw_nt += ndval;
-    //#ifndef CUDA_COMPILE
-    //      ndval = 0.0f;           // zero immediately upon use -- for threads
-    //#endif
-    //    }
-    //
-    //    recv_gp->net_raw += g_nw_nt;
-    //
-    //    if(from->name.contains("Patch")) {
-    //      if(from->name.contains("Ind")) {
-    //        patch_ind += recv_gp->net_raw;
-    //      }
-    //      else {
-    //        patch_dir += recv_gp->net_raw;
-    //      }
-    //    }
-    //    else if(from->name.contains("Matrix")) {
-    //      if(from->name.contains("Ind") || from->name.contains("NoGo")) {
-    //        matrix_ind += recv_gp->net_raw;
-    //      }
-    //      else {
-    //        matrix_dir += recv_gp->net_raw;
-    //      }
-    //    }
-    //    else if(from->name.contains("PosPV")) {
-    //      pv_pos += recv_gp->net_raw;
-    //    }
-    //    else if(from->name.contains("NegPV")) {
-    //      pv_neg += recv_gp->net_raw;
-    //    }
-    //  }
-    
-/////////////////////////////
-    
-    
   }
   return true;
 }
@@ -236,8 +189,9 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   GetRecvLayers(un, patch_dir_lay, patch_ind_lay, matrix_dir_lay, matrix_ind_lay, pv_pos_lay, pv_neg_lay);
   
   // use avg act over layer..
-  float patch_dir = patch_dir_lay->acts_eq.avg; // * patch_dir_lay->units.size;
-  float patch_ind = patch_ind_lay->acts_eq.avg; // * patch_ind_lay->units.size;
+  // note: need acts_q0 for patch to reflect previous trial..
+  float patch_dir = patch_dir_lay->acts_q0.avg; // * patch_dir_lay->units.size;
+  float patch_ind = patch_ind_lay->acts_q0.avg; // * patch_ind_lay->units.size;
   float matrix_dir = matrix_dir_lay->acts_eq.avg; // * matrix_dir_lay->units.size;
   float matrix_ind = matrix_ind_lay->acts_eq.avg; // * matrix_ind_lay->units.size;
   float pv_pos = pv_pos_lay->acts_eq.avg; // * pv_pos_lay->units.size;
@@ -255,85 +209,6 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   // TODO: tweak the gains.params here and for initialization, defaults, etc.
   
   u->act_eq = u->act_nd = u->act = u->net = u->ext = net_lhb;
-
-  ////////////////////////////
-  // original code
-  ///////////////////////////
-//  int nt = net->n_thrs_built;
-//  int flat_idx = u->UnFlatIdx(net, thr_no);
-//#ifdef CUDA_COMPILE
-//  nt = 1;                       // cuda is always 1 thread for this..
-//#endif
-//
-//  // note: REQUIRES NetinPerPrjn!  Set automatically in CheckConfig
-//  float patch_dir = 0.0f;
-//  float patch_ind = 0.0f;
-//  float matrix_dir = 0.0f;
-//  float matrix_ind = 0.0f;
-//  float pv_pos = 0.0f;
-//  float pv_neg = 0.0f;
-//  const int nrg = u->NRecvConGps(net, thr_no);
-//  for(int g=0; g<nrg; g++) {
-//    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
-//    if(recv_gp->NotActive()) continue;
-//    LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
-//
-//    float g_nw_nt = 0.0f;
-//    for(int j=0;j<nt;j++) {
-//      float& ndval = net->ThrSendNetinTmpPerPrjn(j, g)[flat_idx]; 
-//      g_nw_nt += ndval;
-//#ifndef CUDA_COMPILE
-//      ndval = 0.0f;           // zero immediately upon use -- for threads
-//#endif
-//    }
-//
-//    recv_gp->net_raw += g_nw_nt;
-//
-//    if(from->name.contains("Patch")) {
-//      if(from->name.contains("Ind")) {
-//        patch_ind += recv_gp->net_raw;
-//      }
-//      else {
-//        patch_dir += recv_gp->net_raw;
-//      }
-//    }
-//    else if(from->name.contains("Matrix")) {
-//      if(from->name.contains("Ind") || from->name.contains("NoGo")) {
-//        matrix_ind += recv_gp->net_raw;
-//      }
-//      else {
-//        matrix_dir += recv_gp->net_raw;
-//      }
-//    }
-//    else if(from->name.contains("PosPV")) {
-//      pv_pos += recv_gp->net_raw;
-//    }
-//    else if(from->name.contains("NegPV")) {
-//      pv_neg += recv_gp->net_raw;
-//    }
-//  }
-//
-//  // todo? do shunting separately in the VTA layer itself, with direct prjns
-//
-//  // now do the proper subtractions, and individually rectify each term
-//  // this individual rectification is important so that system is not 
-//  // sensitive to overshoot of predictor relative to its comparison value
-//  float matrix_net = 0.0f;
-//  if(gains.matrix_td) {
-//    matrix_net = gains.matrix * (u->misc_1 - matrix_ind); // misc_1 holds prior -- looking for dips so sign is reversed!
-//  }
-//  else {
-//    matrix_net = gains.matrix * (matrix_ind - matrix_dir); // net positive dipping action from matrix
-//  }
-//  matrix_net = MAX(0.0f, matrix_net);
-//
-//  float pv_neg_net = gains.patch_ind * (pv_neg - patch_ind); // indir cancels neg
-//  pv_neg_net = MIN(0.0f, pv_neg_net);
-//
-//  float pv_pos_net = gains.patch_dir * (patch_dir - pv_pos); // direct cancels pos
-//  pv_pos_net = MAX(0.0f, pv_pos_net);
-//
-//  u->net_raw = gains.all * (matrix_net + pv_neg_net + pv_pos_net);
   
   if(gains.rec_data) {
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
@@ -353,16 +228,10 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
 
 void LHbRMTgUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(Quarter_DeepNow(net->quarter)) {
-//    u->ext = u->net_raw;
-//    u->act_eq = u->act_nd = u->act = u->net = u->ext;
     Compute_Lhb(u, net, thr_no);
-//    Send_Da(u, net, thr_no);
   }
   else {
-//    u->ext = u->net_raw;
-//    u->act_eq = u->act_nd = u->act = u->net = u->ext;
-//    Send_Da(u, net, thr_no);    // send nothing
-//    Compute_Da(u, net, thr_no); // then compute just for kicks
+    // todo: why not all the time?
   }
 }
 

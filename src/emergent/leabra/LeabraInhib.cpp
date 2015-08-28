@@ -72,6 +72,7 @@ void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
   acts = cp.acts;
   acts_m = cp.acts_m;
   acts_p = cp.acts_p;
+  acts_q0 = cp.acts_p;
   un_g_i = cp.un_g_i;
   am_deep_raw = cp.am_deep_raw;
   am_deep_ctxt_net = cp.am_deep_ctxt_net;

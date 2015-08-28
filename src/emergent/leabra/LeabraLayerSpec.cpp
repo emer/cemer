@@ -373,6 +373,14 @@ void LeabraLayerSpec::Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->acts_q0 = lay->acts_p;
+  if(lay->unit_groups) {
+    for(int g=0; g < lay->gp_geom.n; g++) {
+      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
+      gpd->acts_q0 = gpd->acts_p;
+    }
+  }
+  
   if(decay.trial > 0.0f) {
     lay->i_val.ffi -= decay.trial * lay->i_val.ffi;
     lay->i_val.fbi -= decay.trial * lay->i_val.fbi;
