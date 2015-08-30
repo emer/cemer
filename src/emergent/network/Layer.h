@@ -100,6 +100,7 @@ public:
     PROJECT_WTS_DONE    = 0x0020,       // #NO_SHOW this layer is done with weight projection operation (prevents loops)
     SAVE_UNITS          = 0x0040,       // save this layer's units in the project file (even if Network::SAVE_UNITS off)
     NO_SAVE_UNITS       = 0x0080,       // don't save this layer's units in the project file (even if Network::SAVE_UNITS on)
+    ABS_POS             = 0x0100,       // #NO_SHOW -- copied from Network -- always use absolute positions for layers as the primary positioning, otherwise if not set then layer positions relative to owning layer group are primary and absolute positions are computed relative to them
   };
 
   enum AccessMode {     // how to access the units in the layer -- only relevant for layers with unit groups (otherwise modes are the same)
@@ -107,13 +108,14 @@ public:
     ACC_GP,             // access via their subgroup structure, with group and unit index values
   };
 
-
   String                desc;           // #EDIT_DIALOG Description of this layer -- what functional role it plays, how it maps onto the brain, etc
   Network*              own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure #NO_SET_POINTER Network this layer is in
   LayerFlags            flags;          // flags controlling various aspects of layer funcdtion
   LayerType             layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
-  PosVector3i           pos;            // #CAT_Structure position of layer relative to the overall network position (0,0,0 is lower left hand corner)
-  PosVector2i       	pos2d;		// #CAT_Structure 2D network view display position of layer relative to the overall nework (0,0 is lower left hand corner)
+  PosVector3i           pos;            // #CAT_Structure #CONDEDIT_OFF_flags:ABS_POS position of layer relative to owning layer group, or overall network position if none (0,0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetPos or SetAbsPos to set position either way
+  PosVector3i           pos_abs;        // #CAT_Structure #CONDEDIT_ON_flags:ABS_POS absolute position of layer always relative to overall network position (0,0,0 is lower left hand corner) -- not relative to owning layer group -- see network ABS_POS flag for which position is used by default -- can use SetPos or SetAbsPos to set position either way
+  PosVector2i       	pos2d;		// #CAT_Structure #CONDEDIT_OFF_flags:ABS_POS 2D  network view display position of layer relative to owning layer group, or overall nework position if none (0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetPos2d or SetAbsPos2d to set position either way
+  PosVector2i       	pos2d_abs;	// #CAT_Structure #CONDEDIT_ON_flags:ABS_POS absolute 2D network view display position of layer always relative to the overall nework (0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetPos2d or SetAbsPos2d to set position either way
   float                 disp_scale;     // #DEF_1 #CAT_Structure display scale factor for layer -- multiplies overall layer size -- 1 is normal, < 1 is smaller and > 1 is larger -- can be especially useful for shrinking very large layers to better fit with other smaller layers
   XYNGeom               un_geom;        // #AKA_geom #CAT_Structure two-dimensional layout and number of units within the layer or each unit group within the layer
   bool                  unit_groups;    // #CAT_Structure organize units into subgroups within the layer, with each unit group having the geometry specified by un_geom -- see virt_groups for whether there are actual unit groups allocated, or just virtual organization a flat list of groups
@@ -295,22 +297,38 @@ public:
 
   bool          InLayerSubGroup();
   // #CAT_Structure is this layer in a layer subgroup or directly in network.layers main layer group?
-  void          GetAbsPos(taVector3i& abs_pos) { abs_pos = pos; AddRelPos(abs_pos); }
-  // #CAT_Structure get absolute pos, which factors in offsets from layer groups
   void          AddRelPos(taVector3i& rel_pos);
   // #IGNORE add relative pos, which factors in offsets from above
-  void          GetAbsPos2d(taVector2i& abs_pos) { abs_pos = pos2d; AddRelPos2d(abs_pos); }
-  // #CAT_Structure get absolute pos, which factors in offsets from layer groups
   void          AddRelPos2d(taVector2i& rel_pos);
   // #IGNORE add relative pos, which factors in offsets from above
-  void          SetDefaultPos();
+
+  inline void   GetAbsPos(taVector3i& abs_pos) { abs_pos = pos_abs; }
+  // #CAT_Structure get absolute pos, which factors in offsets from layer groups
+  inline void   GetRelPos(taVector3i& rel_pos) { rel_pos = pos; }
+  // #CAT_Structure get relativeabsolute pos, which factors in offsets from layer groups
+  inline void   GetAbsPos2d(taVector2i& abs_pos) { abs_pos = pos2d_abs; }
+  // #CAT_Structure get absolute pos, which factors in offsets from layer groups
+  virtual void  SetRelPos(taVector3i& ps);
+  // #CAT_Structure set position of layer -- if in a layer group, this is relative to the owning layer group position, otherwise relative to network 0,0,0
+  virtual void  SetAbsPos(taVector3i& ps);
+  // #CAT_Structure set absolute position of layer, regardless of whether it is in a layer group or not - always relative to network 0,0,0
+  virtual void  SetRelPos2d(taVector2i& ps);
+  // #CAT_Structure set 2D position of layer -- if in a layer group, this is relative to the owning layer group position, otherwise relative to network 0,0
+  virtual void  SetAbsPos2d(taVector2i& ps);
+  // #CAT_Structure set absolute 2D position of layer, regardless of whether it is in a layer group or not - always relative to network 0,0
+  virtual void  MovePos(int x, int y, int z=0);
+  // #CAT_Structure move position of layer given increment from where it currently is, in 3d space
+  virtual void  MovePos2d(int x, int y);
+  // #CAT_Structure move 2d position of layer given increment from where it currently is
+  
+  virtual void  SetDefaultPos();
   // #IGNORE initialize position of layer
-  void          SetDefaultPos2d();
+  virtual void  SetDefaultPos2d();
   // #IGNORE initialize position of layer -- 2d
 
-  void          PositionRightOf(Layer* lay, int space = 2);
+  virtual void  PositionRightOf(Layer* lay, int space = 2);
   // position this layer to the right of given other layer -- does this for both 3D and 2D displays, with given amount of space
-  void          PositionBehind(Layer* lay, int space = 2);
+  virtual void  PositionBehind(Layer* lay, int space = 2);
   // position this layer behind other layer -- does this for both 3D and 2D displays, with given amount of space
   
   virtual void  Copy_Weights(const Layer* src);

@@ -63,7 +63,8 @@ void Network::Initialize() {
   unit_vars_type = &TA_UnitVars;
   con_group_type = &TA_ConGroup;
 
-  flags = BUILD_INIT_WTS;
+  flags = (NetFlags)(ABS_POS | BUILD_INIT_WTS | MANUAL_POS);
+
   auto_build = AUTO_BUILD;
   auto_load_wts = NO_AUTO_LOAD;
 

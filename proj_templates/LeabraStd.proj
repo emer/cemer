@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.1.0 rev8269
+// ta_Dump File v3.0 -- code v7.8.2.0 rev8566
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -42,17 +42,20 @@ LeabraProject .projects["LeabraStd"] {
    EditMthItem_Group @.mths = [0] {
    };
 
-   DataTableCols @.jobs_running.data = [27] {
+   DataTableCols @.jobs_running.data = [31] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["notes"] { };
+    String_Data @["label"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -78,6 +81,11 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
      };
@@ -96,17 +104,23 @@ LeabraProject .projects["LeabraStd"] {
     String_Data @["submit_job"] { };
    };
 
-   DataTableCols @.jobs_done.data = [27] {
+   DataOpList @.jobs_running.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCols @.jobs_done.data = [31] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["notes"] { };
+    String_Data @["label"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -132,6 +146,11 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
      };
@@ -150,17 +169,23 @@ LeabraProject .projects["LeabraStd"] {
     String_Data @["submit_job"] { };
    };
 
-   DataTableCols @.jobs_archive.data = [27] {
+   DataOpList @.jobs_done.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCols @.jobs_archive.data = [31] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["notes"] { };
+    String_Data @["label"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -190,6 +215,11 @@ LeabraProject .projects["LeabraStd"] {
       UserDataItem @["NARROW"] { };
      };
     };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
@@ -202,6 +232,9 @@ LeabraProject .projects["LeabraStd"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+   };
+
+   DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
    };
 
    DataTableCols @.file_list.data = [11] {
@@ -218,6 +251,9 @@ LeabraProject .projects["LeabraStd"] {
     String_Data @["file_path"] { };
    };
 
+   DataOpList @.file_list.last_sort_spec.ops = [0] {
+   };
+
    DataTableCols @.cluster_info.data = [6] {
     String_Data @["queue"] { };
     String_Data @["job_no"] { };
@@ -225,6 +261,9 @@ LeabraProject .projects["LeabraStd"] {
     String_Data @["state"] { };
     String_Data @["procs"] { };
     String_Data @["start_time"] { };
+   };
+
+   DataOpList @.cluster_info.last_sort_spec.ops = [0] {
    };
 
    ParamSearchAlgo_List @.search_algos = [0] {
@@ -242,6 +281,9 @@ LeabraProject .projects["LeabraStd"] {
      String_Data @["Name"] { };
      float_Data @["Input"] { };
      float_Data @["Output"] { };
+    };
+
+    DataOpList @.last_sort_spec.ops = [0] {
     };
    };
   };
@@ -391,6 +433,9 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
+
+    DataOpList @.last_sort_spec.ops = [0] {
+    };
    };
    DataTable @["EpochOutputData"] { 
     DataTableCols @.data = [40] {
@@ -497,6 +542,9 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
+
+    DataOpList @.last_sort_spec.ops = [0] {
+    };
    };
    DataTable @["TestTrialOutputData"] { 
     DataTableCols @.data = [20] {
@@ -598,6 +646,9 @@ LeabraProject .projects["LeabraStd"] {
      float_Data @["Hidden_lay_net_sd"] { };
      float_Data @["Output_lay_net_sd"] { };
     };
+
+    DataOpList @.last_sort_spec.ops = [0] {
+    };
    };
    DataTable @["TestEpochOutputData"] { 
     DataTableCols @.data = [20] {
@@ -695,6 +746,9 @@ LeabraProject .projects["LeabraStd"] {
      };
      float_Data @["Hidden_avg_net_sd"] { };
      float_Data @["Output_avg_net_sd"] { };
+    };
+
+    DataOpList @.last_sort_spec.ops = [0] {
     };
    };
   };
@@ -2520,9 +2574,12 @@ LeabraProject .projects["LeabraStd"] {
    Weights_List @.weights = [0] {
    };
 
-   NetTiming_List NULL = [2] {
+   NetTiming_List NULL = [5] {
     LeabraNetTiming @[0] { };
     LeabraNetTiming @[1] { };
+    LeabraNetTiming @[2] { };
+    LeabraNetTiming @[3] { };
+    LeabraNetTiming @[4] { };
    };
   };
  };
@@ -2776,6 +2833,20 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
       width=0;
      };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
@@ -2790,9 +2861,9 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
       width=0;
      };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -2804,9 +2875,23 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
       width=0;
      };
-     String_Data @["status"] {
-      name="status";
-      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -2864,6 +2949,20 @@ LeabraProject .projects["LeabraStd"] {
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3096,6 +3195,30 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
       width=0;
      };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      int_Data @["pb_batches"] {
       UserDataItem_List @*(.user_data_) {
        name=;
@@ -3180,6 +3303,14 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    jobs_done {
     name="jobs_done";
@@ -3230,6 +3361,20 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
       width=0;
      };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
@@ -3244,9 +3389,9 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
       width=0;
      };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -3258,9 +3403,23 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
       width=0;
      };
-     String_Data @["status"] {
-      name="status";
-      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -3318,6 +3477,20 @@ LeabraProject .projects["LeabraStd"] {
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3550,6 +3723,30 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
       width=0;
      };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      int_Data @["pb_batches"] {
       UserDataItem_List @*(.user_data_) {
        name=;
@@ -3634,6 +3831,14 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    jobs_archive {
     name="jobs_archive";
@@ -3684,6 +3889,20 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
       width=0;
      };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
@@ -3698,9 +3917,9 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
       width=0;
      };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -3712,9 +3931,23 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
       width=0;
      };
-     String_Data @["status"] {
-      name="status";
-      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -3772,6 +4005,20 @@ LeabraProject .projects["LeabraStd"] {
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4004,6 +4251,30 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
       width=0;
      };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      int_Data @["pb_batches"] {
       UserDataItem_List @*(.user_data_) {
        name=;
@@ -4088,6 +4359,14 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    file_list {
     name="file_list";
@@ -4258,6 +4537,14 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    cluster_info {
     name="cluster_info";
@@ -4358,6 +4645,14 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    search_algos {
     name="search_algos";
@@ -4371,6 +4666,7 @@ LeabraProject .projects["LeabraStd"] {
    users=;
    last_submit_time=;
    notes=;
+   label=;
    extra_files=;
    svn_repo=;
    repo_url=;
@@ -4382,6 +4678,7 @@ LeabraProject .projects["LeabraStd"] {
    n_threads=2;
    use_mpi=0;
    mpi_nodes=10;
+   mpi_per_node=1;
    parallel_batch=0;
    pb_batches=10;
    pb_nodes=0;
@@ -4499,6 +4796,14 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      name="row_indexes";
     [6] 0;1;2;3;4;5;    };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
   };
   DataTable_Group @.gp["OutputData"] {
@@ -5280,6 +5585,14 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    DataTable @["EpochOutputData"] {
     name="EpochOutputData";
@@ -6096,6 +6409,14 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    DataTable @["TestTrialOutputData"] {
     name="TestTrialOutputData";
@@ -6637,6 +6958,14 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    DataTable @["TestEpochOutputData"] {
     name="TestEpochOutputData";
@@ -7163,6 +7492,14 @@ LeabraProject .projects["LeabraStd"] {
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
   };
   DataTable_Group @.gp["AnalysisData"] {
@@ -7178,12 +7515,16 @@ LeabraProject .projects["LeabraStd"] {
   el_def=0;
   tags=;
   desc=;
+  debug_mode=0;
   Program @["LeabraStartup"] {
    name="LeabraStartup";
    short_nm="Startup";
    tags="Leabra, Startup, Parallel Batch";
    desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
    flags=STARTUP_RUN;
+   stop_step_cond {
+    expr=;
+   };
    objs {
     name="objs";
     el_typ=taNBase;
@@ -7406,8 +7747,7 @@ LeabraProject .projects["LeabraStd"] {
      expr {
       expr="\"Loaded project: \" << .projects[0].file_name";
      };
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     Comment @[3] {
      desc="= Std variables in startup program itself =";
@@ -7987,8 +8327,7 @@ LeabraProject .projects["LeabraStd"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     Comment @[25] {
      desc="== Save trial log -- OFF by default ==";
@@ -8113,8 +8452,7 @@ LeabraProject .projects["LeabraStd"] {
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     OtherProgramVar @[29] {
      desc="propagate the tag";
@@ -8134,8 +8472,7 @@ LeabraProject .projects["LeabraStd"] {
      expr {
       expr="\"Running: \" << batch.name";
      };
-     my_mask=NULL;
-     debug_level=NULL;
+     debug=0;
     };
     ProgramCall @[31] {
      desc=;
@@ -8181,12 +8518,16 @@ LeabraProject .projects["LeabraStd"] {
    el_def=0;
    tags="Leabra, Std, All";
    desc="The full set of programs for training a standard Leabra network";
+   debug_mode=0;
    Program @["LeabraBatch"] {
     name="LeabraBatch";
     short_nm="Batch";
     tags="Leabra, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -8402,6 +8743,9 @@ LeabraProject .projects["LeabraStd"] {
     tags="Leabra, Train, RndSeedList";
     desc="A complete training run of a Leabra network: iterating over epochs until the network has learned the task.  Also has a list of random seeds that are tied to the network batch counter, providing consistent runs regardless of what happens in the training of each network, or where it is run (e.g., on different processors)";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=RndSeed;
@@ -8974,8 +9318,7 @@ LeabraProject .projects["LeabraStd"] {
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
 	};
-	my_mask=NULL;
-	debug_level=NULL;
+	debug=0;
        };
       };
      };
@@ -9093,8 +9436,7 @@ LeabraProject .projects["LeabraStd"] {
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
 	};
-	my_mask=NULL;
-	debug_level=NULL;
+	debug=0;
        };
       };
      };
@@ -9322,6 +9664,9 @@ LeabraProject .projects["LeabraStd"] {
     tags="Leabra, Std";
     desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
     flags=2;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -9576,6 +9921,9 @@ LeabraProject .projects["LeabraStd"] {
 	  desc=;
 	  flags=0;
 	  orig_prog_code=;
+	  cond {
+	   expr=;
+	  };
 	 };
 	};
        };
@@ -9685,6 +10033,9 @@ LeabraProject .projects["LeabraStd"] {
     tags="Leabra, Std";
     desc="Leabra processing of a single input/output event or external information, over a single alpha frequency cycle (100 msec / 10 Hz) -- iterates over gamma-frequency (25 msec / 40 Hz) quarter-trials";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -9977,6 +10328,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     tags="Leabra, Std";
     desc="iterates over cycles of activation updating for a gamma-frequency (25 msec / 40 Hz) quarter of an alpha frequency (100 msec / 10 Hz) trial";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -10275,6 +10629,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     tags="Leabra, Std";
     desc="runs one cycle of leabra processing (updating net inputs and activations)";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -10362,6 +10719,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=LayerWriter;
@@ -10623,6 +10983,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     tags="Leabra, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=NetMonitor;
@@ -10635,6 +10998,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
        NetMonItem @["batch"] {
 	name="batch";
+	monitor=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -10669,6 +11033,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch"] {
 	name="epoch";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -10703,6 +11068,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["train_mode"] {
 	name="train_mode";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -10737,6 +11103,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["group"] {
 	name="group";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -10771,6 +11138,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["trial"] {
 	name="trial";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -10805,6 +11173,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["tick"] {
 	name="tick";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -10839,6 +11208,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["time"] {
 	name="time";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -10873,6 +11243,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["trial_name"] {
 	name="trial_name";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -10907,6 +11278,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["group_name"] {
 	name="group_name";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -10941,6 +11313,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["output_name"] {
 	name="output_name";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -10975,6 +11348,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["rt_cycles"] {
 	name="rt_cycles";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11009,6 +11383,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["sse"] {
 	name="sse";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11043,6 +11418,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["norm_err"] {
 	name="norm_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11077,6 +11453,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["cos_err"] {
 	name="cos_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11111,6 +11488,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["ext_rew"] {
 	name="ext_rew";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11145,6 +11523,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_sse"] {
 	name="lay_sse";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11179,6 +11558,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_norm_err"] {
 	name="lay_norm_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11213,6 +11593,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_cos_err"] {
 	name="lay_cos_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11247,6 +11628,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_net_sd"] {
 	name="lay_net_sd";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11281,6 +11663,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["net_cos_diff"] {
 	name="net_cos_diff";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11315,6 +11698,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["net_trial_cos_diff"] {
 	name="net_trial_cos_diff";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11349,6 +11733,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["net_avg_act_diff"] {
 	name="net_avg_act_diff";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11383,6 +11768,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["cos_diff"] {
 	name="cos_diff";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11417,6 +11803,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["trial_cos_diff"] {
 	name="trial_cos_diff";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11451,6 +11838,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_act_diff"] {
 	name="avg_act_diff";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11529,7 +11917,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$$;
+      object_val=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11732,6 +12120,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     tags="Leabra, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=NetMonitor;
@@ -11744,6 +12135,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
        NetMonItem @["batch"] {
 	name="batch";
+	monitor=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11778,6 +12170,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch"] {
 	name="epoch";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11812,6 +12205,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_sse"] {
 	name="avg_sse";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11846,6 +12240,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["cnt_err"] {
 	name="cnt_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11880,6 +12275,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["pct_cor"] {
 	name="pct_cor";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11914,6 +12310,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["pct_err"] {
 	name="pct_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11948,6 +12345,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_norm_err"] {
 	name="avg_norm_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -11982,6 +12380,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_cos_err"] {
 	name="avg_cos_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12016,6 +12415,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_ext_rew"] {
 	name="avg_ext_rew";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12050,6 +12450,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_cycles"] {
 	name="avg_cycles";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12084,6 +12485,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch_time_tot"] {
 	name="epoch_time_tot";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=1;
 	object_type=NULL;
 	object=NULL;
@@ -12118,6 +12520,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch_time_usr"] {
 	name="epoch_time_usr";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=1;
 	object_type=NULL;
 	object=NULL;
@@ -12152,6 +12555,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_avg_sse"] {
 	name="lay_avg_sse";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12186,6 +12590,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_cnt_err"] {
 	name="lay_cnt_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12220,6 +12625,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_pct_cor"] {
 	name="lay_pct_cor";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12254,6 +12660,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_pct_err"] {
 	name="lay_pct_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12288,6 +12695,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_avg_norm_err"] {
 	name="lay_avg_norm_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12322,6 +12730,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_avg_cos_err"] {
 	name="lay_avg_cos_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12356,6 +12765,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["net_avg_cos_diff"] {
 	name="net_avg_cos_diff";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12390,6 +12800,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["net_avg_trial_cos_diff"] {
 	name="net_avg_trial_cos_diff";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12424,6 +12835,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["net_avg_avg_act_diff"] {
 	name="net_avg_avg_act_diff";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12458,6 +12870,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_cos_diff"] {
 	name="avg_cos_diff";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12492,6 +12905,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_trial_cos_diff"] {
 	name="avg_trial_cos_diff";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12526,6 +12940,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_avg_act_diff"] {
 	name="avg_avg_act_diff";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12560,6 +12975,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_net_sd"] {
 	name="avg_net_sd";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12594,6 +13010,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["hog_pct"] {
 	name="hog_pct";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12628,6 +13045,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["dead_pct"] {
 	name="dead_pct";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12662,6 +13080,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["netmax"] {
 	name="netmax";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12696,6 +13115,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_act"] {
 	name="avg_act";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12730,6 +13150,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["netrel"] {
 	name="netrel";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -12808,7 +13229,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$$;
+      object_val=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -13137,6 +13558,9 @@ and the testing data is updated.  The first epoch monitor should have all the it
     tags="Network, Weights";
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -13436,12 +13860,16 @@ and the testing data is updated.  The first epoch monitor should have all the it
    el_def=0;
    tags="Leabra, Std, All, Test";
    desc="The full set of programs for testing a standard Leabra network (starting with Epoch)";
+   debug_mode=0;
    Program @["LeabraEpochTest"] {
     name="LeabraEpochTest";
     short_nm="EpcTest";
     tags="Leabra, Std, Test";
     desc="sets testing flag, iterates over all of the items in a data table and calls LeabraTestTrial process on them";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -13799,6 +14227,9 @@ and the testing data is updated.  The first epoch monitor should have all the it
     tags="Leabra, Std";
     desc="Leabra processing of a single input/output event or external information, over a single alpha frequency cycle (100 msec / 10 Hz) -- iterates over gamma-frequency (25 msec / 40 Hz) quarter-trials";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -14091,6 +14522,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     tags="Leabra, Std";
     desc="iterates over cycles of activation updating for a gamma-frequency (25 msec / 40 Hz) quarter of an alpha frequency (100 msec / 10 Hz) trial";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -14389,6 +14823,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     tags="Leabra, Std";
     desc="runs one cycle of leabra processing (updating net inputs and activations)";
     flags=0;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=taNBase;
@@ -14476,6 +14913,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=LayerWriter;
@@ -14737,6 +15177,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     tags="Leabra, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=NetMonitor;
@@ -14749,6 +15192,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
        NetMonItem @["batch"] {
 	name="batch";
+	monitor=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -14783,6 +15227,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch"] {
 	name="epoch";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -14817,6 +15262,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["train_mode"] {
 	name="train_mode";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -14851,6 +15297,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["group"] {
 	name="group";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -14885,6 +15332,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["trial"] {
 	name="trial";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -14919,6 +15367,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["tick"] {
 	name="tick";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -14953,6 +15402,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["time"] {
 	name="time";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -14987,6 +15437,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["trial_name"] {
 	name="trial_name";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15021,6 +15472,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["group_name"] {
 	name="group_name";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15055,6 +15507,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["output_name"] {
 	name="output_name";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15089,6 +15542,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["rt_cycles"] {
 	name="rt_cycles";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15123,6 +15577,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["sse"] {
 	name="sse";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15157,6 +15612,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["norm_err"] {
 	name="norm_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15191,6 +15647,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["cos_err"] {
 	name="cos_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15225,6 +15682,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["ext_rew"] {
 	name="ext_rew";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15259,6 +15717,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_sse"] {
 	name="lay_sse";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15293,6 +15752,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_norm_err"] {
 	name="lay_norm_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15327,6 +15787,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_cos_err"] {
 	name="lay_cos_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15361,6 +15822,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_net_sd"] {
 	name="lay_net_sd";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15439,7 +15901,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$$;
+      object_val=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].objs["trial_netmon"]$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -15642,6 +16104,9 @@ this program can be extended to do arbitrary things to generate data and apply i
     tags="Leabra, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
     flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
     objs {
      name="objs";
      el_typ=NetMonitor;
@@ -15654,6 +16119,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
        NetMonItem @["batch"] {
 	name="batch";
+	monitor=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15688,6 +16154,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch"] {
 	name="epoch";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15722,6 +16189,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_sse"] {
 	name="avg_sse";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15756,6 +16224,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["cnt_err"] {
 	name="cnt_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15790,6 +16259,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["pct_cor"] {
 	name="pct_cor";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15824,6 +16294,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["pct_err"] {
 	name="pct_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15858,6 +16329,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_norm_err"] {
 	name="avg_norm_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15892,6 +16364,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_cos_err"] {
 	name="avg_cos_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15926,6 +16399,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_ext_rew"] {
 	name="avg_ext_rew";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15960,6 +16434,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_cycles"] {
 	name="avg_cycles";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15994,6 +16469,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch_time_tot"] {
 	name="epoch_time_tot";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=1;
 	object_type=NULL;
 	object=NULL;
@@ -16028,6 +16504,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch_time_usr"] {
 	name="epoch_time_usr";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=1;
 	object_type=NULL;
 	object=NULL;
@@ -16062,6 +16539,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_avg_sse"] {
 	name="lay_avg_sse";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -16096,6 +16574,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_cnt_err"] {
 	name="lay_cnt_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -16130,6 +16609,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_pct_cor"] {
 	name="lay_pct_cor";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -16164,6 +16644,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_pct_err"] {
 	name="lay_pct_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -16198,6 +16679,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_avg_norm_err"] {
 	name="lay_avg_norm_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -16232,6 +16714,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["lay_avg_cos_err"] {
 	name="lay_avg_cos_err";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -16266,6 +16749,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_net_sd"] {
 	name="avg_net_sd";
+	monitor=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -16344,7 +16828,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$$;
+      object_val=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].objs["epoch_netmon"]$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -16664,22 +17148,22 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.02378929406404495;
+     value 8 0=0.02378929;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9968169927597046;
+     value 8 0=0.996817;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7986406087875366;
+     value 8 0=0.7986406;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -16932,6 +17416,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       camera_params {
+	field_of_view=45;
+	near=0.1;
+	focal=5;
+	far=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -18103,7 +18593,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  err_spacing=1;
 	  err_bar_width=0.02;
-	  color_mode=FIXED_COLOR;
+	  color_mode=FIXED;
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
@@ -18167,6 +18657,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       camera_params {
+	field_of_view=45;
+	near=0.1;
+	focal=5;
+	far=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -18543,6 +19039,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       camera_params {
+	field_of_view=45;
+	near=0.1;
+	focal=5;
+	far=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -18634,22 +19136,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 6 0=0;
+       value 8 0=0;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.008496176451444626;
+       value 8 0=0.008496176;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04031830281019211;
+       value 8 0=0.0403183;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7349193096160889;
+       value 8 0=0.7349193;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -18830,6 +19332,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_def=0;
     LeabraLayerSpec @["HiddenLayer"] {
      name="HiddenLayer";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -18838,6 +19341,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       LeabraLayerSpec @["Input_Output"] {
        name="Input_Output";
+       is_used=1;
        desc=;
        unique{ lay_inhib;kwta;       };
        children {
@@ -18860,6 +19364,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	dead_thr=0.01;
 	cos_diff_avg_dt=0.01;
        };
+       lay_lrate=1;
        lay_gp_inhib {on=0: gp_g=0.5: };
       };
      };
@@ -18878,10 +19383,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       dead_thr=0.01;
       cos_diff_avg_dt=0.01;
      };
+     lay_lrate=1;
      lay_gp_inhib {on=0: gp_g=0.5: };
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -18913,7 +19420,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=2: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: dt=0.1: lrn_fact=0.02368421: };
+     avg_l {init=0.4: max=2: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.02368421: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      adapt {
@@ -18939,7 +19446,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      deep_qtr=Q4;
      deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -18954,6 +19461,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     LeabraConSpec @["LeabraConSpec_0"] {
      name="LeabraConSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -18962,6 +19470,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       LeabraBiasSpec @["LeabraBiasSpec_0"] {
        name="LeabraBiasSpec_0";
+       is_used=1;
        desc=;
        unique{ rnd;wt_limits;wt_scale;wt_scale_init;       };
        children {
@@ -18970,7 +19479,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_def=0;
        };
        rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
-       wt_limits {type=NONE: min=-1: max=5: sym=0: };
+       wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
        inhib=0;
        wt_scale {abs=1: rel=1: };
        learn=1;
@@ -18995,6 +19504,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       LeabraConSpec @["TopDownCons"] {
        name="TopDownCons";
+       is_used=1;
        desc="top-down connections from output layers down to hidden etc typically need to be weaker than bottom-up";
        unique{ wt_scale;wt_sig;       };
        children {
@@ -19003,7 +19513,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_def=0;
        };
        rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
-       wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
+       wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
        inhib=0;
        wt_scale {abs=1: rel=0.2: };
        learn=1;
@@ -19027,7 +19537,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
-     wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
+     wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
      wt_scale {abs=1: rel=1: };
      learn=1;
@@ -19051,6 +19561,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      name="FullPrjnSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -19078,7 +19589,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      flags=0;
      layer_type=INPUT;
      pos {x=0: y=0: z=0: };
+     pos_abs {x=0: y=0: z=0: };
      pos2d {x=0: y=0: };
+     pos2d_abs {x=0: y=0: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -19128,7 +19641,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=1: };
+     pos_abs {x=0: y=0: z=1: };
      pos2d {x=0: y=13: };
+     pos2d_abs {x=0: y=13: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -19214,7 +19729,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      flags=0;
      layer_type=TARGET;
      pos {x=0: y=0: z=2: };
+     pos_abs {x=0: y=0: z=2: };
      pos2d {x=0: y=6: };
+     pos2d_abs {x=0: y=6: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -19282,6 +19799,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_typ=Weights;
     el_def=0;
    };
+   flags=MANUAL_POS|ABS_POS|BUILD_INIT_WTS;
    unit_vars_type=LeabraUnitVars;
    con_group_type=LeabraConGroup;
    auto_build=AUTO_BUILD;
@@ -19306,7 +19824,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     sync_time_pct=0;
     wake_in_sync_pct=2.298735696848069e-314;
    };
-   alt_mpi=0;
    net_timing {
     name="net_timing";
     el_typ=LeabraNetTiming;
@@ -19333,6 +19850,39 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
      cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
     };
+    LeabraNetTiming @[2] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[3] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[4] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
    };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
@@ -19349,6 +19899,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    times {
     quarter=25;
+    deep_cyc=5;
     time_inc=0.001;
     minus=75;
     plus=25;

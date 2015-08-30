@@ -987,7 +987,10 @@ void NetView::Layer_DataUAE(LayerView* lv) {
 
 void NetView::NewLayer(int x, int y) {
   Layer* lay = net()->layers.NewEl(1);
-  lay->pos.x = x; lay->pos.y = y;
+  taVector3i nps;
+  nps.z = lay->pos_abs.z;
+  nps.x = x; nps.y = y;
+  lay->SetAbsPos(nps);
   lay->UpdateAfterEdit();
 }
 

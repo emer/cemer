@@ -106,6 +106,9 @@ void Layer::InitLinks() {
   AutoNameMyMembers();
 
   own_net = GET_MY_OWNER(Network);
+  if(own_net) {
+    SetLayerFlagState(ABS_POS, own_net->HasNetFlag(Network::ABS_POS));
+  }
   if(pos == 0)
     SetDefaultPos();
   if(pos2d == 0)
@@ -201,6 +204,10 @@ void Layer::UpdateAfterMove_impl(taBase* old_owner) {
 
 void Layer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  if(own_net) {
+    SetLayerFlagState(ABS_POS, own_net->HasNetFlag(Network::ABS_POS));
+  }
 
   // no negative geoms., y,z must be 1 (for display)
   UpdateUnitSpecs((bool)taMisc::is_loading); // force if loading
@@ -386,6 +393,22 @@ void Layer::UpdateSendPrjnNames() {
   }
 }
 
+void Layer::AddRelPos(taVector3i& rel_pos) {
+  Layer_Group* lgp = dynamic_cast<Layer_Group*>(owner);
+  if (lgp) {
+    rel_pos += lgp->pos;
+    lgp->AddRelPos(rel_pos);
+  }
+}
+
+void Layer::AddRelPos2d(taVector2i& rel_pos) {
+  Layer_Group* lgp = dynamic_cast<Layer_Group*>(owner);
+  if (lgp) {
+    rel_pos += lgp->pos2d;
+    lgp->AddRelPos2d(rel_pos);
+  }
+}
+
 void Layer::RecomputeGeometry() {
   un_geom.SetGtEq(1);           // can't go < 1
   gp_geom.SetGtEq(1);
@@ -407,6 +430,71 @@ void Layer::RecomputeGeometry() {
   }
   scaled_disp_geom.x = (int)ceil((float)disp_geom.x * disp_scale);
   scaled_disp_geom.y = (int)ceil((float)disp_geom.y * disp_scale);
+
+  taVector3i rp = 0;
+  AddRelPos(rp);
+  taVector2i rp2 = 0;
+  AddRelPos2d(rp2);
+  if(HasLayerFlag(ABS_POS)) {
+    pos = pos_abs - rp;         // subtract relative positions
+    pos2d = pos2d_abs - rp2;
+  }
+  else {
+    pos_abs = pos + rp;         // add relative positions
+    pos2d_abs = pos2d + rp2;
+  }
+}
+
+void Layer::SetRelPos(taVector3i& ps) {
+  taVector3i rp = 0;
+  AddRelPos(rp);
+  pos = ps;
+  pos_abs = ps + rp;
+  SigEmitUpdated();
+}
+
+void Layer::SetAbsPos(taVector3i& ps) {
+  taVector3i rp = 0;
+  AddRelPos(rp);
+  pos_abs = ps;
+  pos = ps - rp;
+  SigEmitUpdated();
+}
+
+void Layer::SetRelPos2d(taVector2i& ps) {
+  taVector2i rp = 0;
+  AddRelPos2d(rp);
+  pos2d = ps;
+  pos2d_abs = ps + rp;
+  SigEmitUpdated();
+}
+
+void Layer::SetAbsPos2d(taVector2i& ps) {
+  taVector2i rp = 0;
+  AddRelPos2d(rp);
+  pos2d_abs = ps;
+  pos2d = ps - rp;
+  SigEmitUpdated();
+}
+
+void Layer::MovePos(int x, int y, int z) {
+  taVector3i nps = pos_abs;
+  nps.x += x;
+  if(nps.x < 0) nps.x = 0;
+  nps.y += y;
+  if(nps.y < 0) nps.y = 0;
+  nps.z += z;
+  if(nps.z < 0) nps.z = 0;
+  SetAbsPos(nps);
+}
+
+void Layer::MovePos2d(int x, int y) {
+  taVector2i nps = pos2d_abs;
+  nps.x += x;
+  if(nps.x < 0) nps.x = 0;
+  nps.y += y;
+  if(nps.y < 0) nps.y = 0;
+  SetAbsPos2d(nps);
 }
 
 ProjectBase* Layer::project() {
@@ -433,40 +521,50 @@ bool Layer::SetLayerSpec(LayerSpec*) {
 void Layer::SetDefaultPos() {
   if(!own_net) return;
   int index = own_net->layers.FindLeafEl(this);
-  pos = 0;
+  taVector3i ps = 0;
   for(int i=0;i<index;i++) {
     Layer* lay = (Layer*)own_net->layers.Leaf(i);
-    pos.z = MAX(pos.z, lay->pos.z + 1);
+    ps.z = MAX(ps.z, lay->pos.z + 1);
   }
+  SetAbsPos(ps);
 }
 
 void Layer::SetDefaultPos2d() {
   if(!own_net) return;
   int index = own_net->layers.FindLeafEl(this);
-  pos2d.x = pos.x;		// should transfer..
-  pos2d.y= 0;			// adapt y to fit..
+  taVector2i ps;
+  ps.x = pos.x;		// should transfer..
+  ps.y= 0;			// adapt y to fit..
   for(int i=0;i<index;i++) {
     Layer* lay = (Layer*)own_net->layers.Leaf(i);
-    pos2d.y = MAX(pos2d.y, lay->pos2d.y + lay->scaled_disp_geom.y + 2);
+    ps.y = MAX(ps.y, lay->pos2d.y + lay->scaled_disp_geom.y + 2);
   }
+  SetAbsPos2d(ps);
 }
 
 void Layer::PositionRightOf(Layer* lay, int space) {
   lay->RecomputeGeometry();     // be sure..
-  pos = lay->pos;
-  pos.x += lay->scaled_disp_geom.x + space;
-  pos2d = lay->pos2d;
-  pos2d.x += lay->scaled_disp_geom.x + space;
+  taVector3i ps;
+  ps = lay->pos_abs;
+  ps.x += lay->scaled_disp_geom.x + space;
+  SetAbsPos(ps);
+  taVector2i ps2;
+  ps2 = lay->pos2d_abs;
+  ps2.x += lay->scaled_disp_geom.x + space;
+  SetAbsPos2d(ps2);
 }
 
 void Layer::PositionBehind(Layer* lay, int space) {
   lay->RecomputeGeometry();     // be sure..
-  pos = lay->pos;
-  pos.y += lay->scaled_disp_geom.y + space;
-  pos2d = lay->pos2d;
-  pos2d.y += lay->scaled_disp_geom.y + space;
+  taVector3i ps;
+  ps = lay->pos_abs;
+  ps.y += lay->scaled_disp_geom.y + space;
+  SetAbsPos(ps);
+  taVector2i ps2;
+  ps2 = lay->pos2d_abs;
+  ps2.y += lay->scaled_disp_geom.y + space;
+  SetAbsPos2d(ps2);
 }
-
 
 void Layer::LayoutUnits() {
   StructUpdate(true);
@@ -1704,22 +1802,6 @@ void Layer::UnitDispPos(Unit* un, int& x, int& y) const {
   else {                        // otherwise unit has it directly..
     x = un->pos.x;
     y = un->pos.y;
-  }
-}
-
-void Layer::AddRelPos(taVector3i& rel_pos) {
-  Layer_Group* lgp = dynamic_cast<Layer_Group*>(owner);
-  if (lgp) {
-    rel_pos += lgp->pos;
-    lgp->AddRelPos(rel_pos);
-  }
-}
-
-void Layer::AddRelPos2d(taVector2i& rel_pos) {
-  Layer_Group* lgp = dynamic_cast<Layer_Group*>(owner);
-  if (lgp) {
-    rel_pos += lgp->pos2d;
-    lgp->AddRelPos2d(rel_pos);
   }
 }
 

@@ -339,12 +339,10 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   }
 
   if(nv->lay_layout == NetView::THREE_D) {
-    lay->pos.x += (int)new_x;
-    lay->pos.y += (int)new_y;
+    lay->MovePos((int)new_x, (int)new_y);
   }
   else {
-    lay->pos2d.x += (int)new_x;
-    lay->pos2d.y += (int)new_y;
+    lay->MovePos2d((int)new_x, (int)new_y);
   }
 
   laynd->txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac); // reset!
@@ -375,7 +373,7 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
     proj->undo_mgr.SaveUndo(net, "Layer Move", net, false, NULL); // save at net
   }
 
-  lay->pos.z += (int)new_z;
+  lay->MovePos(0,0,(int)new_z);
 //   if(lay->pos.z < 0) lay->pos.z = 0;
 
   const SbVec3f& shptrans = laynd->txfm_shape()->translation.getValue();
