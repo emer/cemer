@@ -47,6 +47,15 @@ public:
     FOR_LOOP_EXPR       = 0x0004, // expression is an initializer or increment for a for loop -- requires different parsing due to possibility of commas..
     NO_PARSE            = 0x0008, // do not parse expression in UAE
   };
+  
+  enum LookUpType {
+    NOT_SET,
+    VARIABLE,         // no path or delimiter
+    OBJ_MEMB_METH,
+    SCOPED,           // Class::
+    ARRAY_INDEX,
+    CALL
+  };
 
   String        expr;           // #EDIT_DIALOG #EDIT_WIDTH_40 #LABEL_ enter the expression here -- use Ctrl-L to pull up a lookup dialog for members, methods, types, etc -- or you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
 
@@ -109,7 +118,10 @@ public:
 
   String StringFieldLookupFun(const String& cur_txt, int cur_pos,
                               const String& mbr_name, int& new_pos) override;
-
+  
+  static LookUpType ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt, String& path_prepend_txt, String& append_txt, String& prog_el_txt, String& base_path, String& lookup_seed, String& path_var, String& path_rest, bool path_base_not_null, int& expr_start);
+  // return the lookup type
+  
   // Signature must match that of the item_filter_fun typedef.
   static bool   ExprLookupVarFilter(void* base, void* var); // special filter used in ExprLookupFun
   static bool   ExprLookupIsFunc(const String& txt);  // is it a function or program lookup

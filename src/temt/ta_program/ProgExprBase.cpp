@@ -413,35 +413,17 @@ bool ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
   return true;
 }
 
-
-String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_pos,
-                                   taBase*& path_own_obj, TypeDef*& path_own_typ,
-                                   MemberDef*& path_md, ProgEl* own_pel,
-                                   Program* own_prg, Function* own_fun,
-                                   taBase* path_base, TypeDef* path_base_typ) {
-  path_own_obj = NULL;
-  path_own_typ = NULL;
-  path_md = NULL;
+ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt, String& path_prepend_txt, String& append_txt, String& prog_el_txt, String& base_path, String& lookup_seed, String& path_var, String& path_rest, bool path_base_not_null, int& expr_start) {
   
   String txt = cur_txt.before(cur_pos);
   String extra_txt = cur_txt.from(cur_pos);
-  String append_at_end;
-  String prepend_before;
-  String prog_el_txt;
   
-  String base_path;             // path to base element(s) if present
-  String lookup_seed;           // start of text to seed lookup process
-  String rval = _nilString;
-  
-  int lookup_type = -1; // 1 = var name (no path, delim), 2 = obj memb/meth,
-  // 3 = type scoped, 4 = array index, 5 = some program element (e.g. function call)
-  
-  int_Array delim_pos;
   int delims_used = 0;
-  int expr_start = 0;
+  int_Array delim_pos;
   int prog_el_start_pos = -1;
   int c = '\0';
   
+  // ** Working backwards - delimiters will be in reverse order **
   for(int i=cur_pos-1; i>= 0; i--) {
     c = txt[i];
     if(isdigit(c) || (c == '_') || (c == ' ')) {
@@ -472,8 +454,10 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     break;
   }
   if(xtra_st < extra_txt.length()) {
-    append_at_end = extra_txt.from(xtra_st);
+    append_txt = extra_txt.from(xtra_st);
   }
+  
+  ProgExprBase::LookUpType lookup_type = NOT_SET;
   
   if(delim_pos.size > 0) {
     if(txt[delim_pos[0]] == '.') { // path sep = .
@@ -481,11 +465,10 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       int length = base_path.length();
       base_path = triml(base_path);
       int shift = length - base_path.length(); // shift to compensate for trim
-      delim_pos[0] += shift;
       expr_start += shift;
-      prepend_before = txt.before(expr_start);
+      prepend_txt = txt.before(expr_start);
       lookup_seed = txt.after(delim_pos[0]);
-      lookup_type = 2;
+      lookup_type = ProgExprBase::OBJ_MEMB_METH;
       delims_used = 1;
     }
     else if(txt[delim_pos[0]] == '>' && delim_pos.size > 1 && txt[delim_pos[1]] == '-'
@@ -494,12 +477,10 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       int length = base_path.length();
       base_path = triml(base_path);
       int shift = length - base_path.length(); // shift to compensate for trim
-      delim_pos[0] += shift;
-      delim_pos[1] += shift;
       expr_start += shift;
-      prepend_before = txt.before(expr_start);
-      lookup_seed = txt.after(delim_pos[1]);
-      lookup_type = 2;
+      prepend_txt = txt.before(expr_start);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = ProgExprBase::OBJ_MEMB_METH;
       delims_used = 2;
     }
     else if(txt[delim_pos[0]] == ':' && delim_pos.size > 1 && txt[delim_pos[1]] == ':'
@@ -508,12 +489,10 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       int length = base_path.length();
       base_path = triml(base_path);
       int shift = length - base_path.length(); // shift to compensate for trim
-      delim_pos[0] += shift;
-      delim_pos[1] += shift;
       expr_start += shift;
-      prepend_before = txt.before(expr_start);
-      lookup_seed = txt.after(delim_pos[1]);
-      lookup_type = 3;
+      prepend_txt = txt.before(expr_start);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = ProgExprBase::SCOPED;
       delims_used = 2;
     }
     // todo: []
@@ -522,32 +501,72 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     prog_el_txt = txt.at(prog_el_start_pos, txt.length() - prog_el_start_pos);
     
     if (prog_el_start_pos > -1 && ExprLookupIsFunc(prog_el_txt)) {
-      lookup_type = 5;
+      lookup_type = ProgExprBase::CALL;
       expr_start = txt.length();
-//      lookup_seed = txt.from(expr_start);
-      prepend_before = txt.before(expr_start);
+      prepend_txt = txt.before(expr_start);
     }
-    else if(path_base || path_base_typ) {
-      lookup_type = 2;
+    else if(path_base_not_null) {
+      lookup_type = ProgExprBase::OBJ_MEMB_METH;
       lookup_seed = txt.from(expr_start);
-      prepend_before = txt.before(expr_start);
+      prepend_txt = txt.before(expr_start);
     }
     else {
-      lookup_type = 1;
+      lookup_type = ProgExprBase::VARIABLE;
       lookup_seed = txt.from(expr_start);
-      prepend_before = txt.before(expr_start);
+      prepend_txt = txt.before(expr_start);
     }
   }
   
-  String path_prepend_before;   // for path operations
-  if(delim_pos.size > 0) {
-    path_prepend_before = txt.through(delim_pos[0]);
+  // cases such as var.member.<lookup>
+  if(delim_pos.size > delims_used) {
+    // note: any ref to base path needs to subtract expr_start relative to delim_pos!
+    path_var = base_path.before(delim_pos.SafeEl(-1)-expr_start); // use last one = first in list
+    if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
+      path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
+    else
+      path_rest = base_path.after(delim_pos.SafeEl(-1)-expr_start);
   }
+  
+  if(delim_pos.size > 0) {
+    path_prepend_txt = txt.through(delim_pos[0]);
+  }
+  
+  return lookup_type;
+}
+
+
+String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_pos,
+                                   taBase*& path_own_obj, TypeDef*& path_own_typ,
+                                   MemberDef*& path_md, ProgEl* own_pel,
+                                   Program* own_prg, Function* own_fun,
+                                   taBase* path_base, TypeDef* path_base_typ) {
+  
+  String txt = cur_txt.before(cur_pos);
+  String append_txt;
+  String prepend_txt;
+  String path_prepend_txt;
+  String prog_el_txt;
+  String path_var;
+  String path_rest;
+  String base_path;             // path to base element(s) if present
+  String lookup_seed;           // start of text to seed lookup process
+
+  int lookup_type;
+  int expr_start = 0;
+  
+
+  bool path_base_not_null = (path_base_typ != NULL || path_base != NULL);
+  lookup_type = ParseForLookup(cur_txt, cur_pos, prepend_txt, path_prepend_txt, append_txt, prog_el_txt, base_path, lookup_seed, path_var, path_rest, path_base_not_null, expr_start);
 
   lookup_seed.trim();
-  
+
+  String rval = _nilString;
+  path_own_obj = NULL;
+  path_own_typ = NULL;
+  path_md = NULL;
+
   switch(lookup_type) {
-    case 1: {                       // lookup variables
+    case ProgExprBase::VARIABLE: {                       // lookup variables
       taiWidgetTokenChooserMultiType* varlkup =  new taiWidgetTokenChooserMultiType
       (&TA_ProgVar, NULL, NULL, NULL, 0, lookup_seed);
       varlkup->setNewObj1(&(own_prg->vars), " New Global Var");
@@ -564,17 +583,16 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       varlkup->GetImageScoped(NULL, &TA_ProgVar, own_prg, &TA_Program);
       bool okc = varlkup->OpenChooser();
       if(okc && varlkup->token()) {
-        rval = prepend_before + varlkup->token()->GetName();
+        rval = prepend_txt + varlkup->token()->GetName();
         new_pos = rval.length();
-        rval += append_at_end;
+        rval += append_txt;
       }
       delete varlkup;
       expr_lookup_cur_base = NULL;
       break;
     }
       
-    case 2: {                     // members/methods
-      String path_var, path_rest;
+    case ProgExprBase::OBJ_MEMB_METH: {                     // members/methods
       TypeDef* lookup_td = NULL;
       taList_impl* tal = NULL;
       taBase* base_base = NULL;
@@ -589,15 +607,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
         path_rest = base_path;
       }
       else {
-        if(delim_pos.size > delims_used) {
-          // note: any ref to base path needs to subtract expr_start relative to delim_pos!
-          path_var = base_path.before(delim_pos.SafeEl(-1)-expr_start); // use last one = first in list
-          if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
-            path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
-          else
-            path_rest = base_path.after(delim_pos.SafeEl(-1)-expr_start);
-        }
-        else {
+        if (path_var.empty()) {
           path_var = base_path;
         }
         ProgVar* st_var = NULL;
@@ -666,9 +676,9 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
           if(okc && lilkup->item()) {
             path_own_obj = lilkup->item();
             path_own_typ = path_own_obj->GetTypeDef();
-            rval = path_prepend_before + path_own_obj->GetName();
+            rval = path_prepend_txt + path_own_obj->GetName();
             new_pos = rval.length();
-            rval += append_at_end;
+            rval += append_txt;
           }
           delete lilkup;
         }
@@ -680,9 +690,9 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
           if(okc && lilkup->item()) {
             path_own_obj = lilkup->item();
             path_own_typ = path_own_obj->GetTypeDef();
-            rval = path_prepend_before + path_own_obj->GetName();
+            rval = path_prepend_txt + path_own_obj->GetName();
             new_pos = rval.length();
-            rval += append_at_end;
+            rval += append_txt;
           }
           delete lilkup;
         }
@@ -710,11 +720,11 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
           delete mdlkup;
         }
         if(lookup_md) {
-          rval = path_prepend_before + lookup_md->name;
+          rval = path_prepend_txt + lookup_md->name;
           if(lookup_md->TypeInfoKind() == TypeItem::TIK_METHOD)
             rval += "()";
           new_pos = rval.length();
-          rval += append_at_end;
+          rval += append_txt;
           path_own_typ = lookup_td;
           if(lookup_md->TypeInfoKind() == TypeItem::TIK_MEMBER) {
             path_md = (MemberDef*)lookup_md;
@@ -724,7 +734,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       break;
     }
       
-    case 3: {                      // enums
+    case ProgExprBase::SCOPED: {                      // enums
       TypeDef* lookup_td = TypeDef::FindGlobalTypeName(base_path, false);
       if(lookup_td) {
         taiWidgetEnumStaticChooser* eslkup = new taiWidgetEnumStaticChooser
@@ -732,11 +742,11 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
         eslkup->GetImage((MemberDef*)NULL, lookup_td);
         bool okc = eslkup->OpenChooser();
         if(okc && eslkup->md()) {
-          rval = path_prepend_before + eslkup->md()->name;
+          rval = path_prepend_txt + eslkup->md()->name;
           if(eslkup->md()->TypeInfoKind() == TypeItem::TIK_METHOD)
             rval += "()";
           new_pos = rval.length();
-          rval += append_at_end;
+          rval += append_txt;
         }
         delete eslkup;
       }
@@ -748,21 +758,21 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
           varlkup->GetImageScoped(NULL, &TA_DynEnumItem, pt, &TA_DynEnumBase); // scope to this guy
           bool okc = varlkup->OpenChooser();
           if(okc && varlkup->token()) {
-            rval = prepend_before + varlkup->token()->GetName();
+            rval = prepend_txt + varlkup->token()->GetName();
             new_pos = rval.length();
-            rval += append_at_end;
+            rval += append_txt;
           }
           delete varlkup;
         }
       }
       break;
     }
-    case 4: {
+    case ProgExprBase::ARRAY_INDEX: {
       taMisc::Info("lookup an array index from path:", base_path, "seed:", lookup_seed);
       break;
     }
       
-    case 5: {                 // ProgEl
+    case ProgExprBase::CALL: {                 // ProgEl
       String trimmed_txt = trim(prog_el_txt);
       String el = trimmed_txt; // the program element
       if(trimmed_txt.contains(' ')) {
@@ -788,7 +798,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
         func_look_up->GetImageScoped(NULL, &TA_Function, NULL, &TA_Function); // scope to this guy
         bool okc = func_look_up->OpenChooser();
         if(okc && func_look_up->token()) {
-          rval = prepend_before.repl(prog_el_txt, func_look_up->token()->GetName());
+          rval = prepend_txt.repl(prog_el_txt, func_look_up->token()->GetName());
           rval += "()";
         }
         new_pos = rval.length();
@@ -805,9 +815,11 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                           const String& mbr_name, int& new_pos) {
 
   ProgEl* own_pel = GET_MY_OWNER(ProgEl);
-  if(!own_pel) return _nilString;
+  if(!own_pel)
+    return _nilString;
   Program* own_prg = GET_OWNER(own_pel, Program);
-  if(!own_prg) return _nilString;
+  if(!own_prg)
+    return _nilString;
   Function* own_fun = GET_OWNER(own_pel, Function);
   taBase* path_own_obj = NULL;
   TypeDef* path_own_typ = NULL;
