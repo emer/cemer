@@ -106,9 +106,7 @@ void Layer::InitLinks() {
   AutoNameMyMembers();
 
   own_net = GET_MY_OWNER(Network);
-  if(own_net) {
-    SetLayerFlagState(ABS_POS, own_net->HasNetFlag(Network::ABS_POS));
-  }
+  UpdtAbsPosFlag();
   if(pos == 0)
     SetDefaultPos();
   if(pos2d == 0)
@@ -202,13 +200,17 @@ void Layer::UpdateAfterMove_impl(taBase* old_owner) {
   UpdatePointers_NewPar(otnet, mynet);
 }
 
-void Layer::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-
+void Layer::UpdtAbsPosFlag() {
   if(own_net) {
     SetLayerFlagState(ABS_POS, own_net->HasNetFlag(Network::ABS_POS));
   }
+}  
 
+void Layer::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  UpdtAbsPosFlag();
+  
   // no negative geoms., y,z must be 1 (for display)
   UpdateUnitSpecs((bool)taMisc::is_loading); // force if loading
   //  SyncSendPrjns(); // this is not a good place to do this -- too frequent and unnec
@@ -410,6 +412,7 @@ void Layer::AddRelPos2d(taVector2i& rel_pos) {
 }
 
 void Layer::RecomputeGeometry() {
+  UpdtAbsPosFlag();
   un_geom.SetGtEq(1);           // can't go < 1
   gp_geom.SetGtEq(1);
   un_geom.UpdateAfterEdit_NoGui();
@@ -445,12 +448,22 @@ void Layer::RecomputeGeometry() {
   }
 }
 
+void Layer::SetRelPos(int x, int y, int z) {
+  taVector3i ps(x,y,z);
+  SetRelPos(ps);
+}
+
 void Layer::SetRelPos(taVector3i& ps) {
   taVector3i rp = 0;
   AddRelPos(rp);
   pos = ps;
   pos_abs = ps + rp;
   SigEmitUpdated();
+}
+
+void Layer::SetAbsPos(int x, int y, int z) {
+  taVector3i ps(x,y,z);
+  SetAbsPos(ps);
 }
 
 void Layer::SetAbsPos(taVector3i& ps) {
@@ -461,12 +474,22 @@ void Layer::SetAbsPos(taVector3i& ps) {
   SigEmitUpdated();
 }
 
+void Layer::SetRelPos2d(int x, int y) {
+  taVector2i ps(x,y);
+  SetRelPos2d(ps);
+}
+
 void Layer::SetRelPos2d(taVector2i& ps) {
   taVector2i rp = 0;
   AddRelPos2d(rp);
   pos2d = ps;
   pos2d_abs = ps + rp;
   SigEmitUpdated();
+}
+
+void Layer::SetAbsPos2d(int x, int y) {
+  taVector2i ps(x,y);
+  SetAbsPos2d(ps);
 }
 
 void Layer::SetAbsPos2d(taVector2i& ps) {

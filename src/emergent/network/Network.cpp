@@ -337,6 +337,11 @@ void Network::UpdateAfterEdit_impl(){
   else {
     if(brain_atlas)
       brain_atlas_name = brain_atlas->name; // for later saving..
+
+    FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+      if(l->lesioned()) continue;
+      l->UpdtAbsPosFlag();
+    }
   }
 }
 
@@ -2616,6 +2621,10 @@ void Network::LayerZPos_Unitize() {
 }
 
 void Network::LayerPos_Cleanup() {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+    if(l->lesioned()) continue;
+    l->UpdtAbsPosFlag();
+  }
   if (flags & MANUAL_POS) return;
   layers.LayerPos_Cleanup();
   UpdateMaxDispSize();          // must do that in case something moves

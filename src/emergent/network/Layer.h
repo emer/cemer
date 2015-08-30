@@ -112,10 +112,10 @@ public:
   Network*              own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure #NO_SET_POINTER Network this layer is in
   LayerFlags            flags;          // flags controlling various aspects of layer funcdtion
   LayerType             layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
-  PosVector3i           pos;            // #CAT_Structure #CONDEDIT_OFF_flags:ABS_POS position of layer relative to owning layer group, or overall network position if none (0,0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetPos or SetAbsPos to set position either way
-  PosVector3i           pos_abs;        // #CAT_Structure #CONDEDIT_ON_flags:ABS_POS absolute position of layer always relative to overall network position (0,0,0 is lower left hand corner) -- not relative to owning layer group -- see network ABS_POS flag for which position is used by default -- can use SetPos or SetAbsPos to set position either way
-  PosVector2i       	pos2d;		// #CAT_Structure #CONDEDIT_OFF_flags:ABS_POS 2D  network view display position of layer relative to owning layer group, or overall nework position if none (0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetPos2d or SetAbsPos2d to set position either way
-  PosVector2i       	pos2d_abs;	// #CAT_Structure #CONDEDIT_ON_flags:ABS_POS absolute 2D network view display position of layer always relative to the overall nework (0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetPos2d or SetAbsPos2d to set position either way
+  PosVector3i           pos;            // #CAT_Structure #CONDEDIT_OFF_flags:ABS_POS position of layer relative to owning layer group, or overall network position if none (0,0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetRelPos or SetAbsPos to set position either way
+  PosVector3i           pos_abs;        // #CAT_Structure #CONDEDIT_ON_flags:ABS_POS absolute position of layer always relative to overall network position (0,0,0 is lower left hand corner) -- not relative to owning layer group -- see network ABS_POS flag for which position is used by default -- can use SetRelPos or SetAbsPos to set position either way
+  PosVector2i       	pos2d;		// #CAT_Structure #CONDEDIT_OFF_flags:ABS_POS 2D  network view display position of layer relative to owning layer group, or overall nework position if none (0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetRelPos2d or SetAbsPos2d to set position either way
+  PosVector2i       	pos2d_abs;	// #CAT_Structure #CONDEDIT_ON_flags:ABS_POS absolute 2D network view display position of layer always relative to the overall nework (0,0 is lower left hand corner) -- see network ABS_POS flag for which position is used by default -- can use SetRelPos2d or SetAbsPos2d to set position either way
   float                 disp_scale;     // #DEF_1 #CAT_Structure display scale factor for layer -- multiplies overall layer size -- 1 is normal, < 1 is smaller and > 1 is larger -- can be especially useful for shrinking very large layers to better fit with other smaller layers
   XYNGeom               un_geom;        // #AKA_geom #CAT_Structure two-dimensional layout and number of units within the layer or each unit group within the layer
   bool                  unit_groups;    // #CAT_Structure organize units into subgroups within the layer, with each unit group having the geometry specified by un_geom -- see virt_groups for whether there are actual unit groups allocated, or just virtual organization a flat list of groups
@@ -301,6 +301,8 @@ public:
   // #IGNORE add relative pos, which factors in offsets from above
   void          AddRelPos2d(taVector2i& rel_pos);
   // #IGNORE add relative pos, which factors in offsets from above
+  void          UpdtAbsPosFlag();
+  // #IGNORE update the ABS_POS flag from the network
 
   inline void   GetAbsPos(taVector3i& abs_pos) { abs_pos = pos_abs; }
   // #CAT_Structure get absolute pos, which factors in offsets from layer groups
@@ -310,11 +312,19 @@ public:
   // #CAT_Structure get absolute pos, which factors in offsets from layer groups
   virtual void  SetRelPos(taVector3i& ps);
   // #CAT_Structure set position of layer -- if in a layer group, this is relative to the owning layer group position, otherwise relative to network 0,0,0
+  virtual void  SetRelPos(int x, int y, int z);
+  // #CAT_Structure set position of layer -- if in a layer group, this is relative to the owning layer group position, otherwise relative to network 0,0,0
   virtual void  SetAbsPos(taVector3i& ps);
+  // #CAT_Structure set absolute position of layer, regardless of whether it is in a layer group or not - always relative to network 0,0,0
+  virtual void  SetAbsPos(int x, int y, int z);
   // #CAT_Structure set absolute position of layer, regardless of whether it is in a layer group or not - always relative to network 0,0,0
   virtual void  SetRelPos2d(taVector2i& ps);
   // #CAT_Structure set 2D position of layer -- if in a layer group, this is relative to the owning layer group position, otherwise relative to network 0,0
+  virtual void  SetRelPos2d(int x, int y);
+  // #CAT_Structure set 2D position of layer -- if in a layer group, this is relative to the owning layer group position, otherwise relative to network 0,0
   virtual void  SetAbsPos2d(taVector2i& ps);
+  // #CAT_Structure set absolute 2D position of layer, regardless of whether it is in a layer group or not - always relative to network 0,0
+  virtual void  SetAbsPos2d(int x, int y);
   // #CAT_Structure set absolute 2D position of layer, regardless of whether it is in a layer group or not - always relative to network 0,0
   virtual void  MovePos(int x, int y, int z=0);
   // #CAT_Structure move position of layer given increment from where it currently is, in 3d space
