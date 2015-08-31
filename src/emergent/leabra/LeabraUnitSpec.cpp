@@ -205,7 +205,7 @@ void LeabraAvgLSpec::Initialize() {
 void LeabraAvgLSpec::Defaults_init() {
   init = 0.4f;
   max = 1.5f;
-  min = 0.1f;
+  min = 0.2f;
   tau = 10.0f;
   lrn_max = 0.05f;
   lrn_min = 0.005f;

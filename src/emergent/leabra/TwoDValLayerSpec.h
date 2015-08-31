@@ -135,8 +135,11 @@ public:
     virtual void ReadValue_ugp(TwoDValLeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
 			       LeabraNetwork* net);
     // #CAT_TwoDVal unit group version: read out current value represented by activations in layer
-  // virtual void	HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_TwoDVal hard clamp current ext values (on all units, after ClampValue called) to all the units (calls ResetAfterClamp)
+  virtual void HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_ScalarVal hard clamp current ext values (on all units, after ClampValue called) to all the units
+    virtual void HardClampExt_ugp(LeabraLayer* lay, LeabraNetwork* net,
+                                  Layer::AccessMode acc_md, int gpidx);
+    // #IGNORE
 
   virtual void	LabelUnits(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TwoDVal label units in given layer with their underlying values

@@ -27,7 +27,7 @@
 eTypeDef_Of(TwoDValLeabraLayer);
 
 class E_API TwoDValLeabraLayer : public LeabraLayer {
-  // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- uses separate matrix storage of x,y values (prev impl used first row of layer)
+  // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- uses separate matrix storage of x,y values (prev impl used first row of layer) -- input data must have x (innermost) dim = 2 (x,y coords), y (next) dim = nvals -- 11x11 or 21x21 layer sizes are generally good for encoding -0.5..1.5 normalized data
 INHERITED(LeabraLayer)
 public:
   enum TwoDXY {			// x-y two-d vals

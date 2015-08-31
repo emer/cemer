@@ -546,6 +546,24 @@ void TwoDValLayerSpec::Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) 
   }
 }
 
+void TwoDValLayerSpec::HardClampExt_ugp
+(LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  if(nunits < 1) return;
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
+    LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+    ((LeabraUnitSpec*)u->GetUnitSpec())->Compute_HardClamp(uv, net, u->ThrNo());
+  }
+}
+
+void TwoDValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
+  UNIT_GP_ITR(lay, HardClampExt_ugp(lay, net, acc_md, gpidx); );
+}
+
+
 void TwoDValLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   if(twod.clamp_pat) {
     inherited::Compute_HardClamp_Layer(lay, net);
@@ -562,8 +580,8 @@ void TwoDValLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* 
     lay->hard_clamped = false;
     return;
   }
-  // todo: 
-  // HardClampExt(lay, net);
+  HardClampExt(lay, net);
+  lay->hard_clamped = true;     // cache this flag
 }
 
 void TwoDValLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {

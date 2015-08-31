@@ -17153,7 +17153,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.02378929;
+     value 8 0=0.02293968;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -19420,7 +19420,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=2: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.02368421: };
+     avg_l {init=0.4: max=1.5: min=0.2: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03461539: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      adapt {
@@ -19586,7 +19586,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     LeabraLayer @["Input"] {
      name="Input";
      desc=;
-     flags=0;
+     flags=ABS_POS;
      layer_type=INPUT;
      pos {x=0: y=0: z=0: };
      pos_abs {x=0: y=0: z=0: };
@@ -19638,7 +19638,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     LeabraLayer @["Hidden"] {
      name="Hidden";
      desc=;
-     flags=0;
+     flags=ABS_POS;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=1: };
      pos_abs {x=0: y=0: z=1: };
@@ -19726,7 +19726,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     LeabraLayer @["Output"] {
      name="Output";
      desc=;
-     flags=0;
+     flags=ABS_POS;
      layer_type=TARGET;
      pos {x=0: y=0: z=2: };
      pos_abs {x=0: y=0: z=2: };
