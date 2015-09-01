@@ -25,7 +25,7 @@ int Random::Discrete(taMatrix* distribution, int thr_no) {
     z += distribution->FastElAsDouble_Flat(i);
   }
   double r = MTRnd::GenRandRes53(thr_no);
-  double psum;
+  double psum = 0.0;
   for (int i = 0; i < distribution->size; i++) {
     double pval = distribution->FastElAsDouble_Flat(i) / z;
     psum += pval;
