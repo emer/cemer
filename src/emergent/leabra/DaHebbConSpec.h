@@ -40,6 +40,7 @@ public:
   LearnActVal         ru_act_var;     // what variable to use for recv unit activation
   
   bool                d2r;            // if true, exhibits inverted D2 receptor-driven learning - LTD from phaDA bursts; LTP from dips; i.e., NoGo- / indirect-like pattern
+  float               da_dip_gain;    // multply phasic dips to increase or decrease learning effect
 
   inline float GetActVal(LeabraUnitVars* u, const LearnActVal& val) {
     switch(val) {
@@ -60,6 +61,7 @@ public:
                                     const float da_p, const float lrnmod) {
     float eff_da = da_p;
     if(d2r) eff_da *= -1.0f; // invert direction of learning
+    if(eff_da < 0.0f) { eff_da *= da_dip_gain; }
     dwt += cur_lrate * eff_da * ru_act * su_act * lrnmod;
   }
   // #IGNORE dopamine multiplication
