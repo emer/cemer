@@ -62,6 +62,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
     oncErr[i] = NULL;
     lblcellYAxis[i] = NULL;
     cellYAxis[i] = NULL;
+    butLineProps[i] = NULL;
   }
 
   layTopCtrls = new QHBoxLayout; layWidg->addLayout(layTopCtrls);
