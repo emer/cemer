@@ -411,7 +411,7 @@ void taiEditorOfClass::DoAddToControlPanel(QAction* act){
     return;
   
   int param = act->data().toInt();
-  ControlPanel* se;
+  ControlPanel* se = NULL;
   // this is a terrible hack but will work until I figure out a better way - rohrlich 10/8/14
   if (param < 100) {
     se = proj->ctrl_panels.Leaf(param);

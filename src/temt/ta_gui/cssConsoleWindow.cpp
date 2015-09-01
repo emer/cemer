@@ -307,7 +307,7 @@ void cssConsoleWindow::windowActivateByName(const Variant& title_) {
   iWidget_List wl;
   taiMisc::GetWindowList(wl);
   String title = title_.toString();
-  QWidget* wid;
+  QWidget* wid = NULL;
   for (int i = 0; i < wl.size; ++i) {
     wid = wl.FastEl(i);
     if (wid->isWindow()) {
