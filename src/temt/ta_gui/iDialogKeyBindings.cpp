@@ -54,6 +54,9 @@ iDialogKeyBindings::iDialogKeyBindings(QWidget* par_window_)
 }
 
 iDialogKeyBindings::iDialogKeyBindings() {
+  for (int i=0; i<10; i++) {
+    bindings_layout[i] = NULL;
+  }
 }
 
 iDialogKeyBindings::~iDialogKeyBindings() {
@@ -183,8 +186,8 @@ void iDialogKeyBindings::accept() {
   }
   QDataStream out(&file);
   
-  QLabel* action;
-  QKeySequenceEdit* key_seq_edit;
+  QLabel* action = NULL;
+  QKeySequenceEdit* key_seq_edit = NULL;
   int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
   for (int ctxt=0; ctxt<context_count; ctxt++) {
     for (int row=0; row<bindings_layout[ctxt]->rowCount(); row++) {
