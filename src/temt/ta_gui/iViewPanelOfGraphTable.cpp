@@ -34,6 +34,7 @@
 #include <QVBoxLayout>
 #include <QCheckBox>
 #include <QPushButton>
+#include <QSignalMapper>
 
 const int iViewPanelOfGraphTable::axis_chooser_width = 160;
 const int iViewPanelOfGraphTable::axis_label_width = 25;
@@ -417,6 +418,10 @@ bool iViewPanelOfGraphTable::BuildPlots() {
   layPlots->setFieldGrowthPolicy(iFormLayout::AllNonFixedFieldsGrow); // TBD
 
   // Y AXes
+  // create a signal mapper to pass the plot number as a parameter to butSetLineStyle()
+  QSignalMapper* sig_map_for_prop_buttons = new QSignalMapper(this);
+  connect(sig_map_for_prop_buttons, SIGNAL(mapped(int)), this, SLOT(butSetLineStyle(int)));
+
   for(int i=0;i<pltsz; i++) {
     layYAxis[i] = new QHBoxLayout;
     layYAxis[i]->setMargin(0);
@@ -478,8 +483,15 @@ bool iViewPanelOfGraphTable::BuildPlots() {
     QWidget* ew = lelErr[i]->GetRep();
     ew->setFixedHeight(row_height);
     layYAxis[i]->addWidget(ew);
-
-    layYAxis[i]->addStretch();
+    
+    butLineProps[i] = new QPushButton("", widg);
+    butLineProps[i]->setIcon( QIcon( QPixmap(":/images/editedit.png") ) );
+    oncErr[i]->setToolTip(taiMisc::ToolTipPreProcess("Set color, line style, etc"));
+    oncErr[i]->setFixedHeight(row_height);
+    connect(butLineProps[i], SIGNAL(pressed()), sig_map_for_prop_buttons, SLOT(map()));
+    sig_map_for_prop_buttons->setMapping(butLineProps[i], i);
+    layYAxis[i]->addWidget(butLineProps[i]);
+    layYAxis[i]->addSpacing(taiM->hsep_c);
 
     layPlots->addRow(layYAxis[i]);
   }
@@ -682,5 +694,11 @@ void iViewPanelOfGraphTable::butSetColor_pressed() {
   if (updating || !glv) return;
 
   glv->CallFun("SetColorSpec");
+}
+
+void iViewPanelOfGraphTable::butSetLineStyle(int plot_num) {
+  if (glv()) {
+    glv()->plots[plot_num]->OpenInWindow();
+  }
 }
 

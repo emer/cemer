@@ -114,6 +114,7 @@ public:
   taiWidgetFieldIncr*       cellYAxis[max_plots]; // matrix cell
   taiWidgetListElChooser*   lelErr[max_plots];
   iCheckBox*                oncErr[max_plots]; // on checkbox
+  QPushButton*              butLineProps[max_plots];
 
   //  QLabel*                   lblErr[max_plots];
 
@@ -167,6 +168,7 @@ protected slots:
   void              butRefresh_pressed();
   void              butClear_pressed();
   void              butSetColor_pressed();
+  void              butSetLineStyle(int plot_num);
 
 };
 
