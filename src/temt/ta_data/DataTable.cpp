@@ -4169,9 +4169,9 @@ String DataTable::ColStatsName(const String& col_nm) {
   return cda->ColStats();
 }
 
-void DataTable::PermuteRows() {
+void DataTable::PermuteRows(int thr_no) {
   StructUpdate(true);
-  row_indexes.Permute();
+  row_indexes.Permute(thr_no);
   StructUpdate(false);
 }
 

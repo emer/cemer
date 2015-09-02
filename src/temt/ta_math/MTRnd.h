@@ -114,7 +114,7 @@ public:
   // generates a random number on [0,1) with 53-bit resolution
 
   double GenRandGaussDev();
-  // generate a gaussian-distributed random deviate -- generates 2x at a time, so it caches the 2nd one for greater efficiency -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // generate a gaussian-distributed random deviate -- generates 2x at a time, so it caches the 2nd one for greater efficiency -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
 
   TA_SIMPLE_BASEFUNS(MTRndPar);
 protected:
@@ -167,32 +167,32 @@ public:
   static uint32_t GetCurSeed(int thr_no = 0)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0;
     return rng->GetCurSeed(); }
-  // returns current seed -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // returns current seed -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
   static uint32_t GenRandInt32(int thr_no = 0)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0;
     return rng->GenRandInt32(); }
-  // generates a random number on [0,0xffffffff]-interval -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // generates a random number on [0,0xffffffff]-interval -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
   static double GenRandReal1(int thr_no = 0)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0.0;
     return rng->GenRandReal1(); }
-  // generates a random number on [0,1]-real-interval -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // generates a random number on [0,1]-real-interval -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
   static double GenRandReal2(int thr_no = 0)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0.0;
     return rng->GenRandReal2(); }
-  // generates a random number on [0,1)-real-interval -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // generates a random number on [0,1)-real-interval -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
   static double GenRandReal3(int thr_no = 0)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0.0;
     return rng->GenRandReal3(); }
-  // generates a random number on (0,1)-real-interval -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // generates a random number on (0,1)-real-interval -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
   static double GenRandRes53(int thr_no = 0)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0.0;
     return rng->GenRandRes53(); }
-  // generates a random number on [0,1) with 53-bit resolution -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // generates a random number on [0,1) with 53-bit resolution -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
 
   static double GenRandGaussDev(int thr_no = 0)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0.0;
     return rng->GenRandGaussDev(); }
-  // generate a gaussian-distributed random deviate -- generates 2x at a time, so it caches the 2nd one for greater efficiency -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // generate a gaussian-distributed random deviate -- generates 2x at a time, so it caches the 2nd one for greater efficiency -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
 
   static void  LoadInitParams();
   // #IGNORE load the initial parameters that were previously generated and saved within the source code -- this is called at an initialization step

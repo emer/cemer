@@ -517,10 +517,10 @@ void taDataProc::SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int arr[]
 }
 
 // if dest == src do in place
-bool taDataProc::Permute(DataTable* dest, DataTable* src) {
+bool taDataProc::Permute(DataTable* dest, DataTable* src, int thr_no) {
   if(!src) { taMisc::Error("taDataProc::Permute: src is NULL"); return false; }
   if(src == dest) {             // in place
-    src->PermuteRows();
+    src->PermuteRows(thr_no);
     return true;
   }
   bool in_place = false;        // will remain false
@@ -531,7 +531,7 @@ bool taDataProc::Permute(DataTable* dest, DataTable* src) {
   int_Array idxs;
   idxs.SetSize(src->rows);
   idxs.FillSeq();
-  idxs.Permute();
+  idxs.Permute(thr_no);
   for(int row=0;row<src->rows; row++) {
     dest->AddBlankRow();
     dest->CopyFromRow(-1, *src, idxs[row]);
@@ -1167,9 +1167,10 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
   return true;
 }
 
-bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2,
+bool taDataProc::SplitRowsNPermuted
+   (DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2,
     DataTable* dest_3, int n3, DataTable* dest_4, int n4,
-    DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
+    DataTable* dest_5, int n5, DataTable* dest_6, int n6, int thr_no) {
   if(!src) { taMisc::Error("taDataProc::SplitRowsNPermuted: src is NULL"); return false; }
   int nary[6] = {n1, n2, n3, n4, n5, n6};
   DataTable* dary[6] = {dest_1, dest_2, dest_3, dest_4, dest_5, dest_6};
@@ -1212,7 +1213,7 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
   int_Array idxs;
   idxs.SetSize(src->rows);
   idxs.FillSeq();
-  idxs.Permute();
+  idxs.Permute(thr_no);
   int st_n = 0;
   int end_n = nary[0];
   int ni = 0;

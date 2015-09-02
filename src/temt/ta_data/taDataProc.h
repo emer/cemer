@@ -92,8 +92,8 @@ public:
   // #IGNORE sort the table index based on spec
 
   // these move the data
-  static bool  Permute(DataTable* dest, DataTable* src);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON permute (randomly reorder) the rows of the data table -- note that it is typically much more efficient to just use a permuted index to access the data rather than physically permuting the items -- if src == dest, then a temp dest is used and results are copied back to src (i.e., in-place operation)
+  static bool  Permute(DataTable* dest, DataTable* src, int thr_no = 0);
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON permute (randomly reorder) the rows of the data table -- note that it is typically much more efficient to just use a permuted index to access the data rather than physically permuting the items -- if src == dest, then a temp dest is used and results are copied back to src (i.e., in-place operation) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
   static bool  Group(DataTable* dest, DataTable* src, DataGroupSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON group data from src into dest according to grouping specifications in spec (if dest is NULL, a new one is created in proj.data.AnalysisData) -- if src == dest, then a temp dest is used and results are copied back to src (i.e., in-place operation)
   static bool  Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec);
@@ -126,9 +126,9 @@ public:
        DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Select #MENU_BUTTON splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (sequentially) in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL)
   static bool  SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
-           DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
-           DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Select #MENU_BUTTON splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (order permuted efficiently via an index list) in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL).  this is good for creating random training/testing subsets
+       DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
+       DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0, int thr_no = 0);
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Select #MENU_BUTTON splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (order permuted efficiently via an index list) in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL).  this is good for creating random training/testing subsets -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
 
   ///////////////////////////////////////////////////////////////////
   // column-wise functions: selecting, joining

@@ -321,7 +321,7 @@ bool taDataGen::ReplicateByFrequency(DataTable* dest, const DataTable* data_in,
 
 bool taDataGen::SampleByFrequency(DataTable* dest, const DataTable* data_in,
                                   int n_samples, const String& freq_col_nm,
-                                  bool renorm_freqs) {
+                                  bool renorm_freqs, int thr_no) {
   if(!data_in || data_in->rows == 0) {
     taMisc::Error("taDataGen:SampleByFrequency data_in is NULL or has no rows");
     return false;
@@ -354,7 +354,7 @@ bool taDataGen::SampleByFrequency(DataTable* dest, const DataTable* data_in,
 
   for(int i=0;i<data_in->rows;i++) {
     for(int j=0;j<n_samples;j++) {
-      if(Random::BoolProb(freqs->FastEl_Flat(i))) {
+      if(Random::BoolProb(freqs->FastEl_Flat(i)), thr_no) {
         dest->AddBlankRow();
         dest->CopyFromRow(-1, *data_in, i);
       }
@@ -407,9 +407,9 @@ bool taDataGen::NsByFrequency(DataTable* dest, const DataTable* data_in,
 }
 
 int taDataGen::ProbSelectRow(DataTable* data_table, const String& key_col,
-                             const String& key_val, const String& p_col) {
+                             const String& key_val, const String& p_col, int thr_no) {
   double psum = 0.0;
-  double rndval = Random::ZeroOne();
+  double rndval = Random::ZeroOne(thr_no);
   int row_no = data_table->FindValColName(key_val, key_col, 0);
   while (row_no >= 0 && row_no < data_table->rows) {
     double pval = data_table->GetValColName(p_col, row_no).toDouble();
@@ -431,9 +431,9 @@ int taDataGen::ProbSelectColNo(DataTable* data_table, int row_no,
                                const String& colval5, const String& colp5,
                                const String& colval6, const String& colp6,
                                const String& colval7, const String& colp7,
-                               const String& colval8, const String& colp8) {
+                               const String& colval8, const String& colp8, int thr_no) {
   double psum = 0.0;
-  double rndval = Random::ZeroOne();
+  double rndval = Random::ZeroOne(thr_no);
   int col_no = -1;
   if(colp1.nonempty()) {
     psum += data_table->GetValColName(colp1, row_no).toDouble();
@@ -503,10 +503,11 @@ Variant taDataGen::ProbSelectColVal(DataTable* data_table, int row_no,
                                     const String& colval5, const String& colp5,
                                     const String& colval6, const String& colp6,
                                     const String& colval7, const String& colp7,
-                                    const String& colval8, const String& colp8) {
+                                    const String& colval8, const String& colp8,
+                                    int thr_no) {
   int col_no = ProbSelectColNo(data_table, row_no, colval1, colp1, colval2, colp2,
                                colval3, colp3, colval4, colp4, colval5, colp5,
-                               colval6, colp6, colval7, colp7, colval8, colp8);
+                               colval6, colp6, colval7, colp7, colval8, colp8, thr_no);
   if(col_no >= 0) {
     return data_table->GetVal(col_no, row_no);
   }
@@ -723,20 +724,21 @@ bool taDataGen::RenderWideLine(float_Matrix* mat, int xs, int ys, int xe, int ye
 ///////////////////////////////////////////////////////////////////
 // random pattern generation
 
-bool taDataGen::AddNoiseMat(float_Matrix* mat, const Random& rnd_spec) {
+bool taDataGen::AddNoiseMat(float_Matrix* mat, const Random& rnd_spec, int thr_no) {
   for(int i=0; i<mat->size; i++)
-    mat->FastEl_Flat(i) += rnd_spec.Gen();
+    mat->FastEl_Flat(i) += rnd_spec.Gen(thr_no);
   return true;
 }
 
-bool taDataGen::AddNoise(DataTable* data, const String& col_nm, const Random& rnd_spec) {
+bool taDataGen::AddNoise(DataTable* data, const String& col_nm, const Random& rnd_spec,
+                         int thr_no) {
   if(!data) return false;
   if(col_nm.empty()) {
     bool rval = true;
     for(int pn = 0;pn<data->data.size;pn++) {
       DataCol* da = data->data.FastEl(pn);
       if(da->is_matrix && da->valType() == VT_FLOAT) {
-        if(!AddNoise(data, da->name, rnd_spec))
+        if(!AddNoise(data, da->name, rnd_spec, thr_no))
           rval = false;
       }
     }
@@ -748,14 +750,15 @@ bool taDataGen::AddNoise(DataTable* data, const String& col_nm, const Random& rn
   for(int i=0;i<da->rows();i++) {
     float_Matrix* mat = (float_Matrix*)da->GetValAsMatrix(i);
     taBase::Ref(mat);
-    AddNoiseMat(mat, rnd_spec);
+    AddNoiseMat(mat, rnd_spec, thr_no);
     taBase::unRefDone(mat);
   }
   data->DataUpdate(false);
   return true;
 }
 
-bool taDataGen::PermutedBinaryMat(float_Matrix* mat, int n_on, float on_val, float off_val) {
+bool taDataGen::PermutedBinaryMat(float_Matrix* mat, int n_on, float on_val,
+                                  float off_val, int thr_no) {
   float_Array ary(false);
   ary.SetSize(mat->size);
   int n_max = MIN(mat->size, n_on);
@@ -764,7 +767,7 @@ bool taDataGen::PermutedBinaryMat(float_Matrix* mat, int n_on, float on_val, flo
     ary.Set(i, on_val);
   for(;i<mat->size;i++)
     ary.Set(i, off_val);
-  ary.Permute();
+  ary.Permute(thr_no);
   for(i=0;i<mat->size;i++) {
     mat->FastEl_Flat(i) = ary.FastEl(i);
   }
@@ -772,14 +775,14 @@ bool taDataGen::PermutedBinaryMat(float_Matrix* mat, int n_on, float on_val, flo
 }
 
 bool taDataGen::PermutedBinary(DataTable* data, const String& col_nm, int n_on,
-                               float on_val, float off_val) {
+                               float on_val, float off_val, int thr_no) {
   if(!data) return false;
   if(col_nm.empty()) {
     bool rval = true;
     for(int pn = 0;pn<data->data.size;pn++) {
       DataCol* da = data->data.FastEl(pn);
       if(da->is_matrix && da->valType() == VT_FLOAT) {
-        if(!PermutedBinary(data, da->name, n_on, on_val, off_val))
+        if(!PermutedBinary(data, da->name, n_on, on_val, off_val, thr_no))
           rval = false;
       }
     }
@@ -791,7 +794,7 @@ bool taDataGen::PermutedBinary(DataTable* data, const String& col_nm, int n_on,
   for(int i=0;i<da->rows();i++) {
     float_Matrix* mat = (float_Matrix*)da->GetValAsMatrix(i);
     taBase::Ref(mat);
-    PermutedBinaryMat(mat, n_on, on_val, off_val);
+    PermutedBinaryMat(mat, n_on, on_val, off_val, thr_no);
     taBase::unRefDone(mat);
   }
   data->DataUpdate(false);
@@ -800,7 +803,7 @@ bool taDataGen::PermutedBinary(DataTable* data, const String& col_nm, int n_on,
 
 bool taDataGen::PermutedBinary_MinDist(DataTable* data, const String& col_nm, int n_on,
                                        float dist, taMath::DistMetric metric,
-                                       bool norm, float tol)
+                                       bool norm, float tol, int thr_no)
 {
   if(!data) return false;
   if(col_nm.empty()) {
@@ -808,7 +811,7 @@ bool taDataGen::PermutedBinary_MinDist(DataTable* data, const String& col_nm, in
     for(int pn = 0;pn<data->data.size;pn++) {
       DataCol* da = data->data.FastEl(pn);
       if(da->is_matrix && da->valType() == VT_FLOAT) {
-        if(!PermutedBinary_MinDist(data, da->name, n_on, dist, metric, norm, tol))
+        if(!PermutedBinary_MinDist(data, da->name, n_on, dist, metric, norm, tol, thr_no))
           rval = false;
       }
     }
@@ -826,7 +829,7 @@ bool taDataGen::PermutedBinary_MinDist(DataTable* data, const String& col_nm, in
     bool ok = false;
     float min_d;
     do {
-      PermutedBinaryMat(mat, n_on);
+      PermutedBinaryMat(mat, n_on, 1.0f, 0.0f, thr_no);
       min_d = LastMinDist(da, i, metric, norm, tol);
       cnt--;
       if(larger_further)
@@ -851,7 +854,7 @@ bool taDataGen::PermutedBinary_MinDist(DataTable* data, const String& col_nm, in
   return true;
 }
 
-bool taDataGen::FlipBitsMat(float_Matrix* mat, int n_off, int n_on) {
+bool taDataGen::FlipBitsMat(float_Matrix* mat, int n_off, int n_on, int thr_no) {
   int_Array on_ary, off_ary;
   int i;
   for(i=0; i<mat->size; i++) {
@@ -860,8 +863,8 @@ bool taDataGen::FlipBitsMat(float_Matrix* mat, int n_off, int n_on) {
     else
       off_ary.Add(i);
   }
-  on_ary.Permute();
-  off_ary.Permute();
+  on_ary.Permute(thr_no);
+  off_ary.Permute(thr_no);
   int n_max = MIN(on_ary.size, n_off);
   for(i=0; i<n_max; i++)
     mat->FastEl_Flat(on_ary.FastEl(i)) = 0.0f;
@@ -871,14 +874,14 @@ bool taDataGen::FlipBitsMat(float_Matrix* mat, int n_off, int n_on) {
   return true;
 }
 
-bool taDataGen::FlipBits(DataTable* data, const String& col_nm, int n_off, int n_on) {
+bool taDataGen::FlipBits(DataTable* data, const String& col_nm, int n_off, int n_on, int thr_no) {
   if(!data) return false;
   if(col_nm.empty()) {
     bool rval = true;
     for(int pn = 0;pn<data->data.size;pn++) {
       DataCol* da = data->data.FastEl(pn);
       if(da->is_matrix && da->valType() == VT_FLOAT) {
-        if(!FlipBits(data, da->name, n_off, n_on))
+        if(!FlipBits(data, da->name, n_off, n_on, thr_no))
           rval = false;
       }
     }
@@ -890,7 +893,7 @@ bool taDataGen::FlipBits(DataTable* data, const String& col_nm, int n_off, int n
   for(int i=0;i<da->rows();i++) {
     float_Matrix* mat = (float_Matrix*)da->GetValAsMatrix(i);
     taBase::Ref(mat);
-    FlipBitsMat(mat, n_off, n_on);
+    FlipBitsMat(mat, n_off, n_on, thr_no);
     taBase::unRefDone(mat);
   }
   data->DataUpdate(false);
@@ -899,7 +902,7 @@ bool taDataGen::FlipBits(DataTable* data, const String& col_nm, int n_off, int n
 
 bool taDataGen::FlipBits_MinMax(DataTable* data, const String& col_nm, int n_off, int n_on,
                                 float min_dist, float max_dist,
-                                taMath::DistMetric metric, bool norm, float tol)
+                               taMath::DistMetric metric, bool norm, float tol, int thr_no)
 {
   if(!data) return false;
   if(col_nm.empty()) {
@@ -908,7 +911,7 @@ bool taDataGen::FlipBits_MinMax(DataTable* data, const String& col_nm, int n_off
       DataCol* da = data->data.FastEl(pn);
       if(da->is_matrix && da->valType() == VT_FLOAT) {
         if(!FlipBits_MinMax(data, da->name, n_off, n_on, min_dist, max_dist,
-                            metric, norm, tol))
+                            metric, norm, tol, thr_no))
           rval = false;
       }
     }
@@ -928,7 +931,7 @@ bool taDataGen::FlipBits_MinMax(DataTable* data, const String& col_nm, int n_off
     orig_pat.Reset();
     orig_pat = *mat;
     do {
-      FlipBitsMat(mat, n_off, n_on);
+      FlipBitsMat(mat, n_off, n_on, thr_no);
       min_d = LastMinMaxDist(da, i, max_d, metric, norm, tol);
       cnt--;
       ok = ((min_d >= min_dist) && (max_d <= max_dist));
@@ -1213,14 +1216,14 @@ taMatrix* taDataGen::GetFeatPatName(DataTable* feat_vocab, const String& feat_co
   return feat_vocab->GetValAsMatrixColRowName(feat_col_nm, name_col_nm, feat_row_name);
 }
 
-taMatrix* taDataGen::GetRndFeatPat(DataTable* feat_vocab, const String& feat_col_nm) {
-  int rnd_idx = Random::IntZeroN(feat_vocab->rows);
+taMatrix* taDataGen::GetRndFeatPat(DataTable* feat_vocab, const String& feat_col_nm, int thr_no) {
+  int rnd_idx = Random::IntZeroN(feat_vocab->rows, thr_no);
   return GetFeatPatNo(feat_vocab, feat_col_nm, rnd_idx);
 }
 
 
 bool taDataGen::GenRndFeatPats(DataTable* dest, const String& dest_col, int n_pats,
-                               DataTable* feat_vocab, const String& feat_col_nm) {
+                               DataTable* feat_vocab, const String& feat_col_nm, int thr_no) {
   if(!dest) { taMisc::Error("taDataGen::GenRndFeatPats: dest is NULL"); return false; }
   if(!feat_vocab) { taMisc::Error("taDataGen::GenRndFeatPats: feat_vocab is NULL"); return false; }
 
@@ -1258,7 +1261,7 @@ bool taDataGen::GenRndFeatPats(DataTable* dest, const String& dest_col, int n_pa
       int dest_idx = feat_sz * i;
       dcol->cell_geom.DimsFmIndex(dest_idx, dpt);
       dpt.GetIndexes(dms,d0,d1,d2,d3,d4,d5,d6);
-      taMatrixPtr rnd_pat; rnd_pat = GetRndFeatPat(feat_vocab, feat_col_nm);
+      taMatrixPtr rnd_pat; rnd_pat = GetRndFeatPat(feat_vocab, feat_col_nm, thr_no);
       taMatrixPtr dst_pat; dst_pat = dcol->GetValAsMatrix(pat);
       dst_pat->WriteFmSubMatrix(rnd_pat, taMatrix::COPY, d0,d1,d2,d3,d4,d5,d6);
     }
@@ -1269,7 +1272,7 @@ bool taDataGen::GenRndFeatPats(DataTable* dest, const String& dest_col, int n_pa
 
 bool taDataGen::GenItemsFmProtos(DataTable* items, const String& dest_col,
                                  DataTable* protos, int n_items, float flip_pct,
-                                 DataTable* feat_vocab, const String& feat_col_nm) {
+                             DataTable* feat_vocab, const String& feat_col_nm, int thr_no) {
   if(!items) { taMisc::Error("taDataGen::GenItemsFmProtos: items is NULL"); return false; }
   if(!protos) { taMisc::Error("taDataGen::GenItemsFmProtos: protos is NULL"); return false; }
   if(!feat_vocab) { taMisc::Error("taDataGen::GenItemsFmProtos: feat_vocab is NULL"); return false; }
@@ -1327,12 +1330,12 @@ bool taDataGen::GenItemsFmProtos(DataTable* items, const String& dest_col,
   flip_list.FillSeq();
 
   for(int pat=0;pat<items->rows;pat++) {
-    flip_list.Permute();        // flip for each item
+    flip_list.Permute(thr_no);        // flip for each item
     for (int i=0; i<flip_n; i++) {
       int dest_idx = feat_sz * flip_list[i]; // permute indirection
       dcol->cell_geom.DimsFmIndex(dest_idx, dpt);
       dpt.GetIndexes(dms,d0,d1,d2,d3,d4,d5,d6);
-      taMatrixPtr rnd_pat; rnd_pat = GetRndFeatPat(feat_vocab, feat_col_nm);
+      taMatrixPtr rnd_pat; rnd_pat = GetRndFeatPat(feat_vocab, feat_col_nm, thr_no);
       taMatrixPtr dst_pat; dst_pat = dcol->GetValAsMatrix(pat);
       dst_pat->WriteFmSubMatrix(rnd_pat, taMatrix::COPY, d0,d1,d2,d3,d4,d5,d6);
     }

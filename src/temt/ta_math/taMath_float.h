@@ -236,28 +236,28 @@ public:
   static float beta_den(float x, float a, float b);
   // #CAT_Probability beta probability density function evaluated at 0 < x < 1 for shape parameters a, b
   static float beta_dev(float a, float b, int thr_no = 0);
-  // #CAT_Probability return a beta distribution deviate, characterized by parameters a > 0, b > 0 -- uses gamma_dev  -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // #CAT_Probability return a beta distribution deviate, characterized by parameters a > 0, b > 0 -- uses gamma_dev  -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
 
   static float binom_den(int n, int j, float p);
   // #CAT_Probability binomial probability function
   static float binom_cum(int n, int j, float p);
   // #CAT_Probability cumulative binomial probability
   static float binom_dev(int n, float p, int thr_no = 0);
-  // #CAT_Probability binomial deviate: p prob with n trials -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // #CAT_Probability binomial deviate: p prob with n trials -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
 
   static float poisson_den(int j, float l);
   // #CAT_Probability poisson distribution
   static float poisson_cum(int j, float l);
   // #CAT_Probability cumulative Poisson P_l(<j) (0 thru j-1)
   static float poisson_dev(float l, int thr_no = 0);
-  // #CAT_Probability poisson deviate:  mean is l -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // #CAT_Probability poisson deviate:  mean is l -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
 
   static float gamma_den(int j, float l, float t);
   // #CAT_Probability gamma probability distribution: j events, l lambda, t time
   static float gamma_cum(int j, float l, float t);
   // #CAT_Probability gamma cumulative: j events, l lambda, t time
   static float gamma_dev(float k, float lambda = 1.0, int thr_no = 0);
-  // #CAT_Probability gamma deviate: how long to wait until k events with given lambda variance -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // #CAT_Probability gamma deviate: how long to wait until k events with given lambda variance -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
 
   static float gauss_den(float x);
   // #CAT_Probability gaussian (normal) distribution with uniform standard deviation: 1 / sqrt(2 * PI) * exp(-x^2 / 2)
@@ -274,7 +274,7 @@ public:
   static float gauss_inv_lim(float p);
   // #CAT_Probability inverse of the cumulative for p: z value for given p , returns nonzero value for p==0 or p==1
   static float gauss_dev(int thr_no = 0);
-  // #CAT_Probability gaussian deviate: normally distributed -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // #CAT_Probability gaussian deviate: normally distributed -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
   static float erf(float x);
   // #CAT_Probability the error function: used for computing the normal distribution
   static float erfc(float x);
@@ -424,7 +424,7 @@ public:
   // #CAT_Statistics compute standard descriptive statistics on given vector data, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   static int   vec_prob_choose(float_Matrix* vec, int thr_no = 0);
-  // #CAT_Statistics given a vector of probability values, choose an index according to its corresponding probability -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // #CAT_Statistics given a vector of probability values, choose an index according to its corresponding probability -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
 
   static void   vec_sort(float_Matrix* vec, bool descending = false);
   // #CAT_Statistics sort the given vector values in numerical order (in place)
@@ -439,7 +439,7 @@ public:
   // #CAT_Statistics computes the best-fit linear regression coefficients (b,m) of the model y = b + mx for the dataset (x, y). The variance-covariance matrix for the parameters (c0, c1) is estimated from the scatter of the points around the best-fit line and returned via the parameters (cov00, cov01, cov11). The sum of squares of the residuals from the best-fit line is returned in sum_sq.  See vec_correl to compute the correlation coefficient. -- uses entire matrix, ignoring any view of sub-elements
 
   static bool vec_jitter_gauss(float_Matrix* vec, float stdev, int thr_no = 0);
-  // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter -- uses entire matrix, ignoring any view of sub-elements -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter -- uses entire matrix, ignoring any view of sub-elements -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)

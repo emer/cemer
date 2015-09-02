@@ -1040,8 +1040,8 @@ public:
   // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_ColStats #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
   virtual String        ColStatsName(const String& col_name);
   // #EXPERT #CAT_DataProc compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
-  virtual void          PermuteRows();
-  // #CAT_DataProc #MENU permute the order of rows in the data table -- randomly shuffles the rows -- this is very efficiently implemented by shuffling the row_indexes lookup table, not the actual rows in memory.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Permute you would need to run Flatten first
+  virtual void          PermuteRows(int thr_no = 0);
+  // #CAT_DataProc #MENU permute the order of rows in the data table -- randomly shuffles the rows -- this is very efficiently implemented by shuffling the row_indexes lookup table, not the actual rows in memory.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Permute you would need to run Flatten first -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
   virtual void          CompareRows(int st_row, int n_rows);
   // ##CAT_Rows compare cell values in selected rows (first selected row to all others) does not test matrices
   virtual void          ClearCompareRows();

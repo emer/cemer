@@ -28,7 +28,7 @@
 eTypeDef_Of(SendDeepNormConSpec);
 
 class E_API SendDeepNormConSpec : public LeabraConSpec {
-  // #AKA_Deep5bConSpec sends deep_norm activation values instead of usual act values -- stored into deep_norm_net var on recv unit -- used for deep top-down projections
+  // #AKA_Deep5bConSpec sends deep_norm activation values instead of usual act values -- stored into deep_norm_net var on recv unit -- used for deep top-down projections -- learns using delta rule just like the TI context connections
 INHERITED(LeabraConSpec)
 public:
 
