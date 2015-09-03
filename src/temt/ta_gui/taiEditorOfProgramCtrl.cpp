@@ -85,8 +85,8 @@ void taiEditorOfProgramCtrl::Constr_Widget_Labels() {
   if (!prog) return; // defensive
   String nm;
   String help_text;
-
-  // Program guys (just a few key guys), no label
+  
+  // Program guys (just a few key guys), no group label
   {
     MemberSpace& ms = prog->GetTypeDef()->members;
     for (int i = 0; i < ms.size; ++i) {
@@ -94,15 +94,20 @@ void taiEditorOfProgramCtrl::Constr_Widget_Labels() {
       if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
       // just have a fixed list of guys we show
       if ((md->name == "name") || (md->name == "desc") || (md->name == "short_nm")
-          || (md->name == "flags") || (md->name == "stop_step_cond")) {
+          || (md->name == "flags")) {
         memb_el(MS_PROG).Add(md);
+      }
+      if (md->name == "stop_step_cond") {
+        if (md->GetCondOptTest("CONDSHOW", prog->GetTypeDef(), prog)) {
+          memb_el(MS_PROG).Add(md);
+        }
       }
     }
     int idx = 0;
     // we can just use the default worker bee routine
     Constr_Widget_Labels_impl(idx, &memb_el(MS_PROG), &widget_el(MS_PROG));
   }
-
+  
 //   taiMemberWidgets* ms = membs.SafeEl(MS_GP);
 //   ms->text = "Items from Program_Group";
 //   ms->desc = "useful items from the Program_Group to which this Program belongs";
