@@ -446,6 +446,12 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     break;
   }
   
+  if (prog_el_start_pos == 0 && delims_used == 0) {
+    // we have something like 'Print some_var'
+    // expr start will be the some_var part
+    expr_start = txt.index(' ', -1) + 1;
+  }
+  
   int xtra_st = extra_txt.length();
   for(int i=0;i<extra_txt.length(); i++) {
     c = extra_txt[i];
@@ -495,7 +501,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_type = ProgExprBase::SCOPED;
       delims_used = 2;
     }
-    // todo: []
+    // todo: [] - I think this means we need to handle arrays - rohrlich 9/2/2015
   }
   else {
     prog_el_txt = txt.at(prog_el_start_pos, txt.length() - prog_el_start_pos);
@@ -580,6 +586,8 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       expr_lookup_cur_base = own_pel;
       varlkup->type_list.Link(&TA_ProgVar);
       varlkup->type_list.Link(&TA_DynEnumItem);
+      varlkup->type_list.Link(&TA_Function);
+      varlkup->type_list.Link(&TA_Program);
       varlkup->GetImageScoped(NULL, &TA_ProgVar, own_prg, &TA_Program);
       bool okc = varlkup->OpenChooser();
       if(okc && varlkup->token()) {
