@@ -132,8 +132,6 @@ int taiWidgetTokenChooserMultiType::columnCount(int view) const {
 
 void taiWidgetTokenChooserMultiType::GetImage(void* cur_sel_, TypeDef* targ_typ_)
 {//NOTE: this routine is needed in case clients call the old GetImage renamed to GetImageScoped
-  scope_ref = NULL;
-  scope_typ = NULL;
   inherited::GetImage(cur_sel_, targ_typ_);
 }
 
