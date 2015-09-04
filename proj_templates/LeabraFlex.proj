@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.2.0 rev8566
+// ta_Dump File v3.0 -- code v7.8.2.0 rev8583
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -1257,9 +1257,10 @@ LeabraProject .projects["LeabraFlex"] {
        If @[2] { 
 	ProgEl_List @.true_code = [1] {
 	 DataProcCall @[0] { 
-	  ProgArg_List @.meth_args = [2] {
+	  ProgArg_List @.meth_args = [3] {
 	   ProgArg @[0] { };
 	   ProgArg @[1] { };
+	   ProgArg @[2] { };
 	  };
 	 };
 	};
@@ -2136,13 +2137,14 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["network"] { };
     };
 
-    ProgVar_List @.vars = [6] {
+    ProgVar_List @.vars = [7] {
      ProgVar @["weights_file"] { };
      ProgVar @["load_weights"] { };
      ProgVar @["load_st_epc"] { };
      ProgVar @["lrs_step_epochs"] { };
      ProgVar @["LRSConSpec"] { };
      ProgVar @["dmem_rnd_seed"] { };
+     ProgVar @["dmem_new_seed"] { };
     };
 
     Function_List @.functions = [0] {
@@ -3344,22 +3346,268 @@ LeabraProject .projects["LeabraFlex"] {
 </body>
 </html>
 ";
-   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-nojs\"><head>
+   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
 <meta charset=\"UTF-8\"><title>LeabraFlex - emergent</title>
 <meta name=\"generator\" content=\"MediaWiki 1.22.14\">
 <link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"LeabraFlex\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlex&amp;xmlmime=rdf\">
+<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\">
+<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
-<link rel=\"canonical\" href=\"/emergent/index.php/LeabraFlex\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.rtlcite%7Cmediawiki.legacy.commonPrint%2Cshared%7Cskins.vector&amp;only=styles&amp;skin=vector&amp;*\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;*\">
-<style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:d901f157ec9fff8ddab15d03002ebefd */</style>
+<style>a{text-decoration:none}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:7eff986bfd76653022a4188143e1a40c */</style>
 
-<script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script></head></html>";
+<script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=20141215T005424Z\"></script>
+<script>if(window.mw){
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":11194,\"wgRevisionId\":11194,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgUserId\":3,\"wgUserEditCount\":2384,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});
+}</script><script>if(window.mw){
+mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":\"30\",\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"vector\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"vector-simplesearch\":1,\"watchcreations\":\"1\",\"watchdefault\":\"1\",\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,
+\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":
+false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"searchNs500\":false,\"searchNs501\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"855ddd791cb1fb0c87c8dff27e360b46+\\\\\",\"patrolToken\":\"2914eeb56bd86941e17081db0f960298+\\\\\",\"watchToken\":\"9556cba7db53f5fcebc6f46d0ecaa5de+\\\\\"});},{},{});
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:6f02c9b685dc7804991f64edd878c089 */
+}</script>
+<script>if(window.mw){
+mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
+}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=vector&amp;version=20150419T081543Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CdelayedBind%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup%7Cskins.vector.js&amp;skin=vector&amp;version=20150419T081544Z&amp;*\"></script>
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.api.watch%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cmediawiki.page.watch.ajax%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20150809T180531Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20150208T001329Z&amp;*\"></script></head>
+<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlex skin-vector action-view vector-animateLayout\">
+		<div id=\"mw-page-base\" class=\"noprint\"><a href=\"http://grey.colorado.edu/emergent\"><img src=\"http://grey.colorado.edu/mediawiki/sites/emergent/images/6/6b/emergent_small.png\"></a></div>
+		<div id=\"mw-head-base\" class=\"noprint\"></div>
+		<div id=\"content\" class=\"mw-body\" role=\"main\">
+			<a id=\"top\"></a>
+			<div id=\"mw-js-message\" style=\"display:none;\"></div>
+						<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\"><span dir=\"auto\">LeabraFlex</span></h1>
+			<div id=\"bodyContent\">
+								<div id=\"siteSub\">From emergent</div>
+								<div id=\"contentSub\"></div>
+												<div id=\"jump-to-nav\" class=\"mw-jump\">
+					Jump to:					<a href=\"#mw-navigation\">navigation</a>, 					<a href=\"#p-search\">search</a>
+				</div>
+				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><p>Documentation for the <code>LeabraFlex</code> project template (also avail in <code>demo/leabra/leabra_flex_progs.proj</code>), which provides a different way of configuring the <a href=\"/emergent/index.php/Leabra\" title=\"Leabra\">Leabra</a> programs that is more flexible and modular -- very useful for more complex projects that require extensive novel functionality, including interactive behaviors between the network and the programs that generate inputs to the network, things that happen at different points in the settling process, and supporting multiple different ways of running the model in a more efficient, modular fashion.
+</p>
+<div id=\"toc\" class=\"toc\"><div id=\"toctitle\"><h2>Contents</h2><span class=\"toctoggle\">&nbsp;[<a href=\"#\" class=\"internal\" id=\"togglelink\">hide</a>]&nbsp;</span></div>
+<ul>
+<li class=\"toclevel-1 tocsection-1\"><a href=\"#ConfigData.2FConfigTable\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">ConfigData/ConfigTable</span></a></li>
+<li class=\"toclevel-1 tocsection-2\"><a href=\"#Program_Hierarchy\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Program Hierarchy</span></a></li>
+<li class=\"toclevel-1 tocsection-3\"><a href=\"#UtilProgs\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">UtilProgs</span></a></li>
+<li class=\"toclevel-1 tocsection-4\"><a href=\"#DMem_.28MPI.29\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">DMem (MPI)</span></a></li>
+</ul>
+</div>
+
+<h1><span class=\"mw-headline\" id=\"ConfigData.2FConfigTable\">ConfigData/ConfigTable</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=1\" title=\"Edit section: ConfigData/ConfigTable\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>The <a href=\"/emergent/index.php/DataTable\" title=\"DataTable\">DataTable</a> in ConfigData/ConfigTable is key for the flex progs -- each row specifies a different configuration, which can call different Init, Run, and even Startup programs, to achieve very different behavior or configurations all within the same project.  This makes it very easy to add new functionality into the system without adding spaghetti or complex conditionals in existing programs -- just add a new config and a new program at the right level, to achieve new functionality.
+</p>
+<h1><span class=\"mw-headline\" id=\"Program_Hierarchy\">Program Hierarchy</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=2\" title=\"Edit section: Program Hierarchy\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>The call sequence is:
+</p>
+<ul>
+<li> <b>MasterTrain</b>
+</li>
+</ul>
+<dl>
+<dd><ul>
+<li> <b>InitProgs[init_prog]</b> (as spec'd in ConfigTable)
+</li>
+<li> loop over <b>MasterRun</b> until stop_train is set to true
+</li>
+</ul>
+<dl>
+<dd><ul>
+<li> <b>RunProgs[run_prog]</b> (as spec'd in ConfigTable)
+</li>
+</ul>
+<dl>
+<dd><ul>
+<li> typically calls one or more <b>TaskProgs</b>, increments counters and does appropriate Epoch and higher-level housekeeping as necessary.
+</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>MasterRun now has a <b>stop_step_grain</b> parameter that allows you to Step this program at different grain sizes (e.g., after an Epoch) and for different conditions -- this is completely extensible if you look at the underlying code, and very powerful.
+</p>
+<h1><span class=\"mw-headline\" id=\"UtilProgs\">UtilProgs</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=3\" title=\"Edit section: UtilProgs\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>The UtilProgs contain all the basic functionality for training a network and monitoring, etc -- the task programs should consist of calls to these util programs in the desired order to achieve whatever form of processing is required.  The built-in BasicTrain program just does the equivalent of a standard LeabraTrial.
+</p>
+<h1><span class=\"mw-headline\" id=\"DMem_.28MPI.29\">DMem (MPI)</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=4\" title=\"Edit section: DMem (MPI)\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<p>The most efficient way to use multiple distributed memory (dmem) processors (via MPI) is to split different events across processors.  The standard Leabra programs do this by interleaving trials according to dmem processor (e.g., for 10 processors, proc 0 gets trials 0, 10, 20, ..; proc 1 gets 1, 11, 21, etc..).  For these flex progs, which can have interactive behavior and ill-defined sequences of events, this strategy is not always possible (the <b>ChoosePermutedEvent</b> program in EnviroProgs does implement this behavior however).  Here are some tips:
+</p>
+<ul>
+<li> After version 8.0, you can add taMisc::dmem_proc to all calls to <a href=\"/emergent/index.php/Random\" title=\"Random\">Random</a> or various Permute etc functions that use random numbers and take a <b>thr_no</b> (thread number) argument -- as documented in <a href=\"/emergent/index.php/MTRnd\" title=\"MTRnd\">MTRnd</a>, this thr_no arg selects different random number sequences that are initialized from a single common seed, and will produce statistically independent sequences.  Thus, you can ensure that each node gets different random inputs and other parameters, as appropriate, without needing to have an entirely different seed for each node.  This also means that results can be fully replicable when starting from the same random seed, and that nodes can also generate the same random numbers as needed (if this is needed, it is a good idea to pass taMisc::dmem_proc + 1 to the Random calls, and reserve 0 for the common shared thread that should only be called identically from all processors -- otherwise it will diverge from the 0'th node relative to the others.
+</li>
+</ul>
+<ul>
+<li> After common weight initialization etc, the <b>TrainStart</b> program has the option to generate a new random seed just before starting the Epoch -- see the <b>dmem_new_seed</b> flag -- each processor at this point will be operating with their own random seed, so any dynamic event generation code that uses random numbers (hint: it should!) will result in different things on different nodes.  However, as a result of this, <b>every run of the simulation will be different</b>, even if using common initial starting seeds.   See first note to alternative that avoids these consequences.
+</li>
+</ul>
+<ul>
+<li> It is <b>essential</b> that the different nodes still end up calling <b>Compute_Weights</b> the same number of times, after roughly the same amount of overall computation -- this is where the weight changes are synchronized across processors -- the simulation will lock up and hang if these do not align.
+</li>
+</ul>
+<ul>
+<li> The <b>epoch_trials</b> value gets divided by dmem_nprocs in StdGlobalsInit, such that each processor runs this reduced number of trials, <i>with the network-&gt;trial counter going from 0 to this lower epoch_trials value</i> -- it does not do the interleaving that is done in the hierarchical programs.  This also means that trial numbers will be duplicated if you merge separate trial log data tables into a single table, which is not necessarily a problem, but you may need to do things a bit differently in analyzing the data.
+</li>
+</ul>
+<ul>
+<li> If you are using a traditional list of events in an input_data table, use ChoosePermutedEvent and it will work properly with dmem, just like the standard programs.  This program maintains its own internal counter, and simply iterates in a permuted order through the events and then repeats -- it does not need to be synchronized with the trial and epoch structure of the programs (to achieve this, simply ensure that the epoch_trials is the same as the number of rows in the input data table).
+</li>
+</ul>
+
+<!-- 
+NewPP limit report
+CPU time usage: 0.017 seconds
+Real time usage: 0.019 seconds
+Preprocessor visited node count: 15/1000000
+Preprocessor generated node count: 20/1000000
+Post?expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20150904081904
+ -->
+</div>								<div class=\"printfooter\">
+				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\"				</div>
+												<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>												<div class=\"visualClear\"></div>
+							</div>
+		</div>
+		<div id=\"mw-navigation\">
+			<h2>Navigation menu</h2>
+			<div id=\"mw-head\">
+				<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
+	<h3 id=\"p-personal-label\">Personal tools</h3>
+	<ul>
+<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" title=\"Your user page [.]\" accesskey=\".\">Oreilly</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=LeabraFlex\" title=\"Log out\">Log out</a></li>	</ul>
+</div>
+				<div id=\"left-navigation\">
+					<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
+	<h3 id=\"p-namespaces-label\">Namespaces</h3>
+	<ul>
+					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
+					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraFlex&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
+			</ul>
+</div>
+<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
+	<h3 id=\"mw-vector-current-variant\">
+		</h3>
+	<h3 id=\"p-variants-label\" tabindex=\"0\"><span>Variants</span><a href=\"#\" tabindex=\"-1\"></a></h3>
+	<div class=\"menu\">
+		<ul>
+					</ul>
+	</div>
+</div>
+				</div>
+				<div id=\"right-navigation\">
+					<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
+	<h3 id=\"p-views-label\">Views</h3>
+	<ul>
+					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\">Read</a></span></li>
+					<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\" title=\"You can edit this page. Please use the preview button before saving [e]\" accesskey=\"e\">Edit</a></span></li>
+					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+					<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=dcbb9e116528794294cb8e0b59463c2b%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+			</ul>
+</div>
+<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
+	<h3 id=\"p-cactions-label\" tabindex=\"0\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
+	<div class=\"menu\">
+		<ul>
+							<li id=\"ca-delete\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a></li>
+							<li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/LeabraFlex\" title=\"Move this page [m]\" accesskey=\"m\">Move</a></li>
+							<li id=\"ca-protect\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=protect\" title=\"Protect this page [=]\" accesskey=\"=\">Protect</a></li>
+							<li id=\"ca-purge\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=purge\">Refresh</a></li>
+					</ul>
+	</div>
+</div>
+<div id=\"p-search\" role=\"search\">
+	<h3><label for=\"searchInput\">Search</label></h3>
+	<form action=\"/emergent/index.php\" id=\"searchform\">
+				<div id=\"simpleSearch\">
+						<input name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
+		</div>
+	</form>
+</div>
+				</div>
+			</div>
+			<div id=\"mw-panel\">
+					<div id=\"p-logo\" role=\"banner\"><a style=\"background-image: url(/mediawiki/sites//emergent/logo.png);\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
+				<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+	<h3 id=\"p-navigation-label\">Navigation</h3>
+	<div class=\"body\">
+		<ul>
+			<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li>
+			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li>
+			<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
+			<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
+			<li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li>
+			<li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>
+		</ul>
+	</div>
+</div>
+<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+	<h3 id=\"p-tb-label\">Tools</h3>
+	<div class=\"body\">
+		<ul>
+			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlex\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
+			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlex\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
+			<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li>
+			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
+			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;oldid=11194\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
+			<li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=info\">Page information</a></li>
+			<li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlex\" rel=\"smw-browse\">Browse properties</a></li>
+		</ul>
+	</div>
+</div>
+<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+	<h3 id=\"p-coll-print_export-label\">Print/export</h3>
+	<div class=\"body\">
+		<ul>
+			<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlex\">Create a book</a></li>
+			<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlex&amp;oldid=11194&amp;writer=rl\">Download as PDF</a></li>
+			<li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
+		</ul>
+	</div>
+</div>
+			</div>
+		</div>
+		<div id=\"footer\" role=\"contentinfo\">
+							<ul id=\"footer-info\">
+											<li id=\"footer-info-lastmod\"> This page was last modified on 4 September 2015, at 02:19.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 13,560 times.</li>
+									</ul>
+							<ul id=\"footer-places\">
+											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
+									</ul>
+										<ul id=\"footer-icons\" class=\"noprint\">
+					<li id=\"footer-poweredbyico\">
+						<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/skins/common/images/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" width=\"88\" height=\"31\"></a>
+						<a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>
+					</li>
+				</ul>
+						<div style=\"clear:both\"></div>
+		</div>
+		<script>/*<![CDATA[*/window.jQuery && jQuery.ready();/*]]>*/</script><script>if(window.mw){
+mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"loading\"});
+}</script>
+<script>if(window.mw){
+mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
+}</script>
+<script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
+<script>if(window.mw){
+mw.loader.state({\"user.groups\":\"ready\"});
+}</script>
+<!-- Served in 0.151 secs. -->
+	
+
+</body></html>";
   };
  };
  wizards {
@@ -10399,7 +10647,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="dest";
 	    required=1;
 	    def_val=;
-	    prev_expr=;
+	    prev_expr="PermIdxTable";
 	    expr {
 	     expr="PermIdxTable";
 	    };
@@ -10410,9 +10658,20 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="src";
 	    required=1;
 	    def_val=;
-	    prev_expr=;
+	    prev_expr="PermIdxTable";
 	    expr {
 	     expr="PermIdxTable";
+	    };
+	   };
+	   ProgArg @[2] {
+	    arg_type=int;
+	    type="int";
+	    name="thr_no";
+	    required=0;
+	    def_val="0";
+	    prev_expr=;
+	    expr {
+	     expr="taMisc::dmem_proc";
 	    };
 	   };
 	  };
@@ -10900,7 +11159,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	def_val="0";
 	prev_expr=;
 	expr {
-	 expr=;
+	 expr="taMisc::dmem_proc";
 	};
        };
       };
@@ -14512,6 +14771,16 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+     ProgVar @["dmem_new_seed"] {
+      name="dmem_new_seed";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="when running under dmem (MPI), generate a new random seed for each node after common initialization, to cause each node to have different random events, etc.   It is now possible to add taMisc::dmem_proc to the thr_no args to any random functions, and achieve fully reproducible results without this randomization.";
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -14741,7 +15010,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=0;
       orig_prog_code=;
       cond {
-       expr="taMisc::dmem_nprocs > 1";
+       expr="dmem_new_seed && taMisc::dmem_nprocs > 1";
       };
       true_code {
        name=;
