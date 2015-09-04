@@ -175,7 +175,7 @@ String Program_Group::GetStateDecoKey() const {
   String rval = inherited::GetStateDecoKey();
   if(rval.empty()) {
     if(debug_mode)
-      return "debug_mode";
+      rval = "debug_mode";
   }
   return rval;
 }

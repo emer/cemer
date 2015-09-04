@@ -1550,6 +1550,10 @@ bool taRootBase::Startup_InitViewColors() {
                                          false, _nilString, true, "violet");
   taMisc::view_colors->FindMakeViewColor("ProgElBreakpointDisabled", "State: program element is set for a breakpoint",
                                          false, _nilString, true, "violet");
+  taMisc::view_colors->FindMakeViewColor("DebugPrintEnabled", "State: when print statement has debug set and the program group also has it set to true",
+                                         false, _nilString, true, "violet");
+  taMisc::view_colors->FindMakeViewColor("DebugPrintDisabled", "State: when print statement has debug set and the program group debug boolean is set to false",
+                                         false, _nilString, true, "violet");
   taMisc::view_colors->FindMakeViewColor("Comment", "Program comments",
                                          true, "sea green", true, "medium sea green");
   taMisc::view_colors->FindMakeViewColor("ProgCode", "Program code -- proto element before being parsed into specific one",

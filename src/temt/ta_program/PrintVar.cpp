@@ -180,3 +180,21 @@ bool PrintVar::CvtFmCode(const String& code) {
   } while(varnms.nonempty());
   return true;
 }
+
+String PrintVar::GetStateDecoKey() const {
+  String rval = inherited::GetStateDecoKey();
+  Program* my_program = GET_MY_OWNER(Program);
+  if(rval.empty()) {
+    if(debug) {
+      if(my_program->prog_gp->InDebugMode()) {
+        rval = "debug_mode";
+      }
+      else {
+        rval = "NotEnabled";
+      }
+    }
+  }
+  my_program->SigEmitUpdated();
+  return rval;
+}
+

@@ -15,6 +15,7 @@
 
 #include "PrintExpr.h"
 #include <Program>
+#include <Program_Group>
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(PrintExpr);
@@ -103,4 +104,22 @@ bool PrintExpr::CvtFmCode(const String& code) {
   expr.SetExpr(exprstr);
   return true;
 }
+
+String PrintExpr::GetStateDecoKey() const {
+  String rval = inherited::GetStateDecoKey();
+  Program* my_program = GET_MY_OWNER(Program);
+  if(rval.empty()) {
+    if(debug) {
+      if(my_program->prog_gp->InDebugMode()) {
+        rval = "debug_mode";
+      }
+      else {
+        rval = "NotEnabled";
+      }
+    }
+  }
+  my_program->SigEmitUpdated();
+  return rval;
+}
+
 
