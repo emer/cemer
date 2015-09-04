@@ -479,16 +479,15 @@ bool iViewPanelOfGraphTable::BuildPlots() {
     layYAxis[i]->addWidget(oncErr[i]);
     layYAxis[i]->addSpacing(taiM->hsep_c);
 
-    lelErr[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg,
-                                                  list_flags));
+    lelErr[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
     QWidget* ew = lelErr[i]->GetRep();
     ew->setFixedHeight(row_height);
     layYAxis[i]->addWidget(ew);
     
     butLineProps[i] = new QPushButton("", widg);
     butLineProps[i]->setIcon( QIcon( QPixmap(":/images/editedit.png") ) );
-    oncErr[i]->setToolTip(taiMisc::ToolTipPreProcess("Set color, line style, etc"));
-    oncErr[i]->setFixedHeight(row_height);
+    butLineProps[i]->setToolTip(taiMisc::ToolTipPreProcess("Set color, line style, etc"));
+    butLineProps[i]->setFixedHeight(row_height);
     connect(butLineProps[i], SIGNAL(pressed()), sig_map_for_prop_buttons, SLOT(map()));
     sig_map_for_prop_buttons->setMapping(butLineProps[i], i);
     layYAxis[i]->addWidget(butLineProps[i]);
