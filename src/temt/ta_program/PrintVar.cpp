@@ -187,10 +187,10 @@ String PrintVar::GetStateDecoKey() const {
   if(rval.empty()) {
     if(debug) {
       if(my_program->prog_gp->InDebugMode()) {
-        rval = "debug_mode";
+        rval = "PrintDebugEnabled";
       }
       else {
-        rval = "NotEnabled";
+        rval = "PrintDebugDisabled";
       }
     }
   }

@@ -1550,10 +1550,10 @@ bool taRootBase::Startup_InitViewColors() {
                                          false, _nilString, true, "violet");
   taMisc::view_colors->FindMakeViewColor("ProgElBreakpointDisabled", "State: program element is set for a breakpoint",
                                          false, _nilString, true, "violet");
-  taMisc::view_colors->FindMakeViewColor("DebugPrintEnabled", "State: when print statement has debug set and the program group also has it set to true",
-                                         false, _nilString, true, "violet");
-  taMisc::view_colors->FindMakeViewColor("DebugPrintDisabled", "State: when print statement has debug set and the program group debug boolean is set to false",
-                                         false, _nilString, true, "violet");
+  taMisc::view_colors->FindMakeViewColor("PrintDebugEnabled", "State: when print statement has debug set and the program group also has it set to true",
+                                         false, _nilString, true, "LightSalmon");
+  taMisc::view_colors->FindMakeViewColor("PrintDebugDisabled", "State: when print statement has debug set and the program group debug boolean is set to false",
+                                         false, _nilString, true, "LightSalmon");
   taMisc::view_colors->FindMakeViewColor("Comment", "Program comments",
                                          true, "sea green", true, "medium sea green");
   taMisc::view_colors->FindMakeViewColor("ProgCode", "Program code -- proto element before being parsed into specific one",
@@ -1595,6 +1595,11 @@ bool taRootBase::Startup_InitViewBackgrounds() {
       "State: program element is set for an enabled breakpoint", Qt::SolidPattern);
   taMisc::view_backgrounds->FindMakeViewBackground("ProgElBreakpointDisabled",
       "State: program element is set for a disabled breakpoint", Qt::Dense5Pattern);
+  taMisc::view_backgrounds->FindMakeViewBackground("PrintDebugEnabled",
+      "State: program element is set for an enabled breakpoint", Qt::SolidPattern);
+  taMisc::view_backgrounds->FindMakeViewBackground("PrintDebugDisabled",
+      "State: program element is set for a disabled breakpoint", Qt::Dense5Pattern);
+  
  return true;
 }
 
