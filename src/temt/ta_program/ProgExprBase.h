@@ -50,7 +50,7 @@ public:
   
   enum LookUpType {
     NOT_SET,
-    VARIABLE,         // no path or delimiter
+    VARIOUS,         // no path or delimiter - could be one of several types
     OBJ_MEMB_METH,
     SCOPED,           // Class::
     ARRAY_INDEX,

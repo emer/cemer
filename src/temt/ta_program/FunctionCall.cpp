@@ -64,9 +64,9 @@ void FunctionCall::GenCssBody_impl(Program* prog) {
 }
 
 String FunctionCall::GetDisplayName() const {
-  String rval = "FunCall ";
+  String rval;
   if(result_var)
-    rval += result_var->name + "=";
+    rval = result_var->name + "=";
   if (fun) {
     rval += fun->name;
     rval += "(";
@@ -100,6 +100,9 @@ bool FunctionCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   }
   if(lhs.contains('=')) {
     funm = trim(lhs.after('='));
+  }
+  else {
+    funm = lhs;
   }
   
   if((funm.freq('.') + funm.freq("->")) > 0) return false; // exclude method call

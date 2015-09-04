@@ -146,10 +146,9 @@ void ProgramCall::GenCssPost_impl(Program* prog) {
 }
 
 String ProgramCall::GetDisplayName() const {
-  String rval = "Call ";
+  String rval;
   if (target) {
-    rval += target->GetName();
-    if(prog_args.size > 0) {
+    rval = target->GetName();
       rval += "(";
       for(int i=0;i<prog_args.size;i++) {
         ProgArg* pa = prog_args.FastEl(i);
@@ -157,10 +156,7 @@ String ProgramCall::GetDisplayName() const {
         rval += pa->expr.expr;   // GetDisplayName();
       }
       rval += ")";
-    }
   }
-  else
-    rval += "(no program set)";
   return rval;
 }
 

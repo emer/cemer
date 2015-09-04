@@ -517,7 +517,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       prepend_txt = txt.before(expr_start);
     }
     else {
-      lookup_type = ProgExprBase::VARIABLE;
+      lookup_type = ProgExprBase::VARIOUS;
       lookup_seed = txt.from(expr_start);
       prepend_txt = txt.before(expr_start);
     }
@@ -572,7 +572,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   path_md = NULL;
 
   switch(lookup_type) {
-    case ProgExprBase::VARIABLE: {                       // lookup variables
+    case ProgExprBase::VARIOUS: {  // multiple possibilities
       taiWidgetTokenChooserMultiType* varlkup =  new taiWidgetTokenChooserMultiType
       (&TA_ProgVar, NULL, NULL, NULL, 0, lookup_seed);
       varlkup->setNewObj1(&(own_prg->vars), " New Global Var");
@@ -592,8 +592,15 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       bool okc = varlkup->OpenChooser();
       if(okc && varlkup->token()) {
         rval = prepend_txt + varlkup->token()->GetName();
-        new_pos = rval.length();
-        rval += append_txt;
+        String type_name = varlkup->token()->GetTypeName();
+        if (type_name == "Program" || type_name == "Function") {
+          rval += "()";
+          new_pos = rval.length();
+        }
+        else {
+          new_pos = rval.length();
+          rval += append_txt;
+        }
       }
       delete varlkup;
       expr_lookup_cur_base = NULL;
@@ -788,13 +795,13 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
         el = trimmed_txt.before(' ');
       }
       if (el.downcase() == "call" || el.downcase().startsWith("prog")) {
-        txt = "Call ";
         taiWidgetTokenChooser* pgrm_look_up =  new taiWidgetTokenChooser
           (&TA_Program, NULL, NULL, NULL, 0, lookup_seed);
         pgrm_look_up->GetImageScoped(NULL, &TA_Program, NULL, &TA_Program); // scope to this guy
         bool okc = pgrm_look_up->OpenChooser();
         if(okc && pgrm_look_up->token()) {
-          rval = txt + pgrm_look_up->token()->GetName();
+          rval = pgrm_look_up->token()->GetName();
+          rval += "()";
         }
         new_pos = rval.length();
         delete pgrm_look_up;
