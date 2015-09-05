@@ -119,7 +119,7 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
       rval = false;
     }
     if(u->CheckError(!vspatch_lay, quiet, rval,
-                     "did not find VS Patch Indir layer to get pos PV shunting (cancelling) signal from (looks for layer with Patch in name)")) {
+                     "did not find VS Patch Direct layer to get pos PV shunting (cancelling) signal from (looks for layer with Patch in name)")) {
       rval = false;
     }
   }
@@ -220,7 +220,7 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   float net_block = 0.0f;
   float net_da = 0.0f;
   
-  if(da_val == DA_N) { // atypical burst for NegPV case
+  if(da_val == DA_N) { // atypical burst for NegPV case - anti-Schultzian
     GetRecvLayers_N(un, negpv_lay, pptg_lay_n);
     LeabraLayer* lay = un->own_lay();
     negpv = negpv_lay->acts_eq.avg * negpv_lay->units.size;
@@ -260,14 +260,19 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
     net_da = 0.0f;
     
     //float pospv_da = pospv - vspvi; // original
-    pospv_da = pospv - da.pvi_gain * vspvi; // higher pvi_gain == more shunting
+    float tot_burst_da = pospv + da.pptg_gain * pptg_da_p;
+    //pospv_da = pospv - da.pvi_gain * vspvi; // higher pvi_gain == more shunting // old
+    float net_burst_da = tot_burst_da - (da.pvi_gain * vspvi);
     
-    pospv_da = MAX(pospv_da, 0.0f); // shunting should not be able to produce dip!
+    //pospv_da = MAX(pospv_da, 0.0f); // shunting should not be able to produce dip!
+    net_burst_da = MAX(net_burst_da, 0.0f);
     
     net_block = (1.0f - (lv_block.pos_pv * pospv + lv_block.lhb_dip * lhb_da));
     net_block = MAX(0.0f, net_block);
     
-    net_da = da.pv_gain * pospv_da - da.lhb_gain * lhb_da + net_block * da.pptg_gain * pptg_da_p;
+    
+//    net_da = da.pv_gain * pospv_da - da.lhb_gain * lhb_da + net_block * da.pptg_gain * pptg_da_p;
+    net_da = da.pv_gain * net_burst_da - da.lhb_gain * lhb_da; // + net_block * da.pptg_gain * pptg_da_p;
     
     net_da *= da.da_gain;
     
