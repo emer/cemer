@@ -47,6 +47,8 @@ public:
   static const int          max_plots = 64; // maximum number of y axis data plots that can be displayed in the control panel
   static const int          axis_chooser_width;
   static const int          axis_label_width;
+  static const int          margin_l_r;  // left right contents margin
+  static const int          margin_t_b;  // top bottom contents margin
   
   QHBoxLayout*              layTopCtrls;
   QCheckBox*                chkDisplay;

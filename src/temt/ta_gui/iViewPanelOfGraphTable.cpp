@@ -38,6 +38,8 @@
 
 const int iViewPanelOfGraphTable::axis_chooser_width = 160;
 const int iViewPanelOfGraphTable::axis_label_width = 25;
+const int iViewPanelOfGraphTable::margin_l_r = 3;
+const int iViewPanelOfGraphTable::margin_t_b = 0;
 
 String iViewPanelOfGraphTable::panel_type() const {
   static String str("Graph Log");
@@ -66,6 +68,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   }
 
   layTopCtrls = new QHBoxLayout; layWidg->addLayout(layTopCtrls);
+  layTopCtrls->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
 
   chkDisplay = new QCheckBox("Disp", widg); chkDisplay->setObjectName("chkDisplay");
   chkDisplay->setToolTip(taiMisc::ToolTipPreProcess("Whether to update the display when the underlying data changes"));
@@ -116,7 +119,8 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   connect(butRefresh, SIGNAL(pressed()), this, SLOT(butRefresh_pressed()) );
 
   layVals = new QHBoxLayout; layWidg->addLayout(layVals);
-
+  layVals->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
+  
   lblRows = taiM->NewLabel("View\nRows", widg, font_spec);
   lblRows->setToolTip(taiMisc::ToolTipPreProcess("Maximum number of rows to display (row height is scaled to fit)."));
   layVals->addWidget(lblRows);
@@ -176,6 +180,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   //    A series of checkboxes for show/hide axes labels
   layAxisLabelChks = new QHBoxLayout;
+  layAxisLabelChks->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
   layWidg->addLayout(layAxisLabelChks);
   
   lblAxisLabelChks =  taiM->NewLabel("Axes Labels:  ", widg, font_spec);
@@ -201,7 +206,8 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   // X AXis
   layXAxis = new QHBoxLayout; layWidg->addLayout(layXAxis);
-
+  layXAxis->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
+  
   int list_flags = taiWidget::flgNullOk | taiWidget::flgAutoApply | taiWidget::flgNoHelp;
 
   lblXAxis = taiM->NewLabel("X:", widg, font_spec);
@@ -232,6 +238,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   // Z AXis
   layZAxis = new QHBoxLayout; layWidg->addLayout(layZAxis);
+  layZAxis->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
 
   lblZAxis = taiM->NewLabel("Z:", widg, font_spec);
   lblZAxis->setFixedWidth(axis_label_width);
@@ -272,6 +279,8 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   //    Colors
 
   layCAxis = new QHBoxLayout; layWidg->addLayout(layCAxis);
+  layCAxis->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
+
   lblColorMode = taiM->NewLabel("Color\nMode", widg, font_spec);
   lblColorMode->setToolTip(taiMisc::ToolTipPreProcess("How to determine line color:\n BY_VALUE makes the color change as a function of the\n Y axis value, according to the colorscale pallete\n FIXED uses fixed colors associated with each Y axis line\n (click on line/legend/axis and do View Properties in context menu to change)\n BY_VARIABLE uses a separate column of data to determine color value"));
   layCAxis->addWidget(lblColorMode);
@@ -331,7 +340,8 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   // Raster Axis
   layRAxis = new QHBoxLayout; layWidg->addLayout(layRAxis);
-
+  layRAxis->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
+  
   lblRAxis = taiM->NewLabel("Raster:", widg, font_spec);
   lblRAxis->setToolTip(taiMisc::ToolTipPreProcess("Column of data for the Y axis in RASTER graphs"));
   layRAxis->addWidget(lblRAxis);
@@ -362,6 +372,8 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   // second row: color bar + button
   layColorScale = new QHBoxLayout; layWidg->addLayout(layColorScale);
+  layColorScale->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
+
   cbar = new iHColorScaleBar(&tlv->colorscale, iColorScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
@@ -415,7 +427,7 @@ bool iViewPanelOfGraphTable::BuildPlots() {
   layPlots->setRowWrapPolicy(iFormLayout::DontWrapRows);
   layPlots->setHorizontalSpacing(2 * LAYBODY_MARGIN);
   layPlots->setVerticalSpacing(2 * LAYBODY_MARGIN);
-  layPlots->setContentsMargins(LAYBODY_MARGIN, 0, LAYBODY_MARGIN, 0);
+  layPlots->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
   layPlots->setFieldGrowthPolicy(iFormLayout::AllNonFixedFieldsGrow); // TBD
 
   // Y AXes
@@ -483,15 +495,16 @@ bool iViewPanelOfGraphTable::BuildPlots() {
     QWidget* ew = lelErr[i]->GetRep();
     ew->setFixedHeight(row_height);
     layYAxis[i]->addWidget(ew);
-    
+    layYAxis[i]->addSpacing(taiM->hsep_c);
+
     butLineProps[i] = new QPushButton("", widg);
     butLineProps[i]->setIcon( QIcon( QPixmap(":/images/editedit.png") ) );
     butLineProps[i]->setToolTip(taiMisc::ToolTipPreProcess("Set color, line style, etc"));
     butLineProps[i]->setFixedHeight(row_height);
+    butLineProps[i]->setFlat(true);  // hide the border or the row height will be wrong and the alternating color background won't be right
     connect(butLineProps[i], SIGNAL(pressed()), sig_map_for_prop_buttons, SLOT(map()));
     sig_map_for_prop_buttons->setMapping(butLineProps[i], i);
     layYAxis[i]->addWidget(butLineProps[i]);
-    layYAxis[i]->addSpacing(taiM->hsep_c);
 
     layPlots->addRow(layYAxis[i]);
   }
