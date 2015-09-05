@@ -74,7 +74,8 @@ String StaticMethodCall::GetDisplayName() const {
   String rval;
 
   if (!method) {
-    rval += object_type->name + "::?() - Select a method";
+    rval += object_type->name + "::";
+    rval += "      // to look up methods place cursor after :: and press Control + 'l'";
     return rval;
   }
 
