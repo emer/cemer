@@ -52,6 +52,9 @@ public:
 
   virtual void outputLine(QString line, bool err = false);
   // append one line of text, marked as an error or not
+  
+  virtual void InitHistory(QStringList& string_list);
+  // load the history file from prior sessions
 
   // cosmetic methods
   virtual void setCmdColor(QColor c) {cmdColor = c;};

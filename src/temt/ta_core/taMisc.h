@@ -500,7 +500,6 @@ public:
 
   static std::fstream   log_stream; // #IGNORE current logging output stream -- updated to project name + .plog extension whenever a program is opened or saved with a new name -- all significant events are logged to this stream via logging interface functions below
   static String         log_fname;  // #READ_ONLY #NO_SAVE current log file output name
-
   static String         console_chars; // #NO_SAVE #HIDDEN buffer of current console chars output -- when this gets longer than a display line, it is output
   static String         console_hold; // #NO_SAVE #HIDDEN buffer of all console output since console_hold_on set to true  -- used by server api to get console output
   static bool           console_hold_on; // #NO_SAVE #HIDDEN setting to true will start collection of console output - console_hold is the store
@@ -874,6 +873,8 @@ public:
   // #CAT_File root for user-visible application files
   static String GetCustomKeyFilename();
   // #CAT_File the file with the custom key bindings
+  static String GetConsoleHistoryFilename();
+  // #CAT_File the file with the history of console commands
   static String FileDiff(const String& fname_a, const String& fname_b,
                          bool trimSpace = false, bool ignoreSpace = false,
                          bool ignoreCase = false);

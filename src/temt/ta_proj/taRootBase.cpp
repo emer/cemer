@@ -60,6 +60,7 @@ taTypeDef_Of(StartupWizard);
 #include <QGLFormat>
 #include <QBrush>
 #include <QLocale>
+#include <QFile>
 
 #include <css_machine.h>
 #include <css_qtconsole.h>
@@ -1717,18 +1718,18 @@ bool taRootBase::Startup_Console() {
   if(taMisc::gui_active) {
     //note: nothing else to do here for gui_dockable
     QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
-
+    
     QObject::connect(con, SIGNAL(receivedNewStdin(int)), root_adapter,
                      SLOT(ConsoleNewStdin(int)));
     // get notified
-
+    
     if(!(console_options & taMisc::CO_GUI_DOCK)) {
       cssConsoleWindow* cwin = new cssConsoleWindow();
       cwin->LockedNewGeom((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h),
                           (int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
       cwin->show();
       taMisc::console_win = cwin; // note: uses a guarded QPointer
-
+      
       if(tabMisc::root->viewers.size >= 1) {
         taMisc::ProcessEvents();
         MainWindowViewer* db = (MainWindowViewer*)tabMisc::root->viewers[0];
@@ -1736,6 +1737,26 @@ bool taRootBase::Startup_Console() {
         qApp->setActiveWindow(db->widget());
         // todo: add focus events here!!
       }
+    }
+    
+    String filename = taMisc::GetConsoleHistoryFilename();
+    QFile history_file(filename);
+    if (!history_file.open(QIODevice::ReadOnly)) {
+      taMisc::Info("Console history file not found, will be created on first console command");
+    }
+    else {
+      QStringList string_list;
+      QTextStream text_stream(&history_file);
+      while (true)
+      {
+        QString line = text_stream.readLine();
+        if (line.isNull())
+          break;
+        else
+          string_list.append(line);
+      }
+      con->InitHistory(string_list);
+      history_file.close();
     }
   }
   cssMisc::TopShell->StartupShellInit(cin, cout);

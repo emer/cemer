@@ -1,3 +1,4 @@
+
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -98,6 +99,27 @@ void MyQTextEditMimeData::setup() const
 
 using namespace std;
 
+void iConsole::InitHistory(QStringList& string_list) {
+  // keep the saved list to around 100 by reducing it to 100 on startup
+  if (string_list.length() > 5) {
+    String filename = taMisc::prefs_dir + PATH_SEP + "console_history";
+    QFile history_file(filename);
+    if (history_file.open(QIODevice::Truncate | QIODevice::WriteOnly)) {
+      QTextStream out(&history_file);
+      int start = string_list.length() - 5;
+      for (int i=start; i<string_list.length(); i++) {
+        QString command = string_list[i];
+        out << command << endl;
+      }
+      history_file.close();
+    }
+  }
+  
+  for (int i=0; i<string_list.length(); i++) {
+    QString command = string_list[i];
+    history.append(command);
+  }
+}
 
 void iConsole::setFontNameSize(QString fnm, int sz) {
   setFontFamily(fnm);
@@ -747,8 +769,17 @@ QString iConsole::interpretCommand(QString command, int *res) {
   //update the history and its index
   history.append(command);
   historyIndex = history.size();
+  
+  // write history to file for reloading
+  String filename = taMisc::prefs_dir + PATH_SEP + "console_history";
+  QFile history_file(filename);
+  if (history_file.open(QIODevice::Append)) {
+    QTextStream out(&history_file);
+    out << command << endl;
+    history_file.close();
+  }
   //emit the commandExecuted signal
-//   emit commandExecuted(command);
+  //   emit commandExecuted(command);
   return "";
 }
 

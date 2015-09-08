@@ -2922,6 +2922,10 @@ String taMisc::GetCustomKeyFilename() {
  return taMisc::prefs_dir + PATH_SEP + "custom_keys";
 }
 
+String taMisc::GetConsoleHistoryFilename() {
+  return taMisc::prefs_dir + PATH_SEP + "console_history";
+}
+
 String taMisc::FileDiff(const String& fname_a, const String& fname_b,
                         bool trimSpace, bool ignoreSpace, bool ignoreCase) {
   String str_a, str_b;
