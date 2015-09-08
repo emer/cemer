@@ -100,13 +100,14 @@ void MyQTextEditMimeData::setup() const
 using namespace std;
 
 void iConsole::InitHistory(QStringList& string_list) {
+  int max_commands = 100;
   // keep the saved list to around 100 by reducing it to 100 on startup
-  if (string_list.length() > 5) {
+  if (string_list.length() > max_commands) {
     String filename = taMisc::prefs_dir + PATH_SEP + "console_history";
     QFile history_file(filename);
     if (history_file.open(QIODevice::Truncate | QIODevice::WriteOnly)) {
       QTextStream out(&history_file);
-      int start = string_list.length() - 5;
+      int start = string_list.length() - max_commands;
       for (int i=start; i<string_list.length(); i++) {
         QString command = string_list[i];
         out << command << endl;
@@ -115,6 +116,7 @@ void iConsole::InitHistory(QStringList& string_list) {
     }
   }
   
+  // load the saved command strings
   for (int i=0; i<string_list.length(); i++) {
     QString command = string_list[i];
     history.append(command);
