@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.1.0 rev8301
+// ta_Dump File v3.0 -- code v7.8.2.0 rev8589
 LeabraProject .projects["projection_sampler"] { 
  Doc_Group @.docs = [1] {
   taDoc @["ProjectionSpecDocs"] { 
@@ -28,17 +28,20 @@ LeabraProject .projects["projection_sampler"] {
    EditMthItem_Group @.mths = [0] {
    };
 
-   DataTableCols @.jobs_running.data = [27] {
+   DataTableCols @.jobs_running.data = [31] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["notes"] { };
+    String_Data @["label"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -64,6 +67,11 @@ LeabraProject .projects["projection_sampler"] {
      };
     };
     int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
      };
@@ -82,17 +90,23 @@ LeabraProject .projects["projection_sampler"] {
     String_Data @["submit_job"] { };
    };
 
-   DataTableCols @.jobs_done.data = [27] {
+   DataOpList @.jobs_running.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCols @.jobs_done.data = [31] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["notes"] { };
+    String_Data @["label"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -118,6 +132,11 @@ LeabraProject .projects["projection_sampler"] {
      };
     };
     int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
      };
@@ -136,17 +155,23 @@ LeabraProject .projects["projection_sampler"] {
     String_Data @["submit_job"] { };
    };
 
-   DataTableCols @.jobs_archive.data = [27] {
+   DataOpList @.jobs_done.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCols @.jobs_archive.data = [31] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["notes"] { };
+    String_Data @["label"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -176,6 +201,11 @@ LeabraProject .projects["projection_sampler"] {
       UserDataItem @["NARROW"] { };
      };
     };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
@@ -188,6 +218,9 @@ LeabraProject .projects["projection_sampler"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+   };
+
+   DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
    };
 
    DataTableCols @.file_list.data = [11] {
@@ -204,6 +237,9 @@ LeabraProject .projects["projection_sampler"] {
     String_Data @["file_path"] { };
    };
 
+   DataOpList @.file_list.last_sort_spec.ops = [0] {
+   };
+
    DataTableCols @.cluster_info.data = [6] {
     String_Data @["queue"] { };
     String_Data @["job_no"] { };
@@ -211,6 +247,9 @@ LeabraProject .projects["projection_sampler"] {
     String_Data @["state"] { };
     String_Data @["procs"] { };
     String_Data @["start_time"] { };
+   };
+
+   DataOpList @.cluster_info.last_sort_spec.ops = [0] {
    };
 
    ParamSearchAlgo_List @.search_algos = [0] {
@@ -1373,13 +1412,7 @@ LeabraProject .projects["projection_sampler"] {
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.rtlcite%7Cmediawiki.legacy.commonPrint%2Cshared%7Cskins.vector&amp;only=styles&amp;skin=vector&amp;*\">
-<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><style>
-.qtip,.qtip{position:absolute;left:-28000px;top:-28000px;display:none;max-width:280px;min-width:50px;font-size:10.5px;line-height:12px;direction:ltr}.qtip-content{position:relative;padding:5px 9px;overflow:hidden;text-align:left;word-wrap:break-word}.qtip-titlebar{position:relative;padding:5px 35px 5px 10px;overflow:hidden;border-width:0 0 1px;font-weight:bold}.qtip-titlebar + .qtip-content{border-top-width:0 !important} .qtip-close{position:absolute;right:-9px;top:-9px;cursor:pointer;outline:medium none;border-width:1px;border-style:solid;border-color:transparent}.qtip-titlebar .qtip-close{right:4px;top:50%;margin-top:-9px}* html .qtip-titlebar .qtip-close{top:16px} .qtip-titlebar .ui-icon,.qtip-icon .ui-icon{display:block;text-indent:-1000em;direction:ltr;vertical-align:middle}.qtip-icon,.qtip-icon .ui-icon{-moz-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;text-decoration:none}.qtip-icon .ui-icon{width:18px;height:14px;text-align:center;text-indent:0;font:normal bold 10px/13px Tahoma,sans-serif;color:inherit;background:transparent none no-repeat -100em -100em} .qtip-focus{} .qtip-hover{} .qtip-default{border-width:1px;border-style:solid;border-color:#F1D031;background-color:#FFFFA3;color:#555}.qtip-default .qtip-titlebar{background-color:#FFEF93}.qtip-default .qtip-icon{border-color:#CCC;background:#F1F1F1;color:#777}.qtip-default .qtip-titlebar .qtip-close{border-color:#AAA;color:#111} .qtip-light{background-color:white;border-color:#E2E2E2;color:#454545}.qtip-light .qtip-titlebar{background-color:#f1f1f1} .qtip-dark{background-color:#505050;border-color:#303030;color:#f3f3f3}.qtip-dark .qtip-titlebar{background-color:#404040}.qtip-dark .qtip-icon{border-color:#444}.qtip-dark .qtip-titlebar .ui-state-hover{border-color:#303030} .qtip-cream{background-color:#FBF7AA;border-color:#F9E98E;color:#A27D35}.qtip-cream .qtip-titlebar{background-color:#F0DE7D}.qtip-cream .qtip-close .qtip-icon{background-position:-82px 0} .qtip-red{background-color:#F78B83;border-color:#D95252;color:#912323}.qtip-red .qtip-titlebar{background-color:#F06D65}.qtip-red .qtip-close .qtip-icon{background-position:-102px 0}.qtip-red .qtip-icon{border-color:#D95252}.qtip-red .qtip-titlebar .ui-state-hover{border-color:#D95252} .qtip-green{background-color:#CAED9E;border-color:#90D93F;color:#3F6219}.qtip-green .qtip-titlebar{background-color:#B0DE78}.qtip-green .qtip-close .qtip-icon{background-position:-42px 0} .qtip-blue{background-color:#E5F6FE;border-color:#ADD9ED;color:#5E99BD}.qtip-blue .qtip-titlebar{background-color:#D0E9F5}.qtip-blue .qtip-close .qtip-icon{background-position:-2px 0} .qtip-shadow{-webkit-box-shadow:1px 1px 3px 1px rgba(0,0,0,0.15);-moz-box-shadow:1px 1px 3px 1px rgba(0,0,0,0.15);box-shadow:1px 1px 3px 1px rgba(0,0,0,0.15)} .qtip-rounded,.qtip-tipsy,.qtip-bootstrap{-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px} .qtip-youtube{-moz-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;-webkit-box-shadow:0 0 3px #333;-moz-box-shadow:0 0 3px #333;box-shadow:0 0 3px #333;color:white;border-width:0;background:#4A4A4A;background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0,#4A4A4A),color-stop(100%,black));background-image:-webkit-linear-gradient(top,#4A4A4A 0,black 100%);background-image:-moz-linear-gradient(top,#4A4A4A 0,black 100%);background-image:-ms-linear-gradient(top,#4A4A4A 0,black 100%);background-image:-o-linear-gradient(top,#4A4A4A 0,black 100%)}.qtip-youtube .qtip-titlebar{background-color:#4A4A4A;background-color:rgba(0,0,0,0)}.qtip-youtube .qtip-content{padding:.75em;font:12px arial,sans-serif;filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=#4a4a4a,EndColorStr=#000000);-ms-filter:\"progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=#4a4a4a,EndColorStr=#000000);\"}.qtip-youtube .qtip-icon{border-color:#222}.qtip-youtube .qtip-titlebar .ui-state-hover{border-color:#303030} .qtip-jtools{background:#232323;background:rgba(0,0,0,0.7);background-image:-webkit-gradient(linear,left top,left bottom,from(#717171),to(#232323));background-image:-moz-linear-gradient(top,#717171,#232323);background-image:-webkit-linear-gradient(top,#717171,#232323);background-image:-ms-linear-gradient(top,#717171,#232323);background-image:-o-linear-gradient(top,#717171,#232323);border:2px solid #ddd;border:2px solid rgba(241,241,241,1);-moz-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;-webkit-box-shadow:0 0 12px #333;-moz-box-shadow:0 0 12px #333;box-shadow:0 0 12px #333} .qtip-jtools .qtip-titlebar{background-color:transparent;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#717171,endColorstr=#4A4A4A);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#717171,endColorstr=#4A4A4A)\"}.qtip-jtools .qtip-content{filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#4A4A4A,endColorstr=#232323);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#4A4A4A,endColorstr=#232323)\"}.qtip-jtools .qtip-titlebar,.qtip-jtools .qtip-content{background:transparent;color:white;border:0 dashed transparent}.qtip-jtools .qtip-icon{border-color:#555}.qtip-jtools .qtip-titlebar .ui-state-hover{border-color:#333} .qtip-cluetip{-webkit-box-shadow:4px 4px 5px rgba(0,0,0,0.4);-moz-box-shadow:4px 4px 5px rgba(0,0,0,0.4);box-shadow:4px 4px 5px rgba(0,0,0,0.4);background-color:#D9D9C2;color:#111;border:0 dashed transparent}.qtip-cluetip .qtip-titlebar{background-color:#87876A;color:white;border:0 dashed transparent}.qtip-cluetip .qtip-icon{border-color:#808064}.qtip-cluetip .qtip-titlebar .ui-state-hover{border-color:#696952;color:#696952} .qtip-tipsy{background:black;background:rgba(0,0,0,.87);color:white;border:0 solid transparent;font-size:11px;font-family:'Lucida Grande',sans-serif;font-weight:bold;line-height:16px;text-shadow:0 1px black}.qtip-tipsy .qtip-titlebar{padding:6px 35px 0 10;background-color:transparent}.qtip-tipsy .qtip-content{padding:6px 10}.qtip-tipsy .qtip-icon{border-color:#222;text-shadow:none}.qtip-tipsy .qtip-titlebar .ui-state-hover{border-color:#303030} .qtip-tipped{border:3px solid #959FA9;-moz-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;background-color:#F9F9F9;color:#454545;font-weight:normal;font-family:serif}.qtip-tipped .qtip-titlebar{border-bottom-width:0;color:white;background:#3A79B8;background-image:-webkit-gradient(linear,left top,left bottom,from(#3A79B8),to(#2E629D));background-image:-webkit-linear-gradient(top,#3A79B8,#2E629D);background-image:-moz-linear-gradient(top,#3A79B8,#2E629D);background-image:-ms-linear-gradient(top,#3A79B8,#2E629D);background-image:-o-linear-gradient(top,#3A79B8,#2E629D);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#3A79B8,endColorstr=#2E629D);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#3A79B8,endColorstr=#2E629D)\"}.qtip-tipped .qtip-icon{border:2px solid #285589;background:#285589}.qtip-tipped .qtip-icon .ui-icon{background-color:#FBFBFB;color:#555} .qtip-bootstrap{ font-size:14px;line-height:20px;color:#333333; padding:1px;background-color:#ffffff;border:1px solid #ccc;border:1px solid rgba(0,0,0,0.2);-webkit-border-radius:6px;-moz-border-radius:6px;border-radius:6px;-webkit-box-shadow:0 5px 10px rgba(0,0,0,0.2);-moz-box-shadow:0 5px 10px rgba(0,0,0,0.2);box-shadow:0 5px 10px rgba(0,0,0,0.2);-webkit-background-clip:padding-box;-moz-background-clip:padding;background-clip:padding-box}.qtip-bootstrap .qtip-titlebar{ padding:8px 14px;margin:0;font-size:14px;font-weight:normal;line-height:18px;background-color:#f7f7f7;border-bottom:1px solid #ebebeb;-webkit-border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;border-radius:5px 5px 0 0}.qtip-bootstrap .qtip-titlebar .qtip-close{ right:11px;top:45%;border-style:none}.qtip-bootstrap .qtip-content{ padding:9px 14px}.qtip-bootstrap .qtip-icon{ background:transparent}.qtip-bootstrap .qtip-icon .ui-icon{ width:auto;height:auto; float:right;font-size:20px;font-weight:bold;line-height:18px;color:#000000;text-shadow:0 1px 0 #ffffff;opacity:0.2;filter:alpha(opacity=20)}.qtip-bootstrap .qtip-icon .ui-icon:hover{ color:#000000;text-decoration:none;cursor:pointer;opacity:0.4;filter:alpha(opacity=40)} .qtip:not(.ie9haxors) div.qtip-content,.qtip:not(.ie9haxors) div.qtip-titlebar{filter:none;-ms-filter:none} .qtip .qtip-tip{margin:0 auto;overflow:hidden;z-index:10}.qtip .qtip-tip,.qtip .qtip-tip .qtip-vml{position:absolute;color:#123456;background:transparent;border:0 dashed transparent}.qtip .qtip-tip canvas{top:0;left:0}.qtip .qtip-tip .qtip-vml{behavior:url(#default#VML);display:inline-block;visibility:visible} #qtip-overlay{position:fixed;left:-10000em;top:-10000em} #qtip-overlay.blurs{cursor:pointer} #qtip-overlay div{position:absolute;left:0;top:0;width:100%;height:100%;background-color:black;opacity:0.7;filter:alpha(opacity=70);-ms-filter:\"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)\"} .qtipmodal-ie6fix{position:absolute !important}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:41ffaee069228769025644e340c1e368 */
-div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-style:italic;font-size:90%} span.smwttinline span.smwttcontent{display:none;speak:none} span.smwtticon{display:none} span.smwttactivepersist{cursor:help;color:#0000C8} span.smwttactiveinline{color:#BB7700;text-decoration:none} img.smwttimg{padding-right:5px;padding-left:4px} .smwttcontent{display:none} .smwtticon{padding:14px 12px 0 0;white-space:nowrap;margin-bottom:-1px} .smwtticon.info{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.service{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.warning{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZ1JREFUKFOVy79rE3EcxvH39+7y8/q9pF4S0xi0mEiaMxV68Yxg8PeiVyhV6iCIQhErHUScFJxcHAX/Azf/AgWXWlsUhyrYioMiqKgoiEgrJTH3cSuldvE9Pg8vkw3Nt6lfHuZ68g9fnv/k2/pPRDDWD098bD1gTO4cdS+NNowp38ZhQ2tgZgQSWo3kDgyPpU/esSuHd4fnK6o1lERtCuIp0tmGO73sHavevf8B8Y7uaDT7pwMXvSmwEkbgNHeFb1eLPH22wNJKnka7enxAG+1/wKxPpq+SuuaeOKSzuSQxq0vGjZML99vj+xJXDmoKa2DOx0znOVUcL7fNrXl8v0OtZhIEv1GFFLUJt3XW43TRJAZgGBal/lbsjN0sZeENIkuEoQUsAq/RQcZpHjEnzpUpA/DqAld/zOjVqOdJFO2RuXlPhuo5efBwUKJou0S9gvx6HO/cG+OmiGD1FdSU3tZNyNdPAFQd4cbFHvUty8jnCOhhl6JYfZBJ4JY1+1IeObc770S6ChClQCvhxaKwEAEISqE+vuf7XkCJCP/TX7cEexPi9whUAAAAAElFTkSuQmCC) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/warning.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.note{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAgtJREFUeNokUctqU1EUXefk5iY3D2MrSWOamyq9jYO2BovUR41O1Iykov6Bc6WDDh36A4oKnYkORZBCoA6KI1GrEKhoFWOo1qhJk6Z539c57sTB5gzOWns9NpMA3KCK0s0TsHwiBsW3qPi0OYerbmP89IaVnFvtMn/dmEginU5DITyYLSA4y40embp3MDWVVoNhgKvot1sob699/OqdvM0MY32AVTrZWZhhfnEsk85HEikOxoERnbYwBLxeGNH4jK/wdq1W1Bd7h8fySnlei4WT0ZV4ROWivQt4A+AzV0DrIV8/AtQA9Onjyt7G6spmOJHhb6IXrkbCnqOyuw+YNL0aTRPSpOnVidgE7A70Q/7x+pf315Wgph1TpAVBOcApktUBnN7/t9/AoBT6REAl8f3dBcW07R1pdSGkSvaJIBzIWpHUWkRqDrNAWENFIWJBZafWKZgjbWghDZIRgUK7Hx4PugNzXSK1wZmLVq0CO5ot8kw2Vyg70U+M/Eu7D0lWPLm78GSXKEOD7JlAu4rvTVWwmPGc/frzF63S5kIgv7SeOGCp0usHUmfAhAtW3SIdga2ffZTnl++nZk/dYlJKkDBePXtyOfb56cO4W5rUWH9YQEcEsI2U+9u48WD63KVlY0K3hpeWjgMxqr+snr9zslL5do3t/ThLnYXsUKLIY8YLj22+Y441gOKfAAMAeeDgUIIDAXwAAAAASUVORK5CYII=) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/note.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}  span.smwbuiltin,span.smwttactiveinline span.smwbuiltin{font-style:italic} div.smwpre{white-space:pre;font-family:monospace;padding:1em;border:1px dashed #2f6fab;color:black;background-color:#f9f9f9;line-height:1.1em;margin-bottom:0.5em;margin-top:0.5em} #smwfootbr{clear:both} span.smwsortkey{display:none} a.sortheader:hover{text-decoration:none} div.smwtimeline{border:1px solid #AAAAAA;background-color:#F9F9F9;  }span.smwtlevent,span.smwtlband,span.smwtlsize,span.smwtlposition{display:none;speak:none}span.smwtlcomment{font-style:italic;padding:5px} div.smwfact{clear:both;background-color:#F9F9F9;padding:5px;margin-top:1em;border:1px solid #AAAAAA;font-size:95%}div.smwfact td,div.smwfact tr,div.smwfact table{background-color:#F9F9F9}span.smwfactboxhead{font-size:110%;font-weight:bold;float:left}table.smwfacttable{border-top:1px dotted #AAAAAA;width:100%;clear:both}td.smwpropname,th.smwpropname,td.smwspecname{text-align:right;vertical-align:top;padding-right:1em}td.smwprops,td.smwspecs{vertical-align:top;width:75%}div.smwhr hr{background-color:#DDDDDD;color:#DDDDDD} span.smwwarning{color:#888888;font-style:italic;font-size:90%} span.smwsearchicon{padding-right:16px;margin-right:2px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAABC1BMVEU+S114jayTpb6Im7eMn7qhsceBlbOYqcKXp8GDl7N2i6rJ0uCYqcJogKB9kq+KnLipt81qgKF8kK9qgKF4jayntstheJpsgqOSo75RaIxWbpCIm7fAy9tlfJ5keptedZdHXX5bcpWBlbOersajssmVp79lfJ5thKN2i6phd5lTa45GW3lPZ4plfJ5le5xRaYxbcpV3jKt2i6pWbpBKYoVOZolSao2HmrZ4jaxTa45JYYRJYYSHmrZedZdFWnhTa45ieZtVbZCzv9Lm6/Ha4Onp7fKks8rb4uvf5e3h5u7X3um2wtXQ2OTAy9vW3efl6fCmtcrJ0uDGz96jssm5xdaruc6uu8+9yNnt8PXd7KeZAAAAQnRSTlMACfbevtlP8sRPTv2lFfRF2Cz1A7jZLdG4HFbm/q8vBAxjxO/syrHaxk0EByM4NyUrutRNBAI6xeJdADjU4QFO3NoNTLabAAAAeElEQVQIHQXBvQ7BUACA0e+7P020EQsDC4NBYrZJ38BTewcmg8XGomnjRso50QlUuSkA1p9TenF2+oRUH7/DzMoChJJH3n2bEpDS0CS7kAVCntd9txhjBFzp7he86h03qqp6kb2qbm8qABy06Y0A8FjHcTkIANCqf7L2G5qa4UzTAAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/searchgray_iconsmall.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.smwsearch a{padding-right:16px;margin-right:2px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAABC1BMVEU+S114jayTpb6Im7eMn7qhsceBlbOYqcKXp8GDl7N2i6rJ0uCYqcJogKB9kq+KnLipt81qgKF8kK9qgKF4jayntstheJpsgqOSo75RaIxWbpCIm7fAy9tlfJ5keptedZdHXX5bcpWBlbOersajssmVp79lfJ5thKN2i6phd5lTa45GW3lPZ4plfJ5le5xRaYxbcpV3jKt2i6pWbpBKYoVOZolSao2HmrZ4jaxTa45JYYRJYYSHmrZedZdFWnhTa45ieZtVbZCzv9Lm6/Ha4Onp7fKks8rb4uvf5e3h5u7X3um2wtXQ2OTAy9vW3efl6fCmtcrJ0uDGz96jssm5xdaruc6uu8+9yNnt8PXd7KeZAAAAQnRSTlMACfbevtlP8sRPTv2lFfRF2Cz1A7jZLdG4HFbm/q8vBAxjxO/syrHaxk0EByM4NyUrutRNBAI6xeJdADjU4QFO3NoNTLabAAAAeElEQVQIHQXBvQ7BUACA0e+7P020EQsDC4NBYrZJ38BTewcmg8XGomnjRso50QlUuSkA1p9TenF2+oRUH7/DzMoChJJH3n2bEpDS0CS7kAVCntd9txhjBFzp7he86h03qqp6kb2qbm8qABy06Y0A8FjHcTkIANCqf7L2G5qa4UzTAAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/searchgray_iconsmall.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.smwsearch a:hover{text-decoration:none;color:#0000FF;padding-right:18px;margin-right:0px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAALySURBVDgRlcFraNVlHMDx7+95nv/zP+d/LnObeVtz2uyCrRUVDAIHMbIXltUgKRYR7kWvupjYDSEkgkgoKCiJfGeRzqw0CvYuahBWyrZWuWihuWNrZ+e2c87OZf//U1DB8EXU52P27XuV9takiiVS95ZjV+xdjK3uxbO0sFi15ewnlBYO1pZqP9YbTZQSLmeUOF1eNs+fj219QXdt1i2rfXwPlpxKho3qbpme3B7+/N2wUoyKCJcz9VB2ZFfdcKDtxh7p3hiRiMFSDfKFJjadwF/fd+V8pfhmYXK83ynJgLCSKanU47Et18qmDsc1axXtAlPzEekOS7XhSK3SmNt6uuemJnc2K5VDog0rmaptvWXtmgRBLKJNBL/h8DyhPRBqScGKI31dB2c8c2exsHhIW8tKZtmm/MBGFIohZ2oRQaDYkFYECgLAOjBa0ajVk8VSGc+3rGSa+Us18XQ8bIREgSKIC74G5aAdsEAjjCgXioXSYgVTX0bE8Q+zMD0xVs2V7tKtCepNiJRQB1JAClgjwskvvuXCzOypWn2ZeLiEA5wD58DkZs69fO7UyYGBPQ/FYxoi51D8JRBhNl/i05FRWlpaLtzReZbOxiSzRcNcCXIVMErL2E+fffSYNe61/t33pUxbEgeIwOmpGY6/fQxj4mzrTe/vyUz0zzflLU/CeSOgcRhRiqhZPzx+/OjEr998tXdDd2dfPBHT1flc4eL0Lyc6OzeeXt9WHu52Xw5etTk9UP0+f2szsg87XMEhGP4kWiNEXxczmQfERQSpBIXMHKVcka1XO/QP76/rvr9rsOf2IezIu3f/PpY/8lvRewTIGv4mImjPw/MtnvXwYhbtB9jqefzKxaMfj+R74+u6nrh+1xDN8MiO7Gj+8ELZDhv+lcOJRhtTuZRt7Hn9xQ/do88MPnnz0BAPyns73ziRf8fwH/lWu9mF5acPHvggevalXU+137QN9fn4PYb/wfN0M1cKn3tl/7FNbVt6tk9L39k/AH8KLAsrDQkDAAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/search_icon.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.swmfactboxheadbrowse a{padding-right:16px;margin-right:2px;color:#000000;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAAA5FBMVEUAAADb3uv///+gqcBJYqGTmq24v9KJkamboLBtfqOnrbuSmqyqr7yVnK3o6e3n6OrKzdaWna7O0NWMlKiQl6qWm6yRma3DxczEyM+Olqyeo7J+iaamq7qZoLGMlKrg4eiYobqFjqfBxMyQl6hXbaGXnK+hprmcobPEx9BZbaGkqriIkayjp7d1g6iztsSytsZzf6GcobSaobjq6++Umq5abZ6aoLJre6NqeqJ7hqfg4umvtsp0g6h9iaff4el3hKVld6aUoL6wt8meo7SXnbCUm66Jkqnq6+64usRfcqOxs8Dm5+teFG05AAAAAXRSTlMAQObYZgAAAH9JREFUeF4dymMSRDEABOGZ5HFt27Zt3v8+m833r6saSqDl6aSC0ELhXN7r80egVBYZRmOMJ5LAIV0lsy55LRRRKlNYbs0SrDfQpBCybUgh2EXvH4aOPgZDtRkjtY0nmM7m5HtJrtYbYLvb07Z5PJ2hXMybad4fEtrz5TifL4AfAxMLmJTt7hwAAAAASUVORK5CYII=) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_iconsmall.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.swmfactboxheadbrowse a:hover{text-decoration:none;color:#0000FF;padding-right:18px;margin-right:0px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAA81BMVEUAAADByOQOLn7///8BInfg5O2xuthsf7ODk8CmqbEnQ4slQYoYNYJqea6BhZaSlJ9kbo5fc6xld62/v8Fnea6BhZdbb6lKY6axsrWIjJe/wMQ6UZOCkMVoeq6Gk79BWZpBWJqCkr4uSo8mRI8PLnqio6plcppIXp+LjprFxsgmQYMrRo4nRJI6TX+ytLyKl8xseah7ir9cbqUDJXeJl8xWbLBue6xPZaeYm6V+hqCLl841S34MLXwsSZJVaasSMYBcaYZUZphLYqBsfrFKYaB3iLcwS5EvSpFjeK1neq4zTpE2ToxQaKlSXoIMKW9idKyur7PDoCJEAAAAAXRSTlMAQObYZgAAAJtJREFUGFdlT8USg1AQ292HQ93d3d3dvf//NYWBHhhyS2ZiAAYCnpC7GoU/al5XsjPs9V9fk8tEPn8q+AlH6jGDxxMrwnQmm8N8oVjShXLljXhS1ANio9kCaK+7yIQ9aUeB4XgyhdkcGZOWA44kxnC0hZ3OeXHDcSTyurJwCg6LGXom7WKFmrVXRb1Ztcawu20YyI+nbbrznP3+D9crFuL3dLY6AAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_icon.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.smwbrowse a{padding-right:16px;margin-right:2px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAAA5FBMVEUAAADb3uv///+gqcBJYqGTmq24v9KJkamboLBtfqOnrbuSmqyqr7yVnK3o6e3n6OrKzdaWna7O0NWMlKiQl6qWm6yRma3DxczEyM+Olqyeo7J+iaamq7qZoLGMlKrg4eiYobqFjqfBxMyQl6hXbaGXnK+hprmcobPEx9BZbaGkqriIkayjp7d1g6iztsSytsZzf6GcobSaobjq6++Umq5abZ6aoLJre6NqeqJ7hqfg4umvtsp0g6h9iaff4el3hKVld6aUoL6wt8meo7SXnbCUm66Jkqnq6+64usRfcqOxs8Dm5+teFG05AAAAAXRSTlMAQObYZgAAAH9JREFUeF4dymMSRDEABOGZ5HFt27Zt3v8+m833r6saSqDl6aSC0ELhXN7r80egVBYZRmOMJ5LAIV0lsy55LRRRKlNYbs0SrDfQpBCybUgh2EXvH4aOPgZDtRkjtY0nmM7m5HtJrtYbYLvb07Z5PJ2hXMybad4fEtrz5TifL4AfAxMLmJTt7hwAAAAASUVORK5CYII=) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_iconsmall.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.smwbrowse a:hover{text-decoration:none;color:#0000FF;padding-right:18px;margin-right:0px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAA81BMVEUAAADByOQOLn7///8BInfg5O2xuthsf7ODk8CmqbEnQ4slQYoYNYJqea6BhZaSlJ9kbo5fc6xld62/v8Fnea6BhZdbb6lKY6axsrWIjJe/wMQ6UZOCkMVoeq6Gk79BWZpBWJqCkr4uSo8mRI8PLnqio6plcppIXp+LjprFxsgmQYMrRo4nRJI6TX+ytLyKl8xseah7ir9cbqUDJXeJl8xWbLBue6xPZaeYm6V+hqCLl841S34MLXwsSZJVaasSMYBcaYZUZphLYqBsfrFKYaB3iLcwS5EvSpFjeK1neq4zTpE2ToxQaKlSXoIMKW9idKyur7PDoCJEAAAAAXRSTlMAQObYZgAAAJtJREFUGFdlT8USg1AQ292HQ93d3d3dvf//NYWBHhhyS2ZiAAYCnpC7GoU/al5XsjPs9V9fk8tEPn8q+AlH6jGDxxMrwnQmm8N8oVjShXLljXhS1ANio9kCaK+7yIQ9aUeB4XgyhdkcGZOWA44kxnC0hZ3OeXHDcSTyurJwCg6LGXom7WKFmrVXRb1Ztcawu20YyI+nbbrznP3+D9crFuL3dLY6AAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_icon.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.smwmap a{padding-right:20px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAANkE3LLaAgAAAzBJREFUOBGlwTtsGwUAgOH/zufHOe9zHBzsJM6DhpRUCWmjCiolKgOiS6VKrWBghSUswEAlJjYGRlQECypQhoIEAqlNuwSiJhSqkJAqbR40pnbjR/w6+x72+Xw+itgqMfF98D8JPCn2thwfDZ9/cXro7LOjfSflgLetpBoP1u9llm7/kbqirn+wyX/pmLz4wvsfXV9PplW30XBcu+m4dtNxrUbTNcyGu7r2sH72jc8/hHmJJwUm3pu79OUvVcO03ZJad1PpirtxL+3e2Uy5v24k3b1EwVWrlltW6+75hS++hgseHvPwjyPv9L72yuyNhddPhTXDIpEqki/p6GaDoOzlsKgjCCJOs4VmWBwd7T+2eDerGwdLqxKPdcltb710cnwgmVHJl3R2EjkkSaTVclG6g9hNh/HhPrySh939Am3BAPPHn7l4tfDuZQ+86RVD8scdbb6wLHvJ5quoWo1sQaOq1ckVdAajCqeOD2M3HBwHDgsGubwp7z3MbYn+8Z6oKAjDK+sJvrm+gVeSmBqP4TgumztZDrIauUONRKpMOqfRdFoUSzXUqondap3wBMJzMURhIRDwismMymC/wpn5CSaPRCiWDXp7giCIfHJllWLZJBLqolypc215i2yxui02/T7d5/PYlWqNnk6ZzZ00uw/yyD4fF85MMTsdY2RAQdOaJA+q5EsmZr2BZdv4vP6qx8nphtw/8qrfHwjrhoUousSjvcT6u7h5a4fFn7fJ5U062/y4Lgz1K+wk8rQQ+HN365IEa7aZ6f4+Mn3uaPJRlopmMRZXiD3dgW40qNUddMnCrNsc5FRUrYZhNUhnD0v1/a9uioBkZVcWq6WD0lg8Qme7TKVqIXqgL9TO2GAIBBerYeP3SeylcgRkmcz24lUwyx4gAM1uvZgkEp898fzkiNinyKzcSVBSTSLhDtqDPsJKO0NRhZCisPLTd3fVxLXPgLwHaAESzYqhZrfVztBQPBobaotGFGYmY4S62wkGZXqVbvb2s+6NHy7fytz/9lPgPpAR+JcE9AIDIE6MHzs9N3/65ZmZqeeeQhCkR+m8/vvab3vLSz8u62rqNvAXkAFqfwOkPI+h92xJFAAAAABJRU5ErkJggg==) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/world.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.smwmap a:hover{padding-right:20px;color:#0000FF;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAANkE3LLaAgAAAzBJREFUOBGlwTtsGwUAgOH/zufHOe9zHBzsJM6DhpRUCWmjCiolKgOiS6VKrWBghSUswEAlJjYGRlQECypQhoIEAqlNuwSiJhSqkJAqbR40pnbjR/w6+x72+Xw+itgqMfF98D8JPCn2thwfDZ9/cXro7LOjfSflgLetpBoP1u9llm7/kbqirn+wyX/pmLz4wvsfXV9PplW30XBcu+m4dtNxrUbTNcyGu7r2sH72jc8/hHmJJwUm3pu79OUvVcO03ZJad1PpirtxL+3e2Uy5v24k3b1EwVWrlltW6+75hS++hgseHvPwjyPv9L72yuyNhddPhTXDIpEqki/p6GaDoOzlsKgjCCJOs4VmWBwd7T+2eDerGwdLqxKPdcltb710cnwgmVHJl3R2EjkkSaTVclG6g9hNh/HhPrySh939Am3BAPPHn7l4tfDuZQ+86RVD8scdbb6wLHvJ5quoWo1sQaOq1ckVdAajCqeOD2M3HBwHDgsGubwp7z3MbYn+8Z6oKAjDK+sJvrm+gVeSmBqP4TgumztZDrIauUONRKpMOqfRdFoUSzXUqondap3wBMJzMURhIRDwismMymC/wpn5CSaPRCiWDXp7giCIfHJllWLZJBLqolypc215i2yxui02/T7d5/PYlWqNnk6ZzZ00uw/yyD4fF85MMTsdY2RAQdOaJA+q5EsmZr2BZdv4vP6qx8nphtw/8qrfHwjrhoUousSjvcT6u7h5a4fFn7fJ5U062/y4Lgz1K+wk8rQQ+HN365IEa7aZ6f4+Mn3uaPJRlopmMRZXiD3dgW40qNUddMnCrNsc5FRUrYZhNUhnD0v1/a9uioBkZVcWq6WD0lg8Qme7TKVqIXqgL9TO2GAIBBerYeP3SeylcgRkmcz24lUwyx4gAM1uvZgkEp898fzkiNinyKzcSVBSTSLhDtqDPsJKO0NRhZCisPLTd3fVxLXPgLwHaAESzYqhZrfVztBQPBobaotGFGYmY4S62wkGZXqVbvb2s+6NHy7fytz/9lPgPpAR+JcE9AIDIE6MHzs9N3/65ZmZqeeeQhCkR+m8/vvab3vLSz8u62rqNvAXkAFqfwOkPI+h92xJFAAAAABJRU5ErkJggg==) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/world.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.rdflink{float:right}#bodyContent span.rdflink a{padding-right:20px;color:#888888;background:url(data:image/gif;base64,R0lGODlhEQASAIQeAIWjzhpTo0h1tvH0+SpeqUh1tWeMwjlqr+Hp89Ld7cLR5rPG4RpSo8PS53aYyDhpr5Wv1FiBvO/z+KS62uDo8ileqWaMwXWXx7LF4KO62pSu1FeAu9Hc7P///wtHnQtHnSH+FUNyZWF0ZWQgd2l0aCBUaGUgR0lNUAAh+QQBAAAfACwAAAAAEQASAAAFU+AnjuQneKhQriclpSvJSC/qxaNX2/hn/6pY6udRAX03k82Y6dROJKjI01H8VknfDoXNbbmkougEBC+DZDES1aHAcChKZ9nzza89HbGefvfSDh8hADs=) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/rdf_flyer.18.gif?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.rdflink a:hover{text-decoration:none;color:#0000FF;padding-right:20px;margin-right:0px;background:url(data:image/gif;base64,R0lGODlhEQASAIQeAIWjzhpTo0h1tvH0+SpeqUh1tWeMwjlqr+Hp89Ld7cLR5rPG4RpSo8PS53aYyDhpr5Wv1FiBvO/z+KS62uDo8ileqWaMwXWXx7LF4KO62pSu1FeAu9Hc7P///wtHnQtHnSH+FUNyZWF0ZWQgd2l0aCBUaGUgR0lNUAAh+QQBAAAfACwAAAAAEQASAAAFU+AnjuQneKhQriclpSvJSC/qxaNX2/hn/6pY6udRAX03k82Y6dROJKjI01H8VknfDoXNbbmkougEBC+DZDES1aHAcChKZ9nzza89HbGefvfSDh8hADs=) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/rdf_flyer.18.gif?2014-12-15T00:56:40Z) center right no-repeat!ie} table.smwb-factbox{border-left:8px solid #DDDDDD;width:100% }tr.smwb-title{font-size:200%;background-color:#DDDDDD;line-height:1.5}tr.smwb-title td{padding-left:5px;border-bottom:2px solid white}tr.smwb-propvalue{width:100%;background-color:#EEEEEE}tr.smwb-propvalue th{text-align:right;vertical-align:top;font-weight:bold;font-size:120%;background-color:#DDDDDD;padding:0.2em 0.6em;border-bottom:2px solid white;border-top:2px solid white}tr.smwb-propvalue td{padding-left:0.4em;background-color:#EEEEEE;border:0px solid white;border-bottom:2px solid white;border-top:2px solid white;width:90%}tr.smwb-center{background-color:#DDDDDD}span.smwb-value{} table.smwb-ifactbox{border-right:8px solid #DDDDDD;width:100% }tr.smwb-ititle{font-size:200%;background-color:#DDDDDD;line-height:1.5}tr.smwb-ititle td{padding-left:5px;border-bottom:2px solid white}tr.smwb-ipropvalue{width:100%;background-color:#EEEEEE;text-align:right}tr.smwb-ipropvalue th{text-align:left;font-weight:bold;font-size:120%;background-color:#DDDDDD;padding:0.2em 0.6em;border-bottom:3px solid white;border-top:3px solid white}tr.smwb-ipropvalue td{background-color:#EEEEEE;border-bottom:3px solid white;border-top:3px solid white;padding-right:1em;width:90%}span.smwb-ivalue{} .smw-spinner .text{padding-left:2.1em;font-size:12px;vertical-align:middle} .smw-spinner.left.mw-small-spinner{background-position:left;vertical-align:middle;display:inline-block;padding:0px !important} .smw-spinner.center.mw-small-spinner{vertical-align:middle;display:inline-block;padding:0px !important}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:578aea4183360bf97b768f88a24d775b */
-div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-style:italic;font-size:90%} span.smwttinline span.smwttcontent{display:none;speak:none} span.smwtticon{display:none} span.smwttactivepersist{cursor:help;color:#0000C8} span.smwttactiveinline{color:#BB7700;text-decoration:none} img.smwttimg{padding-right:5px;padding-left:4px} .smwttcontent{display:none} .smwtticon{padding:14px 12px 0 0;white-space:nowrap;margin-bottom:-1px} .smwtticon.info{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.service{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.warning{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZ1JREFUKFOVy79rE3EcxvH39+7y8/q9pF4S0xi0mEiaMxV68Yxg8PeiVyhV6iCIQhErHUScFJxcHAX/Azf/AgWXWlsUhyrYioMiqKgoiEgrJTH3cSuldvE9Pg8vkw3Nt6lfHuZ68g9fnv/k2/pPRDDWD098bD1gTO4cdS+NNowp38ZhQ2tgZgQSWo3kDgyPpU/esSuHd4fnK6o1lERtCuIp0tmGO73sHavevf8B8Y7uaDT7pwMXvSmwEkbgNHeFb1eLPH22wNJKnka7enxAG+1/wKxPpq+SuuaeOKSzuSQxq0vGjZML99vj+xJXDmoKa2DOx0znOVUcL7fNrXl8v0OtZhIEv1GFFLUJt3XW43TRJAZgGBal/lbsjN0sZeENIkuEoQUsAq/RQcZpHjEnzpUpA/DqAld/zOjVqOdJFO2RuXlPhuo5efBwUKJou0S9gvx6HO/cG+OmiGD1FdSU3tZNyNdPAFQd4cbFHvUty8jnCOhhl6JYfZBJ4JY1+1IeObc770S6ChClQCvhxaKwEAEISqE+vuf7XkCJCP/TX7cEexPi9whUAAAAAElFTkSuQmCC) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/warning.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.note{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAgtJREFUeNokUctqU1EUXefk5iY3D2MrSWOamyq9jYO2BovUR41O1Iykov6Bc6WDDh36A4oKnYkORZBCoA6KI1GrEKhoFWOo1qhJk6Z539c57sTB5gzOWns9NpMA3KCK0s0TsHwiBsW3qPi0OYerbmP89IaVnFvtMn/dmEginU5DITyYLSA4y40embp3MDWVVoNhgKvot1sob699/OqdvM0MY32AVTrZWZhhfnEsk85HEikOxoERnbYwBLxeGNH4jK/wdq1W1Bd7h8fySnlei4WT0ZV4ROWivQt4A+AzV0DrIV8/AtQA9Onjyt7G6spmOJHhb6IXrkbCnqOyuw+YNL0aTRPSpOnVidgE7A70Q/7x+pf315Wgph1TpAVBOcApktUBnN7/t9/AoBT6REAl8f3dBcW07R1pdSGkSvaJIBzIWpHUWkRqDrNAWENFIWJBZafWKZgjbWghDZIRgUK7Hx4PugNzXSK1wZmLVq0CO5ot8kw2Vyg70U+M/Eu7D0lWPLm78GSXKEOD7JlAu4rvTVWwmPGc/frzF63S5kIgv7SeOGCp0usHUmfAhAtW3SIdga2ffZTnl++nZk/dYlJKkDBePXtyOfb56cO4W5rUWH9YQEcEsI2U+9u48WD63KVlY0K3hpeWjgMxqr+snr9zslL5do3t/ThLnYXsUKLIY8YLj22+Y441gOKfAAMAeeDgUIIDAXwAAAAASUVORK5CYII=) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/note.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:2581106f4267d54f61dcdb06e62c25e1 */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;*\">
 <style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:d901f157ec9fff8ddab15d03002ebefd */</style>
@@ -1396,7 +1429,7 @@ mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonema
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
 }</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=vector&amp;version=20150419T081543Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CdelayedBind%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup%7Cskins.vector.js&amp;skin=vector&amp;version=20150419T081544Z&amp;*\"></script>
-<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20150419T081545Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20150208T001329Z&amp;*\"></script></head>
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20150809T180531Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20150208T001329Z&amp;*\"></script></head>
 <body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-ProjectionSpec skin-vector action-view vector-animateLayout\">
 		<div id=\"mw-page-base\" class=\"noprint\"><a href=\"http://grey.colorado.edu/emergent\"><img src=\"http://grey.colorado.edu/mediawiki/sites/emergent/images/6/6b/emergent_small.png\"></a></div>
 		<div id=\"mw-head-base\" class=\"noprint\"></div>
@@ -1491,8 +1524,8 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.048 seconds
-Real time usage: 0.054 seconds
+CPU time usage: 0.038 seconds
+Real time usage: 0.043 seconds
 Preprocessor visited node count: 42/1000000
 Preprocessor generated node count: 84/1000000
 Post?expand include size: 226/2097152 bytes
@@ -1501,7 +1534,7 @@ Highest expansion depth: 3/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:301-0!*!0!!en!*!* and timestamp 20150527050628
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:301-0!*!0!!en!*!* and timestamp 20150907151954
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=ProjectionSpec&amp;oldid=4508\">https://grey.colorado.edu/emergent/index.php?title=ProjectionSpec&amp;oldid=4508</a>\"				</div>
@@ -1604,7 +1637,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 13 August 2009, at 11:09.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 2,038 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 2,113 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -1624,7 +1657,7 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.410 secs. -->
+<!-- Served in 0.117 secs. -->
 	
 
 </body></html>";
@@ -1726,6 +1759,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
@@ -1740,9 +1787,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -1754,9 +1801,23 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["status"] {
-      name="status";
-      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -1814,6 +1875,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2046,6 +2121,30 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      int_Data @["pb_batches"] {
       UserDataItem_List @*(.user_data_) {
        name=;
@@ -2130,6 +2229,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    jobs_done {
     name="jobs_done";
@@ -2180,6 +2287,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
@@ -2194,9 +2315,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -2208,9 +2329,23 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["status"] {
-      name="status";
-      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -2268,6 +2403,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2500,6 +2649,30 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      int_Data @["pb_batches"] {
       UserDataItem_List @*(.user_data_) {
        name=;
@@ -2584,6 +2757,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    jobs_archive {
     name="jobs_archive";
@@ -2634,6 +2815,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
@@ -2648,9 +2843,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -2662,9 +2857,23 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["status"] {
-      name="status";
-      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -2722,6 +2931,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2954,6 +3177,30 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      int_Data @["pb_batches"] {
       UserDataItem_List @*(.user_data_) {
        name=;
@@ -3038,6 +3285,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    file_list {
     name="file_list";
@@ -3208,6 +3463,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    cluster_info {
     name="cluster_info";
@@ -3308,6 +3571,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    search_algos {
     name="search_algos";
@@ -3321,6 +3592,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    users=;
    last_submit_time=;
    notes=;
+   label=;
    extra_files=;
    svn_repo=;
    repo_url=;
@@ -3332,6 +3604,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    n_threads=1;
    use_mpi=0;
    mpi_nodes=10;
+   mpi_per_node=1;
    parallel_batch=0;
    pb_batches=10;
    pb_nodes=0;
@@ -3376,6 +3649,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
   el_def=0;
   tags=;
   desc=;
+  debug_mode=0;
  };
  viewers {
   name="viewers";
@@ -3388,22 +3662,22 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=1;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.799490213394165;
+     value 8 0=0.7994902;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -3596,6 +3870,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       camera_params {
+	field_of_view=45;
+	near=0.1;
+	focal=5;
+	far=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -3786,6 +4066,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       camera_params {
+	field_of_view=45;
+	near=0.1;
+	focal=5;
+	far=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -3898,7 +4184,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ r.wt;	  };
-	  unit_src_path=".layers[5].units[58]";
+	  unit_src_path=".layers[5].units[73]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -3982,6 +4268,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       camera_params {
+	field_of_view=45;
+	near=0.1;
+	focal=5;
+	far=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -4172,6 +4464,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       camera_params {
+	field_of_view=45;
+	near=0.1;
+	focal=5;
+	far=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -4362,6 +4660,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       camera_params {
+	field_of_view=45;
+	near=0.1;
+	focal=5;
+	far=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -4474,7 +4778,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ r.wt;	  };
-	  unit_src_path=".layers[3].units[0]";
+	  unit_src_path=".layers[3].units[6]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -4552,6 +4856,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       camera_params {
+	field_of_view=45;
+	near=0.1;
+	focal=5;
+	far=1000;
+       };
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
@@ -4643,22 +4953,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 6 0=0;
+       value 8 0=0;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.008496176451444626;
+       value 8 0=0.008496176;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04031830281019211;
+       value 8 0=0.0403183;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7357689142227173;
+       value 8 0=0.7357689;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -4839,6 +5149,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_def=0;
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -4870,7 +5181,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: dt=0.1: lrn_fact=0.03214286: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.15: i=0.15: };
      adapt {
@@ -4896,7 +5207,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      };
      deep_qtr=Q4;
      deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
@@ -4911,6 +5222,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraBiasSpec @["LeabraBiasSpec_0"] {
      name="LeabraBiasSpec_0";
+     is_used=1;
      desc=;
      unique{ rnd;wt_limits;wt_scale;wt_scale_init;     };
      children {
@@ -4944,6 +5256,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraLayerSpec @["LeabraLayerSpec_0"] {
      name="LeabraLayerSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -4971,6 +5284,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     GaussRFPrjnSpec @["GaussRF_HalfOvlp4x4"] {
      name="GaussRF_HalfOvlp4x4";
+     is_used=1;
      desc="half-overlapping (move = 1/2 width) 4x4 rf's -- half overlap is a good idea in general for smoothly covering space";
      unique{      };
      children {
@@ -4991,6 +5305,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     GaussRFPrjnSpec @["GaussRF_NoOvlp4x4"] {
      name="GaussRF_NoOvlp4x4";
+     is_used=1;
      desc="no overlap (move = width) with 4x4 gaussian rf's";
      unique{      };
      children {
@@ -5011,6 +5326,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     GaussRFPrjnSpec @["GaussRF_SelfPrjn"] {
      name="GaussRF_SelfPrjn";
+     is_used=1;
      desc="self-projection within Self layer -- good idea to use wrap for this in general, and odd rf width values";
      unique{      };
      children {
@@ -5031,6 +5347,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraConSpec @["LeabraConSpec_0"] {
      name="LeabraConSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -5063,6 +5380,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     FullPrjnSpec @["FullPrjn"] {
      name="FullPrjn";
+     is_used=0;
      desc=;
      unique{      };
      children {
@@ -5090,7 +5408,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=0: };
+     pos_abs {x=0: y=0: z=0: };
      pos2d {x=0: y=0: };
+     pos2d_abs {x=0: y=0: };
      disp_scale=1;
      un_geom {x=12: y=12: n_not_xy=0: n=144: };
      unit_groups=0;
@@ -5141,7 +5461,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=1: y=6: z=1: };
+     pos_abs {x=1: y=6: z=1: };
      pos2d {x=0: y=14: };
+     pos2d_abs {x=0: y=14: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -5208,7 +5530,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=8: y=6: z=1: };
+     pos_abs {x=8: y=6: z=1: };
      pos2d {x=7: y=14: };
+     pos2d_abs {x=7: y=14: };
      disp_scale=1;
      un_geom {x=3: y=3: n_not_xy=0: n=9: };
      unit_groups=0;
@@ -5275,7 +5599,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=2: };
+     pos_abs {x=0: y=0: z=2: };
      pos2d {x=12: y=14: };
+     pos2d_abs {x=12: y=14: };
      disp_scale=1;
      un_geom {x=10: y=10: n_not_xy=0: n=100: };
      unit_groups=0;
@@ -5368,7 +5694,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     sync_time_pct=0;
     wake_in_sync_pct=1.004950033390163e-147;
    };
-   alt_mpi=0;
    net_timing {
     name="net_timing";
     el_typ=LeabraNetTiming;
@@ -5444,6 +5769,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    };
    times {
     quarter=25;
+    deep_cyc=5;
     time_inc=0.001;
     minus=75;
     plus=25;
@@ -5621,6 +5947,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_def=0;
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -5652,7 +5979,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: dt=0.1: lrn_fact=0.03214286: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.15: i=0.15: };
      adapt {
@@ -5678,7 +6005,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      };
      deep_qtr=Q4;
      deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
@@ -5693,6 +6020,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraBiasSpec @["LeabraBiasSpec_0"] {
      name="LeabraBiasSpec_0";
+     is_used=1;
      desc=;
      unique{ rnd;wt_limits;wt_scale;wt_scale_init;     };
      children {
@@ -5726,6 +6054,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraLayerSpec @["LeabraLayerSpec_0"] {
      name="LeabraLayerSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -5753,6 +6082,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     TesselPrjnSpec @["Tessel_EllipseHalfOvlp"] {
      name="Tessel_EllipseHalfOvlp";
+     is_used=1;
      desc="small 5x5 ellipse with half-ovlp roughly see last_cmds for how created -- send_scale is like rf_move in GaussRF.  send_off just adds a starting offset to keep it all in frame.  note that last sender row/col is not connected..";
      unique{      };
      children {
@@ -5833,6 +6163,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     TesselPrjnSpec @["Tessel_Grouped_4x4HalfOvlp"] {
      name="Tessel_Grouped_4x4HalfOvlp";
+     is_used=1;
      desc="has 2x2 grouped recv layer and 4x4 half-overlap rectangular RF -- note that you generally need to divide send_scale by the group values to achieve smooth coverage - so original 2 scale for half ovlp, divided by 2 group = 1 = scale used";
      unique{      };
      children {
@@ -5925,6 +6256,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     TesselPrjnSpec @["Tessel_EllipseSelf"] {
      name="Tessel_EllipseSelf";
+     is_used=1;
      desc="larger ellipse with no offset, for self projection";
      unique{      };
      children {
@@ -6149,6 +6481,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraConSpec @["LeabraConSpec_0"] {
      name="LeabraConSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -6181,6 +6514,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     FullPrjnSpec @["FullPrjn"] {
      name="FullPrjn";
+     is_used=0;
      desc=;
      unique{      };
      children {
@@ -6208,7 +6542,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=0: };
+     pos_abs {x=0: y=0: z=0: };
      pos2d {x=0: y=0: };
+     pos2d_abs {x=0: y=0: };
      disp_scale=1;
      un_geom {x=12: y=12: n_not_xy=0: n=144: };
      unit_groups=0;
@@ -6259,7 +6595,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=6: z=1: };
+     pos_abs {x=0: y=6: z=1: };
      pos2d {x=0: y=14: };
+     pos2d_abs {x=0: y=14: };
      disp_scale=1;
      un_geom {x=4: y=4: n_not_xy=0: n=16: };
      unit_groups=0;
@@ -6326,7 +6664,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=6: y=6: z=1: };
+     pos_abs {x=6: y=6: z=1: };
      pos2d {x=6: y=14: };
+     pos2d_abs {x=6: y=14: };
      disp_scale=1;
      un_geom {x=10: y=10: n_not_xy=0: n=100: };
      unit_groups=0;
@@ -6393,7 +6733,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=2: y=0: z=2: };
+     pos_abs {x=2: y=0: z=2: };
      pos2d {x=18: y=14: };
+     pos2d_abs {x=18: y=14: };
      disp_scale=1;
      un_geom {x=10: y=10: n_not_xy=0: n=100: };
      unit_groups=0;
@@ -6486,7 +6828,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     sync_time_pct=0;
     wake_in_sync_pct=2.121995790985035e-312;
    };
-   alt_mpi=0;
    net_timing {
     name="net_timing";
     el_typ=LeabraNetTiming;
@@ -6562,6 +6903,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    };
    times {
     quarter=25;
+    deep_cyc=5;
     time_inc=0.001;
     minus=75;
     plus=25;
@@ -6739,6 +7081,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_def=0;
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -6770,7 +7113,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: dt=0.1: lrn_fact=0.03214286: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.15: i=0.15: };
      adapt {
@@ -6796,7 +7139,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      };
      deep_qtr=Q4;
      deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
@@ -6811,6 +7154,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraBiasSpec @["LeabraBiasSpec_0"] {
      name="LeabraBiasSpec_0";
+     is_used=1;
      desc=;
      unique{ rnd;wt_limits;wt_scale;wt_scale_init;     };
      children {
@@ -6844,6 +7188,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraLayerSpec @["LeabraLayerSpec_0"] {
      name="LeabraLayerSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -6871,6 +7216,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraConSpec @["LeabraConSpec_0"] {
      name="LeabraConSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -6903,6 +7249,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     FullPrjnSpec @["FullPrjn"] {
      name="FullPrjn";
+     is_used=0;
      desc=;
      unique{      };
      children {
@@ -6917,6 +7264,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     TiledRFPrjnSpec @["TiledRF_4x4HalfOvlp"] {
      name="TiledRF_4x4HalfOvlp";
+     is_used=1;
      desc="If you set the layer geom up correctly, it just works with all default params.. otherwise..";
      unique{      };
      children {
@@ -6947,6 +7295,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     TiledNovlpPrjnSpec @["TiledNovlp"] {
      name="TiledNovlp";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -6965,6 +7314,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     GpMapConvergePrjnSpec @["GpMapConverge"] {
      name="GpMapConverge";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -6979,6 +7329,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     TiledGpMapConvergePrjnSpec @["TiledGpMapConverge"] {
      name="TiledGpMapConverge";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -6987,6 +7338,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       el_def=0;
       TiledGpMapConvergePrjnSpec @["TiledGpMapConverge_Recip"] {
        name="TiledGpMapConverge_Recip";
+       is_used=1;
        desc=;
        unique{ reciprocal;       };
        children {
@@ -7019,6 +7371,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     TiledGpRFPrjnSpec @["TiledGpRF"] {
      name="TiledGpRF";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -7028,7 +7381,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      };
      self_con=0;
      init_wts=1;
-     set_scale=1;
+     set_scale=0;
      add_rnd_var=0;
      send_gp_size {x=4: y=4: };
      send_gp_skip {x=2: y=2: };
@@ -7036,9 +7389,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      wrap=1;
      reciprocal=0;
      share_cons=0;
-     full_gauss {on=1: sigma=0.6: wrap_wts=0: ctr_mv=0.8: };
-     gp_gauss {on=1: sigma=0.6: wrap_wts=0: ctr_mv=0.8: };
-     full_gpwise=0;
+     wts_type=GAUSSIAN;
+     full_gauss {on=0: sigma=0.6: wrap_wts=1: ctr_mv=1: };
+     gp_gauss {on=1: sigma=0.6: wrap_wts=0: ctr_mv=1: };
+     full_send=BY_UNIT;
+     full_recv=BY_UNIT;
+     full_sig {on=1: gain=0.02: ctr_mv=0.5: };
+     gp_sig {on=1: gain=0.02: ctr_mv=0.5: };
      wt_range {min=0.1: max=0.9: range=0.8: scale=1.25: };
      trg_recv_geom {x=0: y=0: };
      trg_send_geom {x=0: y=0: };
@@ -7058,7 +7415,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=6: y=0: z=0: };
+     pos_abs {x=6: y=0: z=0: };
      pos2d {x=0: y=0: };
+     pos2d_abs {x=0: y=0: };
      disp_scale=1;
      un_geom {x=12: y=12: n_not_xy=0: n=144: };
      unit_groups=0;
@@ -7109,7 +7468,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=1: };
+     pos_abs {x=0: y=0: z=1: };
      pos2d {x=0: y=28: };
+     pos2d_abs {x=0: y=28: };
      disp_scale=1;
      un_geom {x=6: y=6: n_not_xy=0: n=36: };
      unit_groups=1;
@@ -7197,7 +7558,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=36: y=0: z=1: };
+     pos_abs {x=36: y=0: z=1: };
      pos2d {x=36: y=14: };
+     pos2d_abs {x=36: y=14: };
      disp_scale=1;
      un_geom {x=2: y=2: n_not_xy=0: n=4: };
      unit_groups=1;
@@ -7264,7 +7627,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=3: y=-1: z=2: };
+     pos_abs {x=3: y=0: z=2: };
      pos2d {x=46: y=14: };
+     pos2d_abs {x=46: y=14: };
      disp_scale=1;
      un_geom {x=6: y=6: n_not_xy=0: n=36: };
      unit_groups=0;
@@ -7331,7 +7696,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=11: y=-1: z=2: };
+     pos_abs {x=11: y=0: z=2: };
      pos2d {x=0: y=12: };
+     pos2d_abs {x=0: y=12: };
      disp_scale=1;
      un_geom {x=4: y=4: n_not_xy=0: n=16: };
      unit_groups=1;
@@ -7398,8 +7765,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      desc=;
      flags=0;
      layer_type=HIDDEN;
-     pos {x=27: y=-1: z=2: };
+     pos {x=27: y=0: z=2: };
+     pos_abs {x=27: y=0: z=2: };
      pos2d {x=16: y=12: };
+     pos2d_abs {x=16: y=12: };
      disp_scale=1;
      un_geom {x=4: y=4: n_not_xy=0: n=16: };
      unit_groups=1;
@@ -7491,7 +7860,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     sync_time_pct=0;
     wake_in_sync_pct=1.625974598210277e-260;
    };
-   alt_mpi=0;
    net_timing {
     name="net_timing";
     el_typ=LeabraNetTiming;
@@ -7567,6 +7935,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    };
    times {
     quarter=25;
+    deep_cyc=5;
     time_inc=0.001;
     minus=75;
     plus=25;
@@ -7744,6 +8113,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_def=0;
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -7775,7 +8145,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: dt=0.1: lrn_fact=0.03214286: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.15: i=0.15: };
      adapt {
@@ -7801,7 +8171,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      };
      deep_qtr=Q4;
      deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
@@ -7816,6 +8186,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraBiasSpec @["LeabraBiasSpec_0"] {
      name="LeabraBiasSpec_0";
+     is_used=1;
      desc=;
      unique{ rnd;wt_limits;wt_scale;wt_scale_init;     };
      children {
@@ -7849,6 +8220,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraLayerSpec @["LeabraLayerSpec_0"] {
      name="LeabraLayerSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -7876,6 +8248,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraConSpec @["LeabraConSpec_0"] {
      name="LeabraConSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -7908,6 +8281,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     FullPrjnSpec @["FullPrjn"] {
      name="FullPrjn";
+     is_used=0;
      desc=;
      unique{      };
      children {
@@ -7922,6 +8296,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     UniformRndPrjnSpec @["UniformRnd_p25"] {
      name="UniformRnd_p25";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -7943,6 +8318,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     UniformRndPrjnSpec @["UniformRnd_p05"] {
      name="UniformRnd_p05";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -7964,6 +8340,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     PolarRndPrjnSpec @["PolarRnd_p05"] {
      name="PolarRnd_p05";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -8002,7 +8379,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=0: };
+     pos_abs {x=0: y=0: z=0: };
      pos2d {x=0: y=0: };
+     pos2d_abs {x=0: y=0: };
      disp_scale=1;
      un_geom {x=12: y=12: n_not_xy=0: n=144: };
      unit_groups=0;
@@ -8054,7 +8433,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=1: };
+     pos_abs {x=0: y=0: z=1: };
      pos2d {x=0: y=14: };
+     pos2d_abs {x=0: y=14: };
      disp_scale=1;
      un_geom {x=6: y=6: n_not_xy=0: n=36: };
      unit_groups=0;
@@ -8121,7 +8502,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=8: y=0: z=1: };
+     pos_abs {x=8: y=0: z=1: };
      pos2d {x=8: y=14: };
+     pos2d_abs {x=8: y=14: };
      disp_scale=1;
      un_geom {x=6: y=6: n_not_xy=0: n=36: };
      unit_groups=0;
@@ -8188,7 +8571,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=4: y=8: z=1: };
+     pos_abs {x=4: y=8: z=1: };
      pos2d {x=16: y=14: };
+     pos2d_abs {x=16: y=14: };
      disp_scale=1;
      un_geom {x=6: y=6: n_not_xy=0: n=36: };
      unit_groups=0;
@@ -8280,7 +8665,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     sync_time_pct=0;
     wake_in_sync_pct=3.209734060534516e+21;
    };
-   alt_mpi=0;
    net_timing {
     name="net_timing";
     el_typ=LeabraNetTiming;
@@ -8344,7 +8728,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=252;
-   n_cons=1811;
+   n_cons=1800;
    max_prjns=1;
    max_disp_size {x=14: y=14: z=2: };
    max_disp_size2d {x=22: y=20: };
@@ -8356,6 +8740,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    };
    times {
     quarter=25;
+    deep_cyc=5;
     time_inc=0.001;
     minus=75;
     plus=25;
@@ -8533,6 +8918,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_def=0;
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -8564,7 +8950,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: dt=0.1: lrn_fact=0.03214286: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.15: i=0.15: };
      adapt {
@@ -8590,7 +8976,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      };
      deep_qtr=Q4;
      deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
@@ -8605,6 +8991,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraBiasSpec @["LeabraBiasSpec_0"] {
      name="LeabraBiasSpec_0";
+     is_used=1;
      desc=;
      unique{ rnd;wt_limits;wt_scale;wt_scale_init;     };
      children {
@@ -8638,6 +9025,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraLayerSpec @["LeabraLayerSpec_0"] {
      name="LeabraLayerSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -8665,6 +9053,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraConSpec @["LeabraConSpec_0"] {
      name="LeabraConSpec_0";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -8697,6 +9086,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     FullPrjnSpec @["FullPrjn"] {
      name="FullPrjn";
+     is_used=0;
      desc=;
      unique{      };
      children {
@@ -8711,6 +9101,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     UniformRndPrjnSpec @["UniformRnd_p25"] {
      name="UniformRnd_p25";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -8732,6 +9123,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     UniformRndPrjnSpec @["UniformRnd_p05"] {
      name="UniformRnd_p05";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -8753,6 +9145,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     PolarRndPrjnSpec @["PolarRnd_p05"] {
      name="PolarRnd_p05";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -8791,7 +9184,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=0: };
+     pos_abs {x=0: y=0: z=0: };
      pos2d {x=0: y=0: };
+     pos2d_abs {x=0: y=0: };
      disp_scale=1;
      un_geom {x=36: y=36: n_not_xy=0: n=1296: };
      unit_groups=0;
@@ -8843,7 +9238,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=1: };
+     pos_abs {x=0: y=0: z=1: };
      pos2d {x=0: y=3: };
+     pos2d_abs {x=0: y=3: };
      disp_scale=1;
      un_geom {x=24: y=24: n_not_xy=0: n=576: };
      unit_groups=0;
@@ -8910,7 +9307,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=26: y=0: z=1: };
+     pos_abs {x=26: y=0: z=1: };
      pos2d {x=0: y=6: };
+     pos2d_abs {x=0: y=6: };
      disp_scale=1;
      un_geom {x=12: y=12: n_not_xy=0: n=144: };
      unit_groups=0;
@@ -8977,7 +9376,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=26: y=16: z=1: };
+     pos_abs {x=26: y=16: z=1: };
      pos2d {x=0: y=9: };
+     pos2d_abs {x=0: y=9: };
      disp_scale=1;
      un_geom {x=12: y=12: n_not_xy=0: n=144: };
      unit_groups=0;
@@ -9069,7 +9470,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     sync_time_pct=0;
     wake_in_sync_pct=1.075851866021369e-311;
    };
-   alt_mpi=0;
    net_timing {
     name="net_timing";
     el_typ=LeabraNetTiming;
@@ -9090,6 +9490,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    };
    times {
     quarter=25;
+    deep_cyc=5;
     time_inc=0.001;
     minus=75;
     plus=25;
@@ -9267,6 +9668,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_def=0;
     LeabraUnitSpec @["LeabraUnitSpec_5"] {
      name="LeabraUnitSpec_5";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -9298,7 +9700,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=4: net_tau=1.428571: fast_cyc=0: vm_dt=0.25: net_dt=0.7000002: };
      act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: dt=0.1: lrn_fact=0.03214286: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03214286: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.15: i=0.15: };
      adapt {
@@ -9324,7 +9726,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      };
      deep_qtr=Q4;
      deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
@@ -9339,6 +9741,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraBiasSpec @["LeabraBiasSpec_5"] {
      name="LeabraBiasSpec_5";
+     is_used=1;
      desc=;
      unique{ rnd;wt_limits;wt_scale;wt_scale_init;     };
      children {
@@ -9372,6 +9775,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraLayerSpec @["LeabraLayerSpec_5"] {
      name="LeabraLayerSpec_5";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -9399,6 +9803,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     GpRndTesselPrjnSpec @["GpRndTessel_Full"] {
      name="GpRndTessel_Full";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -9449,6 +9854,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     GpRndTesselPrjnSpec @["GpRndTessel_p25"] {
      name="GpRndTessel_p25";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -9499,6 +9905,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     GpRndTesselPrjnSpec @["GpRndTessel_Self_p25"] {
      name="GpRndTessel_Self_p25";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -9537,6 +9944,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     FullPrjnSpec @["FullPrjnSpec_5"] {
      name="FullPrjnSpec_5";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -9551,6 +9959,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     LeabraConSpec @["LeabraConSpec_5"] {
      name="LeabraConSpec_5";
+     is_used=1;
      desc=;
      unique{      };
      children {
@@ -9583,6 +9992,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     };
     GpMapConvergePrjnSpec @["GpAggregatePrjnSpec_0"] {
      name="GpAggregatePrjnSpec_0";
+     is_used=0;
      desc=;
      unique{      };
      children {
@@ -9610,7 +10020,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=0: };
+     pos_abs {x=0: y=0: z=0: };
      pos2d {x=0: y=0: };
+     pos2d_abs {x=0: y=0: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=1;
@@ -9681,7 +10093,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=1: y=0: z=1: };
+     pos_abs {x=1: y=0: z=1: };
      pos2d {x=0: y=19: };
+     pos2d_abs {x=0: y=19: };
      disp_scale=1;
      un_geom {x=2: y=2: n_not_xy=0: n=4: };
      unit_groups=1;
@@ -9748,7 +10162,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=9: y=0: z=1: };
+     pos_abs {x=9: y=0: z=1: };
      pos2d {x=7: y=19: };
+     pos2d_abs {x=7: y=19: };
      disp_scale=1;
      un_geom {x=2: y=2: n_not_xy=0: n=4: };
      unit_groups=1;
@@ -9815,7 +10231,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=16: y=0: z=1: };
+     pos_abs {x=16: y=0: z=1: };
      pos2d {x=14: y=19: };
+     pos2d_abs {x=14: y=19: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=1;
@@ -9907,7 +10325,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     sync_time_pct=0;
     wake_in_sync_pct=1.964077274749999e-152;
    };
-   alt_mpi=0;
    net_timing {
     name="net_timing";
     el_typ=LeabraNetTiming;
@@ -9983,6 +10400,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    };
    times {
     quarter=25;
+    deep_cyc=5;
     time_inc=0.001;
     minus=75;
     plus=25;

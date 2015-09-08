@@ -458,6 +458,8 @@ public:
   float         ctxt_fm_ctxt;   // #READ_ONLY 1.0 - ctxt_fm_lay -- how much of context comes from deep_ctxt_net value
   float         min_ctxt;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.05 minimum context value for purposes of computing deep_norm -- because ctxt shows up in divisor of norm equation, very small values can produce high values -- this prevents that sensitivity
   float         copy_def;       // #CONDSHOW_ON_on for the raw_val = NORM_NET and other specialized cases where deep_norm is copied from other values and not computed as usual, this is the value to use for the deep_norm_def default deep_norm value for units that don't have an above-zero deep_norm value
+
+  // (x + g) / (c + g) = x / (c + g) + g / (c + g) = x / (c + g) + 1 / (c/g + 1)
   
   inline float  ComputeNorm(float raw, float ctxt)
   { ctxt = MAX(min_ctxt, ctxt); return (raw + contrast) / (ctxt + contrast); }

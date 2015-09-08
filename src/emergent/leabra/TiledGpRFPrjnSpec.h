@@ -43,21 +43,53 @@ private:
   void	Destroy() { };
 };
 
+eTypeDef_Of(SigmoidInitWtsSpec);
+
+class E_API SigmoidInitWtsSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Projection parameters for initializing sigmoid projection weights
+INHERITED(taOBase)
+public:
+  bool          on;             // initialize sigmoid weights at this level scale
+  float		gain;		// #CONDSHOW_ON_on sigmoid gain (contrast) in normalized units where entire distance across relevant dimension is 1.0 -- typical useful values range from 0.01..0.1
+  float         ctr_mv;         // #CONDSHOW_ON_on #DEF_0.5;1 how much the center of the sigmoid moves with respect to the position of the receiving unit within its unit group -- 1.0 = centers span the entire range of the receptive field -- typically 0.5 to 0.8 is best
+
+  TA_SIMPLE_BASEFUNS(SigmoidInitWtsSpec);
+private:
+  void 	Initialize();
+  void	Destroy() { };
+};
+
 eTypeDef_Of(TiledGpRFPrjnSpec);
 
 class E_API TiledGpRFPrjnSpec : public ProjectionSpec {
-  // Tiled receptive field projection spec for entirely group-to-group connections: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups -- if init_wts is on, gaussian topographic weights are initialized
+  // Tiled receptive field projection spec for entirely group-to-group connections: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups -- if init_wts is on, gaussian or sigmoid topographic weights are initialized
 INHERITED(ProjectionSpec)
 public:
+  enum InitWtsType {
+    GAUSSIAN,                   // gassian initial weights
+    SIGMOID,                    // sigmoidal initial weights
+  };
+
+ enum GroupUnitOpts {
+   BY_UNIT,                     // use the individual unit positions to shape the weight distribution (sometimes also in conjunction with the group positions, depending on which level -- see member comment for more specifics per each case)
+   BY_GROUP,                    // use the unit group positions, and NOT the individual unit positions, to shape the weight distribution
+   ALL_SAME,                    // all units have the same weight distribution -- this is only applicable to the receiving layer side, not the sending layer
+  };
+
   taVector2i	send_gp_size;		// number of groups in the sending receptive field
   taVector2i	send_gp_skip;		// number of groups to skip per each recv group (typically 1/2 of the size for nice overlap)
   taVector2i	send_gp_start;		// starting offset for sending groups -- for wrapping this was previously automatically set to -send_gp_skip (else 0), but you can now set this to anything you want
   bool		wrap;			// if true, then connectivity has a wrap-around structure so it starts at -gp_skip (wrapped to right/top) and goes +gp_skip past the right/top edge (wrapped to left/bottom)
   bool		reciprocal;		// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
   bool          share_cons;             // units in unit groups after the first unit group share connection values (weights etc) with those in the first unit group -- generally only works if wrap is true so that all units have same scope and order of connectivity
-  GaussInitWtsSpec full_gauss;          // #CONDSHOW_ON_init_wts parameters for gaussian initial weight distribution for the full width of the projection across all sending unit groups
-  GaussInitWtsSpec gp_gauss;            // #CONDSHOW_ON_init_wts parameters for gaussian initial weight distribution for each individual sending unit group
-  bool          full_gpwise;            // #CONDSHOW_ON_init_wts&&full_gauss.on make the full-field gaussian weights apply uniformly across entire unit groups -- does not use relative position of the receiving unit -- otherwise uses full unit-level coordinates relative to position of receiving unit to compute a moving topological gaussian
+  InitWtsType   wts_type;               // #CONDSHOW_ON_init_wts type of initial weights to create for init_wts
+  GaussInitWtsSpec full_gauss;          // #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN parameters for gaussian initial weight distribution for the full width of the projection across all sending unit groups and units within those sending units -- see also gauss_opts
+  GaussInitWtsSpec gp_gauss;            // #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN parameters for gaussian initial weight distribution for each individual sending unit group
+  GroupUnitOpts    full_send;        //  #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN&&full_gauss.on use units or unit groups to organize the sending weights for the full_gauss component -- BY_UNIT means that each unit within the sending layer gets a different gaussian weight value -- BY_GROUP means that all units within the same sending group get the same weight values -- ALL_SAME is not a valid option for this case
+  GroupUnitOpts    full_recv;        //  #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN&&full_gauss.on use units, unit groups, or nothing (ALL_SAME) to organize the receiving weights for the full_gauss component -- BY_UNIT means that the relative position of the recv unit within its unit group (or layer if no groups) determines the center of the gaussian coming from the sending layer -- BY_GROUP means that the relative position of the recv unit group within the recv layer determines the center of the gaussian coming from the sending layer (only applicable for layers with unit groups!) -- ALL_SAME means that the recv position does not matter at all -- all recv units get the same gaussian profile across the sending unit projection (this still moves according to the connectivity parameters)
+    
+  SigmoidInitWtsSpec full_sig;          // #CONDSHOW_ON_init_wts&&wts_type:SIGMOID parameters for sigmoid initial weight distribution for the full width of the projection across all sending unit groups
+  SigmoidInitWtsSpec gp_sig;            // #CONDSHOW_ON_init_wts&&wts_type:SIGMOID parameters for sigmoid initial weight distribution for each individual sending unit group
   MinMaxRange	wt_range;               // #CONDSHOW_ON_init_wts range of weakest (min) to strongest (max) weight values generated -- typically want to center this around .5, and often fairly subtle differences (.4 - .6) produce reasonably strong effects on Leabra networks
 
   taVector2i 	trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
@@ -70,6 +102,9 @@ public:
   virtual void	Init_Weights_Gaussian(Projection* prjn, ConGroup* cg, Network* net,
                                       int thr_no);
   // gaussian initial weights
+  virtual void	Init_Weights_Sigmoid(Projection* prjn, ConGroup* cg, Network* net,
+                                      int thr_no);
+  // sigmoid initial weights
 
   void  Connect_impl(Projection* prjn, bool make_cons) override;
 

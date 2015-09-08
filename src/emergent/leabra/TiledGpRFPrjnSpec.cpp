@@ -22,6 +22,7 @@
 #include <LeabraConSpec>
 
 TA_BASEFUNS_CTORS_DEFN(GaussInitWtsSpec);
+TA_BASEFUNS_CTORS_DEFN(SigmoidInitWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(TiledGpRFPrjnSpec);
 
 void GaussInitWtsSpec::Initialize() {
@@ -31,14 +32,22 @@ void GaussInitWtsSpec::Initialize() {
   ctr_mv = 0.8f;
 }
 
+void SigmoidInitWtsSpec::Initialize() {
+  on = true;
+  gain = 0.02f;
+  ctr_mv = 0.5f;
+}
+
 void TiledGpRFPrjnSpec::Initialize() {
   send_gp_size = 4;
   send_gp_skip = 2;
   send_gp_start = -1;
   wrap = true;
+  wts_type = GAUSSIAN;
   share_cons = false;
   reciprocal = false;
-  full_gpwise = false;
+  full_send = BY_UNIT;
+  full_recv = BY_UNIT;
   wt_range.min = 0.4f;
   wt_range.max = 0.6f;
 }
@@ -47,6 +56,10 @@ void TiledGpRFPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
   wt_range.UpdateAfterEdit_NoGui();
+  if(TestWarning(full_send == ALL_SAME, "UAE",
+                 "full_send == ALL_SAME is not a valid option, switching back to BY_UNIT")) {
+    full_send = BY_UNIT;
+  }
   
   if(taMisc::is_loading) {
     taVersion v705(7, 0, 5);
@@ -231,7 +244,12 @@ void TiledGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
                    "Init_Weights_Prjn", "set_scale can only apply to Leabra connections!"))
       return;
   }
-  Init_Weights_Gaussian(prjn, cg, net, thr_no);
+  if(wts_type == GAUSSIAN) {
+    Init_Weights_Gaussian(prjn, cg, net, thr_no);
+  }
+  else {
+    Init_Weights_Sigmoid(prjn, cg, net, thr_no);
+  }
 }
 
 void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
@@ -244,35 +262,44 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
   //   send_lay = prjn->layer;
   // }
 
-  taVector2f un_full_size = send_lay->un_geom * send_gp_size;
+  bool no_send_gp = (send_gp_size.Product() == 1);
+  
+  taVector2f un_full_size = send_lay->un_geom * send_gp_size -1.0f;
   taVector2f un_half_size = un_full_size;
   un_half_size *= 0.5f;
 
   float full_eff_sig = full_gauss.sigma * un_half_size.x;
 
-  taVector2f gp_full_size = send_lay->un_geom;
+  taVector2f gp_full_size = send_lay->un_geom -1.0f;
   taVector2f gp_half_size = gp_full_size;
   gp_half_size *= 0.5f;
   float gp_eff_sig = gp_gauss.sigma * gp_half_size.x;
   
-  taVector2i ru_pos;
+  taVector2i ru_un_pos;
   Unit* ru = cg->ThrOwnUn(net, thr_no);
-  ru->UnitGpLogPos(ru_pos);
+  ru->UnitGpLogPos(ru_un_pos);
 
-  taVector2f rugpctr = recv_lay->un_geom;
-  rugpctr *= 0.5f;
-  taVector2f ru_nrm_pos = ((taVector2f)ru_pos - rugpctr) / rugpctr;
+  taVector2f ru_ctr = recv_lay->un_geom -1;
+  ru_ctr *= 0.5f;
+  taVector2f ru_nrm_pos = (taVector2f(ru_un_pos) - ru_ctr) / ru_ctr;
   taVector2f ru_nrm_pos_full = ru_nrm_pos * full_gauss.ctr_mv;
   taVector2f ru_nrm_pos_gp = ru_nrm_pos * gp_gauss.ctr_mv;
-
-  taVector2f s_un_ctr;
-  if(full_gpwise)
-    s_un_ctr = un_half_size;
-  else
-    s_un_ctr = (ru_nrm_pos_full * un_half_size) + un_half_size;
-
+  taVector2f s_un_ctr = (ru_nrm_pos_full * un_half_size) + un_half_size;
   taVector2f s_gp_ctr = (ru_nrm_pos_gp * gp_half_size) + gp_half_size;
 
+  if(full_recv == BY_GROUP && recv_lay->unit_groups) {
+    taVector2i ru_gp_geo = recv_lay->gp_geom-1;
+    taVector2i ru_gp_pos = recv_lay->UnitGpPosFmIdx(ru->UnitGpIdx());
+    taVector2f ru_gp_ctr = ru_gp_geo;
+    ru_gp_ctr *= 0.5f;
+    taVector2f ru_gp_nrm_pos = ((taVector2f)ru_gp_pos - ru_gp_ctr) / ru_gp_ctr;
+    ru_nrm_pos_full = ru_gp_nrm_pos * full_gauss.ctr_mv;
+    s_un_ctr = (ru_nrm_pos_full * un_half_size) + un_half_size;
+  }
+  if(full_recv == ALL_SAME) {
+    s_un_ctr = un_half_size;
+  }
+  
   taVector2i unc, ugc;
   taVector2f suc;
   taVector2f sucw;
@@ -292,10 +319,12 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
     float fwt = 1.0f;
     if(full_gauss.on) {
       suc = ugc * send_lay->un_geom;
-      if(full_gpwise)
-        suc += gp_half_size;
-      else
+      if(full_send == BY_UNIT) {
         suc += unc;
+      }
+      else {                    // by group
+        suc += gp_half_size;
+      }
       sucw = suc;
       // wrap coords around to get min dist from ctr either way
       if(full_gauss.wrap_wts) {
@@ -344,3 +373,102 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
   }
 }
 
+void TiledGpRFPrjnSpec::Init_Weights_Sigmoid(Projection* prjn, ConGroup* cg,
+                                             Network* net, int thr_no) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+
+  taVector2f un_full_size = send_lay->un_geom * send_gp_size;
+  taVector2f un_half_size = un_full_size;
+  un_half_size *= 0.5f;
+
+  float full_eff_gain = full_sig.gain * un_half_size.x;
+
+  taVector2f gp_full_size = send_lay->un_geom;
+  taVector2f gp_half_size = gp_full_size;
+  gp_half_size *= 0.5f;
+  float gp_eff_gain = gp_sig.gain * gp_half_size.x;
+  
+  taVector2i ru_pos;
+  Unit* ru = cg->ThrOwnUn(net, thr_no);
+  ru->UnitGpLogPos(ru_pos);
+
+  taVector2f ru_ctr = recv_lay->un_geom;
+  ru_ctr *= 0.5f;
+  taVector2f ru_nrm_pos = ((taVector2f)ru_pos / ru_ctr);
+  taVector2f sgn = 1.0f;
+  taVector2f ru_nrm_pos_full;
+  taVector2f ru_nrm_pos_gp;
+  // su coords
+  //  0  1  2   3    4  5  6  7 or - for flipped
+  // .2 .4 .6. .8 | -.2 -.4 -.6 -.8
+  if(ru_nrm_pos.x >= 1.0f) {
+    ru_nrm_pos.x = -ru_nrm_pos.x + 1.0f;
+    sgn.x = -1.0f;
+    ru_nrm_pos_full.x = (ru_nrm_pos.x + 0.5f) * full_sig.ctr_mv - 0.5f;
+    ru_nrm_pos_gp.x = (ru_nrm_pos.x + 0.5f) * gp_sig.ctr_mv - 0.5f;
+  }
+  else {
+    ru_nrm_pos_full.x = (ru_nrm_pos.x - 0.5f) * full_sig.ctr_mv + 0.5f;
+    ru_nrm_pos_gp.x = (ru_nrm_pos.x - 0.5f) * gp_sig.ctr_mv + 0.5f;
+  }
+  if(ru_nrm_pos.y >= 1.0f) {
+    ru_nrm_pos.y = -ru_nrm_pos.y + 1.0f;
+    sgn.y = -1.0f;
+    ru_nrm_pos_full.y = (ru_nrm_pos.y + 0.5f) * full_sig.ctr_mv - 0.5f;
+    ru_nrm_pos_gp.y = (ru_nrm_pos.y + 0.5f) * gp_sig.ctr_mv - 0.5f;
+  }
+  else {
+    ru_nrm_pos_full.y = (ru_nrm_pos.y - 0.5f) * full_sig.ctr_mv + 0.5f;
+    ru_nrm_pos_gp.y = (ru_nrm_pos.y - 0.5f) * gp_sig.ctr_mv + 0.5f;
+  }
+
+  taVector2f s_un_ctr = ru_nrm_pos_full * un_full_size;
+  taVector2f s_gp_ctr = ru_nrm_pos_gp * gp_full_size;
+
+  taVector2i unc, ugc;
+  taVector2f suc;
+  taVector2f sucw;
+  taVector2f suncw;
+  
+  for(int i=0; i<cg->size; i++) {
+    // note: these are organized within unit group first, then by groups
+    int ug_idx = i / send_lay->un_geom.n; // which unit group, ordinally
+    int un_idx = i % send_lay->un_geom.n; // index in unit group
+
+    unc.x = un_idx % send_lay->un_geom.x;
+    unc.y = un_idx / send_lay->un_geom.x;
+
+    ugc.x = ug_idx % send_gp_size.x;
+    ugc.y = ug_idx / send_gp_size.x;
+
+    float fwt = 1.0f;
+    if(full_sig.on) {
+      suc = ugc * send_lay->un_geom;
+      suc += unc;
+      float sig_x = taMath_float::logistic(sgn.x * suc.x, full_eff_gain, s_un_ctr.x);
+      float sig_y = taMath_float::logistic(sgn.y * suc.y, full_eff_gain, s_un_ctr.y);
+      fwt = sig_x * sig_y;
+    }
+
+    float gwt = 1.0f;
+    if(gp_sig.on) {
+      suncw = unc;
+      
+      float sig_x = taMath_float::logistic(sgn.x * unc.x, gp_eff_gain, s_gp_ctr.x);
+      float sig_y = taMath_float::logistic(sgn.y * unc.y, gp_eff_gain, s_gp_ctr.y);
+      gwt = sig_x * sig_y;
+    }
+
+    float wt = fwt * gwt;
+    wt = wt_range.min + wt_range.range * wt;
+
+    if(set_scale) {
+      SetCnWtRnd(cg, i, net, thr_no);
+      SetCnScale(wt, cg, i, net, thr_no);
+    }
+    else {
+      SetCnWt(wt, cg, i, net, thr_no);
+    }
+  }
+}
