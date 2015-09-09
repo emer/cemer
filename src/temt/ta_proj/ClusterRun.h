@@ -297,6 +297,7 @@ protected:
 private:
   void  Initialize();
   void  Destroy();
+  String ExpandLabel();
 };
 
 #endif // ClusterRun_h
