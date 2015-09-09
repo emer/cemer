@@ -134,8 +134,10 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   return rval;
 }
 
-bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u,                             LeabraLayer*& patch_dir_lay, LeabraLayer*& patch_ind_lay,
-                                    LeabraLayer*& matrix_dir_lay, LeabraLayer*& matrix_ind_lay,
+bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u, LeabraLayer*& patch_dir_lay,
+                                    LeabraLayer*& patch_ind_lay,
+                                    LeabraLayer*& matrix_dir_lay,
+                                    LeabraLayer*& matrix_ind_lay,
                                     LeabraLayer*& pv_pos_lay, LeabraLayer*& pv_neg_lay) {
   patch_dir_lay = NULL;
   patch_ind_lay = NULL;
@@ -222,6 +224,7 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
     lay->SetUserData("matrix_dir", matrix_dir);
     lay->SetUserData("matrix_ind", matrix_ind);
     //lay->SetUserData("matrix_net", matrix_net);
+    lay->SetUserData("residual_pvneg", residual_pvneg);
     lay->SetUserData("net_lhb", net_lhb);
   }
 }
