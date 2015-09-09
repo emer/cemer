@@ -118,7 +118,6 @@ String PrintExpr::GetStateDecoKey() const {
       }
     }
   }
-  my_program->SigEmitUpdated();
   return rval;
 }
 
