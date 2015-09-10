@@ -63,7 +63,7 @@ void taSigLink::DoNotify(int sls, void* op1_, void* op2_) {
     taMisc::DebugInfo("A non-main thread has caused a taSigLink::DoNotify -- not allowed, notify will not be sent");
     return;
   }
-//#endif
+#endif
   for (int i = 0; i < clients.size; ++i) {
     ISigLinkClient* dlc = clients.FastEl(i);
     if ((sls == SLS_REBUILD_VIEWS) && !dlc->isDataView()) continue;
