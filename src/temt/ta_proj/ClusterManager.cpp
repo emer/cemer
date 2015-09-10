@@ -842,7 +842,7 @@ ClusterManager::ShowRepoDialog()
   dlg.win_title = "Run on cluster";
   dlg.prompt = "Enter parameters";
   dlg.width = 300;
-  dlg.height = 540;
+  dlg.height = 600;
 
   String widget("main");
   String vbox("mainv");

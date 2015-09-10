@@ -1011,6 +1011,9 @@ namespace { // anon
       // don't use -1 -- some suffixes have _ in them (e.g., version numbers) and
       // the app name hopefully does not have a suffix..
     }
+    else if(isdigit(taMisc::exe_cmd.lastchar())) { // emergent7 etc
+      taMisc::app_suffix = taMisc::exe_cmd.lastchar();
+    }
     else {
       taMisc::app_suffix = "";
     }
