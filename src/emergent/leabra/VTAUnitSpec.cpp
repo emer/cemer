@@ -210,6 +210,7 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   // use avg act over layer..
   float pptg_da_p = 0.0f;
   float pptg_da_n = 0.0f;
+  float net_burst_da = 0.0f;
   float lhb_da = 0.0f;
   float pospv = 0.0f;
   float negpv = 0.0f;
@@ -259,17 +260,19 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
     net_block = 0.0f;
     net_da = 0.0f;
     
+    float pos_lhb_da = MIN(lhb_da, 0.0f); // if neg, promotes bursting
+    
     //float pospv_da = pospv - vspvi; // original
-    float tot_burst_da = pospv + da.pptg_gain * pptg_da_p;
+    float tot_burst_da = pospv + da.pptg_gain * pptg_da_p - da.lhb_gain * pos_lhb_da;
+    // note sign reversal for lhb component
     //pospv_da = pospv - da.pvi_gain * vspvi; // higher pvi_gain == more shunting // old
-    float net_burst_da = tot_burst_da - (da.pvi_gain * vspvi);
+    net_burst_da = tot_burst_da - (da.pvi_gain * vspvi);
     
     //pospv_da = MAX(pospv_da, 0.0f); // shunting should not be able to produce dip!
     net_burst_da = MAX(net_burst_da, 0.0f);
     
     net_block = (1.0f - (lv_block.pos_pv * pospv + lv_block.lhb_dip * lhb_da));
     net_block = MAX(0.0f, net_block);
-    
     
 //    net_da = da.pv_gain * pospv_da - da.lhb_gain * lhb_da + net_block * da.pptg_gain * pptg_da_p;
     net_da = da.pv_gain * net_burst_da - da.lhb_gain * lhb_da; // + net_block * da.pptg_gain * pptg_da_p;
@@ -293,12 +296,13 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   if(lv_block.rec_data) {
     lay->SetUserData("pptg_da_p", pptg_da_p);
     lay->SetUserData("pptg_da_n", pptg_da_n);
-    lay->SetUserData("lhb_da", lhb_da);
     lay->SetUserData("pos_pv", pospv);
     lay->SetUserData("vs_patch_dir_pos", vspvi);
     lay->SetUserData("pospv_da", pospv_da);
     lay->SetUserData("negpv_da", negpv_da);
-    lay->SetUserData("net_block", net_block);
+    //lay->SetUserData("net_block", net_block);
+    lay->SetUserData("net_burst_da", net_burst_da);
+    lay->SetUserData("lhb_da", lhb_da);
     lay->SetUserData("net_da", net_da);
   }
 }
