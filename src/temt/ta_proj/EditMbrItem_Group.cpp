@@ -87,7 +87,7 @@ EditMbrItem* EditMbrItem_Group::PSearchFind(const String& mbr_nm, const String& 
 EditMbrItem* EditMbrItem_Group::PSearchNext(int& st_idx) {
   while(st_idx < leaves) {
     EditMbrItem* sei = Leaf(st_idx);
-    if(!sei->mbr || !sei->is_numeric || sei->param_search.srch != EditParamSearch::SRCH) {
+    if(!sei->mbr || !sei->is_numeric || !sei->param_search.search) {
       st_idx++;
       continue;
     }
@@ -102,7 +102,7 @@ bool EditMbrItem_Group::PSearchOn(const String& mbr_nm, const String& label) {
   EditMbrItem* sei = PSearchFind(mbr_nm, label);
   if(!sei)
     return no_val;
-  return (sei->param_search.srch == EditParamSearch::SRCH);
+  return sei->param_search.search;
 }
 
 bool EditMbrItem_Group::PSearchOn_Set(bool psearch, const String& mbr_nm, const String& label) {
@@ -110,9 +110,9 @@ bool EditMbrItem_Group::PSearchOn_Set(bool psearch, const String& mbr_nm, const 
   if(!sei)
     return false;
   if(psearch)
-    sei->param_search.srch = EditParamSearch::SRCH;
+    sei->param_search.search = true;
   else
-    sei->param_search.srch = EditParamSearch::NO;
+    sei->param_search.search = false;
   return true;
 }
 
@@ -203,7 +203,7 @@ bool EditMbrItem_Group::PSearchNextToCur(const String& mbr_nm, const String& lab
 bool EditMbrItem_Group::PSearchMinToCur_All() {
   bool rval = false;
   FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, *this) {
-    if(!sei->mbr || !sei->is_numeric || sei->param_search.srch != EditParamSearch::SRCH)
+    if(!sei->mbr || !sei->is_numeric || !sei->param_search.search)
       continue;
     bool psr = sei->PSearchMinToCur();
     rval |= psr;
@@ -226,7 +226,7 @@ bool EditMbrItem_Group::PSearchNextIncr_Grid() {
 bool EditMbrItem_Group::PSearchNextToCur_All() {
   bool rval = false;
   FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, *this) {
-    if(!sei->mbr || !sei->is_numeric || sei->param_search.srch != EditParamSearch::SRCH)
+    if(!sei->mbr || !sei->is_numeric || !sei->param_search.search)
       continue;
     bool psr = sei->PSearchNextToCur();
     rval |= psr;
@@ -239,7 +239,7 @@ void EditMbrItem_Group::PSearchConfigTable(DataTable* dat, bool all_nums, bool a
     return;
   FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, *this) {
     if(!sei->mbr || !sei->is_numeric) continue;
-    if(!all_nums && sei->param_search.srch != EditParamSearch::SRCH) continue;
+    if(!all_nums && !sei->param_search.search) continue;
     String nm = taMisc::StringCVar(sei->label);
     dat->FindMakeCol(nm, VT_DOUBLE);
   }
@@ -253,7 +253,7 @@ void EditMbrItem_Group::PSearchRecordData(DataTable* dat, bool all_nums, bool ad
     return;
   FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, *this) {
     if(!sei->mbr || !sei->is_numeric) continue;
-    if(!all_nums && sei->param_search.srch != EditParamSearch::SRCH) continue;
+    if(!all_nums && !sei->param_search.search) continue;
     String nm = taMisc::StringCVar(sei->label);
     dat->SetValColName(sei->PSearchCurVal(), nm, -1);
   }

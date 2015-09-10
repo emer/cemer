@@ -1512,7 +1512,7 @@ String ClusterRun::ExpandLabel() {
 
 				//If we are in a search algorithm, then we need to use the value
 				//set in the search parameters
-				if (!mbr->is_numeric || ps.srch != EditParamSearch::SRCH) {
+				if (!mbr->is_numeric || !ps.search) {
 					variable_value = mbr->CurValAsString();
 				} else {
 					variable_value = String(ps.next_val);
@@ -1753,7 +1753,7 @@ void ClusterRun::RunCommand(String& cmd, String& params, bool use_cur_vals) {
   bool first = true;
   FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, mbrs) {
     const EditParamSearch &ps = mbr->param_search;
-    if (ps.srch != EditParamSearch::NO) {
+    if (ps.record) {
       if(!first)
         params.cat(" "); // sep
       else

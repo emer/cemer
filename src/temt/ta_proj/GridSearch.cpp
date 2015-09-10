@@ -36,7 +36,7 @@ GridSearch::Reset()
   int total_jobs = 1;
   FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, m_cluster_run->mbrs) {
     EditParamSearch &ps = mbr->param_search;
-    if (ps.srch == EditParamSearch::SRCH) {
+    if (ps.search) {
       // Keep track of names to make sure they haven't changed by the time
       // ProcessResults is called.
       String name = mbr->GetName();
@@ -121,7 +121,7 @@ GridSearch::nextParamCombo()
   int idx = 0;
   FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, m_cluster_run->mbrs) {
     EditParamSearch &ps = mbr->param_search;
-    if (ps.srch == EditParamSearch::SRCH) {
+    if (ps.search) {
       // Sanity check that the parameters to search haven't changed.
       String name = mbr->GetName();
       if (name != m_names[idx]) {

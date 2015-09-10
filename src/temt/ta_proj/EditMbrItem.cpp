@@ -65,10 +65,11 @@ void EditMbrItem::UpdateAfterEdit_impl() {
     }
   }
   if(!is_single) {
-    param_search.srch = EditParamSearch::NO;
+    param_search.search = false;
   }
-  else if(!is_numeric && param_search.srch == EditParamSearch::SRCH) {
-    param_search.srch = EditParamSearch::SET;
+  else if(!is_numeric && param_search.search) {
+    param_search.search = false;
+    param_search.record = true;
   }
 }
 
