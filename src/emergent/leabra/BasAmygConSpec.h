@@ -36,7 +36,7 @@ public:
   };
 
   BasAmygType   ba_type;        // type of basal amgydala neuron
-  float         neg_da_gain;    // multiplicative gain factor applied to negative dopamine signals -- this value should be < 1 to cause negative da to be reduced relative to positive, thus reducing the level of unlearning and extinction in this pathway -- applies to negative of da for the extinction pathway (i.e., to positive da values)
+  float         neg_da_gain;    // multiplicative gain factor applied to negative dopamine signals -- this value should always be >= 0 and should be < 1 to cause negative da to be reduced relative to positive, thus reducing the level of unlearning in this pathway -- applies to negative of da for the extinction pathway (i.e., to positive da values)
   bool          invert_da;   // if true, wt changes go in opposite direction to the standard case; analogous to NoGo guys in striatum; generally, for PosLV_BasAmyg layers/units should be false; for NegPV_ guys should be true
 
   inline float  GetDa(float da) {
