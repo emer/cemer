@@ -62,7 +62,10 @@ public:
     float eff_da = da_p;
     if(d2r) eff_da *= -1.0f; // invert direction of learning
     if(eff_da < 0.0f) { eff_da *= da_dip_gain; }
-    dwt += cur_lrate * eff_da * ru_act * su_act * lrnmod;
+//    dwt += cur_lrate * eff_da * ru_act * su_act * lrnmod;
+    if(lrnmod > 0.1f) { // only learn if topo input says you're the right topologically
+      dwt += cur_lrate * eff_da * ru_act * su_act;
+    }
   }
   // #IGNORE dopamine multiplication
 
