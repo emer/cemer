@@ -192,12 +192,12 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   // use avg act over layer..
   // note: need acts_q0 for patch to reflect previous trial..
-  float patch_dir = patch_dir_lay->acts_q0.avg; // * patch_dir_lay->units.size;
-  float patch_ind = patch_ind_lay->acts_q0.avg; // * patch_ind_lay->units.size;
-  float matrix_dir = matrix_dir_lay->acts_eq.avg; // * matrix_dir_lay->units.size;
-  float matrix_ind = matrix_ind_lay->acts_eq.avg; // * matrix_ind_lay->units.size;
-  float pv_pos = pv_pos_lay->acts_eq.avg; // * pv_pos_lay->units.size;
-  float pv_neg = pv_neg_lay->acts_eq.avg; // * pv_neg_lay->units.size;
+  float patch_dir = patch_dir_lay->acts_q0.avg * patch_dir_lay->units.size;
+  float patch_ind = patch_ind_lay->acts_q0.avg * patch_ind_lay->units.size;
+  float matrix_dir = matrix_dir_lay->acts_eq.avg * matrix_dir_lay->units.size;
+  float matrix_ind = matrix_ind_lay->acts_eq.avg * matrix_ind_lay->units.size;
+  float pv_pos = pv_pos_lay->acts_eq.avg * pv_pos_lay->units.size;
+  float pv_neg = pv_neg_lay->acts_eq.avg * pv_neg_lay->units.size;
   
   // punishments should never be completely predicted away...
   //float residual_pvneg = 0.0f; // no residual if nothing there to start with
