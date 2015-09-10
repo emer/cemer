@@ -220,8 +220,6 @@ public:
   // #READ_ONLY #NO_SAVE #EXPERT #CAT_App various informative bits of information about how the program was compiled -- important for high-level optimization of the code for the particular type of processor
   static String         app_suffix;
   // #READ_ONLY #NO_SAVE #EXPERT #CAT_App actual empirical suffix on the exe_cmd -- this is the official key used for plugins and prefs and other things like that
-  static bool           save_old_fmt;
-  // #SAVE #CAT_File save project and other 'dump' files in the old emergent format (version 2 of the file format) which was used up through version 5.0.1 -- files are unlikely to be very functional in older versions anyway, but this would allow them to at least be loaded -- only use this on a temporary basis when absolutely necessary! (note: old format files can be loaded without problem in current version)
   static String         project_author;
   // #SAVE #CAT_File the person developing the project - used when publishing a project to the wiki
   static String         author_email;

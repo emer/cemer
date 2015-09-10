@@ -51,10 +51,7 @@ int DumpPathTokenList::FindObj(taBase* obj) {
 
 DumpPathToken* DumpPathTokenList::AddObjPath(taBase* obj, const String& pat) {
   String tok_id;
-  if(taMisc::save_old_fmt)
-    tok_id = String("$") + String(size) + "$"; // use old-style numbered tokens
-  else
-    tok_id = String("$") + pat + "$"; // tok_id is now always just the path!
+  tok_id = String("$") + pat + "$"; // tok_id is now always just the path!
   int idx = size;
   DumpPathToken* tok = new DumpPathToken(obj, pat, tok_id);
   Add(tok);
@@ -74,10 +71,6 @@ String DumpPathTokenList::GetPath(taBase* obj) {
   else
     path = obj->GetPath();
   DumpPathToken* tok = AddObjPath(obj, path);
-  if(taMisc::save_old_fmt) {
-    path += tok->token_id;
-    return path;
-  }
   path += "$$";	// this marks this as a new token to be stored..
   // if obj is outside of root path, provide extra info about the object
   // that can be used during loading for finding object of correct type/name

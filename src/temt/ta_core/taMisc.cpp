@@ -180,8 +180,6 @@ taThreadDefaults::taThreadDefaults() {
 taThreadDefaults taMisc::thread_defaults;
 bool    taMisc::dmem_output_all = false;
 
-bool    taMisc::save_old_fmt = false;
-
 ////////////////////////////////////////////////////////
 //      TA GUI parameters
 

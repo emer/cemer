@@ -404,33 +404,24 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
 int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   if (base == NULL)
     return false;
-
+  
   ++taMisc::is_saving;
   dumpMisc::path_tokens.ReInit();
   tabMisc::root->plugin_deps.Reset();
-
-  // saving both dump file version and now the actual code version string
-  if(taMisc::save_old_fmt) {
-    strm << "// ta_Dump File v2.0"
-         << " -- code v" << taMisc::version_bin.toString() << "\n";
-  }
-  else {
-    // For v3.0, also save Emergent's SVN revision number.
-    // It will be ignored on load.
-    strm << "// ta_Dump File v3.0"
-         << " -- code v" << taMisc::version_bin.toString()
-         << " rev" << taMisc::svn_rev << "\n";
-  }
+  
+  strm << "// ta_Dump File v3.0"
+  << " -- code v" << taMisc::version_bin.toString()
+  << " rev" << taMisc::svn_rev << "\n";
   taMisc::strm_ver = 3;
   if (IsActualTaBase()) {
     taBase* rbase = (taBase*)base;
-
+    
     dumpMisc::dump_root = rbase;
     if(taMisc::save_use_name_paths)
       dumpMisc::dump_root_path = rbase->GetPathNames();
     else
       dumpMisc::dump_root_path = rbase->GetPath();
-
+    
     rbase->Dump_Save_pre();
     rbase->Dump_Save_GetPluginDeps();
     // if any plugins were used, write out the list of deps
