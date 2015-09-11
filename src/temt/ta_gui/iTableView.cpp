@@ -445,6 +445,28 @@ bool iTableView::SelectColumns(int st_col, int end_col) {
   return true;
 }
 
+void iTableView::wheelEvent(QWheelEvent *e)
+{
+  if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
+    int h_scroll_pos = horizontalScrollBar()->value();
+    int v_scroll_pos = verticalScrollBar()->value();
+    
+    int delta_x = e->pos().x() - last_x;
+    int delta_y = e->pos().y() - last_y;
+
+    last_x = e->pos().x();
+    last_y = e->pos().y();
+    
+    if (delta_y > 5*delta_x) {
+      horizontalScrollBar()->setValue(h_scroll_pos);
+    }
+    if (delta_x > 5*delta_y) {
+      verticalScrollBar()->setValue(v_scroll_pos);
+    }
+  }
+  inherited::wheelEvent(e);
+}
+
 ////////////////////////////////////////////////
 //      iTableViewDefaultDelegate
 
@@ -481,4 +503,5 @@ void iTableViewDefaultDelegate::setModelData(QWidget* editor, QAbstractItemModel
   // if(own_table_widg)
   //   own_table_widg->itemWasEdited(index);
 }
+
 

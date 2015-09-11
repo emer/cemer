@@ -114,12 +114,16 @@ public:
     OP_CLEAR_COMPARE          = 0x0800,
     OP_SHOW_ALL               = 0x1000
   };
+  
+  int                   last_x;
+  int                   last_y;
 
   bool                  ext_select_on;     // toggled by Ctrl+space -- extends selection with keyboard movement
   int                   m_saved_scroll_pos;
 
   bool                  event(QEvent* ev) override;
   void                  keyPressEvent(QKeyEvent* e) override;
+  void                  wheelEvent(QWheelEvent *) override;
   bool                  eventFilter(QObject* obj, QEvent* event) override;
   virtual void          FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel);
   virtual void          RowColOp_impl(int op_code, const CellRange& sel) {}
