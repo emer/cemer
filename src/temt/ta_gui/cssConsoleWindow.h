@@ -69,7 +69,7 @@ public:
   // load (resize, reposition) us based on our (unlocked) saved geometry
   virtual void  LockedNewGeom(int left, int top, int width, int height);
   // if the console is in locked state, get this new geometry
-  virtual iAction*      AddAction(iAction* act); // add the action to the list, returning the instance (for convenience)
+  virtual iAction* AddAction(iAction* act); // add the action to the list, returning the instance (for convenience)
 
   cssConsoleWindow(QWidget* parent = NULL);
   ~cssConsoleWindow();
@@ -81,11 +81,6 @@ public slots:
   virtual void  UpdateUi();
 
 protected:
-  int64_t      self_resize_timestamp;
-
-  virtual void StartSelfResize();
-  virtual bool CheckSelfResize();
-
   void         resizeEvent(QResizeEvent* ev) override;
   void         moveEvent(QMoveEvent* e) override;
   void         closeEvent(QCloseEvent* e) override;

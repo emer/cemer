@@ -93,11 +93,11 @@ extern "C" void moncontrol(int mode);
 using namespace std;
 
 
-int taRootBase::milestone;
-TypeDef* taRootBase::root_type;
-int taRootBase::console_options;
+int taRootBase::milestone = 0;
+TypeDef* taRootBase::root_type = NULL;
+int taRootBase::console_options = 0;
 ContextFlag taRootBase::in_init;
-bool taRootBase::openProject;
+bool taRootBase::openProject = false;
 
 // note: not static class to avoid need qpointer in header
 QPointer<taRootBase_QObj> root_adapter;
@@ -125,6 +125,7 @@ void taRootBase::Initialize() {
   openProject = false;
   rootview_pos.SetXY(0.0f, 0.0f);
   rootview_size.SetXY(0.9f, 0.6f);
+  console_locked = true;
 #ifdef TA_OS_LINUX
   fpe_enable = FPE_0; //GetFPEFlags(fegetexcept());
 #endif
@@ -1728,8 +1729,14 @@ bool taRootBase::Startup_Console() {
     
     if(!(console_options & taMisc::CO_GUI_DOCK)) {
       cssConsoleWindow* cwin = new cssConsoleWindow();
-      cwin->LockedNewGeom((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h),
-                          (int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
+      cwin->lock_to_proj = tabMisc::root->console_locked;
+      if(cwin->lock_to_proj) {
+        cwin->LockedNewGeom((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h),
+                            (int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
+      }
+      else {
+        cwin->UpdateFmLock();
+      }
       cwin->show();
       taMisc::console_win = cwin; // note: uses a guarded QPointer
       

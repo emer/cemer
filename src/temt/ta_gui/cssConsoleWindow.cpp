@@ -42,7 +42,6 @@
 
 cssConsoleWindow::cssConsoleWindow(QWidget* parent) : inherited(parent) {
   lock_to_proj = true;
-  self_resize_timestamp = 1;
 
   css_con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
 
@@ -139,6 +138,8 @@ cssConsoleWindow::~cssConsoleWindow() {
 }
 
 void cssConsoleWindow::UpdateFmLock() {
+  tabMisc::root->console_locked = lock_to_proj;
+
   if(lock_to_proj) 
     pin_act->setIcon(*pinned);
   else
@@ -172,21 +173,6 @@ void cssConsoleWindow::SaveGeom() {
   tabMisc::root->console_pos.SetXY(lft, top);
 }
 
-void cssConsoleWindow::StartSelfResize() {
-  // note: resize/move combo recommended by Qt
-  QDateTime tm = QDateTime::currentDateTime();
-  self_resize_timestamp = tm.toTime_t();
-}
-
-bool cssConsoleWindow::CheckSelfResize() {
-  QDateTime tm = QDateTime::currentDateTime();
-  int64_t cur_ts = tm.toTime_t();
-  // 9/15/14 - changed to 1 second
-  if(cur_ts - self_resize_timestamp < 1) // 10 seconds to resize..
-    return true;
-  return false;
-}
-
 void cssConsoleWindow::LoadGeom() {
   if(tabMisc::root->console_size == 0.0f) return;
 
@@ -205,7 +191,6 @@ void cssConsoleWindow::LoadGeom() {
     s.h
   );
 
-  StartSelfResize();
   resize(tr.w, tr.h);
   move(tr.x, tr.y);
 }
@@ -217,7 +202,6 @@ void cssConsoleWindow::PinAction() {
 
 void cssConsoleWindow::LockedNewGeom(int left, int top, int width, int height) {
   if(!lock_to_proj) return;
-  StartSelfResize();
   resize(width, height);
   move(left, top);
   css_con->gotoEnd();
@@ -225,34 +209,22 @@ void cssConsoleWindow::LockedNewGeom(int left, int top, int width, int height) {
 
 void cssConsoleWindow::resizeEvent(QResizeEvent* e) {
   inherited::resizeEvent(e);
-  if(CheckSelfResize()) return;
+  if(lock_to_proj) return;
   
   taProject* proj = tabMisc::root->projects.DefaultEl();
   if(!proj) return;             // only functions if there is a project
   
-  if(!lock_to_proj) {
-    SaveGeom();
-  }
-  else {
-    lock_to_proj = false;
-    UpdateFmLock();
-  }
+  SaveGeom();
 }
 
 void cssConsoleWindow::moveEvent(QMoveEvent* e) {
   inherited::moveEvent(e);
-  if(CheckSelfResize()) return;
+  if(lock_to_proj) return;
 
   taProject* proj = tabMisc::root->projects.DefaultEl();
   if(!proj) return;             // only functions if there is a project
 
-  if(!lock_to_proj) {
-    SaveGeom();
-  }
-  else {
-    lock_to_proj = false;
-    UpdateFmLock();
-  }
+  SaveGeom();
 }
 
 void cssConsoleWindow::closeEvent(QCloseEvent* e) {
