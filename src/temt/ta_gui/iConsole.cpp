@@ -348,7 +348,8 @@ void iConsole::outputLine(QString line, bool err) {
     gotoEnd();
   }
   emit receivedNewStdin(1);
-  QCoreApplication::processEvents();
+  // QCoreApplication::processEvents();
+  // QCoreApplication::runPending();
 }
 
 #ifndef TA_OS_WIN
