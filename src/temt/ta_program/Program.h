@@ -243,8 +243,6 @@ public:
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F11 stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)
   virtual void  Abort();
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F12 stop the current program immediately, regardless of where it is
-  virtual bool  RunFunction(const String& fun_name);
-  // #CAT_Run run a particular function within the program -- returns false if function not found -- function must not take any args
   virtual void  StepCss();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run one step of underlying css script code, from current point of execution
 
@@ -290,7 +288,9 @@ public:
   // #IGNORE a general (ta) warning was triggered -- this is callback from taMisc::Warning handling routine for program to update gui with relevant info
 
   int                   Call(Program* caller);
-  // #CAT_Run runs the program as a subprogram called from another running program, 0=success
+  // #CAT_Run runs the program as a subprogram called from another running program, 0=success -- args are passed by setting global args variables in advance of calling
+  int                   CallFunction(Program* caller, const String& fun_name);
+  // #CAT_Run runs the given function name in this program as a subprogram called from another running program, 0=success -- function must NOT take any args -- args are passed as when using Call -- by setting global args variables in advance -- no return values are passed either
   int                   CallInit(Program* caller);
   // #CAT_Run runs the program's Init from a superProg Init, 0=success
   virtual int           CallInit_impl(Program* caller);
@@ -444,7 +444,6 @@ public: // XxxGui versions provide feedback to the user
   String       GetTypeDecoKey() const override { return "Program"; }
   Variant      GetGuiArgVal(const String& fun_name, int arg_idx) override;
   void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
-  void         CallFun(const String& fun_name) override;
 
   void  InitLinks();
   void  CutLinks();

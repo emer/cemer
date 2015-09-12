@@ -279,6 +279,40 @@ int Program::Call(Program* caller) {
   return rval;
 }
 
+int Program::CallFunction(Program* caller, const String& fun_name) {
+  if(TestError(!(run_state == DONE || run_state == STOP), "CallFunction",
+               "Attempt to call a program that is already running or has not been initialized")) {
+    ret_val = RV_RUNTIME_ERR;
+    return ret_val;
+  }
+  run_state = RUN;              // just a local update
+  // note: cont is fast and does not do any compile or run checks.
+  // the user cannot access this without having pressed Init first, and that
+  // does all the checks.  this is the standard paradigm for such things --
+  // init does checks. run assumes things are ok & thus can be fast.
+  script->SetDebug((int)HasProgFlag(TRACE));
+  cssEl* cssrval = script->RunFun(fun_name);
+  // note: shared var state likely changed, so update gui
+  script_compiled = true; // override any run-generated changes!!
+  int rval = ret_val;
+  // note: err should already have been generated if function not found..
+  if(stop_req) {
+    script->Stop();             // stop us
+    if(caller) {
+      caller->script->Stop();     // stop caller!
+      caller->script->Prog()->Frame()->pc = 0;
+    }
+    run_state = STOP;           // we are done
+    // NOTE: this backs up to restart the entire call to fun -- THIS DEPENDS ON THE CODE
+    // that generates the call!!!!!  ALWAYS MUST BE IN A SUB-BLOCK of code..
+  }
+  else {
+    script->Restart();          // restart script at beginning if run again
+    run_state = DONE;           // we are done
+  }
+  return rval;
+}
+
 int Program::CallInit(Program* caller) {
   if(last_init_timestamp == global_init_timestamp)
     return ret_val;		// already done it!
@@ -686,28 +720,6 @@ void Program::StepCss() {
   stop_req = false;                 // this does not do full clear, so that information can be queried
   UpdateUi();
   SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
-}
-
-bool Program::RunFunction(const String& fun_name) {
-  if(run_state == NOT_INIT) {
-    Init();                     // auto-press Init button!
-  }
-  if(run_state == STOP && stop_reason == SR_ERROR) {
-    Init();                     // auto-reinit after errors!
-  }
-  // todo: not clear how much more control infrastructure we need..
-  script->SetDebug((int)HasProgFlag(TRACE));
-  cssEl* rval = script->RunFun(fun_name); // no args right now
-  return (bool)rval;
-}
-
-void Program::CallFun(const String& fun_name) {
-  if(!taMisc::gui_active) return;
-  MethodDef* md = GetTypeDef()->methods.FindName(fun_name);
-  if(md != NULL)
-    md->CallFun((void*)this);
-  else if(!RunFunction(fun_name))
-    TestWarning(true, "CallFun", "function:", fun_name, "not found on object");
 }
 
 void Program::Compile() {

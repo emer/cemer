@@ -53,6 +53,7 @@ set(ta_program_HEADS_MAKETA
 
   ProgramCallBase.h
   ProgramCall.h
+  ProgramCallFun.h
   ProgramCallVar.h
   ProgCode.h
   LocalVars.h
@@ -162,6 +163,7 @@ set(ta_program_SRCS
 
   ProgramCallBase.cpp
   ProgramCall.cpp
+  ProgramCallFun.cpp
   ProgramCallVar.cpp
   ProgCode.cpp
   LocalVars.cpp

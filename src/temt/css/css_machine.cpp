@@ -4821,15 +4821,24 @@ void cssProgSpace::Stop() {
 cssEl* cssProgSpace::RunFun(const String& fun_name, cssEl* arg1, cssEl* arg2,
     cssEl* arg3, cssEl* arg4, cssEl* arg5, cssEl* arg6) {
   cssElPtr fun = ParseName(fun_name);
-  if(!(bool)fun) return NULL;
+  if(!(bool)fun) {
+    cssMisc::Error(NULL, "RunFun: function named:", fun_name,
+                   "not found in program:", name);
+    return NULL;
+  }
   cssEl* funel = fun.El();
   if(!((funel->GetType() == cssEl::T_ScriptFun)
-       || (funel->GetType() == cssEl::T_ElCFun))) return NULL;
-  cssProgSpace funspace;        // run it here in separate space
-  funspace.Prog()->Code(cssMisc::VoidElPtr);
-  // todo: args
-  funspace.Prog()->Code(fun);
-  cssEl* rval = funspace.Run();         // run it!
+       || (funel->GetType() == cssEl::T_ElCFun))) {
+    cssMisc::Error(NULL, "RunFun: function named:", fun_name,
+                   "not of appropriate type in program:", name);
+    return NULL;
+  }
+  state |= cssProg::State_Run;
+  Restart();
+  Prog()->Stack()->Push(&cssMisc::Void); // no args at first!  // todo: args
+  funel->Do(Prog());                     // should push as next thing to do!
+  cssEl* rval = Cont();
+  state &= ~cssProg::State_Run;
   return rval;
 }
 

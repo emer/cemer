@@ -43,11 +43,11 @@ public:
   void         GenCompileScript(Program* prg) override;
   void         GenCallInit(Program* prg) override;
 
-  void                  SetTarget(Program* target); // #DROP1
+  void         SetTarget(Program* target); // #DROP1
 
   bool         LoadInitTarget() override;
   // initialize target based on targ_ld_init information
-  virtual bool          LoadInitTarget_impl(const String& nm);
+  virtual bool LoadInitTarget_impl(const String& nm);
   // initialize target based on targ_ld_init information
 
   bool         CanCvtFmCode(const String& code, ProgEl* scope_el) const override;

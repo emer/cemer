@@ -219,6 +219,8 @@ bool ProgramCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   String funm = lhs;
   if(lhs.contains('=')) return false; // no rval for progcall
   if((funm.freq('.') + funm.freq("->")) > 0) return false; // exclude method call
+  String rhs = trim(code.after('('));
+  if(rhs.endsWith("()")) return false; // ProgramCallFun
   if(!scope_el) return false;
   taProject* proj = scope_el->GetMyProj();
   if(!proj) return false;

@@ -1489,44 +1489,44 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
  * Expand the label to replace variables with their respective value. Particularly useful to label search runs.
  */
 String ClusterRun::ExpandLabel() {
-	int start_pos = 0;
-	int end_pos = 0;
-	int idx = -1;
-	String label_expanded = label;
+  int start_pos = 0;
+  int end_pos = 0;
+  int idx = -1;
+  String label_expanded = label;
 
-	idx = label_expanded.index('%',start_pos);
+  idx = label_expanded.index('%',start_pos);
 
-	//Iterate over all % in the label string
-	while (idx >= 0) {
-		end_pos = label_expanded.index(' ', idx);
-		if (end_pos < 0)
-			end_pos = label_expanded.length();
-		//Extract the variable name to be expanded out.
-		String var_name = label_expanded.at(idx + 1, end_pos - idx - 1);
+  //Iterate over all % in the label string
+  while (idx >= 0) {
+    end_pos = label_expanded.index(' ', idx);
+    if (end_pos < 0)
+      end_pos = label_expanded.length();
+    //Extract the variable name to be expanded out.
+    String var_name = label_expanded.at(idx + 1, end_pos - idx - 1);
 
-		//Search over all parameters in cluster run to find the variable by name
-		FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, mbrs) {
-			if (var_name == mbr->GetName()) {
-				String variable_value;
-				const EditParamSearch &ps = mbr->param_search;
+    //Search over all parameters in cluster run to find the variable by name
+    FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, mbrs) {
+      if (var_name == mbr->GetName()) {
+        String variable_value;
+        const EditParamSearch &ps = mbr->param_search;
 
-				//If we are in a search algorithm, then we need to use the value
-				//set in the search parameters
-				if (!mbr->is_numeric || !ps.search) {
-					variable_value = mbr->CurValAsString();
-				} else {
-					variable_value = String(ps.next_val);
-				}
-				label_expanded = label_expanded.before(idx) + variable_value
-						+ label_expanded.after(end_pos - 1);
-			}
-		}
+        //If we are in a search algorithm, then we need to use the value
+        //set in the search parameters
+        if (!mbr->is_numeric || !ps.search) {
+          variable_value = mbr->CurValAsString();
+        } else {
+          variable_value = String(ps.next_val);
+        }
+        label_expanded = label_expanded.before(idx) + variable_value
+          + label_expanded.after(end_pos - 1);
+      }
+    }
 
-		start_pos = idx + 1;
-		idx = label_expanded.index('%', start_pos);
-	}
+    start_pos = idx + 1;
+    idx = label_expanded.index('%', start_pos);
+  }
 
-	return label_expanded;
+  return label_expanded;
 }
 
 void
