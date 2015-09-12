@@ -1738,6 +1738,7 @@ bool taRootBase::Startup_Console() {
         cwin->UpdateFmLock();
       }
       cwin->show();
+      cwin->css_con->clear();     // move cursor to bottom
       taMisc::console_win = cwin; // note: uses a guarded QPointer
       
       if(tabMisc::root->viewers.size >= 1) {

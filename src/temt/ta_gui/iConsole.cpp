@@ -169,6 +169,10 @@ void iConsole::clear() {
   setReadOnly(false);           // this determines if links are clickable
   setOpenExternalLinks(false);
   setOpenLinks(false);          // we do it ourselves b/c it doesn't seem to work otherwise
+
+  for(int i=0; i<maxLines; i++) { // scroll to end
+    outputLine(" ");
+  }
   displayPrompt(true);          // force
 }
 
