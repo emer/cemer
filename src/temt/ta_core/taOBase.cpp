@@ -70,3 +70,8 @@ void taOBase::RemoveAllUserData() {
     user_data_ = NULL;
   }
 }
+
+String taOBase::GetToolbarName() const {
+  return "<base el>";
+}
+

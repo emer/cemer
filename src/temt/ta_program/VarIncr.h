@@ -42,7 +42,7 @@ public:
 
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  String	GetToolbarName() const override { return "var+="; }
+  String	GetToolbarName() const override { return "variable+="; }
 
   PROGEL_SIMPLE_BASEFUNS(VarIncr);
 protected:

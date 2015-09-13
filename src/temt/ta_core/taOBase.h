@@ -46,10 +46,14 @@ public:
   taBase*               GetOwner() const override { return owner; }
   using inherited::GetOwner;
   taBase*               SetOwner(taBase* ta) override { owner = ta; return ta; }
+
   UserDataItem_List*    GetUserDataList(bool force = false) const override;
   void                  RemoveAllUserData() override;
   void                  CutLinks() override;
   TA_BASEFUNS(taOBase); //
+
+  virtual String        GetToolbarName() const;
+  // #IGNORE name of the program element as represented in the programming toolbar
 
 protected:
   void CanCopy_impl(const taBase* cp_fm, bool quiet, bool& ok, bool virt) const override {

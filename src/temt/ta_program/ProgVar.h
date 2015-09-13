@@ -133,6 +133,7 @@ public:
   String GetDisplayName() const override;
   String GetTypeDecoKey() const override { return "ProgVar"; }
   String GetColText(const KeyString& key, int itm_idx = -1) const override;
+  String GetToolbarName() const override { return "variable"; }
 
   virtual TypeDef*      act_object_type() const; // #IGNORE the actual object type; never NULL (taBase min)
   virtual MemberDef*    GetValMemberDef();

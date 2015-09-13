@@ -55,7 +55,7 @@ public:
   taList_impl*	children_() override {return &meth_args;}	
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "Function"; }
-  String	GetToolbarName() const override { return "meth()"; }
+  String	GetToolbarName() const override { return "method()"; }
   void 	Help() override;
 
   PROGEL_SIMPLE_BASEFUNS(MethodCall);

@@ -409,3 +409,24 @@ int ControlPanel::FindMethBase(taBase* base, MethodDef* md) {
   ControlPanelItem::StatFindItemBase(&mths, base, md, rval);
   return rval;
 }
+
+void ControlPanel::MakeTemplate_fmtype(ControlPanel* cp, TypeDef* td) {
+  taBase* tok = (taBase*)td->GetInstance();
+  if(tok) {
+    taBase* o = tok->MakeToken();
+    o->SetName("New" + td->name);
+  }
+  for(int i=0;i<td->children.size;i++) {
+    TypeDef* chld = td->children[i];
+    MakeTemplate_fmtype(cp, chld);
+  }
+}
+
+ControlPanel* ControlPanel::MakeTemplate() {
+  //TODO: this will probably get nuked and replaced with a generic maker on .root
+  ControlPanel* cp = new ControlPanel;
+  
+  MakeTemplate_fmtype(cp, &TA_ProgEl);
+  return cp;
+}
+

@@ -1121,15 +1121,19 @@ public:
   // #IGNORE perform auto loading of data from file when data table is loaded (called by PostLoadAutos) -- true if loaded
   bool                  AutoSaveData();
   // #IGNORE perform auto saving of data to file when project is saved
-  void         Dump_Load_post() override;
+  void                  Dump_Load_post() override;
 
-  int          Dump_Load_Value(std::istream& strm, taBase* par) override;
-  void         Dump_Save_pre() override;
-  String       GetTypeDecoKey() const override { return "DataTable"; }
-  int          GetSpecialState() const override;
-  taBase*      ChildDuplicate(const taBase* chld) override;
-  taBase*      ChooseNew(taBase* origin) override;
-  bool         HasChooseNew() override { return true; }
+  int                   Dump_Load_Value(std::istream& strm, taBase* par) override;
+  void                  Dump_Save_pre() override;
+  String                GetTypeDecoKey() const override { return "DataTable"; }
+  int                   GetSpecialState() const override;
+  taBase*               ChildDuplicate(const taBase* chld) override;
+  taBase*               ChooseNew(taBase* origin) override;
+  bool                  HasChooseNew() override { return true; }
+  String                GetToolbarName() const override { return "data table"; }
+
+  static DataTable*       MakeTemplate(); // #IGNORE make a template instance (with children) suitable for root.templates
+  static void           MakeTemplate_fmtype(DataTable* table, TypeDef* td); // #IGNORE make from typedef
 
   void  InitLinks();
   void  CutLinks();

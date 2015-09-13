@@ -23,6 +23,7 @@
 
 #include <QToolBox>
 #include <QToolBar>
+#include <QTabWidget>
 
 
 IViewerWidget* ToolBoxDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
@@ -43,9 +44,12 @@ iToolBoxDockViewer::~iToolBoxDockViewer()
 void iToolBoxDockViewer::Init() {
   tbx = new QToolBox();
   //note: if we don't set font, tabs seem to have too big a font
-  tbx->setFont(taiM->buttonFont(taiMisc::defFontSize));
+  tbx->setFont(taiM->buttonFont(taiMisc::fonSmall));
   setWidget(tbx);
 }
+
+
+
 
 int iToolBoxDockViewer::AssertSection(const String& sec_name) {
   int sec = -1;
@@ -58,10 +62,15 @@ int iToolBoxDockViewer::AssertSection(const String& sec_name) {
   if (sec < 0) {
     QToolBar* tb = new QToolBar;
     tb->setOrientation(Qt::Vertical);
-    sec = tbx->addItem(tb, sec_name);
+    tb->setStyleSheet("QToolButton { width: 75px; background : 0xd3d3d3; border: 1px solid #8f8f91; }");
+    // why doesn't this work to alter the look of the tabs!
+//    tb->setStyleSheet("QToolBox::tab { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #E1E1E1, stop: 0.4 #DDDDDD, stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3); border-radius: 5px; color: darkgray; };" );
+
+       sec = tbx->addItem(tb, sec_name);
   }
   return sec;
 }
+
 
 QWidget* iToolBoxDockViewer::AddClipToolWidget(int sec, iClipWidgetAction* cwa) {
   QToolBar* w = sectionWidget(sec);

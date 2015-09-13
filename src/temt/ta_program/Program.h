@@ -440,10 +440,11 @@ public: // XxxGui versions provide feedback to the user
                                    const char* g=0, const char* h=0, const char* i=0);
   // #CAT_Debug generate verbose output as given by input strings for given code line -- this is called by verbose program elements when they run
 
-  int          GetSpecialState() const override;
-  String       GetTypeDecoKey() const override { return "Program"; }
-  Variant      GetGuiArgVal(const String& fun_name, int arg_idx) override;
-  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
+  int                   GetSpecialState() const override;
+  String                GetTypeDecoKey() const override { return "Program"; }
+  Variant               GetGuiArgVal(const String& fun_name, int arg_idx) override;
+  void                  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
+  String                GetToolbarName() const override { return "program"; }
 
   void  InitLinks();
   void  CutLinks();

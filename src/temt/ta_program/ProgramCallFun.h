@@ -35,7 +35,7 @@ public:
   bool         CvtFmCode(const String& code) override;
 
   String       GetDisplayName() const override;
-  String       GetToolbarName() const override { return "prog fun()"; }
+  String       GetToolbarName() const override { return "call prog\nfunction()"; }
  
   PROGEL_SIMPLE_BASEFUNS(ProgramCallFun);
  protected:

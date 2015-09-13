@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "DynEnum.h"
+#include <ProgEl>
 
 TA_BASEFUNS_CTORS_DEFN(DynEnum);
 
@@ -76,5 +77,24 @@ void  DynEnum::NumberToName_Matrix(String_Matrix& names, const int_Matrix& vals)
 void  DynEnum::NameToNumber_Matrix(int_Matrix& vals, const String_Matrix& names) const {
   if(!enum_type) return;
   enum_type->NameToNumber_Matrix(vals, names);
+}
+
+void DynEnum::MakeTemplate_fmtype(DynEnum* an_enum, TypeDef* td) {
+  taBase* tok = (taBase*)td->GetInstance();
+  if(tok) {
+    taBase* o = tok->MakeToken();
+    o->SetName("New" + td->name);
+  }
+//  for(int i=0;i<td->children.size;i++) {
+//    TypeDef* chld = td->children[i];
+//    MakeTemplate_fmtype(an_enum, chld);
+//  }
+}
+
+DynEnum* DynEnum::MakeTemplate() {
+  DynEnum* an_enum = new DynEnum;
+  
+  MakeTemplate_fmtype(an_enum, &TA_ProgEl);
+  return an_enum;
 }
 

@@ -44,7 +44,7 @@ public:
   Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
   { return select_spec.Elem(idx, mode); }
   String    GetDisplayName() const override;
-  String    GetToolbarName() const override { return "sel cols"; }
+  String    GetToolbarName() const override { return "select\ncolumns"; }
   bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool      CvtFmCode(const String& code) override;
 

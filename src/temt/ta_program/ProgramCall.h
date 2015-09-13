@@ -56,7 +56,7 @@ public:
   taList_impl* children_() override {return &prog_args;}
   String       GetDisplayName() const override;
   String       GetTypeDecoKey() const override { return "Program"; }
-  String       GetToolbarName() const override { return "prog()"; }
+  String       GetToolbarName() const override { return "call\nprogram()"; }
 
   PROGEL_SIMPLE_BASEFUNS(ProgramCall);
 protected:

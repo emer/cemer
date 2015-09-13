@@ -29,7 +29,7 @@ class DataTable; //
 eTypeDef_Of(SetUnitsVar);
 
 class E_API SetUnitsVar: public ProgEl { 
-  // set units in input_data table to present to the network based on dynamic enum variables where the type name of the dynamic enum corresponds to the layer name in the input data: values supplied as variables
+  // #OBSOLETE set units in input_data table to present to the network based on dynamic enum variables where the type name of the dynamic enum corresponds to the layer name in the input data: values supplied as variables
 INHERITED(ProgEl)
 public:
   ProgVarRef	input_data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to the input data table

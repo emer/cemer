@@ -61,10 +61,15 @@ public:
 
   virtual bool          autoEdit() const {return auto_edit;}
 
-  String       GetTypeDecoKey() const override { return "ControlPanel"; }
-  String       GetDesc() const override { return desc; } //
-  int          UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
-  SIMPLE_LINKS(ControlPanel);
+  String                GetTypeDecoKey() const override { return "ControlPanel"; }
+  String                GetDesc() const override { return desc; } //
+  int                   UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
+  String                GetToolbarName() const override { return "cntrl pnl"; }
+
+  static ControlPanel*  MakeTemplate(); // #IGNORE make a template instance (with children) suitable for root.templates
+  static void           MakeTemplate_fmtype(ControlPanel* cp, TypeDef* td); // #IGNORE make from typedef
+
+SIMPLE_LINKS(ControlPanel);
   TA_BASEFUNS(ControlPanel);
 
 public: // public API

@@ -4569,4 +4569,23 @@ void DataTable::FindAll(taVector2i_List* found_list, const String& search_str, b
   DataUpdate(false);
 }
 
+void DataTable::MakeTemplate_fmtype(DataTable* table, TypeDef* td) {
+  taBase* tok = (taBase*)td->GetInstance();
+  if(tok) {
+    taBase* o = tok->MakeToken();
+    o->SetName("New" + td->name);
+  }
+  for(int i=0;i<td->children.size;i++) {
+    TypeDef* chld = td->children[i];
+    MakeTemplate_fmtype(table, chld);
+  }
+}
+
+DataTable* DataTable::MakeTemplate() {
+  DataTable* table = new DataTable;
+  
+  MakeTemplate_fmtype(table, &TA_ProgEl);
+  return table;
+}
+
 

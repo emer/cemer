@@ -60,7 +60,7 @@ public:
   ProgVar*     FindVarName(const String& var_nm) const override;
   String       GetDisplayName() const override;
   String       GetTypeDecoKey() const override { return "Function"; }
-  String       GetToolbarName() const override { return "fun def"; }
+  String       GetToolbarName() const override { return "function"; }
 
   // below from taNBase for name:
   bool	       HasName() const override { return true; }

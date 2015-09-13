@@ -30,6 +30,11 @@
 #include <taiMisc>
 #include <taRootBase>
 
+taTypeDef_Of(DataTable);
+taTypeDef_Of(ControlPanel);
+taTypeDef_Of(Program);
+taTypeDef_Of(Function);
+
 taTypeDef_Of(ForLoop);
 taTypeDef_Of(ForeachLoop);
 taTypeDef_Of(DoLoop);
@@ -43,48 +48,29 @@ taTypeDef_Of(IfBreak);
 taTypeDef_Of(IfReturn);
 taTypeDef_Of(IfGuiPrompt);
 taTypeDef_Of(Switch);
-
-taTypeDef_Of(CodeBlock);
-taTypeDef_Of(UserScript);
 taTypeDef_Of(StopStepPoint);
-
-taTypeDef_Of(LocalVars);
+taTypeDef_Of(Comment);
+taTypeDef_Of(BlankLineEl);
 
 taTypeDef_Of(AssignExpr);
 taTypeDef_Of(VarIncr);
 taTypeDef_Of(MemberAssign);
 taTypeDef_Of(MethodCall);
 taTypeDef_Of(MemberMethodCall);
-taTypeDef_Of(CssExpr);
-
-taTypeDef_Of(Function);
 taTypeDef_Of(FunctionCall);
-taTypeDef_Of(ReturnExpr);
-
 taTypeDef_Of(ProgramCall);
-taTypeDef_Of(ProgramCallVar);
-taTypeDef_Of(OtherProgramVar);
-
-taTypeDef_Of(PrintExpr);
-taTypeDef_Of(PrintVar);
-taTypeDef_Of(Comment);
-taTypeDef_Of(BlankLineEl);
-
-taTypeDef_Of(ProgVarFmArg);
-taTypeDef_Of(MemberFmArg);
-taTypeDef_Of(DataColsFmArgs);
-taTypeDef_Of(ControlPanelsFmArgs);
-taTypeDef_Of(RegisterArgs);
+taTypeDef_Of(ProgramCallFun);
 
 taTypeDef_Of(StaticMethodCall);
 taTypeDef_Of(MathCall);
 taTypeDef_Of(RandomCall);
 taTypeDef_Of(MiscCall);
+taTypeDef_Of(PrintExpr);
+taTypeDef_Of(PrintVar);
 
 taTypeDef_Of(DataProcCall);
 taTypeDef_Of(DataAnalCall);
 taTypeDef_Of(DataGenCall);
-// taTypeDef_Of(ImageProcCall);
 
 taTypeDef_Of(DataLoop);
 taTypeDef_Of(ResetDataRows);
@@ -116,7 +102,7 @@ void iProgramToolBar::Constr_post() {
 //  iMainWindowViewer* win = viewerWindow(); //cache
 //TODO: add the appropriate global actions
 //  int icon_sz = (int)(1.1f * (float)taiM_->label_height(taiMisc::sizMedium));
-  int icon_sz = taiM_->label_height(taiMisc::sizMedium);
+  int icon_sz = taiM_->label_height(taiMisc::sizSmall);
   this->setIconSize(QSize(icon_sz, icon_sz));
 }
 
@@ -142,7 +128,7 @@ static void ptbp_deco_widget(QWidget* widg, taBase* obj) {
 
 //static void ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td) {
 void iProgramToolBar::ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td) {
-  ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
+  taOBase* obj = (taOBase*)tabMisc::root->GetTemplateInstance(td);
   if(td == &TA_ForLoop) {
     ((ForLoop*)obj)->init.expr = "_toolbox_tmp_"; // flag for auto-updating of for loop var
   }
@@ -152,13 +138,19 @@ void iProgramToolBar::ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* 
 }
 
 void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
-  int sec = tb->AssertSection("Ctrl"); //note: need to keep it short
+  int sec = tb->AssertSection("New"); //note: need to keep it short
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataTable);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ControlPanel);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Program);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Function);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgVar);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DynEnum);
 
+  sec = tb->AssertSection("Control"); //note: need to keep it short
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ForLoop);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ForeachLoop);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DoLoop);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_WhileLoop);
-
   tb->AddSeparator(sec);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_If);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Else);
@@ -168,71 +160,37 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfReturn);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfGuiPrompt);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Switch);
-
-  tb->AddSeparator(sec);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_CodeBlock);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_UserScript);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_StopStepPoint);
+  tb->AddSeparator(sec);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Comment);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_BlankLineEl);
 
   ////////////////////////////////////////////////////////////////////////////
   //            Var/Fun
-  sec = tb->AssertSection("Var/Fun");
-  QWidget* widg = tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("var",
-                       tabMisc::root->GetTemplateInstance(&TA_ProgVar)));
-  ptbp_deco_widget(widg, tabMisc::root->GetTemplateInstance(&TA_ProgVar));
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_LocalVars);
-
-  tb->AddSeparator(sec);
+  sec = tb->AssertSection("Assign/Call");
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_AssignExpr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_VarIncr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MemberAssign);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MethodCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MemberMethodCall);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_CssExpr);
-
-  tb->AddSeparator(sec);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Function);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_FunctionCall);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ReturnExpr);
-
-  tb->AddSeparator(sec);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCall);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCallVar);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_OtherProgramVar);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_FunctionCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCallFun);
 
-  ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
   //            Print/Misc
-  sec = tb->AssertSection("Print/Args..");
+  sec = tb->AssertSection("Functions");
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_PrintExpr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_PrintVar);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Comment);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_BlankLineEl);
-
   tb->AddSeparator(sec);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgVarFmArg);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MemberFmArg);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataColsFmArgs);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ControlPanelsFmArgs);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_RegisterArgs);
-
-  ////////////////////////////////////////////////////////////////////////////
-  //            Misc Fun
-  sec = tb->AssertSection("Misc Fun");
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_StaticMethodCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MathCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_RandomCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MiscCall);
-  // add other spec meth calls here..
-
-  tb->AddSeparator(sec);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataProcCall);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataAnalCall);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataGenCall);
-  //  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ImageProcCall);
 
   ////////////////////////////////////////////////////////////////////////////
   //            Data processing
-  sec = tb->AssertSection("Data"); //note: need to keep it short
+  sec = tb->AssertSection("Data R/W"); //note: need to keep it short
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataLoop);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ResetDataRows);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_AddNewDataRow);
@@ -256,6 +214,13 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataCalcSetDestRow);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataCalcSetSrcRow);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataCalcCopyCommonCols);
+  
+  ////////////////////////////////////////////////////////////////////////////
+  //            Data Procs
+  sec = tb->AssertSection("Data Procs"); //note: need to keep it short
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataProcCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataAnalCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataGenCall);
 }
 
 ToolBoxRegistrar ptb(ProgramToolBoxProc);

@@ -30,7 +30,7 @@ class DynEnumType; //
 eTypeDef_Of(InitNamedUnits);
 
 class E_API InitNamedUnits: public NetBaseProgEl { 
-  // Initialize named units system -- put this in the Init code of the program and it will configure everything based on the input_data datatable (which should be the first datatable in the args or vars -- Set Unit guys will look for it there)
+  // #OBSOLETE Initialize named units system -- put this in the Init code of the program and it will configure everything based on the input_data datatable (which should be the first datatable in the args or vars -- Set Unit guys will look for it there)
 INHERITED(NetBaseProgEl)
 public:
   ProgVarRef	input_data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to the input data table -- finds the first one in the program by default (and makes one if not found)

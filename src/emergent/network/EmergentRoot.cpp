@@ -80,17 +80,12 @@ void EmergentRoot::Initialize() {
 
 void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
   int sec = tb->AssertSection("Network"); //note: need to keep it short
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_InitNamedUnits);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_SetUnitsLit);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_SetUnitsVar);
-  tb->AddSeparator(sec);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetCounterInit);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetCounterIncr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetUpdateView);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_WtInitPrompt);
   tb->AddSeparator(sec);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetDataLoop);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetGroupedDataLoop);
 }
 
 ToolBoxRegistrar emergent_ptb(PDPProgramToolBoxProc);

@@ -38,7 +38,7 @@ public:
 
   String	GetDisplayName() const override;
   String	GetTypeDecoKey() const override { return "Comment"; }
-  String	GetToolbarName() const override { return "blank"; }
+  String	GetToolbarName() const override { return "blank\nline"; }
 
   PROGEL_SIMPLE_BASEFUNS(BlankLineEl);
 protected:

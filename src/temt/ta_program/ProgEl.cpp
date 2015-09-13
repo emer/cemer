@@ -679,9 +679,6 @@ const String ProgEl::GetToolTip(const KeyString& key) const {
   return String("(") + GetToolbarName() + " " + GetTypeName() + ") : " + rval;
 }
 
-String ProgEl::GetToolbarName() const {
-  return "<base el>";
-}
 
 bool ProgEl::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   String dc = code;  dc.downcase();

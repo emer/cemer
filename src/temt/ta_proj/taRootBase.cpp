@@ -449,6 +449,9 @@ void taRootBase::About() {
 
 void taRootBase::AddTemplates() {
   templates.Add(Program::MakeTemplate());
+  templates.Add(ControlPanel::MakeTemplate());
+  templates.Add(DataTable::MakeTemplate());
+  templates.Add(DynEnum::MakeTemplate());
 }
 
 void taRootBase::AddDocs() {
