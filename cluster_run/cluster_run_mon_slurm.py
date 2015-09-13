@@ -43,7 +43,7 @@ runmon.job_launcher = 'mpirun --bind-to none --mca btl_tcp_if_include bond0'
 # specify a setup script that is run at the beginning of a job on the node the job is executed,
 # this allows to ensure that all of the enivronment variables, paths and other resources necessary
 # on the compute node is available and correctly setup.
-runmon.path_setup = "/projects/oreillyr/bin/emergent_setup.sh"
+runmon.path_setup = "/work/ccnlab/bin/emergent_setup.sh"
 
 # qstat-like command -- for quering a specific job_no 
 # sge = qstat -j <job_no>
