@@ -32,3 +32,7 @@ void VSPatchUnitSpec::Defaults_init() {
 //  }
 //}
 
+void VSPatchUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_NetinInteg(u, net, thr_no);
+  if(u->lrnmod < 0.1f) { u->net = 0.0f; } // using lrnmod to define MSN Up-state that is permissive for activation
+}
