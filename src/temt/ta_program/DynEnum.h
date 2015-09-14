@@ -67,11 +67,6 @@ public:
   // #CAT_DynEnum translate an matrix of enum names into corresponding enum numbers in matrix -- if the vals matrix does not have enough room to hold all the names, SetSize is called on it to set it to size of names
 
   String        GetDisplayName() const override;
-  String        GetToolbarName() const override { return "enum"; }
-
-  static DynEnum*       MakeTemplate(); // #IGNORE make a template instance (with children) suitable for root.templates
-  static void           MakeTemplate_fmtype(DynEnum* cp, TypeDef* td); // #IGNORE make from typedef
-
 
   TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DynEnum, Program);
 protected:

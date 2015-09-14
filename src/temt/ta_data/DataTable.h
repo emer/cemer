@@ -1132,9 +1132,6 @@ public:
   bool                  HasChooseNew() override { return true; }
   String                GetToolbarName() const override { return "data table"; }
 
-  static DataTable*       MakeTemplate(); // #IGNORE make a template instance (with children) suitable for root.templates
-  static void           MakeTemplate_fmtype(DataTable* table, TypeDef* td); // #IGNORE make from typedef
-
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(DataTable); //

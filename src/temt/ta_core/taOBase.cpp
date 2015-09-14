@@ -75,3 +75,11 @@ String taOBase::GetToolbarName() const {
   return "<base el>";
 }
 
+void taOBase::MakeTemplate_fmtype(taOBase* taO_base, TypeDef* td) {
+  taBase* tok = (taBase*)td->GetInstance();
+  if(tok) {
+    taBase* o = tok->MakeToken();
+    o->SetName("New" + td->name);
+  }
+}
+

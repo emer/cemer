@@ -40,6 +40,8 @@ public:
   virtual bool          EnumsFromDataTable(DataTable* dt, const Variant& col);
   // #BUTTON initialize enum values from values in given data table column (TIP: DynEnumTableCol is a better choice - updates automatically whenever the column values change or rows are added)
 
+  String        GetToolbarName() const override { return "enum type"; }
+
   TA_SIMPLE_BASEFUNS(DynEnumType);
 protected:
 

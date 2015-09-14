@@ -39,6 +39,9 @@
 #include <KeyBindings_List>
 #include <ClusterRun>
 #include <MTRnd>
+#include <DynEnumType>
+#include <ControlPanel>
+#include <DataTable>
 
 taTypeDef_Of(PluginWizard);
 taTypeDef_Of(StartupWizard);
@@ -92,6 +95,9 @@ extern "C" void moncontrol(int mode);
 
 using namespace std;
 
+class DataTable;
+class DynEnumType;
+class ControlPanel;
 
 int taRootBase::milestone = 0;
 TypeDef* taRootBase::root_type = NULL;
@@ -448,10 +454,23 @@ void taRootBase::About() {
 }
 
 void taRootBase::AddTemplates() {
+  // NOTE - Because Program::MakeTemplate creates all the children when you drag an instance
+  // from the toolbar you get a program with all children!
+  // SO TO DO - need to create them individually
   templates.Add(Program::MakeTemplate());
-  templates.Add(ControlPanel::MakeTemplate());
-  templates.Add(DataTable::MakeTemplate());
-  templates.Add(DynEnum::MakeTemplate());
+  
+  ControlPanel* panel = new ControlPanel;
+  MakeTemplate_fmtype(panel, &TA_ProgEl);
+  templates.Add(panel);
+  
+  DataTable* table = new DataTable;
+  MakeTemplate_fmtype(table, &TA_ProgEl);
+  templates.Add(table);
+
+  DynEnumType* enum_type = new DynEnumType;
+  MakeTemplate_fmtype(enum_type, &TA_ProgEl);
+  templates.Add(enum_type);
+
 }
 
 void taRootBase::AddDocs() {
@@ -527,7 +546,8 @@ taBase* taRootBase::GetTemplateInstance(TypeDef* typ) {
 taBase* taRootBase::GetTemplateInstance_impl(TypeDef* typ, taBase* base) {
   taBase* rval = NULL;
   TypeDef* btyp = base->GetTypeDef();
-  if (btyp->name == typ->name) return base;
+  if (btyp->name == typ->name)
+    return base;
 
   // if it is a list, check its children first (vastly more likely than member pointers)
   if (btyp->InheritsFrom(&TA_taList_impl)) {

@@ -34,6 +34,7 @@ taTypeDef_Of(DataTable);
 taTypeDef_Of(ControlPanel);
 taTypeDef_Of(Program);
 taTypeDef_Of(Function);
+taTypeDef_Of(DynEnumType);
 
 taTypeDef_Of(ForLoop);
 taTypeDef_Of(ForeachLoop);
@@ -144,7 +145,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Program);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Function);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgVar);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DynEnum);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DynEnumType);
 
   sec = tb->AssertSection("Control"); //note: need to keep it short
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ForLoop);
