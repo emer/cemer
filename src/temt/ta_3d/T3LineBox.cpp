@@ -16,9 +16,9 @@
 #include "T3LineBox.h"
 
 #include <Qt3DRenderer/Buffer>
-#include <Qt3DRenderer/QMeshData>
-#include <Qt3DRenderer/QPhongMaterial>
+#include <Qt3DRenderer/QBufferFunctor>
 #include <Qt3DRenderer/Attribute>
+#include <Qt3DRenderer/QPhongMaterial>
 
 #include <T3Misc>
 
@@ -54,66 +54,20 @@ void T3LineBox::updateSize() {
   ((T3LineBoxMesh*)mesh)->setSize(size);
 }
 
-///////////////////////////
+/////////////////////////////////////////////////
+//      Mesh, impl
 
-T3LineBoxMesh::T3LineBoxMesh(Qt3DNode* parent, const QVector3D* sz)
-  : Qt3D::QAbstractMesh(parent)
-{
-  if(sz) {
-    size = *sz;
-  }
-}
 
-T3LineBoxMesh::~T3LineBoxMesh() {
-  Qt3D::QNode::cleanup();
-}
-
-void T3LineBoxMesh::setSize(const QVector3D& sz) {
-  if(size != sz) {
-    size = sz;
-    update();
-  }
-}
-
-void T3LineBoxMesh::copy(const Qt3DNode *ref) {
-    Qt3D::QAbstractMesh::copy(ref);
-    const T3LineBoxMesh* mesh = static_cast<const T3LineBoxMesh*>(ref);
-    size = mesh->size;
-}
-
-Qt3D::QMeshDataPtr createLineBox(const QVector3D& size);
-
-class LineBoxFunctor : public Qt3D::QAbstractMeshFunctor {
-public:
-  QVector3D size;
-  
-  LineBoxFunctor(const T3LineBoxMesh& mesh)
-    : size(mesh.size)
-  {
-  }
-
-  Qt3D::QMeshDataPtr operator ()() override {
-    return createLineBox(size);
-  }
-
-  bool operator ==(const Qt3D::QAbstractMeshFunctor &other) const {
-    const LineBoxFunctor *otherFunctor = dynamic_cast<const LineBoxFunctor *>(&other);
-    if (otherFunctor != Q_NULLPTR)
-      return (otherFunctor->size == size);
-    return false;
-  }
-};
-
-Qt3D::QMeshDataPtr createLineBox(const QVector3D& size) {
+QByteArray createLineBoxVertexData(const QVector3D& size) {
   const int nVerts = 8;
 
   // Populate a buffer with the interleaved per-vertex data with
   // vec3 pos; // not: vec2 texCoord, vec3 normal, vec4 tangent
   const quint32 elementSize = 3; // + 2 + 3 + 4;
   const quint32 stride = elementSize * sizeof(float);
-  QByteArray bufferBytes;
-  bufferBytes.resize(stride * nVerts);
-  float* fptr = reinterpret_cast<float*>(bufferBytes.data());
+  QByteArray vertexBytes;
+  vertexBytes.resize(stride * nVerts);
+  float* fptr = reinterpret_cast<float*>(vertexBytes.data());
 
   const float xs = size.x();
   const float ys = size.y();
@@ -131,23 +85,40 @@ Qt3D::QMeshDataPtr createLineBox(const QVector3D& size) {
       }
     }
   }
+  return vertexBytes;
+}
+  
+class LineBoxVertexBufferFunctor : public Qt3D::QBufferFunctor {
+public:
+  QVector3D size;
+  
+  LineBoxVertexBufferFunctor(const T3LineBoxMesh& mesh)
+    : size(mesh.size)
+  {
+  }
 
+  QByteArray operator ()() override {
+    return createLineBoxVertexData(size);
+  }
+
+  bool operator ==(const Qt3D::QBufferFunctor &other) const {
+    const LineBoxVertexBufferFunctor *otherFunctor =
+      dynamic_cast<const LineBoxVertexBufferFunctor *>(&other);
+    if (otherFunctor != Q_NULLPTR)
+      return (otherFunctor->size == size);
+    return false;
+  }
+
+  QT3D_FUNCTOR(LineBoxVertexBufferFunctor)
+};
+
+
+QByteArray createLineBoxIndexData(const QVector3D& size) {
   // vertex positions
   //    6   7
   //  2   3
   //    4   5
   //  0   1 
-
-  // Wrap the raw bytes in a buffer
-  Qt3D::BufferPtr buf(new Qt3D::Buffer(QOpenGLBuffer::VertexBuffer));
-  buf->setUsage(QOpenGLBuffer::StaticDraw);
-  buf->setData(bufferBytes);
-
-  // Create the mesh data, specify the vertex format and data
-  Qt3D::QMeshDataPtr mesh(new Qt3D::QMeshData(Qt3D::QMeshData::LineStrip));
-  quint32 offset = 0;
-  mesh->addAttribute(Qt3D::QMeshData::defaultPositionAttributeName(),
-     Qt3D::AttributePtr(new Qt3D::Attribute(buf, GL_FLOAT_VEC3, nVerts, offset, stride)));
 
   // Create the index data. 
   const int indicies = 24;
@@ -167,22 +138,103 @@ Qt3D::QMeshDataPtr createLineBox(const QVector3D& size) {
   for(int i=0; i<4; i++) {      
      *idxPtr++ = i; *idxPtr++ = 4 + i; *idxPtr++ = 0xFFFF;
   }
+  return indexBytes;
+}
+
+class LineBoxIndexBufferFunctor : public Qt3D::QBufferFunctor {
+public:
+  QVector3D size;
   
-  // Wrap the index bytes in a buffer
-  Qt3D::BufferPtr indexBuffer(new Qt3D::Buffer(QOpenGLBuffer::IndexBuffer));
-  indexBuffer->setUsage(QOpenGLBuffer::StaticDraw);
-  indexBuffer->setData(indexBytes);
+  LineBoxIndexBufferFunctor(const T3LineBoxMesh& mesh)
+    : size(mesh.size)
+  {
+  }
 
-  // Specify index data on the mesh
-  mesh->setIndexAttribute(Qt3D::AttributePtr(new Qt3D::Attribute
-                                             (indexBuffer, GL_UNSIGNED_SHORT,
-                                              indicies, 0, 0)));
+  QByteArray operator ()() override {
+    return createLineBoxIndexData(size);
+  }
 
-  mesh->computeBoundsFromAttribute(Qt3D::QMeshData::defaultPositionAttributeName());
+  bool operator ==(const Qt3D::QBufferFunctor &other) const {
+    const LineBoxIndexBufferFunctor *otherFunctor =
+      dynamic_cast<const LineBoxIndexBufferFunctor *>(&other);
+    if (otherFunctor != Q_NULLPTR)
+      return (otherFunctor->size == size);
+    return false;
+  }
 
-  return mesh;
+  QT3D_FUNCTOR(LineBoxIndexBufferFunctor)
+};
+
+////////////////////////////////////////////////////
+//      Geometry
+
+class LineBoxGeometry : public Qt3D::QGeometry {
+  Q_OBJECT
+public:
+  explicit LineBoxGeometry(Qt3D::QNode *parent)
+    : Qt3D::QGeometry(parent)
+    , m_mesh((T3LineBoxMesh*)parent)
+    , m_positionAttribute(new Qt3D::QAttribute(this))
+    , m_indexAttribute(new Qt3D::QAttribute(this))
+    , m_vertexBuffer(new Qt3D::QBuffer(Qt3D::QBuffer::VertexBuffer, this))
+    , m_indexBuffer(new Qt3D::QBuffer(Qt3D::QBuffer::IndexBuffer, this))
+  {
+    m_positionAttribute->setName(Qt3D::QAttribute::defaultPositionAttributeName());
+    m_positionAttribute->setDataType(Qt3D::QAttribute::Float);
+    m_positionAttribute->setDataSize(3);
+    m_positionAttribute->setAttributeType(Qt3D::QAttribute::VertexAttribute);
+    m_positionAttribute->setBuffer(m_vertexBuffer);
+    m_positionAttribute->setByteStride(3 * sizeof(float));
+    m_positionAttribute->setCount(8);
+
+    m_indexAttribute->setAttributeType(Qt3D::QAttribute::IndexAttribute);
+    m_indexAttribute->setDataType(Qt3D::QAttribute::UnsignedShort);
+    m_indexAttribute->setBuffer(m_indexBuffer);
+    m_indexAttribute->setCount(24);
+
+    m_vertexBuffer->setBufferFunctor
+      (Qt3D::QBufferFunctorPtr(new LineBoxVertexBufferFunctor(*m_mesh)));
+    m_indexBuffer->setBufferFunctor
+      (Qt3D::QBufferFunctorPtr(new LineBoxIndexBufferFunctor(*m_mesh)));
+
+    addAttribute(m_positionAttribute);
+    addAttribute(m_indexAttribute);
+  }
+
+  ~LineBoxGeometry() {
+    Qt3D::QGeometry::cleanup();
+  }
+
+private:
+  Qt3D::QAttribute *m_positionAttribute;
+  Qt3D::QAttribute *m_indexAttribute;
+  Qt3D::QBuffer *m_vertexBuffer;
+  Qt3D::QBuffer *m_indexBuffer;
+  T3LineBoxMesh* m_mesh;
+};
+
+
+///////////////////////////////////
+//      Mesh
+
+T3LineBoxMesh::T3LineBoxMesh(Qt3DNode* parent, const QVector3D* sz)
+  : inherited(parent)
+{
+  if(sz) {
+    size = *sz;
+  }
+  LineBoxGeometry* geometry = new LineBoxGeometry(this);
+  inherited::setGeometry(geometry);
 }
 
-Qt3D::QAbstractMeshFunctorPtr T3LineBoxMesh::meshFunctor() const {
-  return Qt3D::QAbstractMeshFunctorPtr(new LineBoxFunctor(*this));
+T3LineBoxMesh::~T3LineBoxMesh() {
+  Qt3D::QNode::cleanup();
 }
+
+void T3LineBoxMesh::setSize(const QVector3D& sz) {
+  if(size != sz) {
+    size = sz;
+    //    update();                   // todo!
+  }
+}
+

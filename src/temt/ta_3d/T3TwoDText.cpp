@@ -163,6 +163,8 @@ public:
     const T3TwoDTextureDataFunctor *otherFunctor = dynamic_cast<const T3TwoDTextureDataFunctor*>(&other);
     return (otherFunctor != Q_NULLPTR && otherFunctor->image == image);
   }
+
+  QT3D_FUNCTOR(T3TwoDTextureDataFunctor)
 };
 
 Qt3D::QTextureDataFunctorPtr T3TwoDTexture::dataFunctor() const {

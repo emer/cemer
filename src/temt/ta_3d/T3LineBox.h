@@ -18,31 +18,24 @@
 
 // parent includes:
 #include <T3ColorEntity>
-#include <Qt3DRenderer/QAbstractMesh>
+#include <Qt3DRenderer/QGeometryRenderer>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API T3LineBoxMesh : public Qt3D::QAbstractMesh {
+class TA_API T3LineBoxMesh : public Qt3D::QGeometryRenderer {
   // mesh for a 3D line box  -- good for bounding boxes etc
   Q_OBJECT
-  INHERITED(Qt3D::QAbstractMesh)
+  INHERITED(Qt3D::QGeometryRenderer)
 public:
   QVector3D     size;           // size of the frame box
     
-  Qt3D::QAbstractMeshFunctorPtr meshFunctor() const override;
-
   void  setSize(const QVector3D& sz);
   // set size and update mesh
   
   explicit T3LineBoxMesh(Qt3DNode* parent = 0, const QVector3D* sz = 0);
   ~T3LineBoxMesh(); 
-
-protected:
-  void copy(const Qt3DNode* ref) override;
-private:
-  QT3D_CLONEABLE(T3LineBoxMesh)
 };
 
 

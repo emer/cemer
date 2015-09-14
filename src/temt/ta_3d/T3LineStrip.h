@@ -20,7 +20,7 @@
 #include <T3ColorEntity>
 
 // member includes:
-#include <Qt3DRenderer/QAbstractMesh>
+#include <Qt3DRenderer/QGeometryRenderer>
 #include <float_Matrix>
 #include <int_Array>
 #include <taVector3f>
@@ -28,10 +28,10 @@
 
 // declare all other types mentioned but not required to include:
 
-class TA_API T3LineStripMesh : public Qt3D::QAbstractMesh {
+class TA_API T3LineStripMesh : public Qt3D::QGeometryRenderer {
   // mesh for an arbitrary line strip with verticies and indexes
   Q_OBJECT
-  INHERITED(Qt3D::QAbstractMesh)
+  INHERITED(Qt3D::QGeometryRenderer)
 public:
   bool  node_updating;          // is the node currently updating its structure, and thus rendering should be blocked, or not?
   virtual void setNodeUpdating(bool updating);
@@ -40,15 +40,12 @@ public:
   float_Matrix  colors; // optional per-vertex colors in 1-to-1 correspondence with the point data -- these are 4 full floating-point colors RGBA per point -- packed RGBA not supported in shaders it seems..
   int_Array     indexes; // lines defined by sequential indexes into points -- use 0xFFFF to stop one line strip and then start another
     
-  Qt3D::QAbstractMeshFunctorPtr meshFunctor() const override;
-  void setMeshFunctor(Qt3D::QAbstractMeshFunctorPtr& fn) { }; // nop -- just want signal
-
   void  restart();
   // set sizes back to 0
   
-  int  pointCount()  { return points.Frames(); } // number of points
-  int  colorCount()  { return colors.Frames(); } // number of colors
-  int  indexCount()  { return indexes.size; } // number of indexes
+  int  pointCount() const { return points.Frames(); } // number of points
+  int  colorCount() const { return colors.Frames(); } // number of colors
+  int  indexCount() const { return indexes.size; } // number of indexes
   
   int  addPoint(const QVector3D& pos);
   // add given point, return index to that point
@@ -79,14 +76,6 @@ public:
 
 public slots:
   virtual void  updateLines(); // update the rendered lines
-  
-signals:
-  void  meshFunctorChanged();
-  
-protected:
-  void copy(const Qt3DNode* ref) override;
-private:
-  QT3D_CLONEABLE(T3LineStripMesh)
 };
 
 
@@ -103,9 +92,9 @@ public:
   
   void  restart()                      { lines->restart(); }
 
-  int  pointCount()  { return lines->pointCount(); } // number of vertexes
-  int  colorCount()  { return lines->colorCount(); } // number of colors
-  int  indexCount()  { return lines->indexCount(); } // number of indexes
+  int  pointCount() const { return lines->pointCount(); } // number of vertexes
+  int  colorCount() const { return lines->colorCount(); } // number of colors
+  int  indexCount() const { return lines->indexCount(); } // number of indexes
   
   int   addPoint(const QVector3D& pos) { return lines->addPoint(pos); }
   void  moveTo(const QVector3D& pos)   { lines->moveTo(pos); }

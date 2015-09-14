@@ -18,15 +18,16 @@
 
 // parent includes:
 #include <T3ColorEntity>
+#include <Qt3DRenderer/QGeometryRenderer>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API T3FrameMesh : public Qt3D::QAbstractMesh {
+class TA_API T3FrameMesh : public Qt3D::QGeometryRenderer {
   // a picture-frame shape -- rectangular with a width and thickness, oriented in XY plane
   Q_OBJECT
-  INHERITED(Qt3D::QAbstractMesh)
+  INHERITED(Qt3D::QGeometryRenderer)
 
   Q_PROPERTY(float width READ width WRITE setWidth NOTIFY widthChanged)
   Q_PROPERTY(float height READ height WRITE setHeight NOTIFY heightChanged)
@@ -55,22 +56,16 @@ public:
   { if(m_frame_width != wd) { m_frame_width = wd; update(); } }
   float frameWidth() const { return m_frame_width; }
 
+  virtual void update();
+  
   explicit T3FrameMesh(Qt3DNode *parent = 0);
   ~T3FrameMesh();
-
-  Qt3D::QAbstractMeshFunctorPtr meshFunctor() const override;
 
 signals:
   void  widthChanged();
   void  heightChanged();
   void  depthChanged();
   void  frameWidthChanged();
-  
-protected:
-  void copy(const Qt3DNode *ref) override;
-
-private:
-  QT3D_CLONEABLE(T3FrameMesh)
 };
 
 

@@ -40,7 +40,7 @@ class Qt3DNode; // #IGNORE
 #include <Qt3DCore/QScaleTransform>
 #include <Qt3DCore/QTranslateTransform>
 #include <Qt3DCore/QRotateTransform>
-#include <Qt3DRenderer/QAbstractMesh>
+#include <Qt3DRenderer/QGeometryRenderer>
 #include <Qt3DRenderer/QMaterial>
 #include <QColor>
 
@@ -67,11 +67,11 @@ public:
   Qt3D::QScaleTransform*     scale;     // overall scale transform applied to this node
   Qt3D::QTranslateTransform* translate; // overall translation transform applied to this node
   Qt3D::QRotateTransform*    rotate;    // overall rotation transform applied to this node
-  Qt3D::QAbstractMesh*       mesh;      // mesh component for this node
+  Qt3D::QGeometryRenderer*       mesh;      // mesh component for this node
   Qt3D::QMaterial*           material;  // material for this node
   QVector3D                  size;      // overall size of the object (if known) -- 0 if not
   
-  void  addMesh(Qt3D::QAbstractMesh* msh)
+  void  addMesh(Qt3D::QGeometryRenderer* msh)
   { mesh = msh; addComponent(mesh); }
   // adds mesh component, records the last one added
 
