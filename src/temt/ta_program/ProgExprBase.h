@@ -54,7 +54,8 @@ public:
     OBJ_MEMB_METH,
     SCOPED,           // Class::
     ARRAY_INDEX,
-    CALL
+    CALL,
+    PROGRAM_FUNCTION
   };
 
   String        expr;           // #EDIT_DIALOG #EDIT_WIDTH_40 #LABEL_ enter the expression here -- use Ctrl-L to pull up a lookup dialog for members, methods, types, etc -- or you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated

@@ -35,6 +35,7 @@
 #include <taiWidgetTokenChooser>
 #include <MemberProgEl>
 #include <SigLinkSignal>
+#include <taProject>
 
 TA_BASEFUNS_CTORS_DEFN(ProgExprBase);
 
@@ -426,7 +427,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   // ** Working backwards - delimiters will be in reverse order **
   for(int i=cur_pos-1; i>= 0; i--) {
     c = txt[i];
-    if(isdigit(c) || (c == '_') || (c == ' ')) {
+    if(isdigit(c) || (c == '_') || (c == ' ') || (c == ',')) {
       continue;
     }
     if(isalpha(c)) {
@@ -438,7 +439,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         continue;
       }
     }
-    if(c == ']' || c == '[' || c == '.' || c == '>' || c == '-' || c == ':') {
+    if(c == ']' || c == '[' || c == '.' || c == '>' || c == '-' || c == ':' || c == '(' || c == ')') {
       delim_pos.Add(i);
       continue;
     }
@@ -499,6 +500,17 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       prepend_txt = txt.before(expr_start);
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = ProgExprBase::SCOPED;
+      delims_used = 2;
+    }
+    else if(txt[delim_pos[0]] == ')' && delim_pos.size > 1 && txt[delim_pos[1]] == '(') { // program () which can be followed by a function in that program
+      base_path = txt.at(expr_start, delim_pos[1]-expr_start);
+      int length = base_path.length();
+      base_path = triml(base_path);
+      int shift = length - base_path.length(); // shift to compensate for trim
+      expr_start += shift;
+      prepend_txt = txt.before(txt[delim_pos[1]]);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = ProgExprBase::PROGRAM_FUNCTION;
       delims_used = 2;
     }
     // todo: [] - I think this means we need to handle arrays - rohrlich 9/2/2015
@@ -821,6 +833,25 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
         break;
       }
     }
+      
+    case ProgExprBase::PROGRAM_FUNCTION: {                 // call a function in a specific program
+      taiWidgetTokenChooser* func_look_up =  new taiWidgetTokenChooser
+      (&TA_Function, NULL, NULL, NULL, 0, lookup_seed);
+      // scope functions to the containing program - not this program
+      taProject* my_proj = own_prg->GetMyProj();
+      String scoped_prog_name = trim(prepend_txt);
+      Program* scope_program = (Program*)my_proj->programs.FindLeafName_(scoped_prog_name);
+      func_look_up->GetImageScoped(NULL, &TA_Function, scope_program, &TA_Program); // scope to this guy
+      bool okc = func_look_up->OpenChooser();
+      if(okc && func_look_up->token()) {
+        taBase* tok = func_look_up->token();
+        rval = prepend_txt + "() " + tok->GetName();
+        rval += "()";
+      }
+      new_pos = rval.length();
+      delete func_look_up;
+      break;
+    }
   }
   
   return rval;
@@ -828,7 +859,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
 
 String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                           const String& mbr_name, int& new_pos) {
-
+  
   ProgEl* own_pel = GET_MY_OWNER(ProgEl);
   if(!own_pel)
     return _nilString;
