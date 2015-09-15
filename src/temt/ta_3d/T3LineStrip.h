@@ -38,7 +38,7 @@ public:
 
   float_Matrix  points; // 3d points (verticies) for lines -- geom is 3 x n (outer is the "frame" dimension which can be increased dynamically)
   float_Matrix  colors; // optional per-vertex colors in 1-to-1 correspondence with the point data -- these are 4 full floating-point colors RGBA per point -- packed RGBA not supported in shaders it seems..
-  int_Array     indexes; // lines defined by sequential indexes into points -- use 0xFFFF to stop one line strip and then start another
+  int_Array     indexes; // lines defined by sequential indexes into points -- uses 0xFFFFFFFF to stop one line strip and then start another
     
   void  restart();
   // set sizes back to 0

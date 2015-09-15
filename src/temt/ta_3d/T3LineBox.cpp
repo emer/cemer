@@ -169,7 +169,7 @@ public:
 //      Geometry
 
 class LineBoxGeometry : public Qt3D::QGeometry {
-  Q_OBJECT
+  // Q_OBJECT
 public:
   explicit LineBoxGeometry(Qt3D::QNode *parent)
     : Qt3D::QGeometry(parent)
@@ -223,6 +223,11 @@ T3LineBoxMesh::T3LineBoxMesh(Qt3DNode* parent, const QVector3D* sz)
   if(sz) {
     size = *sz;
   }
+
+  setPrimitiveType(LineStrip);
+  setPrimitiveRestart(true);
+  setRestartIndex(0xFFFF);
+  
   LineBoxGeometry* geometry = new LineBoxGeometry(this);
   inherited::setGeometry(geometry);
 }

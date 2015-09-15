@@ -444,28 +444,64 @@ public:
 //      Geometry
 
 class FrameGeometry : public Qt3D::QGeometry {
-  Q_OBJECT
+  //  Q_OBJECT
 public:
   explicit FrameGeometry(Qt3D::QNode *parent)
     : Qt3D::QGeometry(parent)
     , m_mesh((T3FrameMesh*)parent)
     , m_positionAttribute(new Qt3D::QAttribute(this))
+    , m_texCoordAttribute(new Qt3D::QAttribute(this))
+    , m_normalAttribute(new Qt3D::QAttribute(this))
+    , m_tangentAttribute(new Qt3D::QAttribute(this))
     , m_indexAttribute(new Qt3D::QAttribute(this))
     , m_vertexBuffer(new Qt3D::QBuffer(Qt3D::QBuffer::VertexBuffer, this))
     , m_indexBuffer(new Qt3D::QBuffer(Qt3D::QBuffer::IndexBuffer, this))
   {
+    const quint32 elementSize = 3 + 2 + 3 + 4;
+    const quint32 stride = elementSize * sizeof(float);
+    const int nVerts = 64;
+    const int indexCount = 96;
+
     m_positionAttribute->setName(Qt3D::QAttribute::defaultPositionAttributeName());
     m_positionAttribute->setDataType(Qt3D::QAttribute::Float);
     m_positionAttribute->setDataSize(3);
     m_positionAttribute->setAttributeType(Qt3D::QAttribute::VertexAttribute);
     m_positionAttribute->setBuffer(m_vertexBuffer);
-    m_positionAttribute->setByteStride(3 * sizeof(float));
-    m_positionAttribute->setCount(64);
+    m_positionAttribute->setByteStride(stride);
+    m_positionAttribute->setCount(nVerts);
+
+    m_texCoordAttribute->setName
+        (Qt3D::QAttribute::defaultTextureCoordinateAttributeName());
+    m_texCoordAttribute->setDataType(Qt3D::QAttribute::Float);
+    m_texCoordAttribute->setDataSize(3);
+    m_texCoordAttribute->setAttributeType(Qt3D::QAttribute::VertexAttribute);
+    m_texCoordAttribute->setBuffer(m_vertexBuffer);
+    m_texCoordAttribute->setByteStride(stride);
+    m_texCoordAttribute->setByteOffset(3 * sizeof(float));
+    m_texCoordAttribute->setCount(nVerts);
+
+    m_normalAttribute->setName(Qt3D::QAttribute::defaultNormalAttributeName());
+    m_normalAttribute->setDataType(Qt3D::QAttribute::Float);
+    m_normalAttribute->setDataSize(3);
+    m_normalAttribute->setAttributeType(Qt3D::QAttribute::VertexAttribute);
+    m_normalAttribute->setBuffer(m_vertexBuffer);
+    m_normalAttribute->setByteStride(stride);
+    m_normalAttribute->setByteOffset(5 * sizeof(float));
+    m_normalAttribute->setCount(nVerts);
+
+    m_tangentAttribute->setName(Qt3D::QAttribute::defaultTangentAttributeName());
+    m_tangentAttribute->setDataType(Qt3D::QAttribute::Float);
+    m_tangentAttribute->setDataSize(3);
+    m_tangentAttribute->setAttributeType(Qt3D::QAttribute::VertexAttribute);
+    m_tangentAttribute->setBuffer(m_vertexBuffer);
+    m_tangentAttribute->setByteStride(stride);
+    m_tangentAttribute->setByteOffset(8 * sizeof(float));
+    m_tangentAttribute->setCount(nVerts);
 
     m_indexAttribute->setAttributeType(Qt3D::QAttribute::IndexAttribute);
     m_indexAttribute->setDataType(Qt3D::QAttribute::UnsignedShort);
     m_indexAttribute->setBuffer(m_indexBuffer);
-    m_indexAttribute->setCount(96);
+    m_indexAttribute->setCount(indexCount);
 
     m_vertexBuffer->setBufferFunctor
       (Qt3D::QBufferFunctorPtr(new FrameVertexBufferFunctor(*m_mesh)));
@@ -473,6 +509,9 @@ public:
       (Qt3D::QBufferFunctorPtr(new FrameIndexBufferFunctor(*m_mesh)));
 
     addAttribute(m_positionAttribute);
+    addAttribute(m_texCoordAttribute);
+    addAttribute(m_normalAttribute);
+    addAttribute(m_tangentAttribute);
     addAttribute(m_indexAttribute);
   }
 
@@ -482,6 +521,9 @@ public:
 
 private:
   Qt3D::QAttribute *m_positionAttribute;
+  Qt3D::QAttribute *m_texCoordAttribute;
+  Qt3D::QAttribute *m_normalAttribute;
+  Qt3D::QAttribute *m_tangentAttribute;
   Qt3D::QAttribute *m_indexAttribute;
   Qt3D::QBuffer *m_vertexBuffer;
   Qt3D::QBuffer *m_indexBuffer;
@@ -499,6 +541,10 @@ T3FrameMesh::T3FrameMesh(Qt3DNode* parent)
   m_depth = 0.05f;
   m_frame_width = 0.1f;
 
+  setPrimitiveType(Triangles);
+  // setPrimitiveRestart(true);
+  // setRestartIndex(0xFFFF);
+  
   FrameGeometry* geometry = new FrameGeometry(this);
   inherited::setGeometry(geometry);
 }

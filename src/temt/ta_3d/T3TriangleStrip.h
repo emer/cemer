@@ -20,17 +20,17 @@
 #include <T3ColorEntity>
 
 // member includes:
-#include <Qt3DRenderer/QAbstractMesh>
+#include <Qt3DRenderer/QGeometryRenderer>
 #include <float_Matrix>
 #include <int_Array>
 #include <taVector3f>
 
 // declare all other types mentioned but not required to include:
 
-class TA_API T3TriangleStripMesh : public Qt3D::QAbstractMesh {
+class TA_API T3TriangleStripMesh : public Qt3D::QGeometryRenderer {
   // mesh for an arbitrary triangle strip with verticies and indexes
   Q_OBJECT
-  INHERITED(Qt3D::QAbstractMesh)
+  INHERITED(Qt3D::QGeometryRenderer)
 public:
   enum VertexNormal {
     VTX,                        // vertex data
@@ -42,16 +42,14 @@ public:
 
   float_Matrix  vndata; // verticies and normal data -- geom is 3 x 2 x n (3d coords, vertex and normal, then outer is the "frame" dimension of points which can be increased dynamically)
   float_Matrix  colors; // optional per-vertex colors in 1-to-1 correspondence with the vertex data -- these are 4 full floating-point colors RGBA per point -- packed RGBA not supported in shaders it seems..
-  int_Array     indexes; // triangles defined by sequential indexes into vndata -- use 0xFFFF to stop one triangle strip and then start another
+  int_Array     indexes; // triangles defined by sequential indexes into vndata -- use 0xFFFFFFFF to stop one triangle strip and then start another
     
-  Qt3D::QAbstractMeshFunctorPtr meshFunctor() const override;
-  
   void  restart();
   // set sizes back to 0
 
-  int  vertexCount() { return vndata.Frames(); } // number of vertexes
-  int  colorCount()  { return colors.Frames(); } // number of colors
-  int  indexCount()  { return indexes.size; } // number of indexes
+  int  vertexCount() const { return vndata.Frames(); } // number of vertexes
+  int  colorCount() const { return colors.Frames(); } // number of colors
+  int  indexCount() const { return indexes.size; } // number of indexes
   
   int  addVertex(const QVector3D& pos, const QVector3D& norm);
   // add given vertex, normal at that vertex, return index to that point
@@ -75,14 +73,6 @@ public:
 
 public slots:
   virtual void  updateMesh(); // update the rendered mesh
-  
-signals:
-  void  meshFunctorChanged();
-  
-protected:
-  void copy(const Qt3DNode* ref) override;
-private:
-  QT3D_CLONEABLE(T3TriangleStripMesh)
 };
 
 
@@ -97,9 +87,9 @@ public:
   
   void  restart()    { tris->restart(); }
 
-  int  vertexCount() { return tris->vertexCount(); } // number of vertexes
-  int  colorCount()  { return tris->colorCount(); } // number of colors
-  int  indexCount()  { return tris->indexCount(); } // number of indexes
+  int  vertexCount() const { return tris->vertexCount(); } // number of vertexes
+  int  colorCount() const { return tris->colorCount(); } // number of colors
+  int  indexCount() const { return tris->indexCount(); } // number of indexes
   
   int  addVertex(const QVector3D& pos, const QVector3D& norm)
   { return tris->addVertex(pos, norm); }
