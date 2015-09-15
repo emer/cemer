@@ -945,8 +945,6 @@ void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
 
   ps->name = String("tag_") + tag;
   ps->desc = notes;
-  ps->mbrs.Duplicate(mbrs);     // grab our current select edit members
-  ps->CopyActiveToSaved();      // first, grab everything current, b/c we only have a subset
 
   String_Array parlst;
   parlst.Split(params, " ");    // space sep
@@ -954,6 +952,13 @@ void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
     String nm = parlst[i];
     String val = nm.after("=");
     nm = nm.before("=");
+
+    EditMbrItem* itmMain = mbrs.FindLeafName(nm);
+    if (!itmMain) {
+      taMisc::Info("Could not find control panel entry for parameter " + nm);
+      continue;
+    }
+    ps->mbrs.DuplicateEl(itmMain);
     EditMbrItem* itm = ps->mbrs.FindLeafName(nm);
     if(!itm) continue;
     if(itm->mbr && itm->mbr->type->IsBool()) {
