@@ -16,12 +16,72 @@
 #ifndef GridSearch_h
 #define GridSearch_h 1
 
+
+
+#ifdef __MAKETA__
+class   QGridSearchParameterRangeList;        // #IGNORE
+class   QGridSearchParameterRangeSetList;     // #IGNORE
+class   GridSearchParameterRange;             // #IGNORE
+#else
+
+#include <QList>
+#include "EditParamSearch"
+
+class GridSearchParameterRange { // #IGNORE
+
+private:
+  double minValue;
+  double maxValue;
+  double increment;
+
+  int idx;
+
+public:
+  GridSearchParameterRange(double minV, double maxV, double incr) {
+    minValue = minV;
+    maxValue = maxV;
+    increment = incr;
+  };
+  double getFirstValue() const { return minValue; }
+  bool hasNext() const;
+  double nextValue() { return minValue + idx++ * increment; };
+  void reset() { idx = 0; };
+};
+
+class GridSearchParameterRangeSet {
+private:
+  int range_idx;
+public:
+  taString name;
+  int values;
+  EditParamSearch * ps;
+  QList<GridSearchParameterRange *> ranges;
+  bool hasNext() const;
+  double nextValue();
+  void reset();
+
+  ~GridSearchParameterRangeSet() {
+    qDeleteAll(ranges);
+    ranges.clear();
+  }
+};
+
+
+
+typedef QList<GridSearchParameterRange *> QGridSearchParameterRangeList;
+typedef QList<GridSearchParameterRangeSet *> QGridSearchParameterRangeSetList;
+#endif
+
+
 // parent includes:
 #include <ParamSearchAlgo>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+
+
+
 
 
 taTypeDef_Of(GridSearch);
@@ -47,7 +107,13 @@ protected:
 
 private:
   void Initialize();
-  void Destroy() { }
+  void Destroy() { };
+
+  QGridSearchParameterRangeSetList search_parameters;
+
+  GridSearchParameterRange * ParseSubRange(String sub_range);
+  QGridSearchParameterRangeList ParseRange(String range); // #IGNORE
+
 };
 
 #endif // GridSearch_h

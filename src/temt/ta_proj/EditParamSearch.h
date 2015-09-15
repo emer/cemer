@@ -39,12 +39,14 @@ public:
   SearchMode            srch;           // #HIDDEN #NO_SAVE obsolete whether to use this parameter for the currently-selected search algorithm, or set it as a fixed parameter on the startup arguments
   bool                  search;         // Use this parameter in search
 
-  bool					record;         // #CONDEDIT_OFF_search #DEF_true whether we should record the parameter in the param sets for the run
+  bool                  record;         // #CONDEDIT_OFF_search #DEF_true whether we should record the parameter in the param sets for the run
 
-  double                min_val;        // #CONDSHOW_ON_search:true minimum value to consider for parameter searching purposes
-  double                max_val;        // #CONDSHOW_ON_search:true maximum value to consider for parameter searching purposes
-  double                next_val;       // #CONDSHOW_ON_search:true computed next value to assign to this item in the parameter search
-  double                incr;           // #CONDSHOW_ON_search:true suggested increment to use in searching this parameter (e.g., for grid search)
+  String                range;           // #CONDSHOW_ON_search:true specify the range and increments over which to search this parameter -- e.g. 1;2;3:1:5;10:2:20
+  double                next_val;       // #HIDDEN #NO_SAVE computed next value to assign to this item in the parameter search
+
+  double                min_val;        // #HIDDEN #NO_SAVE obsolete -- minimum value to consider for parameter searching purposes
+  double                max_val;        // #HIDDEN #NO_SAVE obsolete -- maximum value to consider for parameter searching purposes
+  double                incr;           // #HIDDEN #NO_SAVE obsolete -- suggested increment to use in searching this parameter (e.g., for grid search)
 
 
   TA_SIMPLE_BASEFUNS(EditParamSearch);
