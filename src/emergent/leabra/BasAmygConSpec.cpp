@@ -19,7 +19,7 @@ TA_BASEFUNS_CTORS_DEFN(BasAmygConSpec);
 
 void BasAmygConSpec::Initialize() {
   ba_type = ACQ;
-  neg_da_gain = 1.0f;
+  dip_da_gain = 1.0f;
   invert_da = false;
 }
 

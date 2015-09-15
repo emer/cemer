@@ -36,12 +36,12 @@ public:
   };
 
   BasAmygType   ba_type;        // type of basal amgydala neuron
-  float         neg_da_gain;    // multiplicative gain factor applied to negative dopamine signals -- this value should always be >= 0 and should be < 1 to cause negative da to be reduced relative to positive, thus reducing the level of unlearning in this pathway -- applies to negative of da for the extinction pathway (i.e., to positive da values)
+  float         dip_da_gain;    // multiplicative gain factor applied to negative dopamine signals -- this value should always be >= 0 and should be < 1 to cause negative da to be reduced relative to positive, thus reducing the level of unlearning in this pathway -- applies to negative of da for the extinction pathway (i.e., to positive da values)
   bool          invert_da;   // if true, wt changes go in opposite direction to the standard case; analogous to NoGo guys in striatum; generally, for PosLV_BasAmyg layers/units should be false; for NegPV_ guys should be true
 
   inline float  GetDa(float da) {
-    if(!invert_da) { return (da < 0.0f) ? neg_da_gain * da : da; }
-    else { return (da >= 0.0f) ? neg_da_gain * da : da; }
+    if(!invert_da) { return (da < 0.0f) ? dip_da_gain * da : da; }
+    else { return (da >= 0.0f) ? dip_da_gain * da : da; }
   }
   // get neg-modulated dopamine value
 
@@ -55,7 +55,12 @@ public:
   inline void C_Compute_dWt_BasAmyg_Ext(float& dwt, const float su_act,
                                         const float lrnmod, const float da_p,
                                         const float da_n) {
-      dwt += cur_lrate * su_act * lrnmod * (GetDa(-da_p) + GetDa(-da_n));
+// NOTE: the -da_p arg was inverting the dip_da_gain effect - BAD!!!
+    // NOTE: BasAmyg now only listening to the Schultzian (VTAp) guys
+    //      dwt += cur_lrate * su_act * lrnmod * (GetDa(-da_p) + GetDa(-da_n));
+    // NOTE: the lrnmod param here was making extinction excruciatingly slow since it gets smaller as _Ext activation increases; already have soft wt bounding, etc. so together it takes forever!!
+    float eff_lrnmod = (lrnmod >= 0.1f) ? 1.0f : 0.0f; // discretize to 0, 1
+    dwt -= cur_lrate * su_act * eff_lrnmod * (GetDa(da_p));
 //      dwt += cur_lrate * su_act * (GetDa(-da_p) + GetDa(-da_n));
     if(invert_da) dwt = -dwt;
   }
