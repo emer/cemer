@@ -85,7 +85,7 @@ public:
 
   String                desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
   ProgFlags             flags;  // flags for modifying program element function or providing information about the status of this program element
-  String                orig_prog_code; // #HIDDEN original program code in a ProgCode used to create this element -- used e.g. for reverting
+  String                orig_prog_code; // #READ_ONLY #SHOW original program code in a ProgCode used to create this element -- used e.g. for reverting
 
   virtual ProgEl*       parent() const
   { return (ProgEl*)const_cast<ProgEl*>(this)->GetOwner(&TA_ProgEl); }
