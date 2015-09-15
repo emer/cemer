@@ -58,6 +58,7 @@
 #include <Qt3DRenderer/QFrameGraph>
 #include <Qt3DRenderer/QPhongMaterial>
 
+#include <Qt3DRenderer/QWindow>
 #include <Qt3DRenderer/QViewport>
 #include <Qt3DRenderer/QCameraSelector>
 #include <Qt3DRenderer/QClearBuffer>

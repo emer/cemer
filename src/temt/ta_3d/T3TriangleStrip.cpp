@@ -57,7 +57,7 @@ public:
   }
 
   bool operator ==(const Qt3D::QBufferFunctor &other) const {
-    //    return false;               // always update!!
+    return false;               // always update!!
     const TriangleStripVertexBufferFunctor *otherFunctor =
       dynamic_cast<const TriangleStripVertexBufferFunctor *>(&other);
     if (otherFunctor != Q_NULLPTR)
@@ -88,7 +88,7 @@ public:
     //   n_indexes = 0;
     // }
     // else {
-    n_indexes = mesh.indexCount();
+      n_indexes = mesh.indexCount();
     // }
   }
 
@@ -141,7 +141,7 @@ public:
   }
 
   bool operator ==(const Qt3D::QBufferFunctor &other) const {
-    //    return false;               // always update!!
+    return false;               // always update!!
     const TriangleStripColorBufferFunctor *otherFunctor =
       dynamic_cast<const TriangleStripColorBufferFunctor *>(&other);
     if (otherFunctor != Q_NULLPTR)
@@ -284,7 +284,7 @@ void T3TriangleStripMesh::setNodeUpdating(bool updating) {
   blockNotifications(node_updating); // block if updating
   if(should_render) {
 #ifdef DEBUG
-    //    taMisc::Info("TriangleStrip mesh update");
+    // taMisc::Info("TriangleStrip mesh update");
     if(colors.Frames() > 0 && colors.Frames() != vndata.Frames()) {
       taMisc::Warning("T3TriangleStripMesh: colors != vndata vertices, colors:",
                       String(colors.Frames()), " vs. verticies:", String(vndata.Frames()));

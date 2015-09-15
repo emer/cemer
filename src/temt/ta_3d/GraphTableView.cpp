@@ -735,6 +735,10 @@ void GraphTableView::SigRecvUpdateView_impl() {
   int delta_rows = CheckRowsChanged(old_rows);
   
   if (!isVisible()) return;
+
+#ifdef TA_QT3D  
+  // RemoveGraph();
+#endif // TA_QT3D
   
   if(delta_rows > 0) {
     // if we were not at the very end, then don't scroll, but do update the panel
