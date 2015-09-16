@@ -81,6 +81,8 @@ taTypeDef_Of(DataVarProg);
 taTypeDef_Of(DataVarRead);
 taTypeDef_Of(DataVarWrite);
 taTypeDef_Of(DataVarProgMatrix);
+taTypeDef_Of(OtherProgramVar);
+taTypeDef_Of(ProgramCallVar);
 
 taTypeDef_Of(DataSortProg);
 taTypeDef_Of(DataGroupProg);
@@ -222,6 +224,14 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataProcCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataAnalCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataGenCall);
+  
+  ////////////////////////////////////////////////////////////////////////////
+  //            Expert
+  sec = tb->AssertSection("Expert"); //note: need to keep it short
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_OtherProgramVar);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCallVar);
+  
+
 }
 
 ToolBoxRegistrar ptb(ProgramToolBoxProc);
