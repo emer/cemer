@@ -1758,7 +1758,7 @@ void ClusterRun::RunCommand(String& cmd, String& params, bool use_cur_vals) {
   bool first = true;
   FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, mbrs) {
     const EditParamSearch &ps = mbr->param_search;
-    if (ps.record) {
+    if (mbr->is_single && ps.record) {
       if(!first)
         params.cat(" "); // sep
       else

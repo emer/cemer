@@ -26,6 +26,7 @@ void EditParamSearch::Initialize() {
   max_val = 1.0f;
   next_val = 0.0f;
   incr = 0.1f;
+  record = false;
 }
 
 void EditParamSearch::Destroy() {

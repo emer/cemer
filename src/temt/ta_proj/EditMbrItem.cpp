@@ -66,6 +66,7 @@ void EditMbrItem::UpdateAfterEdit_impl() {
   }
   if(!is_single) {
     param_search.search = false;
+    param_search.record = false;
   }
   else if(!is_numeric && param_search.search) {
     param_search.search = false;
