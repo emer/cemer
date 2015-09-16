@@ -31,13 +31,17 @@ T3GraphViewNode::T3GraphViewNode(Qt3DNode* parent, T3DataView* dataView_, float 
   : inherited(parent, dataView_)
   , width(wd)
   , show_drag(show_drg)
-  , frame(new T3LineBox(this))
+  , frame(NULL)
   , x_axis(new T3Entity(this))
   , y_axes(new T3Entity(this))
   , z_axis(new T3Entity(this))
   , legend(new T3Entity(this))
   , graphs(new T3Entity(this))
 {
+  if(show_drag) {
+    frame = new T3LineBox(this);
+  }
+
   updateNode();
 }
 
@@ -51,11 +55,14 @@ void T3GraphViewNode::setWidth(float wdth) {
 
 void T3GraphViewNode::updateNode() {
   inherited::updateNode();
-  float frmg2 = 2.0f * frame_margin;
 
-  QVector3D fr_sz(width + frmg2, 1.0f + frmg2 * 1.4f, frame_width);
-  frame->setSize(fr_sz);
-  frame->setColor(T3Misc::frame_clr());
+  if(frame) {
+    float frmg2 = 2.0f * frame_margin;
+
+    QVector3D fr_sz(width + frmg2, 1.0f + frmg2 * 1.4f, frame_width);
+    frame->setSize(fr_sz);
+    frame->setColor(T3Misc::frame_clr());
+  }
 }
 
 void T3GraphViewNode::setDefaultCaptionTransform() {

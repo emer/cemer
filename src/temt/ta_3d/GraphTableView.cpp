@@ -725,6 +725,13 @@ void GraphTableView::UpdateDisplay(bool update_panel) {
   }
   
   if (update_panel) UpdatePanel();
+
+#ifdef TA_QT3D
+  Render();                     // this is brute force and works, for now..
+  return;
+  //  RemoveGraph();
+#endif // TA_QT3D
+
   Render_impl();
 }
 
@@ -736,8 +743,10 @@ void GraphTableView::SigRecvUpdateView_impl() {
   
   if (!isVisible()) return;
 
-#ifdef TA_QT3D  
-  // RemoveGraph();
+#ifdef TA_QT3D
+  Render();                     // this is brute force and works, for now..
+  return;
+  //  RemoveGraph();
 #endif // TA_QT3D
   
   if(delta_rows > 0) {
@@ -756,6 +765,12 @@ void GraphTableView::SigRecvUpdateView_impl() {
   ComputeAxisRanges();
   SetScrollBars();
   RenderGraph();
+
+#ifdef TA_QT3D
+  // taMisc::ProcessEvents();
+  RenderGraph();
+#endif // TA_QT3D
+
 }
 
 void GraphTableView::ComputeAxisRanges() {

@@ -303,10 +303,6 @@ void T3TriangleStripMesh::restart() {
 int T3TriangleStripMesh::addVertex(const QVector3D& pos, const QVector3D& norm) {
   vndata.AddFrame();
   int idx = vndata.Frames()-1;
-  if(idx == 0xFFFFFFFF) {
-    vndata.AddFrame();          // skip!!!
-    idx = vndata.Frames()-1;
-  }
   vndata.Set(pos.x(), 0, VTX, idx);
   vndata.Set(pos.y(), 1, VTX, idx);
   vndata.Set(pos.z(), 2, VTX, idx);
@@ -320,10 +316,6 @@ int T3TriangleStripMesh::addVertex(const QVector3D& pos, const QVector3D& norm) 
 int T3TriangleStripMesh::addVertex(const taVector3f& pos, const taVector3f& norm) {
   vndata.AddFrame();
   int idx = vndata.Frames()-1;
-  if(idx == 0xFFFFFFFF) {
-    vndata.AddFrame();          // skip!!!
-    idx = vndata.Frames()-1;
-  }
   vndata.Set(pos.x, 0, VTX, idx);
   vndata.Set(pos.y, 1, VTX, idx);
   vndata.Set(pos.z, 2, VTX, idx);
@@ -351,10 +343,6 @@ void T3TriangleStripMesh::addBreak() {
 int T3TriangleStripMesh::addColor(const QColor& clr) {
   colors.AddFrame();
   int idx = colors.Frames()-1;
-  if(idx == 0xFFFFFFFF) {
-    colors.AddFrame();          // skip!!!
-    idx = colors.Frames()-1;
-  }
   colors.Set(clr.redF(), 0, idx);
   colors.Set(clr.greenF(), 1, idx);
   colors.Set(clr.blueF(), 2, idx);

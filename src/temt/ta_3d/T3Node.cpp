@@ -18,6 +18,7 @@
 #include <iColor>
 #include <T3Panel>
 
+
 #ifdef TA_QT3D
 
 #include <T3TwoDText>
@@ -45,6 +46,8 @@ void T3Node::setCaption(const QString& txt) {
 void T3Node::createCaption() {
   if(caption) return;
   caption = new T3TwoDText(this);
+  iColor txtcolr = getTextColor();
+  caption->setTextColor(txtcolr);
   setDefaultCaptionTransform();
 }
 
@@ -57,6 +60,14 @@ void T3Node::setDefaultCaptionTransform() {
 void T3Node::resizeCaption(float sz) {
   if(!caption) return;
   caption->Scale(sz);
+}
+
+iColor T3Node::getTextColor() {
+  if(data_view) {
+    T3Panel* fr = data_view->GetFrame();
+    return fr->GetTextColor();
+  }
+  return iColor(0, 0, 0);
 }
 
 #else
@@ -166,14 +177,8 @@ SoAsciiText* T3Node::captionNode(bool auto_create) {
   SoSeparator* cs = captionSeparator(auto_create); //note: ac is true
   SoBaseColor* bc = new SoBaseColor;
 
-  if (T3DataView* dview = dataView()) {
-    T3Panel* fr = dview->GetFrame();
-    iColor txtcolr = fr->GetTextColor();
-    bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
-  }
-  else {
-    bc->rgb.setValue(0, 0, 0); //black is default for text
-  }
+  iColor txtcolr = getTextColor();
+  bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
   insertChildBefore(cs, bc, NULL); // at end
   captionNode_ = new SoAsciiText();
 //  captionNode_->setName("captionNode");
@@ -214,6 +219,14 @@ void T3Node::setCaption(const char* value) {
 void T3Node::resizeCaption(float sz) {
   SoFont* font = captionFont(true);
   font->size.setValue(sz);
+}
+
+iColor T3Node::getTextColor() {
+  if(T3DataView* dview = dataView()) {
+    T3Panel* fr = dview->GetFrame();
+    return fr->GetTextColor();
+  }
+  return iColor(0, 0, 0);
 }
 
 void T3Node::transformCaption(const iVec3f& translate)

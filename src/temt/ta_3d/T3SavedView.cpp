@@ -17,6 +17,8 @@
 
 #ifdef TA_QT3D
 
+#include <taMisc>
+
 #else // TA_QT3D
 
 #include <Inventor/SbLinear.h>
@@ -33,7 +35,7 @@ void T3SavedView::Initialize() {
   view_action = NULL;
   pos = 0.0f;
 #ifdef TA_QT3D
-  pos.z = -5.0f;
+  pos.z = 2.0f;
   up = 0.0f; up.y = 1.0f;
   look_at = 0.0f;
 #else // TA_QT3D
@@ -42,6 +44,19 @@ void T3SavedView::Initialize() {
 }
 
 #ifdef TA_QT3D
+
+void T3SavedView::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) {
+    taVersion v783(7, 8, 3);
+    if(taMisc::loading_version < v783) { // update to Qt3D
+      pos.x -= 0.5f;
+      pos.y -= 0.5f;
+      look_at.x = pos.x;                 // update to parallel view by default
+      look_at.y = pos.y;
+    }
+  }
+}
 
 void T3SavedView::getCameraParams(Qt3D::QCamera* cam) {
   pos = cam->position();
@@ -59,6 +74,10 @@ bool T3SavedView::setCameraParams(Qt3D::QCamera* cam) {
 }
 
 #else // TA_QT3D
+
+void T3SavedView::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
 
 void T3SavedView::getCameraParams(SoCamera* cam) {
   SbVec3f sb_pos = cam->position.getValue();

@@ -104,7 +104,7 @@ protected:
 
 protected:
 //  void                        hideEvent(QHideEvent* ev);
-  void                  showEvent(QShowEvent* ev);
+  void                  showEvent(QShowEvent* ev) override;
   void                  Showing(bool showing);
 
 private:

@@ -29,31 +29,33 @@ T3NetNode::T3NetNode(Qt3DNode* parent, T3DataView* dataView_, bool show_dr,
   , show_drag(show_dr)
   , show_net_text_drag(show_n_drg)
   , mode_2d(md2d)
-  , frame(new T3LineBox(this))
+  , frame(NULL)
   , net_text(new T3Entity(this))
   , wt_lines(new T3LineStrip(this))
 {
-  frame->setColor(T3Misc::frame_clr());
-
   float net_margin = 0.05f;
   float two_net_marg = 2.0f * net_margin;
   float tnm1 = 1.0f + two_net_marg;
 
-  if(mode_2d) {
-    QVector3D fr_sz(tnm1, two_net_marg, tnm1);
-    frame->setSize(fr_sz);
+  if(show_drag) {
+    frame = new T3LineBox(this);
+    frame->setColor(T3Misc::frame_clr());
+    if(mode_2d) {
+      QVector3D fr_sz(tnm1, two_net_marg, tnm1);
+      frame->setSize(fr_sz);
+    }
+    else {
+      QVector3D fr_sz(tnm1, tnm1, tnm1);
+      frame->setSize(fr_sz);
+    }
+    if(mode_2d) {
+      frame->Translate(0.0f, 0.0f, 0.0f);
+    }
+    else {
+      frame->TranslateZFrontTo(QVector3D(0.0f, 0.0f, 0.0f));
+    }
   }
-  else {
-    QVector3D fr_sz(tnm1, tnm1, tnm1);
-    frame->setSize(fr_sz);
-  }
-  if(mode_2d) {
-    frame->Translate(0.0f, 0.0f, 0.0f);
-  }
-  else {
-    frame->TranslateZFrontTo(QVector3D(0.0f, 0.0f, 0.0f));
-    wt_lines->TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.5f));
-  }
+  wt_lines->TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.5f));
 }
 
 T3NetNode::~T3NetNode() {

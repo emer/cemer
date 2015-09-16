@@ -200,6 +200,7 @@ public:
   void                  setBackgroundColor(const QColor & color);
   QColor                backgroundColor() const { return bg_color; }
   void                  setCameraParams(const T3CameraParams& cps);
+  void                  updateAspectRatio(); // get aspect ratio from current window size
 #else
   SoCamera*             getViewerCamera() const;
   // helper function get the quarter viewer camera (not immediately avail on quarter widget)
@@ -315,6 +316,7 @@ protected:
   // implementation function that will rotate view camera given angle (in radians) around given axis
   virtual void  PanView(const QVector3D& dir, const float dist);
   // implementation function that will move (pan) view camera given distance in given direction
+  void    showEvent(QShowEvent* ev) override;
 #else
   virtual void  RotateView(const SbVec3f& axis, const float ang);
   // implementation function that will rotate view camera given angle (in radians) around given axis

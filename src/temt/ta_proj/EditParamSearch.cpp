@@ -35,17 +35,17 @@ void EditParamSearch::Destroy() {
 void EditParamSearch::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) {
-		taVersion v783(7, 8, 3);
-		if (taMisc::loading_version < v783) { // update from enum to bool..
-			if (srch == SET) {
-				search = false;
-				record = true;
-			}
-			if (srch == SRCH) {
-				search = true;
-				record = true;
-			}
-		}
+    taVersion v783(7, 8, 3);
+    if (taMisc::loading_version < v783) { // update from enum to bool..
+      if (srch == SET) {
+        search = false;
+        record = true;
+      }
+      if (srch == SRCH) {
+        search = true;
+        record = true;
+      }
+    }
   }
   if (search) record = true;
 }

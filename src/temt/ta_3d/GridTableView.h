@@ -173,6 +173,7 @@ protected:
   void         Clear_impl() override;
   void         Render_pre() override; // #IGNORE
   void         Render_impl() override; // #IGNORE
+  void         SigRecvUpdateView_impl() override;
 
   void         UpdateFromDataTable_this(bool first) override;
 

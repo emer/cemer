@@ -33,6 +33,8 @@ public:
     
   void  setSize(const QVector3D& sz);
   // set size and update mesh
+
+  virtual void updateSize();
   
   explicit T3LineBoxMesh(Qt3DNode* parent = 0, const QVector3D* sz = 0);
   ~T3LineBoxMesh(); 

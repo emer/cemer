@@ -96,6 +96,8 @@ public:
   iAction*    view_action;    // #IGNORE action for the gotoview function
 
   TA_SIMPLE_BASEFUNS(T3SavedView);
+protected:
+  void  UpdateAfterEdit_impl();
 private:
   void  Initialize();
   void  Destroy()       { };

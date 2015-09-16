@@ -58,7 +58,6 @@
 #include <Qt3DRenderer/QFrameGraph>
 #include <Qt3DRenderer/QPhongMaterial>
 
-#include <Qt3DRenderer/QWindow>
 #include <Qt3DRenderer/QViewport>
 #include <Qt3DRenderer/QCameraSelector>
 #include <Qt3DRenderer/QClearBuffer>
@@ -177,8 +176,10 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   T3Panel* panl = GetPanel();
   scene = NULL;
   bg_color = QColor::fromRgbF(0.0, 0.5, 1.0, 1.0);
+
+  QScreen* scr = QApplication::screens().at(0); // first screen
   
-  view3d = new T3RenderView();
+  view3d = new T3RenderView(scr);
   QWidget* container = QWidget::createWindowContainer(view3d);
   main_hbox->addWidget(container, 1);
   engine = new Qt3D::QAspectEngine;
@@ -198,6 +199,9 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
   QSize sz = container->size();
   float aspect_ratio = (float)sz.width() / (float)sz.height();
+  // if(sz.width() < 10 || sz.height() < 10) {
+    // taMisc::Info("size: ", String(sz.width()), ",", String(sz.height()));
+  // }
   
   camera->lens()->setPerspectiveProjection(45.0f, aspect_ratio, 0.1f, 1000.0f);
   if(panl) {
@@ -369,7 +373,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   Constr_Bot_Buttons();
   
   //   quarter->setInteractionModeOn(false);
-  setInteractionModeOn(false);  // default start it off!
+  setInteractionModeOn(false, false);  // default start it off!
   setFocusPolicy(Qt::StrongFocus);
 }
 
@@ -968,6 +972,7 @@ void T3ExaminerViewer::setSceneGraph(Qt3D::QEntity* root) {
   }
   scene = root;
   scene->setParent(root_entity);
+  updateAspectRatio();
 }
 
 void T3ExaminerViewer::setBackgroundColor(const QColor & color) {
@@ -981,6 +986,12 @@ void T3ExaminerViewer::setCameraParams(const T3CameraParams& cps) {
   camera->lens()->setFarPlane(cps.far);
 }
 
+void T3ExaminerViewer::updateAspectRatio() {
+  QSize sz = view3d->size();
+  float aspect_ratio = (float)sz.width() / (float)sz.height();
+  camera->lens()->setAspectRatio(aspect_ratio);
+}
+ 
 #else
 
 SoCamera* T3ExaminerViewer::getViewerCamera() const {
@@ -1250,7 +1261,22 @@ bool T3ExaminerViewer::syncCursor() {
 
 void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
   viewer_mode = (ViewerMode)onoff; // enum matches
-#ifndef TA_QT3D
+#ifdef TA_QT3D
+  if(viewer_mode == INTERACT) {
+    interact_button->setChecked(true);
+    view_button->setChecked(false);
+  }
+  else {
+    interact_button->setChecked(false);
+    view_button->setChecked(true);
+  }
+  if(re_render) {
+    T3Panel* panl = GetPanel();
+    if(panl) {
+      panl->Render();
+    }
+  }
+#else
   if(quarter->interactionModeOn() != onoff) {
     SoEventManager* emgr = quarter->getSoEventManager();
     if(onoff) {
@@ -1437,9 +1463,14 @@ do_inherited:
 void T3ExaminerViewer::resizeEvent(QResizeEvent* ev) {
   inherited::resizeEvent(ev);
 #ifdef TA_QT3D
-  QSize sz = view3d->size();
-  float aspect_ratio = (float)sz.width() / (float)sz.height();
-  camera->lens()->setAspectRatio(aspect_ratio);
+  updateAspectRatio();
 #endif // TA_QT3D
 }
 
+#ifdef TA_QT3D
+void T3ExaminerViewer::showEvent(QShowEvent* ev) {
+  inherited::showEvent(ev);
+  updateAspectRatio();
+}
+#endif
+ 

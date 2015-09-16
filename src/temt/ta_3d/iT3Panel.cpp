@@ -165,13 +165,13 @@ void iT3Panel::Refresh_impl() {
 }
 
 void iT3Panel::RegisterPanel(iViewPanel* pan) {
-    if (panel_set) {
-      panel_set->AddSubPanel(pan);
-    }
+  if (panel_set) {
+    panel_set->AddSubPanel(pan);
+  }
 #ifdef DEBUG
-    else {
-      taMisc::Warning("Attempt to RegisterPanel failed because it doesn't exist!");
-    }
+  else {
+    taMisc::Warning("Attempt to RegisterPanel failed because it doesn't exist!");
+  }
 #endif
 }
 

@@ -205,6 +205,11 @@ public:
     Qt3D::QGeometry::cleanup();
   }
 
+  void updateSize() {
+    m_vertexBuffer->setBufferFunctor
+      (Qt3D::QBufferFunctorPtr(new LineBoxVertexBufferFunctor(*m_mesh)));
+  }
+
 private:
   Qt3D::QAttribute *m_positionAttribute;
   Qt3D::QAttribute *m_indexAttribute;
@@ -239,7 +244,10 @@ T3LineBoxMesh::~T3LineBoxMesh() {
 void T3LineBoxMesh::setSize(const QVector3D& sz) {
   if(size != sz) {
     size = sz;
-    //    update();                   // todo!
+    updateSize();
   }
 }
 
+void T3LineBoxMesh::updateSize() {
+  static_cast<LineBoxGeometry *>(geometry())->updateSize();
+}

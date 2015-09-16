@@ -519,6 +519,11 @@ public:
     Qt3D::QGeometry::cleanup();
   }
 
+  void updateGeometry() {
+    m_vertexBuffer->setBufferFunctor
+      (Qt3D::QBufferFunctorPtr(new FrameVertexBufferFunctor(*m_mesh)));
+  }
+
 private:
   Qt3D::QAttribute *m_positionAttribute;
   Qt3D::QAttribute *m_texCoordAttribute;
@@ -553,8 +558,8 @@ T3FrameMesh::~T3FrameMesh() {
   Qt3D::QNode::cleanup();
 }
 
-void T3FrameMesh::update() {
-  // todo!
+void T3FrameMesh::updateGeometry() {
+  static_cast<FrameGeometry *>(geometry())->updateGeometry();
 }
 
 

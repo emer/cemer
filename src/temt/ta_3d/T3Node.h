@@ -19,6 +19,8 @@
 // parent includes:
 #include "ta_def.h"
 
+class iColor;
+
 #ifdef TA_QT3D
 
 class T3DataView;  //
@@ -51,6 +53,8 @@ public:
   // set the default caption transform; this is called after creating caption first time
   virtual void	        resizeCaption(float sz);
   // resize caption to given fractional height relative to a 1.0 viewport height
+  virtual iColor        getTextColor();
+  // get the text color from the T3Panel
   
   virtual void		clear() { } // optional method, for clearing out the content; called from ReInit
   virtual void		updateNode() { } // update all the geom, children etc of node
@@ -247,7 +251,9 @@ public:
 
   virtual const char*	caption();
   virtual void		setCaption(const char* value); //NOTE: if you want to transform, you MUST call transformCaption every time after calling setCaption
-
+  virtual iColor        getTextColor();
+  // get the text color from the T3Panel
+  
   virtual void		clear() {} // optional method, for clearing out the content; called from ReInit
   void			transformCaption(const iVec3f& translate); // #IGNORE
   void			transformCaption(const SbRotation& rotate, const iVec3f& translate); // #IGNORE

@@ -1354,6 +1354,7 @@ void NetView::Render_net_text() {
 #ifdef TA_QT3D
       T3TwoDText* txt = new T3TwoDText(net_txt);
       txt->align = T3_ALIGN_LEFT;
+      txt->setTextColor(txtcolr);
 #else // TA_QT3D
       SoSeparator* tsep = new SoSeparator;
       net_txt->addChild(tsep);
@@ -1371,7 +1372,7 @@ void NetView::Render_net_text() {
       float xv = 0.05f + (float)cur_col / (float)(per_row);
       float yv = ((float)(cur_row+1.0f) / (float)(n_rows + 2.0f));
 #ifdef TA_QT3D
-      txt->Translate(xv, 0.0f, -yv);
+      txt->Translate(xv-0.5f, 0.0f, -yv + 0.5f);
       txt->RotateDeg(1.0f, 0.0f, 0.0f, net_text_rot);
       txt->Scale(font_sizes.net_vals);
 #else // TA_QT3D
@@ -1395,7 +1396,6 @@ void NetView::Render_net_text() {
     }
 #ifdef TA_QT3D
     T3TwoDText* txt = dynamic_cast<T3TwoDText*>(net_txt->children().at(chld_idx));
-    txt->align = T3_ALIGN_LEFT;
 #else // TA_QT3D
     SoSeparator* tsep = (SoSeparator*)net_txt->getChild(chld_idx + txt_st_off);
     SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);

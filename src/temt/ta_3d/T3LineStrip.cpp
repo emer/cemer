@@ -286,10 +286,6 @@ void T3LineStripMesh::restart() {
 int T3LineStripMesh::addPoint(const QVector3D& pos) {
   points.AddFrame();
   int idx = points.Frames()-1;
-  if(idx == 0xFFFFFFFF) {
-    points.AddFrame();          // skip!!!
-    idx = points.Frames()-1;
-  }
   points.Set(pos.x(), 0, idx);
   points.Set(pos.y(), 1, idx);
   points.Set(pos.z(), 2, idx);
@@ -311,10 +307,6 @@ void T3LineStripMesh::lineTo(const QVector3D& pos) {
 int T3LineStripMesh::addPoint(const taVector3f& pos) {
   points.AddFrame();
   int idx = points.Frames()-1;
-  if(idx == 0xFFFFFFFF) {
-    points.AddFrame();          // skip!!!
-    idx = points.Frames()-1;
-  }
   points.Set(pos.x, 0, idx);
   points.Set(pos.y, 1, idx);
   points.Set(pos.z, 2, idx);
@@ -346,10 +338,6 @@ void T3LineStripMesh::lineToIdx(int idx) {
 int T3LineStripMesh::addColor(const QColor& clr) {
   colors.AddFrame();
   int idx = colors.Frames()-1;
-  if(idx == 0xFFFFFFFF) {
-    colors.AddFrame();          // skip!!!
-    idx = colors.Frames()-1;
-  }
   colors.Set(clr.redF(), 0, idx);
   colors.Set(clr.greenF(), 1, idx);
   colors.Set(clr.blueF(), 2, idx);

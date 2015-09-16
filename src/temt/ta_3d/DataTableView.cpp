@@ -178,6 +178,7 @@ int DataTableView::CheckRowsChanged(int& orig_rows) {
 
 void DataTableView::SigRecvUpdateView_impl() {
   if(!display_on) return;
+  if (!isVisible()) return;
   UpdateDisplay(true);
 }
 

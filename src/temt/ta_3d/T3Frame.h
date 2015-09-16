@@ -41,22 +41,22 @@ public:
   float		m_frame_width;    // width of the frame -- goes in this amount from overall width, height
 
   void setWidth(float wd)
-  { if(m_width != wd) { m_width = wd; update(); } }
+  { if(m_width != wd) { m_width = wd; updateGeometry(); } }
   float width() const { return m_width; }
 
   void setHeight(float wd)
-  { if(m_height != wd) { m_height = wd; update(); } }
+  { if(m_height != wd) { m_height = wd; updateGeometry(); } }
   float height() const { return m_height; }
 
   void setDepth(float wd)
-  { if(m_depth != wd) { m_depth = wd; update(); } }
+  { if(m_depth != wd) { m_depth = wd; updateGeometry(); } }
   float depth() const { return m_depth; }
 
   void setFrameWidth(float wd)
-  { if(m_frame_width != wd) { m_frame_width = wd; update(); } }
+  { if(m_frame_width != wd) { m_frame_width = wd; updateGeometry(); } }
   float frameWidth() const { return m_frame_width; }
 
-  virtual void update();
+  virtual void updateGeometry();
   
   explicit T3FrameMesh(Qt3DNode *parent = 0);
   ~T3FrameMesh();

@@ -33,11 +33,15 @@ T3GridViewNode::T3GridViewNode(Qt3DNode* parent, T3DataView* dataView_, float wd
   : inherited(parent, dataView_)
   , width(wd)
   , show_drag(show_drg)
-  , frame(new T3LineBox(this))
+  , frame(NULL)
   , grid(new T3LineStrip(this))
   , header(new T3Entity(this))
   , body(new T3Entity(this))
 {
+  if(show_drag) {
+    frame = new T3LineBox(this);
+  }
+
   updateNode();
 }
 
@@ -51,11 +55,14 @@ void T3GridViewNode::setWidth(float wdth) {
 
 void T3GridViewNode::updateNode() {
   inherited::updateNode();
-  float frmg2 = 2.0f * frame_margin;
 
-  QVector3D fr_sz(width + frmg2 + 2.0f*frame_width, 1.0f + frmg2 * 2.0f, frame_width);
-  frame->setSize(fr_sz);
-  frame->setColor(T3Misc::frame_clr());
+  if(frame) {
+    float frmg2 = 2.0f * frame_margin;
+
+    QVector3D fr_sz(width + frmg2 + 2.0f*frame_width, 1.0f + frmg2 * 2.0f, frame_width);
+    frame->setSize(fr_sz);
+    frame->setColor(T3Misc::frame_clr());
+  }
 }
 
 void T3GridViewNode::setDefaultCaptionTransform() {
