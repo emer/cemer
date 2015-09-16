@@ -51,16 +51,11 @@ void T3TwoDText::setText(const QString& txt) {
 }
 
 void T3TwoDText::setTextColor(const QColor& fg_color) {
-  // can't get this to not clip the text!
-  
-  // QPalette pal = label.palette();
-  // pal.setColor(QPalette::Active, QPalette::WindowText, fg_color);
-  // pal.setColor(QPalette::Active, QPalette::Window, bg_color);
-  // label.setAutoFillBackground(true);
-  // label.setPalette(pal);
-
-  // label.setStyleSheet("QLabel { color: " + fg_color.name() + " background-color: rgba(0,0,0,0) }");
-  // updateRender();
+  QPalette pal = label.palette();
+  pal.setColor(QPalette::Active, QPalette::WindowText, fg_color);
+  pal.setColor(QPalette::Active, QPalette::Window, bg_color);
+  label.setAutoFillBackground(true);
+  label.setPalette(pal);
 }
 
 void T3TwoDText::setFont(const QString& family, int pointSize, int weight,
