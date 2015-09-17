@@ -340,6 +340,7 @@ void DeepSupSpec::Defaults_init() {
 void DeepNormSpec::Initialize() {
   on = false;
   mod = true;
+  immed = false;
   raw_val = GROUP_MAX;
   raw_thr = 0.2f;
   binary = false;
@@ -1956,6 +1957,11 @@ void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int
       u->deep_norm = deep_norm_2.ComputeNormLayCtxt(u->deep_raw_norm, dctxt, lctxt);
     }
   }
+
+  if(deep_norm.mod && deep_norm.immed) {
+    // deep_mod has full final value for modulation
+    Compute_DeepMod(u, net, thr_no);
+  }
 }
 
 void LeabraUnitSpec::Send_DeepNormNetin(LeabraUnitVars* u, LeabraNetwork* net,
@@ -2038,7 +2044,19 @@ void LeabraUnitSpec::Send_DeepNormNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
   u->deep_norm_net += dnorm_net_delta;
 }
 
-void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net,
+                                     int thr_no) {
+  // deep_mod has full final value for modulation
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  if(u->deep_norm > 0.0f) {
+    u->deep_mod = u->deep_norm;
+  }
+  else {
+    u->deep_mod = lay->deep_norm_def;
+  }
+}
+
+  void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!deep.on) return;
   int qtr_eff = net->quarter;
   if(qtr_eff == 0)
@@ -2048,13 +2066,7 @@ void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net
   if(!Quarter_DeepNow(qtr_eff)) return;
 
   // deep_mod has full final value for modulation
-  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-  if(u->deep_norm > 0.0f) {
-    u->deep_mod = u->deep_norm;
-  }
-  else {
-    u->deep_mod = lay->deep_norm_def;
-  }
+  Compute_DeepMod(u, net, thr_no);
 
   u->deep_ctxt = u->deep_ctxt_net;
   u->deep_raw_pprv = u->deep_raw_prv;
@@ -2079,6 +2091,8 @@ void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int th
   u->deep_norm_net = 0.0f;
   u->deep_raw_net = 0.0f;
   u->deep_ctxt_net = 0.0f;
+  u->deep_raw_sent = 0.0f;
+  u->deep_norm_sent = 0.0f;
 }
 
 ///////////////////////////////////////////////////////////////////////

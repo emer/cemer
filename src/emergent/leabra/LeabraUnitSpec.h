@@ -488,7 +488,8 @@ public:
   };
 
   bool          on;             // enable normalization of the deep_raw, deep_norm_net, and deep_ctxt values into deep_norm attentional modulation factors -- automatically normalized based on layer vals to max at 1.0 -- if off, then deep_norm is always set to 1.0 -- requires deep.on for this to work!!
-  bool          mod;            // #CONDSHOW_ON_on should deep_norm values modulate (multiply) superficial act and net variables -- turn this off to allow layer to compute deep_norm values but not apply them to itself..
+  bool          mod;            // #CONDSHOW_ON_on should deep_norm values modulate (multiply) superficial activation variables via the deep_mod value which is updated at the start of each deep period -- turn this off to allow layer to compute deep_norm values but not apply them to itself
+  bool          immed;          // #CONDSHOW_ON_on&&mod compute the deep_mod values that actually multiply activations immediately, instead of at the start of the next trial -- this allows attentional modulation to take place within one trial, but is only appropriate for externally-driven forms of attention
   DeepRawVal    raw_val;        // #CONDSHOW_ON_on which deep_raw value should be used in computing the deep_norm attentional mask weights -- see options for various issues
   float         raw_thr;        // #CONDSHOW_ON_on threshold for the computation of deep_norm on the effective normalized deep_raw_norm value that drives the deep_norm computation -- anything below this threshold will get a deep_norm value of 0, and use the layer deep_norm_def default value for the layer
   bool          binary;         // #CONDSHOW_ON_on deep norm is a binary mask based on what is above or below threshold
@@ -855,6 +856,8 @@ public:
   // #CAT_Deep compute deep_raw_norm values from deep_raw values
   virtual void Compute_DeepNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep compute deep_norm values from deep_raw and deep_ctxt values
+  virtual void Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep compute deep_mod values from deep_norm
     
   virtual void Send_DeepNormNetin(LeabraUnitVars* uv, LeabraNetwork* net,
                                    int thr_no);
