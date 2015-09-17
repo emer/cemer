@@ -207,7 +207,8 @@ public:
   virtual  void         Init_Weights_Net();
   // #BUTTON #CAT_Learning initializes all weights in the network
 
-  String       GetTypeDecoKey() const override { return "ConSpec"; }
+  String          GetTypeDecoKey() const override { return "ConSpec"; }
+  String          GetToolbarName() const override { return "con spec"; }
 
   void  InitLinks();
   void  CutLinks();

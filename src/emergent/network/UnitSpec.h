@@ -91,7 +91,8 @@ public:
   virtual bool  CheckConfig_Unit(Unit* un, bool quiet=false);
   // #CAT_ObjectMgmt check for for misc configuration settings required by different algorithms
 
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+  String        GetTypeDecoKey() const override { return "UnitSpec"; }
+  String        GetToolbarName() const override { return "unit spec"; }
 
   void  InitLinks();
   void  CutLinks();

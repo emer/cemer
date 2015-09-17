@@ -675,6 +675,8 @@ public:
   String  Cuda_TimingReport(bool print = true);
   // #CAT_CUDA report time used statistics for CUDA operations (only does something for cuda compiled version)
 
+  String       GetToolbarName() const override { return "leabra ntwrk"; }
+
   TA_SIMPLE_BASEFUNS(LeabraNetwork);
 protected:
   void 	UpdateAfterEdit_impl();

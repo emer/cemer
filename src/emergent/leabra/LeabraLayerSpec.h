@@ -452,6 +452,8 @@ public:
   virtual TypeDef* 	UnGpDataType()  { return &TA_LeabraUnGpData; }
   // #CAT_Structure type of unit group data object to create for the layers associated with this layer spec
 
+  String        GetToolbarName() const override { return "leabra lay spc"; }
+
   void	InitLinks();
   SIMPLE_COPY(LeabraLayerSpec);
   TA_BASEFUNS(LeabraLayerSpec);

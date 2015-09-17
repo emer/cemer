@@ -73,7 +73,8 @@ public:
   virtual bool  CheckConnect(Projection* prjn, bool quiet=false);
   // #CAT_ObjectMgmt check if projection is connected
 
-  String       GetTypeDecoKey() const override { return "ProjectionSpec"; }
+  String        GetTypeDecoKey() const override { return "ProjectionSpec"; }
+  String        GetToolbarName() const override { return "prjn spec"; }
 
   void  InitLinks();
   SIMPLE_COPY(ProjectionSpec);

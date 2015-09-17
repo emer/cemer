@@ -33,7 +33,8 @@ public:
   virtual bool          CheckConfig_Layer(Layer* lay, bool quiet = false)
     {return true;} // #CAT_ObjectMgmt This is ONLY for spec-specific stuff; the layer still does all its default checking (incl child checking)
 
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+  String        GetTypeDecoKey() const override { return "LayerSpec"; }
+  String        GetToolbarName() const override { return "layer spec"; }
 
   void  InitLinks();
   void  CutLinks();

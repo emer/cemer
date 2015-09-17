@@ -32,9 +32,20 @@
 
 #include <NetDataLoop>
 #include <NetGroupedDataLoop>
+
 #include <Network>
-#include <LeabraConSpec>
+#include <Layer>
+#include <LayerSpec>
+#include <UnitSpec>
+#include <ProjectionSpec>
+#include <ConSpec>
+
+#include <LeabraNetwork>
 #include <LeabraLayer>
+#include <LeabraLayerSpec>
+#include <LeabraUnitSpec>
+#include <ProjectionSpec>
+#include <LeabraConSpec>
 
 eTypeDef_Of(ProjectBase);
 
@@ -115,11 +126,49 @@ void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
   taRootBase::instance()->templates.Add(layer);
   iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_Layer);
   
-  LeabraLayer* leabra_layer = new LeabraLayer;
-  taRootBase::instance()->templates.Add(leabra_layer);
-  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraLayer);
+  LayerSpec* layer_spec = new LayerSpec;
+  taRootBase::instance()->templates.Add(layer_spec);
+  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LayerSpec);
   
-  // TODO - add spec types
+  UnitSpec* unit_spec = new UnitSpec;
+  taRootBase::instance()->templates.Add(unit_spec);
+  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_UnitSpec);
+  
+  ProjectionSpec* proj_spec = new ProjectionSpec;
+  taRootBase::instance()->templates.Add(proj_spec);
+  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ProjectionSpec);
+  
+  ConSpec* con_spec = new ConSpec;
+  taRootBase::instance()->templates.Add(con_spec);
+  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ConSpec);
+  
+  tb->AddSeparator(the_new_sec);
+
+  {  // scope to reuse names
+    LeabraNetwork* net = new LeabraNetwork;
+    taRootBase::instance()->templates.Add(net);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraNetwork);
+    
+    LeabraLayer* leabra_layer = new LeabraLayer;
+    taRootBase::instance()->templates.Add(leabra_layer);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraLayer);
+    
+    LeabraLayerSpec* layer_spec = new LeabraLayerSpec;
+    taRootBase::instance()->templates.Add(layer_spec);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraLayerSpec);
+    
+    LeabraUnitSpec* unit_spec = new LeabraUnitSpec;
+    taRootBase::instance()->templates.Add(unit_spec);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraUnitSpec);
+    
+    ProjectionSpec* proj_spec = new ProjectionSpec;
+    taRootBase::instance()->templates.Add(proj_spec);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ProjectionSpec);
+    
+    LeabraConSpec* con_spec = new LeabraConSpec;
+    taRootBase::instance()->templates.Add(con_spec);
+    iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraConSpec);
+  }
 }
 
 ToolBoxRegistrar emergent_ptb(PDPProgramToolBoxProc);

@@ -54,7 +54,6 @@ public:
 
   virtual String        GetToolbarName() const;
   // #IGNORE name of the program element as represented in the programming toolbar
-  static void           MakeTemplate_fmtype(taOBase* taO_base, TypeDef* td); // #IGNORE make from typedef
 
 protected:
   void CanCopy_impl(const taBase* cp_fm, bool quiet, bool& ok, bool virt) const override {

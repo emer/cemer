@@ -48,7 +48,7 @@ public:
   float		gain;		// #DEF_100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network
   float		nvar;		// #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
 
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+  String        GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(LeabraActFunSpec);
 protected:
@@ -924,7 +924,9 @@ public:
   virtual void TimeExp(int mode, int nreps=100000000);
   // #EXPERT time how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
 
-  bool  CheckConfig_Unit(Unit* uv, bool quiet=false) override;
+  bool          CheckConfig_Unit(Unit* uv, bool quiet=false) override;
+
+  String        GetToolbarName() const override { return "leabra unit spc"; }
 
   void	InitLinks();
   SIMPLE_COPY(LeabraUnitSpec);
