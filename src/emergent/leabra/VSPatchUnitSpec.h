@@ -16,6 +16,7 @@
 #ifndef VSPatchUnitSpec_h
 #define VSPatchUnitSpec_h 1
 
+
 // parent includes:
 #include <LeabraUnitSpec>
 
@@ -31,7 +32,7 @@ INHERITED(LeabraUnitSpec)
 public:
 
 //  void	Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+//  void Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(VSPatchUnitSpec);
 protected:
