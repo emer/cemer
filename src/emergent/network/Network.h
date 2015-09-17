@@ -1049,8 +1049,9 @@ public:
   int  Dump_Save_impl(std::ostream& strm, taBase* par=NULL, int indent=0) override;
 
   String       GetTypeDecoKey() const override { return "Network"; }
+  String       GetToolbarName() const override { return "network"; }
 
-  bool ChangeMyType(TypeDef* new_type) override;
+  bool         ChangeMyType(TypeDef* new_type) override;
   taBase*      ChooseNew(taBase* origin) override;
   bool         HasChooseNew() override { return true; }
 

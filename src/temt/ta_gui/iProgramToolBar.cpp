@@ -145,10 +145,14 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataTable);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ControlPanel);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Program);
+  tb->AddSeparator(sec);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Function);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgVar);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DynEnumType);
+  tb->AddSeparator(sec);
 
+  ////////////////////////////////////////////////////////////////////////////
+  //            Looping and Branching
   sec = tb->AssertSection("Control"); //note: need to keep it short
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ForLoop);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ForeachLoop);
@@ -225,6 +229,11 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataAnalCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataGenCall);
   
+  ////////////////////////////////////////////////////////////////////////////
+  //            Network
+  // just the section - elements added later
+  sec = tb->AssertSection("Network"); //note: need to keep it short
+
   ////////////////////////////////////////////////////////////////////////////
   //            Expert
   sec = tb->AssertSection("Expert"); //note: need to keep it short

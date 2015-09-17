@@ -242,8 +242,11 @@ public:
   ////////////////////////////////////////////
   //	Misc structural routines
 
-  bool		SetLayerSpec(LayerSpec* sp);
-  LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.SPtr(); }
+  bool          SetLayerSpec(LayerSpec* sp);
+  LayerSpec*    GetLayerSpec()		{ return (LayerSpec*)spec.SPtr(); }
+  
+  String        GetToolbarName() const override { return "leabra layer"; }
+
 
   void	InitLinks();
   void	CutLinks();

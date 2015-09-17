@@ -42,6 +42,7 @@
 #include <DynEnumType>
 #include <ControlPanel>
 #include <DataTable>
+#include <ForLoop>
 
 taTypeDef_Of(PluginWizard);
 taTypeDef_Of(StartupWizard);
@@ -454,23 +455,19 @@ void taRootBase::About() {
 }
 
 void taRootBase::AddTemplates() {
-  // NOTE - Because Program::MakeTemplate creates all the children when you drag an instance
-  // from the toolbar you get a program with all children!
-  // SO TO DO - need to create them individually
-  templates.Add(Program::MakeTemplate());
+  Program* program = new Program;
+  templates.Add(program);
+  
+  Program::AddTemplates();  // all of the program elements are added by the program class
   
   ControlPanel* panel = new ControlPanel;
-  MakeTemplate_fmtype(panel, &TA_ProgEl);
   templates.Add(panel);
   
   DataTable* table = new DataTable;
-  MakeTemplate_fmtype(table, &TA_ProgEl);
   templates.Add(table);
 
   DynEnumType* enum_type = new DynEnumType;
-  MakeTemplate_fmtype(enum_type, &TA_ProgEl);
   templates.Add(enum_type);
-
 }
 
 void taRootBase::AddDocs() {

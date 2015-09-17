@@ -40,6 +40,7 @@ taTypeDef_Of(DynEnumType);
 #include <taMisc>
 #include <taiMisc>
 #include <tabMisc>
+#include <taRootBase>
 
 #include <css_machine.h>
 
@@ -47,6 +48,68 @@ taTypeDef_Of(DynEnumType);
 #include <QDir>
 #include <QCoreApplication>
 #include <QKeyEvent>
+
+#include <Function>
+
+#include <ForLoop>
+#include <ForeachLoop>
+#include <DoLoop>
+#include <WhileLoop>
+
+#include <If>
+#include <Else>
+#include <ElseIf>
+#include <IfContinue>
+#include <IfBreak>
+#include <IfReturn>
+#include <IfGuiPrompt>
+#include <Switch>
+#include <StopStepPoint>
+
+#include <AssignExpr>
+#include <VarIncr>
+#include <MemberAssign>
+#include <MethodCall>
+#include <MemberMethodCall>
+#include <FunctionCall>
+#include <ProgramCall>
+#include <ProgramCallFun>
+#include <StaticMethodCall>
+#include <MathCall>
+#include <RandomCall>
+#include <MiscCall>
+#include <PrintExpr>
+#include <PrintVar>
+#include <Comment>
+#include <BlankLineEl>
+
+#include <DataLoop>
+#include <ResetDataRows>
+#include <AddNewDataRow>
+#include <DoneWritingDataRow>
+#include <DataVarProg>
+#include <DataVarRead>
+#include <DataVarWrite>
+#include <DataVarProgMatrix>
+
+#include <DataSortProg>
+#include <DataGroupProg>
+#include <DataSelectRowsProg>
+#include <DataSelectColsProg>
+#include <DataJoinProg>
+
+#include <DataCalcLoop>
+#include <DataCalcAddDestRow>
+#include <DataCalcSetDestRow>
+#include <DataCalcSetSrcRow>
+#include <DataCalcCopyCommonCols>
+
+#include <DataProcCall>
+#include <DataAnalCall>
+#include <DataGenCall>
+
+#include <OtherProgramVar>
+#include <ProgramCallVar>
 
 TA_BASEFUNS_CTORS_DEFN(Program);
 
@@ -250,7 +313,7 @@ void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
   args.CheckConfig(quiet, rval);
   vars.CheckConfig(quiet, rval);
   functions.CheckConfig(quiet, rval);
-  init_code.CheckConfig(quiet, rval);
+//  init_code.CheckConfig(quiet, rval);
   prog_code.CheckConfig(quiet, rval);
 }
 
@@ -1815,29 +1878,168 @@ bool Program::IsForbiddenName(taBase* itm, const String& chk_nm, bool warn) {
   return true;
 }
 
-void Program::MakeTemplate_fmtype(Program* prog, TypeDef* td) {
-  taBase* tok = (taBase*)td->GetInstance();
-  if(tok) {
-    taBase* o = tok->MakeToken();
-    o->SetName("New" + td->name);
-    prog->init_code.Add(o);
-  }
-  for(int i=0;i<td->children.size;i++) {
-    TypeDef* chld = td->children[i];
-    MakeTemplate_fmtype(prog, chld);
-  }
-}
-
-Program* Program::MakeTemplate() {
-  //TODO: this will probably get nuked and replaced with a generic maker on .root
-  Program* prog = new Program;
-  {ProgVar* o = new ProgVar; o->SetName("NewProgVar"); prog->vars.Add(o);}
-  //note: prog args go into a ProgramCall etc., so we just add the tmpl to the objects
-  {ProgArg* o = new ProgArg; o->SetName("NewProgArg"); prog->objs.Add(o);}
-  //note: put in .init since that will get searched first
+void Program::AddTemplates() {
+  Function* obj = new Function;
+  taRootBase::instance()->templates.Add(obj);
   
-  MakeTemplate_fmtype(prog, &TA_ProgEl);
-  return prog;
+  ProgVar* pv = new ProgVar;
+  taRootBase::instance()->templates.Add(pv);
+  
+  ForLoop* fl = new ForLoop;
+  taRootBase::instance()->templates.Add(fl);
+  
+  ForeachLoop* fel = new ForeachLoop;
+  taRootBase::instance()->templates.Add(fel);
+  
+  DoLoop* dl = new DoLoop;
+  taRootBase::instance()->templates.Add(dl);
+  
+  WhileLoop* wl = new WhileLoop;
+  taRootBase::instance()->templates.Add(wl);
+  
+  If* if_obj = new If;
+  taRootBase::instance()->templates.Add(if_obj);
+
+  Else* else_obj = new Else;
+  taRootBase::instance()->templates.Add(else_obj);
+
+  ElseIf* elseif_obj = new ElseIf;
+  taRootBase::instance()->templates.Add(elseif_obj);
+
+  IfContinue* if_continue = new IfContinue;
+  taRootBase::instance()->templates.Add(if_continue);
+
+  IfBreak* if_break = new IfBreak;
+  taRootBase::instance()->templates.Add(if_break);
+
+  IfReturn* if_return = new IfReturn;
+  taRootBase::instance()->templates.Add(if_return);
+
+  IfGuiPrompt* if_gui = new IfGuiPrompt;
+  taRootBase::instance()->templates.Add(if_gui);
+
+  Switch* switch_obj = new Switch;
+  taRootBase::instance()->templates.Add(switch_obj);
+
+  StopStepPoint* ssp = new StopStepPoint;
+  taRootBase::instance()->templates.Add(ssp);
+
+  Comment* com = new Comment;
+  taRootBase::instance()->templates.Add(com);
+  
+  BlankLineEl* bl = new BlankLineEl;
+  taRootBase::instance()->templates.Add(bl);
+  
+  AssignExpr* ae = new AssignExpr;
+  taRootBase::instance()->templates.Add(ae);
+  
+  VarIncr* vi = new VarIncr;
+  taRootBase::instance()->templates.Add(vi);
+  
+  MemberAssign* ma = new MemberAssign;
+  taRootBase::instance()->templates.Add(ma);
+  
+  MethodCall* mc = new MethodCall;
+  taRootBase::instance()->templates.Add(mc);
+  
+  MemberMethodCall* mmc = new MemberMethodCall;
+  taRootBase::instance()->templates.Add(mmc);
+  
+  FunctionCall* fc = new FunctionCall;
+  taRootBase::instance()->templates.Add(fc);
+  
+  ProgramCall* pc = new ProgramCall;
+  taRootBase::instance()->templates.Add(pc);
+  
+  ProgramCallFun* pcf = new ProgramCallFun;
+  taRootBase::instance()->templates.Add(pcf);
+  
+  PrintExpr* p_x = new PrintExpr;
+  taRootBase::instance()->templates.Add(p_x);
+
+  PrintVar* p_v = new PrintVar;
+  taRootBase::instance()->templates.Add(p_v);
+  
+  StaticMethodCall* smc = new StaticMethodCall;
+  taRootBase::instance()->templates.Add(smc);
+  
+  MathCall* math = new MathCall;
+  taRootBase::instance()->templates.Add(math);
+  
+  RandomCall* rand = new RandomCall;
+  taRootBase::instance()->templates.Add(rand);
+  
+  MiscCall* misc = new MiscCall;
+  taRootBase::instance()->templates.Add(misc);
+  
+  DataLoop* data_loop = new DataLoop;
+  taRootBase::instance()->templates.Add(data_loop);
+
+  ResetDataRows* rsd = new ResetDataRows;
+  taRootBase::instance()->templates.Add(rsd);
+
+  AddNewDataRow* new_row = new AddNewDataRow;
+  taRootBase::instance()->templates.Add(new_row);
+
+  DoneWritingDataRow* done = new DoneWritingDataRow;
+  taRootBase::instance()->templates.Add(done);
+
+  DataVarProg* dvp = new DataVarProg;
+  taRootBase::instance()->templates.Add(dvp);
+
+  DataVarRead* dvr = new DataVarRead;
+  taRootBase::instance()->templates.Add(dvr);
+
+  DataVarWrite* dvw = new DataVarWrite;
+  taRootBase::instance()->templates.Add(dvw);
+
+  DataVarProgMatrix* dvpm = new DataVarProgMatrix;
+  taRootBase::instance()->templates.Add(dvpm);
+  
+  DataSortProg* sort = new DataSortProg;
+  taRootBase::instance()->templates.Add(sort);
+  
+  DataGroupProg* grp = new DataGroupProg;
+  taRootBase::instance()->templates.Add(grp);
+  
+  DataSelectRowsProg* sel_rows = new DataSelectRowsProg;
+  taRootBase::instance()->templates.Add(sel_rows);
+  
+  DataSelectColsProg* sel_cols = new DataSelectColsProg;
+  taRootBase::instance()->templates.Add(sel_cols);
+  
+  DataJoinProg* join = new DataJoinProg;
+  taRootBase::instance()->templates.Add(join);
+
+  DataCalcLoop* calc_loop = new DataCalcLoop;
+  taRootBase::instance()->templates.Add(calc_loop);
+  
+  DataCalcAddDestRow* calc_add = new DataCalcAddDestRow;
+  taRootBase::instance()->templates.Add(calc_add);
+  
+  DataCalcSetDestRow* calc_set_dest = new DataCalcSetDestRow;
+  taRootBase::instance()->templates.Add(calc_set_dest);
+  
+  DataCalcSetSrcRow* cal_set_src = new DataCalcSetSrcRow;
+  taRootBase::instance()->templates.Add(cal_set_src);
+  
+ DataCalcCopyCommonCols* calc_copy = new DataCalcCopyCommonCols;
+  taRootBase::instance()->templates.Add(calc_copy);
+  
+  DataProcCall* data_call = new DataProcCall;
+  taRootBase::instance()->templates.Add(data_call);
+  
+  DataAnalCall* anal_call = new DataAnalCall;
+  taRootBase::instance()->templates.Add(anal_call);
+  
+  DataGenCall* gen_call = new DataGenCall;
+  taRootBase::instance()->templates.Add(gen_call);
+  
+  OtherProgramVar* other = new OtherProgramVar;
+  taRootBase::instance()->templates.Add(other);
+  
+  ProgramCallVar* call_var = new ProgramCallVar;
+  taRootBase::instance()->templates.Add(call_var);
 }
 
 bool Program::AddCtrlFunsToControlPanel(ControlPanel* ctrl_panel, const String& extra_label,

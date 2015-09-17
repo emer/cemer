@@ -580,11 +580,12 @@ public:
   // #IGNORE aggregate layer variables across procs for trial-level dmem
 #endif
 
-  String GetDesc() const       override { return desc; }
-  int    GetEnabled() const    override { return !lesioned(); }
-  void   SetEnabled(bool value) override { SetLayerFlagState(LESIONED, !value); }
-  String GetTypeDecoKey() const override { return "Layer"; }
-  int    GetSpecialState() const override;
+  String        GetDesc() const       override { return desc; }
+  int           GetEnabled() const    override { return !lesioned(); }
+  void          SetEnabled(bool value) override { SetLayerFlagState(LESIONED, !value); }
+  String        GetTypeDecoKey() const override { return "Layer"; }
+  int           GetSpecialState() const override;
+  String        GetToolbarName() const override { return "layer"; }
 
   bool ChangeMyType(TypeDef* new_type) override;
 

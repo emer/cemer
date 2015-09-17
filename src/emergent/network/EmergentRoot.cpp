@@ -21,9 +21,9 @@
 #include <KeyBindings>
 #include <iBaseClipWidgetAction>
 #include <ToolBoxRegistrar>
-#include <InitNamedUnits>
-#include <SetUnitsLit>
-#include <SetUnitsVar>
+//#include <InitNamedUnits>
+//#include <SetUnitsLit>
+//#include <SetUnitsVar>
 
 #include <NetCounterInit>
 #include <NetCounterIncr>
@@ -32,6 +32,9 @@
 
 #include <NetDataLoop>
 #include <NetGroupedDataLoop>
+#include <Network>
+#include <LeabraConSpec>
+#include <LeabraLayer>
 
 eTypeDef_Of(ProjectBase);
 
@@ -41,6 +44,10 @@ eTypeDef_Of(ProjectBase);
 #include <iProgramToolBar>
 
 TA_BASEFUNS_CTORS_DEFN(EmergentRoot);
+
+taTypeDef_Of(Network);
+taTypeDef_Of(ConSpec);
+
 
 static void emergent_viewcolor_init() {
   if(!taMisc::view_colors) {
@@ -80,12 +87,39 @@ void EmergentRoot::Initialize() {
 
 void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
   int sec = tb->AssertSection("Network"); //note: need to keep it short
+  NetCounterInit* init = new NetCounterInit;
+  taRootBase::instance()->templates.Add(init);
+  NetCounterIncr* incr = new NetCounterIncr;
+  taRootBase::instance()->templates.Add(incr);
+  NetUpdateView* view = new NetUpdateView;
+  taRootBase::instance()->templates.Add(view);
+  WtInitPrompt* prompt = new WtInitPrompt;
+  taRootBase::instance()->templates.Add(prompt);
+  NetDataLoop* loop = new NetDataLoop;
+  taRootBase::instance()->templates.Add(loop);
+  
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetCounterInit);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetCounterIncr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetUpdateView);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_WtInitPrompt);
   tb->AddSeparator(sec);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetDataLoop);
+  
+  int the_new_sec = tb->AssertSection("New"); //note: need to keep it short
+  
+  Network* net = new Network;
+  taRootBase::instance()->templates.Add(net);
+  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_Network);
+  
+  Layer* layer = new Layer;
+  taRootBase::instance()->templates.Add(layer);
+  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_Layer);
+  
+  LeabraLayer* leabra_layer = new LeabraLayer;
+  taRootBase::instance()->templates.Add(leabra_layer);
+  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LeabraLayer);
+  
+  // TODO - add spec types
 }
 
 ToolBoxRegistrar emergent_ptb(PDPProgramToolBoxProc);

@@ -368,9 +368,9 @@ public: // XxxGui versions provide feedback to the user
   virtual void          SetAllBreakpoints();
   // #IGNORE re-set all the breakpoints in the code to be currently active -- after recompiling, need to reinstate them all
 
-  static Program*       MakeTemplate(); // #IGNORE make a template instance (with children) suitable for root.templates
-  static void           MakeTemplate_fmtype(Program* prog, TypeDef* td); // #IGNORE make from typedef
-
+  static void           AddTemplates();
+  // add all of the ProgEl objects to the template list
+  
   virtual bool          AddCtrlFunsToControlPanel(ControlPanel* ctrl_panel,
               const String& extra_label = "", const String& sub_gp_nm = "");
   // #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #NULL_OK_0  #NULL_TEXT_0_CtrlPanel #CAT_Display add the program control functions (Init, Run, Step, Stop) to a project control_panel - a panel that is a user chosen collection of members and methods from one or more objects (if ctrl_panel is NULL, a new one is created in .ctrl_panels). returns false if method was already selected.   extra_label is prepended to item names, and if sub_gp_nm is specified, items will be put in this sub-group (new one will be made if it does not yet exist)
