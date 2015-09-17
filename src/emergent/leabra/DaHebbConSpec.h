@@ -58,14 +58,11 @@ public:
   }    
   
   inline void C_Compute_dWt_Hebb_Da(float& dwt, const float ru_act, const float su_act,
-                                    const float da_p, const float lrnmod) {
+                                    const float da_p, const float lrate_eff) {
     float eff_da = da_p;
-    if(d2r) eff_da *= -1.0f; // invert direction of learning
+    if(d2r) eff_da = -eff_da; // invert direction of learning
     if(eff_da < 0.0f) { eff_da *= da_dip_gain; }
-//    dwt += cur_lrate * eff_da * ru_act * su_act * lrnmod;
-    if(lrnmod > 0.1f) { // only learn if topo input says you're the right topologically
-      dwt += cur_lrate * eff_da * ru_act * su_act;
-    }
+    dwt += lrate_eff * eff_da * ru_act * su_act;
   }
   // #IGNORE dopamine multiplication
 
@@ -78,11 +75,19 @@ public:
 
     float su_act = GetActVal(su, su_act_var);
 
+    float clrate, bg_lrate, fg_lrate;
+    bool deep_on;
+    GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
+    
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+      float lrate_eff = clrate;
+      if(deep_on) {
+        lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
+      }
       float ru_act = GetActVal(ru, ru_act_var);
-      C_Compute_dWt_Hebb_Da(dwts[i], ru_act, su_act, ru->da_p, ru->lrnmod);
+      C_Compute_dWt_Hebb_Da(dwts[i], ru_act, su_act, ru->da_p, lrate_eff);
     }
   }
 

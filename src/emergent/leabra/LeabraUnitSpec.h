@@ -249,10 +249,6 @@ public:
   float         tau;            // #DEF_10 #MIN_1 time constant for updating avg_l -- rate of approaching soft exponential bound to max / min -- longer time constants can also work fine, but the default of 10 allows for quicker reaction to beneficial weight changes
   float         lrn_max;        // #DEF_0.05 #MIN_0 maximum avg_l_lrn value -- if avg_l is at its maximum value, then avg_l_lrn will be at this maximum value -- used to increase the amount of self-organizing learning, which will then bring down average activity of units -- the default of 0.05, in combination with the err_mod flag, works well for most models
   float         lrn_min;        // #DEF_0.005 #MIN_0 miniumum avg_l_lrn -- if avg_l is at its minimum value, then avg_l_lrn will be at this minimum value -- neurons that are not overly active may not need to increase the contrast of their weights as much -- the default of 0.005 works well for most models
-  bool          err_mod;        // #DEF_true if true, then we multiply avg_l_lrn factor by layer.cos_diff_avg_lrn to make hebbian term roughly proportional to amount of error driven learning signal across layers -- cos_diff_avg computes the running average of the cos diff value between act_m and act_p (no diff is 1, max diff is 0), and cos_diff_avg_lrn = 1 - cos_diff_avg (and 0 for non-HIDDEN layers), so the effective lrn value is high when there are large error signals (differences) in a layer, and low when error signals are low, producing a more consistent mix overall -- typically this error level tends to be stable for a given layer, so this is really just a quick shortcut for setting layer-specific mixes by hand (which the brain can do) -- cos_diff_avg_tau rate constant is in LayerSpec.decay settings
-  float         err_min;        // #DEF_0.01:0.1 #CONDSHOW_ON_err_mod minimum layer.cos_diff_avg_lrn value (for non-zero cases, i.e., not for target or input layers) -- ensures a minimum amount of self-organizing learning even for layers that have a very small level of error signal -- this may need to be increased for problematic hog layers in deep5aed auto-encoder networks, which tend to have small error values but also significant hog unit problems
-  float         act_thr;        // #DEF_0.2 threshold of minus-phase activation value for whether to increase or decrease the avg_l value -- generally don't need to change this from the default value
-  float         lay_act_thr;    // #DEF_0.01 threshold of layer average activation on this trial, in order to update avg_l values -- setting to 0 disables this check
   
   float		dt;	        // #READ_ONLY #EXPERT rate = 1 / tau
   float         lrn_fact;       // #READ_ONLY #EXPERT (lrn_max - lrn_min) / (max - min)
@@ -268,6 +264,29 @@ public:
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
+eTypeDef_Of(LeabraAvgL2Spec);
+
+class E_API LeabraAvgL2Spec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra additional parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units
+INHERITED(SpecMemberBase)
+public:
+  bool          err_mod;        // #DEF_true if true, then we multiply avg_l_lrn factor by layer.cos_diff_avg_lrn to make hebbian term roughly proportional to amount of error driven learning signal across layers -- cos_diff_avg computes the running average of the cos diff value between act_m and act_p (no diff is 1, max diff is 0), and cos_diff_avg_lrn = 1 - cos_diff_avg (and 0 for non-HIDDEN layers), so the effective lrn value is high when there are large error signals (differences) in a layer, and low when error signals are low, producing a more consistent mix overall -- typically this error level tends to be stable for a given layer, so this is really just a quick shortcut for setting layer-specific mixes by hand (which the brain can do) -- cos_diff_avg_tau rate constant is in LayerSpec.decay settings
+  float         err_min;        // #DEF_0.01:0.1 #CONDSHOW_ON_err_mod minimum layer.cos_diff_avg_lrn value (for non-zero cases, i.e., not for target or input layers) -- ensures a minimum amount of self-organizing learning even for layers that have a very small level of error signal -- this may need to be increased for problematic hog layers in deep5aed auto-encoder networks, which tend to have small error values but also significant hog unit problems
+  float         act_thr;        // #DEF_0.2 threshold of minus-phase activation value for whether to increase or decrease the avg_l value -- generally don't need to change this from the default value
+  float         lay_act_thr;    // #DEF_0.01 threshold of layer average activation on this trial, in order to update avg_l values -- setting to 0 disables this check
+  
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraAvgL2Spec);
+protected:
+  SPEC_DEFAULTS;
+
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -408,13 +427,10 @@ class E_API DeepSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;         // enable the DeepLeabra mechanisms, including temporal integration via deep_ctxt context connections, thalamic-based auto-encoder driven by deep_raw projections, and attentional modulation by deep_norm (requires deep_norm.on)
-  float	        thr;        // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 threshold on act_eq value for deep_raw neurons to fire -- neurons below this level have deep_raw = 0 -- above this level, deep_raw = act_eq -- value is specified as distance between average and maximum act_raw values within layer (e.g., 0 = average, 1 = max)
+  float	        thr_rel;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 #AKA_thr relative threshold on act_raw value (distance between average and maximum act_raw values within layer, e.g., 0 = average, 1 = max) for deep_raw neurons to fire -- neurons below this level have deep_raw = 0 -- above this level, deep_raw = act_raw + d_to_d * deep_norm_net + thal_to_d * thal -- all normalized
+  float	        thr_abs;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 absolute threshold on act_raw value for deep_raw neurons to fire -- see thr_rel for relative threshold and activation value -- effective threshold is MAX of relative and absolute thresholds
   float         d_to_d;     // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_norm_net inputs from deep-to-deep projections in computing deep_raw
-  float         d_to_s;     // #CONDSHOW_ON_on #MIN_0 how much of the deep_norm signal should be added to superficial neuron net-input -- this represents a form of TI-like context information because the deep projections are delayed in time
-  float         ctxt_to_s;  // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_ctxt as an input to superficial neurons (from DeepCtxtConSpec connections) -- determines how much direct recurrent temporal integration (TI) context a neuron receives
-  bool          ctxt_rel;   // #CONDSHOW_ON_on should the DeepCtxtConSpec context projections wt_scale.rel be normalized along with all of the standard corticocortical connections for the superficial neurons -- when ctxt_to_s is relatively strong, this is a good idea -- when it is weaker, it is not so necessary, and it can be cleaner to not do it
   float         thal_to_d;  // #CONDSHOW_ON_on how much to drive deep_raw from thal input from thalamus -- provides extra attentional modulation from larger-scale thalamic attentional layers
-  float         thal_to_s;  // #CONDSHOW_ON_on how much to add to superficial net input from thal input from thalamus
   
   float         ComputeDeepRaw(float act, float deep_norm_net, float thal,
                                float max_deep_norm_net) {
@@ -425,6 +441,29 @@ public:
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(DeepSpec);
+protected:
+  SPEC_DEFAULTS;
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
+eTypeDef_Of(DeepSupSpec);
+
+class E_API DeepSupSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms: context and superficial mod parameters
+INHERITED(SpecMemberBase)
+public:
+  float         ctxt_to_s;  // #MIN_0 how much to weight the deep_ctxt as an input to superficial neurons (from DeepCtxtConSpec connections) -- determines how much direct recurrent temporal integration (TI) context a neuron receives
+  bool          ctxt_rel;   // should the DeepCtxtConSpec context projections wt_scale.rel be normalized along with all of the standard corticocortical connections for the superficial neurons -- when ctxt_to_s is relatively strong, this is a good idea -- when it is weaker, it is not so necessary, and it can be cleaner to not do it
+  float         d_to_s;     // #MIN_0 how much of the deep_norm signal should be added to superficial neuron net-input -- this represents a form of TI-like context information because the deep projections are delayed in time
+  float         thal_to_s;  // how much to add to superficial net input from thal input from thalamus
+  
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(DeepSupSpec);
 protected:
   SPEC_DEFAULTS;
 
@@ -453,16 +492,36 @@ public:
   DeepRawVal    raw_val;        // #CONDSHOW_ON_on which deep_raw value should be used in computing the deep_norm attentional mask weights -- see options for various issues
   float         raw_thr;        // #CONDSHOW_ON_on threshold for the computation of deep_norm on the effective normalized deep_raw_norm value that drives the deep_norm computation -- anything below this threshold will get a deep_norm value of 0, and use the layer deep_norm_def default value for the layer
   bool          binary;         // #CONDSHOW_ON_on deep norm is a binary mask based on what is above or below threshold
-  float         contrast;       // #CONDSHOW_ON_on #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
-  float         ctxt_fm_lay;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 what proportion of the deep context value to get from the layer average context value, for purposes of computing deep_norm -- remainder is from local deep_ctxt_net values
-  float         ctxt_fm_ctxt;   // #READ_ONLY 1.0 - ctxt_fm_lay -- how much of context comes from deep_ctxt_net value
-  float         min_ctxt;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.05 minimum context value for purposes of computing deep_norm -- because ctxt shows up in divisor of norm equation, very small values can produce high values -- this prevents that sensitivity
-  float         copy_def;       // #CONDSHOW_ON_on for the raw_val = NORM_NET and other specialized cases where deep_norm is copied from other values and not computed as usual, this is the value to use for the deep_norm_def default deep_norm value for units that don't have an above-zero deep_norm value
 
-  // (x + g) / (c + g) = x / (c + g) + g / (c + g) = x / (c + g) + 1 / (c/g + 1)
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(DeepNormSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
+eTypeDef_Of(DeepNorm2Spec);
+
+class E_API DeepNorm2Spec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra additional specs for computing deep_norm normalized attentional filter values as function of deep_raw, deep_norm_net, and deep_ctxt_net variables
+INHERITED(SpecMemberBase)
+public:
+  float         gain;           // #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
+  float         ctxt_fm_lay;    // #MIN_0 #MAX_1 what proportion of the deep context value to get from the layer average context value, for purposes of computing deep_norm -- remainder is from local deep_ctxt_net values
+  float         ctxt_fm_ctxt;   // #READ_ONLY 1.0 - ctxt_fm_lay -- how much of context comes from deep_ctxt_net value
+  float         min_ctxt;       // #MIN_0 #DEF_0.05 minimum context value for purposes of computing deep_norm -- because ctxt shows up in divisor of norm equation, very small values can produce high values -- this prevents that sensitivity
+  float         copy_def;       // for the raw_val = NORM_NET and other specialized cases where deep_norm is copied from other values and not computed as usual, this is the value to use for the deep_norm_def default deep_norm value for units that don't have an above-zero deep_norm value
+
+  // x / (x + c) =  x/c / (x/c + 1) = gx / (gx + 1) = XX1 function
   
   inline float  ComputeNorm(float raw, float ctxt)
-  { ctxt = MAX(min_ctxt, ctxt); return (raw + contrast) / (ctxt + contrast); }
+  { ctxt = MAX(min_ctxt, ctxt); raw *= gain; return raw / (raw + ctxt + 1.0f); }
   // computed normalized value from current raw and context values -- assumes that values will be renormalized afterward anyway
 
   inline float  ComputeNormLayCtxt(float raw, float ctxt, float lay_avg_ctxt)
@@ -477,7 +536,7 @@ public:
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
-  TA_SIMPLE_BASEFUNS(DeepNormSpec);
+  TA_SIMPLE_BASEFUNS(DeepNorm2Spec);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
@@ -579,6 +638,7 @@ public:
   LeabraDtSpec	dt;		// #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
   LeabraActAvgSpec act_avg;	// #CAT_Activation time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
   LeabraAvgLSpec   avg_l;	// #CAT_Activation parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
+  LeabraAvgL2Spec  avg_l_2;	// #CAT_Activation additional parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
   LeabraChannels g_bar;		// #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
   ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
@@ -587,7 +647,9 @@ public:
   LeabraDropoutSpec dropout;	// #CAT_Activation random dropout parameters -- an important tool against positive feedback dynamics, and pressure to break up large-scale interdependencies between neurons, which benefits generalization
   Quarters      deep_qtr;       // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt, deep_norm are updated and sent right after this quarter (wrapping around to the first quarter for the 4th quarter)
   DeepSpec	 deep;  	// #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
-  DeepNormSpec   deep_norm;	// #CAT_Learning specs for computing deep_nrm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables
+  DeepSupSpec	 deep_s;  	// #CONDSHOW_ON_deep.on #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms: context and superficial parameters
+  DeepNormSpec   deep_norm;	// #CAT_Learning specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables
+  DeepNorm2Spec  deep_norm_2;	// #CONDSHOW_ON_deep_norm.on #CAT_Learning additional specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   NoiseType	noise_type;	// #CAT_Activation where to add random noise in the processing (if at all)
   RandomSpec	noise;		// #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise

@@ -35,6 +35,7 @@
 #include <taiMimeSource>
 #include <ISigLinkClient>
 #include <iColor>
+#include <taTaskThread>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -2869,7 +2870,7 @@ UserDataItem* taBase::SetUserData(const String& name, const Variant& value)
   UserDataItem_List* ud = GetUserDataList(true);
   if (!ud) return NULL; // not supported, shouldn't be calling
 
-  bool notify = true; // always!
+  bool notify = taTaskThread::inMainThread();
   UserDataItemBase* udi = ud->FindLeafName(name);
   if (udi) {
     if (TestError(!udi->isSimple(),
@@ -2877,7 +2878,8 @@ UserDataItem* taBase::SetUserData(const String& name, const Variant& value)
       "non-simple UserData item with that name already exists!")) {
       return NULL;
     }
-  } else {
+  }
+  else {
     udi = new UserDataItem;
     udi->SetName(name);
     ud->Add(udi);

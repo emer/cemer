@@ -150,6 +150,22 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_vec
 
 #endif
 
+inline void LeabraConSpec::GetLrates(LeabraConGroup* cg, float& clrate, bool& deep_on,
+                          float& bg_lrate, float& fg_lrate) {
+  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+  clrate = cur_lrate * rlay->lrate_mod;
+  deep_on = deep.on;
+  if(deep_on) {
+    LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
+    if(!rus->deep_norm.on)
+      deep_on = false;          // only applicable to deep_norm active layers
+  }
+  if(deep_on) {
+    bg_lrate = deep.bg_lrate;
+    fg_lrate = deep.fg_lrate;
+  }
+}
+
 inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no) {
   LeabraNetwork* net = (LeabraNetwork*)rnet;
   if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
@@ -158,21 +174,10 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   LeabraUnitSpec* us = (LeabraUnitSpec*)su->unit_spec;
   if(su->avg_s < us->opt_thresh.xcal_lrn && su->avg_m < us->opt_thresh.xcal_lrn) return;
   // no need to learn!
-  bool deep_on = deep.on;
-  if(deep_on) {
-    LeabraUnitSpec* rus = (LeabraUnitSpec*)cg->prjn->layer->GetUnitSpec();
-    if(!rus->deep_norm.on)
-      deep_on = false;          // only applicable to deep_norm active layers
-  }
-  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-  float clrate = cur_lrate * rlay->lrate_mod;
 
-  float bg_lrate;
-  float fg_lrate;
-  if(deep_on) {
-    bg_lrate = deep.bg_lrate;
-    fg_lrate = deep.fg_lrate;
-  }
+  float clrate, bg_lrate, fg_lrate;
+  bool deep_on;
+  GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
 
   const float su_avg_s = su->avg_s_eff;
   const float su_avg_m = su->avg_m;

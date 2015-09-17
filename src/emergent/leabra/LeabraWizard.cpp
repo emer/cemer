@@ -1699,19 +1699,19 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_units->noise_adapt.trial_fixed = true;
 
   pfc_mnt_units->SetUnique("deep", true);
-  pfc_mnt_units->deep.d_to_s = 0.1f;
+  pfc_mnt_units->deep_s.d_to_s = 0.1f;
 
   // this has less strong self-maint:
   pfc_out_units->SetUnique("deep", true);
-  pfc_out_units->deep.d_to_s = 0.2f;
+  pfc_out_units->deep_s.d_to_s = 0.2f;
   pfc_out_units->pfc.out_gate = true;
   pfc_out_units->n_dyns = 1;
 
   pfcd_units->SetUnique("deep", true);
   pfcd_units->deep.on = true;
-  pfcd_units->deep.thr = 0.1f;
+  pfcd_units->deep.thr_rel = 0.1f;
   pfcd_units->deep.d_to_d = 0.0f;
-  pfcd_units->deep.d_to_s = 0.0f;
+  pfcd_units->deep_s.d_to_s = 0.0f;
   pfcd_units->SetUnique("deep_norm", true);
   pfcd_units->deep_norm.on = true;
   pfcd_units->deep_norm.raw_val = DeepNormSpec::UNIT;
@@ -1725,7 +1725,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   input_units->SetUnique("deep", true);
   input_units->deep.on = true;
-  input_units->deep.thr = 0.1f;
+  input_units->deep.thr_rel = 0.1f;
   input_units->SetUnique("deep_norm", true);
   input_units->deep_norm.on = true;
   

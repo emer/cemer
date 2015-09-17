@@ -380,6 +380,10 @@ public:
   /////////////////////////////////////
   // CtLeabraXCAL code
 
+  inline void   GetLrates(LeabraConGroup* cg, float& clrate, bool& deep_on,
+                          float& bg_lrate, float& fg_lrate);
+  // #IGNORE get the current learning rates including layer-specific and potential deep modulations
+  
   inline void 	C_Compute_dWt_CtLeabraXCAL
     (float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
      const float su_avg_s, const float su_avg_m, const float ru_avg_l,
