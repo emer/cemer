@@ -33,14 +33,16 @@ class TA_API MemberAssign: public MemberProgEl {
 INHERITED(MemberProgEl)
 public:
   ProgExpr		expr; // #BROWSER_EDIT_LOOKUP the expression to compute and assign to the member
-  bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
+  bool        update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  bool        CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool        CvtFmCode(const String& code) override;
+  bool        ChooseMe() override;
+  // #IGNORE pop chooser for selecting object of this type
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  String	GetToolbarName() const override { return "member="; }
+  String      GetDisplayName() const override;
+  String      GetTypeDecoKey() const override { return "ProgVar"; }
+  String      GetToolbarName() const override { return "member="; }
 
   PROGEL_SIMPLE_BASEFUNS(MemberAssign);
 protected:
