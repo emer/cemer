@@ -18,6 +18,11 @@
 #include <taMisc>
 #include <tabMisc>
 #include <MethodDef>
+#include <MemberDef>
+
+#include <taiWidgetTokenChooser>
+#include <taiWidgetMethodDefChooser>
+#include <taiWidgetMemberDefChooser>
 
 TA_BASEFUNS_CTORS_DEFN(MemberMethodCall);
 
@@ -191,3 +196,47 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
   meth_args.ParseArgString(args);
   return true;
 }
+
+bool MemberMethodCall::ChooseMe() {
+  // first get the object
+  if (!obj) {
+    taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
+    Program* scope_program = GET_MY_OWNER(Program);
+    chooser->GetImageScoped(NULL, &TA_ProgVar, scope_program, &TA_Program); // scope to this guy
+    bool okc = chooser->OpenChooser();
+    if(okc && chooser->token()) {
+      ProgVar* tok = (ProgVar*)chooser->token();
+      obj.set(tok);
+      UpdateAfterEdit();
+    }
+    delete chooser;
+  }
+
+  // now scope the member choices to the object type
+  if (obj) {
+    TypeDef* obj_td = obj->act_object_type();
+    taiWidgetMemberDefChooser* chooser =  new taiWidgetMemberDefChooser(obj_td, NULL, NULL, NULL, 0, "");
+    chooser->GetImage((MemberDef*)NULL, obj_td);
+    bool okc = chooser->OpenChooser();
+    if(okc && chooser->md()) {
+      member_lookup = chooser->md();
+      UpdateAfterEdit();
+    }
+    delete chooser;
+  }
+
+  // now scope the method choices to the object type -- READ comments in .h to make sense of this class!
+  if (obj && !path.empty() && GetTypeFromPath()) {
+    taiWidgetMethodDefChooser* chooser =  new taiWidgetMethodDefChooser(obj_type, NULL, NULL, NULL, 0, "");
+    chooser->GetImage((MethodDef*)NULL, obj_type);
+    bool okc = chooser->OpenChooser();
+    if(okc && chooser->md()) {
+      method = chooser->md();
+      UpdateAfterEdit();
+    }
+    delete chooser;
+  }
+
+  return true;
+}
+

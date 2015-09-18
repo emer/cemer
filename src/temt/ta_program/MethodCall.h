@@ -34,25 +34,27 @@ class TA_API MethodCall: public ProgEl {
   // ##DEF_CHILD_meth_args call a method (member function) on an object
 INHERITED(ProgEl)
 public:
-  ProgVarRef		result_var;
+  ProgVarRef      result_var;
   // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser where to store the result of the method call (optional -- can be NULL)
-  ProgVarRef		obj;
+  ProgVarRef      obj;
   // #ITEM_FILTER_ObjProgVarFilter program variable that points to the object with the method to call
-  TypeDef*		obj_type;
+  TypeDef*        obj_type;
   // #NO_SHOW #NO_SAVE temp copy of obj.object_type
-  MethodDef*		method;
+  MethodDef*      method;
   // #TYPE_ON_obj_type the method to call on object obj
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
-  String		meth_sig;
+  String          meth_sig;
   // #READ_ONLY #SHOW signature of the method, for reference
-  String		meth_desc;
+  String          meth_desc;
   // #READ_ONLY #SHOW description of the method, for reference
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  bool        CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool        CvtFmCode(const String& code) override;
+  bool        ChooseMe() override;
+  // #IGNORE pop chooser for selecting object of this type
 
-  taList_impl*	children_() override {return &meth_args;}	
+  taList_impl*	children_() override {return &meth_args;}
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "Function"; }
   String	GetToolbarName() const override { return "method()"; }
@@ -61,7 +63,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(MethodCall);
 protected:
   void		UpdateAfterEdit_impl() override;
-  void 	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void 	  CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		CheckChildConfig_impl(bool quiet, bool& rval) override;
   void		GenCssBody_impl(Program* prog) override;
 
