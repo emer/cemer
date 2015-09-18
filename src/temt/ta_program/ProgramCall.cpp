@@ -265,6 +265,7 @@ bool ProgramCall::ChooseMe() {
       target = tok;
       UpdateAfterEdit();
     }
+    delete chooser;
   }
   return true;
 }
