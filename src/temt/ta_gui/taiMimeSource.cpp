@@ -31,7 +31,12 @@
 #include <QApplication>
 #include <QClipboard>
 
+#include <Program>
+#include <ProgramCall>
+
 #include <sstream>
+
+#include <taiWidgetTokenChooser>
 
 using namespace std;
 
@@ -717,13 +722,8 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     // do a full UAE (not just DC) so associated update code gets retriggered
     new_obj->UpdateAfterEdit();
 
-    // special new delayed code to expand and select the new guy!
-    if(!taMisc::in_gui_multi_action && 
-       !list->HasOption("NO_EXPAND_ALL") && !new_obj->HasOption("NO_EXPAND_ALL")) {
-      // Bug 2231 - no auto expand on duplicate
-//      tabMisc::DelayedFunCall_gui(new_obj, "BrowserExpandAll");
-      tabMisc::DelayedFunCall_gui(new_obj, "BrowserSelectMe");
-    }
+    tabMisc::DelayedFunCall_gui(new_obj, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(new_obj, "ChooseMe");  // pop scoped chooser
 
     return iClipData::ER_OK;
   }
@@ -752,12 +752,7 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
           // for fm>to, to will just be the dst, because fm pushes to down
           list->MoveIdx(list->size - 1, itm_idx);
         }
-        // special new delayed code to expand and select the new guy!
-        if(!taMisc::in_gui_multi_action &&
-           !list->HasOption("NO_EXPAND_ALL") && !obj->HasOption("NO_EXPAND_ALL")) {
-          tabMisc::DelayedFunCall_gui(obj, "BrowserSelectMe"); // select new guy in case new owner was not expaned yet and needs expansion!
-        }
-      }
+        tabMisc::DelayedFunCall_gui(obj, "BrowserSelectMe");      }
       else {
         return iClipData::ER_ERROR;
       }

@@ -44,6 +44,8 @@ public:
   void         GenCallInit(Program* prg) override;
 
   void         SetTarget(Program* target); // #DROP1
+  bool         ChooseMe() override;
+  // #IGNORE pop chooser for selecting object of this type
 
   bool         LoadInitTarget() override;
   // initialize target based on targ_ld_init information

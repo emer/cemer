@@ -17,6 +17,8 @@
 
 #include <Program>
 #include <taProject>
+#include <Function>
+#include <taiWidgetTokenChooser>
 
 TA_BASEFUNS_CTORS_DEFN(ProgramCallFun);
 
@@ -94,3 +96,26 @@ bool ProgramCallFun::CvtFmCode(const String& code) {
   return true;
 }
 
+bool ProgramCallFun::ChooseMe() {
+  // pop a chooser for the user
+  if (GetTarget() == NULL) {
+    taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_Program, NULL, NULL, NULL, 0, "");
+    chooser->GetImageScoped(NULL, &TA_Program, NULL, &TA_Program); // scope to this guy
+    bool okc = chooser->OpenChooser();
+    if(okc && chooser->token()) {
+      Program* tok = (Program*)chooser->token();
+      target = tok;
+      UpdateAfterEdit();
+      
+      // now the chooser for the function
+      chooser->GetImageScoped(NULL, &TA_Function, target, &TA_Program); // scope to this guy
+      bool okc = chooser->OpenChooser();
+      if(okc && chooser->token()) {
+        Function* tok = (Function*)chooser->token();
+        function = tok->GetName();
+        UpdateAfterEdit();
+      }
+    }
+  }
+  return true;
+}

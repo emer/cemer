@@ -2994,7 +2994,7 @@ MainWindowViewer* taBase::GetMyBrowser() {
 
 #ifndef TA_GUI
 
-// see iMainWindowViewer.cpp
+// see iMainWindowViewer.cpp for the ifdef TA_GUI implementations
 bool taBase::EditPanel(bool new_tab, bool pin_tab) {
   return false;
 }
@@ -3011,6 +3011,10 @@ bool taBase::GuiFindFromMe(const String& find_str) {
   return false;
 }
 #endif
+
+bool taBase::ChooseMe() {
+  return false;
+}
 
 /*obs bool taBase::ReShowEdit(bool force) {
   if(!taMisc::gui_active) return false;

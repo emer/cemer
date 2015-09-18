@@ -34,6 +34,9 @@ public:
   bool         CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool         CvtFmCode(const String& code) override;
 
+  bool         ChooseMe() override;
+  // #IGNORE pop chooser for selecting object of this type
+
   String       GetDisplayName() const override;
   String       GetToolbarName() const override { return "call prog\nfunction()"; }
  
