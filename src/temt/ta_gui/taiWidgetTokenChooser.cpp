@@ -78,22 +78,26 @@ void taiWidgetTokenChooser::EditPanel() {
 }
 
 bool taiWidgetTokenChooser::countTokensToN(int& cnt, TypeDef* td, int n, void*& last_itm) {
-  if(td->tokens.size == 0 && td->tokens.sub_tokens == 0) return false;
+  if(td->tokens.size == 0 && td->tokens.sub_tokens == 0)
+    return false;
   // not gonna happen if it hasn't already
   for (int i = 0; i < td->tokens.size; ++i) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
-    if (!ShowToken(btmp)) continue;
+    if (!ShowToken(btmp))
+      continue;
     cnt++;
     last_itm = (void*)btmp;
-    if(cnt >= n) return true;   // got it!
+    if(cnt >= n)
+      return true;   // got it!
   }
   if(td->tokens.sub_tokens == 0) return false; // not gonna happen
 
   for (int i = 0; i < td->children.size; ++i) {
     TypeDef* chld = td->children[i];
-    if(countTokensToN(cnt, chld, n, last_itm)) return true;
+    if(countTokensToN(cnt, chld, n, last_itm))
+      return true;
   }
   return false;                 // didn't happen
 }
@@ -169,7 +173,8 @@ void taiWidgetTokenChooser::BuildChooser(iDialogItemChooser* ic, int view) {
 int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
                                           QTreeWidgetItem* top_item)
 {
-  if(!td->IsActualTaBase()) return 0;
+  if(!td->IsActualTaBase())
+    return 0;
   int rval = 0;
   
   //NOTES:
@@ -177,8 +182,12 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
   
   for (int i = 0; i < td->tokens.size; ++i) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
-    if(!btmp) continue;
-    
+    if(!btmp)
+      continue;
+    taBase* parent = btmp->GetParent();
+    // keeps templates out of the list of actual instances
+    if (!parent || parent->GetName() == "root")
+      continue;
     // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
     taBase* owner = btmp->GetOwner();
     if (owner) {
@@ -186,7 +195,6 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
       if (md && md->HasOption("HIDDEN_CHOOSER"))
         continue;
     }
-    
     if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
     if (!ShowToken(btmp)) continue;

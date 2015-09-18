@@ -96,7 +96,8 @@ void taiWidgetTokenChooserMultiType::BuildChooser(iDialogItemChooser* ic, int vi
 int taiWidgetTokenChooserMultiType::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
   QTreeWidgetItem* top_item)
 {
-  if (!td->IsActualTaBase()) return 0;
+  if (!td->IsActualTaBase())
+    return 0;
   int rval = 0;
 
   //NOTES:
@@ -104,9 +105,16 @@ int taiWidgetTokenChooserMultiType::BuildChooser_0(iDialogItemChooser* ic, TypeD
 
   for (int i = 0; i < td->tokens.size; ++i) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
+    if(!btmp)
+      continue;
+    taBase* parent = btmp->GetParent();
+    // keeps templates out of the list of actual instances
+    if (!parent || parent->GetName() == "root")
+      continue;
     if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
-    if (!ShowToken(btmp)) continue;
+    if (!ShowToken(btmp))
+      continue;
     //todo: need to get a more globally unique name, maybe key_unique_name
     QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
       top_item, (void*)btmp);
