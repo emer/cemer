@@ -17,8 +17,9 @@
 #include <Program>
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(AssignExpr);
+#include <taiWidgetTokenChooser>
 
+TA_BASEFUNS_CTORS_DEFN(AssignExpr);
 
 void AssignExpr::Initialize() {
 }
@@ -72,5 +73,21 @@ bool AssignExpr::CvtFmCode(const String& code) {
   result_var = FindVarNameInScope(lhs, true); // option to make
   expr.SetExpr(rhs);
 
+  return true;
+}
+
+bool AssignExpr::ChooseMe() {
+  // first get the object
+  if (!result_var) {
+    taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
+    Program* scope_program = GET_MY_OWNER(Program);
+    chooser->GetImageScoped(NULL, &TA_ProgVar, scope_program, &TA_Program); // scope to this guy
+    bool okc = chooser->OpenChooser();
+    if(okc && chooser->token()) {
+      result_var = (ProgVar*)chooser->token();
+      UpdateAfterEdit();
+    }
+    delete chooser;
+  }
   return true;
 }

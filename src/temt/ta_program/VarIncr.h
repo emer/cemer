@@ -25,29 +25,30 @@
 
 // declare all other types mentioned but not required to include:
 
-
 taTypeDef_Of(VarIncr);
 
 class TA_API VarIncr: public ProgEl { 
   // increment a variable's value by given amount
 INHERITED(ProgEl)
 public:
-  ProgVarRef		var;
+  ProgVarRef      var;
   // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable to increment
-  ProgExpr		expr;
+  ProgExpr        expr;
   // #BROWSER_EDIT_LOOKUP expression for how much to add to variable (use a negative sign to decrement)
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  bool            CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool            CvtFmCode(const String& code) override;
+  bool            ChooseMe() override;
+  // #IGNORE pop chooser for selecting object of this type
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  String	GetToolbarName() const override { return "variable+="; }
+  String          GetDisplayName() const override;
+  String          GetTypeDecoKey() const override { return "ProgVar"; }
+  String          GetToolbarName() const override { return "variable+="; }
 
   PROGEL_SIMPLE_BASEFUNS(VarIncr);
 protected:
-  void 	CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssBody_impl(Program* prog) override;
+  void            CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void            GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

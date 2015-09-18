@@ -32,22 +32,24 @@ class TA_API AssignExpr: public ProgEl {
   // assign an expression to a variable (use method call for simple assignment to function call)
 INHERITED(ProgEl)
 public:
-  ProgVarRef		result_var;
+  ProgVarRef      result_var;
   // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser where to store the result of the expression (the variable)
-  ProgExpr		expr;
+  ProgExpr        expr;
   // #BROWSER_EDIT_LOOKUP expression to assign to variable
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  bool            CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool            CvtFmCode(const String& code) override;
+  bool            ChooseMe() override;
+  // #IGNORE pop chooser for selecting object of this type
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  String	GetToolbarName() const override { return "variable="; }
+  String          GetDisplayName() const override;
+  String          GetTypeDecoKey() const override { return "ProgVar"; }
+  String          GetToolbarName() const override { return "variable="; }
 
   PROGEL_SIMPLE_BASEFUNS(AssignExpr);
 protected:
-  void 	CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssBody_impl(Program* prog) override;
+  void            CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void            GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

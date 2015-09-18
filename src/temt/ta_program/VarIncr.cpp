@@ -17,8 +17,9 @@
 #include <Program>
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(VarIncr);
+#include <taiWidgetTokenChooser>
 
+TA_BASEFUNS_CTORS_DEFN(VarIncr);
 
 void VarIncr::Initialize() {
   expr.expr = "1";
@@ -76,5 +77,21 @@ bool VarIncr::CvtFmCode(const String& code) {
   else
     expr.SetExpr(rhs);
 
+  return true;
+}
+
+bool VarIncr::ChooseMe() {
+  // first get the object
+  if (!var) {
+    taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
+    Program* scope_program = GET_MY_OWNER(Program);
+    chooser->GetImageScoped(NULL, &TA_ProgVar, scope_program, &TA_Program); // scope to this guy
+    bool okc = chooser->OpenChooser();
+    if(okc && chooser->token()) {
+      var = (ProgVar*)chooser->token();
+      UpdateAfterEdit();
+    }
+    delete chooser;
+  }
   return true;
 }
