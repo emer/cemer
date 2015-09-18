@@ -42,6 +42,7 @@ class Qt3DNode; // #IGNORE
 #include <Qt3DCore/QRotateTransform>
 #include <Qt3DRenderer/QGeometryRenderer>
 #include <Qt3DRenderer/QMaterial>
+#include <Qt3DInput/QMouseInput>
 #include <QColor>
 
 namespace Qt3D {
@@ -67,8 +68,9 @@ public:
   Qt3D::QScaleTransform*     scale;     // overall scale transform applied to this node
   Qt3D::QTranslateTransform* translate; // overall translation transform applied to this node
   Qt3D::QRotateTransform*    rotate;    // overall rotation transform applied to this node
-  Qt3D::QGeometryRenderer*       mesh;      // mesh component for this node
+  Qt3D::QGeometryRenderer*   mesh;      // mesh component for this node
   Qt3D::QMaterial*           material;  // material for this node
+  Qt3D::QMouseInput*         mouse;     // mouse input object if created
   QVector3D                  size;      // overall size of the object (if known) -- 0 if not
   
   void  addMesh(Qt3D::QGeometryRenderer* msh)
@@ -83,6 +85,9 @@ public:
   { removeComponent(mat); if(material == mat) material = NULL; }
   // remove material component
 
+  void  addMouseInput(Qt3D::QMouseController* mouse_ctrl);
+  // add a QMouseInput component and send its clicked, double-clicked signals to this object's mouse* slots -- needs the mouse_ctrl from the T3ExaminerViewer
+  
   inline void   Translate(const QVector3D& pos)
   { translate->setTranslation(pos); }
   inline void   Translate(float dx, float dy, float dz)
@@ -130,6 +135,21 @@ public:
   T3Entity(Qt3DNode* parent = 0);
   ~T3Entity();
 
+
+public slots:
+  // these are all mouse actions -- first two enabled when addMouseInput is connected -- others can be added with connect method from mouse object
+  virtual void mouseClicked(Qt3D::Q3DMouseEvent* mouse) { };
+  virtual void mouseDoubleClicked(Qt3D::Q3DMouseEvent* mouse) { };
+
+  virtual void mouseEntered() { };
+  virtual void mouseExited() { };
+
+  virtual void mousePressed(Qt3D::Q3DMouseEvent* mouse)  { };
+  virtual void mouseReleased(Qt3D::Q3DMouseEvent* mouse) { };
+  virtual void mousePressAndHold(Qt3D::Q3DMouseEvent* mouse) { };
+  virtual void mousePositionChanged(Qt3D::Q3DMouseEvent* mouse) { };
+  virtual void mouseWheel(Qt3D::Q3DWheelEvent* wheel) { };
+  
 signals:
   void  nodeUpdatingChanged();
 };

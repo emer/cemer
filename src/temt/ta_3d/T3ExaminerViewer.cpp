@@ -53,6 +53,7 @@
 #include <Qt3DCore/QAspectEngine>
 
 #include <Qt3DInput/QInputAspect>
+#include <Qt3DInput/QMouseController>
 
 #include <Qt3DRenderer/QRenderAspect>
 #include <Qt3DRenderer/QFrameGraph>
@@ -237,6 +238,8 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   // cam2->setCamera(camera);
 
   framegraph->setActiveFrameGraph(viewport);
+
+  mouse_ctrl = new Qt3D::QMouseController(root_entity);
   
   root_entity->addComponent(framegraph);
   engine->setRootEntity(root_entity);

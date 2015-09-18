@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "T3Entity.h"
+#include <Qt3DInput/QMouseController>
 
 #include <taiMisc>
 
@@ -27,6 +28,7 @@ T3Entity::T3Entity(Qt3DNode* parent)
 {
   mesh = NULL;
   material = NULL;
+  mouse = NULL;
   // order MATTERS in setting these -- used in *reverse* order
   transform->addTransform(rotate);
   transform->addTransform(scale);
@@ -36,6 +38,21 @@ T3Entity::T3Entity(Qt3DNode* parent)
 
 T3Entity::~T3Entity() {
   // todo: call cleanup here or not??
+}
+
+void T3Entity::addMouseInput(Qt3D::QMouseController* mouse_ctrl) {
+  if(mouse) return;
+  mouse = new Qt3D::QMouseInput();
+  mouse->setController(mouse_ctrl);
+  addComponent(mouse);
+  // todo: clicked actually not implemented yet!
+  // connect(mouse, SIGNAL(clicked(Qt3D::Q3DMouseEvent*)), this,
+  //         SLOT(mouseClicked(Qt3D::Q3DMouseEvent*)));
+  // connect(mouse, SIGNAL(doubleClicked(Qt3D::Q3DMouseEvent*)), this,
+  //         SLOT(mouseDoubleClicked(Qt3D::Q3DMouseEvent*)));
+  // others not needed so frequently -- add manually if wanted
+  connect(mouse, SIGNAL(released(Qt3D::Q3DMouseEvent*)), this,
+          SLOT(mouseClicked(Qt3D::Q3DMouseEvent*)));
 }
 
 void T3Entity::setNodeUpdating(bool updating) {

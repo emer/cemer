@@ -54,6 +54,7 @@ namespace Qt3D {
   class QFrameGraph;
   class QEntity;
   class QViewport;
+  class QMouseController;
 }
 
 class T3CameraParams; //
@@ -125,6 +126,7 @@ public:
   Qt3D::QFrameGraph*   framegraph;   // framegraph for rendering
   Qt3D::QViewport*     viewport;     // viewport for rendering
   Qt3D::QEntity*       scene;        // root of the actual objects being viewed -- below camera
+  Qt3D::QMouseController* mouse_ctrl; // overall mouse controller for scene -- lives in root_entity
   QColor               bg_color;     // background color
 #endif
 #else

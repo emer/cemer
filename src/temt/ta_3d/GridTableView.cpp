@@ -1089,6 +1089,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   float y_offs = ((row_height - text_ht) * 0.5f) + text_ht - txt_base_adj;
 
 #ifdef TA_QT3D
+  T3ExaminerViewer* vw = GetViewer();
   T3Entity* body = node_so->body;
   T3Entity* ln = new T3Entity(body);
   ln->Translate(0.0f, 1.0f - (row_pos + y_offs), 0.0f);
@@ -1217,6 +1218,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           sogr->block_height = mat_block_height;
           sogr->trans_max = mat_trans;
           sogr->user_data = dc; // needed for point picking
+          sogr->addMouseInput(vw->mouse_ctrl);
           
 #else // TA_QT3D
           SoSeparator* grsep = new SoSeparator;

@@ -793,7 +793,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   GetDest(dist_mat, src_data, "DistMatrix");
   dist_mat->StructUpdate(true);
   dist_mat->Reset();	// get rid of any existing cols
-  if(!name_col_nm.empty() && !(view && name_labels)) {
+  if(name_col_nm.nonempty() && !name_labels) {
     DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
     if(nmda) {
       dist_mat->NewColString("Name");

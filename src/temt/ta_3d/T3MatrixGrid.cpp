@@ -26,6 +26,8 @@
 #include <T3TriangleStrip>
 #include <T3TwoDText>
 
+#include <taMisc>
+
 T3MatrixGrid::T3MatrixGrid(Qt3DNode* par, taMatrix* mat, int slice, bool oddy,
                            ColorScale* sc, MatrixLayout layout, bool val_txt)
   : inherited(par)
@@ -443,4 +445,14 @@ void T3MatrixGrid::renderSvg(taMatrix* matptr, const taVector2i& pos, iColor& cl
            << "L " << taSvg::Coords(xp1, yp1, 0.0f)
            << "L " << taSvg::Coords(xp1, yp0, 0.0f)
            << taSvg::PathEnd();
+}
+
+void T3MatrixGrid::mouseClicked(Qt3D::Q3DMouseEvent* mouse) {
+  int xp = mouse->x();
+  int yp = mouse->y();
+  taMisc::Info("mouse: ", String(xp), ",", String(yp));
+}
+
+void T3MatrixGrid::mouseDoubleClicked(Qt3D::Q3DMouseEvent* mouse) {
+  
 }

@@ -91,6 +91,9 @@ public:
                bool val_txt = false);
   ~T3MatrixGrid();
 
+  void mouseClicked(Qt3D::Q3DMouseEvent* mouse) override;
+  void mouseDoubleClicked(Qt3D::Q3DMouseEvent* mouse) override;
+  
 protected:
   void renderBlock(const taVector2i& pos);
   void renderText(float xp, float xp1, float yp, float yp1, float zp);
