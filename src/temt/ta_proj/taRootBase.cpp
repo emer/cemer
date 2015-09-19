@@ -454,20 +454,25 @@ void taRootBase::About() {
     taMisc::Info(info);
 }
 
-void taRootBase::AddTemplates() {
-  Program* program = new Program;
-  templates.Add(program);
-  
-  Program::AddTemplates();  // all of the program elements are added by the program class
-  
-  ControlPanel* panel = new ControlPanel;
-  templates.Add(panel);
-  
-  DataTable* table = new DataTable;
-  templates.Add(table);
+void taRootBase::AddTemplatesOfType(TypeDef* td) {
+  if(!td->HasOption("VIRT_BASE") && td->GetInstance() != NULL) {
+    taBase* tok = ((taBase*)td->GetInstance())->MakeToken();
+    templates.Add(tok);
+  }
+  for(int i=0; i<td->children.size; i++) {
+    TypeDef* chtd = td->children.FastEl(i);
+    if(chtd->IsNotActual()) continue;
+    AddTemplatesOfType(chtd);
+  }
+}
 
-  DynEnumType* enum_type = new DynEnumType;
-  templates.Add(enum_type);
+void taRootBase::AddTemplates() {
+  templates.Add(new Program);
+  AddTemplatesOfType(&TA_ProgEl); // get all prog els
+  templates.Add(new ProgVar);
+  templates.Add(new ControlPanel);
+  templates.Add(new DataTable);
+  templates.Add(new DynEnumType);
 }
 
 void taRootBase::AddDocs() {

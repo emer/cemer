@@ -227,6 +227,8 @@ protected:
   bool                  AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
   bool                  AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;
   virtual void          AddTemplates(); // called in InitLinks -- extend to add new templates
+  virtual void          AddTemplatesOfType(TypeDef* td);
+  // add all templates of this type and all its subtypes
   virtual void          AddDocs(); // called in InitLinks -- extend to add new docs
   virtual taBase*       GetTemplateInstance_impl(TypeDef* typ, taBase* base);
   virtual void          MakeWizards_impl();
