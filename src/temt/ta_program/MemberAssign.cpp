@@ -146,6 +146,7 @@ bool MemberAssign::CvtFmCode(const String& code) {
 
 bool MemberAssign::ChooseMe() {
   // first get the object
+  bool keep_choosing = false;
   if (!obj) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
     Program* scope_program = GET_MY_OWNER(Program);
@@ -155,12 +156,13 @@ bool MemberAssign::ChooseMe() {
       ProgVar* tok = (ProgVar*)chooser->token();
       obj.set(tok);
       UpdateAfterEdit();
+      keep_choosing = true;
     }
     delete chooser;
   }
   
   // now scope the member choices to the object type
-  if (obj) {
+  if (obj && keep_choosing) {
     TypeDef* obj_td = obj->act_object_type();
     taiWidgetMemberDefChooser* chooser =  new taiWidgetMemberDefChooser(obj_td, NULL, NULL, NULL, 0, "");
     chooser->GetImage((MemberDef*)NULL, obj_td);

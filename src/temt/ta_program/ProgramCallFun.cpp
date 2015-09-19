@@ -98,6 +98,7 @@ bool ProgramCallFun::CvtFmCode(const String& code) {
 
 bool ProgramCallFun::ChooseMe() {
   // pop a chooser for the user
+  bool keep_choosing = false;
   if (GetTarget() == NULL) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_Program, NULL, NULL, NULL, 0, "");
     chooser->GetImageScoped(NULL, &TA_Program, NULL, &TA_Program); // scope to this guy
@@ -106,15 +107,20 @@ bool ProgramCallFun::ChooseMe() {
       Program* tok = (Program*)chooser->token();
       target = tok;
       UpdateAfterEdit();
-      
-      // now the chooser for the function
-      chooser->GetImageScoped(NULL, &TA_Function, target, &TA_Program); // scope to this guy
-      bool okc = chooser->OpenChooser();
-      if(okc && chooser->token()) {
-        Function* tok = (Function*)chooser->token();
-        function = tok->GetName();
-        UpdateAfterEdit();
-      }
+      keep_choosing = true;
+    }
+    delete chooser;
+  }
+  
+  // now the chooser for the function
+  if (keep_choosing) {
+    taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_Function, NULL, NULL, NULL, 0, "");
+    chooser->GetImageScoped(NULL, &TA_Function, target, &TA_Program); // scope to this guy
+    bool okc = chooser->OpenChooser();
+    if(okc && chooser->token()) {
+      Function* tok = (Function*)chooser->token();
+      function = tok->GetName();
+      UpdateAfterEdit();
     }
   }
   return true;

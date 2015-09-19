@@ -81,7 +81,9 @@ public:
 
   virtual BaseSpec* NewChild(TypeDef* child_type);
   // #BUTTON #TYPE_ON_children.el_base #NO_SAVE_ARG_VAL #CAT_Modify create a new child spec that inherits from this one but can have its own unique parameters
-
+  bool          ChooseMe() override;
+  // #IGNORE pop chooser for selecting type of spec to create
+  
   virtual bool  CheckType(TypeDef* td);
   // checks typedef type, issues error and returns false if not sufficient
   virtual bool	CheckObjectType(taBase* obj);

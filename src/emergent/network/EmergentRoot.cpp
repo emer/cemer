@@ -21,9 +21,6 @@
 #include <KeyBindings>
 #include <iBaseClipWidgetAction>
 #include <ToolBoxRegistrar>
-//#include <InitNamedUnits>
-//#include <SetUnitsLit>
-//#include <SetUnitsVar>
 
 #include <NetCounterInit>
 #include <NetCounterIncr>
@@ -33,12 +30,12 @@
 #include <NetDataLoop>
 #include <NetGroupedDataLoop>
 
-#include <Network>
-#include <Layer>
-#include <LayerSpec>
-#include <UnitSpec>
-#include <ProjectionSpec>
-#include <ConSpec>
+//#include <Network>
+//#include <Layer>
+//#include <LayerSpec>
+//#include <UnitSpec>
+//#include <ProjectionSpec>
+//#include <ConSpec>
 
 #include <LeabraNetwork>
 #include <LeabraLayer>
@@ -87,15 +84,6 @@ void EmergentRoot::Initialize() {
   projects.SetBaseType(&TA_ProjectBase); //note: must actually be one of the descendants
 }
 
-// fix for bug 1573 - (decoration/color not being set)
-// ptbp_add_widget now a static method of iProgramToolBar
-// - better to funnel all the adding of widgets through one method anyway
-//
-//static void ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td) {
-//  ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
-//  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction(obj->GetToolbarName(), obj));
-//}
-
 void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
   int sec = tb->AssertSection("Network"); //note: need to keep it short
   NetCounterInit* init = new NetCounterInit;
@@ -118,31 +106,31 @@ void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
   
   int the_new_sec = tb->AssertSection("New"); //note: need to keep it short
   
-  Network* net = new Network;
-  taRootBase::instance()->templates.Add(net);
-  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_Network);
-  
-  Layer* layer = new Layer;
-  taRootBase::instance()->templates.Add(layer);
-  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_Layer);
-  
-  LayerSpec* layer_spec = new LayerSpec;
-  taRootBase::instance()->templates.Add(layer_spec);
-  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LayerSpec);
-  
-  UnitSpec* unit_spec = new UnitSpec;
-  taRootBase::instance()->templates.Add(unit_spec);
-  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_UnitSpec);
-  
-  ProjectionSpec* proj_spec = new ProjectionSpec;
-  taRootBase::instance()->templates.Add(proj_spec);
-  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ProjectionSpec);
-  
-  ConSpec* con_spec = new ConSpec;
-  taRootBase::instance()->templates.Add(con_spec);
-  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ConSpec);
-  
-  tb->AddSeparator(the_new_sec);
+//  Network* net = new Network;
+//  taRootBase::instance()->templates.Add(net);
+//  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_Network);
+//  
+//  Layer* layer = new Layer;
+//  taRootBase::instance()->templates.Add(layer);
+//  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_Layer);
+//  
+//  LayerSpec* layer_spec = new LayerSpec;
+//  taRootBase::instance()->templates.Add(layer_spec);
+//  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_LayerSpec);
+//  
+//  UnitSpec* unit_spec = new UnitSpec;
+//  taRootBase::instance()->templates.Add(unit_spec);
+//  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_UnitSpec);
+//  
+//  ProjectionSpec* proj_spec = new ProjectionSpec;
+//  taRootBase::instance()->templates.Add(proj_spec);
+//  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ProjectionSpec);
+//  
+//  ConSpec* con_spec = new ConSpec;
+//  taRootBase::instance()->templates.Add(con_spec);
+//  iProgramToolBar::ptbp_add_widget(tb, the_new_sec, &TA_ConSpec);
+//  
+//  tb->AddSeparator(the_new_sec);
 
   {  // scope to reuse names
     LeabraNetwork* net = new LeabraNetwork;

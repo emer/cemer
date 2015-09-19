@@ -529,7 +529,7 @@ public:
   // check for for misc configuration settings required by different algorithms
 
   void          GetPrjnName(Projection& prjn, String& nm) override;
-  String        GetToolbarName() const override { return "leabra con spc"; }
+  String        GetToolbarName() const override { return "connect spec"; }
 
   void	InitLinks();
   SIMPLE_COPY(LeabraConSpec);

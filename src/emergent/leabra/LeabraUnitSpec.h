@@ -929,7 +929,7 @@ public:
 
   bool          CheckConfig_Unit(Unit* uv, bool quiet=false) override;
 
-  String        GetToolbarName() const override { return "leabra unit spc"; }
+  String        GetToolbarName() const override { return "unit spec"; }
 
   void	InitLinks();
   SIMPLE_COPY(LeabraUnitSpec);

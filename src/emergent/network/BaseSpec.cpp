@@ -20,6 +20,7 @@
 #include <SpecPtr>
 
 #include <taMisc>
+#include <taiWidgetTypeDefChooser>
 
 TA_BASEFUNS_CTORS_DEFN(BaseSpec);
 
@@ -365,3 +366,18 @@ taBase* BaseSpec::ChooseNew(taBase* origin) {
   }
   return newSpec;
 }
+
+bool BaseSpec::ChooseMe() {
+  taiWidgetTypeDefChooser* chooser = new taiWidgetTypeDefChooser(GetTypeDef(), NULL, NULL, NULL);
+  chooser->GetImage(GetTypeDef(), GetTypeDef());
+  TypeDef* new_td;
+  bool okc = chooser->OpenChooser();
+  if (okc) {
+    new_td = chooser->td();
+    ChangeMyType(new_td);
+  }
+  delete chooser;
+  UpdateAfterEdit();
+  return true;
+}
+

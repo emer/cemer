@@ -245,7 +245,7 @@ public:
   bool          SetLayerSpec(LayerSpec* sp);
   LayerSpec*    GetLayerSpec()		{ return (LayerSpec*)spec.SPtr(); }
   
-  String        GetToolbarName() const override { return "leabra layer"; }
+  String        GetToolbarName() const override { return "layer"; }
 
 
   void	InitLinks();

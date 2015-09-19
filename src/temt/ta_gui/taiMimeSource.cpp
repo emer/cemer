@@ -671,49 +671,50 @@ int taOBase::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea
 }
 
 int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
-  taBase* lst_itm, taiMimeSource* ms, int ea)
+                                           taBase* lst_itm, taiMimeSource* ms, int ea)
 {
   taList_impl* list = children_();
   if (!list) return iClipData::ER_IGNORED;
   if (list->HasOption("FIXED_SIZE")) return iClipData::ER_IGNORED;
   int itm_idx = list->FindEl(lst_itm); // -1 if NULL ie at end
-
+  
   taProject* proj = dynamic_cast<taProject*>(list->GetThisOrOwner(&TA_taProject));
   
   // itm_idx, -1 means parent itself
   int obj_idx = -1; // -1 means not in this list
   taBase* obj = NULL;
-
-//NOTE: OP/OP_INTO are implicitly encoded via existence of lst_itm so 
-//  we always lump the two variants together (OP2)
+  
+  //NOTE: OP/OP_INTO are implicitly encoded via existence of lst_itm so
+  //  we always lump the two variants together (OP2)
   // only fetch obj for ops that require it
   if (ea & (iClipData::EA_PASTE2 | iClipData::EA_LINK2  | iClipData::EA_DROP_COPY2 |
-    iClipData::EA_DROP_LINK2 | iClipData::EA_DROP_MOVE2))
+            iClipData::EA_DROP_LINK2 | iClipData::EA_DROP_MOVE2))
   {
     obj = ms->tabObject();
     if(TestError(!obj, "ChildEditActionLD_impl_inproc",
-		 "Could not retrieve object for operation")) return iClipData::ER_ERROR;
+                 "Could not retrieve object for operation")) return iClipData::ER_ERROR;
     // already in this list? (affects how we do drops/copies, etc.)
     obj_idx = list->FindEl(obj);
   }
   
-    
+  
   // All non-move paste ops (i.e., copy an object)
   if (
-    (ea & (iClipData::EA_DROP_COPY2)) ||
-    //  Cut/Paste svn is a move
-    ((ea & iClipData::EA_PASTE2) && (ms->srcAction() & iClipData::EA_SRC_COPY))
-  ) {
+      (ea & (iClipData::EA_DROP_COPY2)) ||
+      //  Cut/Paste svn is a move
+      ((ea & iClipData::EA_PASTE2) && (ms->srcAction() & iClipData::EA_SRC_COPY))
+      ) {
     if(proj) {
       proj->undo_mgr.SaveUndo(list, "Paste/Copy", NULL, false, this);
       // list is save_undo_owner
     }
     taBase* new_obj = obj->MakeToken();
     // if dest is list itself, then targ item is the virtual new item (end+1)
-    if (itm_idx < 0) 
-      itm_idx = list->size; 
+    if (itm_idx < 0)
+      itm_idx = list->size;
     list->Insert(new_obj, itm_idx); // at end if itm_idx=size
     new_obj->UnSafeCopy(obj);	// always copy after inserting so there is a full path & initlinks
+    
     // retain the name if being copied from outside the list, otherwise give new name
     if (obj_idx < 0)
       new_obj->SetName(obj->GetName());
@@ -721,19 +722,18 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
       new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj
     // do a full UAE (not just DC) so associated update code gets retriggered
     new_obj->UpdateAfterEdit();
-
     tabMisc::DelayedFunCall_gui(new_obj, "BrowserSelectMe");
     tabMisc::DelayedFunCall_gui(new_obj, "ChooseMe");  // pop scoped chooser
-
+    tabMisc::DelayedFunCall_gui(new_obj, "BrowserSelectMe");  // some cases require reselection because focus lost when changing type
     return iClipData::ER_OK;
   }
   
   // All Move-like ops
   if (
-    (ea & (iClipData::EA_DROP_MOVE2)) ||
-    //  Cut/Paste is a move
-    ((ea & iClipData::EA_PASTE2) && (ms->srcAction() & iClipData::EA_SRC_CUT))
-  ) {
+      (ea & (iClipData::EA_DROP_MOVE2)) ||
+      //  Cut/Paste is a move
+      ((ea & iClipData::EA_PASTE2) && (ms->srcAction() & iClipData::EA_SRC_CUT))
+      ) {
     if (obj == lst_itm)
       return 1; // nop
     if(proj) {
@@ -770,8 +770,8 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
       proj->undo_mgr.SaveUndo(obj, "Insert Link", NULL, false, this);
       // list is save_undo_owner
     }
-    if (itm_idx < 0) 
-      itm_idx = list->size; 
+    if (itm_idx < 0)
+      itm_idx = list->size;
     list->InsertLink(obj, itm_idx);
     return iClipData::ER_OK;
   }
