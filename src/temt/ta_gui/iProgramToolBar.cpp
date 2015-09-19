@@ -183,6 +183,10 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_FunctionCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCallFun);
+  tb->AddSeparator(sec);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_OtherProgramVar);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCallVar);
+
 
     ////////////////////////////////////////////////////////////////////////////
   //            Print/Misc
@@ -233,14 +237,6 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   //            Network
   // just the section - elements added later
   sec = tb->AssertSection("Network"); //note: need to keep it short
-
-  ////////////////////////////////////////////////////////////////////////////
-  //            Expert
-  sec = tb->AssertSection("Expert"); //note: need to keep it short
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_OtherProgramVar);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCallVar);
-  
-
 }
 
 ToolBoxRegistrar ptb(ProgramToolBoxProc);
