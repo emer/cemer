@@ -109,6 +109,12 @@ public:
   inline float& avg_m()
   { return ((LeabraUnitVars*)GetUnitVars())->avg_m; }
   // #CAT_UnitVar medium time-scale activation average -- integrates over avg_s values, and represents the minus phase for learning in XCAL algorithms
+  inline float& avg_m_eff()
+  { return ((LeabraUnitVars*)GetUnitVars())->avg_m_eff; }
+  // #CAT_UnitVar effective medium time-scale activation average that is actually used for the minus phase for learning in XCAL algorithms -- can include a contribution from ml trace average as well
+  inline float& avg_ml()
+  { return ((LeabraUnitVars*)GetUnitVars())->avg_ml; }
+  // #CAT_UnitVar medium-long time-scale activation average -- integrates over avg_m values at the trial level, and adds a longer-term trace factor to the minus phase for learning in XCAL algorithms
   inline float& avg_l()
   { return ((LeabraUnitVars*)GetUnitVars())->avg_l; }
   // #CAT_UnitVar long time-scale average of medium-time scale (trial level) activation, used for the BCM-style floating threshold in XCAL

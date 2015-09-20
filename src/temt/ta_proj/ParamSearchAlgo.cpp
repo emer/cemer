@@ -21,33 +21,24 @@
 TA_BASEFUNS_CTORS_DEFN(ParamSearchAlgo);
 SMARTREF_OF_CPP(ParamSearchAlgo); // ParamSearchAlgoRef
 
-
-void ParamSearchAlgo::Initialize()
-{
+void ParamSearchAlgo::Initialize() {
 }
 
-void
-ParamSearchAlgo::InitLinks()
-{
+void ParamSearchAlgo::InitLinks() {
   inherited::InitLinks();
   InitLinks_taAuto(&TA_ParamSearchAlgo);
   m_cluster_run = GET_MY_OWNER(ClusterRun);
 }
 
-void
-ParamSearchAlgo::Reset()
-{
-}
-
-bool
-ParamSearchAlgo::CreateJobs()
-{
+bool ParamSearchAlgo::StartSearch() {
   return false;
 }
 
-void
-ParamSearchAlgo::ProcessResults()
-{
+bool ParamSearchAlgo::CreateJobs() {
+  return false;
+}
+
+void ParamSearchAlgo::ProcessResults() {
 }
 
 

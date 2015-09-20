@@ -677,9 +677,11 @@ ClusterManager::RunSearchAlgo()
 
   // Tell the chosen search algorithm to populate the jobs_submit table
   // for the first batch of jobs.
-  m_cluster_run.cur_search_algo->Reset();
+  bool start_ok = m_cluster_run.cur_search_algo->StartSearch();
+  if(!start_ok) {
+    throw Exception("Search algorithm could not start any jobs.");
+  }
   bool created = m_cluster_run.cur_search_algo->CreateJobs();
-
   if (!created || m_cluster_run.jobs_submit.rows == 0) {
     throw Exception("Search algorithm did not produce any jobs.");
   }
@@ -879,6 +881,14 @@ ClusterManager::ShowRepoDialog()
   }
   int idx1 = combo1->findText(m_cluster_run.cluster.toQString());
   if (idx1 >= 0) combo1->setCurrentIndex(idx1);
+
+  dlg.AddSpace(space, row);
+
+  String srchalgo = "none";
+  if(m_cluster_run.cur_search_algo) {
+    srchalgo = m_cluster_run.cur_search_algo->name;
+  }
+  dlg.AddLabel("srchAlgo", widget, row, "label= Search Algo: " + srchalgo + ";");
   dlg.AddStretch(row);
 
   row = "emer_exe_row";

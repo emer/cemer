@@ -33,13 +33,16 @@ class TA_API ParamSearchAlgo : public taNBase {
   // #VIRT_BASE ##INSTANCE #NO_INSTANCE Parameter Search algorithm base class.
   INHERITED(taNBase)
 public:
+  virtual bool StartSearch();
+  // start a new search -- returns false if something is wrong
+  virtual bool CreateJobs();
+  // create all the jobs for the search algorithm
+  virtual void ProcessResults();
+  // process results, and potentially iterate??
+
   TA_ABSTRACT_BASEFUNS_NOCOPY(ParamSearchAlgo) //
   SIMPLE_CUTLINKS(ParamSearchAlgo);
   virtual void InitLinks();
-
-  virtual void Reset();
-  virtual bool CreateJobs();
-  virtual void ProcessResults();
 protected:
   ClusterRun *m_cluster_run;
 private:

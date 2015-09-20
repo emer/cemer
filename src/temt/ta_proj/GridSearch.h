@@ -16,104 +16,36 @@
 #ifndef GridSearch_h
 #define GridSearch_h 1
 
-
-
-#ifdef __MAKETA__
-class   QGridSearchParameterRangeList;        // #IGNORE
-class   QGridSearchParameterRangeSetList;     // #IGNORE
-class   GridSearchParameterRange;             // #IGNORE
-#else
-
-#include <QList>
-#include "EditParamSearch"
-
-class GridSearchParameterRange { // #IGNORE
-
-private:
-  double minValue;
-  double maxValue;
-  double increment;
-
-  int idx;
-
-public:
-  GridSearchParameterRange(double minV, double maxV, double incr) {
-    minValue = minV;
-    maxValue = maxV;
-    increment = incr;
-  };
-  double getFirstValue() const { return minValue; }
-  bool hasNext() const;
-  double nextValue() { return minValue + idx++ * increment; };
-  void reset() { idx = 0; };
-};
-
-class GridSearchParameterRangeSet {
-private:
-  int range_idx;
-public:
-  taString name;
-  int values;
-  EditParamSearch * ps;
-  QList<GridSearchParameterRange *> ranges;
-  bool hasNext() const;
-  double nextValue();
-  void reset();
-
-  ~GridSearchParameterRangeSet() {
-    qDeleteAll(ranges);
-    ranges.clear();
-  }
-};
-
-
-
-typedef QList<GridSearchParameterRange *> QGridSearchParameterRangeList;
-typedef QList<GridSearchParameterRangeSet *> QGridSearchParameterRangeSetList;
-#endif
-
-
 // parent includes:
 #include <ParamSearchAlgo>
 
 // member includes:
+#include <EditParamSearch>
+#include <EditMbrItem_Group>
 
 // declare all other types mentioned but not required to include:
-
-
-
-
-
 taTypeDef_Of(GridSearch);
 
 class TA_API GridSearch : public ParamSearchAlgo {
-  // Grid Search algorithm.
+  // Grid Search algorithm -- searches in uniform increments of values along each parameter, crossing all values across all parameters (the most expensive form of search!)
   INHERITED(ParamSearchAlgo)
 public:
-  int max_jobs; // The maximum number of jobs that may be run concurrently on the cluster.
+  bool  StartSearch() override;
+  bool  CreateJobs() override;
+  void  ProcessResults() override;
 
   TA_BASEFUNS_NOCOPY(GridSearch)
-  void Reset() override;
-  bool CreateJobs() override;
-  void ProcessResults() override;
 protected:
-  String_PArray m_names;
-  int_PArray m_counts;
-  int_PArray m_iter;
-  int m_cmd_id;
-  bool m_all_jobs_created;
-
-  virtual bool nextParamCombo();
+  EditMbrItem_Group m_params;   // active parameters to be searching on
+  int_PArray    m_counts;       // total number of values in each param
+  int_PArray    m_iter;         // current index of value in each param
+  int           m_tot_count;    // total number of values to search -- prod(m_counts)
+  int           m_cur_idx;      // current index out of m_tot_count
+  int           m_cmd_id;
 
 private:
   void Initialize();
   void Destroy() { };
-
-  QGridSearchParameterRangeSetList search_parameters;
-
-  GridSearchParameterRange * ParseSubRange(String sub_range);
-  QGridSearchParameterRangeList ParseRange(String range); // #IGNORE
-
 };
 
 #endif // GridSearch_h
