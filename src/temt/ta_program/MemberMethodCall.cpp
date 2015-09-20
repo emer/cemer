@@ -202,6 +202,7 @@ bool MemberMethodCall::ChooseMe() {
   bool keep_choosing = false;
   if (!obj) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
+    chooser->item_filter = (item_filter_fun)ProgEl::ObjProgVarFilter;
     Program* scope_program = GET_MY_OWNER(Program);
     chooser->GetImageScoped(NULL, &TA_ProgVar, scope_program, &TA_Program); // scope to this guy
     bool okc = chooser->OpenChooser();
