@@ -29,10 +29,14 @@ bool Layer_Group::nw_itm_def_arg = false;
 void Layer_Group::InitLinks() {
   inherited::InitLinks();
   taBase::Own(pos,this);
+  taBase::Own(pos2d,this);
+  taBase::Own(max_disp_size,this);
+  taBase::Own(max_disp_size2d,this);
 }
 
 void Layer_Group::CutLinks() {
   pos.CutLinks();
+  pos2d.CutLinks();
   inherited::CutLinks();
 }
 
@@ -45,6 +49,18 @@ void Layer_Group::Copy_(const Layer_Group& cp) {
 
 void Layer_Group::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) {
+    prev_pos = pos;
+    prev_pos2d = pos2d;
+  }
+  if(pos != prev_pos) {
+    taVector3i del = pos - prev_pos;
+    MovePos(del.x, del.y, del.z);
+  }
+  if(pos2d != prev_pos2d) {
+    taVector2i del = pos2d - prev_pos2d;
+    MovePos2d(del.x, del.y);
+  }
 }
 
 void Layer_Group::AddRelPos(taVector3i& rel_pos) {
@@ -72,7 +88,7 @@ void Layer_Group::SigEmit(int sls, void* op1, void* op2) {
   }
 }
 
-void Layer_Group::UpdateMaxDispSize() {
+void Layer_Group::UpdateLayerGroupGeom() {
   max_disp_size = 1;
   max_disp_size2d = 1;
 
@@ -114,12 +130,13 @@ void Layer_Group::UpdateMaxDispSize() {
   }
 
   if(!owner->InheritsFrom(&TA_Network)) {
-    TestWarning(gp.size > 0, "UpdateMaxDispSize",
+    TestWarning(gp.size > 0, "UpdateLayerGroupGeom",
                 "layout of layer groups within layer groups is NOT supported");
     if(min_size != pos) {
       taVector3i pos_chg = min_size - pos;
       FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
         l->pos -= pos_chg;      // fix up all the layer rels to be less.
+        l->SigEmitUpdated();
       }
       max_disp_size -= pos_chg; // reduce by amount moving
       pos = min_size;           // new position
@@ -128,6 +145,7 @@ void Layer_Group::UpdateMaxDispSize() {
       taVector2i pos_chg = min_size2d - pos2d;
       FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
         l->pos2d -= pos_chg;      // fix up all the layer rels to be less.
+        l->SigEmitUpdated();
       }
       max_disp_size2d -= pos_chg; // reduce by amount moving
       pos2d = min_size2d;           // new position
@@ -137,9 +155,12 @@ void Layer_Group::UpdateMaxDispSize() {
     // iterate on subgroups -- only for top-level guy
     for(int gi=0; gi<gp.size; gi++) {
       Layer_Group* lgp = (Layer_Group*)FastGp(gi);
-      lgp->UpdateMaxDispSize();
+      lgp->UpdateLayerGroupGeom();
     }
   }
+  prev_pos = pos;
+  prev_pos2d = pos2d;
+  SigEmitUpdated();
 }
 
 void Layer_Group::BuildLayers() {
@@ -173,6 +194,35 @@ void Layer_Group::Clean() {
     lg->Clean();
   }
   Clean_impl();
+}
+
+void Layer_Group::MovePos(int x, int y, int z) {
+  taVector3i nwpos = pos;
+  nwpos.x += x;  nwpos.y += y;  nwpos.z += z;
+  if(nwpos.x < 0) { x += -nwpos.x; nwpos.x = 0; }
+  if(nwpos.y < 0) { y += -nwpos.y; nwpos.y = 0; }
+  if(nwpos.z < 0) { z += -nwpos.z; nwpos.z = 0; }
+  taVector3i del(x,y,z);
+  FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
+    l->pos += del;
+    l->pos_abs += del;
+    l->SigEmitUpdated();
+  }
+  UpdateLayerGroupGeom();       // double check..
+}
+
+void Layer_Group::MovePos2d(int x, int y) {
+  taVector2i nwpos = pos2d;
+  nwpos.x += x;  nwpos.y += y;
+  if(nwpos.x < 0) { x += -nwpos.x; nwpos.x = 0; }
+  if(nwpos.y < 0) { y += -nwpos.y; nwpos.y = 0; }
+  taVector2i del(x,y);
+  FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
+    l->pos2d += del;
+    l->pos2d_abs += del;
+    l->SigEmitUpdated();
+  }
+  UpdateLayerGroupGeom();       // double check..
 }
 
 void Layer_Group::LayerPos_Cleanup() {
@@ -319,7 +369,7 @@ void Layer_Group::LayerPos_GridLayout_Sub_2d(int x_space, int y_space,
     }
   }
   LayerPos_Cleanup_2d();        // clean me up
-  UpdateMaxDispSize();
+  UpdateLayerGroupGeom();
 }
 
 void Layer_Group::LayerPos_GridLayout_Gps_2d(int x_space, int y_space,
@@ -412,7 +462,7 @@ void Layer_Group::LayerPos_GridLayout_Sub_3d(int x_space, int y_space,
     }
   }
   LayerPos_Cleanup_3d();        // clean me up
-  UpdateMaxDispSize();
+  UpdateLayerGroupGeom();
 }
 
 void Layer_Group::LayerPos_GridLayout_NoSub_3d(int x_space, int y_space, int z_size,
@@ -458,7 +508,7 @@ void Layer_Group::LayerPos_GridLayout_NoSub_3d(int x_space, int y_space, int z_s
     }
   }
   LayerPos_Cleanup_3d();        // clean me up
-  UpdateMaxDispSize();
+  UpdateLayerGroupGeom();
 }
 
 void Layer_Group::LayerPos_GridLayout_Gps_3d(int x_space, int y_space, int z_size,
@@ -530,7 +580,7 @@ void Layer_Group::IconifyLayers() {
   FOREACH_ELEM_IN_GROUP(Layer, lay, *this) {
     lay->Iconify();
   }
-  UpdateMaxDispSize();
+  UpdateLayerGroupGeom();
   UpdateAfterEdit();
 }
 
@@ -538,7 +588,7 @@ void Layer_Group::DeIconifyLayers() {
   FOREACH_ELEM_IN_GROUP(Layer, lay, *this) {
     lay->DeIconify();
   }
-  UpdateMaxDispSize();
+  UpdateLayerGroupGeom();
   UpdateAfterEdit();
 }
 
@@ -546,7 +596,7 @@ void Layer_Group::DispScaleLayers(float disp_scale) {
   FOREACH_ELEM_IN_GROUP(Layer, lay, *this) {
     lay->SetDispScale(disp_scale);
   }
-  UpdateMaxDispSize();
+  UpdateLayerGroupGeom();
   UpdateAfterEdit();
 }
 

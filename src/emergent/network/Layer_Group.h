@@ -51,13 +51,13 @@ public:
   // #CAT_Structure get absolute pos, which factors in offsets from layer groups
   void          AddRelPos2d(taVector2i& rel_pos);
   // #CAT_Structure add relative pos from layer groups, which factors in offsets from layer groups
-
+  
   virtual void  BuildLayers();
   // #CAT_Structure create any algorithmically specified layers
   virtual void  BuildPrjns();
   // #CAT_Structure create any algorithmically specified prjns
-  virtual void  UpdateMaxDispSize();
-  // #IGNORE update max_disp_size of layer group based on current layer layout
+  virtual void  UpdateLayerGroupGeom();
+  // #IGNORE update max_disp_size of layer group based on current layer layout, and layer group position based on all the lower-left-corner of all layers in the group
 
   virtual void  LesionLayers();
   // #BUTTON #DYN1 #CAT_Structure set the lesion flag on all the layers within this group -- removes them from all processing operations
@@ -72,6 +72,11 @@ public:
 
   virtual void  Clean();
   // #MENU #MENU_CONTEXT #CAT_Structure remove any algorithmically specified layers/prjns etc.
+
+  virtual void  MovePos(int x, int y, int z=0);
+  // #BUTTON move layer group position in 3D display by given increments -- moves all the sub-layers by given amount as well, and ensures that position never goes negative
+  virtual void  MovePos2d(int x, int y);
+  // #BUTTON move layer group position in 2D display by given increments -- moves all the sub-layers by given amount as well, and ensures that position never goes negative
 
   virtual void  LayerPos_Cleanup();
   // #MENU #MENU_CONTEXT #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc) -- both 2d and 3d positions
@@ -125,6 +130,9 @@ public:
   void  CutLinks();
   TA_BASEFUNS(Layer_Group);
 protected:
+  PosVector3i    prev_pos;      // previous 3d position
+  PosVector2i    prev_pos2d;    // previous 2d position
+
   void UpdateAfterEdit_impl() override;
   virtual void  BuildLayers_impl();
   virtual void  BuildPrjns_impl();

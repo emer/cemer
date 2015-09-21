@@ -996,7 +996,7 @@ void NetView::NewLayer(int x, int y) {
 
 void NetView::GetMaxSize() {
   if(!net()) return;
-  net()->UpdateMaxDispSize();
+  net()->UpdateLayerGroupGeom();
   max_size = net()->max_disp_size;
   max_size.z -= (max_size.z - 1.0f) / max_size.z; // leave 1 extra layer's worth of room..
   if(view_params.xy_square) {

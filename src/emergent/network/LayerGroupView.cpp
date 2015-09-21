@@ -316,23 +316,14 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   }
 
   if(nv->lay_layout == NetView::THREE_D) {
-    lgp->pos.x += (int)new_x;
-    if(lgp->pos.x < 0) lgp->pos.x = 0;
-    lgp->pos.y += (int)new_y;
-    if(lgp->pos.y < 0) lgp->pos.y = 0;
+    lgp->MovePos(new_x, new_y);
   }
   else {
-    lgp->pos2d.x += (int)new_x;
-    if(lgp->pos2d.x < 0) lgp->pos2d.x = 0;
-    lgp->pos2d.y += (int)new_y;
-    if(lgp->pos2d.y < 0) lgp->pos2d.y = 0;
+    lgp->MovePos2d(new_x, new_y);
   }
 
   laynd->txfm_shape()->translation.setValue(xfrac, zfrac, -yfrac); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
-
-  lgp->SigEmitUpdated();
-  nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();
 }
@@ -360,16 +351,12 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   }
 
   if(nv->lay_layout == NetView::THREE_D) {
-    lgp->pos.z += (int)new_z;
-    if(lgp->pos.z < 0) lgp->pos.z = 0;
+    lgp->MovePos(0,0,new_z);
   }
 
   const SbVec3f& shptrans = laynd->txfm_shape()->translation.getValue();
   laynd->txfm_shape()->translation.setValue(shptrans[0], zfrac, shptrans[2]); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
-
-  lgp->SigEmitUpdated();
-  nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();
 }

@@ -303,6 +303,8 @@ public:
   // #IGNORE add relative pos, which factors in offsets from above
   void          UpdtAbsPosFlag();
   // #IGNORE update the ABS_POS flag from the network
+  virtual void  UpdateLayerGroupGeom();
+  // #IGNORE update our owning layer group geometry (auto called after repositioning layers)
 
   inline void   GetAbsPos(taVector3i& abs_pos) { abs_pos = pos_abs; }
   // #CAT_Structure get absolute pos, which factors in offsets from layer groups

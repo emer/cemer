@@ -667,6 +667,9 @@ public:
     virtual void  Connect_UpdtActives_Thr(int thr_no);
     // #IGNORE update the active flag status of all connections
 
+  virtual void  UnBuild();
+  // #BUTTON #CAT_Structure un-build the network -- remove all units and connections -- network configuration is much faster when operating on an un-built network
+  
   virtual bool    AutoBuild();
   // #CAT_Structure called by ProjectBase::AutoBuildNets() -- does auto-building and loading of weight files after project is loaded
     
@@ -1019,8 +1022,8 @@ public:
   virtual bool   RemoveLayer(const String& nm) { return layers.RemoveName(nm); }
   // #CAT_Structure remove layer with given name, if it exists
 
-  virtual void  UpdateMaxDispSize();
-  // #IGNORE update max_disp_size of network based on current layer layout
+  virtual void  UpdateLayerGroupGeom();
+  // #IGNORE update layer group geometries (max_disp_size, positions) and max_disp_size of of network based on current layer layout
 
   virtual void  SetProjectionDefaultTypes(Projection* prjn);
   // #IGNORE this is called by the projection InitLinks to set its default types: overload in derived algorithm-specific networks to provide appropriate default types

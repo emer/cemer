@@ -411,6 +411,13 @@ void Layer::AddRelPos2d(taVector2i& rel_pos) {
   }
 }
 
+void Layer::UpdateLayerGroupGeom() {
+  Layer_Group* lgp = dynamic_cast<Layer_Group*>(owner);
+  if (lgp) {
+    lgp->UpdateLayerGroupGeom();
+  }
+}
+
 void Layer::RecomputeGeometry() {
   UpdtAbsPosFlag();
   un_geom.SetGtEq(1);           // can't go < 1
@@ -446,6 +453,7 @@ void Layer::RecomputeGeometry() {
     pos_abs = pos + rp;         // add relative positions
     pos2d_abs = pos2d + rp2;
   }
+  UpdateLayerGroupGeom();
 }
 
 void Layer::SetRelPos(int x, int y, int z) {
@@ -456,8 +464,9 @@ void Layer::SetRelPos(int x, int y, int z) {
 void Layer::SetRelPos(taVector3i& ps) {
   taVector3i rp = 0;
   AddRelPos(rp);
-  pos = ps;
+  pos.x = ps.x; pos.y = ps.y; pos.z = ps.z; // avoid pos constraint
   pos_abs = ps + rp;
+  UpdateLayerGroupGeom();
   SigEmitUpdated();
 }
 
@@ -470,7 +479,8 @@ void Layer::SetAbsPos(taVector3i& ps) {
   taVector3i rp = 0;
   AddRelPos(rp);
   pos_abs = ps;
-  pos = ps - rp;
+  pos.x = ps.x - rp.x;  pos.y = ps.y - rp.y;  pos.z = ps.z - rp.z;
+  UpdateLayerGroupGeom();
   SigEmitUpdated();
 }
 
@@ -482,8 +492,9 @@ void Layer::SetRelPos2d(int x, int y) {
 void Layer::SetRelPos2d(taVector2i& ps) {
   taVector2i rp = 0;
   AddRelPos2d(rp);
-  pos2d = ps;
+  pos2d.x = ps.x; pos2d.y = ps.y; // avoid pos constraint
   pos2d_abs = ps + rp;
+  UpdateLayerGroupGeom();
   SigEmitUpdated();
 }
 
@@ -496,28 +507,46 @@ void Layer::SetAbsPos2d(taVector2i& ps) {
   taVector2i rp = 0;
   AddRelPos2d(rp);
   pos2d_abs = ps;
-  pos2d = ps - rp;
+  pos2d.x = ps.x - rp.x;  pos2d.y = ps.y - rp.y;
+  UpdateLayerGroupGeom();
   SigEmitUpdated();
 }
 
 void Layer::MovePos(int x, int y, int z) {
-  taVector3i nps = pos_abs;
-  nps.x += x;
-  if(nps.x < 0) nps.x = 0;
-  nps.y += y;
-  if(nps.y < 0) nps.y = 0;
-  nps.z += z;
-  if(nps.z < 0) nps.z = 0;
-  SetAbsPos(nps);
+  if(HasLayerFlag(ABS_POS)) {
+    taVector3i nps = pos_abs;
+    nps.x += x;
+    if(nps.x < 0) nps.x = 0;
+    nps.y += y;
+    if(nps.y < 0) nps.y = 0;
+    nps.z += z;
+    if(nps.z < 0) nps.z = 0;
+    SetAbsPos(nps);
+  }
+  else {
+    taVector3i nps = pos;
+    nps.x += x;
+    nps.y += y;
+    nps.z += z;
+    SetRelPos(nps);
+  }
 }
 
 void Layer::MovePos2d(int x, int y) {
-  taVector2i nps = pos2d_abs;
-  nps.x += x;
-  if(nps.x < 0) nps.x = 0;
-  nps.y += y;
-  if(nps.y < 0) nps.y = 0;
-  SetAbsPos2d(nps);
+  if(HasLayerFlag(ABS_POS)) {
+    taVector2i nps = pos2d_abs;
+    nps.x += x;
+    if(nps.x < 0) nps.x = 0;
+    nps.y += y;
+    if(nps.y < 0) nps.y = 0;
+    SetAbsPos2d(nps);
+  }
+  else {
+    taVector2i nps = pos2d;
+    nps.x += x;
+    nps.y += y;
+    SetRelPos2d(nps);
+  }
 }
 
 ProjectBase* Layer::project() {

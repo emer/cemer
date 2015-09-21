@@ -27,6 +27,8 @@
 #include <T3Panel>
 #include <taSvg>
 
+#include <tabMisc>
+
 #ifdef TA_QT3D
 
 #include <T3TwoDText>
@@ -348,10 +350,8 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   laynd->txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
-  lay->SigEmitUpdated();
-  nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
-
   nv->UpdateDisplay();
+  // tabMisc::DelayedUpdateAfterEdit(lay);
 }
 
 // callback for layer z dragger
@@ -374,16 +374,13 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   }
 
   lay->MovePos(0,0,(int)new_z);
-//   if(lay->pos.z < 0) lay->pos.z = 0;
 
   const SbVec3f& shptrans = laynd->txfm_shape()->translation.getValue();
   laynd->txfm_shape()->translation.setValue(shptrans[0], 0.0f, shptrans[2]); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
-  lay->SigEmitUpdated();
-  nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
-
   nv->UpdateDisplay();
+  // tabMisc::DelayedUpdateAfterEdit(lay);
 }
 
 #endif // TA_QT3D

@@ -178,6 +178,9 @@ void SpecPtr_impl::UpdateAfterEdit_impl() {
       SetSpec(NULL);            // get rid of existing -- will try to find new one later
     }
   }
+  else if(sp) {
+    sp->SpecSet(owner);         // be sure to register that we've got this guy
+  }
 }
 
 void SpecPtr_impl::SetBaseType(TypeDef* td) {

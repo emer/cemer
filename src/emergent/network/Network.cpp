@@ -1177,6 +1177,10 @@ void Network::Connect_UpdtActives_Thr(int thr_no) {
   }
 }
 
+void Network::UnBuild() {
+  RemoveUnits();
+}
+
 bool Network::AutoBuild() {
   if(auto_build == NO_BUILD) return false;
   
@@ -2617,7 +2621,7 @@ void Network::LayerZPos_Unitize() {
     int nw_z = zvals.FindEl(l->pos.z); // replace with its index on sorted list..
     l->pos.z += nw_z - l->pos.z;
   }
-  UpdateMaxDispSize();
+  UpdateLayerGroupGeom();
 }
 
 void Network::LayerPos_Cleanup() {
@@ -2627,14 +2631,14 @@ void Network::LayerPos_Cleanup() {
   }
   if (flags & MANUAL_POS) return;
   layers.LayerPos_Cleanup();
-  UpdateMaxDispSize();          // must do that in case something moves
+  UpdateLayerGroupGeom();          // must do that in case something moves
 }
 
 void Network::LayerPos_GridLayout_2d(int x_space, int y_space,
                                      int gp_grid_x, int lay_grid_x) {
   StructUpdate(true);
   layers.LayerPos_GridLayout_2d(x_space, y_space, gp_grid_x, lay_grid_x);
-  UpdateMaxDispSize();          // must do that in case something moves
+  UpdateLayerGroupGeom();          // must do that in case something moves
   StructUpdate(false);
 }
 
@@ -2948,8 +2952,8 @@ void Network::DeIconifyAllLayers() {
   UpdtAfterNetMod();
 }
 
-void Network::UpdateMaxDispSize() {
-  layers.UpdateMaxDispSize();
+void Network::UpdateLayerGroupGeom() {
+  layers.UpdateLayerGroupGeom();
   max_disp_size = layers.max_disp_size;
   max_disp_size2d = layers.max_disp_size2d;
 }
