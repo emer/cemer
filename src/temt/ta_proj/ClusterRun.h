@@ -277,6 +277,8 @@ public:
   virtual void        UpdateUI();
   // a chance to enable/disable buttons when panel changes or selection changes
   virtual DataTable*        GetCurDataTable();
+  virtual String      ReplaceVars(const String& str);
+  // #IGNORE replace %varname with variable values
 
   
   SIMPLE_COPY(ClusterRun);
@@ -297,7 +299,6 @@ protected:
 private:
   void  Initialize();
   void  Destroy();
-  String ExpandLabel();
 };
 
 #endif // ClusterRun_h

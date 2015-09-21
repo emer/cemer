@@ -1493,11 +1493,11 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
 /**
  * Expand the label to replace variables with their respective value. Particularly useful to label search runs.
  */
-String ClusterRun::ExpandLabel() {
+String ClusterRun::ReplaceVars(const String& str) {
   int start_pos = 0;
   int end_pos = 0;
   int idx = -1;
-  String label_expanded = label;
+  String label_expanded = str;
 
   idx = label_expanded.index('%',start_pos);
 
@@ -1552,8 +1552,8 @@ ClusterRun::AddJobRow_impl(const String& cmd, const String& params, int cmd_id) 
   jobs_submit.SetVal(cmd_id,      "command_id", row);
   jobs_submit.SetVal(cmd,         "command",    row);
   jobs_submit.SetVal(params,      "params",     row);
-  jobs_submit.SetVal(notes,       "notes",      row);
-  jobs_submit.SetVal(ExpandLabel(),       "label",      row);
+  jobs_submit.SetVal(ReplaceVars(notes), "notes",      row);
+  jobs_submit.SetVal(ReplaceVars(label), "label",      row);
   
   jobs_submit.SetVal(repo_url,    "repo_url",   row);
   jobs_submit.SetVal(cluster,     "cluster",    row);

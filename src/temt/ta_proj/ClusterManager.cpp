@@ -891,13 +891,15 @@ ClusterManager::ShowRepoDialog()
   dlg.AddLabel("srchAlgo", widget, row, "label= Search Algo: " + srchalgo + ";");
   dlg.AddStretch(row);
 
+  String tt;
+  
   row = "emer_exe_row";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("exe_lbl", widget, row, "label=* Executable Cmd: ;");
+  tt = "tooltip=Enter name of executable to run on cluster -- can be an absolute path or just an executable name that will be found on default path;";
+  dlg.AddLabel("exe_lbl", widget, row, "label=* Executable Cmd: ;" + tt);
   
-  dlg.AddStringField(&m_cluster_run.exe_cmd, "", widget, row,
-                     "tooltip=Enter name of executable to run on cluster -- can be an absolute path or just an executable name that will be found on default path;");
+  dlg.AddStringField(&m_cluster_run.exe_cmd, "", widget, row, tt);
   dlg.AddStretch(row);
   
   row = "repoRow";
@@ -926,83 +928,87 @@ ClusterManager::ShowRepoDialog()
   row = "notesRow";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("notesLbl", widget, row, "label=* Notes: ;");
-  dlg.AddStringField(&m_cluster_run.notes, "notes", widget, row,
-                     "tooltip=Notes about this run, used as a checkin comment and visible in job lists -- very good idea to be specific here.;");
+  tt = "tooltip=Notes about this run, used as a checkin comment and visible in job lists -- very good idea to be specific here.  Use %varname to automatically add current variable value (must have a space after);";
+  dlg.AddLabel("notesLbl", widget, row, "label=* Notes: ;" + tt);
+  dlg.AddStringField(&m_cluster_run.notes, "notes", widget, row, tt);
   
   row = "labelRow";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("labelLbl", widget, row, "label=Label: ;");
-  dlg.AddStringField(&m_cluster_run.label, "label", widget, row,
-                     "tooltip=A label that can be used when plotting data to distinguish this run from another;");
+  tt = "tooltip=A label that can be used when plotting data to distinguish this run from another. Use %varname to automatically add current variable value (must have a space after);";
+  dlg.AddLabel("labelLbl", widget, row, "label=Label: ;" + tt);
+  dlg.AddStringField(&m_cluster_run.label, "label", widget, row, tt);
   
   row = "queueRow";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("queueLbl", widget, row, "label=Queue: ;");
-  dlg.AddStringField(&m_cluster_run.queue, "queue", widget, row,
-    "tooltip=Choose a queue on the computing resource (optional).;");
+  tt = "tooltip=Choose a queue on the computing resource (optional).;";
+  dlg.AddLabel("queueLbl", widget, row, "label=Queue: ;" + tt);
+  dlg.AddStringField(&m_cluster_run.queue, "queue", widget, row, tt);
 
   row = "runtimeRow";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("runtimeLbl", widget, row, "label=Run time: ;");
-  dlg.AddStringField(&m_cluster_run.run_time, "runtime", widget, row,
-    "tooltip=how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate!;");
+  tt = "tooltip=how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate!;";
+  dlg.AddLabel("runtimeLbl", widget, row, "label=Run time: ;" + tt);
+  dlg.AddStringField(&m_cluster_run.run_time, "runtime", widget, row, tt);
 
   row = "ramRow";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("ramLbl", widget, row, "label=RAM (in GB): ;");
-  dlg.AddIntField(&m_cluster_run.ram_gb, "ram", widget, row,
-    "tooltip=how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources -- the status_info field can often show you how much a job has used in the past.;");
+  tt = "tooltip=how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources -- the status_info field can often show you how much a job has used in the past.;";
+  dlg.AddLabel("ramLbl", widget, row, "label=RAM (in GB): ;" + tt);
+  dlg.AddIntField(&m_cluster_run.ram_gb, "ram", widget, row, tt);
   dlg.AddStretch(row);
 
   row = "threadsRow";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("threadsLbl", widget, row, "label=Number of threads: ;");
-  dlg.AddIntField(&m_cluster_run.n_threads, "threads", widget, row,
-    "tooltip=Number of parallel threads to use for running.;");
+  tt = "tooltip=Number of parallel threads to use for running.;";
+  dlg.AddLabel("threadsLbl", widget, row, "label=Number of threads: ;" + tt);
+  dlg.AddIntField(&m_cluster_run.n_threads, "threads", widget, row, tt);
   dlg.AddStretch(row);
 
   row = "mpi";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("mpiLbl", widget, row, "label=Use MPI: ;");
-  dlg.AddBoolCheckbox(&m_cluster_run.use_mpi, "usempi", widget, row,
-    "tooltip=Use MPI (message-passing-inteface distributed memory executable to run across multiple nodes) on the cluster?;");
+  tt = "tooltip=Use MPI (message-passing-inteface distributed memory executable to run across multiple nodes) on the cluster?;";
+  dlg.AddLabel("mpiLbl", widget, row, "label=Use MPI: ;" + tt);
+  dlg.AddBoolCheckbox(&m_cluster_run.use_mpi, "usempi", widget, row, tt);
+
   dlg.AddStretch(row);
-  dlg.AddLabel("nodesLbl", widget, row, "label=MPI nodes: ;");
-  dlg.AddIntField(&m_cluster_run.mpi_nodes, "numnodes", widget, row,
-    "tooltip=The number of physical compute nodes to use per each job for MPI -- total number of nodes is nodes * per_node.;");
+  tt = "tooltip=The number of physical compute nodes to use per each job for MPI -- total number of nodes is nodes * per_node.;";
+  dlg.AddLabel("nodesLbl", widget, row, "label=MPI nodes: ;" + tt);
+  dlg.AddIntField(&m_cluster_run.mpi_nodes, "numnodes", widget, row, tt);
+
   dlg.AddStretch(row);
-  dlg.AddLabel("pernodesLbl", widget, row, "label=MPI per_node: ;");
-  dlg.AddIntField(&m_cluster_run.mpi_per_node, "numpernode", widget, row,
-    "tooltip=The number of MPI processes to use per each physical compute node -- total number of nodes is nodes * per_node.;");
+  tt = "tooltip=The number of MPI processes to use per each physical compute node -- total number of nodes is nodes * per_node.;";
+  dlg.AddLabel("pernodesLbl", widget, row, "label=MPI per_node: ;" + tt);
+  dlg.AddIntField(&m_cluster_run.mpi_per_node, "numpernode", widget, row, tt);
   dlg.AddStretch(row);
 
   row = "pb";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("pbLbl", widget, row, "label=Use parallel_batch: ;");
-  dlg.AddBoolCheckbox(&m_cluster_run.parallel_batch, "usepb", widget, row,
-                      "tooltip=use parallel batch processing -- run multiple runs of the same model in parallel across nodes or cpus (not using mpi -- just embarassingly parallel separate runs), each on a different batch iteration (e.g., different initial random weights).;");
+  tt = "tooltip=use parallel batch processing -- run multiple runs of the same model in parallel across nodes or cpus (not using mpi -- just embarassingly parallel separate runs), each on a different batch iteration (e.g., different initial random weights).;";
+  dlg.AddLabel("pbLbl", widget, row, "label=Use parallel_batch: ;" + tt);
+  dlg.AddBoolCheckbox(&m_cluster_run.parallel_batch, "usepb", widget, row, tt);
+
   dlg.AddStretch(row);
-  dlg.AddLabel("batchesLbl", widget, row, "label=pb_batches: ;");
-  dlg.AddIntField(&m_cluster_run.pb_batches, "numbatches", widget, row,
-    "tooltip=The number of parallel batches to run.;");
-  dlg.AddLabel("pbnodesLbl", widget, row, "label=pb_nodes: ;");
-  dlg.AddIntField(&m_cluster_run.pb_nodes, "numpbnodes", widget, row,
-    "tooltip=if the cluster uses by_node job allocation strategy, then this is the number of nodes to request for this job -- if you want all of your jobs to run in parallel at the same time, then this should be equal to (pb_batches * n_threads * mpi_nodes) / cpus_per_node -- setting this value to 0 will default to this allocation number.;");
+  tt = "tooltip=The number of parallel batches to run.;";
+  dlg.AddLabel("batchesLbl", widget, row, "label=pb_batches: ;" + tt);
+  dlg.AddIntField(&m_cluster_run.pb_batches, "numbatches", widget, row, tt);
+
+  tt = "tooltip=if the cluster uses by_node job allocation strategy, then this is the number of nodes to request for this job -- if you want all of your jobs to run in parallel at the same time, then this should be equal to (pb_batches * n_threads * mpi_nodes) / cpus_per_node -- setting this value to 0 will default to this allocation number.;";
+  dlg.AddLabel("pbnodesLbl", widget, row, "label=pb_nodes: ;" + tt);
+  dlg.AddIntField(&m_cluster_run.pb_nodes, "numpbnodes", widget, row, tt);
 
   row = "misc";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("nowinxLbl", widget, row, "label=Use -nowin: ;");
-  dlg.AddBoolCheckbox(&m_cluster_run.nowin_x, "nowin", widget, row,
-                      "tooltip=use the -nowin startup command instead of -nogui and add a _x suffix to the executable command (e.g., emergent_x or emergent_x_mpi), to call a version of the program (a shell wrapper around the standard compiled executable) that opens up an XWindows connection to allow offscreen rendering and other such operations, even in batch mode.;");
+  tt = "tooltip=use the -nowin startup command instead of -nogui and add a _x suffix to the executable command (e.g., emergent_x or emergent_x_mpi), to call a version of the program (a shell wrapper around the standard compiled executable) that opens up an XWindows connection to allow offscreen rendering and other such operations, even in batch mode.;";
+  dlg.AddLabel("nowinxLbl", widget, row, "label=Use -nowin: ;" + tt);
+  dlg.AddBoolCheckbox(&m_cluster_run.nowin_x, "nowin", widget, row, tt);
   dlg.AddStretch(row);
 
   
