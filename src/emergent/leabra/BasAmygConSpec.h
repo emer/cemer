@@ -52,16 +52,21 @@ public:
       if(invert_da) dwt = -dwt;
   }
   // #IGNORE acquisition
+//  inline void C_Compute_dWt_BasAmyg_Ext(float& dwt, const float su_act,
+//                                        const float lrnmod, const float da_p,
+//                                        const float da_n) {
   inline void C_Compute_dWt_BasAmyg_Ext(float& dwt, const float su_act,
-                                        const float lrnmod, const float da_p,
+                                        const float ru_act, const float da_p,
                                         const float da_n) {
 // NOTE: the -da_p arg was inverting the dip_da_gain effect - BAD!!!
     // NOTE: BasAmyg now only listening to the Schultzian (VTAp) guys
     //      dwt += cur_lrate * su_act * lrnmod * (GetDa(-da_p) + GetDa(-da_n));
     // NOTE: the lrnmod param here was making extinction excruciatingly slow since it gets smaller as _Ext activation increases; already have soft wt bounding, etc. so together it takes forever!!
-    float eff_lrnmod = (lrnmod >= 0.1f) ? 1.0f : 0.0f; // discretize to 0, 1
-    dwt -= cur_lrate * su_act * eff_lrnmod * (GetDa(da_p));
+//    float eff_lrnmod = (lrnmod >= 0.1f) ? 1.0f : 0.0f; // discretize to 0, 1
+//    dwt -= cur_lrate * su_act * eff_lrnmod * (GetDa(da_p));
 //      dwt += cur_lrate * su_act * (GetDa(-da_p) + GetDa(-da_n));
+    // don't use lrnmod at all anymore???
+    dwt -= cur_lrate * su_act * (GetDa(da_p));
     if(invert_da) dwt = -dwt;
   }
   // #IGNORE extinction
@@ -85,7 +90,8 @@ public:
     else {
       for(int i=0; i<sz; i++) {
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-        C_Compute_dWt_BasAmyg_Ext(dwts[i], su_act, ru->lrnmod, ru->da_p, ru->da_n);
+//        C_Compute_dWt_BasAmyg_Ext(dwts[i], su_act, ru->lrnmod, ru->da_p, ru->da_n);
+        C_Compute_dWt_BasAmyg_Ext(dwts[i], su_act, ru->act_eq, ru->da_p, ru->da_n);
       }
     }
   }
