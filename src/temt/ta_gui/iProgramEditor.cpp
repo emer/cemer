@@ -358,14 +358,17 @@ void iProgramEditor::Controls_Add() {
   }
   // don't forget the desc guy
   if (md_desc) {
-     membs.SetMinSize(lines + 1);
-     membs.FastEl(lines)->memb_el.Add(md_desc);
-     if(md_opc) {
-       if(md_flags) {
-         membs.FastEl(lines)->memb_el.Add(md_flags);
-       }
-       membs.FastEl(lines)->memb_el.Add(md_opc);
-     }
+    membs.SetMinSize(lines + 1);
+    if(md_opc) {
+      if(md_flags) {
+        membs.FastEl(lines)->memb_el.Add(md_flags);
+      }
+      membs.FastEl(lines)->memb_el.Add(md_desc);
+      membs.FastEl(lines)->memb_el.Add(md_opc);
+    }
+    else {
+      membs.FastEl(lines)->memb_el.Add(md_desc);
+    }
   }
 
   // add main inline controls
