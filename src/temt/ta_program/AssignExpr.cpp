@@ -58,7 +58,8 @@ bool AssignExpr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.endsWith(';')) return false; // don't pick up css exprs
   if(code.freq('=') >= 1) {
     String lhs = code.before('=');
-    if(lhs.nonempty() && !lhs.contains('.') && !lhs.contains('-')) // no path
+    if(lhs.nonempty() && !lhs.contains('.') && !lhs.contains('-') && !lhs.contains('['))
+      // no path, matrix
       return true;
   }
   return false;

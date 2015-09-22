@@ -38,6 +38,7 @@
 #include <taProject>
 
 TA_BASEFUNS_CTORS_DEFN(ProgExprBase);
+TA_BASEFUNS_CTORS_DEFN(ProgExprShort);
 
 
 cssProgSpace* ProgExprBase::parse_prog = NULL;

@@ -2005,7 +2005,8 @@ void taBase::RebuildAllViews() {
 void taBase::SigEmit(int sls, void* op1, void* op2) {
   if(taMisc::is_loading)  return; // no notifies while loading!!
   if(!tabMisc::root || tabMisc::root->in_init) return;
-
+  if(!taTaskThread::inMainThread()) return;
+  
   if (sls != SLS_ITEM_UPDATED_ND)
     setDirty(true); // note, also then sets dirty for list ops, like Add etc.
   // only assume stale for strict condition:

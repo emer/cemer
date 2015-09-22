@@ -291,8 +291,12 @@ void iProgramEditor::Controls_Add() {
 
   TypeDef* typ = GetRootTypeDef();
   // check for a desc guy, it will consume another line
+  MemberDef* md_opc = NULL;
   MemberDef* md_desc = typ->members.FindName("desc");
-  if (md_desc) --lines;
+  if (md_desc) {
+    --lines;
+    md_opc = typ->members.FindName("orig_prog_code");
+  }
 
   // make main layout
   QVBoxLayout* lay = new QVBoxLayout(body);
@@ -307,7 +311,10 @@ void iProgramEditor::Controls_Add() {
     MemberDef* md = typ->members.FastEl(i);
     if (ShowMember(md)) ++mbr_cnt;
   }
-  if (md_desc) --mbr_cnt; // don't double count
+  if (md_desc) {
+    --mbr_cnt; // don't double count
+    if (md_opc) --mbr_cnt;
+  }
 
   // apportion the members amongst the available lines
   // round up slightly so first N lines get the extra odd ones
@@ -321,7 +328,8 @@ void iProgramEditor::Controls_Add() {
   for (int i = 0, i_ln = 0; i < typ->members.size; ++i) {
     MemberDef* md = typ->members.FastEl(i);
     if (!ShowMember(md)) continue;
-    if (md->name == "desc") continue; // on separate line at end
+    if (md->name == "desc" || md->name == "orig_prog_code") continue;
+    // on separate line at end
     membs.FastEl(cur_ln)->memb_el.Add(md);
     ++i_ln;
     --tmbr_cnt;
@@ -342,6 +350,9 @@ void iProgramEditor::Controls_Add() {
   if (md_desc) {
      membs.SetMinSize(lines + 1);
      membs.FastEl(lines)->memb_el.Add(md_desc);
+     if(md_opc) {
+       membs.FastEl(lines)->memb_el.Add(md_opc);
+     }
   }
 
   // add main inline controls

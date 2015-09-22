@@ -1508,7 +1508,10 @@ String ClusterRun::ReplaceVars(const String& str) {
       end_pos = label_expanded.length();
     //Extract the variable name to be expanded out.
     String var_name = label_expanded.at(idx + 1, end_pos - idx - 1);
-
+    if(var_name.endsWith(',') || var_name.endsWith('.')) {
+      var_name = var_name.before(var_name.length()-1);
+    }
+                         
     //Search over all parameters in cluster run to find the variable by name
     FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, mbrs) {
       if (var_name == mbr->GetName()) {

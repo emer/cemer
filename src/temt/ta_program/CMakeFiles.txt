@@ -87,6 +87,7 @@ set(ta_program_HEADS_MAKETA
   MemberAssign.h
   MemberFmArg.h
   MemberMethodCall.h
+  MatrixAssign.h
 
   MiscCall.h
 
@@ -197,6 +198,7 @@ set(ta_program_SRCS
   MemberAssign.cpp
   MemberFmArg.cpp
   MemberMethodCall.cpp
+  MatrixAssign.cpp
 
   MiscCall.cpp
 

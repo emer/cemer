@@ -147,4 +147,24 @@ private:
   void  Destroy();
 };
 
+
+// short expression version -- for shorter expressions -- a gui /maketa difference
+
+taTypeDef_Of(ProgExprShort);
+
+class TA_API ProgExprShort : public ProgExprBase {
+INHERITED(ProgExprBase)
+public:
+#ifdef __MAKETA__
+  String        expr;           // #EDIT_DIALOG #EDIT_WIDTH_5 #LABEL_ enter the expression here -- use Ctrl-L to pull up a lookup dialog for members, methods, types, etc -- or you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
+#endif
+
+  TA_BASEFUNS_NOCOPY(ProgExprShort);
+private:
+  void  Initialize() { };
+  void  Destroy()    { };
+};
+
+
+
 #endif // ProgExprBase_h
