@@ -292,10 +292,14 @@ void iProgramEditor::Controls_Add() {
   TypeDef* typ = GetRootTypeDef();
   // check for a desc guy, it will consume another line
   MemberDef* md_opc = NULL;
+  MemberDef* md_flags = NULL;
   MemberDef* md_desc = typ->members.FindName("desc");
   if (md_desc) {
     --lines;
     md_opc = typ->members.FindName("orig_prog_code");
+    if(md_opc) {
+      md_flags = typ->members.FindName("flags");
+    }
   }
 
   // make main layout
@@ -313,7 +317,12 @@ void iProgramEditor::Controls_Add() {
   }
   if (md_desc) {
     --mbr_cnt; // don't double count
-    if (md_opc) --mbr_cnt;
+    if (md_opc) {
+      --mbr_cnt;
+      if(md_flags) {
+        --mbr_cnt;
+      }
+    }
   }
 
   // apportion the members amongst the available lines
@@ -329,7 +338,8 @@ void iProgramEditor::Controls_Add() {
     MemberDef* md = typ->members.FastEl(i);
     if (!ShowMember(md)) continue;
     if (md->name == "desc" || md->name == "orig_prog_code") continue;
-    // on separate line at end
+    if (md_opc && md->name == "flags") continue; // only for prog el -- opc is check for that
+    // these are all on separate line at end
     membs.FastEl(cur_ln)->memb_el.Add(md);
     ++i_ln;
     --tmbr_cnt;
@@ -351,6 +361,9 @@ void iProgramEditor::Controls_Add() {
      membs.SetMinSize(lines + 1);
      membs.FastEl(lines)->memb_el.Add(md_desc);
      if(md_opc) {
+       if(md_flags) {
+         membs.FastEl(lines)->memb_el.Add(md_flags);
+       }
        membs.FastEl(lines)->memb_el.Add(md_opc);
      }
   }
