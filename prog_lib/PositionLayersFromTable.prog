@@ -1,16 +1,16 @@
-// ta_Dump File v3.0 -- code v7.8.2.0 rev8569
-Program .projects[0].programs.gp[4][18] { 
+// ta_Dump File v3.0 -- code v7.8.3.0 rev8651
+Program .projects[1].programs[1] { 
  UserDataItem_List @*(.user_data_) {
   UserDataItem @[0] { };
  };
 
- ProgObjList @.objs = [2] {
+ ProgObjList @.objs = [4] {
   DataTable @[0] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @[0] { };
    };
 
-   DataTableCols @.data = [9] {
+   DataTableCols @.data = [8] {
     String_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
@@ -21,9 +21,10 @@ Program .projects[0].programs.gp[4][18] {
       UserDataItem @[0] { };
      };
     };
-    String_Data @[2] { 
+    int_Data @[2] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
+      UserDataItem @[1] { };
      };
     };
     int_Data @[3] { 
@@ -35,7 +36,6 @@ Program .projects[0].programs.gp[4][18] {
     int_Data @[4] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
     int_Data @[5] { 
@@ -56,14 +56,11 @@ Program .projects[0].programs.gp[4][18] {
       UserDataItem @[1] { };
      };
     };
-    int_Data @[8] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
    };
 
-   DataOpList @.last_sort_spec.ops = [0] {
+   DataOpList @.last_sort_spec.ops = [2] {
+    DataSortEl @[0] { };
+    DataSortEl @[1] { };
    };
   };
   DataTable @[1] { 
@@ -71,7 +68,7 @@ Program .projects[0].programs.gp[4][18] {
     UserDataItem @[0] { };
    };
 
-   DataTableCols @.data = [9] {
+   DataTableCols @.data = [8] {
     String_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
@@ -82,9 +79,10 @@ Program .projects[0].programs.gp[4][18] {
       UserDataItem @[0] { };
      };
     };
-    String_Data @[2] { 
+    int_Data @[2] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
+      UserDataItem @[1] { };
      };
     };
     int_Data @[3] { 
@@ -96,7 +94,6 @@ Program .projects[0].programs.gp[4][18] {
     int_Data @[4] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
-      UserDataItem @[1] { };
      };
     };
     int_Data @[5] { 
@@ -117,9 +114,84 @@ Program .projects[0].programs.gp[4][18] {
       UserDataItem @[1] { };
      };
     };
-    int_Data @[8] { 
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+  };
+  DataTable @[2] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+   };
+
+   DataTableCols @.data = [5] {
+    String_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
+     };
+    };
+    String_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    int_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    int_Data @[3] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    int_Data @[4] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+   };
+
+   DataOpList @.last_sort_spec.ops = [2] {
+    DataSortEl @[0] { };
+    DataSortEl @[1] { };
+   };
+  };
+  DataTable @[3] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @[0] { };
+   };
+
+   DataTableCols @.data = [5] {
+    String_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    int_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    int_Data @[3] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    int_Data @[4] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
      };
     };
    };
@@ -131,37 +203,39 @@ Program .projects[0].programs.gp[4][18] {
 
  ProgType_List @.types = [2] {
   DynEnumType @[0] { 
+   DynEnumItem_List @.enums = [4] {
+    DynEnumItem @[0] { };
+    DynEnumItem @[1] { };
+    DynEnumItem @[2] { };
+    DynEnumItem @[3] { };
+   };
+  };
+  DynEnumType @[1] { 
    DynEnumItem_List @.enums = [2] {
     DynEnumItem @[0] { };
     DynEnumItem @[1] { };
    };
   };
-  DynEnumType @[1] { 
-   DynEnumItem_List @.enums = [3] {
-    DynEnumItem @[0] { };
-    DynEnumItem @[1] { };
-    DynEnumItem @[2] { };
-   };
-  };
  };
 
- ProgVar_List @.args = [3] {
+ ProgVar_List @.args = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
+
+ ProgVar_List @.vars = [4] {
   ProgVar @[0] { };
   ProgVar @[1] { };
   ProgVar @[2] { };
+  ProgVar @[3] { };
  };
 
- ProgVar_List @.vars = [2] {
-  ProgVar @[0] { };
-  ProgVar @[1] { };
- };
-
- Function_List @.functions = [2] {
+ Function_List @.functions = [3] {
   Function @[0] { 
    ProgVar_List @.args = [0] {
    };
 
-   ProgEl_List @.fun_code = [7] {
+   ProgEl_List @.fun_code = [13] {
     LocalVars @[0] { 
      ProgVar_List @.local_vars = [4] {
       ProgVar @[0] { };
@@ -176,13 +250,22 @@ Program .projects[0].programs.gp[4][18] {
      };
     };
     MethodCall @[2] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[3] { 
      ProgArg_List @.meth_args = [0] {
      };
     };
-    AssignExpr @[3] { };
-    Comment @[4] { };
-    ForeachLoop @[5] { 
-     ProgEl_List @.loop_code = [5] {
+    MethodCall @[4] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    AssignExpr @[5] { };
+    Comment @[6] { };
+    ForeachLoop @[7] { 
+     ProgEl_List @.loop_code = [6] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [0] {
        };
@@ -191,10 +274,12 @@ Program .projects[0].programs.gp[4][18] {
       CssExpr @[2] { };
       CssExpr @[3] { };
       CssExpr @[4] { };
+      CssExpr @[5] { };
      };
     };
-    ForLoop @[6] { 
-     ProgEl_List @.loop_code = [10] {
+    Comment @[8] { };
+    ForLoop @[9] { 
+     ProgEl_List @.loop_code = [14] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [0] {
        };
@@ -209,9 +294,53 @@ Program .projects[0].programs.gp[4][18] {
       CssExpr @[4] { };
       CssExpr @[5] { };
       CssExpr @[6] { };
-      CssExpr @[7] { };
-      CssExpr @[8] { };
+      Comment @[7] { };
+      MethodCall @[8] { 
+       ProgArg_List @.meth_args = [0] {
+       };
+      };
       CssExpr @[9] { };
+      If @[10] { 
+       ProgEl_List @.true_code = [1] {
+	CssExpr @[0] { };
+       };
+      };
+      CssExpr @[11] { };
+      CssExpr @[12] { };
+      CssExpr @[13] { };
+     };
+    };
+    Comment @[10] { };
+    MethodCall @[11] { 
+     ProgArg_List @.meth_args = [12] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+      ProgArg @[9] { };
+      ProgArg @[10] { };
+      ProgArg @[11] { };
+     };
+    };
+    MethodCall @[12] { 
+     ProgArg_List @.meth_args = [12] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+      ProgArg @[9] { };
+      ProgArg @[10] { };
+      ProgArg @[11] { };
      };
     };
    };
@@ -241,87 +370,102 @@ Program .projects[0].programs.gp[4][18] {
       AssignExpr @[2] { };
       If @[3] { 
        ProgEl_List @.true_code = [1] {
-	Switch @[0] { 
-	 ProgEl_List @.cases = [3] {
-	  CaseBlock @[0] { 
-	   ProgEl_List @.prog_code = [1] {
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [3] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+   };
+  };
+  Function @[2] { 
+   ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+   };
+
+   ProgEl_List @.fun_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [9] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+      ProgVar @[2] { };
+      ProgVar @[3] { };
+      ProgVar @[4] { };
+      ProgVar @[5] { };
+      ProgVar @[6] { };
+      ProgVar @[7] { };
+      ProgVar @[8] { };
+     };
+    };
+    ForLoop @[1] { 
+     ProgEl_List @.loop_code = [4] {
+      AssignExpr @[0] { };
+      IfContinue @[1] { };
+      AssignExpr @[2] { };
+      If @[3] { 
+       ProgEl_List @.true_code = [5] {
+	If @[0] { 
+	 ProgEl_List @.true_code = [1] {
+	  AssignExpr @[0] { };
+	 };
+	};
+	Else @[1] { 
+	 ProgEl_List @.else_code = [1] {
+	  AssignExpr @[0] { };
+	 };
+	};
+	If @[2] { 
+	 ProgEl_List @.true_code = [5] {
+	  If @[0] { 
+	   ProgEl_List @.true_code = [1] {
 	    MethodCall @[0] { 
-	     ProgArg_List @.meth_args = [3] {
+	     ProgArg_List @.meth_args = [4] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	      ProgArg @[2] { };
+	      ProgArg @[3] { };
 	     };
 	    };
 	   };
 	  };
-	  CaseBlock @[1] { 
-	   ProgEl_List @.prog_code = [4] {
-	    AssignExpr @[0] { };
-	    If @[1] { 
-	     ProgEl_List @.true_code = [4] {
-	      MethodCall @[0] { 
-	       ProgArg_List @.meth_args = [4] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-		ProgArg @[2] { };
-		ProgArg @[3] { };
-	       };
-	      };
-	      AssignExpr @[1] { };
-	      AssignExpr @[2] { };
-	      AssignExpr @[3] { };
-	     };
-	    };
-	    Else @[2] { 
-	     ProgEl_List @.else_code = [3] {
-	      AssignExpr @[0] { };
-	      AssignExpr @[1] { };
-	      AssignExpr @[2] { };
-	     };
-	    };
-	    MethodCall @[3] { 
-	     ProgArg_List @.meth_args = [3] {
+	  Else @[1] { 
+	   ProgEl_List @.else_code = [1] {
+	    MethodCall @[0] { 
+	     ProgArg_List @.meth_args = [4] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	      ProgArg @[2] { };
+	      ProgArg @[3] { };
 	     };
 	    };
 	   };
 	  };
-	  CaseBlock @[2] { 
-	   ProgEl_List @.prog_code = [4] {
-	    AssignExpr @[0] { };
-	    If @[1] { 
-	     ProgEl_List @.true_code = [4] {
-	      MethodCall @[0] { 
-	       ProgArg_List @.meth_args = [4] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-		ProgArg @[2] { };
-		ProgArg @[3] { };
-	       };
-	      };
-	      AssignExpr @[1] { };
-	      AssignExpr @[2] { };
-	      AssignExpr @[3] { };
-	     };
-	    };
-	    Else @[2] { 
-	     ProgEl_List @.else_code = [3] {
-	      AssignExpr @[0] { };
-	      AssignExpr @[1] { };
-	      AssignExpr @[2] { };
-	     };
-	    };
-	    MethodCall @[3] { 
-	     ProgArg_List @.meth_args = [3] {
-	      ProgArg @[0] { };
-	      ProgArg @[1] { };
-	      ProgArg @[2] { };
-	     };
-	    };
-	   };
-	  };
+	  AssignExpr @[2] { };
+	  AssignExpr @[3] { };
+	  AssignExpr @[4] { };
+	 };
+	};
+	Else @[3] { 
+	 ProgEl_List @.else_code = [3] {
+	  AssignExpr @[0] { };
+	  AssignExpr @[1] { };
+	  AssignExpr @[2] { };
+	 };
+	};
+	MethodCall @[4] { 
+	 ProgArg_List @.meth_args = [3] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
 	 };
 	};
        };
@@ -341,7 +485,7 @@ Program .projects[0].programs.gp[4][18] {
 
  ProgEl_List @.prog_code = [1] {
   Switch @[0] { 
-   ProgEl_List @.cases = [2] {
+   ProgEl_List @.cases = [4] {
     CaseBlock @[0] { 
      ProgEl_List @.prog_code = [1] {
       FunctionCall @[0] { 
@@ -358,13 +502,31 @@ Program .projects[0].programs.gp[4][18] {
       };
      };
     };
+    CaseBlock @[2] { 
+     ProgEl_List @.prog_code = [1] {
+      FunctionCall @[0] { 
+       ProgArg_List @.fun_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
+    CaseBlock @[3] { 
+     ProgEl_List @.prog_code = [1] {
+      FunctionCall @[0] { 
+       ProgArg_List @.fun_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
    };
   };
  };
 };
-Program .projects[0].programs.gp[4][18] {
+Program .projects[1].programs[1] {
  UserDataItem_List @*(.user_data_) {
-  name=;
+  name="UserDataItem_List_353";
   el_typ=UserDataItem;
   el_def=0;
   UserDataItem @[0] {
@@ -387,7 +549,7 @@ Program .projects[0].programs.gp[4][18] {
   el_def=0;
   DataTable @[0] {
    UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_896";
+    name=;
     el_typ=UserDataItem;
     el_def=0;
     UserDataItem @[0] {
@@ -396,7 +558,7 @@ Program .projects[0].programs.gp[4][18] {
      val_type_fixed=0;
     };
    };
-   name="LayerLayout";
+   name="PositionsRelative";
    desc=;
    data {
     name="data";
@@ -404,17 +566,17 @@ Program .projects[0].programs.gp[4][18] {
     el_def=0;
     String_Data @[0] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_969";
+      name=;
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.1902357;
+       value 8 0=0.137637;
        val_type_fixed=0;
       };
      };
      name="LayerName";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -430,12 +592,12 @@ Program .projects[0].programs.gp[4][18] {
     };
     String_Data @[1] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_85";
+      name=;
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.1885522;
+       value 8 0=0.1047503;
        val_type_fixed=0;
       };
      };
@@ -449,40 +611,14 @@ Program .projects[0].programs.gp[4][18] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=112;
+     width=86;
      ar {
       name="ar";
      [0]      };
     };
-    String_Data @[2] {
+    int_Data @[2] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_88";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.1902357;
-       val_type_fixed=0;
-      };
-     };
-     name="LayoutGroup";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=113;
-     ar {
-      name="ar";
-     [0]      };
-    };
-    int_Data @[3] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_966";
+      name=;
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -492,11 +628,42 @@ Program .projects[0].programs.gp[4][18] {
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.1212121;
+       value 8 0=0.08769793;
        val_type_fixed=0;
       };
      };
-     name="X_Abs";
+     name="X_Rel";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=72;
+     ar {
+      name="ar";
+     [0]      };
+    };
+    int_Data @[3] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 8 0=0.08769793;
+       val_type_fixed=0;
+      };
+     };
+     name="Y_Rel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -517,17 +684,12 @@ Program .projects[0].programs.gp[4][18] {
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.1212121;
+       value 8 0=0.08282582;
        val_type_fixed=0;
       };
      };
-     name="Y_Abs";
+     name="Z_Rel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -537,7 +699,7 @@ Program .projects[0].programs.gp[4][18] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=72;
+     width=68;
      ar {
       name="ar";
      [0]      };
@@ -554,11 +716,11 @@ Program .projects[0].programs.gp[4][18] {
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.1212121;
+       value 8 0=0.08769793;
        val_type_fixed=0;
       };
      };
-     name="Z_Abs";
+     name="X_Abs";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -585,11 +747,11 @@ Program .projects[0].programs.gp[4][18] {
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.1212121;
+       value 8 0=0.08769793;
        val_type_fixed=0;
       };
      };
-     name="X_Rel";
+     name="Y_Abs";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -616,7 +778,165 @@ Program .projects[0].programs.gp[4][18] {
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.1212121;
+       value 8 0=0.08769793;
+       val_type_fixed=0;
+      };
+     };
+     name="Z_Abs";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=72;
+     ar {
+      name="ar";
+     [0]      };
+    };
+   };
+   data_flags=SAVE_ROWS|AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name="row_indexes";
+   [0]    };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+     DataSortEl @[0] {
+      col_name="LayerGroup";
+      name="LayerGroup_up_0";
+      order=ASCENDING;
+     };
+     DataSortEl @[1] {
+      col_name="LayerName";
+      name="LayerName_up_1";
+      order=ASCENDING;
+     };
+    };
+   };
+  };
+  DataTable @[1] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="PositionsRelative_prior";
+   desc=;
+   data {
+    name="data";
+    el_typ=int_Data;
+    el_def=0;
+    String_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.137637;
+       val_type_fixed=0;
+      };
+     };
+     name="LayerName";
+     col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=113;
+     ar {
+      name="ar";
+     [0]      };
+    };
+    String_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.1047503;
+       val_type_fixed=0;
+      };
+     };
+     name="LayerGroup";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=86;
+     ar {
+      name="ar";
+     [0]      };
+    };
+    int_Data @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 8 0=0.08769793;
+       val_type_fixed=0;
+      };
+     };
+     name="X_Rel";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=72;
+     ar {
+      name="ar";
+     [0]      };
+    };
+    int_Data @[3] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 8 0=0.08769793;
        val_type_fixed=0;
       };
      };
@@ -635,14 +955,14 @@ Program .projects[0].programs.gp[4][18] {
       name="ar";
      [0]      };
     };
-    int_Data @[8] {
+    int_Data @[4] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_90";
+      name=;
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.1144781;
+       value 8 0=0.08282582;
        val_type_fixed=0;
       };
      };
@@ -657,6 +977,99 @@ Program .projects[0].programs.gp[4][18] {
       name="dim_names";
      [0]      };
      width=68;
+     ar {
+      name="ar";
+     [0]      };
+    };
+    int_Data @[5] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 8 0=0.08769793;
+       val_type_fixed=0;
+      };
+     };
+     name="X_Abs";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=72;
+     ar {
+      name="ar";
+     [0]      };
+    };
+    int_Data @[6] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 8 0=0.08769793;
+       val_type_fixed=0;
+      };
+     };
+     name="Y_Abs";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=72;
+     ar {
+      name="ar";
+     [0]      };
+    };
+    int_Data @[7] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 8 0=0.08769793;
+       val_type_fixed=0;
+      };
+     };
+     name="Z_Abs";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=72;
      ar {
       name="ar";
      [0]      };
@@ -678,7 +1091,7 @@ Program .projects[0].programs.gp[4][18] {
     };
    };
   };
-  DataTable @[1] {
+  DataTable @[2] {
    UserDataItem_List @*(.user_data_) {
     name=;
     el_typ=UserDataItem;
@@ -689,7 +1102,7 @@ Program .projects[0].programs.gp[4][18] {
      val_type_fixed=0;
     };
    };
-   name="LayerLayout_previous";
+   name="PositionsAbsolute";
    desc=;
    data {
     name="data";
@@ -702,12 +1115,12 @@ Program .projects[0].programs.gp[4][18] {
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.1902357;
+       value 8 0=0.1047503;
        val_type_fixed=0;
       };
      };
-     name="LayerName";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     name="LayerGroup";
+     col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -716,7 +1129,7 @@ Program .projects[0].programs.gp[4][18] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=113;
+     width=86;
      ar {
       name="ar";
      [0]      };
@@ -728,38 +1141,12 @@ Program .projects[0].programs.gp[4][18] {
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.1885522;
+       value 8 0=0.137637;
        val_type_fixed=0;
       };
      };
-     name="LayerGroup";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=112;
-     ar {
-      name="ar";
-     [0]      };
-    };
-    String_Data @[2] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.1902357;
-       val_type_fixed=0;
-      };
-     };
-     name="LayoutGroup";
-     col_flags=SAVE_ROWS|SAVE_DATA;
+     name="LayerName";
+     col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -769,6 +1156,37 @@ Program .projects[0].programs.gp[4][18] {
       name="dim_names";
      [0]      };
      width=113;
+     ar {
+      name="ar";
+     [0]      };
+    };
+    int_Data @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 8 0=0.08769793;
+       val_type_fixed=0;
+      };
+     };
+     name="X_Abs";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=72;
      ar {
       name="ar";
      [0]      };
@@ -785,11 +1203,11 @@ Program .projects[0].programs.gp[4][18] {
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.1212121;
+       value 8 0=0.08769793;
        val_type_fixed=0;
       };
      };
-     name="X_Abs";
+     name="Y_Abs";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -816,38 +1234,7 @@ Program .projects[0].programs.gp[4][18] {
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.1212121;
-       val_type_fixed=0;
-      };
-     };
-     name="Y_Abs";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=72;
-     ar {
-      name="ar";
-     [0]      };
-    };
-    int_Data @[5] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-       val_type_fixed=0;
-      };
-      UserDataItem @[1] {
-       name="view_panel_wd";
-       value 8 0=0.1212121;
+       value 8 0=0.08769793;
        val_type_fixed=0;
       };
      };
@@ -866,7 +1253,103 @@ Program .projects[0].programs.gp[4][18] {
       name="ar";
      [0]      };
     };
-    int_Data @[6] {
+   };
+   data_flags=SAVE_ROWS|AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name="row_indexes";
+   [0]    };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+     DataSortEl @[0] {
+      col_name="LayerGroup";
+      name="LayerGroup_up_0";
+      order=ASCENDING;
+     };
+     DataSortEl @[1] {
+      col_name="LayerName";
+      name="LayerName_up_1";
+      order=ASCENDING;
+     };
+    };
+   };
+  };
+  DataTable @[3] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="PositionsAbsolute_prior";
+   desc=;
+   data {
+    name="data";
+    el_typ=int_Data;
+    el_def=0;
+    String_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.1047503;
+       val_type_fixed=0;
+      };
+     };
+     name="LayerGroup";
+     col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=86;
+     ar {
+      name="ar";
+     [0]      };
+    };
+    String_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.137637;
+       val_type_fixed=0;
+      };
+     };
+     name="LayerName";
+     col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=113;
+     ar {
+      name="ar";
+     [0]      };
+    };
+    int_Data @[2] {
      UserDataItem_List @*(.user_data_) {
       name=;
       el_typ=UserDataItem;
@@ -878,11 +1361,11 @@ Program .projects[0].programs.gp[4][18] {
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.1212121;
+       value 8 0=0.08769793;
        val_type_fixed=0;
       };
      };
-     name="X_Rel";
+     name="X_Abs";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -897,7 +1380,7 @@ Program .projects[0].programs.gp[4][18] {
       name="ar";
      [0]      };
     };
-    int_Data @[7] {
+    int_Data @[3] {
      UserDataItem_List @*(.user_data_) {
       name=;
       el_typ=UserDataItem;
@@ -909,11 +1392,11 @@ Program .projects[0].programs.gp[4][18] {
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.1212121;
+       value 8 0=0.08769793;
        val_type_fixed=0;
       };
      };
-     name="Y_Rel";
+     name="Y_Abs";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -928,18 +1411,23 @@ Program .projects[0].programs.gp[4][18] {
       name="ar";
      [0]      };
     };
-    int_Data @[8] {
+    int_Data @[4] {
      UserDataItem_List @*(.user_data_) {
       name=;
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.1144781;
+       value 8 0=0.08769793;
        val_type_fixed=0;
       };
      };
-     name="Z_Rel";
+     name="Z_Abs";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -949,7 +1437,7 @@ Program .projects[0].programs.gp[4][18] {
      dim_names {
       name="dim_names";
      [0]      };
-     width=68;
+     width=72;
      ar {
       name="ar";
      [0]      };
@@ -984,14 +1472,24 @@ Program .projects[0].programs.gp[4][18] {
     el_typ=DynEnumItem;
     el_def=0;
     DynEnumItem @[0] {
-     name="GetCurrentPos";
+     name="GetCurrentPositions";
      value=0;
      desc="get current layer positions into table";
     };
     DynEnumItem @[1] {
-     name="SetPositions";
+     name="SetPositionsAbsolute";
      value=1;
-     desc="set layer positions based on table";
+     desc="set layer positions based on absolute positions - not relative to any group";
+    };
+    DynEnumItem @[2] {
+     name="SetPositionsRelativeToLayerGroup";
+     value=2;
+     desc="use layer-group relative positions -- X_Rel etc in";
+    };
+    DynEnumItem @[3] {
+     name="SetPositionsRelativeToLogicalGroup";
+     value=3;
+     desc="use layout groups which are out side the structure of the model -- uses relative positions relative to these layout group offsets";
     };
    };
    bits=0;
@@ -1004,18 +1502,13 @@ Program .projects[0].programs.gp[4][18] {
     el_typ=DynEnumItem;
     el_def=0;
     DynEnumItem @[0] {
-     name="IgnoreGroup";
-     value=0;
-     desc="ignore any group information, and just use absolute positions";
-    };
-    DynEnumItem @[1] {
      name="LayerGroup";
-     value=1;
+     value=0;
      desc="use layer-group relative positions -- X_Rel etc in table";
     };
-    DynEnumItem @[2] {
-     name="LayoutGroup";
-     value=2;
+    DynEnumItem @[1] {
+     name="LogicalGroup";
+     value=1;
      desc="use layout groups which are out side the structure of the model -- uses relative positions relative to these layout group offsets";
     };
    };
@@ -1030,20 +1523,7 @@ Program .projects[0].programs.gp[4][18] {
    name="action";
    var_type=T_DynEnum;
    dyn_enum_val {
-    enum_type=.projects[0].programs.gp[4][18].types[0]$$;
-    value=1;
-   };
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
-   reference=0;
-   desc=;
-   init_from=NULL;
-  };
-  ProgVar @[1] {
-   name="use_group";
-   var_type=T_DynEnum;
-   dyn_enum_val {
-    enum_type=.projects[0].programs.gp[4][18].types[1]$$;
+    enum_type=.projects[1].programs[1].types[0]$$;
     value=0;
    };
    objs_ptr=0;
@@ -1052,11 +1532,11 @@ Program .projects[0].programs.gp[4][18] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[2] {
+  ProgVar @[1] {
    name="network";
    var_type=T_Object;
    object_type=LeabraNetwork;
-   object_val=.projects[0].networks[0]$$<LeabraNetwork,LVisNet>;
+   object_val=.projects[1].networks[0]$$<LeabraNetwork,Network_0>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -1069,10 +1549,10 @@ Program .projects[0].programs.gp[4][18] {
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
-   name="LayerLayout";
+   name="PositionsAbsolute";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[4][18].objs[0]$$;
+   object_val=.projects[1].programs[1].objs[2]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -1080,10 +1560,32 @@ Program .projects[0].programs.gp[4][18] {
    init_from=NULL;
   };
   ProgVar @[1] {
-   name="LayerLayout_previous";
+   name="PositionsRelative";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[4][18].objs[1]$$;
+   object_val=.projects[1].programs[1].objs[0]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[2] {
+   name="PositionsRelative_prior";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[1].programs[1].objs[1]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[3] {
+   name="PositionsAbsolute_prior";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[1].programs[1].objs[3]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -1103,12 +1605,12 @@ Program .projects[0].programs.gp[4][18] {
    return_type=T_Int;
    object_type=taOBase;
    args {
-    name="ProgVar_List_1";
+    name=;
     el_typ=ProgVar;
     el_def=0;
    };
    fun_code {
-    name="ProgEl_List_62";
+    name=;
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
@@ -1169,7 +1671,7 @@ Program .projects[0].programs.gp[4][18] {
      flags=CAN_REVERT_TO_CODE;
      orig_prog_code="LayerLayout_previous->CopyFrom(LayerLayout)";
      result_var=NULL;
-     obj=.projects[0].programs.gp[4][18].vars[1]$$;
+     obj=.projects[1].programs[1].vars[3]$$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -1183,7 +1685,7 @@ Program .projects[0].programs.gp[4][18] {
        def_val=;
        prev_expr=;
        expr {
-	expr="LayerLayout";
+	expr="PositionsAbsolute";
        };
       };
      };
@@ -1193,9 +1695,35 @@ Program .projects[0].programs.gp[4][18] {
     MethodCall @[2] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="LayerLayout_previous->CopyFrom(LayerLayout)";
+     result_var=NULL;
+     obj=.projects[1].programs[1].vars[2]$$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="PositionsRelative";
+       };
+      };
+     };
+     meth_sig="bool CopyFrom(taBase* cpy_from)";
+     meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+    };
+    MethodCall @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
      orig_prog_code="LayerLayout.RemoveAllUserData()";
      result_var=NULL;
-     obj=.projects[0].programs.gp[4][18].vars[0]$$;
+     obj=.projects[1].programs[1].vars[1]$$;
      method=DataTable::RemoveAllRows;
      meth_args {
       name="meth_args";
@@ -1205,21 +1733,36 @@ Program .projects[0].programs.gp[4][18] {
      meth_sig="void RemoveAllRows()";
      meth_desc=" remove all of the rows of data, but keep the column structure";
     };
-    AssignExpr @[3] {
+    MethodCall @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="LayerLayout.RemoveAllUserData()";
+     result_var=NULL;
+     obj=.projects[1].programs[1].vars[0]$$;
+     method=DataTable::RemoveAllRows;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void RemoveAllRows()";
+     meth_desc=" remove all of the rows of data, but keep the column structure";
+    };
+    AssignExpr @[5] {
      desc="all of the layers";
      flags=CAN_REVERT_TO_CODE;
      orig_prog_code="layer_group = network.layers";
-     result_var=.projects[0].programs.gp[4][18].functions[0].fun_code[0].local_vars[2]$$;
+     result_var=.projects[1].programs[1].functions[0].fun_code[0].local_vars[2]$$;
      expr {
       expr="network.layers";
      };
     };
-    Comment @[4] {
-     desc="first get all the layer groups";
+    Comment @[6] {
+     desc="first get all the layer group positions";
      flags=CAN_REVERT_TO_CODE;
      orig_prog_code="// first get all the layer groups";
     };
-    ForeachLoop @[5] {
+    ForeachLoop @[7] {
      desc=;
      flags=0;
      orig_prog_code="foreach(layer_group in net_layers.gp)";
@@ -1232,7 +1775,7 @@ Program .projects[0].programs.gp[4][18] {
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="LayerLayout.AddBlankRow()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4][18].vars[0]$;
+       obj=$.projects[1].programs[1].vars[1]$;
        method=DataTable::AddBlankRow;
        meth_args {
 	name="meth_args";
@@ -1247,15 +1790,15 @@ Program .projects[0].programs.gp[4][18] {
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="LayerLayout[\"LayerName\"][i] = current_layer.name";
        expr {
-	expr="LayerLayout[\"LayerGroup\"][-1] = layer_group.name;";
+	expr="PositionsRelative[\"LayerName\"][-1] = \"--------\";";
        };
       };
       CssExpr @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="LayerLayout[\"X_Abs\"][i] = current_layer.pos.x";
+       orig_prog_code="LayerLayout[\"LayerName\"][i] = current_layer.name";
        expr {
-	expr="LayerLayout[\"X_Abs\"][-1] = layer_group.pos.x;";
+	expr="PositionsRelative[\"LayerGroup\"][-1] = layer_group.name;";
        };
       };
       CssExpr @[3] {
@@ -1263,7 +1806,7 @@ Program .projects[0].programs.gp[4][18] {
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="LayerLayout[\"X_Abs\"][i] = current_layer.pos.x";
        expr {
-	expr="LayerLayout[\"Y_Abs\"][-1] = layer_group.pos.y;";
+	expr="PositionsRelative[\"X_Abs\"][-1] = layer_group.pos.x;";
        };
       };
       CssExpr @[4] {
@@ -1271,16 +1814,29 @@ Program .projects[0].programs.gp[4][18] {
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="LayerLayout[\"X_Abs\"][i] = current_layer.pos.x";
        expr {
-	expr="LayerLayout[\"Z_Abs\"][-1] = layer_group.pos.z;";
+	expr="PositionsRelative[\"Y_Abs\"][-1] = layer_group.pos.y;";
+       };
+      };
+      CssExpr @[5] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="LayerLayout[\"X_Abs\"][i] = current_layer.pos.x";
+       expr {
+	expr="PositionsRelative[\"Z_Abs\"][-1] = layer_group.pos.z;";
        };
       };
      };
-     el_var=.projects[0].programs.gp[4][18].functions[0].fun_code[0].local_vars[3]$$;
+     el_var=.projects[1].programs[1].functions[0].fun_code[0].local_vars[3]$$;
      in {
       expr="net_layers.gp";
      };
     };
-    ForLoop @[6] {
+    Comment @[8] {
+     desc="now get the layer positions";
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="// now get the layer positions";
+    };
+    ForLoop @[9] {
      desc=;
      flags=0;
      orig_prog_code="for (i=0; i <layer_group.size; i++0";
@@ -1293,7 +1849,7 @@ Program .projects[0].programs.gp[4][18] {
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="LayerLayout.AddBlankRow()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[4][18].vars[0]$;
+       obj=$.projects[1].programs[1].vars[1]$;
        method=DataTable::AddBlankRow;
        meth_args {
 	name="meth_args";
@@ -1307,7 +1863,7 @@ Program .projects[0].programs.gp[4][18] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="current_layer =layer_group.SafeEl(i)";
-       result_var=.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[1]$$;
+       result_var=.projects[1].programs[1].functions[1].fun_code[0].local_vars[1]$$;
        expr {
 	expr="net_layers.Leaf(leaf)";
        };
@@ -1317,7 +1873,7 @@ Program .projects[0].programs.gp[4][18] {
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="LayerLayout[\"LayerName\"][i] = current_layer.name";
        expr {
-	expr="LayerLayout[\"LayerName\"][-1] = current_layer.name;";
+	expr="PositionsRelative[\"LayerName\"][-1] = current_layer.name;";
        };
       };
       If @[3] {
@@ -1336,7 +1892,7 @@ Program .projects[0].programs.gp[4][18] {
 	 flags=CAN_REVERT_TO_CODE;
 	 orig_prog_code="LayerLayout[\"LayerGroup\"][leaf] =current_layer.GetOwner().name";
 	 expr {
-	  expr="LayerLayout[\"LayerGroup\"][-1] = current_layer.GetOwner().name;";
+	  expr="PositionsRelative[\"LayerGroup\"][-1] = current_layer.GetOwner().name;";
 	 };
 	};
        };
@@ -1346,7 +1902,7 @@ Program .projects[0].programs.gp[4][18] {
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="LayerLayout[\"X_Abs\"][i] = current_layer.pos.x";
        expr {
-	expr="LayerLayout[\"X_Abs\"][-1] = current_layer.pos_abs.x;";
+	expr="PositionsRelative[\"X_Rel\"][-1] = current_layer.pos.x;";
        };
       };
       CssExpr @[5] {
@@ -1354,7 +1910,7 @@ Program .projects[0].programs.gp[4][18] {
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="LayerLayout[\"X_Abs\"][i] = current_layer.pos.x";
        expr {
-	expr="LayerLayout[\"Y_Abs\"][-1] = current_layer.pos_abs.y;";
+	expr="PositionsRelative[\"Y_Rel\"][-1] = current_layer.pos.y;";
        };
       };
       CssExpr @[6] {
@@ -1362,31 +1918,80 @@ Program .projects[0].programs.gp[4][18] {
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="LayerLayout[\"X_Abs\"][i] = current_layer.pos.x";
        expr {
-	expr="LayerLayout[\"Z_Abs\"][-1] = current_layer.pos_abs.z;";
+	expr="PositionsRelative[\"Z_Rel\"][-1] = current_layer.pos.z;";
        };
       };
-      CssExpr @[7] {
-       desc=;
+      Comment @[7] {
+       desc="absolute layer positions go into a different table - that has no group info";
        flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="LayerLayout[\"X_Abs\"][i] = current_layer.pos.x";
-       expr {
-	expr="LayerLayout[\"X_Rel\"][-1] = current_layer.pos.x;";
-       };
+       orig_prog_code="// absolute layer positions go into a different table";
       };
-      CssExpr @[8] {
+      MethodCall @[8] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="LayerLayout[\"X_Abs\"][i] = current_layer.pos.x";
-       expr {
-	expr="LayerLayout[\"Y_Rel\"][-1] = current_layer.pos.y;";
+       orig_prog_code="LayerLayout.AddBlankRow()";
+       result_var=NULL;
+       obj=$.projects[1].programs[1].vars[0]$;
+       method=DataTable::AddBlankRow;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
        };
+       meth_sig="int AddBlankRow()";
+       meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
       };
       CssExpr @[9] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="LayerLayout[\"LayerName\"][i] = current_layer.name";
+       expr {
+	expr="PositionsAbsolute[\"LayerName\"][-1] = current_layer.name;";
+       };
+      };
+      If @[10] {
+       desc=;
+       flags=0;
+       orig_prog_code="if (current_layer.GetOwner()";
+       cond {
+	expr="current_layer.InLayerSubGroup()";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	CssExpr @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 orig_prog_code="LayerLayout[\"LayerGroup\"][leaf] =current_layer.GetOwner().name";
+	 expr {
+	  expr="PositionsAbsolute[\"LayerGroup\"][-1] = current_layer.GetOwner().name;";
+	 };
+	};
+       };
+      };
+      CssExpr @[11] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
        orig_prog_code="LayerLayout[\"X_Abs\"][i] = current_layer.pos.x";
        expr {
-	expr="LayerLayout[\"Z_Rel\"][-1] = current_layer.pos.z;";
+	expr="PositionsAbsolute[\"X_Abs\"][-1] = current_layer.pos_abs.x;";
+       };
+      };
+      CssExpr @[12] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="LayerLayout[\"X_Abs\"][i] = current_layer.pos.x";
+       expr {
+	expr="PositionsAbsolute[\"Y_Abs\"][-1] = current_layer.pos_abs.y;";
+       };
+      };
+      CssExpr @[13] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="LayerLayout[\"X_Abs\"][i] = current_layer.pos.x";
+       expr {
+	expr="PositionsAbsolute[\"Z_Abs\"][-1] = current_layer.pos_abs.z;";
        };
       };
      };
@@ -1400,22 +2005,575 @@ Program .projects[0].programs.gp[4][18] {
       expr="leaf++";
      };
     };
+    Comment @[10] {
+     desc="sort by group then by layer";
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="// sort by group then by layer";
+    };
+    MethodCall @[11] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="PositionsAbsolute->SortCol()";
+     result_var=NULL;
+     obj=$.projects[1].programs[1].vars[0]$;
+     method=DataTable::SortColName;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col1";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"LayerGroup\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="ascending1";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col2";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"LayerName\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="ascending2";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col3";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=bool;
+       type="bool";
+       name="ascending3";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col4";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=bool;
+       type="bool";
+       name="ascending4";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col5";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[9] {
+       arg_type=bool;
+       type="bool";
+       name="ascending5";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[10] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col6";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[11] {
+       arg_type=bool;
+       type="bool";
+       name="ascending6";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+     };
+     meth_sig="void SortColName(taString& col1, bool ascending1 = true, taString& col2, bool ascending2 = true, taString& col3, bool ascending3 = true, taString& col4, bool ascending4 = true, taString& col5, bool ascending5 = true, taString& col6, bool ascending6 = true)";
+     meth_desc=" sort table according to selected columns of data. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first";
+    };
+    MethodCall @[12] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="PositionsAbsolute->SortCol()";
+     result_var=NULL;
+     obj=$.projects[1].programs[1].vars[1]$;
+     method=DataTable::SortColName;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col1";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"LayerGroup\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="ascending1";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col2";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"LayerName\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="ascending2";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col3";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=bool;
+       type="bool";
+       name="ascending3";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col4";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=bool;
+       type="bool";
+       name="ascending4";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col5";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[9] {
+       arg_type=bool;
+       type="bool";
+       name="ascending5";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[10] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col6";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[11] {
+       arg_type=bool;
+       type="bool";
+       name="ascending6";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+     };
+     meth_sig="void SortColName(taString& col1, bool ascending1 = true, taString& col2, bool ascending2 = true, taString& col3, bool ascending3 = true, taString& col4, bool ascending4 = true, taString& col5, bool ascending5 = true, taString& col6, bool ascending6 = true)";
+     meth_desc=" sort table according to selected columns of data. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first";
+    };
    };
   };
   Function @[1] {
    desc=;
    flags=0;
    orig_prog_code=;
-   name="SetPos";
+   name="SetPositionsAbs";
    return_type=T_Int;
    object_type=taOBase;
    args {
-    name="ProgVar_List_1";
+    name=;
     el_typ=ProgVar;
     el_def=0;
    };
    fun_code {
-    name="ProgEl_List_66";
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="row";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="current_layer";
+       var_type=T_Object;
+       object_type=Layer;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[2] {
+       name="layer_name";
+       var_type=T_String;
+       string_val=;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[3] {
+       name="layer_group";
+       var_type=T_Object;
+       object_type=Layer_Group;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[4] {
+       name="group_name";
+       var_type=T_String;
+       string_val=;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[5] {
+       name="lg_row";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[6] {
+       name="lg_x";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[7] {
+       name="lg_y";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[8] {
+       name="lg_z";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    ForLoop @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code="for (i=0 i";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="layer_name = pos";
+       result_var=.projects[1].programs[1].functions[1].fun_code[0].local_vars[2]$$;
+       expr {
+	expr="PositionsAbsolute[\"LayerName\"][row]";
+       };
+      };
+      IfContinue @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="if(layer_name.empty()) continue";
+       cond {
+	expr="layer_name.empty()";
+       };
+      };
+      AssignExpr @[2] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="current_layer =";
+       result_var=$.projects[1].programs[1].functions[1].fun_code[0].local_vars[1]$;
+       expr {
+	expr="network.FindLayer(layer_name)";
+       };
+      };
+      If @[3] {
+       desc=;
+       flags=0;
+       orig_prog_code="if (current_layer)";
+       cond {
+	expr="current_layer";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 orig_prog_code="current_layer.SetAbsPos(layer_layout[\"X_Abs\"][row])";
+	 result_var=NULL;
+	 obj=$.projects[1].programs[1].functions[1].fun_code[0].local_vars[1]$;
+	 method=Layer::SetAbsPos;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="x";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="PositionsAbsolute[\"X_Abs\"][row]";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=int;
+	   type="int";
+	   name="y";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="PositionsAbsolute[\"Y_Abs\"][row]";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=int;
+	   type="int";
+	   name="z";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="PositionsAbsolute[\"Z_Abs\"][row]";
+	   };
+	  };
+	 };
+	 meth_sig="void SetAbsPos(int x, int y, int z)";
+	 meth_desc=" set absolute position of layer, regardless of whether it is in a layer group or not - always relative to network 0,0,0";
+	};
+       };
+      };
+     };
+     init {
+      expr="row = 0";
+     };
+     test {
+      expr="row <PositionsAbsolute.rows";
+     };
+     iter {
+      expr="row++";
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="network_0.Build()";
+     result_var=NULL;
+     obj=.projects[1].programs[1].args[1]$$;
+     method=LeabraNetwork::Build;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void Build()";
+     meth_desc=" Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)";
+    };
+   };
+  };
+  Function @[2] {
+   desc=;
+   flags=0;
+   orig_prog_code=;
+   name="SetPositionsRel";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="group";
+     var_type=T_DynEnum;
+     dyn_enum_val {
+      enum_type=.projects[1].programs[1].types[1]$$;
+      value=0;
+     };
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   fun_code {
+    name=;
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
@@ -1532,9 +2690,9 @@ Program .projects[0].programs.gp[4][18] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="layer_name = pos";
-       result_var=.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[2]$$;
+       result_var=.projects[1].programs[1].functions[2].fun_code[0].local_vars[2]$$;
        expr {
-	expr="LayerLayout[\"LayerName\"][row]";
+	expr="PositionsRelative[\"LayerName\"][row]";
        };
       };
       IfContinue @[1] {
@@ -1549,7 +2707,7 @@ Program .projects[0].programs.gp[4][18] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="current_layer =";
-       result_var=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[1]$;
+       result_var=.projects[1].programs[1].functions[2].fun_code[0].local_vars[1]$$;
        expr {
 	expr="network.FindLayer(layer_name)";
        };
@@ -1565,489 +2723,312 @@ Program .projects[0].programs.gp[4][18] {
 	name="true_code";
 	el_typ=ProgCode;
 	el_def=0;
-	Switch @[0] {
+	If @[0] {
 	 desc=;
 	 flags=0;
-	 orig_prog_code="switch(";
-	 switch_var=.projects[0].programs.gp[4][18].args[1]$$;
-	 cases {
-	  name="cases";
-	  el_typ=CaseBlock;
+	 orig_prog_code="if (group == LayerGroup)";
+	 cond {
+	  expr="group == LayerGroup";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
 	  el_def=0;
-	  CaseBlock @[0] {
+	  AssignExpr @[0] {
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   orig_prog_code="group_name = LayerLayout[\"LayerGroup\"][row]";
+	   result_var=.projects[1].programs[1].functions[2].fun_code[0].local_vars[4]$$;
+	   expr {
+	    expr="PositionsRelative[\"LayerGroup\"][row]";
+	   };
+	  };
+	 };
+	};
+	Else @[1] {
+	 desc=;
+	 flags=0;
+	 orig_prog_code="else";
+	 else_code {
+	  name="else_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   orig_prog_code="group_name = PositionsRelative[\"LogicalGroup\"][row]";
+	   result_var=$.projects[1].programs[1].functions[2].fun_code[0].local_vars[4]$;
+	   expr {
+	    expr="PositionsRelative[\"LogicalGroup\"][row]";
+	   };
+	  };
+	 };
+	};
+	If @[2] {
+	 desc=;
+	 flags=0;
+	 orig_prog_code="if(group_name.nonempty())";
+	 cond {
+	  expr="group_name.nonempty()";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  If @[0] {
 	   desc=;
 	   flags=0;
-	   orig_prog_code=;
-	   prog_code {
-	    name="prog_code";
+	   orig_prog_code="if (group == LayerGroup)";
+	   cond {
+	    expr="group == LayerGroup";
+	   };
+	   true_code {
+	    name="true_code";
 	    el_typ=ProgCode;
 	    el_def=0;
 	    MethodCall @[0] {
 	     desc=;
 	     flags=CAN_REVERT_TO_CODE;
-	     orig_prog_code="current_layer.SetAbsPos(layer_layout[\"X_Abs\"][row])";
-	     result_var=NULL;
-	     obj=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[1]$;
-	     method=Layer::SetAbsPos;
+	     orig_prog_code="lg_row = LayerLayout.FindVal()";
+	     result_var=.projects[1].programs[1].functions[2].fun_code[0].local_vars[5]$$;
+	     obj=$.projects[1].programs[1].vars[1]$;
+	     method=DataTable::FindVal;
 	     meth_args {
 	      name="meth_args";
 	      el_typ=ProgArg;
 	      el_def=0;
 	      ProgArg @[0] {
-	       arg_type=int;
-	       type="int";
-	       name="x";
+	       arg_type=const_Variant_ref;
+	       type="Variant&";
+	       name="val";
 	       required=1;
 	       def_val=;
 	       prev_expr=;
 	       expr {
-		expr="LayerLayout[\"X_Abs\"][row]";
+		expr="group_name";
 	       };
 	      };
 	      ProgArg @[1] {
-	       arg_type=int;
-	       type="int";
-	       name="y";
+	       arg_type=const_Variant_ref;
+	       type="Variant&";
+	       name="col";
 	       required=1;
 	       def_val=;
 	       prev_expr=;
 	       expr {
-		expr="LayerLayout[\"Y_Abs\"][row]";
+		expr="\"LayerGroup\"";
 	       };
 	      };
 	      ProgArg @[2] {
 	       arg_type=int;
 	       type="int";
-	       name="z";
-	       required=1;
-	       def_val=;
+	       name="st_row";
+	       required=0;
+	       def_val="0";
 	       prev_expr=;
 	       expr {
-		expr="LayerLayout[\"Z_Abs\"][row]";
+		expr="0";
+	       };
+	      };
+	      ProgArg @[3] {
+	       arg_type=bool;
+	       type="bool";
+	       name="not_found_err";
+	       required=0;
+	       def_val="false";
+	       prev_expr=;
+	       expr {
+		expr="true";
 	       };
 	      };
 	     };
-	     meth_sig="void SetAbsPos(int x, int y, int z)";
-	     meth_desc=" set absolute position of layer, regardless of whether it is in a layer group or not - always relative to network 0,0,0";
+	     meth_sig="int FindVal(Variant& val, Variant& col, int st_row = 0, bool not_found_err = false)";
+	     meth_desc=" find row number for given value within column col of scalar type (use for Programs), starting at given starting row number. if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- column can be specified as either integer index or a string that is then used to find the given column name. returns -1 if not found, and issues error if not_found_err is true";
 	    };
-	   };
-	   case_val {
-	    expr="IgnoreGroup";
 	   };
 	  };
-	  CaseBlock @[1] {
+	  Else @[1] {
 	   desc=;
 	   flags=0;
-	   orig_prog_code=;
-	   prog_code {
-	    name="prog_code";
+	   orig_prog_code="else";
+	   else_code {
+	    name="else_code";
 	    el_typ=ProgCode;
 	    el_def=0;
-	    AssignExpr @[0] {
+	    MethodCall @[0] {
 	     desc=;
 	     flags=CAN_REVERT_TO_CODE;
-	     orig_prog_code="group_name = LayerLayout[\"LayerGroup\"][row]";
-	     result_var=.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[4]$$;
-	     expr {
-	      expr="LayerLayout[\"LayerGroup\"][row]";
-	     };
-	    };
-	    If @[1] {
-	     desc=;
-	     flags=0;
-	     orig_prog_code="if(group_name.nonempty())";
-	     cond {
-	      expr="group_name.nonempty()";
-	     };
-	     true_code {
-	      name="true_code";
-	      el_typ=ProgCode;
-	      el_def=0;
-	      MethodCall @[0] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_row = LayerLayout.FindVal()";
-	       result_var=.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[5]$$;
-	       obj=$.projects[0].programs.gp[4][18].vars[0]$;
-	       method=DataTable::FindVal;
-	       meth_args {
-		name="meth_args";
-		el_typ=ProgArg;
-		el_def=0;
-		ProgArg @[0] {
-		 arg_type=const_Variant_ref;
-		 type="Variant&";
-		 name="val";
-		 required=1;
-		 def_val=;
-		 prev_expr=;
-		 expr {
-		  expr="group_name";
-		 };
-		};
-		ProgArg @[1] {
-		 arg_type=const_Variant_ref;
-		 type="Variant&";
-		 name="col";
-		 required=1;
-		 def_val=;
-		 prev_expr=;
-		 expr {
-		  expr="\"LayerGroup\"";
-		 };
-		};
-		ProgArg @[2] {
-		 arg_type=int;
-		 type="int";
-		 name="st_row";
-		 required=0;
-		 def_val="0";
-		 prev_expr=;
-		 expr {
-		  expr="0";
-		 };
-		};
-		ProgArg @[3] {
-		 arg_type=bool;
-		 type="bool";
-		 name="not_found_err";
-		 required=0;
-		 def_val="false";
-		 prev_expr=;
-		 expr {
-		  expr="true";
-		 };
-		};
-	       };
-	       meth_sig="int FindVal(Variant& val, Variant& col, int st_row = 0, bool not_found_err = false)";
-	       meth_desc=" find row number for given value within column col of scalar type (use for Programs), starting at given starting row number. if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- column can be specified as either integer index or a string that is then used to find the given column name. returns -1 if not found, and issues error if not_found_err is true";
-	      };
-	      AssignExpr @[1] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_x = LayerLayout[\"X_Abs\"][lg_row]";
-	       result_var=.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[6]$$;
-	       expr {
-		expr="LayerLayout[\"X_Abs\"][lg_row]";
-	       };
-	      };
-	      AssignExpr @[2] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_x = LayerLayout[\"X_Abs\"][lg_row]";
-	       result_var=.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[7]$$;
-	       expr {
-		expr="LayerLayout[\"Y_Abs\"][lg_row]";
-	       };
-	      };
-	      AssignExpr @[3] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_x = LayerLayout[\"X_Abs\"][lg_row]";
-	       result_var=.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[8]$$;
-	       expr {
-		expr="LayerLayout[\"Z_Abs\"][lg_row]";
-	       };
-	      };
-	     };
-	    };
-	    Else @[2] {
-	     desc=;
-	     flags=0;
-	     orig_prog_code="else";
-	     else_code {
-	      name="else_code";
-	      el_typ=ProgCode;
-	      el_def=0;
-	      AssignExpr @[0] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_x = 0";
-	       result_var=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[6]$;
-	       expr {
-		expr="0";
-	       };
-	      };
-	      AssignExpr @[1] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_y = 0";
-	       result_var=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[7]$;
-	       expr {
-		expr="0";
-	       };
-	      };
-	      AssignExpr @[2] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_z = 0";
-	       result_var=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[8]$;
-	       expr {
-		expr="0";
-	       };
-	      };
-	     };
-	    };
-	    MethodCall @[3] {
-	     desc=;
-	     flags=CAN_REVERT_TO_CODE;
-	     orig_prog_code="current_layer.SetAbsPos(layer_layout[\"X_Abs\"][row])";
-	     result_var=NULL;
-	     obj=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[1]$;
-	     method=Layer::SetAbsPos;
+	     orig_prog_code="lg_row = LayerLayout.FindVal()";
+	     result_var=$.projects[1].programs[1].functions[2].fun_code[0].local_vars[5]$;
+	     obj=$.projects[1].programs[1].vars[1]$;
+	     method=DataTable::FindVal;
 	     meth_args {
 	      name="meth_args";
 	      el_typ=ProgArg;
 	      el_def=0;
 	      ProgArg @[0] {
-	       arg_type=int;
-	       type="int";
-	       name="x";
+	       arg_type=const_Variant_ref;
+	       type="Variant&";
+	       name="val";
 	       required=1;
 	       def_val=;
 	       prev_expr=;
 	       expr {
-		expr="lg_x + LayerLayout[\"X_Rel\"][row]";
+		expr="group_name";
 	       };
 	      };
 	      ProgArg @[1] {
-	       arg_type=int;
-	       type="int";
-	       name="y";
+	       arg_type=const_Variant_ref;
+	       type="Variant&";
+	       name="col";
 	       required=1;
 	       def_val=;
 	       prev_expr=;
 	       expr {
-		expr="lg_y + LayerLayout[\"Y_Rel\"][row]";
+		expr="\"LogicalGroup\"";
 	       };
 	      };
 	      ProgArg @[2] {
 	       arg_type=int;
 	       type="int";
-	       name="z";
-	       required=1;
-	       def_val=;
+	       name="st_row";
+	       required=0;
+	       def_val="0";
 	       prev_expr=;
 	       expr {
-		expr="lg_z + LayerLayout[\"Z_Rel\"][row]";
+		expr="0";
+	       };
+	      };
+	      ProgArg @[3] {
+	       arg_type=bool;
+	       type="bool";
+	       name="not_found_err";
+	       required=0;
+	       def_val="false";
+	       prev_expr=;
+	       expr {
+		expr="true";
 	       };
 	      };
 	     };
-	     meth_sig="void SetAbsPos(int x, int y, int z)";
-	     meth_desc=" set absolute position of layer, regardless of whether it is in a layer group or not - always relative to network 0,0,0";
+	     meth_sig="int FindVal(Variant& val, Variant& col, int st_row = 0, bool not_found_err = false)";
+	     meth_desc=" find row number for given value within column col of scalar type (use for Programs), starting at given starting row number. if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- column can be specified as either integer index or a string that is then used to find the given column name. returns -1 if not found, and issues error if not_found_err is true";
 	    };
-	   };
-	   case_val {
-	    expr="LayerGroup";
 	   };
 	  };
-	  CaseBlock @[2] {
-	   desc=;
-	   flags=0;
-	   orig_prog_code=;
-	   prog_code {
-	    name="prog_code";
-	    el_typ=ProgCode;
-	    el_def=0;
-	    AssignExpr @[0] {
-	     desc=;
-	     flags=CAN_REVERT_TO_CODE;
-	     orig_prog_code="group_name = LayerLayout[\"LayerGroup\"][row]";
-	     result_var=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[4]$;
-	     expr {
-	      expr="LayerLayout[\"LayoutGroup\"][row]";
-	     };
-	    };
-	    If @[1] {
-	     desc=;
-	     flags=0;
-	     orig_prog_code="if(group_name.nonempty())";
-	     cond {
-	      expr="group_name.nonempty()";
-	     };
-	     true_code {
-	      name="true_code";
-	      el_typ=ProgCode;
-	      el_def=0;
-	      MethodCall @[0] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_row = LayerLayout.FindVal()";
-	       result_var=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[5]$;
-	       obj=$.projects[0].programs.gp[4][18].vars[0]$;
-	       method=DataTable::FindVal;
-	       meth_args {
-		name="meth_args";
-		el_typ=ProgArg;
-		el_def=0;
-		ProgArg @[0] {
-		 arg_type=const_Variant_ref;
-		 type="Variant&";
-		 name="val";
-		 required=1;
-		 def_val=;
-		 prev_expr=;
-		 expr {
-		  expr="group_name";
-		 };
-		};
-		ProgArg @[1] {
-		 arg_type=const_Variant_ref;
-		 type="Variant&";
-		 name="col";
-		 required=1;
-		 def_val=;
-		 prev_expr=;
-		 expr {
-		  expr="\"LayoutGroup\"";
-		 };
-		};
-		ProgArg @[2] {
-		 arg_type=int;
-		 type="int";
-		 name="st_row";
-		 required=0;
-		 def_val="0";
-		 prev_expr=;
-		 expr {
-		  expr="0";
-		 };
-		};
-		ProgArg @[3] {
-		 arg_type=bool;
-		 type="bool";
-		 name="not_found_err";
-		 required=0;
-		 def_val="false";
-		 prev_expr=;
-		 expr {
-		  expr="true";
-		 };
-		};
-	       };
-	       meth_sig="int FindVal(Variant& val, Variant& col, int st_row = 0, bool not_found_err = false)";
-	       meth_desc=" find row number for given value within column col of scalar type (use for Programs), starting at given starting row number. if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- column can be specified as either integer index or a string that is then used to find the given column name. returns -1 if not found, and issues error if not_found_err is true";
-	      };
-	      AssignExpr @[1] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_x = LayerLayout[\"X_Abs\"][lg_row]";
-	       result_var=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[6]$;
-	       expr {
-		expr="LayerLayout[\"X_Abs\"][lg_row]";
-	       };
-	      };
-	      AssignExpr @[2] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_x = LayerLayout[\"X_Abs\"][lg_row]";
-	       result_var=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[7]$;
-	       expr {
-		expr="LayerLayout[\"Y_Abs\"][lg_row]";
-	       };
-	      };
-	      AssignExpr @[3] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_x = LayerLayout[\"X_Abs\"][lg_row]";
-	       result_var=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[8]$;
-	       expr {
-		expr="LayerLayout[\"Z_Abs\"][lg_row]";
-	       };
-	      };
-	     };
-	    };
-	    Else @[2] {
-	     desc=;
-	     flags=0;
-	     orig_prog_code="else";
-	     else_code {
-	      name="else_code";
-	      el_typ=ProgCode;
-	      el_def=0;
-	      AssignExpr @[0] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_x = 0";
-	       result_var=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[6]$;
-	       expr {
-		expr="0";
-	       };
-	      };
-	      AssignExpr @[1] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_y = 0";
-	       result_var=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[7]$;
-	       expr {
-		expr="0";
-	       };
-	      };
-	      AssignExpr @[2] {
-	       desc=;
-	       flags=CAN_REVERT_TO_CODE;
-	       orig_prog_code="lg_z = 0";
-	       result_var=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[8]$;
-	       expr {
-		expr="0";
-	       };
-	      };
-	     };
-	    };
-	    MethodCall @[3] {
-	     desc=;
-	     flags=CAN_REVERT_TO_CODE;
-	     orig_prog_code="current_layer.SetAbsPos(layer_layout[\"X_Abs\"][row])";
-	     result_var=NULL;
-	     obj=$.projects[0].programs.gp[4][18].functions[1].fun_code[0].local_vars[1]$;
-	     method=Layer::SetAbsPos;
-	     meth_args {
-	      name="meth_args";
-	      el_typ=ProgArg;
-	      el_def=0;
-	      ProgArg @[0] {
-	       arg_type=int;
-	       type="int";
-	       name="x";
-	       required=1;
-	       def_val=;
-	       prev_expr=;
-	       expr {
-		expr="lg_x + LayerLayout[\"X_Rel\"][row]";
-	       };
-	      };
-	      ProgArg @[1] {
-	       arg_type=int;
-	       type="int";
-	       name="y";
-	       required=1;
-	       def_val=;
-	       prev_expr=;
-	       expr {
-		expr="lg_y + LayerLayout[\"Y_Rel\"][row]";
-	       };
-	      };
-	      ProgArg @[2] {
-	       arg_type=int;
-	       type="int";
-	       name="z";
-	       required=1;
-	       def_val=;
-	       prev_expr=;
-	       expr {
-		expr="lg_z + LayerLayout[\"Z_Rel\"][row]";
-	       };
-	      };
-	     };
-	     meth_sig="void SetAbsPos(int x, int y, int z)";
-	     meth_desc=" set absolute position of layer, regardless of whether it is in a layer group or not - always relative to network 0,0,0";
-	    };
+	  AssignExpr @[2] {
+	   desc="get the layer group position";
+	   flags=CAN_REVERT_TO_CODE;
+	   orig_prog_code="lg_x = LayerLayout[\"X_Abs\"][lg_row]";
+	   result_var=.projects[1].programs[1].functions[2].fun_code[0].local_vars[6]$$;
+	   expr {
+	    expr="PositionsRelative[\"X_Abs\"][lg_row]";
 	   };
-	   case_val {
-	    expr="LayoutGroup";
+	  };
+	  AssignExpr @[3] {
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   orig_prog_code="lg_x = LayerLayout[\"X_Abs\"][lg_row]";
+	   result_var=.projects[1].programs[1].functions[2].fun_code[0].local_vars[7]$$;
+	   expr {
+	    expr="PositionsRelative[\"Y_Abs\"][lg_row]";
+	   };
+	  };
+	  AssignExpr @[4] {
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   orig_prog_code="lg_x = LayerLayout[\"X_Abs\"][lg_row]";
+	   result_var=.projects[1].programs[1].functions[2].fun_code[0].local_vars[8]$$;
+	   expr {
+	    expr="PositionsRelative[\"Z_Abs\"][lg_row]";
 	   };
 	  };
 	 };
+	};
+	Else @[3] {
+	 desc=;
+	 flags=0;
+	 orig_prog_code="else";
+	 else_code {
+	  name="else_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   orig_prog_code="lg_x = 0";
+	   result_var=$.projects[1].programs[1].functions[2].fun_code[0].local_vars[6]$;
+	   expr {
+	    expr="0";
+	   };
+	  };
+	  AssignExpr @[1] {
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   orig_prog_code="lg_y = 0";
+	   result_var=$.projects[1].programs[1].functions[2].fun_code[0].local_vars[7]$;
+	   expr {
+	    expr="0";
+	   };
+	  };
+	  AssignExpr @[2] {
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   orig_prog_code="lg_z = 0";
+	   result_var=$.projects[1].programs[1].functions[2].fun_code[0].local_vars[8]$;
+	   expr {
+	    expr="0";
+	   };
+	  };
+	 };
+	};
+	MethodCall @[4] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 orig_prog_code="current_layer.SetAbsPos(layer_layout[\"X_Abs\"][row])";
+	 result_var=NULL;
+	 obj=$.projects[1].programs[1].functions[2].fun_code[0].local_vars[1]$;
+	 method=Layer::SetAbsPos;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="x";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="lg_x + PositionsRelative[\"X_Rel\"][row]";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=int;
+	   type="int";
+	   name="y";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="lg_y + PositionsRelative[\"Y_Rel\"][row]";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=int;
+	   type="int";
+	   name="z";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="lg_z + PositionsRelative[\"Z_Rel\"][row]";
+	   };
+	  };
+	 };
+	 meth_sig="void SetAbsPos(int x, int y, int z)";
+	 meth_desc=" set absolute position of layer, regardless of whether it is in a layer group or not - always relative to network 0,0,0";
 	};
        };
       };
@@ -2056,7 +3037,7 @@ Program .projects[0].programs.gp[4][18] {
       expr="row = 0";
      };
      test {
-      expr="row <LayerLayout.rows";
+      expr="row <PositionsRelative.rows";
      };
      iter {
       expr="row++";
@@ -2067,7 +3048,7 @@ Program .projects[0].programs.gp[4][18] {
      flags=CAN_REVERT_TO_CODE;
      orig_prog_code="network_0.Build()";
      result_var=NULL;
-     obj=.projects[0].programs.gp[4][18].args[2]$$;
+     obj=$.projects[1].programs[1].args[1]$;
      method=LeabraNetwork::Build;
      meth_args {
       name="meth_args";
@@ -2093,7 +3074,7 @@ Program .projects[0].programs.gp[4][18] {
    desc=;
    flags=0;
    orig_prog_code="switch(action)";
-   switch_var=.projects[0].programs.gp[4][18].args[0]$$;
+   switch_var=.projects[1].programs[1].args[0]$$;
    cases {
     name="cases";
     el_typ=CaseBlock;
@@ -2111,7 +3092,7 @@ Program .projects[0].programs.gp[4][18] {
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="fun GetCurrent()";
        result_var=NULL;
-       fun=.projects[0].programs.gp[4][18].functions[0]$$;
+       fun=.projects[1].programs[1].functions[0]$$;
        fun_args {
 	name="fun_args";
 	el_typ=ProgArg;
@@ -2120,7 +3101,7 @@ Program .projects[0].programs.gp[4][18] {
       };
      };
      case_val {
-      expr="GetCurrentPos";
+      expr="GetCurrentPositions";
      };
     };
     CaseBlock @[1] {
@@ -2134,9 +3115,9 @@ Program .projects[0].programs.gp[4][18] {
       FunctionCall @[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="fun SetPos()";
+       orig_prog_code="SetPositionsAbs()";
        result_var=NULL;
-       fun=.projects[0].programs.gp[4][18].functions[1]$$;
+       fun=.projects[1].programs[1].functions[1]$$;
        fun_args {
 	name="fun_args";
 	el_typ=ProgArg;
@@ -2145,7 +3126,79 @@ Program .projects[0].programs.gp[4][18] {
       };
      };
      case_val {
-      expr="SetPositions";
+      expr="SetPositionsAbsolute";
+     };
+    };
+    CaseBlock @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog_code {
+      name="prog_code";
+      el_typ=ProgCode;
+      el_def=0;
+      FunctionCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="SetPositionsRel(LayerGroup)";
+       result_var=NULL;
+       fun=.projects[1].programs[1].functions[2]$$;
+       fun_args {
+	name="fun_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DynEnum;
+	 type="UseGroup";
+	 name="group";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="LayerGroup";
+	 };
+	};
+       };
+      };
+     };
+     case_val {
+      expr="SetPositionsRelativeToLayerGroup";
+     };
+    };
+    CaseBlock @[3] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog_code {
+      name="prog_code";
+      el_typ=ProgCode;
+      el_def=0;
+      FunctionCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="SetPositionsRel(LogicalGroup)";
+       result_var=NULL;
+       fun=$.projects[1].programs[1].functions[2]$;
+       fun_args {
+	name="fun_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DynEnum;
+	 type="UseGroup";
+	 name="group";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="LogicalGroup";
+	 };
+	};
+       };
+      };
+     };
+     case_val {
+      expr="SetPositionsRelativeToLogicalGroup";
      };
     };
    };
