@@ -61,6 +61,7 @@ taTypeDef_Of(MemberMethodCall);
 taTypeDef_Of(FunctionCall);
 taTypeDef_Of(ProgramCall);
 taTypeDef_Of(ProgramCallFun);
+taTypeDef_Of(MatrixAssign);
 
 taTypeDef_Of(StaticMethodCall);
 taTypeDef_Of(MathCall);
@@ -178,6 +179,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_AssignExpr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_VarIncr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MemberAssign);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MatrixAssign);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MethodCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MemberMethodCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCall);

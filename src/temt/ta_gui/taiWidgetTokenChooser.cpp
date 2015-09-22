@@ -186,6 +186,10 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
       continue;
     taBase* parent = btmp->GetParent();
     // keeps templates out of the list of actual instances
+    if (btmp->GetPath().startsWith(".templates")) {
+      continue;
+    }
+    // keeps templates out of the list of actual instances
     if (!parent || parent->GetName() == "root")
       continue;
     // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
