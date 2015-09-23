@@ -2458,9 +2458,9 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   // prjn specs
   BaseSpec_Group* prjns = (BaseSpec_Group*)hipspec->FindMakeGpName("HippoPrjns");
 
-  FMSpec(ProjectionSpec, fullprjn, prjns, "FullPrjn");
-  FMSpec(ProjectionSpec, onetoone, prjns, "OneToOne");
-  FMSpec(ProjectionSpec, gponetoone, prjns, "GpOneToOne");
+  FMSpec(FullPrjnSpec, fullprjn, prjns, "FullPrjn");
+  FMSpec(OneToOnePrjnSpec, onetoone, prjns, "OneToOne");
+  FMSpec(GpOneToOnePrjnSpec, gponetoone, prjns, "GpOneToOne");
   FMSpec(UniformRndPrjnSpec, ppath_prjn, prjns, "RandomPerfPath");
   FMSpec(UniformRndPrjnSpec, mossy_prjn, prjns, "UniformRndMossy");
 
@@ -2541,21 +2541,23 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   // subic->un_geom.y = 1;
 
   hip_laygp->pos.SetXYZ(0, 0, 1);
-  ecin->pos.SetXYZ(0, 0, 0);
-  ecout->pos.SetXYZ(35, 0, 0);
+  ecin->SetAbsPos(0, 0, 1);
+  ecout->SetAbsPos(35, 0, 1);
   // subic->pos.SetXYZ(70, 0, 0);
-  dg->pos.SetXYZ(0, 0, 1);
-  ca3->pos.SetXYZ(0, 0, 2);
-  ca1->pos.SetXYZ(35, 0, 2);
+  dg->SetAbsPos(0, 0, 2);
+  ca3->SetAbsPos(0, 0, 3);
+  ca1->SetAbsPos(35, 0, 3);
 
   //////////////////////////////////////////////////////////////////////////////////
   // params
 
+  mossy_prjn->p_con = 0.05f;
+  
   // EC_CA1ConSpecs, wt_sig.gain = 6, off 1.25, cor = 1 (not .4)
 
   // ECin_CA1, abs = 2
   ecin_ca1_cons->SetUnique("wt_scale", true);
-  ecin_ca1_cons->wt_scale.abs = 2.0f;
+  // ecin_ca1_cons->wt_scale.abs = 2.0f;
 
   // CA1_ECout, abs = 4
   ca1_ecout_cons->SetUnique("wt_scale", true);
