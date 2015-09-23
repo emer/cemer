@@ -19,6 +19,7 @@
 #include <tabMisc>
 #include <CaseBlock>
 #include <EnumDef>
+#include <taiWidgetTokenChooser>
 
 TA_BASEFUNS_CTORS_DEFN(Switch);
 
@@ -62,7 +63,7 @@ const String Switch::GenListing_children(int indent_level) {
 String Switch::GetDisplayName() const {
   if(switch_var)
     return "switch(" + switch_var->name + ")";
-  return "switch( VAR NOT SET!)";
+  return "switch(name_of_variable)";
 }
 
 void Switch::PreGenChildren_impl(int& item_id) {
@@ -210,3 +211,49 @@ bool Switch::BrowserEditTest() {
   bool rv2 = cases.BrowserEditTest();
   return rval | rv2;
 }
+
+bool Switch::ChooseMe() {
+  Program* my_program = GET_MY_OWNER(Program);
+  // have user choose variable on which to switch
+  if (!switch_var && my_program->vars.size > 0) {
+    taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
+    Program* scope_program = GET_MY_OWNER(Program);
+    chooser->GetImageScoped(NULL, &TA_ProgVar, scope_program, &TA_Program); // scope to this guy
+    bool okc = chooser->OpenChooser();
+    if(okc && chooser->token()) {
+      switch_var = (ProgVar*)chooser->token();
+      UpdateAfterEdit();
+    }
+    delete chooser;
+  }
+  return true;
+}
+
+bool Switch::HasDefaultCase() {
+  for (int i=0; i<cases.size; i++) {
+    CaseBlock* cb = dynamic_cast<CaseBlock*>(cases[i]);
+    if (cb->case_val.expr.empty()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void Switch::AddCase() {
+  CaseBlock* cb = new CaseBlock();
+  cb->case_val.expr = "value_or_variable_name";
+  if (HasDefaultCase()) {
+    cases.Insert(cb, cases.size - 1);
+  }
+  else {
+    cases.Insert(cb, cases.size);
+  }
+}
+
+void Switch::AddDefaultCase() {
+  if (!HasDefaultCase()) {
+    CaseBlock* cb = new CaseBlock();
+    cases.Insert(cb, cases.size);
+  }
+}
+

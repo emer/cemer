@@ -33,13 +33,16 @@ class TA_API CaseBlock: public CodeBlock {
   INHERITED(CodeBlock)
 public:
   ProgExpr		case_val; // #BROWSER_EDIT_LOOKUP value of the switch variable -- if switch_var is equal to this, then this code is run (must use literal expression here) -- if case_val is empty, then this represents the default case (run when no other case matches)
-
+  
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;
   bool		IsCtrlProgEl() 	override { return true; }
 
   String	GetDisplayName() const override;
   String	GetToolbarName() const override { return "case"; }
+
+  bool    ChooseMe() override;
+  // #IGNORE code to run when object drop from toolbar
 
   PROGEL_SIMPLE_BASEFUNS(CaseBlock);
 protected:
@@ -50,7 +53,7 @@ protected:
 
 private:
   void	Initialize();
-  void	Destroy()	{ CutLinks(); }
+  void	Destroy();
 };
 
 #endif // CaseBlock_h

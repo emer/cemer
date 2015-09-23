@@ -15,12 +15,21 @@
 
 #include "CaseBlock.h"
 #include <Program>
+#include <Switch>
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(CaseBlock);
 
 
 void CaseBlock::Initialize() {
+}
+
+void CaseBlock::Destroy() {
+//  Switch* sw = dynamic_cast<Switch*>(GetParent());
+//  if (sw) {
+//    sw->RemoveCase(this);
+//  }
+  CutLinks();
 }
 
 void CaseBlock::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -80,3 +89,20 @@ bool CaseBlock::CvtFmCode(const String& code) {
   return true;
 }
 
+bool CaseBlock::ChooseMe() {
+  case_val.expr = "value"; // make into a regular case by making expression non-empty
+  UpdateAfterEdit();
+  Switch* sw = dynamic_cast<Switch*>(GetParent());
+  if (sw) {
+    if (sw->HasDefaultCase()) {
+      // I'd better explain the next part
+      // if it is a regular case it should precede the last item (i.e. the default case)
+      CaseBlock* default_case = dynamic_cast<CaseBlock*>(sw->cases[sw->cases.size-2]);
+      if (default_case) {
+        sw->cases.MoveBefore(default_case, this);
+      }
+    }
+    return true;
+  }
+  return false;
+}

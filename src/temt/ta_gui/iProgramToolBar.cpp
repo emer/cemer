@@ -49,6 +49,7 @@ taTypeDef_Of(IfBreak);
 taTypeDef_Of(IfReturn);
 taTypeDef_Of(IfGuiPrompt);
 taTypeDef_Of(Switch);
+taTypeDef_Of(CaseBlock);
 taTypeDef_Of(StopStepPoint);
 taTypeDef_Of(Comment);
 taTypeDef_Of(BlankLineEl);
@@ -168,6 +169,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfReturn);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfGuiPrompt);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Switch);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_CaseBlock);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_StopStepPoint);
   tb->AddSeparator(sec);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Comment);
