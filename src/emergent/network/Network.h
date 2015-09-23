@@ -839,14 +839,14 @@ public:
                                 const String& sub_gp_nm = "");
   // #MENU #MENU_ON_ControlPanels #MENU_SEP_BEFORE #NULL_OK_0  #NULL_TEXT_0_NewCtrlPanel #CAT_Display add the key network counters and statistics to a project control panel (if ctrl_panel is NULL, a new one is created in .ctrl_panels).  The extra label is prepended to each member name, and if sub_group, then all items are placed in a subgroup with the network's name.  NOTE: be sure to click update_after on NetCounterInit and Incr at appropriate program level(s) to trigger updates of select edit display (typically in Train to update epoch -- auto update of all after Step so only needed for continuous update during runnign)
 
-  virtual bool  SnapVar();
-  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of currently selected variable in netview -- copies this value to the snap unit variable
-  virtual bool  SnapAnd();
-  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic do an AND-like MIN computation of the current snap unit variable and the current value of the variable shown in netview -- shows the intersection between current state and previously snap'd state
-  virtual bool  SnapOr();
-  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic do an OR-like MAX computation of the current snap unit variable and the current value of the variable shown in netview -- shows the union between current state and previously snap'd state
-  virtual bool  SnapThresh(float thresh_val = 0.5f);
-  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of currently selected variable in netview -- copies this value to the snap unit variable, but also applies a thresholding such that values above the thresh_val are set to 1 and values below the thresh_val are set to 0
+  virtual bool  SnapVar(const String& variable = "");
+  // #MENU_BUTTON #MENU_ON_Snapshot #ARGC_0 #CAT_Statistic take a snapshot of specified variable (or currently selected variable in netview if empty or using from the gui) -- copies this value to the snap unit variable
+  virtual bool  SnapAnd(const String& variable = "");
+  // #MENU_BUTTON #MENU_ON_Snapshot #ARGC_0 #CAT_Statistic do an AND-like MIN computation of the current snap unit variable and the current value of the specified variable (or currently selected variable in netview if empty or using from the gui) -- shows the intersection between current state and previously snap'd state
+  virtual bool  SnapOr(const String& variable = "");
+  // #MENU_BUTTON #MENU_ON_Snapshot #ARGC_0 #CAT_Statistic do an OR-like MAX computation of the current snap unit variable and the current value of the specified variable (or currently selected variable in netview if empty or using from the gui) -- shows the union between current state and previously snap'd state
+  virtual bool  SnapThresh(float thresh_val = 0.5f, const String& variable = "");
+  // #MENU_BUTTON #MENU_ON_Snapshot #ARGC_1 #CAT_Statistic take a snapshot of specified variable (or currently selected variable if empty) in netview -- copies this value to the snap unit variable, but also applies a thresholding such that values above the thresh_val are set to 1 and values below the thresh_val are set to 0
   virtual bool  Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
   // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of given variable (if empty, currently viewed variable in netview is used): assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.
 

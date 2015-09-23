@@ -2721,31 +2721,31 @@ void Network::GetLocalistName() {
   UpdateAllViews();
 }
 
-bool Network::SnapVar() {
+bool Network::SnapVar(const String& variable) {
   SimpleMathSpec sm;
   sm.opr = SimpleMathSpec::NONE;
-  return Snapshot("", sm, false); // empty var is retrieved
+  return Snapshot(variable, sm, false); // empty var is retrieved
 }
 
-bool Network::SnapAnd() {
+bool Network::SnapAnd(const String& variable) {
   SimpleMathSpec sm;
   sm.opr = SimpleMathSpec::MIN;
-  return Snapshot("", sm, true); // empty var is retrieved
+  return Snapshot(variable, sm, true); // empty var is retrieved
 }
 
-bool Network::SnapOr() {
+bool Network::SnapOr(const String& variable) {
   SimpleMathSpec sm;
   sm.opr = SimpleMathSpec::MAX;
-  return Snapshot("", sm, true); // empty var is retrieved
+  return Snapshot(variable, sm, true); // empty var is retrieved
 }
 
-bool Network::SnapThresh(float thresh_val) {
+bool Network::SnapThresh(float thresh_val, const String& variable) {
   SimpleMathSpec sm;
   sm.opr = SimpleMathSpec::THRESH;
   sm.arg = thresh_val;
   sm.lw = 0.0;
   sm.hi = 1.0;
-  return Snapshot("", sm, false);
+  return Snapshot(variable, sm, false);
 }
 
 // Network::GetViewVar is in netstru_qtso.cpp

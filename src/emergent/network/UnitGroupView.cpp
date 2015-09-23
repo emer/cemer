@@ -1514,7 +1514,8 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
   float trans = nv->view_params.unit_trans;
-  
+  int cur_disp_idx = nv->unit_disp_idx;
+
   MemberDef* md = (MemberDef*)nv->membs.FindName("snap");
   if(!md) return;               // shouldn't happen
   nv->unit_disp_idx = nv->membs.FindEl(md);
@@ -1560,8 +1561,6 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
   uint32_t* color_dat = color.startEditing();
   if(!color_dat) return;
 
-  int cur_disp_idx = nv->unit_disp_idx;
-
   int c_idx = 0;
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
@@ -1578,9 +1577,8 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
     }
   }
 
-  nv->unit_disp_idx = cur_disp_idx; // restore!
-
   color.finishEditing();
 #endif // TA_QT3D
   
+  nv->unit_disp_idx = cur_disp_idx; // restore!
 }
