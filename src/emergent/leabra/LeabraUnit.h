@@ -159,7 +159,7 @@ public:
   // #CAT_UnitVar local lateral integration of deep_raw signals, to drive normalization of the overall attentional filtering signals as reflected in deep_norm -- also provides temporal context for temporal integration (TI) learning in deep_ctxt
   inline float& thal()
   { return ((LeabraUnitVars*)GetUnitVars())->thal; }
-  // #VIEW_HOT #CAT_UnitVar thalamic activation value, driven by a ThalSendUnitSpec or GpiInvUnitSpec -- used by deep params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
+  // #VIEW_HOT #CAT_UnitVar thalamic activation value, driven by a ThalSendUnitSpec or GpiInvUnitSpec -- used by deep params in LeabraUnitSpec and MSNConSpecs, and possibly other specs, to respond to thalamic inputs
   inline float& thal_cnt()
   { return ((LeabraUnitVars*)GetUnitVars())->thal_cnt; }
   // #CAT_UnitVar counter for thalamic activation value -- increments for active maintenance in PFCUnitSpec

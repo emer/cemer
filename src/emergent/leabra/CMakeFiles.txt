@@ -41,6 +41,7 @@ set(leabra_HEADS_MAKETA
   MarkerConSpec.h
   LeabraDeltaConSpec.h
   DaDeltaConSpec.h
+  DaHebbConSpec.h
   CHLConSpec.h
   LeabraLimPrecConSpec.h
   
@@ -70,6 +71,7 @@ set(leabra_HEADS_MAKETA
   # TDRewIntegLayerSpec.h
   # TdLayerSpec.h
 
+  BAUnitSpec.h
   LatAmygConSpec.h
   BasAmygConSpec.h
   LearnModUnitSpec.h
@@ -79,11 +81,12 @@ set(leabra_HEADS_MAKETA
   LHbRMTgUnitSpec.h
   VTAUnitSpec.h
   DRNUnitSpec.h
-  VSPatchUnitSpec.h
   ClampDaUnitSpec.h
 
-  MatrixCon.h
-  MatrixConSpec.h
+  D1D2UnitSpec.h
+  MSNCon.h
+  MSNConSpec.h
+  MSNUnitSpec.h
   PatchUnitSpec.h
   GPiInvUnitSpec.h
   InvertUnitSpec.h
@@ -101,7 +104,6 @@ set(leabra_HEADS_MAKETA
   HippoEncoderConSpec.h
   CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
-  DaHebbConSpec.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -164,6 +166,7 @@ set(leabra_SRCS
   MarkerConSpec.cpp
   LeabraDeltaConSpec.cpp
   DaDeltaConSpec.cpp
+  DaHebbConSpec.cpp
   CHLConSpec.cpp
   LeabraLimPrecConSpec.cpp
   
@@ -193,6 +196,7 @@ set(leabra_SRCS
   # TDRewIntegLayerSpec.cpp
   # TdLayerSpec.cpp
                    
+  BAUnitSpec.cpp
   LatAmygConSpec.cpp
   BasAmygConSpec.cpp
   LearnModUnitSpec.cpp
@@ -202,11 +206,12 @@ set(leabra_SRCS
   LHbRMTgUnitSpec.cpp
   VTAUnitSpec.cpp
   DRNUnitSpec.cpp
-  VSPatchUnitSpec.cpp
   ClampDaUnitSpec.cpp
 
-  MatrixCon.cpp
-  MatrixConSpec.cpp
+  D1D2UnitSpec.cpp
+  MSNCon.cpp
+  MSNConSpec.cpp
+  MSNUnitSpec.cpp
   PatchUnitSpec.cpp
   GPiInvUnitSpec.cpp
   InvertUnitSpec.cpp
@@ -224,7 +229,6 @@ set(leabra_SRCS
   HippoEncoderConSpec.cpp
   CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
-  DaHebbConSpec.cpp
 )
 
 set(leabra_CUDA

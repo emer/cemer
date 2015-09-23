@@ -13,17 +13,16 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "MatrixConSpec.h"
+#include "MSNConSpec.h"
 
-TA_BASEFUNS_CTORS_DEFN(MatrixLearnSpec);
-TA_BASEFUNS_CTORS_DEFN(MatrixConSpec);
+TA_BASEFUNS_CTORS_DEFN(MSNTraceSpec);
+TA_BASEFUNS_CTORS_DEFN(MSNConSpec);
 
-void MatrixLearnSpec::Initialize() {
-  use_thal = true;
+void MSNTraceSpec::Initialize() {
   Defaults_init();
 }
 
-void MatrixLearnSpec::Defaults_init() {
+void MSNTraceSpec::Defaults_init() {
   da_reset_tr = 0.1f;
   tr_decay = 1.0f;
   otr_lrate = 0.5f;
@@ -32,18 +31,19 @@ void MatrixLearnSpec::Defaults_init() {
   tr_max = 1.0f;
 }
 
-void MatrixLearnSpec::UpdateAfterEdit_impl() {
+void MSNTraceSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-void MatrixConSpec::Initialize() {
-  min_obj_type = &TA_MatrixCon;
-  nogo = false;
-
+void MSNConSpec::Initialize() {
+  min_obj_type = &TA_MSNCon;
+  su_act_var = PREV_TRIAL;
+  ru_act_var = ACT_P;
+  learn_rule = DA_HEBB;
   Defaults_init();
 }
 
-void MatrixConSpec::Defaults_init() {
+void MSNConSpec::Defaults_init() {
   SetUnique("wt_limits", true);
   wt_limits.sym = false;
 
@@ -55,7 +55,7 @@ void MatrixConSpec::Defaults_init() {
   ignore_unlearnable = false;
 }
 
-void MatrixConSpec::UpdateAfterEdit_impl() {
+void MSNConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 

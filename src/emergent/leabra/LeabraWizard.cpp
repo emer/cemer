@@ -57,18 +57,18 @@ void LeabraWizard::Initialize() {
 #include <LearnModUnitSpec>
 #include <VTAUnitSpec>
 #include <DRNUnitSpec>
-#include <VSPatchUnitSpec>
 #include <LeabraDeltaConSpec>
 #include <LearnModDeltaConSpec>
 #include <LearnModHebbConSpec>
 #include <BasAmygConSpec>
 #include <LatAmygConSpec>
 
+#include <MSNUnitSpec>
 #include <PatchUnitSpec>
 #include <GPiInvUnitSpec>
 #include <PFCUnitSpec>
 #include <DeepCopyUnitSpec>
-#include <MatrixConSpec>
+#include <MSNConSpec>
 #include <SendDeepRawConSpec>
 #include <SendDeepNormConSpec>
 
@@ -884,18 +884,18 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMChild(LeabraUnitSpec, cem_units, pvlv_units, "CeMUnits");
   FMChild(LeabraUnitSpec, bla_units, pvlv_units, "BLAUnits");
   FMChild(LearnModUnitSpec, baa_units, pvlv_units, "BAacqUnits");
-  FMChild(VSPatchUnitSpec, vspd_units, pvlv_units, "VSPatchDirectUnits");
-  FMChild(VSPatchUnitSpec, vspi_units, pvlv_units, "VSPatchIndirUnits");
-  FMChild(LeabraUnitSpec, vsmd_units, pvlv_units, "VSMatrixDirectUnits");
-  FMChild(LeabraUnitSpec, vsmi_units, pvlv_units, "VSMatrixIndirUnits");
+  FMChild(MSNUnitSpec, vspd_units, pvlv_units, "VSPatchDirectUnits");
+  FMChild(MSNUnitSpec, vspi_units, pvlv_units, "VSPatchIndirUnits");
+  FMChild(MSNUnitSpec, vsmd_units, pvlv_units, "VSMatrixDirectUnits");
+  FMChild(MSNUnitSpec, vsmi_units, pvlv_units, "VSMatrixIndirUnits");
 
   FMSpec(LeabraConSpec, pvlv_cons, pvlvspgp, "PVLVLrnCons");
   FMChild(LatAmygConSpec, la_cons, pvlv_cons, "LatAmygCons");
   FMChild(BasAmygConSpec, baa_cons, pvlv_cons, "BasAmygCons_acq");
   FMChild(BasAmygConSpec, bae_cons, baa_cons, "BasAmygCons_ext");
   FMChild(LeabraDeltaConSpec, vspatch_cons, pvlv_cons, "VSPatchCons");
-  FMChild(MatrixConSpec, matrix_dir_cons, pvlv_cons, "MatrixCons_dir");
-  FMChild(MatrixConSpec, matrix_indir_cons, matrix_dir_cons, "MatrixCons_indir");
+  FMChild(MSNConSpec, matrix_dir_cons, pvlv_cons, "MSNCons_dir");
+  FMChild(MSNConSpec, matrix_indir_cons, matrix_dir_cons, "MSNCons_indir");
 
   FMSpec(LeabraConSpec, fix_cons, pvlvspgp, "PVLVFixedCons");
   FMChild(LeabraBiasSpec, fix_bias, fix_cons, "PVLVFixedBias");
@@ -959,14 +959,14 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons->wt_scale.abs = 4.0f;
   matrix_dir_cons->SetUnique("wt_scale", true);
   matrix_dir_cons->wt_scale.abs = 4.0f;
-  matrix_dir_cons->SetUnique("nogo", true);
-  matrix_dir_cons->nogo = false;
+  // matrix_dir_cons->SetUnique("nogo", true);
+  // matrix_dir_cons->nogo = false;
   matrix_dir_cons->SetUnique("matrix", true);
-  matrix_dir_cons->matrix.use_thal = false;
-  matrix_dir_cons->matrix.tr_max = 1.0f;
+  //  matrix_dir_cons->trace.use_thal = false;
+  matrix_dir_cons->trace.tr_max = 1.0f;
   
-  matrix_indir_cons->SetUnique("nogo", true);
-  matrix_indir_cons->nogo = true;
+  // matrix_indir_cons->SetUnique("nogo", true);
+  // matrix_indir_cons->nogo = true;
 
   fix_cons->UpdateAfterEdit();
   // fix_cons->xcal.raw_l_mix = true;
@@ -1324,10 +1324,10 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   neglv_baa->SetLayerSpec(amygsp);
   lat_amyg->SetLayerSpec(amygsp);
 
-  vspd->SetUnitSpec(PvlvSp("VSPatchDirectUnits", VSPatchUnitSpec));
-  vspi->SetUnitSpec(PvlvSp("VSPatchIndirUnits", VSPatchUnitSpec));
-  vsmd->SetUnitSpec(PvlvSp("VSPatchDirectUnits", LeabraUnitSpec));
-  vsmi->SetUnitSpec(PvlvSp("VSMatrixIndirUnits", LeabraUnitSpec));
+  vspd->SetUnitSpec(PvlvSp("VSPatchDirectUnits", MSNUnitSpec));
+  vspi->SetUnitSpec(PvlvSp("VSPatchIndirUnits", MSNUnitSpec));
+  vsmd->SetUnitSpec(PvlvSp("VSMatrixDirectUnits", MSNUnitSpec));
+  vsmi->SetUnitSpec(PvlvSp("VSMatrixIndirUnits", MSNUnitSpec));
 
   vspd->SetLayerSpec(PvlvSp("VSPatchLayer", LeabraLayerSpec));
   vspi->SetLayerSpec(PvlvSp("VSPatchLayer", LeabraLayerSpec));
@@ -1423,8 +1423,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
 
     net->FindMakePrjn(vspd, il, fullprjn, vsp_cons);
     net->FindMakePrjn(vspi, il, fullprjn, vsp_cons);
-    net->FindMakePrjn(vsmd, il, fullprjn, PvlvSp("MatrixCons_dir", MatrixConSpec));
-    net->FindMakePrjn(vsmi, il, fullprjn, PvlvSp("MatrixCons_indir", MatrixConSpec));
+    net->FindMakePrjn(vsmd, il, fullprjn, PvlvSp("MSNCons_dir", MSNConSpec));
+    net->FindMakePrjn(vsmi, il, fullprjn, PvlvSp("MSNCons_indir", MSNConSpec));
   }
 
   for(i=0;i<output_lays.size;i++) {
@@ -1643,8 +1643,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   ////////////	ConSpecs
 
   FMSpec(LeabraConSpec, bg_lrn_cons, pbwmspgp, "BgLrnCons");
-  FMChild(MatrixConSpec, mtx_cons_go, bg_lrn_cons, "MatrixConsGo");
-  FMChild(MatrixConSpec, mtx_cons_nogo, mtx_cons_go, "MatrixConsNoGo");
+  FMChild(MSNConSpec, mtx_cons_go, bg_lrn_cons, "MSNConsGo");
+  FMChild(MSNConSpec, mtx_cons_nogo, mtx_cons_go, "MSNConsNoGo");
 
   FMSpec(LeabraConSpec, pfc_lrn_cons, pbwmspgp, "PfcLrnCons");
   FMChild(LeabraConSpec, to_pfc, pfc_lrn_cons, "ToPFC");
@@ -1737,8 +1737,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   mtx_cons_go->SetUnique("wt_limits", true);
   mtx_cons_go->wt_limits.sym = false;
 
-  mtx_cons_nogo->SetUnique("nogo", true);
-  mtx_cons_nogo->nogo = true;
+  // mtx_cons_nogo->SetUnique("nogo", true);
+  // mtx_cons_nogo->nogo = true;
 
   pfc_lrn_cons->lrate = 0.01f;
   pfc_lrn_cons->learn_qtr = LeabraConSpec::Q4; // pfc lrn Q4 only for now
@@ -2178,9 +2178,9 @@ can be sure everything is ok.";
   // connect input layers
   for(i=0;i<task_input_lays.size;i++) {
     Layer* il = (Layer*)task_input_lays[i];
-    net->FindMakePrjn(matrix_go, il, fullprjn, PbwmSp("MatrixConsGo", MatrixConSpec));
+    net->FindMakePrjn(matrix_go, il, fullprjn, PbwmSp("MSNConsGo", MSNConSpec));
     net->FindMakePrjn(matrix_nogo, il, fullprjn,
-                      PbwmSp("MatrixConsNoGo", MatrixConSpec));
+                      PbwmSp("MSNConsNoGo", MSNConSpec));
   }
   
   LeabraUnitSpec* input_units = PbwmSp("PFCInputUnits", LeabraUnitSpec);
@@ -2191,9 +2191,9 @@ can be sure everything is ok.";
     il->SetUnitSpec(input_units);
     
     if(task_input_lays.size == 0) {
-      net->FindMakePrjn(matrix_go, il, fullprjn, PbwmSp("MatrixConsGo", MatrixConSpec));
+      net->FindMakePrjn(matrix_go, il, fullprjn, PbwmSp("MSNConsGo", MSNConSpec));
       net->FindMakePrjn(matrix_nogo, il, fullprjn,
-                        PbwmSp("MatrixConsNoGo", MatrixConSpec));
+                        PbwmSp("MSNConsNoGo", MSNConSpec));
     }
     net->FindMakePrjn(pfc_mnt, il, fullprjn, PbwmSp("ToPFC", LeabraConSpec));
     net->FindMakePrjn(pfc_mnt_trc, il, fullprjn, PbwmSp(prefix + "DeepRawPlus",

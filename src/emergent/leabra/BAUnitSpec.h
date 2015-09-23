@@ -13,25 +13,31 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef MatrixCon_h
-#define MatrixCon_h 1
+#ifndef BAUnitSpec_h
+#define BAUnitSpec_h 1
 
 // parent includes:
-#include <LeabraCon>
+#include <D1D2UnitSpec>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(MatrixCon);
+eTypeDef_Of(BAUnitSpec);
 
-class E_API MatrixCon : public LeabraCon {
-  // connection for recv cons into matrix units -- stores the sender activation prior to any gating update signals, used for learning
+class E_API BAUnitSpec : public D1D2UnitSpec {
+  // Basal Amygdala units -- specifies the dopamine receptor subtypes
+INHERITED(D1D2UnitSpec)
 public:
-  float		ntr;	// #NO_SAVE new trace -- drives updates to trace value -- su * ru at time of gating
-  float         tr;     // #NO_SAVE current ongoing trace of activations, which drive learning -- adds ntr and clears after learning on current values -- includes both thal gated (+ and other nongated, - inputs)
+  Valence       valence;        // US valence coding -- positive or negative US's
 
-  MatrixCon() { ntr = tr = 0.0f; }
+  TA_SIMPLE_BASEFUNS(BAUnitSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void  Initialize();
+  void  Destroy()     { };
+  void  Defaults_init();
 };
 
-#endif // MatrixCon_h
+#endif // BAUnitSpec_h

@@ -13,5 +13,13 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "MatrixCon.h"
+#include "BAUnitSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(BAUnitSpec);
+
+void BAUnitSpec::Initialize() {
+  valence = APPETITIVE;
+}
+
+void BAUnitSpec::Defaults_init() {
+}

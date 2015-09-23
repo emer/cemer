@@ -27,7 +27,7 @@
 eTypeDef_Of(LeabraCon);
 
 class E_API LeabraCon : public Connection {
-  // #STEM_BASE ##CAT_Leabra #AKA_MatrixCon Leabra connection
+  // #STEM_BASE ##CAT_Leabra #AKA_MSNCon Leabra connection
 public:
   float         fwt;            // #NO_SAVE fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
   float         swt;            // #NO_SAVE slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time

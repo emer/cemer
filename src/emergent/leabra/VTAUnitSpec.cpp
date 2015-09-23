@@ -21,7 +21,7 @@
 #include <PPTgUnitSpec>
 #include <LHbRMTgUnitSpec>
 #include <LearnModUnitSpec>
-#include <VSPatchUnitSpec>
+// #include <VSPatchUnitSpec>
 
 #include <taMisc>
 
@@ -159,7 +159,7 @@ bool VTAUnitSpec::GetRecvLayers_P(LeabraUnit* u,
       else if(us->InheritsFrom(TA_LearnModUnitSpec)) {
         pospv_lay = fmlay;
       }
-      else if(us->InheritsFrom(TA_VSPatchUnitSpec)) vspatch_lay = fmlay;
+      // else if(us->InheritsFrom(TA_VSPatchUnitSpec)) vspatch_lay = fmlay;
     }
   }
   return true;
