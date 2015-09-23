@@ -149,6 +149,7 @@ bool MemberAssign::ChooseMe() {
   bool keep_choosing = false;
   if (!obj) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
+    chooser->SetTitleText("Choose the object that has the member you want to set");
     chooser->item_filter = (item_filter_fun)ProgEl::ObjProgVarFilter;
     Program* scope_program = GET_MY_OWNER(Program);
     chooser->GetImageScoped(NULL, &TA_ProgVar, scope_program, &TA_Program); // scope to this guy
@@ -166,6 +167,7 @@ bool MemberAssign::ChooseMe() {
   if (obj && keep_choosing) {
     TypeDef* obj_td = obj->act_object_type();
     taiWidgetMemberDefChooser* chooser =  new taiWidgetMemberDefChooser(obj_td, NULL, NULL, NULL, 0, "");
+    chooser->SetTitleText("Choose the member to set");
     chooser->GetImage((MemberDef*)NULL, obj_td);
     bool okc = chooser->OpenChooser();
     if(okc && chooser->md()) {

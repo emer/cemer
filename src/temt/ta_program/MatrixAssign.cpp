@@ -187,6 +187,7 @@ bool MatrixAssign::ChooseMe() {
   // first get the object
   if (!variable) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
+    chooser->SetTitleText("Choose the variable you will be setting");
     Program* scope_program = GET_MY_OWNER(Program);
     chooser->GetImageScoped(NULL, &TA_ProgVar, scope_program, &TA_Program); // scope to this guy
     bool okc = chooser->OpenChooser();

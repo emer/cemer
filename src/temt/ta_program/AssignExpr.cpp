@@ -81,6 +81,7 @@ bool AssignExpr::ChooseMe() {
   // first get the object
   if (!result_var) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
+    chooser->SetTitleText("Choose the variable you want to set");
     Program* scope_program = GET_MY_OWNER(Program);
     chooser->GetImageScoped(NULL, &TA_ProgVar, scope_program, &TA_Program); // scope to this guy
     bool okc = chooser->OpenChooser();

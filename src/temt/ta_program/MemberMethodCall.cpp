@@ -202,6 +202,7 @@ bool MemberMethodCall::ChooseMe() {
   bool keep_choosing = false;
   if (!obj) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
+    chooser->SetTitleText("Choose the object, then you will choose the member");
     chooser->item_filter = (item_filter_fun)ProgEl::ObjProgVarFilter;
     Program* scope_program = GET_MY_OWNER(Program);
     chooser->GetImageScoped(NULL, &TA_ProgVar, scope_program, &TA_Program); // scope to this guy
@@ -219,6 +220,7 @@ bool MemberMethodCall::ChooseMe() {
   if (obj && keep_choosing) {
     TypeDef* obj_td = obj->act_object_type();
     taiWidgetMemberDefChooser* chooser =  new taiWidgetMemberDefChooser(obj_td, NULL, NULL, NULL, 0, "");
+    chooser->SetTitleText("Choose the member, then you will choose the method");
     chooser->GetImage((MemberDef*)NULL, obj_td);
     bool okc = chooser->OpenChooser();
     if(okc && chooser->md()) {
@@ -232,6 +234,7 @@ bool MemberMethodCall::ChooseMe() {
   // now scope the method choices to the object type -- READ comments in .h to make sense of this class!
   if (obj && keep_choosing && !path.empty() && GetTypeFromPath()) {
     taiWidgetMethodDefChooser* chooser =  new taiWidgetMethodDefChooser(obj_type, NULL, NULL, NULL, 0, "");
+    chooser->SetTitleText("Choose the method to cal");
     chooser->GetImage((MethodDef*)NULL, obj_type);
     bool okc = chooser->OpenChooser();
     if(okc && chooser->md()) {

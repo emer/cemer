@@ -258,6 +258,7 @@ bool ProgramCall::ChooseMe() {
   // pop a chooser for the user
   if (GetTarget() == NULL) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_Program, NULL, NULL, NULL, 0, "");
+    chooser->SetTitleText("Choose the program to call");
     chooser->GetImageScoped(NULL, &TA_Program, NULL, &TA_Program); // scope to this guy
     bool okc = chooser->OpenChooser();
     if(okc && chooser->token()) {

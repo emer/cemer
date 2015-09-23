@@ -161,6 +161,7 @@ bool FunctionCall::ChooseMe() {
   // pop a chooser for the user
   if (!fun) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_Function, NULL, NULL, NULL, 0, "");
+    chooser->SetTitleText("Choose the function to call");
     // scope functions to the containing program - not this program
     Program* scope_program = GET_MY_OWNER(Program);
     chooser->GetImageScoped(NULL, &TA_Function, scope_program, &TA_Program); // scope to this guy

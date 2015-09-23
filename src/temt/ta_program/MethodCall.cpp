@@ -190,6 +190,7 @@ bool MethodCall::ChooseMe() {
   if (!obj) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
     chooser->item_filter = (item_filter_fun)ProgEl::ObjProgVarFilter;
+    chooser->SetTitleText("Choose the object for the method call");
     Program* scope_program = GET_MY_OWNER(Program);
     chooser->GetImageScoped(NULL, &TA_ProgVar   , scope_program, &TA_Program); // scope to this guy
     bool okc = chooser->OpenChooser();
@@ -205,6 +206,7 @@ bool MethodCall::ChooseMe() {
   if (obj && keep_choosing) {
     TypeDef* obj_td = obj->act_object_type();
     taiWidgetMethodDefChooser* chooser =  new taiWidgetMethodDefChooser(obj_td, NULL, NULL, NULL, 0, "");
+    chooser->SetTitleText("Choose the method to call");
     chooser->GetImage((MethodDef*)NULL, obj_td);
     bool okc = chooser->OpenChooser();
     if(okc && chooser->md()) {

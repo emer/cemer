@@ -101,6 +101,7 @@ bool ProgramCallFun::ChooseMe() {
   bool keep_choosing = false;
   if (GetTarget() == NULL) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_Program, NULL, NULL, NULL, 0, "");
+    chooser->SetTitleText("Choose the program with the function to call");
     chooser->GetImageScoped(NULL, &TA_Program, NULL, &TA_Program); // scope to this guy
     bool okc = chooser->OpenChooser();
     if(okc && chooser->token()) {
@@ -116,6 +117,7 @@ bool ProgramCallFun::ChooseMe() {
   if (keep_choosing) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_Function, NULL, NULL, NULL, 0, "");
     chooser->GetImageScoped(NULL, &TA_Function, target, &TA_Program); // scope to this guy
+    chooser->SetTitleText("Choose the function to call");
     bool okc = chooser->OpenChooser();
     if(okc && chooser->token()) {
       Function* tok = (Function*)chooser->token();

@@ -86,6 +86,7 @@ bool VarIncr::ChooseMe() {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
     Program* scope_program = GET_MY_OWNER(Program);
     chooser->GetImageScoped(NULL, &TA_ProgVar, scope_program, &TA_Program); // scope to this guy
+    chooser->SetTitleText("Choose the variable you want to set");
     bool okc = chooser->OpenChooser();
     if(okc && chooser->token()) {
       var = (ProgVar*)chooser->token();

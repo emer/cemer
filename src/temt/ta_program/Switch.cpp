@@ -217,6 +217,7 @@ bool Switch::ChooseMe() {
   // have user choose variable on which to switch
   if (!switch_var && my_program->vars.size > 0) {
     taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_ProgVar, NULL, NULL, NULL, 0, "");
+    chooser->SetTitleText("Choose the switch variable");
     Program* scope_program = GET_MY_OWNER(Program);
     chooser->GetImageScoped(NULL, &TA_ProgVar, scope_program, &TA_Program); // scope to this guy
     bool okc = chooser->OpenChooser();
