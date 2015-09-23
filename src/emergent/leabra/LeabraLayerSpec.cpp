@@ -27,7 +27,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraClampSpec);
 TA_BASEFUNS_CTORS_DEFN(LayerDecaySpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDelInhib);
 TA_BASEFUNS_CTORS_DEFN(LeabraLayStats);
-TA_BASEFUNS_CTORS_DEFN(LayGpInhibSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraLayerSpec);
 TA_BASEFUNS_CTORS_LITE_DEFN(LeabraLayerSpec_SPtr);
 SMARTREF_OF_CPP(LeabraLayerSpec);
@@ -149,16 +148,6 @@ void LeabraLayStats::UpdateAfterEdit_impl() {
   cos_diff_avg_dt = 1.0f / cos_diff_avg_tau;
 }
 
-void LayGpInhibSpec::Initialize() {
-  on = false;
-  gp_g = 0.5f;
-}
-
-void LayGpInhibSpec::Defaults_init() {
-  
-}
-
-
 //////////////////////////////////////////////////////////
 
 
@@ -166,6 +155,7 @@ void LeabraLayerSpec::Initialize() {
   min_obj_type = &TA_LeabraLayer;
   unit_gp_inhib.on = false;
   multi_gp_inhib.on = false;
+  lay_gp_inhib.on = false;
   Defaults_init();
 }
 
@@ -178,6 +168,8 @@ void LeabraLayerSpec::UpdateAfterEdit_impl() {
 
   lay_inhib.UpdateAfterEdit_NoGui();
   unit_gp_inhib.UpdateAfterEdit_NoGui();
+  multi_gp_inhib.UpdateAfterEdit_NoGui();
+  lay_gp_inhib.UpdateAfterEdit_NoGui();
   avg_act.UpdateAfterEdit_NoGui();
   lstats.UpdateAfterEdit_NoGui();
 }
@@ -294,6 +286,7 @@ void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
       }
     }
   }
+  lay->laygp_data.Init_State();
   Init_Inhib(lay, net);         // initialize inhibition at start..
 }
 
@@ -351,6 +344,7 @@ void LeabraLayerSpec::Init_Acts_Layer(LeabraLayer* lay, LeabraNetwork* net) {
       gpd->Inhib_Init_Acts(this);
     }
   }
+  lay->laygp_data.Inhib_Init_Acts(this);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -395,6 +389,8 @@ void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
         gpd->i_val.fbi -= decay.trial * gpd->i_val.fbi;
       }
     }
+    lay->laygp_data.i_val.ffi -= decay.trial * lay->laygp_data.i_val.ffi;
+    lay->laygp_data.i_val.fbi -= decay.trial * lay->laygp_data.i_val.fbi;
   }
 }
 
@@ -536,8 +532,12 @@ void LeabraLayerSpec::Compute_Inhib_FfFb
 //      Inhibition Stage 2.2: LayInhibToGps
 
 void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net) {
+  if(lay_gp_inhib.on) {
+    lay->i_val.g_i = MAX(lay->i_val.g_i, lay->laygp_data.i_val.g_i);
+  }
+  
   if(!lay->unit_groups) return;
-
+  
   if(unit_gp_inhib.on || multi_gp_inhib.on) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);

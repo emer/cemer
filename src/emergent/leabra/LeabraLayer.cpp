@@ -67,6 +67,7 @@ void LeabraLayer::InitLinks() {
 
   taBase::Own(ungp_data, this);
   taBase::Own(multigp_data, this);
+  taBase::Own(laygp_data, this);
 
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_agg_sum, this);

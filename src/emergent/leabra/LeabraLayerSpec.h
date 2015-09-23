@@ -236,26 +236,6 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(LayGpInhibSpec);
-
-class E_API LayGpInhibSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is communicated among layers within a layer group -- a MAX inhibition value is computed across the layer inhibition levels multiplied by gp_g (typically < 1, which discounts layer contributions to global layer-group level inhibition) -- the final layer inhibition value is then a MAX of the original inhibition and the layer-group level inhibition
-INHERITED(SpecMemberBase)
-public:
-  bool		on;            // compute layer-group level inhibition, only applicable if the layer is within a layer group with other layers having this feature enabled
-  float		gp_g;		// #CONDSHOW_ON_on&&!fffb #MIN_0 how much this layer's computed inhibition level contributes to the pooled layer-group-level inhibition MAX value -- the higher the value (closer to 1) the stronger the overall pooled inhibition effect within the group, with 1 being a maximal amount of pooled inhibition
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LayGpInhibSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init();
-};
-
 
 eTypeDef_Of(LeabraLayerSpec);
 
@@ -263,10 +243,11 @@ class E_API LeabraLayerSpec : public LayerSpec {
   // #STEM_BASE ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
 INHERITED(LayerSpec)
 public:
-  LeabraInhibSpec lay_inhib;	// #CAT_Activation #AKA_inhib how to compute layer-wide inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- net inhibition is MAX of layer and unit group -- any inhibitory unit inhibition is just added on top of this computed inhibition
-  LeabraInhibSpec unit_gp_inhib; // #CAT_Activation how to compute unit-group-level inhibition (only relevant if layer actually has unit groups -- net inhibition is MAX of layer and unit group -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
-  LeabraInhibSpec multi_gp_inhib; // #CAT_Activation how to compute inhibition that combines across multiple unit-groups (only relevant if layer actually has unit groups -- net inhibition is MAX of layer and unit group -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
+  LeabraInhibSpec lay_inhib;	// #CAT_Activation #AKA_inhib how to compute layer-wide inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- net inhibition is MAX of all operative inhibition -- any inhibitory unit inhibition is just added on top of this computed inhibition
+  LeabraInhibSpec unit_gp_inhib; // #CAT_Activation how to compute unit-group-level inhibition (only relevant if layer actually has unit groups -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
+  LeabraInhibSpec multi_gp_inhib; // #CAT_Activation how to compute inhibition that combines across multiple unit-groups (only relevant if layer actually has unit groups -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
   LeabraMultiGpSpec multi_gp_geom; // #CAT_Activation #CONDSHOW_ON_multi_gp_inhib.on how to combine multiple unit groups for computing multi-group level inhibition
+  LeabraInhibSpec lay_gp_inhib;	// #CAT_Activation inhibition computed across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- only the specs of the FIRST layer in the layer group are used for computing inhib -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
   LayerAvgActSpec avg_act;	// #CAT_Activation expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
   LeabraInhibMisc inhib_misc;	// #CAT_Activation extra parameters for special forms of inhibition beyond the basic FFFB dynamic specified in inhib
   LeabraClampSpec clamp;        // #CAT_Activation how to clamp external inputs to units (hard vs. soft)
@@ -274,7 +255,6 @@ public:
   LeabraDelInhib  del_inhib;	// #CAT_Activation delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
   LeabraLayStats  lstats;       // #CAT_Statistic layer-level statistics parameters
   float           lay_lrate;    // #CAT_Statistic layer-level learning rate modulator, multiplies learning rates for all connections coming into layer(s) that this spec applies to -- sets lrate_mod value on layer
-  LayGpInhibSpec  lay_gp_inhib;	// #CAT_Activation pooling of inhibition across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- each layer's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given layer is then a MAX of the individual layer's original inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak layers to drop out
 
   ///////////////////////////////////////////////////////////////////////
   //	Access, status functions

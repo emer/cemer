@@ -69,6 +69,7 @@ public:
   float         dead_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is below the layerspec dead_thr threshold, indicating that they are effectively 'dead' and not participating in any representations (because this is computed on a time average, there is no epoch average of this statistic)
   LeabraUnGpData_List ungp_data; // #NO_SAVE #NO_COPY #SHOW_TREE #HIDDEN #CAT_Activation unit group data (for inhibition computation and other things) -- allows actual unit groups to be virtual (virt_groups flag)
   LeabraUnGpData_List multigp_data; // #NO_SAVE #NO_COPY #SHOW_TREE #HIDDEN #CAT_Activation unit group data (for multi-unit-group inhibition computation and other things)
+  LeabraUnGpData      laygp_data;   // #NO_SAVE #NO_COPY #SHOW_TREE #HIDDEN #CAT_Activation layer-group inhibition data -- first layer in a layer group that has lay_gp_inhib.on active has the data for the entire layer group
 
 #ifdef DMEM_COMPILE
   DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)

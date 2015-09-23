@@ -809,12 +809,12 @@ void LeabraNetwork::Compute_Inhib_Thr(int thr_no) {
   // note: only running on thr_no == 0 right now -- may be best overall to avoid
   // messy cache stuff, to just keep it on 0
   if(thr_no == 0) {
+    if(net_misc.lay_gp_inhib)
+      Compute_Inhib_LayGp();
     FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
       if(lay->lesioned()) continue;
       lay->Compute_Inhib(this);
     }
-    if(net_misc.lay_gp_inhib)
-      Compute_Inhib_LayGp();
   }
   if(threads.get_timing)
     ((LeabraNetTiming*)net_timing[thr_no])->inhib.EndIncrAvg();
@@ -824,26 +824,34 @@ void LeabraNetwork::Compute_Inhib_LayGp() {
   if(!net_misc.lay_gp_inhib || layers.gp.size == 0) return;
   for(int lgi = 0; lgi < layers.gp.size; lgi++) {
     Layer_Group* lg = (Layer_Group*)layers.gp[lgi];
-    float lay_gp_g_i = 0.0f;
+    if(lg->size <= 1) continue;
+
+    // use first layer as initial data for layer group
+    LeabraLayer* lay0 = (LeabraLayer*)lg->FastEl(0);
+    LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay0->spec.SPtr();
+    if(!laysp->lay_gp_inhib.on) continue;
+    
+    lay0->laygp_data.netin.InitVals();
+    lay0->laygp_data.acts.InitVals();
     for(int li = 0; li < lg->size; li++) {
       LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
-      LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
+      laysp = (LeabraLayerSpec*)lay->spec.SPtr();
       if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
-      float lay_val = laysp->lay_gp_inhib.gp_g * lay->i_val.g_i;
-      lay_gp_g_i = MAX(lay_val, lay_gp_g_i);
-    }
-    if(lay_gp_g_i > 0.0f) {   // actually got something
-      for(int li = 0; li < lg->size; li++) {
-        LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
-        LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-        if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
-        lay->i_val.laygp_g_i = lay_gp_g_i;
-        lay->i_val.g_i = MAX(lay->i_val.laygp_g_i, lay->i_val.g_i);
 
-        if(lay->unit_groups) {
-          lay->Compute_LayInhibToGps(this);
-        }
-      }
+      lay0->laygp_data.netin.UpdtFmAvgMax(lay->netin);
+      lay0->laygp_data.acts.UpdtFmAvgMax(lay->acts);
+    }
+
+    lay0->laygp_data.netin.CalcAvg();
+    lay0->laygp_data.acts.CalcAvg();
+    laysp->Compute_Inhib_impl(lay0, &lay0->laygp_data, this, laysp->lay_gp_inhib);
+    
+    for(int li = 1; li < lg->size; li++) {
+      LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
+      laysp = (LeabraLayerSpec*)lay->spec.SPtr();
+      if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
+      
+      lay->laygp_data = lay0->laygp_data;
     }
   }
 }
