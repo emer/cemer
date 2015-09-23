@@ -104,14 +104,29 @@ public:
     }
   }
 
+  inline float GetActVal(LeabraUnitVars* u, const LearnActVal& val) {
+    switch(val) {
+    case PREV_TRIAL:
+      return u->act_q0;
+      break;
+    case ACT_P:
+      return u->act_p;
+      break;
+    case ACT_M:
+      return u->act_m;
+      break;
+    }
+    return 0.0f;
+  }    
+  
   // IMPORTANT: need to always build in a temporal asymmetry so LV-level gating does not
   // disrupt the trace right as it is established..
   
   inline void C_Compute_dWt_Trace_Thal
     (float& dwt, float& ntr, float& tr, const float otr_lr, const float mtx_da,
-     const float ru_thal, const float ru_act, const float su_act) {
+     const float ru_thal, const float ru_act, const float su_act, const float lrate_eff) {
 
-    dwt += cur_lrate * mtx_da * tr;
+    dwt += lrate_eff * mtx_da * tr;
     float reset_factor = (trace.da_reset_tr - fabs(mtx_da)) / trace.da_reset_tr;
     if(reset_factor < 0.0f) reset_factor = 0.0f;
     tr *= reset_factor;
@@ -141,9 +156,9 @@ public:
 
   inline void C_Compute_dWt_Trace_NoThal
     (float& dwt, float& ntr, float& tr, const float mtx_da,
-     const float ru_act, const float su_act) {
+     const float ru_act, const float su_act, const float lrate_eff) {
 
-    dwt += cur_lrate * mtx_da * tr;
+    dwt += lrate_eff * mtx_da * tr;
     float reset_factor = (trace.da_reset_tr - fabs(mtx_da)) / trace.da_reset_tr;
     if(reset_factor < 0.0f) reset_factor = 0.0f;
     tr *= reset_factor;
@@ -165,10 +180,14 @@ public:
     LeabraConGroup* cg = (LeabraConGroup*)rcg;
     LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-    MSNUnitSpec* rus = (MSNUnitSpec*)rlay->GetUnitSpec(); // todo: checkconfig!!!
+    MSNUnitSpec* rus = (MSNUnitSpec*)rlay->GetUnitSpec();
 
-    // todo: get su_act and ru_act per enums!!
-    
+    float su_act = GetActVal(su, su_act_var);
+
+    float clrate, bg_lrate, fg_lrate;
+    bool deep_on;
+    GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
+
     bool d2r = (rus->dar == MSNUnitSpec::D2R);
     
     float* dwts = cg->OwnCnVar(DWT);
@@ -186,18 +205,28 @@ public:
     case TRACE_THAL: {
       for(int i=0; i<sz; i++) {
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+        float lrate_eff = clrate;
+        if(deep_on) {
+          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
+        }
+        float ru_act = GetActVal(ru, ru_act_var);
         float da_p = ((d2r) ? -ru->da_p : ru->da_p);
         C_Compute_dWt_Trace_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
-                                  da_p, ru->thal, ru->act_eq, su->act_eq);
+                                 da_p, ru->thal, ru_act, su_act, lrate_eff);
       }
       break;
     }
     case TRACE_NO_THAL: {
       for(int i=0; i<sz; i++) {
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+        float lrate_eff = clrate;
+        if(deep_on) {
+          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
+        }
+        float ru_act = GetActVal(ru, ru_act_var);
         float da_p = ((d2r) ? -ru->da_p : ru->da_p);
         C_Compute_dWt_Trace_NoThal(dwts[i], ntrs[i], trs[i], 
-                                    da_p, ru->act_eq, su->act_eq);
+                                   da_p, ru_act, su_act, lrate_eff);
       }
       break;
     }
@@ -208,6 +237,8 @@ public:
     }
   }
 
+  bool  CheckConfig_RecvCons(ConGroup* cg, bool quiet=false) override;
+  
   TA_SIMPLE_BASEFUNS(MSNConSpec);
 protected:
   SPEC_DEFAULTS;

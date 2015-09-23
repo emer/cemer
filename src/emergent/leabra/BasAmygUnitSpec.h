@@ -13,13 +13,31 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "BAUnitSpec.h"
+#ifndef BasAmygUnitSpec_h
+#define BasAmygUnitSpec_h 1
 
-TA_BASEFUNS_CTORS_DEFN(BAUnitSpec);
+// parent includes:
+#include <D1D2UnitSpec>
 
-void BAUnitSpec::Initialize() {
-  valence = APPETITIVE;
-}
+// member includes:
 
-void BAUnitSpec::Defaults_init() {
-}
+// declare all other types mentioned but not required to include:
+
+eTypeDef_Of(BasAmygUnitSpec);
+
+class E_API BasAmygUnitSpec : public D1D2UnitSpec {
+  // Basal Amygdala units -- specifies the dopamine receptor subtypes
+INHERITED(D1D2UnitSpec)
+public:
+  Valence       valence;        // US valence coding -- positive or negative US's
+
+  TA_SIMPLE_BASEFUNS(BasAmygUnitSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void  Initialize();
+  void  Destroy()     { };
+  void  Defaults_init();
+};
+
+#endif // BasAmygUnitSpec_h
