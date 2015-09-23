@@ -22,14 +22,27 @@ TA_BASEFUNS_CTORS_DEFN(CaseBlock);
 
 
 void CaseBlock::Initialize() {
+  is_default = false;
 }
 
 void CaseBlock::Destroy() {
-//  Switch* sw = dynamic_cast<Switch*>(GetParent());
-//  if (sw) {
-//    sw->RemoveCase(this);
-//  }
   CutLinks();
+}
+
+void CaseBlock::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) {
+    taVersion v784(7, 8, 4);
+    if (taMisc::loading_version < v784) { // update from enum to bool..
+      if (case_val.expr.empty()) {
+        is_default = true;
+      }
+    }
+  }
+  // user can toggle the is_default case
+  if (is_default) {
+    case_val.expr = "";
+  }
 }
 
 void CaseBlock::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -62,7 +75,7 @@ void CaseBlock::GenCssPost_impl(Program* prog) {
 }
 
 String CaseBlock::GetDisplayName() const {
-  if(case_val.expr.empty()) return "default:";
+  if(is_default) return "default:";
   return "case: " + case_val.expr;
 }
 

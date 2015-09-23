@@ -233,7 +233,7 @@ bool Switch::ChooseMe() {
 bool Switch::HasDefaultCase() {
   for (int i=0; i<cases.size; i++) {
     CaseBlock* cb = dynamic_cast<CaseBlock*>(cases[i]);
-    if (cb->case_val.expr.empty()) {
+    if (cb->is_default) {
       return true;
     }
   }
@@ -242,7 +242,7 @@ bool Switch::HasDefaultCase() {
 
 void Switch::AddCase() {
   CaseBlock* cb = new CaseBlock();
-  cb->case_val.expr = "value_or_variable_name";
+  cb->case_val.expr = "value";
   if (HasDefaultCase()) {
     cases.Insert(cb, cases.size - 1);
   }
@@ -254,6 +254,7 @@ void Switch::AddCase() {
 void Switch::AddDefaultCase() {
   if (!HasDefaultCase()) {
     CaseBlock* cb = new CaseBlock();
+    cb->is_default = true;
     cases.Insert(cb, cases.size);
   }
 }
