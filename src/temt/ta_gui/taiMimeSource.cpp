@@ -723,8 +723,10 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     // do a full UAE (not just DC) so associated update code gets retriggered
     new_obj->UpdateAfterEdit();
     tabMisc::DelayedFunCall_gui(new_obj, "BrowserSelectMe");
-    tabMisc::DelayedFunCall_gui(new_obj, "ChooseMe");  // pop scoped chooser
-    tabMisc::DelayedFunCall_gui(new_obj, "BrowserSelectMe");  // some cases require reselection because focus lost when changing type
+    if (obj->GetOwner()->GetName() == "templates") {  // only if dropped from toolbar
+      tabMisc::DelayedFunCall_gui(new_obj, "ChooseMe");  // pop scoped chooser
+      tabMisc::DelayedFunCall_gui(new_obj, "BrowserSelectMe");  // some cases require reselection because focus lost when changing type
+    }
     return iClipData::ER_OK;
   }
   
