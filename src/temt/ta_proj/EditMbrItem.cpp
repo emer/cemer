@@ -80,19 +80,6 @@ String EditMbrItem::GetColText(const KeyString& key, int itm_idx) const {
   else return inherited::GetColText(key, itm_idx);
 }
 
-bool EditMbrItem::PSearchValidTest() {
-  if(TestError(!mbr, "PSearchValidTest", "item does not have member def set -- not valid parameter search item"))
-    return false;
-  if(TestError(!is_numeric, "PSearchValidTest", "item is not numeric and thus not a valid parameter search item.  member name:", mbr->name, "label:", label))
-    return false;
-  return true;
-}
-
-Variant EditMbrItem::PSearchCurVal() {
-  if(!PSearchValidTest()) return 0.0;
-  return mbr->type->GetValVar(mbr->GetOff(base), mbr);
-}
-
 String EditMbrItem::CurValAsString() {
   if(!mbr) return _nilString;
   
@@ -104,38 +91,4 @@ String EditMbrItem::CurValAsString() {
   return mbr->GetValStr(base, TypeDef::SC_STREAMING, true);
 }
 
-bool EditMbrItem::PSearchCurVal_Set(const Variant& cur_val) {
-  //  if(!PSearchValidTest()) return false;
-  if(TestError(!mbr, "PSearchCurVal_Set", "item does not have member def set -- not valid parameter search item"))
-    return false;
-  if(TestError(!is_single, "PSearchCurVal_Set", "item is not a single atomic value and thus not a valid parameter search item.  member name:", mbr->name, "label:", label))
-    return false;
-  mbr->type->SetValVar(cur_val, mbr->GetOff(base), NULL, mbr);
-  base->UpdateAfterEdit();
-  return true;
-}
 
-bool EditMbrItem::PSearchMinToCur() {
-  if(!PSearchValidTest()) return false;
-  mbr->type->SetValVar(param_search.min_val, mbr->GetOff(base), NULL, mbr);
-  base->UpdateAfterEdit();
-  return true;
-}
-
-bool EditMbrItem::PSearchNextIncr() {
-  if(!PSearchValidTest()) return false;
-  double cur_val = PSearchCurVal().toDouble();
-  param_search.next_val = cur_val + param_search.incr;
-  if(param_search.next_val > param_search.max_val) {
-    param_search.next_val = param_search.min_val;
-    return false;
-  }
-  return true;
-}
-
-bool EditMbrItem::PSearchNextToCur() {
-  if(!PSearchValidTest()) return false;
-  mbr->type->SetValVar(param_search.next_val, mbr->GetOff(base), NULL, mbr);
-  base->UpdateAfterEdit();
-  return true;
-}

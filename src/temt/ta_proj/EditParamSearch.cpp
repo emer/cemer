@@ -132,7 +132,7 @@ bool EditParamSearch::ParseSubRange(const String& sub_range) {
       return false;
     }
 
-    for(double val = start; val < end; val += increment) {
+    for(double val = start; val <= end; val += increment) {
       srch_vals.Add(val);
     }
   }

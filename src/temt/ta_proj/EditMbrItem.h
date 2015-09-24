@@ -40,31 +40,16 @@ public:
   ParamSetItem          param_set_value;  // if the panel is a param set panel display the saved value
   ControlItemNote       notes;            // you can record notes here about this parameter
     
-  ///////////////////////////////////
-  //        Param Search
+  TypeItem*    typeItem() const override {return mbr;} // the mbr or mth
 
-  virtual bool          PSearchValidTest();
-  // #CAT_ParamSearch test if parameter searching is valid on this item -- emits error if not
-  virtual Variant       PSearchCurVal();
-  // #CAT_ParamSearch get current value of item, as a variant
   virtual String        CurValAsString();
   // #CAT_ParamSearch get current value of item, as a string -- not subject to validity for parameter searching
-  virtual bool          PSearchCurVal_Set(const Variant& cur_val);
-  // #CAT_ParamSearch set current value of item from a variant
-  virtual bool          PSearchMinToCur();
-  // #CAT_ParamSearch set current value of item to value stored in min_val field (called at start)
-  virtual bool          PSearchNextIncr();
-  // #CAT_ParamSearch set next_val to current value plus incr -- iterate to next level -- returns false if new next_val > max_val, and sets next_val = min_val in this case
-  virtual bool          PSearchNextToCur();
-  // #CAT_ParamSearch set current value of item to value stored in next_val field -- call this after updating the next values, before running the evaluation with the current parameters
-
-  TypeItem*    typeItem() const override {return mbr;} // the mbr or mth
 
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   TA_BASEFUNS(EditMbrItem);
-  void  InitLinks();
+  void  InitLinks() override;
 protected:
-  void                  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy();

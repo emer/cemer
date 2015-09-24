@@ -253,8 +253,13 @@ String taSigLinkTaBase::GetName() const {
 
 String taSigLinkTaBase::GetDisplayName() const {
   MemberDef* md = GetDataMemberDef();
-  if (md) return md->name;
-  else    return data()->GetDisplayName();
+  if (md) {
+    return md->name;
+  }
+  else if(data()) {
+    return data()->GetDisplayName();
+  }
+  return String();
 }
 
 bool taSigLinkTaBase::HasChildItems() {
