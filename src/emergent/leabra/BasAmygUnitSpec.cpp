@@ -18,8 +18,30 @@
 TA_BASEFUNS_CTORS_DEFN(BasAmygUnitSpec);
 
 void BasAmygUnitSpec::Initialize() {
+  acq_ext = ACQ;
   valence = APPETITIVE;
+  dar = D1R;
 }
 
 void BasAmygUnitSpec::Defaults_init() {
+}
+
+void BasAmygUnitSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(acq_ext == ACQ) {
+    if(valence == APPETITIVE) {
+      dar = D1R;
+    }
+    else {
+      dar = D2R;
+    }
+  }
+  else {
+    if(valence == APPETITIVE) {
+      dar = D2R;                // reversed!
+    }
+    else {
+      dar = D1R;
+    }
+  }
 }

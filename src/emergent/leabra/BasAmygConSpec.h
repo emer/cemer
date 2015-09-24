@@ -21,53 +21,36 @@
 
 // member includes:
 #include <LeabraNetwork>
+#include <BasAmygUnitSpec>
 
 // declare all other types mentioned but not required to include:
 
 eTypeDef_Of(BasAmygConSpec);
 
 class E_API BasAmygConSpec : public LeabraConSpec {
-  // simulates learning in the basal amygdala, with separate equations for acquisition vs. extinction subpoplations -- acquisition recv from LatAmyg, learn from da_p or da_n and postsynaptic activity -- extinction recv from context / pfc, and learn from acq (as lrnmod input) and -(da_p or da_n) -- each layer should recv from appropriate valence of da signals (pos or neg)
+  // simulates learning in the basal amygdala, with separate equations for acquisition vs. extinction subpoplations -- acquisition recv from LatAmyg, learn from da_p and postsynaptic activity -- extinction recv from context / pfc, and learn from ACQ up-state signal and da_p using D2 receptors
 INHERITED(LeabraConSpec)
 public:
-  enum BasAmygType {
-    ACQ,                        // acquisition neurons -- learn from LatAmyg and (da_p + da_n)
-    EXT,                        // extinction neurons -- learn from context / pfc input and ACQ (as learn_mod) and -(da_p + da_n)
-  };
+  float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
+  float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
 
-  BasAmygType   ba_type;        // type of basal amgydala neuron
-  float         dip_da_gain;    // multiplicative gain factor applied to negative dopamine signals -- this value should always be >= 0 and should be < 1 to cause negative da to be reduced relative to positive, thus reducing the level of unlearning in this pathway -- applies to negative of da for the extinction pathway (i.e., to positive da values)
-  bool          invert_da;   // if true, wt changes go in opposite direction to the standard case; analogous to NoGo guys in striatum; generally, for PosLV_BasAmyg layers/units should be false; for NegPV_ guys should be true
-
-  inline float  GetDa(float da) {
-    if(!invert_da) { return (da < 0.0f) ? dip_da_gain * da : da; }
-    else { return (da >= 0.0f) ? dip_da_gain * da : da; }
+  inline float  GetDa(float da, bool d2r) {
+    if(da < 0.0f) da *= dip_da_gain; else da *= burst_da_gain;
+    if(d2r) da = -da;
+    return da;
   }
-  // get neg-modulated dopamine value
+  // get effective dopamine signal taking into account gains and reversal by D2R
 
   inline void C_Compute_dWt_BasAmyg_Acq(float& dwt, const float su_act,
                                         const float ru_act, const float da_p,
-                                        const float da_n) {
-      dwt += cur_lrate * su_act * ru_act * (GetDa(da_p) +  GetDa(da_n));
-      if(invert_da) dwt = -dwt;
+                                        const bool d2r, const float lrate_eff) {
+    dwt += lrate_eff * su_act * ru_act * GetDa(da_p, d2r);
   }
   // #IGNORE acquisition
-//  inline void C_Compute_dWt_BasAmyg_Ext(float& dwt, const float su_act,
-//                                        const float lrnmod, const float da_p,
-//                                        const float da_n) {
   inline void C_Compute_dWt_BasAmyg_Ext(float& dwt, const float su_act,
                                         const float ru_act, const float da_p,
-                                        const float da_n) {
-// NOTE: the -da_p arg was inverting the dip_da_gain effect - BAD!!!
-    // NOTE: BasAmyg now only listening to the Schultzian (VTAp) guys
-    //      dwt += cur_lrate * su_act * lrnmod * (GetDa(-da_p) + GetDa(-da_n));
-    // NOTE: the lrnmod param here was making extinction excruciatingly slow since it gets smaller as _Ext activation increases; already have soft wt bounding, etc. so together it takes forever!!
-//    float eff_lrnmod = (lrnmod >= 0.1f) ? 1.0f : 0.0f; // discretize to 0, 1
-//    dwt -= cur_lrate * su_act * eff_lrnmod * (GetDa(da_p));
-//      dwt += cur_lrate * su_act * (GetDa(-da_p) + GetDa(-da_n));
-    // don't use lrnmod at all anymore???
-    dwt -= cur_lrate * su_act * (GetDa(da_p));
-    if(invert_da) dwt = -dwt;
+                                        const bool d2r, const float lrate_eff) {
+    dwt += lrate_eff * su_act * GetDa(da_p, d2r); // no ru_act!
   }
   // #IGNORE extinction
 
@@ -76,25 +59,35 @@ public:
     if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
     LeabraConGroup* cg = (LeabraConGroup*)rcg;
     LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+    BasAmygUnitSpec* rus = (BasAmygUnitSpec*)rlay->GetUnitSpec();
+    bool d2r = (rus->dar == BasAmygUnitSpec::D2R);
+    bool acq = (rus->acq_ext == BasAmygUnitSpec::ACQ);
     
     float su_act = su->act_q0;  // previous trial
     float* dwts = cg->OwnCnVar(DWT);
 
+    float clrate, bg_lrate, fg_lrate;
+    bool deep_on;
+    GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
+
     const int sz = cg->size;
-    if(ba_type == ACQ) {
-      for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-        C_Compute_dWt_BasAmyg_Acq(dwts[i], su_act, ru->act_eq, ru->da_p, ru->da_n);
+    for(int i=0; i<sz; i++) {
+      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+      float lrate_eff = clrate;
+      if(deep_on) {
+        lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
       }
-    }
-    else {
-      for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-//        C_Compute_dWt_BasAmyg_Ext(dwts[i], su_act, ru->lrnmod, ru->da_p, ru->da_n);
-        C_Compute_dWt_BasAmyg_Ext(dwts[i], su_act, ru->act_eq, ru->da_p, ru->da_n);
+      if(acq) {
+        C_Compute_dWt_BasAmyg_Acq(dwts[i], su_act, ru->act_eq, ru->da_p, d2r, lrate_eff);
+      }
+      else {
+        C_Compute_dWt_BasAmyg_Ext(dwts[i], su_act, ru->act_eq, ru->da_p, d2r, lrate_eff);
       }
     }
   }
+
+  bool  CheckConfig_RecvCons(ConGroup* cg, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(BasAmygConSpec);
 protected:

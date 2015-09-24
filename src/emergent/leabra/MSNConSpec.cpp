@@ -44,6 +44,9 @@ void MSNConSpec::Initialize() {
 }
 
 void MSNConSpec::Defaults_init() {
+  burst_da_gain = 1.0f;
+  dip_da_gain = 1.0f;
+
   SetUnique("wt_limits", true);
   wt_limits.sym = false;
 

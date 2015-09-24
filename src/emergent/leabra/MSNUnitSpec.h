@@ -39,6 +39,7 @@ public:
     VENTRAL,                    // ventral striatum -- projects to VTA, LHB, ventral pallidum -- drives updating of OFC, ACC and modulation of VTA dopamine
   };
 
+  DAReceptor            dar;            // type of dopamine receptor: D1 vs. D2 -- also determines direct vs. indirect pathway in dorsal striatum
   MatrixPatch           matrix_patch;   // matrix vs. patch specialization
   DorsalVentral         dorsal_ventral; // dorsal vs. ventral specialization
   Valence               valence;        // #CONDSHOW_ON_dorsal_ventral:VENTRAL US valence coding of the ventral neurons
@@ -46,6 +47,7 @@ public:
   TA_SIMPLE_BASEFUNS(MSNUnitSpec);
 protected:
   SPEC_DEFAULTS;
+  void  UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy()     { };

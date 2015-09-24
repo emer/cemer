@@ -21,7 +21,7 @@
 #include <PPTgUnitSpec>
 #include <LHbRMTgUnitSpec>
 #include <LearnModUnitSpec>
-// #include <VSPatchUnitSpec>
+#include <MSNUnitSpec>
 
 #include <taMisc>
 
@@ -159,7 +159,8 @@ bool VTAUnitSpec::GetRecvLayers_P(LeabraUnit* u,
       else if(us->InheritsFrom(TA_LearnModUnitSpec)) {
         pospv_lay = fmlay;
       }
-      // else if(us->InheritsFrom(TA_VSPatchUnitSpec)) vspatch_lay = fmlay;
+      else if(us->InheritsFrom(TA_MSNUnitSpec)) vspatch_lay = fmlay;
+      // todo: could discriminate diff types of these now!
     }
   }
   return true;
@@ -189,7 +190,8 @@ bool VTAUnitSpec::GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay, Leabra
       if(us->InheritsFrom(TA_LearnModUnitSpec)) {
         negpv_lay = fmlay;
       }
-//      else if(us->InheritsFrom(TA_VSPatchUnitSpec)) vspatch_lay = fmlay;
+      // else if(us->InheritsFrom(TA_MSNUnitSpec)) vspatch_lay = fmlay;
+      // todo: could discriminate diff types of these now!
     }
   }
   return true;

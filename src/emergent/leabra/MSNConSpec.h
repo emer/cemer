@@ -79,6 +79,15 @@ public:
   LearnActVal        ru_act_var;     // what variable to use for recv unit activation
   LearningRule       learn_rule;     // what kind of learning rule to use
   MSNTraceSpec       trace;          // #AKA_matrix #CONDSHOW_ON_learn_rule:TRACE_THAL,TRACE_NO_THAL parameters for trace-based learning 
+  float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
+  float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
+
+  inline float  GetDa(float da, bool d2r) {
+    if(da < 0.0f) da *= dip_da_gain; else da *= burst_da_gain;
+    if(d2r) da = -da;
+    return da;
+  }
+  // get effective dopamine signal taking into account gains and reversal by D2R
 
   inline void Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
     Init_Weights_symflag(net, thr_no);
@@ -122,12 +131,20 @@ public:
   // IMPORTANT: need to always build in a temporal asymmetry so LV-level gating does not
   // disrupt the trace right as it is established..
   
+  inline void C_Compute_dWt_DaHebb
+    (float& dwt, const float da_p, const bool d2r, const float ru_act, const float su_act,
+     const float lrate_eff) {
+    dwt += lrate_eff * GetDa(da_p, d2r) * ru_act * su_act;
+  }
+  // #IGNORE
+
   inline void C_Compute_dWt_Trace_Thal
-    (float& dwt, float& ntr, float& tr, const float otr_lr, const float mtx_da,
+    (float& dwt, float& ntr, float& tr, const float otr_lr, const float da_p,
+     const bool d2r,
      const float ru_thal, const float ru_act, const float su_act, const float lrate_eff) {
 
-    dwt += lrate_eff * mtx_da * tr;
-    float reset_factor = (trace.da_reset_tr - fabs(mtx_da)) / trace.da_reset_tr;
+    dwt += lrate_eff * GetDa(da_p,d2r) * tr;
+    float reset_factor = (trace.da_reset_tr - fabs(da_p)) / trace.da_reset_tr;
     if(reset_factor < 0.0f) reset_factor = 0.0f;
     tr *= reset_factor;
 
@@ -155,11 +172,11 @@ public:
   // #IGNORE
 
   inline void C_Compute_dWt_Trace_NoThal
-    (float& dwt, float& ntr, float& tr, const float mtx_da,
+    (float& dwt, float& ntr, float& tr, const float da_p, const bool d2r,
      const float ru_act, const float su_act, const float lrate_eff) {
 
-    dwt += lrate_eff * mtx_da * tr;
-    float reset_factor = (trace.da_reset_tr - fabs(mtx_da)) / trace.da_reset_tr;
+    dwt += lrate_eff * GetDa(da_p,d2r) * tr;
+    float reset_factor = (trace.da_reset_tr - fabs(da_p)) / trace.da_reset_tr;
     if(reset_factor < 0.0f) reset_factor = 0.0f;
     tr *= reset_factor;
 
@@ -181,14 +198,13 @@ public:
     LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
     MSNUnitSpec* rus = (MSNUnitSpec*)rlay->GetUnitSpec();
+    bool d2r = (rus->dar == MSNUnitSpec::D2R);
 
     float su_act = GetActVal(su, su_act_var);
 
     float clrate, bg_lrate, fg_lrate;
     bool deep_on;
     GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
-
-    bool d2r = (rus->dar == MSNUnitSpec::D2R);
     
     float* dwts = cg->OwnCnVar(DWT);
     float* ntrs = cg->OwnCnVar(NTR);
@@ -199,7 +215,15 @@ public:
     const int sz = cg->size;
     switch(learn_rule) {
     case DA_HEBB: {
-      // todo!
+      for(int i=0; i<sz; i++) {
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+        float lrate_eff = clrate;
+        if(deep_on) {
+          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
+        }
+        float ru_act = GetActVal(ru, ru_act_var);
+        C_Compute_dWt_DaHebb(dwts[i], ru->da_p, d2r, ru_act, su_act, lrate_eff);
+      }
       break;
     }
     case TRACE_THAL: {
@@ -210,9 +234,8 @@ public:
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
         }
         float ru_act = GetActVal(ru, ru_act_var);
-        float da_p = ((d2r) ? -ru->da_p : ru->da_p);
         C_Compute_dWt_Trace_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
-                                 da_p, ru->thal, ru_act, su_act, lrate_eff);
+                                 ru->da_p, d2r, ru->thal, ru_act, su_act, lrate_eff);
       }
       break;
     }
@@ -224,9 +247,8 @@ public:
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
         }
         float ru_act = GetActVal(ru, ru_act_var);
-        float da_p = ((d2r) ? -ru->da_p : ru->da_p);
         C_Compute_dWt_Trace_NoThal(dwts[i], ntrs[i], trs[i], 
-                                   da_p, ru_act, su_act, lrate_eff);
+                                   ru->da_p, d2r, ru_act, su_act, lrate_eff);
       }
       break;
     }

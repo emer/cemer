@@ -18,10 +18,21 @@
 TA_BASEFUNS_CTORS_DEFN(BasAmygConSpec);
 
 void BasAmygConSpec::Initialize() {
-  ba_type = ACQ;
+  burst_da_gain = 1.0f;
   dip_da_gain = 1.0f;
-  invert_da = false;
 }
 
 void BasAmygConSpec::Defaults_init() {
 }
+
+bool BasAmygConSpec::CheckConfig_RecvCons(ConGroup* cg, bool quiet) {
+  bool rval = inherited::CheckConfig_RecvCons(cg, quiet);
+  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
+  
+  if(rlay->CheckError(!rus->InheritsFrom(&TA_BasAmygUnitSpec), quiet, rval,
+                      "requires receiving unit to use an BasAmygUnitSpec"))
+    return false;
+  return rval;
+}
+

@@ -18,7 +18,6 @@
 TA_BASEFUNS_CTORS_DEFN(D1D2UnitSpec);
 
 void D1D2UnitSpec::Initialize() {
-  dar = D1R;
 }
 
 void D1D2UnitSpec::Defaults_init() {

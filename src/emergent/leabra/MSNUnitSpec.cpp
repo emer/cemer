@@ -18,10 +18,16 @@
 TA_BASEFUNS_CTORS_DEFN(MSNUnitSpec);
 
 void MSNUnitSpec::Initialize() {
+  dar = D1R;
   matrix_patch = MATRIX;
   dorsal_ventral = DORSAL;
   valence = APPETITIVE;
 }
 
 void MSNUnitSpec::Defaults_init() {
+}
+
+void MSNUnitSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  // todo: could enforce various combinations here..
 }

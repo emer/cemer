@@ -26,7 +26,7 @@
 eTypeDef_Of(D1D2UnitSpec);
 
 class E_API D1D2UnitSpec : public LeabraUnitSpec {
-  // Medium Spiny Neuron, which is principal cell of the striatum -- determines the dopamine receptor type and patch / matrix specialization of the neuron, and overall anatomical location (dorsal / ventral), which are then used by the D1D2ConSpec and other areas in determining learning and other dynamics
+  // base class for basal ganglia and amygdala neurons that express dopamine D1 vs. D2 receptors and thus learn differentially from dopamine -- this also supports a multiplicative up-state dynamic using the deep* variables, and sent to other neurons via a SendDeepNormConSpec
 INHERITED(LeabraUnitSpec)
 public:
   enum DAReceptor {             // type of dopamine receptor expressed
@@ -39,7 +39,10 @@ public:
     AVERSIVE,                   // has an aversive (negative valence) US coding
   };
 
-  DAReceptor            dar;            // type of dopamine receptor: D1 vs. D2
+  // note subclasses will want to include these enums in their own way, so we don't do
+  // it here..
+  // DAReceptor            dar;            // type of dopamine receptor: D1 vs. D2
+
   
   TA_SIMPLE_BASEFUNS(D1D2UnitSpec);
 protected:

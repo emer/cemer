@@ -948,12 +948,12 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   la_cons->lrate = 0.1f;
   baa_cons->SetUnique("lrate", true);
   baa_cons->lrate = 0.1f;
-  baa_cons->SetUnique("ba_type", true);
-  baa_cons->ba_type = BasAmygConSpec::ACQ;
+  // baa_cons->SetUnique("ba_type", true);
+  // baa_cons->ba_type = BasAmygConSpec::ACQ;
   // bae_cons->SetUnique("lrate", true);
   // bae_cons->lrate = 0.1f;
-  bae_cons->SetUnique("ba_type", true);
-  bae_cons->ba_type = BasAmygConSpec::EXT;
+  // bae_cons->SetUnique("ba_type", true);
+  // bae_cons->ba_type = BasAmygConSpec::EXT;
 
   vspatch_cons->SetUnique("wt_scale", true);
   vspatch_cons->wt_scale.abs = 4.0f;
