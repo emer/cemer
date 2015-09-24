@@ -16,6 +16,7 @@
 #include "LHbRMTgUnitSpec.h"
 
 #include <LeabraNetwork>
+#include <MSNUnitSpec>
 
 #include <taMisc>
 
@@ -60,8 +61,8 @@ void LHbRMTgUnitSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  LeabraUnit* u = (LeabraUnit*)un;
+bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* u, bool quiet) {
+  LeabraUnit* un = (LeabraUnit*)u;
   if(!inherited::CheckConfig_Unit(un, quiet)) return false;
 
   LeabraNetwork* net = (LeabraNetwork*)un->own_net();
@@ -69,64 +70,37 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 
   bool rval = true;
 
-  bool patch_dir = false;
-  bool patch_ind = false;
-  bool matrix_dir = false;
-  bool matrix_ind = false;
-  bool pv_pos = false;
-  bool pv_neg = false;
-  const int nrg = u->NRecvConGps();
-  for(int g=0; g<nrg; g++) {
-    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
-    if(recv_gp->NotActive()) continue;
-    LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+  LeabraLayer* patch_dir_lay = NULL;
+  LeabraLayer* patch_ind_lay = NULL;
+  LeabraLayer* matrix_dir_lay = NULL;
+  LeabraLayer* matrix_ind_lay = NULL;
+  LeabraLayer* pv_pos_lay = NULL;
+  LeabraLayer* pv_neg_lay = NULL;
+  GetRecvLayers(un, patch_dir_lay, patch_ind_lay, matrix_dir_lay, matrix_ind_lay,
+                pv_pos_lay, pv_neg_lay);
 
-    if(from->name.contains("Patch")) {
-      if(from->name.contains("Ind")) {
-        patch_ind = true;
-      }
-      else {
-        patch_dir = true;
-      }
-    }
-    else if(from->name.contains("Matrix")) {
-      if(from->name.contains("Ind") || from->name.contains("NoGo")) {
-        matrix_ind = true;
-      }
-      else {
-        matrix_dir = true;
-      }
-    }
-    else if(from->name.contains("PosPV")) {
-      pv_pos = true;
-    }
-    else if(from->name.contains("NegPV")) {
-      pv_neg = true;
-    }
-  }
-
-  if(u->CheckError(!patch_dir, quiet, rval,
+  if(u->CheckError(!patch_dir_lay, quiet, rval,
                    "did not find VS Patch Direct recv projection -- searches for Patch and *not* Ind in layer name")) {
     rval = false;
   }
-  if(u->CheckError(!patch_ind, quiet, rval,
+  if(u->CheckError(!patch_ind_lay, quiet, rval,
                    "did not find VS Patch Indirect recv projection -- searches for Patch and Ind in layer name")) {
     rval = false;
   }
   // matrix is optional
-  // if(u->CheckError(!matrix_dir, quiet, rval,
+  // if(u->CheckError(!matrix_dir_lay, quiet, rval,
   //                  "did not find VS Matrix Direct recv projection -- searches for Matrix and *not* Ind or NoGo in layer name")) {
   //   rval = false;
   // }
-  // if(u->CheckError(!matrix_ind, quiet, rval,
+  // if(u->CheckError(!matrix_ind_lay, quiet, rval,
   //                  "did not find VS Matrix Indirect recv projection -- searches for Matrix and Ind or NoGo in layer name")) {
   //   rval = false;
   // }
-  if(u->CheckError(!pv_pos, quiet, rval,
+  if(u->CheckError(!pv_pos_lay, quiet, rval,
                    "did not find PV Positive recv projection -- searches for PosPV in layer name")) {
     rval = false;
   }
-  if(u->CheckError(!pv_neg, quiet, rval,
+  if(u->CheckError(!pv_neg_lay, quiet, rval,
                    "did not find PV Negative recv projection -- searches for NegPV in layer name")) {
     rval = false;
   }
@@ -151,22 +125,24 @@ bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u, LeabraLayer*& patch_dir_lay,
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
     if(recv_gp->NotActive()) continue;
     LeabraLayer* fmlay = (LeabraLayer*) recv_gp->prjn->from.ptr();
-    
-    
-    if(fmlay->name.contains("Patch")) {
-      if(fmlay->name.contains("Ind") || fmlay->name.contains("NoGo") || fmlay->name.contains("D2R")) {
-        patch_ind_lay = fmlay;
+    LeabraUnitSpec* us = (LeabraUnitSpec*) fmlay->GetUnitSpec();
+    if(us->InheritsFrom(&TA_MSNUnitSpec)) {
+      MSNUnitSpec* mus = (MSNUnitSpec*)us;
+      if(mus->matrix_patch == MSNUnitSpec::PATCH) {
+        if(mus->dar == MSNUnitSpec::D2R) {
+          patch_ind_lay = fmlay;
+        }
+        else {
+          patch_dir_lay = fmlay;
+        }
       }
-      else {
-        patch_dir_lay = fmlay;
-      }
-    }
-    else if(fmlay->name.contains("Matrix")) {
-      if(fmlay->name.contains("Ind") || fmlay->name.contains("NoGo") || fmlay->name.contains("D2R")) {
-        matrix_ind_lay = fmlay;
-      }
-      else {
-        matrix_dir_lay = fmlay;
+      else if(mus->matrix_patch == MSNUnitSpec::MATRIX) {
+        if(mus->dar == MSNUnitSpec::D2R) {
+          matrix_ind_lay = fmlay;
+        }
+        else {
+          matrix_dir_lay = fmlay;
+        }
       }
     }
     else if(fmlay->name.contains("PosPV")) {
