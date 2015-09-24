@@ -628,6 +628,7 @@ public:
     Q3 = 0x04,                 // third quarter -- posterior cortical minus phase
     Q4 = 0x08,                 // fourth quarter -- posterior cortical plus phase
     Q2_Q4 = Q2 | Q4,           // #NO_BIT standard beta frequency option, for bg, pfc
+    QALL = Q1 | Q2 | Q3 | Q4,  // #NO_BIT all quarters
   };
 
   ActFun            act_fun;        // #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
@@ -654,7 +655,7 @@ public:
   DeepSpec         deep;          // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
   DeepSupSpec      deep_s;          // #CONDSHOW_ON_deep.on #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms: context and superficial parameters
   DeepNormSpec     deep_norm;        // #CAT_Learning specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables
-  DeepNorm2Spec    deep_norm_2;        // #CONDSHOW_ON_deep_norm.on #CAT_Learning additional specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables
+  DeepNorm2Spec    deep_norm_2;        // #CONDSHOW_ON_deep_norm.on&&!deep_norm.raw_val:NORM_NET #CAT_Learning additional specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables
   DaModSpec        da_mod;                // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   NoiseType        noise_type;        // #CAT_Activation where to add random noise in the processing (if at all)
   RandomSpec       noise;                // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise

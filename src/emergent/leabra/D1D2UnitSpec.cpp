@@ -21,5 +21,11 @@ void D1D2UnitSpec::Initialize() {
 }
 
 void D1D2UnitSpec::Defaults_init() {
-  // todo: set all the deep defaults here
+  deep.d_to_d = 1.0f;
+  deep.thal_to_d = 0.0f;
+  deep_qtr = QALL;
+  deep_norm.raw_val = DeepNormSpec::NORM_NET;
+  deep_norm.mod = true;
+  deep_norm.immed = true;
 }
+
