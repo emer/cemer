@@ -1189,7 +1189,7 @@ class SubversionPoller(object):
         pb_batches = self.jobs_submit.get_val(row, "pb_batches")
         pb_nodes = self.jobs_submit.get_val(row, "pb_nodes")
         submit_svn = str(rev)
-        submit_job = str(row)
+        submit_job = str(row).zfill(3)
         tag = '_'.join((submit_svn, submit_job))
 
         self._get_tag_proj_file(tag)
