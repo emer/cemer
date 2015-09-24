@@ -43,7 +43,34 @@ public:
   // it here..
   // DAReceptor            dar;            // type of dopamine receptor: D1 vs. D2
 
+
+  /*
+  void Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  // #CAT_Activation update the deep_raw activations -- assumes checks have already been done
+  void Send_DeepRawNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  // #CAT_Deep send deep5b netinputs through SendDeepRawConSpec connections
+  void Send_DeepRawNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  // #CAT_Deep send context netinputs through SendDeepRawConSpec connections -- post processing rollup
+
+  void Compute_DeepRawNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  // #CAT_Deep compute deep_raw_norm values from deep_raw values
+  void Compute_DeepNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  // #CAT_Deep compute deep_norm values from deep_raw and deep_ctxt values
+  void Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  // #CAT_Deep compute deep_mod values from deep_norm
+    
+  void Send_DeepNormNetin(LeabraUnitVars* uv, LeabraNetwork* net,
+                                   int thr_no) override;
+  // #CAT_Deep send deep_norm netinputs through SendDeepNormConSpec connections
+  void Send_DeepNormNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net,
+                                        int thr_no) override;
+  // #CAT_Deep send deep_norm netinputs through SendDeepNormConSpec connections -- post processing rollup
   
+  void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  // #CAT_Deep state update for deep leabra -- typically at start of new alpha trial -- copy deep_mod from deep_norm, deep_ctxt from deep_ctxt_net
+
+  */
+
   TA_SIMPLE_BASEFUNS(D1D2UnitSpec);
 protected:
   SPEC_DEFAULTS;
