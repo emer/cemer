@@ -91,4 +91,13 @@ String EditMbrItem::CurValAsString() {
   return mbr->GetValStr(base, TypeDef::SC_STREAMING, true);
 }
 
+bool EditMbrItem::SetCurVal(const Variant& cur_val) {
+  if(TestError(!mbr, "SetCurVal", "item does not have member def set -- not valid control panel item"))
+    return false;
+  if(TestError(!is_single, "SetCurVal", "item is not a single atomic value and thus not a valid control panel item to set from a command line.  member name:", mbr->name, "label:", label))
+    return false;
+  mbr->type->SetValVar(cur_val, mbr->GetOff(base), NULL, mbr);
+  base->UpdateAfterEdit();
+  return true;
+}
 

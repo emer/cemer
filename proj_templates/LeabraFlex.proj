@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.2.0 rev8583
+// ta_Dump File v3.0 -- code v7.8.4.0 rev8672
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -609,7 +609,7 @@ LeabraProject .projects["LeabraFlex"] {
    };
 
    ProgVar_List @.vars = [13] {
-    ProgVar @["batch"] { };
+    ProgVar @["batch_prog"] { };
     ProgVar @["tag"] { };
     ProgVar @["config_id"] { };
     ProgVar @["param_set"] { };
@@ -651,7 +651,7 @@ LeabraProject .projects["LeabraFlex"] {
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [32] {
+   ProgEl_List @.prog_code = [30] {
     IfReturn @[0] { };
     RegisterArgs @[1] { };
     PrintExpr @[2] { };
@@ -661,13 +661,12 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVarFmArg @[6] { };
     ProgVarFmArg @[7] { };
     ProgVarFmArg @[8] { };
-    ProgVarFmArg @[9] { };
-    Comment @[10] { };
+    Comment @[9] { };
+    ProgVarFmArg @[10] { };
     ProgVarFmArg @[11] { };
-    ProgVarFmArg @[12] { };
-    OtherProgramVar @[13] { };
-    ControlPanelsFmArgs @[14] { };
-    If @[15] { 
+    OtherProgramVar @[12] { };
+    ControlPanelsFmArgs @[13] { };
+    If @[14] { 
      ProgEl_List @.true_code = [1] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [1] {
@@ -676,9 +675,9 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
     };
+    Comment @[15] { };
     Comment @[16] { };
-    Comment @[17] { };
-    If @[18] { 
+    If @[17] { 
      ProgEl_List @.true_code = [1] {
       MiscCall @[0] { 
        ProgArg_List @.meth_args = [9] {
@@ -695,51 +694,66 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
     };
-    AssignExpr @[19] { };
-    Comment @[20] { };
-    DataColsFmArgs @[21] { };
-    Comment @[22] { };
-    If @[23] { 
+    AssignExpr @[18] { };
+    Comment @[19] { };
+    DataColsFmArgs @[20] { };
+    Comment @[21] { };
+    If @[22] { 
      ProgEl_List @.true_code = [4] {
+      ProgVarFmArg @[0] { };
+      MiscCall @[1] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+      VarIncr @[2] { };
+      If @[3] { 
+       ProgEl_List @.true_code = [2] {
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [4] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
+	  ProgArg @[3] { };
+	 };
+	};
+	MiscCall @[1] { 
+	 ProgArg_List @.meth_args = [1] {
+	  ProgArg @[0] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    Else @[23] { 
+     ProgEl_List @.else_code = [2] {
       MethodCall @[0] { 
-       ProgArg_List @.meth_args = [2] {
+       ProgArg_List @.meth_args = [4] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
        };
       };
-      ProgVarFmArg @[1] { };
-      MiscCall @[2] { 
-       ProgArg_List @.meth_args = [2] {
+      MiscCall @[1] { 
+       ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
-	ProgArg @[1] { };
        };
       };
-      VarIncr @[3] { };
      };
     };
-    MethodCall @[24] { 
-     ProgArg_List @.meth_args = [4] {
-      ProgArg @[0] { };
-      ProgArg @[1] { };
-      ProgArg @[2] { };
-      ProgArg @[3] { };
-     };
-    };
-    MiscCall @[25] { 
-     ProgArg_List @.meth_args = [1] {
-      ProgArg @[0] { };
-     };
-    };
-    OtherProgramVar @[26] { };
-    Comment @[27] { };
-    DataVarProg @[28] { };
-    ProgramCallVar @[29] { 
+    OtherProgramVar @[24] { };
+    Comment @[25] { };
+    DataVarProg @[26] { };
+    ProgramCallVar @[27] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
     };
-    PrintExpr @[30] { };
-    ProgramCall @[31] { 
+    PrintExpr @[28] { };
+    ProgramCall @[29] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
@@ -788,8 +802,8 @@ LeabraProject .projects["LeabraFlex"] {
 
     ProgVar_List @.vars = [3] {
      ProgVar @["batch"] { };
-     ProgVar @["init_batch"] { };
-     ProgVar @["max_batch"] { };
+     ProgVar @["batch_start"] { };
+     ProgVar @["n_batches"] { };
     };
 
     Function_List @.functions = [0] {
@@ -799,18 +813,15 @@ LeabraProject .projects["LeabraFlex"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [3] {
-     If @[0] { 
-      ProgEl_List @.true_code = [1] {
-       NetCounterInit @[0] { };
+    ProgEl_List @.prog_code = [4] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["i"] { };
       };
      };
-     Else @[1] { 
-      ProgEl_List @.else_code = [1] {
-       MemberAssign @[0] { };
-      };
-     };
-     WhileLoop @[2] { 
+     AssignExpr @[1] { };
+     MemberAssign @[2] { };
+     ForLoop @[3] { 
       ProgEl_List @.loop_code = [2] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [1] {
@@ -3346,268 +3357,22 @@ LeabraProject .projects["LeabraFlex"] {
 </body>
 </html>
 ";
-   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
+   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-nojs\"><head>
 <meta charset=\"UTF-8\"><title>LeabraFlex - emergent</title>
 <meta name=\"generator\" content=\"MediaWiki 1.22.14\">
 <link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"LeabraFlex\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlex&amp;xmlmime=rdf\">
-<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\">
-<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
+<link rel=\"canonical\" href=\"/emergent/index.php/LeabraFlex\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.rtlcite%7Cmediawiki.legacy.commonPrint%2Cshared%7Cskins.vector&amp;only=styles&amp;skin=vector&amp;*\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;*\">
-<style>a{text-decoration:none}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:7eff986bfd76653022a4188143e1a40c */</style>
+<style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:d901f157ec9fff8ddab15d03002ebefd */</style>
 
-<script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=20141215T005424Z\"></script>
-<script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":11194,\"wgRevisionId\":11194,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgUserId\":3,\"wgUserEditCount\":2384,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});
-}</script><script>if(window.mw){
-mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":\"30\",\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"vector\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"vector-simplesearch\":1,\"watchcreations\":\"1\",\"watchdefault\":\"1\",\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,
-\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":
-false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"searchNs500\":false,\"searchNs501\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"855ddd791cb1fb0c87c8dff27e360b46+\\\\\",\"patrolToken\":\"2914eeb56bd86941e17081db0f960298+\\\\\",\"watchToken\":\"9556cba7db53f5fcebc6f46d0ecaa5de+\\\\\"});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:6f02c9b685dc7804991f64edd878c089 */
-}</script>
-<script>if(window.mw){
-mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
-}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=vector&amp;version=20150419T081543Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CdelayedBind%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup%7Cskins.vector.js&amp;skin=vector&amp;version=20150419T081544Z&amp;*\"></script>
-<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.api.watch%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cmediawiki.page.watch.ajax%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20150809T180531Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20150208T001329Z&amp;*\"></script></head>
-<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlex skin-vector action-view vector-animateLayout\">
-		<div id=\"mw-page-base\" class=\"noprint\"><a href=\"http://grey.colorado.edu/emergent\"><img src=\"http://grey.colorado.edu/mediawiki/sites/emergent/images/6/6b/emergent_small.png\"></a></div>
-		<div id=\"mw-head-base\" class=\"noprint\"></div>
-		<div id=\"content\" class=\"mw-body\" role=\"main\">
-			<a id=\"top\"></a>
-			<div id=\"mw-js-message\" style=\"display:none;\"></div>
-						<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\"><span dir=\"auto\">LeabraFlex</span></h1>
-			<div id=\"bodyContent\">
-								<div id=\"siteSub\">From emergent</div>
-								<div id=\"contentSub\"></div>
-												<div id=\"jump-to-nav\" class=\"mw-jump\">
-					Jump to:					<a href=\"#mw-navigation\">navigation</a>, 					<a href=\"#p-search\">search</a>
-				</div>
-				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><p>Documentation for the <code>LeabraFlex</code> project template (also avail in <code>demo/leabra/leabra_flex_progs.proj</code>), which provides a different way of configuring the <a href=\"/emergent/index.php/Leabra\" title=\"Leabra\">Leabra</a> programs that is more flexible and modular -- very useful for more complex projects that require extensive novel functionality, including interactive behaviors between the network and the programs that generate inputs to the network, things that happen at different points in the settling process, and supporting multiple different ways of running the model in a more efficient, modular fashion.
-</p>
-<div id=\"toc\" class=\"toc\"><div id=\"toctitle\"><h2>Contents</h2><span class=\"toctoggle\">&nbsp;[<a href=\"#\" class=\"internal\" id=\"togglelink\">hide</a>]&nbsp;</span></div>
-<ul>
-<li class=\"toclevel-1 tocsection-1\"><a href=\"#ConfigData.2FConfigTable\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">ConfigData/ConfigTable</span></a></li>
-<li class=\"toclevel-1 tocsection-2\"><a href=\"#Program_Hierarchy\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Program Hierarchy</span></a></li>
-<li class=\"toclevel-1 tocsection-3\"><a href=\"#UtilProgs\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">UtilProgs</span></a></li>
-<li class=\"toclevel-1 tocsection-4\"><a href=\"#DMem_.28MPI.29\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">DMem (MPI)</span></a></li>
-</ul>
-</div>
-
-<h1><span class=\"mw-headline\" id=\"ConfigData.2FConfigTable\">ConfigData/ConfigTable</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=1\" title=\"Edit section: ConfigData/ConfigTable\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
-<p>The <a href=\"/emergent/index.php/DataTable\" title=\"DataTable\">DataTable</a> in ConfigData/ConfigTable is key for the flex progs -- each row specifies a different configuration, which can call different Init, Run, and even Startup programs, to achieve very different behavior or configurations all within the same project.  This makes it very easy to add new functionality into the system without adding spaghetti or complex conditionals in existing programs -- just add a new config and a new program at the right level, to achieve new functionality.
-</p>
-<h1><span class=\"mw-headline\" id=\"Program_Hierarchy\">Program Hierarchy</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=2\" title=\"Edit section: Program Hierarchy\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
-<p>The call sequence is:
-</p>
-<ul>
-<li> <b>MasterTrain</b>
-</li>
-</ul>
-<dl>
-<dd><ul>
-<li> <b>InitProgs[init_prog]</b> (as spec'd in ConfigTable)
-</li>
-<li> loop over <b>MasterRun</b> until stop_train is set to true
-</li>
-</ul>
-<dl>
-<dd><ul>
-<li> <b>RunProgs[run_prog]</b> (as spec'd in ConfigTable)
-</li>
-</ul>
-<dl>
-<dd><ul>
-<li> typically calls one or more <b>TaskProgs</b>, increments counters and does appropriate Epoch and higher-level housekeeping as necessary.
-</li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-</dl>
-<p>MasterRun now has a <b>stop_step_grain</b> parameter that allows you to Step this program at different grain sizes (e.g., after an Epoch) and for different conditions -- this is completely extensible if you look at the underlying code, and very powerful.
-</p>
-<h1><span class=\"mw-headline\" id=\"UtilProgs\">UtilProgs</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=3\" title=\"Edit section: UtilProgs\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
-<p>The UtilProgs contain all the basic functionality for training a network and monitoring, etc -- the task programs should consist of calls to these util programs in the desired order to achieve whatever form of processing is required.  The built-in BasicTrain program just does the equivalent of a standard LeabraTrial.
-</p>
-<h1><span class=\"mw-headline\" id=\"DMem_.28MPI.29\">DMem (MPI)</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit&amp;section=4\" title=\"Edit section: DMem (MPI)\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
-<p>The most efficient way to use multiple distributed memory (dmem) processors (via MPI) is to split different events across processors.  The standard Leabra programs do this by interleaving trials according to dmem processor (e.g., for 10 processors, proc 0 gets trials 0, 10, 20, ..; proc 1 gets 1, 11, 21, etc..).  For these flex progs, which can have interactive behavior and ill-defined sequences of events, this strategy is not always possible (the <b>ChoosePermutedEvent</b> program in EnviroProgs does implement this behavior however).  Here are some tips:
-</p>
-<ul>
-<li> After version 8.0, you can add taMisc::dmem_proc to all calls to <a href=\"/emergent/index.php/Random\" title=\"Random\">Random</a> or various Permute etc functions that use random numbers and take a <b>thr_no</b> (thread number) argument -- as documented in <a href=\"/emergent/index.php/MTRnd\" title=\"MTRnd\">MTRnd</a>, this thr_no arg selects different random number sequences that are initialized from a single common seed, and will produce statistically independent sequences.  Thus, you can ensure that each node gets different random inputs and other parameters, as appropriate, without needing to have an entirely different seed for each node.  This also means that results can be fully replicable when starting from the same random seed, and that nodes can also generate the same random numbers as needed (if this is needed, it is a good idea to pass taMisc::dmem_proc + 1 to the Random calls, and reserve 0 for the common shared thread that should only be called identically from all processors -- otherwise it will diverge from the 0'th node relative to the others.
-</li>
-</ul>
-<ul>
-<li> After common weight initialization etc, the <b>TrainStart</b> program has the option to generate a new random seed just before starting the Epoch -- see the <b>dmem_new_seed</b> flag -- each processor at this point will be operating with their own random seed, so any dynamic event generation code that uses random numbers (hint: it should!) will result in different things on different nodes.  However, as a result of this, <b>every run of the simulation will be different</b>, even if using common initial starting seeds.   See first note to alternative that avoids these consequences.
-</li>
-</ul>
-<ul>
-<li> It is <b>essential</b> that the different nodes still end up calling <b>Compute_Weights</b> the same number of times, after roughly the same amount of overall computation -- this is where the weight changes are synchronized across processors -- the simulation will lock up and hang if these do not align.
-</li>
-</ul>
-<ul>
-<li> The <b>epoch_trials</b> value gets divided by dmem_nprocs in StdGlobalsInit, such that each processor runs this reduced number of trials, <i>with the network-&gt;trial counter going from 0 to this lower epoch_trials value</i> -- it does not do the interleaving that is done in the hierarchical programs.  This also means that trial numbers will be duplicated if you merge separate trial log data tables into a single table, which is not necessarily a problem, but you may need to do things a bit differently in analyzing the data.
-</li>
-</ul>
-<ul>
-<li> If you are using a traditional list of events in an input_data table, use ChoosePermutedEvent and it will work properly with dmem, just like the standard programs.  This program maintains its own internal counter, and simply iterates in a permuted order through the events and then repeats -- it does not need to be synchronized with the trial and epoch structure of the programs (to achieve this, simply ensure that the epoch_trials is the same as the number of rows in the input data table).
-</li>
-</ul>
-
-<!-- 
-NewPP limit report
-CPU time usage: 0.017 seconds
-Real time usage: 0.019 seconds
-Preprocessor visited node count: 15/1000000
-Preprocessor generated node count: 20/1000000
-Post?expand include size: 0/2097152 bytes
-Template argument size: 0/2097152 bytes
-Highest expansion depth: 2/40
-Expensive parser function count: 0/100
--->
-
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20150904081904
- -->
-</div>								<div class=\"printfooter\">
-				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\"				</div>
-												<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>												<div class=\"visualClear\"></div>
-							</div>
-		</div>
-		<div id=\"mw-navigation\">
-			<h2>Navigation menu</h2>
-			<div id=\"mw-head\">
-				<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
-	<h3 id=\"p-personal-label\">Personal tools</h3>
-	<ul>
-<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" title=\"Your user page [.]\" accesskey=\".\">Oreilly</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=LeabraFlex\" title=\"Log out\">Log out</a></li>	</ul>
-</div>
-				<div id=\"left-navigation\">
-					<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
-	<h3 id=\"p-namespaces-label\">Namespaces</h3>
-	<ul>
-					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
-					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraFlex&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
-			</ul>
-</div>
-<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
-	<h3 id=\"mw-vector-current-variant\">
-		</h3>
-	<h3 id=\"p-variants-label\" tabindex=\"0\"><span>Variants</span><a href=\"#\" tabindex=\"-1\"></a></h3>
-	<div class=\"menu\">
-		<ul>
-					</ul>
-	</div>
-</div>
-				</div>
-				<div id=\"right-navigation\">
-					<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
-	<h3 id=\"p-views-label\">Views</h3>
-	<ul>
-					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\">Read</a></span></li>
-					<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\" title=\"You can edit this page. Please use the preview button before saving [e]\" accesskey=\"e\">Edit</a></span></li>
-					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-					<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=dcbb9e116528794294cb8e0b59463c2b%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
-			</ul>
-</div>
-<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
-	<h3 id=\"p-cactions-label\" tabindex=\"0\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
-	<div class=\"menu\">
-		<ul>
-							<li id=\"ca-delete\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a></li>
-							<li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/LeabraFlex\" title=\"Move this page [m]\" accesskey=\"m\">Move</a></li>
-							<li id=\"ca-protect\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=protect\" title=\"Protect this page [=]\" accesskey=\"=\">Protect</a></li>
-							<li id=\"ca-purge\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=purge\">Refresh</a></li>
-					</ul>
-	</div>
-</div>
-<div id=\"p-search\" role=\"search\">
-	<h3><label for=\"searchInput\">Search</label></h3>
-	<form action=\"/emergent/index.php\" id=\"searchform\">
-				<div id=\"simpleSearch\">
-						<input name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
-		</div>
-	</form>
-</div>
-				</div>
-			</div>
-			<div id=\"mw-panel\">
-					<div id=\"p-logo\" role=\"banner\"><a style=\"background-image: url(/mediawiki/sites//emergent/logo.png);\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
-				<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
-	<h3 id=\"p-navigation-label\">Navigation</h3>
-	<div class=\"body\">
-		<ul>
-			<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li>
-			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li>
-			<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
-			<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
-			<li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li>
-			<li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>
-		</ul>
-	</div>
-</div>
-<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
-	<h3 id=\"p-tb-label\">Tools</h3>
-	<div class=\"body\">
-		<ul>
-			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlex\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
-			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlex\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
-			<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li>
-			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
-			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;oldid=11194\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
-			<li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=info\">Page information</a></li>
-			<li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlex\" rel=\"smw-browse\">Browse properties</a></li>
-		</ul>
-	</div>
-</div>
-<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
-	<h3 id=\"p-coll-print_export-label\">Print/export</h3>
-	<div class=\"body\">
-		<ul>
-			<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlex\">Create a book</a></li>
-			<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlex&amp;oldid=11194&amp;writer=rl\">Download as PDF</a></li>
-			<li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
-		</ul>
-	</div>
-</div>
-			</div>
-		</div>
-		<div id=\"footer\" role=\"contentinfo\">
-							<ul id=\"footer-info\">
-											<li id=\"footer-info-lastmod\"> This page was last modified on 4 September 2015, at 02:19.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 13,560 times.</li>
-									</ul>
-							<ul id=\"footer-places\">
-											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
-									</ul>
-										<ul id=\"footer-icons\" class=\"noprint\">
-					<li id=\"footer-poweredbyico\">
-						<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/skins/common/images/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" width=\"88\" height=\"31\"></a>
-						<a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>
-					</li>
-				</ul>
-						<div style=\"clear:both\"></div>
-		</div>
-		<script>/*<![CDATA[*/window.jQuery && jQuery.ready();/*]]>*/</script><script>if(window.mw){
-mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"loading\"});
-}</script>
-<script>if(window.mw){
-mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
-}</script>
-<script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<script>if(window.mw){
-mw.loader.state({\"user.groups\":\"ready\"});
-}</script>
-<!-- Served in 0.151 secs. -->
-	
-
-</body></html>";
+<script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script></head></html>";
   };
  };
  wizards {
@@ -3659,11 +3424,9 @@ mw.loader.state({\"user.groups\":\"ready\"});
      is_numeric=0;
      is_single=1;
      param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1;
+      record=0;
+      search=0;
+      range="0:1:0.1";
      };
      param_set_value {
       saved_value=;
@@ -3681,11 +3444,9 @@ mw.loader.state({\"user.groups\":\"ready\"});
      is_numeric=0;
      is_single=1;
      param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1;
+      record=0;
+      search=0;
+      range="0:1:0.1";
      };
      param_set_value {
       saved_value=;
@@ -3703,11 +3464,9 @@ mw.loader.state({\"user.groups\":\"ready\"});
      is_numeric=0;
      is_single=1;
      param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
+      record=0;
+      search=0;
+      range="0:1:0.1";
      };
      param_set_value {
       saved_value=;
@@ -3725,11 +3484,9 @@ mw.loader.state({\"user.groups\":\"ready\"});
      is_numeric=0;
      is_single=1;
      param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
+      record=0;
+      search=0;
+      range="0:1:0.1";
      };
      param_set_value {
       saved_value=;
@@ -3747,11 +3504,9 @@ mw.loader.state({\"user.groups\":\"ready\"});
      is_numeric=1;
      is_single=1;
      param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
+      record=0;
+      search=0;
+      range="0:1:0.1";
      };
      param_set_value {
       saved_value=;
@@ -5696,6 +5451,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
+   use_search_algo=0;
    cur_search_algo=NULL;
    set_proj_name=0;
    proj_name=;
@@ -5718,7 +5474,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
    mpi_per_node=1;
    parallel_batch=0;
    pb_batches=10;
-   pb_nodes=0;
+   pb_n_batches_per=1;
    nowin_x=0;
    enable_kill=0;
    enable_load=0;
@@ -7624,8 +7380,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     name="vars";
     el_typ=ProgVar;
     el_def=0;
-    ProgVar @["batch"] {
-     name="batch";
+    ProgVar @["batch_prog"] {
+     name="batch_prog";
      var_type=T_Object;
      object_type=Program;
      object_val=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$$;
@@ -7670,7 +7426,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="log file directory";
      init_from=NULL;
@@ -7929,35 +7685,27 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      arg_name="param_set";
     };
     ProgVarFmArg @[7] {
-     desc=;
-     flags=0;
+     desc="starting batch -- replaces b_start";
+     flags=NEW_EL;
      orig_prog_code=;
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$;
-     var_name="max_batch";
-     arg_name="batches";
+     var_name="batch_start";
+     arg_name="batch_start";
     };
     ProgVarFmArg @[8] {
-     desc="b_end is parallel-batch mode of operation (see b_start)";
-     flags=0;
+     desc="number of batches to run";
+     flags=NEW_EL;
      orig_prog_code=;
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$;
-     var_name="max_batch";
-     arg_name="b_end";
+     var_name="n_batches";
+     arg_name="n_batches";
     };
-    ProgVarFmArg @[9] {
-     desc="b_start is parallel-batch mode of operation (see also b_end)";
-     flags=0;
-     orig_prog_code=;
-     prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$;
-     var_name="batch";
-     arg_name="b_start";
-    };
-    Comment @[10] {
+    Comment @[9] {
      desc="add our special args from command line";
      flags=0;
      orig_prog_code=;
     };
-    ProgVarFmArg @[11] {
+    ProgVarFmArg @[10] {
      desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
      flags=0;
      orig_prog_code=;
@@ -7965,7 +7713,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_name="cur_config";
      arg_name="config";
     };
-    ProgVarFmArg @[12] {
+    ProgVarFmArg @[11] {
      desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
      flags=0;
      orig_prog_code=;
@@ -7973,7 +7721,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_name="config_id";
      arg_name="config";
     };
-    OtherProgramVar @[13] {
+    OtherProgramVar @[12] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -7984,13 +7732,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    ControlPanelsFmArgs @[14] {
+    ControlPanelsFmArgs @[13] {
      desc="sets any arg listed in the control panel";
      flags=NEW_EL;
      orig_prog_code=;
      ctrl_panel_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["MyClusterRun"]$$;
     };
-    If @[15] {
+    If @[14] {
      desc="set variables to values stored in a param set";
      flags=0;
      orig_prog_code="if (Act";
@@ -8029,17 +7777,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    Comment @[16] {
+    Comment @[15] {
      desc="TODO: Add your program comment here (multi-lines ok).";
      flags=0;
      orig_prog_code=;
     };
-    Comment @[17] {
+    Comment @[16] {
      desc="= Add args to tag name =";
      flags=0;
      orig_prog_code=;
     };
-    If @[18] {
+    If @[17] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -8164,7 +7912,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    AssignExpr @[19] {
+    AssignExpr @[18] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -8173,12 +7921,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       expr="\"_\" +  config_id + tag";
      };
     };
-    Comment @[20] {
+    Comment @[19] {
      desc="set any params from Config";
      flags=0;
      orig_prog_code=;
     };
-    DataColsFmArgs @[21] {
+    DataColsFmArgs @[20] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -8186,68 +7934,31 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      row_spec=ROW_VAL;
      row_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["config_id"]$;
     };
-    Comment @[22] {
+    Comment @[21] {
      desc="Set log files";
      flags=0;
      orig_prog_code=;
     };
-    If @[23] {
-     desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
-     flags=0;
+    If @[22] {
+     desc="set tag for starting batch (new code in v 8.0)";
+     flags=NEW_EL;
      orig_prog_code=;
      cond {
-      expr="taMisc::CheckArgByName(\"b_start\")";
+      expr="taMisc::CheckArgByName(\"batch_start\")";
      };
      true_code {
-      name=;
+      name="true_code";
       el_typ=ProgCode;
       el_def=0;
-      MethodCall @[0] {
-       desc="directly set variable on batch program";
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["batch"]$$;
-       method=Program::SetVar;
-       meth_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="var_nm";
-	 required=1;
-	 def_val="\"\"";
-	 prev_expr=;
-	 expr {
-	  expr="\"init_batch\"";
-	 };
-	};
-	ProgArg @[1] {
-	 arg_type=const_Variant_ref;
-	 type="Variant&";
-	 name="value";
-	 required=1;
-	 def_val=;
-	 prev_expr=;
-	 expr {
-	  expr="false";
-	 };
-	};
-       };
-       meth_sig="bool SetVar(taString& var_nm, Variant& value)";
-       meth_desc=" set the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program";
-      };
-      ProgVarFmArg @[1] {
+      ProgVarFmArg @[0] {
        desc="read in the arg to us too, so we can set file names based on it";
        flags=0;
        orig_prog_code=;
        prog=$.projects["LeabraFlex"].programs["MasterStartup"]$;
        var_name="batch_start";
-       arg_name="b_start";
+       arg_name="batch_start";
       };
-      MiscCall @[2] {
+      MiscCall @[1] {
        desc="string version with leading zeros";
        flags=0;
        orig_prog_code=;
@@ -8255,7 +7966,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        object_type=taMisc;
        method=taMisc::LeadingZeros;
        meth_args {
-	name=;
+	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
 	ProgArg @[0] {
@@ -8282,7 +7993,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      VarIncr @[3] {
+      VarIncr @[2] {
        desc="add to tag for setting log file names";
        flags=0;
        orig_prog_code=;
@@ -8291,92 +8002,198 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	expr="\".\" + batch_str";
        };
       };
+      If @[3] {
+       desc="save startup args: only for first job in parallel batch mode, or this should be 0 otherwise in any case";
+       flags=0;
+       orig_prog_code=;
+       cond {
+	expr="batch_start == 0";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc="save args to file: last arg is to include dmem proc number";
+	 flags=0;
+	 orig_prog_code=;
+	 result_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["log_file_nm"]$$;
+	 obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["EpochOutputData"]$$;
+	 method=taBase::GetFileNameFmProject;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="ext";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="\".args\"";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="tag";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr="tag.before(\".00\",-1)";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="subdir";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr="log_dir";
+	   };
+	  };
+	  ProgArg @[3] {
+	   arg_type=bool;
+	   type="bool";
+	   name="dmem_proc_no";
+	   required=0;
+	   def_val="false";
+	   prev_expr=;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	 };
+	 meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
+	 meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
+	};
+	MiscCall @[1] {
+	 desc=;
+	 flags=0;
+	 orig_prog_code=;
+	 result_var=NULL;
+	 object_type=taMisc;
+	 method=taMisc::FullArgStringToFile;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="fname";
+	   required=1;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr="log_file_nm";
+	   };
+	  };
+	 };
+	};
+       };
+      };
      };
     };
-    MethodCall @[24] {
-     desc="save args to file: last arg is to include dmem proc number";
-     flags=0;
-     orig_prog_code=;
-     result_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["log_file_nm"]$$;
-     obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["EpochOutputData"]$$;
-     method=taBase::GetFileNameFmProject;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="taString&";
-       name="ext";
-       required=1;
-       def_val=;
-       prev_expr=;
-       expr {
-	expr="\".args\"";
-       };
-      };
-      ProgArg @[1] {
-       arg_type=const_taString_ref;
-       type="taString&";
-       name="tag";
-       required=0;
-       def_val="\"\"";
-       prev_expr=;
-       expr {
-	expr="tag";
-       };
-      };
-      ProgArg @[2] {
-       arg_type=const_taString_ref;
-       type="taString&";
-       name="subdir";
-       required=0;
-       def_val="\"\"";
-       prev_expr=;
-       expr {
-	expr="\"log\"";
-       };
-      };
-      ProgArg @[3] {
-       arg_type=bool;
-       type="bool";
-       name="dmem_proc_no";
-       required=0;
-       def_val="false";
-       prev_expr=;
-       expr {
-	expr="false";
-       };
-      };
-     };
-     meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
-     meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
-    };
-    MiscCall @[25] {
+    Else @[23] {
      desc=;
      flags=0;
      orig_prog_code=;
-     result_var=NULL;
-     object_type=taMisc;
-     method=taMisc::FullArgStringToFile;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
+     else_code {
+      name="else_code";
+      el_typ=ProgCode;
       el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="taString&";
-       name="fname";
-       required=1;
-       def_val="\"\"";
-       prev_expr=;
-       expr {
-	expr="log_file_nm";
+      MethodCall @[0] {
+       desc="save args to file: last arg is to include dmem proc number";
+       flags=0;
+       orig_prog_code=;
+       result_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["log_file_nm"]$;
+       obj=$.projects["LeabraFlex"].programs["MasterStartup"].vars["EpochOutputData"]$;
+       method=taBase::GetFileNameFmProject;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="ext";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\".args\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="tag";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="tag";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="subdir";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="log_dir";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=bool;
+	 type="bool";
+	 name="dmem_proc_no";
+	 required=0;
+	 def_val="false";
+	 prev_expr=;
+	 expr {
+	  expr="false";
+	 };
+	};
+       };
+       meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
+       meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
+      };
+      MiscCall @[1] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::FullArgStringToFile;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="fname";
+	 required=1;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="log_file_nm";
+	 };
+	};
        };
       };
      };
     };
-    OtherProgramVar @[26] {
+    OtherProgramVar @[24] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -8387,12 +8204,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    Comment @[27] {
+    Comment @[25] {
      desc="= Call sub-startup programs =";
      flags=0;
      orig_prog_code=;
     };
-    DataVarProg @[28] {
+    DataVarProg @[26] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -8407,7 +8224,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    ProgramCallVar @[29] {
+    ProgramCallVar @[27] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -8430,16 +8247,16 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      prog_group=.projects["LeabraFlex"].programs.gp["StartupProgs"]$$;
      prog_name_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["startup_prog"]$;
     };
-    PrintExpr @[30] {
+    PrintExpr @[28] {
      desc=;
      flags=0;
      orig_prog_code=;
      expr {
-      expr="\"Running: \" << batch.name";
+      expr="\"Running: \" << batch_prog.name";
      };
      debug=0;
     };
-    ProgramCall @[31] {
+    ProgramCall @[29] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -8608,24 +8425,24 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="batch counter";
       init_from=NULL;
      };
-     ProgVar @["init_batch"] {
-      name="init_batch";
-      var_type=T_Bool;
-      bool_val=1;
+     ProgVar @["batch_start"] {
+      name="batch_start";
+      var_type=T_Int;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="initialize batch counter at start of run -- turn off if using \"parallel batch\" mode to run different batches on different processes";
+      desc="batch number to start on";
       init_from=NULL;
      };
-     ProgVar @["max_batch"] {
-      name="max_batch";
+     ProgVar @["n_batches"] {
+      name="n_batches";
       var_type=T_Int;
       int_val=10;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="maximum number of batch runs to perform";
+      desc="number of batches to run";
       init_from=NULL;
      };
     };
@@ -8652,63 +8469,60 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     If @[0] {
+     LocalVars @[0] {
       desc=;
       flags=0;
       orig_prog_code=;
-      cond {
-       expr="init_batch";
-      };
-      true_code {
-       name=;
-       el_typ=ProgCode;
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
        el_def=0;
-       NetCounterInit @[0] {
-	desc="initializes local batch counter and batch field on network";
-	flags=0;
-	orig_prog_code=;
-	network_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].args["network"]$;
-	local_ctr_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].vars["batch"]$;
-	counter=Network::batch;
-	update_after=0;
+       ProgVar @["i"] {
+	name="i";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
        };
       };
      };
-     Else @[1] {
-      desc=;
-      flags=0;
-      orig_prog_code=;
-      else_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-       MemberAssign @[0] {
-	desc="just set directly to current batch value";
-	flags=0;
-	orig_prog_code=;
-	obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].args["network"]$;
-	path="batch";
-	expr {
-	 expr="batch";
-	};
-	update_after=0;
-       };
+     AssignExpr @[1] {
+      desc="start at the start";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="batch = batch_start";
+      result_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].vars["batch"]$;
+      expr {
+       expr="batch_start";
       };
      };
-     WhileLoop @[2] {
-      desc="the main loop over training runs";
+     MemberAssign @[2] {
+      desc="update network";
       flags=0;
       orig_prog_code=;
+      obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].args["network"]$;
+      path="batch";
+      expr {
+       expr="batch";
+      };
+      update_after=0;
+     };
+     ForLoop @[3] {
+      desc="main loop over training runs";
+      flags=0;
+      orig_prog_code="for(i=0; i<n_batches; i++)";
       loop_code {
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
-	desc="run the training program -- passes the network setting down";
+	desc="run the training program -- sets the network and input_data args";
 	flags=0;
 	orig_prog_code=;
 	prog_args {
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -8717,7 +8531,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="network";
 	  required=1;
 	  def_val=;
-	  prev_expr=;
+	  prev_expr="network";
 	  expr {
 	   expr="network";
 	  };
@@ -8736,8 +8550,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	update_after=0;
        };
       };
+      init {
+       expr="i=0";
+      };
       test {
-       expr="batch < max_batch";
+       expr="i<n_batches";
+      };
+      iter {
+       expr="i++";
       };
      };
     };
@@ -9251,6 +9071,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  case_val {
 	   expr="TRIAL";
 	  };
+	  is_default=0;
 	 };
 	 CaseBlock @[1] {
 	  desc=;
@@ -9272,6 +9093,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  case_val {
 	   expr="EPOCH";
 	  };
+	  is_default=0;
 	 };
 	 CaseBlock @[2] {
 	  desc=;
@@ -9293,6 +9115,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  case_val {
 	   expr="ERROR";
 	  };
+	  is_default=0;
 	 };
 	 CaseBlock @[3] {
 	  desc=;
@@ -9314,6 +9137,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  case_val {
 	   expr="CORRECT";
 	  };
+	  is_default=0;
 	 };
 	};
        };
@@ -10390,7 +10214,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [0]       };
+      [6] 5;3;1;2;4;0;      };
       last_sort_spec {
        name="last_sort_spec";
        ops {
@@ -13713,6 +13537,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	      case_val {
 	       expr="IgnoreGroup";
 	      };
+	      is_default=0;
 	     };
 	     CaseBlock @[1] {
 	      desc=;
@@ -13919,6 +13744,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	      case_val {
 	       expr="LayerGroup";
 	      };
+	      is_default=0;
 	     };
 	     CaseBlock @[2] {
 	      desc=;
@@ -14125,6 +13951,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	      case_val {
 	       expr="LayoutGroup";
 	      };
+	      is_default=0;
 	     };
 	    };
 	   };
@@ -14201,6 +14028,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	case_val {
 	 expr="GetCurrentPos";
 	};
+	is_default=0;
        };
        CaseBlock @[1] {
 	desc=;
@@ -14226,6 +14054,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	case_val {
 	 expr="SetPositions";
 	};
+	is_default=0;
        };
       };
      };
@@ -19934,7 +19763,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0;
+     value 8 0=0.01104503;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -21484,7 +21313,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.0403183;
+       value 8 0=0.04350132;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -21705,6 +21534,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
+       lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
        avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
        inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: };
@@ -21717,13 +21547,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	cos_diff_avg_dt=0.01;
        };
        lay_lrate=1;
-       lay_gp_inhib {on=0: gp_g=0.5: };
       };
      };
      lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
+     lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
      inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
@@ -21736,7 +21566,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       cos_diff_avg_dt=0.01;
      };
      lay_lrate=1;
-     lay_gp_inhib {on=0: gp_g=0.5: };
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
@@ -21771,8 +21600,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      v_m_init {name="v_m_init": type=NONE: mean=0.4: var=0: par=1: };
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
-     act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.2: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03461539: };
+     act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ml_tau=2: ml_in_m=0: s_in_s=0.9: m_in_m=1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: ml_dt=0.5: };
+     avg_l {init=0.4: max=1.5: min=0.2: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03461539: };
+     avg_l_2 {err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      adapt {
@@ -21797,8 +21627,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       net_drop=0.9;
      };
      deep_qtr=0;
-     deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep {on=0: thr_rel=0.2: thr_abs=0.2: d_to_d=0.5: thal_to_d=0: };
+     deep_s {ctxt_to_s=0.3: ctxt_rel=0: d_to_s=0: thal_to_s=0: };
+     deep_norm {on=0: mod=1: immed=0: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: };
+     deep_norm_2 {gain=3: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };

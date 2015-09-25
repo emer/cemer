@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7546
+// ta_Dump File v3.0 -- code v7.8.4.0 rev8672
 Program .projects[0].programs.gp[0][0] { 
  ProgObjList @.objs = [0] {
  };
@@ -24,18 +24,15 @@ Program .projects[0].programs.gp[0][0] {
   NetCounterInit @[0] { };
  };
 
- ProgEl_List @.prog_code = [3] {
-  If @[0] { 
-   ProgEl_List @.true_code = [1] {
-    NetCounterInit @[0] { };
+ ProgEl_List @.prog_code = [4] {
+  LocalVars @[0] { 
+   ProgVar_List @.local_vars = [1] {
+    ProgVar @[0] { };
    };
   };
-  Else @[1] { 
-   ProgEl_List @.else_code = [1] {
-    MemberAssign @[0] { };
-   };
-  };
-  WhileLoop @[2] { 
+  AssignExpr @[1] { };
+  MemberAssign @[2] { };
+  ForLoop @[3] { 
    ProgEl_List @.loop_code = [2] {
     ProgramCall @[0] { 
      ProgArg_List @.prog_args = [3] {
@@ -55,6 +52,9 @@ Program .projects[0].programs.gp[0][0] {
  tags="Leabra, Std";
  desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
  flags=0;
+ stop_step_cond {
+  expr=;
+ };
  objs {
   name="objs";
   el_typ=taNBase;
@@ -75,7 +75,7 @@ Program .projects[0].programs.gp[0][0] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="network to operate on -- updates batch counter on network and passes it to train program";
    init_from=NULL;
@@ -86,7 +86,7 @@ Program .projects[0].programs.gp[0][0] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="datatable with training patterns -- not used by this program, but passed to train program";
    init_from=NULL;
@@ -107,23 +107,23 @@ Program .projects[0].programs.gp[0][0] {
    init_from=NULL;
   };
   ProgVar @[1] {
-   name="init_batch";
-   var_type=T_Bool;
-   bool_val=1;
+   name="batch_start";
+   var_type=T_Int;
+   int_val=0;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
-   desc="initialize batch counter at start of run -- turn off if using \"parallel batch\" mode to run different batches on different processes";
+   desc="batch number to start on";
    init_from=NULL;
   };
   ProgVar @[2] {
-   name="max_batch";
+   name="n_batches";
    var_type=T_Int;
    int_val=10;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
-   desc="maximum number of batch runs to perform";
+   desc="number of batches to run";
    init_from=NULL;
   };
  };
@@ -150,55 +150,52 @@ Program .projects[0].programs.gp[0][0] {
   name="prog_code";
   el_typ=ProgCode;
   el_def=0;
-  If @[0] {
+  LocalVars @[0] {
    desc=;
    flags=0;
    orig_prog_code=;
-   cond {
-    expr="init_batch";
-   };
-   true_code {
-    name=;
-    el_typ=ProgCode;
+   local_vars {
+    name="local_vars";
+    el_typ=ProgVar;
     el_def=0;
-    NetCounterInit @[0] {
-     desc="initializes local batch counter and batch field on network";
-     flags=0;
-     orig_prog_code=;
-     network_var=$.projects[0].programs.gp[0][0].args[0]$;
-     local_ctr_var=$.projects[0].programs.gp[0][0].vars[0]$;
-     counter=Network::batch;
-     update_after=0;
+    ProgVar @[0] {
+     name="i";
+     var_type=T_Int;
+     int_val=0;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
     };
    };
   };
-  Else @[1] {
-   desc=;
-   flags=0;
-   orig_prog_code=;
-   else_code {
-    name=;
-    el_typ=ProgCode;
-    el_def=0;
-    MemberAssign @[0] {
-     desc="just set directly to current batch value";
-     flags=0;
-     orig_prog_code=;
-     obj=$.projects[0].programs.gp[0][0].args[0]$;
-     path="batch";
-     expr {
-      expr="batch";
-     };
-     update_after=0;
-    };
+  AssignExpr @[1] {
+   desc="start at the start";
+   flags=CAN_REVERT_TO_CODE;
+   orig_prog_code="batch = batch_start";
+   result_var=$.projects[0].programs.gp[0][0].vars[0]$;
+   expr {
+    expr="batch_start";
    };
   };
-  WhileLoop @[2] {
-   desc="the main loop over training runs";
+  MemberAssign @[2] {
+   desc="update network";
    flags=0;
    orig_prog_code=;
+   obj=$.projects[0].programs.gp[0][0].args[0]$;
+   path="batch";
+   expr {
+    expr="batch";
+   };
+   update_after=0;
+  };
+  ForLoop @[3] {
+   desc="main loop over training runs";
+   flags=0;
+   orig_prog_code="for(i=0; i<n_batches; i++)";
    loop_code {
-    name=;
+    name="loop_code";
     el_typ=ProgCode;
     el_def=0;
     ProgramCall @[0] {
@@ -206,7 +203,7 @@ Program .projects[0].programs.gp[0][0] {
      flags=0;
      orig_prog_code=;
      prog_args {
-      name=;
+      name="prog_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
@@ -215,6 +212,7 @@ Program .projects[0].programs.gp[0][0] {
        name="network";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="network";
        };
@@ -225,6 +223,7 @@ Program .projects[0].programs.gp[0][0] {
        name="input_data";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="input_data";
        };
@@ -235,6 +234,7 @@ Program .projects[0].programs.gp[0][0] {
        name="no_prompts";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="true";
        };
@@ -253,8 +253,14 @@ Program .projects[0].programs.gp[0][0] {
      update_after=0;
     };
    };
+   init {
+    expr="i=0";
+   };
    test {
-    expr="batch < max_batch";
+    expr="i<n_batches";
+   };
+   iter {
+    expr="i++";
    };
   };
  };

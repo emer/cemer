@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.2.0 rev8566
+// ta_Dump File v3.0 -- code v7.8.4.0 rev8672
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -43,130 +43,336 @@ LeabraProject .projects["LeabraStd"] {
    };
 
    DataTableCols @.jobs_running.data = [31] {
-    String_Data @["cluster"] { };
-    String_Data @["user"] { };
-    String_Data @["tag"] { };
-    String_Data @["status"] { };
-    String_Data @["notes"] { };
-    String_Data @["label"] { };
-    String_Data @["filename"] { };
-    String_Data @["params"] { };
-    String_Data @["status_info"] { };
-    String_Data @["submit_time"] { };
-    String_Data @["start_time"] { };
-    String_Data @["end_time"] { };
-    String_Data @["running_time"] { };
-    String_Data @["job_no"] { };
-    String_Data @["job_out"] { };
-    String_Data @["job_out_file"] { };
-    String_Data @["dat_files"] { };
-    String_Data @["other_files"] { };
+    String_Data @["cluster"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["user"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["tag"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["status"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["notes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["label"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["filename"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["params"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["status_info"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["submit_time"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["start_time"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["end_time"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["running_time"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["job_no"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["job_out"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["job_out_file"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["dat_files"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["other_files"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
     int_Data @["command_id"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
-    String_Data @["command"] { };
-    String_Data @["repo_url"] { };
-    String_Data @["queue"] { };
-    String_Data @["run_time"] { };
+    String_Data @["command"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["repo_url"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["queue"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["run_time"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
     int_Data @["ram_gb"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
     int_Data @["n_threads"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
     int_Data @["mpi_nodes"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
     int_Data @["mpi_per_node"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
     int_Data @["pb_nodes"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
-    String_Data @["submit_svn"] { };
-    String_Data @["submit_job"] { };
+    String_Data @["submit_svn"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["submit_job"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
    };
 
    DataOpList @.jobs_running.last_sort_spec.ops = [0] {
    };
 
    DataTableCols @.jobs_done.data = [31] {
-    String_Data @["cluster"] { };
-    String_Data @["user"] { };
-    String_Data @["tag"] { };
-    String_Data @["status"] { };
-    String_Data @["notes"] { };
-    String_Data @["label"] { };
-    String_Data @["filename"] { };
-    String_Data @["params"] { };
-    String_Data @["status_info"] { };
-    String_Data @["submit_time"] { };
-    String_Data @["start_time"] { };
-    String_Data @["end_time"] { };
-    String_Data @["running_time"] { };
-    String_Data @["job_no"] { };
-    String_Data @["job_out"] { };
-    String_Data @["job_out_file"] { };
-    String_Data @["dat_files"] { };
-    String_Data @["other_files"] { };
+    String_Data @["cluster"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["user"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["tag"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["status"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["notes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["label"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["filename"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["params"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["status_info"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["submit_time"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["start_time"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["end_time"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["running_time"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["job_no"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["job_out"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["job_out_file"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["dat_files"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["other_files"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
     int_Data @["command_id"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
-    String_Data @["command"] { };
-    String_Data @["repo_url"] { };
-    String_Data @["queue"] { };
-    String_Data @["run_time"] { };
+    String_Data @["command"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["repo_url"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["queue"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["run_time"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
     int_Data @["ram_gb"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
     int_Data @["n_threads"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
     int_Data @["mpi_nodes"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
     int_Data @["mpi_per_node"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
     int_Data @["pb_batches"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
     int_Data @["pb_nodes"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
+      UserDataItem @["view_panel_wd"] { };
      };
     };
-    String_Data @["submit_svn"] { };
-    String_Data @["submit_job"] { };
+    String_Data @["submit_svn"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
+    String_Data @["submit_job"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_wd"] { };
+     };
+    };
    };
 
    DataOpList @.jobs_done.last_sort_spec.ops = [0] {
@@ -769,11 +975,9 @@ LeabraProject .projects["LeabraStd"] {
     ProgVar @["input_data"] { };
    };
 
-   ProgVar_List @.vars = [14] {
-    ProgVar @["train"] { };
-    ProgVar @["batch"] { };
-    ProgVar @["batches"] { };
-    ProgVar @["epochs"] { };
+   ProgVar_List @.vars = [12] {
+    ProgVar @["train_prog"] { };
+    ProgVar @["batch_prog"] { };
     ProgVar @["param_set"] { };
     ProgVar @["tag"] { };
     ProgVar @["batch_str"] { };
@@ -792,7 +996,7 @@ LeabraProject .projects["LeabraStd"] {
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [32] {
+   ProgEl_List @.prog_code = [31] {
     IfReturn @[0] { };
     RegisterArgs @[1] { };
     PrintExpr @[2] { };
@@ -806,9 +1010,8 @@ LeabraProject .projects["LeabraStd"] {
     ProgVarFmArg @[10] { };
     ProgVarFmArg @[11] { };
     ProgVarFmArg @[12] { };
-    ProgVarFmArg @[13] { };
-    ControlPanelsFmArgs @[14] { };
-    If @[15] { 
+    ControlPanelsFmArgs @[13] { };
+    If @[14] { 
      ProgEl_List @.true_code = [1] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [1] {
@@ -817,25 +1020,19 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
+    Comment @[15] { };
     Comment @[16] { };
-    Comment @[17] { };
-    If @[18] { 
-     ProgEl_List @.true_code = [5] {
-      MethodCall @[0] { 
+    If @[17] { 
+     ProgEl_List @.true_code = [4] {
+      ProgVarFmArg @[0] { };
+      MiscCall @[1] { 
        ProgArg_List @.meth_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
        };
       };
-      ProgVarFmArg @[1] { };
-      MiscCall @[2] { 
-       ProgArg_List @.meth_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-       };
-      };
-      VarIncr @[3] { };
-      If @[4] { 
+      VarIncr @[2] { };
+      If @[3] { 
        ProgEl_List @.true_code = [2] {
 	MethodCall @[0] { 
 	 ProgArg_List @.meth_args = [4] {
@@ -854,7 +1051,7 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    Else @[19] { 
+    Else @[18] { 
      ProgEl_List @.else_code = [2] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [4] {
@@ -871,13 +1068,30 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    MiscCall @[20] { 
+    MiscCall @[19] { 
      ProgArg_List @.meth_args = [1] {
       ProgArg @[0] { };
      };
     };
-    Comment @[21] { };
+    Comment @[20] { };
+    MethodCall @[21] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
     MethodCall @[22] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[23] { };
+    Comment @[24] { };
+    MethodCall @[25] { 
      ProgArg_List @.meth_args = [4] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -885,34 +1099,17 @@ LeabraProject .projects["LeabraStd"] {
       ProgArg @[3] { };
      };
     };
-    MethodCall @[23] { 
-     ProgArg_List @.meth_args = [3] {
-      ProgArg @[0] { };
-      ProgArg @[1] { };
-      ProgArg @[2] { };
-     };
-    };
-    PrintVar @[24] { };
-    Comment @[25] { };
     MethodCall @[26] { 
-     ProgArg_List @.meth_args = [4] {
-      ProgArg @[0] { };
-      ProgArg @[1] { };
-      ProgArg @[2] { };
-      ProgArg @[3] { };
-     };
-    };
-    MethodCall @[27] { 
      ProgArg_List @.meth_args = [3] {
       ProgArg @[0] { };
       ProgArg @[1] { };
       ProgArg @[2] { };
      };
     };
-    PrintVar @[28] { };
-    OtherProgramVar @[29] { };
-    PrintExpr @[30] { };
-    ProgramCall @[31] { 
+    PrintVar @[27] { };
+    OtherProgramVar @[28] { };
+    PrintExpr @[29] { };
+    ProgramCall @[30] { 
      ProgArg_List @.prog_args = [2] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -935,8 +1132,8 @@ LeabraProject .projects["LeabraStd"] {
 
     ProgVar_List @.vars = [3] {
      ProgVar @["batch"] { };
-     ProgVar @["init_batch"] { };
-     ProgVar @["max_batch"] { };
+     ProgVar @["batch_start"] { };
+     ProgVar @["n_batches"] { };
     };
 
     Function_List @.functions = [0] {
@@ -946,18 +1143,15 @@ LeabraProject .projects["LeabraStd"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [3] {
-     If @[0] { 
-      ProgEl_List @.true_code = [1] {
-       NetCounterInit @[0] { };
+    ProgEl_List @.prog_code = [4] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["i"] { };
       };
      };
-     Else @[1] { 
-      ProgEl_List @.else_code = [1] {
-       MemberAssign @[0] { };
-      };
-     };
-     WhileLoop @[2] { 
+     AssignExpr @[1] { };
+     MemberAssign @[2] { };
+     ForLoop @[3] { 
       ProgEl_List @.loop_code = [2] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [3] {
@@ -2666,11 +2860,9 @@ LeabraProject .projects["LeabraStd"] {
      is_numeric=1;
      is_single=1;
      param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
+      record=0;
+      search=0;
+      range="0:1:0.1";
      };
      param_set_value {
       saved_value=;
@@ -2688,11 +2880,9 @@ LeabraProject .projects["LeabraStd"] {
      is_numeric=0;
      is_single=1;
      param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
+      record=0;
+      search=0;
+      range="0:1:0.1";
      };
      param_set_value {
       saved_value=;
@@ -2710,11 +2900,9 @@ LeabraProject .projects["LeabraStd"] {
      is_numeric=0;
      is_single=1;
      param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
+      record=0;
+      search=0;
+      range="0:1:0.1";
      };
      param_set_value {
       saved_value=;
@@ -2792,6 +2980,16 @@ LeabraProject .projects["LeabraStd"] {
      el_typ=String_Data;
      el_def=0;
      String_Data @["cluster"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_155";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="cluster";
       desc="name of cluster to run job on";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -2806,6 +3004,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["user"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_156";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="user";
       desc="user who ran this job";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -2820,6 +3028,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["tag"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_157";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -2834,6 +3052,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["status"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_158";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -2848,6 +3076,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["notes"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_159";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -2862,6 +3100,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["label"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_160";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -2876,6 +3124,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["filename"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_161";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
       col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
@@ -2890,6 +3148,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["params"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_162";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -2904,6 +3172,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["status_info"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_163";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="status_info";
       desc="more detailed information about status";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -2918,6 +3196,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["submit_time"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_164";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -2932,6 +3220,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["start_time"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_165";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="start_time";
       desc="when did the job actually start running";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -2946,6 +3244,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["end_time"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_166";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -2960,6 +3268,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["running_time"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_167";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="running_time";
       desc="total running time in days/hours/minutes";
       col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
@@ -2974,6 +3292,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["job_no"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_168";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -2988,6 +3316,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["job_out"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_169";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3002,6 +3340,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["job_out_file"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_170";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3016,6 +3364,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["dat_files"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_171";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3030,6 +3388,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["other_files"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_172";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3053,6 +3421,11 @@ LeabraProject .projects["LeabraStd"] {
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
@@ -3068,6 +3441,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["command"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_173";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="command";
       desc="emergent command line, up to point of parameters";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3082,6 +3465,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["repo_url"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_174";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="repo_url";
       desc="name of repository to run job on";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3096,6 +3489,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["queue"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_175";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3110,6 +3513,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["run_time"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_176";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3131,6 +3544,11 @@ LeabraProject .projects["LeabraStd"] {
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
 	val_type_fixed=0;
        };
       };
@@ -3157,6 +3575,11 @@ LeabraProject .projects["LeabraStd"] {
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
@@ -3179,6 +3602,11 @@ LeabraProject .projects["LeabraStd"] {
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
 	val_type_fixed=0;
        };
       };
@@ -3205,6 +3633,11 @@ LeabraProject .projects["LeabraStd"] {
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
@@ -3227,6 +3660,11 @@ LeabraProject .projects["LeabraStd"] {
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
 	val_type_fixed=0;
        };
       };
@@ -3253,6 +3691,11 @@ LeabraProject .projects["LeabraStd"] {
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
       };
       name="pb_nodes";
       desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
@@ -3268,6 +3711,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["submit_svn"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_177";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="submit_svn";
       desc="svn revision for the original job submission";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3282,6 +3735,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["submit_job"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_178";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3320,6 +3783,16 @@ LeabraProject .projects["LeabraStd"] {
      el_typ=String_Data;
      el_def=0;
      String_Data @["cluster"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_179";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="cluster";
       desc="name of cluster to run job on";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3334,6 +3807,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["user"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_180";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="user";
       desc="user who ran this job";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3348,6 +3831,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["tag"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_181";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3362,6 +3855,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["status"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_182";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3376,6 +3879,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["notes"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_183";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3390,6 +3903,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["label"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_184";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3404,6 +3927,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["filename"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_185";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
       col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
@@ -3418,6 +3951,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["params"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_186";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3432,6 +3975,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["status_info"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_187";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="status_info";
       desc="more detailed information about status";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3446,6 +3999,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["submit_time"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_188";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3460,6 +4023,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["start_time"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_189";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="start_time";
       desc="when did the job actually start running";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3474,6 +4047,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["end_time"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_190";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3488,6 +4071,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["running_time"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_191";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="running_time";
       desc="total running time in days/hours/minutes";
       col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
@@ -3502,6 +4095,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["job_no"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_192";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3516,6 +4119,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["job_out"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_193";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3530,6 +4143,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["job_out_file"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_194";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3544,6 +4167,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["dat_files"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_195";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3558,6 +4191,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["other_files"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_196";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3581,6 +4224,11 @@ LeabraProject .projects["LeabraStd"] {
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
@@ -3596,6 +4244,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["command"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_197";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="command";
       desc="emergent command line, up to point of parameters";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3610,6 +4268,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["repo_url"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_198";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="repo_url";
       desc="name of repository to run job on";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3624,6 +4292,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["queue"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_199";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3638,6 +4316,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["run_time"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_200";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3659,6 +4347,11 @@ LeabraProject .projects["LeabraStd"] {
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
 	val_type_fixed=0;
        };
       };
@@ -3685,6 +4378,11 @@ LeabraProject .projects["LeabraStd"] {
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
@@ -3707,6 +4405,11 @@ LeabraProject .projects["LeabraStd"] {
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
 	val_type_fixed=0;
        };
       };
@@ -3733,6 +4436,11 @@ LeabraProject .projects["LeabraStd"] {
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
@@ -3755,6 +4463,11 @@ LeabraProject .projects["LeabraStd"] {
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
 	val_type_fixed=0;
        };
       };
@@ -3781,6 +4494,11 @@ LeabraProject .projects["LeabraStd"] {
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
       };
       name="pb_nodes";
       desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
@@ -3796,6 +4514,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["submit_svn"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_201";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="submit_svn";
       desc="svn revision for the original job submission";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3810,6 +4538,16 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
      };
      String_Data @["submit_job"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_202";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1574803;
+	val_type_fixed=0;
+       };
+      };
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -4659,6 +5397,7 @@ LeabraProject .projects["LeabraStd"] {
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
+   use_search_algo=0;
    cur_search_algo=NULL;
    set_proj_name=0;
    proj_name=;
@@ -4681,7 +5420,7 @@ LeabraProject .projects["LeabraStd"] {
    mpi_per_node=1;
    parallel_batch=0;
    pb_batches=10;
-   pb_nodes=0;
+   pb_n_batches_per=1;
    nowin_x=0;
    enable_kill=0;
    enable_load=0;
@@ -7566,8 +8305,8 @@ LeabraProject .projects["LeabraStd"] {
     name="vars";
     el_typ=ProgVar;
     el_def=0;
-    ProgVar @["train"] {
-     name="train";
+    ProgVar @["train_prog"] {
+     name="train_prog";
      var_type=T_Object;
      object_type=Program;
      object_val=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
@@ -7577,8 +8316,8 @@ LeabraProject .projects["LeabraStd"] {
      desc="set this to point to your train process";
      init_from=NULL;
     };
-    ProgVar @["batch"] {
-     name="batch";
+    ProgVar @["batch_prog"] {
+     name="batch_prog";
      var_type=T_Object;
      object_type=Program;
      object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"]$$;
@@ -7586,26 +8325,6 @@ LeabraProject .projects["LeabraStd"] {
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="set this to point to your batch process";
-     init_from=NULL;
-    };
-    ProgVar @["batches"] {
-     name="batches";
-     var_type=T_Int;
-     int_val=100;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-     reference=0;
-     desc="this is a \"dummy\" var for ClusterRun to set the startup arg";
-     init_from=NULL;
-    };
-    ProgVar @["epochs"] {
-     name="epochs";
-     var_type=T_Int;
-     int_val=10000;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-     reference=0;
-     desc="this is a \"dummy\" var for ClusterRun to set the startup arg";
      init_from=NULL;
     };
     ProgVar @["param_set"] {
@@ -7795,30 +8514,22 @@ LeabraProject .projects["LeabraStd"] {
      arg_name="rnd_init";
     };
     ProgVarFmArg @[9] {
-     desc=;
-     flags=0;
+     desc="starting batch -- replaces b_start";
+     flags=NEW_EL;
      orig_prog_code=;
      prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"]$;
-     var_name="max_batch";
-     arg_name="batches";
+     var_name="batch_start";
+     arg_name="batch_start";
     };
     ProgVarFmArg @[10] {
-     desc="b_end is parallel-batch mode of operation (see b_start)";
-     flags=0;
+     desc="number of batches to run";
+     flags=NEW_EL;
      orig_prog_code=;
      prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"]$;
-     var_name="max_batch";
-     arg_name="b_end";
+     var_name="n_batches";
+     arg_name="n_batches";
     };
     ProgVarFmArg @[11] {
-     desc="b_start is parallel-batch mode of operation (see also b_end)";
-     flags=0;
-     orig_prog_code=;
-     prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"]$;
-     var_name="batch";
-     arg_name="b_start";
-    };
-    ProgVarFmArg @[12] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -7826,7 +8537,7 @@ LeabraProject .projects["LeabraStd"] {
      var_name="save_wts_interval";
      arg_name="save_wts_interval";
     };
-    ProgVarFmArg @[13] {
+    ProgVarFmArg @[12] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -7834,13 +8545,13 @@ LeabraProject .projects["LeabraStd"] {
      var_name="save_final_wts";
      arg_name="save_final_wts";
     };
-    ControlPanelsFmArgs @[14] {
+    ControlPanelsFmArgs @[13] {
      desc="sets any arg listed in the control panel";
      flags=NEW_EL;
      orig_prog_code=;
      ctrl_panel_var=.projects["LeabraStd"].programs["LeabraStartup"].vars["MyClusterRun"]$$;
     };
-    If @[15] {
+    If @[14] {
      desc="set variables to values stored in a param set";
      flags=0;
      orig_prog_code="if (Act";
@@ -7879,73 +8590,36 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    Comment @[16] {
+    Comment @[15] {
      desc="= Add your own variables here =";
      flags=0;
      orig_prog_code=;
     };
-    Comment @[17] {
+    Comment @[16] {
      desc="= Below saves log files of standard data tables =";
      flags=0;
      orig_prog_code=;
     };
-    If @[18] {
-     desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
-     flags=0;
+    If @[17] {
+     desc="set tag for starting batch (new code in v 8.0)";
+     flags=NEW_EL;
      orig_prog_code=;
      cond {
-      expr="taMisc::CheckArgByName(\"b_start\")";
+      expr="taMisc::CheckArgByName(\"batch_start\")";
      };
      true_code {
       name=;
       el_typ=ProgCode;
       el_def=0;
-      MethodCall @[0] {
-       desc="directly set variable on batch program";
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=.projects["LeabraStd"].programs["LeabraStartup"].vars["batch"]$$;
-       method=Program::SetVar;
-       meth_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="var_nm";
-	 required=1;
-	 def_val="\"\"";
-	 prev_expr=;
-	 expr {
-	  expr="\"init_batch\"";
-	 };
-	};
-	ProgArg @[1] {
-	 arg_type=const_Variant_ref;
-	 type="Variant&";
-	 name="value";
-	 required=1;
-	 def_val=;
-	 prev_expr=;
-	 expr {
-	  expr="false";
-	 };
-	};
-       };
-       meth_sig="bool SetVar(taString& var_nm, Variant& value)";
-       meth_desc=" set the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program";
-      };
-      ProgVarFmArg @[1] {
+      ProgVarFmArg @[0] {
        desc="read in the arg to us too, so we can set file names based on it";
        flags=0;
        orig_prog_code=;
        prog=$.projects["LeabraStd"].programs["LeabraStartup"]$;
        var_name="batch_start";
-       arg_name="b_start";
+       arg_name="batch_start";
       };
-      MiscCall @[2] {
+      MiscCall @[1] {
        desc="string version with leading zeros";
        flags=0;
        orig_prog_code=;
@@ -7980,7 +8654,7 @@ LeabraProject .projects["LeabraStd"] {
 	};
        };
       };
-      VarIncr @[3] {
+      VarIncr @[2] {
        desc="add to tag for setting log file names";
        flags=0;
        orig_prog_code=;
@@ -7989,7 +8663,7 @@ LeabraProject .projects["LeabraStd"] {
 	expr="\".\" + batch_str";
        };
       };
-      If @[4] {
+      If @[3] {
        desc="save startup args: only for first job in parallel batch mode, or this should be 0 otherwise in any case";
        flags=0;
        orig_prog_code=;
@@ -8087,7 +8761,7 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    Else @[19] {
+    Else @[18] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -8180,7 +8854,7 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    MiscCall @[20] {
+    MiscCall @[19] {
      desc="report any args that didn't get used!";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      orig_prog_code="taMisc::ReportUnusedArgs()";
@@ -8204,12 +8878,12 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    Comment @[21] {
+    Comment @[20] {
      desc="== Save epoch log -- on by default ==";
      flags=0;
      orig_prog_code=;
     };
-    MethodCall @[22] {
+    MethodCall @[21] {
      desc="last arg is to include dmem proc number";
      flags=0;
      orig_prog_code=;
@@ -8268,7 +8942,7 @@ LeabraProject .projects["LeabraStd"] {
      meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
      meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
     };
-    MethodCall @[23] {
+    MethodCall @[22] {
      desc="last arg is to restrict log to dmem_proc = 0";
      flags=0;
      orig_prog_code=;
@@ -8316,7 +8990,7 @@ LeabraProject .projects["LeabraStd"] {
      meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
      meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
     };
-    PrintVar @[24] {
+    PrintVar @[23] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -8329,12 +9003,12 @@ LeabraProject .projects["LeabraStd"] {
      print_var6=NULL;
      debug=0;
     };
-    Comment @[25] {
+    Comment @[24] {
      desc="== Save trial log -- OFF by default ==";
      flags=0;
      orig_prog_code=;
     };
-    MethodCall @[26] {
+    MethodCall @[25] {
      desc="last arg is to include dmem proc number";
      flags=OFF;
      orig_prog_code=;
@@ -8393,7 +9067,7 @@ LeabraProject .projects["LeabraStd"] {
      meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
      meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
     };
-    MethodCall @[27] {
+    MethodCall @[26] {
      desc="last arg is to restrict log to dmem_proc = 0";
      flags=OFF;
      orig_prog_code=;
@@ -8441,7 +9115,7 @@ LeabraProject .projects["LeabraStd"] {
      meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
      meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
     };
-    PrintVar @[28] {
+    PrintVar @[27] {
      desc=;
      flags=OFF;
      orig_prog_code=;
@@ -8454,7 +9128,7 @@ LeabraProject .projects["LeabraStd"] {
      print_var6=NULL;
      debug=0;
     };
-    OtherProgramVar @[29] {
+    OtherProgramVar @[28] {
      desc="propagate the tag";
      flags=0;
      orig_prog_code=;
@@ -8465,16 +9139,16 @@ LeabraProject .projects["LeabraStd"] {
      var_3=NULL;
      var_4=NULL;
     };
-    PrintExpr @[30] {
+    PrintExpr @[29] {
      desc=;
      flags=0;
      orig_prog_code=;
      expr {
-      expr="\"Running: \" << batch.name";
+      expr="\"Running: \" << batch_prog.name";
      };
      debug=0;
     };
-    ProgramCall @[31] {
+    ProgramCall @[30] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -8579,24 +9253,24 @@ LeabraProject .projects["LeabraStd"] {
       desc="batch counter";
       init_from=NULL;
      };
-     ProgVar @["init_batch"] {
-      name="init_batch";
-      var_type=T_Bool;
-      bool_val=1;
+     ProgVar @["batch_start"] {
+      name="batch_start";
+      var_type=T_Int;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="initialize batch counter at start of run -- turn off if using \"parallel batch\" mode to run different batches on different processes";
+      desc="batch number to start on";
       init_from=NULL;
      };
-     ProgVar @["max_batch"] {
-      name="max_batch";
+     ProgVar @["n_batches"] {
+      name="n_batches";
       var_type=T_Int;
       int_val=10;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="maximum number of batch runs to perform";
+      desc="number of batches to run";
       init_from=NULL;
      };
     };
@@ -8623,55 +9297,52 @@ LeabraProject .projects["LeabraStd"] {
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     If @[0] {
+     LocalVars @[0] {
       desc=;
       flags=0;
       orig_prog_code=;
-      cond {
-       expr="init_batch";
-      };
-      true_code {
-       name=;
-       el_typ=ProgCode;
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
        el_def=0;
-       NetCounterInit @[0] {
-	desc="initializes local batch counter and batch field on network";
-	flags=0;
-	orig_prog_code=;
-	network_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].args["network"]$;
-	local_ctr_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].vars["batch"]$;
-	counter=Network::batch;
-	update_after=0;
+       ProgVar @["i"] {
+	name="i";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
        };
       };
      };
-     Else @[1] {
-      desc=;
-      flags=0;
-      orig_prog_code=;
-      else_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-       MemberAssign @[0] {
-	desc="just set directly to current batch value";
-	flags=0;
-	orig_prog_code=;
-	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].args["network"]$;
-	path="batch";
-	expr {
-	 expr="batch";
-	};
-	update_after=0;
-       };
+     AssignExpr @[1] {
+      desc="start at the start";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="batch = batch_start";
+      result_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].vars["batch"]$;
+      expr {
+       expr="batch_start";
       };
      };
-     WhileLoop @[2] {
-      desc="the main loop over training runs";
+     MemberAssign @[2] {
+      desc="update network";
       flags=0;
       orig_prog_code=;
+      obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].args["network"]$;
+      path="batch";
+      expr {
+       expr="batch";
+      };
+      update_after=0;
+     };
+     ForLoop @[3] {
+      desc="main loop over training runs";
+      flags=0;
+      orig_prog_code="for(i=0; i<n_batches; i++)";
       loop_code {
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -8679,7 +9350,7 @@ LeabraProject .projects["LeabraStd"] {
 	flags=0;
 	orig_prog_code=;
 	prog_args {
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -8729,8 +9400,14 @@ LeabraProject .projects["LeabraStd"] {
 	update_after=0;
        };
       };
+      init {
+       expr="i=0";
+      };
       test {
-       expr="batch < max_batch";
+       expr="i<n_batches";
+      };
+      iter {
+       expr="i++";
       };
      };
     };
@@ -9128,6 +9805,7 @@ LeabraProject .projects["LeabraStd"] {
 	  case_val {
 	   expr="OLD_SEED";
 	  };
+	  is_default=0;
 	 };
 	 CaseBlock @[1] {
 	  desc=;
@@ -9156,6 +9834,7 @@ LeabraProject .projects["LeabraStd"] {
 	  case_val {
 	   expr="NEW_SEED";
 	  };
+	  is_default=0;
 	 };
 	 CaseBlock @[2] {
 	  desc=;
@@ -9195,6 +9874,7 @@ LeabraProject .projects["LeabraStd"] {
 	  case_val {
 	   expr="BATCH_SEEDS";
 	  };
+	  is_default=0;
 	 };
 	};
        };
@@ -19146,7 +19826,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.0403183;
+       value 8 0=0.04350132;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -19353,6 +20033,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
+       lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
        avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
        inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: };
@@ -19365,13 +20046,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	cos_diff_avg_dt=0.01;
        };
        lay_lrate=1;
-       lay_gp_inhib {on=0: gp_g=0.5: };
       };
      };
      lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
+     lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
      inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
@@ -19384,7 +20065,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       cos_diff_avg_dt=0.01;
      };
      lay_lrate=1;
-     lay_gp_inhib {on=0: gp_g=0.5: };
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
@@ -19419,8 +20099,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      v_m_init {name="v_m_init": type=NONE: mean=0.4: var=0: par=1: };
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
-     act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
-     avg_l {init=0.4: max=1.5: min=0.2: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: dt=0.1: lrn_fact=0.03461539: };
+     act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: ml_tau=2: ml_in_m=0: s_in_s=0.9: m_in_m=1: ss_dt=0.5: s_dt=0.5: m_dt=0.1: ml_dt=0.5: };
+     avg_l {init=0.4: max=1.5: min=0.2: tau=10: lrn_max=0.05: lrn_min=0.005: dt=0.1: lrn_fact=0.03461539: };
+     avg_l_2 {err_mod=1: err_min=0.01: act_thr=0.2: lay_act_thr=0.01: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      adapt {
@@ -19445,8 +20126,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       net_drop=0.9;
      };
      deep_qtr=Q4;
-     deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
-     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
+     deep {on=0: thr_rel=0.2: thr_abs=0.2: d_to_d=0.5: thal_to_d=0: };
+     deep_s {ctxt_to_s=0.3: ctxt_rel=0: d_to_s=0: thal_to_s=0: };
+     deep_norm {on=0: mod=1: immed=0: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: };
+     deep_norm_2 {gain=3: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };

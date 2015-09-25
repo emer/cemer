@@ -43,7 +43,9 @@ public:
   TypeItem*    typeItem() const override {return mbr;} // the mbr or mth
 
   virtual String        CurValAsString();
-  // #CAT_ParamSearch get current value of item, as a string -- not subject to validity for parameter searching
+  // #CAT_ControlPanel get current value of item, as a string -- not subject to validity for parameter searching
+  virtual bool          SetCurVal(const Variant& cur_val);
+  // #CAT_ControlPanel set current value of item from a variant
 
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   TA_BASEFUNS(EditMbrItem);

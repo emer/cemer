@@ -108,7 +108,7 @@ void ControlPanelsFmArgs::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "sefma_lbl = sei->label;");
   prog->AddLine(this, "sefma_argval = taMisc::FindArgByName(sefma_lbl);");
   prog->AddLine(this, "if(sefma_argval.empty()) continue;");
-  prog->AddLine(this, "sei->PSearchCurVal_Set(sefma_argval);");
+  prog->AddLine(this, "sei->SetCurVal(sefma_argval);");
   if(taMisc::dmem_proc == 0) {
     prog->AddLine(this, String("taMisc::Info(\"Set ctrl panel item: \",sefma_lbl,\" in ctrl panel: \",\"") +
                   se->name + "\",\"to val:\",sefma_argval);");
