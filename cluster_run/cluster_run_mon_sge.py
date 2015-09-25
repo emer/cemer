@@ -32,9 +32,6 @@ runmon.dm_qsub_args = "--threaded --quick --jobtype dm_qsub_q"
 # created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
 # further (you can of course do this in some other way by editing code below)
 
-# for bynode pb_qsub commands -- if pb_batches and pb_nodes > 0
-runmon.pb_qsub_cmd = 'pb_qsub.bynode'
-
 # specify the job launcher command with all of its parameters. The parameters might be
 # specific to the cluster environment, such as the network interface the MPI libraries should use
 runmon.job_launcher = "mpirun"

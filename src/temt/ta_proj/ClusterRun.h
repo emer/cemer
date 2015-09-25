@@ -81,28 +81,29 @@ public:
   String        users;          // space-separated list of user names to include in listing jobs for this project
   int           cur_svn_rev;    // #READ_ONLY #SHOW #NO_SAVE #METHBOX_LABEL the current svn revision that we've updated to (-1 if not yet updated)
   String        last_submit_time; // #READ_ONLY #SHOW #SAVE time stamp when jobs were last submitted -- important also for ensuring that there is a diff to trigger svn commit of project!
-  String        notes;          // notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results
-  String        label;          // label -- useful for labeling results when graphing
+  String        notes;          // Notes about this run, used as a checkin comment and visible in job lists -- very good idea to be specific here.  Use %varname to automatically add current variable value
+  String        label;          // A label that can be used when plotting data to distinguish this run from another. Use %varname to automatically add current variable value 
   String        extra_files;    // space separated list of extra files to check into the repository along with this project
   String        svn_repo;       // svn repository to use for file exchange with the cluster -- this should be the name of a svn_repo as listed in the Preferences / Options settings (when you Run a job you can pick from a dropdown list)
   String        repo_url;       // #READ_ONLY #SHOW svn repository url to use for file exchange with the cluster -- this is looked up from svn_repo name from options listed in the Preferences / Options settings
   String        cluster;        // #METHBOX_LABEL name of cluster to run job on -- see Preferences / Options settings for list of valid names -- easiest to use SelectCluster to switch between clusters, and when you Run a job you can pick from a dropdown list
-  String        queue;          // if specified, indicate a particular queue on the computing resource
+  String        queue;          // if specified, indicate a particular queue on the computing resource (optional) -- depends on cluster whether this is used
   String        run_time;       // how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate
-  String        exe_cmd;        // executable command to run the project -- defaults to taMisc::app_name (e.g., emergent) -- will find on executable path
+  String        exe_cmd;        // executable command to run the project on the cluster -- defaults to taMisc::app_name (e.g., emergent) -- can be an absolute path or just an executable name that will be found on default path
   int           ram_gb;         // how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources -- the status_info field can often show you how much a job has used in the past
   int           n_threads;      // number of parallel threads to use for running
   bool          use_mpi;        // use message-passing-inteface distributed memory executable to run across multiple nodes?
   int           mpi_nodes;      // #CONDSHOW_ON_use_mpi number of physical nodes to use for mpi run -- total number of nodes is mpi_nodes * mpi_per_node
   int           mpi_per_node;   // #CONDSHOW_ON_use_mpi number of processes (instances of emergent) to use per physical node for mpi run -- mpi_per_node * n_threads must be <= total cores per node -- can be faster to run multiple processes per physical multi-core node, where these processes communicate locally on the same node, instead of the slower inter-node communication fabric
-  bool          parallel_batch; // use parallel batch processing -- run multiple runs of the same model in parallel across nodes or procs (not using mpi -- just embarassingly parallel separate runs), each on a different batch iteration (e.g., different initial random weights) -- this will submit a different job for each batch here on the client (so they can all be tracked directly)
-  int            pb_batches;     // #CONDSHOW_ON_parallel_batch number of parallel batches to run per job -- beware that this can result in very large processor counts if doing in context of a parameter search on top, as this batch multiplier operates on each job submitted
-  bool           nowin_x;        // use the -nowin startup command instead of -nogui and add a _x suffix to the executable command (e.g., emergent_x or emergent_x_mpi), to call a version of the program (a shell wrapper around the standard compiled executable) that opens up an XWindows connection to allow offscreen rendering and other such operations, even in batch mode
+  bool          parallel_batch; // use parallel batch processing -- run multiple runs of the same model in parallel across nodes or procs (not using mpi -- just embarassingly parallel separate runs), each on a different set of batch iterations (e.g., different initial random weights) -- this will submit a different job for each set of batches on the server (so they can all be tracked directly) -- see pb_batches and pb_n_batches_per for relevant parameters
+  int           pb_batches;     // #CONDSHOW_ON_parallel_batch #MIN_2 total number of parallel batches to run, with pb_n_batches_per batches allocated per each submitted job -- total number of submitted jobs = pb_batches / pb_n_batches_per -- each submitted job will have two added args: batch_start=0:<pb_patches>:<pb_n_batches_per> (start:stop:incr range notation) and n_batches=<pb_n_batches_per> parameters added -- the Startup program must interpret these args properly -- updated for version 8.0! -- beware that this can result in very large processor counts if doing in context of a parameter search in addition, as this batch multiplier operates on each job submitted
+  int           pb_n_batches_per;  // #CONDSHOW_ON_parallel_batch #MIN_1 number of batches to run per parallel batch job -- this number of batches will be run *sequentially* within a single submitted job, while pb_batches / pb_n_batches_per jobs will be submitted in parallel to cover the total pb_batches number of batches specified
+  bool          nowin_x;        // use the -nowin startup command instead of -nogui and add a _x suffix to the executable command (e.g., emergent_x or emergent_x_mpi), to call a version of the program (a shell wrapper around the standard compiled executable) that opens up an XWindows connection to allow offscreen rendering and other such operations, even in batch mode
   
   // this group is all about enabling method buttons
-  bool            enable_kill;    // #HIDDEN whether to enable the kill action
-  bool            enable_load;    // #HIDDEN whether to enable import action
-  bool            enable_notes;    // #HIDDEN whether to enable update notes action
+  bool          enable_kill;    // #HIDDEN whether to enable the kill action
+  bool          enable_load;    // #HIDDEN whether to enable import action
+  bool          enable_notes;   // #HIDDEN whether to enable update notes action
   
 protected:
   bool InitClusterManager(bool check_prefs = true);

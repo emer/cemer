@@ -68,6 +68,7 @@ void ClusterRun::Initialize() {
   mpi_per_node = 1;
   parallel_batch = false;
   pb_batches = 10;
+  pb_n_batches_per = 1;
   nowin_x = false;
   m_cm = 0;
   svn_other = NULL;
@@ -1246,7 +1247,7 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   dc = dt.FindMakeCol("pb_batches", VT_INT);
   dc->desc = "if > 0, use parallel batch mode with this number of batches";
   dc = dt.FindMakeCol("pb_nodes", VT_INT);
-  dc->desc = "if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
+  dc->desc = "actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
   
   // these two comprise the tag -- internal stuff user doesn't need to see
   dc = dt.FindMakeCol("submit_svn", VT_STRING);
@@ -1439,15 +1440,25 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
                     String(pb_batches));
       return false;
     }
+    if(pb_n_batches_per < 1) {
+      taMisc::Error("pb_n_batches must be greater than or equal to 1",
+                    String(pb_n_batches_per));
+      return false;
+    }
+    if(pb_batches % pb_n_batches_per != 0) {
+      taMisc::Warning("pb_batches (", String(pb_batches),
+                      ") is not evenly divisible by pb_n_batches (",
+                      String(pb_n_batches_per), ") -- still works but is less efficient");
+    }
   }
-  if(cs.by_node && cs.procs_per_node <= 1) {
-    taMisc::Error("Cluster:", cluster, "says allocate by node but procs_per_node is not set -- must set this parameter in Preferences / Options settings");
-    return false;
-  }
-  if(cs.by_node && cs.procs_per_node > 4 && !(use_mpi || parallel_batch)) {
-    taMisc::Error("Cluster:", cluster, "has allocate by node policy, but you are not requesting either an mpi or a parallel batch job -- this will waste compute allocations -- please use a cluster that is more appropriate for single-shot single-processor jobs");
-    return false;
-  }
+  // if(cs.by_node && cs.procs_per_node <= 1) {
+  //   taMisc::Error("Cluster:", cluster, "says allocate by node but procs_per_node is not set -- must set this parameter in Preferences / Options settings");
+  //   return false;
+  // }
+  // if(cs.by_node && cs.procs_per_node > 4 && !(use_mpi || parallel_batch)) {
+  //   taMisc::Error("Cluster:", cluster, "has allocate by node policy, but you are not requesting either an mpi or a parallel batch job -- this will waste compute allocations -- please use a cluster that is more appropriate for single-shot single-processor jobs");
+  //   return false;
+  // }
   if(cs.max_jobs > 0) {
     if(n_jobs_to_sub > cs.max_jobs) {
       int chs = taMisc::Choice("You are requesting to run more than listed max number of jobs on cluster: " + cluster + " -- jobs: " + String(n_jobs_to_sub) + " max: " +
@@ -1457,9 +1468,6 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
   }
   int tot_procs = n_jobs_to_sub * n_threads;
   if(use_mpi) tot_procs *= mpi_nodes * mpi_per_node;
-  if(parallel_batch && cs.by_node) { // note: regular non-by-node pb already reflected in n_jobs_to_sub!
-    tot_procs *= pb_batches;
-  }
 
   taMisc::Info("total procs requested for this job:", String(tot_procs));
 
@@ -1585,7 +1593,7 @@ ClusterRun::AddJobRow_impl(const String& cmd, const String& params, int cmd_id) 
 
   if(parallel_batch && pb_batches > 0) {
     jobs_submit.SetVal(pb_batches,   "pb_batches",  row);
-    jobs_submit.SetVal(0,   "pb_nodes",  row); // pb_nodes deprecated
+    jobs_submit.SetVal(pb_n_batches_per,   "pb_nodes",  row); // re-using for now..
   }
   else {
     jobs_submit.SetVal(0,   "pb_batches",  row);
@@ -1605,11 +1613,20 @@ ClusterRun::AddJobRow(const String& cmd, const String& params, int& cmd_id) {
   }
   ClusterSpecs& cs = taMisc::clusters[csi];
 
-  if(parallel_batch && pb_batches > 0 && !cs.by_node) {
+  if(parallel_batch && pb_batches > 0) {
     // we stream off the jobs ourselves
-    for(int i=0; i<pb_batches; i++) {
-      // only support single-increment pb, assume the two args per existing convention
-      String cmd_pb = cmd + " b_start=" + String(i) + " b_end=" + String(i+1);
+    for(int i=0; i<pb_batches; i+= pb_n_batches_per) {
+      int batch_start = i;
+      int batch_end = i + pb_n_batches_per;
+      int n_batches = pb_n_batches_per;
+      if(batch_end > pb_batches) {
+        batch_end = pb_batches;
+        n_batches = pb_batches - i;
+      }
+      String cmd_pb = cmd + " batch_start=" + String(batch_start) + " n_batches=" +
+        String(n_batches);
+      // note: including these legacy params will cause "arg not used" errors to trigger!!!
+      // + " b_start=" + String(batch_start) + " b_end=" + String(batch_end);
       AddJobRow_impl(cmd_pb, params, cmd_id++);
     }
   }
