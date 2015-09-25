@@ -1040,9 +1040,13 @@ void taMisc::EditFile(const String& filename) {
 //      Global state management
 
 TypeDef* taMisc::FindTypeName(const String& nm, bool err_not_found) {
-  if(nm.contains("::")) {
-    String typnm = nm.before("::");
-    String subnm = nm.after("::");
+  String use_nm = trim(nm);
+  if(use_nm.startsWith("&TA_") || use_nm.startsWith("TA_")) {
+    use_nm = use_nm.after("TA_");
+  }
+  if(use_nm.contains("::")) {
+    String typnm = use_nm.before("::");
+    String subnm = use_nm.after("::");
     TypeDef* typ = FindTypeName(typnm, err_not_found);
     if(!typ) {
       if(err_not_found) {
@@ -1060,18 +1064,18 @@ TypeDef* taMisc::FindTypeName(const String& nm, bool err_not_found) {
     }
     return sub;
   }
-  TypeDef* typ = taMisc::types.FindName(nm);
+  TypeDef* typ = taMisc::types.FindName(use_nm);
   if(typ != NULL) return typ;
   for(int i=0; i<taMisc::aka_types.size; i++) {
     TypeDef* aka = taMisc::aka_types.FastEl(i);
     String aka_nm = aka->OptionAfter("AKA_");
-    if(aka_nm == nm) {
+    if(aka_nm == use_nm) {
       return aka;
     }
   }
   if(!typ && err_not_found) {
-    if(!(nm.contains("null") || nm.contains("NULL"))) {
-      taMisc::Error("FindGlobalTypeName: type named:", nm, "not found!");
+    if(!(use_nm.contains("null") || use_nm.contains("NULL"))) {
+      taMisc::Error("FindGlobalTypeName: type named:", use_nm, "not found!");
     }
   }
   return NULL;

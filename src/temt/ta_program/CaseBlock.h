@@ -32,9 +32,11 @@ class TA_API CaseBlock: public CodeBlock {
   // one case element of a switch: if switch variable is equal to case_val, then this chunk of code is run
   INHERITED(CodeBlock)
 public:
-  ProgExpr		case_val; // #BROWSER_EDIT_LOOKUP value of the switch variable -- if switch_var is equal to this, then this code is run (must use literal expression here) -- if case_val is empty, then this represents the default case (run when no other case matches)
+  ProgExpr	case_val; // #BROWSER_EDIT_LOOKUP value of the switch variable -- if the switch condition value is equal to this, then this code is run (must use a concrete, literal expression here -- no variables or functions)
   
-  bool    is_default;
+  bool          is_default;
+  // make this a default case which is selected if none of the other cases match the switch condition
+  
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;
   bool		IsCtrlProgEl() 	override { return true; }

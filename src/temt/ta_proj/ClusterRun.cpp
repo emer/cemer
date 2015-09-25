@@ -60,6 +60,7 @@ void ClusterRun::Initialize() {
   set_proj_name = false;
   cur_svn_rev = -1;
   exe_cmd = taMisc::app_name;
+  use_search_algo = false;
   ram_gb = 0;
   n_threads = 1;  // taMisc::thread_defaults.n_threads
   use_mpi = false;
@@ -67,7 +68,6 @@ void ClusterRun::Initialize() {
   mpi_per_node = 1;
   parallel_batch = false;
   pb_batches = 10;
-  pb_nodes = 0;
   nowin_x = false;
   m_cm = 0;
   svn_other = NULL;
@@ -118,6 +118,12 @@ void ClusterRun::UpdateAfterEdit_impl() {
       jobs_submitted.Reset(); 
       FormatTables();
     }
+    taVersion v784(7, 8, 4);
+    if (taMisc::loading_version < v784) {
+      if(cur_search_algo) {
+        use_search_algo = true;
+      }
+    }
   }
 }
 
@@ -153,8 +159,11 @@ bool ClusterRun::InitClusterManager(bool check_prefs) {
   return true;
 }
 
-void ClusterRun::NewSearchAlgo(TypeDef *type) {
-  search_algos.New(1, type);
+ParamSearchAlgo* ClusterRun::NewSearchAlgo(TypeDef *type) {
+  ParamSearchAlgo* algo = (ParamSearchAlgo*)search_algos.New(1, type);
+  cur_search_algo = algo;       // always select by default
+  use_search_algo = true;
+  return algo;
 }
 
 void ClusterRun::Run() {
@@ -229,7 +238,7 @@ bool ClusterRun::Update() {
     SelectRows(jobs_archive, st_row_archive, end_row_archive);
   }
 
-  if (has_updates && cur_search_algo) {
+  if (has_updates && cur_search_algo && use_search_algo) {
     cur_search_algo->ProcessResults();
   }
   
@@ -276,10 +285,12 @@ void ClusterRun::Cont() {
     return;
 
   // Create the next batch of jobs.
-  if (cur_search_algo && cur_search_algo->CreateJobs()) {
-    // Commit the table to submit the jobs.
-    m_cm->CommitJobSubmissionTable();
-    AutoUpdateMe();
+  if (cur_search_algo && use_search_algo) {
+    if (cur_search_algo->CreateJobs()) {
+      // Commit the table to submit the jobs.
+      m_cm->CommitJobSubmissionTable();
+      AutoUpdateMe();
+    }
   }
 }
 
@@ -1574,21 +1585,7 @@ ClusterRun::AddJobRow_impl(const String& cmd, const String& params, int cmd_id) 
 
   if(parallel_batch && pb_batches > 0) {
     jobs_submit.SetVal(pb_batches,   "pb_batches",  row);
-    if(cs.by_node) {
-      int eff_nodes = pb_nodes;
-      if(pb_nodes == 0) {
-        int tot_procs = pb_batches * n_threads;
-        if(use_mpi)
-          tot_procs *= mpi_nodes;
-        eff_nodes = tot_procs / cs.procs_per_node;
-        if(eff_nodes * cs.procs_per_node < tot_procs)
-          eff_nodes++;
-      }
-      jobs_submit.SetVal(eff_nodes,   "pb_nodes",  row);
-    }
-    else {
-      jobs_submit.SetVal(0,   "pb_nodes",  row);
-    }
+    jobs_submit.SetVal(0,   "pb_nodes",  row); // pb_nodes deprecated
   }
   else {
     jobs_submit.SetVal(0,   "pb_batches",  row);

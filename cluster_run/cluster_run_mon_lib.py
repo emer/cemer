@@ -15,8 +15,6 @@ import xml.etree.ElementTree as ET
 
 # THESE SHOULD BE SET IN A CALLING PROGRAM
 
-submit_mode = "cluster"
-
 # name of queue -- used for a few things -- replace with actual!
 clust_queue = ""
 
@@ -50,9 +48,6 @@ job_launcher = "mpirun"
 # it is essential that these scripts return the cluster job number in the format
 # created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
 # further (you can of course do this in some other way if necessary)
-
-# for bynode pb_qsub commands -- if pb_batches and pb_nodes > 0
-pb_qsub_cmd = 'pb_qsub.bynode'
 
 # qstat-like command -- for quering a specific job_no 
 # sge = qstat -j <job_no>
@@ -88,69 +83,6 @@ showq_parser = "moab"
 mail_user = None
 # specify the type of job events the user should be notified about via email
 mail_type = "FAIL"
-
-# Specifies the availability region of Amazon AWS EC2  
-ec2_region = ""
-
-# Specifies the machine image to use when launching a new Amazon AWS EC2 instance
-ec2_ami = ""
-
-# Specifies the placement group to use when launching a set of new MPI Amazon AWS EC2 instances
-ec2_placement_group = ""
-
-ec2_use_spot = True
-
-# Specifies which named SSH key to use when launching a new Amazon AWS EC2 instance
-ec2_ssh_key = ""
-
-# Specifies the Amazon AWS API user identity. This determines under whos account things get submitted and billed. This should remain private.
-ec2_api_user = ""
-
-# Specifies the Amazon AWS API password. This needs to be kept secret to prevent missues of the AWS account.
-
-ec2_api_key = ""
-
-ec2_instances = """{ "instances": [
-                              {
-                               "name": "c4.large",
-                               "cpus": 2,
-                               "memory": 3.5,
-                               "spotprice": 0.03,
-                               "mpi": false
-                              },
-                              {
-                               "name": "c4.xlarge",
-                               "cpus": 4,
-                               "memory": 7.0,
-                               "spotprice": 0.06,
-                               "mpi": false
-                              },
-                              {
-                               "name": "c4.2xlarge",
-                               "cpus": 8,
-                               "memory": 14,
-                               "spotprice": 0.10,
-                               "mpi": false
-                              },
-                              {
-                               "name": "c4.4xlarge",
-                               "cpus": 16,
-                               "memory": 30,
-                               "spotprice": 0.20,
-                               "mpi": false
-                              },
-                              {
-                               "name": "c4.8xlarge",
-                               "cpus": 36,
-                               "memory": 60,
-                               "spotprice": 0.40,
-                               "mpi": true
-                              }
-                              
-                             ]
-                 }"""
-
-
 
 # number of runtime minutes during which the script will continue to update the 
 # output info from the job (job_out, dat_files)
@@ -742,33 +674,6 @@ class SubversionPoller(object):
         self.mod_re_comp = re.compile(
             r'^\s*[AUGR]\s+(%s/[^/]+/models/.*)' % esc_repo_dir)
         
-    @staticmethod
-    def _get_local_server_name(): 
-        return SubversionPoller._get_local_server_name_ec2()
-    
-    @staticmethod
-    def _get_local_server_name_ec2():
-        # one can retrieve the instance-id from an Amazon EC2 instance by querying a special URL
-        response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/instance-id')
-        html = response.read()
-        return html
-    
-    def _is_for_local_server(self, job_id):
-        if (submit_mode == "cluster"):
-            # If we are running on a static cluster with a real job scheduler,
-            # then we only run on one node and all jobs are for us
-            return True
-        elif (submit_mode == "ec2_compute"):
-            # Check if current job is for our compute server.
-            return self._is_for_local_server_ec2(job_id)
-        elif (submit_mode == "ec2_control"):
-            return True
-    
-    def _is_for_local_server_ec2(self, job_id):
-        job_instance = job_id.split("_")
-        #print "Checking if " + job_instance[0] + " is for us " + self._get_local_server_name_ec2(   )
-        return job_instance[0] == self._get_local_server_name_ec2()
-
     def _get_all_submit_files(self):
         submit_files = []
         if debug:
@@ -820,38 +725,6 @@ class SubversionPoller(object):
         if debug:
             logging.info('\nPolling the Subversion server every %d seconds ' \
                              '(hit Ctrl-C to quit) ...' % self.delay)
-        
-        if (submit_mode == "ec2_compute"):
-            global ec2_api_user
-            global ec2_api_key
-            global ec2_region
-            # Check if we have an EC2 api key and user?
-            try:
-                ec2_api_key
-            except:
-                ec2_api_key = ""
-            if len(ec2_api_key) == 0:    
-                user_data_str = urllib2.urlopen('http://169.254.169.254/latest/user-data').read()
-                user_data = ast.literal_eval(base64.b64decode(user_data_str))
-                ec2_api_user = user_data[0]
-                ec2_api_key = user_data[1]
-                ec2_region = user_data[2]
-                
-                logging.info(user_data)
-            
-            logging.info("ec2_api_key: " + ec2_api_user)
-            
-            # When running on a dynamic cloud computing cluster, rather than a static cluster, we are booting up the
-            # instance after the job submission, the files have therefore obviously already been committed by
-            # the time we start this script. So we need to check through all old submissions as well to see if any of them are
-            # for us.
-            
-            #Run through all submission files on first launch to make sure we catch everything that happened before the script was launched. 
-            sub_files = self._get_all_submit_files(); 
-            for filename in sub_files: 
-                if debug: 
-                    logging.info('\nProcessing %s' % filename) 
-                self._process_new_submission(filename) 
         
         while True:
             # If running in background and the nohup "keep running" file
@@ -947,21 +820,10 @@ class SubversionPoller(object):
             status = self.jobs_running.get_val(row, "status")
             tag = self.jobs_running.get_val(row, "tag")
             
-            # If we are running this script on many instances, as we are using it for
-            # for job submission, check if this job is actually for us.
-            job_id = self.jobs_running.get_val(row,"job_no")
-            if not self._is_for_local_server(job_id):
-                continue
-            
             # print "updating status of job tag: %s status: %s" % (tag, status)
 
             if status == 'SUBMITTED' or status == 'QUEUED':
-                if (submit_mode == "cluster"):
-                    self._query_job_queue(row, status, force_updt)
-                elif (submit_mode == "ec2_compute"):
-                    self._launch_ec2_job(row, filename)
-                elif (submit_mode == "ec2_control"):
-                    self._update_ec2_spot_instances(row, filename)
+                self._query_job_queue(row, status, force_updt)
             elif status == 'RUNNING' or ('ABSENT_' in status):
                 self._query_job_queue(row, status, force_updt)   # always update status!
                 self._update_running_job(row, force_updt)
@@ -1117,11 +979,6 @@ class SubversionPoller(object):
         for row in range(self.jobs_submit.n_rows()):
             status = self.jobs_submit.get_val(row, "status")
             
-            job_id = self.jobs_submit.get_val(row,"job_no") 
-             
-            if not self._is_for_local_server(job_id):
-                continue 
-
             if status == 'REQUESTED':
                 self._start_job(filename, rev, row)
             elif status == 'CANCELLED':
@@ -1136,134 +993,28 @@ class SubversionPoller(object):
                 self._query_running_jobs(self.cur_running_file, True)  # True = force updt
                 if debug:
                     print "probed for project root %s" % self.cur_proj_root
-            
-            if (submit_mode == "cluster" or submit_mode == "ec2_compute"):
-                if status == 'GETDATA':
-                    self._getdata_job(filename, rev, row)
-                elif status == 'GETFILES':
-                    self._getfiles_job(filename, rev, row)
-                elif status == 'REMOVEFILES':
-                    self._removefiles_job(filename, rev, row)
-                elif status == 'REMOVEJOB':
-                    self._remove_job(filename, rev, row)
-                elif status == 'CLEANJOBFILES':
-                    self._clean_job_files(filename, rev, row)
-                elif status == 'UPDATENOTE':
-                    self._update_note(filename, rev, row)
+            elif status == 'GETDATA':
+                self._getdata_job(filename, rev, row)
+            elif status == 'GETFILES':
+                self._getfiles_job(filename, rev, row)
+            elif status == 'REMOVEFILES':
+                self._removefiles_job(filename, rev, row)
+            elif status == 'REMOVEJOB':
+                self._remove_job(filename, rev, row)
+            elif status == 'CLEANJOBFILES':
+                self._clean_job_files(filename, rev, row)
+            elif status == 'UPDATENOTE':
+                self._update_note(filename, rev, row)
 
         # save any changes to current jobs files
         self._save_cur_files()
 
-    def _choose_ec2_instance_type (self, cpus, memory, mpi):
-        #return "t2.micro"
-        instance_types = json.loads(ec2_instances)
-        return instance_types["instances"][1]
-        for i in range(0, len(instance_types["instances"])):
-        	if instance_types["instances"][i]["cpus"] > cpus:
-        		if instance_types["instances"][i]["memory"] > memory:
-        			if (mpi < 2) or instance_types["instances"][i]["mpi"]:
-        				return instance_types["instances"][i]
-        return instance_types["instances"][-1]
-    
     def _start_job(self, filename, rev, row):
         if len(self.model_files) != 1:   # no project committed!
             logging.error("\nNo project file was submitted along with job submit commit -- unable to run")
             return
-        if (submit_mode == "cluster"):
-            self._start_job_cluster(filename, rev, row);
-        elif (submit_mode == "ec2_control"):
-            self._start_job_ec2_control(filename, rev, row)
-            
-    
-    def _start_job_ec2_control(self, filename, rev, row):
-        proj = self.model_files[0]  
-        proj = os.path.abspath(proj)
-        self.cur_proj_file = proj
+        self._start_job_cluster(filename, rev, row);
 
-        cmd = self.jobs_submit.get_val(row, "command")
-        params = self.jobs_submit.get_val(row, "params")
-        run_time = self.jobs_submit.get_val(row, "run_time")
-        n_threads = self.jobs_submit.get_val(row, "n_threads")
-        mpi_nodes = self.jobs_submit.get_val(row, "mpi_nodes")
-        ram_gb = self.jobs_submit.get_val(row, "ram_gb")
-        pb_batches = self.jobs_submit.get_val(row, "pb_batches")
-        pb_nodes = self.jobs_submit.get_val(row, "pb_nodes")
-        submit_svn = str(rev)
-        submit_job = str(row).zfill(3)
-        tag = '_'.join((submit_svn, submit_job))
-
-        self._get_tag_proj_file(tag)
-
-        shutil.copy(proj, self.cur_tag_proj_file)  # we get our own private copy of proj
-
-        cmdsub = []
-        
-        ec2instance = self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
-                  
-        # ec2launch = "ec2-run-instances ami-59174069 -n 1 -g sg-b8f680dd -k standard_key -t t2.micro --region us-west-2 -O AKIAJ4SCF5FBPXL5OITQ -W WaqVJLFaKMTLG34fB1hOoHKTxjvP628lYEdbtMm/"
-        if ec2_use_spot:
-            job_id = str(random.getrandbits(32))
-            ec2launch = "ec2-request-spot-instances " + ec2_ami + " -p " + str(ec2instance["spotprice"])  + " -k " + ec2_ssh_key + " --region " + ec2_region
-            ec2launch += " -t " + ec2instance["name"]
-            ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key
-            ec2launch += " -d " + base64.b64encode("['" + ec2_api_user + "', '" + ec2_api_key + "', '" + ec2_region + "', '" + job_id + "']")
-            ec2launch += " --launch-group " + "mpi_cluster_" + str(random.getrandbits(16))
-            if mpi_nodes <= 1:
-                ec2launch += " -n 1"            
-            else:
-                print "Mpi_nodes: " + str(mpi_nodes)
-                ec2launch += " -n " + str(mpi_nodes) + " --placement-group " + ec2_placement_group
-            cmdsub = ec2launch.split()
-            print "cmd: " + str(cmdsub)
-            result = check_output(cmdsub)
-            #result = "SPOTINSTANCEREQUEST    sir-034bzmhr    0.100000    one-time    Linux/UNIX    open    2015-01-28T21:17:56+0000"
-            print result
-            instancere = re.compile("^SPOTINSTANCEREQUEST\s*(sir-\w+)\s+.*", re.MULTILINE)
-            instance = instancere.search(result)
-            print instance
-            status_info = instance.group(1)
-            job_no = instance.group(1) + "_" + job_id
-        else:
-            ec2launch = "ec2-run-instances " + ec2_ami + " -g " + ec2_security + " -k " + ec2_ssh_key + " --region " + ec2_region
-            ec2launch += " -t " + ec2instance["name"]
-            ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key
-            ec2launch += " -d " + base64.b64encode("['" + ec2_api_user + "', '" + ec2_api_key + "', '" + ec2_region + "']")
-            if mpi_nodes <= 1:
-                ec2launch += " -n 1"            
-            else:
-                print "Mpi_nodes: " + str(mpi_nodes)
-                ec2launch += " -n " + str(mpi_nodes) + " --placement-group " + ec2_placement_group
-                 
-            
-            cmdsub = ec2launch.split()
-            print "cmd: " + str(cmdsub)
-            result = check_output(cmdsub)
-            #result = "INSTANCE i-d617b7d8 ami-12334"
-            print result
-        
-            instancere = re.compile("^INSTANCE\s*(.*?)\s*ami-.*", re.MULTILINE)
-            instance = instancere.search(result)
-            print instance
-            status_info = instance.group(1)
-            job_no = instance.group(1) + "_" + str(random.getrandbits(32))
-        
-        status = "SUBMITTED"
-
-        
-        # grab current submit info
-        self.jobs_running.append_row_from(self.jobs_submit, row)
-        run_row = self.jobs_running.n_rows()-1
-        
-        self.jobs_running.set_val(run_row, "job_no", job_no) 
-        self.jobs_running.set_val(run_row, "submit_svn", submit_svn)
-        self.jobs_running.set_val(run_row, "submit_job", submit_job)
-        self.jobs_running.set_val(run_row, "command", cmd)
-        self.jobs_running.set_val(run_row, "params", params)
-        self.jobs_running.set_val(run_row, "tag", tag)
-        self.jobs_running.set_val(run_row, "status", status)
-        self.jobs_running.set_val(run_row, "status_info", status_info)
-        return
-    
     def _start_job_cluster(self, filename, rev, row):
         global mail_user, clust_queue
         proj = self.model_files[0]  
@@ -1279,9 +1030,8 @@ class SubversionPoller(object):
         mpi_per_node = self.jobs_submit.get_val(row, "mpi_per_node")
         ram_gb = self.jobs_submit.get_val(row, "ram_gb")
         pb_batches = self.jobs_submit.get_val(row, "pb_batches")
-        pb_nodes = self.jobs_submit.get_val(row, "pb_nodes")
         submit_svn = str(rev)
-        submit_job = str(row)
+        submit_job = str(row).zfill(3)  # up to 999 rows per job -- should cover it
         tag = '_'.join((submit_svn, submit_job))
 
         self._get_tag_proj_file(tag)
@@ -1377,12 +1127,6 @@ class SubversionPoller(object):
             else:
                 cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(mpi_per_node), str(n_threads), run_time, cmd, params]
 
-        # if pb, put a wrapper on it!
-        if pb_batches > 0 and pb_nodes > 0:
-            cmdsub = [pb_qsub_cmd, "--node_pool", str(pb_nodes), str(pb_batches), "1"] + cmdsub
-            if debug:
-                print 'command: %s' % cmdsub
-
         result = check_output(cmdsub)
         # print "result: %s" % result
 
@@ -1409,295 +1153,6 @@ class SubversionPoller(object):
         self.jobs_running.set_val(run_row, "tag", tag)
         self.jobs_running.set_val(run_row, "status", status)
         self.jobs_running.set_val(run_row, "job_out_file", job_out_file)
-        
-    def _update_ec2_spot_instances(self, row, filename):
-        job_no = self.jobs_running.get_val(row, "job_no")
-        job_no_split = job_no.split("_")
-        if job_no[:4] == "sir-":
-            logging.info(job_no + " needs some spot instance dealing")
-            ec2getspotinstance = "ec2-describe-spot-instance-requests -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " --filter spot-instance-request-id=" + job_no_split[0]
-            logging.info("Spott check: " + ec2getspotinstance)
-            cmdsub2 = ec2getspotinstance.split()
-            logging.info("Getting relevant instances cmd: " + str(cmdsub2))
-            result = check_output(cmdsub2)
-                   
-            logging.info(result)
-            
-            instancere = re.compile("^SPOTINSTANCEREQUEST.*(i-\w+)\s+ami-.*", re.MULTILINE)
-            instance = instancere.search(result)
-            if instance:
-                logging.info("Spot instance: " + instance.group(1));
-                job_no = instance.group(1) + "_" + job_no_split[1]
-                self.jobs_running.set_val(row, "job_no",job_no)
-                
-                #self._save_cur_files()
-                self.got_submit = True
-            else:
-                logging.info("We don't yet have an instance for this spot request")
-                
-    def _get_mpi_launch_group_ec2(self, row, filename):
-        job_no = self.jobs_running.get_val(row, "job_no")
-        status_info = self.jobs_running.get_val(row, "status_info")
-        
-        #Check if we used spot instances or full instances to run these jobs, as there are different ways to figure
-        #out which ip addressess to add to the MPI machinefile
-        if status_info.startswith("sir-"):
-            #we are using spot instances
-
-            #We have written a unique random token in to the user data to define the group of machines
-            #belonging to a single request group.
-            user_data_str = urllib2.urlopen('http://169.254.169.254/latest/user-data').read()
-            user_data = ast.literal_eval(base64.b64decode(user_data_str))
-            desired_token = user_data[3]
-
-            logging.info ( "We are dealing with a spot request, need to try and piece things together for job token " + desired_token + "!" )
-
-            #Enumerate all currently running instances to then probe the token written to the user data.
-            ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region
-            cmdsub2 = ec2getinstances.split()
-            result = check_output(cmdsub2)
-            logging.info(result)
-                
-            instances = re.findall(r"INSTANCE\s*(.*?)\s*ami-.*", result)
-            logging.info("Instance ID: " + str(instances))
-                
-            for machine in instances:
-                #Probe user data for each instance
-                ec2describeinstance = "ec2-describe-instance-attribute -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " --user-data " + machine
-                cmdsub2 = ec2describeinstance.split()
-                logging.info("Getting user data for instance cmd: " + str(cmdsub2))
-                result = check_output(cmdsub2)
-                logging.info(result)
-                #Result data should be in the form of
-                #result = "userData  i-7e3daab7  WydBS0lBSjRTQ0Y1RkJQWEw1T0lUUScsICdXYXFWSkxGYUtNVExHMzRmQjFoT29IS1R4anZQNjI4bFlFZGJ0TW0vJywgJ3VzLXdlc3QtMicsICcxMDk4NTAxMjAxJ10="
-
-                userdre = re.compile("^userData\s+i-.*?\s+(.*)", re.MULTILINE)
-                userde = userdre.search(result)
-                user_data_str = userde.group(1)
-                if len(user_data_str) > 0:
-                    user_data = ast.literal_eval(base64.b64decode(user_data_str))
-                    logging.info(str(user_data))
-                    if len(user_data) > 3:
-                        job_id = user_data[3]
-                        logging.info("Job_token: " + job_id)
-                    else:
-                        #couldn't extract job token
-                        job_id = -1
-                else:
-                    job_id = -1
-
-                if (job_id == desired_token):
-                    logging.info("Found an instance (" + machine + ") that is for our MPI group")
-
-                    ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " " + machine
-                    cmdsub2 = ec2getinstances.split()
-                    result = check_output(cmdsub2)
-                    #logging.info(result)
-
-                    ipre = re.compile("^PRIVATEIPADDRESS\s*(.*?)\s*ip-.*?", re.MULTILINE)
-                    iip = ipre.search(result)
-
-                    logging.info("Instance " + machine + " has IP " + iip.group(1))
-
-            else:
-
-                # Get our EC2 registration id, to query all instances launched in this reservation request
-                # As these are the ones we want to group together into MPI network
-                res_id = urllib2.urlopen('http://169.254.169.254/latest/meta-data/reservation-id').read()
-
-                ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " --filter reservation-id=" + str(res_id)
-
-                cmdsub2 = ec2getinstances.split()
-                logging.info("Getting relevant instances cmd: " + str(cmdsub2))
-                result = check_output(cmdsub2)
-            
-                logging.info(result)
-            
-                ipaddressres = re.findall(r"PRIVATEIPADDRESS\s*(.*?)\s*ip-.*?", result)
-                logging.info("IP: " + str(ipaddressres))
-
-        
-        
-    def _launch_ec2_job(self, row, filename):
- 
-        logging.warning("file name: " + filename)
-        parsere = re.compile("(.*/(.*?)/)submit/jobs_running.dat")
-        projre = parsere.match(filename)
-        self.cur_proj_file = projre.group(1) + "models/"  + projre.group(2) + ".proj"
-        self.cur_proj_root = projre.group(1)
-        #proj = self.model_files[0]  
-        proj = os.path.abspath(self.cur_proj_file)
-        
-        cmd = self.jobs_running.get_val(row, "command")
-        params = self.jobs_running.get_val(row, "params")
-        run_time = self.jobs_running.get_val(row, "run_time")
-        n_threads = self.jobs_running.get_val(row, "n_threads")
-        mpi_nodes = self.jobs_running.get_val(row, "mpi_nodes")
-        ram_gb = self.jobs_running.get_val(row, "ram_gb")
-        pb_batches = self.jobs_running.get_val(row, "pb_batches")
-        pb_nodes = self.jobs_running.get_val(row, "pb_nodes")
-        tag = self.jobs_running.get_val(row, "tag")
-        job_no = self.jobs_running.get_val(row, "job_no")
-        status_info = self.jobs_running.get_val(row, "status_info")
-
-        self._get_tag_proj_file(tag)
-
-        shutil.copy(proj, self.cur_tag_proj_file)  # we get our own private copy of proj
-
-        cmd = cmd.replace("<TAG>", "_" + tag)  # leading ubar added here only
-        cmd = cmd.replace("<PROJ_FILENAME>", self.cur_tag_proj_file)
-
-        cmdsub = []
-        if mpi_nodes <= 1:
-            cmdsub = cmd.split()
-            #cmdsub = [cmd, params]
-            print "Non MPI mode"
-            #Nothing to do here.
-        else:
-            logging.info( "Working out the nodes on which to run MPI")
-
-            cmd = "mpirun -np " + str(mpi_nodes) + " -machinefile /tmp/machinefile." + str(job_no) + " " + cmd
-
-            cmdsub = cmd.split()
-            
-            #Check if we used spot instances or full instances to run these jobs, as there are different ways to figure
-            #out which ip addressess to add to the MPI machinefile
-            if status_info.startswith("sir-"):
-                #we are using spot instances
-
-                #We have written a unique random token in to the user data to define the group of machines
-                #belonging to a single request group.
-                user_data_str = urllib2.urlopen('http://169.254.169.254/latest/user-data').read()
-                user_data = ast.literal_eval(base64.b64decode(user_data_str))
-                desired_token = user_data[3]
-
-                logging.info ( "We are dealing with a spot request, need to try and piece things together for job token " + desired_token + "!" )
-
-                #Enumerate all currently running instances to then probe the token written to the user data.
-                ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region
-                cmdsub2 = ec2getinstances.split()
-                result = check_output(cmdsub2)
-                logging.info(result)
-                
-                instances = re.findall(r"INSTANCE\s*(.*?)\s*ami-.*", result)
-                logging.info("Instance ID: " + str(instances))
-                
-                machinefile = open("/tmp/machinefile." + str(job_no), 'w')
-                for machine in instances:
-                    #Probe user data for each instance
-                    ec2describeinstance = "ec2-describe-instance-attribute -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " --user-data " + machine
-                    cmdsub2 = ec2describeinstance.split()
-                    logging.info("Getting user data for instance cmd: " + str(cmdsub2))
-                    result = check_output(cmdsub2)
-                    logging.info(result)
-                    #Result data should be in the form of
-                    #result = "userData  i-7e3daab7  WydBS0lBSjRTQ0Y1RkJQWEw1T0lUUScsICdXYXFWSkxGYUtNVExHMzRmQjFoT29IS1R4anZQNjI4bFlFZGJ0TW0vJywgJ3VzLXdlc3QtMicsICcxMDk4NTAxMjAxJ10="
-
-                    userdre = re.compile("^userData\s+i-.*?\s+(.*)", re.MULTILINE)
-                    userde = userdre.search(result)
-                    user_data_str = userde.group(1)
-                    if len(user_data_str) > 0:
-                        user_data = ast.literal_eval(base64.b64decode(user_data_str))
-                        logging.info(str(user_data))
-                        if len(user_data) > 3:
-                            job_id = user_data[3]
-                            logging.info("Job_token: " + job_id)
-                        else:
-                            #couldn't extract job token
-                            job_id = -1
-                    else:
-                        job_id = -1
-
-                    if (job_id == desired_token):
-                        logging.info("Found an instance (" + machine + ") that is for our MPI group")
-
-                        ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " " + machine
-                        cmdsub2 = ec2getinstances.split()
-                        result = check_output(cmdsub2)
-                        #logging.info(result)
-
-                        ipre = re.compile("^PRIVATEIPADDRESS\s*(.*?)\s*ip-.*?", re.MULTILINE)
-                        iip = ipre.search(result)
-
-                        logging.info("Instance " + machine + " has IP " + iip.group(1))
-
-                        machinefile.write(iip.group(1) + "\n")
-
-                        #For MPI, we need to ssh into all those machines. As these are new machines, we need to make sure
-                        #The host keys are accepted and we can connect to them
-                        accept_host_key = "ssh-keyscan " + iip.group(1) + " >> ~/.ssh/known_hosts"
-                        os.system(accept_host_key)
-                        #As all of these machine boot up independently, we need to check if the other machines are up already.
-                        probe_ssh = "ssh " + iip.group(1) + " -C echo"
-                        logging.info("Testing if we can ssh into MPI node: " + probe_ssh)
-                        if (os.system(probe_ssh) != 0):
-                            logging.warning("We don't seem to be able to SSH into this machine yet, so don't submit the job yet")
-                            return
-                        
-
-            else:
-
-                # Get our EC2 registration id, to query all instances launched in this reservation request
-                # As these are the ones we want to group together into MPI network
-                res_id = urllib2.urlopen('http://169.254.169.254/latest/meta-data/reservation-id').read()
-
-                ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " --filter reservation-id=" + str(res_id)
-
-                cmdsub2 = ec2getinstances.split()
-                logging.info("Getting relevant instances cmd: " + str(cmdsub2))
-                result = check_output(cmdsub2)
-            
-                logging.info(result)
-            
-                ipaddressres = re.findall(r"PRIVATEIPADDRESS\s*(.*?)\s*ip-.*?", result)
-                logging.info("IP: " + str(ipaddressres))
-
-                machinefile = open("/tmp/machinefile." + str(job_no), 'w')
-                for machine in ipaddressres:
-                    machinefile.write(machine + "\n")
-                    accept_host_key = "ssh-keyscan " + machine + " >> ~/.ssh/known_hosts"
-                    os.system(accept_host_key)
-                    probe_ssh = "ssh " + machine + " -C echo"
-                    logging.info("Testing if we can ssh into MPI node: " + probe_ssh)
-                    if (os.system(probe_ssh) != 0):
-                        logging.warning("We don't seem to be able to SSH into this machine yet, so don't submit the job yet")
-                        return
-                                                                                                                                        
-
-        # if pb, put a wrapper on it!
-        if pb_batches > 0 and pb_nodes > 0:
-            cmdsub = [pb_qsub_cmd, "--node_pool", str(pb_nodes), str(pb_batches), "1"] + cmdsub
-            if debug:
-                print 'command: %s' % cmdsub
-
-        
-        
-        job_out_file = "/tmp/JOB." + job_no + ".out"
-        job_err_file = "/tmp/JOB." + job_no + ".err"
- 
-        logging.info("Cmd to execute: " + str(cmdsub))
-        try:
-            pid = subprocess.Popen(cmdsub, stdout=open(job_out_file,"w"), stderr=open(job_err_file,"w")).pid
-        except:
-            print "Failed to run command to submit job: " + str(cmdsub)
-        job_no = job_no + "." + str(pid)
-        
-        status = 'RUNNING'
-        stdt = datetime.now()
-        start_time = stdt.strftime(time_format)
-        
-        ## grab current submit info
-        #self.jobs_running.append_row_from(self.jobs_submit, row)
-        #run_row = self.jobs_running.n_rows()-1
-         
-        self.jobs_running.set_val(row, "command", cmd)
-        self.jobs_running.set_val(row, "job_no", job_no)
-        self.jobs_running.set_val(row, "status", status)
-        self.jobs_running.set_val(row, "job_out_file", job_out_file)
-        self.jobs_running.set_val(row, "start_time", start_time)
-        
-        self._save_cur_files()
-        self.got_submit = True
                 
     def _update_note(self, filename, rev, row):
         tag = self.jobs_submit.get_val(row, "tag")
@@ -1719,14 +1174,6 @@ class SubversionPoller(object):
         	self.jobs_archive.set_val(arch_row, "label", label)
 			
     def _cancel_job(self, filename, rev, row):
-        if (submit_mode == "cluster"):
-            self._cancel_job_cluster(filename, rev, row);
-        elif (submit_mode == "ec2_control"):
-            self._cancel_job_ec2_control(filename, rev, row)
-        elif (submit_mode == "ec2_compute"):
-            self._cancel_job_ec2_compute(filename, rev, row)
-        
-    def _cancel_job_cluster(self, filename, rev, row):
         job_no = self.jobs_submit.get_val(row, "job_no")
         if qdel_args != '':
             cmd = [qdel_cmd, qdel_args, job_no] 
@@ -1742,22 +1189,6 @@ class SubversionPoller(object):
             self.jobs_running.set_val(runrow, "status", status)
         # we don't actually do anything with this output..
         
-    def _cancel_job_ec2_compute(self, filename, rev, row):
-        job_no = self.jobs_submit.get_val(row, "job_no")
-        if not self._is_for_local_server(job_no):
-            return
-        job_no_split = job_no.split(".")
-        if (len(job_no_split < 2)):
-            logging.warning("Could not cancel job, because we don't have a pid")
-            return
-        os.kill(int(job_no_split[1]),9)
-        # update jobs running so that job is correctly marked at KILLED instead of DONE
-        runrow = self.jobs_running.find_val("job_no", job_no)
-        if runrow >= 0:
-            status = 'CANCELLED'
-            self.jobs_running.set_val(runrow, "status", status)
-        # we don't actually do anything with this output..
-
     # remove given tag from jobs done or archive
     def _remove_job(self, filename, rev, row):
         tag = self.jobs_submit.get_val(row, "tag")
@@ -1951,44 +1382,17 @@ class SubversionPoller(object):
         end_time = stdt.strftime(time_format)
         self.jobs_running.set_val(row, "status", status)
         self.jobs_running.set_val(row, "end_time", end_time)
-        if (submit_mode == "ec2_compute"):
-            # On the dynamic cloud cluster, we will likely shutdown the instance once the job is done
-            # so we can't recover the data later on, so we need to commit it back to the SVN repository
-            # unconditionally to have data saved.
-            self._getdata_job_tag(tag) 
-            self._getfiles_job_tag(tag)
-            self._getdata_job_out_tag(tag)
-            
-            ec2terminate = "ec2-terminate-instances " + self._get_local_server_name_ec2()
-            ec2terminate += " -O " + ec2_api_user + " -W " + ec2_api_key + " --region " + ec2_region
-            
-            cmdsub = ec2terminate.split()
-            if debug:
-                logging.info("cmd: " + str(cmdsub))
-            result = check_output(cmdsub)
-            if debug:
-                logging.info("cmd result: " + result)
-            
         if debug:
             logging.info("job: %s ended with status: %s at time: %s" % (tag, status, end_time))
 
 
     def _query_job_queue(self, row, status, force_updt = False):
-        if submit_mode == "cluster":
-            if qstat_parser == "moab":
-                self._query_job_queue_moab(row, status, force_updt)
-            elif qstat_parser == "sge":
-                self._query_job_queue_sge(row, status, force_updt)
-            elif qstat_parser == "slurm":
-                self._query_job_queue_slurm(row, status, force_updt)
-        elif submit_mode == "ec2_control":
-            job_no = self.jobs_running.get_val(row, "job_no")
-            if debug:
-                logging.info("Dealing with " + job_no)
-            pass
-        elif submit_mode == "ec2_compute":
-            pass
-        
+        if qstat_parser == "moab":
+            self._query_job_queue_moab(row, status, force_updt)
+        elif qstat_parser == "sge":
+            self._query_job_queue_sge(row, status, force_updt)
+        elif qstat_parser == "slurm":
+            self._query_job_queue_slurm(row, status, force_updt)
 
     def _query_job_queue_moab(self, row, status, force_updt = False):
         job_no = self.jobs_running.get_val(row, "job_no")
@@ -2278,8 +1682,8 @@ class SubversionPoller(object):
         # next look for output files
         results_dir = self.cur_proj_root + "/results/"
 
-        re_tag_dat = re.compile(r".*%s.*\.dat" % tag)
-        re_tag = re.compile(r".*%s.*" % tag)
+        re_tag_dat = re.compile(r".*%s\..*\.dat" % tag)
+        re_tag = re.compile(r".*%s\..*" % tag)
 
         dat_files_set = set()
         other_files_set = set()
@@ -2328,23 +1732,6 @@ class SubversionPoller(object):
                 self._getdata_job_tag(tag)
             self.jobs_running.set_val(row, "other_files", all_files[1])
         
-        if (submit_mode == "ec2_compute"):
-            print "Checking if job is done..."
-            # As we don't have a job scheduler, check if the jobs still are running, or if they terminated
-            
-            if len(job_no_split) < 2: 
-                # We don't have a PID for the job, so no way to check if it is still running or has terminated
-                # so assume it died before we were able to execute it. 
-                self._job_is_done(row, "KILLED") 
-            else: 
-                try:
-                    # Test if we can send a signal (null signal) to the process with PID
-                    # If we succeed, then the job is still running.
-                    os.kill(int(job_no_split[1]),0) 
-                except OSError:
-                    # The process is no longer running. Presume it completed and mark it as done.
-                    self._job_is_done(row, "DONE")
-
     def _update_running_jobs(self, force_updt = False):
         for filename in self.all_running_files:
             self._get_cur_jobs_files(filename) # get all the file names for this dir
@@ -2473,16 +1860,12 @@ class SubversionPoller(object):
         subprocess.call(cmd)
 
     def _get_cluster_info(self):
-        if submit_mode == "cluster":
-            if showq_parser == 'pyshowq':
-                self._get_cluster_info_pyshowq()
-            elif showq_parser == 'moab':
-                self._get_cluster_info_moab()
-            elif showq_parser == "slurm":
-                self._get_cluster_info_slurm()
-        elif submit_mode == "ec2_control":
-            # There is nothing we can do on the control server side here
-            pass
+        if showq_parser == 'pyshowq':
+            self._get_cluster_info_pyshowq()
+        elif showq_parser == 'moab':
+            self._get_cluster_info_moab()
+        elif showq_parser == "slurm":
+            self._get_cluster_info_slurm()
 
     def _get_cluster_info_pyshowq(self):
         if showq_args != '':

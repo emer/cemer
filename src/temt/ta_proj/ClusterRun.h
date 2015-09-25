@@ -72,7 +72,8 @@ public:
   DataTable     jobs_done_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
   DataTable     jobs_archive_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
   ParamSearchAlgo_List search_algos; // #SHOW_TREE #EXPERT Possible search algorithms to run on the cluster
-  ParamSearchAlgoRef cur_search_algo; // The current search algorithm in use -- if not set, then jobs will just use current parameters, for manual param searching
+  bool          use_search_algo;     // use search algorithm to explore across parameters -- if false, then just the current values will be used -- must also set cur_search_algo
+  ParamSearchAlgoRef cur_search_algo; // #CONDEDIT_ON_use_search_algo The current search algorithm in use -- if not set, then jobs will just use current parameters, for manual param searching -- see also use_search_algo
 
   bool          set_proj_name;  // set the project name to use -- overrides the default which is to use the actual name of the project -- this can be useful for running multiple variants of the same project with different local file names, all under a common cluster-run project name, so they can all share the same results etc
   String        proj_name;      // #CONDSHOW_ON_set_proj_name project name to use in lieu of the actual project name, when set_proj_name is active
@@ -94,9 +95,8 @@ public:
   bool          use_mpi;        // use message-passing-inteface distributed memory executable to run across multiple nodes?
   int           mpi_nodes;      // #CONDSHOW_ON_use_mpi number of physical nodes to use for mpi run -- total number of nodes is mpi_nodes * mpi_per_node
   int           mpi_per_node;   // #CONDSHOW_ON_use_mpi number of processes (instances of emergent) to use per physical node for mpi run -- mpi_per_node * n_threads must be <= total cores per node -- can be faster to run multiple processes per physical multi-core node, where these processes communicate locally on the same node, instead of the slower inter-node communication fabric
-  bool          parallel_batch; // use parallel batch processing -- run multiple runs of the same model in parallel across nodes or procs (not using mpi -- just embarassingly parallel separate runs), each on a different batch iteration (e.g., different initial random weights) -- this will submit a different job for each batch here on the client (so they can all be tracked directly), unless the cluster has allocate_by_node checked, in which case the params will be sent up to the server to manage as a single meta-job
+  bool          parallel_batch; // use parallel batch processing -- run multiple runs of the same model in parallel across nodes or procs (not using mpi -- just embarassingly parallel separate runs), each on a different batch iteration (e.g., different initial random weights) -- this will submit a different job for each batch here on the client (so they can all be tracked directly)
   int            pb_batches;     // #CONDSHOW_ON_parallel_batch number of parallel batches to run per job -- beware that this can result in very large processor counts if doing in context of a parameter search on top, as this batch multiplier operates on each job submitted
-  int            pb_nodes;       // #CONDSHOW_ON_parallel_batch if the cluster uses by_node job allocation strategy, then this is the number of nodes to request for this job -- if you want all of your jobs to run in parallel at the same time, then this should be equal to (pb_batches * n_threads * mpi_nodes) / procs_per_node -- setting this value to 0 will default to this allocation number
   bool           nowin_x;        // use the -nowin startup command instead of -nogui and add a _x suffix to the executable command (e.g., emergent_x or emergent_x_mpi), to call a version of the program (a shell wrapper around the standard compiled executable) that opens up an XWindows connection to allow offscreen rendering and other such operations, even in batch mode
   
   // this group is all about enabling method buttons
@@ -141,8 +141,8 @@ public:
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove ALL jobs in the jobs_done data table with a status of KILLED, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this)
   virtual void  Cont();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM Continue the search process by submitting the next batch of jobs.
-  virtual void  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
-  // #MENU_BUTTON #MENU_ON_Jobs #MENU_SEP_BEFORE #TYPE_0_ParamSearchAlgo Choose a search algorithm to use in this cluster run.
+  virtual ParamSearchAlgo*  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
+  // #MENU_BUTTON #MENU_ON_Jobs #MENU_SEP_BEFORE #TYPE_0_ParamSearchAlgo Create a search algorithm to use in this cluster run -- will automatically be selected as the current search algo and enabled (use_search_algo = true)
   virtual bool  AddCluster(const String& clust_nm);
   // #MENU_BUTTON #MENU_ON_Jobs add given cluster to list of active clusters in use -- jobs from these clusters will be displayed in all the jobs* tables -- any cluster you visit will also automatically be added to the list, which is also visible / editable in the Properties tab, in clusters field (space separated list)
   virtual bool  AddUser(const String& user_nm);

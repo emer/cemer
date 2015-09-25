@@ -669,8 +669,8 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
 void
 ClusterManager::RunSearchAlgo()
 {
-  if (!m_cluster_run.cur_search_algo) {
-    taMisc::Info(m_cluster_run.name, "no search algorithm set -- running on current values");
+  if (!m_cluster_run.cur_search_algo || !m_cluster_run.use_search_algo) {
+    taMisc::Info(m_cluster_run.name, "no search algorithm set or not using it -- running on current values");
     m_cluster_run.CreateCurJob(); // just run on current values
     return;
   }
@@ -851,6 +851,8 @@ ClusterManager::ShowRepoDialog()
   dlg.AddWidget(widget);
   dlg.AddVBoxLayout(vbox, "", widget);
 
+  String tt;
+
   String row = "instrRow";
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("Instructions", widget, row,
@@ -887,12 +889,18 @@ ClusterManager::ShowRepoDialog()
   String srchalgo = "none";
   if(m_cluster_run.cur_search_algo) {
     srchalgo = m_cluster_run.cur_search_algo->name;
+    tt = "tooltip=Select whether to use the given search algorithm -- to select a search algorithm you must first make one of an appropriate type (Jobs/New Search Algo menu), or edit the properties tab of the ControlPanel to select a different one;"; 
+    dlg.AddLabel("srchAlgo", widget, row, "label= Search Algo: " + srchalgo + " : use it? ;" + tt);
+    dlg.AddSpace(space, row);
+    dlg.AddBoolCheckbox(&m_cluster_run.use_search_algo, "usesrch", widget, row, tt);
+    dlg.AddStretch(row);
   }
-  dlg.AddLabel("srchAlgo", widget, row, "label= Search Algo: " + srchalgo + ";");
-  dlg.AddStretch(row);
+  else {
+    tt = "tooltip=No search algorithm has been selected -- to select a search algorithm you must first make one of an appropriate type (Jobs/New Search Algo menu), or edit the properties tab of the ControlPanel to select a different one;"; 
+    dlg.AddLabel("srchAlgo", widget, row, "label= Search Algo: " + srchalgo + " ;" + tt);
+    dlg.AddStretch(row);
+  }
 
-  String tt;
-  
   row = "emer_exe_row";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
@@ -994,14 +1002,11 @@ ClusterManager::ShowRepoDialog()
   dlg.AddLabel("pbLbl", widget, row, "label=Use parallel_batch: ;" + tt);
   dlg.AddBoolCheckbox(&m_cluster_run.parallel_batch, "usepb", widget, row, tt);
 
-  dlg.AddStretch(row);
+  dlg.AddSpace(space, vbox);
   tt = "tooltip=The number of parallel batches to run.;";
   dlg.AddLabel("batchesLbl", widget, row, "label=pb_batches: ;" + tt);
   dlg.AddIntField(&m_cluster_run.pb_batches, "numbatches", widget, row, tt);
-
-  tt = "tooltip=if the cluster uses by_node job allocation strategy, then this is the number of nodes to request for this job -- if you want all of your jobs to run in parallel at the same time, then this should be equal to (pb_batches * n_threads * mpi_nodes) / cpus_per_node -- setting this value to 0 will default to this allocation number.;";
-  dlg.AddLabel("pbnodesLbl", widget, row, "label=pb_nodes: ;" + tt);
-  dlg.AddIntField(&m_cluster_run.pb_nodes, "numpbnodes", widget, row, tt);
+  dlg.AddStretch(row);
 
   row = "misc";
   dlg.AddSpace(space, vbox);

@@ -33,7 +33,7 @@ void CaseBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) {
     taVersion v784(7, 8, 4);
-    if (taMisc::loading_version < v784) { // update from enum to bool..
+    if (taMisc::loading_version < v784) {
       if (case_val.expr.empty()) {
         is_default = true;
       }
@@ -47,14 +47,15 @@ void CaseBlock::UpdateAfterEdit_impl() {
 
 void CaseBlock::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  //  CheckError(case_val.empty(), quiet, rval,  "case value expression is empty!");
+  CheckError(!is_default && case_val.empty(), quiet, rval,
+             "case value expression is empty for a non-default case!");
 }
 
 void CaseBlock::GenCssPre_impl(Program* prog) {
   case_val.ParseExpr();         // re-parse just to be sure!
   if(prog_code.size == 0) return;
   String expr = case_val.GetFullExpr();
-  if(expr.empty())
+  if(is_default)
     prog->AddLine(this, "default: {", ProgLine::MAIN_LINE);
   else
     prog->AddLine(this, "case " + case_val.GetFullExpr() + ": {", ProgLine::MAIN_LINE);
