@@ -2567,10 +2567,16 @@ void DataTable::CloseDataLog() {
 }
 
 bool DataTable::WriteDataLogRow() {
-  if(log_file && log_file->IsOpen()) {
+  if(IsSavingDataLog()) {
     SaveDataRow_strm(*log_file->ostrm);
     return true;
   }
+  return false;
+}
+
+bool DataTable::IsSavingDataLog() const {
+  if(log_file && log_file->IsOpen())
+    return true;
   return false;
 }
 
