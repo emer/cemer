@@ -514,6 +514,17 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_type = ProgExprBase::PROGRAM_FUNCTION;
       delims_used = 2;
     }
+    else if(txt[delim_pos[0]] == '(') { // handles cases such as methods my_method(xxx or if(
+      base_path = txt.at(expr_start, delim_pos[0]-expr_start);
+      int length = base_path.length();
+      base_path = triml(base_path);
+      int shift = length - base_path.length(); // shift to compensate for trim
+      expr_start += shift;
+      prepend_txt = txt.through(txt[delim_pos[0]]);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = ProgExprBase::VARIOUS;
+      delims_used = 1;
+    }
     // todo: [] - I think this means we need to handle arrays - rohrlich 9/2/2015
   }
   else {
