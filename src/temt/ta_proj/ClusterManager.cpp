@@ -1002,12 +1002,12 @@ ClusterManager::ShowRepoDialog()
   dlg.AddLabel("pbLbl", widget, row, "label=Use parallel_batch: ;" + tt);
   dlg.AddBoolCheckbox(&m_cluster_run.parallel_batch, "usepb", widget, row, tt);
 
-  dlg.AddSpace(space, vbox);
+  dlg.AddStretch(row);
   tt = "tooltip=" + TA_ClusterRun.members.FindName("pb_batches")->desc + ";";
   dlg.AddLabel("batchesLbl", widget, row, "label=pb_batches: ;" + tt);
   dlg.AddIntField(&m_cluster_run.pb_batches, "numbatches", widget, row, tt);
 
-  dlg.AddSpace(space, vbox);
+  dlg.AddStretch(row);
   tt = "tooltip=" + TA_ClusterRun.members.FindName("pb_n_batches_per")->desc + ";";
   dlg.AddLabel("nbatchesLbl", widget, row, "label=pb_n_batches_per: ;" + tt);
   dlg.AddIntField(&m_cluster_run.pb_n_batches_per, "nbatchesper", widget, row, tt);

@@ -828,14 +828,14 @@ void LeabraNetwork::Compute_Inhib_LayGp() {
 
     // use first layer as initial data for layer group
     LeabraLayer* lay0 = (LeabraLayer*)lg->FastEl(0);
-    LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay0->spec.SPtr();
-    if(!laysp->lay_gp_inhib.on) continue;
+    LeabraLayerSpec* laysp0 = (LeabraLayerSpec*)lay0->spec.SPtr();
+    if(!laysp0->lay_gp_inhib.on) continue;
     
     lay0->laygp_data.netin.InitVals();
     lay0->laygp_data.acts.InitVals();
     for(int li = 0; li < lg->size; li++) {
       LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
-      laysp = (LeabraLayerSpec*)lay->spec.SPtr();
+      LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
       if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
 
       lay0->laygp_data.netin.UpdtFmAvgMax(lay->netin);
@@ -844,11 +844,11 @@ void LeabraNetwork::Compute_Inhib_LayGp() {
 
     lay0->laygp_data.netin.CalcAvg();
     lay0->laygp_data.acts.CalcAvg();
-    laysp->Compute_Inhib_impl(lay0, &lay0->laygp_data, this, laysp->lay_gp_inhib);
+    laysp0->Compute_Inhib_impl(lay0, &lay0->laygp_data, this, laysp0->lay_gp_inhib);
     
     for(int li = 1; li < lg->size; li++) {
       LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
-      laysp = (LeabraLayerSpec*)lay->spec.SPtr();
+      LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
       if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
       
       lay->laygp_data = lay0->laygp_data;
