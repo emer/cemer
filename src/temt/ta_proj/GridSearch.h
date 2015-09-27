@@ -34,9 +34,13 @@ public:
   bool  CreateJobs() override;
   void  ProcessResults() override;
 
+  virtual int   FindParamNameIdx(const String& nm);
+  // find parameter index by name
+  
   TA_BASEFUNS_NOCOPY(GridSearch)
 protected:
   EditMbrItem_Group m_params;   // active parameters to be searching on
+  EditMbrItem_Group m_yoked;    // items that are yoked to other searched params
   int_PArray    m_counts;       // total number of values in each param
   int_PArray    m_iter;         // current index of value in each param
   int           m_tot_count;    // total number of values to search -- prod(m_counts)

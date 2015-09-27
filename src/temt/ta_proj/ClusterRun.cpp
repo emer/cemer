@@ -1539,9 +1539,10 @@ String ClusterRun::ReplaceVars(const String& str) {
 
         //If we are in a search algorithm, then we need to use the value
         //set in the search parameters
-        if (!mbr->is_numeric || !ps.search) {
+        if (!use_search_algo || !cur_search_algo || !mbr->is_numeric || !ps.search) {
           variable_value = mbr->CurValAsString();
-        } else {
+        }
+        else {
           variable_value = String(ps.next_val);
         }
         label_expanded = label_expanded.before(idx) + variable_value

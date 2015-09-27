@@ -69,6 +69,12 @@ bool EditParamSearch::ParseRange() {
   int start_pos2 = 0;
 
   srch_vals.Reset();
+
+  range = trim(range);
+  
+  if(range.startsWith('%')) {
+    return true;                     // deal with it at higher level
+  }
   
   idx = range.index(',', start_pos);
 
@@ -107,7 +113,7 @@ bool EditParamSearch::ParseSubRange(const String& sub_range) {
       step_s = sub_range.after(sidx);
     }
     else {
-      step_s = sub_range.after(idx); // original index
+      end_s = sub_range.after(idx); // original index
     }
     bool ok;
     double start = start_s.toDouble(&ok);
