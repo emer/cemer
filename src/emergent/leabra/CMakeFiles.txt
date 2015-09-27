@@ -104,6 +104,7 @@ set(leabra_HEADS_MAKETA
   HippoEncoderConSpec.h
   CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
+  LeabraMultCopyUnitSpec.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -229,6 +230,7 @@ set(leabra_SRCS
   HippoEncoderConSpec.cpp
   CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
+  LeabraMultCopyUnitSpec.cpp
 )
 
 set(leabra_CUDA
