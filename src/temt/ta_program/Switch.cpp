@@ -26,6 +26,7 @@ TA_BASEFUNS_CTORS_DEFN(Switch);
 
 void Switch::Initialize() {
   cases.SetBaseType(&TA_CaseBlock);
+  cases.AddAcceptableType("CaseBlock");
 }
 
 void Switch::CheckThisConfig_impl(bool quiet, bool& rval) {

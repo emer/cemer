@@ -550,12 +550,13 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
 
   // DST ops
 
+  taBase* obj = NULL;
   if (ms == NULL) return; // SRC only query
   // if not a taBase type of object, no more applicable
   if (!ms->isBase()) return;
   if (ms->isThisProcess()) {
     // cannot allow an object to be copied or moved into one of its own subobjects
-    taBase* obj = ms->tabObject();
+    obj = ms->tabObject();
     if (this->IsChildOf(obj)) {
       // forbid both kinds of cases
       forbidden |= (iClipData::EA_DROP_COPY2 | iClipData::EA_DROP_MOVE2 |
@@ -571,9 +572,11 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
     forbidden |= iClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for L action calls
   }
   
-  // generic list paste allows any subtype of the base type
-  bool right_type = ((list->el_base) && (ms->td() != NULL) && ms->td()->InheritsFrom(list->el_base));
-
+  bool right_type = false;
+  if ((list->el_base) && (ms->td() != NULL)) {
+    right_type = list->IsAcceptable(obj);
+  }
+  
   // figure out what would be allowed if right type
   int op = 0;
   //note: we no longer allow linking generally, only into LINK_GROUPs

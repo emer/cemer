@@ -26,6 +26,7 @@
 
 // member includes:
 #include <cassert>
+#include <String_Array>
 
 // declare all other types mentioned but not required to include:
 class taHashTable; // 
@@ -39,8 +40,7 @@ class ControlPanel; //
 class MethodDef; // 
 class UserDataItem; // 
 class UserDataItem_List; // 
-class UserDataItemBase; // 
-
+class UserDataItemBase; //
 
 taTypeDef_Of(taList_impl);
 
@@ -59,6 +59,9 @@ public:
   taBasePtr     el_view;        // #EXPERT #NO_SAVE #CAT_taList matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
   IndexMode     el_view_mode;   // #EXPERT #NO_SAVE #CAT_taList what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS and IDX_MASK
 
+  String_Array  acceptable_types;     // #HIDDEN #NO_SAVE types that are ok for this list instance
+  String_Array  unacceptable_types;   // #HIDDEN #NO_SAVE types that are NOT ok for this list instance
+  
   TypeDef*     GetElType() const override {return el_typ;}
   // #IGNORE Default type for objects in group
   TypeDef*     El_GetType_(void* it) const override
@@ -97,17 +100,17 @@ public:
   void ChildUpdateAfterEdit(taBase* child, bool& handled) override;
   void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 
-  taBase* CopyChildBefore(taBase* src, taBase* child_pos) override;
+  taBase*       CopyChildBefore(taBase* src, taBase* child_pos) override;
 
-  String&      Print(String& strm, int indent = 0) const override;
+  String&       Print(String& strm, int indent = 0) const override;
 
-  String GetValStr(void* par = NULL, MemberDef* md = NULL,
+  String        GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                             bool force_inline = false) const override;
-  bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
+  bool          SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                            bool force_inline = false) override;
-  int  ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
+  int           ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
                               void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
                               TypeDef::StrContext sc = TypeDef::SC_DEFAULT) override;
 
@@ -162,8 +165,15 @@ public:
 
   virtual void  EnforceType();
   // #CAT_Modify enforce current type (all elements have to be of this type)
-  void  EnforceSameStru(const taList_impl& cp);
+  void          EnforceSameStru(const taList_impl& cp);
   // #CAT_Modify make the two lists identical in terms of size and types of objects
+
+  virtual void  AddAcceptableType(const String& type);
+  // Add the name of a type that is allowed in this list - only used if unacceptable list is empty
+  virtual void  AddUnacceptableType(const String& type);
+  // Add the name of a type that is NOT allowed in this list
+  virtual bool  IsAcceptable(taBase* candidate);
+  // is this candidate item acceptable for this list - Only used in drag and drop - must be at least type or subtype of el_base - Use the Add methods to include/exclude types 
 
   virtual bool  ChangeType(int idx, TypeDef* new_type);
   // change type of item at index
@@ -246,11 +256,11 @@ protected:
   void*         El_CopyN_(void* to, void* fm); // wrap in an update bracket
 
 protected:
-  void CanCopy_impl(const taBase* cp_fm, bool quiet,
-                    bool& ok, bool virt) const override;
-  void CheckChildConfig_impl(bool quiet, bool& rval) override;
-  String ChildGetColText_impl(taBase* child, const KeyString& key, int itm_idx = -1) const override;
-  taBase* New_impl(int n_objs, TypeDef* typ, const String& nm) override;
+  void          CanCopy_impl(const taBase* cp_fm, bool quiet, bool& ok, bool virt) const override;
+  void          CheckChildConfig_impl(bool quiet, bool& rval) override;
+  String        ChildGetColText_impl(taBase* child, const KeyString& key, int itm_idx = -1) const override;
+  taBase*       New_impl(int n_objs, TypeDef* typ, const String& nm) override;
+
 private:
   void  Copy_(const taList_impl& cp);
   void  Initialize();

@@ -160,6 +160,8 @@ void taList_impl::Copy_(const taList_impl& cp) {
   el_def = cp.el_def;
   el_view = cp.el_view;
   el_view_mode = cp.el_view_mode;
+  acceptable_types = cp.acceptable_types;
+  unacceptable_types = cp.unacceptable_types;
   taPtrList_impl::Copy_Exact(cp);
 }
 
@@ -1575,6 +1577,45 @@ int taList_impl::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr)
     nchg += oitm->UpdatePointersToMe_impl(scope_obj, nitm);     // do it all over on this guy
   }
   return nchg;
+}
+
+void taList_impl::AddAcceptableType(const String& type) {
+  acceptable_types.Add(type);
+}
+
+void taList_impl::AddUnacceptableType(const String& type) {
+  unacceptable_types.Add(type);
+}
+
+bool taList_impl::IsAcceptable(taBase* candidate) {
+  if (!candidate) {
+    return true;
+  }
+  if (!candidate->InheritsFrom(el_base)) {
+    return false;
+  }
+  if (unacceptable_types.size == 0 && acceptable_types.size == 0) {
+    return true;
+  }
+  if (unacceptable_types.size == 0) {
+    // if not unacceptables then only check acceptables
+    for (int i=0; i<acceptable_types.size; i++) {
+      String type = acceptable_types.SafeEl(i);
+      if (candidate->InheritsFromName(type)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  else {
+    for (int i=0; i<unacceptable_types.size; i++) {
+      String type = unacceptable_types.SafeEl(i);
+      if (candidate->InheritsFromName(type)) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 #ifdef TA_GUI
