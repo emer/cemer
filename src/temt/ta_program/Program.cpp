@@ -145,15 +145,21 @@ void Program::Initialize() {
   last_init_timestamp = 1;	// not same as global init..
   last_subprog_timestamp = 1;
   prog_code.AddUnacceptableType("CaseBlock");
+  init_code.AddUnacceptableType("CaseBlock");
+
   prog_code.AddUnacceptableType("DataCalcAddDestRow");
   prog_code.AddUnacceptableType("DataCalcSetDestRow");
   prog_code.AddUnacceptableType("DataCalcSetSrcRow");
   prog_code.AddUnacceptableType("DataCalcCopyCommonCols");
-  init_code.AddUnacceptableType("CaseBlock");
   init_code.AddUnacceptableType("DataCalcAddDestRow");
   init_code.AddUnacceptableType("DataCalcSetDestRow");
   init_code.AddUnacceptableType("DataCalcSetSrcRow");
   init_code.AddUnacceptableType("DataCalcCopyCommonCols");
+  
+  prog_code.AddUnacceptableType("IfBreak");
+  prog_code.AddUnacceptableType("IfContinue");
+  init_code.AddUnacceptableType("IfBreak");
+  init_code.AddUnacceptableType("IfContinue");
 
   if(!prog_lib)
     prog_lib = &Program_Group::prog_lib;

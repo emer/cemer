@@ -37,6 +37,8 @@ void ProgEl_List::Destroy() {
 }
 
 void ProgEl_List::Copy_(const ProgEl_List& cp) {
+  acceptable_types = cp.acceptable_types;
+  unacceptable_types = cp.unacceptable_types;
 }
 
 void ProgEl_List::UpdateAfterEdit_impl() {
@@ -187,4 +189,43 @@ void ProgEl_List::DoMoveElseLater() {
   }
   el_to_repl = NULL;
   taMisc::Warning("DoMoveElseLater: could not move the else / elseif statment");
+}
+
+void ProgEl_List::AddAcceptableType(const String& type) {
+  acceptable_types.Add(type);
+}
+
+void ProgEl_List::AddUnacceptableType(const String& type) {
+  unacceptable_types.Add(type);
+}
+
+bool ProgEl_List::IsAcceptable(taBase* candidate) {
+  if (!candidate) {
+    return true;
+  }
+  if (!candidate->InheritsFrom(el_base)) {
+    return false;
+  }
+  if (unacceptable_types.size == 0 && acceptable_types.size == 0) {
+    return true;
+  }
+  if (unacceptable_types.size == 0) {
+    // if not unacceptables then only check acceptables
+    for (int i=0; i<acceptable_types.size; i++) {
+      String type = acceptable_types.SafeEl(i);
+      if (candidate->InheritsFromName(type)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  else {
+    for (int i=0; i<unacceptable_types.size; i++) {
+      String type = unacceptable_types.SafeEl(i);
+      if (candidate->InheritsFromName(type)) {
+        return false;
+      }
+    }
+  }
+  return true;
 }

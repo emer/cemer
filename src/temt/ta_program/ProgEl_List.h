@@ -33,6 +33,9 @@ class TA_API ProgEl_List: public taList<ProgEl> {
   // #TREEFILT_ProgGp ##CAT_Program list of program elements: a block of code
 INHERITED(taList<ProgEl>)
 public:
+  String_Array  acceptable_types;     // #HIDDEN #NO_SAVE types that are ok for this list instance
+  String_Array  unacceptable_types;   // #HIDDEN #NO_SAVE types that are NOT ok for this list instance
+  
   virtual void          PreGen(int& item_id); // iterates over all items
   virtual void          GenCss(Program* prog); // generate the Css code for this object
   virtual const String  GenListing(int indent_level = 0); // generate the listing of this program
@@ -62,6 +65,15 @@ public:
   // #IGNORE move an else / else-if up to higher level, after given item, and optionally do a delayed function call on new replacement guy
   void         DoMoveElseLater();
   // actually do the later replacement that was setup earlier
+  
+  virtual void  AddAcceptableType(const String& type);
+  // Add the name of a type that is allowed in this list - only used if unacceptable list is empty
+  virtual void  AddUnacceptableType(const String& type);
+  // Add the name of a type that is NOT allowed in this list
+
+  bool  IsAcceptable(taBase* candidate) override;
+ // is this candidate item acceptable for this list - Only used in drag and drop - must be at least type or subtype of el_base - Use the Add methods to include/exclude types
+
 
   SIMPLE_LINKS(ProgEl_List);
   TA_BASEFUNS(ProgEl_List);
