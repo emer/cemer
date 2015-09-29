@@ -33,8 +33,9 @@ class TA_API ProgEl_List: public taList<ProgEl> {
   // #TREEFILT_ProgGp ##CAT_Program list of program elements: a block of code
 INHERITED(taList<ProgEl>)
 public:
-  String_Array  acceptable_types;     // #HIDDEN #NO_SAVE types that are ok for this list instance
-  String_Array  unacceptable_types;   // #HIDDEN #NO_SAVE types that are NOT ok for this list instance
+  String_Array          acceptable_types;     // #HIDDEN #NO_SAVE types that are ok for this list instance
+  String_Array          unacceptable_types;   // #HIDDEN #NO_SAVE types that are NOT ok for this list instance
+  bool                  check_with_parent;    // #HIDDEN #NO_SAVE if type is unacceptable should the parent be consulted?
   
   virtual void          PreGen(int& item_id); // iterates over all items
   virtual void          GenCss(Program* prog); // generate the Css code for this object

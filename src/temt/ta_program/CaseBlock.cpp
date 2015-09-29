@@ -23,6 +23,16 @@ TA_BASEFUNS_CTORS_DEFN(CaseBlock);
 
 void CaseBlock::Initialize() {
   is_default = false;
+  
+  // these are the same as for Program prog_code
+  prog_code.AddUnacceptableType("CaseBlock");
+  prog_code.AddUnacceptableType("IfBreak");
+  prog_code.AddUnacceptableType("IfContinue");
+  prog_code.AddUnacceptableType("DataCalcAddDestRow");
+  prog_code.AddUnacceptableType("DataCalcSetDestRow");
+  prog_code.AddUnacceptableType("DataCalcSetSrcRow");
+  prog_code.AddUnacceptableType("DataCalcCopyCommonCols");
+  prog_code.check_with_parent = false; // stop here
 }
 
 void CaseBlock::Destroy() {

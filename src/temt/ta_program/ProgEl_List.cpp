@@ -30,6 +30,7 @@ void ProgEl_List::Initialize() {
   setUseStale(true);
   el_to_repl = NULL;
   el_to_repl_idx = 0;
+  check_with_parent = true;
 }
 
 void ProgEl_List::Destroy() {
@@ -39,6 +40,7 @@ void ProgEl_List::Destroy() {
 void ProgEl_List::Copy_(const ProgEl_List& cp) {
   acceptable_types = cp.acceptable_types;
   unacceptable_types = cp.unacceptable_types;
+  check_with_parent = cp.check_with_parent;
 }
 
 void ProgEl_List::UpdateAfterEdit_impl() {
@@ -206,26 +208,38 @@ bool ProgEl_List::IsAcceptable(taBase* candidate) {
   if (!candidate->InheritsFrom(el_base)) {
     return false;
   }
-  if (unacceptable_types.size == 0 && acceptable_types.size == 0) {
+  for (int i=0; i<unacceptable_types.size; i++) {
+    String type = unacceptable_types.SafeEl(i);
+    if (candidate->InheritsFromName(type)) {
+      return false;
+    }
+  }
+  for (int i=0; i<acceptable_types.size; i++) {
+    String type = acceptable_types.SafeEl(i);
+    if (candidate->InheritsFromName(type)) {
+      return true;
+    }
+  }
+  if (check_with_parent) {
+    ProgEl* parent_el = (ProgEl*)this->GetOwner(&TA_ProgEl);
+    if (parent_el) {
+      ProgEl* grand_el = (ProgEl*)parent_el->GetOwner(&TA_ProgEl);
+      if (grand_el) {
+        ProgEl_List* children_of_grand = (ProgEl_List*)grand_el->children_();
+        if (children_of_grand) {
+          return children_of_grand->IsAcceptable(candidate);
+        }
+      }
+      else {
+        ProgEl_List* grand_list = (ProgEl_List*)parent_el->GetOwner(&TA_ProgEl_List);
+        if (grand_list) {
+          return grand_list->IsAcceptable(candidate);
+        }
+      }
+    }
+  }
+  else {  // done
     return true;
-  }
-  if (unacceptable_types.size == 0) {
-    // if not unacceptables then only check acceptables
-    for (int i=0; i<acceptable_types.size; i++) {
-      String type = acceptable_types.SafeEl(i);
-      if (candidate->InheritsFromName(type)) {
-        return true;
-      }
-    }
-    return false;
-  }
-  else {
-    for (int i=0; i<unacceptable_types.size; i++) {
-      String type = unacceptable_types.SafeEl(i);
-      if (candidate->InheritsFromName(type)) {
-        return false;
-      }
-    }
   }
   return true;
 }

@@ -144,6 +144,7 @@ void Program::Initialize() {
   step_n = 1;
   last_init_timestamp = 1;	// not same as global init..
   last_subprog_timestamp = 1;
+  
   prog_code.AddUnacceptableType("CaseBlock");
   init_code.AddUnacceptableType("CaseBlock");
 
@@ -160,6 +161,9 @@ void Program::Initialize() {
   prog_code.AddUnacceptableType("IfContinue");
   init_code.AddUnacceptableType("IfBreak");
   init_code.AddUnacceptableType("IfContinue");
+  
+  prog_code.check_with_parent = false; // stop here
+  init_code.check_with_parent = false; // stop here
 
   if(!prog_lib)
     prog_lib = &Program_Group::prog_lib;

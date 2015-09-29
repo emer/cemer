@@ -30,6 +30,9 @@ taTypeDef_Of(int_Matrix);
 void DataCalcLoop::Initialize() {
   src_row_var.name = "src_row";
   use_col_numbers = false;
+  
+  loop_code.check_with_parent = false;
+  loop_code.AddAcceptableType("ProgEl");
 }
 
 void DataCalcLoop::UpdateAfterEdit_impl() {

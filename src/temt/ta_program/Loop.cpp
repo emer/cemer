@@ -19,6 +19,10 @@
 
 TA_BASEFUNS_CTORS_DEFN(Loop);
 
+void Loop::Initialize() {
+  loop_code.AddAcceptableType("IfBreak");
+  loop_code.AddAcceptableType("IfContinue");
+}
 
 void Loop::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);

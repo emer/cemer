@@ -58,7 +58,7 @@ protected:
   const String GenListing_children(int indent_level) override;
 
 private:
-  void  Initialize() {}
+  void  Initialize();
   void  Destroy()       {CutLinks();}
 };
 
