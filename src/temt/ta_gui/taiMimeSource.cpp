@@ -560,7 +560,7 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
     if (this->IsChildOf(obj)) {
       // forbid both kinds of cases
       forbidden |= (iClipData::EA_DROP_COPY2 | iClipData::EA_DROP_MOVE2 |
-        iClipData::EA_PASTE2); //note: paste, regardless whether src cut or copy
+                    iClipData::EA_PASTE2); //note: paste, regardless whether src cut or copy
     }
     // confusing to allow move of an obj on itself
     if (lst_itm && (lst_itm == obj)) {
@@ -573,8 +573,14 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
   }
   
   bool right_type = false;
-  if ((list->el_base) && (ms->td() != NULL)) {
-    right_type = list->IsAcceptable(obj);
+  
+  if (list->InheritsFrom(&TA_ProgEl_List)) {
+    if ((list->el_base) && (ms->td() != NULL)) {
+      right_type = list->IsAcceptable(obj);
+    }
+  }
+  else {
+    right_type = ((list->el_base) && (ms->td() != NULL) && ms->td()->InheritsFrom(list->el_base));
   }
   
   // figure out what would be allowed if right type
