@@ -572,16 +572,7 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
     forbidden |= iClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for L action calls
   }
   
-  bool right_type = false;
-  
-  if (list->InheritsFrom(&TA_ProgEl_List)) {
-    if ((list->el_base) && (ms->td() != NULL)) {
-      right_type = list->IsAcceptable(obj);
-    }
-  }
-  else {
-    right_type = ((list->el_base) && (ms->td() != NULL) && ms->td()->InheritsFrom(list->el_base));
-  }
+  bool right_type = list->IsAcceptable(obj);
   
   // figure out what would be allowed if right type
   int op = 0;
@@ -605,10 +596,8 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
   if (right_type) {
     allowed |= op;
   }
-
   //TODO: some groups allow promiscuous linking -- they must enable such themselves
 }
-
 
 int taOBase::ChildEditAction_impl(const MemberDef* md, taBase* child,
   taiMimeSource* ms, int ea)

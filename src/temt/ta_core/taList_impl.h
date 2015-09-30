@@ -164,7 +164,7 @@ public:
   // #CAT_Modify enforce current type (all elements have to be of this type)
   void          EnforceSameStru(const taList_impl& cp);
   // #CAT_Modify make the two lists identical in terms of size and types of objects
-  virtual bool  IsAcceptable(taBase* candidate) { return true; }
+  virtual bool  IsAcceptable(taBase* candidate);
   // is this candidate item acceptable for this list - subclasses can implement for list specific use - ProgEl_List does
   
   virtual bool  ChangeType(int idx, TypeDef* new_type);

@@ -1577,6 +1577,13 @@ int taList_impl::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr)
   return nchg;
 }
 
+bool taList_impl::IsAcceptable(taBase* candidate) {
+  if (!candidate) {
+    return false;
+  }
+  return candidate->GetTypeDef()->InheritsFrom(el_base);
+}
+
 #ifdef TA_GUI
 const QPixmap* taList_impl::GetDataNodeBitmap(int bmf, int& flags_supported) const {
   flags_supported |= NBF_FOLDER_OPEN;
