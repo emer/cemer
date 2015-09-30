@@ -495,6 +495,7 @@ public:
   bool          mod;            // #CONDSHOW_ON_on should deep_norm values modulate (multiply) superficial activation variables via the deep_mod value which is updated at the start of each deep period -- turn this off to allow layer to compute deep_norm values but not apply them to itself
   bool          immed;          // #CONDSHOW_ON_on&&mod compute the deep_mod values that actually multiply activations immediately, instead of at the start of the next trial -- this allows attentional modulation to take place within one trial, but is only appropriate for externally-driven forms of attention
   DeepRawVal    raw_val;        // #CONDSHOW_ON_on which deep_raw value should be used in computing the deep_norm attentional mask weights -- see options for various issues
+  bool          raw_renorm;     // #CONDSHOW_ON_on max-renormalize the deep_raw_norm value prior to applying the raw_thr -- divides by the layer-level maximum deep_raw_norm value 
   float         raw_thr;        // #CONDSHOW_ON_on threshold for the computation of deep_norm on the effective normalized deep_raw_norm value that drives the deep_norm computation -- anything below this threshold will get a deep_norm value of 0, and use the layer deep_norm_def default value for the layer
   bool          binary;         // #CONDSHOW_ON_on deep norm is a binary mask based on what is above or below threshold
 

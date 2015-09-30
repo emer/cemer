@@ -15,15 +15,22 @@
 
 #include "BasAmygUnitSpec.h"
 
+#include <LeabraNetwork>
+
 TA_BASEFUNS_CTORS_DEFN(BasAmygUnitSpec);
 
 void BasAmygUnitSpec::Initialize() {
   acq_ext = ACQ;
   valence = APPETITIVE;
   dar = D1R;
+  deep_vg_netin = false;
+  Defaults_init();
 }
 
 void BasAmygUnitSpec::Defaults_init() {
+  deep_norm.raw_val = DeepNormSpec::UNIT; // source
+  deep_norm.mod = false;
+  deep_norm.immed = false;
 }
 
 void BasAmygUnitSpec::UpdateAfterEdit_impl() {
@@ -45,3 +52,43 @@ void BasAmygUnitSpec::UpdateAfterEdit_impl() {
     }
   }
 }
+
+float BasAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
+                                           int thr_no, float& net_syn) {
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+
+  float net_ex = 0.0f;
+  if(bias_spec) {
+    net_ex += u->bias_scale * u->bias_wt;
+  }
+  if(u->HasExtFlag(UnitVars::EXT)) {
+    net_ex += u->ext * ls->clamp.gain;
+  }
+  if(deep.on) {
+    if(deep_s.d_to_s > 0.0f) {
+      if(deep_vg_netin) {
+        net_ex += deep_s.d_to_s * u->deep_norm * u->act_eq;
+      }
+      else {
+        net_ex += deep_s.d_to_s * u->deep_mod;
+      }
+    }
+    if(deep_s.ctxt_to_s > 0.0f) {
+      net_ex += deep_s.ctxt_to_s * u->deep_ctxt;
+    }
+    if(deep_s.thal_to_s > 0.0f) {
+      net_ex += deep_s.thal_to_s * u->thal;
+    }
+  }
+  if(da_mod.on) {
+    if(net->phase == LeabraNetwork::PLUS_PHASE) {
+      net_ex += da_mod.plus * u->da_p * net_syn;
+    }
+    else {                      // MINUS_PHASE
+      net_ex += da_mod.minus * u->da_p * net_syn;
+    }
+  }
+  return net_ex;
+}
+

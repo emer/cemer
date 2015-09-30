@@ -348,6 +348,7 @@ void DeepNormSpec::Initialize() {
   mod = true;
   immed = false;
   raw_val = GROUP_MAX;
+  raw_renorm = true;
   raw_thr = 0.2f;
   binary = false;
   Defaults_init();
@@ -1950,7 +1951,7 @@ void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int
     return;
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
 
-  if(lay->am_deep_raw_norm.max > 0.0f) {
+  if(deep_norm.raw_renorm && (lay->am_deep_raw_norm.max > 0.0f)) {
     u->deep_raw_norm /= lay->am_deep_raw_norm.max;
   }
 

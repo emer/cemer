@@ -18,6 +18,7 @@
 TA_BASEFUNS_CTORS_DEFN(D1D2UnitSpec);
 
 void D1D2UnitSpec::Initialize() {
+  Defaults_init();
 }
 
 void D1D2UnitSpec::Defaults_init() {
@@ -27,5 +28,6 @@ void D1D2UnitSpec::Defaults_init() {
   deep_norm.raw_val = DeepNormSpec::NORM_NET;
   deep_norm.mod = true;
   deep_norm.immed = true;
+  deep_norm.raw_renorm = false;
 }
 

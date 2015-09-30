@@ -37,7 +37,11 @@ public:
   AcqExt        acq_ext;        // acquisition vs. extinction sub-type
   Valence       valence;        // US valence coding -- appetitive vs. aversive
   DAReceptor    dar;            // #READ_ONLY #SHOW type of dopamine receptor: D1 vs. D2 -- computed automatically from acq_ext and valence
- 
+  bool          deep_vg_netin;  // treat deep_norm_net input (typically from ACQ to EXT) as a voltage-gated netinput -- contributes in proportion to activation of receiving neuron -- also subject to d_to_s multiplier
+
+  float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
+                            int thr_no, float& net_syn) override;
+
   TA_SIMPLE_BASEFUNS(BasAmygUnitSpec);
 protected:
   SPEC_DEFAULTS;
