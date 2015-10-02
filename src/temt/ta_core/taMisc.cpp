@@ -759,6 +759,12 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
   //  if (beep_on_error) cerr << '\a'; // BEL character
 #if defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0 && !taMisc::dmem_output_all) {
+#ifdef TA_NO_GUI
+    if(!taMisc::interactive) {
+      //We still need to quit all MPI processors even if we don't print out the error message on all.
+      taiMiscCore::Quit();        // all errors are *fatal* for non-interactive jobs!!!
+    }
+#endif
     return;
   }
 #endif
@@ -853,6 +859,10 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   ++err_cnt;
 #if defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0 && !taMisc::dmem_output_all) {
+    if(!taMisc::interactive) {
+      //We still need to exit all mpi_processors even if we don't print out the error message
+      taiMiscCore::Quit();// all errors are *fatal* for non-interactive jobs!!!
+    }
     return;
   }
 #endif
