@@ -28,10 +28,11 @@
 eTypeDef_Of(SendDeepNormConSpec);
 
 class E_API SendDeepNormConSpec : public LeabraConSpec {
-  // #AKA_Deep5bConSpec sends deep_norm activation values instead of usual act values -- stored into deep_norm_net var on recv unit -- used for deep top-down projections -- learns using delta rule just like the TI context connections
+  // #AKA_Deep5bConSpec sends deep_norm activation values instead of usual act values -- stored into deep_norm_net var on recv unit -- used for deep top-down projections
 INHERITED(LeabraConSpec)
 public:
-
+  bool          delta_rule;     // use TI-based delta-rule learning mechanism instead of standard one
+  
   // special!
   bool  DoesStdNetin() override { return false; }
   bool  DoesStdDwt() override { return false; }
@@ -66,13 +67,17 @@ public:
   // #IGNORE
 
   inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
+    if(!delta_rule) {
+      inherited::Compute_dWt(rcg, rnet, thr_no);
+      return;
+    }
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
     LeabraConGroup* cg = (LeabraConGroup*)rcg;
     LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
 
     float* dwts = cg->OwnCnVar(DWT);
-    const float su_deep_norm = su->deep_norm; // should be last deep_norm
+    const float su_deep_norm = su->deep_raw_prv; // todo: should be last deep_norm
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {

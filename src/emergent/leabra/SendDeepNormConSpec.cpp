@@ -20,6 +20,7 @@ TA_BASEFUNS_CTORS_DEFN(SendDeepNormConSpec);
 void SendDeepNormConSpec::Initialize() {
   // SetUnique("learn", true);     // generally doesn't learn..
   // learn = false;
+  delta_rule = true;
 }
 
 void SendDeepNormConSpec::GetPrjnName(Projection& prjn, String& nm) {
