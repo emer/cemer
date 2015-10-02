@@ -21,6 +21,7 @@ void SendDeepNormConSpec::Initialize() {
   // SetUnique("learn", true);     // generally doesn't learn..
   // learn = false;
   delta_rule = true;
+  use_prev = false;
 }
 
 void SendDeepNormConSpec::GetPrjnName(Projection& prjn, String& nm) {

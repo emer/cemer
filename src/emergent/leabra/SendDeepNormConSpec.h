@@ -32,6 +32,7 @@ class E_API SendDeepNormConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   bool          delta_rule;     // use TI-based delta-rule learning mechanism instead of standard one
+  bool          use_prev;       // #CONDSHOW_ON_delta_rule use previous sending act (deep_raw_prv) instead of current one
   
   // special!
   bool  DoesStdNetin() override { return false; }
@@ -77,7 +78,11 @@ public:
     LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
 
     float* dwts = cg->OwnCnVar(DWT);
-    const float su_deep_norm = su->deep_raw_prv; // todo: should be last deep_norm
+    float su_deep_norm;
+    if(use_prev)
+      su_deep_norm = su->deep_raw_prv; // todo: should be last deep_norm
+    else
+      su_deep_norm = su->deep_norm;
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
