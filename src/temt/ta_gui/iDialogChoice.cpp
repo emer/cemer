@@ -342,6 +342,7 @@ QAbstractButton* iDialogChoiceSepBut::Constr_SepBut(String lbl, int id) {
   if (lbl.empty())
     return NULL; // not really supposed to happen...
 
+  lbl.repl('\n', ' ');  // if there is a new line character (we have these in toolbar button names) it messes with the coloring and the button is unreadable!
   QPushButton* but = new QPushButton(lbl, this);
   sep_but_lay->addWidget(but);
   customButtonList.append(but);
