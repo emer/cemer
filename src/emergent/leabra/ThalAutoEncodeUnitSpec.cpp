@@ -50,6 +50,7 @@ float ThalAutoEncodeUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwo
                                                   int thr_no, float& net_syn) {
   if(Quarter_DeepNow(net->quarter)) {
     net_syn = u->deep_raw_net;          // only gets from deep!
+    return 0.0f;
   }
   return inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
 }
