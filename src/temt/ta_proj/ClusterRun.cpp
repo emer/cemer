@@ -1589,7 +1589,8 @@ ClusterRun::AddJobRow_impl(const String& cmd, const String& params, int cmd_id) 
     jobs_submit.SetVal(mpi_per_node, "mpi_per_node",  row);
   }
   else {
-    jobs_submit.SetVal(0,   "mpi_nodes",  row);
+    jobs_submit.SetVal(0, "mpi_nodes",  row);
+    jobs_submit.SetVal(0, "mpi_per_node",  row);
   }
 
   if(parallel_batch && pb_batches > 0) {

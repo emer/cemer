@@ -1042,7 +1042,7 @@ class SubversionPoller(object):
         cmd = cmd.replace("<PROJ_FILENAME>", self.cur_tag_proj_file)
 
         cmdsub = []
-        if mpi_nodes <= 1:
+        if mpi_nodes * mpi_per_node <= 1:
             args_eff = sp_qsub_args.split()
             if ram_gb > 0:
                 if len(args_eff) > 0:
