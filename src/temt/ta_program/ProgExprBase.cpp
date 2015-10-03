@@ -893,7 +893,7 @@ bool ProgExprBase::ExprLookupIsFunc(const String& txt) {
   if(trimmed_txt.contains(' ')) {
     trimmed_txt = trimmed_txt.before(' ');
   }
-  return (trimmed_txt == "call" || trimmed_txt.startsWith("prog") || trimmed_txt.startsWith("fun"));
+  return (trimmed_txt == "call");
 }
 
 String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
