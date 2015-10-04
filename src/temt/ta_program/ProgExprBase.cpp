@@ -549,12 +549,28 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   
   // cases such as var.member.<lookup>
   if(delim_pos.size > delims_used) {
-    // note: any ref to base path needs to subtract expr_start relative to delim_pos!
-    path_var = base_path.before(delim_pos.SafeEl(-1)-expr_start); // use last one = first in list
-    if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
-      path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
-    else
-      path_rest = base_path.after(delim_pos.SafeEl(-1)-expr_start);
+    // is one of the delimiters a '(' - we want to start from there
+    int parens_pos = base_path.index('(', cur_pos-base_path.length());
+    if (parens_pos != -1) {
+      int parens_index = 0;
+      // which delimiter is it
+      parens_index = delim_pos.FindEl(parens_pos);
+      // path_var will be the string between parens_pos and the next delimiter pos to the right
+      path_var = base_path.at(parens_pos + 1, delim_pos[parens_index - 1] - parens_pos - 1);
+      
+      if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
+        path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
+      else
+        path_rest = base_path.after(delim_pos.SafeEl(parens_index-1)-expr_start);
+    }
+    else {
+      // note: any ref to base path needs to subtract expr_start relative to delim_pos!
+      path_var = base_path.before(delim_pos.SafeEl(-1)-expr_start); // use last one = first in list
+      if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
+        path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
+      else
+        path_rest = base_path.after(delim_pos.SafeEl(-1)-expr_start);
+    }
   }
   
   if(delim_pos.size > 0) {
