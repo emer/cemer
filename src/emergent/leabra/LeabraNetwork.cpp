@@ -74,6 +74,7 @@ void LeabraNetStats::Initialize() {
 void LeabraNetMisc::Initialize() {
   spike = false;
   deep = false;
+  deep_norm_calc = false;
   bias_learn = false;
   trial_decay = false;
   diff_scale_p = false;
@@ -606,9 +607,15 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
       ((LeabraNetTiming*)net_timing[thr_no])->netin_stats.StartTimer(true); // reset
 
     Compute_NetinStats_Thr(thr_no);
+    if(net_misc.deep && !net_misc.deep_norm_calc) {
+      Compute_DeepNormNetStats_Thr(thr_no);
+    }
     threads.SyncSpin(thr_no, 2);
     if(thr_no == 0) {
       Compute_NetinStats_Post();
+      if(net_misc.deep && !net_misc.deep_norm_calc) {
+        Compute_DeepNormNetStats_Post();
+      }
     }
     threads.SyncSpin(thr_no, 0);
 
@@ -1241,6 +1248,12 @@ void LeabraNetwork::Compute_Deep_Thr(int thr_no) {
   }
   threads.SyncSpin(thr_no, 2);
 
+  if(!net_misc.deep_norm_calc)  // done!
+    return;
+
+  /////////////////////////////////////////////////////
+  //    below only for deep_norm_calc case!!
+  
   for(int i=0; i<nu; i++) {
     LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;

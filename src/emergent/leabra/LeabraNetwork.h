@@ -127,6 +127,7 @@ INHERITED(taOBase)
 public:
   bool          spike;         // #READ_ONLY #SHOW using discrete spiking -- all units must be either rate code or spiking, to optimize the computation -- updated in Trial_Init_Specs call
   bool          deep;         // #READ_ONLY #SHOW deep processing is active -- updated in Trial_Init_Specs call
+  bool          deep_norm_calc; // #READ_ONLY #SHOW deep norm is computed through calculations, orchestrated at the network level -- updated in Trial_Init_Specs from unit spec setting
   bool		bias_learn;     // #READ_ONLY #SHOW do any of the bias connections have learning enabled?  if true, then an extra unit-level computational step is required -- bias learning is now OFF by default, as it has no obvious benefits in large models, but may be useful for smaller networks
   bool          trial_decay;   // #READ_ONLY #SHOW at least one layer spec has a non-zero level of trial decay -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
   bool          diff_scale_p;   // #READ_ONLY #SHOW a unitspec such as the hippocampus ThetaPhase units rescales inputs in plus phase -- this requires initializing the net inputs between these phases
@@ -489,6 +490,7 @@ public:
     // #IGNORE compute layer and unit-group level stats on deep_raw, deep_ctxt_net vars
     virtual void Compute_DeepRawStats_Post();
     // #IGNORE compute layer and unit-group level stats on deep_raw, deep_ctxt_net vars
+    
     virtual void Compute_DeepRawNormStats_Thr(int thr_no);
     // #IGNORE compute layer and unit-group level stats on deep_raw_norm vars
     virtual void Compute_DeepRawNormStats_Post();

@@ -19,6 +19,7 @@
 #include <DeepCtxtConSpec>
 #include <SendDeepRawConSpec>
 #include <SendDeepNormConSpec>
+#include <SendDeepModConSpec>
 #include <taProject>
 #include <taMath_double>
 #include <DataTable>
@@ -409,6 +410,8 @@ void LeabraUnitSpec::Initialize() {
   act_fun = NOISY_XX1;
 
   deep_qtr = Q4;
+  deep_norm_mode = DEEP_NORM_CALC;
+  send_deep_mod = false;
 
   noise_type = NO_NOISE;
   noise.type = Random::GAUSSIAN;
@@ -682,8 +685,11 @@ void LeabraUnitSpec::Init_Netins(LeabraUnitVars* u, LeabraNetwork* net, int thr_
   // u->deep_norm_sent = 0.0f;
   // u->deep_raw_net = 0.0f;
   // u->deep_ctxt_net = 0.0f;
-  // u->deep_norm_net = 0.0f;
 
+  if(deep.on && deep_norm_mode == DEEP_NORM_UNITS) {
+    u->deep_norm_net = 0.0f;
+  }
+  
   // u->net = 0.0f;
 
   const int nrg = u->NRecvConGps(net, thr_no); 
@@ -877,6 +883,9 @@ void LeabraUnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
   }
   if(deep.on) {
     net->net_misc.deep = true;
+  }
+  if(deep.on && deep_norm_mode == DEEP_NORM_CALC) {
+    net->net_misc.deep_norm_calc = true;
   }
   if(bias_spec)
     ((LeabraConSpec*)bias_spec.SPtr())->Trial_Init_Specs(net);
@@ -1169,6 +1178,13 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
         if(tol->hard_clamped)      continue;
         ((LeabraConSpec*)send_gp->con_spec)->Send_NetinDelta(send_gp, net, thr_no,
                                                              act_delta);
+        if(deep.on && deep_norm_mode == DEEP_NORM_UNITS && send_deep_mod) {
+          LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+          if(cs->IsDeepModCon()) {
+            SendDeepModConSpec* sp = (SendDeepModConSpec*)cs;
+            sp->Send_DeepModNetDelta(send_gp, net, thr_no, act_delta);
+          }
+        }
       }
       u->act_sent = act_ts;     // cache the last sent value
     }
@@ -1186,6 +1202,13 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
       if(tol->hard_clamped)        continue;
       ((LeabraConSpec*)send_gp->con_spec)->Send_NetinDelta(send_gp, net, thr_no,
                                                            act_delta);
+      if(deep.on && deep_norm_mode == DEEP_NORM_UNITS && send_deep_mod) {
+        LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+        if(cs->IsDeepModCon()) {
+          SendDeepModConSpec* sp = (SendDeepModConSpec*)cs;
+          sp->Send_DeepModNetDelta(send_gp, net, thr_no, act_delta);
+        }
+      }
     }
     u->act_sent = 0.0f;         // now it effectively sent a 0..
   }
@@ -1267,6 +1290,10 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   Compute_NetinRaw(u, net, thr_no);
   // u->net_raw and u->gi_syn now have proper values integrated from deltas
 
+  if(deep.on && deep_norm_mode == DEEP_NORM_UNITS) {
+    Send_DeepNormNetin_Post(u, net, thr_no);
+  }
+  
   float net_syn = u->net_raw;
   float net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
   // this could modify net_syn if it wants..
@@ -1412,10 +1439,30 @@ void LeabraUnitSpec::Compute_ApplyInhib
   }
 }
 
+void LeabraUnitSpec::Compute_DeepMod_Units(LeabraUnitVars* u, LeabraNetwork* net,
+                                           int thr_no) {
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  if(send_deep_mod) {
+    u->deep_norm = u->act;      // we are it!
+  }
+  else if(lay->am_deep_norm_net.max < 0.1f) { // not enough yet 
+    u->deep_norm = u->deep_norm_net;
+    u->deep_mod = 1.0f;         // 100%
+  }
+  else {
+    u->deep_norm = u->deep_norm_net / lay->am_deep_norm_net.max;
+    u->deep_mod = u->deep_norm;
+  }
+}
+
 void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
 
   // if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
+
+  if(deep.on && deep_norm_mode == DEEP_NORM_UNITS) {
+    Compute_DeepMod_Units(u, net, thr_no);
+  }
 
   if((net->cycle >= 0) && lay->hard_clamped) {
     // Compute_HardClamp happens before deep_mod is available due to timing of updates
@@ -1534,6 +1581,10 @@ void LeabraUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, in
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
 
   // if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
+
+  if(deep.on && deep_norm_mode == DEEP_NORM_UNITS) {
+    Compute_DeepMod_Units(u, net, thr_no);
+  }
 
   if((net->cycle >= 0) && lay->hard_clamped) {
     Compute_ClampSpike(u, net, thr_no, u->ext * spike_misc.clamp_max_p);
@@ -1942,6 +1993,8 @@ void LeabraUnitSpec::Compute_DeepRawNorm(LeabraUnitVars* u, LeabraNetwork* net, 
   }
 }
 
+// following only called for deep_norm_mode == DEEP_NORM_CALC case, by network!
+
 void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!deep_norm.on) {
     TestWrite(u->deep_norm, 1.0f);
@@ -2006,10 +2059,6 @@ void LeabraUnitSpec::Send_DeepNormNetin(LeabraUnitVars* u, LeabraNetwork* net,
           SendDeepNormConSpec* sp = (SendDeepNormConSpec*)cs;
           sp->Send_DeepNormNetDelta(send_gp, net, thr_no, act_delta);
         }
-        else if(cs->IsDeepCtxtCon()) {
-          DeepCtxtConSpec* sp = (DeepCtxtConSpec*)cs;
-          sp->Send_DeepNormNetDelta(send_gp, net, thr_no, act_delta);
-        }
       }
       u->deep_norm_sent = act_ts;     // cache the last sent value
     }
@@ -2025,10 +2074,6 @@ void LeabraUnitSpec::Send_DeepNormNetin(LeabraUnitVars* u, LeabraNetwork* net,
       LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
       if(cs->IsDeepNormCon()) {
         SendDeepNormConSpec* sp = (SendDeepNormConSpec*)cs;
-        sp->Send_DeepNormNetDelta(send_gp, net, thr_no, act_delta);
-      }
-      else if(cs->IsDeepCtxtCon()) {
-        DeepCtxtConSpec* sp = (DeepCtxtConSpec*)cs;
         sp->Send_DeepNormNetDelta(send_gp, net, thr_no, act_delta);
       }
     }
@@ -2071,7 +2116,7 @@ void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net,
   }
 }
 
-  void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!deep.on) return;
   int qtr_eff = net->quarter;
   if(qtr_eff == 0)

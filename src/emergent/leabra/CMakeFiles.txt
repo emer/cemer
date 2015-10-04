@@ -34,6 +34,7 @@ set(leabra_HEADS_MAKETA
   DeepCtxtConSpec.h
   SendDeepRawConSpec.h
   SendDeepNormConSpec.h
+  SendDeepModConSpec.h
   DeepCopyUnitSpec.h
   ThalAutoEncodeUnitSpec.h
   ThalSendUnitSpec.h
@@ -160,6 +161,7 @@ set(leabra_SRCS
   DeepCtxtConSpec.cpp
   SendDeepRawConSpec.cpp
   SendDeepNormConSpec.cpp
+  SendDeepModConSpec.cpp
   DeepCopyUnitSpec.cpp
   ThalAutoEncodeUnitSpec.cpp
   ThalSendUnitSpec.cpp

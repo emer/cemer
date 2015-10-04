@@ -349,6 +349,8 @@ public:
   // #IGNORE is this a send deep_raw connection (SendDeepRawConSpec) -- optimized check for higher speed
   inline virtual bool  IsDeepNormCon() { return false; }
   // #IGNORE is this a send deep_norm connection (SendDeepNormConSpec) -- optimized check for higher speed
+  inline virtual bool  IsDeepModCon() { return false; }
+  // #IGNORE is this a send deep_mod connection (SendDeepModConSpec) -- optimized check for higher speed
 
   inline void 	C_Send_NetinDelta(const float wt, float* send_netin_vec,
                                   const int ru_idx, const float su_act_delta_eff)

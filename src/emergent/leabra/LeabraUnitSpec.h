@@ -488,6 +488,7 @@ public:
     GROUP_MAX,      // use the max deep_raw across the unit group -- provides a broader deep_norm attentional mask compared to UNIT, and is the most lenient allocation of attention to anything that had some strong activation -- falls back on unit if no unit groups
     GROUP_AVG,      // use the average deep_raw across the unit group -- provides a broader deep_norm attentional mask compared to UNIT, while weighting overall level of contribution within unit group -- falls back on unit if no unit groups
     NORM_NET,       // only use deep_norm_net for computing deep_norm in this layer -- makes this a slave layer to its modulatory inputs -- also sets the layer default value to copy_def
+    NORM_NET_MOD,   // use deep_norm_net to directly drive deep_mod directly and continuously -- use this for connections from deep layer as a predictive auto encoder
     THAL,           // only use thal for computing deep_norm in this layer -- useful for directly using gating signals driven to the thal variable, e.g., in pfc auto encoder
   };
 
@@ -632,6 +633,11 @@ public:
     QALL = Q1 | Q2 | Q3 | Q4,  // #NO_BIT all quarters
   };
 
+  enum DeepNormMode {
+    DEEP_NORM_CALC,             // deep norm is calculated from equations
+    DEEP_NORM_UNITS,            // deep norm is implemented by separate units representing the deep layer 6 cortico-thalamic regular spiking neurons
+  };
+  
   ActFun            act_fun;        // #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
   LeabraActFunSpec  act;         // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
   LeabraActMiscSpec act_misc;   // #CAT_Activation miscellaneous activation parameters
@@ -655,8 +661,10 @@ public:
   Quarters         deep_qtr;       // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt, deep_norm are updated and sent right after this quarter (wrapping around to the first quarter for the 4th quarter)
   DeepSpec         deep;          // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
   DeepSupSpec      deep_s;          // #CONDSHOW_ON_deep.on #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms: context and superficial parameters
-  DeepNormSpec     deep_norm;        // #CAT_Learning specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables
-  DeepNorm2Spec    deep_norm_2;        // #CONDSHOW_ON_deep_norm.on&&!deep_norm.raw_val:NORM_NET #CAT_Learning additional specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables
+  DeepNormMode     deep_norm_mode;   // how to compute deep norm -- caculated vs. separate units -- MUST BE CONSISTENT FOR ALL units in the network
+  DeepNormSpec     deep_norm;        // #CAT_Learning specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables -- most of this is not applicable for deep_norm_mode == DEEP_NORM_UNITS
+  DeepNorm2Spec    deep_norm_2;        // #CONDSHOW_ON_deep_norm_mode:DEEP_NORM_CALC&&deep_norm.on&&!deep_norm.raw_val:NORM_NET #CAT_Learning additional specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables
+  bool             send_deep_mod;     // #CONDSHOW_ON_deep_norm_mode:DEEP_NORM_UNITS these neurons send activation to the deep_norm_net variable on receivers, which then feed directly into deep_mod
   DaModSpec        da_mod;                // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   NoiseType        noise_type;        // #CAT_Activation where to add random noise in the processing (if at all)
   RandomSpec       noise;                // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
@@ -796,6 +804,8 @@ public:
   virtual void Compute_Act_Rate(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Activation Rate coded activation
 
+    virtual void Compute_DeepMod_Units(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #CAT_Activation compute unit-based deep_mod value
     virtual void Compute_ActFun_Rate(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #CAT_Activation compute the activation from g_e vs. threshold -- rate code functions
     virtual float Compute_ActFun_Rate_impl(float val_sub_thr);

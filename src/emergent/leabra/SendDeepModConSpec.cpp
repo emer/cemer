@@ -13,20 +13,21 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "DeepCtxtConSpec.h"
+#include "SendDeepModConSpec.h"
 
-TA_BASEFUNS_CTORS_DEFN(DeepCtxtConSpec);
+TA_BASEFUNS_CTORS_DEFN(SendDeepModConSpec);
 
-void DeepCtxtConSpec::Initialize() {
-  SetUnique("wt_scale", true);
-  wt_scale.rel = 1.0;
+void SendDeepModConSpec::Initialize() {
+  SetUnique("learn", true);     // generally doesn't learn..
+  learn = false;
+  SetUnique("rnd", true);
+  rnd.mean = 0.8f;
+  rnd.var = 0.0f;
+  SetUnique("wt_limits", true);
+  wt_limits.sym = false;
 }
 
-void DeepCtxtConSpec::GetPrjnName(Projection& prjn, String& nm) {
-  nm = "Ctxt_" + nm;
+void SendDeepModConSpec::GetPrjnName(Projection& prjn, String& nm) {
+  nm = "Deep_Mod_" + nm;
 }
 
-void DeepCtxtConSpec::Trial_Init_Specs(LeabraNetwork* net) {
-  inherited::Trial_Init_Specs(net);
-  // net->net_misc.ti = true;
-}
