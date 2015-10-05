@@ -554,6 +554,30 @@ private:
   void        Defaults_init();
 };
 
+eTypeDef_Of(DeepModSpec);
+
+class E_API DeepModSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra additional specs for computing deep_norm normalized attentional filter values as function of deep_raw, deep_norm_net, and deep_ctxt_net variables
+INHERITED(SpecMemberBase)
+public:
+  bool        send;     // these neurons send activation to the deep_norm_net variable on receivers, which then feed directly into deep_mod
+  float       min;     // #MIN_0 #MAX_1 minimum deep_mod value -- provides a non-zero baseline for deep modulation -- all
+
+  float       range;  // #READ_ONLY #EXPERT 1 - min -- range for the netinput to modulate value of deep_mod, between min and 1 value
+
+  String      GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(DeepModSpec);
+protected:
+  SPEC_DEFAULTS;
+  void        UpdateAfterEdit_impl();
+
+private:
+  void        Initialize();
+  void        Destroy()        { };
+  void        Defaults_init();
+};
+
 eTypeDef_Of(DaModSpec);
 
 class E_API DaModSpec : public SpecMemberBase {
@@ -664,7 +688,7 @@ public:
   DeepNormMode     deep_norm_mode;   // how to compute deep norm -- caculated vs. separate units -- MUST BE CONSISTENT FOR ALL units in the network
   DeepNormSpec     deep_norm;        // #CAT_Learning specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables -- most of this is not applicable for deep_norm_mode == DEEP_NORM_UNITS
   DeepNorm2Spec    deep_norm_2;        // #CONDSHOW_ON_deep_norm_mode:DEEP_NORM_CALC&&deep_norm.on&&!deep_norm.raw_val:NORM_NET #CAT_Learning additional specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables
-  bool             send_deep_mod;     // #CONDSHOW_ON_deep_norm_mode:DEEP_NORM_UNITS these neurons send activation to the deep_norm_net variable on receivers, which then feed directly into deep_mod
+  DeepModSpec      deep_mod;        // #CONDSHOW_ON_deep_norm_mode:DEEP_NORM_UNITS&&deep.on #CAT_Learning deep modulation specs for unit-based predictive auto-encoder learning in deep layers
   DaModSpec        da_mod;                // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   NoiseType        noise_type;        // #CAT_Activation where to add random noise in the processing (if at all)
   RandomSpec       noise;                // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise

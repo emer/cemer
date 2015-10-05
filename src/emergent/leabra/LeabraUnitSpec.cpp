@@ -45,6 +45,7 @@ TA_BASEFUNS_CTORS_DEFN(DeepSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepSupSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepNormSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepNorm2Spec);
+TA_BASEFUNS_CTORS_DEFN(DeepModSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
 TA_BASEFUNS_CTORS_DEFN(NoiseAdaptSpec);
 
@@ -379,6 +380,21 @@ void DeepNorm2Spec::UpdateAfterEdit_impl() {
   ctxt_fm_ctxt = 1.0f - ctxt_fm_lay;
 }
 
+void DeepModSpec::Initialize() {
+  send = false;
+  Defaults_init();
+}
+
+void DeepModSpec::Defaults_init() {
+  min = 0.8f;
+  range = 1.0f - min;
+}
+
+void DeepModSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  range = 1.0f - min;
+}
+
 void DaModSpec::Initialize() {
   on = false;
   minus = 0.0f;
@@ -411,7 +427,6 @@ void LeabraUnitSpec::Initialize() {
 
   deep_qtr = Q4;
   deep_norm_mode = DEEP_NORM_CALC;
-  send_deep_mod = false;
 
   noise_type = NO_NOISE;
   noise.type = Random::GAUSSIAN;
@@ -1178,7 +1193,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
         if(tol->hard_clamped)      continue;
         ((LeabraConSpec*)send_gp->con_spec)->Send_NetinDelta(send_gp, net, thr_no,
                                                              act_delta);
-        if(deep.on && deep_norm_mode == DEEP_NORM_UNITS && send_deep_mod) {
+        if(deep.on && deep_norm_mode == DEEP_NORM_UNITS && deep_mod.send) {
           LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
           if(cs->IsDeepModCon()) {
             SendDeepModConSpec* sp = (SendDeepModConSpec*)cs;
@@ -1202,7 +1217,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
       if(tol->hard_clamped)        continue;
       ((LeabraConSpec*)send_gp->con_spec)->Send_NetinDelta(send_gp, net, thr_no,
                                                            act_delta);
-      if(deep.on && deep_norm_mode == DEEP_NORM_UNITS && send_deep_mod) {
+      if(deep.on && deep_norm_mode == DEEP_NORM_UNITS && deep_mod.send) {
         LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
         if(cs->IsDeepModCon()) {
           SendDeepModConSpec* sp = (SendDeepModConSpec*)cs;
@@ -1442,7 +1457,7 @@ void LeabraUnitSpec::Compute_ApplyInhib
 void LeabraUnitSpec::Compute_DeepMod_Units(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-  if(send_deep_mod) {
+  if(deep_mod.send) {
     u->deep_norm = u->act;      // we are it!
   }
   else if(lay->am_deep_norm_net.max < 0.1f) { // not enough yet 
@@ -1450,8 +1465,8 @@ void LeabraUnitSpec::Compute_DeepMod_Units(LeabraUnitVars* u, LeabraNetwork* net
     u->deep_mod = 1.0f;         // 100%
   }
   else {
-    u->deep_norm = u->deep_norm_net / lay->am_deep_norm_net.max;
-    u->deep_mod = u->deep_norm;
+    u->deep_norm = u->deep_norm_net / lay->am_deep_norm_net.max; // uncompressed
+    u->deep_mod = deep_mod.min + deep_mod.range * u->deep_norm;
   }
 }
 
