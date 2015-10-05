@@ -166,7 +166,7 @@ void Function::ListCallers() {
   if(!prog)
     return;
   
- prog->GuiFindFromMe("\"FunCall " + name + "\"");    // find all refs to me
+ prog->GuiFindFromMe("\"" + name + "(\"");    // find all refs to me
 }
 void Function::UpdateCallerArgs() {
   Program* prog = program();

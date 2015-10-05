@@ -823,7 +823,7 @@ void Program::ListCallers() {
   taProject* proj = GetMyProj();
   if(!proj)
     return;
-  proj->programs.GuiFindFromMe("\"Call " + name + "\"");   // find all refs to me in programs
+  proj->programs.GuiFindFromMe("\"" + name + "(\"");   // find all refs to me in programs
 }
 
 void Program::UpdateCallerArgs() {
