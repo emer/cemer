@@ -881,6 +881,9 @@ public:
   virtual void Send_DeepNormNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net,
                                         int thr_no);
   // #CAT_Deep send deep_norm netinputs through SendDeepNormConSpec connections -- post processing rollup
+    virtual void Send_DeepNormNetin_Post_impl(LeabraUnitVars* uv, LeabraNetwork* net,
+                                            int thr_no);
+    // #CAT_Deep send deep_norm netinputs through SendDeepNormConSpec connections -- post processing rollup -- actually do
   
   virtual void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep state update for deep leabra -- typically at start of new alpha trial -- copy deep_mod from deep_norm, deep_ctxt from deep_ctxt_net

@@ -1291,7 +1291,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   // u->net_raw and u->gi_syn now have proper values integrated from deltas
 
   if(deep.on && deep_norm_mode == DEEP_NORM_UNITS) {
-    Send_DeepNormNetin_Post(u, net, thr_no);
+    Send_DeepNormNetin_Post_impl(u, net, thr_no);
   }
   
   float net_syn = u->net_raw;
@@ -2088,6 +2088,12 @@ void LeabraUnitSpec::Send_DeepNormNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
   }
   if(!Compute_DeepTest(u, net, thr_no))
     return;
+
+  Send_DeepNormNetin_Post_impl(u, net, thr_no);
+}
+
+void LeabraUnitSpec::Send_DeepNormNetin_Post_impl(LeabraUnitVars* u, LeabraNetwork* net,
+                                                  int thr_no) {
   int flat_idx = u->UnFlatIdx(net, thr_no);
   int nt = net->n_thrs_built;
 #ifdef CUDA_COMPILE
@@ -2126,7 +2132,10 @@ void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net
   if(!Quarter_DeepNow(qtr_eff)) return;
 
   // deep_mod has full final value for modulation
-  Compute_DeepMod(u, net, thr_no);
+  if(deep_norm_mode == DEEP_NORM_CALC) {
+    Compute_DeepMod(u, net, thr_no);
+    u->deep_norm_net = 0.0f;    // don't do for UNITS
+  }
 
   u->deep_ctxt = u->deep_ctxt_net;
   u->deep_raw_pprv = u->deep_raw_prv;
@@ -2137,7 +2146,6 @@ void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net
   u->deep_norm_sent = 0.0f;
   u->deep_raw_net = 0.0f;
   u->deep_ctxt_net = 0.0f;
-  u->deep_norm_net = 0.0f;
 }
 
 void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
