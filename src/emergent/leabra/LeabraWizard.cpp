@@ -35,6 +35,7 @@ void LeabraWizard::Initialize() {
 #include <UniformRndPrjnSpec>
 #include <GpRndTesselPrjnSpec>
 #include <TiledGpRFPrjnSpec>
+#include <TiledGpRFOneToOnePrjnSpec>
 
 #include <TwoDValLayerSpec>
 #include <DeepCtxtConSpec>
@@ -94,7 +95,7 @@ String LeabraWizard::RenderWizDoc_network() {
   String rval = inherited::RenderWizDoc_network();
   rval += String("\
 * [[<this>.LeabraTI()|LeabraTI]] -- configure specs and layers for LeabraTI -- temporal integration of information over time, based on deep neocortical layer biology -- functionally similar to an SRN but auto-encoding and predictive\n\
-* [[<this>.DeepLeabra()|DeepLeabra]] -- configure DeepLeabra specs and layers, for all hidden layers in the network -- creates corresponding trc layers for predictive auto-encoder learning from deep layer driver projections coming from lower layers -- optionaly create TI deep context self projections, and top-down deep attentional projections from higher layers\n\
+* [[<this>.DeepLeabra()|DeepLeabra]] -- configure DeepLeabra specs and layers, for all hidden layers in the network -- creates corresponding deep and trc layers for predictive auto-encoder learning from deep layer driver projections coming from lower layers\n\
 * [[<this>.SRNContext()|SRN Context]] -- configure a network with a simple-recurrent-network (SRN) context layer\n\
 * [[<this>.UnitInhib()|Unit Inhib]] -- configure unit-based inhibition for all layers in selected network (as compared with standard kWTA inhibition) ('''NOTE: parameters are out of date''').\n\
 * [[<this>.Hippo()|Hippo]] -- configure a Hippocampus using theta-phase specs -- high functioning hippocampal episodic memory system.\n\
@@ -428,19 +429,31 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
     return false;
   }
   FMSpec(LeabraUnitSpec, stduns, net, "LeabraUnitSpec_0");
-  FMChild(LeabraUnitSpec, ae_uns, stduns, "TRCAutoEnc");
+  FMChild(LeabraUnitSpec, s_uns, stduns, "SuperUnits");
+  FMChild(LeabraUnitSpec, d_uns, stduns, "DeepUnits");
+  FMChild(LeabraUnitSpec, trc_uns, stduns, "TRCUnits");
   FMSpec(LeabraConSpec, stdcons, net, "LeabraConSpec_0");
   FMChild(DeepCtxtConSpec, ti_ctxt, stdcons, "DeepTICtxt");
   FMChild(LeabraConSpec, fm_trc, stdcons, "FmTRC");
   FMChild(LeabraConSpec, to_trc, stdcons, "ToTRC");
+  FMChild(LeabraConSpec, deep_td, stdcons, "DeepTopDown");
   FMChild(SendDeepRawConSpec, d_to_trc, stdcons, "DeepToTRC");
-  FMChild(SendDeepModConSpec, dnorm, stdcons, "DeepMod_fixed");
+  FMChild(SendDeepModConSpec, dmod, stdcons, "SendDeepMod_fixed");
   FMSpec(FullPrjnSpec, full_prjn, net, "FullPrjnSpec_0");
   FMSpec(GpOneToOnePrjnSpec, gp_one_to_one, net, "GpOneToOne");
-  FMSpec(TiledGpRFPrjnSpec, deep_prjn, net, "DeepToTRC");
-  FMSpec(TiledGpRFPrjnSpec, ctxt_prjn, net, "RF3x3skp1");
+  FMSpec(OneToOnePrjnSpec, one_to_one, net, "OneToOne");
+  FMSpec(TiledGpRFOneToOnePrjnSpec, deep_prjn, net, "DeepToTRC");
+  FMSpec(TiledGpRFPrjnSpec, trc_prjn, net, "RF3x3skp1");
+  FMSpec(TiledGpRFPrjnSpec, ctxt_prjn, net, "RF5x5skp1");
 
   stduns->deep.on = true;
+  
+  s_uns->SetUnique("deep", true);
+  s_uns->deep.role = DeepSpec::SUPER;
+  d_uns->SetUnique("deep", true);
+  d_uns->deep.role = DeepSpec::DEEP;
+  trc_uns->SetUnique("deep", true);
+  trc_uns->deep.role = DeepSpec::TRC;
   
   fm_trc->SetUnique("wt_scale", true);
   fm_trc->wt_scale.rel = 0.1f;
@@ -449,31 +462,36 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
   d_to_trc->SetUnique("rnd", true);
   d_to_trc->rnd.var = 0.0f;
 
-  dnorm->SetUnique("learn", true);
-  dnorm->learn = false;
-  dnorm->SetUnique("rnd", true);
-  dnorm->rnd.var = 0.0f;
+  deep_td->SetUnique("wt_scale", true);
+  deep_td->wt_scale.rel = 0.2f;
 
-  deep_prjn->init_wts = true;
+  dmod->SetUnique("learn", true);
+  dmod->learn = false;
+  dmod->SetUnique("rnd", true);
+  dmod->rnd.var = 0.0f;
+
   deep_prjn->send_gp_size = 2;
   deep_prjn->send_gp_skip = 2;
   deep_prjn->send_gp_start = 0;
   deep_prjn->wrap = true;
-  deep_prjn->full_gauss.on = true;
-  deep_prjn->full_gauss.sigma = 1.2f;
-  deep_prjn->full_gauss.wrap_wts = false;
-  deep_prjn->full_gauss.ctr_mv = 0.8f;
-  deep_prjn->gp_gauss.on = true;
-  deep_prjn->gp_gauss.sigma = 1.2f;
-  deep_prjn->gp_gauss.wrap_wts = false;
-  deep_prjn->gp_gauss.ctr_mv = 0.8f;
 
-  deep_prjn->wt_range.min = 0.3f;
-  deep_prjn->wt_range.max = 0.7f;
+  trc_prjn->send_gp_size = 3;
+  trc_prjn->send_gp_skip = 1;
+  trc_prjn->send_gp_start = -1;
+  trc_prjn->init_wts = true;
+  trc_prjn->wrap = true;
+  trc_prjn->full_gauss.on = true;
+  trc_prjn->full_gauss.sigma = 0.6f;
+  trc_prjn->full_gauss.wrap_wts = false;
+  trc_prjn->full_gauss.ctr_mv = 0.8f;
+  trc_prjn->gp_gauss.on = true;
+  trc_prjn->gp_gauss.sigma = 0.6f;
+  trc_prjn->gp_gauss.wrap_wts = false;
+  trc_prjn->gp_gauss.ctr_mv = 0.8f;
 
-  ctxt_prjn->send_gp_size = 3;
+  ctxt_prjn->send_gp_size = 5;
   ctxt_prjn->send_gp_skip = 1;
-  ctxt_prjn->send_gp_start = -1;
+  ctxt_prjn->send_gp_start = -2;
   ctxt_prjn->init_wts = true;
   ctxt_prjn->wrap = true;
   ctxt_prjn->full_gauss.on = true;
@@ -501,15 +519,26 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
   for(int li=net->layers.leaves-1; li >= 0; li--) {
     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
     if(lay->layer_type != Layer::HIDDEN) continue;
-    if(lay->name.contains("_trc")) continue;
+    if(lay->name.contains("trc")) continue;
+    if(lay->name.endsWith("d")) continue;
 
-    LeabraLayer* trc = (LeabraLayer*)net->FindMakeLayer(lay->name + "_trc");
+    lay->SetUnitSpec(s_uns);
+      
+    LeabraLayer* deep = (LeabraLayer*)net->FindMakeLayer(lay->name + "d");
+    deep->un_geom = lay->un_geom;
+    deep->unit_groups = lay->unit_groups;
+    deep->gp_geom = lay->gp_geom;
+    net->layers.MoveAfter(lay, deep);
+    deep->PositionBehind(lay, 2);
+    deep->SetUnitSpec(d_uns);
+
+    LeabraLayer* trc = (LeabraLayer*)net->FindMakeLayer(lay->name + "trc");
     trc->un_geom = 4;
     trc->unit_groups = lay->unit_groups;
     trc->gp_geom = lay->gp_geom;
-    net->layers.MoveAfter(lay, trc);
-    trc->PositionBehind(lay, 2);
-    trc->SetUnitSpec(ae_uns);
+    net->layers.MoveAfter(deep, trc);
+    trc->PositionBehind(deep, 2);
+    trc->SetUnitSpec(trc_uns);
 
     Layer* fm_in = NULL;
     Layer* fm_out = NULL;
@@ -523,21 +552,25 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
 
     //	  	 	   to		 from		prjn_spec	con_spec
     if(lay->unit_groups) {
-      net->FindMakePrjn(lay, trc, ctxt_prjn,  fm_trc);
-      net->FindMakePrjn(trc, lay, ctxt_prjn,  to_trc);
-      net->FindMakePrjn(trc, lay, gp_one_to_one,  dnorm);
-      net->FindMakePrjn(lay, lay, ctxt_prjn,  ti_ctxt);
+      net->FindMakePrjn(lay, trc, trc_prjn,  fm_trc);
+      net->FindMakePrjn(lay, deep, gp_one_to_one,  dmod);
+      net->FindMakePrjn(trc, deep, trc_prjn,  to_trc);
+      net->FindMakePrjn(deep, trc, trc_prjn,  fm_trc);
+      net->FindMakePrjn(deep, deep, ctxt_prjn,  ti_ctxt);
+      net->FindMakePrjn(deep, lay, ctxt_prjn,  ti_ctxt);
       if(fm_out) {
-        net->FindMakePrjn(lay, fm_out, ctxt_prjn,  dnorm);
+        net->FindMakePrjn(deep, fm_out, gp_one_to_one,  deep_td);
       }
     }
     else {
       net->FindMakePrjn(lay, trc, full_prjn,  fm_trc);
-      net->FindMakePrjn(trc, lay, full_prjn,  to_trc);
-      //      net->FindMakePrjn(trc, lay, gp_one_to_one,  dnorm);
-      net->FindMakePrjn(lay, lay, full_prjn,  ti_ctxt);
+      net->FindMakePrjn(lay, deep, one_to_one,  dmod);
+      net->FindMakePrjn(trc, deep, full_prjn,  to_trc);
+      net->FindMakePrjn(deep, trc, full_prjn,  fm_trc);
+      net->FindMakePrjn(deep, deep, full_prjn,  ti_ctxt);
+      net->FindMakePrjn(deep, lay, full_prjn,  ti_ctxt);
       if(fm_out) {
-        net->FindMakePrjn(lay, fm_out, full_prjn,  dnorm);
+        net->FindMakePrjn(deep, fm_out, full_prjn,  deep_td);
       }
     }
     if(fm_in) {
@@ -547,7 +580,7 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
   
   net->Build();
 
-  String msg = "DeepLeabra Configuration complete -- be sure to turn on deep.on and deep_norm.on as appropriate in relevant LeabraUnitSpec's!";
+  String msg = "DeepLeabra Configuration complete!";
   taMisc::Confirm(msg);
   
   return true;
