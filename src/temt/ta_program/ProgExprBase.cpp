@@ -942,3 +942,23 @@ String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 
   return rval;
 }
+
+int ProgExprBase::Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos, String& prepend_txt, String& prog_el_txt) {
+  int lookup_type = 0;
+  
+  String  append_txt;
+  String  path_prepend_txt;
+  String  path_var;
+  String  path_rest;
+  String  base_path;    // path to base element(s) if present
+  String  lookup_seed;  // start of text to seed lookup process
+  bool    path_base_not_null = false;
+  int     expr_start = 0;
+  
+  lookup_type = ParseForLookup(input_text, cursor_pos, prepend_txt, path_prepend_txt, append_txt, prog_el_txt, base_path, lookup_seed, path_var, path_rest, path_base_not_null, expr_start);
+  
+  return lookup_type;
+}
+
+
+
