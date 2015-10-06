@@ -42,8 +42,6 @@ void LeabraWizard::Initialize() {
 #include <LayerActUnitSpec>
 #include <LeabraContextLayerSpec>
 
-#include <ThalAutoEncodeUnitSpec>
-
 #include <ExtRewLayerSpec>
 // #include <LeabraTdUnit>
 // #include <LeabraTdUnitSpec>
@@ -54,12 +52,9 @@ void LeabraWizard::Initialize() {
 
 #include <PPTgUnitSpec>
 #include <LHbRMTgUnitSpec>
-#include <LearnModUnitSpec>
 #include <VTAUnitSpec>
 #include <DRNUnitSpec>
 #include <LeabraDeltaConSpec>
-#include <LearnModDeltaConSpec>
-#include <LearnModHebbConSpec>
 #include <BasAmygConSpec>
 #include <LatAmygConSpec>
 
@@ -70,7 +65,7 @@ void LeabraWizard::Initialize() {
 #include <DeepCopyUnitSpec>
 #include <MSNConSpec>
 #include <SendDeepRawConSpec>
-#include <SendDeepNormConSpec>
+#include <SendDeepModConSpec>
 
 #include <BgPfcPrjnSpec>
 #include <TopoWtsPrjnSpec>
@@ -428,27 +423,24 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
   return true;
 }
 
-bool LeabraWizard::DeepLeabra(LeabraNetwork* net, bool do_ti_ctxt, bool top_down_attn) {
+bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
   if(TestError(!net, "DeepLeabra", "must have basic constructed network first")) {
     return false;
   }
   FMSpec(LeabraUnitSpec, stduns, net, "LeabraUnitSpec_0");
-  FMChild(ThalAutoEncodeUnitSpec, ae_uns, stduns, "TRCAutoEnc");
+  FMChild(LeabraUnitSpec, ae_uns, stduns, "TRCAutoEnc");
   FMSpec(LeabraConSpec, stdcons, net, "LeabraConSpec_0");
   FMChild(DeepCtxtConSpec, ti_ctxt, stdcons, "DeepTICtxt");
   FMChild(LeabraConSpec, fm_trc, stdcons, "FmTRC");
   FMChild(LeabraConSpec, to_trc, stdcons, "ToTRC");
   FMChild(SendDeepRawConSpec, d_to_trc, stdcons, "DeepToTRC");
-  FMChild(SendDeepNormConSpec, dnorm, stdcons, "DeepNorm_fixed");
+  FMChild(SendDeepModConSpec, dnorm, stdcons, "DeepMod_fixed");
   FMSpec(FullPrjnSpec, full_prjn, net, "FullPrjnSpec_0");
   FMSpec(GpOneToOnePrjnSpec, gp_one_to_one, net, "GpOneToOne");
   FMSpec(TiledGpRFPrjnSpec, deep_prjn, net, "DeepToTRC");
   FMSpec(TiledGpRFPrjnSpec, ctxt_prjn, net, "RF3x3skp1");
 
   stduns->deep.on = true;
-  if(top_down_attn) {
-    stduns->deep_norm.on = true;
-  }
   
   fm_trc->SetUnique("wt_scale", true);
   fm_trc->wt_scale.rel = 0.1f;
@@ -534,10 +526,8 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, bool do_ti_ctxt, bool top_down
       net->FindMakePrjn(lay, trc, ctxt_prjn,  fm_trc);
       net->FindMakePrjn(trc, lay, ctxt_prjn,  to_trc);
       net->FindMakePrjn(trc, lay, gp_one_to_one,  dnorm);
-      if(do_ti_ctxt) {
-        net->FindMakePrjn(lay, lay, ctxt_prjn,  ti_ctxt);
-      }
-      if(top_down_attn && fm_out) {
+      net->FindMakePrjn(lay, lay, ctxt_prjn,  ti_ctxt);
+      if(fm_out) {
         net->FindMakePrjn(lay, fm_out, ctxt_prjn,  dnorm);
       }
     }
@@ -545,10 +535,8 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, bool do_ti_ctxt, bool top_down
       net->FindMakePrjn(lay, trc, full_prjn,  fm_trc);
       net->FindMakePrjn(trc, lay, full_prjn,  to_trc);
       //      net->FindMakePrjn(trc, lay, gp_one_to_one,  dnorm);
-      if(do_ti_ctxt) {
-        net->FindMakePrjn(lay, lay, full_prjn,  ti_ctxt);
-      }
-      if(top_down_attn && fm_out) {
+      net->FindMakePrjn(lay, lay, full_prjn,  ti_ctxt);
+      if(fm_out) {
         net->FindMakePrjn(lay, fm_out, full_prjn,  dnorm);
       }
     }
@@ -875,7 +863,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   if(!pvlvspgp) return false;
 
   FMSpec(LeabraUnitSpec, pvlv_units, pvlvspgp, "PVLVUnits");
-  FMChild(LearnModUnitSpec, pv_units, pvlv_units, "PVUnits");
+  FMChild(LeabraUnitSpec, pv_units, pvlv_units, "PVUnits");
   FMChild(LHbRMTgUnitSpec, lhbrmtg_units, pvlv_units, "LHbRMTgUnits");
   FMChild(PPTgUnitSpec, pptg_units, pvlv_units, "PPTgUnits");
   FMChild(VTAUnitSpec, vtap_units, pvlv_units, "VTAUnits_p");
@@ -883,7 +871,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMChild(DRNUnitSpec, drn_units, pvlv_units, "DRNUnits");
   FMChild(LeabraUnitSpec, cem_units, pvlv_units, "CeMUnits");
   FMChild(LeabraUnitSpec, bla_units, pvlv_units, "BLAUnits");
-  FMChild(LearnModUnitSpec, baa_units, pvlv_units, "BAacqUnits");
+  FMChild(LeabraUnitSpec, baa_units, pvlv_units, "BAacqUnits");
   FMChild(MSNUnitSpec, vspd_units, pvlv_units, "VSPatchDirectUnits");
   FMChild(MSNUnitSpec, vspi_units, pvlv_units, "VSPatchIndirUnits");
   FMChild(MSNUnitSpec, vsmd_units, pvlv_units, "VSMatrixDirectUnits");
@@ -1291,7 +1279,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   // apply specs to objects
 
   LeabraUnitSpec* pvlv_units = PvlvSp("PVLVUnits",LeabraUnitSpec);
-  LearnModUnitSpec* pv_units = PvlvSp("PVUnits",LearnModUnitSpec);
+  LeabraUnitSpec* pv_units = PvlvSp("PVUnits",LeabraUnitSpec);
   pos_pv->SetUnitSpec(pv_units);
   neg_pv->SetUnitSpec(pv_units);
   pos_bs->SetUnitSpec(pv_units);
@@ -1311,8 +1299,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   neglv_cem->SetUnitSpec(PvlvSp("CeMUnits", LeabraUnitSpec));
   poslv_bae->SetUnitSpec(PvlvSp("BLAUnits", LeabraUnitSpec));
   neglv_bae->SetUnitSpec(PvlvSp("BLAUnits", LeabraUnitSpec));
-  poslv_baa->SetUnitSpec(PvlvSp("BAacqUnits", LearnModUnitSpec));
-  neglv_baa->SetUnitSpec(PvlvSp("BAacqUnits", LearnModUnitSpec));
+  poslv_baa->SetUnitSpec(PvlvSp("BAacqUnits", LeabraUnitSpec));
+  neglv_baa->SetUnitSpec(PvlvSp("BAacqUnits", LeabraUnitSpec));
   lat_amyg->SetUnitSpec(PvlvSp("BLAUnits", LeabraUnitSpec));
 
   LeabraLayerSpec* amygsp = PvlvSp("AmygLayer", LeabraLayerSpec);
@@ -1637,7 +1625,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMChild(PFCUnitSpec, pfc_mnt_units, pbwm_units, "PFCmntUnits");
   FMChild(PFCUnitSpec, pfc_out_units, pbwm_units, "PFCoutUnits");
   FMChild(DeepCopyUnitSpec, pfcd_units, pbwm_units, "PFCdUnits");
-  FMChild(ThalAutoEncodeUnitSpec, pfc_trc_units, pbwm_units, "PFCtrcUnits");
+  FMChild(LeabraUnitSpec, pfc_trc_units, pbwm_units, "PFCtrcUnits");
   FMChild(LeabraUnitSpec, input_units, pbwm_units, "PFCInputUnits");
 
   ////////////	ConSpecs
@@ -1699,35 +1687,26 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_units->noise_adapt.trial_fixed = true;
 
   pfc_mnt_units->SetUnique("deep", true);
-  pfc_mnt_units->deep_s.d_to_s = 0.1f;
+  // pfc_mnt_units->deep_s.d_to_s = 0.1f;
 
   // this has less strong self-maint:
   pfc_out_units->SetUnique("deep", true);
-  pfc_out_units->deep_s.d_to_s = 0.2f;
+  // pfc_out_units->deep_s.d_to_s = 0.2f;
   pfc_out_units->pfc.out_gate = true;
   pfc_out_units->n_dyns = 1;
 
   pfcd_units->SetUnique("deep", true);
   pfcd_units->deep.on = true;
-  pfcd_units->deep.thr_rel = 0.1f;
-  pfcd_units->deep.d_to_d = 0.0f;
-  pfcd_units->deep_s.d_to_s = 0.0f;
-  pfcd_units->SetUnique("deep_norm", true);
-  pfcd_units->deep_norm.on = true;
-  pfcd_units->deep_norm.raw_val = DeepNormSpec::UNIT;
-  pfcd_units->deep_var = DeepCopyUnitSpec::DEEP_NORM;
+  pfcd_units->deep.raw_thr_rel = 0.1f;
+  // pfcd_units->deep.d_to_d = 0.0f;
+  // pfcd_units->deep_s.d_to_s = 0.0f;
   
   pfc_trc_units->SetUnique("deep", true);
   pfc_trc_units->deep.on = true;
-  pfc_trc_units->SetUnique("deep_norm", true);
-  pfc_trc_units->deep_norm.on = true;
-  pfc_trc_units->deep_norm.raw_val = DeepNormSpec::THAL;
 
   input_units->SetUnique("deep", true);
   input_units->deep.on = true;
-  input_units->deep.thr_rel = 0.1f;
-  input_units->SetUnique("deep_norm", true);
-  input_units->deep_norm.on = true;
+  input_units->deep.raw_thr_rel = 0.1f;
   
   ////////////	ConSpecs
 
@@ -2121,7 +2100,7 @@ can be sure everything is ok.";
   pfc_mnt_d->SetUnitSpec(PbwmSp("PFCdUnits",DeepCopyUnitSpec));
   pfc_mnt_d->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
-  pfc_mnt_trc->SetUnitSpec(PbwmSp("PFCtrcUnits",ThalAutoEncodeUnitSpec));
+  pfc_mnt_trc->SetUnitSpec(PbwmSp("PFCtrcUnits",LeabraUnitSpec));
   pfc_mnt_trc->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
   pfc_out->SetUnitSpec(PbwmSp("PFCoutUnits",PFCUnitSpec));

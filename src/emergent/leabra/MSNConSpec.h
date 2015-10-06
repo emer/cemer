@@ -219,7 +219,7 @@ public:
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
         float lrate_eff = clrate;
         if(deep_on) {
-          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
+          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
         }
         float ru_act = GetActVal(ru, ru_act_var);
         C_Compute_dWt_DaHebb(dwts[i], ru->da_p, d2r, ru_act, su_act, lrate_eff);
@@ -231,7 +231,7 @@ public:
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
         float lrate_eff = clrate;
         if(deep_on) {
-          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
+          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
         }
         float ru_act = GetActVal(ru, ru_act_var);
         C_Compute_dWt_Trace_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
@@ -244,7 +244,7 @@ public:
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
         float lrate_eff = clrate;
         if(deep_on) {
-          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
+          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
         }
         float ru_act = GetActVal(ru, ru_act_var);
         C_Compute_dWt_Trace_NoThal(dwts[i], ntrs[i], trs[i], 

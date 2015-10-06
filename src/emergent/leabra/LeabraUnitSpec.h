@@ -430,144 +430,39 @@ class E_API DeepSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
 INHERITED(SpecMemberBase)
 public:
-  bool          on;         // enable the DeepLeabra mechanisms, including temporal integration via deep_ctxt context connections, thalamic-based auto-encoder driven by deep_raw projections, and attentional modulation by deep_norm (requires deep_norm.on)
-  float         thr_rel;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 #AKA_thr relative threshold on act_raw value (distance between average and maximum act_raw values within layer, e.g., 0 = average, 1 = max) for deep_raw neurons to fire -- neurons below this level have deep_raw = 0 -- above this level, deep_raw = act_raw + d_to_d * deep_norm_net + thal_to_d * thal -- all normalized
-  float         thr_abs;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 absolute threshold on act_raw value for deep_raw neurons to fire -- see thr_rel for relative threshold and activation value -- effective threshold is MAX of relative and absolute thresholds
-  float         d_to_d;     // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_norm_net inputs from deep-to-deep projections in computing deep_raw
-  float         thal_to_d;  // #CONDSHOW_ON_on how much to drive deep_raw from thal input from thalamus -- provides extra attentional modulation from larger-scale thalamic attentional layers
-  
-  float         ComputeDeepRaw(float act, float deep_norm_net, float thal,
-                               float max_deep_norm_net) {
-    return act * ((1.0f + d_to_d * deep_norm_net + thal_to_d * thal) /
-                  (1.0f + d_to_d * max_deep_norm_net + thal_to_d));
-  }
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(DeepSpec);
-protected:
-  SPEC_DEFAULTS;
-
-private:
-  void        Initialize();
-  void        Destroy()        { };
-  void        Defaults_init();
-};
-
-eTypeDef_Of(DeepSupSpec);
-
-class E_API DeepSupSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms: context and superficial mod parameters
-INHERITED(SpecMemberBase)
-public:
-  float         ctxt_to_s;  // #MIN_0 how much to weight the deep_ctxt as an input to superficial neurons (from DeepCtxtConSpec connections) -- determines how much direct recurrent temporal integration (TI) context a neuron receives
-  bool          ctxt_rel;   // should the DeepCtxtConSpec context projections wt_scale.rel be normalized along with all of the standard corticocortical connections for the superficial neurons -- when ctxt_to_s is relatively strong, this is a good idea -- when it is weaker, it is not so necessary, and it can be cleaner to not do it
-  float         d_to_s;     // #MIN_0 how much of the deep_norm signal should be added to superficial neuron net-input -- this represents a form of TI-like context information because the deep projections are delayed in time
-  float         thal_to_s;  // how much to add to superficial net input from thal input from thalamus
-  
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(DeepSupSpec);
-protected:
-  SPEC_DEFAULTS;
-
-private:
-  void        Initialize();
-  void        Destroy()        { };
-  void        Defaults_init();
-};
-
-eTypeDef_Of(DeepNormSpec);
-
-class E_API DeepNormSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing deep_norm normalized attentional filter values as function of deep_raw, deep_norm_net, and deep_ctxt_net variables -- a
-INHERITED(SpecMemberBase)
-public:
-  enum DeepRawVal { // value to use for deep_raw in computing deep_norm
-    UNIT,           // use the unit deep_raw value -- produces a very specific attentional mask for deep_norm values -- may not generalize very well to new inputs (see GROUP options)
-    GROUP_MAX,      // use the max deep_raw across the unit group -- provides a broader deep_norm attentional mask compared to UNIT, and is the most lenient allocation of attention to anything that had some strong activation -- falls back on unit if no unit groups
-    GROUP_AVG,      // use the average deep_raw across the unit group -- provides a broader deep_norm attentional mask compared to UNIT, while weighting overall level of contribution within unit group -- falls back on unit if no unit groups
-    NORM_NET,       // only use deep_norm_net for computing deep_norm in this layer -- makes this a slave layer to its modulatory inputs -- also sets the layer default value to copy_def
-    NORM_NET_MOD,   // use deep_norm_net to directly drive deep_mod directly and continuously -- use this for connections from deep layer as a predictive auto encoder
-    THAL,           // only use thal for computing deep_norm in this layer -- useful for directly using gating signals driven to the thal variable, e.g., in pfc auto encoder
+  enum DeepRole {          // what role do these neurons play in the deep layer network dynamics -- determines what function the deep_net plays
+    SUPER,                 // superficial layer cortical neurons -- generate a deep_raw activation based on thresholds, and receive a deep_net signal from ongoing deep layer neuron activations via SendDeepModConSpec connections, which they then turn into a deep_mod activation value that multiplies activations in this layer
+    DEEP,                  // deep layer cortical neurons -- receive deep_net inputs via DeepCtxtConSpec from superficial layer neurons to drive deep_ctxt values that are added into net input along with other inputs to support predictive learning of thalamic relay cell layer activations, which these should project to and receive from -- they should also receive direct top-down projections from other deep layer neurons for top-down attentional signals
+    TRC,                   // thalamic relay cell neurons -- receive a SendDeepRawConSpec topographic projection from lower-layer superficial neurons (sending their deep_raw values into deep_net) which is all that is used for net input in the plus phase -- minus phase activation is driven from projections from deep layer predictive learning neurons
   };
 
-  bool          on;             // enable normalization of the deep_raw, deep_norm_net, and deep_ctxt values into deep_norm attentional modulation factors -- automatically normalized based on layer vals to max at 1.0 -- if off, then deep_norm is always set to 1.0 -- requires deep.on for this to work!!
-  bool          mod;            // #CONDSHOW_ON_on should deep_norm values modulate (multiply) superficial activation variables via the deep_mod value which is updated at the start of each deep period -- turn this off to allow layer to compute deep_norm values but not apply them to itself
-  bool          immed;          // #CONDSHOW_ON_on&&mod compute the deep_mod values that actually multiply activations immediately, instead of at the start of the next trial -- this allows attentional modulation to take place within one trial, but is only appropriate for externally-driven forms of attention
-  DeepRawVal    raw_val;        // #CONDSHOW_ON_on which deep_raw value should be used in computing the deep_norm attentional mask weights -- see options for various issues
-  bool          raw_renorm;     // #CONDSHOW_ON_on max-renormalize the deep_raw_norm value prior to applying the raw_thr -- divides by the layer-level maximum deep_raw_norm value 
-  float         raw_thr;        // #CONDSHOW_ON_on threshold for the computation of deep_norm on the effective normalized deep_raw_norm value that drives the deep_norm computation -- anything below this threshold will get a deep_norm value of 0, and use the layer deep_norm_def default value for the layer
-  bool          binary;         // #CONDSHOW_ON_on deep norm is a binary mask based on what is above or below threshold
+  bool       on;         // enable the DeepLeabra mechanisms, including temporal integration via deep_ctxt context connections, thalamic-based auto-encoder driven by deep_raw projections, and attentional modulation by deep_mod
+  DeepRole   role;       // what role do these neurons play in overall deep layer network dynamics -- determines what function the deep_net plays, among other things
+  float      raw_thr_rel;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 #AKA_thr_rel relative threshold on act_raw value (distance between average and maximum act_raw values within layer, e.g., 0 = average, 1 = max) for deep_raw neurons to fire -- neurons below this level have deep_raw = 0 -- above this level, deep_raw = act_raw
+  float      raw_thr_abs;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 #AKA_thr_abs absolute threshold on act_raw value for deep_raw neurons to fire -- see thr_rel for relative threshold and activation value -- effective threshold is MAX of relative and absolute thresholds
+  float      mod_min;     // #CONDSHOW_ON_on&&role:SUPER #MIN_0 #MAX_1 minimum deep_mod value -- provides a non-zero baseline for deep-layer modulation
 
-  String      GetTypeDecoKey() const override { return "UnitSpec"; }
+  float      mod_range;  // #READ_ONLY #EXPERT 1 - mod_min -- range for the netinput to modulate value of deep_mod, between min and 1 value
 
-  TA_SIMPLE_BASEFUNS(DeepNormSpec);
-protected:
-  SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  inline bool   ApplyDeepMod()
+  { return on && role == SUPER; }
+  // should deep modulation be applied to these units?
 
-private:
-  void        Initialize();
-  void        Destroy()        { };
-  void        Defaults_init();
-};
+  inline bool   SendDeepMod()
+  { return on && role == DEEP; }
+  // should we send our activation into deep_net of other (superficial) units via SendDeepModConSpec connections?
 
-eTypeDef_Of(DeepNorm2Spec);
+  inline bool   ApplyDeepCtxt()
+  { return on && role == DEEP; }
+  // should we apply deep context netinput?  only for deep guys
 
-class E_API DeepNorm2Spec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra additional specs for computing deep_norm normalized attentional filter values as function of deep_raw, deep_norm_net, and deep_ctxt_net variables
-INHERITED(SpecMemberBase)
-public:
-  float         gain;           // #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
-  float         ctxt_fm_lay;    // #MIN_0 #MAX_1 what proportion of the deep context value to get from the layer average context value, for purposes of computing deep_norm -- remainder is from local deep_ctxt_net values
-  float         ctxt_fm_ctxt;   // #READ_ONLY 1.0 - ctxt_fm_lay -- how much of context comes from deep_ctxt_net value
-  float         min_ctxt;       // #MIN_0 #DEF_0.05 minimum context value for purposes of computing deep_norm -- because ctxt shows up in divisor of norm equation, very small values can produce high values -- this prevents that sensitivity
-  float         copy_def;       // for the raw_val = NORM_NET and other specialized cases where deep_norm is copied from other values and not computed as usual, this is the value to use for the deep_norm_def default deep_norm value for units that don't have an above-zero deep_norm value
+  inline bool   TRCUnits()
+  { return on && role == TRC; }
+  // are we thalamic relay cell units?
 
-  // x / (x + c) =  x/c / (x/c + 1) = gx / (gx + 1) = XX1 function
-  
-  inline float  ComputeNorm(float raw, float ctxt)
-  { ctxt = MAX(min_ctxt, ctxt); raw *= gain; return raw / (raw + ctxt + 1.0f); }
-  // computed normalized value from current raw and context values -- assumes that values will be renormalized afterward anyway
+  String     GetTypeDecoKey() const override { return "UnitSpec"; }
 
-  inline float  ComputeNormLayCtxt(float raw, float ctxt, float lay_avg_ctxt)
-  { float ctxt_eff = ctxt_fm_lay * lay_avg_ctxt + ctxt_fm_ctxt * ctxt;
-    return ComputeNorm(raw, ctxt_eff); }
-  // computed normalized value from current raw and context values, and the layer average context value, which is combined with local context to produce a multi-scale average value  -- assumes a gain of 1.0, and that values will be renormalized afterward anyway
-
-  // this seems to not work..
-  // inline float    ComputeContrast(float thr)
-  // { return (gain * thr - weak_trg * min_ctxt) / (weak_trg - gain); }
-  // compute contrast parameter based on target weak value and other params
-
-  String      GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(DeepNorm2Spec);
-protected:
-  SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
-
-private:
-  void        Initialize();
-  void        Destroy()        { };
-  void        Defaults_init();
-};
-
-eTypeDef_Of(DeepModSpec);
-
-class E_API DeepModSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra additional specs for computing deep_norm normalized attentional filter values as function of deep_raw, deep_norm_net, and deep_ctxt_net variables
-INHERITED(SpecMemberBase)
-public:
-  bool        send;     // these neurons send activation to the deep_norm_net variable on receivers, which then feed directly into deep_mod
-  float       min;     // #MIN_0 #MAX_1 minimum deep_mod value -- provides a non-zero baseline for deep modulation -- all
-
-  float       range;  // #READ_ONLY #EXPERT 1 - min -- range for the netinput to modulate value of deep_mod, between min and 1 value
-
-  String      GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(DeepModSpec);
+  TA_SIMPLE_BASEFUNS(DeepSpec);
 protected:
   SPEC_DEFAULTS;
   void        UpdateAfterEdit_impl();
@@ -657,11 +552,6 @@ public:
     QALL = Q1 | Q2 | Q3 | Q4,  // #NO_BIT all quarters
   };
 
-  enum DeepNormMode {
-    DEEP_NORM_CALC,             // deep norm is calculated from equations
-    DEEP_NORM_UNITS,            // deep norm is implemented by separate units representing the deep layer 6 cortico-thalamic regular spiking neurons
-  };
-  
   ActFun            act_fun;        // #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
   LeabraActFunSpec  act;         // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
   LeabraActMiscSpec act_misc;   // #CAT_Activation miscellaneous activation parameters
@@ -682,13 +572,8 @@ public:
   ShortPlastSpec   stp;           // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec     syn_delay;        // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   LeabraDropoutSpec dropout;        // #CAT_Activation random dropout parameters -- an important tool against positive feedback dynamics, and pressure to break up large-scale interdependencies between neurons, which benefits generalization
-  Quarters         deep_qtr;       // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt, deep_norm are updated and sent right after this quarter (wrapping around to the first quarter for the 4th quarter)
+  Quarters         deep_qtr;       // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
   DeepSpec         deep;          // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
-  DeepSupSpec      deep_s;          // #CONDSHOW_ON_deep.on #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms: context and superficial parameters
-  DeepNormMode     deep_norm_mode;   // how to compute deep norm -- caculated vs. separate units -- MUST BE CONSISTENT FOR ALL units in the network
-  DeepNormSpec     deep_norm;        // #CAT_Learning specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables -- most of this is not applicable for deep_norm_mode == DEEP_NORM_UNITS
-  DeepNorm2Spec    deep_norm_2;        // #CONDSHOW_ON_deep_norm_mode:DEEP_NORM_CALC&&deep_norm.on&&!deep_norm.raw_val:NORM_NET #CAT_Learning additional specs for computing deep_norm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables
-  DeepModSpec      deep_mod;        // #CONDSHOW_ON_deep_norm_mode:DEEP_NORM_UNITS&&deep.on #CAT_Learning deep modulation specs for unit-based predictive auto-encoder learning in deep layers
   DaModSpec        da_mod;                // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   NoiseType        noise_type;        // #CAT_Activation where to add random noise in the processing (if at all)
   RandomSpec       noise;                // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
@@ -828,8 +713,8 @@ public:
   virtual void Compute_Act_Rate(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Activation Rate coded activation
 
-    virtual void Compute_DeepMod_Units(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-    // #CAT_Activation compute unit-based deep_mod value
+    virtual void Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #CAT_Activation compute deep_lrn and deep_mod values
     virtual void Compute_ActFun_Rate(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #CAT_Activation compute the activation from g_e vs. threshold -- rate code functions
     virtual float Compute_ActFun_Rate_impl(float val_sub_thr);
@@ -879,9 +764,6 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        Deep Leabra Computations -- after superifical acts updated
 
-  virtual bool DeepNormCopied();
-  // #CAT_Deep is the deep_norm value actually copied from another layer (e.g., ThalAutoEncodeUnitSpec) -- if true, then the deep_norm_def value on the layer is just set to 0, so it doesn't get miscomputed based on values that are not otherwise accurate
-  
   virtual bool Compute_DeepTest(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep should various Compute_Deep* functions be run now?
 
@@ -890,27 +772,12 @@ public:
   virtual void Send_DeepRawNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep send deep5b netinputs through SendDeepRawConSpec connections
   virtual void Send_DeepRawNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep send context netinputs through SendDeepRawConSpec connections -- post processing rollup
+  // #CAT_Deep send context netinputs through SendDeepRawConSpec connections -- post processing rollup -- checks deeptest
+  virtual void Compute_DeepNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep send context netinputs through SendDeepRawConSpec connections -- post processing rollup -- just does it -- no checks
 
-  virtual void Compute_DeepRawNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep compute deep_raw_norm values from deep_raw values
-  virtual void Compute_DeepNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep compute deep_norm values from deep_raw and deep_ctxt values
-  virtual void Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep compute deep_mod values from deep_norm
-    
-  virtual void Send_DeepNormNetin(LeabraUnitVars* uv, LeabraNetwork* net,
-                                   int thr_no);
-  // #CAT_Deep send deep_norm netinputs through SendDeepNormConSpec connections
-  virtual void Send_DeepNormNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net,
-                                        int thr_no);
-  // #CAT_Deep send deep_norm netinputs through SendDeepNormConSpec connections -- post processing rollup
-    virtual void Send_DeepNormNetin_Post_impl(LeabraUnitVars* uv, LeabraNetwork* net,
-                                            int thr_no);
-    // #CAT_Deep send deep_norm netinputs through SendDeepNormConSpec connections -- post processing rollup -- actually do
-  
   virtual void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep state update for deep leabra -- typically at start of new alpha trial -- copy deep_mod from deep_norm, deep_ctxt from deep_ctxt_net
+  // #CAT_Deep state update for deep leabra -- typically at start of new alpha trial -- copy deep_ctxt from deep_ctxt_net
 
   virtual void ClearDeepActs(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep clear all the deep lamina variables -- can be useful to do at discontinuities of experience
@@ -964,9 +831,6 @@ public:
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the spike alpha function for conductance integration over time window given in spike parameters -- last data point is the sum over the whole window (total conductance of a single spike) -- force_alpha means use explicit alpha function even when rise=0 (otherewise it simulates actual recursive exp decay used in optimized code)
 //   virtual void        GraphSLNoiseAdaptFun(DataTable* graph_data, float incr = 0.05f);
 //   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the short and long-term noise adaptation function, which integrates both short-term and long-term performance values
-  virtual void        GraphDeepNormFun(DataTable* graph_data, float deep_ctxt = 0.5,
-                                 float incr = .01);
-  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the deep_norm function from min to max deep_raw values (min = deep.thr, max as given in params), using given deep_ctxt as the context value (see deep_norm.min_ctxt for default value in computing gain, context params)
   virtual void        TimeExp(int mode, int nreps=100000000);
   // #EXPERT time how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
 

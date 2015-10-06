@@ -20,17 +20,11 @@
 TA_BASEFUNS_CTORS_DEFN(ThalSendUnitSpec);
 
 void ThalSendUnitSpec::Initialize() {
+  Defaults_init();
 }
 
 void ThalSendUnitSpec::Defaults_init() {
-}
-
-float ThalSendUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
-                                            int thr_no, float& net_syn) {
-  if(deep.on && Quarter_DeepNow(net->quarter)) {
-    net_syn = u->deep_raw_net;          // only gets from deep!
-  }
-  return inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
+  deep.role = DeepSpec::TRC;
 }
 
 void ThalSendUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {

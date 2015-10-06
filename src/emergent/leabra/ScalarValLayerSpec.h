@@ -50,7 +50,6 @@ public:
   RepType	rep;		// type of representation of scalar value to use
   float		un_width;	// #CONDEDIT_ON_rep:GAUSSIAN sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in unit_range min-max units, unless norm_width is true, meaning use normalized 0-1 proportion of unit range)
   bool		norm_width;	// un_width is specified in normalized 0-1 proportion of unit range
-  bool          lrnmod_clamp;   // if true, then any lrnmod signals received in the plus phase will cause the lrnmod value in the first unit to be clamped over the whole layer -- this is a way for other layers to send clamping values to this layer, outside of external clamping
   bool		clamp_pat;	// #DEF_false if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)
   float		min_sum_act;	// #DEF_0.2 minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by
   bool		clip_val;	// ensure that value remains within specified range
@@ -164,9 +163,6 @@ public:
   virtual void 	Compute_ExtToPlus_ugp(LeabraLayer* lay, LeabraNetwork* net,
                                       Layer::AccessMode acc_md, int gpidx);
   // #CAT_ScalarVal copy ext values to act_p -- used for internally-generated training signals for learning in several subclasses
-  virtual void 	Compute_LrnModToExt_ugp(LeabraLayer* lay, LeabraNetwork* net,
-                                         Layer::AccessMode acc_md, int gpidx);
-  // #CAT_ScalarVal copy lrnmod values to ext -- used for lrnmod_clamp option
   virtual void 	Compute_ExtToAct_ugp(LeabraLayer* lay, LeabraNetwork* net,
                                      Layer::AccessMode acc_md, int gpidx);
   // #CAT_ScalarVal copy ext values to act -- used for dynamically computed clamped layers

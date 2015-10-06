@@ -129,7 +129,7 @@ public:
   // #CAT_UnitVar raw superficial-layer activation prior to mutliplication by deep_norm -- this may reflect layer 4 activation -- used in computing new deep_raw values
   inline float& deep_raw()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw; }
-  // #VIEW_HOT #CAT_UnitVar deep layer raw activation values -- these reflect the raw output from a microcolumn, in the form of layer 5b tufted neurons that project to the thalamus -- they integrate local thresholded input from superficial layer and top-down deep-layer input from other areas, to provide raw attentional and output signal from an area - this is then normalized in deep_nrm values
+  // #VIEW_HOT #CAT_UnitVar deep layer raw activation values -- these reflect the raw output from a microcolumn, in the form of layer 5b tufted neurons that project to the thalamus -- they integrate local thresholded input from superficial layer and top-down deep-layer input from other areas, to provide raw attentional and output signal from an area -- this signal drives deep_ctxt temporal integration (TI) for predictive learning, in addition to attention
   inline float& deep_raw_prv()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_prv; }
   // #CAT_UnitVar previous value of the deep layer raw activation values -- used for temporal context learning
@@ -138,34 +138,22 @@ public:
   // #CAT_UnitVar previous-previous value of the deep layer raw activation values -- used for pfc dynamics updating
   inline float& deep_ctxt()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_ctxt; }
-  // #CAT_UnitVar temporally-delayed local lateral integration of deep_raw signals to provide context for temporal integration (TI) learning -- added into net input of superficial neurons -- copied from deep_ctxt_net at start of new alpha trial
-  inline float& deep_raw_norm()
-  { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_norm; }
-  // #CAT_UnitVar the value of deep_raw that goes into the deep_norm computation for this unit -- determined by the deep_norm.raw_val setting on the unit spec -- automatically max-normalized to 1 per layer, and thresholded by deep_norm.raw_thr
-  inline float& deep_norm()
-  { return ((LeabraUnitVars*)GetUnitVars())->deep_norm; }
-  // #CAT_UnitVar normalized deep layer activation, reflecting normalization from deep_ctxt local integration of deep_raw signals -- this is the net attentional filter that is applied to the superficial layers, and is communicated in top-down deep-to-deep projections via layer 5/6 corticocortical neurons and communicated to layer 4 and thalamus by layer 6 corticothalamic projections, where it modulates net input into superficial neurons
+  // #CAT_UnitVar temporally-delayed local lateral integration of deep_raw signals sent via DeepCtxtConSpec connections to provide context for temporal integration (TI) learning -- added into net input of superficial neurons -- computed at start of new alpha trial
   inline float& deep_mod()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_mod; }
-  // #CAT_UnitVar current modulating value of deep_norm to apply to superficial neurons -- this is copied from deep_norm at the start of a new trial -- deep_norm itself is updated dynamically during the plus phase but does not take effect until it hits this variable
-  inline float& deep_norm_net()
-  { return ((LeabraUnitVars*)GetUnitVars())->deep_norm_net; }
-  // #CAT_UnitVar net input from deep_norm activation of other areas, reflecting e.g., the layer 6 cortico-cortical projections that are the source of the top-down deep-to-deep pathway in the cortex, or the layer 6 corticothalamic projections into the thalamus
-  inline float& deep_raw_net()
-  { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_net; }
-  // #CAT_UnitVar net input from the deep_raw activation of other areas, in terms of the feedforward corticothalamic pathway from deep5b IB neurons to thalamic relay neurons in other areas
-  inline float& deep_ctxt_net()
-  { return ((LeabraUnitVars*)GetUnitVars())->deep_ctxt_net; }
-  // #CAT_UnitVar local lateral integration of deep_raw signals, to drive normalization of the overall attentional filtering signals as reflected in deep_norm -- also provides temporal context for temporal integration (TI) learning in deep_ctxt
+  // #CAT_UnitVar current modulating value of deep layer 6 corticothalamic, regular spiking neurons that represents the net attentional filter applied to the superficial layers -- value is computed from deep_mod_net received via SendDeepModConSpec projections from deep layer units, and directly multiplies the superficial activations (act)
+  inline float& deep_lrn()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_lrn; }
+  // #CAT_UnitVar net influence of deep layer dynamics on learning rate for connections into this unit -- typically set to deep_mod prior to enforcing the mod_min floor value, so that baseline deep_mod=0 units get lowest background learning rate
+  inline float& deep_net()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_net; }
+  // #CAT_UnitVar net input from deep layer activations -- use depends on deep.role setting in LeabraUnitSpec: can be local deep context inputs via DeepCtxtConSpec, deep5b driver inputs into thalamic relay cells via SendDeepRawConSpec, or deep mod of superficial neurons sent by SendDeepModConSpec projections from deep layer units
   inline float& thal()
   { return ((LeabraUnitVars*)GetUnitVars())->thal; }
   // #VIEW_HOT #CAT_UnitVar thalamic activation value, driven by a ThalSendUnitSpec or GpiInvUnitSpec -- used by deep params in LeabraUnitSpec and MSNConSpecs, and possibly other specs, to respond to thalamic inputs
   inline float& thal_cnt()
   { return ((LeabraUnitVars*)GetUnitVars())->thal_cnt; }
   // #CAT_UnitVar counter for thalamic activation value -- increments for active maintenance in PFCUnitSpec
-  inline float& lrnmod()
-  { return ((LeabraUnitVars*)GetUnitVars())->lrnmod; }
-  // #CAT_UnitVar learning modulation variable -- set by LearnModUnitSpec units (or possibly other types) -- used for special learning modulation variable, e.g., to represent the special status of the US/PV in the PVLV model as a learning enabler -- see LearnModDeltaConSpec and LearnModHebbConSpec 
   inline float& gc_i()
   { return ((LeabraUnitVars*)GetUnitVars())->gc_i; }
   // #CAT_UnitVar total inhibitory conductance -- does NOT include the g_bar.i
@@ -234,9 +222,6 @@ public:
   inline float& deep_raw_sent()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_sent; }
   // #NO_VIEW #EXPERT #CAT_UnitVar last deep_raw activation value sent in computing deep_raw_net
-  inline float& deep_norm_sent()
-  { return ((LeabraUnitVars*)GetUnitVars())->deep_norm_sent; }
-  // #NO_VIEW #EXPERT #CAT_UnitVar last deep_norm activation value sent in computing deep_norm_net
 
   inline float& misc_1()
   { return ((LeabraUnitVars*)GetUnitVars())->misc_1; }

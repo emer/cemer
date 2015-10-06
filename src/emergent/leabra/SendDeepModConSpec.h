@@ -28,7 +28,7 @@
 eTypeDef_Of(SendDeepModConSpec);
 
 class E_API SendDeepModConSpec : public LeabraConSpec {
-  // sends regular activation values to deep_norm_net variable on recv units, which is then used to drive deep_mod activation state directly -- used for deep norm as predictive auto-encoder units -- no defined learning rule at this point -- use fixed one-to-one cons usually
+  // sends regular activation values to deep_net variable on recv units, which is then used to drive deep_mod activation state directly -- used for predictive auto-encoder units -- no defined learning rule at this point -- use fixed one-to-one cons usually
 INHERITED(LeabraConSpec)
 public:
   bool  DoesStdNetin() override { return false; }
@@ -38,7 +38,7 @@ public:
                                     int thr_no, const float su_act_delta) {
     const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
-    float* send_deepnet_vec = net->ThrSendDeepNormNetTmp(thr_no);
+    float* send_deepnet_vec = net->ThrSendDeepNetTmp(thr_no);
 #ifdef TA_VEC_USE
     Send_NetinDelta_vec(cg, su_act_delta_eff, send_deepnet_vec, wts);
 #else

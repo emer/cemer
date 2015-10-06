@@ -76,7 +76,7 @@ public:
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
       float lrate_eff = clrate;
       if(deep_on) {
-        lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
+        lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
       }
       if(acq) {
         C_Compute_dWt_BasAmyg_Acq(dwts[i], su_act, ru->act_eq, ru->da_p, d2r, lrate_eff);

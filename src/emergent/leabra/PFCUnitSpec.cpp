@@ -40,22 +40,10 @@ void PFCUnitSpec::Initialize() {
 void PFCUnitSpec::Defaults_init() {
   InitDynTable();
   SetUnique("deep", true);
-  SetUnique("deep_s", true);
   deep_qtr = Q2_Q4;
   deep.on = true;
-  deep.thr_rel = 0.1f;
-  deep.thr_abs = 0.1f; // todo??
-  deep.d_to_d = 0.0f;
-  deep.thal_to_d = 0.0f;
-  deep_s.d_to_s = 1.0f;
-  deep_s.thal_to_s = 0.0f;
-  SetUnique("deep_norm", true);
-  SetUnique("deep_norm_2", true);
-  deep_norm.on = true;
-  deep_norm.mod = false;
-  deep_norm.raw_val = DeepNormSpec::UNIT;
-  deep_norm_2.gain = 1.0f;
-  deep_norm_2.copy_def = 0.0f;
+  deep.raw_thr_rel = 0.1f;
+  deep.raw_thr_abs = 0.1f; // todo??
 }
 
 void  PFCUnitSpec::FormatDynTable() {
@@ -203,7 +191,7 @@ void PFCUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int th
   int dyn_row = unidx % n_dyns;
 
   if(u->thal_cnt < 0.0f) {
-    TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
+    // TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
     TestWrite(u->deep_raw, 0.0f);        // not maintaining, bail
     return;
   }
@@ -211,12 +199,12 @@ void PFCUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int th
   if(pfc.out_gate) {
     if(u->thal_cnt >= pfc.out_mnt) {
       // out gating is transient, now turn it off, and clear other guys
-      TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
+      // TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
       TestWrite(u->deep_raw, 0.0f);        // not maintaining, bail
       TestWrite(u->thal_cnt, -1.0f);
     }
     else {
-      u->deep_norm = u->deep_raw;
+      // u->deep_norm = u->deep_raw;
       u->thal_cnt += 1.0f;
     }
   }
@@ -232,12 +220,12 @@ void PFCUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int th
     // u->deep_norm = nw_nrm;
 
     if(u->thal_cnt >= pfc.max_mnt) {
-      TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
+      // TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
       TestWrite(u->deep_raw, 0.0f);        // not maintaining, bail
       TestWrite(u->thal_cnt, -1.0f);
     }
     else {
-      u->deep_norm = u->deep_raw;
+      // u->deep_norm = u->deep_raw;
 
       // now update maintenance for next time!
       u->thal_cnt += 1.0f;
@@ -269,7 +257,7 @@ float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
 
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
   if(u->thal >= pfc.gate_thr) { // our gate is open
-    net_ex += u->deep_raw_net;  // add in the gated deep inputs!
+    net_ex += u->deep_net;  // add in the gated deep inputs!
   }
   return net_ex;
 }

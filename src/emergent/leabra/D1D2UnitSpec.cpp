@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "D1D2UnitSpec.h"
+#include <LeabraNetwork>
 
 TA_BASEFUNS_CTORS_DEFN(D1D2UnitSpec);
 
@@ -22,12 +23,23 @@ void D1D2UnitSpec::Initialize() {
 }
 
 void D1D2UnitSpec::Defaults_init() {
-  deep.d_to_d = 1.0f;
-  deep.thal_to_d = 0.0f;
-  deep_qtr = QALL;
-  deep_norm.raw_val = DeepNormSpec::NORM_NET;
-  deep_norm.mod = true;
-  deep_norm.immed = true;
-  deep_norm.raw_renorm = false;
+}
+
+void D1D2UnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  if(deep.SendDeepMod()) {
+    u->deep_lrn = u->deep_mod = u->act;      // record what we send!
+  }
+  else if(deep.TRCUnits()) {
+    u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
+  }
+  // must be SUPER units at this point
+  else if(lay->am_deep_net.max < 0.1f) { // not enough yet 
+    u->deep_lrn = u->deep_mod = 0.0f;    // default is 0!
+  }
+  else {
+    u->deep_lrn = u->deep_net / lay->am_deep_net.max; // todo: could not normalize this..
+    u->deep_mod = deep.mod_min + deep.mod_range * u->deep_lrn;
+  }
 }
 

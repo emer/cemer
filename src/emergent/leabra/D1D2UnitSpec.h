@@ -43,6 +43,9 @@ public:
   // it here..
   // DAReceptor            dar;            // type of dopamine receptor: D1 vs. D2
 
+  void  Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net,
+                        int thr_no) override;
+  
   TA_SIMPLE_BASEFUNS(D1D2UnitSpec);
 protected:
   SPEC_DEFAULTS;

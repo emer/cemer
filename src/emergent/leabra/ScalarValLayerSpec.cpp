@@ -30,7 +30,6 @@ void ScalarValSpec::Initialize() {
   rep = LOCALIST;
   un_width = .3f;
   norm_width = false;
-  lrnmod_clamp = false;
   clamp_pat = false;
   clip_val = true;
   send_thr = false;
@@ -461,19 +460,6 @@ void ScalarValLayerSpec::Compute_ExtToPlus_ugp
   }
 }
 
-void ScalarValLayerSpec::Compute_LrnModToExt_ugp
-(LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  if(nunits < 1) return;
-  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
-  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx); // first unit
-  if(u->lesioned()) return;
-  LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-  uv->ext = uv->targ = uv->lrnmod;
-  uv->SetExtFlag(UnitVars::EXT);
-  uv->SetExtFlag(UnitVars::TARG);
-}
-
 void ScalarValLayerSpec::Compute_ExtToAct_ugp
 (LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
@@ -549,11 +535,6 @@ void ScalarValLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork
     inherited::Compute_HardClamp_Layer(lay, net);
     return;
   }
-  if(scalar.lrnmod_clamp && net->phase == LeabraNetwork::PLUS_PHASE) {
-    lay->SetExtFlag(UnitVars::EXT);
-    lay->SetExtFlag(UnitVars::TARG); // do as targ so err stats work..
-    UNIT_GP_ITR(lay, Compute_LrnModToExt_ugp(lay, net, acc_md, gpidx); );
-  }
   if(!lay->HasExtFlag(UnitVars::EXT)) {
     lay->hard_clamped = false;
     return;
@@ -572,9 +553,6 @@ void ScalarValLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork
 void ScalarValLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_OutputName(lay, net);
   ReadValue(lay, net);          // always read out the value
-  if(scalar.lrnmod_clamp && net->phase == LeabraNetwork::PLUS_PHASE) {
-    Compute_HardClamp_Layer(lay, net); // update!
-  }
 }
 
 float ScalarValLayerSpec::Compute_SSE_ugp(LeabraLayer* lay, LeabraNetwork* net,

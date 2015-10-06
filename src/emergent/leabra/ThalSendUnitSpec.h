@@ -32,8 +32,6 @@ public:
   virtual void  Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // send the act value as thal to sending projections: every cycle
 
-  float Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net, int thr_no,
-                            float& net_syn) override;
   void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 

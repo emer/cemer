@@ -60,11 +60,11 @@ void DeepCopyUnitSpec::Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net
   case DEEP_RAW:
     var = su->deep_raw;
     break;
-  case DEEP_NORM:
-    var = su->deep_norm;
-    break;
   case DEEP_MOD:
     var = su->deep_mod;
+    break;
+  case DEEP_LRN:
+    var = su->deep_lrn;
     break;
   case DEEP_CTXT:
     var = su->deep_ctxt;

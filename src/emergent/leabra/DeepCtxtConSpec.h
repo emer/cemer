@@ -40,11 +40,11 @@ public:
                                     int thr_no, const float su_act_delta) {
     const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
-    float* send_netin_vec = net->ThrSendNetinTmp(thr_no);
+    float* send_deepnet_vec = net->ThrSendDeepNetTmp(thr_no);
 #ifdef TA_VEC_USE
-    Send_NetinDelta_vec(cg, su_act_delta_eff, send_netin_vec, wts);
+    Send_NetinDelta_vec(cg, su_act_delta_eff, send_deepnet_vec, wts);
 #else
-    CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_netin_vec,
+    CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_deepnet_vec,
                                          cg->UnIdx(i), su_act_delta_eff));
 #endif
   }

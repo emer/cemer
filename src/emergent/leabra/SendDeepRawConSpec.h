@@ -42,7 +42,7 @@ public:
                                    int thr_no, const float su_act_delta) {
     const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
-    float* send_deepnet_vec = net->ThrSendDeepRawNetTmp(thr_no); // no per-prjn
+    float* send_deepnet_vec = net->ThrSendDeepNetTmp(thr_no); // no per-prjn
 #ifdef TA_VEC_USE
     Send_NetinDelta_vec(cg, su_act_delta_eff, send_deepnet_vec, wts);
 #else

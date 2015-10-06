@@ -20,7 +20,6 @@
 #include <OneToOnePrjnSpec>
 #include <PPTgUnitSpec>
 #include <LHbRMTgUnitSpec>
-#include <LearnModUnitSpec>
 
 #include <taMisc>
 

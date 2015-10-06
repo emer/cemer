@@ -33,10 +33,8 @@ set(leabra_HEADS_MAKETA
 
   DeepCtxtConSpec.h
   SendDeepRawConSpec.h
-  SendDeepNormConSpec.h
   SendDeepModConSpec.h
   DeepCopyUnitSpec.h
-  ThalAutoEncodeUnitSpec.h
   ThalSendUnitSpec.h
 
   MarkerConSpec.h
@@ -75,9 +73,6 @@ set(leabra_HEADS_MAKETA
   BasAmygUnitSpec.h
   LatAmygConSpec.h
   BasAmygConSpec.h
-  LearnModUnitSpec.h
-  LearnModDeltaConSpec.h
-  LearnModHebbConSpec.h
   PPTgUnitSpec.h
   LHbRMTgUnitSpec.h
   VTAUnitSpec.h
@@ -160,10 +155,8 @@ set(leabra_SRCS
 
   DeepCtxtConSpec.cpp
   SendDeepRawConSpec.cpp
-  SendDeepNormConSpec.cpp
   SendDeepModConSpec.cpp
   DeepCopyUnitSpec.cpp
-  ThalAutoEncodeUnitSpec.cpp
   ThalSendUnitSpec.cpp
 
   MarkerConSpec.cpp
@@ -202,9 +195,6 @@ set(leabra_SRCS
   BasAmygUnitSpec.cpp
   LatAmygConSpec.cpp
   BasAmygConSpec.cpp
-  LearnModUnitSpec.cpp
-  LearnModDeltaConSpec.cpp
-  LearnModHebbConSpec.cpp
   PPTgUnitSpec.cpp
   LHbRMTgUnitSpec.cpp
   VTAUnitSpec.cpp

@@ -84,7 +84,7 @@ public:
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
       float lrate_eff = clrate;
       if(deep_on) {
-        lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
+        lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
       }
       float ru_act = GetActVal(ru, ru_act_var);
       C_Compute_dWt_Hebb_Da(dwts[i], ru_act, su_act, ru->da_p, lrate_eff);

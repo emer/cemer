@@ -157,7 +157,7 @@ inline void LeabraConSpec::GetLrates(LeabraConGroup* cg, float& clrate, bool& de
   deep_on = deep.on;
   if(deep_on) {
     LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
-    if(!rus->deep_norm.on)
+    if(!rus->deep.ApplyDeepMod())
       deep_on = false;          // only applicable to deep_norm active layers
   }
   if(deep_on) {
@@ -203,7 +203,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
     LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
     float lrate_eff = clrate;
     if(deep_on) {
-      lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
+      lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
     }
     float l_lrn_eff;
     if(xcal.set_l_lrn)

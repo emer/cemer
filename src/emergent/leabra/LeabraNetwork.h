@@ -127,7 +127,6 @@ INHERITED(taOBase)
 public:
   bool          spike;         // #READ_ONLY #SHOW using discrete spiking -- all units must be either rate code or spiking, to optimize the computation -- updated in Trial_Init_Specs call
   bool          deep;         // #READ_ONLY #SHOW deep processing is active -- updated in Trial_Init_Specs call
-  bool          deep_norm_calc; // #READ_ONLY #SHOW deep norm is computed through calculations, orchestrated at the network level -- updated in Trial_Init_Specs from unit spec setting
   bool		bias_learn;     // #READ_ONLY #SHOW do any of the bias connections have learning enabled?  if true, then an extra unit-level computational step is required -- bias learning is now OFF by default, as it has no obvious benefits in large models, but may be useful for smaller networks
   bool          trial_decay;   // #READ_ONLY #SHOW at least one layer spec has a non-zero level of trial decay -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
   bool          diff_scale_p;   // #READ_ONLY #SHOW a unitspec such as the hippocampus ThetaPhase units rescales inputs in plus phase -- this requires initializing the net inputs between these phases
@@ -185,7 +184,6 @@ public:
     AVG_S,
     AVG_M,
     AVG_L,
-    DEEP,
     AVG_L_LRN,
     ACT_Q0,
     N_VEC_VARS,
@@ -201,10 +199,7 @@ public:
     AM_ACT_RAW,
     AM_UN_G_I,
     AM_DEEP_RAW,
-    AM_DEEP_CTXT,
-    AM_DEEP_RAW_NORM,
-    AM_DEEP_NORM_NET,
-    AM_DEEP_NORM,
+    AM_DEEP_NET,
     N_AM_VARS,
   };
 
@@ -275,10 +270,8 @@ public:
 
   float**       unit_vec_vars;
   // #IGNORE vectorized versions of unit variables stored in separate memory for each thread -- n_thrs pointers to N_VEC_VARS * n_units floats -- note that mem access is more efficient if vars are inner dimension, but vectorization load operator only operates on contiguous memory..  can try it both ways and see..
-  float**       thrs_send_deeprawnet_tmp;
-  // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep_raw netinput computation -- float*[threads] array of float[n_units]
-  float**       thrs_send_deepnormnet_tmp;
-  // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep_norm netinput computation -- float*[threads] array of float[n_units]
+  float**       thrs_send_deepnet_tmp;
+  // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep netinput computation -- float*[threads] array of float[n_units]
   char**        thrs_lay_avg_max_vals;
   // #IGNORE AvgMaxValsRaw data for layers, by thread
   char**        thrs_ungp_avg_max_vals;
@@ -296,13 +289,9 @@ public:
   { return unit_vec_vars[thr_no] + var * n_units_built; }
   // #IGNORE get start of given unit vector variable array
 
-  inline float* ThrSendDeepRawNetTmp(int thr_no) const 
-  { return thrs_send_deeprawnet_tmp[thr_no]; }
+  inline float* ThrSendDeepNetTmp(int thr_no) const 
+  { return thrs_send_deepnet_tmp[thr_no]; }
   // #IGNORE temporary sending deep_raw netinput memory for given thread 
-
-  inline float* ThrSendDeepNormNetTmp(int thr_no) const 
-  { return thrs_send_deepnormnet_tmp[thr_no]; }
-  // #IGNORE temporary sending deep_norm netinput memory for given thread 
 
   inline AvgMaxValsRaw* ThrLayAvgMax(int thr_no, int lay_idx, AvgMaxVars var) 
   { return (AvgMaxValsRaw*)(thrs_lay_avg_max_vals[thr_no] +
@@ -486,28 +475,13 @@ public:
   virtual void Compute_Deep_Thr(int thr_no);
   // #IGNORE update deep variables, using the proper sequence of unit-level calls
 
-    virtual void Compute_DeepRawStats_Thr(int thr_no);
-    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_ctxt_net vars
-    virtual void Compute_DeepRawStats_Post();
-    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_ctxt_net vars
+    virtual void Compute_DeepStats_Thr(int thr_no);
+    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_net vars
+    virtual void Compute_DeepStats_Post();
+    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_net vars
     
-    virtual void Compute_DeepRawNormStats_Thr(int thr_no);
-    // #IGNORE compute layer and unit-group level stats on deep_raw_norm vars
-    virtual void Compute_DeepRawNormStats_Post();
-    // #IGNORE compute layer and unit-group level stats on deep_raw_norm vars
-    virtual void Compute_DeepNormStats_Thr(int thr_no);
-    // #IGNORE compute layer and unit-group level stats on deep_norm
-    virtual void Compute_DeepNormStats_Post();
-    // #IGNORE compute layer and unit-group level stats on deep_norm
-    virtual void Compute_DeepNormStats_PostPost();
-    // #IGNORE compute layer and unit-group level stats on deep_norm -- renorm avg
-    virtual void Compute_DeepNormNetStats_Thr(int thr_no);
-    // #IGNORE compute layer and unit-group level stats on deep_norm_net
-    virtual void Compute_DeepNormNetStats_Post();
-    // #IGNORE compute layer and unit-group level stats on deep_norm_net
-  
   virtual void Compute_DeepStateUpdt_Thr(int thr_no);
-  // #IGNORE state update for deep leabra -- typically at start of new alpha trial -- copy deep_mod from deep_norm, deep_ctxt from deep_ctxt_net
+  // #IGNORE state update for deep leabra -- typically at start of new alpha trial -- copy deep_ctxt from deep_ctxt_net
   
   virtual void ClearDeepActs();
   // #CAT_Deep clear all the deep lamina variables -- can be useful to do at discontinuities of experience

@@ -20,7 +20,6 @@
 #include <OneToOnePrjnSpec>
 #include <PPTgUnitSpec>
 #include <LHbRMTgUnitSpec>
-#include <LearnModUnitSpec>
 #include <MSNUnitSpec>
 
 #include <taMisc>
@@ -115,7 +114,7 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
       rval = false;
     }
     if(u->CheckError(!pospv_lay, quiet, rval,
-                     "did not find PosPV layer to get positive PV from -- looks for LearnModUnitSpec and Pos in layer name")) {
+                     "did not find PosPV layer to get positive PV from -- looks for PV and Pos in layer name")) {
       rval = false;
     }
     if(u->CheckError(!vspatch_lay, quiet, rval,
@@ -130,7 +129,7 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     GetRecvLayers_N(u, negpv_lay, pptg_lay_n);
 
     if(u->CheckError(!negpv_lay, quiet, rval,
-                     "did not find NegPV layer to get negative PV from -- looks for LearnModUnitSpec and Neg in layer name")) {
+                     "did not find NegPV layer to get negative PV from -- looks for PV and Neg in layer name")) {
       rval = false;
     }
   }
@@ -156,7 +155,7 @@ bool VTAUnitSpec::GetRecvLayers_P(LeabraUnit* u,
     if(cs->InheritsFrom(TA_MarkerConSpec)) {
       if(us->InheritsFrom(TA_PPTgUnitSpec)) pptg_lay_p = fmlay;
       else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) lhb_lay = fmlay;
-      else if(us->InheritsFrom(TA_LearnModUnitSpec)) {
+      else if(fmlay->name.contains("PV")) {
         pospv_lay = fmlay;
       }
       else if(us->InheritsFrom(TA_MSNUnitSpec)) vspatch_lay = fmlay;
@@ -181,13 +180,13 @@ bool VTAUnitSpec::GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay, Leabra
     if(cs->InheritsFrom(TA_MarkerConSpec)) {
       if(us->InheritsFrom(TA_PPTgUnitSpec)) pptg_lay_n = fmlay;
 //      else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) lhb_lay = fmlay;
-//      else if(us->InheritsFrom(TA_LearnModUnitSpec) && fmlay->name.contains("Pos")) {
+//      else if(fmlay->name.contains("PV") && fmlay->name.contains("Pos")) {
 //        pospv_lay = fmlay;
 //      }
-//      else if(us->InheritsFrom(TA_LearnModUnitSpec) && fmlay->name.contains("Neg")) {
+//      else if(fmlay->name.contains("PV") && fmlay->name.contains("Neg")) {
 //        negpv_lay = fmlay;
 //      }
-      if(us->InheritsFrom(TA_LearnModUnitSpec)) {
+      if(fmlay->name.contains("PV")) {
         negpv_lay = fmlay;
       }
       // else if(us->InheritsFrom(TA_MSNUnitSpec)) vspatch_lay = fmlay;

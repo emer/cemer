@@ -41,6 +41,8 @@ public:
 
   float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
                             int thr_no, float& net_syn) override;
+  void  Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net,
+                        int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(BasAmygUnitSpec);
 protected:
