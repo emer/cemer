@@ -152,7 +152,9 @@ void Layer::Copy_(const Layer& cp) {
   flags = cp.flags;
   layer_type = cp.layer_type;
   pos = cp.pos;
+  pos_abs = cp.pos_abs;
   pos2d = cp.pos2d;
+  pos2d_abs = cp.pos2d_abs;
   disp_scale = cp.disp_scale;
   un_geom = cp.un_geom;
   unit_groups = cp.unit_groups;
