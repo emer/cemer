@@ -1484,22 +1484,32 @@ void GraphTableView::RenderLegend() {
   float ylen = plots[0]->axis_length;
 
   int n_plots_eff = 0;
-  
+  int max_label_len = 5;
   if (color_mode == BY_GROUP) {
     n_plots_eff = color_axis.group_by_values.size;
+    if (main_y_plots.size == 0) return;
+    for (int group=0; group<color_axis.group_by_values.size; group++) {
+      max_label_len = MAX(color_axis.group_by_values[group].length(), max_label_len);
+    }
   }
   else {
     n_plots_eff = main_y_plots.size + alt_y_plots.size;
+    for(int i=0;i<main_y_plots.size;i++) {
+      GraphPlotView* pl = plots[main_y_plots[i]];
+      max_label_len = MAX(pl->col_name.length(), max_label_len);
+    }
   }
   if(n_plots_eff == 0)
     return;    // nothing..
-  int n_down = 2;
-  int n_across = (int)(((float)n_plots_eff / (float)n_down) + 0.5f);
+
+  float tot_char_wd = (width * 2.0f) / label_font_size; // rough heuristic total
+  int n_across = (int)(tot_char_wd / (float)max_label_len);
   if(n_across < 1) n_across = 1;
-  while(n_across > 3) {         // keep it reasonable..
+  
+  int n_down = (int)(((float)n_plots_eff / (float)n_across) + 0.5f);
+  if(n_down < 1) n_down = 1;
+  while(n_down * n_across < n_plots_eff)
     n_down++;
-    n_across = n_plots_eff / n_down;
-  }
   
 #ifdef TA_QT3D
   T3Entity* leg = node_so->legend;
@@ -1533,44 +1543,42 @@ void GraphTableView::RenderLegend() {
   
   if (color_mode == BY_GROUP) {
     for (int group=0; group<color_axis.group_by_values.size; group++) {
-      if (main_y_plots.size > 0) {  // only draw legend for y plot - all the same when color is by group
-        GraphPlotView* pl = plots[main_y_plots[0]];
+      GraphPlotView* pl = plots[main_y_plots[0]];
 #ifdef TA_QT3D
-        T3GraphLine* ln = NULL;
-        if(leg_n < leg_ol.count()) {
-          ln = dynamic_cast<T3GraphLine*>(leg_ol.at(leg_n++));
-        }
-        if(!ln) {
-          ln = new T3GraphLine(leg, pl, label_font_size, width);
-          leg_n++;
-        }
-        ln->clear();
-#else // TA_QT3D
-        T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
-        leg->addChild(ln);
-#endif // TA_QT3D
-        pl->group_by_values = color_axis.group_by_values;  // copy the group_by values
-        RenderLegend_Ln(*pl, ln, cur_tr, group);
-#ifdef TA_QT3D
-        xpos = lidx / n_down;
-        ypos = lidx % n_down;
-        lidx++;
-        cur_tr.SetXY(over_amt * xpos, dn_amt * ypos);
-        ln->Translate(cur_tr.x, cur_tr.y, 0.0f);
-#else // TA_QT3D
-        tr = new SoTranslation();  leg->addChild(tr);
-        if(mv_dn > 1) {
-          tr->translation.setValue(0.0f, dn_amt, 0.0f);
-          cur_tr.y += dn_amt;
-          mv_dn--;
-        }
-        else {
-          tr->translation.setValue(over_amt, -dn_amt * (n_down-1), 0.0f);
-          cur_tr.x += over_amt; cur_tr.y -= dn_amt * (n_down-1);
-          mv_dn = n_down;
-        }
-#endif // TA_QT3D
+      T3GraphLine* ln = NULL;
+      if(leg_n < leg_ol.count()) {
+        ln = dynamic_cast<T3GraphLine*>(leg_ol.at(leg_n++));
       }
+      if(!ln) {
+        ln = new T3GraphLine(leg, pl, label_font_size, width);
+        leg_n++;
+      }
+      ln->clear();
+#else // TA_QT3D
+      T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
+      leg->addChild(ln);
+#endif // TA_QT3D
+      pl->group_by_values = color_axis.group_by_values;  // copy the group_by values
+      RenderLegend_Ln(*pl, ln, cur_tr, group);
+#ifdef TA_QT3D
+      xpos = lidx / n_down;
+      ypos = lidx % n_down;
+      lidx++;
+      cur_tr.SetXY(over_amt * xpos, dn_amt * ypos);
+      ln->Translate(cur_tr.x, cur_tr.y, 0.0f);
+#else // TA_QT3D
+      tr = new SoTranslation();  leg->addChild(tr);
+      if(mv_dn > 1) {
+        tr->translation.setValue(0.0f, dn_amt, 0.0f);
+        cur_tr.y += dn_amt;
+        mv_dn--;
+      }
+      else {
+        tr->translation.setValue(over_amt, -dn_amt * (n_down-1), 0.0f);
+        cur_tr.x += over_amt; cur_tr.y -= dn_amt * (n_down-1);
+        mv_dn = n_down;
+      }
+#endif // TA_QT3D
     }
     // no alt-y -- when coloring by group the legend would be the same for alt-Y so don't draw it
   }
