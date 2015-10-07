@@ -159,6 +159,9 @@ String ProgramCall::GetDisplayName() const {
       }
       rval += ")";
   }
+  else {
+    rval = "program_name()";
+  }
   return rval;
 }
 

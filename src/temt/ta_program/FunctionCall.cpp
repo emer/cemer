@@ -80,7 +80,7 @@ String FunctionCall::GetDisplayName() const {
     rval += ")";
   }
   else
-    rval += "(no function set)";
+    rval += "function_name()";
   return rval;
 }
 

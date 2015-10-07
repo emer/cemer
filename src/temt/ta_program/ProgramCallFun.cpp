@@ -34,6 +34,9 @@ String ProgramCallFun::GetDisplayName() const {
       }
       rval += ") " + function + "()";
   }
+  else {
+    rval += "program_name function_name()";
+  }
   return rval;
 }
 
