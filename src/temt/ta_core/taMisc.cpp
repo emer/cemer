@@ -757,17 +757,6 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
 {
   ++err_cnt;
   //  if (beep_on_error) cerr << '\a'; // BEL character
-#if defined(DMEM_COMPILE)
-  if(taMisc::dmem_proc > 0 && !taMisc::dmem_output_all) {
-#if !defined(NO_TA_BASE)
-    if(!taMisc::interactive) {
-      //We still need to quit all MPI processors even if we don't print out the error message on all.
-      taiMiscCore::Quit();        // all errors are *fatal* for non-interactive jobs!!!
-    }
-#endif
-    return;
-  }
-#endif
   taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
 #if !defined(NO_TA_BASE)
   if(cssMisc::cur_top) {
@@ -857,15 +846,6 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   const char* e, const char* f, const char* g, const char* h, const char* i)
 {
   ++err_cnt;
-#if defined(DMEM_COMPILE)
-  if(taMisc::dmem_proc > 0 && !taMisc::dmem_output_all) {
-    if(!taMisc::interactive) {
-      //We still need to exit all mpi_processors even if we don't print out the error message
-      taiMiscCore::Quit();// all errors are *fatal* for non-interactive jobs!!!
-    }
-    return;
-  }
-#endif
   taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
   String fmsg = "***ERROR: " + taMisc::last_err_msg;
   taMisc::LogEvent(fmsg);
@@ -1001,6 +981,11 @@ void taMisc::LogInfo(const char* a, const char* b, const char* c, const char* d,
 }
 
 void taMisc::LogEvent(const String& log_data) {
+#if defined(DMEM_COMPILE)
+  if(taMisc::dmem_proc > 0 && !taMisc::dmem_output_all) {
+    return;
+  }
+#endif
   time_t tmp = time(NULL);
   String tstamp = ctime(&tmp);
   tstamp = tstamp.before('\n');
