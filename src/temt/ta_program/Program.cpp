@@ -831,6 +831,9 @@ void Program::UpdateCallerArgs() {
   if(!proj)
     return;
   FOREACH_ELEM_IN_GROUP(Program, pg, proj->programs) {
+    if (!pg->script_compiled) {
+      pg->Compile();
+    }
     ProgramCallBase* pc = pg->FindSubProgTarget(this);
     if(pc) {
       pc->UpdateArgs();
