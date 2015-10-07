@@ -970,9 +970,8 @@ void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
       taMisc::Info("Could not find control panel entry for parameter " + nm);
       continue;
     }
-    ps->mbrs.DuplicateEl(itmMain);
-    EditMbrItem* itm = ps->mbrs.FindLeafName(nm);
-    if(!itm) continue;
+    EditMbrItem* itm = (EditMbrItem*)itmMain->Clone();
+    ps->mbrs.Add(itm);
     if(itm->mbr && itm->mbr->type->IsBool()) {
       if(val == "0") val = "false"; // translate bools..
       if(val == "1") val = "true";
