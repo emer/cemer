@@ -197,11 +197,11 @@ void Layer_Group::Clean() {
 }
 
 void Layer_Group::MovePos(int x, int y, int z) {
-  taVector3i nwpos = pos;
+  taVector3i nwpos = pos;  // temp copy of current group position
   nwpos.x += x;  nwpos.y += y;  nwpos.z += z;
-  if(nwpos.x < 0) { x += -nwpos.x; nwpos.x = 0; }
-  if(nwpos.y < 0) { y += -nwpos.y; nwpos.y = 0; }
-  if(nwpos.z < 0) { z += -nwpos.z; nwpos.z = 0; }
+  if(nwpos.x < 0) { x -= nwpos.x; }
+  if(nwpos.y < 0) { y -= nwpos.y; }
+  if(nwpos.z < 0) { z -= nwpos.z; }
   taVector3i del(x,y,z);
   FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
     l->pos += del;
@@ -214,8 +214,8 @@ void Layer_Group::MovePos(int x, int y, int z) {
 void Layer_Group::MovePos2d(int x, int y) {
   taVector2i nwpos = pos2d;
   nwpos.x += x;  nwpos.y += y;
-  if(nwpos.x < 0) { x += -nwpos.x; nwpos.x = 0; }
-  if(nwpos.y < 0) { y += -nwpos.y; nwpos.y = 0; }
+  if(nwpos.x < 0) { x -= nwpos.x; }
+  if(nwpos.y < 0) { y -= nwpos.y; }
   taVector2i del(x,y);
   FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
     l->pos2d += del;
