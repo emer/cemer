@@ -39,7 +39,6 @@ void MethodCall::UpdateAfterEdit_impl() {
     obj_type = obj->act_object_type();
   else {
     obj_type = &TA_taBase; // placeholder
-    method = NULL;
   }
 
 //  if(!taMisc::is_loading && method)
