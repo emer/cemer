@@ -37,7 +37,10 @@ void MethodCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(obj)
     obj_type = obj->act_object_type();
-  else obj_type = &TA_taBase; // placeholder
+  else {
+    obj_type = &TA_taBase; // placeholder
+    method = NULL;
+  }
 
 //  if(!taMisc::is_loading && method)
   if (method) { // needed to set required etc.
@@ -82,8 +85,8 @@ void MethodCall::GenCssBody_impl(Program* prog) {
 }
 
 String MethodCall::GetDisplayName() const {
-  if (!obj || !method) {
-    return "(Select object, then method) or enter inline using the form object_name->method_name()";
+  if (!obj) {
+    return "object.method()";
   }
   
   String rval;
@@ -91,15 +94,20 @@ String MethodCall::GetDisplayName() const {
     rval += result_var->name + "=";
   rval += obj->name;
   rval += "->";
-  rval += method->name;
-  rval += "(";
-  for(int i=0;i<meth_args.size;i++) {
-    ProgArg* pa = meth_args[i];
-    if (i > 0)
-      rval += ", ";
-    rval += pa->expr.expr; // GetDisplayName();
+  if (method) {
+    rval += method->name;
+    rval += "(";
+    for(int i=0;i<meth_args.size;i++) {
+      ProgArg* pa = meth_args[i];
+      if (i > 0)
+        rval += ", ";
+      rval += pa->expr.expr; // GetDisplayName();
+    }
+    rval += ")";
   }
-  rval += ")";
+  else {
+    rval += "method()";
+  }
   return rval;
 }
 

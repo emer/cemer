@@ -93,9 +93,9 @@ String MemberAssign::GetDisplayName() const {
   if(obj)
     rval = obj->name;
   else
-    rval = "?";
+    rval = "object";
   if(path.empty())
-    rval += ".?";
+    rval += ".member";
   else if(path.startsWith('['))
     rval += path;
   else
