@@ -861,8 +861,9 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int
     float eff_err = MAX(lay->cos_diff_avg_lrn, avg_l_2.err_min);
     u->avg_l_lrn *= eff_err;
   }
-  if(lay->layer_type != Layer::HIDDEN)
+  if(lay->layer_type != Layer::HIDDEN || deep.TRCUnits()) {
     u->avg_l_lrn = 0.0f;        // no self organizing in non-hidden layers!
+  }
 }
 
 void LeabraUnitSpec::Trial_DecayState(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
