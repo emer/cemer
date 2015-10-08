@@ -25,10 +25,12 @@ taTypeDef_Of(Function);
 taTypeDef_Of(taProject);
 
 #include <SigLinkSignal>
-#include <taMisc>
 #include <ProgElChoiceDlg>
 #include <ControlPanel>
 #include <taProject>
+
+#include <taMisc>
+#include <tabMisc>
 
 #include <css_machine.h>
 #include <css_ta.h>
@@ -239,6 +241,11 @@ void ProgVar::UpdateAfterEdit_impl() {
               "Hard-coded (C++) enum's are not supported for local variables -- please use an int or String variable instead.");
 
   UpdateCssObjVal();
+
+  if(HasVarFlag(FUN_ARG)) {
+    taBase* fun = owner->GetOwner();
+    tabMisc::DelayedUpdateAfterEdit(fun); // update call signature!
+  }
 }
 
 bool ProgVar::UpdateCssObjVal() {
@@ -644,8 +651,12 @@ taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
 }
 
 const String ProgVar::GenCss(bool is_arg) {
-  UpdateAfterEdit();            // update used and other flags
-  return is_arg ? GenCssArg_impl() : GenCssVar_impl() ;
+  if(is_arg) {
+    // UpdateAfterEdit();   // this is called in parent css gen process
+    return GenCssArg_impl();
+  }
+  UpdateAfterEdit();            // update flags etc
+  return GenCssVar_impl() ;
 }
 
 const String ProgVar::GenListing(bool is_arg, int indent_level) {
