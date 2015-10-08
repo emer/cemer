@@ -102,17 +102,23 @@ String MemberMethodCall::GetDisplayName() const {
   if(obj)
     rval += obj->name;
   else
-    rval += "?";
+    rval += "object";
   if(path.empty())
-    rval += ".?";
+    rval += ".member";
   else if(path.startsWith('['))
     rval += path;
   else
     rval += "." + path;
+  
+  // make sure we don't get "member..method"
+  if (rval.lastchar() =='.') {
+    int last_char_pos = rval.length() - 1;
+    rval = rval.before(last_char_pos);
+  }
   if(method)
     rval += "." + method->name + "(";
   else
-    rval += ".?(";
+    rval += ".method(";
   for(int i=0;i<meth_args.size;i++) {
     ProgArg* pa = meth_args[i];
     if (i > 0)
@@ -124,7 +130,10 @@ String MemberMethodCall::GetDisplayName() const {
 }
 
 bool MemberMethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-  if(!code.contains('(')) return false;
+  if (code == GetDisplayName())
+    return true;
+  if(!code.contains('('))
+    return false;
   String lhs = code.before('(');
   int mbfreq = lhs.freq('.') + lhs.freq("->");
   if(mbfreq <= 1) {
@@ -168,7 +177,7 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
       pathnm = objnm.from('[');
     objnm = objnm.before('[');
   }
-  if(objnm == "?") return false;
+  if(objnm == "object") return false;
   ProgVar* pv = FindVarNameInScope(objnm, true); // true = give option to make one
   if(!pv) return false;
   obj = pv;
