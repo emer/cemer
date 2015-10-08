@@ -711,7 +711,7 @@ bool ProgEl::BrowserEditSet(const String& code, int move_after) {
   }
   edit_move_after = 0;
   String cd = CodeGetDesc(code);
-  if(CanCvtFmCode(cd, NULL)) {
+  if(CanCvtFmCode(cd, this)) {
     bool rval;
     rval = CvtCodeToVar(cd);
     rval = CvtFmCode(cd);
