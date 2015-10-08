@@ -244,7 +244,7 @@ void ProgVar::UpdateAfterEdit_impl() {
 
   if(HasVarFlag(FUN_ARG)) {
     taBase* fun = owner->GetOwner();
-    tabMisc::DelayedUpdateAfterEdit(fun); // update call signature!
+    fun->SigEmitUpdated();
   }
 }
 

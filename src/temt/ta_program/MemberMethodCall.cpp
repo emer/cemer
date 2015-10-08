@@ -97,7 +97,7 @@ void MemberMethodCall::GenCssBody_impl(Program* prog) {
 String MemberMethodCall::GetDisplayName() const {
   String rval;
   if(result_var)
-    rval += result_var->name + "=";
+    rval += result_var->name + " = ";
 
   if(obj)
     rval += obj->name;
