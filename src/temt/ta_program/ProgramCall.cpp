@@ -217,37 +217,54 @@ bool ProgramCall::LoadInitTarget_impl(const String& nm) {
 
 bool ProgramCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   String code_dn = code; code_dn.downcase();
-  if(code_dn.startsWith("call ")) return true; // definitely
-  if(code_dn.startsWith("prog ")) return true; // definitely
-  if(!code.contains('(')) return false;
+  if (code == GetDisplayName())
+    return true;
+  if(code_dn.startsWith("call "))
+    return true; // definitely
+//  if(code_dn.startsWith("prog ")) return true; // obsolete
+  if(!code.contains('('))
+    return false;
+  
   String lhs = code.before('(');
-  String funm = lhs;
-  if(lhs.contains('=')) return false; // no rval for progcall
-  if((funm.freq('.') + funm.freq("->")) > 0) return false; // exclude method call
+  if(lhs.contains('='))
+    return false; // no rval for progcall
+  String func_name = lhs;
+  if((func_name.freq('.') + func_name.freq("->")) > 0)
+    return false; // exclude method call
+  
   String rhs = trim(code.after('('));
-  if(rhs.endsWith("()")) return false; // ProgramCallFun
-  if(!scope_el) return false;
+  if(rhs.endsWith("()"))                // do we need this?
+    return false; // ProgramCallFun
+  
+  if(!scope_el)
+    return false;
   taProject* proj = scope_el->GetMyProj();
-  if(!proj) return false;
-  Program* prg = proj->programs.FindLeafName(funm);
-  if(prg) return true;
+  if(!proj)
+    return false;
+  String prog_name = lhs;
+  Program* prg = proj->programs.FindLeafName(prog_name);
+  if(prg)
+    return true;
+  
   return false;
 }
 
 bool ProgramCall::CvtFmCode(const String& code) {
   String cd = code;
-  if(cd.startsWith("Call "))
-    cd = cd.after("Call ");
-  if(cd.startsWith("call "))
-    cd = cd.after("call ");
+//  if(cd.startsWith("Call "))  // before 7.8.? we used Call but now just program_name()
+//    cd = cd.after("Call ");   // so this is for older projects
+//  if(cd.startsWith("call "))
+//    cd = cd.after("call ");
   String lhs = cd;
   if(lhs.contains('('))
     lhs = lhs.before('(');
-  String funm = lhs;
+  String func_name = lhs;
   taProject* proj = GetMyProj();
-  if(!proj) return false;
-  Program* prg = proj->programs.FindLeafName(funm);
-  if(!prg) return false;
+  if(!proj)
+    return false;
+  Program* prg = proj->programs.FindLeafName(func_name);
+  if(!prg)
+    return false;
   target = prg;
   UpdateAfterEdit_impl();                          // update based on targ
   // now tackle the args

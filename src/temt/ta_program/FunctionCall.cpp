@@ -90,6 +90,8 @@ void FunctionCall::UpdateArgs() {
 }
 
 bool FunctionCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if (code == GetDisplayName())
+    return true;
   String code_dn = code; code_dn.downcase();
   // if assignment of return value from func you may not see funcall
   if(code_dn.startsWith("funcall ")) return true; // definitely
@@ -118,7 +120,7 @@ bool FunctionCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 
 bool FunctionCall::CvtFmCode(const String& code) {
   String cd = code;
-  if(cd.startsWith("FunCall "))
+  if(cd.startsWith("FunCall "))  // all of these are old style -- allow for now
     cd = cd.after("FunCall ");
   else if(cd.startsWith("funcall "))
     cd = cd.after("funcall ");
