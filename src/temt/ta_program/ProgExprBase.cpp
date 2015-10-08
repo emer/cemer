@@ -522,6 +522,13 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       expr_start += shift;
       prepend_txt = txt.through(txt[delim_pos[0]]);
       lookup_seed = txt.after(delim_pos[0]);
+      
+      // we might have a string of arguments - only use text after last comma as seed
+      int last_comma_pos = lookup_seed.index(',', -1);
+      String addl_prepend = lookup_seed.through(last_comma_pos);
+      prepend_txt += addl_prepend;
+      lookup_seed = lookup_seed.after(last_comma_pos);
+      
       lookup_type = ProgExprBase::VARIOUS;
       delims_used = 1;
     }
