@@ -50,7 +50,7 @@ void FunctionCall::GenCssBody_impl(Program* prog) {
 
   String rval;
   if(result_var) {
-    rval += result_var->name + "=";
+    rval += result_var->name + " = ";
   }
   rval += fun->name + "(";
   for (int i = 0; i < fun_args.size; ++i) {
@@ -68,7 +68,7 @@ void FunctionCall::GenCssBody_impl(Program* prog) {
 String FunctionCall::GetDisplayName() const {
   String rval;
   if(result_var)
-    rval = result_var->name + "=";
+    rval = result_var->name + " = ";
   if (fun) {
     rval += fun->name;
     rval += "(";

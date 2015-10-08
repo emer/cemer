@@ -80,7 +80,7 @@ String StaticMethodCall::GetDisplayName() const {
   }
 
   if(result_var)
-    rval += result_var->name + "=";
+    rval += result_var->name + " = ";
   rval += object_type->name;
   rval += "::";
   rval += method->name;

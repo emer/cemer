@@ -90,7 +90,7 @@ String MethodCall::GetDisplayName() const {
   
   String rval;
   if(result_var)
-    rval += result_var->name + "=";
+    rval += result_var->name + " = ";
   rval += obj->name;
   rval += "->";
   if (method) {

@@ -132,7 +132,7 @@ bool ProgArg::UpdateFromType(TypeDef* td) {
 }
 
 String ProgArg::GetDisplayName() const {
-  return type + " " + name + "=" + expr.GetFullExpr();
+  return type + " " + name + " = " + expr.GetFullExpr();
 //  return expr.expr;
 }
 

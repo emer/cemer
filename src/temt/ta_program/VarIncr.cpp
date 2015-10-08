@@ -48,7 +48,7 @@ String VarIncr::GetDisplayName() const {
     return "(var not selected)";
 
   String rval;
-  rval += var->name + "+=" + expr.GetFullExpr();
+  rval += var->name + " += " + expr.GetFullExpr();
   return rval;
 }
 
