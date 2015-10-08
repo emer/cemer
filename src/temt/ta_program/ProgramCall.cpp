@@ -73,6 +73,11 @@ void ProgramCall::PreGenMe_impl(int item_id) {
   Program* prog = program();
   if (!prog) return; // shouldn't normally happen
 
+  if(TestError(prog == target.ptr(), "CvtFmCode", "Error - program calling itself")) {
+    target = NULL;
+    return;
+  }
+
   Program* trg = target.ptr();
   if(!trg || (prog->sub_progs_dir.FindEl(trg) < 0)) {
     // link in the call if targ is unique or null
