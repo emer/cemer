@@ -191,7 +191,8 @@ INHERITED(SpecMemberBase)
 public:
   float       v_m;        // #DEF_0.4 initial membrane potential -- see e_rev.l for the resting potential (typically .3) -- often works better to have a somewhat elevated initial membrane potential relative to that
   float       act;        // #DEF_0 initial activation value -- typically 0
-  float       netin;      // #DEF_0 baseline level of excitatory net input -- netin is initialized to this value, and it is added in as a constant background level of excitatory input -- captures all the other inputs not represented in the model, and intrinsic excitability, etc
+  float       netin;      // #DEF_0 baseline level of excitatory net input -- netin is initialized to this value (if netin_init is on), and it is added in as a constant background level of excitatory input -- captures all the other inputs not represented in the model, and intrinsic excitability, etc
+  bool        netin_init; // initialize starting netinput to netin value -- otherwise netin is added into the evolving netinput but starting value is 0
 
   TA_SIMPLE_BASEFUNS(LeabraInitSpec);
 protected:
