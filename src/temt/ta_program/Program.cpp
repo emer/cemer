@@ -450,7 +450,6 @@ void Program::Init() {
       ret_val = RV_COMPILE_ERR;
   }
   if(ret_val == RV_OK) {
-    UpdateProgElCodeStrings();
     // check args and vars before running any code, to get NULL_CHECK etc
     bool chkargs = args.CheckConfig(false);
     bool chkvars = vars.CheckConfig(false);
@@ -476,7 +475,11 @@ void Program::Init() {
   // now check us..
   CheckConfig(false);
   taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
-  if (ret_val != RV_OK) ShowRunError();
+  if (ret_val != RV_OK)
+    ShowRunError();
+  if (ret_val == RV_OK) {
+    UpdateProgElCodeStrings();
+  }
   script->Restart();            // restart script at beginning if run again
   
   if(!taMisc::check_ok)
@@ -531,7 +534,6 @@ int Program::Run_impl() {
       ret_val = RV_COMPILE_ERR;
   }
   if (ret_val == RV_OK) {
-    UpdateProgElCodeStrings();
     script->SetDebug((int)HasProgFlag(TRACE));
     script->Run();
     // DO NOT DO!
