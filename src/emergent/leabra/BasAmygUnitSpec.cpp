@@ -52,33 +52,9 @@ void BasAmygUnitSpec::UpdateAfterEdit_impl() {
 
 float BasAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no, float& net_syn) {
-  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-
-  if(deep.TRCUnits()) {
-    if(Quarter_DeepNow(net->quarter)) {
-      net_syn = u->deep_net;          // only gets from deep!
-      return 0.0f;                    // no further extras!
-    }
-  }
-  
-  float net_ex = 0.0f;
-  if(bias_spec) {
-    net_ex += u->bias_scale * u->bias_wt;
-  }
-  if(u->HasExtFlag(UnitVars::EXT)) {
-    net_ex += u->ext * ls->clamp.gain;
-  }
+  float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
   if(deep.ApplyDeepMod() && deep_vg_netin) {
     net_ex += u->deep_lrn * u->act_eq;
-  }
-  if(da_mod.on) {
-    if(net->phase == LeabraNetwork::PLUS_PHASE) {
-      net_ex += da_mod.plus * u->da_p * net_syn;
-    }
-    else {                      // MINUS_PHASE
-      net_ex += da_mod.minus * u->da_p * net_syn;
-    }
   }
   return net_ex;
 }

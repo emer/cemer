@@ -183,6 +183,25 @@ private:
   void        Defaults_init() { Initialize(); }
 };
 
+eTypeDef_Of(LeabraInitSpec);
+
+class E_API LeabraInitSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial values for key network state variables -- initialized at start of trial with Init_Acts or DecayState
+INHERITED(SpecMemberBase)
+public:
+  float       v_m;        // #DEF_0.4 initial membrane potential -- see e_rev.l for the resting potential (typically .3) -- often works better to have a somewhat elevated initial membrane potential relative to that
+  float       act;        // #DEF_0 initial activation value -- typically 0
+  float       netin;      // #DEF_0 baseline level of excitatory net input -- netin is initialized to this value, and it is added in as a constant background level of excitatory input -- captures all the other inputs not represented in the model, and intrinsic excitability, etc
+
+  TA_SIMPLE_BASEFUNS(LeabraInitSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void        Initialize();
+  void        Destroy()        { };
+  void        Defaults_init();
+};
+
 eTypeDef_Of(LeabraDtSpec);
 
 class E_API LeabraDtSpec : public SpecMemberBase {
@@ -403,27 +422,6 @@ private:
 };
 
 
-eTypeDef_Of(LeabraDropoutSpec);
-
-class E_API LeabraDropoutSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra random dropout parameters -- an important tool against positive feedback dynamics, and pressure to break up large-scale interdependencies between neurons, which benefits generalization
-INHERITED(SpecMemberBase)
-public:
-  bool          net_on;         // is random dropout of net input active?
-  float         net_p;          // #CONDSHOW_ON_net_on probability of dropout of net inputs values per unit
-  float         net_drop;       // #CONDSHOW_ON_net_on multiplier on net input to apply for dropping out -- how far does it drop?
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LeabraDropoutSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void        Initialize();
-  void        Destroy()        { };
-  void        Defaults_init();
-};
-
 eTypeDef_Of(DeepSpec);
 
 class E_API DeepSpec : public SpecMemberBase {
@@ -553,35 +551,33 @@ public:
   };
 
   ActFun            act_fun;        // #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
-  LeabraActFunSpec  act;         // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
-  LeabraActMiscSpec act_misc;   // #CAT_Activation miscellaneous activation parameters
-  SpikeFunSpec      spike;                // #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
-  SpikeMiscSpec    spike_misc;        // #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
-  OptThreshSpec    opt_thresh;        // #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
-  MinMaxRange      clamp_range;        // #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
+  LeabraActFunSpec  act;            // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
+  LeabraActMiscSpec act_misc;       // #CAT_Activation miscellaneous activation parameters
+  SpikeFunSpec      spike;          // #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
+  SpikeMiscSpec    spike_misc;      // #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
+  OptThreshSpec    opt_thresh;      // #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
+  MinMaxRange      clamp_range;     // #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
   MinMaxRange      vm_range;        // #CAT_Activation membrane potential range (min, max, 0-2 for normalized)
-  RandomSpec       v_m_init;        // #CAT_Activation what to initialize the membrane potential to (mean = .4, var = 0 std)
-  RandomSpec       act_init;        // #CAT_Activation what to initialize the activation to (mean = 0 var = 0 std)
-  LeabraDtSpec     dt;                // #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
-  LeabraActAvgSpec act_avg;        // #CAT_Activation time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
-  LeabraAvgLSpec   avg_l;        // #CAT_Activation parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
-  LeabraAvgL2Spec  avg_l_2;        // #CAT_Activation additional parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
-  LeabraChannels   g_bar;                // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
-  LeabraChannels   e_rev;                // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
-  ActAdaptSpec     adapt;                // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
-  ShortPlastSpec   stp;           // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
-  SynDelaySpec     syn_delay;        // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
-  LeabraDropoutSpec dropout;        // #CAT_Activation random dropout parameters -- an important tool against positive feedback dynamics, and pressure to break up large-scale interdependencies between neurons, which benefits generalization
-  Quarters         deep_qtr;       // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
-  DeepSpec         deep;          // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
-  DaModSpec        da_mod;                // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
-  NoiseType        noise_type;        // #CAT_Activation where to add random noise in the processing (if at all)
-  RandomSpec       noise;                // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
-  NoiseAdaptSpec   noise_adapt;        // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation how to adapt the noise variance (var) value
-  Schedule         noise_sched;        // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation schedule of noise variance -- time scale depends on noise_adapt parameter (cycles, epochs, etc)
+  LeabraInitSpec   init;            // #CAT_Activation initial starting values for various key neural parameters
+  LeabraDtSpec     dt;              // #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
+  LeabraActAvgSpec act_avg;         // #CAT_Activation time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
+  LeabraAvgLSpec   avg_l;           // #CAT_Activation parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
+  LeabraAvgL2Spec  avg_l_2;         // #CAT_Activation additional parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
+  LeabraChannels   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
+  LeabraChannels   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
+  ActAdaptSpec     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
+  ShortPlastSpec   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
+  SynDelaySpec     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
+  Quarters         deep_qtr;        // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
+  DeepSpec         deep;            // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
+  DaModSpec        da_mod;          // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
+  NoiseType        noise_type;      // #CAT_Activation where to add random noise in the processing (if at all)
+  RandomSpec       noise;           // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
+  NoiseAdaptSpec   noise_adapt;     // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation how to adapt the noise variance (var) value
+  Schedule         noise_sched;     // #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation schedule of noise variance -- time scale depends on noise_adapt parameter (cycles, epochs, etc)
 
   FunLookup        nxx1_fun;        // #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
-  FunLookup        noise_conv;        // #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
+  FunLookup        noise_conv;      // #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
 
 
   inline void  TestWrite(float& var, const float val) {

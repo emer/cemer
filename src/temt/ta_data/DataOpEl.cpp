@@ -95,7 +95,8 @@ void DataOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   ProgEl* pel = GET_MY_OWNER(ProgEl);
   if(pel && pel->HasProgFlag(ProgEl::QUIET))
     return;
-  TestWarning(col_idx < 0, "CheckConfig", "could not find", col_name,"in datatable");
+  // TestWarning(col_idx < 0, "CheckConfig", "could not find", col_name,"in datatable");
+  // see above -- this is not useful..
 }
 
 void DataOpEl::SetDataTable(DataTable* dt) {

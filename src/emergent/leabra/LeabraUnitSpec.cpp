@@ -35,7 +35,7 @@ TA_BASEFUNS_CTORS_DEFN(OptThreshSpec);
 TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
 TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
-TA_BASEFUNS_CTORS_DEFN(LeabraDropoutSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraInitSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgLSpec);
@@ -151,6 +151,16 @@ void OptThreshSpec::Initialize() {
   send = .1f;
   delta = 0.005f;
   xcal_lrn = 0.01f;
+}
+
+void LeabraInitSpec::Initialize() {
+  Defaults_init();
+}
+
+void LeabraInitSpec::Defaults_init() {
+  act = 0.0f;
+  v_m = 0.4f;
+  netin = 0.0f;
 }
 
 void LeabraDtSpec::Initialize() {
@@ -306,17 +316,6 @@ void SynDelaySpec::Initialize() {
   delay = 4;
 }
 
-void LeabraDropoutSpec::Initialize() {
-  net_on = false;
-
-  Defaults_init();
-}
-
-void LeabraDropoutSpec::Defaults_init() {
-  net_p = 0.1f;
-  net_drop = 0.9f;
-}
-
 void DeepSpec::Initialize() {
   on = false;
   role = SUPER;
@@ -393,14 +392,6 @@ void LeabraUnitSpec::Defaults_init() {
   e_rev.e = 1.0f;
   e_rev.l = 0.3f;
   e_rev.i = 0.25f;
-
-  v_m_init.type = Random::NONE;
-  v_m_init.mean = 0.4f; // e_rev.l;  // 0.4f works sig better in many cases..
-  v_m_init.var = 0.0f;
-
-  act_init.type = Random::NONE;
-  act_init.mean = 0.0f;
-  act_init.var = 0.0f;
 
   e_rev_sub_thr.e = e_rev.e - act.thr;
   e_rev_sub_thr.l = e_rev.l - act.thr;
@@ -652,8 +643,8 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
 
   Init_Netins(u, net, thr_no);
 
-  u->act = act_init.Gen(thr_no);
-  u->net = 0.0f;               // these are not done in netins -- need to nuke
+  u->act = init.act;
+  u->net = init.netin;   // these are not done in netins -- need to nuke
 
   u->act_eq = u->act;
   u->act_nd = u->act_eq;
@@ -691,7 +682,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->thal_cnt = -1.0f;
   u->gc_i = 0.0f;
   u->I_net = 0.0f;
-  u->v_m = v_m_init.Gen(thr_no);
+  u->v_m = init.v_m;
   u->v_m_eq = u->v_m;
   u->adapt = 0.0f;
   u->gi_syn = 0.0f;
@@ -728,15 +719,15 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
 void LeabraUnitSpec::DecayState(LeabraUnitVars* u, LeabraNetwork* net, int thr_no,
                                 float decay) {
   if(decay > 0.0f) {            // no need to reset netin if not decaying at all
-    u->act -= decay * (u->act - act_init.mean);
-    u->net -= decay * u->net;
+    u->act -= decay * (u->act - init.act);
+    u->net -= decay * (u->net - init.netin);
     u->td_net -= decay * u->td_net;
-    u->act_eq -= decay * (u->act_eq - act_init.mean);
-    u->act_nd -= decay * (u->act_nd - act_init.mean);
-    u->act_raw -= decay * (u->act_raw - act_init.mean);
+    u->act_eq -= decay * (u->act_eq - init.act);
+    u->act_nd -= decay * (u->act_nd - init.act);
+    u->act_raw -= decay * (u->act_raw - init.act);
     u->gc_i -= decay * u->gc_i;
-    u->v_m -= decay * (u->v_m - v_m_init.mean);
-    u->v_m_eq -= decay * (u->v_m_eq - v_m_init.mean);
+    u->v_m -= decay * (u->v_m - init.v_m);
+    u->v_m_eq -= decay * (u->v_m_eq - init.v_m);
     if(adapt.on) {
       u->adapt -= decay * u->adapt;
     }
@@ -1226,15 +1217,15 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   }
   
   float net_syn = u->net_raw;
-  float net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
-  // this could modify net_syn if it wants..
-  float net_tot = net_syn + net_ex;
-
-  if(dropout.net_on) {
-    if(Random::BoolProb(dropout.net_p, thr_no)) {
-      net_tot *= dropout.net_drop;
-    }
+  float net_ex = 0.0f;
+  if(deep.TRCUnits() && Quarter_DeepNow(net->quarter)) {
+    net_syn = u->deep_net;          // only gets from deep!  and no extras!
   }
+  else {
+    net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);  // this could modify net_syn if it wants..
+  }
+  
+  float net_tot = init.netin + net_syn + net_ex;
 
   if(act_fun == SPIKE) {
     // todo: need a mech for inhib spiking
@@ -1262,13 +1253,6 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
 
-  if(deep.TRCUnits()) {
-    if(Quarter_DeepNow(net->quarter)) {
-      net_syn = u->deep_net;          // only gets from deep!
-      return 0.0f;                    // no further extras!
-    }
-  }
-  
   float net_ex = 0.0f;
   if(bias_spec) {
     net_ex += u->bias_scale * u->bias_wt;
@@ -2047,7 +2031,7 @@ void LeabraUnitSpec::BioParams(float norm_sec, float norm_volt, float volt_off, 
   adapt.vm_gain = (adapt_vm_gain_nS * 1.0e-9f) / norm_siemens;
   adapt.spike_gain = (adapt_spk_gain_nA * 1.0e-9f) / norm_amp;
 
-  v_m_init.mean = e_rev.l;
+  init.v_m = e_rev.l;
   vm_range.min = 0.0f;
   vm_range.max = 2.0f;
 
