@@ -85,7 +85,7 @@ public:
 
   String                desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
   ProgFlags             flags;  // flags for modifying program element function or providing information about the status of this program element
-  String                code_string; // #READ_ONLY #SHOW most recently compiled program code in a ProgCode used to create this element -- used e.g. for reverting
+  String                code_string; // #AKA_orig_prog_code #READ_ONLY #SHOW most recently compiled program code in a ProgCode used to create this element -- used e.g. for reverting
   String                pre_compile_code_string; // #HIDDEN hold on to this for updating code_string if compile successful
   virtual ProgEl*       parent() const
   { return (ProgEl*)const_cast<ProgEl*>(this)->GetOwner(&TA_ProgEl); }
