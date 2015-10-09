@@ -1,0 +1,139 @@
+** Settings ***
+
+Library          Telnet
+Library          HttpLibrary.HTTP
+Library          Process
+Library          OperatingSystem
+
+Resource         Server_lib.txt
+
+Suite Setup      Initialize Emergent    ../../test/TestLookupParse.proj
+Suite Teardown   Shutdown Emergent
+
+*** Variables ***
+
+# use 'pybot -v debug:true server.txt' on the command line to
+#      output the transmissions to/from Emergent using warnings
+${debug} =       false
+
+*** Test Cases ***
+
+# Ideas on things to test
+#  - SetDataTableCell and Matrix Cell
+
+#
+# Initialization and general tests
+#
+
+Initialize
+    Set Suite Variable     ${verbose}       ${false}
+    Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
+
+Connection
+    Sleep                  1 sec
+    ${output} =            Read
+    Print                  ${output}
+    Should Contain         ${output}    Emergent Server v7.
+
+# TODO: Start another process and check for the "Too many connections already" error.
+
+#
+# ParserTest
+#
+
+General RunState
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             4
+
+ParseNoText
+    Ensure Emergent Free
+    Set Suite Variable   ${program_test}       "no_text"
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
+    Status OK No Result        ${output}
+    
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
+    Status OK 		       ${output}
+    Json Value Should Equal    ${output}             /result  1
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_seed"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "prepend_txt"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "append_txt"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "prog_el_txt"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "path_var"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "path_prepend_txt"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "path_rest"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "base_path"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+    
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "base_path"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+
+
+ParseObjectSelectMethodOrMember
+    Ensure Emergent Free
+    Set Suite Variable   ${program_test}       "object_select_method_or_member"
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
+    Status OK No Result        ${output}
+    
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
+    Status OK 		       ${output}
+    Json Value Should Equal    ${output}             /result  2
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_seed"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "prepend_txt"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "append_txt"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "prog_el_txt"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "path_var"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "path_prepend_txt"}
+    Status OK 		       ${output}
+    Json String Should Match    ${output}             /result	DataTable_28->
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "path_rest"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+    
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "base_path"}
+    Status OK 		       ${output}
+    Json String Should Match    ${output}             /result  DataTable_28
+
+
+

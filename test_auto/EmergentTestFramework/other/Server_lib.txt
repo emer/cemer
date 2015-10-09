@@ -70,6 +70,11 @@ Json String Should Match
     ${value} =         Get Json String    ${json}    ${pointer}
     Should Match       ${value}    ${expected}
 
+Json String Should Be Empty
+    [Arguments]        ${json}    ${pointer}
+    ${value} =         Get Json String    ${json}    ${pointer}
+    Should Be Empty    ${value}
+
 Get Json String
     [Arguments]        ${json}                   ${pointer}
     ${value} =         Get Json Value            ${json}        ${pointer}
@@ -109,6 +114,7 @@ Initialize Emergent
     Log       ${project}                  WARN
     ${pid} =             Start Process      emergent -nogui -server -p ${project}    shell=True
     Set Suite Variable   ${pid}
+    Log	      ${pid}	 WARN
     Sleep                8 sec   # Could do a loop and use Is Process Running but not a big deal
     Open Connection      127.0.0.1    port=5360
 
