@@ -122,6 +122,7 @@ void ProgEl::Copy_(const ProgEl& cp) {
   desc = cp.desc;
   flags = cp.flags;
   code_string = cp.code_string;
+  pre_compile_code_string = cp.pre_compile_code_string;
   ClearBaseFlag(COPYING); // ala Copy__
 }
 
