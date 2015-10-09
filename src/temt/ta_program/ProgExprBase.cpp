@@ -905,6 +905,7 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   taBase* path_own_obj = NULL;
   TypeDef* path_own_typ = NULL;
   MemberDef* path_md = NULL;
+  
   return ProgExprBase::ExprLookupFun(cur_txt, cur_pos, new_pos,
                                      path_own_obj, path_own_typ, path_md,
                                      own_pel, own_prg, own_fun);
@@ -939,6 +940,7 @@ String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   taBase* path_own_obj = NULL;
   TypeDef* path_own_typ = NULL;
   MemberDef* path_md = NULL;
+  
   rval = ProgExprBase::ExprLookupFun(cur_txt, cur_pos, new_pos,
                                      path_own_obj, path_own_typ, path_md,
                                      this, own_prg, own_fun, path_base, path_base_typ);
@@ -950,19 +952,25 @@ String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   return rval;
 }
 
-int ProgExprBase::Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos, String& prepend_txt, String& prog_el_txt) {
-  int lookup_type = 0;
-  
-  String  append_txt;
-  String  path_prepend_txt;
-  String  path_var;
-  String  path_rest;
-  String  base_path;    // path to base element(s) if present
-  String  lookup_seed;  // start of text to seed lookup process
+int ProgExprBase::Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
+                                      String& lookup_seed, String& prepend_txt, String& append_txt,
+                                      String& prog_el_txt, String& path_var, String& path_prepend_txt,
+                                      String& path_rest, String& base_path) {
+  int     lookup_type = 0;
   bool    path_base_not_null = false;
   int     expr_start = 0;
   
   lookup_type = ParseForLookup(input_text, cursor_pos, prepend_txt, path_prepend_txt, append_txt, prog_el_txt, base_path, lookup_seed, path_var, path_rest, path_base_not_null, expr_start);
+  
+//  taMisc::DebugInfo("lookup_type = ", (String)lookup_type);
+//  taMisc::DebugInfo("lookup_seed = ", lookup_seed);
+//  taMisc::DebugInfo("prepend_txt = ", prepend_txt);
+//  taMisc::DebugInfo("path_prepend_txt = ", path_prepend_txt);
+//  taMisc::DebugInfo("append_txt = ", append_txt);
+//  taMisc::DebugInfo("prog_el_txt = ", prog_el_txt);
+//  taMisc::DebugInfo("prepend_txt = ", prepend_txt);
+//  taMisc::DebugInfo("path_var = ", path_var);
+//  taMisc::DebugInfo("path_rest = ", path_rest);
   
   return lookup_type;
 }

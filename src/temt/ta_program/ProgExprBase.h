@@ -127,10 +127,13 @@ public:
   static bool   ExprLookupVarFilter(void* base, void* var); // special filter used in ExprLookupFun
   static bool   ExprLookupIsFunc(const String& txt);  // is it a function or program lookup
 
-  static int   Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos, String& prepend_txt, String& prog_el_txt);
-  // ONLY for testing - returns the lookup type and sets some variables
+  static int   Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
+                                   String& lookup_seed, String& prepend_txt, String& append_txt,
+                                   String& prog_el_txt, String& path_var, String& path_prepend_txt,
+                                   String& path_rest, String& base_path);
+  // ONLY for testing - returns the lookup type and sets many variables
 
-void  InitLinks();
+  void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(ProgExprBase);
 protected:
