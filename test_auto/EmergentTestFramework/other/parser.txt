@@ -55,43 +55,14 @@ ParseNoText
     Status OK 		       ${output}
     Json Value Should Equal    ${output}             /result  1
 
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_seed"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "prepend_txt"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "append_txt"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "prog_el_txt"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "path_var"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "path_prepend_txt"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "path_rest"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "base_path"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-    
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "base_path"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
-
+    Prog Var Should Be Empty	lookup_seed
+    Prog Var Should Be Empty	prepend_txt
+    Prog Var Should Be Empty	append_txt
+    Prog Var Should Be Empty	prog_el_txt
+    Prog Var Should Be Empty	path_var
+    Prog Var Should Be Empty	path_prepend_txt
+    Prog Var Should Be Empty	path_rest
+    Prog Var Should Be Empty	base_path
 
 ParseObjectSelectMethodOrMember
     Ensure Emergent Free
@@ -103,37 +74,104 @@ ParseObjectSelectMethodOrMember
     Status OK 		       ${output}
     Json Value Should Equal    ${output}             /result  2
 
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_seed"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
+    Prog Var Should Be Empty	lookup_seed
+    Prog Var Should Be Empty	prepend_txt
+    Prog Var Should Be Empty	append_txt
+    Prog Var Should Be Empty	prog_el_txt
+    Prog Var Should Be Empty	path_var
+    Prog Var Should Match	path_prepend_txt      DataTable_28->
+    Prog Var Should Be Empty	   path_rest
+    Prog Var Should Match	base_path	      DataTable_28
 
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "prepend_txt"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "append_txt"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "prog_el_txt"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "path_var"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "path_prepend_txt"}
-    Status OK 		       ${output}
-    Json String Should Match    ${output}             /result	DataTable_28->
-
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "path_rest"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
+ParseStaticMethodRandom
+    Ensure Emergent Free
+    Set Suite Variable   ${program_test}       "static_method_random"
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
+    Status OK No Result        ${output}
     
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "base_path"}
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
     Status OK 		       ${output}
-    Json String Should Match    ${output}             /result  DataTable_28
+    Json Value Should Equal    ${output}             /result  3
 
+    Prog Var Should Be Empty	lookup_seed
+    Prog Var Should Be Empty	prepend_txt
+    Prog Var Should Be Empty	append_txt
+    Prog Var Should Be Empty	prog_el_txt
+    Prog Var Should Be Empty	path_var
+    Prog Var Should Match	path_prepend_txt      Random::
+    Prog Var Should Be Empty	   path_rest
+    Prog Var Should Match	base_path	      Random
+
+ParseStaticMethodRandomSeeded
+    Ensure Emergent Free
+    Set Suite Variable   ${program_test}       "static_method_random_seeded"
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
+    Status OK No Result        ${output}
+    
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
+    Status OK 		       ${output}
+    Json Value Should Equal    ${output}             /result  3
+
+    Prog Var Should Match	lookup_seed	     Int
+    Prog Var Should Be Empty	prepend_txt
+    Prog Var Should Be Empty	append_txt
+    Prog Var Should Be Empty	prog_el_txt
+    Prog Var Should Be Empty	path_var
+    Prog Var Should Match	path_prepend_txt      Random::
+    Prog Var Should Be Empty	   path_rest
+    Prog Var Should Match	base_path	      Random
+
+ParseObjectMemberSelectMethodOrMember
+    Ensure Emergent Free
+    Set Suite Variable   ${program_test}       "object_member_select_method_or_member"
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
+    Status OK No Result        ${output}
+    
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
+    Status OK 		       ${output}
+    Json Value Should Equal    ${output}             /result  2
+
+    Prog Var Should Be Empty	lookup_seed
+    Prog Var Should Be Empty	prepend_txt
+    Prog Var Should Be Empty	append_txt
+    Prog Var Should Be Empty	prog_el_txt
+    Prog Var Should Match	path_var	      DataTable_28
+    Prog Var Should Match	path_prepend_txt      DataTable_28.cell_view.
+    Prog Var Should Match	path_rest	      cell_view
+    Prog Var Should Match	base_path	      DataTable_28.cell_view
+
+ParseObjectMemberSelectMethodOrMemberSeeded
+    Ensure Emergent Free
+    Set Suite Variable   ${program_test}       "object_member_select_method_or_member_seeded"
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
+    Status OK No Result        ${output}
+    
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
+    Status OK 		       ${output}
+    Json Value Should Equal    ${output}             /result  2
+
+    Prog Var Should MAtch	lookup_seed	     af
+    Prog Var Should Be Empty	prepend_txt
+    Prog Var Should Be Empty	append_txt
+    Prog Var Should Be Empty	prog_el_txt
+    Prog Var Should Match	path_var	      DataTable_28
+    Prog Var Should Match	path_prepend_txt      DataTable_28.cell_view.
+    Prog Var Should Match	path_rest	      cell_view
+    Prog Var Should Match	base_path	      DataTable_28.cell_view
+
+
+*** Keywords ***
+
+Prog Var Should Match
+    [Arguments]         ${var_name}	${should_match}
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "${var_name}"}
+    Status OK 		       ${output}
+    Json String Should Match    ${output}             /result  ${should_match}
+
+Prog Var Should Be Empty
+    [Arguments]         ${var_name}
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "${var_name}"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
 
 
