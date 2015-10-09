@@ -325,7 +325,7 @@ void DeepSpec::Initialize() {
 void DeepSpec::Defaults_init() {
   raw_thr_rel = 0.2f;
   raw_thr_abs = 0.2f;
-  mod_min = 0.7f;
+  mod_min = 0.8f;
   mod_range = 1.0f - mod_min;
 }
 
@@ -1225,7 +1225,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
     net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);  // this could modify net_syn if it wants..
   }
   
-  float net_tot = init.netin + net_syn + net_ex;
+  float net_tot = net_syn + net_ex;
 
   if(act_fun == SPIKE) {
     // todo: need a mech for inhib spiking
@@ -1253,7 +1253,7 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
 
-  float net_ex = 0.0f;
+  float net_ex = init.netin;
   if(bias_spec) {
     net_ex += u->bias_scale * u->bias_wt;
   }
