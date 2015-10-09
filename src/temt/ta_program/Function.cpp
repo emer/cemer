@@ -71,8 +71,10 @@ bool Function::SetName(const String& nm) {
 }
 
 void Function::Copy_(const Function& cp) {
-  // note: do not copy name so it can be uniquified
+  // note: do not copy name so it can be uniquified -- Don't understand -- setting name - rohrlich 10/8/15
   SetBaseFlag(COPYING); // ala Copy__
+  String new_name = cp.name + "_copy"; // SetCopyName is in taNBase so we don't have access - this is good enough
+  SetName(new_name);
   return_type = cp.return_type;
   object_type = cp.object_type;
   args = cp.args;
