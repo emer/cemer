@@ -1503,7 +1503,7 @@ void GraphTableView::RenderLegend() {
     return;    // nothing..
 
   float tot_char_wd = (width * 2.0f) / label_font_size; // rough heuristic total
-  int n_across = (int)(tot_char_wd / (float)max_label_len);
+  int n_across = (int)(tot_char_wd / (float)(max_label_len + 5)); // add 5 for the line
   if(n_across < 1) n_across = 1;
   
   int n_down = (int)(((float)n_plots_eff / (float)n_across) + 0.5f);
