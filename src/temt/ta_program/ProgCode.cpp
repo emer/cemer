@@ -165,7 +165,7 @@ void ProgCode::ConvertToProgEl() {
   cvt->edit_move_after = edit_move_after; // these are the ones who need it
   edit_move_after = 0;
   cvt->desc = desc;         // transfer description
-  cvt->orig_prog_code = code.expr;
+  cvt->code_string = code.expr;
   cvt->SetProgFlag(CAN_REVERT_TO_CODE);
   int myidx = own->FindEl(this);
   // if we just typed an else or elseif, see if we did this within an existing if/elseif, without

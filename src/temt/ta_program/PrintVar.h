@@ -45,7 +45,8 @@ public:
 
   String        GetDisplayName() const override;
   String        GetTypeDecoKey() const override { return "ProgVar"; }
-  String        GetToolbarName() const override { return "print\nvariable"; }
+//  String        GetToolbarName() const override { return "print\nvariable"; }
+  String        GetToolbarName() const override { return "print xxx"; }
   String        GetStateDecoKey() const override;
 
   PROGEL_SIMPLE_BASEFUNS(PrintVar);

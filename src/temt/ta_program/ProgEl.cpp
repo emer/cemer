@@ -121,12 +121,12 @@ void ProgEl::Copy_(const ProgEl& cp) {
   SetBaseFlag(COPYING); // ala Copy__
   desc = cp.desc;
   flags = cp.flags;
-  orig_prog_code = cp.orig_prog_code;
+  code_string = cp.code_string;
   ClearBaseFlag(COPYING); // ala Copy__
 }
 
 void ProgEl::UpdateProgFlags() {
-  if(orig_prog_code.nonempty() && ProgElChildrenCount() == 0) {
+  if(code_string.nonempty() && ProgElChildrenCount() == 0) {
     SetProgFlag(CAN_REVERT_TO_CODE);
   }
   else {
@@ -137,6 +137,7 @@ void ProgEl::UpdateProgFlags() {
 void ProgEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateProgFlags();
+  pre_compile_code_string = BrowserEditString();  // hold on to the current code; if compile successful copy to
 }
 
 void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
@@ -404,7 +405,6 @@ int ProgEl::GetEnabled() const {
 void ProgEl::SetEnabled(bool value) {
   SetProgFlagState(OFF, !value);
 }
-
 
 String ProgEl::GetStateDecoKey() const {
   String rval = inherited::GetStateDecoKey();
@@ -694,7 +694,7 @@ bool ProgEl::CvtFmCode(const String& code) {
 }
 
 bool ProgEl::CvtFmSavedCode() {
-  bool rval = CvtFmCode(orig_prog_code);
+  bool rval = CvtFmCode(code_string);
   SigEmitUpdated();
   return rval;
 }
@@ -718,7 +718,7 @@ bool ProgEl::BrowserEditSet(const String& code, int move_after) {
     UpdateAfterEdit();
     return rval;
   }
-  orig_prog_code = cd;
+  code_string = cd;
   edit_move_after = move_after;
   TestWarning(move_after == -11, "BrowserEditSet",
               "Reverting Code -- it failed to pass the CanCvtFmCode step!\n",
@@ -770,7 +770,7 @@ bool ProgEl::RevertToCode() {
   if(!own) return false;
   ProgCode* cvt = new ProgCode;
   cvt->desc = desc;
-  cvt->code.expr = orig_prog_code;
+  cvt->code.expr = code_string;
   int myidx = own->FindEl(this);
   SetBaseFlag(BF_MISC4); // indicates that we're done..
   own->ReplaceLater(cvt, myidx, "");
@@ -879,6 +879,11 @@ bool ProgEl::CvtCodeToVar(String& code) {
     }
   }
   return true;
+}
+
+void ProgEl::UpdateProgCode() {
+  code_string = pre_compile_code_string;
+  SigEmitUpdated();
 }
 
 bool ProgEl::InDebugMode() {

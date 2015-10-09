@@ -478,6 +478,7 @@ protected:
   virtual int           Cont_impl();
   void                  ScriptCompiled() override; // #IGNORE
   virtual void          UpdateProgVars(); // put global vars in script, set values
+  virtual void          UpdateProgElCodeStrings();  // keep each ProgEl saved code_string up to date
   void                  ShowRunError(); // factored error msg code
   virtual void          ViewScript_impl(int sel_ln_st = -1, int sel_ln_ed = -1);
   virtual void          GetSubProgsAll(int depth=0);

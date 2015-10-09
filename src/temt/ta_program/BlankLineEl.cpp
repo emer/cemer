@@ -57,7 +57,7 @@ bool BlankLineEl::BrowserEditSet(const String& code, int move_after) {
     SigEmitUpdated();
     return rval;
   }
-  orig_prog_code = cd;
+  code_string = cd;
   edit_move_after = move_after;
   tabMisc::DelayedFunCall_gui(this, "RevertToCode"); // do it later..
   return true;

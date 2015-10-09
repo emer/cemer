@@ -450,6 +450,7 @@ void Program::Init() {
       ret_val = RV_COMPILE_ERR;
   }
   if(ret_val == RV_OK) {
+    UpdateProgElCodeStrings();
     // check args and vars before running any code, to get NULL_CHECK etc
     bool chkargs = args.CheckConfig(false);
     bool chkvars = vars.CheckConfig(false);
@@ -530,6 +531,7 @@ int Program::Run_impl() {
       ret_val = RV_COMPILE_ERR;
   }
   if (ret_val == RV_OK) {
+    UpdateProgElCodeStrings();
     script->SetDebug((int)HasProgFlag(TRACE));
     script->Run();
     // DO NOT DO!
@@ -809,6 +811,9 @@ void Program::StepCss() {
 
 void Program::Compile() {
   CompileScript(true);          // always force if command entered
+  if (ret_val == RV_OK ) {
+    UpdateProgElCodeStrings();
+  }
 }
 
 void Program::CmdShell() {
@@ -2140,6 +2145,19 @@ bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
   // make sure our operations are finished
   taiMiscCore::ProcessEvents();
   return (bool)iti;
+}
+
+void Program::UpdateProgElCodeStrings() {
+  if (ret_val == RV_OK) {
+    for (int i=0; i<init_code.size; i++) {  // update code_strings in case user wants to revert
+      ProgEl* prog_el = init_code.FastEl(i);
+      prog_el->UpdateProgCode();
+    }
+    for (int i=0; i<prog_code.size; i++) {
+      ProgEl* prog_el = prog_code.FastEl(i);
+      prog_el->UpdateProgCode();
+    }
+  }
 }
 
 #ifdef DEBUG

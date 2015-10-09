@@ -85,8 +85,8 @@ public:
 
   String                desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
   ProgFlags             flags;  // flags for modifying program element function or providing information about the status of this program element
-  String                orig_prog_code; // #READ_ONLY #SHOW original program code in a ProgCode used to create this element -- used e.g. for reverting
-
+  String                code_string; // #READ_ONLY #SHOW most recently compiled program code in a ProgCode used to create this element -- used e.g. for reverting
+  String                pre_compile_code_string; // #HIDDEN hold on to this for updating code_string if compile successful
   virtual ProgEl*       parent() const
   { return (ProgEl*)const_cast<ProgEl*>(this)->GetOwner(&TA_ProgEl); }
   Program*              program() { return GET_MY_OWNER(Program); }
@@ -156,7 +156,7 @@ public:
   virtual  bool         CvtFmCode(const String& code);
   // #IGNORE go ahead and convert the code (ProgCode) text string into this program element type  -- code has had whitespace trimmed at start
   virtual  bool         CvtFmSavedCode();
-  // call CvtFmCode on orig_prog_code string -- for a callback
+  // call CvtFmCode on code_string string -- for a callback
   virtual  bool         CvtCodeToVar(String& code_str);
   // attempt to convert the code to a new variable declaration -- prompts for var location -- if true, then it was interpreted as a var decl, and var decl is removed from code -- e.g., if input is "int i = 20" then remaining code will be "i = 20" -- if nothing but a decl (e.g., "int i"), then code is empty, and nothing left to do
   bool                  BrowserEditEnable() override { return true; }
@@ -170,6 +170,9 @@ public:
 
   virtual  bool         IsCtrlProgEl()  { return false; }
   // #IGNORE set this to true for any program element that is a basic control element, such as loops (for, while), if, switch, etc -- these have special parsing status
+
+  virtual void          UpdateProgCode();
+  // #IGNORE save the latest successfully compiled code
 
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
@@ -214,11 +217,12 @@ protected:
   // check program variable reference to make sure it is in same Program scope as this progel
   virtual bool          UpdateProgVarRef_NewOwner(ProgVarRef& pvr);
   // if program variable reference is not in same Program scope as this progel (because progel was moved to a new program), then try to find the same progvar in new owner (by name), emit warning if not found -- auto called by UpdateAfterMove and UpdateAfterCopy
-    virtual ProgVar*    FindVarNameInScope_impl(const String& var_nm) const;
+  virtual ProgVar*      FindVarNameInScope_impl(const String& var_nm) const;
     // #IGNORE impl
 
   virtual void          UpdateProgFlags();
   // #IGNORE update program element flags
+
 
   bool         CheckConfig_impl(bool quiet) override;
   void         CheckThisConfig_impl(bool quiet, bool& rval) override;
