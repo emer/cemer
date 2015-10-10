@@ -55,7 +55,7 @@ void MSNConSpec::Defaults_init() {
 
   learn_qtr = Q2_Q4;            // beta frequency default
 
-  ignore_unlearnable = false;
+  use_unlearnable = false;
 }
 
 void MSNConSpec::UpdateAfterEdit_impl() {

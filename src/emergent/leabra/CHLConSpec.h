@@ -88,7 +88,7 @@ public:
       return;
     }
     LeabraNetwork* net = (LeabraNetwork*)rnet;
-    if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
+    if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LeabraConGroup* cg = (LeabraConGroup*)rcg;
     LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
 

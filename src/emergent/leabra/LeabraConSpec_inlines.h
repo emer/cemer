@@ -168,7 +168,7 @@ inline void LeabraConSpec::GetLrates(LeabraConGroup* cg, float& clrate, bool& de
 
 inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no) {
   LeabraNetwork* net = (LeabraNetwork*)rnet;
-  if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
+  if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
   LeabraConGroup* cg = (LeabraConGroup*)scg;
   LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
   LeabraUnitSpec* us = (LeabraUnitSpec*)su->unit_spec;

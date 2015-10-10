@@ -137,7 +137,7 @@ void LeabraConSpec::Initialize() {
   learn = true;
   learn_qtr = Q4;
   
-  ignore_unlearnable = true;
+  use_unlearnable = true;
 
   // we are no longer going back-and-forth from inv to sig weights 
   // so we presumably can use an order of magnitude smaller lookup table

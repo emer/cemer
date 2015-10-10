@@ -154,7 +154,6 @@ void OptThreshSpec::Initialize() {
 }
 
 void LeabraInitSpec::Initialize() {
-  netin_init = true;
   Defaults_init();
 }
 
@@ -645,12 +644,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   Init_Netins(u, net, thr_no);
 
   u->act = init.act;
-  if(init.netin_init) {
-    u->net = init.netin;
-  }
-  else {
-    u->net = 0.0f;
-  }
+  u->net = init.netin;
 
   u->act_eq = u->act;
   u->act_nd = u->act_eq;
@@ -726,12 +720,7 @@ void LeabraUnitSpec::DecayState(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
                                 float decay) {
   if(decay > 0.0f) {            // no need to reset netin if not decaying at all
     u->act -= decay * (u->act - init.act);
-    if(init.netin_init) {
-      u->net -= decay * (u->net - init.netin);
-    }
-    else {
-      u->net -= decay * u->net;
-    }
+    u->net -= decay * (u->net - init.netin);
     u->td_net -= decay * u->td_net;
     u->act_eq -= decay * (u->act_eq - init.act);
     u->act_nd -= decay * (u->act_nd - init.act);

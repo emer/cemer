@@ -56,7 +56,7 @@ public:
 
   inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
-    if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
+    if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LeabraConGroup* cg = (LeabraConGroup*)rcg;
     LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;

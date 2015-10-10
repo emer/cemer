@@ -39,7 +39,7 @@ public:
   // #IGNORE
 
   inline void Compute_dWt(LeabraConGroup* cg, LeabraUnit* su, LeabraNetwork* net) override {
-    if(ignore_unlearnable && net->unlearnable_trial) return;
+    if(use_unlearnable && net->unlearnable_trial) return;
 
     LeabraTdUnit* lsu = (LeabraTdUnit*)su;
     const float su_trace = lsu->trace;
