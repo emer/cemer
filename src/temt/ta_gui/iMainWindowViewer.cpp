@@ -64,9 +64,7 @@
 #include <taDataProc>
 #include <taDataAnal>
 #include <taDataGen>
-//#include <taImageProc>
 #include <taWikiURL>
-#include <iApplicationToolbar>
 
 #include <QFileInfo>
 #include <QUrl>
