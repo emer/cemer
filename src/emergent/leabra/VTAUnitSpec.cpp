@@ -211,6 +211,7 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   // use avg act over layer..
   float pptg_da_p = 0.0f;
   float pptg_da_n = 0.0f;
+  float tot_burst_da = 0.0f;
   float net_burst_da = 0.0f;
   float lhb_da = 0.0f;
   float pospv = 0.0f;
@@ -228,6 +229,12 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
     negpv = negpv_lay->acts_eq.avg * negpv_lay->units.size;
     pptg_da_n = pptg_lay_n->acts_eq.avg * pptg_lay_n->units.size;
 
+    
+    // absorbing NegPV value - prevents double counting
+    float tot_burst_da = MAX(da.pv_gain * negpv, da.pptg_gain * pptg_da_n);
+    // NOTE: at present, don't thing there is any lhb contribution to bursting
+//    tot_burst_da -= da.lhb_gain * burst_lhb_da; // burst_lhb_da non-positive
+    
     net_da = 0.0f;
     
     negpv_da = negpv;
@@ -236,8 +243,10 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
 //    net_da = da.pv_gain * negpv_da + da.pptg_gain * pptg_da_n;
     net_da = MAX(da.pv_gain * negpv_da, da.pptg_gain * pptg_da_n);
     // don't double-count PV signal
-    //TODO: probably need separate pptg_p_ and pptg_n_ gain factors
+    //TODO: probably WON'T need separate pptg_p_ and pptg_n_ gain factors now since goal is to get rid of the multiplicity of gain factors
     
+    net_da = tot_burst_da;
+    // currently, no reason for PVi-like shunting identified
     net_da *= da.da_gain;
     
     //net_da *= -1.0f; // TODO: eventually delete since vestigial, original implementation; kept temporarily for Randy's short-term reference only
@@ -257,7 +266,7 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
     pospv = pospv_lay->acts_eq.avg * pospv_lay->units.size;
     vspvi = vspatch_lay->acts_q0.avg * vspatch_lay->units.size;
     
-    pospv_da = 0.0f;
+//    pospv_da = 0.0f;
     net_block = 0.0f;
     net_da = 0.0f;
     
@@ -265,9 +274,14 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
     float dip_lhb_da = MAX(lhb_da, 0.0f); // else, promotes dipping
     
     //float pospv_da = pospv - vspvi; // original
-    float tot_burst_da = da.pv_gain * pospv + da.pptg_gain * pptg_da_p - da.lhb_gain * burst_lhb_da;
-    // note sign reversal for lhb component
-    //pospv_da = pospv - da.pvi_gain * vspvi; // higher pvi_gain == more shunting // old
+    
+    // absorbing PosPV value - prevents double counting
+    tot_burst_da = MAX(da.pv_gain * pospv, da.pptg_gain * pptg_da_p);
+    // likewise for lhb contribution to bursting (burst_lhb_da non-positive)
+    tot_burst_da = MAX(tot_burst_da, -da.lhb_gain * burst_lhb_da);
+//    tot_burst_da -= da.lhb_gain * burst_lhb_da; // burst_lhb_da non-positive
+   
+    // PVi shunting
     net_burst_da = tot_burst_da - (da.pvi_gain * vspvi);
     
     //pospv_da = MAX(pospv_da, 0.0f); // shunting should not be able to produce dip!
@@ -296,16 +310,14 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   }
 
   if(lv_block.rec_data) {
-    lay->SetUserData("pptg_da_p", pptg_da_p);
-    lay->SetUserData("pptg_da_n", pptg_da_n);
     lay->SetUserData("pospv", pospv);
-    lay->SetUserData("negpv", negpv);
-    lay->SetUserData("vs_patch_dir_pos", vspvi);
-//    lay->SetUserData("pospv_da", pospv_da);
-//    lay->SetUserData("negpv_da", negpv_da);
-    //lay->SetUserData("net_block", net_block);
-    lay->SetUserData("net_burst_da", net_burst_da);
+    lay->SetUserData("pptg_da_p", pptg_da_p);
     lay->SetUserData("lhb_da", lhb_da);
+    lay->SetUserData("tot_burst_da", tot_burst_da);
+    lay->SetUserData("vs_patch_dir_pos", vspvi);
+    lay->SetUserData("net_burst_da", net_burst_da);
+    lay->SetUserData("negpv", negpv);
+    lay->SetUserData("pptg_da_n", pptg_da_n);
     lay->SetUserData("net_da", net_da);
   }
 }

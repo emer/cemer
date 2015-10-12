@@ -80,7 +80,7 @@ private:
 eTypeDef_Of(VTAUnitSpec);
 
 class E_API VTAUnitSpec : public LeabraUnitSpec {
-  // Models DA cells of the Ventral Tegmental Area: if DA_P models classic Schultzian behavior and computes PVLV dopamine (Da) signal from PPTg and LHbRMTg input projections, and also a direct input from a positive valence PV layer, and shunting inhibition from VS Patch Indirect -- uses deep_qtr to determine when to send dopamine values; if DA_N models newly discovered small subpopulation that bursts for negative valence and projects to ONLY dedicated fear-related circuits
+// Models DA cells of the Ventral Tegmental Area: if DA_P models classic Schultzian behavior and computes PVLV dopamine (Da) signal from PPTg and LHbRMTg input projections, and also a direct input from a positive valence PV layer, and shunting inhibition from VS Patch Indirect -- uses deep_qtr to determine when to send dopamine values; if DA_N models newly discovered small subpopulation that bursts for negative valence and projects to ONLY dedicated fear-related circuits
 INHERITED(LeabraUnitSpec)
 public:
   enum  DaValence {             // which valence of dopamine should we compute?

@@ -176,15 +176,18 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   float pv_neg = pv_neg_lay->acts_eq.avg * pv_neg_lay->units.size;
   
   // punishments should never be completely predicted away...
-  //float residual_pvneg = 0.0f; // no residual if nothing there to start with
-  float residual_pvneg = gains.min_pvneg * pv_neg;
+   float residual_pvneg = gains.min_pvneg * pv_neg;
   residual_pvneg = MAX(residual_pvneg, 0.0f); // just a precaution
+ 
+  // don't double count pv going through the matrix guys
+  float net_pv_pos = MAX(pv_pos, gains.matrix * matrix_dir);
+  float net_pv_neg = MAX(pv_neg, gains.matrix * matrix_ind);
   
-  float net_lhb = pv_neg - (gains.patch_ind * patch_ind) - pv_pos +
-                           (gains.patch_dir * patch_dir) + gains.matrix *
-                           (matrix_ind - matrix_dir) + residual_pvneg;
+  float net_lhb = net_pv_neg - (gains.patch_ind * patch_ind) - net_pv_pos +
+                           (gains.patch_dir * patch_dir) + residual_pvneg;
   net_lhb *=gains.all;
   // TODO: tweak the gains.params here and for initialization, defaults, etc.
+  // TODO: note matrix guys netted out first to reflect the Go/NoGo competition - should patch guys do the same?
   
   u->act_eq = u->act_nd = u->act = u->net = u->ext = net_lhb;
   

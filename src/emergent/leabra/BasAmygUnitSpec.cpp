@@ -54,7 +54,10 @@ float BasAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net
                                            int thr_no, float& net_syn) {
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
   if(deep.ApplyDeepMod() && deep_vg_netin) {
-    net_ex += u->deep_lrn * u->act_eq;
+//    net_ex += u->deep_lrn * u->act_eq;
+    // TEST:TODO: correct for apparent cycle-by-cycle accummulation
+    // COMMENT: seems to have helped a LOT!!!!
+    net_ex += ((u->deep_lrn * u->act_eq) / 100);
   }
   return net_ex;
 }
@@ -68,7 +71,7 @@ void BasAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int
     u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
   }
   // must be SUPER units at this point
-  else if(lay->am_deep_net.max < 0.1f) { // not enough yet 
+  else if(lay->am_deep_net.max < 0.01f) { // not enough yet // was .1f
     u->deep_lrn = 0.0f;    // default is 0!
     u->deep_mod = 1.0f;
   }
