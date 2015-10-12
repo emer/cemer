@@ -57,7 +57,7 @@ float BasAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net
 //    net_ex += u->deep_lrn * u->act_eq;
     // TEST:TODO: correct for apparent cycle-by-cycle accummulation
     // COMMENT: seems to have helped a LOT!!!!
-    net_ex += ((u->deep_lrn * u->act_eq) / 100);
+    net_ex += ((u->deep_lrn * u->act_eq) / (net->times.quarter *4));
   }
   return net_ex;
 }
