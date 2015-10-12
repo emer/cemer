@@ -35,11 +35,9 @@ void iApplicationToolBar::Constr_post() {
   // Now add these actions to the toolbar for convenient access.
   tb->addAction(win->historyBackAction);
   win->historyBackAction->setIcon(QIcon(QPixmap(":/images/previous_icon.png")));
-//  win->historyBackAction->setIconText("Previous");
 
   tb->addAction(win->historyForwardAction);
   win->historyForwardAction->setIcon(QIcon(QPixmap(":/images/next_icon.png")));
-//  win->historyForwardAction->setIconText("Next");
 
   tb->addSeparator();
   tb->addAction(win->editFindAction);
@@ -50,18 +48,15 @@ void iApplicationToolBar::Constr_post() {
   tb->addAction(win->fileCloseAction);
   tb->addAction(win->fileSaveAction);
   tb->addAction(win->fileSaveAsAction);
-  // tb->addAction(win->fileSaveNotesAction);
-  //  tb->addAction(win->fileUpdateChangeLogAction);
-  // tb->addAction(win->filePrintAction);
-  tb->addSeparator();
 
+  tb->addSeparator();
   tb->addAction(win->fileOpenSvnBrowserAction);
   tb->addAction(win->fileSvnCommitAction);
-
+  
   tb->addSeparator();
   tb->addAction(win->editUndoAction);
   tb->addAction(win->editRedoAction);
-
+  
   tb->addSeparator();
   tb->addAction(win->editCutAction);
   tb->addAction(win->editCopyAction);
@@ -71,9 +66,10 @@ void iApplicationToolBar::Constr_post() {
   tb->addAction(win->editPasteAppendAction);
 
   tb->addSeparator();
+  tb->addAction(win->ctrlInitAction);
   tb->addAction(win->ctrlStopAction);
-  tb->addAction(win->ctrlContAction);
   tb->addAction(win->ctrlStepAction);
+  tb->addAction(win->ctrlRunAction);
   tb->addAction(win->progStatusAction);
 
   tb->addSeparator();

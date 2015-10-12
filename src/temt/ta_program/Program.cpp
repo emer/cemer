@@ -129,6 +129,7 @@ ProgramRef Program::last_step_prog;
 int Program::cur_step_n = 1;
 int Program::cur_step_cnt = 0;
 Program::RunState Program::global_run_state = Program::NOT_INIT;
+Program::RunState Program::last_global_run_state = Program::NOT_INIT;
 String Program::global_trace;
 int64_t Program::global_init_timestamp = 0;
 
@@ -524,7 +525,12 @@ bool Program::AlreadyRunning() {
 
 void Program::SetRunState(RunState value) {
   run_state = value;
+  SetLastRunState(global_run_state);  // save prior state
   global_run_state = value;
+}
+
+void Program::SetLastRunState(RunState value) {
+  last_global_run_state = value;
 }
 
 int Program::Run_impl() {

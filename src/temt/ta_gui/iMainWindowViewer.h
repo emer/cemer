@@ -207,6 +207,8 @@ public:
   iAction*            toolsCloseServerAction;
   iAction*            toolsChooseKeyBindingsAction;
 
+  iAction*            ctrlInitAction;
+  iAction*            ctrlRunAction;
   iAction*            ctrlStopAction;
   iAction*            ctrlContAction;
   iAction*            ctrlStepAction;
@@ -386,6 +388,8 @@ public slots:
   virtual void  toolsMenu_aboutToShow();
   virtual void  dataMenu_aboutToShow();
 
+  virtual void  ctrlInit();
+  virtual void  ctrlRun();
   virtual void  ctrlStop();
   virtual void  ctrlCont();
   virtual void  ctrlStep();
@@ -440,6 +444,7 @@ protected:
   void         ResolveChanges_impl(CancelOp& cancel_op) override; // only for project browsers
   void         Refresh_impl() override;
   void         keyPressEvent(QKeyEvent * e) override;
+  void         UpdateStateActions();
 
 protected slots:
   void                  ch_destroyed(); // cliphandler destroyed (just in case it doesn't deregister)

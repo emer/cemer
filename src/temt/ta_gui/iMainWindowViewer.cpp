@@ -66,6 +66,7 @@
 #include <taDataGen>
 //#include <taImageProc>
 #include <taWikiURL>
+#include <iApplicationToolbar>
 
 #include <QFileInfo>
 #include <QUrl>
@@ -828,15 +829,23 @@ void iMainWindowViewer::Constr_ControlMenu()
 {
   KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::current_key_bindings));
 
-  ctrlStopAction = AddAction(new iAction("Stop", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_STOP)), "ctrlStopAction"));
+  ctrlInitAction = new iAction("Init", QKeySequence(), "ctrlInitAction");
+  ctrlInitAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
+  ctrlInitAction->setToolTip(taiMisc::ToolTipPreProcess("Init: initialize the last program that was run, from wherever it was last stopped"));
+
+  ctrlRunAction = new iAction("Run", QKeySequence(), "ctrlRunAction");
+  ctrlRunAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
+  ctrlRunAction->setToolTip(taiMisc::ToolTipPreProcess("Run: Run the last program that was run, will just continue a stopped program unless you re-init"));
+  
+  ctrlStopAction = new iAction("Stop", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_STOP)), "ctrlStopAction");
   ctrlStopAction->setIcon(QIcon(QPixmap(":/images/stop_icon.png")));
   ctrlStopAction->setToolTip(taiMisc::ToolTipPreProcess("Stop: stop whatever program is currently running -- execution can be resumed with the Cont continue button."));
 
-  ctrlContAction = AddAction(new iAction("Cont", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_CONTINUE)), "ctrlContAction"));
+  ctrlContAction = new iAction("Cont", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_CONTINUE)), "ctrlContAction");
   ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
   ctrlContAction->setToolTip(taiMisc::ToolTipPreProcess("Continue: continue running the last program that was run, from wherever it was last stopped"));
   
-  ctrlStepAction = AddAction(new iAction("Step", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_STEP)), "ctrlStepAction"));
+  ctrlStepAction = new iAction("Step", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_STEP)), "ctrlStepAction");
   ctrlStepAction->setIcon(QIcon(QPixmap(":/images/step_icon.png")));
   ctrlStepAction->setToolTip(taiMisc::ToolTipPreProcess("Step: Step again"));
   
@@ -844,16 +853,26 @@ void iMainWindowViewer::Constr_ControlMenu()
   progStatusAction->setToolTip(taiMisc::ToolTipPreProcess("Current Program status -- click button to see the current Global Backtrace of programs run"));
   
   // Build menu items.
-  ctrlMenu->AddAction(ctrlStopAction);
+  ctrlMenu->AddAction(ctrlInitAction);
+  ctrlMenu->AddAction(ctrlRunAction);
   ctrlMenu->AddAction(ctrlContAction);
+  ctrlMenu->AddAction(ctrlStopAction);
   ctrlMenu->AddAction(ctrlStepAction);
   ctrlMenu->AddAction(progStatusAction);
 
   // Make connections.
+  connect(ctrlInitAction, SIGNAL(Action()), this, SLOT(ctrlInit()));
+  connect(ctrlRunAction, SIGNAL(Action()), this, SLOT(ctrlRun()));
   connect(ctrlStopAction, SIGNAL(Action()), this, SLOT(ctrlStop()));
   connect(ctrlContAction, SIGNAL(Action()), this, SLOT(ctrlCont()));
   connect(ctrlStepAction, SIGNAL(Action()), this, SLOT(ctrlStep()));
   connect(progStatusAction, SIGNAL(Action()), this, SLOT(progStatus()));
+  
+  ctrlStopAction->setEnabled(false);
+  ctrlInitAction->setEnabled(false);
+  ctrlContAction->setEnabled(false);
+  ctrlStepAction->setEnabled(false);
+  ctrlRunAction->setEnabled(false);
 }
 
 void iMainWindowViewer::Constr_DataMenu() {
@@ -1757,6 +1776,16 @@ void iMainWindowViewer::fileOptions() {
   tabMisc::root->Options();
 }
 
+void iMainWindowViewer::ctrlInit() {
+  if(!Program::last_run_prog) {
+    taMisc::Error("Init: cannot continue because there is no record of which program was running previously");
+    return;
+  }
+  taMisc::Info("Init: reinitialize last running program:", Program::last_run_prog->name);
+  Program::last_run_prog->Init();
+  
+}
+
 void iMainWindowViewer::ctrlStop() {
   Program::SetStopReq(Program::SR_USER_STOP, "Main window Stop Button");
 }
@@ -1767,6 +1796,15 @@ void iMainWindowViewer::ctrlCont() {
     return;
   }
   taMisc::Info("Continue: running program:", Program::last_run_prog->name);
+  Program::last_run_prog->Run_Gui();
+}
+
+void iMainWindowViewer::ctrlRun() {
+  if(!Program::last_run_prog) {
+    taMisc::Error("Run: cannot continue because there is no record of which program was running previously");
+    return;
+  }
+  taMisc::Info("Run: running program:", Program::last_run_prog->name);
   Program::last_run_prog->Run_Gui();
 }
 
@@ -2978,10 +3016,14 @@ void iMainWindowViewer::UpdateUi() {
     editRedoAction->setEnabled(false);
   }
 
+  UpdateStateActions();
+  
   bool css_running = (Program::global_run_state == Program::RUN);
-  ctrlStopAction->setEnabled(css_running);
-  ctrlContAction->setEnabled(!css_running && Program::last_run_prog);
-  ctrlStepAction->setEnabled(!css_running && Program::last_step_prog);
+//  ctrlStopAction->setEnabled(css_running);
+//  ctrlInitAction->setEnabled(!css_running && Program::last_run_prog);
+//  ctrlContAction->setEnabled(!css_running && Program::last_run_prog);
+//  ctrlStepAction->setEnabled(!css_running && Program::last_step_prog);
+////  ctrlRunAction->setEnabled(!css_running && Program::last_run_prog);
 
   progStatusAction->setText(Program::GlobalStatus());
 
@@ -3225,4 +3267,59 @@ bool taBase::GuiFindFromMe(const String& find_str) {
     imwv->FindNonInteractive(link, find_str);
   }
   return rval;
+}
+
+void iMainWindowViewer::UpdateStateActions() {
+  if (Program::global_run_state == Program::last_global_run_state) {
+    return;
+  }
+  
+  // if we set last_program_run on init this would be good
+//  if (Program::global_run_state == Program::DONE && Program::last_global_run_state == Program::INIT) {
+//    ctrlRunAction->setEnabled(true);
+//  }
+  
+  ToolBar* tb = viewer()->FindToolBarByType(&TA_ToolBar,"Application");
+  if (!tb) {
+    return;
+  }
+
+  Program::SetLastRunState(Program::global_run_state); // set the old state to current so we don't keep updating
+
+  bool css_running = (Program::global_run_state == Program::RUN);
+  ctrlStopAction->setEnabled(css_running);
+  ctrlInitAction->setEnabled(!css_running && Program::last_run_prog);
+  ctrlContAction->setEnabled(!css_running && Program::last_run_prog);
+  ctrlStepAction->setEnabled(!css_running && Program::last_step_prog);
+  ctrlRunAction->setEnabled(!css_running && Program::last_run_prog);
+  
+  switch (Program::global_run_state) {
+    case Program::RUN:
+      tb->widget()->insertAction(ctrlStopAction, ctrlContAction);
+      ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
+      tb->widget()->removeAction(ctrlRunAction);
+      break;
+      
+    case Program::INIT:
+      ctrlStepAction->setEnabled(false);
+      break;
+      
+    case Program::NOT_INIT:
+      break;
+      
+    case Program::DONE:
+      tb->widget()->insertAction(ctrlStopAction, ctrlRunAction);
+      ctrlRunAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
+      tb->widget()->removeAction(ctrlContAction);
+      break;
+      
+    case Program::STOP:
+      tb->widget()->insertAction(ctrlStopAction, ctrlContAction);
+      ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
+      tb->widget()->removeAction(ctrlRunAction);
+      break;
+      
+    default:
+      break;
+  }
 }

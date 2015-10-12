@@ -129,6 +129,8 @@ public:
   // #READ_ONLY #NO_SAVE current step count -- incremented until cur_step_n is reached
   static RunState       global_run_state;
   // #READ_ONLY #NO_SAVE global run state -- set by the last program to run in gui mode (from the Run, Init, Step buttons) -- used primarily to prevent multiple programs from running at the same time
+  static RunState       last_global_run_state;
+  // #READ_ONLY #NO_SAVE holds previous run state - so we can see if the run state has changed
   static String         global_trace;
   // #READ_ONLY #NO_SAVE trace of programs called at point of last stop -- for GlobalTrace function
   static int64_t        global_init_timestamp;
@@ -207,7 +209,7 @@ public:
   void                  ToggleTrace();
   // #MENU #MENU_ON_Object #DYN1 toggle the TRACE flag to opposite of current state: flag indicates whether to record a trace of program execution in the css console or not
 
-  virtual void		ProjDirToCurrent();
+  virtual void          ProjDirToCurrent();
   // #CAT_Run make sure that the project directory is the current directory
   static void           SetStopReq(StopReason stop_rsn, const String& stop_message = "");
   // #CAT_Run request that the currently-running program stop at its earliest convenience..
@@ -215,9 +217,11 @@ public:
   // #CAT_Run reset the stop request information
   static const String   GetDescString(const String& dsc, int indent_level);
   // #IGNORE get an appropriately formatted version of the description string for css code
+  static void           SetLastRunState(RunState value);
+  // #IGNORE sets last_global_run_state - saved for comparison needed in update UI
 
   bool                  isStale() const {return m_stale;}
-  void         setStale() override; // indicates a component has changed
+  void                  setStale() override; // indicates a component has changed
   void                  SetRunState(RunState value);
   // #IGNORE sets the local AND global run state -- don't use for just local run state updates
   bool                  AlreadyRunning();
