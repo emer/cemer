@@ -24,6 +24,7 @@ void BasAmygUnitSpec::Initialize() {
   valence = APPETITIVE;
   dar = D1R;
   deep_vg_netin = 0.0f;
+  deep_vg_thr = 0.001f;
   Defaults_init();
 }
 
@@ -54,7 +55,7 @@ float BasAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net
                                            int thr_no, float& net_syn) {
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
   if(deep.ApplyDeepMod() && deep_vg_netin > 0.0f) {
-    net_ex += deep_vg_netin * u->deep_lrn * u->act_eq;
+    net_ex += deep_vg_netin * u->deep_lrn * ((u->act_eq >= deep_vg_thr) ? 1.0f : 0.0f);
   }
   return net_ex;
 }
