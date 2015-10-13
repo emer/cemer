@@ -57,9 +57,9 @@ float BasAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net
 //    net_ex += u->deep_lrn * u->act_eq;
     // TEST:TODO: correct for apparent cycle-by-cycle accummulation
     // COMMENT: seems to have helped a LOT!!!!
-    net_ex += ((u->deep_lrn * u->act_eq) / (net->times.quarter *4));
+//    net_ex += ((u->deep_lrn * u->act_eq) / (net->times.quarter *4));
     
-    int tot_cycles = net->times.quarter *3; // just minus phase
+    int tot_cycles = net->times.quarter *3; // shouldn't need more net_ex after minus phase
     int cycles_left = (int)MAX(0.0f, tot_cycles - net->cycle);
     net_ex += (u->deep_lrn * u->act_eq) * cycles_left/(tot_cycles * tot_cycles);
     
