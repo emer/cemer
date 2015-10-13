@@ -23,7 +23,7 @@ void BasAmygUnitSpec::Initialize() {
   acq_ext = ACQ;
   valence = APPETITIVE;
   dar = D1R;
-  deep_vg_netin = false;
+  deep_vg_netin = 0.0f;
   Defaults_init();
 }
 
@@ -53,16 +53,8 @@ void BasAmygUnitSpec::UpdateAfterEdit_impl() {
 float BasAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no, float& net_syn) {
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
-  if(deep.ApplyDeepMod() && deep_vg_netin) {
-//    net_ex += u->deep_lrn * u->act_eq;
-    // TEST:TODO: correct for apparent cycle-by-cycle accummulation
-    // COMMENT: seems to have helped a LOT!!!!
-//    net_ex += ((u->deep_lrn * u->act_eq) / (net->times.quarter *4));
-    
-    int tot_cycles = net->times.quarter *3; // shouldn't need more net_ex after minus phase
-    int cycles_left = (int)MAX(0.0f, tot_cycles - net->cycle);
-    net_ex += (u->deep_lrn * u->act_eq) * cycles_left/(tot_cycles * tot_cycles);
-    
+  if(deep.ApplyDeepMod() && deep_vg_netin > 0.0f) {
+    net_ex += deep_vg_netin * u->deep_lrn * u->act_eq;
   }
   return net_ex;
 }
