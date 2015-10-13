@@ -208,6 +208,8 @@ protected:
   void         UpdateAfterEdit_impl() override;
   void         UpdateAfterMove_impl(taBase* old_owner) override;
   // uses type information to do a set of automatic updates of pointers (smart refs) after copy
+  void         UpdatePointersAfterCopy_impl(const taBase& cp) override;
+  // copies progvar references when copying expressions using vars when copying a program element and not a parent e.g. an entire program
   void         CheckError_msg(const char* a, const char* b=0, const char* c=0,
                                        const char* d=0, const char* e=0, const char* f=0,
                                        const char* g=0, const char* h=0) const override;
