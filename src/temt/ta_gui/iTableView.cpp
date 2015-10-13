@@ -457,10 +457,10 @@ void iTableView::wheelEvent(QWheelEvent *e)
     last_x = e->pos().x();
     last_y = e->pos().y();
     
-    if (delta_y > 5*delta_x) {
+    if (delta_y > 2*delta_x) {
       horizontalScrollBar()->setValue(h_scroll_pos);
     }
-    if (delta_x > 5*delta_y) {
+    if (delta_x > 2*delta_y) {
       verticalScrollBar()->setValue(v_scroll_pos);
     }
   }
