@@ -86,8 +86,8 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
     act->setEnabled((tab->name == "jobs_done" || tab->name == "jobs_archive") && sel.height() > 0);
 
     menu->AddSep();
-    act = menu->AddItem("Get Project at Rev", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "GetProjectAtRev");
-    act->setEnabled((tab->name == "jobs_running" || tab->name == "jobs_done" || tab->name == "jobs_archive") && sel.height() == 0);
+    act = menu->AddItem("Get Proj at Rev", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "GetProjAtRev");
+    act->setEnabled((tab->name == "jobs_running" || tab->name == "jobs_done" || tab->name == "jobs_archive") && sel.height() > 0);
 
     menu->AddSep();
     act = menu->AddItem("Compare Selected Rows", taiWidgetMenu::normal,
