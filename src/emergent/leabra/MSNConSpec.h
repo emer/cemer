@@ -93,16 +93,16 @@ public:
     if(da < 0.0f) da *= dip_da_gain; else da *= burst_da_gain;
     if(d2r) {
       da = -da;
-      if(da >=0.0f) {
-        da *= (1.0f - cwt);
-      }
-      else { da *= cwt; }
+//      if(da >=0.0f) {
+//        da *= (1.0f - cwt);
+//      }
+//      else { da *= cwt; }
     }
     else {
-      if(da >=0.0f) {
-        da *= (1.0f - cwt);
-      }
-      else { da *= cwt; }
+//      if(da >=0.0f) {
+//        da *= (1.0f - cwt);
+//      }
+//      else { da *= cwt; }
     }
     return da;
   }
