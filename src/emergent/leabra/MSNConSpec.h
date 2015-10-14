@@ -82,31 +82,13 @@ public:
   float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
 
-//  inline float  GetDa(float da, bool d2r) {
-//    if(da < 0.0f) da *= dip_da_gain; else da *= burst_da_gain;
-//    if(d2r) da = -da;
-//    return da;
-//  }
-//  // get effective dopamine signal taking into account gains and reversal by D2R
-  
-  inline float  GetDa(float da, bool d2r, float cwt) {
+  inline float  GetDa(float da, bool d2r) {
     if(da < 0.0f) da *= dip_da_gain; else da *= burst_da_gain;
-    if(d2r) {
-      da = -da;
-//      if(da >=0.0f) {
-//        da *= (1.0f - cwt);
-//      }
-//      else { da *= cwt; }
-    }
-    else {
-//      if(da >=0.0f) {
-//        da *= (1.0f - cwt);
-//      }
-//      else { da *= cwt; }
-    }
+    if(d2r) da = -da;
     return da;
   }
   // get effective dopamine signal taking into account gains and reversal by D2R
+  
 
   inline void Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
     Init_Weights_symflag(net, thr_no);
@@ -151,18 +133,18 @@ public:
   // disrupt the trace right as it is established..
   
   inline void C_Compute_dWt_DaHebb
-    (float& dwt, float cwt, const float da_p, const bool d2r, const float ru_act, const float su_act,
+    (float& dwt, const float da_p, const bool d2r, const float ru_act, const float su_act,
      const float lrate_eff) {
-    dwt += lrate_eff * GetDa(da_p, d2r, cwt) * ru_act * su_act;
+    dwt += lrate_eff * GetDa(da_p, d2r) * ru_act * su_act;
   }
   // #IGNORE
 
   inline void C_Compute_dWt_Trace_Thal
-    (float& dwt, float cwt, float& ntr, float& tr, const float otr_lr, const float da_p,
+    (float& dwt, float& ntr, float& tr, const float otr_lr, const float da_p,
      const bool d2r,
      const float ru_thal, const float ru_act, const float su_act, const float lrate_eff) {
 
-    dwt += lrate_eff * GetDa(da_p, d2r, cwt) * tr;
+    dwt += lrate_eff * GetDa(da_p, d2r) * tr;
     float reset_factor = (trace.da_reset_tr - fabs(da_p)) / trace.da_reset_tr;
     if(reset_factor < 0.0f) reset_factor = 0.0f;
     tr *= reset_factor;
@@ -191,10 +173,10 @@ public:
   // #IGNORE
 
   inline void C_Compute_dWt_Trace_NoThal
-    (float& dwt, float cwt, float& ntr, float& tr, const float da_p, const bool d2r,
+    (float& dwt, float& ntr, float& tr, const float da_p, const bool d2r,
      const float ru_act, const float su_act, const float lrate_eff) {
 
-    dwt += lrate_eff * GetDa(da_p, d2r, cwt) * tr;
+    dwt += lrate_eff * GetDa(da_p, d2r) * tr;
     float reset_factor = (trace.da_reset_tr - fabs(da_p)) / trace.da_reset_tr;
     if(reset_factor < 0.0f) reset_factor = 0.0f;
     tr *= reset_factor;
@@ -226,7 +208,6 @@ public:
     GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
     
     float* dwts = cg->OwnCnVar(DWT);
-    float* cwts = cg->OwnCnVar(WT);
     float* ntrs = cg->OwnCnVar(NTR);
     float* trs = cg->OwnCnVar(TR);
     
@@ -242,7 +223,7 @@ public:
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
         }
         float ru_act = GetActVal(ru, ru_act_var);
-        C_Compute_dWt_DaHebb(dwts[i], cwts[i], ru->da_p, d2r, ru_act, su_act, lrate_eff);
+        C_Compute_dWt_DaHebb(dwts[i], ru->da_p, d2r, ru_act, su_act, lrate_eff);
       }
       break;
     }
@@ -254,7 +235,7 @@ public:
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
         }
         float ru_act = GetActVal(ru, ru_act_var);
-        C_Compute_dWt_Trace_Thal(dwts[i], cwts[i], ntrs[i], trs[i], otr_lr,
+        C_Compute_dWt_Trace_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
                                  ru->da_p, d2r, ru->thal, ru_act, su_act, lrate_eff);
       }
       break;
@@ -267,7 +248,7 @@ public:
           lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
         }
         float ru_act = GetActVal(ru, ru_act_var);
-        C_Compute_dWt_Trace_NoThal(dwts[i], cwts[i], ntrs[i], trs[i],
+        C_Compute_dWt_Trace_NoThal(dwts[i], ntrs[i], trs[i],
                                    ru->da_p, d2r, ru_act, su_act, lrate_eff);
       }
       break;

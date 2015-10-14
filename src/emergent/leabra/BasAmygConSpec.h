@@ -34,38 +34,25 @@ public:
   float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
 
-//  inline float  GetDa(float da, bool d2r) {
-//    if(da < 0.0f) da *= dip_da_gain; else da *= burst_da_gain;
-//    if(d2r) da = -da;
-//    return da;
-//  }
-//  // get effective dopamine signal taking into account gains and reversal by D2R
-
-  inline float  GetDa(float da, bool d2r, float cwt) {
+  inline float  GetDa(float da, bool d2r) {
     if(da < 0.0f) da *= dip_da_gain; else da *= burst_da_gain;
-    if(d2r) {
-      da = -da;
-//      if(da >=0.0f) {
-//        da *= (1.0f - cwt);
-//      }
-//      else { da *= cwt; }
-    }
+    if(d2r) da = -da;
     return da;
   }
   // get effective dopamine signal taking into account gains and reversal by D2R
-  
-  inline void C_Compute_dWt_BasAmyg_Acq(float& dwt, float cwt,
+
+  inline void C_Compute_dWt_BasAmyg_Acq(float& dwt, 
                                         const float su_act,
                                         const float ru_act, const float da_p,
                                         const bool d2r, const float lrate_eff) {
-    dwt += lrate_eff * su_act * ru_act * GetDa(da_p, d2r, cwt);
+    dwt += lrate_eff * su_act * ru_act * GetDa(da_p, d2r);
   }
   // #IGNORE acquisition
-  inline void C_Compute_dWt_BasAmyg_Ext(float& dwt, float cwt,
+  inline void C_Compute_dWt_BasAmyg_Ext(float& dwt, 
                                         const float su_act,
                                         const float ru_act, const float da_p,
                                         const bool d2r, const float lrate_eff) {
-    dwt += lrate_eff * su_act * GetDa(da_p, d2r, cwt); // no ru_act!
+    dwt += lrate_eff * su_act * GetDa(da_p, d2r); // no ru_act!
   }
   // #IGNORE extinction
 
@@ -81,7 +68,6 @@ public:
     
     float su_act = su->act_q0;  // previous trial
     float* dwts = cg->OwnCnVar(DWT);
-    float* cwts = cg->OwnCnVar(WT);
 
     float clrate, bg_lrate, fg_lrate;
     bool deep_on;
@@ -95,10 +81,10 @@ public:
         lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
       }
       if(acq) {
-        C_Compute_dWt_BasAmyg_Acq(dwts[i], cwts[i], su_act, ru->act_eq, ru->da_p, d2r, lrate_eff);
+        C_Compute_dWt_BasAmyg_Acq(dwts[i], su_act, ru->act_eq, ru->da_p, d2r, lrate_eff);
       }
       else {
-        C_Compute_dWt_BasAmyg_Ext(dwts[i], cwts[i], su_act, ru->act_eq, ru->da_p, d2r, lrate_eff);
+        C_Compute_dWt_BasAmyg_Ext(dwts[i], su_act, ru->act_eq, ru->da_p, d2r, lrate_eff);
       }
     }
   }
