@@ -238,15 +238,11 @@ public:
   float         s_tau;                // #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
   float         m_tau;                // #DEF_10;100 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome)
   float         m_in_s;                // #DEF_0.1 #MIN_0 #MAX_1 how much of the medium term average activation to include at the short (plus phase) avg_s_eff variable that is actually used in learning -- important to ensure that when unit turns off in plus phase (short time scale), enough medium-phase trace remains so that learning signal doesn't just go all the way to 0, at which point no learning would take place -- typically need faster time constant for updating s such that this trace of the m signal is lost
-  float         ml_tau;                // #DEF_2 #MIN_1 time constant in trials for integrating the medium-long time integral running average value (computed from avg_m at end of each trial) -- this is used for a trace-based learning rule with an extended minus phase value that combines ml and m time scales
-  float         ml_in_m;               // #DEF_0 amount of medium-long to mix into medium for learning purposes 
 
   float         s_in_s;              // #READ_ONLY #EXPERT 1-m_in_s
-  float         m_in_m;              // #READ_ONLY #EXPERT 1-m_in_s
   float         ss_dt;               // #READ_ONLY #EXPERT rate = 1 / tau
   float         s_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
   float         m_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
-  float         ml_dt;               // #READ_ONLY #EXPERT rate = 1 / tau
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -408,7 +404,7 @@ class E_API SynDelaySpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;                // is synaptic delay active?
-  int           delay;                // #CONDSHOW_ON_on #MIN_0 number of cycles to delay for
+  int           delay;             // #CONDSHOW_ON_on #MIN_0 number of cycles to delay for
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -419,6 +415,27 @@ private:
   void        Initialize();
   void        Destroy()        { };
   void        Defaults_init() { }; // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
+};
+
+eTypeDef_Of(RLrateSpec);
+
+class E_API RLrateSpec : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra receiving unit learning rate spec: learning rate dynamics based on activity profile of the receiving unit -- implements trace-like learning to support development of invariant representations -- high lrate for units that have above-threshold activation for two trials in a row
+INHERITED(SpecMemberBase)
+public:
+  bool          on;                // turn on recv learning rate dynamics
+  float         base;              // #CONDSHOW_ON_on #MIN_0 baseline learning rate -- for units that fail to meet the high lrate criterion of two active trials in a row -- this value multiplies the overall learning rate for this unit across all of its synapses
+  float         act_thr;           // #CONDSHOW_ON_on #MIN_0 activation threshold for units -- only those that are active above this threshold for two sequential trials get the full normal learning rate level -- others get the base level learning rate multiplier
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(RLrateSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void        Initialize();
+  void        Destroy()        { };
+  void        Defaults_init();
 };
 
 
@@ -439,6 +456,7 @@ public:
   float      raw_thr_rel;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 #AKA_thr_rel relative threshold on act_raw value (distance between average and maximum act_raw values within layer, e.g., 0 = average, 1 = max) for deep_raw neurons to fire -- neurons below this level have deep_raw = 0 -- above this level, deep_raw = act_raw
   float      raw_thr_abs;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 #AKA_thr_abs absolute threshold on act_raw value for deep_raw neurons to fire -- see thr_rel for relative threshold and activation value -- effective threshold is MAX of relative and absolute thresholds
   float      mod_min;     // #CONDSHOW_ON_on&&role:SUPER #MIN_0 #MAX_1 minimum deep_mod value -- provides a non-zero baseline for deep-layer modulation
+  bool       trc_trace;   // #CONDSHOW_ON_on&&role:TRC TRC plus-phase activation is MAX  of prior alpha trial's deep clamp activation and whatever is computed for this trial
 
   float      mod_range;  // #READ_ONLY #EXPERT 1 - mod_min -- range for the netinput to modulate value of deep_mod, between min and 1 value
 
@@ -568,6 +586,7 @@ public:
   ActAdaptSpec     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   ShortPlastSpec   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
+  RLrateSpec       r_lrate;         // #CAT_Learning receiving-unit based learning rate specs -- sets effective learning rate multiplier based on activation profile of receiving unit, to promote greater translation invariance
   Quarters         deep_qtr;        // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
   DeepSpec         deep;            // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
   DaModSpec        da_mod;          // #CAT_Learning da modulation of activations (for da-based learning, and other effects)

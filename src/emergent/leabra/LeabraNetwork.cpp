@@ -1445,7 +1445,7 @@ void LeabraNetwork::Compute_dWt_VecVars_Thr(int thr_no) {
   for(int i=1; i<units_flat.size; i++) {
     LeabraUnitVars* u = (LeabraUnitVars*)UnUnitVars(i);
     avg_s[i] = u->avg_s_eff;    // key!
-    avg_m[i] = u->avg_m_eff;
+    avg_m[i] = u->avg_m;
     avg_l[i] = u->avg_l;
     avg_l_lrn[i] = u->avg_l_lrn;
     // deep[i] = u->deep_lrn;

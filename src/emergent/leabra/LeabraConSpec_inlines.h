@@ -180,7 +180,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
 
   const float su_avg_s = su->avg_s_eff;
-  const float su_avg_m = su->avg_m_eff;
+  const float su_avg_m = su->avg_m;
   float* dwts = cg->OwnCnVar(DWT);
 
   const int sz = cg->size;
@@ -201,7 +201,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
 #else
   for(int i=0; i<sz; i++) {
     LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-    float lrate_eff = clrate;
+    float lrate_eff = clrate * ru->r_lrate;
     if(deep_on) {
       lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
     }
@@ -211,7 +211,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
     else
       l_lrn_eff = ru->avg_l_lrn;
     C_Compute_dWt_CtLeabraXCAL
-      (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m_eff, su_avg_s, su_avg_m,
+      (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
        ru->avg_l, l_lrn_eff);
   }
 #endif

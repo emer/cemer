@@ -109,18 +109,15 @@ public:
   inline float& avg_m()
   { return ((LeabraUnitVars*)GetUnitVars())->avg_m; }
   // #CAT_UnitVar medium time-scale activation average -- integrates over avg_s values, and represents the minus phase for learning in XCAL algorithms
-  inline float& avg_m_eff()
-  { return ((LeabraUnitVars*)GetUnitVars())->avg_m_eff; }
-  // #CAT_UnitVar effective medium time-scale activation average that is actually used for the minus phase for learning in XCAL algorithms -- can include a contribution from ml trace average as well
-  inline float& avg_ml()
-  { return ((LeabraUnitVars*)GetUnitVars())->avg_ml; }
-  // #CAT_UnitVar medium-long time-scale activation average -- integrates over avg_m values at the trial level, and adds a longer-term trace factor to the minus phase for learning in XCAL algorithms
   inline float& avg_l()
   { return ((LeabraUnitVars*)GetUnitVars())->avg_l; }
   // #CAT_UnitVar long time-scale average of medium-time scale (trial level) activation, used for the BCM-style floating threshold in XCAL
   inline float& avg_l_lrn()
   { return ((LeabraUnitVars*)GetUnitVars())->avg_l_lrn; }
   // #CAT_UnitVar how much to learn based on the long-term floating threshold (avg_l) for BCM-style Hebbian learning -- is modulated level of avg_l itself (stronger hebbian as average activation goes higher) and optionally the average amount of error experienced in the layer (to retain a common proportionality with the level of error-driven learning across layers)
+  inline float& r_lrate()
+  { return ((LeabraUnitVars*)GetUnitVars())->r_lrate; }
+  // #CAT_UnitVar learning rate dynamics based on activity profile of the receiving unit -- can implement trace-like learning to support development of invariant representations
   inline float& act_avg()
   { return ((LeabraUnitVars*)GetUnitVars())->act_avg; }
   // #CAT_UnitVar average activation (of final plus phase activation state) over long time intervals (time constant = act_mid.avg_time -- typically 200) -- useful for finding hog units and seeing overall distribution of activation

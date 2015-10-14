@@ -35,6 +35,7 @@ TA_BASEFUNS_CTORS_DEFN(OptThreshSpec);
 TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
 TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
+TA_BASEFUNS_CTORS_DEFN(RLrateSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraInitSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
@@ -192,15 +193,11 @@ void LeabraActAvgSpec::Defaults_init() {
   s_tau = 2.0f;
   m_tau = 10.0f;
   m_in_s = 0.1f;
-  ml_tau = 2.0f;
-  ml_in_m = 0.0f;
 
   ss_dt = 1.0f / ss_tau;
   s_dt = 1.0f / s_tau;
   m_dt = 1.0f / m_tau;
-  ml_dt = 1.0f / ml_tau;
   s_in_s = 1.0f - m_in_s;
-  m_in_m = 1.0f - ml_in_m;
 }
 
 
@@ -209,9 +206,7 @@ void LeabraActAvgSpec::UpdateAfterEdit_impl() {
   ss_dt = 1.0f / ss_tau;
   s_dt = 1.0f / s_tau;
   m_dt = 1.0f / m_tau;
-  ml_dt = 1.0f / ml_tau;
   s_in_s = 1.0f - m_in_s;
-  m_in_m = 1.0f - ml_in_m;
 }
 
 void LeabraAvgLSpec::Initialize() {
@@ -316,6 +311,16 @@ void SynDelaySpec::Initialize() {
   delay = 4;
 }
 
+void RLrateSpec::Initialize() {
+  on = false;
+  Defaults_init();
+}
+
+void RLrateSpec::Defaults_init() {
+  base = 0.5f;
+  act_thr = 0.2f;
+}
+
 void DeepSpec::Initialize() {
   on = false;
   role = SUPER;
@@ -326,6 +331,7 @@ void DeepSpec::Defaults_init() {
   raw_thr_rel = 0.2f;
   raw_thr_abs = 0.2f;
   mod_min = 0.8f;
+  trc_trace = false;
   mod_range = 1.0f - mod_min;
 }
 
@@ -545,10 +551,9 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->avg_s = 0.15f;
   u->avg_s_eff = 0.15f;
   u->avg_m = 0.15f;
-  u->avg_m_eff = 0.15f;
-  u->avg_ml = 0.15f;
   u->avg_l = avg_l.init;
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
+  u->r_lrate = 1.0f;
   u->act_avg = 0.15f;
   u->act_raw = 0.0f;
   u->deep_raw = 0.0f;
@@ -665,9 +670,8 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->avg_s = act_misc.avg_init;
   u->avg_s_eff = u->avg_s;
   u->avg_m = act_misc.avg_init;
-  u->avg_m_eff = u->avg_m;
-  u->avg_ml = u->avg_m;
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
+  u->r_lrate = 1.0f;
   // not avg_l
   // not act_avg
   u->act_raw = 0.0f;
@@ -836,8 +840,6 @@ void LeabraUnitSpec::Trial_Init_PrvVals(LeabraUnitVars* u, LeabraNetwork* net, i
 void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   
-  u->avg_ml += act_avg.ml_dt * (u->avg_m - u->avg_ml); // ml always updated
-
   if(lay->acts_p.avg >= avg_l_2.lay_act_thr) {
     float lval = u->avg_m;
     if(lval > avg_l_2.act_thr) { // above threshold, raise it up
@@ -1443,6 +1445,9 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
   if(deep.ApplyDeepMod()) { // apply attention directly to act
     new_act *= u->deep_mod;
   }
+  if(deep.TRCUnits() && deep.trc_trace && Quarter_DeepNow(net->quarter)) {
+    new_act = MAX(u->act_q0, new_act);
+  }
   u->act_nd = act_range.Clip(new_act);
 
   if(stp.on) {                   // short term plasticity, depression
@@ -1748,7 +1753,6 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int th
   u->avg_m += dt.integ * act_avg.m_dt * (u->avg_s - u->avg_m);
 
   u->avg_s_eff = act_avg.s_in_s * u->avg_s + act_avg.m_in_s * u->avg_m;
-  u->avg_m_eff = act_avg.ml_in_m * u->avg_ml + act_avg.m_in_m * u->avg_m;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1930,6 +1934,14 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
     u->act_q4 = use_act;
     u->act_p = use_act;
     u->act_dif = u->act_p - u->act_m;
+    if(r_lrate.on) {
+      if(u->act_p >= r_lrate.act_thr && u->act_q0 >= r_lrate.act_thr) {
+        u->r_lrate = 1.0f;
+      }
+      else {
+        u->r_lrate = r_lrate.base;
+      }
+    }
     Compute_ActTimeAvg(u, net, thr_no);
     break;
   }
