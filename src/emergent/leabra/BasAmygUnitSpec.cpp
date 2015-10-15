@@ -23,9 +23,6 @@ void BasAmygUnitSpec::Initialize() {
   acq_ext = ACQ;
   valence = APPETITIVE;
   dar = D1R;
-  deep_vg_netin = 0.0f;
-  deep_vg_thr = 0.0001f;
-  deep_vg_act_up = 0.1f;
   Defaults_init();
 }
 
@@ -50,15 +47,6 @@ void BasAmygUnitSpec::UpdateAfterEdit_impl() {
       dar = D1R;
     }
   }
-}
-
-float BasAmygUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
-                                           int thr_no, float& net_syn) {
-  float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
-  if(deep.ApplyDeepMod() && deep_vg_netin > 0.0f) {
-    net_ex += deep_vg_netin * u->deep_lrn * (((u->act_eq >= deep_vg_thr) && (u->act_eq < deep_vg_act_up)) ? 1.0f : 0.0f);
-  }
-  return net_ex;
 }
 
 void BasAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {

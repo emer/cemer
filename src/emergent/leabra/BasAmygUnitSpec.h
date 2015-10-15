@@ -37,12 +37,7 @@ public:
   AcqExt        acq_ext;        // acquisition vs. extinction sub-type
   Valence       valence;        // US valence coding -- appetitive vs. aversive
   DAReceptor    dar;            // #READ_ONLY #SHOW type of dopamine receptor: D1 vs. D2 -- computed automatically from acq_ext and valence
-  float         deep_vg_netin;  // #MIN_0 if > 0, apply deep_lrn input (typically from ACQ to EXT) as a voltage-gated netinput -- contributes in proportion to activation of receiving neuron: extra netin = deep_vg_netin * deep_lrn * ru_act_eq
-  float         deep_vg_thr;    // #MIN_0 #DEF_0.0001 threshold for receiving unit activation for triggering voltage-gated channels to open
-  float         deep_vg_act_up; // #MIN_0 #DEF_0.1 activation level corresponding to a self-sustaining up state so no more deep_vg_netin contribution
 
-  float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
-                            int thr_no, float& net_syn) override;
   void  Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net,
                         int thr_no) override;
 

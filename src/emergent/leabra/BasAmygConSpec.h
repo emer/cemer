@@ -33,6 +33,7 @@ INHERITED(LeabraConSpec)
 public:
   float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
+  bool          ext_learn_act;  // do the extinction connections learn based on the activation of the ext units themselves -- if true, uses MAX(deep_lrn, ru_act) -- if false, then acquisition-sent deep_lrn determines when learning occurs
 
   inline float  GetDa(float da, bool d2r) {
     if(da < 0.0f) da *= dip_da_gain; else da *= burst_da_gain;
@@ -76,14 +77,11 @@ public:
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-      float lrate_eff = clrate;
-      if(deep_on) {
-        lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
-      }
       if(acq) {
-        C_Compute_dWt_BasAmyg_Acq(dwts[i], su_act, ru->act_eq, ru->da_p, d2r, lrate_eff);
+        C_Compute_dWt_BasAmyg_Acq(dwts[i], su_act, ru->act_eq, ru->da_p, d2r, clrate);
       }
       else {
+        float lrate_eff = clrate * MAX(ru->deep_lrn, ru->act_eq);
         C_Compute_dWt_BasAmyg_Ext(dwts[i], su_act, ru->act_eq, ru->da_p, d2r, lrate_eff);
       }
     }
