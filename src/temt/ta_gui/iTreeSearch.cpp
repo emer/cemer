@@ -38,17 +38,18 @@
 void iTreeSearch::Constr() {
   search_mode = TEXT;  //  default
   taiMisc::SizeSpec currentSizeSpec = taiM->GetCurrentSizeSpec();
-
+  
   QHBoxLayout* lay = new QHBoxLayout(this);
   srch_bar = new QToolBar(this);
   lay->addWidget(srch_bar);
   lay->setMargin(0);
   lay->setSpacing(0);
-
+  
   srch_mode_button = new iActionMenuButton();
   srch_bar->addWidget(srch_mode_button);
   
   find_action = new QAction("Find", this);
+  replace_action = new QAction("Replace", this);
   find_deep_action = new QAction("Find Deep", this);
   
   srch_mode_menu = new QMenu(this);
@@ -56,32 +57,42 @@ void iTreeSearch::Constr() {
   srch_mode_button->setDefaultAction(find_action);
   srch_mode_button->setFont(taiM->nameFont(currentSizeSpec));
   srch_mode_button->setToolTip(taiMisc::ToolTipPreProcess("Find or Find Deep - the first mode only searches the text of the tree items - the deep search also looks at the object name, value, description, members and so on. In most cases the former is probably what you want. Find is case sensitive if the search string has any uppercase letter, otherwise case insensitive. If multiple strings are entered find only matches if all strings are found."));
-
+  
   srch_text = new iLineEdit();
   srch_bar->addWidget(srch_text);
-
+  
+  repl_text = new iLineEdit();
+  srch_bar->addWidget(repl_text);
+  repl_text->setEnabled(false);
+    
   srch_nfound = new QLabel(" 0");
   srch_nfound->setFont(taiM->nameFont(currentSizeSpec));
   srch_nfound->setToolTip(taiMisc::ToolTipPreProcess("Number of items found"));
   srch_bar->addWidget(srch_nfound);
-
+  
   srch_clear = srch_bar->addAction("x");
   srch_clear->setToolTip(taiMisc::ToolTipPreProcess("Clear search text and highlighting"));
   srch_prev = srch_bar->addAction("<");
   srch_prev->setToolTip(taiMisc::ToolTipPreProcess("Find previous occurrence of find text within browser"));
   srch_next = srch_bar->addAction(">");
   srch_next->setToolTip(taiMisc::ToolTipPreProcess("Find next occurrence of find text within browser"));
+  repl_next = srch_bar->addAction("R>");
+  repl_next->setToolTip(taiMisc::ToolTipPreProcess("Replace current selection, then find next occurrence"));
   
   srch_mode_menu->addAction(find_action);
+  srch_mode_menu->addAction(replace_action);
   srch_mode_menu->addAction(find_deep_action);
-
+  
   connect(srch_clear, SIGNAL(triggered()), this, SLOT(srch_clear_clicked()) );
-  connect(srch_next, SIGNAL(triggered()), this, SLOT(srch_next_clicked()) );
   connect(srch_prev, SIGNAL(triggered()), this, SLOT(srch_prev_clicked()) );
+  connect(srch_next, SIGNAL(triggered()), this, SLOT(srch_next_clicked()) );
+  connect(repl_next, SIGNAL(triggered()), this, SLOT(repl_next_clicked()) );
   connect(srch_text, SIGNAL(returnPressed()), this, SLOT(srch_text_entered()) );
+  connect(repl_text, SIGNAL(returnPressed()), this, SLOT(srch_text_entered()) );
   connect(tree_view, SIGNAL(TreeStructToUpdate()), this, SLOT(treeview_to_updt()) );
   
   connect(find_action, SIGNAL(triggered()), this, SLOT(TextFindSelected()));
+  connect(replace_action, SIGNAL(triggered()), this, SLOT(TextReplaceSelected()));
   connect(find_deep_action, SIGNAL(triggered()), this, SLOT(DeepFindSelected()));
 }
 
@@ -96,7 +107,7 @@ iTreeSearch::iTreeSearch(iTreeView* tree_view_, QWidget* parent)  : QWidget(pare
 }
 
 iTreeSearch::~iTreeSearch() {
-
+  
 }
 
 void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
@@ -119,7 +130,7 @@ void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
   String_Array srch;
   srch.Split(ftxt, " ");
   
-  bool text_only = (mode == iTreeSearch::TEXT);
+  bool text_only = (mode == iTreeSearch::TEXT || mode == iTreeSearch::TEXT_REPLACE);
   QTreeWidgetItemIterator it(tree_view, QTreeWidgetItemIterator::All);
   QTreeWidgetItem* item_;
   taBase_PtrList sub_srch;
@@ -187,16 +198,17 @@ void iTreeSearch::unHighlightFound() {
   }
 }
 
-void iTreeSearch::selectCurrent() {
-  if(!tree_view) return;
+void iTreeSearch::selectCurrent(bool replace) {
+  if(!tree_view)
+    return;
   if(cur_item < 0 || cur_item >= found_items.size)
     return;
-
+  
   srch_nfound->setText(String((int)found_items.size));
-
+  
   taBase* fnd = found_items.FastEl(cur_item);
   if(!fnd) return;
-//  taMisc::Info("find item:", String(cur_item+1), "path:", fnd->GetPathNames());
+  //  taMisc::Info("find item:", String(cur_item+1), "path:", fnd->GetPathNames());
   taiSigLink* lnk = (taiSigLink*)fnd->GetSigLink();
   if(!lnk) return;
   iTreeViewItem* fitm = tree_view->AssertItem(lnk);
@@ -204,11 +216,13 @@ void iTreeSearch::selectCurrent() {
   if(srch_found.indexOf(fitm) < 0) {
     srch_found.append(fitm);
   }
+  
   fitm->setBackgroundColor(Qt::yellow);
   tree_view->setFocus();
   tree_view->clearExtSelection();
   tree_view->scrollTo(fitm);
   tree_view->setCurrentItem(fitm, 0, QItemSelectionModel::ClearAndSelect);
+  
 }
 
 void iTreeSearch::srch_text_entered() {
@@ -237,6 +251,20 @@ void iTreeSearch::srch_next_clicked() {
   selectCurrent();
 }
 
+void iTreeSearch::repl_next_clicked() {
+  taBase* fnd = found_items.FastEl(cur_item);
+  if(fnd) {
+    taiSigLink* dl = (taiSigLink*)fnd->GetSigLink();
+    if (dl) {
+      String srch_string = static_cast<String>(srch_text->text());
+      String repl_string = static_cast<String>(repl_text->text());
+      bool replace_deep = false;
+      dl->taData()->ReplaceValStr(srch_string, repl_string, "", NULL, NULL, NULL, TypeDef::SC_DEFAULT, replace_deep);
+    }
+  }
+  srch_next_clicked();
+}
+
 void iTreeSearch::srch_prev_clicked() {
   cur_item--;
   if(cur_item < 0)
@@ -246,10 +274,23 @@ void iTreeSearch::srch_prev_clicked() {
 
 void iTreeSearch::TextFindSelected() {
   search_mode = TEXT;
+  
+  repl_text->setEnabled(false);
+  srch_bar->removeAction(repl_next);
 }
 
 void iTreeSearch::DeepFindSelected() {
   search_mode = DEEP;
+  
+  repl_text->setEnabled(false);
+  srch_bar->removeAction(repl_next);
+}
+
+void iTreeSearch::TextReplaceSelected() {
+  search_mode = TEXT_REPLACE;
+  
+  repl_text->setEnabled(true);
+  srch_bar->addAction(repl_next);
 }
 
 

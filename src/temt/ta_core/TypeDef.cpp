@@ -2007,7 +2007,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 
 int TypeDef::ReplaceValStr_class(const String& srch, const String& repl, const String& mbr_filt,
                                  void* base, void* par, TypeDef* par_typ, MemberDef* memb_def,
-                                 StrContext sc)
+                                 StrContext sc, bool replace_deep)
 {
   int rval = 0;
   for(int i=0; i<members.size; i++) {
@@ -2031,26 +2031,26 @@ int TypeDef::ReplaceValStr_class(const String& srch, const String& repl, const S
       bool condedit = md->GetCondOptTest("CONDEDIT", this, base);
       if(!condedit) continue;
     }
-    rval += md->type->ReplaceValStr(srch, repl, mbr_filt, md->GetOff(base), base, this, md, sc);
+    rval += md->type->ReplaceValStr(srch, repl, mbr_filt, md->GetOff(base), base, this, md, sc, replace_deep);
   }
   return rval;
 }
 
 int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
                            void* base, void* par, TypeDef* par_typ, MemberDef* memb_def,
-                           StrContext sc)
+                           StrContext sc, bool replace_deep)
 {
   if(IsNotPtr()) {
 #ifndef NO_TA_BASE
     if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
       if(rbase)
-        return rbase->ReplaceValStr(srch, repl, mbr_filt, par, par_typ, memb_def, sc);
+        return rbase->ReplaceValStr(srch, repl, mbr_filt, par, par_typ, memb_def, sc, replace_deep);
     }
     else
 #endif
       if(IsActualClassNoEff()) {
-        return ReplaceValStr_class(srch, repl, mbr_filt, base, par, par_typ, memb_def, sc);
+        return ReplaceValStr_class(srch, repl, mbr_filt, base, par, par_typ, memb_def, sc, replace_deep);
       }
   }
   // only apply filtering to the terminal leaves case here, not to higher level owners
@@ -2061,7 +2061,7 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
   if(!str.contains(srch)) return 0;
   String orig = str;
   int rval = str.gsub(srch, repl);
-  SetValStr(str, base, par, memb_def, sc, false);
+  SetValStr(str, base, par, memb_def, sc, true);
   String repl_info = String("orig val: ") + orig + " new val: " + str;
 #ifndef NO_TA_BASE
   if(par_typ && par && par_typ->IsTaBase()) {

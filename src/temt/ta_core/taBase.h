@@ -935,8 +935,8 @@ public:
   // #IGNORE set value from a string for ptr to taBase (ptr=1) -- called by TypeDef SetValStr
   virtual int   ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
                               void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
-                              TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
-  // #IGNORE replace string value -- does a GetValStr, replace srch with repl in that string, then does a SetValStr -- always iterates over members of classes instead of doing inline to prevent replacing member names -- returns number replaced (0 = none) -- mbr_filt = filter for members to replace in -- if non-empty, member name for terminal value members where replace actually occurs (as opposed to owner class objects) must contain this string
+                              TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true);
+  // #IGNORE replace string value -- does a GetValStr, replace srch with repl in that string, then does a SetValStr -- always iterates over members of classes instead of doing inline to prevent replacing member names -- returns number replaced (0 = none) -- mbr_filt = filter for members to replace in -- if non-empty, member name for terminal value members where replace actually occurs (as opposed to owner class objects) must contain this string - if deep is false changing a string will not be recursive nor will members of list or groups be changed
 
   virtual taObjDiffRec*  GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
                                MemberDef* memb_def=NULL, const void* par=NULL,

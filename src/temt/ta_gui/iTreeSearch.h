@@ -40,62 +40,68 @@ class QMenu; //
 
 
 class TA_API iTreeSearch: public QWidget {
-// ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS search widget for a tree view -- controls searching in this view
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS search widget for a tree view -- controls searching in this view
   Q_OBJECT
-friend class iTreeView;
-friend class iTreeViewItem;
+  friend class iTreeView;
+  friend class iTreeViewItem;
 public:
   enum SearchMode {
-    TEXT = 0,   // display text only, ignore case
-    DEEP,       // object name, val, description, members, etc.
+    TEXT = 0,         // display text only, ignore case
+    DEEP,             // object name, val, description, members, etc.
+    TEXT_REPLACE      // incremental replace - at level of TEXT searching
   };
-
+  
   iTreeView*            tree_view; // pointer to the tree view that we operate on
-
+  
   QToolBar*             srch_bar;
   iLineEdit*            srch_text;
+  iLineEdit*            repl_text;  // this text replaces srch_text in replace mode
   QLabel*               srch_nfound;
   QAction*              srch_clear;
   QAction*              srch_prev;
   QAction*              srch_next;
+  QAction*              repl_next;  // replace the current selection and move to next selection
   
   iActionMenuButton*    srch_mode_button;
   QMenu*                srch_mode_menu;
   QAction*              find_action;
   QAction*              find_deep_action;
+  QAction*              replace_action;  // incremental
   
   enum SearchMode       search_mode;
-
-
-
+  
+  
+  
   taBase_RefList        found_items; // full list of items found
 #ifndef __MAKETA__i
   QList<iTreeViewItem*> srch_found; // list of items found
 #endif
   int                   cur_item; // currrent item
-
+  
   void                  Search(iTreeSearch::SearchMode mode);
   // search using either the simple text mode for searching the visible strings in the tree or the deep search that checks object name, val, description, etc. and can handle conjunction of search terms
   void                  unHighlightFound();
   // un-highlight all items
   void                  highlightFound();
   // highlight all found items
-  void                  selectCurrent();
+  void                  selectCurrent(bool replace = false);
   // select current search item
-
+  
   iTreeSearch(QWidget* parent = NULL);
   iTreeSearch(iTreeView* tree_view_, QWidget* parent = NULL);
   ~iTreeSearch();
-
-public slots:
+  
+  public slots:
   void                  srch_text_entered();
   void                  srch_clear_clicked();
   void                  treeview_to_updt();
   void                  srch_next_clicked();
+  void                  repl_next_clicked();
   void                  srch_prev_clicked();
   void                  TextFindSelected();
+  void                  TextReplaceSelected();
   void                  DeepFindSelected();
-
+  
 private:
   void Constr();                // construct widget
 };

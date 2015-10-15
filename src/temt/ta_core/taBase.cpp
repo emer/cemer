@@ -1914,9 +1914,9 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
 }
 
 int taBase::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-                          void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
+                          void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc, bool replace_deep) {
   TypeDef* td = GetTypeDef();
-  int rval = td->ReplaceValStr_class(srch, repl, mbr_filt, this, par, par_typ, memb_def, sc);
+  int rval = td->ReplaceValStr_class(srch, repl, mbr_filt, this, par, par_typ, memb_def, sc, replace_deep);
   if(rval > 0)
     UpdateAfterEdit();
   return rval;

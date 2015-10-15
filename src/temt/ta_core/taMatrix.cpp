@@ -1120,8 +1120,8 @@ bool taMatrix::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return true;
 }
 
-int taMatrix::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-                            void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
+int taMatrix::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt, void* par,
+                            TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc, bool replace_deep) {
   int rval = 0;
   String mypath = GetPathNames();
   for(int i=0; i<size; i++) {

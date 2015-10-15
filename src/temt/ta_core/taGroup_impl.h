@@ -247,9 +247,9 @@ public:
                            bool force_inline = false) override;
   int   ReplaceValStr(const String& srch, const String& repl,
                               const String& mbr_filt,
-                              void* par = NULL, TypeDef* par_typ=NULL,
+                              void* par = NULL, TypeDef* par_typ = NULL,
                               MemberDef* md = NULL,
-                              TypeDef::StrContext sc = TypeDef::SC_DEFAULT) override;
+                              TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
 
   taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
                               MemberDef* memb_def=NULL, const void* par=NULL,
