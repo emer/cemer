@@ -21,6 +21,7 @@
 #include <taBase_PtrList>
 #include <taiSigLink>
 #include <String_Array>
+#include <taProject>
 
 #include <taMisc>
 #include <taiMisc>
@@ -256,6 +257,10 @@ void iTreeSearch::repl_next_clicked() {
   if(fnd) {
     taiSigLink* dl = (taiSigLink*)fnd->GetSigLink();
     if (dl) {
+      taProject* proj = tree_view->curProject();
+      if(proj) {
+        proj->undo_mgr.SaveUndo(dl->taData(), "Replace", NULL, false, proj);
+      }
       String srch_string = static_cast<String>(srch_text->text());
       String repl_string = static_cast<String>(repl_text->text());
       bool replace_deep = false;
