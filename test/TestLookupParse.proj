@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.4.0 rev8748
+// ta_Dump File v3.0 -- code v7.8.4.0 rev8765
 LeabraProject .projects["TestLookupParse"] { 
  Doc_Group @.docs = [0] {
  };
@@ -276,44 +276,8 @@ LeabraProject .projects["TestLookupParse"] {
   };
  };
 
- Program_TopGroup @.programs = [1] {
-  Program @["Program_10"] { 
-   ProgObjList @.objs = [0] {
-   };
-
-   ProgType_List @.types = [0] {
-   };
-
-   ProgVar_List @.args = [0] {
-   };
-
-   ProgVar_List @.vars = [2] {
-    ProgVar @["x_"] { };
-    ProgVar @["x"] { };
-   };
-
-   Function_List @.functions = [0] {
-   };
-
-   ProgEl_List @.init_code = [0] {
-   };
-
-   ProgEl_List @.prog_code = [3] {
-    LocalVars @[0] { 
-     ProgVar_List @.local_vars = [0] {
-     };
-    };
-    RandomCall @[1] { 
-     ProgArg_List @.meth_args = [3] {
-      ProgArg @[0] { };
-      ProgArg @[1] { };
-      ProgArg @[2] { };
-     };
-    };
-    BlankLineEl @[2] { };
-   };
-  };
-  Program_Group @.gp["TestPrograms"] = [10] { 
+ Program_TopGroup @.programs = [0] {
+  Program_Group @.gp["TestPrograms"] = [12] { 
    Program @["no_text"] { 
     ProgObjList @.objs = [0] {
     };
@@ -376,6 +340,75 @@ LeabraProject .projects["TestLookupParse"] {
     };
    };
    Program @["object_select_method_or_member"] { 
+    ProgObjList @.objs = [1] {
+     DataTable @["DataTable_28"] { 
+      DataTableCols @.data = [0] {
+      };
+
+      DataOpList @.last_sort_spec.ops = [0] {
+      };
+     };
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [10] {
+     ProgVar @["DataTable_28"] { };
+     ProgVar @["lookup_type"] { };
+     ProgVar @["lookup_seed"] { };
+     ProgVar @["prepend_txt"] { };
+     ProgVar @["append_txt"] { };
+     ProgVar @["prog_el_txt"] { };
+     ProgVar @["path_var"] { };
+     ProgVar @["path_prepend_txt"] { };
+     ProgVar @["path_rest"] { };
+     ProgVar @["base_path"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [7] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [3] {
+       ProgVar @["test_name"] { };
+       ProgVar @["input"] { };
+       ProgVar @["cursor_pos"] { };
+      };
+     };
+     AssignExpr @[1] { };
+     AssignExpr @[2] { };
+     MethodCall @[3] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     StaticMethodCall @[4] { 
+      ProgArg_List @.meth_args = [11] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
+       ProgArg @[3] { };
+       ProgArg @[4] { };
+       ProgArg @[5] { };
+       ProgArg @[6] { };
+       ProgArg @[7] { };
+       ProgArg @[8] { };
+       ProgArg @[9] { };
+       ProgArg @[10] { };
+      };
+     };
+     PrintVar @[5] { };
+     PrintVar @[6] { };
+    };
+   };
+   Program @["object_select_method_or_member_copy"] { 
     ProgObjList @.objs = [1] {
      DataTable @["DataTable_28"] { 
       DataTableCols @.data = [0] {
@@ -921,6 +954,74 @@ LeabraProject .projects["TestLookupParse"] {
        };
       };
      };
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [7] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [3] {
+       ProgVar @["test_name"] { };
+       ProgVar @["input"] { };
+       ProgVar @["cursor_pos"] { };
+      };
+     };
+     AssignExpr @[1] { };
+     AssignExpr @[2] { };
+     MethodCall @[3] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     StaticMethodCall @[4] { 
+      ProgArg_List @.meth_args = [11] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
+       ProgArg @[3] { };
+       ProgArg @[4] { };
+       ProgArg @[5] { };
+       ProgArg @[6] { };
+       ProgArg @[7] { };
+       ProgArg @[8] { };
+       ProgArg @[9] { };
+       ProgArg @[10] { };
+      };
+     };
+     PrintVar @[5] { };
+     PrintVar @[6] { };
+    };
+   };
+   Program @["object_member_after_print"] { 
+    ProgObjList @.objs = [1] {
+     DataTable @["DataTable_32"] { 
+      DataTableCols @.data = [0] {
+      };
+
+      DataOpList @.last_sort_spec.ops = [0] {
+      };
+     };
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [9] {
+     ProgVar @["lookup_type"] { };
+     ProgVar @["lookup_seed"] { };
+     ProgVar @["prepend_txt"] { };
+     ProgVar @["append_txt"] { };
+     ProgVar @["prog_el_txt"] { };
+     ProgVar @["path_var"] { };
+     ProgVar @["path_prepend_txt"] { };
+     ProgVar @["path_rest"] { };
+     ProgVar @["base_path"] { };
+    };
+
+    Function_List @.functions = [0] {
     };
 
     ProgEl_List @.init_code = [0] {
@@ -3115,137 +3216,6 @@ LeabraProject .projects["TestLookupParse"] {
   tags=;
   desc=;
   debug_mode=0;
-  Program @["Program_10"] {
-   name="Program_10";
-   short_nm=;
-   tags=;
-   desc=;
-   flags=NO_STOP_STEP;
-   stop_step_cond {
-    expr=;
-   };
-   objs {
-    name="ProgObjList_11";
-    el_typ=taNBase;
-    el_def=0;
-   };
-   types {
-    name="ProgType_List_1";
-    el_typ=DynEnumType;
-    el_def=0;
-   };
-   args {
-    name="ProgVar_List_1";
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   vars {
-    name="ProgVar_List_1";
-    el_typ=ProgVar;
-    el_def=0;
-    ProgVar @["x_"] {
-     name="x_";
-     var_type=T_Int;
-     int_val=0;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @["x"] {
-     name="x";
-     var_type=T_Int;
-     int_val=0;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-   };
-   functions {
-    name="Function_List_11";
-    el_typ=Function;
-    el_def=0;
-   };
-   init_code {
-    name="ProgEl_List_84";
-    el_typ=ProgCode;
-    el_def=0;
-   };
-   prog_code {
-    name="ProgEl_List_85";
-    el_typ=ProgCode;
-    el_def=0;
-    LocalVars @[0] {
-     desc=;
-     flags=0;
-     code_string=;
-     pre_compile_code_string=;
-     local_vars {
-      name="local_vars";
-      el_typ=ProgVar;
-      el_def=0;
-     };
-    };
-    RandomCall @[1] {
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="Random::UniformMeanRange(0,x_m";
-     pre_compile_code_string="Random::UniformMeanRange(0, x_m, )";
-     result_var=NULL;
-     object_type=Random;
-     method=Random::UniformMeanRange;
-     meth_args {
-      name="meth_args";
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=double;
-       type="double";
-       name="mean";
-       required=1;
-       def_val=;
-       prev_expr=;
-       expr {
-	expr="0";
-       };
-      };
-      ProgArg @[1] {
-       arg_type=double;
-       type="double";
-       name="range";
-       required=1;
-       def_val=;
-       prev_expr=;
-       expr {
-	expr="x_m";
-       };
-      };
-      ProgArg @[2] {
-       arg_type=int;
-       type="int";
-       name="thr_no";
-       required=0;
-       def_val="0";
-       prev_expr=;
-       expr {
-	expr=;
-       };
-      };
-     };
-    };
-    BlankLineEl @[2] {
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string=;
-     pre_compile_code_string=;
-    };
-   };
-   step_prog=NULL;
-   step_n=1;
-  };
   Program_Group @.gp["TestPrograms"] {
    name="TestPrograms";
    el_typ=Program;
@@ -3602,7 +3572,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
-      pre_compile_code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["no_text"].prog_code[0].local_vars["test_name"]$;
       print_var2=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["no_text"].vars["lookup_type"]$;
@@ -3616,7 +3586,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
-      pre_compile_code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["no_text"].prog_code[0].local_vars["test_name"]$;
       print_var2=.projects["TestLookupParse"].programs.gp["TestPrograms"]["no_text"].vars["path_var"]$$;
@@ -4014,7 +3984,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
-      pre_compile_code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member"].prog_code[0].local_vars["test_name"]$;
       print_var2=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member"].vars["lookup_type"]$;
@@ -4028,13 +3998,425 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
-      pre_compile_code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member"].prog_code[0].local_vars["test_name"]$;
       print_var2=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member"].vars["path_var"]$$;
       print_var3=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member"].vars["path_prepend_txt"]$$;
       print_var4=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member"].vars["path_rest"]$$;
       print_var5=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member"].vars["base_path"]$$;
+      print_var6=NULL;
+      debug=0;
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["object_select_method_or_member_copy"] {
+    name="object_select_method_or_member_copy";
+    short_nm="bjcslc";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="objs";
+     el_typ=DataTable;
+     el_def=0;
+     DataTable @["DataTable_28"] {
+      name="DataTable_28";
+      desc=;
+      data {
+       name="data";
+       el_typ=DataColT;
+       el_def=0;
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name="row_indexes";
+      [0]       };
+      last_sort_spec {
+       name="last_sort_spec";
+       ops {
+	name="ops";
+	el_typ=DataSortEl;
+	el_def=0;
+       };
+      };
+     };
+    };
+    types {
+     name="types";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="args";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="vars";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["DataTable_28"] {
+      name="DataTable_28";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].objs["DataTable_28"]$$;
+      objs_ptr=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["lookup_type"] {
+      name="lookup_type";
+      var_type=T_Int;
+      int_val=2;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="return value from method";
+      init_from=NULL;
+     };
+     ProgVar @["lookup_seed"] {
+      name="lookup_seed";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["prepend_txt"] {
+      name="prepend_txt";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["append_txt"] {
+      name="append_txt";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["prog_el_txt"] {
+      name="prog_el_txt";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["path_var"] {
+      name="path_var";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["path_prepend_txt"] {
+      name="path_prepend_txt";
+      var_type=T_String;
+      string_val="DataTable_28->";
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["path_rest"] {
+      name="path_rest";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["base_path"] {
+      name="base_path";
+      var_type=T_String;
+      string_val="DataTable_28";
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="functions";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="init_code";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="prog_code";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (3 vars)";
+      pre_compile_code_string="LocalVars (3 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["test_name"] {
+	name="test_name";
+	var_type=T_String;
+	string_val=;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["input"] {
+	name="input";
+	var_type=T_String;
+	string_val=;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["cursor_pos"] {
+	name="cursor_pos";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc="position of cursor when control+l pressed";
+	init_from=NULL;
+       };
+      };
+     };
+     AssignExpr @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="test_name = this.name";
+      pre_compile_code_string="test_name = this.name";
+      result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].prog_code[0].local_vars["test_name"]$$;
+      expr {
+       expr="this.name";
+      };
+     };
+     AssignExpr @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="input = DataTable_28.GetName() + \"->\"";
+      pre_compile_code_string="input = DataTable_28.GetName() + \"->\"";
+      result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].prog_code[0].local_vars["input"]$$;
+      expr {
+       expr="DataTable_28.GetName() + \"->\"";
+      };
+     };
+     MethodCall @[3] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="cursor_pos = input->length()";
+      pre_compile_code_string="cursor_pos = input->length()";
+      result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].prog_code[0].local_vars["cursor_pos"]$$;
+      obj=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].prog_code[0].local_vars["input"]$;
+      method=taString::length;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="int length()";
+      meth_desc=" how many characters in the string";
+     };
+     StaticMethodCall @[4] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].vars["lookup_type"]$$;
+      object_type=ProgExprBase;
+      method=ProgExprBase::Test_ParseForLookup;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString;
+	type="const taString";
+	name="test_name";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="this.name";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=const_taString;
+	type="const taString";
+	name="input_text";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="input";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=const_int;
+	type="const int";
+	name="cursor_pos";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="cursor_pos";
+	};
+       };
+       ProgArg @[3] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="lookup_seed";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_seed";
+	};
+       };
+       ProgArg @[4] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="prepend_txt";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="prepend_txt";
+	};
+       };
+       ProgArg @[5] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="append_txt";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="append_txt";
+	};
+       };
+       ProgArg @[6] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="prog_el_txt";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="prog_el_txt";
+	};
+       };
+       ProgArg @[7] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="path_var";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="path_var";
+	};
+       };
+       ProgArg @[8] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="path_prepend_txt";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="path_prepend_txt";
+	};
+       };
+       ProgArg @[9] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="path_rest";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="path_rest";
+	};
+       };
+       ProgArg @[10] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="base_path";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="base_path";
+	};
+       };
+      };
+     };
+     PrintVar @[5] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      message=;
+      print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].prog_code[0].local_vars["test_name"]$;
+      print_var2=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].vars["lookup_type"]$;
+      print_var3=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].vars["lookup_seed"]$$;
+      print_var4=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].vars["prepend_txt"]$$;
+      print_var5=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].vars["append_txt"]$$;
+      print_var6=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].vars["prog_el_txt"]$$;
+      debug=0;
+     };
+     PrintVar @[6] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
+      message=;
+      print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].prog_code[0].local_vars["test_name"]$;
+      print_var2=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].vars["path_var"]$$;
+      print_var3=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].vars["path_prepend_txt"]$$;
+      print_var4=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].vars["path_rest"]$$;
+      print_var5=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].vars["base_path"]$$;
       print_var6=NULL;
       debug=0;
      };
@@ -4391,7 +4773,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
-      pre_compile_code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random"].prog_code[0].local_vars["test_name"]$;
       print_var2=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random"].vars["lookup_type"]$;
@@ -4405,7 +4787,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name path_var prepend_txt path_rest base_path";
-      pre_compile_code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random"].prog_code[0].local_vars["test_name"]$;
       print_var2=.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random"].vars["path_var"]$$;
@@ -4768,7 +5150,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
-      pre_compile_code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random_seeded"].prog_code[0].local_vars["test_name"]$;
       print_var2=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random_seeded"].vars["lookup_type"]$;
@@ -4782,7 +5164,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name path_var prepend_txt path_rest base_path";
-      pre_compile_code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random_seeded"].prog_code[0].local_vars["test_name"]$;
       print_var2=.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random_seeded"].vars["path_var"]$$;
@@ -5180,7 +5562,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
-      pre_compile_code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member"].prog_code[0].local_vars["test_name"]$;
       print_var2=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member"].vars["lookup_type"]$;
@@ -5194,7 +5576,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name path_var prepend_txt path_rest base_path";
-      pre_compile_code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member"].prog_code[0].local_vars["test_name"]$;
       print_var2=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member"].vars["path_var"]$$;
@@ -5592,7 +5974,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
-      pre_compile_code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member_seeded"].prog_code[0].local_vars["test_name"]$;
       print_var2=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member_seeded"].vars["lookup_type"]$;
@@ -5606,7 +5988,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name path_var prepend_txt path_rest base_path";
-      pre_compile_code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member_seeded"].prog_code[0].local_vars["test_name"]$;
       print_var2=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member_seeded"].vars["path_var"]$$;
@@ -5969,7 +6351,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
-      pre_compile_code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["call_function_other_program"].prog_code[0].local_vars["test_name"]$;
       print_var2=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["call_function_other_program"].vars["lookup_type"]$;
@@ -5983,7 +6365,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
-      pre_compile_code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["call_function_other_program"].prog_code[0].local_vars["test_name"]$;
       print_var2=.projects["TestLookupParse"].programs.gp["TestPrograms"]["call_function_other_program"].vars["path_var"]$$;
@@ -6007,22 +6389,22 @@ LeabraProject .projects["TestLookupParse"] {
      expr=;
     };
     objs {
-     name=;
+     name="objs";
      el_typ=DataTable;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["lookup_type"] {
@@ -6117,17 +6499,17 @@ LeabraProject .projects["TestLookupParse"] {
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -6346,7 +6728,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
-      pre_compile_code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_first_arg"].prog_code[0].local_vars["test_name"]$;
       print_var2=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_first_arg"].vars["lookup_type"]$;
@@ -6360,7 +6742,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
-      pre_compile_code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_first_arg"].prog_code[0].local_vars["test_name"]$;
       print_var2=.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_first_arg"].vars["path_var"]$$;
@@ -6384,22 +6766,22 @@ LeabraProject .projects["TestLookupParse"] {
      expr=;
     };
     objs {
-     name=;
+     name="objs";
      el_typ=DataTable;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["lookup_type"] {
@@ -6494,17 +6876,17 @@ LeabraProject .projects["TestLookupParse"] {
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -6723,7 +7105,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
-      pre_compile_code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_second_arg"].prog_code[0].local_vars["test_name"]$;
       print_var2=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_second_arg"].vars["lookup_type"]$;
@@ -6737,7 +7119,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
-      pre_compile_code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_second_arg"].prog_code[0].local_vars["test_name"]$;
       print_var2=.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_second_arg"].vars["path_var"]$$;
@@ -7130,7 +7512,7 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
-      pre_compile_code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["var_after_conditional"].prog_code[0].local_vars["test_name"]$;
       print_var2=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["var_after_conditional"].vars["lookup_type"]$;
@@ -7144,13 +7526,414 @@ LeabraProject .projects["TestLookupParse"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
-      pre_compile_code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["var_after_conditional"].prog_code[0].local_vars["test_name"]$;
       print_var2=.projects["TestLookupParse"].programs.gp["TestPrograms"]["var_after_conditional"].vars["path_var"]$$;
       print_var3=.projects["TestLookupParse"].programs.gp["TestPrograms"]["var_after_conditional"].vars["path_prepend_txt"]$$;
       print_var4=.projects["TestLookupParse"].programs.gp["TestPrograms"]["var_after_conditional"].vars["path_rest"]$$;
       print_var5=.projects["TestLookupParse"].programs.gp["TestPrograms"]["var_after_conditional"].vars["base_path"]$$;
+      print_var6=NULL;
+      debug=0;
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["object_member_after_print"] {
+    name="object_member_after_print";
+    short_nm="bjcmmb";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name=;
+     el_typ=DataTable;
+     el_def=0;
+     DataTable @["DataTable_32"] {
+      name="DataTable_32";
+      desc=;
+      data {
+       name="data";
+       el_typ=DataColT;
+       el_def=0;
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [0]       };
+      last_sort_spec {
+       name="DataSortSpec_37";
+       ops {
+	name="ops";
+	el_typ=DataSortEl;
+	el_def=0;
+       };
+      };
+     };
+    };
+    types {
+     name=;
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["lookup_type"] {
+      name="lookup_type";
+      var_type=T_Int;
+      int_val=0;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="return value from method";
+      init_from=NULL;
+     };
+     ProgVar @["lookup_seed"] {
+      name="lookup_seed";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["prepend_txt"] {
+      name="prepend_txt";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["append_txt"] {
+      name="append_txt";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["prog_el_txt"] {
+      name="prog_el_txt";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["path_var"] {
+      name="path_var";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["path_prepend_txt"] {
+      name="path_prepend_txt";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["path_rest"] {
+      name="path_rest";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["base_path"] {
+      name="base_path";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (3 vars)";
+      pre_compile_code_string="LocalVars (3 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["test_name"] {
+	name="test_name";
+	var_type=T_String;
+	string_val=;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["input"] {
+	name="input";
+	var_type=T_String;
+	string_val=;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["cursor_pos"] {
+	name="cursor_pos";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc="position of cursor when control+l pressed";
+	init_from=NULL;
+       };
+      };
+     };
+     AssignExpr @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="test_name = this.name";
+      pre_compile_code_string="test_name = this.name";
+      result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].prog_code[0].local_vars["test_name"]$$;
+      expr {
+       expr="this.name";
+      };
+     };
+     AssignExpr @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="input = \"print \" + DataTable_32 + \".\"";
+      pre_compile_code_string="input = \"print \" + DataTable_32 + \".\"";
+      result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].prog_code[0].local_vars["input"]$$;
+      expr {
+       expr="\"print \" + DataTable_32 + \".\"";
+      };
+     };
+     MethodCall @[3] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="cursor_pos = input->length()";
+      pre_compile_code_string="cursor_pos = input->length()";
+      result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].prog_code[0].local_vars["cursor_pos"]$$;
+      obj=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].prog_code[0].local_vars["input"]$;
+      method=taString::length;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="int length()";
+      meth_desc=" how many characters in the string";
+     };
+     StaticMethodCall @[4] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].vars["lookup_type"]$$;
+      object_type=ProgExprBase;
+      method=ProgExprBase::Test_ParseForLookup;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString;
+	type="const taString";
+	name="test_name";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="this.name";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=const_taString;
+	type="const taString";
+	name="input_text";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="input";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=const_int;
+	type="const int";
+	name="cursor_pos";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="cursor_pos";
+	};
+       };
+       ProgArg @[3] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="lookup_seed";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_seed";
+	};
+       };
+       ProgArg @[4] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="prepend_txt";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="prepend_txt";
+	};
+       };
+       ProgArg @[5] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="append_txt";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="append_txt";
+	};
+       };
+       ProgArg @[6] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="prog_el_txt";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="prog_el_txt";
+	};
+       };
+       ProgArg @[7] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="path_var";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="path_var";
+	};
+       };
+       ProgArg @[8] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="path_prepend_txt";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="path_prepend_txt";
+	};
+       };
+       ProgArg @[9] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="path_rest";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="path_rest";
+	};
+       };
+       ProgArg @[10] {
+	arg_type=taString_ref;
+	type="taString&";
+	name="base_path";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="base_path";
+	};
+       };
+      };
+     };
+     PrintVar @[5] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      message=;
+      print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].prog_code[0].local_vars["test_name"]$;
+      print_var2=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].vars["lookup_type"]$;
+      print_var3=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].vars["lookup_seed"]$$;
+      print_var4=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].vars["prepend_txt"]$$;
+      print_var5=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].vars["append_txt"]$$;
+      print_var6=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].vars["prog_el_txt"]$$;
+      debug=0;
+     };
+     PrintVar @[6] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
+      pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
+      message=;
+      print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].prog_code[0].local_vars["test_name"]$;
+      print_var2=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].vars["path_var"]$$;
+      print_var3=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].vars["path_prepend_txt"]$$;
+      print_var4=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].vars["path_rest"]$$;
+      print_var5=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].vars["base_path"]$$;
       print_var6=NULL;
       debug=0;
      };
@@ -7292,7 +8075,7 @@ LeabraProject .projects["TestLookupParse"] {
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAADVwAABMgAAAAAAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAAEsAAAAmsAAAAAAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
