@@ -428,7 +428,9 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   // ** Working backwards - delimiters will be in reverse order **
   for(int i=cur_pos-1; i>= 0; i--) {
     c = txt[i];
-    if(isdigit(c) || (c == '_') || (c == ' ') || (c == ',')) {
+// if there is a space, like in "print something" then expr_start should be after the ' ' - Rohrlich 10/15/2015
+//    if(isdigit(c) || (c == '_') || (c == ',') || (c == ' ')) {
+      if(isdigit(c) || (c == '_') || (c == ',')) {
       continue;
     }
     if(isalpha(c)) {
@@ -502,17 +504,6 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = ProgExprBase::SCOPED;
       delims_used = 2;
-    }
-    else if(txt[delim_pos[0]] == ':' && delim_pos.size == 1) {  // something like print: - might be the only case
-      base_path = txt.at(expr_start, delim_pos[0]-expr_start);
-      int length = base_path.length();
-      base_path = triml(base_path);
-      int shift = length - base_path.length(); // shift to compensate for trim
-      expr_start += shift;
-      prepend_txt = txt.through(txt[delim_pos[0]]);
-      lookup_seed = txt.after(delim_pos[0]);
-      lookup_type = ProgExprBase::VARIOUS;
-      delims_used = 1;
     }
     else if(txt[delim_pos[0]] == ')' && delim_pos.size > 1 && txt[delim_pos[1]] == '(') { // program () which can be followed by a function in that program
       base_path = txt.at(expr_start, delim_pos[1]-expr_start);

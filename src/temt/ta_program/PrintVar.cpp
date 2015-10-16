@@ -73,7 +73,7 @@ void PrintVar::GenCssBody_impl(Program* prog) {
 }
 
 String PrintVar::GetDisplayName() const {
-  String rval = "Print:";
+  String rval = "Print ";
   if(message.nonempty())
     rval += " \"" + message + "\"";
   if(print_var)
@@ -98,12 +98,10 @@ bool PrintVar::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   if (code.startsWith("printexpr"))
     return false;
 
-  if(!(code.startsWith("print") || code.startsWith("print:") ||
-       code.startsWith("cerr << ") || code.startsWith("cout << ")))
+  if(!(code.startsWith("print") || code.startsWith("cerr << ") || code.startsWith("cout << ")))
     return false;
   String exprstr;
   if(code.startsWith("print ")) exprstr = trim(code.after("print "));
-  else if(code.startsWith("print:")) exprstr = trim(code.after("print:"));
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
   if(exprstr.contains('"')) {
@@ -125,12 +123,8 @@ bool PrintVar::CvtFmCode(const String& code) {
   String start_str;
   if(code.startsWith("print ")) start_str = "print ";
   else if(code.startsWith("Print ")) start_str = "Print ";
-  else if(code.startsWith("print:")) start_str = "print:";
-  else if(code.startsWith("Print:")) start_str = "Print:";
   else if(code.startsWith("printvar ")) start_str = "printvar ";
   else if(code.startsWith("PrintVar ")) start_str = "PrintVar ";
-  else if(code.startsWith("printvar:")) start_str = "printvar:";
-  else if(code.startsWith("PrintVar:")) start_str = "PrintVar:";
   else if(code.startsWith("cerr << ")) start_str = "cerr << ";
   else if(code.startsWith("cout << ")) start_str = "cout << ";
   exprstr = trim(code.after(start_str));

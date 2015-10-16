@@ -58,7 +58,7 @@ void PrintExpr::GenCssBody_impl(Program* prog) {
 
 String PrintExpr::GetDisplayName() const {
   String rval;
-  rval += "Print: " + expr.GetFullExpr();
+  rval += "Print " + expr.GetFullExpr();
   return rval;
 }
 
@@ -68,12 +68,10 @@ bool PrintExpr::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   if (code.startsWith("printvar"))
     return false;
 
-  if(!(code.startsWith("print") || code.startsWith("print:") ||
-       code.startsWith("cerr << ") || code.startsWith("cout << ")))
+  if(!(code.startsWith("print") || code.startsWith("cerr << ") || code.startsWith("cout << ")))
     return false;
   String exprstr;
   if(code.startsWith("print ")) exprstr = trim(code.after("print "));
-  else if(code.startsWith("print:")) exprstr = trim(code.after("print:"));
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
   if(exprstr.freq('"') == 2) {
@@ -88,12 +86,8 @@ bool PrintExpr::CvtFmCode(const String& code) {
   String start_str;
   if(code.startsWith("print ")) start_str = "print ";
   else if(code.startsWith("Print ")) start_str = "Print ";
-  else if(code.startsWith("print:")) start_str = "print:";
-  else if(code.startsWith("Print:")) start_str = "Print:";
   else if(code.startsWith("printexpr ")) start_str = "printexpr ";
   else if(code.startsWith("PrintExpr ")) start_str = "PrintExpr ";
-  else if(code.startsWith("printexpr:")) start_str = "printexpr:";
-  else if(code.startsWith("PrintExpr:")) start_str = "PrintExpr:";
   else if(code.startsWith("cerr << ")) start_str = "cerr << ";
   else if(code.startsWith("cout << ")) start_str = "cout << ";
   exprstr = trim(code.after(start_str));
