@@ -828,7 +828,7 @@ void iMainWindowViewer::Constr_ControlMenu()
   KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::current_key_bindings));
 
   ctrlInitAction = new iAction("Init", QKeySequence(), "ctrlInitAction");
-  ctrlInitAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
+  ctrlInitAction->setIcon(QIcon(QPixmap(":/images/init_icon.png")));
   ctrlInitAction->setToolTip(taiMisc::ToolTipPreProcess("Init: initialize the last program that was run, from wherever it was last stopped"));
 
   ctrlRunAction = new iAction("Run", QKeySequence(), "ctrlRunAction");
