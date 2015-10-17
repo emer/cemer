@@ -83,13 +83,13 @@ inline void LeabraConSpec::Send_NetinDelta_impl(LeabraConGroup* cg, LeabraNetwor
     const int n_un = net->n_units_built;
     float* send_netin_vec = net->ThrSendNetinTmpPerSugp(thr_no, cg->other_idx, 0);
 #ifdef TA_VEC_USE
-    // if(cg->HasConGroupFlag(ConGroup::CHUNKS_SAME_SUGP)) {
-    //   Send_NetinDeltaSugp_vec(cg, su_act_delta_eff, send_netin_vec, wts, sugps, n_un);
-    // }
-    // else {
+    if(cg->HasConGroupFlag(ConGroup::CHUNKS_SAME_SUGP)) {
+      Send_NetinDeltaSugp_vec(cg, su_act_delta_eff, send_netin_vec, wts, sugps, n_un);
+    }
+    else {
       CON_GROUP_LOOP(cg, C_Send_NetinDeltaSugp(wts[i], sugps[i], n_un, send_netin_vec,
                                                cg->UnIdx(i), su_act_delta_eff));
-    // }
+    }
 #else
     CON_GROUP_LOOP(cg, C_Send_NetinDeltaSugp(wts[i], sugps[i], n_un, send_netin_vec,
                                              cg->UnIdx(i), su_act_delta_eff));
