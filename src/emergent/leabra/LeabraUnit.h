@@ -85,9 +85,6 @@ public:
   inline float& act_dif()
   { return ((LeabraUnitVars*)GetUnitVars())->act_dif; }
   // #VIEW_HOT #CAT_UnitVar act_p - act_m -- difference between plus and minus phase acts, -- reflects the individual error gradient for this neuron in standard error-driven learning terms
-  inline float& td_net()
-  { return ((LeabraUnitVars*)GetUnitVars())->td_net; }
-  // #VIEW_HOT #CAT_UnitVar top-down netinput -- used if unitspec.act.td_mod is engaged -- top-down is modulatory on bottom-up
   inline float& net_prv_q()
   { return ((LeabraUnitVars*)GetUnitVars())->net_prv_q; }
   // #CAT_UnitVar net input from the previous quarter -- this is used for delayed inhibition as specified in del_inhib on layer spec

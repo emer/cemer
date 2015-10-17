@@ -215,6 +215,53 @@ void LeabraConSpec::Compute_NetinScale(LeabraConGroup* recv_gp, LeabraLayer* fro
   recv_gp->scale_eff = wt_scale.FullScale(savg, from_sz, n_cons);
 }
 
+int LeabraConSpec::Init_SUGps(LeabraConGroup* cg, LeabraNetwork* net, int thr_no) {
+  // have to do this recv-based, because that is the perspective for the netin rollup
+  // so indexes need to be into the recv guys
+  Layer* slay = cg->prjn->from.ptr();
+  const int sz = cg->size;
+  if(!slay->unit_groups) {
+    for(int i=0; i<sz; i++) {
+      cg->PtrCnInt(i,SUGP,net) = 0;
+    }
+    return 0;
+  }
+  // note: this assumes that connections are always made within unit groups as inner loop!
+  int sugp_idx = -1;
+  int last_ug = -1;
+  for(int i=0; i<sz; i++) {
+    LeabraUnit* su = (LeabraUnit*)cg->Un(i, net);
+    int ugi = su->UnitGpIdx();
+    if(ugi != last_ug) {
+      last_ug = ugi;
+      sugp_idx++;
+    }
+    cg->PtrCnInt(i,SUGP,net) = sugp_idx;
+  }
+  return sugp_idx+1;            // total n
+}
+
+bool LeabraConSpec::Init_SUGpChunkFlag(LeabraConGroup* cg, LeabraNetwork* net, int thr_no) {
+  cg->SetConGroupFlag(ConGroup::CHUNKS_SAME_SUGP);
+  Layer* slay = cg->prjn->from.ptr();
+  if(!slay->unit_groups)
+    return true;
+  const int sz = cg->vec_chunked_size;
+  const int vct = ConGroup::vec_chunk_targ;
+  int32_t* sugps = cg->OwnCnVarInt(SUGP);
+  for(int i=0; i<sz; i += vct) {
+    int32_t sugp = sugps[i];
+    for(int j=1; j<vct; j++) {
+      if(sugps[i+j] != sugp) {
+        cg->ClearConGroupFlag(ConGroup::CHUNKS_SAME_SUGP);
+        break;
+      }
+    }
+  }
+  return cg->HasConGroupFlag(ConGroup::CHUNKS_SAME_SUGP);
+}
+
+
 void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   float prv_cur_lrate = cur_lrate;
   cur_lrate = lrate;            // as a backup..

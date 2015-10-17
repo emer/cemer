@@ -72,6 +72,7 @@ void LeabraNetStats::Initialize() {
 }
 
 void LeabraNetMisc::Initialize() {
+  sugp_netin = false;
   spike = false;
   deep = false;
   bias_learn = false;
@@ -131,6 +132,11 @@ void LeabraNetwork::Initialize() {
   thrs_send_deepnet_tmp = NULL;
   thrs_lay_avg_max_vals = NULL;
   thrs_ungp_avg_max_vals = NULL;
+  thrs_recv_cgp_sugp_net_cnt = NULL;
+  thrs_recv_cgp_sugp_net_mem = NULL;
+  thrs_pct_chunks_same_sugp = NULL;
+  pct_chunks_same_sugp = 0.0f;
+  max_n_sugp = 0;
   
 #ifdef CUDA_COMPILE
   cudai = new LeabraConSpecCuda;
@@ -163,7 +169,7 @@ void LeabraNetwork::CheckInhibCons() {
 
 void LeabraNetwork::Build() {
   CheckInhibCons();
-  if(net_misc.inhib_cons) {
+  if(net_misc.inhib_cons || net_misc.sugp_netin) {
     SetNetFlag(NETIN_PER_PRJN);	// inhib cons use per-prjn inhibition
   }
   inherited::Build();
@@ -203,28 +209,6 @@ void LeabraNetwork::InitLeabraThreadMem_Thr(int thr_no) {
          sizeof(AvgMaxValsRaw));
 }
 
-#ifdef NUMA_COMPILE
-void LeabraNetwork::AllocSendNetinTmp_Thr(int thr_no) {
-  inherited::AllocSendNetinTmp_Thr(thr_no);
-}
-#endif
-
-void LeabraNetwork::AllocSendNetinTmp() {
-  // temporary storage for sender-based netinput computation
-  if(n_units_built == 0 || threads.n_threads == 0) return;
-
-  net_aligned_malloc((void**)&thrs_send_deepnet_tmp, n_thrs_built * sizeof(float*));
-
-#ifndef NUMA_COMPILE
-  for(int i=0; i<n_thrs_built; i++) {
-    net_aligned_malloc((void**)&thrs_send_deepnet_tmp[i],
-                       n_units_built * sizeof(float));
-  }
-#endif
-
-  inherited::AllocSendNetinTmp();
-}
-
 void LeabraNetwork::FreeUnitConGpThreadMem() {
   inherited::FreeUnitConGpThreadMem();
 
@@ -235,16 +219,15 @@ void LeabraNetwork::FreeUnitConGpThreadMem() {
     net_free((void**)&unit_vec_vars[i]);
     net_free((void**)&thrs_lay_avg_max_vals[i]);
     net_free((void**)&thrs_ungp_avg_max_vals[i]);
+    net_free((void**)&thrs_recv_cgp_sugp_net_mem[i]);
   }
   net_free((void**)&thrs_send_deepnet_tmp);
   net_free((void**)&unit_vec_vars);
   net_free((void**)&thrs_lay_avg_max_vals);
   net_free((void**)&thrs_ungp_avg_max_vals);
-}
-
-void LeabraNetwork::InitSendNetinTmp_Thr(int thr_no) {
-  inherited::InitSendNetinTmp_Thr(thr_no);
-  memset(thrs_send_deepnet_tmp[thr_no], 0, n_units_built * sizeof(float));
+  net_free((void**)&thrs_recv_cgp_sugp_net_mem);
+  net_free((void**)&thrs_recv_cgp_sugp_net_cnt);
+  net_free((void**)&thrs_pct_chunks_same_sugp);
 }
 
 void LeabraNetwork::BuildNullUnit() {
@@ -252,6 +235,168 @@ void LeabraNetwork::BuildNullUnit() {
     taBase::OwnPointer((taBase**)&null_unit, new LeabraUnit, this);
   }
 }
+
+void LeabraNetwork::Connect() {
+  inherited::Connect();
+  Connect_SUGps();
+}
+
+void LeabraNetwork::Connect_SUGps() {
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(lay->lesioned()) continue;
+    FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
+      p->n_sugps = 0;
+    }
+  }
+
+  net_aligned_malloc((void**)&thrs_recv_cgp_sugp_net_cnt,
+                     n_thrs_built * sizeof(int64_t));
+  net_aligned_malloc((void**)&thrs_recv_cgp_sugp_net_mem, n_thrs_built * sizeof(float*));
+  net_aligned_malloc((void**)&thrs_pct_chunks_same_sugp, n_thrs_built * sizeof(float));
+
+  NET_THREAD_CALL(LeabraNetwork::Connect_SUGps_Thr);
+
+  pct_chunks_same_sugp = 0.0f;
+  for(int i=0; i<n_thrs_built; i++) {
+    int64_t sugp_cnt = thrs_recv_cgp_sugp_net_cnt[i];
+    if(sugp_cnt > 0) {
+      net_aligned_malloc((void**)&thrs_recv_cgp_sugp_net_mem[i],
+                         sugp_cnt * sizeof(float));
+    }
+    else {
+      thrs_recv_cgp_sugp_net_mem[i] = NULL;
+    }
+
+    pct_chunks_same_sugp += thrs_pct_chunks_same_sugp[i];
+  }
+
+  if(n_thrs_built > 0) {
+    pct_chunks_same_sugp /= (float)n_thrs_built;
+    if(net_misc.sugp_netin) {
+      taMisc::Info("pct_chunks_same_sugp:", String(pct_chunks_same_sugp));
+    }
+  }
+  
+  NET_THREAD_CALL(LeabraNetwork::Connect_SUGps_Alloc_Thr);
+
+  int maxns = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(lay->lesioned()) continue;
+    FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
+      if(p->NotActive()) continue;
+      maxns = MAX(maxns, p->n_sugps);
+    }
+  }
+  max_n_sugp = maxns;
+  if(TestWarning(max_n_sugp == 0 && net_misc.sugp_netin, "Connect_SUGps",
+                 "no sending unit groups found -- turning off net_misc.sugp_netin")) {
+    net_misc.sugp_netin = false;
+  }
+}
+
+void LeabraNetwork::Connect_SUGps_Thr(int thr_no) {
+  const int nrcg = ThrNRecvConGps(thr_no);
+  for(int i=0; i<nrcg; i++) {
+    LeabraConGroup* rcg = (LeabraConGroup*)ThrRecvConGroup(thr_no, i);
+    if(rcg->NotActive()) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)rcg->con_spec;
+    rcg->LeabraInit();
+    if(!net_misc.sugp_netin) continue;
+    int n_sugps = cs->Init_SUGps(rcg, this, thr_no);
+    ((LeabraPrjn*)rcg->prjn)->n_sugps = MAX(((LeabraPrjn*)rcg->prjn)->n_sugps, n_sugps);
+  }
+
+  // need a second pass to collect all the standardized maxed sugp cnts
+  int64_t sugp_cnt = 0;
+  for(int i=0; i<nrcg; i++) {
+    LeabraConGroup* rcg = (LeabraConGroup*)ThrRecvConGroup(thr_no, i);
+    if(rcg->NotActive()) continue;
+    sugp_cnt += ((LeabraPrjn*)rcg->prjn)->n_sugps;
+  }
+  thrs_recv_cgp_sugp_net_cnt[thr_no] = sugp_cnt;
+
+  // go through senders and set the vector chunk flag
+  thrs_pct_chunks_same_sugp[thr_no] = 0.0f;
+  if(net_misc.sugp_netin) {
+    int n_chunk_same_sugp = 0;
+    const int nscg = ThrNSendConGps(thr_no);
+    for(int i=0; i<nscg; i++) {
+      LeabraConGroup* scg = (LeabraConGroup*)ThrSendConGroup(thr_no, i);
+      if(scg->NotActive()) continue;
+      scg->LeabraInit();
+      LeabraConSpec* cs = (LeabraConSpec*)scg->con_spec;
+      bool same_sugp = cs->Init_SUGpChunkFlag(scg, this, thr_no);
+      if(same_sugp) {
+        n_chunk_same_sugp++;
+      }
+    }
+    if(nscg > 0) {
+      thrs_pct_chunks_same_sugp[thr_no] = (float)n_chunk_same_sugp / (float)nscg;
+    }
+  }
+}
+
+void LeabraNetwork::Connect_SUGps_Alloc_Thr(int thr_no) {
+  int sugp_cnt = thrs_recv_cgp_sugp_net_cnt[thr_no];
+  if(sugp_cnt == 0) return;
+  
+  int64_t thrs_idx = 0;
+  const int nrcg = ThrNRecvConGps(thr_no);
+  for(int i=0; i<nrcg; i++) {
+    LeabraConGroup* rcg = (LeabraConGroup*)ThrRecvConGroup(thr_no, i);
+    if(rcg->NotActive()) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)rcg->con_spec;
+    int n_sugps = ((LeabraPrjn*)rcg->prjn)->n_sugps;
+    if(n_sugps > 0) {
+      rcg->sugp_net = thrs_recv_cgp_sugp_net_mem[thr_no] + thrs_idx;
+      cs->Init_SUGpNetin(rcg, this, thr_no); // make it ours..
+      thrs_idx += n_sugps;
+    }
+  }
+}
+
+void LeabraNetwork::AllocSendNetinTmp() {
+  // note: not calling Network: version -- need to update based on that!
+  // temporary storage for sender-based netinput computation
+  if(n_units_built == 0 || threads.n_threads == 0) return;
+
+  net_aligned_malloc((void**)&thrs_send_netin_tmp, n_thrs_built * sizeof(float*));
+  net_aligned_malloc((void**)&thrs_send_deepnet_tmp, n_thrs_built * sizeof(float*));
+
+  for(int i=0; i<n_thrs_built; i++) {
+    if(net_misc.sugp_netin) {
+      net_aligned_malloc((void**)&thrs_send_netin_tmp[i],
+                         n_units_built * max_n_sugp * max_prjns * sizeof(float));
+    }
+    else if(NetinPerPrjn()) {
+      net_aligned_malloc((void**)&thrs_send_netin_tmp[i],
+                         n_units_built * max_prjns * sizeof(float));
+    }
+    else {
+      net_aligned_malloc((void**)&thrs_send_netin_tmp[i],
+                         n_units_built * sizeof(float));
+    }
+    net_aligned_malloc((void**)&thrs_send_deepnet_tmp[i],
+                       n_units_built * sizeof(float));
+  }
+
+  NET_THREAD_CALL(Network::InitSendNetinTmp_Thr);
+}
+
+void LeabraNetwork::InitSendNetinTmp_Thr(int thr_no) {
+  if(net_misc.sugp_netin) {
+    memset(thrs_send_netin_tmp[thr_no], 0, n_units_built * max_n_sugp * max_prjns *
+           sizeof(float));
+  }
+  else if(NetinPerPrjn()) {
+    memset(thrs_send_netin_tmp[thr_no], 0, n_units_built * max_prjns * sizeof(float));
+  }
+  else {
+    memset(thrs_send_netin_tmp[thr_no], 0, n_units_built * sizeof(float));
+  }
+  memset(thrs_send_deepnet_tmp[thr_no], 0, n_units_built * sizeof(float));
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 //      General Init functions
@@ -713,8 +858,6 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
       continue;
     AvgMaxValsRaw* am_net = ThrLayAvgMax(thr_no, li, AM_NET);
     am_net->InitVals();
-    AvgMaxValsRaw* am_td_net = ThrLayAvgMax(thr_no, li, AM_TD_NET);
-    am_td_net->InitVals();
     
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
@@ -723,7 +866,6 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_net->UpdtVals(uv->net, flat_idx); 
-      am_td_net->UpdtVals(uv->td_net, flat_idx); 
     }
   }
 
@@ -735,8 +877,6 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
       continue;
     AvgMaxValsRaw* am_net = ThrUnGpAvgMax(thr_no, li, AM_NET);
     am_net->InitVals();
-    AvgMaxValsRaw* am_td_net = ThrUnGpAvgMax(thr_no, li, AM_TD_NET);
-    am_td_net->InitVals();
     
     const int ust = ThrUnGpUnStart(thr_no, li);
     const int ued = ThrUnGpUnEnd(thr_no, li);
@@ -745,7 +885,6 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_net->UpdtVals(uv->net, flat_idx); 
-      am_td_net->UpdtVals(uv->td_net, flat_idx); 
     }
   }
 }
@@ -761,17 +900,12 @@ void LeabraNetwork::Compute_NetinStats_Post() {
       continue;
     AvgMaxVals& netin = lay->netin;
     netin.InitVals();
-    AvgMaxVals& td_netin = lay->td_netin;
-    td_netin.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_net = ThrLayAvgMax(i, li, AM_NET);
       netin.UpdtFmAvgMaxRaw(*am_net);
-      AvgMaxValsRaw* am_td_net = ThrLayAvgMax(i, li, AM_TD_NET);
-      td_netin.UpdtFmAvgMaxRaw(*am_td_net);
     }
     netin.CalcAvg();
-    td_netin.CalcAvg();
   }
 
   // then by unit groups
@@ -784,17 +918,12 @@ void LeabraNetwork::Compute_NetinStats_Post() {
     LeabraUnGpData* gpd = lay->ungp_data.FastEl(ugidx);
     AvgMaxVals& netin = gpd->netin;
     netin.InitVals();
-    AvgMaxVals& td_netin = gpd->td_netin;
-    td_netin.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_net = ThrUnGpAvgMax(i, li, AM_NET);
       netin.UpdtFmAvgMaxRaw(*am_net);
-      AvgMaxValsRaw* am_td_net = ThrUnGpAvgMax(i, li, AM_TD_NET);
-      td_netin.UpdtFmAvgMaxRaw(*am_td_net);
     }
     netin.CalcAvg();
-    td_netin.CalcAvg();
   }
 }
 

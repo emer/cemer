@@ -48,7 +48,6 @@ void LeabraInhib::Inhib_Initialize() {
 void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
   i_val.InitVals();
   netin.InitVals();
-  td_netin.InitVals();
   acts.InitVals();
   un_g_i.InitVals();
   am_deep_raw.InitVals();
@@ -61,7 +60,6 @@ void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
   acts_p_avg_eff = cp.acts_p_avg_eff;
   i_val = cp.i_val;
   netin = cp.netin;
-  td_netin = cp.td_netin;
   acts = cp.acts;
   acts_m = cp.acts_m;
   acts_p = cp.acts_p;

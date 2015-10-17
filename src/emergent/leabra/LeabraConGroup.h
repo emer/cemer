@@ -32,7 +32,11 @@ public:
   float		scale_eff;	// #NO_SAVE #CAT_Activation effective scale parameter for netin -- copied from recv congroup where it is computed
   float		net;		// #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
   float		net_raw;	// #NO_SAVE #CAT_Activation raw summed netinput to this con_group -- only used for NETIN_PER_PRJN
+  float*        sugp_net;       // #IGNORE net input stored for each sending unit group -- of size prjn->n_sugps -- only stored on receiving con groups -- points to memory allocated by network in thrs_recv_cgp_sugp_net_mem
 
+  void  LeabraInit()
+  { scale_eff = 0.0f; net = 0.0f; net_raw = 0.0f; sugp_net = NULL; }
+  // leabra initialize
 };
 
 #endif // LeabraConGroup_h

@@ -49,13 +49,53 @@ inline void LeabraConSpec::Send_NetinDelta_vec(LeabraConGroup* cg,
   }
 }
 
+inline void LeabraConSpec::Send_NetinDeltaSugp_vec
+(LeabraConGroup* cg, const float su_act_delta_eff, float* send_netin_vec, const float* wts,
+ const int32_t* sugps, const int n_un)
+{
+  VECF sa(su_act_delta_eff);
+  const int sz = cg->size;
+  const int parsz = cg->vec_chunked_size;
+  int i;
+  for(i=0; i<parsz; i += TA_VEC_SIZE) {
+    VECF wt;  wt.load(wts+i);
+    VECF dp = wt * sa;
+    VECF rnet;
+    float* stnet = send_netin_vec + sugps[i] * n_un + cg->UnIdx(i); // all have same
+    rnet.load(stnet);
+    rnet += dp;
+    rnet.store(stnet);
+  }
+
+  // remainder of non-vector chunkable ones
+  for(; i<sz; i++) {
+    send_netin_vec[sugps[i] * n_un + cg->UnIdx(i)] += wts[i] * su_act_delta_eff;
+  }
+}
+
 #endif
 
 inline void LeabraConSpec::Send_NetinDelta_impl(LeabraConGroup* cg, LeabraNetwork* net,
                                          int thr_no, const float su_act_delta,
-                                         const float* wts) {
+                                         const float* wts, const int32_t* sugps) {
   const float su_act_delta_eff = cg->scale_eff * su_act_delta;
-  if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thr_no auto set to 0 in parent call if no threads
+  if(net->net_misc.sugp_netin) {
+    const int n_un = net->n_units_built;
+    float* send_netin_vec = net->ThrSendNetinTmpPerSugp(thr_no, cg->other_idx, 0);
+#ifdef TA_VEC_USE
+    if(cg->HasConGroupFlag(ConGroup::CHUNKS_SAME_SUGP)) {
+      Send_NetinDeltaSugp_vec(cg, su_act_delta_eff, send_netin_vec, wts, sugps, n_un);
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Send_NetinDeltaSugp(wts[i], sugps[i], n_un, send_netin_vec,
+                                               cg->UnIdx(i), su_act_delta_eff));
+    }
+#else
+    CON_GROUP_LOOP(cg, C_Send_NetinDeltaSugp(wts[i], sugps[i], n_un, send_netin_vec,
+                                             cg->UnIdx(i), su_act_delta_eff));
+#endif
+  }
+  else if(net->NetinPerPrjn()) {
     float* send_netin_vec = net->ThrSendNetinTmpPerPrjn(thr_no, cg->other_idx);
 #ifdef TA_VEC_USE
     Send_NetinDelta_vec(cg, su_act_delta_eff, send_netin_vec, wts);
@@ -79,7 +119,7 @@ inline void LeabraConSpec::Send_NetinDelta(LeabraConGroup* cg, LeabraNetwork* ne
                                            int thr_no, const float su_act_delta)
 {
   // note: _impl is used b/c subclasses replace WT var with another variable
-  Send_NetinDelta_impl(cg, net, thr_no, su_act_delta, cg->OwnCnVar(WT));
+  Send_NetinDelta_impl(cg, net, thr_no, su_act_delta, cg->OwnCnVar(WT), cg->OwnCnVarInt(SUGP));
 }
 
 
@@ -90,6 +130,16 @@ inline float LeabraConSpec::Compute_Netin(ConGroup* rcg, Network* net, int thr_n
   CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->PtrCn(i,WT,net),
 					     cg->UnVars(i,net)->act));
   return ((LeabraConGroup*)cg)->scale_eff * rval;
+}
+
+
+inline void LeabraConSpec::Init_SUGpNetin(LeabraConGroup* rcg, LeabraNetwork* net,
+                                          int thr_no) {
+  const int nsg = ((LeabraPrjn*)rcg->prjn)->n_sugps;
+  if(nsg == 0 || !rcg->sugp_net) return;
+  for(int i=0; i < nsg; i++) {
+    rcg->sugp_net[i] = 0.0f;
+  }
 }
 
 

@@ -88,6 +88,7 @@ public:
     RECV_CONS = 0x0002, // we are a recv con group -- else a send con group
     IS_ACTIVE = 0x0004, // we are an active con group -- projection is active and size > 0
     SHARING = 0x0008,   // this OWN_CONS group is sharing connection objects from another con group
+    CHUNKS_SAME_SUGP = 0x0010,  // for Leabra: chunks all have the same sender unit group -- important for optimization of netin
   };
 
   static float  null_rval;      // #IGNORE null return value for reference funs
@@ -217,17 +218,25 @@ public:
   inline float*         OwnCnVar(int var_no) const
   { return cnmem_start + (alloc_size * var_no); }
 #endif
-  // #CAT_Access fastest access (no range checking) to owned connection variable value -- get this float* and then index it directly with loop index -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
+  // #CAT_Access fastest access (no range checking) to owned connection variable value -- get this float* and then index it directly with loop index -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::SCALE)
+
+  inline int32_t*       OwnCnVarInt(int var_no) const
+  { return ((int32_t*)cnmem_start) + (alloc_size * var_no); }
+  // #CAT_Access fastest access (no range checking) to owned connection variable value of INTEGER type -- get this float* and then index it directly with loop index -- var_no is defined in ConSpec
 
   inline float&          OwnCn(int idx, int var_no) const
   { return cnmem_start[(alloc_size * var_no) + idx]; }
   // #CAT_Access fast access (no range checking) to owned connection variable value at given index -- OwnCnVar with index in loop is preferred for fastest access -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
 
-  inline const int& UnIdx(int idx) const
-  { return ((int*)mem_start)[idx]; }
+  inline int32_t&        OwnCnInt(int idx, int var_no) const
+  { return ((int32_t*)cnmem_start)[(alloc_size * var_no) + idx]; }
+  // #CAT_Access fast access (no range checking) to owned connection INTEGER variable value at given index -- OwnCnVar with index in loop is preferred for fastest access -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
+
+  inline const int32_t& UnIdx(int idx) const
+  { return ((int32_t*)mem_start)[idx]; }
   // #CAT_Access fast access (no range checking) to unit flat index at given connection index
-  inline int&       UnIdx(int idx)
-  { return ((int*)mem_start)[idx]; }
+  inline int32_t&       UnIdx(int idx)
+  { return ((int32_t*)mem_start)[idx]; }
   // #CAT_Access fast access (no range checking) to unit flat index at given connection index
   inline Unit*          Un(int idx, Network* net) const;
   // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level) -- this is the unit on the other end of this connection 
@@ -252,16 +261,19 @@ public:
   bool                  SetShareFrom(Network* net, Unit* shu);
   // #CAT_Access set this connection group to share from given other unit -- checks to make sure this works -- returns false if not (will have already emitted warning message)
 
-  inline const int& PtrCnIdx(int idx) const
-  { return ((int*)mem_start)[alloc_size + idx]; }
+  inline const int32_t& PtrCnIdx(int idx) const
+  { return ((int32_t*)mem_start)[alloc_size + idx]; }
   // #CAT_Access fast access (no range checking) to index of connection within unit cons on other side of connection 
-  inline int&    PtrCnIdx(int idx)
-  { return ((int*)mem_start)[alloc_size + idx]; }
+  inline int32_t&    PtrCnIdx(int idx)
+  { return ((int32_t*)mem_start)[alloc_size + idx]; }
   // #CAT_Access fast access (no range checking) to index of connection within unit cons on other side of connection 
 
   inline float&  PtrCn(int idx, int var_no, Network* net) const
   { return UnCons(idx, net)->OwnCn(PtrCnIdx(idx), var_no); }
   // #IGNORE #CAT_Access fast access (no range or own_cons checking) to connection value at given index -- this is MUCH slower than OwnCn due to several index accesses, so where ever possible computations should be performed on the side that owns the connections -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
+  inline int32_t&  PtrCnInt(int idx, int var_no, Network* net) const
+  { return UnCons(idx, net)->OwnCnInt(PtrCnIdx(idx), var_no); }
+  // #IGNORE #CAT_Access fast access (no range or own_cons checking) to connection INTEGER value at given index -- this is MUCH slower than OwnCn due to several index accesses, so where ever possible computations should be performed on the side that owns the connections -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
 
   inline float&  Cn(int idx, int var_no, Network* net) const
   { if(OwnCons()) return OwnCn(idx, var_no); return PtrCn(idx, var_no, net); }

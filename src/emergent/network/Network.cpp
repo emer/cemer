@@ -166,9 +166,11 @@ void Network::Initialize() {
   thrs_send_cons_mem = NULL;
 
   thrs_own_cons_max_size = NULL;
+  thrs_own_cons_tot_size = NULL;
   thrs_own_cons_avg_size = NULL;
   thrs_own_cons_max_vars = NULL;
   thrs_pct_cons_vec_chunked = NULL;
+  pct_cons_vec_chunked = 0.0f;
 
   thrs_tmp_chunks = NULL;
   thrs_tmp_not_chunks = NULL;
@@ -368,14 +370,21 @@ void Network::UpdtAfterNetMod() {
 }
 
 void Network::CountCons() {
-  n_units = 0;
+  n_units = n_units_built;
   n_cons = 0;
+  pct_cons_vec_chunked = 0.0f;
+  for(int i=0; i<n_thrs_built; i++) {
+    n_cons += thrs_own_cons_tot_size[i];
+    pct_cons_vec_chunked += thrs_pct_cons_vec_chunked[i];
+  }
+  if(n_thrs_built > 0) {
+    pct_cons_vec_chunked /= (float)n_thrs_built;
+  }
   max_prjns = 1;
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
-    n_cons += l->CountCons(this);
-    n_units += l->units.leaves;
     max_prjns = MAX(l->projections.size, max_prjns);
+    l->CountCons(this);
   }
 }
 
@@ -658,6 +667,7 @@ void Network::FreeConThreadMem() {
 
   // now go back and get the rest
   net_free((void**)&thrs_own_cons_max_size);
+  net_free((void**)&thrs_own_cons_tot_size);
   net_free((void**)&thrs_own_cons_avg_size);
   net_free((void**)&thrs_own_cons_max_vars);
   net_free((void**)&thrs_pct_cons_vec_chunked);
@@ -993,6 +1003,7 @@ void Network::Connect_Alloc() {
   net_aligned_malloc((void**)&thrs_send_cons_mem, n_thrs_built * sizeof(float*));
 
   net_aligned_malloc((void**)&thrs_own_cons_max_size, n_thrs_built * sizeof(int));
+  net_aligned_malloc((void**)&thrs_own_cons_tot_size, n_thrs_built * sizeof(int64_t));
   net_aligned_malloc((void**)&thrs_own_cons_avg_size, n_thrs_built * sizeof(int));
   net_aligned_malloc((void**)&thrs_own_cons_max_vars, n_thrs_built * sizeof(int));
   net_aligned_malloc((void**)&thrs_pct_cons_vec_chunked, n_thrs_built * sizeof(float));
@@ -1042,7 +1053,7 @@ void Network::Connect_AllocSizes_Thr(int thr_no) {
   thrs_send_cons_cnt[thr_no] = 0;
   thrs_own_cons_max_size[thr_no] = 0;
   thrs_own_cons_max_vars[thr_no] = 0;
-  float ocsum = 0.0f;
+  int64_t ocsum = 0;
   int ocn = 0;
 
   // recv cons
@@ -1081,8 +1092,9 @@ void Network::Connect_AllocSizes_Thr(int thr_no) {
     }
   }
 
+  thrs_own_cons_tot_size[thr_no] = ocsum;
   if(ocn > 0) {
-    thrs_own_cons_avg_size[thr_no] = round(ocsum / (float)ocn);
+    thrs_own_cons_avg_size[thr_no] = round((float)ocsum / (float)ocn);
   }
 }
 

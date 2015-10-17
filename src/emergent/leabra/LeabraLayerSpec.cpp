@@ -356,6 +356,7 @@ void LeabraLayerSpec::Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net) {
   }
 
   FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
+    if(p->NotActive()) continue;
     p->Trial_Init_Specs(net);
   }
 
@@ -983,6 +984,7 @@ void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net) 
 
     for(int i=0;i<lay->projections.size;i++) {
       LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+      if(prjn->NotActive()) continue;
       if(sum_net > 0.0f)
         prjn->netin_rel = prjn->netin_avg / sum_net;
       // increment epoch-level

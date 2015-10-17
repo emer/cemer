@@ -285,7 +285,7 @@ public:
   WtSaveFormat  wt_save_fmt;    // #CAT_File #EXPERT format to save weights in if saving weights
 
   int           n_units;        // #READ_ONLY #SHOW #CAT_Structure total number of units in the network
-  int           n_cons;         // #READ_ONLY #SHOW #CAT_Structure total number of connections in the network
+  int64_t       n_cons;         // #READ_ONLY #SHOW #CAT_Structure total number of connections in the network
   int           max_prjns;      // #READ_ONLY #EXPERT #CAT_Structure maximum number of prjns per any given layer or unit in the network
   PosVector3i   max_disp_size;  // #AKA_max_size #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net
   PosVector2i   max_disp_size2d; // #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net -- for 2D display
@@ -344,10 +344,11 @@ public:
   float**       thrs_send_cons_mem; // #IGNORE bulk memory allocated for all of the recv connections, by thread -- array of float*[thrs_recv_cons_cnt[thr_no]]
 
   int*          thrs_own_cons_max_size; // #IGNORE maximum alloc_size of any owning connection group, by thread -- for allocating temp structures..
+  int64_t*      thrs_own_cons_tot_size; // #IGNORE total number of owned connections, by thread
   int*          thrs_own_cons_avg_size; // #IGNORE average size of any owning connection group, by thread -- for optimizing computation
   int*          thrs_own_cons_max_vars; // #IGNORE maximum NConVars of any owning connection group, by thread -- for allocating temp structures..
   float*        thrs_pct_cons_vec_chunked; // #IGNORE average percent of connections that are vector chunked (across owned projections and units), by thread
-
+  float         pct_cons_vec_chunked; // #NO_SAVE #READ_ONLY #EXPERT average percent of connections that are vector chunked (across owned projections and units)
 
   int**         thrs_tmp_chunks;      // #IGNORE tmp con vec chunking memory
   int**         thrs_tmp_not_chunks;  // #IGNORE tmp con vec chunking memory

@@ -243,9 +243,10 @@ class E_API LeabraConSpec : public ConSpec {
 INHERITED(ConSpec)
 public:
   enum LeabraConVars {
-    FWT = DWT+1,                // fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
-    SWT,                        // slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
-    SCALE,                      // scaling paramter -- effective weight value is scaled by this factor -- useful for topographic connectivity patterns e.g., to enforce more distant connections to always be lower in magnitude than closer connections -- set by custom weight init code for certain projection specs
+    SCALE = DWT+1,      // scaling paramter -- effective weight value is scaled by this factor -- useful for topographic connectivity patterns e.g., to enforce more distant connections to always be lower in magnitude than closer connections -- set by custom weight init code for certain projection specs
+    FWT,                // fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
+    SWT,                // slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
+    SUGP,               // sending unit group index -- for integrating net input over unit groups
   };
 
   enum Quarters {               // #BITS specifies gamma frequency quarters within an alpha-frequency trial on which to do things
@@ -349,19 +350,36 @@ public:
   // #IGNORE is this a send deep_raw connection (SendDeepRawConSpec) -- optimized check for higher speed
   inline virtual bool  IsDeepModCon() { return false; }
   // #IGNORE is this a send deep_mod connection (SendDeepModConSpec) -- optimized check for higher speed
-
+  virtual int          Init_SUGps(LeabraConGroup* recv_gp, LeabraNetwork* net, int thr_no);
+  // #IGNORE initialize sending unit group indexes (sugp) for already-connected projections
+  virtual bool         Init_SUGpChunkFlag(LeabraConGroup* send_gp, LeabraNetwork* net, int thr_no);
+  // #IGNORE initialize sending unit group chunked flag -- returns flag status
+  inline void          Init_SUGpNetin(LeabraConGroup* recv_gp, LeabraNetwork* net,
+                                      int thr_no);
+  // #IGNORE initialize the sending unit group netinput variables
+  
+  
   inline void 	C_Send_NetinDelta(const float wt, float* send_netin_vec,
                                   const int ru_idx, const float su_act_delta_eff)
   { send_netin_vec[ru_idx] += wt * su_act_delta_eff; }
+  // #IGNORE
+  inline void 	C_Send_NetinDeltaSugp(const float wt, const int32_t sugp,
+                                      const int32_t n_un, float* send_netin_vec,
+                                      const int ru_idx, const float su_act_delta_eff)
+  { send_netin_vec[sugp * n_un + ru_idx] += wt * su_act_delta_eff; }
   // #IGNORE
 #ifdef TA_VEC_USE
   inline void 	Send_NetinDelta_vec(LeabraConGroup* cg, const float su_act_delta_eff,
                                     float* send_netin_vec, const float* wts);
   // #IGNORE vectorized version
+  inline void 	Send_NetinDeltaSugp_vec(LeabraConGroup* cg, const float su_act_delta_eff,
+                           float* send_netin_vec, const float* wts, const int32_t* sugps,
+                           const int max_n_sugp);
+  // #IGNORE vectorized version
 #endif
   inline void 	Send_NetinDelta_impl(LeabraConGroup* cg, LeabraNetwork* net,
                                      int thr_no, const float su_act_delta,
-                                     const float* wts);
+                                     const float* wts, const int32_t* sugps);
   // #IGNORE implementation that uses specified weights -- typically only diff in different subclasses is the weight variables used
   inline virtual void 	Send_NetinDelta(LeabraConGroup* cg, LeabraNetwork* net,
                                         int thr_no, const float su_act_delta);
