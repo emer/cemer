@@ -169,6 +169,7 @@ class E_API LeabraNetinSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          max_on;             // enable computation of netinput as a max over sending unit groups, for projections that have sending unit groups -- the max is computed within each projection, and then summed across projections -- parameters allow for a mix of max and sum netin
+  bool          max_ff;             // #CONDSHOW_ON_max_on apply max operation to feedforward (from input) projections only
   float         max_mix;            // #CONDSHOW_ON_max_on #MIN_0 #MAX_1 mix between max over sending unit group netin, and sum over all sending unit groups -- 1 = all max, 0 = all sum, .5 = half of each
   float         max_gain;           // #CONDSHOW_ON_max_on #DEF_0.4 multiplier applied to number of sending unit groups, to bring max_net into same range as netin summed across all unit groups
 

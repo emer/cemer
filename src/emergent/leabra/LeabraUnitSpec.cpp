@@ -151,6 +151,7 @@ void SpikeMiscSpec::UpdateAfterEdit_impl() {
 
 void LeabraNetinSpec::Initialize() {
   max_on = false;
+  max_ff = false;
   Defaults_init();
 }
 
@@ -1211,8 +1212,13 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
         }
         if(!cs->inhib) {
           if(nsgp > 0 && recv_gp->sugp_net) {
-            recv_gp->net_raw = netin.max_mult * max_raw * (float)nsgp +
-              netin.sum_mix * sum_raw;
+            if(!netin.max_ff || recv_gp->prjn->direction == Projection::FM_INPUT) {
+              recv_gp->net_raw = netin.max_mult * max_raw * (float)nsgp +
+                netin.sum_mix * sum_raw;
+            }
+            else {
+              recv_gp->net_raw = sum_raw;
+            }
           }
           net_raw += recv_gp->net_raw;
         }
