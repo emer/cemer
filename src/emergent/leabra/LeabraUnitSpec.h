@@ -44,7 +44,6 @@ class E_API LeabraActFunSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications, using the gelin (g_e linear) activation function by default
 INHERITED(SpecMemberBase)
 public:
-  bool          max_netin;          // compute netinput as a max over sending unit groups, for projections that have sending unit groups -- the max is computed within each projection, and summed across projections 
   float         thr;                // #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button)
   float         gain;                // #DEF_100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network
   float         nvar;                // #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
@@ -154,6 +153,31 @@ public:
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(SpikeMiscSpec);
+protected:
+  SPEC_DEFAULTS;
+  void        UpdateAfterEdit_impl();
+private:
+  void        Initialize();
+  void        Destroy()        { };
+  void        Defaults_init();
+};
+
+eTypeDef_Of(LeabraNetinSpec);
+
+class E_API LeabraNetinSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how to compute excitatory net input to unit
+INHERITED(SpecMemberBase)
+public:
+  bool          max_on;             // enable computation of netinput as a max over sending unit groups, for projections that have sending unit groups -- the max is computed within each projection, and then summed across projections -- parameters allow for a mix of max and sum netin
+  float         max_mix;            // #CONDSHOW_ON_max_on #MIN_0 #MAX_1 mix between max over sending unit group netin, and sum over all sending unit groups -- 1 = all max, 0 = all sum, .5 = half of each
+  float         max_gain;           // #CONDSHOW_ON_max_on #DEF_0.4 multiplier applied to number of sending unit groups, to bring max_net into same range as netin summed across all unit groups
+
+  float         sum_mix;            // #READ_ONLY #HIDDEN 1 - max_mix
+  float         max_mult;           // #READ_ONLY #HIDDEN max_mix * max_gain
+  
+  String        GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraNetinSpec);
 protected:
   SPEC_DEFAULTS;
   void        UpdateAfterEdit_impl();
@@ -574,6 +598,7 @@ public:
   LeabraActMiscSpec act_misc;       // #CAT_Activation miscellaneous activation parameters
   SpikeFunSpec      spike;          // #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
   SpikeMiscSpec    spike_misc;      // #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
+  LeabraNetinSpec  netin;           // #CAT_Activation how to compute the excitatory net input to units
   OptThreshSpec    opt_thresh;      // #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
   MinMaxRange      clamp_range;     // #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
   MinMaxRange      vm_range;        // #CAT_Activation membrane potential range (min, max, 0-2 for normalized)

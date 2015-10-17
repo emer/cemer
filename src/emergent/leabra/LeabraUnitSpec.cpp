@@ -31,6 +31,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraActFunSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActMiscSpec);
 TA_BASEFUNS_CTORS_DEFN(SpikeFunSpec);
 TA_BASEFUNS_CTORS_DEFN(SpikeMiscSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraNetinSpec);
 TA_BASEFUNS_CTORS_DEFN(OptThreshSpec);
 TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
@@ -53,7 +54,6 @@ void LeabraActFunSpec::Initialize() {
 }
 
 void LeabraActFunSpec::Defaults_init() {
-  max_netin = false;
   thr = 0.5f;
   gain = 100.0f;
   nvar = 0.005f;
@@ -148,6 +148,25 @@ void SpikeMiscSpec::Defaults_init() {
 void SpikeMiscSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
+
+void LeabraNetinSpec::Initialize() {
+  max_on = false;
+  Defaults_init();
+}
+
+void LeabraNetinSpec::Defaults_init() {
+  max_mix = 0.2f;
+  max_gain = 0.4f;
+  sum_mix = 1.0f - max_mix;
+  max_mult = max_mix * max_gain;
+}
+
+void LeabraNetinSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  sum_mix = 1.0f - max_mix;
+  max_mult = max_mix * max_gain;
+}
+
 
 void OptThreshSpec::Initialize() {
   send = .1f;
@@ -637,7 +656,7 @@ void LeabraUnitSpec::Init_Netins(LeabraUnitVars* u, LeabraNetwork* net, int thr_
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
     recv_gp->net = 0.0f;
     recv_gp->net_raw = 0.0f;
-    if(act.max_netin) {
+    if(netin.max_on) {
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       cs->Init_SUGpNetin(recv_gp, net, thr_no);
     }
@@ -827,11 +846,11 @@ void LeabraUnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
     ((LeabraConSpec*)bias_spec.SPtr())->Trial_Init_Specs(net);
   }
   
-  if(act.max_netin) {
+  if(netin.max_on) {
     TestWarning(!net->net_misc.sugp_netin, "Trial_Init_Specs",
-                "act.max_netin requires Network net_misc.sugp_net = true -- I will set this now, but you will need to rebuild the network for this to take effect!");
+                "netin.max_on requires Network net_misc.sugp_net = true -- I will set this now, but you will need to rebuild the network for this to take effect!");
     TestWarning(!net->NetinPerPrjn(), "Trial_Init_Specs",
-                "act.max_netin requires Network NETIN_PER_PRJN flag to be set -- I will set this now, but you will need to rebuild the network for this to take effect!");
+                "netin.max_on requires Network NETIN_PER_PRJN flag to be set -- I will set this now, but you will need to rebuild the network for this to take effect!");
     net->SetNetFlag(Network::NETIN_PER_PRJN);
   }
 }
@@ -1160,7 +1179,7 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
   float gi_delta = 0.0f;
   if(net->net_misc.sugp_netin) {
     const int nrg = u->NRecvConGps(net, thr_no);
-    if(act.max_netin) {
+    if(netin.max_on) {
       float net_raw = 0.0f;
       for(int g=0; g < nrg; g++) {
         LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
@@ -1168,6 +1187,7 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
         LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
         const int nsgp = MAX(((LeabraPrjn*)recv_gp->prjn)->n_sugps, 1);
         float max_raw = 0.0f;
+        float sum_raw = 0.0f;
         for(int sg=0; sg < nsgp; sg++) {
           float sg_net_delta = 0.0f;
           for(int j=0;j<nt;j++) {
@@ -1182,6 +1202,7 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
           else if(nsgp > 0 && recv_gp->sugp_net) {
             recv_gp->sugp_net[sg] += sg_net_delta; // increment
             max_raw = MAX(max_raw, recv_gp->sugp_net[sg]);
+            sum_raw += recv_gp->sugp_net[sg];
           }
           else {
             recv_gp->net_raw += sg_net_delta; // use recv_gp
@@ -1190,7 +1211,8 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
         }
         if(!cs->inhib) {
           if(nsgp > 0 && recv_gp->sugp_net) {
-            recv_gp->net_raw = max_raw * (float)nsgp; // rescale!
+            recv_gp->net_raw = netin.max_mult * max_raw * (float)nsgp +
+              netin.sum_mix * sum_raw;
           }
           net_raw += recv_gp->net_raw;
         }

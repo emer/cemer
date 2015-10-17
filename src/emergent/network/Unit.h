@@ -64,15 +64,15 @@ public: //
   Voxel_List*   voxels;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #NO_VIEW Voxels assigned to this unit in a brain view.
   int           idx;
-  // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit within containing unit group
+  // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit within containing unit group -- for virtual unit groups, this is NOT the index within the virtual unit group, but rather the index within the entire layer unit group
   int           flat_idx;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit in a flat array of units (used by parallel threading) -- 0 is special null case -- real idx's start at 1
   int           thr_un_idx;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit in owning thread's array of units (used by parallel threading)
   int		ug_idx;
-  // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure unit group index, if this unit belongs in a unit group (virtual or real) -- assigned at build by layer
+  // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure index of the unit group this unit belongs in, if this unit belongs in a unit group (either virtual or real) -- assigned at build by layer
   bool		in_subgp;
-  // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure determine if unit is in a subgroup
+  // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure determine if unit is in a REAL subgroup -- not true for virtual subgroups
 
   // UnitVars variable access:
 
