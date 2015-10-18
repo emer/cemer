@@ -1408,7 +1408,7 @@ public:
 
   virtual bool          AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel,
       const String& extra_label = "", const String& sub_gp_nm = "");
-  // #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel select an object member to be added to a project control_panel - a panel that is a user chosen collection of members and methods from one or more objects (if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
+  // #MENU #MENU_ON_ControlPanel #NO_MENU_PANEL #MENU_SEP_BEFORE #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel select an object member to be added to a project control_panel - a panel that is a user chosen collection of members and methods from one or more objects (if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
   virtual bool          AddToControlPanelNm(const String& memb_nm, ControlPanel* ctrl_panel,
                 const String& extra_label = _nilString, const String& sub_gp_nm = _nilString,
                 const String& desc = _nilString);
@@ -1426,7 +1426,7 @@ public:
   // #CAT_Display select a method (by name) for use in a control_panel that is a collection of selected members and methods from different objects (if ctrl_panel is NULL, a new one is created in .crtl_panels)  returns false if method was already selected.   extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)  desc is a custom description -- will show up as tooltip for user (default is info from member)
   virtual bool          AddToParamSet(MemberDef* member, ParamSet* ctrl_panel,
                                           const String& extra_label = "", const String& sub_gp_nm = "");
-  // #MENU #MENU_ON_ParamSet #MENU #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewParamSet select an object member to be added to a project param_set
+  // #MENU #MENU_ON_ParamSet #NO_MENU_PANEL #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewParamSet select an object member to be added to a project param_set
   virtual void          GetControlPanelText(MemberDef* mbr, const String& extra_label,
     String& full_lbl, String& desc) const; // #IGNORE supply extra_label (optional); provides the canonical full label and (if empty) desc
 

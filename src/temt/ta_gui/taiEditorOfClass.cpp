@@ -342,7 +342,7 @@ void taiEditorOfClass::Constr_Methods_impl() {
       mth_rep->AddToMenu(cur_menu_but);
       meth_el.Add(mth_rep);
     }
-    if (md->HasOption("MENU")) {
+    if (md->HasOption("MENU") && !md->HasOption("NO_MENU_PANEL")) {
       SetCurMenu(md);
       mth_rep = im->GetMenuMethodRep(root, this, NULL, NULL/*frmMethButtons*/);
       mth_rep->AddToMenu(cur_menu);
