@@ -705,6 +705,9 @@ void taiEditorOfClass::SetCurMenu(MethodDef* md) {
   // note: men_nm will be blank if implicit (i.e. last one)
   // if no explicit name, and no menu yet, we use "Actions"
   String men_nm = md->OptionAfter("MENU_ON_");
+  if (men_nm == "Object") {  // use the object name rather than the generic
+    men_nm = typ->name;
+  }
   SetCurMenu_Name(men_nm);
 }
 
