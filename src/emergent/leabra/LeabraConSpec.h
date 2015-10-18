@@ -424,6 +424,9 @@ public:
 
   inline void	Compute_dWt(ConGroup* cg, Network* net, int thr_no) override;
 
+  inline void	Compute_dWt_MaxSugp(LeabraConGroup* cg, LeabraNetwork* net, int thr_no);
+  // only learn on the max sending unit group
+
   inline void	C_Compute_Weights_CtLeabraXCAL
     (float& wt, float& dwt, float& fwt, float& swt, float& scale)
   { if(dwt != 0.0f) {

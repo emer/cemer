@@ -1187,6 +1187,7 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
         if(recv_gp->NotActive()) continue;
         LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
         const int nsgp = MAX(((LeabraPrjn*)recv_gp->prjn)->n_sugps, 1);
+        int max_idx = 0;
         float max_raw = 0.0f;
         float sum_raw = 0.0f;
         for(int sg=0; sg < nsgp; sg++) {
@@ -1202,7 +1203,10 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
           }
           else if(nsgp > 0 && recv_gp->sugp_net) {
             recv_gp->sugp_net[sg] += sg_net_delta; // increment
-            max_raw = MAX(max_raw, recv_gp->sugp_net[sg]);
+            if(recv_gp->sugp_net[sg] > max_raw) {
+              max_raw = recv_gp->sugp_net[sg];
+              max_idx = sg;
+            }
             sum_raw += recv_gp->sugp_net[sg];
           }
           else {

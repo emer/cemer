@@ -225,6 +225,13 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   if(su->avg_s < us->opt_thresh.xcal_lrn && su->avg_m < us->opt_thresh.xcal_lrn) return;
   // no need to learn!
 
+  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
+  if(rus->netin.max_on && ((LeabraPrjn*)cg->prjn)->n_sugps > 1) {
+    Compute_dWt_MaxSugp(cg, net, thr_no);
+    return;
+  }
+  
   float clrate, bg_lrate, fg_lrate;
   bool deep_on;
   GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
@@ -238,12 +245,11 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
 #if 0 // TA_VEC_USE
   // at this point, code is so simple that this vec version probably not worth it..
   // also, the set_l_lrn is not supported here..
-  LeabraNetwork* lnet = (LeabraNetwork*)net;
-  float* avg_s = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_S);
-  float* avg_m = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_M);
-  float* avg_l = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_L);
-  float* avg_l_lrn = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_L_LRN);
-  float* deep = lnet->UnVecVar(thr_no, LeabraNetwork::DEEP);
+  float* avg_s = net->UnVecVar(thr_no, LeabraNetwork::AVG_S);
+  float* avg_m = net->UnVecVar(thr_no, LeabraNetwork::AVG_M);
+  float* avg_l = net->UnVecVar(thr_no, LeabraNetwork::AVG_L);
+  float* avg_l_lrn = net->UnVecVar(thr_no, LeabraNetwork::AVG_L_LRN);
+  float* deep = net->UnVecVar(thr_no, LeabraNetwork::DEEP);
   Compute_dWt_CtLeabraXCAL_vec
     (cg, dwts, avg_s, avg_m, avg_l, avg_l_lrn, deep,
      deep_on, clrate, bg_lrate, fg_lrate,
@@ -265,6 +271,40 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
        ru->avg_l, l_lrn_eff);
   }
 #endif
+}
+
+inline void LeabraConSpec::Compute_dWt_MaxSugp(LeabraConGroup* cg, LeabraNetwork* net, int thr_no) {
+  LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+  LeabraUnitSpec* us = (LeabraUnitSpec*)su->unit_spec;
+
+  float clrate, bg_lrate, fg_lrate;
+  bool deep_on;
+  GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
+
+  const float su_avg_s = su->avg_s_eff;
+  const float su_avg_m = su->avg_m;
+  float* dwts = cg->OwnCnVar(DWT);
+  float* sugps = cg->OwnCnVar(SUGP);
+
+  const int sz = cg->size;
+  const int max_sugp = cg->max_sugp;
+
+  for(int i=0; i<sz; i++) {
+    if(sugps[i] != max_sugp) continue; // only learn on max!
+    LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+    float lrate_eff = clrate * ru->r_lrate;
+    if(deep_on) {
+      lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
+    }
+    float l_lrn_eff;
+    if(xcal.set_l_lrn)
+      l_lrn_eff = xcal.l_lrn;
+    else
+      l_lrn_eff = ru->avg_l_lrn;
+    C_Compute_dWt_CtLeabraXCAL
+      (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
+       ru->avg_l, l_lrn_eff);
+  }
 }
 
 /////////////////////////////////////
