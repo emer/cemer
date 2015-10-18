@@ -234,7 +234,7 @@ public:
   // #CAT_Code generate the listing of the program (NOT the underlying CSS code -- just the program)
 
   virtual void  Init();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run #SHORTCUT_F8 set the program state back to the beginning
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run #SHORTCUT_F8 run init_code, global variables retain current values unless reset in the init_code
   virtual void  Run_Gui();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run #LABEL_Run #SHORTCUT_F9 run the program -- if not yet Init, will run Init first
   virtual void  Run();
