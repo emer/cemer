@@ -287,11 +287,11 @@ inline void LeabraConSpec::Compute_dWt_MaxSugp(LeabraConGroup* cg, LeabraNetwork
   float* sugps = cg->OwnCnVar(SUGP);
 
   const int sz = cg->size;
-  const int max_sugp = cg->max_sugp;
 
   for(int i=0; i<sz; i++) {
-    if(sugps[i] != max_sugp) continue; // only learn on max!
     LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+    LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, thr_no, cg->other_idx);
+    if(sugps[i] != rcg->max_sugp) continue; // only learn on max!
     float lrate_eff = clrate * ru->r_lrate;
     if(deep_on) {
       lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
