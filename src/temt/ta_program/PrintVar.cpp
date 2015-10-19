@@ -104,15 +104,15 @@ bool PrintVar::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   if(code.startsWith("print ")) exprstr = trim(code.after("print "));
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
+  if(exprstr.contains("<<")) return false; // if you're writing << then it is an expr!!!
   if(exprstr.contains('"')) {
     if(exprstr.freq('"') != 2) return false; // only one message
     exprstr = trim(exprstr.after('"',-1));
     if(exprstr.contains(',')) exprstr = trim(exprstr.after(','));
-    if(exprstr.contains("<<")) exprstr = trim(exprstr.after("<<"));
   }
   String varnm = exprstr;
   if(exprstr.contains(',')) varnm = trim(exprstr.before(','));
-  if(exprstr.contains("<<")) varnm = trim(exprstr.before("<<"));
+  // if(exprstr.contains("<<")) varnm = trim(exprstr.before("<<"));
   if(exprstr.contains(' ')) varnm = trim(exprstr.before(' '));
 //  if(varnm.nonempty()) return true; // cannot look it up -- have to go on nonempty status
   return true;
