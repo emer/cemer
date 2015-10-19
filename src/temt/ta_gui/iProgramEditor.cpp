@@ -296,7 +296,7 @@ void iProgramEditor::Controls_Add() {
   MemberDef* md_desc = typ->members.FindName("desc");
   if (md_desc) {
     --lines;
-    md_opc = typ->members.FindName("orig_prog_code");
+    md_opc = typ->members.FindName("code_string");
     if(md_opc) {
       md_flags = typ->members.FindName("flags");
     }
@@ -337,7 +337,7 @@ void iProgramEditor::Controls_Add() {
   for (int i = 0, i_ln = 0; i < typ->members.size; ++i) {
     MemberDef* md = typ->members.FastEl(i);
     if (!ShowMember(md)) continue;
-    if (md->name == "desc" || md->name == "orig_prog_code") continue;
+    if (md->name == "desc" || md->name == "code_string") continue;
     if (md_opc && md->name == "flags") continue; // only for prog el -- opc is check for that
     // these are all on separate line at end
     membs.FastEl(cur_ln)->memb_el.Add(md);

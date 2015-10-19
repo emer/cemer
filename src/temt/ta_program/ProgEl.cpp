@@ -127,7 +127,7 @@ void ProgEl::Copy_(const ProgEl& cp) {
 }
 
 void ProgEl::UpdateProgFlags() {
-  if(code_string.nonempty() && ProgElChildrenCount() == 0) {
+  if(code_string.nonempty()) { // && ProgElChildrenCount() == 0) {
     SetProgFlag(CAN_REVERT_TO_CODE);
   }
   else {
