@@ -52,6 +52,9 @@ bool ECoutUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 }
 
 void ECoutUnitSpec::ClampFromECin(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(deep.on) {
+    Compute_DeepMod(u, net, thr_no);
+  }
   const int nrg = u->NRecvConGps(net, thr_no);
   for(int g=0; g<nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
@@ -62,6 +65,9 @@ void ECoutUnitSpec::ClampFromECin(LeabraUnitVars* u, LeabraNetwork* net, int thr
     LeabraUnitVars* su = (LeabraUnitVars*)recv_gp->UnVars(0, net);
     float inval = su->act_eq;
     u->act = clamp_range.Clip(inval);
+    if(deep.on) {
+      u->act *= u->deep_mod;
+    }
     u->act_eq = u->act_nd = u->act;
     TestWrite(u->da, 0.0f);
     //    u->AddToActBuf(syn_delay);
@@ -76,7 +82,7 @@ void ECoutUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int 
 }
 
 void ECoutUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(net->quarter == 3)
+  if(net->quarter == 3) 
     ClampFromECin(u, net, thr_no);
   else
     inherited::Compute_Act_Spike(u, net, thr_no);
