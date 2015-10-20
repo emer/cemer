@@ -51,11 +51,26 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos,
 //Note: on Mac, "Ctrl" and test bits always refer to Command key (not Ctrl key)
   taiMimeSource* ms = taiMimeSource::New(mime);
   ISelectableHost* host_ = host(); //cache
-
+  
+  
+  taOBase* obj = dynamic_cast<taOBase*>(ms->tabObject());
+  if (obj) {
+    if (obj->owner->GetName() == "templates") {
+      taNBase* tanb = dynamic_cast<taNBase*>(link()->taData());
+      bool handled = false;
+      if (tanb) {
+        handled = tanb->AddFromTemplate(obj);
+      }
+      if (handled) {
+        return;
+      }
+    }
+  }
+  
   // set for the menu callbacks
   host_->ctxt_ms = ms;
   host_->ctxt_item = this;
-
+  
   int ea = QueryEditActions_(ms, GC_DEFAULT);
   int key_mods = mods & (Qt::ShiftModifier | Qt::ControlModifier |
     Qt::AltModifier);

@@ -38,9 +38,12 @@ public:
   void            MakeNameUnique() override;
   bool            SetCopyName(const taBase& cp) override;
 
-  bool        BrowserEditEnable() override;
-  String      BrowserEditString() override { return GetDisplayName(); }
-  bool        BrowserEditSet(const String& new_val_str, int move_after = 0) override;
+  bool            BrowserEditEnable() override;
+  String          BrowserEditString() override { return GetDisplayName(); }
+  bool            BrowserEditSet(const String& new_val_str, int move_after = 0) override;
+  
+  virtual bool    AddFromTemplate(taBase* obj) { return false; }
+  // handles drops from toolbar - when adding an object to a program, network, etc - e.g. dropping generic data table onto a program
 
   TA_BASEFUNS(taNBase);
 protected:

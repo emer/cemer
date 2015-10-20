@@ -989,11 +989,43 @@ ProgVar* Program::FindVarName(const String& var_nm) const {
 }
 
 void Program::AddVarTo(taNBase* src) {
-  vars.AddVarTo(src);
+  if (src->owner->GetName() == "templates") {
+    vars.ChooseNew(NULL);
+  }
+  else {
+    vars.AddVarTo(src);
+  }
 }
 
 void Program::AddArgTo(taNBase* src) {
-  args.AddVarTo(src);
+  if (src->owner->GetName() == "templates") {
+    args.ChooseNew(NULL);
+  }
+  else {
+    args.AddVarTo(src);
+  }
+}
+
+bool Program::AddFromTemplate(taBase* obj) {
+  if (obj->InheritsFrom(&TA_DataTable)) {
+    objs.New(1, &TA_DataTable);
+    return true;
+  }
+  else if (obj->InheritsFrom(&TA_Function)) {
+    functions.New(1, &TA_Function);
+    return true;
+  }
+  else if (obj->InheritsFrom(&TA_DynEnumType)) {
+    types.New(1, &TA_DynEnumType);
+    return true;
+  }
+  else if (obj->InheritsFrom(&TA_ProgVar))
+  {
+    return false;  // let caller handle vars so it can put up a menu to choose b/w arg list and var_list
+  }
+  else {
+    return true; // don't allow anything else so say "we handled"
+  }
 }
 
 taBase* Program::FindTypeName(const String& nm) const {
