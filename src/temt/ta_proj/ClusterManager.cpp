@@ -213,9 +213,11 @@ ClusterManager::UpdateTables()
     return updated && (ok1 || ok2 || ok3 || ok4);
   }
   catch (const ClusterManager::Exception &ex) {
+    taMisc::DoneBusy();
     taMisc::Error("Could not update working copy:", ex.what());
   }
   catch (const SubversionClient::Exception &ex) {
+    taMisc::DoneBusy();
     HandleException(ex);
   }
   return false;
