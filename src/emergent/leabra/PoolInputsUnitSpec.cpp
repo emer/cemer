@@ -52,22 +52,30 @@ bool PoolInputsUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 
 void PoolInputsUnitSpec::Compute_PooledAct(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no) {
-  LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroupSafe(net, thr_no, 0);
-  const int sz = cg->size;
   float new_act = 0.0f;
-  if(pool_fun == MAX_POOL) {
-    for(int i=0; i< sz; i++) {
-      LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(i, net);
-      new_act = MAX(su->act_eq, new_act);
+  int tot_n = 0;
+  const int rsz = u->NRecvConGps(net, thr_no);
+  for(int g=0; g < rsz; g++) {
+    LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    const int sz = cg->size;
+    if(pool_fun == MAX_POOL) {
+      for(int i=0; i< sz; i++) {
+        LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(i, net);
+        new_act = MAX(su->act_eq, new_act);
+      }
+    }
+    else {                        // AVG_POOL
+      for(int i=0; i< sz; i++) {
+        LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(i, net);
+        new_act += su->act_eq;
+      }
+      tot_n += sz;
     }
   }
-  else {                        // AVG_POOL
-    for(int i=0; i< sz; i++) {
-      LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(i, net);
-      new_act += su->act_eq;
-    }
-    if(sz > 0) {
-      new_act /= (float)sz;
+
+  if(pool_fun == AVG_POOL) {
+    if(tot_n > 0) {
+      new_act /= (float)tot_n;
     }
   }
     
