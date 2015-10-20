@@ -1007,6 +1007,11 @@ void Program::AddArgTo(taNBase* src) {
 }
 
 bool Program::AddFromTemplate(taBase* obj) {
+  taProject* proj = GetMyProj();
+  if (proj) {
+    proj->undo_mgr.SaveUndo(this, "AddFromTemplate", NULL, false, proj);
+  }
+
   if (obj->InheritsFrom(&TA_DataTable)) {
     objs.New(1, &TA_DataTable);
     return true;
