@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef InvertUnitSpec_h
-#define InvertUnitSpec_h 1
+#ifndef PoolInputsUnitSpec_h
+#define PoolInputsUnitSpec_h 1
 
 // parent includes:
 #include <LeabraUnitSpec>
@@ -23,14 +23,21 @@
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(InvertUnitSpec);
+eTypeDef_Of(PoolInputsUnitSpec);
 
-class E_API InvertUnitSpec : public LeabraUnitSpec {
-  // a unit that continuously copies activations from input (use one to one prjns, weights don't matter) and sets our activations to 1.0 - input->act
+class E_API PoolInputsUnitSpec : public LeabraUnitSpec {
+  // a unit that continuously computes the pooled activation value over its inputs -- does not participate in normal netinput -- use MarkerConSpecs for inputs -- does not use weights, just activations
 INHERITED(LeabraUnitSpec)
 public:
-  virtual void Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
-  // set current act 
+  enum PoolingFun {             // how to pool the inputs
+    MAX_POOL,                   // our activation is max over our inputs
+    AVG_POOL,                   // our activation is average over our inputs
+  };
+
+  PoolingFun    pool_fun;        // how to pool the inputs
+ 
+  virtual void Compute_PooledAct(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // set current act from current inputs
 
   void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
   void	Compute_ApplyInhib
@@ -45,11 +52,11 @@ public:
 
   bool  CheckConfig_Unit(Unit* u, bool quiet=false) override;
 
-  TA_SIMPLE_BASEFUNS(InvertUnitSpec);
+  TA_SIMPLE_BASEFUNS(PoolInputsUnitSpec);
 private:
   void  Initialize();
   void  Destroy()     { };
   void	Defaults_init();
 };
 
-#endif // InvertUnitSpec_h
+#endif // PoolInputsUnitSpec_h

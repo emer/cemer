@@ -36,6 +36,7 @@ set(leabra_HEADS_MAKETA
   SendDeepModConSpec.h
   DeepCopyUnitSpec.h
   ThalSendUnitSpec.h
+  PoolInputsUnitSpec.h
 
   MarkerConSpec.h
   LeabraDeltaConSpec.h
@@ -158,6 +159,7 @@ set(leabra_SRCS
   SendDeepModConSpec.cpp
   DeepCopyUnitSpec.cpp
   ThalSendUnitSpec.cpp
+  PoolInputsUnitSpec.cpp
 
   MarkerConSpec.cpp
   LeabraDeltaConSpec.cpp
