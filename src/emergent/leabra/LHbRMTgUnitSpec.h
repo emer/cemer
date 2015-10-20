@@ -33,7 +33,10 @@ public:
   float         all;            // #MIN_0 #DEF_1.5 final overall gain on everything
   float         patch_dir;      // #MIN_0 #DEF_1 VS patch direct pathway versus positive PV outcomes
   float         patch_ind;      // #MIN_0 #DEF_1 VS patch indirect pathway versus negative PV outcomes
-  float         matrix;         // #MIN_0 #DEF_1 VS gain on matrix pathway 
+  float         vs_matrix_dir;       // #MIN_0 #DEF_1 gain on VS matrix dir
+  float         vs_matrix_ind;       // #MIN_0 #DEF_1 - VS matrix indir
+  float         dms_matrix_dir;      // #MIN_0 #DEF_1 - DMS matrix_dir
+  float         dms_matrix_ind;      // #MIN_0 #DEF_1 - DMS matrix_indir
   bool          matrix_td;      // #DEF_false compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
   float         min_pvneg;      // #DEF_0.1 #MIN_0 #MAX_1 proportion of PVNeg that cannot be predicted away - can never afford to take danger for granted!
   
@@ -67,7 +70,9 @@ public:
                               LeabraLayer*& matrix_dir_lay,
                               LeabraLayer*& matrix_ind_lay,
                               LeabraLayer*& pv_pos_lay,
-                              LeabraLayer*& pv_neg_lay);
+                              LeabraLayer*& pv_neg_lay,
+                              LeabraLayer*& dms_matrix_dir_lay,
+                              LeabraLayer*& dms_matrix_ind_lay);
   // get the recv layers..
   
   void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
