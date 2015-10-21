@@ -28,6 +28,7 @@
 #include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
+#include <tabMisc>
 
 #include <QMenu>
 #include <QFrame>
@@ -244,7 +245,9 @@ void taiEditorWidgets::Refresh_impl(bool reshow) {
     if (reshow) defer_reshow_req = true; // if not already set
   } else {
     if (reshow) {
-      ReShow();                 // this must NOT be _Async -- otherwise doesn't work with carbon qt on mac
+      if (tabMisc::delayed_funcalls.size == 0) {
+        ReShow();                 // this must NOT be _Async -- otherwise doesn't work with carbon qt on mac
+      }
     }
     else {
       GetImage_Async();
@@ -315,6 +318,7 @@ void taiEditorWidgets::ClearBody_impl() {
 
 void taiEditorWidgets::ReConstr_Body() {
   if (!isConstructed()) return;
+  if (!link()) return;
   rebuild_body = true;
   ++updating;                   // prevents spurious changed flags from coming in
   Constr_Body();

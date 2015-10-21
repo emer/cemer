@@ -65,10 +65,12 @@ taiEditor::taiEditor(TypeDef* typ_, bool read_only_,
   apply_req = false;
   reshow_on_apply = true;
   warn_clobber = false;
+  marked_for_deletion =false;
 }
 
 
 taiEditor::~taiEditor() {
+  marked_for_deletion = true;
   if (dialog != NULL) DoDestr_Dialog(dialog);
 }
 
@@ -452,7 +454,7 @@ bool taiEditor::AsyncWaitProc() {
     taiEditor* dhb = async_getimage_list.SafeEl(i);
     if(!dhb) continue;
     dhb->getimage_req = false;
-    if ((dhb->state & STATE_MASK) < CANCELED) {
+    if (!dhb->marked_for_deletion && dhb->root == 0 && (dhb->state & STATE_MASK) < CANCELED) {
       dhb->GetImage(false);
       did_some = true;
     }

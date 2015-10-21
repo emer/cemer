@@ -82,6 +82,7 @@ public:
 
   static void   MakeDarkBgColor(const iColor& bg, iColor& dk_bg); // for use by other users of stripe grids, to make the right dk bg color
 
+  bool          marked_for_deletion;  // set to true if delete later called on it - check this on async drawing calls like GetImage()
   TypeDef*      typ;            // type of object (if relevant)
   void*         root;   // current root pointer of object (if relevant)
   int           ctrl_size;      // a taiMisc::SizeSpec-compatible value (ie, from FontSpec) -- def is taiM->ctrl_size
