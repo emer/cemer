@@ -43,8 +43,8 @@
 #include <svn_time.h>
 #include <svn_wc.h>
 #include <svn_sorts.h>
-#include <apr_xlate.h>          // for APR_*_CHARSET
-
+#include <apr_xlate.h> // for APR_*_CHARSET
+#include <apr_hash.h>
 namespace {
   template<typename T>
   std::string
@@ -1287,39 +1287,18 @@ static svn_error_t* mysvn_log_callback(void *baton, svn_log_entry_t* log_entry,
 
   // changed_paths2 is for 1.6 and above -- that is all we support
   if (log_entry->changed_paths2 != NULL) {
-    apr_array_header_t* sorted_paths
-        = svn_sort__hash (log_entry->changed_paths2, svn_sort_compare_items_as_paths,
-                          pool);
+    char * path;
+    apr_ssize_t klen;
+    svn_log_changed_path2_t* log_item;
+    for (apr_hash_index_t * itr = apr_hash_first(pool, log_entry->changed_paths2);
+        itr; itr = apr_hash_next(itr)) {
 
-      for(int i = 0, count = sorted_paths->nelts; i < count; ++i) {
-        // find the item in the hash
-        svn_sort__item_t* item = &(APR_ARRAY_IDX(sorted_paths, i, svn_sort__item_t));
+      apr_hash_this(itr, (const void **) &path, &klen, (void **) &log_item);
 
-        String path = (const char*)item->key;
-        li->files->Add(path);
-
-        // decode the action
-        svn_log_changed_path2_t* log_item
-          = (svn_log_changed_path2_t*) apr_hash_get (log_entry->changed_paths2,
-                                                     item->key, item->klen);
-        String action = log_item->action; // char A, D, R, M
-        li->actions->Add(action);
-
-        // decode copy-from info
-        // if(log_item->copyfrom_path
-        //    && SVN_IS_VALID_REVNUM (log_item->copyfrom_rev))
-        //   {
-        //     entry.copyFromPath = SVN::MakeUIUrlOrPath (log_item->copyfrom_path);
-        //     entry.copyFromRev = log_item->copyfrom_rev;
-        //   }
-        // else
-        //   {
-        //     entry.copyFromRev = 0;
-        //   }
-
-        // entry.text_modified = log_item->text_modified;
-        // entry.props_modified = log_item->props_modified;
-      }
+      li->files->Add(path);
+      String action = log_item->action; // char A, D, R, M
+      li->actions->Add(action);
+    }
   }
 
   li->files_n->Add(li->files->size - files_start); // how many we added
