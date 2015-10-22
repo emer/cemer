@@ -132,7 +132,7 @@ INHERITED(SpecMemberBase)
 public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1 is standard for XCAL
-  bool          linear_sb;         // new soft bound test
+  bool          linear_sb;      // linear soft bounding: if approaching upper or lower bound, apply exponential bounding, but otherwise it is just linear
   bool		dwt_norm;	// #DEF_false normalize weight changes -- this adds a significant amount of computational cost, and generally makes learning more robust, but a well-tuned network should not require it, and it causes some interference with prior learning that may not be very biologically plausible or desirable -- dwt -= (act_p / sum act_p) (sum dwt) over receiving projection
   bool          rugp_wt_sync;    // #DEF_false keep weights synchronized for the same recv unit index within its unit group across the layer -- does this upon weight init and also integrates all the weight changes to produce an aggregate dwt -- all done at network level
 
@@ -442,6 +442,7 @@ public:
         else		dwt *= fwt;
       }
       fwt += dwt;
+      C_ApplyLimits(fwt);       // need this for new sb
       // swt = fwt;  // leave swt as pristine original weight value -- saves time
       // and is useful for visualization!
       wt = scale * SigFmLinWt(fwt);
