@@ -1,3 +1,4 @@
+
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -45,7 +46,7 @@ taiEditor::taiEditor(TypeDef* typ_, bool read_only_,
   modal = modal_;
   state = EXISTS;
 
-  // default background colors
+
   setBgColor(QApplication::palette().color(QPalette::Active, QPalette::Background));
 
   InitGuiFields(false);
@@ -65,12 +66,14 @@ taiEditor::taiEditor(TypeDef* typ_, bool read_only_,
   apply_req = false;
   reshow_on_apply = true;
   warn_clobber = false;
-  marked_for_deletion =false;
 }
 
 
 taiEditor::~taiEditor() {
-  marked_for_deletion = true;
+  taiEditor::async_getimage_list.RemoveEl_(this);
+  taiEditor::async_reconstr_list.RemoveEl_(this);
+  taiEditor::async_reshow_list.RemoveEl(this);
+  taiEditor::async_apply_list.RemoveEl(this);
   if (dialog != NULL) DoDestr_Dialog(dialog);
 }
 
@@ -441,20 +444,20 @@ taiEditor_List taiEditor::async_getimage_list;
 
 bool taiEditor::AsyncWaitProc() {
   static bool in_waitproc = false;
-
+  
   if(async_apply_list.size == 0 && async_reshow_list.size == 0 &&
      async_getimage_list.size == 0 && async_reconstr_list.size == 0) return false;
-
+  
   if(in_waitproc) return false;
   in_waitproc = true;
-
+  
   // order is important here: don't want to have one thing trigger another right away..
   bool did_some = false;
   for(int i=0;i<async_getimage_list.size;i++) {
     taiEditor* dhb = async_getimage_list.SafeEl(i);
     if(!dhb) continue;
     dhb->getimage_req = false;
-    if (!dhb->marked_for_deletion && dhb->root != 0 && (dhb->state & STATE_MASK) < CANCELED) {
+    if ((dhb->state & STATE_MASK) < CANCELED) {
       dhb->GetImage(false);
       did_some = true;
     }
@@ -463,7 +466,7 @@ bool taiEditor::AsyncWaitProc() {
   if(did_some) {
     goto leave;
   }
-
+  
   for(int i=0;i<async_reconstr_list.size;i++) {
     taiEditor* dhb = async_reconstr_list.SafeEl(i);
     if(!dhb) continue;
@@ -529,7 +532,7 @@ void taiEditor::Apply_Async() {
   if (state != ACTIVE) return;
   apply_req = true;
   taMisc::do_wait_proc = true;
-  async_apply_list.Link(this);
+  async_apply_list.LinkUnique(this);
 }
 
 void taiEditor::ReShow_Async(bool forced) {
@@ -538,20 +541,20 @@ void taiEditor::ReShow_Async(bool forced) {
   reshow_req = true;
   reshow_req_forced = forced;
   taMisc::do_wait_proc = true;
-  async_reshow_list.Link(this);
+  async_reshow_list.LinkUnique(this);
 }
 
 void taiEditor::ReConstr_Async() {
   if(reconstr_req) return;
   reconstr_req = true;
   taMisc::do_wait_proc = true;
-  async_reconstr_list.Link(this);
+  async_reconstr_list.LinkUnique(this);
 }
 
 void taiEditor::GetImage_Async() {
   getimage_req = true;
   taMisc::do_wait_proc = true;
-  async_getimage_list.Link(this);
+  async_getimage_list.LinkUnique(this);
 }
 
 void taiEditor::DebugDestroy(QObject* obj) {

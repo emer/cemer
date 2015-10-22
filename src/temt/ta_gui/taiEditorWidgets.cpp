@@ -245,9 +245,9 @@ void taiEditorWidgets::Refresh_impl(bool reshow) {
     if (reshow) defer_reshow_req = true; // if not already set
   } else {
     if (reshow) {
-      if (tabMisc::delayed_funcalls.size == 0) {
+//      if (tabMisc::delayed_funcalls.size == 0) {
         ReShow();                 // this must NOT be _Async -- otherwise doesn't work with carbon qt on mac
-      }
+//      }
     }
     else {
       GetImage_Async();
