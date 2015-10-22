@@ -1006,7 +1006,7 @@ void Program::AddArgTo(taNBase* src) {
   }
 }
 
-bool Program::AddFromTemplate(taBase* obj) {
+bool Program::AddFromTemplate(taBase* obj, bool& is_acceptable) {
   taProject* proj = GetMyProj();
   if (proj) {
     proj->undo_mgr.SaveUndo(this, "AddFromTemplate", NULL, false, proj);
@@ -1026,10 +1026,12 @@ bool Program::AddFromTemplate(taBase* obj) {
   }
   else if (obj->InheritsFrom(&TA_ProgVar))
   {
+    is_acceptable = true;
     return false;  // let caller handle vars so it can put up a menu to choose b/w arg list and var_list
   }
   else {
-    return true; // don't allow anything else so say "we handled"
+    is_acceptable = false;
+    return false; // don't allow anything else so say "we handled"
   }
 }
 

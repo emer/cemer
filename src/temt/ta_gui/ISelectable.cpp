@@ -52,14 +52,20 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos,
   taiMimeSource* ms = taiMimeSource::New(mime);
   ISelectableHost* host_ = host(); //cache
   
+  // set for the menu callbacks
+  host_->ctxt_ms = ms;
+  host_->ctxt_item = this;
   
+  int ea = QueryEditActions_(ms, GC_DEFAULT);
+
   taOBase* obj = dynamic_cast<taOBase*>(ms->tabObject());
+  bool is_acceptable = true;  // the handler accepts the type but didn't didn't do anything
   if (obj) {
     if (obj->owner->GetName() == "templates") {
       taNBase* tanb = dynamic_cast<taNBase*>(link()->taData());
       bool handled = false;
       if (tanb) {
-        handled = tanb->AddFromTemplate(obj);
+        handled = tanb->AddFromTemplate(obj, is_acceptable);
       }
       if (handled) {
         return;
@@ -67,11 +73,6 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos,
     }
   }
   
-  // set for the menu callbacks
-  host_->ctxt_ms = ms;
-  host_->ctxt_item = this;
-  
-  int ea = QueryEditActions_(ms, GC_DEFAULT);
   int key_mods = mods & (Qt::ShiftModifier | Qt::ControlModifier |
     Qt::AltModifier);
   // only honor if user has chosen 1 and only 1 mod
@@ -189,10 +190,13 @@ show_menu:
 
   // if any appropriate drop actions, then add them!
   menu->AddSep();
-  host_->UpdateMethodsActionsForDrop();
-  host_->AddDynActions(menu, 0);
-
-  menu->AddSep();
+    host_->UpdateMethodsActionsForDrop();
+    
+    if (is_acceptable) {
+      host_->AddDynActions(menu, 0);
+    }
+    
+    menu->AddSep();
   act = menu->AddItem("C&ancel", -1);
   act->setShortcut(QKeySequence("Esc"));
 

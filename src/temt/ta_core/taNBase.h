@@ -42,8 +42,8 @@ public:
   String          BrowserEditString() override { return GetDisplayName(); }
   bool            BrowserEditSet(const String& new_val_str, int move_after = 0) override;
   
-  virtual bool    AddFromTemplate(taBase* obj) { return false; }
-  // handles drops from toolbar - when adding an object to a program, network, etc - e.g. dropping generic data table onto a program
+  virtual bool    AddFromTemplate(taBase* obj, bool& is_acceptable) { return false; }
+  // handles drops from toolbar - when adding an object to a program, network, etc - e.g. dropping generic data table onto a program - set is_acceptable for objects "not handled" but which are acceptable
 
   TA_BASEFUNS(taNBase);
 protected:

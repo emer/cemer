@@ -313,7 +313,7 @@ public:
   // #DROPN add a variable in the global vars list to the given object
   virtual void          AddArgTo(taNBase* src);
   // #DROPN add an argument in the global args list to the given object
-  bool                  AddFromTemplate(taBase* obj) override;
+  bool                  AddFromTemplate(taBase* obj, bool& is_acceptable) override;
 
   virtual void          Reset();
   // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE #CONFIRM #CAT_Code reset (remove) all program elements -- typically in preparation for loading a new program over this one
