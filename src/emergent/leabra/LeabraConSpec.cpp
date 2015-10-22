@@ -87,6 +87,7 @@ void WtSigSpec::Initialize() {
   off = 1.0f;
   dwt_norm = false;
   rugp_wt_sync = false;
+  linear_sb = false;
 }
 
 void WtSigSpec::UpdateAfterEdit_impl() {
