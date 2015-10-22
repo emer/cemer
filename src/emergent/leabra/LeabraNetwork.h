@@ -555,8 +555,8 @@ public:
   virtual void	Compute_RUgpDwtSync();
   // #IGNORE compute recv unit group sync of weight changes -- must be done as a second pass after initial weight changes
 
-  virtual void Compute_Weights_impl();
-    void Compute_Weights_Thr(int thr_no) override;
+  void Compute_Weights() override;
+  void Compute_Weights_Thr(int thr_no) override;
 
   ///////////////////////////////////////////////////////////////////////
   //	Stats

@@ -1759,7 +1759,11 @@ void LeabraNetwork::Compute_RUgpDwtSync() {
   }
 }
 
-void LeabraNetwork::Compute_Weights_impl() {
+void LeabraNetwork::Compute_Weights() {
+#ifdef DMEM_COMPILE
+  DMem_SumDWts(dmem_trl_comm.comm);
+#endif
+
 #ifdef CUDA_COMPILE
   Cuda_Compute_Weights();
   return;
