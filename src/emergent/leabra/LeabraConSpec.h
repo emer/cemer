@@ -244,10 +244,11 @@ class E_API LeabraConSpec : public ConSpec {
 INHERITED(ConSpec)
 public:
   enum LeabraConVars {
-    SCALE = DWT+1,      // scaling paramter -- effective weight value is scaled by this factor -- useful for topographic connectivity patterns e.g., to enforce more distant connections to always be lower in magnitude than closer connections -- set by custom weight init code for certain projection specs
+    SCALE = N_CON_VARS,      // scaling paramter -- effective weight value is scaled by this factor -- useful for topographic connectivity patterns e.g., to enforce more distant connections to always be lower in magnitude than closer connections -- set by custom weight init code for certain projection specs
     FWT,                // fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
     SWT,                // slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
     SUGP,               // sending unit group index -- for integrating net input over unit groups
+    N_LEABRA_CON_VARS,  // #IGNORE number of leabra con vars
   };
 
   enum Quarters {               // #BITS specifies gamma frequency quarters within an alpha-frequency trial on which to do things

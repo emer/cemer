@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "LeabraNetwork.h"
+#include <MSNConSpec>
 
 #include <taProject>
 #include <DataTable>
@@ -1495,6 +1496,22 @@ void LeabraNetwork::ClearDeepActs_Thr(int thr_no) {
     LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;
     ((LeabraUnitSpec*)uv->unit_spec)->ClearDeepActs(uv, this, thr_no);
+  }
+}
+
+void LeabraNetwork::ClearMSNTrace() {
+  NET_THREAD_CALL(LeabraNetwork::ClearMSNTrace_Thr);
+}
+
+void LeabraNetwork::ClearMSNTrace_Thr(int thr_no) {
+  const int nscg = ThrNSendConGps(thr_no);
+  for(int i=0; i<nscg; i++) {
+    LeabraConGroup* scg = (LeabraConGroup*)ThrSendConGroup(thr_no, i);
+    if(scg->NotActive()) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)scg->con_spec;
+    if(!cs->InheritsFrom(&TA_MSNConSpec)) continue;
+    MSNConSpec* mscs = (MSNConSpec*)cs;
+    mscs->ClearMSNTrace(scg, this, thr_no);
   }
 }
 

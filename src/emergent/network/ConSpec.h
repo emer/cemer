@@ -91,6 +91,7 @@ public:
   enum ConVars {                // Connection variables -- must align with Connection obj
     WT,                         // the synaptic weight of connection
     DWT,                        // change in synaptic weight as computed by learning mechanism
+    N_CON_VARS,                 // #IGNORE number of basic connection variables -- use this as the starting index for any new connection variables
   };
 
   RandomSpec    rnd;            // #CAT_ConSpec Weight randomization specification.  Note that NONE means no value at all, not the mean, and should be used if some other source is setting the weights, e.g., from a projectionspec or loading from a file etc

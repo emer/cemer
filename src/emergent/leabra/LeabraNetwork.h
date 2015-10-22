@@ -512,6 +512,11 @@ public:
     virtual void ClearDeepActs_Thr(int thr_no);
     // #IGNORE clear all the deep lamina variables -- can be useful to do at discontinuities of experience
 
+  virtual void ClearMSNTrace();
+  // #CAT_PBWM clear the synaptic trace for MSN connections (Medium Spiny Neurons in the Striatum)
+    virtual void ClearMSNTrace_Thr(int thr_no);
+    // #IGNORE clear the synaptic trace for MSN connections (Medium Spiny Neurons in the Striatum)
+
   ///////////////////////////////////////////////////////////////////////
   //	Quarter Final
 

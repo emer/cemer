@@ -58,8 +58,8 @@ class E_API MSNConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   enum MtxConVars {
-    NTR = SCALE+1,      // new trace -- drives updates to trace value -- thal * ru * su
-    TR,                 // current ongoing trace of activations, which drive learning -- adds ntr and clears after learning on current values -- includes both thal gated (+ and other nongated, - inputs)
+    NTR = N_LEABRA_CON_VARS,    // new trace -- drives updates to trace value -- thal * ru * su
+    TR,                         // current ongoing trace of activations, which drive learning -- adds ntr and clears after learning on current values -- includes both thal gated (+ and other nongated, - inputs)
   };
 
   enum LearnActVal {            // activation value to use for learning
@@ -192,10 +192,19 @@ public:
   }
   // #IGNORE
 
-  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
+  inline void ClearMSNTrace(LeabraConGroup* scg, LeabraNetwork* net, int thr_no) {
+    float* trs = scg->OwnCnVar(TR);
+    const int sz = scg->size;
+    for(int i=0; i<sz; i++) {
+      trs[i] = 0.0f;
+    }
+  }
+  // #IGNORE clear the trace value
+
+  inline void Compute_dWt(ConGroup* scg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
-    LeabraConGroup* cg = (LeabraConGroup*)rcg;
+    LeabraConGroup* cg = (LeabraConGroup*)scg;
     LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
     MSNUnitSpec* rus = (MSNUnitSpec*)rlay->GetUnitSpec();
