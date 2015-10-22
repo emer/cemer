@@ -383,6 +383,7 @@ void ProgEl::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
     return;
   }
   ProgVar* pv = (ProgVar*)obj;
+  pre_compile_code_string = BrowserEditString();  // get any change - e.g. the var was renamed
   if (!pv->schemaChanged()) {
     // taMisc::DebugInfo("updating progel:", GetDisplayName(), "b/c of ProgVar:", pv->name,
     //                   "schema NOT changed!, sig:", String(sls));
