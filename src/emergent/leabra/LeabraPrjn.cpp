@@ -29,6 +29,7 @@ void LeabraPrjn::Initialize() {
   avg_netin_n = 0;
 
   n_sugps = 0;
+  sugp_size = 0;
   
 #ifdef DMEM_COMPILE
   dmem_agg_sum.agg_op = MPI_SUM;

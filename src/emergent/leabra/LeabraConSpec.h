@@ -133,6 +133,7 @@ public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1 is standard for XCAL
   bool		dwt_norm;	// #DEF_false normalize weight changes -- this adds a significant amount of computational cost, and generally makes learning more robust, but a well-tuned network should not require it, and it causes some interference with prior learning that may not be very biologically plausible or desirable -- dwt -= (act_p / sum act_p) (sum dwt) over receiving projection
+  bool          rugp_wt_sync;    // #DEF_false keep weights synchronized for the same recv unit index within its unit group across the layer -- does this upon weight init and also integrates all the weight changes to produce an aggregate dwt -- all done at network level
 
   static inline float	SigFun(const float w, const float gn, const float of) {
     if(w <= 0.0f) return 0.0f;

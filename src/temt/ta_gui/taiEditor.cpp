@@ -454,7 +454,7 @@ bool taiEditor::AsyncWaitProc() {
     taiEditor* dhb = async_getimage_list.SafeEl(i);
     if(!dhb) continue;
     dhb->getimage_req = false;
-    if (!dhb->marked_for_deletion && dhb->root == 0 && (dhb->state & STATE_MASK) < CANCELED) {
+    if (!dhb->marked_for_deletion && dhb->root != 0 && (dhb->state & STATE_MASK) < CANCELED) {
       dhb->GetImage(false);
       did_some = true;
     }

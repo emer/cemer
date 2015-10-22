@@ -225,12 +225,13 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   if(su->avg_s < us->opt_thresh.xcal_lrn && su->avg_m < us->opt_thresh.xcal_lrn) return;
   // no need to learn!
 
-  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-  LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
-  if(rus->netin.max_on && ((LeabraPrjn*)cg->prjn)->n_sugps > 1) {
-    Compute_dWt_MaxSugp(cg, net, thr_no);
-    return;
-  }
+  // not using now -- restore if needed..
+  // LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+  // LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
+  // if(rus->netin.max_on && ((LeabraPrjn*)cg->prjn)->n_sugps > 1) {
+  //   Compute_dWt_MaxSugp(cg, net, thr_no);
+  //   return;
+  // }
   
   float clrate, bg_lrate, fg_lrate;
   bool deep_on;
@@ -429,6 +430,7 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
 #endif
   }
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //     Compute dWt Norm: receiver based 

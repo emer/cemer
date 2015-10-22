@@ -86,6 +86,7 @@ void WtSigSpec::Initialize() {
   gain = 6.0f;
   off = 1.0f;
   dwt_norm = false;
+  rugp_wt_sync = false;
 }
 
 void WtSigSpec::UpdateAfterEdit_impl() {
@@ -269,6 +270,9 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   if(!InheritsFrom(&TA_LeabraBiasSpec)) { // bias spec doesn't count
     if(wt_sig.dwt_norm) {
       net->net_misc.dwt_norm = true;
+    }
+    if(wt_sig.rugp_wt_sync) {
+      net->net_misc.rugp_wt_sync = true;
     }
   }
   if(fast_wts.on) {

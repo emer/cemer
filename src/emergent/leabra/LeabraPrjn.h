@@ -42,6 +42,7 @@ public:
   float		avg_netin_rel_sum;	// #NO_SAVE #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic relative netinput values for the recv projections into this layer, sum over an epoch (for computing average)
   int		avg_netin_n;		// #NO_SAVE #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic count for computing epoch-level averages
   int           n_sugps;                // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation maximum number of sending unit groups for this projection -- used for sending unit-group specific netinput computation (e.g., max instead of sum)
+  int           sugp_size;              // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation size of each sending group if all groups the same size -- otherwise 0
 
   virtual void	Trial_Init_Specs(LeabraNetwork* net);
   // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on epoch

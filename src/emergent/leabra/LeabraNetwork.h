@@ -133,7 +133,8 @@ public:
   bool          diff_scale_p;   // #READ_ONLY #SHOW a unitspec such as the hippocampus ThetaPhase units rescales inputs in plus phase -- this requires initializing the net inputs between these phases
   bool          diff_scale_q1;  // #READ_ONLY #SHOW at least one unit spec rescales inputs at start of second quarter, such as hippocampus ThetaPhase units -- this requires initializing the net inputs at this point
   bool		dwt_norm;       // #READ_ONLY #SHOW dwt_norm is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_sig.dwt_norm flag is on, and off if not -- updated in Trial_Init_Specs call
-  bool          lay_gp_inhib;     // #READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation -- updated in Trial_Init_Specs call
+  bool		rugp_wt_sync;   // #READ_ONLY #SHOW rugp_wt_sync is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_sig.rugp_wt_sync flag is on, and off if not -- updated in Trial_Init_Specs call
+  bool          lay_gp_inhib;   // #READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation -- updated in Trial_Init_Specs call
   bool		inhib_cons;     // #READ_ONLY #SHOW inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
   bool          lrate_updtd;
   // #IGNORE flag used to determine when the learning rate was updated -- e.g., needed for CUDA to update parameters 
@@ -442,9 +443,9 @@ public:
   //	Cycle Stage 1: netinput
 
   void	Send_Netin_Thr(int thr_no) override;
-  // #CAT_Cycle compute netinputs -- sender-delta based -- only send when sender activations change -- sends into tmp array that is then integrated into net_raw, gi_raw
+  // #IGNORE compute netinputs -- sender-delta based -- only send when sender activations change -- sends into tmp array that is then integrated into net_raw, gi_raw
   virtual void Compute_NetinInteg_Thr(int thr_no);
-  // #CAT_Cycle integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
+  // #IGNORE integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
   virtual void Compute_NetinStats_Thr(int thr_no);
   // #IGNORE compute layer and unit-group level stats on net input levels -- needed for inhibition
   virtual void Compute_NetinStats_Post();
@@ -454,7 +455,7 @@ public:
   //	Cycle Step 2: Inhibition
 
   virtual void	Compute_Inhib_Thr(int thr_no);
-  // #CAT_Cycle compute inhibitory conductances via inhib functions (FFFB, kWTA) -- calls Compute_NetinStats and LayInhibToGps to coordinate group-level inhibition sharing
+  // #IGNORE compute inhibitory conductances via inhib functions (FFFB, kWTA) -- calls Compute_NetinStats and LayInhibToGps to coordinate group-level inhibition sharing
     virtual void Compute_Inhib_LayGp();
     // #CAT_Cycle compute inhibition across layer groups -- if layer spec lay_gp_inhib flag is on anywhere
 
@@ -462,14 +463,14 @@ public:
   //	Cycle Step 3: Activation
 
   void	Compute_Act_Thr(int thr_no) override;
-  // #CAT_Cycle compute activations
+  // #IGNORE compute activations
   virtual void	Compute_Act_Rate_Thr(int thr_no);
-  // #CAT_Cycle rate coded activations
+  // #IGNORE rate coded activations
   virtual void	Compute_Act_Spike_Thr(int thr_no);
-  // #CAT_Cycle spiking activations
+  // #IGNORE spiking activations
 
   virtual void	Compute_Act_Post_Thr(int thr_no);
-  // #CAT_Cycle post processing after activations have been computed -- special algorithm code takes advantage of this stage, and running average activations (SRAvg) also computed
+  // #IGNORE post processing after activations have been computed -- special algorithm code takes advantage of this stage, and running average activations (SRAvg) also computed
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
@@ -477,9 +478,9 @@ public:
   virtual void	Compute_CycleStats_Pre();
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level pre-step
   virtual void	Compute_CycleStats_Thr(int thr_no);
-  // #CAT_Cycle compute cycle-level stats -- acts AvgMax -- fast layer level computation
+  // #IGNORE compute cycle-level stats -- acts AvgMax -- fast layer level computation
   virtual void	Compute_ActEqStats_Thr(int thr_no);
-  // #CAT_Cycle compute cycle-level stats -- acts AvgMax -- fast layer level computation
+  // #IGNORE compute cycle-level stats -- acts AvgMax -- fast layer level computation
   virtual void	Compute_CycleStats_Post();
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level post-step
     virtual void  Compute_OutputName();
@@ -488,7 +489,7 @@ public:
     // #CAT_Statistic compute the rt_cycles statistic based on trg_max_act and trg_max_act_crit criterion, only in the minus phase -- this is a good measure for computing the reaction time (RT) of the network, as in a psychological experiment -- called automatically in Compute_CycleStats_Post()
 
   virtual void	Compute_GcIStats_Thr(int thr_no);
-  // #CAT_Cycle compute cycle-level stats -- inhibitory conductance AvgMax -- fast layer level computation
+  // #IGNORE compute cycle-level stats -- inhibitory conductance AvgMax -- fast layer level computation
   virtual void	Compute_GcIStats_Post();
   // #CAT_Cycle compute cycle-level stats -- inhibitory conductance AvgMax -- single thread post-step
 
@@ -543,10 +544,16 @@ public:
   virtual void  Compute_dWt_VecVars_Thr(int thr_no);
   // #IGNORE copy over the vectorized variables for learning
 
+  void  Init_Weights_post() override;
+  
   void	Compute_dWt() override;
     void Compute_dWt_Thr(int thr_no) override;
   virtual void	Compute_dWt_Norm_Thr(int thr_no);
-  // #CAT_Learning compute normalization of weight changes -- must be done as a second pass after initial weight changes
+  // #IGNORE compute normalization of weight changes -- must be done as a second pass after initial weight changes
+  virtual void	Compute_RUgpWtSync();
+  // #IGNORE compute recv unit group sync of weights -- called during init weights
+  virtual void	Compute_RUgpDwtSync();
+  // #IGNORE compute recv unit group sync of weight changes -- must be done as a second pass after initial weight changes
 
   virtual void Compute_Weights_impl();
     void Compute_Weights_Thr(int thr_no) override;

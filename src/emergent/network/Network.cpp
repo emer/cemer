@@ -1564,8 +1564,8 @@ void Network::Init_Weights() {
   if(needs_wt_sym) {
     NET_THREAD_CALL(Network::Init_Weights_sym);
   }
-  NET_THREAD_CALL(Network::Init_Weights_post_Thr);
 
+  Init_Weights_post();
   Init_Weights_Layer();
 
   Init_Acts();                  // also re-init state at this point..
