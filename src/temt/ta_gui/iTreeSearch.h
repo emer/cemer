@@ -32,12 +32,12 @@
 class iLineEdit; //
 class iTreeView; //
 class iTreeViewItem; //
-class QToolBar; //
-class QLabel; //
 class iActionMenuButton; //
 class iMenuButton; //
-class QMenu; //
 
+class QToolBar; //
+class QLabel; //
+class QMenu; //
 
 class TA_API iTreeSearch: public QWidget {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS search widget for a tree view -- controls searching in this view
@@ -47,8 +47,7 @@ class TA_API iTreeSearch: public QWidget {
 public:
   enum SearchMode {
     TEXT = 0,         // display text only, ignore case
-    DEEP,             // object name, val, description, members, etc.
-    TEXT_REPLACE      // incremental replace - at level of TEXT searching
+    DEEP              // object name, val, description, members, etc.
   };
   
   iTreeView*            tree_view; // pointer to the tree view that we operate on
@@ -99,7 +98,6 @@ public:
   void                  repl_next_clicked();
   void                  srch_prev_clicked();
   void                  TextFindSelected();
-  void                  TextReplaceSelected();
   void                  DeepFindSelected();
   
 private:

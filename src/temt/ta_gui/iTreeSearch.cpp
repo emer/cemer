@@ -14,14 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "iTreeSearch.h"
-#include <iLineEdit>
 #include <taString>
-#include <iTreeView>
-#include <iTreeViewItem>
 #include <taBase_PtrList>
 #include <taiSigLink>
 #include <String_Array>
 #include <taProject>
+#include <iTreeView>
+#include <iTreeViewItem>
+#include <iLineEdit>
+#include <iActionMenuButton>
+#include <iMenuButton>
 
 #include <taMisc>
 #include <taiMisc>
@@ -31,14 +33,10 @@
 #include <QToolBar>
 #include <QAction>
 #include <QToolButton>
-#include <iActionMenuButton>
-#include <iMenuButton>
-
-
 
 void iTreeSearch::Constr() {
   search_mode = TEXT;  //  default
-  taiMisc::SizeSpec currentSizeSpec = taiM->GetCurrentSizeSpec();
+  taiMisc::SizeSpec font_size = taiMisc::sizSmall;
   
   QHBoxLayout* lay = new QHBoxLayout(this);
   srch_bar = new QToolBar(this);
@@ -49,25 +47,23 @@ void iTreeSearch::Constr() {
   srch_mode_button = new iActionMenuButton();
   srch_bar->addWidget(srch_mode_button);
   
-  find_action = new QAction("Find", this);
-  replace_action = new QAction("Replace", this);
+  find_action = new QAction("Find/Replace", this);
   find_deep_action = new QAction("Find Deep", this);
   
   srch_mode_menu = new QMenu(this);
   srch_mode_button->setMenu(srch_mode_menu);
   srch_mode_button->setDefaultAction(find_action);
-  srch_mode_button->setFont(taiM->nameFont(currentSizeSpec));
-  srch_mode_button->setToolTip(taiMisc::ToolTipPreProcess("Find or Find Deep - the first mode only searches the text of the tree items - the deep search also looks at the object name, value, description, members and so on. In most cases the former is probably what you want. Find is case sensitive if the search string has any uppercase letter, otherwise case insensitive. If multiple strings are entered find only matches if all strings are found."));
+  srch_mode_button->setFont(taiM->nameFont(font_size));
+  srch_mode_button->setToolTip(taiMisc::ToolTipPreProcess("Find/Replace or Find Deep - the first mode only searches the text of the tree items - the deep search also looks at the object name, value, description, members and so on. In most cases the former is probably what you want. Find is case sensitive if the search string has any uppercase letter, otherwise case insensitive. If multiple strings are entered find only matches if all strings are found. To replace strings as you step through the found items use \"R>\" - does not work for Find Deep"));
   
   srch_text = new iLineEdit();
   srch_bar->addWidget(srch_text);
   
   repl_text = new iLineEdit();
   srch_bar->addWidget(repl_text);
-  repl_text->setEnabled(false);
-    
+  
   srch_nfound = new QLabel(" 0");
-  srch_nfound->setFont(taiM->nameFont(currentSizeSpec));
+  srch_nfound->setFont(taiM->nameFont(font_size));
   srch_nfound->setToolTip(taiMisc::ToolTipPreProcess("Number of items found"));
   srch_bar->addWidget(srch_nfound);
   
@@ -81,7 +77,6 @@ void iTreeSearch::Constr() {
   repl_next->setToolTip(taiMisc::ToolTipPreProcess("Replace current selection, then find next occurrence"));
   
   srch_mode_menu->addAction(find_action);
-  srch_mode_menu->addAction(replace_action);
   srch_mode_menu->addAction(find_deep_action);
   
   connect(srch_clear, SIGNAL(triggered()), this, SLOT(srch_clear_clicked()) );
@@ -93,7 +88,6 @@ void iTreeSearch::Constr() {
   connect(tree_view, SIGNAL(TreeStructToUpdate()), this, SLOT(treeview_to_updt()) );
   
   connect(find_action, SIGNAL(triggered()), this, SLOT(TextFindSelected()));
-  connect(replace_action, SIGNAL(triggered()), this, SLOT(TextReplaceSelected()));
   connect(find_deep_action, SIGNAL(triggered()), this, SLOT(DeepFindSelected()));
 }
 
@@ -131,7 +125,7 @@ void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
   String_Array srch;
   srch.Split(ftxt, " ");
   
-  bool text_only = (mode == iTreeSearch::TEXT || mode == iTreeSearch::TEXT_REPLACE);
+  bool text_only = (mode == iTreeSearch::TEXT);
   QTreeWidgetItemIterator it(tree_view, QTreeWidgetItemIterator::All);
   QTreeWidgetItem* item_;
   taBase_PtrList sub_srch;
@@ -209,7 +203,6 @@ void iTreeSearch::selectCurrent(bool replace) {
   
   taBase* fnd = found_items.FastEl(cur_item);
   if(!fnd) return;
-  //  taMisc::Info("find item:", String(cur_item+1), "path:", fnd->GetPathNames());
   taiSigLink* lnk = (taiSigLink*)fnd->GetSigLink();
   if(!lnk) return;
   iTreeViewItem* fitm = tree_view->AssertItem(lnk);
@@ -236,13 +229,11 @@ void iTreeSearch::srch_clear_clicked() {
   srch_found.clear();
   found_items.Reset();
   srch_text->setText("");
+  repl_text->setText("");
 }
 
 void iTreeSearch::treeview_to_updt() {
-  // unHighlightFound();
-  // srch_nfound->setText("0");
   srch_found.clear();           // keep found items, just clear the tree view guys
-  //  srch_text->setText(""); -- keep this in case people want to re-search
 }
 
 void iTreeSearch::srch_next_clicked() {
@@ -253,18 +244,20 @@ void iTreeSearch::srch_next_clicked() {
 }
 
 void iTreeSearch::repl_next_clicked() {
-  taBase* fnd = found_items.FastEl(cur_item);
-  if(fnd) {
-    taiSigLink* dl = (taiSigLink*)fnd->GetSigLink();
-    if (dl) {
-      taProject* proj = tree_view->curProject();
-      if(proj) {
-        proj->undo_mgr.SaveUndo(dl->taData(), "Replace", NULL, false, proj);
+  if (found_items.size > 0) {
+    taBase* fnd = found_items.FastEl(cur_item);
+    if(fnd) {
+      taiSigLink* dl = (taiSigLink*)fnd->GetSigLink();
+      if (dl) {
+        taProject* proj = tree_view->curProject();
+        if(proj) {
+          proj->undo_mgr.SaveUndo(dl->taData(), "Replace", NULL, false, proj);
+        }
+        String srch_string = static_cast<String>(srch_text->text());
+        String repl_string = static_cast<String>(repl_text->text());
+        bool replace_deep = false;
+        dl->taData()->ReplaceValStr(srch_string, repl_string, "", NULL, NULL, NULL, TypeDef::SC_DEFAULT, replace_deep);
       }
-      String srch_string = static_cast<String>(srch_text->text());
-      String repl_string = static_cast<String>(repl_text->text());
-      bool replace_deep = false;
-      dl->taData()->ReplaceValStr(srch_string, repl_string, "", NULL, NULL, NULL, TypeDef::SC_DEFAULT, replace_deep);
     }
   }
   srch_next_clicked();
@@ -279,23 +272,14 @@ void iTreeSearch::srch_prev_clicked() {
 
 void iTreeSearch::TextFindSelected() {
   search_mode = TEXT;
-  
-  repl_text->setEnabled(false);
-  srch_bar->removeAction(repl_next);
+  repl_text->setEnabled(true);
+  repl_next->setEnabled(true);  // R>
 }
 
 void iTreeSearch::DeepFindSelected() {
   search_mode = DEEP;
-  
   repl_text->setEnabled(false);
-  srch_bar->removeAction(repl_next);
-}
-
-void iTreeSearch::TextReplaceSelected() {
-  search_mode = TEXT_REPLACE;
-  
-  repl_text->setEnabled(true);
-  srch_bar->addAction(repl_next);
+  repl_next->setEnabled(false);  // R>
 }
 
 
