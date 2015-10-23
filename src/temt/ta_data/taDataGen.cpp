@@ -354,7 +354,7 @@ bool taDataGen::SampleByFrequency(DataTable* dest, const DataTable* data_in,
 
   for(int i=0;i<data_in->rows;i++) {
     for(int j=0;j<n_samples;j++) {
-      if(Random::BoolProb(freqs->FastEl_Flat(i)), thr_no) {
+      if(Random::BoolProb(freqs->FastEl_Flat(i), thr_no)) {
         dest->AddBlankRow();
         dest->CopyFromRow(-1, *data_in, i);
       }
