@@ -204,7 +204,8 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layAxisLabelChks->addStretch();
 //    Axes
 
-  // X AXis
+  // -------- X Axis --------
+  row_height = taiM->max_control_height(taiM->ctrl_size);
   layXAxis = new QHBoxLayout; layWidg->addLayout(layXAxis);
   layXAxis->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
   
@@ -234,9 +235,17 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   cellXAxis = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
   layXAxis->addWidget(cellXAxis->GetRep());
 
+  butLinePropsXAxis = new QPushButton("", widg);
+  butLinePropsXAxis->setIcon(QIcon(QPixmap(":/images/editedit.png")));
+  butLinePropsXAxis->setToolTip(taiMisc::ToolTipPreProcess("Set axis color, tick marks, etc"));
+  butLinePropsXAxis->setFixedHeight(row_height);
+  butLinePropsXAxis->setFlat(true);  // hide the border or the row height will be wrong and the alternating color background won't be right
+  connect(butLinePropsXAxis, SIGNAL(pressed()), this, SLOT(butSetLineStyleXAxis()));
+  layXAxis->addWidget(butLinePropsXAxis);
+  
   layXAxis->addStretch();
 
-  // Z AXis
+  // -------- Z Axis --------
   layZAxis = new QHBoxLayout; layWidg->addLayout(layZAxis);
   layZAxis->setContentsMargins(margin_l_r, margin_t_b, margin_l_r, margin_t_b);
 
@@ -269,6 +278,14 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layZAxis->addWidget(lblcellZAxis);
   cellZAxis = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
   layZAxis->addWidget(cellZAxis->GetRep());
+
+  butLinePropsZAxis = new QPushButton("", widg);
+  butLinePropsZAxis->setIcon(QIcon(QPixmap(":/images/editedit.png")));
+  butLinePropsZAxis->setToolTip(taiMisc::ToolTipPreProcess("Set axis color, tick marks, etc"));
+  butLinePropsZAxis->setFixedHeight(row_height);
+  butLinePropsZAxis->setFlat(true);  // hide the border or the row height will be wrong and the alternating color background won't be right
+  connect(butLinePropsZAxis, SIGNAL(pressed()), this, SLOT(butSetLineStyleZAxis()));
+  layZAxis->addWidget(butLinePropsZAxis);
 
   layZAxis->addStretch();
 
@@ -714,4 +731,17 @@ void iViewPanelOfGraphTable::butSetLineStyle(int plot_num) {
     glv()->plots[plot_num]->OpenInWindow();
   }
 }
+
+void iViewPanelOfGraphTable::butSetLineStyleXAxis() {
+  if (glv()) {
+    glv()->x_axis.OpenInWindow();
+  }
+}
+
+void iViewPanelOfGraphTable::butSetLineStyleZAxis() {
+  if (glv()) {
+    glv()->z_axis.OpenInWindow();
+  }
+}
+
 

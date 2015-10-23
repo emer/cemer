@@ -91,6 +91,7 @@ public:
   taiWidgetPoly*            pdtXAxis; // fixed_range polydata (inline)
   QLabel*                   lblcellXAxis;
   taiWidgetFieldIncr*       cellXAxis; // matrix cell
+  QPushButton*              butLinePropsXAxis;
 
   QHBoxLayout*            layZAxis;
   iCheckBox*                oncZAxis; // on checkbox
@@ -100,6 +101,7 @@ public:
   taiWidgetPoly*            pdtZAxis; // fixed_range polydata (inline)
   QLabel*                   lblcellZAxis;
   taiWidgetFieldIncr*       cellZAxis; // matrix cell
+  QPushButton*              butLinePropsZAxis;
 
   iStripeWidget*            plotsWidg; // plot holding widget
   iFormLayout*              layPlots; // all the plots
@@ -171,6 +173,8 @@ protected slots:
   void              butClear_pressed();
   void              butSetColor_pressed();
   void              butSetLineStyle(int plot_num);
+  void              butSetLineStyleXAxis();
+  void              butSetLineStyleZAxis();
 
 };
 
