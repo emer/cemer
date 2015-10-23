@@ -130,9 +130,16 @@ class E_API WtSigSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sigmoidal weight function specification
 INHERITED(SpecMemberBase)
 public:
+  enum WtBound { // how to bound the weights
+    CLIP,        // just clip in the specified weight range
+    BI_LINEAR_SB,// bidirectional linear soft-bound: keep it mostly linear but exponential approach to bounds when dwt would take it over the bound -- apply to both high and low bound
+    LO_LINEAR_SB,// low-only linear soft-bound: keep it mostly linear but exponential approach to lower bound when dwt would take it below the bound
+    ASYM_EXP_SB, // asymmetric exponential soft bounding -- multiply by 1-wt for weight increases and by wt for weight decreases (previous default in Leabra)
+  };
+
+  WtBound       wt_bound;       // what kind of weight bounding to apply
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1 is standard for XCAL
-  bool          linear_sb;      // linear soft bounding: if approaching upper or lower bound, apply exponential bounding, but otherwise it is just linear
   bool		dwt_norm;	// #DEF_false normalize weight changes -- this adds a significant amount of computational cost, and generally makes learning more robust, but a well-tuned network should not require it, and it causes some interference with prior learning that may not be very biologically plausible or desirable -- dwt -= (act_p / sum act_p) (sum dwt) over receiving projection
   bool          rugp_wt_sync;    // #DEF_false keep weights synchronized for the same recv unit index within its unit group across the layer -- does this upon weight init and also integrates all the weight changes to produce an aggregate dwt -- all done at network level
 
@@ -433,11 +440,14 @@ public:
   inline void	C_Compute_Weights_CtLeabraXCAL
     (float& wt, float& dwt, float& fwt, float& swt, float& scale)
   { if(dwt != 0.0f) {
-      if(wt_sig.linear_sb) {
+      if(wt_sig.wt_bound == WtSigSpec::BI_LINEAR_SB) {
         if(dwt + fwt > 1.0f)	    dwt *= (1.0f - fwt);
         else if(dwt + fwt < 0.0f)   dwt *= fwt;
       }
-      else {
+      else if(wt_sig.wt_bound == WtSigSpec::LO_LINEAR_SB) {
+        if(dwt + fwt < 0.0f)   dwt *= fwt;
+      }
+      else if(wt_sig.wt_bound == WtSigSpec::ASYM_EXP_SB) {
         if(dwt > 0.0f)	dwt *= (1.0f - fwt);
         else		dwt *= fwt;
       }
@@ -445,7 +455,12 @@ public:
       C_ApplyLimits(fwt);       // need this for new sb
       // swt = fwt;  // leave swt as pristine original weight value -- saves time
       // and is useful for visualization!
-      wt = scale * SigFmLinWt(fwt);
+      if(wt_sig.gain == 1.0f) {
+        wt = scale * fwt;
+      }
+      else {
+        wt = scale * SigFmLinWt(fwt);
+      }
       dwt = 0.0f;
     }
   }

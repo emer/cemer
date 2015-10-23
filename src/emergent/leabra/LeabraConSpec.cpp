@@ -83,11 +83,11 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
 }
 
 void WtSigSpec::Initialize() {
+  wt_bound = ASYM_EXP_SB;
   gain = 6.0f;
   off = 1.0f;
   dwt_norm = false;
   rugp_wt_sync = false;
-  linear_sb = false;
 }
 
 void WtSigSpec::UpdateAfterEdit_impl() {
