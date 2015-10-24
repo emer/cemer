@@ -65,7 +65,6 @@ public:
   QMenu*                srch_mode_menu;
   QAction*              find_action;
   QAction*              find_deep_action;
-  QAction*              replace_action;  // incremental
   
   enum SearchMode       search_mode;
   

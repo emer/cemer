@@ -58,7 +58,6 @@ void iTreeSearch::Constr() {
   
   srch_text = new iLineEdit();
   srch_bar->addWidget(srch_text);
-  
   repl_text = new iLineEdit();
   srch_bar->addWidget(repl_text);
   

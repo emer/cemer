@@ -57,13 +57,15 @@ public:
   void                  emit_dataChanged(const QModelIndex& topLeft,
                                          const QModelIndex& bottomRight); // #IGNORE
     
-  void               AddToFoundList(int row, int col);
+  void                  AddToFoundList(int row, int col);
   // add the row/col pair of a data table to found_list - for non-matrix columns
-  void               ClearFoundList();
+  void                  ClearFoundList();
   // remove all the previously found items from the list
-  const taVector2i*  GetNextFound();
+  void                  RemoveFromFoundList(taVector2i* row_col_pair);
+  // remove all the previously found items from the list
+  const taVector2i*     GetNextFound();
   // #IGNORE get the row/col of the next item from the current search
-  const taVector2i*  GetPreviousFound();
+  const taVector2i*     GetPreviousFound();
   // #IGNORE get the row/col of the previous item from the current search
 
 public slots:

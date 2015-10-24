@@ -268,6 +268,10 @@ void iDataTableModel::ClearFoundList() {
   current_found = -1;
 }
 
+void iDataTableModel::RemoveFromFoundList(taVector2i* row_col_pair) {
+  items_found.RemoveEl(row_col_pair);
+}
+
 const taVector2i* iDataTableModel::GetNextFound() {
   if (items_found.size == 0) {
     return NULL;

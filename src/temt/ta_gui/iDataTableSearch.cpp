@@ -16,6 +16,7 @@
 #include "iDataTableSearch.h"
 #include <iLineEdit>
 #include <taString>
+#include <taProject>
 #include <DataTable>
 #include <iDataTableView>
 #include <iDataTableModel>
@@ -35,12 +36,14 @@
 iDataTableSearch::iDataTableSearch(QWidget* parent) : QWidget(parent) {
   table_view = NULL;
   table_model = NULL;
+  cur_row_col_pair = NULL;
   Constr();
 }
 
 iDataTableSearch::iDataTableSearch(iDataTableView* table_view_, QWidget* parent)  : QWidget(parent) {
   table_view = table_view_;
   table_model = NULL;
+  cur_row_col_pair = NULL;
   Constr();
 }
 
@@ -60,7 +63,7 @@ void iDataTableSearch::Constr() {
   srch_mode_button = new iActionMenuButton();
   srch_bar->addWidget(srch_mode_button);
   
-  contains_action = new QAction("Find", this);
+  contains_action = new QAction("Find/Replace", this);
   matches_action = new QAction("Find Matching", this);
 
   srch_mode_menu = new QMenu(this);
@@ -71,7 +74,9 @@ void iDataTableSearch::Constr() {
 
   srch_text = new iLineEdit();
   srch_bar->addWidget(srch_text);
-  
+  repl_text = new iLineEdit();
+  srch_bar->addWidget(repl_text);
+
   srch_nfound = new QLabel(" 0");
   srch_nfound->setFont(taiM->nameFont(currentSizeSpec));
   srch_nfound->setToolTip(taiMisc::ToolTipPreProcess("Number of items found"));
@@ -83,7 +88,9 @@ void iDataTableSearch::Constr() {
   srch_prev->setToolTip(taiMisc::ToolTipPreProcess("Find previous occurrence of find text within table"));
   srch_next = srch_bar->addAction(">");
   srch_next->setToolTip(taiMisc::ToolTipPreProcess("Find next occurrence of find text within table"));
-  
+  repl_next = srch_bar->addAction("R>");
+  repl_next->setToolTip(taiMisc::ToolTipPreProcess("Replace current selection, then find next occurrence"));
+
   srch_mode_menu->addAction(contains_action);
   srch_mode_menu->addAction(matches_action);
 
@@ -93,6 +100,8 @@ void iDataTableSearch::Constr() {
   connect(srch_text, SIGNAL(returnPressed()), this, SLOT(TextEntered()));
   connect(contains_action, SIGNAL(triggered()), this, SLOT(ContainsSelected()));
   connect(matches_action, SIGNAL(triggered()), this, SLOT(MatchesSelected()));
+  connect(repl_text, SIGNAL(returnPressed()), this, SLOT(TextEntered()));
+  connect(repl_next, SIGNAL(triggered()), this, SLOT(ReplaceNext()));
 }
 
 void iDataTableSearch::TextEntered() {
@@ -134,21 +143,47 @@ void iDataTableSearch::Search(iDataTableSearch::SearchMode mode) {
   delete found_list;
 }
 
+void iDataTableSearch::ReplaceNext() {
+  if (table_model == NULL) {
+    return;
+  }
+  taProject* proj = table_model->dataTable()->GetMyProj();
+  if(proj) {
+    DataCol* col = table_model->dataTable()->GetColData(cur_row_col_pair->y, true); // quiet
+    if (col) {
+      proj->undo_mgr.SaveUndo(table_model->dataTable(), "Replace", NULL, false, proj);
+      int row = GetRowNum(col, cur_row_col_pair);  // handles scalar and matrix
+      String cur_text;
+      if (col->isMatrix()) {
+        Variant cell_value;
+        cell_value = table_model->dataTable()->GetMatrixFlatVal(col, row, 0);
+        cur_text = cell_value.toString();
+      }
+      else {
+        cur_text = table_model->dataTable()->GetValAsString(cur_row_col_pair->y, row);
+      }
+      cur_text.repl(srch_text->text(), repl_text->text());
+      if (col->isMatrix()) {
+        table_model->dataTable()->SetMatrixCellData(cur_text, col, row);
+      }
+      else {
+        table_model->dataTable()->SetVal(cur_text, cur_row_col_pair->y, row);
+      }
+    }
+  }
+  SelectNext();
+}
+
 void iDataTableSearch::SelectNext() {
   if (table_model == NULL) {
     return;
   }
-  const taVector2i* row_col_pair = table_model->GetNextFound();
-  if (row_col_pair) {
+  cur_row_col_pair = table_model->GetNextFound();
+  if (cur_row_col_pair) {
     int row;
-    DataCol* column = table_view->dataTable()->GetColData(row_col_pair->y);
-    if (column->isMatrix()) {
-      row = row_col_pair->x / column->cell_size();
-    }
-    else {
-      row = row_col_pair->x;
-    }
-    table_view->SetCurrentAndSelect(row, row_col_pair->y);
+    DataCol* column = table_view->dataTable()->GetColData(cur_row_col_pair->y);
+    row = GetRowNum(column, cur_row_col_pair);   // handles scalar and matrix
+    table_view->SetCurrentAndSelect(row, cur_row_col_pair->y);
   }
 }
 
@@ -156,28 +191,24 @@ void iDataTableSearch::SelectPrevious() {
   if (table_model == NULL) {
     return;
   }
-  const taVector2i* row_col_pair = table_model->GetPreviousFound();
-  if (row_col_pair) {
+  cur_row_col_pair = table_model->GetPreviousFound();
+  if (cur_row_col_pair) {
     int row;
-    DataCol* column = table_view->dataTable()->GetColData(row_col_pair->y);
-    if (column->isMatrix()) {
-      row = row_col_pair->x / column->cell_size();
-    }
-    else {
-      row = row_col_pair->x;
-    }
-    table_view->SetCurrentAndSelect(row, row_col_pair->y);
+    DataCol* column = table_view->dataTable()->GetColData(cur_row_col_pair->y);
+    row = GetRowNum(column, cur_row_col_pair);   // handles scalar and matrix
+    table_view->SetCurrentAndSelect(row, cur_row_col_pair->y);
   }
 }
 
-  void iDataTableSearch::SearchClear() {
-    if (table_model == NULL) {
+void iDataTableSearch::SearchClear() {
+  if (table_model == NULL) {
     return;
   }
   table_view->dataTable()->DataUpdate(true);
   table_model->ClearFoundList();
   srch_nfound->setText("0");
   srch_text->setText("");
+  repl_text->setText("");
   table_view->dataTable()->DataUpdate(false);
 }
 
@@ -188,4 +219,16 @@ void iDataTableSearch::ContainsSelected() {
 void iDataTableSearch::MatchesSelected() {
   search_mode = MATCHES;
 }
+
+int iDataTableSearch::GetRowNum(DataCol *col, const taVector2i *row_col_pair) const {
+  int row;
+  if (col->isMatrix()) {
+    row = cur_row_col_pair->x / col->cell_size();
+  }
+  else {
+    row = cur_row_col_pair->x;
+  }
+  return row;
+}
+
 

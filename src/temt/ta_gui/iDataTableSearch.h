@@ -33,10 +33,11 @@
 class iLineEdit; //
 class iDataTableView; //
 class iDataTableModel; //
-class QToolBar; //
-class QLabel; //
 class iActionMenuButton; //
 class iMenuButton; //
+class DataCol; //
+class QToolBar; //
+class QLabel; //
 class QMenu; //
 
 
@@ -54,16 +55,20 @@ public:
   
   iDataTableView*       table_view; // DataTable view for the table we search
   iDataTableModel*      table_model; // table model holds list of found items
+  
+  const taVector2i*     cur_row_col_pair; // current selected cell
 
   QToolBar*             srch_bar;
   iLineEdit*            srch_text;
+  iLineEdit*            repl_text;  // this text replaces srch_text in replace mode
   QLabel*               srch_nfound;
   QAction*              srch_clear;
   QAction*              srch_prev;
   QAction*              srch_next;
+  QAction*              repl_next;  // replace the current selection and move to next selection
+
   QMenu*                srch_mode_menu;
   iActionMenuButton*    srch_mode_button;
-
   QAction*              contains_action;
   QAction*              matches_action;
   enum SearchMode       search_mode;
@@ -80,12 +85,14 @@ public slots:
   void                  SelectNext();
   void                  SelectPrevious();
   void                  SearchClear();
+  void                  ReplaceNext();
   void                  ContainsSelected();
   void                  MatchesSelected();
 
 protected:
   taVector2i_List*      found_list;  // pass this to data table so it doesn't need to include any Qt code
-  int                   cur_item; // currrent item
+  int                   GetRowNum(DataCol* col, const taVector2i* row_col_pair) const; // utility
+  // returns correct row number whether scalar or matrix column
   
 private:
   void Constr();                // construct widget
