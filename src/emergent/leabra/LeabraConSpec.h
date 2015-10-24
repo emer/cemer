@@ -132,9 +132,8 @@ INHERITED(SpecMemberBase)
 public:
   enum WtBound { // how to bound the weights
     CLIP,        // just clip in the specified weight range
-    BI_LINEAR_SB,// bidirectional linear soft-bound: keep it mostly linear but exponential approach to bounds when dwt would take it over the bound -- apply to both high and low bound
-    LO_LINEAR_SB,// low-only linear soft-bound: keep it mostly linear but exponential approach to lower bound when dwt would take it below the bound
     ASYM_EXP_SB, // asymmetric exponential soft bounding -- multiply by 1-wt for weight increases and by wt for weight decreases (previous default in Leabra)
+    SYM_EXP_SB,  // symmetric exponential soft bounding -- multiply by wt(1-wt) always
   };
 
   WtBound       wt_bound;       // what kind of weight bounding to apply
@@ -440,12 +439,8 @@ public:
   inline void	C_Compute_Weights_CtLeabraXCAL
     (float& wt, float& dwt, float& fwt, float& swt, float& scale)
   { if(dwt != 0.0f) {
-      if(wt_sig.wt_bound == WtSigSpec::BI_LINEAR_SB) {
-        if(dwt + fwt > 1.0f)	    dwt *= (1.0f - fwt);
-        else if(dwt + fwt < 0.0f)   dwt *= fwt;
-      }
-      else if(wt_sig.wt_bound == WtSigSpec::LO_LINEAR_SB) {
-        if(dwt + fwt < 0.0f)   dwt *= fwt;
+      if(wt_sig.wt_bound == WtSigSpec::SYM_EXP_SB) {
+        dwt *= 2.0f * fwt * (1.0f - fwt); // 2.0 b/c ASYM usu has effective .5 
       }
       else if(wt_sig.wt_bound == WtSigSpec::ASYM_EXP_SB) {
         if(dwt > 0.0f)	dwt *= (1.0f - fwt);
