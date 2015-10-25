@@ -151,7 +151,7 @@ void iDataTableSearch::ReplaceNext() {
   if(proj) {
     DataCol* col = table_model->dataTable()->GetColData(cur_row_col_pair->y, true); // quiet
     if (col) {
-      proj->undo_mgr.SaveUndo(table_model->dataTable(), "Replace", NULL, false, proj);
+      proj->undo_mgr.SaveUndo(table_model->dataTable(), "Replace", col);
       int row = GetRowNum(col, cur_row_col_pair);  // handles scalar and matrix
       String cur_text;
       if (col->isMatrix()) {
