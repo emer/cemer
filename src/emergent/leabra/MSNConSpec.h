@@ -32,7 +32,6 @@ class E_API MSNTraceSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for trace-based learning in the MSN's
 INHERITED(SpecMemberBase)
 public:
-  float         da_reset_tr;    // #DEF_0.1 amount of dopamine needed to completely reset the trace
   float         tr_decay;       // #DEF_1 #MIN_0 #MAX_1 how much to decay the existing trace when adding a new trace -- actual decay rate is multiplied by the new trace value: decay in proportion to how much new trace is coming in -- so effective decay rate is typically less than value entered here
   float         otr_lrate;      // #CONDSHOW_ON_use_thal #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less than 1 -- the non-gated trace has the opposite sign (negative) from the gated trace -- encourages exploration of other alternatives if a negative outcome occurs, so that otr = opposite trace or opponent trace as well as other trace
   bool          protect_pos;    // #CONDSHOW_ON_use_thal #DEF_false do not add in an opposite trace value if the synapse already has a positive trace value from prior gating -- in theory this makes sense to protect the trace over intervening gating events, but only if the gated trace is actually the correct one -- by continuing to add in the opponent traces, the system remains more open to exploration..
@@ -145,10 +144,6 @@ public:
      const float ru_thal, const float ru_act, const float su_act, const float lrate_eff) {
 
     dwt += lrate_eff * GetDa(da_p, d2r) * tr;
-    float reset_factor = (trace.da_reset_tr - fabs(da_p)) / trace.da_reset_tr;
-    if(reset_factor < 0.0f) reset_factor = 0.0f;
-    tr *= reset_factor;
-
     if(ru_thal > 0.0f) {              // gated
       if(trace.thal_mult)
         ntr = ru_thal * ru_act * su_act;
@@ -177,9 +172,6 @@ public:
      const float ru_act, const float su_act, const float lrate_eff) {
 
     dwt += lrate_eff * GetDa(da_p, d2r) * tr;
-    float reset_factor = (trace.da_reset_tr - fabs(da_p)) / trace.da_reset_tr;
-    if(reset_factor < 0.0f) reset_factor = 0.0f;
-    tr *= reset_factor;
 
     ntr = ru_act * su_act;
     

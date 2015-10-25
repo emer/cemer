@@ -470,9 +470,9 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   thr_sub_e_rev_i = (act.thr - e_rev.i);
   thr_sub_e_rev_e = (act.thr - e_rev.e);
 
-  if(deep.on && deep_qtr == QNULL) { // doesn't make sense to not have any deep raw..
-    deep_qtr = Q4;
-  }
+  // if(deep.on && deep_qtr == QNULL) { // doesn't make sense to not have any deep raw..
+  //   deep_qtr = Q4;
+  // }
 }
 
 void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
