@@ -475,7 +475,7 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
   }
   {
     DataCol* cl = dat->FindMakeCol("label", VT_STRING);
-    cl->InitVals(label);
+    cl->InitVals(tag + ": " + label);
   }
   
   String_Array pars;
