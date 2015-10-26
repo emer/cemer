@@ -207,15 +207,31 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
    float residual_pvneg = gains.min_pvneg * pv_neg;
   residual_pvneg = MAX(residual_pvneg, 0.0f); // just a precaution
  
+  // TODO: still double counting matrix_dir via its reflection in both net_pv_pos and net_lv_pos; QUICK FIX
+  
+  matrix_dir = matrix_ind = 0.0f; // TODO: quick fix - just ignore it
+  
+  
   // don't double count pv going through the matrix guys
   float net_pv_pos = MAX(pv_pos, gains.vs_matrix_dir * matrix_dir);
   float net_pv_neg = MAX(pv_neg, gains.vs_matrix_ind * matrix_ind);
   
+  // don't double count lv going through the two (four) separate matrix guys
+  float net_lv_pos = MAX(gains.dms_matrix_dir * dms_matrix_dir,
+                         gains.vs_matrix_dir * matrix_dir);
+  float net_lv_neg = MAX(gains.dms_matrix_ind * dms_matrix_ind,
+                         gains.vs_matrix_ind * matrix_ind);
+  
+//  float net_lhb = net_pv_neg - (gains.patch_ind * patch_ind) - net_pv_pos +
+//                           (gains.patch_dir * patch_dir) - (gains.dms_matrix_dir * dms_matrix_dir) + (gains.dms_matrix_ind * dms_matrix_ind) + residual_pvneg;
+  
   float net_lhb = net_pv_neg - (gains.patch_ind * patch_ind) - net_pv_pos +
-                           (gains.patch_dir * patch_dir) - (gains.dms_matrix_dir * dms_matrix_dir) + (gains.dms_matrix_ind * dms_matrix_ind) + residual_pvneg;
+  (gains.patch_dir * patch_dir) + net_lv_neg - net_lv_pos + residual_pvneg;
+  
   net_lhb *=gains.all;
+  
   // TODO: tweak the gains.params here and for initialization, defaults, etc.
-  // TODO: note matrix guys netted out first to reflect the Go/NoGo competition - should patch guys do the same?
+  // TODO: note should matrix (and patch?) dir vs. indirect guys be netted out first to reflect the Go/NoGo competition?
   
   u->act_eq = u->act_nd = u->act = u->net = u->ext = net_lhb;
   
@@ -224,15 +240,17 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
     LeabraLayer* lay = un->own_lay();
     lay->SetUserData("pv_pos", pv_pos);
     lay->SetUserData("patch_dir", patch_dir);
-    //lay->SetUserData("pv_pos_net", pv_pos_net);
+    lay->SetUserData("net_pv_pos", net_pv_pos);
     lay->SetUserData("pv_neg", pv_neg);
     lay->SetUserData("patch_ind", patch_ind);
-    //lay->SetUserData("pv_neg_net", pv_neg_net);
+    lay->SetUserData("net_pv_neg", net_pv_neg);
     lay->SetUserData("matrix_dir", matrix_dir);
     lay->SetUserData("matrix_ind", matrix_ind);
     //lay->SetUserData("matrix_net", matrix_net);
     lay->SetUserData("dms_matrix_dir", dms_matrix_dir);
     lay->SetUserData("dms_matrix_ind", dms_matrix_ind);
+    lay->SetUserData("net_lv_pos", net_lv_pos);
+    lay->SetUserData("net_lv_neg", net_lv_neg);
     lay->SetUserData("residual_pvneg", residual_pvneg);
     lay->SetUserData("net_lhb", net_lhb);
   }
