@@ -26,7 +26,6 @@ class DataTable; //
 class iDataTableColHeaderView; //
 class iDataTableRowHeaderView; //
 
-
 class TA_API iDataTableView: public iTableView {
   // widget with some customizations to display submatrix views
   INHERITED(iTableView)
@@ -46,8 +45,6 @@ public: // cliphandler i/f
   void                  EditAction(int ea) override;
   void                  GetEditActionsEnabled(int& ea) override;
   void                  ViewAction(int ea) override;
-  void                  SetCurrentAndSelect(int row, int col);
-  // for selecting single cell only
   
 #ifndef __MAKETA__
   signals:
@@ -56,12 +53,12 @@ public: // cliphandler i/f
 #endif
 
 protected:
-  void         currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
+  void          currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
 #if (QT_VERSION >= 0x050000)
-  void         dataChanged(const QModelIndex& topLeft,
+  void          dataChanged(const QModelIndex& topLeft,
       const QModelIndex & bottomRight, const QVector<int> &roles = QVector<int>()) override;
 #else
-  void         dataChanged(const override QModelIndex& topLeft, const QModelIndex & bottomRight);
+  void          dataChanged(const override QModelIndex& topLeft, const QModelIndex & bottomRight);
 #endif
 // refresh mat cell if in here
   void          FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel) override;
@@ -69,8 +66,6 @@ protected:
   
 public slots:
   void          doubleClicked(const QModelIndex & index) override;
-
-
 };
 
 #endif // iDataTableView_h

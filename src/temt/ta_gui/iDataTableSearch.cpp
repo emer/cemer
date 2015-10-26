@@ -17,11 +17,15 @@
 #include <iLineEdit>
 #include <taString>
 #include <taProject>
+#include <taMatrix>
 #include <DataTable>
 #include <iDataTableView>
 #include <iDataTableModel>
-#include <iActionMenuButton>
+#include <iDataTableEditor>
+#include <iMatrixEditor>
+#include <iMatrixTableView>
 #include <iMenuButton>
+#include <iActionMenuButton>
 
 #include <taMisc>
 #include <taiMisc>
@@ -33,14 +37,18 @@
 #include <QToolButton>
 
 
-iDataTableSearch::iDataTableSearch(QWidget* parent) : QWidget(parent) {
+iDataTableSearch::iDataTableSearch(iDataTableEditor* parent) : QWidget(parent) {
+  editor = NULL;
   table_view = NULL;
   table_model = NULL;
+//  table_view_matrix = NULL;
+//  table_model_matrix = NULL;
   cur_row_col_pair = NULL;
   Constr();
 }
 
-iDataTableSearch::iDataTableSearch(iDataTableView* table_view_, QWidget* parent)  : QWidget(parent) {
+iDataTableSearch::iDataTableSearch(iDataTableView* table_view_, iDataTableEditor* parent)  : QWidget(parent) {
+  editor = parent;
   table_view = table_view_;
   table_model = NULL;
   cur_row_col_pair = NULL;
@@ -152,22 +160,30 @@ void iDataTableSearch::ReplaceNext() {
     DataCol* col = table_model->dataTable()->GetColData(cur_row_col_pair->y, true); // quiet
     if (col) {
       proj->undo_mgr.SaveUndo(table_model->dataTable(), "Replace", col);
-      int row = GetRowNum(col, cur_row_col_pair);  // handles scalar and matrix
+      int row = GetRowNumForDataTableView(col, cur_row_col_pair);  // handles scalar and matrix
+      
+      // get the current value
       String cur_text;
       if (col->isMatrix()) {
-        Variant cell_value;
-        cell_value = table_model->dataTable()->GetMatrixFlatVal(col, row, 0);
-        cur_text = cell_value.toString();
+        if (editor) {
+          int cell_number = cur_row_col_pair->x % col->cell_size();
+          Variant cell_value = table_model->dataTable()->GetMatrixFlatVal(col->name, row, cell_number);
+          cur_text = cell_value.toString();
+        }
       }
       else {
         cur_text = table_model->dataTable()->GetValAsString(cur_row_col_pair->y, row);
       }
+      // do the text substitution
       cur_text.repl(srch_text->text(), repl_text->text());
+      
+      // now do the actual replace
       if (col->isMatrix()) {
-        table_model->dataTable()->SetMatrixCellData(cur_text, col, row);
+        int cell_number = cur_row_col_pair->x % col->cell_size();
+        table_model->dataTable()->SetMatrixFlatVal(cur_text, col->name, row, cell_number);
       }
       else {
-        table_model->dataTable()->SetVal(cur_text, cur_row_col_pair->y, row);
+        table_model->dataTable()->SetVal(cur_text, cur_row_col_pair->y, cur_row_col_pair->x);
       }
     }
   }
@@ -182,8 +198,20 @@ void iDataTableSearch::SelectNext() {
   if (cur_row_col_pair) {
     int row;
     DataCol* column = table_view->dataTable()->GetColData(cur_row_col_pair->y);
-    row = GetRowNum(column, cur_row_col_pair);   // handles scalar and matrix
-    table_view->SetCurrentAndSelect(row, cur_row_col_pair->y);
+    if (column) {
+      row = GetRowNumForDataTableView(column, cur_row_col_pair);   // handles scalar and matrix
+      table_view->SetCurrentAndSelect(row, cur_row_col_pair->y);
+      
+      if (column->isMatrix()) {
+        if (editor) {
+          taMatrix* cell = column->GetValAsMatrix(row);  // row here is the tables row
+          iMatrixTableView* mtv = editor->tvCell->tv;
+          taVector2i cell_pair;
+          GetCellForMatrixView(column, cur_row_col_pair->x, cell_pair);  // gets row and column of this matrix cell
+          mtv->SetCurrentAndSelect(cell_pair.y, cell_pair.x);
+        }
+      }
+    }
   }
 }
 
@@ -195,8 +223,19 @@ void iDataTableSearch::SelectPrevious() {
   if (cur_row_col_pair) {
     int row;
     DataCol* column = table_view->dataTable()->GetColData(cur_row_col_pair->y);
-    row = GetRowNum(column, cur_row_col_pair);   // handles scalar and matrix
-    table_view->SetCurrentAndSelect(row, cur_row_col_pair->y);
+    if (column){
+      row = GetRowNumForDataTableView(column, cur_row_col_pair);   // handles scalar and matrix
+      table_view->SetCurrentAndSelect(row, cur_row_col_pair->y);
+    }
+    if (column->isMatrix()) {
+      if (editor) {
+        taMatrix* cell = column->GetValAsMatrix(row);
+        iMatrixTableView* mtv = editor->tvCell->tv;
+        taVector2i cell_pair;
+        GetCellForMatrixView(column, cur_row_col_pair->x, cell_pair);
+        mtv->SetCurrentAndSelect(cell_pair.y, cell_pair.x);
+      }
+    }
   }
 }
 
@@ -220,7 +259,7 @@ void iDataTableSearch::MatchesSelected() {
   search_mode = MATCHES;
 }
 
-int iDataTableSearch::GetRowNum(DataCol *col, const taVector2i *row_col_pair) const {
+int iDataTableSearch::GetRowNumForDataTableView(DataCol *col, const taVector2i *row_col_pair) const {
   int row;
   if (col->isMatrix()) {
     row = cur_row_col_pair->x / col->cell_size();
@@ -230,5 +269,15 @@ int iDataTableSearch::GetRowNum(DataCol *col, const taVector2i *row_col_pair) co
   }
   return row;
 }
+
+void iDataTableSearch::GetCellForMatrixView(DataCol *col, int column_cell_number, taVector2i& cell_pair) {
+  int row_cell_number = column_cell_number % col->cell_size();
+  cell_pair.y = row_cell_number / col->cell_geom.dim(0);
+  cell_pair.x = row_cell_number % col->cell_geom.dim(1);
+  
+  // table view has 0,0 in upper left but our matrix view starts in lower left
+  cell_pair.y = col->cell_geom.dim(1) - cell_pair.y - 1;
+}
+
 
 

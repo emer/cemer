@@ -447,6 +447,7 @@ bool iTableView::SelectColumns(int st_col, int end_col) {
 
 void iTableView::wheelEvent(QWheelEvent *e)
 {
+  // attempt to get reduce scrolling in orthogonal direction when only wanting to scroll horizontal or vertical
   if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
     int h_scroll_pos = horizontalScrollBar()->value();
     int v_scroll_pos = verticalScrollBar()->value();
@@ -466,6 +467,18 @@ void iTableView::wheelEvent(QWheelEvent *e)
   }
   inherited::wheelEvent(e);
 }
+
+void iTableView::SetCurrentAndSelect(int row, int col) {
+  this->selectionModel()->clearSelection();
+  // for single cell only
+  QModelIndex topLeft = model()->index(row, col);
+  QModelIndex bottomRight = model()->index(row, col);
+  QItemSelection selection(topLeft, bottomRight);
+  this->selectionModel()->select(selection, QItemSelectionModel::Select);
+  this->setCurrentIndex(topLeft);
+  this->setFocus();
+}
+
 
 ////////////////////////////////////////////////
 //      iTableViewDefaultDelegate

@@ -78,7 +78,10 @@ public:
   virtual bool		      SelectedRows(int& st_row, int& end_row);
   // return start and end range of selected rows in the view
   virtual bool		      SelectRows(int st_row, int end_row);
-  // select given range of rows
+  // select given range of rows - inclusive
+  virtual void          SetCurrentAndSelect(int row, int col);
+  // for selecting single cell only
+
 
   iTableView(QWidget* parent = NULL);
 

@@ -33,7 +33,10 @@
 class iLineEdit; //
 class iDataTableView; //
 class iDataTableModel; //
+class iMatrixTableView; //
+class iMatrixTableModel; //
 class iActionMenuButton; //
+class iDataTableEditor; //
 class iMenuButton; //
 class DataCol; //
 class QToolBar; //
@@ -53,6 +56,7 @@ public:
     MATCHES,            // string same as value but case insensitive
   };
   
+  iDataTableEditor*     editor; // this will be the parent QWidget
   iDataTableView*       table_view; // DataTable view for the table we search
   iDataTableModel*      table_model; // table model holds list of found items
   
@@ -76,8 +80,8 @@ public:
   void                  Search(iDataTableSearch::SearchMode mode);
   // all searches, partial or exact, are case insensitive
   
-  iDataTableSearch(QWidget* parent = NULL);
-  iDataTableSearch(iDataTableView* table_view_, QWidget* parent = NULL);
+  iDataTableSearch(iDataTableEditor* editor = NULL);
+  iDataTableSearch(iDataTableView* table_view_, iDataTableEditor* editor = NULL);  // parent will be the table editor
   ~iDataTableSearch();
 
 public slots:
@@ -91,9 +95,11 @@ public slots:
 
 protected:
   taVector2i_List*      found_list;  // pass this to data table so it doesn't need to include any Qt code
-  int                   GetRowNum(DataCol* col, const taVector2i* row_col_pair) const; // utility
-  // returns correct row number whether scalar or matrix column
-  
+  int                   GetRowNumForDataTableView(DataCol* col, const taVector2i* row_col_pair) const; // utility
+  // returns correct row number whether scalar or matrix column - for iDataTableView (not matrix table)
+  void                  GetCellForMatrixView(DataCol *col, int column_cell_number, taVector2i& cell_pair); // utility
+  // uses the cell number based on flat column count to calculate the row and column cell values for the table row
+
 private:
   void Constr();                // construct widget
 };
