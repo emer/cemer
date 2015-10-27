@@ -130,13 +130,6 @@ class E_API WtSigSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sigmoidal weight function specification
 INHERITED(SpecMemberBase)
 public:
-  enum WtBound { // how to bound the weights
-    CLIP,        // just clip in the specified weight range
-    ASYM_EXP_SB, // asymmetric exponential soft bounding -- multiply by 1-wt for weight increases and by wt for weight decreases (previous default in Leabra)
-    SYM_EXP_SB,  // symmetric exponential soft bounding -- multiply by wt(1-wt) always
-  };
-
-  WtBound       wt_bound;       // what kind of weight bounding to apply
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1 is standard for XCAL
   bool		dwt_norm;	// #DEF_false normalize weight changes -- this adds a significant amount of computational cost, and generally makes learning more robust, but a well-tuned network should not require it, and it causes some interference with prior learning that may not be very biologically plausible or desirable -- dwt -= (act_p / sum act_p) (sum dwt) over receiving projection
@@ -439,23 +432,13 @@ public:
   inline void	C_Compute_Weights_CtLeabraXCAL
     (float& wt, float& dwt, float& fwt, float& swt, float& scale)
   { if(dwt != 0.0f) {
-      if(wt_sig.wt_bound == WtSigSpec::SYM_EXP_SB) {
-        dwt *= 2.0f * fwt * (1.0f - fwt); // 2.0 b/c ASYM usu has effective .5 
-      }
-      else if(wt_sig.wt_bound == WtSigSpec::ASYM_EXP_SB) {
-        if(dwt > 0.0f)	dwt *= (1.0f - fwt);
-        else		dwt *= fwt;
-      }
+      if(dwt > 0.0f)	dwt *= (1.0f - fwt);
+      else		dwt *= fwt;
       fwt += dwt;
-      C_ApplyLimits(fwt);       // need this for new sb
+      // C_ApplyLimits(fwt);       // don't need this..
       // swt = fwt;  // leave swt as pristine original weight value -- saves time
       // and is useful for visualization!
-      if(wt_sig.gain == 1.0f) {
-        wt = scale * fwt;
-      }
-      else {
-        wt = scale * SigFmLinWt(fwt);
-      }
+      wt = scale * SigFmLinWt(fwt);
       dwt = 0.0f;
     }
   }
