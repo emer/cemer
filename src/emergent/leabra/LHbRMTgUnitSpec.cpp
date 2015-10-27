@@ -197,8 +197,10 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   float patch_ind = patch_ind_lay->acts_q0.avg * patch_ind_lay->units.size;
   float matrix_dir = matrix_dir_lay->acts_eq.avg * matrix_dir_lay->units.size;
   float matrix_ind = matrix_ind_lay->acts_eq.avg * matrix_ind_lay->units.size;
-  float dms_matrix_dir = dms_matrix_dir_lay->acts_eq.avg * dms_matrix_dir_lay->units.size;
-  float dms_matrix_ind = dms_matrix_ind_lay->acts_eq.avg * dms_matrix_ind_lay->units.size;
+//  float dms_matrix_dir = dms_matrix_dir_lay->acts_eq.avg * dms_matrix_dir_lay->units.size;
+//  float dms_matrix_ind = dms_matrix_ind_lay->acts_eq.avg * dms_matrix_ind_lay->units.size;
+  float dms_matrix_dir = dms_matrix_dir_lay->acts_eq.max; //* dms_matrix_dir_lay->units.size;
+  float dms_matrix_ind = dms_matrix_ind_lay->acts_eq.max; //* dms_matrix_ind_lay->units.size;
   float pv_pos = pv_pos_lay->acts_eq.avg * pv_pos_lay->units.size;
   float pv_neg = pv_neg_lay->acts_eq.avg * pv_neg_lay->units.size;
   
@@ -209,7 +211,11 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
  
   // TODO: still double counting matrix_dir via its reflection in both net_pv_pos and net_lv_pos; QUICK FIX
   
-  matrix_dir = matrix_ind = 0.0f; // TODO: quick fix - just ignore it
+  //matrix_dir = matrix_ind = 0.0f; // TODO: quick fix - just ignore it
+  
+  // TODO: maybe no longer need the net_pv_pos absorb somehow?
+  // TODO: OR, also take the MAX(net_pv_pos, net_lv_pos); // call it net_pos and ONLY use that!
+  // TODO: this latter seems the best so far...
   
   
   // don't double count pv going through the matrix guys
@@ -222,11 +228,16 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   float net_lv_neg = MAX(gains.dms_matrix_ind * dms_matrix_ind,
                          gains.vs_matrix_ind * matrix_ind);
   
+  
+  // TODO: better approach to double matrix counting
+  float net_pos = MAX(net_pv_pos, net_lv_pos);
+  float net_neg = MAX(net_pv_neg, net_lv_neg);
+  
 //  float net_lhb = net_pv_neg - (gains.patch_ind * patch_ind) - net_pv_pos +
 //                           (gains.patch_dir * patch_dir) - (gains.dms_matrix_dir * dms_matrix_dir) + (gains.dms_matrix_ind * dms_matrix_ind) + residual_pvneg;
   
-  float net_lhb = net_pv_neg - (gains.patch_ind * patch_ind) - net_pv_pos +
-  (gains.patch_dir * patch_dir) + net_lv_neg - net_lv_pos + residual_pvneg;
+  float net_lhb = net_neg - net_pos - (gains.patch_ind * patch_ind) +
+  (gains.patch_dir * patch_dir) + residual_pvneg;
   
   net_lhb *=gains.all;
   
