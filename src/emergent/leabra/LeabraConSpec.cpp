@@ -216,6 +216,7 @@ void LeabraConSpec::Compute_NetinScale(LeabraConGroup* recv_gp, LeabraLayer* fro
   recv_gp->scale_eff = wt_scale.FullScale(savg, from_sz, n_cons);
 }
 
+#ifdef SUGP_NETIN
 int LeabraConSpec::Init_SUGps(LeabraConGroup* cg, LeabraNetwork* net, int thr_no) {
   // have to do this recv-based, because that is the perspective for the netin rollup
   // so indexes need to be into the recv guys
@@ -262,6 +263,7 @@ bool LeabraConSpec::Init_SUGpChunkFlag(LeabraConGroup* cg, LeabraNetwork* net, i
   return cg->HasConGroupFlag(ConGroup::CHUNKS_SAME_SUGP);
 }
 
+#endif // SUGP_NETIN
 
 void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   float prv_cur_lrate = cur_lrate;

@@ -162,6 +162,7 @@ private:
   void        Defaults_init();
 };
 
+#ifdef SUGP_NETIN
 eTypeDef_Of(LeabraNetinSpec);
 
 class E_API LeabraNetinSpec : public SpecMemberBase {
@@ -187,6 +188,7 @@ private:
   void        Destroy()        { };
   void        Defaults_init();
 };
+#endif // SUGP_NETIN
 
 eTypeDef_Of(OptThreshSpec);
 
@@ -599,7 +601,9 @@ public:
   LeabraActMiscSpec act_misc;       // #CAT_Activation miscellaneous activation parameters
   SpikeFunSpec      spike;          // #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
   SpikeMiscSpec    spike_misc;      // #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
+#ifdef SUGP_NETIN
   LeabraNetinSpec  netin;           // #CAT_Activation how to compute the excitatory net input to units
+#endif // SUGP_NETIN
   OptThreshSpec    opt_thresh;      // #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
   MinMaxRange      clamp_range;     // #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
   MinMaxRange      vm_range;        // #CAT_Activation membrane potential range (min, max, 0-2 for normalized)

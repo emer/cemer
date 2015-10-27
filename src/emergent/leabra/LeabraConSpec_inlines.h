@@ -49,6 +49,7 @@ inline void LeabraConSpec::Send_NetinDelta_vec(LeabraConGroup* cg,
   }
 }
 
+#ifdef SUGP_NETIN
 inline void LeabraConSpec::Send_NetinDeltaSugp_vec
 (LeabraConGroup* cg, const float su_act_delta_eff, float* send_netin_vec, const float* wts,
  const int32_t* sugps, const int n_un)
@@ -72,13 +73,15 @@ inline void LeabraConSpec::Send_NetinDeltaSugp_vec
     send_netin_vec[sugps[i] * n_un + cg->UnIdx(i)] += wts[i] * su_act_delta_eff;
   }
 }
+#endif // SUGP_NETIN
 
 #endif
 
 inline void LeabraConSpec::Send_NetinDelta_impl(LeabraConGroup* cg, LeabraNetwork* net,
                                          int thr_no, const float su_act_delta,
-                                         const float* wts, const int32_t* sugps) {
+                                         const float* wts) {
   const float su_act_delta_eff = cg->scale_eff * su_act_delta;
+#ifdef SUGP_NETIN
   if(net->net_misc.sugp_netin) {
     const int n_un = net->n_units_built;
     float* send_netin_vec = net->ThrSendNetinTmpPerSugp(thr_no, cg->other_idx, 0);
@@ -95,7 +98,9 @@ inline void LeabraConSpec::Send_NetinDelta_impl(LeabraConGroup* cg, LeabraNetwor
                                              cg->UnIdx(i), su_act_delta_eff));
 #endif
   }
-  else if(net->NetinPerPrjn()) {
+  else
+#endif // SUGP_NETIN
+  if(net->NetinPerPrjn()) {
     float* send_netin_vec = net->ThrSendNetinTmpPerPrjn(thr_no, cg->other_idx);
 #ifdef TA_VEC_USE
     Send_NetinDelta_vec(cg, su_act_delta_eff, send_netin_vec, wts);
@@ -119,7 +124,11 @@ inline void LeabraConSpec::Send_NetinDelta(LeabraConGroup* cg, LeabraNetwork* ne
                                            int thr_no, const float su_act_delta)
 {
   // note: _impl is used b/c subclasses replace WT var with another variable
-  Send_NetinDelta_impl(cg, net, thr_no, su_act_delta, cg->OwnCnVar(WT), cg->OwnCnVarInt(SUGP));
+  Send_NetinDelta_impl(cg, net, thr_no, su_act_delta, cg->OwnCnVar(WT)
+#ifdef SUGP_NETIN
+                       , cg->OwnCnVarInt(SUGP)
+#endif // SUGP_NETIN
+                       );
 }
 
 
@@ -133,6 +142,7 @@ inline float LeabraConSpec::Compute_Netin(ConGroup* rcg, Network* net, int thr_n
 }
 
 
+#ifdef SUGP_NETIN
 inline void LeabraConSpec::Init_SUGpNetin(LeabraConGroup* rcg, LeabraNetwork* net,
                                           int thr_no) {
   const int nsg = ((LeabraPrjn*)rcg->prjn)->n_sugps;
@@ -141,6 +151,7 @@ inline void LeabraConSpec::Init_SUGpNetin(LeabraConGroup* rcg, LeabraNetwork* ne
     rcg->sugp_net[i] = 0.0f;
   }
 }
+#endif // SUGP_NETIN
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -225,13 +236,14 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   if(su->avg_s < us->opt_thresh.xcal_lrn && su->avg_m < us->opt_thresh.xcal_lrn) return;
   // no need to learn!
 
-  // not using now -- restore if needed..
-  // LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-  // LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
-  // if(rus->netin.max_on && ((LeabraPrjn*)cg->prjn)->n_sugps > 1) {
-  //   Compute_dWt_MaxSugp(cg, net, thr_no);
-  //   return;
-  // }
+#ifdef SUGP_NETIN
+  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
+  if(rus->netin.max_on && ((LeabraPrjn*)cg->prjn)->n_sugps > 1) {
+    Compute_dWt_MaxSugp(cg, net, thr_no);
+    return;
+  }
+#endif // SUGP_NETIN
   
   float clrate, bg_lrate, fg_lrate;
   bool deep_on;
@@ -274,6 +286,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
 #endif
 }
 
+#ifdef SUGP_NETIN
 inline void LeabraConSpec::Compute_dWt_MaxSugp(LeabraConGroup* cg, LeabraNetwork* net, int thr_no) {
   LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
   LeabraUnitSpec* us = (LeabraUnitSpec*)su->unit_spec;
@@ -307,6 +320,7 @@ inline void LeabraConSpec::Compute_dWt_MaxSugp(LeabraConGroup* cg, LeabraNetwork
        ru->avg_l, l_lrn_eff);
   }
 }
+#endif // SUGP_NETIN
 
 /////////////////////////////////////
 //	Compute_Weights_CtLeabraXCAL

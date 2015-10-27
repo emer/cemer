@@ -73,7 +73,9 @@ void LeabraNetStats::Initialize() {
 }
 
 void LeabraNetMisc::Initialize() {
+#ifdef SUGP_NETIN
   sugp_netin = false;
+#endif // SUGP_NETIN
   spike = false;
   deep = false;
   bias_learn = false;
@@ -134,11 +136,13 @@ void LeabraNetwork::Initialize() {
   thrs_send_deepnet_tmp = NULL;
   thrs_lay_avg_max_vals = NULL;
   thrs_ungp_avg_max_vals = NULL;
+#ifdef SUGP_NETIN
   thrs_recv_cgp_sugp_net_cnt = NULL;
   thrs_recv_cgp_sugp_net_mem = NULL;
   thrs_pct_chunks_same_sugp = NULL;
   pct_chunks_same_sugp = 0.0f;
   max_n_sugp = 0;
+#endif // SUGP_NETIN
   
 #ifdef CUDA_COMPILE
   cudai = new LeabraConSpecCuda;
@@ -171,7 +175,11 @@ void LeabraNetwork::CheckInhibCons() {
 
 void LeabraNetwork::Build() {
   CheckInhibCons();
-  if(net_misc.inhib_cons || net_misc.sugp_netin) {
+  if(net_misc.inhib_cons
+#ifdef SUGP_NETIN
+     || net_misc.sugp_netin
+#endif // SUGP_NETIN
+     ) {
     SetNetFlag(NETIN_PER_PRJN);	// inhib cons use per-prjn inhibition
   }
   inherited::Build();
@@ -221,15 +229,19 @@ void LeabraNetwork::FreeUnitConGpThreadMem() {
     net_free((void**)&unit_vec_vars[i]);
     net_free((void**)&thrs_lay_avg_max_vals[i]);
     net_free((void**)&thrs_ungp_avg_max_vals[i]);
+#ifdef SUGP_NETIN
     net_free((void**)&thrs_recv_cgp_sugp_net_mem[i]);
+#endif // SUGP_NETIN
   }
   net_free((void**)&thrs_send_deepnet_tmp);
   net_free((void**)&unit_vec_vars);
   net_free((void**)&thrs_lay_avg_max_vals);
   net_free((void**)&thrs_ungp_avg_max_vals);
+#ifdef SUGP_NETIN
   net_free((void**)&thrs_recv_cgp_sugp_net_mem);
   net_free((void**)&thrs_recv_cgp_sugp_net_cnt);
   net_free((void**)&thrs_pct_chunks_same_sugp);
+#endif // SUGP_NETIN
 }
 
 void LeabraNetwork::BuildNullUnit() {
@@ -240,9 +252,12 @@ void LeabraNetwork::BuildNullUnit() {
 
 void LeabraNetwork::Connect() {
   inherited::Connect();
+#ifdef SUGP_NETIN
   Connect_SUGps();
+#endif // SUGP_NETIN
 }
 
+#ifdef SUGP_NETIN
 void LeabraNetwork::Connect_SUGps() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(lay->lesioned()) continue;
@@ -363,6 +378,7 @@ void LeabraNetwork::Connect_SUGps_Alloc_Thr(int thr_no) {
     }
   }
 }
+#endif // SUGP_NETIN
 
 void LeabraNetwork::AllocSendNetinTmp() {
   // note: not calling Network: version -- need to update based on that!
@@ -373,11 +389,14 @@ void LeabraNetwork::AllocSendNetinTmp() {
   net_aligned_malloc((void**)&thrs_send_deepnet_tmp, n_thrs_built * sizeof(float*));
 
   for(int i=0; i<n_thrs_built; i++) {
+#ifdef SUGP_NETIN
     if(net_misc.sugp_netin) {
       net_aligned_malloc((void**)&thrs_send_netin_tmp[i],
                          n_units_built * max_n_sugp * max_prjns * sizeof(float));
     }
-    else if(NetinPerPrjn()) {
+    else
+#endif // SUGP_NETIN
+    if(NetinPerPrjn()) {
       net_aligned_malloc((void**)&thrs_send_netin_tmp[i],
                          n_units_built * max_prjns * sizeof(float));
     }
@@ -393,11 +412,14 @@ void LeabraNetwork::AllocSendNetinTmp() {
 }
 
 void LeabraNetwork::InitSendNetinTmp_Thr(int thr_no) {
+#ifdef SUGP_NETIN
   if(net_misc.sugp_netin) {
     memset(thrs_send_netin_tmp[thr_no], 0, n_units_built * max_n_sugp * max_prjns *
            sizeof(float));
   }
-  else if(NetinPerPrjn()) {
+  else
+#endif // SUGP_NETIN
+  if(NetinPerPrjn()) {
     memset(thrs_send_netin_tmp[thr_no], 0, n_units_built * max_prjns * sizeof(float));
   }
   else {

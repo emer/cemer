@@ -125,7 +125,9 @@ class E_API LeabraNetMisc : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
 INHERITED(taOBase)
 public:
+#ifdef SUGP_NETIN
   bool          sugp_netin;     // support sender-unit-group specific net input computation (e.g., max over sugp instead of sum)
+#endif // SUGP_NETIN
   bool          spike;         // #READ_ONLY #SHOW using discrete spiking -- all units must be either rate code or spiking, to optimize the computation -- updated in Trial_Init_Specs call
   bool          deep;         // #READ_ONLY #SHOW deep processing is active -- updated in Trial_Init_Specs call
   bool		bias_learn;     // #READ_ONLY #SHOW do any of the bias connections have learning enabled?  if true, then an extra unit-level computational step is required -- bias learning is now OFF by default, as it has no obvious benefits in large models, but may be useful for smaller networks
@@ -278,6 +280,7 @@ public:
   // #IGNORE AvgMaxValsRaw data for layers, by thread
   char**        thrs_ungp_avg_max_vals;
   // #IGNORE AvgMaxValsRaw data for unit groups, by thread
+#ifdef SUGP_NETIN
   int           max_n_sugp;
   // #NO_SAVE #READ_ONLY #EXPERT maximum number of sending unit groups across all projections -- determines how large send_netin_tmp needs to be for per-con-group data
   float         pct_chunks_same_sugp;
@@ -285,6 +288,7 @@ public:
   float*        thrs_pct_chunks_same_sugp; // #IGNORE percent of sending con groups where the vector chunks all share the same sending unit group index -- required for vectorized sugp-based netin computation
   int64_t*      thrs_recv_cgp_sugp_net_cnt; // #IGNORE number of floats to allocate to thrs_recv_cgp_sugp_net_mem, per thread
   float**       thrs_recv_cgp_sugp_net_mem; // #IGNORE bulk memory allocated for all of the recv con group sender unit group netin memory, by thread -- array of  float*[thrs_recv_cgp_sugp_net_cnt[thr_no]]
+#endif // SUGP_NETIN
   float         tmp_arg1;        // #IGNORE for passing args through threaded call
 
 #ifdef CUDA_COMPILE
@@ -298,6 +302,7 @@ public:
   { return unit_vec_vars[thr_no] + var * n_units_built; }
   // #IGNORE get start of given unit vector variable array
 
+#ifdef SUGP_NETIN
   inline float* ThrSendNetinTmpPerSugp(int thr_no, int recv_prjn_idx, int sugp_idx) const 
   { return thrs_send_netin_tmp[thr_no] + recv_prjn_idx * n_units_built * max_n_sugp +
       sugp_idx * n_units_built; }
@@ -306,6 +311,7 @@ public:
   // prjn 0, sgp 0, units [0..n] -- per prjn: n_units_built * max_n_sugp
   // prjn 0, sgp 1, units [0..n] -- per sugp: * n_units_built
   // ...
+#endif // SUGP_NETIN
   
   inline float* ThrSendDeepNetTmp(int thr_no) const 
   { return thrs_send_deepnet_tmp[thr_no]; }
@@ -338,12 +344,14 @@ public:
   // #IGNORE
   virtual void InitLeabraThreadMem_Thr(int thr_no);
   // #IGNORE
+#ifdef SUGP_NETIN
   virtual void Connect_SUGps();
   // #IGNORE post-connect allocate sender unit group netin related data
   virtual void Connect_SUGps_Thr(int thr_no);
   // #IGNORE  
   virtual void Connect_SUGps_Alloc_Thr(int thr_no);
   // #IGNORE  
+#endif // SUGP_NETIN
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
