@@ -281,8 +281,14 @@ void iTabView::panelSelected(int idx) {
         iTreeView* tree_view = viewerWindow()->GetMainTreeView();
         if (tree_view) {
           iTreeViewItem* item = tree_view->AssertItem(sig_link);
-          if (item) {  // if T3 panel item will be null
-            tree_view->setCurrentItem(item, 0, QItemSelectionModel::ClearAndSelect);
+          // if T3 panel item will be null
+          if (item) {
+            if (sig_link->taData()->InheritsFrom(&TA_taDataView)) {
+              tree_view->clearSelection();
+            }
+            else {
+              tree_view->setCurrentItem(item, 0, QItemSelectionModel::ClearAndSelect);
+            }
           }
           tree_view->update();
         }

@@ -182,7 +182,11 @@ iTreeViewItem* iTreeView::AssertItem(taiSigLink* link, bool super) {
   // then try making sure owner's children asserted
   if (own_el) { // && own_el->lazyChildren()) {
     own_el->CreateChildren();
-    own_el->setExpanded(true);
+    TypeDef* td = link->taData()->GetTypeDef();
+//    if (!td->HasOption("NO_EXPAND_ON_PANEL_VIEW")) {
+    if (!link->taData()->InheritsFrom(&TA_taDataView)) {
+      own_el->setExpanded(true);
+    }
     taiMisc::ProcessEvents();
   }
   // and try again, but not supercursively of course!
