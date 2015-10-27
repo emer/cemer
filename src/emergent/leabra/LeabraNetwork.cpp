@@ -787,6 +787,7 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
       }
     }
     threads.SyncSpin(thr_no, 0);
+    InitSendNetinTmp_Thr(thr_no);
 
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->netin_stats.EndIncrAvg();
@@ -958,6 +959,7 @@ void LeabraNetwork::Compute_NetinStats_Post() {
     netin.CalcAvg();
   }
 }
+
 
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Step 2: Inhibition

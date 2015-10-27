@@ -90,9 +90,6 @@ void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
     for(int j=0;j<nt;j++) {
       float& ndval = net->ThrSendNetinTmpPerPrjn(j, g)[flat_idx]; 
       g_nw_nt += ndval;
-#ifndef CUDA_COMPILE
-      ndval = 0.0f;           // zero immediately upon use -- for threads
-#endif
     }
 
     recv_gp->net_raw += g_nw_nt;

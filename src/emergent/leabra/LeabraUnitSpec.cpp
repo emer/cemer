@@ -1207,7 +1207,6 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
   //         for(int j=0;j<nt;j++) {
   //           float& ndval = net->ThrSendNetinTmpPerSugp(j, g, sg)[flat_idx]; 
   //           sg_net_delta += ndval;
-  //           ndval = 0.0f;           // zero immediately upon use -- for threads
   //         }
   //         if(cs->inhib) {
   //           recv_gp->net_raw += sg_net_delta;
@@ -1252,7 +1251,6 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
   //         for(int j=0;j<nt;j++) {
   //           float& ndval = net->ThrSendNetinTmpPerSugp(j, g, sg)[flat_idx]; 
   //           sg_net_delta += ndval;
-  //           ndval = 0.0f;           // zero immediately upon use -- for threads
   //         }
   //         recv_gp->net_raw += sg_net_delta;
   //         if(cs->inhib) {
@@ -1277,9 +1275,6 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
       for(int j=0;j<nt;j++) {
         float& ndval = net->ThrSendNetinTmpPerPrjn(j, g)[flat_idx]; 
 	g_net_delta += ndval;
-#ifndef CUDA_COMPILE
-        ndval = 0.0f;           // zero immediately upon use -- for threads
-#endif
       }
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       recv_gp->net_raw += g_net_delta; // note: direct assignment to raw, no time integ
@@ -1296,9 +1291,6 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
     for(int j=0;j<nt;j++) {
       float& ndval = net->ThrSendNetinTmp(j)[flat_idx];
       net_delta += ndval;
-#ifndef CUDA_COMPILE
-      ndval = 0.0f;           // zero immediately upon use -- for threads
-#endif
     }
     u->net_raw += net_delta;
   }
@@ -1983,9 +1975,6 @@ void LeabraUnitSpec::Compute_DeepNetin_Post(LeabraUnitVars* u, LeabraNetwork* ne
   for(int j=0;j<nt;j++) {
     float& ndval = net->ThrSendDeepNetTmp(j)[flat_idx];
     net_delta += ndval;
-#ifndef CUDA_COMPILE
-    ndval = 0.0f;             // zero immediately..
-#endif
   }
   u->deep_net += net_delta;
 }
