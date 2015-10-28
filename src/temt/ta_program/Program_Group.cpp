@@ -87,7 +87,7 @@ Variant Program_Group::GetGuiArgVal(const String& fun_name, int arg_idx) {
   return Variant(pel);
 }
 
-void Program_Group::LoadFromProgLib(ProgLibEl* prog_type) {
+void Program_Group::UpdateFromProgLib(ProgLibEl* prog_type) {
   if(TestError(!prog_type, "LoadFromProgLib", "program type to load is null")) return;
   if(TestError(!prog_type->is_group, "LoadFromProgLib",
                "cannot load a single program file into a program group!")) return;
