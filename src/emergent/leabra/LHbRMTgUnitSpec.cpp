@@ -40,8 +40,8 @@ void LHbRMTgGains::Defaults_init() {
 }
 
 void LHbRMTgUnitSpec::Initialize() {
-    SetUnique("deep_qtr", true);
-    deep_qtr = Q4;
+    SetUnique("deep_raw_qtr", true);
+    deep_raw_qtr = Q4;
     SetUnique("act_range", true);
     act_range.max = 2.0f;
     act_range.min = -2.0f;
@@ -268,7 +268,7 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
 }
 
 void LHbRMTgUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(Quarter_DeepNow(net->quarter)) {
+  if(Quarter_DeepRawNow(net->quarter)) {
     Compute_Lhb(u, net, thr_no);
   }
   else {

@@ -618,7 +618,7 @@ public:
   ShortPlastSpec   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   RLrateSpec       r_lrate;         // #CAT_Learning receiving-unit based learning rate specs -- sets effective learning rate multiplier based on activation profile of receiving unit, to promote greater translation invariance
-  Quarters         deep_qtr;        // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
+  Quarters         deep_raw_qtr;    // #CAT_Learning #AKA_deep_qtr quarter(s) during which deep_raw layer 5 intrinsic bursting activations should be updated -- deep_raw is updated and sent to deep_raw_net during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
   DeepSpec         deep;            // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
   DaModSpec        da_mod;          // #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   NoiseType        noise_type;      // #CAT_Activation where to add random noise in the processing (if at all)
@@ -676,9 +676,12 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        QuarterInit -- at start of new gamma-quarter
 
-  inline  bool Quarter_DeepNow(int qtr)
-  { return deep_qtr & (1 << qtr); }
-  // #CAT_Activation test whether to send deep5b netintput and compute deep5b activations at given quarter (pass net->quarter as arg)
+  inline  bool Quarter_DeepRawNow(int qtr)
+  { return deep_raw_qtr & (1 << qtr); }
+  // #CAT_Activation test whether to compute deep_raw activations and send deep_raw_net netintput at given quarter (pass net->quarter as arg)
+  inline  bool Quarter_DeepRawPrevQtr(int qtr)
+  { if(qtr == 0) qtr = 3; else qtr--; return deep_raw_qtr & (1 << qtr); }
+  // #CAT_Activation test whether the previous quarter was when deep_raw was updated
 
   virtual void Quarter_Init_Unit(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Activation quarter unit-level initialization functions: Init_TargFlags, Init_PrvNet, NetinScale
@@ -690,6 +693,14 @@ public:
     virtual void Compute_NetinScale(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #CAT_Activation compute net input scaling values -- call at start of quarter just to be sure
 
+    virtual void Send_DeepCtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #CAT_Deep send deep_raw to deep_ctxt netinput, using deepraw netin temp buffer -- not delta based
+    virtual void Compute_DeepCtxt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #CAT_Deep integrate deep_ctxt from deepraw netin temp sent previously by Send_DeepCtxtNetin
+    virtual void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #CAT_Deep state update for deep leabra -- typically at start of new alpha trial --
+
+    
   virtual void Compute_HardClamp(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Activation force units to external values provided by environment
   virtual void Compute_HardClampNoClip(LeabraUnitVars* uv, LeabraNetwork* net,
@@ -711,6 +722,8 @@ public:
   // #CAT_Activation integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
     virtual void  Compute_NetinRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #IGNORE called by Compute_NetinInteg -- roll up the deltas into net_raw and gi_syn values (or compute net_raw by some other means for special algorithms)
+    virtual void DeepModNetin_Integ(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #IGNORE integrate deep_mod_net values
     virtual float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
                                       int thr_no, float& net_syn);
     // #IGNORE called by Compute_NetinInteg -- get extra excitatory net input factors to add on top of regular synapticaly-generated net inputs, passed as net_syn -- standard items include: bias weights, external soft-clamp input, TI extras (ti_ctxt, d5b_net), CIFER extras: thal (which multiplies net_syn), and da_mod (which multiplies net_syn) -- specialized algorithms can even overwrite net_syn if they need too..
@@ -810,20 +823,12 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        Deep Leabra Computations -- after superifical acts updated
 
-  virtual bool Compute_DeepTest(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep should various Compute_Deep* functions be run now?
-
   virtual void Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Activation update the deep_raw activations -- assumes checks have already been done
   virtual void Send_DeepRawNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep send deep5b netinputs through SendDeepRawConSpec connections
-  virtual void Send_DeepRawNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  virtual void DeepRawNetin_Integ(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep send context netinputs through SendDeepRawConSpec connections -- post processing rollup -- checks deeptest
-  virtual void Compute_DeepNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep send context netinputs through SendDeepRawConSpec connections -- post processing rollup -- just does it -- no checks
-
-  virtual void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep state update for deep leabra -- typically at start of new alpha trial -- copy deep_ctxt from deep_ctxt_net
 
   virtual void ClearDeepActs(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep clear all the deep lamina variables -- can be useful to do at discontinuities of experience

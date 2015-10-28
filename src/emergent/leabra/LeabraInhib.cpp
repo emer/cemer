@@ -51,7 +51,7 @@ void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
   acts.InitVals();
   un_g_i.InitVals();
   am_deep_raw.InitVals();
-  am_deep_net.InitVals();
+  am_deep_mod_net.InitVals();
 }
 
 void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
@@ -66,6 +66,6 @@ void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
   acts_q0 = cp.acts_p;
   un_g_i = cp.un_g_i;
   am_deep_raw = cp.am_deep_raw;
-  am_deep_net = cp.am_deep_net;
+  am_deep_mod_net = cp.am_deep_mod_net;
 }
 

@@ -394,8 +394,8 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
   ti_ctxt->wt_scale.rel = 1.0f;
   ti_uns->SetUnique("deep", true);
   ti_uns->deep.on = true;
-  ti_uns->SetUnique("deep_qtr", true);
-  ti_uns->deep_qtr = LeabraUnitSpec::Q4;
+  ti_uns->SetUnique("deep_raw_qtr", true);
+  ti_uns->deep_raw_qtr = LeabraUnitSpec::Q4;
 
   ctxt_prjn->send_gp_size = 3;
   ctxt_prjn->send_gp_skip = 1;
@@ -949,8 +949,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   pvlv_units->UpdateAfterEdit();
   pvlv_units->bias_spec.SetSpec(fix_bias);
 
-  vtap_units->SetUnique("deep_qtr", true);
-  vtap_units->deep_qtr = LeabraUnitSpec::Q4;
+  vtap_units->SetUnique("deep_raw_qtr", true);
+  vtap_units->deep_raw_qtr = LeabraUnitSpec::Q4;
   vtap_units->SetUnique("da_val", true);
   vtap_units->da_val = VTAUnitSpec::DA_P;
   vtan_units->SetUnique("da_val", true);
@@ -1710,7 +1710,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   ////////////	UnitSpecs
 
   pbwm_units->bias_spec.SetSpec(fix_bias);
-  pbwm_units->deep_qtr = LeabraUnitSpec::Q2_Q4; // beta by default
+  pbwm_units->deep_raw_qtr = LeabraUnitSpec::Q2_Q4; // beta by default
   
   matrix_units->SetUnique("noise_type", true);
   matrix_units->noise_type = LeabraUnitSpec::NETIN_NOISE;
@@ -1860,7 +1860,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
     String subgp;
     subgp = "";
 
-    pbwm_units->AddToControlPanelNm("deep_qtr", cp, "pbwm", subgp,
+    pbwm_units->AddToControlPanelNm("deep_raw_qtr", cp, "pbwm", subgp,
                                     "set to Q2, Q4 for beta frequency updating -- Q4 for just alpha -- coordinate with bg_lrn_learn_qtr setting!");
     bg_lrn_cons->AddToControlPanelNm("learn_qtr", cp, "bg_lrn", subgp);
     

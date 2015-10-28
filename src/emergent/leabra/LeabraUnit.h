@@ -139,9 +139,12 @@ public:
   inline float& deep_lrn()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_lrn; }
   // #CAT_UnitVar net influence of deep layer dynamics on learning rate for connections into this unit -- typically set to deep_mod prior to enforcing the mod_min floor value, so that baseline deep_mod=0 units get lowest background learning rate
-  inline float& deep_net()
-  { return ((LeabraUnitVars*)GetUnitVars())->deep_net; }
-  // #CAT_UnitVar net input from deep layer activations -- use depends on deep.role setting in LeabraUnitSpec: can be local deep context inputs via DeepCtxtConSpec, deep5b driver inputs into thalamic relay cells via SendDeepRawConSpec, or deep mod of superficial neurons sent by SendDeepModConSpec projections from deep layer units
+  inline float& deep_mod_net()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_mod_net; }
+  // #CAT_UnitVar modulatory net input from deep layer activations (representing lamina 6 regular spiking, thalamocortical projecting neurons) via SendDeepModConSpec, drives deep mod of superficial neurons
+  inline float& deep_raw_net()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_net; }
+  // #CAT_UnitVar deep_raw net input from deep layer activations (representing lamina 5b intrinsic bursting neurons), typically for driver inputs into thalamic relay cells via SendDeepRawConSpec
   inline float& thal()
   { return ((LeabraUnitVars*)GetUnitVars())->thal; }
   // #VIEW_HOT #CAT_UnitVar thalamic activation value, driven by a ThalSendUnitSpec or GpiInvUnitSpec -- used by deep params in LeabraUnitSpec and MSNConSpecs, and possibly other specs, to respond to thalamic inputs
@@ -200,6 +203,13 @@ public:
   { return ((LeabraUnitVars*)GetUnitVars())->sev; }
   // #CAT_UnitVar serotonin value 
 
+  inline float& misc_1()
+  { return ((LeabraUnitVars*)GetUnitVars())->misc_1; }
+  // #CAT_UnitVar miscellaneous variable for other algorithms that need it
+  inline int& spk_t()
+  { return ((LeabraUnitVars*)GetUnitVars())->spk_t; }
+  // #CAT_UnitVar time in tot_cycle units when spiking last occurred (-1 for not yet)
+
   inline float& bias_scale()
   { return ((LeabraUnitVars*)GetUnitVars())->bias_scale; }
   // #NO_VIEW #EXPERT #CAT_UnitVar bias weight scaling factor
@@ -209,20 +219,13 @@ public:
   // #NO_VIEW #EXPERT #CAT_UnitVar last activation value sent (only send when diff is over threshold)
   inline float& net_raw()
   { return ((LeabraUnitVars*)GetUnitVars())->net_raw; }
-  // #NO_VIEW #EXPERT #CAT_UnitVar raw net input received from sending units (send delta delta's are added to this value)
+  // #NO_VIEW #EXPERT #CAT_UnitVar raw net input received from sending units (send delta's are added to this value)
   inline float& gi_raw()
   { return ((LeabraUnitVars*)GetUnitVars())->gi_raw; }
   // #NO_VIEW #EXPERT #CAT_UnitVar raw inhib net input received from sending units (increments the deltas in send_delta)
   inline float& deep_raw_sent()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_sent; }
   // #NO_VIEW #EXPERT #CAT_UnitVar last deep_raw activation value sent in computing deep_raw_net
-
-  inline float& misc_1()
-  { return ((LeabraUnitVars*)GetUnitVars())->misc_1; }
-  // #CAT_UnitVar miscellaneous variable for other algorithms that need it
-  inline int& spk_t()
-  { return ((LeabraUnitVars*)GetUnitVars())->spk_t; }
-  // #CAT_UnitVar time in tot_cycle units when spiking last occurred (-1 for not yet)
 
  // TODO: move these to a subclass, with fixed max_delay of float[] guys right inline
 

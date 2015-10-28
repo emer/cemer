@@ -47,8 +47,8 @@ void LVBlockSpec::Initialize() {
 
 void VTAUnitSpec::Initialize() {
   da_val = DA_P;
-  SetUnique("deep_qtr", true);
-  deep_qtr = Q4;
+  SetUnique("deep_raw_qtr", true);
+  deep_raw_qtr = Q4;
   SetUnique("act_range", true);
   act_range.max = 2.0f;
   act_range.min = -2.0f;
@@ -340,7 +340,7 @@ void VTAUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
 }
 
 void VTAUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(Quarter_DeepNow(net->quarter)) {
+  if(Quarter_DeepRawNow(net->quarter)) {
     Compute_Da(u, net, thr_no);
     Send_Da(u, net, thr_no);
   }

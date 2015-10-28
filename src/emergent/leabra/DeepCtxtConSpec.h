@@ -36,19 +36,19 @@ public:
   bool  IsDeepCtxtCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
  
-  inline void Send_DeepCtxtNetDelta(LeabraConGroup* cg, LeabraNetwork* net,
-                                    int thr_no, const float su_act_delta) {
-    const float su_act_delta_eff = cg->scale_eff * su_act_delta;
+  inline void Send_DeepCtxtNetin(LeabraConGroup* cg, LeabraNetwork* net,
+                                 int thr_no, const float su_act) {
+    const float su_act_eff = cg->scale_eff * su_act;
     float* wts = cg->OwnCnVar(WT);
-    float* send_deepnet_vec = net->ThrSendDeepNetTmp(thr_no);
+    float* send_deepnet_vec = net->ThrSendDeepRawNetTmp(thr_no);
 #ifdef TA_VEC_USE
-    Send_NetinDelta_vec(cg, su_act_delta_eff, send_deepnet_vec, wts);
+    Send_NetinDelta_vec(cg, su_act_eff, send_deepnet_vec, wts);
 #else
     CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_deepnet_vec,
-                                         cg->UnIdx(i), su_act_delta_eff));
+                                         cg->UnIdx(i), su_act_eff));
 #endif
   }
-  // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
+  // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_DeepCtxt function on units
 
   // don't send regular net inputs..
   inline void Send_NetinDelta(LeabraConGroup* cg, LeabraNetwork* net, int thr_no, 

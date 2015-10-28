@@ -58,12 +58,12 @@ void BasAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int
     u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
   }
   // must be SUPER units at this point
-  else if(lay->am_deep_net.max < 0.01f) { // not enough yet // was .1f
+  else if(lay->am_deep_mod_net.max < 0.01f) { // not enough yet // was .1f
     u->deep_lrn = 0.0f;    // default is 0!
     u->deep_mod = 1.0f;
   }
   else {
-    u->deep_lrn = u->deep_net / lay->am_deep_net.max; // todo: could not normalize this..
+    u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max; // todo: could not normalize this..
     u->deep_mod = 1.0f;                               // do not modulate with deep_mod!
   }
 }

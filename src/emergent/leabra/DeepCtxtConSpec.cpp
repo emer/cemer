@@ -28,5 +28,5 @@ void DeepCtxtConSpec::GetPrjnName(Projection& prjn, String& nm) {
 
 void DeepCtxtConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   inherited::Trial_Init_Specs(net);
-  // net->net_misc.ti = true;
+  net->deep.ctxt = true;
 }

@@ -149,6 +149,42 @@ private:
   void 	Destroy()	{ };
 };
 
+eTypeDef_Of(LeabraNetDeep);
+
+class E_API LeabraNetDeep : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for DeepLeabra
+INHERITED(taOBase)
+public:
+  enum Quarters {               // #BITS specifies gamma frequency quarters within an alpha-frequency trial on which to do things
+    QNULL = 0x00,              // #NO_BIT no quarter (yeah..)
+    Q1 = 0x01,                 // first quarter
+    Q2 = 0x02,                 // second quarter
+    Q3 = 0x04,                 // third quarter -- posterior cortical minus phase
+    Q4 = 0x08,                 // fourth quarter -- posterior cortical plus phase
+    Q2_Q4 = Q2 | Q4,           // #NO_BIT standard beta frequency option, for bg, pfc
+    QALL = Q1 | Q2 | Q3 | Q4,  // #NO_BIT all quarters
+  };
+
+  bool         on;           // #READ_ONLY #SHOW deep.on was on in some units
+  bool         ctxt;         // #READ_ONLY #SHOW DeepCtxtConSpec's were found -- deep context values will be updated
+  bool         raw_net;      // #READ_ONLY #SHOW SendDeepRawConSpec's were found -- deep_raw_net values will be updated
+  bool         mod_net;      // #READ_ONLY #SHOW SendDeepModConSpec's were found -- deep_mod_net values will be updated
+  Quarters     raw_qtr;      // #READ_ONLY #SHOW aggregated from LeabraUnitSpec deep_raw_qtr values: quarter(s) during which deep_raw layer 5 intrinsic bursting activations should be updated -- deep_raw is updated and sent to deep_raw_net during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
+
+  inline  bool Quarter_DeepRawNow(int qtr)
+  { return raw_qtr & (1 << qtr); }
+
+  inline  bool Quarter_DeepRawPrevQtr(int qtr)
+  { if(qtr == 0) qtr = 3; else qtr--; return raw_qtr & (1 << qtr); }
+
+  String       GetTypeDecoKey() const override { return "Network"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraNetDeep);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 eTypeDef_Of(RelNetinSched);
 
 class E_API RelNetinSched : public taOBase {
@@ -222,6 +258,7 @@ public:
   LeabraTimes     times;        // #CAT_Learning time parameters
   LeabraNetStats  lstats;       // #CAT_Statistic leabra network-level statistics parameters
   LeabraNetMisc	  net_misc;	// misc network level parameters for leabra -- these determine various algorithm variants, typically auto-detected based on the network configuration in Trial_Init_Specs
+  LeabraNetDeep	  deep; 	// flags for what elements of deep computation need to be performed -- typically auto-detected based on the network configuration in Trial_Init_Specs
   RelNetinSched	  rel_netin;	// #CAT_Learning #CONDSHOW_OFF_flags:NETIN_PER_PRJN schedule for computing relative netinput values for each projection -- this is very important data for tuning the network to ensure that each layer has the relative impact it should on other layers -- however it is expensive (only if not using NETIN_PER_PRJN, otherwise it is automatic and these options are disabled), so this schedules it to happen just enough to get the results you want
   bool          unlearnable_trial; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Learning this trial is flagged as being unlearnable -- blocks Compute_dWt and error stats from being computed -- particularly relevant for TI, where the prior context provides no basis for prediction (see also cos_err_lrn_thr) -- flag is automatically reset at start of trial -- must be actively set every trial
 
@@ -274,7 +311,9 @@ public:
 
   float**       unit_vec_vars;
   // #IGNORE vectorized versions of unit variables stored in separate memory for each thread -- n_thrs pointers to N_VEC_VARS * n_units floats -- note that mem access is more efficient if vars are inner dimension, but vectorization load operator only operates on contiguous memory..  can try it both ways and see..
-  float**       thrs_send_deepnet_tmp;
+  float**       thrs_send_deeprawnet_tmp;
+  // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep netinput computation -- float*[threads] array of float[n_units]
+  float**       thrs_send_deepmodnet_tmp;
   // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep netinput computation -- float*[threads] array of float[n_units]
   char**        thrs_lay_avg_max_vals;
   // #IGNORE AvgMaxValsRaw data for layers, by thread
@@ -313,9 +352,12 @@ public:
   // ...
 #endif // SUGP_NETIN
   
-  inline float* ThrSendDeepNetTmp(int thr_no) const 
-  { return thrs_send_deepnet_tmp[thr_no]; }
-  // #IGNORE temporary sending deep_raw netinput memory for given thread 
+  inline float* ThrSendDeepRawNetTmp(int thr_no) const 
+  { return thrs_send_deeprawnet_tmp[thr_no]; }
+  // #IGNORE temporary sending deep_raw_net netinput memory for given thread -- also used for deep_ctxt
+  inline float* ThrSendDeepModNetTmp(int thr_no) const 
+  { return thrs_send_deepmodnet_tmp[thr_no]; }
+  // #IGNORE temporary sending deep_mod_net netinput memory for given thread 
 
   inline AvgMaxValsRaw* ThrLayAvgMax(int thr_no, int lay_idx, AvgMaxVars var) 
   { return (AvgMaxValsRaw*)(thrs_lay_avg_max_vals[thr_no] +
@@ -412,6 +454,12 @@ public:
       // #CAT_QuarterInit compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the Quarter_Init_Unit stage after all the recv ones are computed
       virtual void Compute_NetinScale_Senders_Thr(int thr_no);
       // #IGNORE compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the
+    virtual void Quarter_Init_Deep();
+    // #CAT_QuarterInit quarter deep leabra init: deep_ctxt compute and deep state update
+      virtual void Quarter_Init_Deep_Thr(int thr_no);
+      // #IGNORE quarter deep leabra init: deep_ctxt compute and deep state update
+      virtual void InitDeepRawNetinTmp_Thr(int thr_no);
+      // #IGNORE initialize deep_raw netin temp buffer
 
     virtual void Compute_HardClamp();
     // #CAT_QuarterInit compute hard clamping from external inputs
@@ -458,6 +506,12 @@ public:
   // #IGNORE compute layer and unit-group level stats on net input levels -- needed for inhibition
   virtual void Compute_NetinStats_Post();
   // #IGNORE compute layer and unit-group level stats on net input levels -- needed for inhibition
+  virtual void Compute_DeepModStats_Thr(int thr_no);
+  // #IGNORE compute layer and unit-group level stats on deep_mod_net input levels
+  virtual void Compute_DeepModStats_Post();
+  // #IGNORE compute layer and unit-group level stats on deep_mod_net input levels
+  virtual void InitCycleNetinTmp_Thr(int thr_no);
+  // #IGNORE initialize deep_raw netin temp buffer
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
@@ -502,19 +556,16 @@ public:
   // #CAT_Cycle compute cycle-level stats -- inhibitory conductance AvgMax -- single thread post-step
 
   ///////////////////////////////////////////////////////////////////////
-  //	DeepLeabra Updating -- called after superficial layer updating
+  //	DeepLeabra deep_raw Updating -- called after superficial layer updating
 
-  virtual void Compute_Deep_Thr(int thr_no);
-  // #IGNORE update deep variables, using the proper sequence of unit-level calls
+  virtual void Compute_DeepRaw_Thr(int thr_no);
+  // #IGNORE update deep_raw variables, using the proper sequence of unit-level calls
 
-    virtual void Compute_DeepStats_Thr(int thr_no);
-    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_net vars
-    virtual void Compute_DeepStats_Post();
-    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_net vars
+    virtual void Compute_DeepRawStats_Thr(int thr_no);
+    // #IGNORE compute layer and unit-group level stats on deep_raw vars
+    virtual void Compute_DeepRawStats_Post();
+    // #IGNORE compute layer and unit-group level stats on deep_raw vars
     
-  virtual void Compute_DeepStateUpdt_Thr(int thr_no);
-  // #IGNORE state update for deep leabra -- typically at start of new alpha trial -- copy deep_ctxt from deep_ctxt_net
-  
   virtual void ClearDeepActs();
   // #CAT_Deep clear all the deep lamina variables -- can be useful to do at discontinuities of experience
     virtual void ClearDeepActs_Thr(int thr_no);

@@ -34,11 +34,11 @@ void D1D2UnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int th
     u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
   }
   // must be SUPER units at this point
-  else if(lay->am_deep_net.max < 0.01f) { // not enough yet // was 0.1f
+  else if(lay->am_deep_mod_net.max < 0.01f) { // not enough yet // was 0.1f
     u->deep_lrn = u->deep_mod = 0.0f;    // default is 0!
   }
   else {
-    u->deep_lrn = u->deep_net / lay->am_deep_net.max; // todo: could not normalize this..
+    u->deep_lrn = u->deep_mod_net / lay->am_deep_mod_net.max; // todo: could not normalize this..
     u->deep_mod = deep.mod_min + deep.mod_range * u->deep_lrn;
   }
 }

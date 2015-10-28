@@ -31,3 +31,8 @@ void SendDeepModConSpec::GetPrjnName(Projection& prjn, String& nm) {
   nm = "Deep_Mod_" + nm;
 }
 
+void SendDeepModConSpec::Trial_Init_Specs(LeabraNetwork* net) {
+  inherited::Trial_Init_Specs(net);
+  net->deep.mod_net = true;
+}
+

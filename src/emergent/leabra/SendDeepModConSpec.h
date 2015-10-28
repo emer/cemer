@@ -38,7 +38,7 @@ public:
                                     int thr_no, const float su_act_delta) {
     const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
-    float* send_deepnet_vec = net->ThrSendDeepNetTmp(thr_no);
+    float* send_deepnet_vec = net->ThrSendDeepModNetTmp(thr_no);
 #ifdef TA_VEC_USE
     Send_NetinDelta_vec(cg, su_act_delta_eff, send_deepnet_vec, wts);
 #else
@@ -54,6 +54,7 @@ public:
   inline float Compute_Netin(ConGroup* cg, Network* net, int thr_no) override
   { return 0.0f; }
 
+  void  Trial_Init_Specs(LeabraNetwork* net) override;
   void  GetPrjnName(Projection& prjn, String& nm) override;
 
   TA_SIMPLE_BASEFUNS(SendDeepModConSpec);

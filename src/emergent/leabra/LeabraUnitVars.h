@@ -56,10 +56,11 @@ public:
   float      deep_raw;       // #NO_SAVE #VIEW_HOT #CAT_Activation deep layer raw activation values -- these reflect the raw output from a microcolumn, in the form of layer 5b tufted neurons that project to the thalamus -- they integrate local thresholded input from superficial layer and top-down deep-layer input from other areas, to provide raw attentional and output signal from an area -- this signal drives deep_ctxt temporal integration (TI) for predictive learning, in addition to attention
   float      deep_raw_prv;    // #NO_SAVE #CAT_Activation previous value of the deep layer raw activation values -- used for temporal context learning
   float      deep_raw_pprv;   // #NO_SAVE #CAT_Activation previous-previous value of the deep layer raw activation values -- used for pfc dynamics updating
-  float      deep_ctxt;       // #NO_SAVE #VIEW_HOT #CAT_Activation temporally-delayed local lateral integration of deep_raw signals sent via DeepCtxtConSpec connections to provide context for temporal integration (TI) learning -- added into net input of superficial neurons -- computed at start of new alpha trial
+  float      deep_ctxt;       // #NO_SAVE #VIEW_HOT #CAT_Activation temporally-delayed local lateral integration of deep_raw signals sent via DeepCtxtConSpec connections to provide context for temporal integration (TI) learning -- added into net input of superficial neurons -- computed at start of new alpha trial (quarter after deep_raw_qtr)
   float      deep_mod;        // #NO_SAVE #VIEW_HOT #CAT_Activation current modulating value of deep layer 6 corticothalamic, regular spiking neurons that represents the net attentional filter applied to the superficial layers -- value is computed from deep_net received via SendDeepModConSpec projections from deep layer units, and directly multiplies the superficial activations (act)
   float      deep_lrn;       // #NO_SAVE #VIEW_HOT #CAT_Activation net influence of deep layer dynamics on learning rate for connections into this unit -- typically set to deep_mod prior to enforcing the mod_min floor value, so that baseline deep_mod=0 units get lowest background learning rate
-  float      deep_net;       // #NO_SAVE #CAT_Activation net input from deep layer activations -- use depends on deep.role setting in LeabraUnitSpec: can be local deep context inputs via DeepCtxtConSpec, deep5b driver inputs into thalamic relay cells via SendDeepRawConSpec, or deep mod of superficial neurons sent by SendDeepModConSpec projections from deep layer units
+  float      deep_mod_net;   // #NO_SAVE #CAT_Activation modulatory net input from deep layer activations (representing lamina 6 regular spiking, thalamocortical projecting neurons) via SendDeepModConSpec, drives deep mod of superficial neurons
+  float      deep_raw_net;   // #NO_SAVE #CAT_Activation deep_raw net input from deep layer activations (representing lamina 5b intrinsic bursting neurons), typically for driver inputs into thalamic relay cells via SendDeepRawConSpec
   float      thal;           // #NO_SAVE #VIEW_HOT #CAT_Activation thalamic activation value, driven by a ThalSendUnitSpec or GpiInvUnitSpec -- used by deep params in LeabraUnitSpec and MSNConSpecs, and possibly other specs, to respond to thalamic inputs
   float      thal_cnt;       // #NO_SAVE #CAT_Activation counter for thalamic activation value -- increments for active maintenance in PFCUnitSpec
   float      gc_i;           // #NO_SAVE #CAT_Activation total inhibitory conductance -- does NOT include the g_bar.i
@@ -78,19 +79,16 @@ public:
   float      noise;          // #NO_SAVE #CAT_Activation noise value added to unit (noise_type on unit spec determines where it is added) -- this can be used in learning in some cases
   float      da_p;           // #NO_SAVE #VIEW_HOT #CAT_Activation positive-valence oriented dopamine value -- this typically exhibits phasic bursts (positive values) with unanticipated increases in reward outcomes / expectations, and phasic dips (negative values) with unanticipated decreases thereof.  This value can drive dopaminergic learning rules and activation changes in receiving neurons -- typically sent by VTAUnitSpec units -- see also da_n
   float      da_n;           // #NO_SAVE #VIEW_HOT #CAT_Activation negative-valence oriented dopamine value -- this typically exhibits phasic bursts (positive values) with unanticipated increases in negative outcomes / expectations, and phasic dips (negative values) with unanticipated decreases thereof.  This value can drive dopaminergic learning rules and activation changes in receiving neurons -- typically sent by VTAUnitSpec units with appropriate flags set -- see also da_p
-  
   float      sev;            // #NO_SAVE #CAT_Activation serotonin value 
-
-  float      bias_scale;     // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation bias weight scaling factor
-
-  float      act_sent;       // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last activation value sent (only send when diff is over threshold)
-  float      net_raw;        // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (send delta delta's are added to this value)
-  float      gi_raw;         // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
-  float      deep_raw_sent;  // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last deep_raw activation value sent in computing deep_raw_net
 
   float      misc_1;         // #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   int        spk_t;          // #NO_SAVE #CAT_Activation time in tot_cycle units when spiking last occurred (-1 for not yet)
 
+  float      bias_scale;     // NO_VIEW #NO_SAVE #EXPERT #CAT_Activation bias weight scaling factor
+  float      act_sent;       // NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last activation value sent (only send when diff is over threshold)
+  float      net_raw;        // NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (send delta's are added to this value)
+  float      gi_raw;         // NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
+  float      deep_raw_sent;  // NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last deep_raw activation value sent in computing deep_raw_net
 };
 
 #endif // LeabraUnitVars_h

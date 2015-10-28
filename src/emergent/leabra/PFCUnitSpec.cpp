@@ -40,7 +40,7 @@ void PFCUnitSpec::Initialize() {
 void PFCUnitSpec::Defaults_init() {
   InitDynTable();
   SetUnique("deep", true);
-  deep_qtr = Q2_Q4;
+  deep_raw_qtr = Q2_Q4;
   deep.on = true;
   deep.raw_thr_rel = 0.1f;
   deep.raw_thr_abs = 0.1f; // todo??
@@ -149,8 +149,8 @@ void PFCUnitSpec::UpdateAfterEdit_impl() {
 }
 
 void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(!Compute_DeepTest(u, net, thr_no))
-    return;
+  // if(!Compute_DeepTest(u, net, thr_no))
+  //   return;
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
   int unidx = un->UnitGpUnIdx();
   int dyn_row = unidx % n_dyns;
@@ -183,8 +183,8 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
 }
 
 void PFCUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(!Compute_DeepTest(u, net, thr_no))
-    return;
+  // if(!Compute_DeepTest(u, net, thr_no))
+  //   return;
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
   int unidx = un->UnitGpUnIdx();
@@ -239,8 +239,8 @@ void PFCUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int th
 
 void PFCUnitSpec::Send_DeepNormNetin(LeabraUnitVars* u, LeabraNetwork* net,
                                       int thr_no) {
-  if(!Compute_DeepTest(u, net, thr_no))
-    return;
+  // if(!Compute_DeepTest(u, net, thr_no))
+  //   return;
 
   if(pfc.out_gate) {
     if(u->thal_cnt == 1.0f) {
@@ -257,7 +257,7 @@ float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
 
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
   if(u->thal >= pfc.gate_thr) { // our gate is open
-    net_ex += u->deep_net;  // add in the gated deep inputs!
+    net_ex += u->deep_raw_net;  // add in the gated deep inputs!
   }
   return net_ex;
 }
