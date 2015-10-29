@@ -150,8 +150,8 @@ def make_dir(dir):
 def check_output(cmd):
     try:
         return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
-    except OSError:
-        logging.error("Failed to execute command " + str(cmd) + ": " + str(OSError))
+    except OSError as e:
+        logging.error("Failed to execute command " + str(cmd) + ": " + str(e))
 
 #############################################################################
 
