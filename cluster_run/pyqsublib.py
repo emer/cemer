@@ -417,9 +417,14 @@ class SlurmJobManager( ClusterJobManager ):
             stdoutstr = Popen(cmd,stdout=PIPE).communicate()[0]
         except:
             logging.error("Failed to submit command: %s" % cmd)
+            return False
 
         print stdoutstr
-        self.job_id = re.search('([0-9]+)', stdoutstr).group()
+        try:
+            self.job_id = re.search('([0-9]+)', stdoutstr).group()
+        except Exception as e:
+            logging.error("Submit command failed: " + str(cmd) + ": " + str(e))
+            return False
         cmd = ['mv',self.script_filename,'JOB.'+ self.job_id + '.sh']
         if DEBUG:
             print cmd

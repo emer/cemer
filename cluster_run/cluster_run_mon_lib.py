@@ -132,6 +132,7 @@ job_out_bytes_total = 30000
 #   ABSENT_x  multiple iterations of not finding a status for the job
 #   DONE      if the job completed successfully.
 #   KILLED    if the job was cancelled.
+#   FAILED    if job submission onto the job scheduler failed
 
 # NOTE: it is essential that we only ever send jobs_submit to cluster, and it
 # sends back jobs_running, jobs_done, jobs_archive, etc -- if we attempt
@@ -149,9 +150,16 @@ def make_dir(dir):
 # Don't have subprocess.check_output in Python 2.6.  This will have to do.
 def check_output(cmd):
     try:
-        return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
-    except OSError as e:
-        logging.error("Failed to execute command " + str(cmd) + ": " + str(e))
+        proc_output = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc_output.wait()
+    except Exception as e:
+        raise Exception(str(e) + " while executing " + str(cmd))
+    if (proc_output.returncode != 0):
+        logging.error("Failed to execute command " + str(cmd) + " " + str(proc_output.returncode))
+        raise Exception("Command was not executed successfully: " + proc_output.communicate()[1])
+    return proc_output.communicate()[0]
+    
+
 
 #############################################################################
 
@@ -769,7 +777,11 @@ class SubversionPoller(object):
     def _check_for_updates(self):
         cmd = ['svn', 'update', '--username', self.username, '--force',
                '--accept', 'theirs-full', '--non-interactive', self.repo_dir]
-        svn_update = check_output(cmd)
+        try:
+            svn_update = check_output(cmd)
+        except Exception as e:
+            logging.error("Failed to execute SVN update: " + str(e))
+            return False
 
         # print svn_update
 
@@ -832,7 +844,7 @@ class SubversionPoller(object):
                 status = self.jobs_running.get_val(row, "status") # check right away
                 if status == 'KILLED':
                     self._move_job_to_done(row)
-            elif status == 'DONE' or status == 'KILLED':
+            elif status == 'DONE' or status == 'KILLED' or status == 'FAILED':
                 self._move_job_to_done(row)
 
         # next, go over the done jobs, just to get some job out info if still in window
@@ -880,7 +892,10 @@ class SubversionPoller(object):
         """Get the commit revision and author for the given filename."""
 
         cmd = ['svn', 'info', '--xml', filename]
-        svn_info = check_output(cmd)
+        try:
+            svn_info = check_output(cmd)
+        except Exception as e:
+            return ('0','')
 
         root = ET.fromstring(svn_info)
         try:    revision = root.getiterator('commit')[0].attrib['revision']
@@ -1127,20 +1142,32 @@ class SubversionPoller(object):
             else:
                 cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(mpi_per_node), str(n_threads), run_time, cmd, params]
 
-        result = check_output(cmdsub)
-        # print "result: %s" % result
-
-        re_job = re.compile('created: JOB')
-
-        job_no = ''
-        for l in result.splitlines():
-            if re_job.match(l):
-                job_no = l.split('JOB.')[1].split('.sh')[0]
-
-        # print "job_no: %s" % job_no
-        job_out_file = "JOB." + job_no + ".out"
-
         status = 'SUBMITTED'
+
+        try:
+            result = check_output(cmdsub)
+            #print "result: %s" % result
+
+            re_job = re.compile('created: JOB')
+
+            job_no = ''
+            for l in result.splitlines():
+                if re_job.match(l):
+                    job_no = l.split('JOB.')[1].split('.sh')[0]
+
+            #print "JOB_NO: " + str(job_no) 
+            # print "job_no: %s" % job_no
+            job_out_file = "JOB." + job_no + ".out"
+            job_out = ''
+
+            #print "JOB_FILE: " + job_out_file
+        except Exception as e:
+            job_no = '-1'
+            job_out_file = ""
+            status = 'FAILED'
+            job_out = "FAILED: " + str(e)
+            
+        
 
         # grab current submit info
         self.jobs_running.append_row_from(self.jobs_submit, row)
@@ -1153,6 +1180,7 @@ class SubversionPoller(object):
         self.jobs_running.set_val(run_row, "tag", tag)
         self.jobs_running.set_val(run_row, "status", status)
         self.jobs_running.set_val(run_row, "job_out_file", job_out_file)
+        self.jobs_running.set_val(run_row, "job_out", job_out)
                 
     def _update_note(self, filename, rev, row):
         tag = self.jobs_submit.get_val(row, "tag")
@@ -1179,7 +1207,12 @@ class SubversionPoller(object):
             cmd = [qdel_cmd, qdel_args, job_no] 
         else:
             cmd = [qdel_cmd, job_no]
-        del_out = check_output(cmd)
+        try:
+            del_out = check_output(cmd)
+        except Exception as e:
+            logging.error("Failed to delete job: " + str(e))
+            return
+                          
         if debug:
             print "killed job: %s output: %s" % (job_no, del_out)
         # update jobs running so that job is correctly marked at KILLED instead of DONE
@@ -1401,7 +1434,10 @@ class SubversionPoller(object):
             cmd = [qstat_cmd, qstat_args, job_no]
         else:
             cmd = [qstat_cmd, job_no]
-        q_out = check_output(cmd)
+        try:
+            q_out = check_output(cmd)
+        except Exception as e:
+            logging.error("Failed to get qstat: " + str(e))
 
         got_status = False
 
@@ -1477,7 +1513,10 @@ class SubversionPoller(object):
             cmd = [qstat_cmd, qstat_args, job_no]
         else:
             cmd = [qstat_cmd, job_no]
-        q_out = check_output(cmd)
+        try:
+            q_out = check_output(cmd)
+        except Exception as e:
+            logging.error("Failed to qstat: " + str(e))
 
         # regexp for output of qstat that tells you that the job is running
         qstat_running_re = r"^usage"
@@ -1930,7 +1969,10 @@ class SubversionPoller(object):
             cmd = [showq_cmd, showq_args]
         else:
             cmd = [showq_cmd]
-        show_out = check_output(cmd)
+        try:
+            show_out = check_output(cmd)
+        except Exception as e:
+            logging.error("Failed to qstat: " + str(e))
         
         # always read from file to get current format, then reset
         self.cluster_info.load_from_file(self.cluster_info_file)
@@ -1988,7 +2030,11 @@ class SubversionPoller(object):
         cmd = [showq_cmd] + showq_args
         if debug:
             logging.info("Cmd:" + str(cmd))
-        show_out = check_output(cmd)
+        try:
+            show_out = check_output(cmd)
+        except Exception as e:
+            logging.error("Failed to get cluster info from slurm: " + str(e))
+            show_out = ""
         
         # always read from file to get current format, then reset
         self.cluster_info.load_from_file(self.cluster_info_file)
