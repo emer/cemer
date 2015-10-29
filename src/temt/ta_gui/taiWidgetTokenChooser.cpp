@@ -190,8 +190,12 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
       continue;
     }
     // keeps templates out of the list of actual instances
-    if (!parent || parent->GetName() == "root")
+    if (!parent)
       continue;
+    // allow root as parent if type is project
+    if ((parent->GetName() == "root") && (!btmp->InheritsFrom(&TA_taProject)))
+      continue;
+
     // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
     taBase* owner = btmp->GetOwner();
     if (owner) {
