@@ -672,7 +672,7 @@ class SubversionPoller(object):
         self.sub_re_comp = re.compile(
             r'^\s*[AUGR]\s+(%s/[^/]+/submit/.*)' % esc_repo_dir)
         self.mod_re_comp = re.compile(
-            r'^\s*[AUGR]\s+(%s/[^/]+/models/.*)' % esc_repo_dir)
+            r'^\s*[AUGR]\s+(%s/[^/]+/models/.*\.proj)' % esc_repo_dir)
         
     def _get_all_submit_files(self):
         submit_files = []
