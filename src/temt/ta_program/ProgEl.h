@@ -174,7 +174,9 @@ public:
   // #IGNORE save the latest successfully compiled code
 
   void                  UpdatePointersAfterCopy_(const taBase& cp) override;
-
+  void                  UpdateAfterMove(taBase* old_owner) override;
+  // #IGNORE called after object has been moved from one location to another in the object hierarchy (i.e., list Transfer fun) -- actual functions should be put in the _impl version which should call inherited:: etc just as for UAE -- use for updating pointers etc
+  
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;

@@ -73,7 +73,12 @@ void ProgramCallBase::GenCssArgSet_impl(Program* prog, const String trg_var_nm) 
 void ProgramCallBase::UpdateArgs() {
   Program* trg = GetTarget_Compile();
   if(!trg) return;
-
+  
+  if (!trg->InheritsFrom(&TA_Program)) {
+    taMisc::Error("ProgramCallBase::UpdateArgs trg type bad! - programmer error - please report");
+    return;
+  }
+  
   bool any_changes = prog_args.UpdateFromVarList(trg->args);
   // now go through and set default value for variables of same name in this program
   Program* prg = GET_MY_OWNER(Program);

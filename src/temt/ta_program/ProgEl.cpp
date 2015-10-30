@@ -141,6 +141,25 @@ void ProgEl::UpdateAfterEdit_impl() {
   pre_compile_code_string = BrowserEditString();  // hold on to the current code; if compile successful copy to
 }
 
+void ProgEl::UpdateAfterMove(taBase* old_owner) {
+  Program* old_par = NULL;
+  Program* new_par = NULL;
+  if (old_owner) {
+    if (old_owner->InheritsFrom(&TA_Program)) {
+      old_par = (Program*)old_owner;
+    }
+    else {
+      old_par = (Program*)old_owner->GetOwnerOfType(&TA_Program);
+    }
+  }
+  
+  new_par = (Program*)this->GetOwnerOfType(&TA_Program);
+  
+  if (old_par && new_par && old_par != new_par) {
+    UpdatePointers_NewPar(old_par, new_par); // update any pointers within this guy
+  }
+}
+
 void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
   inherited::UpdateAfterMove_impl(old_owner);
   
