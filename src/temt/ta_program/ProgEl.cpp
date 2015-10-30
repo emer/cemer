@@ -194,6 +194,25 @@ void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
     // then do it again if moving between projects
 }
 
+void ProgEl::UpdatePointersAfterCopy_(const taBase& cp) {
+  if (taMisc::is_loading) {
+    return;
+  }
+  taBase* owner = GetOwner();
+  if (owner) {
+    if (!owner->HasBaseFlag(COPYING)) {
+      // to update pointers for program elements we need the parent of typedef program
+      Program* old_par_program = (Program*)cp.GetOwnerOfType(&TA_Program);
+      Program* new_par_program = (Program*)this->GetOwnerOfType(&TA_Program);
+      if (old_par_program && new_par_program && old_par_program != new_par_program) {
+        UpdatePointers_NewPar(old_par_program, new_par_program); // update any pointers within this guy
+      }
+    }
+  }
+//  // for work we can't handle generically
+//  UpdatePointersAfterCopy_impl(cp);
+}
+
 void ProgEl::UpdatePointersAfterCopy_impl(const taBase& cp) {
   inherited::UpdatePointersAfterCopy_impl(cp);
   

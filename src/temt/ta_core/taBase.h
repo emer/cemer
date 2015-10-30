@@ -988,7 +988,7 @@ public:
   ///////////////////////////////////////////////////////////////////////////
   //    Updating of object properties
 public:
-  void                  UpdatePointersAfterCopy_(const taBase& cp);
+  virtual void          UpdatePointersAfterCopy_(const taBase& cp);
   virtual void          UpdatePointersAfterCopy_impl(const taBase& cp) { };
   virtual void          UpdateAfterEdit();
   // #CAT_ObjectMgmt (aka UAE) called after editing, or any user change to members (eg. in the interface, script)

@@ -170,9 +170,10 @@ public:
 
   virtual  bool         IsCtrlProgEl()  { return false; }
   // #IGNORE set this to true for any program element that is a basic control element, such as loops (for, while), if, switch, etc -- these have special parsing status
-
   virtual void          UpdateProgCode();
   // #IGNORE save the latest successfully compiled code
+
+  void                  UpdatePointersAfterCopy_(const taBase& cp) override;
 
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
