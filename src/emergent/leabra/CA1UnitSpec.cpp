@@ -93,6 +93,7 @@ void CA1UnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int 
     if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    if(!cs->DoesStdNetin()) continue; // skip any special guys
 
     if(from->name.contains("EC")) {
       if(!theta.mod_ec_out && from->name.contains("out"))

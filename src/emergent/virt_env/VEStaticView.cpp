@@ -109,7 +109,7 @@ void VEStaticView::Render_pre() {
 //       // NOTE: do NOT use Info or Error here: ProcessEvents at this point is BAD
 // //       ob->ClearStaticFlag(VEStatic::FM_FILE);
 
-    if((bool)ob->texture && wv) {
+    if((bool)ob->texture && wv && wv->node_so()) {
       // SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
       // SoSwitch* txfsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
       // VETexture* vtex = ob->texture.ptr();
@@ -187,7 +187,7 @@ void VEStaticView::Render_pre() {
 //       ob->ClearStaticFlag(VEStatic::FM_FILE);
     }
 
-    if((bool)ob->texture && wv) {
+    if((bool)ob->texture && wv && wv->node_so()) {
       SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
       SoSwitch* txfsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
       VETexture* vtex = ob->texture.ptr();

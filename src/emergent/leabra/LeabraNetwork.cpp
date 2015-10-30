@@ -632,15 +632,13 @@ void LeabraNetwork::Quarter_Init_Counters() {
 }
 
 void LeabraNetwork::Quarter_Init_Unit() {
-#if 1                           // todo: try this out
-  NET_THREAD_CALL(LeabraNetwork::Quarter_Init_Unit_Thr);
-#else
-  for(int i=1; i<n_units_built; i++) {
-    int thr_no = UnThr(i);
-    LeabraUnitVars* uv = (LeabraUnitVars*)UnUnitVars(i);
-    ((LeabraUnitSpec*)uv->unit_spec)->Quarter_Init_Unit(uv, this, thr_no);
+  // NOTE: *everyone* has to init netins when scales change across quarters, because any existing netin has already been weighted at the previous scaled -- no way to rescale that aggregate -- just have to start over..
+  if((phase == LeabraNetwork::PLUS_PHASE && net_misc.diff_scale_p) ||
+     (quarter == 1 && net_misc.diff_scale_q1)) {
+    Init_Netins();
   }
-#endif
+
+  NET_THREAD_CALL(LeabraNetwork::Quarter_Init_Unit_Thr);
 }
 
 void LeabraNetwork::Quarter_Init_Unit_Thr(int thr_no) {

@@ -29,6 +29,9 @@ class E_API MarkerConSpec : public LeabraConSpec {
   // connection spec that marks special projections: doesn't send netin or adapt weights
 INHERITED(LeabraConSpec)
 public:
+  bool  DoesStdNetin() override { return false; }
+  bool  DoesStdDwt() override { return true; }
+
   // don't send regular net inputs or learn!
   void Send_NetinDelta(LeabraConGroup*, LeabraNetwork* net, int thr_no, 
 				float su_act_delta_eff) override { };

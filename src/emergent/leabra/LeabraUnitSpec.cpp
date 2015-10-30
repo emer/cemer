@@ -958,19 +958,8 @@ void LeabraUnitSpec::Quarter_Init_PrvVals(LeabraUnitVars* u, LeabraNetwork* net,
 
 void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   // this is all receiver-based and done only at beginning of each quarter
-  Unit* un = u->Un(net, thr_no);
   bool plus_phase = (net->phase == LeabraNetwork::PLUS_PHASE);
-  bool init_netin = false;
-  // NOTE: *everyone* has to init netins when scales change across quarters, because any existing netin has already been weighted at the previous scaled -- no way to rescale that aggregate -- just have to start over..
-  if((plus_phase && net->net_misc.diff_scale_p) ||
-     (net->quarter == 1 && net->net_misc.diff_scale_q1)) {
-    init_netin = true;
-  }
-
-  if(init_netin) {
-    Init_Netins(u, net, thr_no);
-  }
-
+  Unit* un = u->Un(net, thr_no);
   float net_scale = 0.0f;
   float inhib_net_scale = 0.0f;
   float deep_raw_scale = 0.0f;
@@ -1180,13 +1169,12 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
       for(int g=0; g< nsg; g++) {
         LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
         if(send_gp->NotActive()) continue;
-        if(deep.SendDeepMod()) {
-          LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
-          if(cs->IsDeepModCon()) {
-            SendDeepModConSpec* sp = (SendDeepModConSpec*)cs;
-            sp->Send_DeepModNetDelta(send_gp, net, thr_no, act_delta);
-          }
+        LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+        if(deep.SendDeepMod() && cs->IsDeepModCon()) {
+          SendDeepModConSpec* sp = (SendDeepModConSpec*)cs;
+          sp->Send_DeepModNetDelta(send_gp, net, thr_no, act_delta);
         }
+        if(!cs->DoesStdNetin()) continue;
         LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
         if(tol->hard_clamped)      continue;
         ((LeabraConSpec*)send_gp->con_spec)->Send_NetinDelta(send_gp, net, thr_no,
@@ -1204,13 +1192,12 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
     for(int g=0; g< nsg; g++) {
       LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
       if(send_gp->NotActive()) continue;
-      if(deep.SendDeepMod()) {
-        LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
-        if(cs->IsDeepModCon()) {
-          SendDeepModConSpec* sp = (SendDeepModConSpec*)cs;
-          sp->Send_DeepModNetDelta(send_gp, net, thr_no, act_delta);
-        }
+      LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+      if(deep.SendDeepMod() && cs->IsDeepModCon()) {
+        SendDeepModConSpec* sp = (SendDeepModConSpec*)cs;
+        sp->Send_DeepModNetDelta(send_gp, net, thr_no, act_delta);
       }
+      if(!cs->DoesStdNetin()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->hard_clamped)        continue;
       ((LeabraConSpec*)send_gp->con_spec)->Send_NetinDelta(send_gp, net, thr_no,
