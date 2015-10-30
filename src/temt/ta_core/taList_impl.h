@@ -97,7 +97,8 @@ public:
   void ChildUpdateAfterEdit(taBase* child, bool& handled) override;
   void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 
-  taBase*       CopyChildBefore(taBase* src, taBase* child_pos) override;
+taBase*       CopyChildBefore(taBase* src, taBase* child_pos) override;
+taBase*       CopyChildBeforeIndex(taBase* src, int child_pos) override;
 
   String&       Print(String& strm, int indent = 0) const override;
 

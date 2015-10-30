@@ -639,13 +639,18 @@ bool taList_impl::CloseLater_Child(taBase* obj) {
 taBase* taList_impl::CopyChildBefore(taBase* src, taBase* child_pos) {
   int idx = FindEl(child_pos);
   if(idx < 0) idx = size;
+  return CopyChildBeforeIndex(src, idx);
+}
+
+taBase* taList_impl::CopyChildBeforeIndex(taBase* src, int child_pos) {
   taBase* new_obj = src->MakeToken();
-  Insert(new_obj, idx);
+  Insert(new_obj, child_pos);
   new_obj->UnSafeCopy(src);
   new_obj->SetName(src->GetName());
   new_obj->UpdateAfterEdit();
   return new_obj;
 }
+
 
 String taList_impl::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
                               bool force_inline) const {

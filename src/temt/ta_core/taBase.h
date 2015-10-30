@@ -1508,6 +1508,8 @@ public:
 
   virtual taBase*       CopyChildBefore(taBase* src, taBase* child_pos) { return NULL; }
   // #CAT_ListMgmt implemented by container (list) objects: make a copy of the src object and insert it at the position of the child_pos object within this list -- copies the name of the object too
+  virtual taBase*       CopyChildBeforeIndex(taBase* src, int child_pos) { return NULL; }
+  // #CAT_ListMgmt implemented by container (list) objects: make a copy of the src object and insert it at the position of the child_pos object within this list -- copies the name of the object too
 
 
   ///////////////////////////////////////////////////////////////////////////
