@@ -256,21 +256,25 @@ bool ProgramCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 
 bool ProgramCall::CvtFmCode(const String& code) {
   String cd = code;
-//  if(cd.startsWith("Call "))  // before 7.8.? we used Call but now just program_name()
-//    cd = cd.after("Call ");   // so this is for older projects
-//  if(cd.startsWith("call "))
-//    cd = cd.after("call ");
   String lhs = cd;
   if(lhs.contains('('))
     lhs = lhs.before('(');
-  String func_name = lhs;
-  taProject* proj = GetMyProj();
-  if(!proj)
+  String program_name = lhs;
+  Program* my_program = program();
+  Program_Group* my_group = (Program_Group*)my_program->GetOwnerOfType(&TA_Program_Group);
+  if(!my_group)
     return false;
-  Program* prg = proj->programs.FindLeafName(func_name);
-  if(!prg)
+  Program* target_program = my_group->FindLeafNameType(program_name);
+  // if not found in our group use first occurence in project
+  if (!target_program) {
+    taProject* proj = GetMyProj();
+    if(!proj)
+      return false;
+    target_program = proj->programs.FindLeafName(program_name);
+  }
+  if(!target_program)
     return false;
-  target = prg;
+  target = target_program;
   UpdateAfterEdit_impl();                          // update based on targ
   // now tackle the args
   String args = trim(cd.after('('));
