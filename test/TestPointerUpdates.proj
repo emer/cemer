@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.4.0 rev8834
+// ta_Dump File v3.0 -- code v7.8.4.0 rev8835
 LeabraProject .projects["TestPointerUpdates"] { 
  Doc_Group @.docs = [0] {
  };
@@ -339,7 +339,8 @@ LeabraProject .projects["TestPointerUpdates"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [0] {
+    ProgVar_List @.vars = [1] {
+     ProgVar @["group_name"] { };
     };
 
     Function_List @.functions = [0] {
@@ -348,21 +349,23 @@ LeabraProject .projects["TestPointerUpdates"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [2] {
+    ProgEl_List @.prog_code = [4] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [0] {
       };
      };
-     ProgramCall @[1] { 
+     AssignExpr @[1] { };
+     ProgramCall @[2] { 
       ProgArg_List @.prog_args = [0] {
       };
      };
+     OtherProgramVar @[3] { };
     };
    };
   };
   Program_Group @.gp["group_two"] { 
   };
-  Program_Group @.gp["TestPrograms"] = [1] { 
+  Program_Group @.gp["TestPrograms"] = [2] { 
    Program @["copy_callee_caller"] { 
     ProgObjList @.objs = [0] {
     };
@@ -402,6 +405,80 @@ LeabraProject .projects["TestPointerUpdates"] {
        ProgArg @[1] { };
       };
      };
+    };
+   };
+   Program @["call_caller"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [4] {
+     ProgVar @["group_two"] { };
+     ProgVar @["group_one"] { };
+     ProgVar @["which_group"] { };
+     ProgVar @["group_name"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [6] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["myProgram"] { };
+      };
+     };
+     If @[1] { 
+      ProgEl_List @.true_code = [1] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [1] {
+	 ProgArg @[0] { };
+	};
+       };
+      };
+     };
+     ElseIf @[2] { 
+      ProgEl_List @.true_code = [1] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [1] {
+	 ProgArg @[0] { };
+	};
+       };
+      };
+     };
+     If @[3] { 
+      ProgEl_List @.true_code = [1] {
+       AssignExpr @[0] { };
+      };
+     };
+     Else @[4] { 
+      ProgEl_List @.else_code = [3] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [1] {
+	 ProgArg @[0] { };
+	};
+       };
+       MethodCall @[1] { 
+	ProgArg_List @.meth_args = [1] {
+	 ProgArg @[0] { };
+	};
+       };
+       MethodCall @[2] { 
+	ProgArg_List @.meth_args = [1] {
+	 ProgArg @[0] { };
+	};
+       };
+      };
+     };
+     PrintVar @[5] { };
     };
    };
   };
@@ -2711,6 +2788,15 @@ LeabraProject .projects["TestPointerUpdates"] {
      name="vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @["group_name"] {
+      name="group_name";
+      var_type=T_String;
+      objs_ptr=0;
+      flags=USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -2737,7 +2823,17 @@ LeabraProject .projects["TestPointerUpdates"] {
        el_def=0;
       };
      };
-     ProgramCall @[1] {
+     AssignExpr @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="group_name = \"\"";
+      pre_compile_code_string="group_name = \"\"";
+      result_var=.projects["TestPointerUpdates"].programs.gp["group_one"]["Caller"].vars["group_name"]$$;
+      expr {
+       expr="\"\"";
+      };
+     };
+     ProgramCall @[2] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Callee()";
@@ -2749,6 +2845,18 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       target=.projects["TestPointerUpdates"].programs.gp["group_one"]["Callee"]$$;
       targ_ld_init="*Callee*";
+     };
+     OtherProgramVar @[3] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="Vars Fm:  program=Callee set=from  var_1=group_name  var_2=?  var_3=?  var_4=? ";
+      pre_compile_code_string="Vars Fm:  program=Callee set=from  var_1=group_name  var_2=?  var_3=?  var_4=? ";
+      other_prog=$.projects["TestPointerUpdates"].programs.gp["group_one"]["Callee"]$;
+      set_other=0;
+      var_1=$.projects["TestPointerUpdates"].programs.gp["group_one"]["Caller"].vars["group_name"]$;
+      var_2=NULL;
+      var_3=NULL;
+      var_4=NULL;
      };
     };
     step_prog=NULL;
@@ -2937,6 +3045,327 @@ LeabraProject .projects["TestPointerUpdates"] {
     step_prog=NULL;
     step_n=1;
    };
+   Program @["call_caller"] {
+    name="call_caller";
+    short_nm="cllcll";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="ProgObjList_6";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="ProgType_List_1";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_1";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_1";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["group_two"] {
+      name="group_two";
+      var_type=T_Object;
+      object_type=Program_Group;
+      object_val=$.projects["TestPointerUpdates"].programs.gp["group_two"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["group_one"] {
+      name="group_one";
+      var_type=T_Object;
+      object_type=Program_Group;
+      object_val=.projects["TestPointerUpdates"].programs.gp["group_one"]$$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["which_group"] {
+      name="which_group";
+      var_type=T_Int;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["group_name"] {
+      name="group_name";
+      var_type=T_String;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="Function_List_6";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_64";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_65";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      code_string=;
+      pre_compile_code_string=;
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["myProgram"] {
+	name="myProgram";
+	var_type=T_Object;
+	object_type=Program;
+	object_val=NULL;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     If @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="if (which_group == 1)";
+      pre_compile_code_string="if (which_group == 1)";
+      cond {
+       expr="which_group == 1";
+      };
+      true_code {
+       name="true_code";
+       el_typ=ProgCode;
+       el_def=0;
+       MethodCall @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="group_one.FindLeafName()";
+	pre_compile_code_string="myProgram = group_one->FindLeafName(\"Caller\")";
+	result_var=.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["call_caller"].prog_code[0].local_vars["myProgram"]$$;
+	obj=.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["call_caller"].vars["group_one"]$$;
+	method=taGroup_Program_::FindLeafName;
+	meth_args {
+	 name="meth_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=const_taString_ref;
+	  type="taString&";
+	  name="item_nm";
+	  required=1;
+	  def_val=;
+	  prev_expr=;
+	  expr {
+	   expr="\"Caller\"";
+	  };
+	 };
+	};
+	meth_sig="Program_ptr FindLeafName(taString& item_nm)";
+	meth_desc=" Find element anywhere in full group and subgroups with given name (item_nm)";
+       };
+      };
+     };
+     ElseIf @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="else if (which_group == 2)";
+      pre_compile_code_string="else if (which_group == 2)";
+      cond {
+       expr="which_group == 2";
+      };
+      true_code {
+       name="true_code";
+       el_typ=ProgCode;
+       el_def=0;
+       MethodCall @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="group_one.FindLeafName()";
+	pre_compile_code_string="myProgram = group_two->FindLeafName(\"Caller\")";
+	result_var=$.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["call_caller"].prog_code[0].local_vars["myProgram"]$;
+	obj=.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["call_caller"].vars["group_two"]$$;
+	method=taGroup_Program_::FindLeafName;
+	meth_args {
+	 name="meth_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=const_taString_ref;
+	  type="taString&";
+	  name="item_nm";
+	  required=1;
+	  def_val=;
+	  prev_expr=;
+	  expr {
+	   expr="\"Caller\"";
+	  };
+	 };
+	};
+	meth_sig="Program_ptr FindLeafName(taString& item_nm)";
+	meth_desc=" Find element anywhere in full group and subgroups with given name (item_nm)";
+       };
+      };
+     };
+     If @[3] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="if (myProgram == NULL)";
+      pre_compile_code_string="if (myProgram == NULL)";
+      cond {
+       expr="myProgram == NULL";
+      };
+      true_code {
+       name="true_code";
+       el_typ=ProgCode;
+       el_def=0;
+       AssignExpr @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="group_name = \"NONE\"";
+	pre_compile_code_string="group_name = \"NONE\"";
+	result_var=.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["call_caller"].vars["group_name"]$$;
+	expr {
+	 expr="\"NONE\"";
+	};
+       };
+      };
+     };
+     Else @[4] {
+      desc=;
+      flags=0;
+      code_string=;
+      pre_compile_code_string=;
+      else_code {
+       name="else_code";
+       el_typ=ProgCode;
+       el_def=0;
+       MethodCall @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="myProgram->CallInit(this)";
+	pre_compile_code_string="myProgram->CallInit(this)";
+	result_var=NULL;
+	obj=$.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["call_caller"].prog_code[0].local_vars["myProgram"]$;
+	method=Program::CallInit;
+	meth_args {
+	 name="meth_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=Program_ptr;
+	  type="Program*";
+	  name="caller";
+	  required=1;
+	  def_val=;
+	  prev_expr=;
+	  expr {
+	   expr="this";
+	  };
+	 };
+	};
+	meth_sig="int CallInit(Program* caller)";
+	meth_desc=" runs the program's Init from a superProg Init, 0=success";
+       };
+       MethodCall @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="myProgram->Call()";
+	pre_compile_code_string="myProgram->Call(this)";
+	result_var=NULL;
+	obj=$.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["call_caller"].prog_code[0].local_vars["myProgram"]$;
+	method=Program::Call;
+	meth_args {
+	 name="meth_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=Program_ptr;
+	  type="Program*";
+	  name="caller";
+	  required=1;
+	  def_val=;
+	  prev_expr=;
+	  expr {
+	   expr="this";
+	  };
+	 };
+	};
+	meth_sig="int Call(Program* caller)";
+	meth_desc=" runs the program as a subprogram called from another running program, 0=success -- args are passed by setting global args variables in advance of calling";
+       };
+       MethodCall @[2] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="myProgram->GetVar(group_name)";
+	pre_compile_code_string="group_name = myProgram->GetVar(\"group_name\")";
+	result_var=$.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["call_caller"].vars["group_name"]$;
+	obj=$.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["call_caller"].prog_code[0].local_vars["myProgram"]$;
+	method=Program::GetVar;
+	meth_args {
+	 name="meth_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=const_taString_ref;
+	  type="taString&";
+	  name="var_nm";
+	  required=1;
+	  def_val=;
+	  prev_expr=;
+	  expr {
+	   expr="\"group_name\"";
+	  };
+	 };
+	};
+	meth_sig="Variant GetVar(taString& var_nm)";
+	meth_desc=" get the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program";
+       };
+      };
+     };
+     PrintVar @[5] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="Print  group_name";
+      pre_compile_code_string="Print  group_name";
+      message=;
+      print_var=$.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["call_caller"].vars["group_name"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      debug=0;
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
   };
  };
  viewers {
@@ -2960,12 +3389,12 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9972613;
+     value 8 0=0.9968685;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7988709;
+     value 8 0=0.7984863;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -3159,22 +3588,22 @@ LeabraProject .projects["TestPointerUpdates"] {
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 8 0=0;
+       value 8 0=-0.002087683;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.02046577;
+       value 8 0=0.02554399;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.03208138;
+       value 8 0=0.04279749;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7325335;
+       value 8 0=0.7114475;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
