@@ -1069,14 +1069,14 @@ void Network::Connect_Alloc() {
   if(all_dmem_sum_dwts_size > 0) {
     net_aligned_malloc((void**)&all_dmem_sum_dwts_send,
                        all_dmem_sum_dwts_size * sizeof(float));
-    net_aligned_malloc((void**)&all_dmem_sum_dwts_recv[thr_no],
+    net_aligned_malloc((void**)&all_dmem_sum_dwts_recv,
                        all_dmem_sum_dwts_size * sizeof(float));
 
     // allocate to thread separate blocks
     int64_t cidx = 0;
     for(int thr_no=0; thr_no<n_thrs_built; thr_no++) {
-      thrs_mem_sum_dwts_send[thr_no] = all_dmem_sum_dwts_send + cidx;
-      thrs_mem_sum_dwts_recv[thr_no] = all_dmem_sum_dwts_recv + cidx;
+      thrs_dmem_sum_dwts_send[thr_no] = all_dmem_sum_dwts_send + cidx;
+      thrs_dmem_sum_dwts_recv[thr_no] = all_dmem_sum_dwts_recv + cidx;
       cidx += thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no];
     }
   }
@@ -2397,32 +2397,34 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 
   double timer2s = MPI_Wtime();
 
-  if(taMisc::thread_defaults.alt_mpi) {
-    dmem_trl_comm.my_reduce->allreduce
-      (all_dmem_sum_dwts_send, all_dmem_sum_dwts_recv, all_dmem_sum_dwts_size);
+  if(false) {			// one big call
+    if(taMisc::thread_defaults.alt_mpi) {
+      dmem_trl_comm.my_reduce->allreduce
+	(all_dmem_sum_dwts_send, all_dmem_sum_dwts_recv, all_dmem_sum_dwts_size);
+    }
+    else {
+      DMEM_MPICALL(MPI_Allreduce
+		   (all_dmem_sum_dwts_send, all_dmem_sum_dwts_recv,
+		    all_dmem_sum_dwts_size, MPI_FLOAT, MPI_SUM, comm),
+		   "Network::SumDWts", "Allreduce");
+    }
   }
   else {
-    DMEM_MPICALL(MPI_Allreduce
-                 (all_dmem_sum_dwts_send, all_dmem_sum_dwts_recv,
-                  all_dmem_sum_dwts_size, MPI_FLOAT, MPI_SUM, comm),
-                 "Network::SumDWts", "Allreduce");
+    for(int i=0; i<n_thrs_built; i++) {
+      int64_t n_floats = thrs_own_cons_tot_size[i] + thrs_n_units[i];
+      if(taMisc::thread_defaults.alt_mpi) {
+	dmem_trl_comm.my_reduce->allreduce
+	  (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i], n_floats);
+	}
+      else {
+	DMEM_MPICALL(MPI_Allreduce
+		     (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i],
+		      n_floats, MPI_FLOAT, MPI_SUM, comm),
+		     "Network::SumDWts", "Allreduce");
+      }
+    }
   }
-  // int64_t tot_floats = 0;
-  // for(int i=0; i<n_thrs_built; i++) {
-  //   int64_t n_floats = thrs_own_cons_tot_size[i] + thrs_n_units[i];
-  //   tot_floats += n_floats;
-  
-  //   if(taMisc::thread_defaults.alt_mpi) {
-  //     dmem_trl_comm.my_reduce->allreduce
-  //       (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i], n_floats);
-  //   }
-  //   else {
-  //     DMEM_MPICALL(MPI_Allreduce
-  //                  (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i],
-  //                   n_floats, MPI_FLOAT, MPI_SUM, comm),
-  //                  "Network::SumDWts", "Allreduce");
-  //   }
-  // }
+
   double timer2e = MPI_Wtime();
 
   NET_THREAD_CALL(Network::DMem_SumDWts_FmTmp_Thr);
