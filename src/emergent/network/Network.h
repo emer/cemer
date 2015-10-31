@@ -356,6 +356,11 @@ public:
 
   float**       thrs_send_netin_tmp; // #IGNORE #CAT_Threads temporary storage for threaded sender-based netinput computation -- float*[threads] array of float[n_units]
 
+#ifdef DMEM_COMPILE
+  float**       thrs_dmem_sum_dwts_send; // #IGNORE #CAT_Threads temporary storage for threaded dmem sum dwts sync operation -- float*[threads] array of float[thrs_own_cons_tot_size + thrs_n_units] per thread (n_units for bias weights)
+  float**       thrs_dmem_sum_dwts_recv; // #IGNORE #CAT_Threads temporary storage for threaded dmem sum dwts sync operation -- float*[threads] array of float[thrs_own_cons_tot_size + thrs_n_units] per thread (n_units for bias weights)
+#endif
+
   ProjectBase*  proj;           // #IGNORE ProjectBase this network is in
 
   inline void           SetNetFlag(NetFlags flg)   { flags = (NetFlags)(flags | flg); }
@@ -1041,6 +1046,10 @@ public:
   // #IGNORE initialize aggregation stuff
   virtual void  DMem_SumDWts(MPI_Comm comm);
   // #IGNORE sync weights across trial-level dmem by summing delta-weights across processors (prior to computing weight updates)
+  virtual void  DMem_SumDWts_ToTmp_Thr(int thr_no);
+  // #IGNORE copy to temp send buffer for sending, per thread
+  virtual void  DMem_SumDWts_FmTmp_Thr(int thr_no);
+  // #IGNORE copy from temp recv buffer, per thread
   virtual void  DMem_ComputeAggs(MPI_Comm comm);
   // #IGNORE aggregate network variables across procs for trial-level dmem
 #endif

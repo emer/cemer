@@ -179,7 +179,8 @@ void Network::Initialize() {
   thrs_send_netin_tmp = NULL;
 
 #ifdef DMEM_COMPILE
-  // dmem_trl_comm = ??
+  thrs_dmem_sum_dwts_send = NULL;
+  thrs_dmem_sum_dwts_recv = NULL;
   dmem_agg_sum.agg_op = MPI_SUM;
 #endif
 }
@@ -653,6 +654,10 @@ void Network::FreeConThreadMem() {
 
     net_free((void**)&thrs_recv_cons_mem[i]);
     net_free((void**)&thrs_send_cons_mem[i]);
+#ifdef DMEM_COMPILE    
+    net_free((void**)&thrs_dmem_sum_dwts_send[i]);
+    net_free((void**)&thrs_dmem_sum_dwts_recv[i]);
+#endif
   }
 
   // first all the doubly-allocated by-thread guys from above
@@ -665,6 +670,11 @@ void Network::FreeConThreadMem() {
   net_free((void**)&thrs_recv_cons_mem);
   net_free((void**)&thrs_send_cons_mem);
 
+#ifdef DMEM_COMPILE
+  net_free((void**)&thrs_dmem_sum_dwts_send);
+  net_free((void**)&thrs_dmem_sum_dwts_recv);
+#endif
+  
   // now go back and get the rest
   net_free((void**)&thrs_own_cons_max_size);
   net_free((void**)&thrs_own_cons_tot_size);
@@ -1012,6 +1022,11 @@ void Network::Connect_Alloc() {
   net_aligned_malloc((void**)&thrs_tmp_not_chunks, n_thrs_built * sizeof(int*));
   net_aligned_malloc((void**)&thrs_tmp_con_mem, n_thrs_built * sizeof(float*));
 
+#ifdef DMEM_COMPILE
+  net_aligned_malloc((void**)&thrs_dmem_sum_dwts_send, n_thrs_built * sizeof(float*));
+  net_aligned_malloc((void**)&thrs_dmem_sum_dwts_recv, n_thrs_built * sizeof(float*));
+#endif
+  
   NET_THREAD_CALL(Network::Connect_AllocSizes_Thr);
 
   for(int thr_no=0; thr_no<n_thrs_built; thr_no++) {
@@ -1043,6 +1058,18 @@ void Network::Connect_Alloc() {
       thrs_tmp_not_chunks[thr_no] = 0;
       thrs_tmp_con_mem[thr_no] = 0;
     }
+#ifdef DMEM_COMPILE
+    if(thrs_own_cons_tot_size[thr_no] > 0) {
+      net_aligned_malloc((void**)&thrs_dmem_sum_dwts_send[thr_no],
+               (thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no]) * sizeof(float));
+      net_aligned_malloc((void**)&thrs_dmem_sum_dwts_recv[thr_no],
+               (thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no]) * sizeof(float));
+    }
+    else {
+      thrs_dmem_sum_dwts_send[thr_no] = 0;
+      thrs_dmem_sum_dwts_recv[thr_no] = 0;
+    }
+#endif
   }
 
   NET_THREAD_CALL(Network::Connect_Alloc_Thr); // allocate to con groups
@@ -2342,110 +2369,109 @@ void Network::DMem_InitAggs() {
 
 void Network::DMem_SumDWts(MPI_Comm comm) {
   wt_sync_time.StartTimer(false); // don't reset
-  static float_Array values;
-  static float_Array results;
-  double timer1s, timer1e, timer2s, timer2e;
   static double timerabs = 0;
 
-
-  timer1s = MPI_Wtime();
+  double timer1s = MPI_Wtime();
   int np = 0; MPI_Comm_size(comm, &np);
   int this_proc = 0; MPI_Comm_rank(comm, &this_proc);
   if(np <= 1) return;
 
-
   // note: memory is not contiguous for all DWT vars, so we still need to do this..
-  // todo: for threaded all-reduce case, we could to this all within separate threads
-  // only for that thread's memory -- not sure if that would help or not though..
 
-  values.SetSize(n_cons + n_units);
+  NET_THREAD_CALL(Network::DMem_SumDWts_ToTmp_Thr);
 
-  int cidx = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
-    if(lay->lesioned()) continue;
-    FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
-      if(un->lesioned()) continue;
-      values.FastEl(cidx++) = un->bias_wt();
-      if(RecvOwnsCons()) {
-        for(int g = 0; g < un->NRecvConGps(); g++) {
-          ConGroup* cg = un->RecvConGroup(g);
-          if(cg->NotActive()) continue;
-          float* dwts = cg->OwnCnVar(ConGroup::DWT);
-          memcpy(values.el + cidx, (char*)dwts, cg->size * sizeof(float));
-          cidx += cg->size;
-          // for(int i = 0;i<cg->size;i++) {
-          //   values.FastEl(cidx++) = dwts[i];
-          // }
-        }
-      }
-      else {
-        for(int g = 0; g < un->NSendConGps(); g++) {
-          ConGroup* cg = un->SendConGroup(g);
-          if(cg->NotActive()) continue;
-          float* dwts = cg->OwnCnVar(ConGroup::DWT);
-          memcpy(values.el + cidx, (char*)dwts, cg->size * sizeof(float));
-          cidx += cg->size;
-          // for(int i = 0;i<cg->size;i++) {
-          //   values.FastEl(cidx++) = dwts[i];
-          // }
-        }
-      }
+  double timer2s = MPI_Wtime();
+  int64_t tot_floats = 0;
+  for(int i=0; i<n_thrs_built; i++) {
+
+    int64_t n_floats = thrs_own_cons_tot_size[i] + thrs_n_units[i];
+    tot_floats += n_floats;
+  
+    if(taMisc::thread_defaults.alt_mpi) {
+      dmem_trl_comm.my_reduce->allreduce
+        (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i], n_floats);
+    }
+    else {
+      DMEM_MPICALL(MPI_Allreduce
+                   (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i],
+                    n_floats, MPI_FLOAT, MPI_SUM, comm),
+                   "Network::SumDWts", "Allreduce");
     }
   }
+  double timer2e = MPI_Wtime();
 
-  results.SetSize(cidx);
-  timer2s = MPI_Wtime();
-  if(taMisc::thread_defaults.alt_mpi) {
-    dmem_trl_comm.my_reduce->allreduce(values.el, results.el, cidx);
-  }
-  else {
-    DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
-		 "Network::SumDWts", "Allreduce");
-  }
-  timer2e = MPI_Wtime();
-  cidx = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
-    if(lay->lesioned()) continue;
-    FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
-      if(un->lesioned()) continue;
-      un->bias_wt() = results.FastEl(cidx++);
-      if(RecvOwnsCons()) {
-        for(int g = 0; g < un->NRecvConGps(); g++) {
-          ConGroup* cg = un->RecvConGroup(g);
-          if(cg->NotActive()) continue;
-          float* dwts = cg->OwnCnVar(ConGroup::DWT);
-          memcpy(dwts, (char*)(results.el + cidx), cg->size * sizeof(float));
-          cidx += cg->size;
-          // for(int i = 0;i<cg->size;i++) {
-          //   dwts[i] = results.FastEl(cidx++);
-          // }
-        }
-      }
-      else {
-        for(int g = 0; g < un->NSendConGps(); g++) {
-          ConGroup* cg = un->SendConGroup(g);
-          if(cg->NotActive()) continue;
-          float* dwts = cg->OwnCnVar(ConGroup::DWT);
-          memcpy(dwts, (char*)(results.el + cidx), cg->size * sizeof(float));
-          cidx += cg->size;
-          // for(int i = 0;i<cg->size;i++) {
-          //   dwts[i] = results.FastEl(cidx++);
-          // }
-        }
-      }
-    }
-  }
-  timer1e = MPI_Wtime();
+  NET_THREAD_CALL(Network::DMem_SumDWts_FmTmp_Thr);
+  
+  double timer1e = MPI_Wtime();
+
   if (false && this_proc == 0) {
     // todo: best to just add stats params to Network object to record this, which can
     // then be logged -- print statements go into .out file of jobs and clutter that massively
     printf("P%i: Computing MPI dmem after %fs resulting in %.1f%% time spent in syncing: Transmitted %i Mb in %fs / %fs = %.1f %.2fGbit/s\n", this_proc,
            (timer1s - timerabs), ((timer1e-timer1s)/(timer1s - timerabs)) * 100.0,
-           (cidx*sizeof(float)/1024/1024), (timer2e - timer2s), (timer1e - timer1s),
-           ((timer2e-timer2s)/(timer1e - timer1s)*100.0), (cidx*sizeof(float)*8.0/(timer2e-timer2s)/1024.0/1024.0/1024.0));
+           (tot_floats*sizeof(float)/1024/1024), (timer2e - timer2s), (timer1e - timer1s),
+           ((timer2e-timer2s)/(timer1e - timer1s)*100.0), (tot_floats*sizeof(float)*8.0/(timer2e-timer2s)/1024.0/1024.0/1024.0));
   }
   timerabs = timer1s;
   wt_sync_time.EndTimer();
+}
+
+void Network::DMem_SumDWts_ToTmp_Thr(int thr_no) {
+  float* dwt_tmp = thrs_dmem_sum_dwts_send[thr_no];
+  int64_t cidx = 0;
+  if(RecvOwnsCons()) {
+    const int nrcg = ThrNRecvConGps(thr_no);
+    for(int i=0; i<nrcg; i++) {
+      ConGroup* rcg = ThrRecvConGroup(thr_no, i); // guaranteed to be active..
+      float* dwts = rcg->OwnCnVar(ConGroup::DWT);
+      memcpy(dwt_tmp + cidx, (char*)dwts, rcg->size * sizeof(float));
+      cidx += rcg->size;
+    }
+  }
+  else {
+    const int nscg = ThrNSendConGps(thr_no);
+    for(int i=0; i<nscg; i++) {
+      ConGroup* scg = ThrSendConGroup(thr_no, i); // guaranteed to be active..
+      float* dwts = scg->OwnCnVar(ConGroup::DWT);
+      memcpy(dwt_tmp + cidx, (char*)dwts, scg->size * sizeof(float));
+      cidx += scg->size;
+    }
+  }
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    memcpy(dwt_tmp + cidx++, (char*)&(uv->bias_dwt), sizeof(float));
+  }
+}
+
+void Network::DMem_SumDWts_FmTmp_Thr(int thr_no) {
+  float* dwt_tmp = thrs_dmem_sum_dwts_recv[thr_no];
+  int64_t cidx = 0;
+  if(RecvOwnsCons()) {
+    const int nrcg = ThrNRecvConGps(thr_no);
+    for(int i=0; i<nrcg; i++) {
+      ConGroup* rcg = ThrRecvConGroup(thr_no, i); // guaranteed to be active..
+      float* dwts = rcg->OwnCnVar(ConGroup::DWT);
+      memcpy(dwts, (char*)(dwt_tmp + cidx), rcg->size * sizeof(float));
+      cidx += rcg->size;
+    }
+  }
+  else {
+    const int nscg = ThrNSendConGps(thr_no);
+    for(int i=0; i<nscg; i++) {
+      ConGroup* scg = ThrSendConGroup(thr_no, i); // guaranteed to be active..
+      float* dwts = scg->OwnCnVar(ConGroup::DWT);
+      memcpy(dwts, (char*)(dwt_tmp + cidx), scg->size * sizeof(float));
+      cidx += scg->size;
+    }
+  }
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    memcpy(&(uv->bias_dwt), (char*)(dwt_tmp + cidx++), sizeof(float));
+  }
 }
 
 void Network::DMem_ComputeAggs(MPI_Comm comm) {
