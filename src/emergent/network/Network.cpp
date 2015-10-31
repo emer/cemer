@@ -2439,7 +2439,7 @@ void Network::DMem_SumDWts_ToTmp_Thr(int thr_no) {
   }
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
-    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    UnitVars* uv = ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;
     memcpy(dwt_tmp + cidx++, (char*)&(uv->bias_dwt), sizeof(float));
   }
@@ -2468,7 +2468,7 @@ void Network::DMem_SumDWts_FmTmp_Thr(int thr_no) {
   }
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
-    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    UnitVars* uv = ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;
     memcpy(&(uv->bias_dwt), (char*)(dwt_tmp + cidx++), sizeof(float));
   }
