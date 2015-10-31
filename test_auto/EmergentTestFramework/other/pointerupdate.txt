@@ -1,0 +1,86 @@
+** Settings ***
+
+Library          Telnet
+Library          HttpLibrary.HTTP
+Library          Process
+Library          OperatingSystem
+
+Resource         Server_lib.txt
+
+Suite Setup      Initialize Emergent    ../../test/TestPointerUpdates.proj
+Suite Teardown   Shutdown Emergent
+
+*** Variables ***
+
+# use 'pybot -v debug:true server.txt' on the command line to
+#      output the transmissions to/from Emergent using warnings
+${debug} =       false
+
+*** Test Cases ***
+
+# Ideas on things to test
+#  - SetDataTableCell and Matrix Cell
+
+#
+# Initialization and general tests
+#
+
+Initialize
+    Set Suite Variable     ${verbose}       ${false}
+    Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
+
+Connection
+    Sleep                  1 sec
+    ${output} =            Read
+    Print                  ${output}
+    Should Contain         ${output}    Emergent Server v7.
+
+# TODO: Start another process and check for the "Too many connections already" error.
+
+#
+# ParserTest
+#
+
+General RunState
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             4
+
+CopyProgram
+    Set Suite Variable          ${program_test}       "call_caller"
+    Ensure Emergent Free
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "call_caller", "var_name": "which_group", "var_value": "1"}
+    Status OK                  ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "call_caller"}
+    Status OK No Result        ${output}
+
+    Prog Var Should Match      group_name       .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"]
+    
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_callee_caller"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "call_caller", "var_name": "which_group", "var_value": "2"}
+    Status OK                  ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "call_caller"}
+    Status OK No Result        ${output}
+
+    Prog Var Should Match      group_name       .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_two\\"]
+    
+
+
+*** Keywords ***
+
+Prog Var Should Match
+    [Arguments]         ${var_name}	${should_match}
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "${var_name}"}
+    Status OK 		       ${output}
+    Json String Should Match    ${output}             /result  ${should_match}
+
+Prog Var Should Be Empty
+    [Arguments]         ${var_name}
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "${var_name}"}
+    Status OK 		       ${output}
+    Json String Should Be Empty    ${output}             /result
+
+
