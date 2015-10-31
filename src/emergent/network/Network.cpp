@@ -180,8 +180,8 @@ void Network::Initialize() {
 
 #ifdef DMEM_COMPILE
   all_dmem_sum_dwts_size = 0;
-  all_dmem_sum_dwts_send = NULL;
-  all_dmem_sum_dwts_recv = NULL;
+  // all_dmem_sum_dwts_send = NULL;
+  // all_dmem_sum_dwts_recv = NULL;
   thrs_dmem_sum_dwts_send = NULL;
   thrs_dmem_sum_dwts_recv = NULL;
   dmem_agg_sum.agg_op = MPI_SUM;
@@ -657,6 +657,11 @@ void Network::FreeConThreadMem() {
 
     net_free((void**)&thrs_recv_cons_mem[i]);
     net_free((void**)&thrs_send_cons_mem[i]);
+
+#ifdef DMEM_COMPILE    
+    net_free((void**)&thrs_dmem_sum_dwts_send[i]);
+    net_free((void**)&thrs_dmem_sum_dwts_recv[i]);
+#endif
   }
 
   // first all the doubly-allocated by-thread guys from above
@@ -680,8 +685,8 @@ void Network::FreeConThreadMem() {
   net_free((void**)&thrs_send_cons_cnt);
 
 #ifdef DMEM_COMPILE
-  net_free((void**)&all_dmem_sum_dwts_send);
-  net_free((void**)&all_dmem_sum_dwts_recv);
+  // net_free((void**)&all_dmem_sum_dwts_send);
+  // net_free((void**)&all_dmem_sum_dwts_recv);
   all_dmem_sum_dwts_size = 0;
   
   net_free((void**)&thrs_dmem_sum_dwts_send);
@@ -1067,22 +1072,29 @@ void Network::Connect_Alloc() {
   net_aligned_malloc((void**)&thrs_dmem_sum_dwts_recv, n_thrs_built * sizeof(float*));
 
   if(all_dmem_sum_dwts_size > 0) {
-    net_aligned_malloc((void**)&all_dmem_sum_dwts_send,
-                       all_dmem_sum_dwts_size * sizeof(float));
-    net_aligned_malloc((void**)&all_dmem_sum_dwts_recv,
-                       all_dmem_sum_dwts_size * sizeof(float));
+    // net_aligned_malloc((void**)&all_dmem_sum_dwts_send,
+    //                    all_dmem_sum_dwts_size * sizeof(float));
+    // net_aligned_malloc((void**)&all_dmem_sum_dwts_recv,
+    //                    all_dmem_sum_dwts_size * sizeof(float));
 
-    // allocate to thread separate blocks
-    int64_t cidx = 0;
+    // allocate thread separate blocks
+    // int64_t cidx = 0;
     for(int thr_no=0; thr_no<n_thrs_built; thr_no++) {
-      thrs_dmem_sum_dwts_send[thr_no] = all_dmem_sum_dwts_send + cidx;
-      thrs_dmem_sum_dwts_recv[thr_no] = all_dmem_sum_dwts_recv + cidx;
-      cidx += thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no];
+      int64_t szal = thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no];
+      if(szal > 0) {
+        net_aligned_malloc((void**)&thrs_dmem_sum_dwts_send[thr_no],
+                           szal * sizeof(float));
+        net_aligned_malloc((void**)&thrs_dmem_sum_dwts_recv[thr_no],
+                           szal * sizeof(float));
+        // thrs_dmem_sum_dwts_send[thr_no] = all_dmem_sum_dwts_send + cidx;
+        // thrs_dmem_sum_dwts_recv[thr_no] = all_dmem_sum_dwts_recv + cidx;
+        // cidx += thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no];
+      }
+      else {
+        thrs_dmem_sum_dwts_send[thr_no] = 0;
+        thrs_dmem_sum_dwts_recv[thr_no] = 0;
+      }
     }
-  }
-  else {
-    all_dmem_sum_dwts_send = 0;
-    all_dmem_sum_dwts_recv = 0;
   }
 #endif
 
@@ -2397,33 +2409,35 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 
   double timer2s = MPI_Wtime();
 
-  if(false) {			// one big call
+  // the one-big call seems slower in terms of usr time, but not wallclock
+  // keeping everything thread-specific is likely to incur less overhead
+  // if(false) {			// one big call
+  //   if(taMisc::thread_defaults.alt_mpi) {
+  //     dmem_trl_comm.my_reduce->allreduce
+  //       (all_dmem_sum_dwts_send, all_dmem_sum_dwts_recv, all_dmem_sum_dwts_size);
+  //   }
+  //   else {
+  //     DMEM_MPICALL(MPI_Allreduce
+  //       	   (all_dmem_sum_dwts_send, all_dmem_sum_dwts_recv,
+  //       	    all_dmem_sum_dwts_size, MPI_FLOAT, MPI_SUM, comm),
+  //       	   "Network::SumDWts", "Allreduce");
+  //   }
+  // }
+  // else {
+  for(int i=0; i<n_thrs_built; i++) {
+    int64_t n_floats = thrs_own_cons_tot_size[i] + thrs_n_units[i];
     if(taMisc::thread_defaults.alt_mpi) {
       dmem_trl_comm.my_reduce->allreduce
-	(all_dmem_sum_dwts_send, all_dmem_sum_dwts_recv, all_dmem_sum_dwts_size);
+        (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i], n_floats);
     }
     else {
       DMEM_MPICALL(MPI_Allreduce
-		   (all_dmem_sum_dwts_send, all_dmem_sum_dwts_recv,
-		    all_dmem_sum_dwts_size, MPI_FLOAT, MPI_SUM, comm),
-		   "Network::SumDWts", "Allreduce");
+                   (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i],
+                    n_floats, MPI_FLOAT, MPI_SUM, comm),
+                   "Network::SumDWts", "Allreduce");
     }
   }
-  else {
-    for(int i=0; i<n_thrs_built; i++) {
-      int64_t n_floats = thrs_own_cons_tot_size[i] + thrs_n_units[i];
-      if(taMisc::thread_defaults.alt_mpi) {
-	dmem_trl_comm.my_reduce->allreduce
-	  (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i], n_floats);
-	}
-      else {
-	DMEM_MPICALL(MPI_Allreduce
-		     (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i],
-		      n_floats, MPI_FLOAT, MPI_SUM, comm),
-		     "Network::SumDWts", "Allreduce");
-      }
-    }
-  }
+  // }
 
   double timer2e = MPI_Wtime();
 
