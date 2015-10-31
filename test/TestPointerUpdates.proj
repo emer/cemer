@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.4.0 rev8822
+// ta_Dump File v3.0 -- code v7.8.4.0 rev8834
 LeabraProject .projects["TestPointerUpdates"] { 
  Doc_Group @.docs = [0] {
  };
@@ -284,7 +284,7 @@ LeabraProject .projects["TestPointerUpdates"] {
  };
 
  Program_TopGroup @.programs = [0] {
-  Program_Group @.gp["group_one"] = [3] { 
+  Program_Group @.gp["group_one"] = [2] { 
    Program @["Callee"] { 
     ProgObjList @.objs = [0] {
     };
@@ -295,7 +295,8 @@ LeabraProject .projects["TestPointerUpdates"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [0] {
+    ProgVar_List @.vars = [1] {
+     ProgVar @["group_name"] { };
     };
 
     Function_List @.functions = [1] {
@@ -303,12 +304,13 @@ LeabraProject .projects["TestPointerUpdates"] {
       ProgVar_List @.args = [0] {
       };
 
-      ProgEl_List @.fun_code = [2] {
+      ProgEl_List @.fun_code = [3] {
        LocalVars @[0] { 
 	ProgVar_List @.local_vars = [0] {
 	};
        };
        PrintExpr @[1] { };
+       AssignExpr @[2] { };
       };
      };
     };
@@ -357,66 +359,10 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
    };
-   Program @["PrintGroup"] { 
-    ProgObjList @.objs = [0] {
-    };
-
-    ProgType_List @.types = [0] {
-    };
-
-    ProgVar_List @.args = [0] {
-    };
-
-    ProgVar_List @.vars = [0] {
-    };
-
-    Function_List @.functions = [0] {
-    };
-
-    ProgEl_List @.init_code = [0] {
-    };
-
-    ProgEl_List @.prog_code = [2] {
-     LocalVars @[0] { 
-      ProgVar_List @.local_vars = [0] {
-      };
-     };
-     ProgramCall @[1] { 
-      ProgArg_List @.prog_args = [0] {
-      };
-     };
-    };
-   };
   };
-  Program_Group @.gp["group_two"] = [1] { 
-   Program @["dummy_program"] { 
-    ProgObjList @.objs = [0] {
-    };
-
-    ProgType_List @.types = [0] {
-    };
-
-    ProgVar_List @.args = [0] {
-    };
-
-    ProgVar_List @.vars = [0] {
-    };
-
-    Function_List @.functions = [0] {
-    };
-
-    ProgEl_List @.init_code = [0] {
-    };
-
-    ProgEl_List @.prog_code = [1] {
-     LocalVars @[0] { 
-      ProgVar_List @.local_vars = [0] {
-      };
-     };
-    };
-   };
+  Program_Group @.gp["group_two"] { 
   };
-  Program_Group @.gp["TestPrograms"] = [2] { 
+  Program_Group @.gp["TestPrograms"] = [1] { 
    Program @["copy_callee_caller"] { 
     ProgObjList @.objs = [0] {
     };
@@ -427,11 +373,9 @@ LeabraProject .projects["TestPointerUpdates"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [5] {
+    ProgVar_List @.vars = [3] {
      ProgVar @["callee"] { };
      ProgVar @["caller"] { };
-     ProgVar @["print_group"] { };
-     ProgVar @["dummy_program"] { };
      ProgVar @["group_two"] { };
     };
 
@@ -456,45 +400,6 @@ LeabraProject .projects["TestPointerUpdates"] {
       ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
-      };
-     };
-    };
-   };
-   Program @["copy_run_print_group"] { 
-    ProgObjList @.objs = [0] {
-    };
-
-    ProgType_List @.types = [0] {
-    };
-
-    ProgVar_List @.args = [0] {
-    };
-
-    ProgVar_List @.vars = [3] {
-     ProgVar @["print_group"] { };
-     ProgVar @["dummy_program"] { };
-     ProgVar @["group_two"] { };
-    };
-
-    Function_List @.functions = [0] {
-    };
-
-    ProgEl_List @.init_code = [0] {
-    };
-
-    ProgEl_List @.prog_code = [3] {
-     LocalVars @[0] { 
-      ProgVar_List @.local_vars = [0] {
-      };
-     };
-     MethodCall @[1] { 
-      ProgArg_List @.meth_args = [2] {
-       ProgArg @[0] { };
-       ProgArg @[1] { };
-      };
-     };
-     ProgramCall @[2] { 
-      ProgArg_List @.prog_args = [0] {
       };
      };
     };
@@ -2675,6 +2580,16 @@ LeabraProject .projects["TestPointerUpdates"] {
      name="vars";
      el_typ=ProgVar;
      el_def=0;
+     ProgVar @["group_name"] {
+      name="group_name";
+      var_type=T_String;
+      string_val=".projects[\"TestPointerUpdates\"].programs.gp[\"group_one\"]";
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -2717,6 +2632,16 @@ LeabraProject .projects["TestPointerUpdates"] {
 	 expr="this.prog_gp";
 	};
 	debug=0;
+       };
+       AssignExpr @[2] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="group_name = this.prog_gp";
+	pre_compile_code_string="group_name = this.prog_gp";
+	result_var=.projects["TestPointerUpdates"].programs.gp["group_one"]["Callee"].vars["group_name"]$$;
+	expr {
+	 expr="this.prog_gp";
+	};
        };
       };
      };
@@ -2829,77 +2754,6 @@ LeabraProject .projects["TestPointerUpdates"] {
     step_prog=NULL;
     step_n=1;
    };
-   Program @["PrintGroup"] {
-    name="PrintGroup";
-    short_nm="PrnGrp";
-    tags=;
-    desc=;
-    flags=NO_STOP_STEP;
-    stop_step_cond {
-     expr=;
-    };
-    objs {
-     name="objs";
-     el_typ=taNBase;
-     el_def=0;
-    };
-    types {
-     name="types";
-     el_typ=DynEnumType;
-     el_def=0;
-    };
-    args {
-     name="args";
-     el_typ=ProgVar;
-     el_def=0;
-    };
-    vars {
-     name="vars";
-     el_typ=ProgVar;
-     el_def=0;
-    };
-    functions {
-     name="functions";
-     el_typ=Function;
-     el_def=0;
-    };
-    init_code {
-     name="init_code";
-     el_typ=ProgCode;
-     el_def=0;
-    };
-    prog_code {
-     name="prog_code";
-     el_typ=ProgCode;
-     el_def=0;
-     LocalVars @[0] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="LocalVars (0 vars)";
-      pre_compile_code_string="LocalVars (0 vars)";
-      local_vars {
-       name="local_vars";
-       el_typ=ProgVar;
-       el_def=0;
-      };
-     };
-     ProgramCall @[1] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="Caller()";
-      pre_compile_code_string="Caller()";
-      prog_args {
-       name="prog_args";
-       el_typ=ProgArg;
-       el_def=0;
-      };
-      target=.projects["TestPointerUpdates"].programs.gp["group_one"]["Caller"]$$;
-      targ_ld_init="*Caller*";
-     };
-    };
-    step_prog=NULL;
-    step_n=1;
-   };
   };
   Program_Group @.gp["group_two"] {
    name="group_two";
@@ -2908,64 +2762,6 @@ LeabraProject .projects["TestPointerUpdates"] {
    tags=;
    desc=;
    debug_mode=0;
-   Program @["dummy_program"] {
-    name="dummy_program";
-    short_nm="dmmprg";
-    tags=;
-    desc=;
-    flags=NO_STOP_STEP;
-    stop_step_cond {
-     expr=;
-    };
-    objs {
-     name="objs";
-     el_typ=taNBase;
-     el_def=0;
-    };
-    types {
-     name="types";
-     el_typ=DynEnumType;
-     el_def=0;
-    };
-    args {
-     name="args";
-     el_typ=ProgVar;
-     el_def=0;
-    };
-    vars {
-     name="vars";
-     el_typ=ProgVar;
-     el_def=0;
-    };
-    functions {
-     name="functions";
-     el_typ=Function;
-     el_def=0;
-    };
-    init_code {
-     name="init_code";
-     el_typ=ProgCode;
-     el_def=0;
-    };
-    prog_code {
-     name="prog_code";
-     el_typ=ProgCode;
-     el_def=0;
-     LocalVars @[0] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="LocalVars (0 vars)";
-      pre_compile_code_string="LocalVars (0 vars)";
-      local_vars {
-       name="local_vars";
-       el_typ=ProgVar;
-       el_def=0;
-      };
-     };
-    };
-    step_prog=NULL;
-    step_n=1;
-   };
   };
   Program_Group @.gp["TestPrograms"] {
    name="TestPrograms";
@@ -3017,29 +2813,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       name="caller";
       var_type=T_Object;
       object_type=Program;
-      object_val=$.projects["TestPointerUpdates"].programs.gp["group_one"]["Caller"]$;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["print_group"] {
-      name="print_group";
-      var_type=T_Object;
-      object_type=Program;
-      object_val=.projects["TestPointerUpdates"].programs.gp["group_one"]["PrintGroup"]$$;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["dummy_program"] {
-      name="dummy_program";
-      var_type=T_Object;
-      object_type=Program;
-      object_val=.projects["TestPointerUpdates"].programs.gp["group_two"]["dummy_program"]$$;
+      object_val=.projects["TestPointerUpdates"].programs.gp["group_one"]["Caller"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -3085,12 +2859,12 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
      MethodCall @[1] {
       desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="group_two->CopyChildBefore(callee, dummy_program)";
-      pre_compile_code_string="group_two->CopyChildBefore(callee, dummy_program)";
+      flags=WARNING|CAN_REVERT_TO_CODE;
+      code_string="group_two->CopyChildBeforeIndex(callee, -1)";
+      pre_compile_code_string="group_two->CopyChildBeforeIndex(callee, -1)";
       result_var=NULL;
       obj=.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["copy_callee_caller"].vars["group_two"]$$;
-      method=taList_impl::CopyChildBefore;
+      method=taList_impl::CopyChildBeforeIndex;
       meth_args {
        name="meth_args";
        el_typ=ProgArg;
@@ -3107,28 +2881,28 @@ LeabraProject .projects["TestPointerUpdates"] {
 	};
        };
        ProgArg @[1] {
-	arg_type=taBase_ptr;
-	type="taBase*";
+	arg_type=int;
+	type="int";
 	name="child_pos";
 	required=1;
 	def_val=;
 	prev_expr=;
 	expr {
-	 expr="dummy_program";
+	 expr="-1";
 	};
        };
       };
-      meth_sig="taBase_ptr CopyChildBefore(taBase* src, taBase* child_pos)";
+      meth_sig="taBase_ptr CopyChildBeforeIndex(taBase* src, int child_pos)";
       meth_desc=" implemented by container (list) objects: make a copy of the src object and insert it at the position of the child_pos object within this list -- copies the name of the object too";
      };
      MethodCall @[2] {
       desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="group_two->CopyChildBefore(caller, dummy_program)";
-      pre_compile_code_string="group_two->CopyChildBefore(caller, dummy_program)";
+      flags=WARNING|CAN_REVERT_TO_CODE;
+      code_string="group_two->CopyChildBeforeIndex(caller, -1)";
+      pre_compile_code_string="group_two->CopyChildBeforeIndex(caller, -1)";
       result_var=NULL;
       obj=$.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["copy_callee_caller"].vars["group_two"]$;
-      method=taList_impl::CopyChildBefore;
+      method=taList_impl::CopyChildBeforeIndex;
       meth_args {
        name="meth_args";
        el_typ=ProgArg;
@@ -3145,161 +2919,19 @@ LeabraProject .projects["TestPointerUpdates"] {
 	};
        };
        ProgArg @[1] {
-	arg_type=taBase_ptr;
-	type="taBase*";
+	arg_type=int;
+	type="int";
 	name="child_pos";
 	required=1;
 	def_val=;
 	prev_expr=;
 	expr {
-	 expr="dummy_program";
+	 expr="-1";
 	};
        };
       };
-      meth_sig="taBase_ptr CopyChildBefore(taBase* src, taBase* child_pos)";
+      meth_sig="taBase_ptr CopyChildBeforeIndex(taBase* src, int child_pos)";
       meth_desc=" implemented by container (list) objects: make a copy of the src object and insert it at the position of the child_pos object within this list -- copies the name of the object too";
-     };
-    };
-    step_prog=NULL;
-    step_n=1;
-   };
-   Program @["copy_run_print_group"] {
-    name="copy_run_print_group";
-    short_nm="cpyrnp";
-    tags=;
-    desc=;
-    flags=NO_STOP_STEP;
-    stop_step_cond {
-     expr=;
-    };
-    objs {
-     name=;
-     el_typ=taNBase;
-     el_def=0;
-    };
-    types {
-     name=;
-     el_typ=DynEnumType;
-     el_def=0;
-    };
-    args {
-     name=;
-     el_typ=ProgVar;
-     el_def=0;
-    };
-    vars {
-     name=;
-     el_typ=ProgVar;
-     el_def=0;
-     ProgVar @["print_group"] {
-      name="print_group";
-      var_type=T_Object;
-      object_type=Program;
-      object_val=$.projects["TestPointerUpdates"].programs.gp["group_one"]["PrintGroup"]$;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["dummy_program"] {
-      name="dummy_program";
-      var_type=T_Object;
-      object_type=Program;
-      object_val=$.projects["TestPointerUpdates"].programs.gp["group_two"]["dummy_program"]$;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["group_two"] {
-      name="group_two";
-      var_type=T_Object;
-      object_type=Program_Group;
-      object_val=$.projects["TestPointerUpdates"].programs.gp["group_two"]$;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-    };
-    functions {
-     name=;
-     el_typ=Function;
-     el_def=0;
-    };
-    init_code {
-     name=;
-     el_typ=ProgCode;
-     el_def=0;
-    };
-    prog_code {
-     name=;
-     el_typ=ProgCode;
-     el_def=0;
-     LocalVars @[0] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="LocalVars (0 vars)";
-      pre_compile_code_string="LocalVars (0 vars)";
-      local_vars {
-       name="local_vars";
-       el_typ=ProgVar;
-       el_def=0;
-      };
-     };
-     MethodCall @[1] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="group_two->CopyChildBefore(callee, dummy_program)";
-      pre_compile_code_string="group_two->CopyChildBefore(print_group, dummy_program)";
-      result_var=NULL;
-      obj=.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["copy_run_print_group"].vars["group_two"]$$;
-      method=taList_impl::CopyChildBefore;
-      meth_args {
-       name="meth_args";
-       el_typ=ProgArg;
-       el_def=0;
-       ProgArg @[0] {
-	arg_type=taBase_ptr;
-	type="taBase*";
-	name="src";
-	required=1;
-	def_val=;
-	prev_expr=;
-	expr {
-	 expr="print_group";
-	};
-       };
-       ProgArg @[1] {
-	arg_type=taBase_ptr;
-	type="taBase*";
-	name="child_pos";
-	required=1;
-	def_val=;
-	prev_expr=;
-	expr {
-	 expr="dummy_program";
-	};
-       };
-      };
-      meth_sig="taBase_ptr CopyChildBefore(taBase* src, taBase* child_pos)";
-      meth_desc=" implemented by container (list) objects: make a copy of the src object and insert it at the position of the child_pos object within this list -- copies the name of the object too";
-     };
-     ProgramCall @[2] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="PrintGroup()";
-      pre_compile_code_string="PrintGroup()";
-      prog_args {
-       name="prog_args";
-       el_typ=ProgArg;
-       el_def=0;
-      };
-      target=$.projects["TestPointerUpdates"].programs.gp["group_one"]["PrintGroup"]$;
-      targ_ld_init="*PrintGroup*";
      };
     };
     step_prog=NULL;
@@ -3328,12 +2960,12 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9973904;
+     value 8 0=0.9972613;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7994902;
+     value 8 0=0.7988709;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -3532,17 +3164,17 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.02463891;
+       value 8 0=0.02046577;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04279749;
+       value 8 0=0.03208138;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7196262;
+       value 8 0=0.7325335;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
