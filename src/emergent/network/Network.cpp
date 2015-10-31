@@ -179,6 +179,9 @@ void Network::Initialize() {
   thrs_send_netin_tmp = NULL;
 
 #ifdef DMEM_COMPILE
+  all_dmem_sum_dwts_size = 0;
+  all_dmem_sum_dwts_send = NULL;
+  all_dmem_sum_dwts_recv = NULL;
   thrs_dmem_sum_dwts_send = NULL;
   thrs_dmem_sum_dwts_recv = NULL;
   dmem_agg_sum.agg_op = MPI_SUM;
@@ -654,10 +657,6 @@ void Network::FreeConThreadMem() {
 
     net_free((void**)&thrs_recv_cons_mem[i]);
     net_free((void**)&thrs_send_cons_mem[i]);
-#ifdef DMEM_COMPILE    
-    net_free((void**)&thrs_dmem_sum_dwts_send[i]);
-    net_free((void**)&thrs_dmem_sum_dwts_recv[i]);
-#endif
   }
 
   // first all the doubly-allocated by-thread guys from above
@@ -670,11 +669,6 @@ void Network::FreeConThreadMem() {
   net_free((void**)&thrs_recv_cons_mem);
   net_free((void**)&thrs_send_cons_mem);
 
-#ifdef DMEM_COMPILE
-  net_free((void**)&thrs_dmem_sum_dwts_send);
-  net_free((void**)&thrs_dmem_sum_dwts_recv);
-#endif
-  
   // now go back and get the rest
   net_free((void**)&thrs_own_cons_max_size);
   net_free((void**)&thrs_own_cons_tot_size);
@@ -684,6 +678,15 @@ void Network::FreeConThreadMem() {
 
   net_free((void**)&thrs_recv_cons_cnt);
   net_free((void**)&thrs_send_cons_cnt);
+
+#ifdef DMEM_COMPILE
+  net_free((void**)&all_dmem_sum_dwts_send);
+  net_free((void**)&all_dmem_sum_dwts_recv);
+  all_dmem_sum_dwts_size = 0;
+  
+  net_free((void**)&thrs_dmem_sum_dwts_send);
+  net_free((void**)&thrs_dmem_sum_dwts_recv);
+#endif
 }
 
 void Network::AllocUnitConGpThreadMem() {
@@ -1022,13 +1025,9 @@ void Network::Connect_Alloc() {
   net_aligned_malloc((void**)&thrs_tmp_not_chunks, n_thrs_built * sizeof(int*));
   net_aligned_malloc((void**)&thrs_tmp_con_mem, n_thrs_built * sizeof(float*));
 
-#ifdef DMEM_COMPILE
-  net_aligned_malloc((void**)&thrs_dmem_sum_dwts_send, n_thrs_built * sizeof(float*));
-  net_aligned_malloc((void**)&thrs_dmem_sum_dwts_recv, n_thrs_built * sizeof(float*));
-#endif
-  
   NET_THREAD_CALL(Network::Connect_AllocSizes_Thr);
 
+  all_dmem_sum_dwts_size = 0;
   for(int thr_no=0; thr_no<n_thrs_built; thr_no++) {
     if(thrs_recv_cons_cnt[thr_no] > 0) {
       net_aligned_malloc((void**)&thrs_recv_cons_mem[thr_no],
@@ -1059,19 +1058,35 @@ void Network::Connect_Alloc() {
       thrs_tmp_con_mem[thr_no] = 0;
     }
 #ifdef DMEM_COMPILE
-    if(thrs_own_cons_tot_size[thr_no] > 0) {
-      net_aligned_malloc((void**)&thrs_dmem_sum_dwts_send[thr_no],
-               (thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no]) * sizeof(float));
-      net_aligned_malloc((void**)&thrs_dmem_sum_dwts_recv[thr_no],
-               (thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no]) * sizeof(float));
-    }
-    else {
-      thrs_dmem_sum_dwts_send[thr_no] = 0;
-      thrs_dmem_sum_dwts_recv[thr_no] = 0;
-    }
+    all_dmem_sum_dwts_size += thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no];
 #endif
   }
 
+#ifdef DMEM_COMPILE
+  net_aligned_malloc((void**)&thrs_dmem_sum_dwts_send, n_thrs_built * sizeof(float*));
+  net_aligned_malloc((void**)&thrs_dmem_sum_dwts_recv, n_thrs_built * sizeof(float*));
+
+  if(all_dmem_sum_dwts_size > 0) {
+    net_aligned_malloc((void**)&all_dmem_sum_dwts_send,
+                       all_dmem_sum_dwts_size * sizeof(float));
+    net_aligned_malloc((void**)&all_dmem_sum_dwts_recv[thr_no],
+                       all_dmem_sum_dwts_size * sizeof(float));
+
+    // allocate to thread separate blocks
+    int64_t cidx = 0;
+    for(int thr_no=0; thr_no<n_thrs_built; thr_no++) {
+      thrs_mem_sum_dwts_send[thr_no] = all_dmem_sum_dwts_send + cidx;
+      thrs_mem_sum_dwts_recv[thr_no] = all_dmem_sum_dwts_recv + cidx;
+      cidx += thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no];
+    }
+  }
+  else {
+    all_dmem_sum_dwts_send = 0;
+    all_dmem_sum_dwts_recv = 0;
+  }
+#endif
+
+  
   NET_THREAD_CALL(Network::Connect_Alloc_Thr); // allocate to con groups
 }
 
@@ -2381,23 +2396,33 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
   NET_THREAD_CALL(Network::DMem_SumDWts_ToTmp_Thr);
 
   double timer2s = MPI_Wtime();
-  int64_t tot_floats = 0;
-  for(int i=0; i<n_thrs_built; i++) {
 
-    int64_t n_floats = thrs_own_cons_tot_size[i] + thrs_n_units[i];
-    tot_floats += n_floats;
-  
-    if(taMisc::thread_defaults.alt_mpi) {
-      dmem_trl_comm.my_reduce->allreduce
-        (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i], n_floats);
-    }
-    else {
-      DMEM_MPICALL(MPI_Allreduce
-                   (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i],
-                    n_floats, MPI_FLOAT, MPI_SUM, comm),
-                   "Network::SumDWts", "Allreduce");
-    }
+  if(taMisc::thread_defaults.alt_mpi) {
+    dmem_trl_comm.my_reduce->allreduce
+      (all_dmem_sum_dwts_send, all_dmem_sum_dwts_recv, all_dmem_sum_dwts_size);
   }
+  else {
+    DMEM_MPICALL(MPI_Allreduce
+                 (all_dmem_sum_dwts_send, all_dmem_sum_dwts_recv,
+                  all_dmem_sum_dwts_size, MPI_FLOAT, MPI_SUM, comm),
+                 "Network::SumDWts", "Allreduce");
+  }
+  // int64_t tot_floats = 0;
+  // for(int i=0; i<n_thrs_built; i++) {
+  //   int64_t n_floats = thrs_own_cons_tot_size[i] + thrs_n_units[i];
+  //   tot_floats += n_floats;
+  
+  //   if(taMisc::thread_defaults.alt_mpi) {
+  //     dmem_trl_comm.my_reduce->allreduce
+  //       (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i], n_floats);
+  //   }
+  //   else {
+  //     DMEM_MPICALL(MPI_Allreduce
+  //                  (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i],
+  //                   n_floats, MPI_FLOAT, MPI_SUM, comm),
+  //                  "Network::SumDWts", "Allreduce");
+  //   }
+  // }
   double timer2e = MPI_Wtime();
 
   NET_THREAD_CALL(Network::DMem_SumDWts_FmTmp_Thr);
@@ -2409,8 +2434,8 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
     // then be logged -- print statements go into .out file of jobs and clutter that massively
     printf("P%i: Computing MPI dmem after %fs resulting in %.1f%% time spent in syncing: Transmitted %i Mb in %fs / %fs = %.1f %.2fGbit/s\n", this_proc,
            (timer1s - timerabs), ((timer1e-timer1s)/(timer1s - timerabs)) * 100.0,
-           (tot_floats*sizeof(float)/1024/1024), (timer2e - timer2s), (timer1e - timer1s),
-           ((timer2e-timer2s)/(timer1e - timer1s)*100.0), (tot_floats*sizeof(float)*8.0/(timer2e-timer2s)/1024.0/1024.0/1024.0));
+           (all_dmem_sum_dwts_size*sizeof(float)/1024/1024), (timer2e - timer2s), (timer1e - timer1s),
+           ((timer2e-timer2s)/(timer1e - timer1s)*100.0), (all_dmem_sum_dwts_size*sizeof(float)*8.0/(timer2e-timer2s)/1024.0/1024.0/1024.0));
   }
   timerabs = timer1s;
   wt_sync_time.EndTimer();

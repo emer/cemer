@@ -357,6 +357,9 @@ public:
   float**       thrs_send_netin_tmp; // #IGNORE #CAT_Threads temporary storage for threaded sender-based netinput computation -- float*[threads] array of float[n_units]
 
 #ifdef DMEM_COMPILE
+  int64_t       all_dmem_sum_dwts_size; // #IGNORE #CAT_Threads size of temporary storage for threaded dmem sum dwts sync operation -- master block of all the mem -- this is what is actually allocated
+  float*        all_dmem_sum_dwts_send; // #IGNORE #CAT_Threads temporary storage for threaded dmem sum dwts sync operation -- master block of all the mem -- this is what is actually allocated
+  float*        all_dmem_sum_dwts_recv; // #IGNORE #CAT_Threads temporary storage for threaded dmem sum dwts sync operation -- master block of all the mem -- this is what is actually allocated
   float**       thrs_dmem_sum_dwts_send; // #IGNORE #CAT_Threads temporary storage for threaded dmem sum dwts sync operation -- float*[threads] array of float[thrs_own_cons_tot_size + thrs_n_units] per thread (n_units for bias weights)
   float**       thrs_dmem_sum_dwts_recv; // #IGNORE #CAT_Threads temporary storage for threaded dmem sum dwts sync operation -- float*[threads] array of float[thrs_own_cons_tot_size + thrs_n_units] per thread (n_units for bias weights)
 #endif
