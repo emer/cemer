@@ -1032,7 +1032,9 @@ void Network::Connect_Alloc() {
 
   NET_THREAD_CALL(Network::Connect_AllocSizes_Thr);
 
+#ifdef DMEM_COMPILE
   all_dmem_sum_dwts_size = 0;
+#endif
   for(int thr_no=0; thr_no<n_thrs_built; thr_no++) {
     if(thrs_recv_cons_cnt[thr_no] > 0) {
       net_aligned_malloc((void**)&thrs_recv_cons_mem[thr_no],
@@ -1071,31 +1073,31 @@ void Network::Connect_Alloc() {
   net_aligned_malloc((void**)&thrs_dmem_sum_dwts_send, n_thrs_built * sizeof(float*));
   net_aligned_malloc((void**)&thrs_dmem_sum_dwts_recv, n_thrs_built * sizeof(float*));
 
-  if(all_dmem_sum_dwts_size > 0) {
-    // net_aligned_malloc((void**)&all_dmem_sum_dwts_send,
-    //                    all_dmem_sum_dwts_size * sizeof(float));
-    // net_aligned_malloc((void**)&all_dmem_sum_dwts_recv,
-    //                    all_dmem_sum_dwts_size * sizeof(float));
+  // if(all_dmem_sum_dwts_size > 0) {
+  // net_aligned_malloc((void**)&all_dmem_sum_dwts_send,
+  //                    all_dmem_sum_dwts_size * sizeof(float));
+  // net_aligned_malloc((void**)&all_dmem_sum_dwts_recv,
+  //                    all_dmem_sum_dwts_size * sizeof(float));
 
-    // allocate thread separate blocks
-    // int64_t cidx = 0;
-    for(int thr_no=0; thr_no<n_thrs_built; thr_no++) {
-      int64_t szal = thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no];
-      if(szal > 0) {
-        net_aligned_malloc((void**)&thrs_dmem_sum_dwts_send[thr_no],
-                           szal * sizeof(float));
-        net_aligned_malloc((void**)&thrs_dmem_sum_dwts_recv[thr_no],
-                           szal * sizeof(float));
-        // thrs_dmem_sum_dwts_send[thr_no] = all_dmem_sum_dwts_send + cidx;
-        // thrs_dmem_sum_dwts_recv[thr_no] = all_dmem_sum_dwts_recv + cidx;
-        // cidx += thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no];
-      }
-      else {
-        thrs_dmem_sum_dwts_send[thr_no] = 0;
-        thrs_dmem_sum_dwts_recv[thr_no] = 0;
-      }
+  // allocate thread separate blocks
+  // int64_t cidx = 0;
+  for(int thr_no=0; thr_no<n_thrs_built; thr_no++) {
+    int64_t szal = thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no];
+    if(szal > 0) {
+      net_aligned_malloc((void**)&thrs_dmem_sum_dwts_send[thr_no],
+                         szal * sizeof(float));
+      net_aligned_malloc((void**)&thrs_dmem_sum_dwts_recv[thr_no],
+                         szal * sizeof(float));
+      // thrs_dmem_sum_dwts_send[thr_no] = all_dmem_sum_dwts_send + cidx;
+      // thrs_dmem_sum_dwts_recv[thr_no] = all_dmem_sum_dwts_recv + cidx;
+      // cidx += thrs_own_cons_tot_size[thr_no] + thrs_n_units[thr_no];
+    }
+    else {
+      thrs_dmem_sum_dwts_send[thr_no] = 0;
+      thrs_dmem_sum_dwts_recv[thr_no] = 0;
     }
   }
+  // }
 #endif
 
   
