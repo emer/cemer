@@ -285,6 +285,46 @@ LeabraProject .projects["TestPointerUpdates"] {
 
  Program_TopGroup @.programs = [0] {
   Program_Group @.gp["group_one"] = [3] { 
+   Program @["HasDataTable"] { 
+    ProgObjList @.objs = [1] {
+     DataTable @["aDataTable"] { 
+      DataTableCols @.data = [1] {
+       String_Data @["col_one"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+
+      DataOpList @.last_sort_spec.ops = [0] {
+      };
+     };
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [1] {
+     ProgVar @["aDataTable"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [2] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     MatrixAssign @[1] { };
+    };
+   };
    Program @["Callee"] { 
     ProgObjList @.objs = [0] {
     };
@@ -362,50 +402,10 @@ LeabraProject .projects["TestPointerUpdates"] {
      OtherProgramVar @[3] { };
     };
    };
-   Program @["HasDataTable"] { 
-    ProgObjList @.objs = [1] {
-     DataTable @["aDataTable"] { 
-      DataTableCols @.data = [1] {
-       String_Data @["col_one"] { 
-	UserDataItem_List @*(.user_data_) {
-	 UserDataItem @["view_panel_wd"] { };
-	};
-       };
-      };
-
-      DataOpList @.last_sort_spec.ops = [0] {
-      };
-     };
-    };
-
-    ProgType_List @.types = [0] {
-    };
-
-    ProgVar_List @.args = [0] {
-    };
-
-    ProgVar_List @.vars = [1] {
-     ProgVar @["aDataTable"] { };
-    };
-
-    Function_List @.functions = [0] {
-    };
-
-    ProgEl_List @.init_code = [0] {
-    };
-
-    ProgEl_List @.prog_code = [2] {
-     LocalVars @[0] { 
-      ProgVar_List @.local_vars = [0] {
-      };
-     };
-     MatrixAssign @[1] { };
-    };
-   };
   };
   Program_Group @.gp["group_two"] { 
   };
-  Program_Group @.gp["TestPrograms"] = [4] { 
+  Program_Group @.gp["TestPrograms"] = [5] { 
    Program @["copy_callee_caller"] { 
     ProgObjList @.objs = [0] {
     };
@@ -443,6 +443,45 @@ LeabraProject .projects["TestPointerUpdates"] {
       ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
+      };
+     };
+    };
+   };
+   Program @["move_callee_caller"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [3] {
+     ProgVar @["callee"] { };
+     ProgVar @["caller"] { };
+     ProgVar @["group_two"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [3] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
       };
      };
     };
@@ -2777,6 +2816,157 @@ LeabraProject .projects["TestPointerUpdates"] {
    tags=;
    desc=;
    debug_mode=0;
+   Program @["HasDataTable"] {
+    name="HasDataTable";
+    short_nm="HDTbl";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="objs";
+     el_typ=DataTable;
+     el_def=0;
+     DataTable @["aDataTable"] {
+      name="aDataTable";
+      desc=;
+      data {
+       name="data";
+       el_typ=String_Data;
+       el_def=0;
+       String_Data @["col_one"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 8 0=0.09680542;
+	  val_type_fixed=0;
+	 };
+	};
+	name="col_one";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=0;
+	ar {
+	 name="ar";
+	[1] "cat";	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name="row_indexes";
+      [1] 0;      };
+      last_sort_spec {
+       name="last_sort_spec";
+       ops {
+	name="ops";
+	el_typ=DataSortEl;
+	el_def=0;
+       };
+      };
+     };
+    };
+    types {
+     name="types";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="args";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="vars";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["aDataTable"] {
+      name="aDataTable";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["TestPointerUpdates"].programs.gp["group_one"]["HasDataTable"].objs["aDataTable"]$$;
+      objs_ptr=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="functions";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="init_code";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="prog_code";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      code_string=;
+      pre_compile_code_string="LocalVars (0 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     MatrixAssign @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="aDataTable[\"col_one\"][0] = 22";
+      pre_compile_code_string="aDataTable[\"col_one\"][0] = 22";
+      variable=.projects["TestPointerUpdates"].programs.gp["group_one"]["HasDataTable"].vars["aDataTable"]$$;
+      data_table=1;
+      col {
+       expr="\"col_one\"";
+      };
+      dim0 {
+       expr="0";
+      };
+      dim1 {
+       expr=;
+      };
+      dim2 {
+       expr=;
+      };
+      dim3 {
+       expr=;
+      };
+      dim4 {
+       expr=;
+      };
+      dim5 {
+       expr=;
+      };
+      expr {
+       expr="22";
+      };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
    Program @["Callee"] {
     name="Callee";
     short_nm="Callee";
@@ -3010,157 +3200,6 @@ LeabraProject .projects["TestPointerUpdates"] {
     step_prog=NULL;
     step_n=1;
    };
-   Program @["HasDataTable"] {
-    name="HasDataTable";
-    short_nm="HDTbl";
-    tags=;
-    desc=;
-    flags=NO_STOP_STEP;
-    stop_step_cond {
-     expr=;
-    };
-    objs {
-     name="objs";
-     el_typ=DataTable;
-     el_def=0;
-     DataTable @["aDataTable"] {
-      name="aDataTable";
-      desc=;
-      data {
-       name="data";
-       el_typ=String_Data;
-       el_def=0;
-       String_Data @["col_one"] {
-	UserDataItem_List @*(.user_data_) {
-	 name=;
-	 el_typ=UserDataItem;
-	 el_def=0;
-	 UserDataItem @["view_panel_wd"] {
-	  name="view_panel_wd";
-	  value 8 0=0.09680542;
-	  val_type_fixed=0;
-	 };
-	};
-	name="col_one";
-	col_flags=SAVE_ROWS|SAVE_DATA;
-	is_matrix=0;
-	cell_geom{ 1;	};
-	calc_expr {
-	 expr=;
-	};
-	dim_names {
-	 name="dim_names";
-	[0] 	};
-	width=0;
-	ar {
-	 name="ar";
-	[1] "cat";	};
-       };
-      };
-      data_flags=SAVE_ROWS|AUTO_CALC;
-      auto_load=NO_AUTO_LOAD;
-      auto_load_file=;
-      keygen 4 0=0;
-      row_indexes {
-       name="row_indexes";
-      [1] 0;      };
-      last_sort_spec {
-       name="last_sort_spec";
-       ops {
-	name="ops";
-	el_typ=DataSortEl;
-	el_def=0;
-       };
-      };
-     };
-    };
-    types {
-     name="types";
-     el_typ=DynEnumType;
-     el_def=0;
-    };
-    args {
-     name="args";
-     el_typ=ProgVar;
-     el_def=0;
-    };
-    vars {
-     name="vars";
-     el_typ=ProgVar;
-     el_def=0;
-     ProgVar @["aDataTable"] {
-      name="aDataTable";
-      var_type=T_Object;
-      object_type=DataTable;
-      object_val=.projects["TestPointerUpdates"].programs.gp["group_one"]["HasDataTable"].objs["aDataTable"]$$;
-      objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-    };
-    functions {
-     name="functions";
-     el_typ=Function;
-     el_def=0;
-    };
-    init_code {
-     name="init_code";
-     el_typ=ProgCode;
-     el_def=0;
-    };
-    prog_code {
-     name="prog_code";
-     el_typ=ProgCode;
-     el_def=0;
-     LocalVars @[0] {
-      desc=;
-      flags=0;
-      code_string=;
-      pre_compile_code_string="LocalVars (0 vars)";
-      local_vars {
-       name="local_vars";
-       el_typ=ProgVar;
-       el_def=0;
-      };
-     };
-     MatrixAssign @[1] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="aDataTable[\"col_one\"][0] = 22";
-      pre_compile_code_string="aDataTable[\"col_one\"][0] = 22";
-      variable=.projects["TestPointerUpdates"].programs.gp["group_one"]["HasDataTable"].vars["aDataTable"]$$;
-      data_table=1;
-      col {
-       expr="\"col_one\"";
-      };
-      dim0 {
-       expr="0";
-      };
-      dim1 {
-       expr=;
-      };
-      dim2 {
-       expr=;
-      };
-      dim3 {
-       expr=;
-      };
-      dim4 {
-       expr=;
-      };
-      dim5 {
-       expr=;
-      };
-      expr {
-       expr="22";
-      };
-     };
-    };
-    step_prog=NULL;
-    step_n=1;
-   };
   };
   Program_Group @.gp["group_two"] {
    name="group_two";
@@ -3339,6 +3378,151 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       meth_sig="taBase_ptr CopyChildBeforeIndex(taBase* src, int child_pos)";
       meth_desc=" implemented by container (list) objects: make a copy of the src object and insert it at the position of the child_pos object within this list -- copies the name of the object too";
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["move_callee_caller"] {
+    name="move_callee_caller";
+    short_nm="mvcllc";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name=;
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name=;
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["callee"] {
+      name="callee";
+      var_type=T_Object;
+      object_type=Program;
+      object_val=$.projects["TestPointerUpdates"].programs.gp["group_one"]["Callee"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["caller"] {
+      name="caller";
+      var_type=T_Object;
+      object_type=Program;
+      object_val=$.projects["TestPointerUpdates"].programs.gp["group_one"]["Caller"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["group_two"] {
+      name="group_two";
+      var_type=T_Object;
+      object_type=Program_Group;
+      object_val=$.projects["TestPointerUpdates"].programs.gp["group_two"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (0 vars)";
+      pre_compile_code_string="LocalVars (0 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     MethodCall @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="group_two->Transfer(callee)";
+      pre_compile_code_string="group_two->Transfer(callee)";
+      result_var=NULL;
+      obj=.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["move_callee_caller"].vars["group_two"]$$;
+      method=taList_impl::Transfer;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=taBase_ptr;
+	type="taBase*";
+	name="item";
+	required=1;
+	def_val=;
+	prev_expr="callee";
+	expr {
+	 expr="callee";
+	};
+       };
+      };
+      meth_sig="bool Transfer(taBase* item)";
+      meth_desc=;
+     };
+     MethodCall @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="group_two->Transfer(caller)";
+      pre_compile_code_string="group_two->Transfer(caller)";
+      result_var=NULL;
+      obj=$.projects["TestPointerUpdates"].programs.gp["TestPrograms"]["move_callee_caller"].vars["group_two"]$;
+      method=taList_impl::Transfer;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=taBase_ptr;
+	type="taBase*";
+	name="item";
+	required=1;
+	def_val=;
+	prev_expr="caller";
+	expr {
+	 expr="caller";
+	};
+       };
+      };
+      meth_sig="bool Transfer(taBase* item)";
+      meth_desc=;
      };
     };
     step_prog=NULL;
