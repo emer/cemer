@@ -622,7 +622,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
    };
   };
-  Program_Group @.gp["TesteePrograms"] = [3] { 
+  Program_Group @.gp["TesteePrograms"] = [4] { 
    Program @["copy_callee_caller"] { 
     ProgObjList @.objs = [0] {
     };
@@ -733,6 +733,39 @@ LeabraProject .projects["TestPointerUpdates"] {
       ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
+      };
+     };
+    };
+   };
+   Program @["move_hasdatatable"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [2] {
+     ProgVar @["group_two"] { };
+     ProgVar @["hasdatatable"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [2] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
       };
      };
     };
@@ -3988,7 +4021,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      LocalVars @[0] {
       desc=;
       flags=0;
-      code_string=;
+      code_string="LocalVars (1 vars)";
       pre_compile_code_string="LocalVars (1 vars)";
       local_vars {
        name="local_vars";
@@ -4103,7 +4136,7 @@ LeabraProject .projects["TestPointerUpdates"] {
        el_def=0;
        AssignExpr @[0] {
 	desc=;
-	flags=WARNING|CAN_REVERT_TO_CODE;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="group_name = \"NONE\"";
 	pre_compile_code_string="SetValue = \"NONE\"";
 	result_var=.projects["TestPointerUpdates"].programs.gp["TesterPrograms"]["edit_datatable"].vars["SetValue"]$$;
@@ -4116,7 +4149,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      Else @[4] {
       desc=;
       flags=0;
-      code_string=;
+      code_string="else";
       pre_compile_code_string="else";
       else_code {
        name="else_code";
@@ -4653,6 +4686,113 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       meth_sig="taBase_ptr CopyChildBeforeIndex(taBase* src, int child_pos)";
       meth_desc=" implemented by container (list) objects: make a copy of the src object and insert it at the position of the child_pos object within this list -- copies the name of the object too";
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["move_hasdatatable"] {
+    name="move_hasdatatable";
+    short_nm="mvhsdt";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name=;
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name=;
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["group_two"] {
+      name="group_two";
+      var_type=T_Object;
+      object_type=Program_Group;
+      object_val=$.projects["TestPointerUpdates"].programs.gp["group_two"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["hasdatatable"] {
+      name="hasdatatable";
+      var_type=T_Object;
+      object_type=Program;
+      object_val=$.projects["TestPointerUpdates"].programs.gp["group_one"]["HasDataTable"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (0 vars)";
+      pre_compile_code_string="LocalVars (0 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     MethodCall @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="group_two->CopyChildBeforeIndex(hasdatatable, -1)";
+      pre_compile_code_string="group_two->Transfer(hasdatatable)";
+      result_var=NULL;
+      obj=.projects["TestPointerUpdates"].programs.gp["TesteePrograms"]["move_hasdatatable"].vars["group_two"]$$;
+      method=taList_impl::Transfer;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=taBase_ptr;
+	type="taBase*";
+	name="item";
+	required=1;
+	def_val=;
+	prev_expr="hasdatatable";
+	expr {
+	 expr="hasdatatable";
+	};
+       };
+      };
+      meth_sig="bool Transfer(taBase* item)";
+      meth_desc=;
      };
     };
     step_prog=NULL;
