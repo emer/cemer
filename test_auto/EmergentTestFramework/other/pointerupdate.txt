@@ -27,6 +27,7 @@ ${debug} =       false
 
 Initialize
     Set Suite Variable     ${verbose}       ${false}
+    Set Suite Variable     ${project}       ../../test/TestPointerUpdates.proj
     Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
 
 Connection
@@ -61,27 +62,18 @@ CopyProgram
     Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
 
 MoveProgram
+    Restart Emergent
     Set Suite Variable          ${program_test}       "call_caller"
+
+    Prog Group Should Match    2                     NONE
+    Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
     
-    Ensure Emergent Free
-    ${output} =                Run Command Wait      {"command": "SetVar", "program": "call_caller", "var_name": "which_group", "var_value": "1"}
-    Status OK                  ${output}
-
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "call_caller"}
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_callee_caller"}
     Status OK No Result        ${output}
 
-    Prog Var Should Match      group_name       .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"]
-    
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_callee_caller"}
-    Status OK No Result        ${output}
+    Prog Group Should Match    1                     NONE
+    Prog Group Should Match    2                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
 
-    ${output} =                Run Command Wait      {"command": "SetVar", "program": "call_caller", "var_name": "which_group", "var_value": "2"}
-    Status OK                  ${output}
-
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "call_caller"}
-    Status OK No Result        ${output}
-
-    Prog Var Should Match      group_name       .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_two\\"]
     
 
 

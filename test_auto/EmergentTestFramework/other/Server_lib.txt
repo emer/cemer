@@ -197,7 +197,7 @@ Restart Emergent
     Log  "Emergent is still busy, restarting server"    WARN
     Shutdown Emergent
     Sleep    5
-    Initialize Emergent ${project}
+    Initialize Emergent         ${project}
     Sleep      5
     ${output} =       Read
     Write Bare        {"command": "GetRunState"}
