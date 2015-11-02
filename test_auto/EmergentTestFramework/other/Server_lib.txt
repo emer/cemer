@@ -194,7 +194,6 @@ Prog Var Should Be Empty
 
 
 Restart Emergent
-    Log  "Emergent is still busy, restarting server"    WARN
     Shutdown Emergent
     Sleep    5
     Initialize Emergent         ${project}
@@ -211,6 +210,7 @@ Ensure Emergent Free
     ${stat}   ${status} =        Run Keyword And Ignore Error     Get Json String    ${output}    /status
     ${stat}   ${result} =        Run Keyword And Ignore Error     Get Json String    ${output}    /result
     Return from Keyword If      '${status}' == 'OK' and ('${result}' == '4' or '${result}' == '0')
+    Log  "Emergent is still busy, restarting server"    WARN
     Restart Emergent
 
 
