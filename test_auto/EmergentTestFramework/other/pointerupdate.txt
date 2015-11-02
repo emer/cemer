@@ -47,7 +47,7 @@ General RunState
     Status OK Match Result     ${output}             4
 
 CopyProgram
-    Set Suite Variable          ${program_test}       "call_caller"
+    Set Suite Variable     ${program_test}       "TestGroup"
     Ensure Emergent Free
     Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"]
     Prog Group Should Match    2                     NONE  
@@ -55,15 +55,14 @@ CopyProgram
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_callee_caller"}
     Status OK No Result        ${output}
 
-    ${output} =                Run Command Wait      {"command": "SetVar", "program": "call_caller", "var_name": "which_group", "var_value": "2"}
-    Status OK                  ${output}
 
     Prog Group Should Match    2                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_two\\"]
     Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
 
 MoveProgram
+    Set Suite Variable     ${program_test}       "TestGroup"
     Restart Emergent
-    Set Suite Variable          ${program_test}       "call_caller"
+    Ensure Emergent Free
 
     Prog Group Should Match    2                     NONE
     Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
@@ -72,7 +71,70 @@ MoveProgram
     Status OK No Result        ${output}
 
     Prog Group Should Match    1                     NONE
-    Prog Group Should Match    2                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
+    Prog Group Should Match    2                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_two\\"] 
+
+CopyDataTable
+    Set Suite Variable   ${program_test}         "TestDataTableValue"
+    Restart Emergent
+    Ensure Emergent Free
+
+    DataTable Value Should Match        1       cat
+    DataTable Value Should Match        2       -1
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_hasdatatable"}
+    Status OK No Result        ${output}
+
+    DataTable Value Should Match        1       cat
+    DataTable Value Should Match        2       cat
+
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "edit_datatable", "var_name": "which_group", "var_value": 2}
+    Status OK                  ${output}    
+
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "edit_datatable", "var_name": "SetValue", "var_value": "dog"}
+    Status OK                  ${output}    
+    
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "edit_datatable"}
+    Status OK No Result        ${output}
+
+    DataTable Value Should Match        1       cat
+    DataTable Value Should Match        2       dog
+
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "edit_datatable", "var_name": "which_group", "var_value": 1}
+    Status OK                  ${output}    
+
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "edit_datatable", "var_name": "SetValue", "var_value": "lion"}
+    Status OK                  ${output}    
+    
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "edit_datatable"}
+    Status OK No Result        ${output}
+
+    DataTable Value Should Match        1       lion
+    DataTable Value Should Match        2       dog
+
+MoveDataTable
+    Set Suite Variable   ${program_test}         "TestDataTableValue"
+    Restart Emergent
+    Ensure Emergent Free
+
+    DataTable Value Should Match        1       cat
+    DataTable Value Should Match        2       -1
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_hasdatatable"}
+    Status OK No Result        ${output}
+
+    DataTable Value Should Match        1       -1
+    DataTable Value Should Match        2       cat
+
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "edit_datatable", "var_name": "which_group", "var_value": 2}
+    Status OK                  ${output}    
+
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "edit_datatable", "var_name": "SetValue", "var_value": "dog"}
+    Status OK                  ${output}    
+    
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "edit_datatable"}
+    Status OK No Result        ${output}
+
+    DataTable Value Should Match        2       dog    
 
     
 
@@ -82,10 +144,20 @@ MoveProgram
 
 Prog Group Should Match
     [Arguments]        ${prog_group}   ${group_name}
-    ${output} =                Run Command Wait      {"command": "SetVar", "program": "call_caller", "var_name": "which_group", "var_value": ${prog_group}}
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "TestGroup", "var_name": "which_group", "var_value": ${prog_group}}
     Status OK                  ${output}
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "call_caller"}
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "TestGroup"}
     Status OK No Result        ${output}
 
     Prog Var Should Match      group_name            ${group_name}
+
+DataTable Value Should Match
+    [Arguments]        ${prog_group}   ${table_value}
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "TestDataTableValue", "var_name": "which_group", "var_value": ${prog_group}}
+    Status OK                  ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "TestDataTableValue"}
+    Status OK No Result        ${output}
+
+    Prog Var Should Match      data_table_value           ${table_value}
