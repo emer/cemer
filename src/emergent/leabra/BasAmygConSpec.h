@@ -33,7 +33,6 @@ INHERITED(LeabraConSpec)
 public:
   float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
-  bool          ext_learn_act;  // do the extinction connections learn based on the activation of the ext units themselves -- if true, uses MAX(deep_lrn, ru_act) -- if false, then acquisition-sent deep_lrn determines when learning occurs
 
   inline float  GetDa(float da, bool d2r) {
     if(da < 0.0f) da *= dip_da_gain; else da *= burst_da_gain;

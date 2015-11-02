@@ -18,7 +18,7 @@
 TA_BASEFUNS_CTORS_DEFN(LatAmygConSpec);
 
 void LatAmygConSpec::Initialize() {
-  neg_da_gain = 0.05f;
+  neg_da_gain = 0.0f;
 }
 
 void LatAmygConSpec::Defaults_init() {

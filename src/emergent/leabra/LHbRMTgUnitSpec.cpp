@@ -24,9 +24,9 @@ TA_BASEFUNS_CTORS_DEFN(LHbRMTgUnitSpec);
 TA_BASEFUNS_CTORS_DEFN(LHbRMTgGains);
 
 void LHbRMTgGains::Initialize() {
-  all = 1.5f;
-  patch_dir = 1.0f;
-  patch_ind = 1.0f;
+  all = 1.0f;
+  patch_dir = 0.7f;
+  patch_ind = 0.7f;
   vs_matrix_dir = 1.0f;
   vs_matrix_ind = 1.0f;
   dms_matrix_dir = 1.0f;
@@ -86,11 +86,11 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* u, bool quiet) {
                 pv_pos_lay, pv_neg_lay, dms_matrix_dir_lay, dms_matrix_ind_lay);
 
   if(u->CheckError(!patch_dir_lay, quiet, rval,
-                   "did not find VS Patch Direct recv projection -- searches for Patch and *not* Ind in layer name")) {
+                   "did not find VS Patch D1R recv projection -- searches for MSNUnitSpec::PATCH, D1R")) {
     rval = false;
   }
   if(u->CheckError(!patch_ind_lay, quiet, rval,
-                   "did not find VS Patch Indirect recv projection -- searches for Patch and Ind in layer name")) {
+                   "did not find VS Patch D2R recv projection -- searches for MSNUnitSpec::PATCH, D2R")) {
     rval = false;
   }
   // matrix is optional

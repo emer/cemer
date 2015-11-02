@@ -23,6 +23,8 @@ void BasAmygConSpec::Initialize() {
 }
 
 void BasAmygConSpec::Defaults_init() {
+  SetUnique("wt_sig", true);
+  wt_sig.gain = 1.0f;
 }
 
 bool BasAmygConSpec::CheckConfig_RecvCons(ConGroup* cg, bool quiet) {

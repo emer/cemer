@@ -27,6 +27,11 @@ void BasAmygUnitSpec::Initialize() {
 }
 
 void BasAmygUnitSpec::Defaults_init() {
+  SetUnique("deep", true);
+  deep.on = true;
+  deep.role = DeepSpec::DEEP;
+  deep.raw_thr_rel = 0.1f;
+  deep.raw_thr_abs = 0.1f;
 }
 
 void BasAmygUnitSpec::UpdateAfterEdit_impl() {

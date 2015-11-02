@@ -40,7 +40,7 @@ void PVLVDaSpec::Initialize() {
 }
 
 void LVBlockSpec::Initialize() {
-  pos_pv = 5.0f;
+  pos_pv = 1.0f;
   lhb_dip = 2.0f;
   rec_data = false;
 }

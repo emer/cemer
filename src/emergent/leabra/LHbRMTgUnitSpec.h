@@ -30,13 +30,13 @@ class E_API LHbRMTgGains : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gains for LHbRMTg inputs
 INHERITED(SpecMemberBase)
 public:
-  float         all;            // #MIN_0 #DEF_1.5 final overall gain on everything
-  float         patch_dir;      // #MIN_0 #DEF_1 VS patch direct pathway versus positive PV outcomes
-  float         patch_ind;      // #MIN_0 #DEF_1 VS patch indirect pathway versus negative PV outcomes
-  float         vs_matrix_dir;       // #MIN_0 #DEF_1 gain on VS matrix dir
-  float         vs_matrix_ind;       // #MIN_0 #DEF_1 - VS matrix indir
-  float         dms_matrix_dir;      // #MIN_0 #DEF_1 - DMS matrix_dir
-  float         dms_matrix_ind;      // #MIN_0 #DEF_1 - DMS matrix_indir
+  float         all;            // #MIN_0 #DEF_1 final overall gain on everything
+  float         patch_dir;      // #MIN_0 #DEF_0.7 VS patch direct pathway versus positive PV outcomes
+  float         patch_ind;      // #MIN_0 #DEF_0.7 VS patch indirect pathway versus negative PV outcomes
+  float         vs_matrix_dir;  // #MIN_0 #DEF_1 gain on VS matrix dir
+  float         vs_matrix_ind;  // #MIN_0 #DEF_1 - VS matrix indir
+  float         dms_matrix_dir; // #MIN_0 #DEF_1 - DMS matrix_dir
+  float         dms_matrix_ind; // #MIN_0 #DEF_1 - DMS matrix_indir
   bool          matrix_td;      // #DEF_false compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
   float         min_pvneg;      // #DEF_0.1 #MIN_0 #MAX_1 proportion of PVNeg that cannot be predicted away - can never afford to take danger for granted!
   
