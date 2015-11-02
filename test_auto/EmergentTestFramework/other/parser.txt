@@ -160,18 +160,4 @@ ParseObjectMemberSelectMethodOrMemberSeeded
     Prog Var Should Match	base_path	      DataTable_28.cell_view
 
 
-*** Keywords ***
-
-Prog Var Should Match
-    [Arguments]         ${var_name}	${should_match}
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "${var_name}"}
-    Status OK 		       ${output}
-    Json String Should Match    ${output}             /result  ${should_match}
-
-Prog Var Should Be Empty
-    [Arguments]         ${var_name}
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "${var_name}"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
-
 

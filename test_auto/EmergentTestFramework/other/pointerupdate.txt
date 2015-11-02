@@ -48,6 +48,22 @@ General RunState
 CopyProgram
     Set Suite Variable          ${program_test}       "call_caller"
     Ensure Emergent Free
+    Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"]
+    Prog Group Should Match    2                     NONE  
+    
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_callee_caller"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "call_caller", "var_name": "which_group", "var_value": "2"}
+    Status OK                  ${output}
+
+    Prog Group Should Match    2                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_two\\"]
+    Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
+
+MoveProgram
+    Set Suite Variable          ${program_test}       "call_caller"
+    
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "call_caller", "var_name": "which_group", "var_value": "1"}
     Status OK                  ${output}
 
@@ -71,16 +87,13 @@ CopyProgram
 
 *** Keywords ***
 
-Prog Var Should Match
-    [Arguments]         ${var_name}	${should_match}
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "${var_name}"}
-    Status OK 		       ${output}
-    Json String Should Match    ${output}             /result  ${should_match}
 
-Prog Var Should Be Empty
-    [Arguments]         ${var_name}
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "${var_name}"}
-    Status OK 		       ${output}
-    Json String Should Be Empty    ${output}             /result
+Prog Group Should Match
+    [Arguments]        ${prog_group}   ${group_name}
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "call_caller", "var_name": "which_group", "var_value": ${prog_group}}
+    Status OK                  ${output}
 
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "call_caller"}
+    Status OK No Result        ${output}
 
+    Prog Var Should Match      group_name            ${group_name}
