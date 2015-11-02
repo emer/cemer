@@ -59,7 +59,7 @@ void BasAmygUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int
   if(deep.SendDeepMod()) {
     u->deep_lrn = u->deep_mod = u->act;      // record what we send!
   }
-  else if(deep.TRCUnits()) {
+  else if(deep.IsTRC()) {
     u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
   }
   // must be SUPER units at this point

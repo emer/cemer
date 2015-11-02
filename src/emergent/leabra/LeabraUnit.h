@@ -127,9 +127,6 @@ public:
   inline float& deep_raw_prv()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_prv; }
   // #CAT_UnitVar previous value of the deep layer raw activation values -- used for temporal context learning
-  inline float& deep_raw_pprv()
-  { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_pprv; }
-  // #CAT_UnitVar previous-previous value of the deep layer raw activation values -- used for pfc dynamics updating
   inline float& deep_ctxt()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_ctxt; }
   // #CAT_UnitVar temporally-delayed local lateral integration of deep_raw signals sent via DeepCtxtConSpec connections to provide context for temporal integration (TI) learning -- added into net input of superficial neurons -- computed at start of new alpha trial

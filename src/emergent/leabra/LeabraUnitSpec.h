@@ -488,6 +488,16 @@ public:
 
   float      mod_range;  // #READ_ONLY #EXPERT 1 - mod_min -- range for the netinput to modulate value of deep_mod, between min and 1 value
 
+  inline bool   IsSuper()
+  { return on && role == SUPER; }
+  // are we SUPER?
+  inline bool   IsDeep()
+  { return on && role == DEEP; }
+  // are we DEEP?
+  inline bool   IsTRC()
+  { return on && role == TRC; }
+  // are we thalamic relay cell units?
+
   inline bool   ApplyDeepMod()
   { return on && role == SUPER; }
   // should deep modulation be applied to these units?
@@ -499,10 +509,6 @@ public:
   inline bool   ApplyDeepCtxt()
   { return on && role == DEEP; }
   // should we apply deep context netinput?  only for deep guys
-
-  inline bool   TRCUnits()
-  { return on && role == TRC; }
-  // are we thalamic relay cell units?
 
   String     GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -693,6 +699,8 @@ public:
     virtual void Compute_NetinScale(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #CAT_Activation compute net input scaling values -- call at start of quarter just to be sure
 
+    virtual void Quarter_Init_Deep(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) { };
+    // #CAT_Deep first entry point into quarter init deep for deep -- needed in subclasses (PFCUnitSpec) for updates prior to sending DeepCtxtNetin
     virtual void Send_DeepCtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #CAT_Deep send deep_raw to deep_ctxt netinput, using deepraw netin temp buffer -- not delta based
     virtual void Compute_DeepCtxt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);

@@ -582,7 +582,6 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->act_raw = 0.0f;
   u->deep_raw = 0.0f;
   u->deep_raw_prv = 0.0f;
-  u->deep_raw_pprv = 0.0f;
   u->deep_mod = 1.0f;
   u->deep_lrn = 1.0f;
   u->deep_ctxt = 0.0f;
@@ -704,7 +703,6 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->act_raw = 0.0f;
   u->deep_raw = 0.0f;
   u->deep_raw_prv = 0.0f;
-  u->deep_raw_pprv = 0.0f;
   u->deep_mod = 1.0f;
   u->deep_lrn = 1.0f;
   u->deep_ctxt = 0.0f;
@@ -892,7 +890,7 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int
     float eff_err = MAX(lay->cos_diff_avg_lrn, avg_l_2.err_min);
     u->avg_l_lrn *= eff_err;
   }
-  if(lay->layer_type != Layer::HIDDEN || deep.TRCUnits()) {
+  if(lay->layer_type != Layer::HIDDEN || deep.IsTRC()) {
     u->avg_l_lrn = 0.0f;        // no self organizing in non-hidden layers!
   }
 }
@@ -1065,7 +1063,6 @@ void LeabraUnitSpec::Compute_DeepCtxt(LeabraUnitVars* u, LeabraNetwork* net, int
 void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
 
-  u->deep_raw_pprv = u->deep_raw_prv;
   u->deep_raw_prv = u->deep_raw; // keep track of what we sent here, for context learning
 }
 
@@ -1374,8 +1371,10 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
 
   float net_syn = u->net_raw;
   float net_ex = 0.0f;
-  if(deep.TRCUnits() && Quarter_DeepRawNow(net->quarter)) {
-    net_syn = u->deep_raw_net;          // only gets from deep!  and no extras!
+  if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
+    if(lay->acts_m.max > 0.1f) {  // only activate if we got minus phase activation!
+      net_syn = u->deep_raw_net; // only gets from deep!  and no extras!
+    }
   }
   else {
     net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);  // this could modify net_syn if it wants..
@@ -1510,7 +1509,7 @@ void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
   if(deep.SendDeepMod()) {
     u->deep_lrn = u->deep_mod = u->act;      // record what we send!
   }
-  else if(deep.TRCUnits()) {
+  else if(deep.IsTRC()) {
     u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
   }
   // must be SUPER units at this point
@@ -1599,7 +1598,7 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
   if(deep.ApplyDeepMod()) { // apply attention directly to act
     new_act *= u->deep_mod;
   }
-  if(deep.TRCUnits() && deep.trc_trace && Quarter_DeepRawNow(net->quarter)) {
+  if(deep.IsTRC() && deep.trc_trace && Quarter_DeepRawNow(net->quarter)) {
     new_act = MAX(u->act_q0, new_act);
   }
   u->act_nd = act_range.Clip(new_act);
@@ -1998,7 +1997,6 @@ void LeabraUnitSpec::DeepRawNetin_Integ(LeabraUnitVars* u, LeabraNetwork* net, i
 void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   u->deep_raw = 0.0f;
   u->deep_raw_prv = 0.0f;
-  u->deep_raw_pprv = 0.0f;
   u->deep_ctxt = 0.0f;
   u->deep_mod = 1.0f;
   u->deep_lrn = 1.0f;

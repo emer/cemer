@@ -32,8 +32,11 @@ INHERITED(SpecMemberBase)
 public:
   float         gate_thr;       // #DEF_0.1 threshold on thalamic gating signal to drive gating
   bool          out_gate;       // if true, this PFC layer is an output gate layer, which means that it only has transient activation during gating
-  int           out_mnt;        // #CONDSHOW_ON_out_gate #DEF_1:2 number of trials (updates of deep_norm state, following deep_qtr updates) to maintain output gating signals
+  int           out_mnt;        // #CONDSHOW_ON_out_gate #DEF_1:2 number of effective trials (updates of deep state, following deep_qtr updates) to maintain output gating signals
   int           max_mnt;        // #CONDSHOW_OFF_out_gate maximum duration of maintenance for any stripe -- beyond this limit, the maintenance is just automatically cleared
+  float         s_mnt_gain;     // for superficial neurons, how much of deep_lrn to add into excitatory net input to support maintenance, from deep maintenance signal
+  float         mnt_thal;       // #DEF_0.5 effective thal activation to use for continued maintenance beyond the initial thal signal provided by the BG -- also sets and effective minimum thal value regardless of the actual gating thal value
+  bool          use_dyn;        // use fixed dynamics for updating deep_ctxt activations -- defined in dyn_table
   
   String        GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -50,23 +53,21 @@ private:
 eTypeDef_Of(PFCUnitSpec);
 
 class E_API PFCUnitSpec : public LeabraUnitSpec {
-  // PFC unit spec -- thal signal during deep updating quarter drives updating of deep_raw activations as maintenance activations -- these activations evolve over time across units according to the dyn_table settings -- each unit has stereotyped dynamic responses to the gating event -- activation at time of gating stored in misc_1 var -- deep_norm at end of deep updating is updated to reflect new maint currents, and this feeds back using deep.d_to_s to drive superficial maint activation as well (super acts don't feel gating update until next alpha or beta trial to prevent learning effects, but deep_raw updates in prior quarter) -- thal_cnt increments for continuing maintenance
+  // PFC unit spec -- thal signal during deep_raw_qtr drives updating of deep_raw as gated deep5b activations, sent as deep_ctxt to DEEP units that send back deep_lrn to SUPER, and drive top-down outputs -- output gating is transient
 INHERITED(LeabraUnitSpec)
 public:
 
   enum DynVals {                // the different values stored in dyn_table -- for rapid access
     DYN_NAME,
     DYN_DESC,
-    DYN_INIT,
-    DYN_RISE_TAU,
-    DYN_RISE_DT,
-    DYN_DECAY_TAU,
-    DYN_DECAY_DT,
+    DYN_INIT,                   // initial value at point when gating starts
+    DYN_RISE_TAU,               // time constant for linear rise in maintenance activation (per quarter when deep is updated) -- use integers -- if both rise and decay then rise comes first
+    DYN_DECAY_TAU,              // time constant for linear decay in maintenance activation (per quarter when deep is updated) -- use integers -- if both rise and decay then rise comes first
   };
 
   PFCMiscSpec   pfc;            // misc PFC specifications
   int           n_dyns;         // number of different temporal dynamic profiles for different PFC units, all triggered by a single gating event -- each row of units within a PFC unit group shares the same dynamics -- there should be an even multiple of n_dyns rows (y unit group size) per unit group
-  DataTable     dyn_table;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER table of dynamics parameters for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_raw is computed -- one set of params per each row, n_dyns rows total (see n_dyns)
+  DataTable     dyn_table;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER table of dynamics parameters for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_ctxt is computed -- one set of params per each row, n_dyns rows total (see n_dyns)
 
   inline float  GetDynVal(DynVals val, int row) {
     return dyn_table.GetValAsFloat(val, row);
@@ -77,24 +78,8 @@ public:
   }
   // set specific dyn value for given row
 
-  inline float   UpdtDynVal(const float cur_val, const float prv_val,
-                            const float max_act, int row) {
-    float rise_tau = GetDynVal(DYN_RISE_TAU, row);
-    float rise_dt = GetDynVal(DYN_RISE_DT, row);
-    float decay_dt = GetDynVal(DYN_DECAY_DT, row);
-    float nw = cur_val;
-    float del = cur_val - prv_val;
-    if(rise_tau > 0.0f && cur_val < max_act && del >= 0.0f) {
-      nw += max_act * rise_dt; 
-    }
-    else {
-      nw -= max_act * decay_dt;
-    }
-    if(nw > max_act) nw = max_act;
-    if(nw < 0.001f) nw = 0.001f; // non-zero indicates gated..
-    return nw;
-  }
-  // update dynamic value as function of current value and time since gating
+  virtual float UpdtDynVal(int row, float time_step);
+  // get update dynamic value as function of current value and previous value
   
   virtual void  FormatDynTable();
   // #IGNORE format the dyn table
@@ -105,9 +90,11 @@ public:
 
   float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
                             int thr_no, float& net_syn) override;
-  void  Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void  Compute_DeepNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-  void  Send_DeepNormNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+
+  void Quarter_Init_Deep(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void Send_DeepCtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
   virtual void ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // clear maintenance in other layers we project to using MarkerConSpec

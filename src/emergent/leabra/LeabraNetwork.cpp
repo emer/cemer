@@ -718,16 +718,23 @@ void LeabraNetwork::Quarter_Init_Deep_Thr(int thr_no) {
     for(int i=0; i<nu; i++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
       if(uv->lesioned()) continue;
-      ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepCtxtNetin(uv, this, thr_no);
+      ((LeabraUnitSpec*)uv->unit_spec)->Quarter_Init_Deep(uv, this, thr_no);
     }
     threads.SyncSpin(thr_no, 0);
+    
+    for(int i=0; i<nu; i++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+      if(uv->lesioned()) continue;
+      ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepCtxtNetin(uv, this, thr_no);
+    }
+    threads.SyncSpin(thr_no, 1);
 
     for(int i=0; i<nu; i++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
       if(uv->lesioned()) continue;
       ((LeabraUnitSpec*)uv->unit_spec)->Compute_DeepCtxt(uv, this, thr_no);
     }
-    threads.SyncSpin(thr_no, 1);
+    threads.SyncSpin(thr_no, 2);
     InitDeepRawNetinTmp_Thr(thr_no);
   }
 
