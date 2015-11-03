@@ -423,7 +423,8 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
       dumpMisc::dump_root_path = rbase->GetPath();
     
     rbase->Dump_Save_pre();
-    rbase->Dump_Save_GetPluginDeps();
+    if(!taMisc::is_undo_saving)
+      rbase->Dump_Save_GetPluginDeps();
     // if any plugins were used, write out the list of deps
     taPluginBase_List* plst = &(tabMisc::root->plugin_deps);
     if (plst->size > 0) {
@@ -1275,6 +1276,7 @@ endload:
 
 
 void taBase::Dump_Save_GetPluginDeps() {
+  if(taMisc::is_undo_saving) return;
   if (!tabMisc::root) return;
   // check me!
   tabMisc::root->CheckAddPluginDep(this->GetTypeDef());
@@ -1303,6 +1305,7 @@ void taBase::Dump_Save_GetPluginDeps() {
 }
 
 void taList_impl::Dump_Save_GetPluginDeps() {
+  if(taMisc::is_undo_saving) return;
   inherited_taBase::Dump_Save_GetPluginDeps();
   if (!Dump_QuerySaveChildren()) return;
   
@@ -1322,6 +1325,7 @@ void taList_impl::Dump_Save_GetPluginDeps() {
 }
 
 void taGroup_impl::Dump_Save_GetPluginDeps() {
+  if(taMisc::is_undo_saving) return;
   inherited::Dump_Save_GetPluginDeps();
   gp.Dump_Save_GetPluginDeps();
 }

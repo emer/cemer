@@ -736,6 +736,13 @@ void LeabraNetwork::Quarter_Init_Deep_Thr(int thr_no) {
     }
     threads.SyncSpin(thr_no, 2);
     InitDeepRawNetinTmp_Thr(thr_no);
+
+    Compute_DeepCtxtStats_Thr(thr_no);
+    threads.SyncSpin(thr_no, 0);
+    if(thr_no == 0) {
+      Compute_DeepCtxtStats_Post();
+    }
+    threads.SyncSpin(thr_no, 1);
   }
 
   for(int i=0; i<nu; i++) {
@@ -747,6 +754,84 @@ void LeabraNetwork::Quarter_Init_Deep_Thr(int thr_no) {
 
 void LeabraNetwork::InitDeepRawNetinTmp_Thr(int thr_no) {
   memset(thrs_send_deeprawnet_tmp[thr_no], 0, n_units_built * sizeof(float));
+}
+
+void LeabraNetwork::Compute_DeepCtxtStats_Thr(int thr_no) {
+  // first go by layers
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    // if(lay->hard_clamped)
+    //   continue;
+    AvgMaxValsRaw* am_ctxt = ThrLayAvgMax(thr_no, li, AM_DEEP_RAW);
+    am_ctxt->InitVals();
+    
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      am_ctxt->UpdtVals(uv->deep_ctxt, flat_idx); 
+    }
+  }
+
+  // then unit groups
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveUnGpLayer(li);
+    // if(lay->hard_clamped)
+    //   continue;
+    AvgMaxValsRaw* am_ctxt = ThrUnGpAvgMax(thr_no, li, AM_DEEP_RAW);
+    am_ctxt->InitVals();
+    
+    const int ust = ThrUnGpUnStart(thr_no, li);
+    const int ued = ThrUnGpUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      am_ctxt->UpdtVals(uv->deep_ctxt, flat_idx); 
+    }
+  }
+}
+
+void LeabraNetwork::Compute_DeepCtxtStats_Post() {
+  // integrate all the data from thread-specific guys
+
+  // first go by layers
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    // if(lay->hard_clamped)
+    // continue;
+    AvgMaxVals& am_deep_ctxt = lay->am_deep_ctxt;
+    am_deep_ctxt.InitVals();
+
+    for(int i=0; i < n_thrs_built; i++) {
+      AvgMaxValsRaw* am_ctxt = ThrLayAvgMax(i, li, AM_DEEP_RAW);
+      am_deep_ctxt.UpdtFmAvgMaxRaw(*am_ctxt);
+    }
+    am_deep_ctxt.CalcAvg();
+  }
+
+  // then by unit groups
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveUnGpLayer(li);
+    // if(lay->hard_clamped)
+    //   continue;
+    int ugidx = ActiveUnGp(li);
+    LeabraUnGpData* gpd = lay->ungp_data.FastEl(ugidx);
+    AvgMaxVals& am_deep_ctxt = gpd->am_deep_ctxt;
+    am_deep_ctxt.InitVals();
+
+    for(int i=0; i < n_thrs_built; i++) {
+      AvgMaxValsRaw* am_ctxt = ThrUnGpAvgMax(i, li, AM_DEEP_RAW);
+      am_deep_ctxt.UpdtFmAvgMaxRaw(*am_ctxt);
+    }
+    am_deep_ctxt.CalcAvg();
+  }
 }
 
 void LeabraNetwork::Compute_HardClamp() {

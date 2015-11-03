@@ -168,7 +168,9 @@ void PFCUnitSpec::UpdateAfterEdit_impl() {
 float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
-  net_ex += pfc.s_mnt_gain * u->deep_lrn;
+  if(deep.IsSuper()) {
+    net_ex += pfc.s_mnt_gain * u->deep_mod_net;
+  }
   return net_ex;
 }
 
@@ -180,6 +182,7 @@ void PFCUnitSpec::Quarter_Init_Deep(LeabraUnitVars* u, LeabraNetwork* net, int t
 
   if(pfc.out_gate) {
     if(u->thal_cnt >= pfc.out_mnt) {
+      u->thal = 0.0f;
       u->thal_cnt = -1.0f;
       // todo: could explore option where we clear here, instead of at first gating
     }
@@ -189,6 +192,7 @@ void PFCUnitSpec::Quarter_Init_Deep(LeabraUnitVars* u, LeabraNetwork* net, int t
   }
   else {                        // maint gating
     if(u->thal_cnt >= pfc.max_mnt) {
+      u->thal = 0.0f;
       u->thal_cnt = -1.0f;
     }
   }
@@ -197,7 +201,8 @@ void PFCUnitSpec::Quarter_Init_Deep(LeabraUnitVars* u, LeabraNetwork* net, int t
 void PFCUnitSpec::Send_DeepCtxtNetin(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
 
-  if(u->thal_cnt < 0.0f) {      // if we were cleared, don't send anything!
+  if(u->thal < pfc.gate_thr && u->thal_cnt < 0.0f) {
+    // if we were cleared, don't send anything!
     u->deep_raw = 0.0f;
   }
   inherited::Send_DeepCtxtNetin(u, net, thr_no);
@@ -208,8 +213,8 @@ void PFCUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, i
   if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
 
   int dyn_row = 0;
+  LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
   if(deep.IsDeep() && pfc.use_dyn) {
-    LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     int unidx = un->UnitGpUnIdx();
     dyn_row = unidx % n_dyns;
   }
@@ -219,28 +224,38 @@ void PFCUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, i
 
     // now update dynamics if doing that!
     if(deep.IsDeep() && pfc.use_dyn) {
-      u->misc_1 = UpdtDynVal(dyn_row, (u->thal_cnt-1.0f));
-      u->deep_ctxt *= u->misc_1;
+      float dynval = UpdtDynVal(dyn_row, (u->thal_cnt-1.0f));
+      u->deep_ctxt = u->misc_1 * dynval;
     }
   }
-  else if(u->thal_cnt <= -1.0f) {
-    u->thal_cnt -= 1.0f;
-    // deep_raw and context already zeroed!
-  }
-  else { // see if just started maint?
+  else {
     if(deep.IsSuper()) {
       if(u->thal > pfc.gate_thr) { 
         u->thal_cnt = 1.0f;
       }
+      else {
+        if(u->thal_cnt >= 0)
+          u->thal_cnt = -1.0f;
+        else
+          u->thal_cnt -= 1.0f;
+      }
     }
     else if(deep.IsDeep()) {
-      if(u->deep_ctxt > 0.001f) {
+      LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+      LeabraUnGpData* ugd = lay->UnGpDataUn(un);
+      if(ugd->am_deep_ctxt.max > 0.01f) {
+        u->misc_1 = u->deep_ctxt; // record gating ctxt
         u->thal_cnt = 1.0f;
 
         if(pfc.use_dyn) {
-          u->misc_1 = GetDynVal(DYN_INIT, dyn_row);
-          u->deep_ctxt *= u->misc_1;
+          u->deep_ctxt *= GetDynVal(DYN_INIT, dyn_row);
         }
+      }
+      else {
+        if(u->thal_cnt >= 0)
+          u->thal_cnt = -1.0f;
+        else
+          u->thal_cnt -= 1.0f;
       }
     }
   }
@@ -277,7 +292,9 @@ void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr
     LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
     if(!cs->InheritsFrom(TA_MarkerConSpec)) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->thal_cnt = -1.0f; // terminate!
+      LeabraUnitVars* uv = (LeabraUnitVars*)send_gp->UnVars(j,net);
+      uv->thal = 0.0f;      // terminate!
+      uv->thal_cnt = -1.0f; // terminate!
     }
   }
 }

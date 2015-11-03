@@ -460,6 +460,10 @@ public:
       // #IGNORE quarter deep leabra init: deep_ctxt compute and deep state update
       virtual void InitDeepRawNetinTmp_Thr(int thr_no);
       // #IGNORE initialize deep_raw netin temp buffer
+      virtual void Compute_DeepCtxtStats_Thr(int thr_no);
+      // #IGNORE compute layer and unit-group level stats on deep_ctxt
+      virtual void Compute_DeepCtxtStats_Post();
+      // #IGNORE compute layer and unit-group level stats on deep_ctxt
 
     virtual void Compute_HardClamp();
     // #CAT_QuarterInit compute hard clamping from external inputs

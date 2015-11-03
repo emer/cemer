@@ -36,7 +36,7 @@ public:
   int           max_mnt;        // #CONDSHOW_OFF_out_gate maximum duration of maintenance for any stripe -- beyond this limit, the maintenance is just automatically cleared
   float         s_mnt_gain;     // for superficial neurons, how much of deep_lrn to add into excitatory net input to support maintenance, from deep maintenance signal
   float         mnt_thal;       // #DEF_0.5 effective thal activation to use for continued maintenance beyond the initial thal signal provided by the BG -- also sets and effective minimum thal value regardless of the actual gating thal value
-  bool          use_dyn;        // use fixed dynamics for updating deep_ctxt activations -- defined in dyn_table
+  bool          use_dyn;        // use fixed dynamics for updating deep_ctxt activations -- defined in dyn_table -- this also preserves the initial gating deep_ctxt value -- otherwise it is up to the recurrent loops between super and deep for maintenance
   
   String        GetTypeDecoKey() const override { return "UnitSpec"; }
 

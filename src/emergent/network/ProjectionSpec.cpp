@@ -90,17 +90,17 @@ void ProjectionSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
 bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
   if(prjn->off) return true;
   bool rval;
-  if(CheckError(!prjn->from, quiet, rval, "from is null -- must set from!")) {
+  if(prjn->CheckError(!prjn->from, quiet, rval, "from is null -- must set from!")) {
     return false;
   }
   if(prjn->from->lesioned()) return true;
-  if(CheckError(!prjn->projected, quiet, rval, "not connected!")) {
+  if(prjn->CheckError(!prjn->projected, quiet, rval, "not connected!")) {
     return false;
   }
-  if(CheckError(!prjn->con_spec.spec, quiet, rval, "has null con_spec")) {
+  if(prjn->CheckError(!prjn->con_spec.spec, quiet, rval, "has null con_spec")) {
     return false;
   }
-  if(CheckError(!prjn->con_spec->CheckObjectType(prjn), quiet, rval,
+  if(prjn->CheckError(!prjn->con_spec->CheckObjectType(prjn), quiet, rval,
                 "does not have correct spec/object type")) {
     return false;
   }

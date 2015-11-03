@@ -68,6 +68,7 @@ public:
   AvgMaxVals	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum unit total inhibitory conductance values (optionally updated -- use for unit inhibition case)
   AvgMaxVals    am_deep_raw;    // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_raw values for the layer
   AvgMaxVals    am_deep_mod_net; // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_mod_net values for the layer
+  AvgMaxVals    am_deep_ctxt;    // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_ctxt values for the layer
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }
   // set computed inhibition values -- sets original too

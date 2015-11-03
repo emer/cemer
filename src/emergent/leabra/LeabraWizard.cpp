@@ -1417,6 +1417,9 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
 
+  net->SetNetFlag(Network::ABS_POS); // only works with absolute positioning
+  net->SetNetFlag(Network::MANUAL_POS); // and turn off automatic..
+  
   // todo: see about better options here..
   pos_pv->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
   neg_pv->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
@@ -1937,7 +1940,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMChild(PatchUnitSpec, patch_units, pbwm_units, "PatchUnits");
   FMChild(PFCUnitSpec, pfc_mnt_units, pbwm_units, "PFCmntUnits");
   FMChild(PFCUnitSpec, pfc_out_units, pbwm_units, "PFCoutUnits");
-  FMChild(DeepCopyUnitSpec, pfcd_units, pbwm_units, "PFCdUnits");
+  FMChild(PFCUnitSpec, pfc_mnt_d_units, pbwm_units, "PFCmntdUnits");
+  FMChild(PFCUnitSpec, pfc_out_d_units, pbwm_units, "PFCoutdUnits");
   FMChild(LeabraUnitSpec, pfc_trc_units, pbwm_units, "PFCtrcUnits");
   FMChild(LeabraUnitSpec, input_units, pbwm_units, "PFCInputUnits");
 
@@ -1948,6 +1952,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMChild(MSNConSpec, mtx_cons_nogo, mtx_cons_go, "MSNConsNoGo");
 
   FMSpec(LeabraConSpec, pfc_lrn_cons, pbwmspgp, "PfcLrnCons");
+  FMChild(DeepCtxtConSpec, deep_ctxt, pfc_lrn_cons, "PFCDeepCtxt");
   FMChild(LeabraConSpec, to_pfc, pfc_lrn_cons, "ToPFC");
   FMChild(LeabraConSpec, pfc_fm_trc, pfc_lrn_cons, "PFCfmTRC");
   FMChild(LeabraConSpec, pfc_to_trc, pfc_lrn_cons, "PFCtoTRC");
@@ -1956,8 +1961,9 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMSpec(LeabraConSpec, fix_cons, pbwmspgp, prefix + "FixedCons");
   FMChild(LeabraBiasSpec, fix_bias, fix_cons, prefix + "FixedBias");
   FMChild(MarkerConSpec, marker_cons, fix_cons, prefix + "MarkerCons");
+  FMChild(SendDeepModConSpec, pfcd_to_s, fix_cons, "PFCdToSuperMod");
 
-  FMChild(SendDeepRawConSpec, pfcd_mnt_out, fix_cons, "PFCdMntToOut");
+  FMChild(LeabraConSpec, pfcd_mnt_out, fix_cons, "PFCdMntToOut");
   FMChild(SendDeepRawConSpec, d5b_lrn_cons, fix_cons, prefix + "DeepRawPlus");
 
   ////////////	LayerSpecs
@@ -2000,19 +2006,27 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_units->noise_adapt.trial_fixed = true;
 
   pfc_mnt_units->SetUnique("deep", true);
-  // pfc_mnt_units->deep_s.d_to_s = 0.1f;
+  pfc_mnt_units->deep.on = true;
+  pfc_mnt_units->deep.role = DeepSpec::SUPER;
+  pfc_mnt_units->deep.raw_thr_rel = 0.1f;
 
   // this has less strong self-maint:
   pfc_out_units->SetUnique("deep", true);
-  // pfc_out_units->deep_s.d_to_s = 0.2f;
+  pfc_mnt_units->deep.on = true;
+  pfc_mnt_units->deep.role = DeepSpec::SUPER;
   pfc_out_units->pfc.out_gate = true;
   pfc_out_units->n_dyns = 1;
 
-  pfcd_units->SetUnique("deep", true);
-  pfcd_units->deep.on = true;
-  pfcd_units->deep.raw_thr_rel = 0.1f;
-  // pfcd_units->deep.d_to_d = 0.0f;
-  // pfcd_units->deep_s.d_to_s = 0.0f;
+  pfc_mnt_d_units->SetUnique("deep", true);
+  pfc_mnt_d_units->deep.on = true;
+  pfc_mnt_d_units->deep.role = DeepSpec::DEEP;
+  pfc_mnt_d_units->deep.raw_thr_rel = 0.1f;
+  
+  pfc_out_d_units->SetUnique("deep", true);
+  pfc_out_d_units->deep.on = true;
+  pfc_out_d_units->deep.role = DeepSpec::DEEP;
+  pfc_out_d_units->deep.raw_thr_rel = 0.1f;
+  pfc_out_d_units->pfc.out_gate = true;
   
   pfc_trc_units->SetUnique("deep", true);
   pfc_trc_units->deep.on = true;
@@ -2301,7 +2315,7 @@ can be sure everything is ok.";
     ext_rew = (LeabraLayer*)pvlv_laygp_pv->FindName("ExtRew");
   }
   if(pvlv_laygp_da) {
-    vta = (LeabraLayer*)pvlv_laygp_da->FindName("VTA");
+    vta = (LeabraLayer*)pvlv_laygp_da->FindName("VTAp");
   }
 
   pos_pv->layer_type = Layer::HIDDEN; // not an input layer anymore
@@ -2410,7 +2424,7 @@ can be sure everything is ok.";
   pfc_mnt->SetUnitSpec(PbwmSp("PFCmntUnits",PFCUnitSpec));
   pfc_mnt->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
-  pfc_mnt_d->SetUnitSpec(PbwmSp("PFCdUnits",DeepCopyUnitSpec));
+  pfc_mnt_d->SetUnitSpec(PbwmSp("PFCmntdUnits",PFCUnitSpec));
   pfc_mnt_d->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
   pfc_mnt_trc->SetUnitSpec(PbwmSp("PFCtrcUnits",LeabraUnitSpec));
@@ -2419,7 +2433,7 @@ can be sure everything is ok.";
   pfc_out->SetUnitSpec(PbwmSp("PFCoutUnits",PFCUnitSpec));
   pfc_out->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
-  pfc_out_d->SetUnitSpec(PbwmSp("PFCdUnits",DeepCopyUnitSpec));
+  pfc_out_d->SetUnitSpec(PbwmSp("PFCoutdUnits",PFCUnitSpec));
   pfc_out_d->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -2451,21 +2465,23 @@ can be sure everything is ok.";
   net->FindMakePrjn(gpi, gpenogo, gponetoone, fix_cons);
 
   net->FindMakePrjn(pfc_mnt, gpi, bgpfcprjn, marker_cons);
+  net->FindMakePrjn(pfc_mnt, pfc_mnt_d, onetoone, PbwmSp("PFCdToSuperMod", SendDeepModConSpec));
   net->FindMakePrjn(pfc_mnt, pfc_out, onetoone, marker_cons);
   net->FindMakePrjn(pfc_mnt, pfc_mnt_trc, gponetoone,
                     PbwmSp("PFCfmTRC", LeabraConSpec));
 
-  net->FindMakePrjn(pfc_mnt_d, pfc_mnt, onetoone, marker_cons);
+  net->FindMakePrjn(pfc_mnt_d, pfc_mnt, onetoone, PbwmSp("PFCDeepCtxt", DeepCtxtConSpec));
 
   net->FindMakePrjn(pfc_mnt_trc, gpi, bgpfcprjn, marker_cons);
   net->FindMakePrjn(pfc_mnt_trc, pfc_mnt, gponetoone,
                     PbwmSp("PFCtoTRC", LeabraConSpec));
 
   net->FindMakePrjn(pfc_out, gpi, bgpfcprjn, marker_cons);
-  net->FindMakePrjn(pfc_out, pfc_mnt, onetoone,
-                    PbwmSp("PFCdMntToOut", SendDeepRawConSpec));
+  net->FindMakePrjn(pfc_out, pfc_out_d, onetoone, PbwmSp("PFCdToSuperMod", SendDeepModConSpec));
+  net->FindMakePrjn(pfc_out, pfc_mnt_d, onetoone,
+                    PbwmSp("PFCdMntToOut", LeabraConSpec));
 
-  net->FindMakePrjn(pfc_out_d, pfc_out, onetoone, marker_cons);
+  net->FindMakePrjn(pfc_out_d, pfc_out, onetoone, PbwmSp("PFCDeepCtxt", DeepCtxtConSpec));
   
   // connect input layers
   for(i=0;i<task_input_lays.size;i++) {
@@ -2511,6 +2527,9 @@ can be sure everything is ok.";
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
 
+  net->SetNetFlag(Network::ABS_POS); // only works with absolute positioning
+  net->SetNetFlag(Network::MANUAL_POS); // and turn off automatic..
+  
   if(matrix_go->brain_area.empty()) 
     matrix_go->brain_area = ".*/.*/.*/.*/Caudate Body";
   if(matrix_nogo->brain_area.empty()) 
@@ -2533,7 +2552,7 @@ can be sure everything is ok.";
 
   if(new_pbwm_laygp) {
     pbwm_laygp->pos.z = 0;
-    pbwm_laygp->pos.x = 20;
+    pbwm_laygp->pos.x = 0;
     pbwm_laygp->pos.y = 0;
   }
 
@@ -2542,7 +2561,7 @@ can be sure everything is ok.";
   int bg_gp_x = pfc_gp_x * 2;
   int bg_gp_y = pfc_gp_y;
   
-  int mtx_st_x = 0;
+  int mtx_st_x = pvlv_laygp_da->pos.x + pvlv_laygp_da->max_disp_size.x + lay_spc;
   int mtx_st_y = 0;
   int mtx_nogo_y = mtx_st_y + 3 * lay_spc;
   int mtx_z = 0;
@@ -2552,7 +2571,7 @@ can be sure everything is ok.";
   int mtx_n = mtx_x_sz * mtx_y_sz;
 
   if(new_matrix) {
-    matrix_go->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
+    matrix_go->pos_abs.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
     matrix_go->un_geom.SetXYN(mtx_x_sz, mtx_y_sz, mtx_n);
     lay_set_geom(matrix_go, bg_gp_x, bg_gp_y);
 
@@ -2579,11 +2598,11 @@ can be sure everything is ok.";
   ///////////////	PFC Layout first -- get into z = 1
 
   int pfcu_n = 35; int pfcu_x = 5; int pfcu_y = 7;
-  int pfc_st_x = 0;
+  int pfc_st_x = mtx_st_x;
   int pfc_st_y = 0;
   int pfc_z = 1;
   if(new_pfc) {
-    pfc_mnt_trc->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z); 
+    pfc_mnt_trc->pos_abs.SetXYZ(pfc_st_x, pfc_st_y, pfc_z); 
     pfc_mnt_trc->un_geom.SetXYN(4, 4, 16);
     lay_set_geom(pfc_mnt_trc, pfc_gp_x, pfc_gp_y);
 
