@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.4.0 rev8841
+// ta_Dump File v3.0 -- code v7.8.4.0 rev8847
 LeabraProject .projects["TestPointerUpdates"] { 
  Doc_Group @.docs = [0] {
  };
@@ -766,6 +766,141 @@ LeabraProject .projects["TestPointerUpdates"] {
      MethodCall @[1] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
+      };
+     };
+    };
+   };
+  };
+  Program_Group @.gp["TestCopyMoveProgramCode"] = [4] { 
+   Program @["code_program"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [0] {
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [3] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["i"] { };
+      };
+     };
+     ProgramCall @[1] { 
+      ProgArg_List @.prog_args = [0] {
+      };
+     };
+     ForLoop @[2] { 
+      ProgEl_List @.loop_code = [0] {
+      };
+     };
+    };
+   };
+   Program @["callee_program"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [1] {
+     ProgVar @["value"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [3] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     AssignExpr @[1] { };
+     PrintVar @[2] { };
+    };
+   };
+   Program @["copier_program"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [1] {
+     ProgVar @["program_a"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [5] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [3] {
+       ProgVar @["the_prog_code"] { };
+       ProgVar @["call_program_element"] { };
+       ProgVar @["the_loop_code"] { };
+      };
+     };
+     AssignExpr @[1] { };
+     AssignExpr @[2] { };
+     AssignExpr @[3] { };
+     MethodCall @[4] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+    };
+   };
+   Program @["test_program"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [0] {
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [2] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     ProgramCall @[1] { 
+      ProgArg_List @.prog_args = [0] {
       };
      };
     };
@@ -3034,7 +3169,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      el_def=0;
      LocalVars @[0] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (0 vars)";
       pre_compile_code_string="LocalVars (0 vars)";
       local_vars {
@@ -3659,22 +3794,22 @@ LeabraProject .projects["TestPointerUpdates"] {
      expr=;
     };
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["group_two"] {
@@ -3728,17 +3863,17 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -4020,7 +4155,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      el_def=0;
      LocalVars @[0] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LocalVars (1 vars)";
       pre_compile_code_string="LocalVars (1 vars)";
       local_vars {
@@ -4148,7 +4283,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
      Else @[4] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="else";
       pre_compile_code_string="else";
       else_code {
@@ -4701,22 +4836,22 @@ LeabraProject .projects["TestPointerUpdates"] {
      expr=;
     };
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["group_two"] {
@@ -4743,17 +4878,17 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -4799,6 +4934,448 @@ LeabraProject .projects["TestPointerUpdates"] {
     step_n=1;
    };
   };
+  Program_Group @.gp["TestCopyMoveProgramCode"] {
+   name="TestCopyMoveProgramCode";
+   el_typ=Program;
+   el_def=0;
+   tags=;
+   desc=;
+   debug_mode=0;
+   Program @["code_program"] {
+    name="code_program";
+    short_nm="cdprgr";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="objs";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="types";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="args";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="vars";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    functions {
+     name="functions";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="init_code";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="prog_code";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (2 vars)";
+      pre_compile_code_string="LocalVars (2 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["i"] {
+	name="i";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     ProgramCall @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="callee_program()";
+      pre_compile_code_string="callee_program()";
+      prog_args {
+       name="prog_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      target=.projects["TestPointerUpdates"].programs.gp["TestCopyMoveProgramCode"]["callee_program"]$$;
+      targ_ld_init="*callee_program*";
+     };
+     ForLoop @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="for (i = 0; i < 1; i++)";
+      pre_compile_code_string="for (i = 0; i < 1; i++)";
+      loop_code {
+       name="loop_code";
+       el_typ=ProgCode;
+       el_def=0;
+      };
+      init {
+       expr="i = 0";
+      };
+      test {
+       expr="i < 1";
+      };
+      iter {
+       expr="i++";
+      };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["callee_program"] {
+    name="callee_program";
+    short_nm="cllprg";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="ProgObjList_15";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="ProgType_List_1";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_1";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_1";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["value"] {
+      name="value";
+      var_type=T_String;
+      string_val="new_value";
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="Function_List_15";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_117";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_118";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      code_string=;
+      pre_compile_code_string=;
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     AssignExpr @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="value = \"new_value\"";
+      pre_compile_code_string="value = \"new_value\"";
+      result_var=.projects["TestPointerUpdates"].programs.gp["TestCopyMoveProgramCode"]["callee_program"].vars["value"]$$;
+      expr {
+       expr="\"new_value\"";
+      };
+     };
+     PrintVar @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="print value";
+      pre_compile_code_string="Print  value";
+      message=;
+      print_var=$.projects["TestPointerUpdates"].programs.gp["TestCopyMoveProgramCode"]["callee_program"].vars["value"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      debug=0;
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["copier_program"] {
+    name="copier_program";
+    short_nm="cprprg";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="objs";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="types";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="args";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="vars";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["program_a"] {
+      name="program_a";
+      var_type=T_Object;
+      object_type=Program;
+      object_val=.projects["TestPointerUpdates"].programs.gp["TestCopyMoveProgramCode"]["code_program"]$$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="functions";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="init_code";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="prog_code";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (3 vars)";
+      pre_compile_code_string="LocalVars (3 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["the_prog_code"] {
+	name="the_prog_code";
+	var_type=T_Object;
+	object_type=ProgEl_List;
+	object_val=NULL;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["call_program_element"] {
+	name="call_program_element";
+	var_type=T_Object;
+	object_type=taOBase;
+	object_val=NULL;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["the_loop_code"] {
+	name="the_loop_code";
+	var_type=T_Object;
+	object_type=taOBase;
+	object_val=NULL;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     AssignExpr @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="the_prog_code = program_a.prog_code";
+      pre_compile_code_string="the_prog_code = program_a.prog_code";
+      result_var=.projects["TestPointerUpdates"].programs.gp["TestCopyMoveProgramCode"]["copier_program"].prog_code[0].local_vars["the_prog_code"]$$;
+      expr {
+       expr="program_a.prog_code";
+      };
+     };
+     AssignExpr @[2] {
+      desc="// target reference should not be updated if copy within program";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="call_program_element = the_prog_code[1]";
+      pre_compile_code_string="call_program_element = the_prog_code[1]";
+      result_var=.projects["TestPointerUpdates"].programs.gp["TestCopyMoveProgramCode"]["copier_program"].prog_code[0].local_vars["call_program_element"]$$;
+      expr {
+       expr="the_prog_code[1]";
+      };
+     };
+     AssignExpr @[3] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="the_loop_code = the_prog_code[2].loop_code";
+      pre_compile_code_string="the_loop_code = the_prog_code[2].loop_code";
+      result_var=.projects["TestPointerUpdates"].programs.gp["TestCopyMoveProgramCode"]["copier_program"].prog_code[0].local_vars["the_loop_code"]$$;
+      expr {
+       expr="the_prog_code[2].loop_code";
+      };
+     };
+     MethodCall @[4] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="the_loop_code->CopyChildBeforeIndex(call_program_element, -1)";
+      pre_compile_code_string="the_loop_code->CopyChildBeforeIndex(call_program_element, -1)";
+      result_var=NULL;
+      obj=$.projects["TestPointerUpdates"].programs.gp["TestCopyMoveProgramCode"]["copier_program"].prog_code[0].local_vars["the_loop_code"]$;
+      method=taBase::CopyChildBeforeIndex;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=taBase_ptr;
+	type="taBase*";
+	name="src";
+	required=1;
+	def_val=;
+	prev_expr="the_code";
+	expr {
+	 expr="call_program_element";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="child_pos";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="-1";
+	};
+       };
+      };
+      meth_sig="taBase_ptr CopyChildBeforeIndex(taBase* src, int child_pos)";
+      meth_desc=" implemented by container (list) objects: make a copy of the src object and insert it at the position of the child_pos object within this list -- copies the name of the object too";
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["test_program"] {
+    name="test_program";
+    short_nm="tstprg";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="ProgObjList_16";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="ProgType_List_1";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_1";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_1";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    functions {
+     name="Function_List_16";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_121";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_122";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      code_string=;
+      pre_compile_code_string=;
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     ProgramCall @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="code_program()";
+      pre_compile_code_string="code_program()";
+      prog_args {
+       name="prog_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      target=$.projects["TestPointerUpdates"].programs.gp["TestCopyMoveProgramCode"]["code_program"]$;
+      targ_ld_init="*code_program*";
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+  };
  };
  viewers {
   name="viewers";
@@ -4811,7 +5388,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=-0.002785515;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -4821,12 +5398,12 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=1.002786;
+     value 8 0=0.901357;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=1;
+     value 8 0=0.7994902;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -4836,7 +5413,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAABNgAAAjUAAAHNAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAABVgAAAtYAAAIyAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -5020,22 +5597,22 @@ LeabraProject .projects["TestPointerUpdates"] {
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 8 0=-0.002785515;
+       value 8 0=0;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.05555556;
+       value 8 0=0.02463891;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.05710306;
+       value 8 0=0.04279749;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.9222222;
+       value 8 0=0.7196262;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
