@@ -136,22 +136,35 @@ MoveDataTable
 
     DataTable Value Should Match        2       dog    
 
-CopyCodeIntoLoop
-    Set Suite Variable   ${program_test}         "LoopCode"
+CopyFunctionCodeIntoLoop
+    Set Suite Variable   ${program_test}         "LoopCodeFunction"
     Ensure Emergent Free
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCode"}
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
     Status OK No Result        ${output}
 
     Prog Var Should Equal      j            1
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_code_into_loop"}
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_function_code_into_loop"}
     Status OK No Result        ${output}
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCode"}
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
     Status OK No Result        ${output}
 
     Prog Var Should Equal      j            3
+
+CopyProgramCodeIntoLoop
+    Set Suite Variable   ${program_test}         "LoopCodeProgram"
+    Ensure Emergent Free
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_program_code_into_loop"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
+    Status OK No Result        ${output}
 
 
 *** Keywords ***
