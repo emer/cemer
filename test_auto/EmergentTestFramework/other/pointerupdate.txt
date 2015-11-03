@@ -136,7 +136,22 @@ MoveDataTable
 
     DataTable Value Should Match        2       dog    
 
-    
+CopyCodeIntoLoop
+    Set Suite Variable   ${program_test}         "LoopCode"
+    Ensure Emergent Free
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCode"}
+    Status OK No Result        ${output}
+
+    Prog Var Should Equal      j            1
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_code_into_loop"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCode"}
+    Status OK No Result        ${output}
+
+    Prog Var Should Equal      j            3
 
 
 *** Keywords ***
