@@ -15,7 +15,6 @@
 
 #include "TDRewPredLayerSpec.h"
 #include <LeabraNetwork>
-#include <MarkerConSpec>
 #include <LeabraTdUnit>
 #include <LeabraTdUnitSpec>
 #include <TDRewPredConSpec>
@@ -76,12 +75,8 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->NotActive()) continue;
-    if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
-      continue;
-    }
-    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
-      continue;
-    }
+    if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) continue; // self projection
+    if(recv_gp->GetConSpec()->IsMarkerCon()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(lay->CheckError(!cs->InheritsFrom(TA_TDRewPredConSpec), quiet, rval,
                   "requires recv connections to be of type TDRewPredConSpec")) {

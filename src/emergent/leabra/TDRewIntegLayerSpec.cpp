@@ -15,7 +15,6 @@
 
 #include "TDRewIntegLayerSpec.h"
 #include <LeabraNetwork>
-#include <MarkerConSpec>
 #include <LeabraTdUnit>
 #include <LeabraTdUnitSpec>
 #include <TDRewPredLayerSpec>
@@ -141,9 +140,7 @@ void TDRewIntegLayerSpec::Compute_TDRewInteg(LeabraLayer* lay, LeabraNetwork* ne
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->NotActive()) continue;
-    if(!recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
-      continue;
-    }
+    if(!recv_gp->GetConSpec()->IsMarkerCon()) continue;
     LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     LeabraLayerSpec* fls = (LeabraLayerSpec*)flay->spec.SPtr();
     if(fls->InheritsFrom(&TA_TDRewPredLayerSpec)) {

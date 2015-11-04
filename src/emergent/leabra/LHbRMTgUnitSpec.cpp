@@ -83,7 +83,7 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* u, bool quiet) {
   LeabraLayer* dms_matrix_ind_lay = NULL;
   
   GetRecvLayers(un, patch_dir_lay, patch_ind_lay, matrix_dir_lay, matrix_ind_lay,
-                pv_pos_lay, pv_neg_lay, dms_matrix_dir_lay, dms_matrix_ind_lay);
+                dms_matrix_dir_lay, dms_matrix_ind_lay, pv_pos_lay, pv_neg_lay);
 
   if(u->CheckError(!patch_dir_lay, quiet, rval,
                    "did not find VS Patch D1R recv projection -- searches for MSNUnitSpec::PATCH, D1R")) {
@@ -189,18 +189,25 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   LeabraLayer* pv_neg_lay = NULL;
   
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
-  GetRecvLayers(un, patch_dir_lay, patch_ind_lay, matrix_dir_lay, matrix_ind_lay, dms_matrix_dir_lay, dms_matrix_ind_lay, pv_pos_lay, pv_neg_lay);
+  GetRecvLayers(un, patch_dir_lay, patch_ind_lay, matrix_dir_lay, matrix_ind_lay,
+                dms_matrix_dir_lay, dms_matrix_ind_lay, pv_pos_lay, pv_neg_lay);
   
   // use avg act over layer..
   // note: need acts_q0 for patch to reflect previous trial..
   float patch_dir = patch_dir_lay->acts_q0.avg * patch_dir_lay->units.size;
   float patch_ind = patch_ind_lay->acts_q0.avg * patch_ind_lay->units.size;
-  float matrix_dir = matrix_dir_lay->acts_eq.avg * matrix_dir_lay->units.size;
-  float matrix_ind = matrix_ind_lay->acts_eq.avg * matrix_ind_lay->units.size;
-//  float dms_matrix_dir = dms_matrix_dir_lay->acts_eq.avg * dms_matrix_dir_lay->units.size;
-//  float dms_matrix_ind = dms_matrix_ind_lay->acts_eq.avg * dms_matrix_ind_lay->units.size;
-  float dms_matrix_dir = dms_matrix_dir_lay->acts_eq.max; //* dms_matrix_dir_lay->units.size;
-  float dms_matrix_ind = dms_matrix_ind_lay->acts_eq.max; //* dms_matrix_ind_lay->units.size;
+  float matrix_dir = 0.0f;
+  if(matrix_dir_lay)
+    matrix_dir = matrix_dir_lay->acts_eq.avg * matrix_dir_lay->units.size;
+  float matrix_ind = 0.0f;
+  if(matrix_ind_lay)
+    matrix_ind = matrix_ind_lay->acts_eq.avg * matrix_ind_lay->units.size;
+  float dms_matrix_dir = 0.0f;
+  if(dms_matrix_dir_lay)
+    dms_matrix_dir = dms_matrix_dir_lay->acts_eq.max; //* dms_matrix_dir_lay->units.size;
+  float dms_matrix_ind = 0.0f;
+  if(dms_matrix_ind_lay)
+    dms_matrix_ind = dms_matrix_ind_lay->acts_eq.max; //* dms_matrix_ind_lay->units.size;
   float pv_pos = pv_pos_lay->acts_eq.avg * pv_pos_lay->units.size;
   float pv_neg = pv_neg_lay->acts_eq.avg * pv_neg_lay->units.size;
   

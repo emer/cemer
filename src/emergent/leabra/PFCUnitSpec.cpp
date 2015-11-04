@@ -15,7 +15,6 @@
 
 #include "PFCUnitSpec.h"
 #include <LeabraNetwork>
-#include <MarkerConSpec>
 #include <taProject>
 #include <taMisc>
 
@@ -300,7 +299,7 @@ void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
-    if(!cs->InheritsFrom(TA_MarkerConSpec)) continue;
+    if(!cs->IsMarkerCon()) continue;
     for(int j=0;j<send_gp->size; j++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)send_gp->UnVars(j,net);
       uv->thal = 0.0f;      // terminate!

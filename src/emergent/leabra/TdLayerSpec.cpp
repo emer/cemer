@@ -15,7 +15,6 @@
 
 #include "TdLayerSpec.h"
 #include <LeabraNetwork>
-#include <MarkerConSpec>
 #include <LeabraTdUnit>
 #include <LeabraTdUnitSpec>
 #include <TDRewIntegLayerSpec>
@@ -85,7 +84,7 @@ bool TdLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->NotActive()) continue;
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)
+    if(recv_gp->GetConSpec()->IsMarkerCon()
         && fmlay->spec.SPtr()->InheritsFrom(TA_TDRewIntegLayerSpec)) {
       rewinteg_lay = fmlay;
       // if(lay->CheckError(recv_gp->size <= 0, quiet, rval,

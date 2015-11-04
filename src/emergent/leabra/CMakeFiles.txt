@@ -84,6 +84,7 @@ set(leabra_HEADS_MAKETA
   MSNCon.h
   MSNConSpec.h
   MSNUnitSpec.h
+  TANUnitSpec.h
   PatchUnitSpec.h
   GPiInvUnitSpec.h
   InvertUnitSpec.h
@@ -207,6 +208,7 @@ set(leabra_SRCS
   MSNCon.cpp
   MSNConSpec.cpp
   MSNUnitSpec.cpp
+  TANUnitSpec.cpp
   PatchUnitSpec.cpp
   GPiInvUnitSpec.cpp
   InvertUnitSpec.cpp

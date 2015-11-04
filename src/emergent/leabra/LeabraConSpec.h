@@ -348,6 +348,8 @@ public:
   // #IGNORE does this connection send standard netinput? if so, it will be included in the CUDA send netin computation -- otherwise a separate function is required
   inline virtual bool  DoesStdDwt() { return true; }
   // #IGNORE does this connection compute a standard XCAL dWt function? if so, it will be included in the CUDA Compute_dWt computation -- otherwise a separate function is required
+  inline virtual bool  IsMarkerCon() { return false; }
+  // #IGNORE is this a marker con (MarkerConSpec) -- optimized check for higher speed
   inline virtual bool  IsDeepCtxtCon() { return false; }
   // #IGNORE is this a deep context connection (DeepCtxtConSpec) -- optimized check for higher speed
   inline virtual bool  IsDeepRawCon() { return false; }

@@ -35,6 +35,8 @@ public:
   float         tr_decay;       // #DEF_1 #MIN_0 #MAX_1 how much to decay the existing trace when adding a new trace -- actual decay rate is multiplied by the new trace value: decay in proportion to how much new trace is coming in -- so effective decay rate is typically less than value entered here
   float         otr_lrate;      // #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less than 1 -- the non-gated trace has the opposite sign (negative) from the gated trace -- encourages exploration of other alternatives if a negative outcome occurs, so that otr = opposite trace or opponent trace as well as other trace
   bool          protect_pos;    // #DEF_false do not add in an opposite trace value if the synapse already has a positive trace value from prior gating -- in theory this makes sense to protect the trace over intervening gating events, but only if the gated trace is actually the correct one -- by continuing to add in the opponent traces, the system remains more open to exploration..
+  float         da_reset_tr;    // #DEF_0.1;0 amount of dopamine needed to completely reset the trace -- if > 0, then either da or ach can reset the trace
+  float         ach_reset_thr;  // #MIN_0 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
   bool          thal_mult;      // #DEF_false multiply gated trace by the actual thal gating signal value -- otherwise it is just used as a gating signal but does not multiply
   float         tr_max;         // #DEF_1 maximum trace value -- cap trace at this value (either positive or negative) -- if tr_decay is 1, this is not needed, but otherwise the trace can build up over time
 
@@ -65,12 +67,13 @@ public:
     PREV_TRIAL,                 // previous trial
     ACT_P,                      // act_p from current trial
     ACT_M,                      // act_m from current trial
+    ACT_EQ,                     // act_eq from current trial -- use this for PBWM Dorsal matrix
   };
   
   enum LearningRule {           // type of learning rule to use
     DA_HEBB,                    // immediate use of dopamine * send * recv activation triplet to drive learning
-    TRACE_THAL,                 // send * recv activation establishes a trace (long-lasting synaptic tag), with thalamic activation determining sign of the trace (if thal active (gated) then sign is positive, else sign is negative) -- when dopamine later arrives, the trace is applied * dopamine and the trace is then reset in proportion to size of dopamine
-    TRACE_NO_THAL,              // send * recv activation establishes a trace (long-lasting synaptic tag), with no influence of thalamic gating signal -- when dopamine later arrives, the trace is applied * dopamine and the trace is then reset in proportion to size of dopamine
+    TRACE_THAL,                 // send * recv activation establishes a trace (long-lasting synaptic tag), with thalamic activation determining sign of the trace (if thal active (gated) then sign is positive, else sign is negative) -- when dopamine later arrives, the trace is applied * dopamine, and any above-threshold ach from TAN units resets the trace
+    TRACE_NO_THAL,              // send * recv activation establishes a trace (long-lasting synaptic tag), with no influence of thalamic gating signal -- when dopamine later arrives, the trace is applied * dopamine, and any above-threshold ach from TAN units resets the trace
     WM_DEPENDENT,               // learning depends on a working memory trace.. 
   };
     
@@ -124,6 +127,9 @@ public:
     case ACT_M:
       return u->act_m;
       break;
+    case ACT_EQ:
+      return u->act_eq;
+      break;
     }
     return 0.0f;
   }    
@@ -140,10 +146,21 @@ public:
 
   inline void C_Compute_dWt_Trace_Thal
     (float& dwt, float& ntr, float& tr, const float otr_lr, const float da_p,
-     const bool d2r,
+     const float ach, const bool d2r,
      const float ru_thal, const float ru_act, const float su_act, const float lrate_eff) {
 
-    dwt += lrate_eff * GetDa(da_p, d2r) * tr;
+    const float da = GetDa(da_p, d2r);
+    dwt += lrate_eff * da * tr;
+
+    if(ach >= trace.ach_reset_thr) {
+      tr = 0.0f;
+    }
+    else if(trace.da_reset_tr > 0.0f) {
+      float reset_factor = (trace.da_reset_tr - fabs(da)) / trace.da_reset_tr;
+      if(reset_factor < 0.0f) reset_factor = 0.0f;
+      tr *= reset_factor;
+    }
+
     if(ru_thal > 0.0f) {              // gated
       if(trace.thal_mult)
         ntr = ru_thal * ru_act * su_act;
@@ -168,16 +185,25 @@ public:
   // #IGNORE
 
   inline void C_Compute_dWt_Trace_NoThal
-    (float& dwt, float& ntr, float& tr, const float da_p, const bool d2r,
+    (float& dwt, float& ntr, float& tr, const float da_p, const float ach, const bool d2r,
      const float ru_act, const float su_act, const float lrate_eff) {
 
-    dwt += lrate_eff * GetDa(da_p, d2r) * tr;
+    const float da = GetDa(da_p, d2r);
+    dwt += lrate_eff * da * tr;
 
+    if(ach >= trace.ach_reset_thr) {
+      tr = 0.0f;
+    }
+    else if(trace.da_reset_tr > 0.0f) {
+      float reset_factor = (trace.da_reset_tr - fabs(da)) / trace.da_reset_tr;
+      if(reset_factor < 0.0f) reset_factor = 0.0f;
+      tr *= reset_factor;
+    }
+    
     ntr = ru_act * su_act;
     
     float decay_factor = trace.tr_decay * fabs(ntr); // decay is function of new trace
     if(decay_factor > 1.0f) decay_factor = 1.0f;
-
     tr += ntr - decay_factor * tr;
     if(tr > trace.tr_max) tr = trace.tr_max;
     else if(tr < -trace.tr_max) tr = -trace.tr_max;
@@ -237,7 +263,7 @@ public:
         }
         float ru_act = GetActVal(ru, ru_act_var);
         C_Compute_dWt_Trace_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
-                                 ru->da_p, d2r, ru->thal, ru_act, su_act, lrate_eff);
+                         ru->da_p, ru->ach, d2r, ru->thal, ru_act, su_act, lrate_eff);
       }
       break;
     }
@@ -250,7 +276,7 @@ public:
         }
         float ru_act = GetActVal(ru, ru_act_var);
         C_Compute_dWt_Trace_NoThal(dwts[i], ntrs[i], trs[i],
-                                   ru->da_p, d2r, ru_act, su_act, lrate_eff);
+                            ru->da_p, ru->ach, d2r, ru_act, su_act, lrate_eff);
       }
       break;
     }

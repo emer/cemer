@@ -198,8 +198,11 @@ public:
   // #VIEW_HOT #CAT_UnitVar negative-valence oriented dopamine value -- this typically exhibits phasic bursts (positive values) with unanticipated increases in negative outcomes / expectations, and phasic dips (negative values) with unanticipated decreases thereof.  This value can drive dopaminergic learning rules and activation changes in receiving neurons -- typically sent by VTAUnitSpec units with appropriate flags set -- see also da_p
   inline float& sev()
   { return ((LeabraUnitVars*)GetUnitVars())->sev; }
-  // #CAT_UnitVar serotonin value 
-
+  // #CAT_UnitVar serotonin value -- driven by Dorsal Raphe Nucleus (DRNUnitSpec) or other sources -- generally thought to reflect longer time-averages of overall progress or lack thereof
+  inline float& ach()
+  { return ((LeabraUnitVars*)GetUnitVars())->ach; }
+  // #CAT_UnitVar acetylcholine value -- driven by Tonically Active Neurons (TAN's) in the Striatum, and potentially other sources -- effects depend strongly on types of receptors present
+  
   inline float& misc_1()
   { return ((LeabraUnitVars*)GetUnitVars())->misc_1; }
   // #CAT_UnitVar miscellaneous variable for other algorithms that need it

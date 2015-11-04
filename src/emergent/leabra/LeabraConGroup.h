@@ -23,6 +23,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class LeabraConSpec; // 
 
 eTypeDef_Of(LeabraConGroup);
 
@@ -36,6 +37,8 @@ public:
   int           max_sugp;	// #NO_SAVE #CAT_Activation index of sending unit group that had the maximum net input -- used for learning
   float*        sugp_net;       // #IGNORE net input stored for each sending unit group -- of size prjn->n_sugps -- only stored on receiving con groups -- points to memory allocated by network in thrs_recv_cgp_sugp_net_mem
 #endif // SUGP_NETIN
+
+  inline LeabraConSpec*    GetConSpec() const { return (LeabraConSpec*)con_spec; }
 
   void  LeabraInit()
   { scale_eff = 0.0f; net = 0.0f; net_raw = 0.0f;

@@ -606,6 +606,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->da_p = 0.0f;
   u->da_n = 0.0f;
   u->sev = 0.0f;
+  u->ach = 0.0f;
   u->misc_1 = 0.0f;
   u->spk_t = -1;
 
@@ -725,6 +726,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->noise = 0.0f;
   u->da_p = 0.0f;
   u->da_n = 0.0f;
+  u->ach = 0.0f;
   // u->sev = 0.0f; // longer time-course
 
   // not the scales
@@ -905,6 +907,7 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnitVars* u, LeabraNetwork* net, int
   Init_Netins(u, net, thr_no); 
   u->da_p = 0.0f;
   u->da_n = 0.0f;
+  u->ach = 0.0f;
   //  u->sev = 0.0f; // longer time-course
   // reset all the time vars so it isn't ambiguous as these update
   if(taMisc::gui_active) {

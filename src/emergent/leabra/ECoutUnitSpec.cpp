@@ -15,7 +15,6 @@
 
 #include "ECoutUnitSpec.h"
 #include <LeabraNetwork>
-#include <MarkerConSpec>
 
 TA_BASEFUNS_CTORS_DEFN(ECoutUnitSpec);
 
@@ -38,7 +37,7 @@ bool ECoutUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)un->RecvConGroup(g);
     if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(cs->InheritsFrom(&TA_MarkerConSpec) && recv_gp->size >= 1) {
+    if(cs->IsMarkerCon() && recv_gp->size >= 1) {
       got_ec_in = true;
     }
   }
@@ -60,8 +59,7 @@ void ECoutUnitSpec::ClampFromECin(LeabraUnitVars* u, LeabraNetwork* net, int thr
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(!cs->InheritsFrom(&TA_MarkerConSpec))
-      continue;
+    if(!cs->IsMarkerCon()) continue;
     LeabraUnitVars* su = (LeabraUnitVars*)recv_gp->UnVars(0, net);
     float inval = su->act_eq;
     u->act = clamp_range.Clip(inval);

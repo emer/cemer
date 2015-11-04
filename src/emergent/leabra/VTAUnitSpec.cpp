@@ -16,8 +16,6 @@
 #include "VTAUnitSpec.h"
 
 #include <LeabraNetwork>
-#include <MarkerConSpec>
-#include <OneToOnePrjnSpec>
 #include <PPTgUnitSpec>
 #include <LHbRMTgUnitSpec>
 #include <MSNUnitSpec>
@@ -152,7 +150,7 @@ bool VTAUnitSpec::GetRecvLayers_P(LeabraUnit* u,
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
     LeabraUnitSpec* us = (LeabraUnitSpec*)fmlay->GetUnitSpec();
-    if(cs->InheritsFrom(TA_MarkerConSpec)) {
+    if(cs->IsMarkerCon()) {
       if(us->InheritsFrom(TA_PPTgUnitSpec)) pptg_lay_p = fmlay;
       else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) lhb_lay = fmlay;
       else if(fmlay->name.contains("PV")) {
@@ -177,7 +175,7 @@ bool VTAUnitSpec::GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay, Leabra
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
     LeabraUnitSpec* us = (LeabraUnitSpec*)fmlay->GetUnitSpec();
-    if(cs->InheritsFrom(TA_MarkerConSpec)) {
+    if(cs->IsMarkerCon()) {
       if(us->InheritsFrom(TA_PPTgUnitSpec)) pptg_lay_n = fmlay;
 //      else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) lhb_lay = fmlay;
 //      else if(fmlay->name.contains("PV") && fmlay->name.contains("Pos")) {

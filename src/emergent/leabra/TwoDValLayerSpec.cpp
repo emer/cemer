@@ -16,7 +16,6 @@
 #include "TwoDValLayerSpec.h"
 #include <LeabraNetwork>
 #include <ScalarValSelfPrjnSpec>
-#include <MarkerConSpec>
 #include <ValIdx_Array>
 
 #include <taMisc>
@@ -223,9 +222,7 @@ bool TwoDValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
         cs->lrate = 0.0f;
       }
     }
-    else if(cs->InheritsFrom(TA_MarkerConSpec)) {
-      continue;
-    }
+    else if(cs->IsMarkerCon()) continue;
   }
   return rval;
 }
@@ -260,7 +257,7 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
         if(recv_gp->NotActive()) continue;
         LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
         if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
-           cs->InheritsFrom(TA_MarkerConSpec)) {
+           cs->IsMarkerCon()) {
           continue;
         }
         // cs->lmix.err_sb = false; // false: this is critical for linear mapping of vals..
@@ -286,7 +283,7 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
         if(recv_gp->NotActive()) continue;
         LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
         if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
-           cs->InheritsFrom(TA_MarkerConSpec)) {
+           cs->IsMarkerCon()) {
           continue;
         }
         // cs->lmix.err_sb = true;
@@ -317,7 +314,7 @@ void TwoDValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode ac
       if(recv_gp->NotActive()) continue;
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
-         cs->InheritsFrom(TA_MarkerConSpec)) continue;
+         cs->IsMarkerCon()) continue;
       for(int ci=0;ci<recv_gp->size;ci++) {
         float& wt = recv_gp->PtrCn(ci, ConGroup::WT, net);
         wt += act;

@@ -15,7 +15,6 @@
 
 #include "ExtRewLayerSpec.h"
 #include <LeabraNetwork>
-#include <MarkerConSpec>
 
 #include <taMisc>
 
@@ -90,7 +89,7 @@ bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   for(int g=0; g<nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
     if(recv_gp->NotActive()) continue;
-    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
+    if(recv_gp->GetConSpec()->IsMarkerCon()) {
       if(recv_gp->prjn->from->name == "RewTarg")
         rew_targ_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
       else
@@ -138,7 +137,7 @@ bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
   for(int g=0; g<nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
     if(recv_gp->NotActive()) continue;
-    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
+    if(recv_gp->GetConSpec()->IsMarkerCon()) {
       LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
       if(rew_lay->name != "RewTarg") continue;
       LeabraUnit* rtu = (LeabraUnit*)rew_lay->units[0];
@@ -161,8 +160,7 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
   for(int g=0; g<nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
     if(recv_gp->NotActive()) continue;
-    if(!recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec))
-      continue;
+    if(!recv_gp->GetConSpec()->IsMarkerCon()) continue;
     LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     if(rew_lay->name == "RewTarg") continue;
 
@@ -178,8 +176,7 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
   for(int g=0; g<nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
     if(recv_gp->NotActive()) continue;
-    if(!recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec))
-      continue;
+    if(!recv_gp->GetConSpec()->IsMarkerCon()) continue;
     LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     if(rew_lay->name == "RewTarg") continue;
 

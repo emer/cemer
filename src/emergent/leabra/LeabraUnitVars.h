@@ -78,16 +78,17 @@ public:
   float      noise;          // #NO_SAVE #CAT_Activation noise value added to unit (noise_type on unit spec determines where it is added) -- this can be used in learning in some cases
   float      da_p;           // #NO_SAVE #VIEW_HOT #CAT_Activation positive-valence oriented dopamine value -- this typically exhibits phasic bursts (positive values) with unanticipated increases in reward outcomes / expectations, and phasic dips (negative values) with unanticipated decreases thereof.  This value can drive dopaminergic learning rules and activation changes in receiving neurons -- typically sent by VTAUnitSpec units -- see also da_n
   float      da_n;           // #NO_SAVE #VIEW_HOT #CAT_Activation negative-valence oriented dopamine value -- this typically exhibits phasic bursts (positive values) with unanticipated increases in negative outcomes / expectations, and phasic dips (negative values) with unanticipated decreases thereof.  This value can drive dopaminergic learning rules and activation changes in receiving neurons -- typically sent by VTAUnitSpec units with appropriate flags set -- see also da_p
-  float      sev;            // #NO_SAVE #CAT_Activation serotonin value 
+  float      sev;            // #NO_SAVE #CAT_Activation serotonin value -- driven by Dorsal Raphe Nucleus (DRNUnitSpec) or other sources -- generally thought to reflect longer time-averages of overall progress or lack thereof
+  float      ach;            // #NO_SAVE #CAT_Activation acetylcholine value -- driven by Tonically Active Neurons (TAN's) in the Striatum, and potentially other sources -- effects depend strongly on types of receptors present
 
   float      misc_1;         // #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   int        spk_t;          // #NO_SAVE #CAT_Activation time in tot_cycle units when spiking last occurred (-1 for not yet)
 
-  float      bias_scale;     // NO_VIEW #NO_SAVE #EXPERT #CAT_Activation bias weight scaling factor
-  float      act_sent;       // NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last activation value sent (only send when diff is over threshold)
-  float      net_raw;        // NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (send delta's are added to this value)
-  float      gi_raw;         // NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
-  float      deep_raw_sent;  // NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last deep_raw activation value sent in computing deep_raw_net
+  float      bias_scale;     // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation bias weight scaling factor
+  float      act_sent;       // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last activation value sent (only send when diff is over threshold)
+  float      net_raw;        // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (send delta's are added to this value)
+  float      gi_raw;         // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
+  float      deep_raw_sent;  // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last deep_raw activation value sent in computing deep_raw_net
 };
 
 #endif // LeabraUnitVars_h

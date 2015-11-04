@@ -16,10 +16,6 @@
 #include "DRNUnitSpec.h"
 
 #include <LeabraNetwork>
-#include <MarkerConSpec>
-#include <OneToOnePrjnSpec>
-#include <PPTgUnitSpec>
-#include <LHbRMTgUnitSpec>
 
 #include <taMisc>
 

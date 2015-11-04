@@ -17,7 +17,6 @@
 #include <LeabraNetwork>
 #include <taMath_float>
 #include <ScalarValSelfPrjnSpec>
-#include <MarkerConSpec>
 #include <MemberDef>
 
 #include <taMisc>
@@ -284,7 +283,7 @@ void ScalarValLayerSpec::Compute_WtBias_Val
       if(recv_gp->NotActive()) continue;
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
-         cs->InheritsFrom(TA_MarkerConSpec)) continue;
+         cs->IsMarkerCon()) continue;
       for(int ci=0;ci<recv_gp->size;ci++) {
         float& wt = recv_gp->PtrCn(ci, ConGroup::WT, net);
         wt += act;
