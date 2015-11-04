@@ -4305,7 +4305,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       name="which_group";
       var_type=T_Int;
       objs_ptr=0;
-      flags=NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -4314,7 +4314,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       name="group_name";
       var_type=T_String;
       objs_ptr=0;
-      flags=NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -4394,10 +4394,10 @@ LeabraProject .projects["TestPointerUpdates"] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="group_one.FindLeafName()";
-	pre_compile_code_string="myProgram = group_one->FindLeafName(\"Caller\")";
+	pre_compile_code_string="myProgram = group_one->FindName(\"Caller\")";
 	result_var=.projects["TestPointerUpdates"].programs.gp["TesterPrograms"]["TestGroup"].prog_code[0].local_vars["myProgram"]$$;
 	obj=.projects["TestPointerUpdates"].programs.gp["TesterPrograms"]["TestGroup"].vars["group_one"]$$;
-	method=taGroup_Program_::FindLeafName;
+	method=taGroup_Program_::FindName;
 	meth_args {
 	 name="meth_args";
 	 el_typ=ProgArg;
@@ -4414,8 +4414,8 @@ LeabraProject .projects["TestPointerUpdates"] {
 	  };
 	 };
 	};
-	meth_sig="Program_ptr FindLeafName(taString& item_nm)";
-	meth_desc=" Find element anywhere in full group and subgroups with given name (item_nm)";
+	meth_sig="Program_ptr FindName(taString& item_nm)";
+	meth_desc=" Find element in top-level list with given name (nm) (NULL = not here)";
        };
       };
      };
@@ -4435,10 +4435,10 @@ LeabraProject .projects["TestPointerUpdates"] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="group_one.FindLeafName()";
-	pre_compile_code_string="myProgram = group_two->FindLeafName(\"Caller\")";
+	pre_compile_code_string="myProgram = group_two->FindName(\"Caller\")";
 	result_var=$.projects["TestPointerUpdates"].programs.gp["TesterPrograms"]["TestGroup"].prog_code[0].local_vars["myProgram"]$;
 	obj=.projects["TestPointerUpdates"].programs.gp["TesterPrograms"]["TestGroup"].vars["group_two"]$$;
-	method=taGroup_Program_::FindLeafName;
+	method=taGroup_Program_::FindName;
 	meth_args {
 	 name="meth_args";
 	 el_typ=ProgArg;
@@ -4455,8 +4455,8 @@ LeabraProject .projects["TestPointerUpdates"] {
 	  };
 	 };
 	};
-	meth_sig="Program_ptr FindLeafName(taString& item_nm)";
-	meth_desc=" Find element anywhere in full group and subgroups with given name (item_nm)";
+	meth_sig="Program_ptr FindName(taString& item_nm)";
+	meth_desc=" Find element in top-level list with given name (nm) (NULL = not here)";
        };
       };
      };
@@ -4476,10 +4476,10 @@ LeabraProject .projects["TestPointerUpdates"] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="group_one.FindLeafName()";
-	pre_compile_code_string="myProgram = group_three->FindLeafName(\"Caller\")";
+	pre_compile_code_string="myProgram = group_three->FindName(\"Caller\")";
 	result_var=$.projects["TestPointerUpdates"].programs.gp["TesterPrograms"]["TestGroup"].prog_code[0].local_vars["myProgram"]$;
 	obj=.projects["TestPointerUpdates"].programs.gp["TesterPrograms"]["TestGroup"].vars["group_three"]$$;
-	method=taGroup_Program_::FindLeafName;
+	method=taGroup_Program_::FindName;
 	meth_args {
 	 name="meth_args";
 	 el_typ=ProgArg;
@@ -4496,8 +4496,8 @@ LeabraProject .projects["TestPointerUpdates"] {
 	  };
 	 };
 	};
-	meth_sig="Program_ptr FindLeafName(taString& item_nm)";
-	meth_desc=" Find element anywhere in full group and subgroups with given name (item_nm)";
+	meth_sig="Program_ptr FindName(taString& item_nm)";
+	meth_desc=" Find element in top-level list with given name (nm) (NULL = not here)";
        };
       };
      };
@@ -4517,10 +4517,10 @@ LeabraProject .projects["TestPointerUpdates"] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	code_string="group_one.FindLeafName()";
-	pre_compile_code_string="myProgram = sub_group_three->FindLeafName(\"Caller\")";
+	pre_compile_code_string="myProgram = sub_group_three->FindName(\"Caller\")";
 	result_var=$.projects["TestPointerUpdates"].programs.gp["TesterPrograms"]["TestGroup"].prog_code[0].local_vars["myProgram"]$;
 	obj=.projects["TestPointerUpdates"].programs.gp["TesterPrograms"]["TestGroup"].vars["sub_group_three"]$$;
-	method=taGroup_Program_::FindLeafName;
+	method=taGroup_Program_::FindName;
 	meth_args {
 	 name="meth_args";
 	 el_typ=ProgArg;
@@ -4537,8 +4537,8 @@ LeabraProject .projects["TestPointerUpdates"] {
 	  };
 	 };
 	};
-	meth_sig="Program_ptr FindLeafName(taString& item_nm)";
-	meth_desc=" Find element anywhere in full group and subgroups with given name (item_nm)";
+	meth_sig="Program_ptr FindName(taString& item_nm)";
+	meth_desc=" Find element in top-level list with given name (nm) (NULL = not here)";
        };
       };
      };
@@ -7930,12 +7930,12 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=1.002786;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=1.025556;
+     value 8 0=0.7994323;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -8129,22 +8129,22 @@ LeabraProject .projects["TestPointerUpdates"] {
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 8 0=-0.002785515;
+       value 8 0=-0.002087683;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.05555556;
+       value 8 0=0.02554399;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.05710306;
+       value 8 0=0.04279749;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.9477777;
+       value 8 0=0.7123936;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
