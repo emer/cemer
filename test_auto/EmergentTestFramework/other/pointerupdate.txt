@@ -153,6 +153,23 @@ CopyFunctionCodeIntoLoop
 
     Prog Var Should Equal      j            3
 
+CopyFunctionCodeOutOfLoop
+    Set Suite Variable   ${program_test}         "LoopCodeFunction"
+    Ensure Emergent Free
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
+    Status OK No Result        ${output}
+
+    Prog Var Should Equal      j            3
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_function_code_out_of_loop"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
+    Status OK No Result        ${output}
+
+    Prog Var Should Equal      j            4
+
 CopyProgramCodeIntoLoop
     Set Suite Variable   ${program_test}         "LoopCodeProgram"
     Ensure Emergent Free
@@ -161,6 +178,81 @@ CopyProgramCodeIntoLoop
     Status OK No Result        ${output}
 
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_program_code_into_loop"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
+    Status OK No Result        ${output}
+
+CopyProgramCodeOutOfLoop
+    Set Suite Variable   ${program_test}         "LoopCodeProgram"
+    Ensure Emergent Free
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_program_code_out_of_loop"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
+    Status OK No Result        ${output}
+
+
+MoveFunctionCodeIntoLoop
+    Set Suite Variable   ${program_test}         "LoopCodeFunction"
+    Restart Emergent
+    Ensure Emergent Free
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
+    Status OK No Result        ${output}
+
+    Prog Var Should Equal      j            1
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_function_code_into_loop"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
+    Status OK No Result        ${output}
+
+    Prog Var Should Equal      j            2
+
+MoveFunctionCodeOutOfLoop
+    Set Suite Variable   ${program_test}         "LoopCodeFunction"
+    Ensure Emergent Free
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
+    Status OK No Result        ${output}
+
+    Prog Var Should Equal      j            2
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_function_code_out_of_loop"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
+    Status OK No Result        ${output}
+
+    Prog Var Should Equal      j            1
+
+MoveProgramCodeIntoLoop
+    Set Suite Variable   ${program_test}         "LoopCodeProgram"
+    Ensure Emergent Free
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_program_code_into_loop"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
+    Status OK No Result        ${output}
+
+MoveProgramCodeOutOfLoop
+    Set Suite Variable   ${program_test}         "LoopCodeProgram"
+    Ensure Emergent Free
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_program_code_out_of_loop"}
     Status OK No Result        ${output}
 
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
