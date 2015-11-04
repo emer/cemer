@@ -173,106 +173,10 @@ float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   return net_ex;
 }
 
-void PFCUnitSpec::Quarter_Init_Deep(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
-
-  // this is first entry point for Quarter_Init, so we need to do out-go-clear,
-  // and check if we are over max maint limits
-
-  if(deep.IsSuper()) {
-    if(pfc.out_gate) {
-      if(u->thal_cnt >= pfc.out_mnt) {
-        u->thal = 0.0f;
-        u->thal_cnt = -1.0f;
-        if(pfc.out_mnt == 1)    // this must happen here for 1
-          ClearOtherMaint(u, net, thr_no); // do this now so it can take effect in Send_DeepCtxt
-      }
-      else if(u->thal > pfc.gate_thr) { // we just gated
-        ClearOtherMaint(u, net, thr_no); // do this now so it can take effect in Send_DeepCtxt
-      }
-    }
-    else {                        // maint gating
-      if(u->thal_cnt >= pfc.max_mnt) {
-        u->thal = 0.0f;
-        u->thal_cnt = -1.0f;
-      }
-    }
-  }
-}
-
-void PFCUnitSpec::Send_DeepCtxtNetin(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
-
-  if(!deep.IsSuper()) return;
-  Compute_DeepRaw(u, net, thr_no); // recompute with current thal, thal_cnt
-  inherited::Send_DeepCtxtNetin(u, net, thr_no);
-}
-
-
-void PFCUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
-
-  if(deep.IsSuper()) {
-    if(u->thal > pfc.gate_thr) {
-      if(u->thal_cnt > 0) {
-        u->thal_cnt += 1.0f;    // deep can't recognize a re-gate of existing gating, so we don't
-      }
-      else {
-        u->thal_cnt = 1.0f;     // new gating
-      }
-    }
-    else if(u->thal_cnt > 0) {
-      u->thal_cnt += 1.0f;      // keep maintaining -- out gets reset in Quarter_Init_Deep
-    }
-    else {
-      if(u->thal_cnt >= 0)      // shouldn't happen
-        u->thal_cnt = -1.0f;
-      else
-        u->thal_cnt -= 1.0f;
-    }
-  }
-  else if(deep.IsDeep()) {
-    LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-    int dyn_row = 0;
-    LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
-    if(pfc.use_dyn) {
-      int unidx = un->UnitGpUnIdx();
-      dyn_row = unidx % n_dyns;
-    }
-    LeabraUnGpData* ugd = lay->UnGpDataUn(un);
-    if(ugd->am_deep_ctxt.max > 0.01f) {
-      // we don't know here if this is a re-gate or just continued gating, so we just 
-      // increment maintenance -- re-gating is just continued maintenance.
-      // super could recognize, but deep is what matters for incrementing dynamics..
-      if(u->thal_cnt > 0) { 
-        u->thal_cnt += 1.0f;
-        // now update dynamics if doing that!
-        if(deep.IsDeep() && pfc.use_dyn) {
-          float dynval = UpdtDynVal(dyn_row, (u->thal_cnt-1.0f));
-          u->deep_ctxt = u->misc_1 * dynval;
-        }
-      }
-      else {                      // not previously maintaining -- first gate
-        u->misc_1 = u->deep_ctxt; // record gating ctxt
-        u->thal_cnt = 1.0f;
-        if(pfc.use_dyn) {
-          u->deep_ctxt *= GetDynVal(DYN_INIT, dyn_row);
-        }
-      }
-    }
-    else {
-      if(u->thal_cnt >= 0)      // could happen here -- we don't get cleared by output gating
-        u->thal_cnt = -1.0f;
-      else
-        u->thal_cnt -= 1.0f;
-    }
-  }
-
-  inherited::Compute_DeepStateUpdt(u, net, thr_no);
-}
-
 void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!deep.on || !Quarter_DeepRawNow(net->quarter)) return;
+
+  // NOTE: only super does anything here -- this is where the gating is detected and updated
   if(!deep.IsSuper()) return;
   
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
@@ -286,11 +190,105 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
   }
 
   float thal_eff = 0.0f;
-  if(u->thal > pfc.gate_thr || u->thal_cnt >= 1.0f) {
+
+  // first, before anything else happens, see if we need to clear previous maint
+  if(pfc.out_gate && u->thal_cnt == 1) { // time to clear out maint
+    ClearOtherMaint(u, net, thr_no);     // this is tiny bit more expensive to do repeatedly
+    // but much clearer to have it done here than any other time
+  }
+  
+  // need to do all gating updates NOW, because otherwise we'll send bad info to deep and
+  // generally be out of sync
+  if(pfc.out_gate) {
+    if(u->thal_cnt >= pfc.out_mnt) {
+      u->thal_cnt = -1.0f;
+    }
+  }
+  else {                        // maint gating
+    if(u->thal_cnt >= pfc.max_mnt) {
+      u->thal_cnt = -1.0f;
+    }
+  }
+  
+  if(u->thal > pfc.gate_thr) { // new gating signal -- reset counter
+    u->thal_cnt = 0.0f;        // catches ANY gating signal within gating window here!
+    // note this can reset the thal_cnt above to perpetuate over-max gating
+    thal_eff = MAX(u->thal, pfc.mnt_thal);
+  }
+  else if(u->thal_cnt >= 0.0f) {
     thal_eff = MAX(u->thal, pfc.mnt_thal);
   }
   
   u->deep_raw = thal_eff * draw;
+}
+
+void PFCUnitSpec::GetThalCntFromSuper(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  // look for layer we recv a deep context con from, that is also a PFCUnitSpec SUPER
+  const int nrg = u->NRecvConGps(net, thr_no); 
+  for(int g=0; g<nrg; g++) {
+    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    if(recv_gp->NotActive()) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    if(!cs->IsDeepCtxtCon()) continue;
+    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
+    LeabraUnitSpec* fmus = (LeabraUnitSpec*)fmlay->GetUnitSpec();
+    if(!fmus->InheritsFrom(&TA_PFCUnitSpec)) continue;
+    PFCUnitSpec* pfcus = (PFCUnitSpec*)fmus;
+    if(!pfcus->deep.IsSuper() || recv_gp->size == 0) continue;
+    LeabraUnitVars* suv = (LeabraUnitVars*)recv_gp->UnVars(0,net); // get first connection
+    u->thal_cnt = suv->thal_cnt; // all super guys in same stripe should have same thal_cnt
+  }
+}  
+
+
+void PFCUnitSpec::Quarter_Init_Deep(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
+
+  // this is first entry point for Quarter_Init -- because of parallel, need to
+  // sync with super here and then do rest of updating in next step
+  if(deep.IsDeep()) {
+    GetThalCntFromSuper(u, net, thr_no); // sync us up with super
+  }
+}
+
+void PFCUnitSpec::Send_DeepCtxtNetin(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
+
+  if(u->thal_cnt < 0.0f) {      // not maintaining or just gated -- zero!
+    u->deep_raw = 0.0f;
+    u->deep_ctxt = 0.0f;
+    u->thal_cnt -= 1.0f;        // decrement count -- optional
+  }
+  else {
+    u->thal_cnt += 1.0f;          // we are maintaining, update count for all
+  }
+
+  if(deep.IsSuper()) {
+    if(u->thal_cnt < 0.0f) return; // optimization: don't send if not maintaining!
+  }
+
+  inherited::Send_DeepCtxtNetin(u, net, thr_no);
+}
+
+
+void PFCUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
+
+  if(pfc.use_dyn && deep.IsDeep() && u->thal_cnt >= 0) { // update dynamics!
+    LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+    LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+    int unidx = un->UnitGpUnIdx();
+    int dyn_row = unidx % n_dyns;
+    if(u->thal_cnt <= 1.0f) { // first gating -- should only ever be 1.0 here..
+      u->misc_1 = u->deep_ctxt; // record gating ctxt
+      u->deep_ctxt *= GetDynVal(DYN_INIT, dyn_row);
+    }
+    else {
+      u->deep_ctxt = u->misc_1 * UpdtDynVal(dyn_row, (u->thal_cnt-1.0f));
+    }
+  }
+
+  inherited::Compute_DeepStateUpdt(u, net, thr_no);
 }
 
 void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -302,8 +300,8 @@ void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr
     if(!cs->IsMarkerCon()) continue;
     for(int j=0;j<send_gp->size; j++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)send_gp->UnVars(j,net);
-      uv->thal = 0.0f;      // terminate!
-      uv->thal_cnt = -1.0f; // terminate!
+      if(uv->thal_cnt >= 1.0f)  // important!  only for established maint, not just gated!
+        uv->thal_cnt = -1.0f; // terminate!
     }
   }
 }

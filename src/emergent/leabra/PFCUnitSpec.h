@@ -91,10 +91,12 @@ public:
   float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
                             int thr_no, float& net_syn) override;
 
+  void Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
   void Quarter_Init_Deep(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  virtual void GetThalCntFromSuper(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // #IGNORE deep guys get thal_cnt from super
   void Send_DeepCtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
   void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-  void Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
   virtual void ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // clear maintenance in other layers we project to using MarkerConSpec

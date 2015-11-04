@@ -1375,7 +1375,9 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   float net_syn = u->net_raw;
   float net_ex = 0.0f;
   if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
-    if(lay->acts_m.max > 0.1f) {  // only activate if we got minus phase activation!
+    LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+    LeabraUnGpData* ugd = lay->UnGpDataUn(un);
+    if(ugd->acts_m.max > 0.1f) {  // only activate if we got minus phase activation!
       net_syn = u->deep_raw_net; // only gets from deep!  and no extras!
     }
   }
