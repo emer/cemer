@@ -24,6 +24,29 @@
 // declare all other types mentioned but not required to include:
 class LeabraLayer; //
 
+eTypeDef_Of(LHbRMTgSpecs);
+
+class E_API LHbRMTgSpecs : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs and params for LHbRMTg inputs
+INHERITED(SpecMemberBase)
+public:
+  bool          patch_cur;      // #DEF_false use current trial patch activations -- otherwise use previous trial -- current trial is appropriate for simple discrete trial environments (e.g., with some PBWM models), whereas previous is more approprate for trials with more realistic temporal structure
+  bool          matrix_td;      // #DEF_false compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
+  float         min_pvneg;      // #DEF_0.1 #MIN_0 #MAX_1 proportion of PVNeg that cannot be predicted away - can never afford to take danger for granted!
+  
+  bool          rec_data;       // #DEF_false record values
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LHbRMTgSpecs);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void  Initialize();
+  void  Destroy()       { };
+  void  Defaults_init();
+};
+
 eTypeDef_Of(LHbRMTgGains);
 
 class E_API LHbRMTgGains : public SpecMemberBase {
@@ -31,16 +54,12 @@ class E_API LHbRMTgGains : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         all;            // #MIN_0 #DEF_1 final overall gain on everything
-  float         patch_dir;      // #MIN_0 #DEF_0.7 VS patch direct pathway versus positive PV outcomes
-  float         patch_ind;      // #MIN_0 #DEF_0.7 VS patch indirect pathway versus negative PV outcomes
+  float         patch_dir;      // #MIN_0 #DEF_1 VS patch direct pathway versus positive PV outcomes
+  float         patch_ind;      // #MIN_0 #DEF_1 VS patch indirect pathway versus negative PV outcomes
   float         vs_matrix_dir;  // #MIN_0 #DEF_1 gain on VS matrix dir
   float         vs_matrix_ind;  // #MIN_0 #DEF_1 - VS matrix indir
   float         dms_matrix_dir; // #MIN_0 #DEF_1 - DMS matrix_dir
   float         dms_matrix_ind; // #MIN_0 #DEF_1 - DMS matrix_indir
-  bool          matrix_td;      // #DEF_false compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
-  float         min_pvneg;      // #DEF_0.1 #MIN_0 #MAX_1 proportion of PVNeg that cannot be predicted away - can never afford to take danger for granted!
-  
-  bool          rec_data;       // #DEF_false record values
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -60,7 +79,8 @@ class E_API LHbRMTgUnitSpec : public LeabraUnitSpec {
   // combined lateral habenula and RMTg units -- receives from Patch and Matrix Direct and Indirect pathways, along with primary value (PV) positive and negative valence drivers, and computes dopamine dip signals, represented as positive activations in these units, which are then translated into dips through a projection to the VTAUnitSpec
 INHERITED(LeabraUnitSpec)
 public:
-  LHbRMTgGains   gains;         // gain parameters (multiplicative constants) for various sources of inputs
+  LHbRMTgSpecs   lhb;         // lhb options and misc specs
+  LHbRMTgGains   gains;       // gain parameters (multiplicative constants) for various sources of inputs
   virtual void	Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // compute the LHb value based on recv projections from VSMatrix_dir/ind, VSPatch_dir/ind, and PV_pos/neg
   

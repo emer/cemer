@@ -85,6 +85,7 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
 void WtSigSpec::Initialize() {
   gain = 6.0f;
   off = 1.0f;
+  sig_wt_bound = false;
   dwt_norm = false;
   rugp_wt_sync = false;
 }

@@ -132,6 +132,7 @@ INHERITED(SpecMemberBase)
 public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1 is standard for XCAL
+  bool          sig_wt_bound;   // use the sigmoidal weight for soft-bounding computation -- typically the linear weight is used instead (if this is false) -- this creates extra strong compression of the weight values
   bool		dwt_norm;	// #DEF_false normalize weight changes -- this adds a significant amount of computational cost, and generally makes learning more robust, but a well-tuned network should not require it, and it causes some interference with prior learning that may not be very biologically plausible or desirable -- dwt -= (act_p / sum act_p) (sum dwt) over receiving projection
   bool          rugp_wt_sync;    // #DEF_false keep weights synchronized for the same recv unit index within its unit group across the layer -- does this upon weight init and also integrates all the weight changes to produce an aggregate dwt -- all done at network level
 
@@ -440,8 +441,14 @@ public:
   inline void	C_Compute_Weights_CtLeabraXCAL
     (float& wt, float& dwt, float& fwt, float& swt, float& scale)
   { if(dwt != 0.0f) {
-      if(dwt > 0.0f)	dwt *= (1.0f - fwt);
-      else		dwt *= fwt;
+      if(wt_sig.sig_wt_bound) {
+        if(dwt > 0.0f)	dwt *= (1.0f - wt);
+        else		dwt *= wt;
+      }
+      else {
+        if(dwt > 0.0f)	dwt *= (1.0f - fwt);
+        else		dwt *= fwt;
+      }
       fwt += dwt;
       // C_ApplyLimits(fwt);       // don't need this..
       // swt = fwt;  // leave swt as pristine original weight value -- saves time

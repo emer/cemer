@@ -30,16 +30,11 @@ class E_API PVLVDaSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
 INHERITED(SpecMemberBase)
 public:
-  float         da_gain;        // #DEF_0:2 #MIN_0 multiplier for dopamine values
   float         tonic_da;       // #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
-  float         pptg_gain;     // #DEF_1 gain on bursts from PPTg
-  //TODO: probably need separate pptg_p and pptg_n_ gain factors
-  
-  float         lhb_gain;       // #DEF_1 gain on dips from LHbRMTg
-  float         pv_gain;        // #DEF_1 gain on positive PV component of total phasic DA signal (net after subtracting VSPatchIndir (PVi) shunt signal)
+  bool          patch_cur;      // #DEF_false use current trial patch activations -- otherwise use previous trial -- current trial is appropriate for simple discrete trial environments (e.g., with some PBWM models), whereas previous is more approprate for trials with more realistic temporal structure
   float         pv_thr;         // #DEF_0.1 threshold on pv max act for setting pv_detected
-  float         pvi_gain;       // #DEF_1 gain on VSPatchIndir (PVi) shunt signal - higher pvi_gain == more shunting
   float         vsp_thr;        // #DEF_0.1 threshold on VS Patch Indir max act for setting pv_detected
+  bool          rec_data;       // record all the internal computations in user data on the VTA layer
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -49,19 +44,41 @@ protected:
 private:
   void  Initialize();
   void  Destroy()       { };
-  void  Defaults_init() { Initialize(); }
+  void  Defaults_init();
 };
 
+
+eTypeDef_Of(PVLVDaGains);
+
+class E_API PVLVDaGains : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gains for various VTA inputs
+INHERITED(SpecMemberBase)
+public:
+  float         da_gain;       // #DEF_0:2 #MIN_0 overall multiplier for dopamine values
+  float         pptg_gain;     // #DEF_1 gain on bursts from PPTg
+  float         lhb_gain;      // #DEF_1 gain on dips from LHbRMTg
+  float         pv_gain;       // #DEF_1 gain on positive PV component of total phasic DA signal (net after subtracting VSPatchIndir (PVi) shunt signal)
+  float         pvi_gain;      // #DEF_1 gain on VSPatchIndir (PVi) shunt signal - higher pvi_gain == more shunting
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(PVLVDaGains);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void  Initialize();
+  void  Destroy()       { };
+  void  Defaults_init();
+};
 
 eTypeDef_Of(LVBlockSpec);
 
 class E_API LVBlockSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for how PV and dip signals block LV signals in dopamine
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how LV signals are blocked by PV and LHbRMTg dip signals -- there are good reasons for these signals to block LV, because they reflect a stronger overall signal about outcomes, compared to the more "speculative" LV signal
 INHERITED(SpecMemberBase)
 public:
-  float         pos_pv;         // #DEF_1 down-regulate LV by factor of: (1 - pos_pv * pv) for positive pv signals (e.g., from LHA etc) -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
-  float         lhb_dip;        // #DEF_2 down-regulate LV by factor of: (1 - dip * lhb_rmtg) for da dip signals coming from the LHbRMTg sytem -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
-  bool          rec_data;       // record all the internal computations in user data on the VTA layer
+  float         pos_pv;   // #DEF_1 down-regulate LV by factor of: (1 - pos_pv * pv) for positive pv signals (e.g., from LHA etc) -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
+  float         lhb_dip;  // #DEF_2 down-regulate LV by factor of: (1 - dip * lhb_rmtg) for da dip signals coming from the LHbRMTg sytem -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -71,11 +88,9 @@ protected:
 private:
   void  Initialize();
   void  Destroy()       { };
-  void  Defaults_init() { Initialize(); }
+  void  Defaults_init();
 };
 
-// todo: right now VTAn is just - of VTAp -- should be its own
-// thing with separate patterns of connections!
 
 eTypeDef_Of(VTAUnitSpec);
 
@@ -89,12 +104,15 @@ public:
   };
   DaValence       da_val;       // what valence of dopamine should we compute?
   PVLVDaSpec      da;           // parameters for the pvlv da computation
+  PVLVDaGains     gains;        // gains for various parameters
   LVBlockSpec     lv_block;     // how LV signals are blocked by PV and LHbRMTg dip signals -- there are good reasons for these signals to block LV, because they reflect a stronger overall signal about outcomes, compared to the more "speculative" LV signal
 
   virtual void  Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // send the da value to sending projections: every cycle
-  virtual void  Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
-  // compute the da value based on recv projections from PPTg and LHbRMTg
+  virtual void  Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // compute positive-valence dopamine 
+  virtual void  Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // compute negative-valence dopamine
 
   virtual bool  GetRecvLayers_P(LeabraUnit* u,
                               LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,

@@ -23,24 +23,41 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(PVLVDaSpec);
+TA_BASEFUNS_CTORS_DEFN(PVLVDaGains);
 TA_BASEFUNS_CTORS_DEFN(LVBlockSpec);
 TA_BASEFUNS_CTORS_DEFN(VTAUnitSpec);
 
 void PVLVDaSpec::Initialize() {
-  da_gain = 1.0f;
+  patch_cur = false;
+  rec_data = false;
+  Defaults_init();
+}
+
+void PVLVDaSpec::Defaults_init() {
   tonic_da = 0.0f;
+  pv_thr = 0.1f;
+  vsp_thr = 0.1f;
+}
+  
+void PVLVDaGains::Initialize() {
+  Defaults_init();
+}
+
+void PVLVDaGains::Defaults_init() {
+  da_gain = 1.0f;
   pptg_gain = 1.0f;
   lhb_gain = 1.0f;
   pv_gain = 1.0f;
-  pv_thr = 0.1f;
   pvi_gain = 1.0f;
-  vsp_thr = 0.1f;
 }
 
 void LVBlockSpec::Initialize() {
+  Defaults_init();
+}
+
+void LVBlockSpec::Defaults_init() {
   pos_pv = 1.0f;
   lhb_dip = 2.0f;
-  rec_data = false;
 }
 
 void VTAUnitSpec::Initialize() {
@@ -177,143 +194,105 @@ bool VTAUnitSpec::GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay, Leabra
     LeabraUnitSpec* us = (LeabraUnitSpec*)fmlay->GetUnitSpec();
     if(cs->IsMarkerCon()) {
       if(us->InheritsFrom(TA_PPTgUnitSpec)) pptg_lay_n = fmlay;
-//      else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) lhb_lay = fmlay;
-//      else if(fmlay->name.contains("PV") && fmlay->name.contains("Pos")) {
-//        pospv_lay = fmlay;
-//      }
-//      else if(fmlay->name.contains("PV") && fmlay->name.contains("Neg")) {
-//        negpv_lay = fmlay;
-//      }
       if(fmlay->name.contains("PV")) {
         negpv_lay = fmlay;
       }
-      // else if(us->InheritsFrom(TA_MSNUnitSpec)) vspatch_lay = fmlay;
-      // todo: could discriminate diff types of these now!
     }
   }
   return true;
 }
 
-void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* pptg_lay_p = NULL;
-  LeabraLayer* pptg_lay_n = NULL;
   LeabraLayer* lhb_lay = NULL;
   LeabraLayer* pospv_lay = NULL;
-  LeabraLayer* negpv_lay = NULL;
   LeabraLayer* vspatch_lay = NULL;
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
   
-  // TODO: add other recv layer inputs as we determine which layers VTAn should receive from based on empical data and phenomenology - really only sure of NegPV currently
   LeabraLayer* lay = un->own_lay();
 
-  // use avg act over layer..
-  float pptg_da_p = 0.0f;
-  float pptg_da_n = 0.0f;
-  float tot_burst_da = 0.0f;
-  float net_burst_da = 0.0f;
-  float lhb_da = 0.0f;
-  float pospv = 0.0f;
-  float negpv = 0.0f;
-  float vspvi = 0.0f;
-  
-  float pospv_da = 0.0f;
-  float negpv_da = 0.0f;
-  float net_block = 0.0f;
-  float net_da = 0.0f;
-  
-  if(da_val == DA_N) { // atypical burst for NegPV case - anti-Schultzian
-    GetRecvLayers_N(un, negpv_lay, pptg_lay_n);
-    LeabraLayer* lay = un->own_lay();
-    negpv = negpv_lay->acts_eq.avg * negpv_lay->units.size;
-    pptg_da_n = pptg_lay_n->acts_eq.avg * pptg_lay_n->units.size;
-
+  GetRecvLayers_P(un, pptg_lay_p, lhb_lay, pospv_lay, vspatch_lay);
     
-    // absorbing NegPV value - prevents double counting
-    float tot_burst_da = MAX(da.pv_gain * negpv, da.pptg_gain * pptg_da_n);
-    // NOTE: at present, don't thing there is any lhb contribution to bursting
-//    tot_burst_da -= da.lhb_gain * burst_lhb_da; // burst_lhb_da non-positive
-    
-    net_da = 0.0f;
-    
-    negpv_da = negpv;
-    negpv_da = MAX(negpv_da, 0.0f); // in case we add shunting later...
-    // may add LV block later...
-//    net_da = da.pv_gain * negpv_da + da.pptg_gain * pptg_da_n;
-    net_da = MAX(da.pv_gain * negpv_da, da.pptg_gain * pptg_da_n);
-    // don't double-count PV signal
-    //TODO: probably WON'T need separate pptg_p_ and pptg_n_ gain factors now since goal is to get rid of the multiplicity of gain factors
-    
-    net_da = tot_burst_da;
-    // currently, no reason for PVi-like shunting identified
-    net_da *= da.da_gain;
-    
-    //net_da *= -1.0f; // TODO: eventually delete since vestigial, original implementation; kept temporarily for Randy's short-term reference only
-    u->da_n = net_da;
-    lay->da_n = u->da_n;
-    u->ext = da.tonic_da + u->da_n;
-    u->act_eq = u->act_nd = u->act = u->net = u->ext;
-    u->da = 0.0f;
-  }
-  else { // classic Schultz guys
-    GetRecvLayers_P(un, pptg_lay_p, lhb_lay, pospv_lay, vspatch_lay);
-    LeabraLayer* lay = un->own_lay();
-    
-    // use total activation over whole layer
-    pptg_da_p = pptg_lay_p->acts_eq.avg * pptg_lay_p->units.size;
-    lhb_da = lhb_lay->acts_eq.avg * lhb_lay->units.size;
-    pospv = pospv_lay->acts_eq.avg * pospv_lay->units.size;
+  // use total activation over whole layer
+  float pptg_da_p = pptg_lay_p->acts_eq.avg * pptg_lay_p->units.size;
+  float lhb_da = lhb_lay->acts_eq.avg * lhb_lay->units.size;
+  float pospv = pospv_lay->acts_eq.avg * pospv_lay->units.size;
+  float vspvi;
+  if(da.patch_cur) 
+    vspvi = vspatch_lay->acts_eq.avg * vspatch_lay->units.size;
+  else
     vspvi = vspatch_lay->acts_q0.avg * vspatch_lay->units.size;
+
+  float burst_lhb_da = MIN(lhb_da, 0.0f); // if neg, promotes bursting
+  float dip_lhb_da = MAX(lhb_da, 0.0f); // else, promotes dipping
     
-//    pospv_da = 0.0f;
-    net_block = 0.0f;
-    net_da = 0.0f;
-    
-    float burst_lhb_da = MIN(lhb_da, 0.0f); // if neg, promotes bursting
-    float dip_lhb_da = MAX(lhb_da, 0.0f); // else, promotes dipping
-    
-    //float pospv_da = pospv - vspvi; // original
-    
-    // absorbing PosPV value - prevents double counting
-    tot_burst_da = MAX(da.pv_gain * pospv, da.pptg_gain * pptg_da_p);
-    // likewise for lhb contribution to bursting (burst_lhb_da non-positive)
-    tot_burst_da = MAX(tot_burst_da, -da.lhb_gain * burst_lhb_da);
-//    tot_burst_da -= da.lhb_gain * burst_lhb_da; // burst_lhb_da non-positive
+  // absorbing PosPV value - prevents double counting
+  float tot_burst_da = MAX(gains.pv_gain * pospv, gains.pptg_gain * pptg_da_p);
+  // likewise for lhb contribution to bursting (burst_lhb_da non-positive)
+  tot_burst_da = MAX(tot_burst_da, -gains.lhb_gain * burst_lhb_da);
    
-    // PVi shunting
-    net_burst_da = tot_burst_da - (da.pvi_gain * vspvi);
+  // PVi shunting
+  float net_burst_da = tot_burst_da - (gains.pvi_gain * vspvi);
     
-    //pospv_da = MAX(pospv_da, 0.0f); // shunting should not be able to produce dip!
-    net_burst_da = MAX(net_burst_da, 0.0f);
+  net_burst_da = MAX(net_burst_da, 0.0f);
     
-    net_block = (1.0f - (lv_block.pos_pv * pospv + lv_block.lhb_dip * lhb_da));
-    net_block = MAX(0.0f, net_block);
+  float net_block = (1.0f - (lv_block.pos_pv * pospv + lv_block.lhb_dip * lhb_da));
+  net_block = MAX(0.0f, net_block);
     
-//    net_da = da.pv_gain * pospv_da - da.lhb_gain * lhb_da + net_block * da.pptg_gain * pptg_da_p;
-    net_da = net_burst_da - da.lhb_gain * dip_lhb_da; // + net_block * da.pptg_gain * pptg_da_p;
-    
-    net_da *= da.da_gain;
-    
-    u->da_p = net_da;
-    lay->da_p = u->da_p;
-    u->ext = da.tonic_da + u->da_p;
-    u->act_eq = u->act_nd = u->act = u->net = u->ext;
-    u->da = 0.0f;
+  float net_da = net_burst_da - gains.lhb_gain * dip_lhb_da;
 
-    // also set the network ext rew pv settings
-    // bool pv_over_thr = (pospv >= da.pv_thr);
-    // bool vsp_over_thr = (vspvi >= da.vsp_thr);
+  net_da *= gains.da_gain;
+    
+  u->da_p = net_da;
+  lay->da_p = u->da_p;
+  u->ext = da.tonic_da + u->da_p;
+  u->act_eq = u->act_nd = u->act = u->net = u->ext;
+  u->da = 0.0f;
 
-    net->ext_rew_avail = true;    // always record pv values -- todo: why??
-    net->ext_rew = pospv;
-  }
+  net->ext_rew_avail = true;    // always record pv values -- todo: why??
+  net->ext_rew = pospv;
 
-  if(lv_block.rec_data) {
+  if(da.rec_data) {
     lay->SetUserData("pospv", pospv);
     lay->SetUserData("pptg_da_p", pptg_da_p);
     lay->SetUserData("lhb_da", lhb_da);
     lay->SetUserData("tot_burst_da", tot_burst_da);
     lay->SetUserData("vs_patch_dir_pos", vspvi);
     lay->SetUserData("net_burst_da", net_burst_da);
+    lay->SetUserData("net_da", net_da);
+  }
+}
+
+void VTAUnitSpec::Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  LeabraLayer* pptg_lay_n = NULL;
+  LeabraLayer* negpv_lay = NULL;
+  LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+  
+  LeabraLayer* lay = un->own_lay();
+
+  GetRecvLayers_N(un, negpv_lay, pptg_lay_n);
+  float negpv = negpv_lay->acts_eq.avg * negpv_lay->units.size;
+  float pptg_da_n = pptg_lay_n->acts_eq.avg * pptg_lay_n->units.size;
+
+  // absorbing NegPV value - prevents double counting
+  float tot_burst_da = MAX(gains.pv_gain * negpv, gains.pptg_gain * pptg_da_n);
+    
+  float negpv_da = negpv;
+  negpv_da = MAX(negpv_da, 0.0f); // in case we add shunting later...
+  float net_da = MAX(gains.pv_gain * negpv_da, gains.pptg_gain * pptg_da_n);
+    
+  net_da = tot_burst_da;        // TOM: this just completely overwrote net_da from above!!
+  // currently, no reason for PVi-like shunting identified
+  net_da *= gains.da_gain;
+    
+  u->da_n = net_da;
+  lay->da_n = u->da_n;
+  u->ext = da.tonic_da + u->da_n;
+  u->act_eq = u->act_nd = u->act = u->net = u->ext;
+  u->da = 0.0f;
+
+  if(da.rec_data) {
+    lay->SetUserData("tot_burst_da", tot_burst_da);
     lay->SetUserData("negpv", negpv);
     lay->SetUserData("pptg_da_n", pptg_da_n);
     lay->SetUserData("net_da", net_da);
@@ -339,13 +318,18 @@ void VTAUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
 
 void VTAUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(Quarter_DeepRawNow(net->quarter)) {
-    Compute_Da(u, net, thr_no);
+    if(da_val == DA_P) {
+      Compute_DaP(u, net, thr_no);
+    }
+    else {
+      Compute_DaN(u, net, thr_no);
+    }
     Send_Da(u, net, thr_no);
   }
   else {
     u->act = 0.0f;
     Send_Da(u, net, thr_no);    // send nothing
-    Compute_Da(u, net, thr_no); // then compute just for kicks
+    // Compute_Da(u, net, thr_no); // then compute just for kicks
   }
 }
 

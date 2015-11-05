@@ -20,36 +20,46 @@
 
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(LHbRMTgUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(LHbRMTgSpecs);
 TA_BASEFUNS_CTORS_DEFN(LHbRMTgGains);
+TA_BASEFUNS_CTORS_DEFN(LHbRMTgUnitSpec);
 
-void LHbRMTgGains::Initialize() {
-  all = 1.0f;
-  patch_dir = 0.7f;
-  patch_ind = 0.7f;
-  vs_matrix_dir = 1.0f;
-  vs_matrix_ind = 1.0f;
-  dms_matrix_dir = 1.0f;
-  dms_matrix_ind = 1.0f;
+void LHbRMTgSpecs::Initialize() {
+  patch_cur = false;
+  Defaults_init();
+}
+
+void LHbRMTgSpecs::Defaults_init() {
   matrix_td = false;
   min_pvneg = 0.1f;
   rec_data = false;
 }
 
+void LHbRMTgGains::Initialize() {
+  Defaults_init();
+}
+
 void LHbRMTgGains::Defaults_init() {
+  all = 1.0f;
+  patch_dir = 1.0f;
+  patch_ind = 1.0f;
+  vs_matrix_dir = 1.0f;
+  vs_matrix_ind = 1.0f;
+  dms_matrix_dir = 1.0f;
+  dms_matrix_ind = 1.0f;
 }
 
 void LHbRMTgUnitSpec::Initialize() {
-    SetUnique("deep_raw_qtr", true);
-    deep_raw_qtr = Q4;
-    SetUnique("act_range", true);
-    act_range.max = 2.0f;
-    act_range.min = -2.0f;
-    act_range.UpdateAfterEdit();
-    SetUnique("clamp_range", true);
-    clamp_range.max = 2.0f;
-    clamp_range.min = -2.0f;
-    clamp_range.UpdateAfterEdit();
+  SetUnique("deep_raw_qtr", true);
+  deep_raw_qtr = Q4;
+  SetUnique("act_range", true);
+  act_range.max = 2.0f;
+  act_range.min = -2.0f;
+  act_range.UpdateAfterEdit();
+  SetUnique("clamp_range", true);
+  clamp_range.max = 2.0f;
+  clamp_range.min = -2.0f;
+  clamp_range.UpdateAfterEdit();
 }
 
 void LHbRMTgUnitSpec::Defaults_init() {
@@ -194,8 +204,18 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   // use avg act over layer..
   // note: need acts_q0 for patch to reflect previous trial..
-  float patch_dir = patch_dir_lay->acts_q0.avg * patch_dir_lay->units.size;
-  float patch_ind = patch_ind_lay->acts_q0.avg * patch_ind_lay->units.size;
+  float patch_dir;
+  if(lhb.patch_cur)
+    patch_dir = patch_dir_lay->acts_eq.avg * patch_dir_lay->units.size;
+  else
+    patch_dir = patch_dir_lay->acts_q0.avg * patch_dir_lay->units.size;
+    
+  float patch_ind;
+  if(lhb.patch_cur)
+    patch_ind = patch_ind_lay->acts_eq.avg * patch_ind_lay->units.size;
+  else
+    patch_ind = patch_ind_lay->acts_q0.avg * patch_ind_lay->units.size;
+    
   float matrix_dir = 0.0f;
   if(matrix_dir_lay)
     matrix_dir = matrix_dir_lay->acts_eq.avg * matrix_dir_lay->units.size;
@@ -213,7 +233,7 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   
   // actual punishments should never be completely predicted away...
-   float residual_pvneg = gains.min_pvneg * pv_neg;
+   float residual_pvneg = lhb.min_pvneg * pv_neg;
   residual_pvneg = MAX(residual_pvneg, 0.0f); // just a precaution
  
   // TODO: still double counting matrix_dir via its reflection in both net_pv_pos and net_lv_pos; QUICK FIX
@@ -253,7 +273,7 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   u->act_eq = u->act_nd = u->act = u->net = u->ext = net_lhb;
   
-  if(gains.rec_data) {
+  if(lhb.rec_data) {
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     LeabraLayer* lay = un->own_lay();
     lay->SetUserData("pv_pos", pv_pos);
@@ -290,7 +310,7 @@ void LHbRMTgUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, i
 
 void LHbRMTgUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   inherited::Quarter_Final(u, net, thr_no);
-  if(gains.matrix_td) {
+  if(lhb.matrix_td) {
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
       float matrix_ind = 0.0f;
       const int nrg = u->NRecvConGps(net, thr_no);
