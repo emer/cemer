@@ -585,14 +585,15 @@ ClusterManager::UpdateWorkingCopy() {
                                                 main_svn);
       }
       else {
-	try{
-	  m_svn_other->SetWorkingCopyPath(wcp);
-	  int rev = UpdateWorkingCopy_impl(m_svn_other, wcp, user, clust, projname,
-					   main_svn);
-	} catch (const SubversionClient::Exception &ex) {
-	  //These are additional repositories, so don't worry about them too much
-	  taMisc::Info("Could not update SVN working copy ", wcp, ". Ignoring secondary repository\n", ex.what());
-	}
+        try{
+          m_svn_other->SetWorkingCopyPath(wcp);
+          int rev = UpdateWorkingCopy_impl(m_svn_other, wcp, user, clust, projname,
+              main_svn);
+        } catch (const SubversionClient::Exception &ex) {
+          //These are additional repositories, so don't worry about them too much
+          taMisc::Info("Could not update SVN working copy ", wcp, ". Ignoring secondary repository\n", ex.what());
+          taMisc::DoneBusy();
+        }
       }
     }
   }
