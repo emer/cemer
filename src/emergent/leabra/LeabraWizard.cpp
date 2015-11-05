@@ -1540,7 +1540,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
     pptg_p->PositionRightOf(neg_pv, sp);
     vtap->PositionRightOf(pptg_p, sp);
     lhb->PositionRightOf(vtap, sp);
-    pptg_n->PositionRightOf(lhb, sp*2);
+    pptg_n->PositionBehind(pptg_p, sp);
     vtan->PositionRightOf(pptg_n, sp);
     drn->PositionRightOf(vtan, sp);
   }
@@ -1655,6 +1655,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   net->FindMakePrjn(baepd2, baapd1, gponetoone, PvlvSp("BAAcqToBAExt_DeepMod",
                                                        SendDeepModConSpec));
   net->FindMakePrjn(baepd2, vtap, fullprjn, marker_cons);
+  net->FindMakePrjn(baepd2, lat_amyg, fullprjn, PvlvSp("BasAmygCons_ext",
+                                                       BasAmygConSpec));
   // also context in
   
   net->FindMakePrjn(capos, pos_pv, gponetoone, fix_cons);
@@ -1665,9 +1667,11 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   net->FindMakePrjn(baand2, lat_amyg, fullprjn, PvlvSp("BasAmygCons_acq_neg", BasAmygConSpec));
   net->FindMakePrjn(baand2, baend1, gponetoone, PvlvSp("BAExtToBAAcq_Inhib", LeabraConSpec));
   
-  net->FindMakePrjn(baepd2, baand2, gponetoone, PvlvSp("BAAcqToBAExt_DeepMod",
+  net->FindMakePrjn(baend1, baand2, gponetoone, PvlvSp("BAAcqToBAExt_DeepMod",
                                                        SendDeepModConSpec));
   net->FindMakePrjn(baend1, vtap, fullprjn, marker_cons);
+  net->FindMakePrjn(baend1, lat_amyg, fullprjn, PvlvSp("BasAmygCons_ext",
+                                                       BasAmygConSpec));
   // also context in
   
   net->FindMakePrjn(caneg, neg_pv, gponetoone, fix_cons);
@@ -1948,8 +1952,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   ////////////	ConSpecs
 
   FMSpec(LeabraConSpec, bg_lrn_cons, pbwmspgp, "BgLrnCons");
-  FMChild(MSNConSpec, mtx_cons_go, bg_lrn_cons, "MSNConsGo");
-  FMChild(MSNConSpec, mtx_cons_nogo, mtx_cons_go, "MSNConsNoGo");
+  FMChild(MSNConSpec, mtx_cons_go, bg_lrn_cons, "MatrixConsGo");
+  FMChild(MSNConSpec, mtx_cons_nogo, mtx_cons_go, "MatrixConsNoGo");
 
   FMSpec(LeabraConSpec, pfc_lrn_cons, pbwmspgp, "PfcLrnCons");
   FMChild(DeepCtxtConSpec, deep_ctxt, pfc_lrn_cons, "PFCDeepCtxt");
@@ -2486,9 +2490,9 @@ can be sure everything is ok.";
   // connect input layers
   for(i=0;i<task_input_lays.size;i++) {
     Layer* il = (Layer*)task_input_lays[i];
-    net->FindMakePrjn(matrix_go, il, fullprjn, PbwmSp("MSNConsGo", MSNConSpec));
+    net->FindMakePrjn(matrix_go, il, fullprjn, PbwmSp("MatrixConsGo", MSNConSpec));
     net->FindMakePrjn(matrix_nogo, il, fullprjn,
-                      PbwmSp("MSNConsNoGo", MSNConSpec));
+                      PbwmSp("MatrixConsNoGo", MSNConSpec));
   }
   
   LeabraUnitSpec* input_units = PbwmSp("PFCInputUnits", LeabraUnitSpec);
@@ -2499,9 +2503,9 @@ can be sure everything is ok.";
     il->SetUnitSpec(input_units);
     
     if(task_input_lays.size == 0) {
-      net->FindMakePrjn(matrix_go, il, fullprjn, PbwmSp("MSNConsGo", MSNConSpec));
+      net->FindMakePrjn(matrix_go, il, fullprjn, PbwmSp("MatrixConsGo", MSNConSpec));
       net->FindMakePrjn(matrix_nogo, il, fullprjn,
-                        PbwmSp("MSNConsNoGo", MSNConSpec));
+                        PbwmSp("MatrixConsNoGo", MSNConSpec));
     }
     net->FindMakePrjn(pfc_mnt, il, fullprjn, PbwmSp("ToPFC", LeabraConSpec));
     net->FindMakePrjn(pfc_mnt_trc, il, fullprjn, PbwmSp(prefix + "DeepRawPlus",
