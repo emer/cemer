@@ -1829,6 +1829,7 @@ class SubversionPoller(object):
         pb_per_tag = []
         for row in range(self.jobs_done.n_rows()):
             pb_batches = self.jobs_done.get_val(row, "pb_batches")
+            pb_nodes = self.jobs_done.get_val(row, "pb_nodes")
             status = self.jobs_done.get_val(row, "status")
             if pb_batches <= 1 or status != "DONE":
                 continue
@@ -1837,11 +1838,11 @@ class SubversionPoller(object):
    
             if not submit_svn in pb_tags:
                 pb_tags.append(submit_svn)
-                n_per_tag.append(1)  # got one
+                n_per_tag.append(pb_nodes)  # got one
                 pb_per_tag.append(pb_batches)
             else:
                 tidx = pb_tags.index(submit_svn)
-                n_per_tag[tidx] += 1
+                n_per_tag[tidx] += pb_nodes
         comb_tags = []
         for tidx in range(len(pb_tags)):
             if n_per_tag[tidx] == pb_per_tag[tidx]:  # got them all
