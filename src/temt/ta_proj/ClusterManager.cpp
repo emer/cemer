@@ -245,19 +245,30 @@ ClusterManager::RemoveFiles(String_PArray& files, bool force, bool keep_local)
 }
 
 bool
-ClusterManager::GetProjectAtRev(int rev) {
+ClusterManager::GetProjectAtRev(String cluster, String username, int rev) {
   if (!m_valid) return false; // Ensure proper construction.
   if(!CheckPrefs()) return false;
 
   String_PArray files;
-  files.Add(m_proj_copy_filename);
+  String m_proj_copy_filename_tmp;
+  if ((username == m_username) && (cluster == GetClusterName())) {
+    m_proj_copy_filename_tmp = m_proj_copy_filename;
+  } else {
+    QFileInfo fi(GetFilename());
+    m_proj_copy_filename_tmp = taMisc::cluster_svn_path + '/' + GetSvnRepo() + '/' + cluster + "/" + username + '/' + fi.completeBaseName() + "/models" + '/' + fi.fileName();
+    m_proj_copy_filename_tmp.gsub("~/", taMisc::GetHomePath() + "/");
+  }
+
+  taMisc::Info("Getting file at revision: ", m_proj_copy_filename_tmp);
+
+  files.Add(m_proj_copy_filename_tmp);
   try {
     m_svn_client->UpdateFiles(files, rev);
     String nwfnm = m_proj_copy_filename.before(".proj");
     nwfnm += "_" + String(rev) + ".proj";
     nwfnm = taMisc::GetFileFmPath(nwfnm);
     nwfnm = taMisc::GetDirFmPath(m_proj->file_name) + "/" + nwfnm; // use orig proj dir
-    QFile::copy(m_proj_copy_filename, nwfnm);
+    QFile::copy(m_proj_copy_filename_tmp, nwfnm);
     m_svn_client->UpdateFiles(files, -1); // go back to current
   }
   catch (const ClusterManager::Exception &ex) {
