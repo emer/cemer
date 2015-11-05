@@ -755,10 +755,11 @@ class SubversionPoller(object):
             # 1. Cancel existing jobs and submit new jobs as requested in
             #    any submission files that were committed.  Those files
             #    will be added to the self.all_submit_files set.
-            for filename in sub_files:
-                if debug:
-                    logging.info('\nProcessing %s' % filename)
-                self._process_new_submission(filename)
+            if sub_files != False:
+                for filename in sub_files:
+                    if debug:
+                        logging.info('\nProcessing %s' % filename)
+                    self._process_new_submission(filename)
 
             # Remaining steps are done on *all* running files seen so far.
             # 2. Query the status of all running jobs
@@ -1847,7 +1848,7 @@ class SubversionPoller(object):
                 comb_tags.append(pb_tags[tidx])
         for tidx in range(len(comb_tags)):
             trg_svn = comb_tags[tidx]
-            trg_tag = trg_svn + "_0"   # target to consolidate is 0 guy
+            trg_tag = trg_svn + "_000"   # target to consolidate is 0 guy
             trg_row = self.jobs_done.find_val("tag", trg_tag)
             if trg_row < 0:
                 continue  # this should not happen
