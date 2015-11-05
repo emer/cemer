@@ -3769,7 +3769,7 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
   }
   
   taBase* old_own = ref.ptr()->GetOwner(old_par->GetTypeDef());
-  if (old_own == old_par) {
+  if (old_own == old_par || old_own == new_par) {
     taBase* new_guy = UpdatePointers_NewPar_FindNew(ref.ptr(), old_par, new_par);
     if(new_guy)
       ref.set(new_guy);
