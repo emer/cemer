@@ -1887,6 +1887,7 @@ class SubversionPoller(object):
                 if tag == trg_tag:
                     continue  # skip the target guy
                 self.jobs_done.remove_row(row) # done with it!
+            self.status_change = True  # be sure to write out new data!!
 
     def _add_cur_running_to_list(self):
         if self.cur_running_file not in self.all_running_files:
