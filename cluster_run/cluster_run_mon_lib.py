@@ -1795,7 +1795,7 @@ class SubversionPoller(object):
         pb_batches = self.jobs_done.get_val(row, "pb_batches")
         status = self.jobs_done.get_val(row, "status")
         submit_job = self.jobs_done.get_val(row, "submit_job")
-        if pb_batches > 1 and status == "DONE" and submit_job == "0":
+        if pb_batches > 1 and status == "DONE" and submit_job == "000":
             return   # don't overwrite consolidated batch guy
 
         try: eddt = datetime(*(time.strptime(end_time, time_format)[0:6]))
@@ -1809,6 +1809,7 @@ class SubversionPoller(object):
                 self.jobs_done.set_val(row, "job_out", job_out)
 
             all_files = self._get_dat_files(tag)
+
             self.jobs_done.set_val(row, "dat_files", all_files[0])
             self.jobs_done.set_val(row, "other_files", all_files[1])
 #        elif deadtime.seconds > job_update_window * 60: # dead long enough to cleanup
@@ -1889,14 +1890,6 @@ class SubversionPoller(object):
                     continue  # skip the target guy
                 self._remove_job_files(job_out_file, job_no, tag)  # nuke now!
                 self.jobs_done.remove_row(row) # done with it!
-
-            # and set it AGAIN because somehow it is still not being set..!?
-            trg_row = self.jobs_done.find_val("tag", trg_tag)
-            self.jobs_done.set_val(trg_row, "dat_files", all_dat_files)
-            self.jobs_done.set_val(trg_row, "other_files", all_other_files)
-            print "setting row: %d for trg tag: %s to all dat files: %s" % (trg_row, trg_tag, all_dat_files)
-
-            self._save_cur_files()
             self.status_change = True  # be sure to write out new data!!
 
     def _add_cur_running_to_list(self):
