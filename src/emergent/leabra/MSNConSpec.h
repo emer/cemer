@@ -72,6 +72,7 @@ public:
   
   enum LearningRule {           // type of learning rule to use
     DA_HEBB,                    // immediate use of dopamine * send * recv activation triplet to drive learning
+    DA_HEBB_VS,                 // ventral striatum version of DA_HEBB, which uses MAX(deep_lrn, ru_act) for recv term in dopamine * send * recv activation triplet to drive learning
     TRACE_THAL,                 // send * recv activation establishes a trace (long-lasting synaptic tag), with thalamic activation determining sign of the trace (if thal active (gated) then sign is positive, else sign is negative) -- when dopamine later arrives, the trace is applied * dopamine, and any above-threshold ach from TAN units resets the trace
     TRACE_NO_THAL,              // send * recv activation establishes a trace (long-lasting synaptic tag), with no influence of thalamic gating signal -- when dopamine later arrives, the trace is applied * dopamine, and any above-threshold ach from TAN units resets the trace
     WM_DEPENDENT,               // learning depends on a working memory trace.. 
@@ -141,6 +142,12 @@ public:
     (float& dwt, const float da_p, const bool d2r, const float ru_act, const float su_act,
      const float lrate_eff) {
     dwt += lrate_eff * GetDa(da_p, d2r) * ru_act * su_act;
+  }
+  // #IGNORE
+  inline void C_Compute_dWt_DaHebbVS
+    (float& dwt, const float da_p, const bool d2r, const float ru_act,
+     const float deep_lrn, const float su_act, const float lrate_eff) {
+    dwt += lrate_eff * GetDa(da_p, d2r) * MAX(ru_act, deep_lrn) * su_act;
   }
   // #IGNORE
 
@@ -251,6 +258,19 @@ public:
         }
         float ru_act = GetActVal(ru, ru_act_var);
         C_Compute_dWt_DaHebb(dwts[i], ru->da_p, d2r, ru_act, su_act, lrate_eff);
+      }
+      break;
+    }
+    case DA_HEBB_VS: {
+      for(int i=0; i<sz; i++) {
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+        float lrate_eff = clrate;
+        if(deep_on) {
+          lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
+        }
+        float ru_act = GetActVal(ru, ru_act_var);
+        C_Compute_dWt_DaHebbVS(dwts[i], ru->da_p, d2r, ru_act, ru->deep_lrn,
+                               su_act, lrate_eff);
       }
       break;
     }
