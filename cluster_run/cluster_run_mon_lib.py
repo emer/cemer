@@ -825,7 +825,6 @@ class SubversionPoller(object):
     def _query_running_jobs(self, filename, force_updt = False):
         self._get_cur_jobs_files(filename) # get all the file names for this dir
         self._init_jobs_files()   # and init or load jobs and running files
-        # self._load_cur_files()   # and load jobs and running files -- must exist here
         
         # first go over the running jobs
         # go backward because we can delete from running.. also newest to oldest
@@ -1887,6 +1886,13 @@ class SubversionPoller(object):
                 if tag == trg_tag:
                     continue  # skip the target guy
                 self.jobs_done.remove_row(row) # done with it!
+
+            # and set it AGAIN because somehow it is still not being set..!?
+            trg_row = self.jobs_done.find_val("tag", trg_tag)
+            self.jobs_done.set_val(trg_row, "dat_files", all_dat_files)
+            self.jobs_done.set_val(trg_row, "other_files", all_other_files)
+
+            self._save_cur_files()
             self.status_change = True  # be sure to write out new data!!
 
     def _add_cur_running_to_list(self):
