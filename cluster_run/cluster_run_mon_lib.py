@@ -1714,8 +1714,11 @@ class SubversionPoller(object):
 
     def _remove_proj_tag_file(self, job_no, tag):
         self._get_tag_proj_file(tag)
-        try: os.remove(self.cur_tag_proj_file)
-        except: pass
+        if os.path.exists(self.cur_tag_proj_file):
+            try:
+                os.remove(self.cur_tag_proj_file)
+            except:
+                pass
 
     def _get_dat_files(self, tag):
         # next look for output files
@@ -1882,15 +1885,16 @@ class SubversionPoller(object):
                 job_out_file = self.jobs_done.get_val(row, "job_out_file")
                 job_no = self.jobs_done.get_val(row, "job_no")
                 tag = self.jobs_done.get_val(row, "tag")
-                self._remove_job_files(job_out_file, job_no, tag)  # nuke now!
                 if tag == trg_tag:
                     continue  # skip the target guy
+                self._remove_job_files(job_out_file, job_no, tag)  # nuke now!
                 self.jobs_done.remove_row(row) # done with it!
 
             # and set it AGAIN because somehow it is still not being set..!?
             trg_row = self.jobs_done.find_val("tag", trg_tag)
             self.jobs_done.set_val(trg_row, "dat_files", all_dat_files)
             self.jobs_done.set_val(trg_row, "other_files", all_other_files)
+            print "setting row: %d for trg tag: %s to all dat files: %s" % (trg_row, trg_tag, all_dat_files)
 
             self._save_cur_files()
             self.status_change = True  # be sure to write out new data!!

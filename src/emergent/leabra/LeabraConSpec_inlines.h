@@ -436,12 +436,12 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
 #endif
   }
   else {
-// #ifdef TA_VEC_USE
-//     Compute_Weights_CtLeabraXCAL_vec(cg, wts, dwts, fwts, swts, scales);
-// #else
+#ifdef TA_VEC_USE
+    Compute_Weights_CtLeabraXCAL_vec(cg, wts, dwts, fwts, swts, scales);
+#else
     CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL
                    (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
-// #endif
+#endif
   }
 }
 
