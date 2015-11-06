@@ -189,8 +189,13 @@ QVariant iDataTableModel::headerData(int section, Qt::Orientation orientation,
       if (col) {
         if (role == Qt::DisplayRole)
           return QString(col->GetDisplayName().chars());
-        else if (role == Qt::ToolTipRole)
-          return QString(col->GetDesc().chars());
+        else if (role == Qt::ToolTipRole) {
+          String full_text = col->GetName();
+          if (col->GetDesc().length() > 0) {
+            full_text = full_text + " - " + col->GetDesc();
+          }
+          return QString(full_text.chars());
+        }
       } else
         return QString();
     } else {
