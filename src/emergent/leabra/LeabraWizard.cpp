@@ -1948,7 +1948,6 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMChild(PFCUnitSpec, pfc_out_units, pbwm_units, "PFCoutUnits");
   FMChild(PFCUnitSpec, pfc_out_d_units, pfc_out_units, "PFCoutdUnits");
   FMChild(LeabraUnitSpec, pfc_trc_units, pbwm_units, "PFCtrcUnits");
-  FMChild(LeabraUnitSpec, input_units, pbwm_units, "PFCInputUnits");
 
   ////////////	ConSpecs
 
@@ -2035,7 +2034,6 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfc_mnt_d_units->deep.on = true;
   pfc_mnt_d_units->deep.role = DeepSpec::DEEP;
   
-  // this has less strong self-maint:
   pfc_out_units->SetUnique("deep", true);
   pfc_mnt_units->deep.on = true;
   pfc_mnt_units->deep.role = DeepSpec::SUPER;
@@ -2050,11 +2048,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   
   pfc_trc_units->SetUnique("deep", true);
   pfc_trc_units->deep.on = true;
+  pfc_trc_units->deep.role = DeepSpec::TRC;
 
-  input_units->SetUnique("deep", true);
-  input_units->deep.on = true;
-  input_units->deep.raw_thr_rel = 0.1f;
-  
   ////////////	ConSpecs
 
   bg_lrn_cons->lrate = 0.005f;
@@ -2062,11 +2057,18 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   mtx_cons_go->SetUnique("wt_limits", true);
   mtx_cons_go->wt_limits.sym = false;
+  mtx_cons_go->SetUnique("lrate", true);
+  mtx_cons_go->lrate = .05f;
+  mtx_cons_go->SetUnique("wt_sig", true);
+  mtx_cons_go->wt_sig.gain = 1.0f;
+  mtx_cons_go->SetUnique("su_act_var", true);
+  mtx_cons_go->su_act_var = MSNConSpec::ACT_EQ;
+  mtx_cons_go->SetUnique("ru_act_var", true);
+  mtx_cons_go->ru_act_var = MSNConSpec::ACT_EQ;
+  mtx_cons_go->SetUnique("learn_rule", true);
+  mtx_cons_go->learn_rule = MSNConSpec::TRACE_THAL;
 
-  // mtx_cons_nogo->SetUnique("nogo", true);
-  // mtx_cons_nogo->nogo = true;
-
-  pfc_lrn_cons->lrate = 0.01f;
+  pfc_lrn_cons->lrate = 0.005f;
   pfc_lrn_cons->learn_qtr = LeabraConSpec::Q4; // pfc lrn Q4 only for now
 
   to_pfc->SetUnique("wt_scale", true);
