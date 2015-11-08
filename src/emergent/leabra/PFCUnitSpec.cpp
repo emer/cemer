@@ -23,6 +23,7 @@ TA_BASEFUNS_CTORS_DEFN(PFCUnitSpec);
 
 void PFCMiscSpec::Initialize() {
   out_gate = false;
+  s_mnt_gain = 0.05f;
   Defaults_init();
 }
 
@@ -30,8 +31,7 @@ void PFCMiscSpec::Defaults_init() {
   gate_thr = 0.1f;
   out_mnt = 1;
   max_mnt = 100;
-  s_mnt_gain = 0.2f;
-  mnt_thal = 0.5f;
+  mnt_thal = 1.0f;
   use_dyn = true;
 }
 
@@ -46,6 +46,7 @@ void PFCUnitSpec::Defaults_init() {
   deep.on = true;
   deep.raw_thr_rel = 0.1f;
   deep.raw_thr_abs = 0.1f; // todo??
+  deep.mod_min = 0.9f;
 }
 
 void  PFCUnitSpec::FormatDynTable() {

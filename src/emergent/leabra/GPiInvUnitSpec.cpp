@@ -31,7 +31,9 @@ void GPiMiscSpec::Defaults_init() {
   nogo = 1.0f;
   gate_thr = 0.1f;
   thr_act = true;
+  min_thal = 0.8f;
   tot_gain = net_gain + nogo;
+  thal_rescale = (1.0f - min_thal) / (1.0f - gate_thr);
 }
 
 void GPiMiscSpec::UpdateAfterEdit_impl() {
@@ -115,6 +117,15 @@ void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
   }
   else {
     snd_val = (u->act_eq > gpi.gate_thr ? u->act_eq : 0.0f);
+  }
+
+  if(snd_val > 0.0f && gpi.min_thal > gpi.gate_thr) {
+    if(gpi.min_thal == 1.0f) {
+      snd_val = 1.0f;
+    }
+    else {
+      snd_val = gpi.min_thal + (snd_val - gpi.gate_thr) * gpi.thal_rescale;
+    }
   }
 
   const int nsg = u->NSendConGps(net, thr_no); 

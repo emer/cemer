@@ -1118,7 +1118,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons->SetUnique("ru_act_var", true);
   vspatch_cons->ru_act_var = MSNConSpec::ACT_P;
   vspatch_cons->SetUnique("learn_rule", true);
-  vspatch_cons->learn_rule = MSNConSpec::DA_HEBB;
+  vspatch_cons->learn_rule = MSNConSpec::DA_HEBB_VS;
   vspatch_cons->SetUnique("burst_da_gain", true);
   vspatch_cons->burst_da_gain = 1.0f;
   vspatch_cons->SetUnique("dip_da_gain", true);
@@ -1939,13 +1939,14 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   ////////////	UnitSpecs
 
   FMSpec(LeabraUnitSpec, pbwm_units, pbwmspgp, prefix + "Units");
-  FMChild(LeabraUnitSpec, matrix_units, pbwm_units, "MatrixUnits");
+  FMChild(MSNUnitSpec, matrix_go_units, pbwm_units, "MatrixGoUnits");
+  FMChild(MSNUnitSpec, matrix_no_units, matrix_go_units, "MatrixNoGoUnits");
   FMChild(GPiInvUnitSpec, gpi_units, pbwm_units, "GPiUnits");
   FMChild(PatchUnitSpec, patch_units, pbwm_units, "PatchUnits");
   FMChild(PFCUnitSpec, pfc_mnt_units, pbwm_units, "PFCmntUnits");
+  FMChild(PFCUnitSpec, pfc_mnt_d_units, pfc_mnt_units, "PFCmntdUnits");
   FMChild(PFCUnitSpec, pfc_out_units, pbwm_units, "PFCoutUnits");
-  FMChild(PFCUnitSpec, pfc_mnt_d_units, pbwm_units, "PFCmntdUnits");
-  FMChild(PFCUnitSpec, pfc_out_d_units, pbwm_units, "PFCoutdUnits");
+  FMChild(PFCUnitSpec, pfc_out_d_units, pfc_out_units, "PFCoutdUnits");
   FMChild(LeabraUnitSpec, pfc_trc_units, pbwm_units, "PFCtrcUnits");
   FMChild(LeabraUnitSpec, input_units, pbwm_units, "PFCInputUnits");
 
@@ -2002,34 +2003,49 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pbwm_units->bias_spec.SetSpec(fix_bias);
   pbwm_units->deep_raw_qtr = LeabraUnitSpec::Q2_Q4; // beta by default
   
-  matrix_units->SetUnique("noise_type", true);
-  matrix_units->noise_type = LeabraUnitSpec::NETIN_NOISE;
-  matrix_units->SetUnique("noise", true);
-  matrix_units->noise.var = 0.0005f;
-  matrix_units->SetUnique("noise_adapt", true);
-  matrix_units->noise_adapt.trial_fixed = true;
+  matrix_go_units->SetUnique("noise_type", true);
+  matrix_go_units->noise_type = LeabraUnitSpec::NETIN_NOISE;
+  matrix_go_units->SetUnique("noise", true);
+  matrix_go_units->noise.var = 0.0005f;
+  matrix_go_units->SetUnique("noise_adapt", true);
+  matrix_go_units->noise_adapt.trial_fixed = true;
+  matrix_go_units->SetUnique("dar", true);
+  matrix_go_units->dar = MSNUnitSpec::D1R;
+  matrix_go_units->SetUnique("matrix_patch", true);
+  matrix_go_units->matrix_patch = MSNUnitSpec::MATRIX;
+  matrix_go_units->SetUnique("dorsal_ventral", true);
+  matrix_go_units->dorsal_ventral = MSNUnitSpec::DORSAL;
+
+  matrix_no_units->SetUnique("noise_type", false);
+  matrix_no_units->SetUnique("noise", false);
+  matrix_no_units->SetUnique("noise_adapt", false);
+  matrix_no_units->SetUnique("dar", true);
+  matrix_no_units->dar = MSNUnitSpec::D2R;
+  matrix_no_units->SetUnique("matrix_patch", true);
+  matrix_no_units->matrix_patch = MSNUnitSpec::MATRIX;
+  matrix_no_units->SetUnique("dorsal_ventral", true);
+  matrix_no_units->dorsal_ventral = MSNUnitSpec::DORSAL;
 
   pfc_mnt_units->SetUnique("deep", true);
   pfc_mnt_units->deep.on = true;
   pfc_mnt_units->deep.role = DeepSpec::SUPER;
-  pfc_mnt_units->deep.raw_thr_rel = 0.1f;
+  pfc_mnt_units->pfc.s_mnt_gain = 0.05f;
 
+  pfc_mnt_d_units->SetUnique("deep", true);
+  pfc_mnt_d_units->deep.on = true;
+  pfc_mnt_d_units->deep.role = DeepSpec::DEEP;
+  
   // this has less strong self-maint:
   pfc_out_units->SetUnique("deep", true);
   pfc_mnt_units->deep.on = true;
   pfc_mnt_units->deep.role = DeepSpec::SUPER;
   pfc_out_units->pfc.out_gate = true;
+  pfc_out_units->pfc.s_mnt_gain = 0.1f;
   pfc_out_units->n_dyns = 1;
 
-  pfc_mnt_d_units->SetUnique("deep", true);
-  pfc_mnt_d_units->deep.on = true;
-  pfc_mnt_d_units->deep.role = DeepSpec::DEEP;
-  pfc_mnt_d_units->deep.raw_thr_rel = 0.1f;
-  
   pfc_out_d_units->SetUnique("deep", true);
   pfc_out_d_units->deep.on = true;
   pfc_out_d_units->deep.role = DeepSpec::DEEP;
-  pfc_out_d_units->deep.raw_thr_rel = 0.1f;
   pfc_out_d_units->pfc.out_gate = true;
   
   pfc_trc_units->SetUnique("deep", true);
@@ -2596,7 +2612,7 @@ can be sure everything is ok.";
     lay_set_geom(gpenogo, bg_gp_x, bg_gp_y);
     
     patch->PositionBehind(gpenogo, lay_spc);
-    lay_set_geom(patch, bg_gp_x, bg_gp_y, 1);
+    lay_set_geom(patch, pfc_gp_x, pfc_gp_y, 1);
   }
 
   ///////////////	PFC Layout first -- get into z = 1

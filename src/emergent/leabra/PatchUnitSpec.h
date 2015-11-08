@@ -30,7 +30,7 @@ class E_API PatchUnitSpec  : public LeabraUnitSpec {
 INHERITED(LeabraUnitSpec)
 public:
   float         shunt_factor;   // #DEF_0 multiplies the dopamine value by this factor -- 0 = complete shunting -- should be a factor < 1.0
-  bool          shunt_ach;      // also shunt the ACh value driven from TAN units -- this prevents clearing of MSNConSpec traces -- more plausibly the patch units directly interfere with the effects of TAN's rather than through ach, but it is easier to implement with ach shunting here.
+  bool          shunt_ach;      // #DEF_true also shunt the ACh value driven from TAN units -- this prevents clearing of MSNConSpec traces -- more plausibly the patch units directly interfere with the effects of TAN's rather than through ach, but it is easier to implement with ach shunting here.
 
   virtual void  Send_DAShunt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // if activation is over opt_thresh.send threshold, we shunt da_p in sending targets, and optionall ach values as well
