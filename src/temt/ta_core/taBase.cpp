@@ -3726,7 +3726,23 @@ bool taBase::UpdatePointers_NewPar_PtrNoSet(taBase** ptr, taBase* old_par, taBas
     return true;
   }
   taBase* old_own = (*ptr)->GetOwner(old_par->GetTypeDef());
-  if(old_own != old_par) return false; // if not scoped in our guy, bail
+  
+  if (!old_own) { // find the owner
+    old_own = (*ptr)->GetOwner();
+    if (old_own->GetTypeDef() != new_par->GetTypeDef()) {
+      taProject* old_proj = old_own->GetMyProj();
+      taProject* new_proj = new_par->GetMyProj();
+      // if different project we need to locate new par from path
+      if (old_proj != new_proj) {
+        taBase* new_guy = UpdatePointers_NewPar_FindNew(*ptr, old_proj, new_proj);
+        *ptr = new_guy;
+        return true;
+      }
+    }
+  }
+  
+  if(old_own != old_par) return false;
+  
   taBase* new_guy = UpdatePointers_NewPar_FindNew(*ptr, old_par, new_par);
   if(new_guy)
     *ptr = new_guy;
