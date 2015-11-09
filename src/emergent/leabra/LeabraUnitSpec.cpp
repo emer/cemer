@@ -353,9 +353,10 @@ void DeepSpec::Initialize() {
 }
 
 void DeepSpec::Defaults_init() {
-  raw_thr_rel = 0.2f;
-  raw_thr_abs = 0.2f;
+  raw_thr_rel = 0.1f;
+  raw_thr_abs = 0.1f;
   mod_min = 0.8f;
+  trc_p_only_m = true;
   trc_trace = false;
   mod_range = 1.0f - mod_min;
 }
@@ -1377,7 +1378,12 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     LeabraUnGpData* ugd = lay->UnGpDataUn(un);
-    if(ugd->acts_m.max > 0.1f) {  // only activate if we got minus phase activation!
+    if(deep.trc_p_only_m) {
+      if(ugd->acts_m.max > 0.1f) {  // only activate if we got minus phase activation!
+        net_syn = u->deep_raw_net; // only gets from deep!  and no extras!
+      }
+    }
+    else {                       // always do it
       net_syn = u->deep_raw_net; // only gets from deep!  and no extras!
     }
   }
