@@ -356,8 +356,33 @@ Program* TemtClient::GetAssertProgram(const String& pnm) {
     return NULL;
   }
   
-  // get program, make sure exists
-  Program* prog = proj->programs.FindLeafName(pnm);
+  Program* prog = NULL;
+  //Check if program name is a path
+  if (pnm.startsWith(".")) {
+    MemberDef* md = NULL;
+    taBase * obj = NULL;
+    if (pnm.startsWith(".projects")) {
+      obj = tabMisc::root->FindFromPath(pnm, md);
+    } else if (pnm.startsWith(".programs")) {
+      obj = proj->FindFromPath(pnm, md);
+    } else {
+      obj = proj->programs.FindFromPath(pnm, md);
+    }
+    if(obj) {
+      if(obj->InheritsFrom(&TA_Program)) {
+        prog = (Program*)obj;
+      } else {
+        SendError("Path '" + pnm + "' does not point to a Program", TemtClient::NOT_FOUND);
+        return NULL;
+      }
+    } else {
+      SendError("Program '" + pnm + "' not found", TemtClient::NOT_FOUND);
+      return NULL;
+    }
+  } else { //Normal program name
+    // get program, make sure exists
+      prog = proj->programs.FindLeafName(pnm);
+  }
   if (!prog) {
     SendError("Program '" + pnm + "' not found", TemtClient::NOT_FOUND);
     return NULL;
