@@ -28,11 +28,12 @@ void PFCMiscSpec::Initialize() {
 }
 
 void PFCMiscSpec::Defaults_init() {
-  gate_thr = 0.1f;
   out_mnt = 1;
   max_mnt = 100;
+  clear_decay = 1.0f;
   mnt_thal = 1.0f;
   use_dyn = true;
+  gate_thr = 0.1f;
 }
 
 void PFCUnitSpec::Initialize() {
@@ -168,7 +169,7 @@ void PFCUnitSpec::UpdateAfterEdit_impl() {
 float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
-  if(deep.IsSuper() && u->thal_cnt > 0.0f) { // only if in maintenance!  not for cleared!
+  if(deep.IsSuper() && u->thal_cnt >= 0.0f) { // only if in maintenance!  not for cleared!
     net_ex += pfc.s_mnt_gain * u->deep_mod_net;
   }
   return net_ex;
@@ -303,6 +304,9 @@ void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr
       LeabraUnitVars* uv = (LeabraUnitVars*)send_gp->UnVars(j,net);
       if(uv->thal_cnt >= 1.0f) { // important!  only for established maint, not just gated!
         uv->thal_cnt = -1.0f; // terminate!
+        if(pfc.clear_decay > 0.0f) {
+          DecayState(uv, net, thr_no, pfc.clear_decay); // note: thr_no is WRONG here!
+        }
       }
     }
   }

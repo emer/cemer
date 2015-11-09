@@ -34,6 +34,7 @@ public:
   int           out_mnt;        // #CONDSHOW_ON_out_gate #DEF_1:2 number of effective trials (updates of deep state, following deep_qtr updates) to maintain output gating signals
   int           max_mnt;        // #CONDSHOW_OFF_out_gate maximum duration of maintenance for any stripe -- beyond this limit, the maintenance is just automatically cleared
   float         s_mnt_gain;     // #DEF_0.05;0.1 for superficial neurons, how much of deep_lrn to add into excitatory net input to support maintenance, from deep maintenance signal
+  float         clear_decay;    // how much to clear out maintenance activations when an output go signal fires and clears maintenance
   float         mnt_thal;       // #DEF_1 effective thal activation to use for continued maintenance beyond the initial thal signal provided by the BG -- also sets and effective minimum thal value regardless of the actual gating thal value
   bool          use_dyn;        // use fixed dynamics for updating deep_ctxt activations -- defined in dyn_table -- this also preserves the initial gating deep_ctxt value in misc_1 -- otherwise it is up to the recurrent loops between super and deep for maintenance
   float         gate_thr;       // #DEF_0.1 threshold on thalamic gating signal to drive gating -- when using GpiInvUnitSpec gpi, this parameter ususally doesn't matter!  set the gpi.gate_thr value instead -- the only constraint is that this value be <= gpi.min_thal as that determines the minimum thalamic value for gated stripes
