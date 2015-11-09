@@ -24,7 +24,7 @@ TA_BASEFUNS_CTORS_DEFN(TANActSpec);
 
 void TANActSpec::Initialize() {
   plus_fm_pv_vs = true;
-  send_plus = false;
+  send_plus = true;
 }
 
 void TANUnitSpec::Initialize() {

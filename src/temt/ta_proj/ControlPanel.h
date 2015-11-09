@@ -78,7 +78,7 @@ public: // public API
   // select object for given member field for editing in the gui
 
   virtual int   SearchMembers(taNBase* obj, const String& memb_contains);
-  // #MENU #MENU_ON_ControlPanel search given object for member names that contain given string, and add them to this editor
+  // #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE search given object for member names that contain given string, and add them to this editor
   virtual int   CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs = true);
   // #MENU #TYPE_taNBase compare two objects (must be of same type) and add the differences in this control panel; no_ptrs = ignore pointer fields
   virtual bool  SelectMember(taBase* base, MemberDef* md,
@@ -112,6 +112,8 @@ public: // public API
 
   virtual void  Reset();
   // #MENU #CONFIRM reset (remove all) current members and methods
+  virtual String  ToWikiTable();
+  // #MENU #CONFIRM #USE_RVAL save current parameters and notes to a mediawiki-formatted table, suitable for pasting into a wiki for recording params and notes
 
 public: // IRefListClient i/f
   void*        This() override {return this;}

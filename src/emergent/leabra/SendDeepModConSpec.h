@@ -60,6 +60,7 @@ public:
   TA_SIMPLE_BASEFUNS(SendDeepModConSpec);
 private:
   void Initialize();
+  void Defaults_init();
   void Destroy()     { };
 };
 

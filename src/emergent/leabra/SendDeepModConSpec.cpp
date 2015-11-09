@@ -18,6 +18,10 @@
 TA_BASEFUNS_CTORS_DEFN(SendDeepModConSpec);
 
 void SendDeepModConSpec::Initialize() {
+  Defaults_init();
+}
+
+void SendDeepModConSpec::Defaults_init() {
   SetUnique("learn", true);     // generally doesn't learn..
   learn = false;
   SetUnique("rnd", true);

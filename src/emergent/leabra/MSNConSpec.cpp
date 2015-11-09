@@ -40,7 +40,7 @@ void MSNConSpec::Initialize() {
   min_obj_type = &TA_MSNCon;
   su_act_var = PREV_TRIAL;
   ru_act_var = ACT_P;
-  learn_rule = DA_HEBB;
+  learn_rule = DA_HEBB_VS;
   Defaults_init();
 }
 
@@ -52,11 +52,11 @@ void MSNConSpec::Defaults_init() {
   wt_limits.sym = false;
 
   // SetUnique("lrate", true);
-  lrate = 0.001f;
+  lrate = 0.005f;
 
   learn_qtr = Q2_Q4;            // beta frequency default
 
-  use_unlearnable = false;
+  // use_unlearnable = false;
 }
 
 void MSNConSpec::UpdateAfterEdit_impl() {

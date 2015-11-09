@@ -29,7 +29,7 @@ class E_API TANActSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for TAN activation 
 INHERITED(SpecMemberBase)
 public:
-  bool          plus_fm_pv_vs;  // drive plus phase activation from the MAX sending activation over any MarkerConSpec inputs -- allows TAN's to learn to fire for expected or actual outcomes conveyed from PV and VSPatch outcome-predicting neurons
+  bool          plus_fm_pv_vs;  // #DEF_true drive plus phase activation from the MAX sending activation over any MarkerConSpec inputs -- allows TAN's to learn to fire for expected or actual outcomes conveyed from PV and VSPatch outcome-predicting neurons
   bool          send_plus;      // #CONDSHOW_ON_plus_fm_pv_vs send the plus phase training values to ach on receivers (otherwise only send the learned minus phase activation)
   
   String       GetTypeDecoKey() const override { return "UnitSpec"; }

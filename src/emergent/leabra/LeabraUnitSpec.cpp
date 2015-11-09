@@ -356,7 +356,7 @@ void DeepSpec::Defaults_init() {
   raw_thr_rel = 0.1f;
   raw_thr_abs = 0.1f;
   mod_min = 0.8f;
-  trc_p_only_m = true;
+  trc_p_only_m = false;
   trc_trace = false;
   mod_range = 1.0f - mod_min;
 }

@@ -409,3 +409,18 @@ int ControlPanel::FindMethBase(taBase* base, MethodDef* md) {
   ControlPanelItem::StatFindItemBase(&mths, base, md, rval);
   return rval;
 }
+
+String ControlPanel::ToWikiTable() {
+  String rval = "{| class=\"wikitable\"\n\
+|-\n\
+! Parameter !! Value  !! Notes \n";
+  
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, mbrs) {
+    rval << "|-\n";
+    rval << "| " << sei->label << " || " << sei->CurValAsString()
+         << " || " << sei->notes.notes << "\n";
+  }
+
+  rval << "|}\n";
+  return rval;
+}
