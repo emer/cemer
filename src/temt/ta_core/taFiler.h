@@ -175,6 +175,8 @@ public:
 
   virtual void          Close();
   // #MENU close the stream (will also manage temporary file renaming if necessary)
+  virtual bool          FlushOutStream();
+  // attempt to fully flush the output stream where possible (LINUX) -- calls fsync on the file descriptor -- returns true if success
 
   virtual bool          GetFileName(FileOperation filerOperation); // gui-dependent routine to get filename from user -- it is set in dir/fname; false if user cancels
   virtual void          FixFileName(); // make sure suffix is right

@@ -2569,6 +2569,7 @@ void DataTable::CloseDataLog() {
 bool DataTable::WriteDataLogRow() {
   if(IsSavingDataLog()) {
     SaveDataRow_strm(*log_file->ostrm);
+    log_file->FlushOutStream(); // really flush!
     return true;
   }
   return false;

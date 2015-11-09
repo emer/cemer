@@ -132,6 +132,39 @@ void taFiler::Close() {
   }
 }
 
+#if defined(TA_OS_LINUX) && defined(__GLIBCXX__)
+#include <ext/stdio_filebuf.h>  // should work for 3.4.0 and higher
+
+template <typename charT, typename traits>
+
+bool taFiler::FlushOutStream() {
+  if(!fstrm) return false;
+
+  int fd = -1;
+  
+  typedef std::basic_filebuf<charT, traits> filebuf_t;
+  filebuf_t* bbuf = dynamic_cast<filebuf_t*>(fstrm->rdbuf());
+  if (bbuf != NULL) {
+    // This subclass is only there for accessing the FILE*.  Ouuwww, sucks!
+    struct my_filebuf : public std::basic_filebuf<charT, traits> {
+      int fd() { return this->_M_file.fd(); }
+    };
+    fd = static_cast<my_filebuf*>(bbuf)->fd();
+  }
+
+  if(fd > 0) {
+    fsync(fd);
+    return true;
+  }
+  return false;
+}
+
+#else // TA_OS_LINUX
+bool taFiler::FlushOutStream() {
+  return false;                 // not supported
+}
+#endif
+
 String taFiler::defExt() const {
   String rval;
   // only grab first in list as default extension
