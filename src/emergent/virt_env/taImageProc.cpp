@@ -17,6 +17,7 @@
 #include <float_Matrix>
 #include <taVector2i>
 #include <taVector2f>
+#include <taVector3i>
 #include <taMath_float>
 #include <float_Array>
 #include <Random>
@@ -25,6 +26,13 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(taImageProc);
+
+float_Matrix* taImageProc::kernel_one_degree = NULL;
+float_Matrix* taImageProc::kernel_two_degree = NULL;
+float_Matrix* taImageProc::kernel_three_degree = NULL;
+float_Matrix* taImageProc::kernel_five_degree = NULL;
+float_Matrix* taImageProc::kernel_max_degree = NULL;
+float_Matrix* taImageProc::kernel_second_pass = NULL;
 
 
 void taImageProc::Initialize() {
@@ -1117,13 +1125,10 @@ bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
   return true;
 }
 
-// jar - 9/25/2013
 // todo: handle rgb
-// todo: other kernels weightings - not just equally weighted
-// todo: other kernel shapes - e.g. circular
 bool taImageProc::Blur(float_Matrix& img, int kernel_size) {
   bool rval = false;
-
+  
   if (img.dims() > 2) {
     taMisc::Error("taImageProc::Blur", "image must be greyscale");
     return false;
@@ -1132,7 +1137,7 @@ bool taImageProc::Blur(float_Matrix& img, int kernel_size) {
     taMisc::Error("taImageProc::Blur", "minimum window size is 3");
     return false;
   }
-
+  
   // create the kernel - always square - equal weighting throughout
   float_Matrix kernel = float_Matrix(2, kernel_size, kernel_size);
   for(int yi=0; yi<kernel_size; yi++) {
@@ -1141,14 +1146,14 @@ bool taImageProc::Blur(float_Matrix& img, int kernel_size) {
     }
   }
   rval = taMath_float::vec_norm_sum(&kernel, 1.0);
-
+  
   // create matrix for result of the convolution
   float_Matrix* out_matrix;
   taVector2i img_size(img.dim(0), img.dim(1));
   out_matrix = new float_Matrix(2, img_size.x, img_size.y);
-
+  
   int offset = (kernel_size-1)/2;
-
+  
   for(int i=0; i<img.Frames(); i++) {
     for(int j=0; j<img.FrameSize(); j++) {
       float sum = 0.0;
@@ -1171,9 +1176,158 @@ bool taImageProc::Blur(float_Matrix& img, int kernel_size) {
       out_matrix->FastEl2d(i,j) = sum;
     }
   }
-
+  
   img = out_matrix;
   return rval;
+}
+
+bool taImageProc::SimulateAcuity(float_Matrix& img, int visual_angle) {
+  bool rval = false;
+  
+  // assumes square image
+  int one_degree_in_pixels = img.dim(0)/visual_angle;
+  
+  if (img.dims() == 2) {
+    // create the kernel - always square - equal weighting throughout
+    int kernel_size = 11;
+    
+    if (taImageProc::kernel_one_degree == NULL) {
+      taImageProc::kernel_one_degree = new float_Matrix(2, kernel_size, kernel_size);
+      taImageProc::SetGaussianKernel(taImageProc::kernel_one_degree, .01);
+    }
+    if (taImageProc::kernel_two_degree == NULL) {
+      taImageProc::kernel_two_degree = new float_Matrix(2, kernel_size, kernel_size);
+      taImageProc::SetGaussianKernel(taImageProc::kernel_two_degree, .25);
+    }
+    if (taImageProc::kernel_three_degree == NULL) {
+      taImageProc::kernel_three_degree = new float_Matrix(2, kernel_size, kernel_size);
+      taImageProc::SetGaussianKernel(taImageProc::kernel_three_degree, .5);
+    }
+    if (taImageProc::kernel_five_degree == NULL) {
+      taImageProc::kernel_five_degree = new float_Matrix(2, kernel_size, kernel_size);
+      taImageProc::SetGaussianKernel(taImageProc::kernel_five_degree, 1.0);
+    }
+    if (taImageProc::kernel_max_degree == NULL) {
+      taImageProc::kernel_max_degree = new float_Matrix(2, kernel_size, kernel_size);
+      taImageProc::SetGaussianKernel(taImageProc::kernel_max_degree, 2.0);
+    }
+    // used in second pass to remove hard edge artifacts
+    if (taImageProc::kernel_second_pass == NULL) {
+      taImageProc::kernel_second_pass = new float_Matrix(2, kernel_size * 1.3, kernel_size * 1.3);
+      taImageProc::SetGaussianKernel(taImageProc::kernel_second_pass, .1);
+    }
+    // create matrix for result of the convolution
+    float_Matrix* out_matrix;
+    taVector2i img_size(img.dim(0), img.dim(1));
+    out_matrix = new float_Matrix(2, img_size.x, img_size.y);
+    
+    int offset = (kernel_size-1)/2;
+    taVector2i img_center;
+    img_center.x = img.dim(0)/2;
+    img_center.y = img.dim(1)/2;
+    
+    
+    for(int i=0; i<img.Frames(); i++) {
+      for(int j=0; j<img.FrameSize(); j++) {
+        float sum = 0.0;
+        float dnorm = 0.0;
+        float_Matrix* cur_kernel;
+        taVector2i dist_from_center;
+        dist_from_center.x = ABS(img_center.x - i);
+        dist_from_center.y = ABS(img_center.y - j);
+        int eccentricity_in_pixels = sqrtf(dist_from_center.x * dist_from_center.x + dist_from_center.y * dist_from_center.y);
+        int eccentricity_in_degrees = eccentricity_in_pixels/visual_angle;  // total simulated angle
+        if (eccentricity_in_degrees <= 1) {
+          cur_kernel = kernel_one_degree;
+        }
+        else if (eccentricity_in_degrees <= 2) {
+          cur_kernel = kernel_two_degree;
+        }
+        else if (eccentricity_in_degrees <= 3) {
+          cur_kernel = kernel_three_degree;
+        }
+        else if (eccentricity_in_degrees <= 5) {
+          cur_kernel = kernel_five_degree;
+        }
+        else {
+          cur_kernel = kernel_max_degree;
+        }
+        for(int m=0; m<kernel_size; m++) {
+          for(int n=0; n<kernel_size; n++) {
+            int iIdx = i+n-offset;
+            int jIdx = j+m-offset;
+            if (iIdx < 0 || iIdx >= img.Frames() || jIdx < 0 || jIdx >= img.FrameSize()) {
+              dnorm += cur_kernel->FastEl2d(n,m);
+            }
+            else {
+              sum += cur_kernel->FastEl2d(n,m)*img.FastEl2d(iIdx, jIdx);
+            }
+          }
+        }
+        if(dnorm > 0.0 && dnorm < 1.0) { // renorm
+          sum /= (1.0 - dnorm);
+        }
+        out_matrix->FastEl2d(i,j) = sum;
+      }
+    }
+    
+    // run over a second time with larger kernel to smooth edges
+    float_Matrix* final_matrix;
+    final_matrix = new float_Matrix(2, img_size.x, img_size.y);  // still the same size as image
+    
+    for(int i=0; i<out_matrix->Frames(); i++) {
+      for(int j=0; j<out_matrix->FrameSize(); j++) {
+        float sum = 0.0;
+        float dnorm = 0.0;
+        for(int m=0; m<kernel_size; m++) {
+          for(int n=0; n<kernel_size; n++) {
+            int iIdx = i+n-offset;
+            int jIdx = j+m-offset;
+            if (iIdx < 0 || iIdx >= out_matrix->Frames() || jIdx < 0 || jIdx >= out_matrix->FrameSize()) {
+              dnorm += kernel_second_pass->FastEl2d(n,m);
+            }
+            else {
+              sum += kernel_second_pass->FastEl2d(n,m)*out_matrix->FastEl2d(iIdx, jIdx);
+            }
+          }
+        }
+        if(dnorm > 0.0 && dnorm < 1.0) { // renorm
+          sum /= (1.0 - dnorm);
+        }
+        final_matrix->FastEl2d(i,j) = sum;
+      }
+    }
+
+    img = final_matrix;
+  }
+  
+  return rval;
+}
+
+bool taImageProc::SetGaussianKernel(float_Matrix* kernel, float sigma) {
+  // Generate a kernel by sampling the Gaussian function
+  int kernel_size = kernel->dim(0);
+  int uc, vc;
+  float g, sum;
+  sum = 0;
+  for(int u=0; u<kernel_size; u++) {
+    for(int v=0; v<kernel_size; v++) {
+      // Center the Gaussian sample so max is at u,v = 10,10
+      uc = u - (kernel_size-1)/2;
+      vc = v - (kernel_size-1)/2;
+      // Calculate and save
+      g = exp(-(uc*uc+vc*vc)/(2*sigma*sigma));
+      sum += g;
+      kernel->FastEl2d(u,v) = g;
+    }
+  }
+  // Normalize it
+  for(int u=0; u<kernel_size; u++) {
+    for(int v=0; v<kernel_size; v++) {
+      kernel->FastEl2d(u,v) /= sum;
+    }
+  }
+  return true;
 }
 
 bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,

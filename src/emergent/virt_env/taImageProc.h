@@ -42,6 +42,13 @@ public:
     WRAP,			// wrap the image around to the other side: no edges!
   };
 
+  static float_Matrix* kernel_one_degree;
+  static float_Matrix* kernel_two_degree;
+  static float_Matrix* kernel_three_degree;
+  static float_Matrix* kernel_five_degree;
+  static float_Matrix* kernel_max_degree;
+  static float_Matrix* kernel_second_pass;
+  
   static bool	GetBorderColor_float(float_Matrix& img_data,
                                      float& r, float& g, float& b, float& a,
                                      bool median = false);
@@ -138,8 +145,14 @@ public:
 			   float_Matrix* foreground=NULL, int_Matrix* bubble_coords=NULL);
   // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise Simplified version of Gosselin & Schyn's bubble paradigm which creates a mask from Gaussians Bubbles through which information is let through. Conceptually just the inverse of BlobBlurOcclude, but parameterization allows titration on number of bubbles. n_bubbles is the number of bubbles to create in the mask, bubble_sig controls the width of the bubble in image width normalized units (e.g., .05 = 5% of the width of the image). foreground specifies a foreground to bubble through (default = border color). if bubble_coords is specified, saves the coordinates of the bubble centers for analysis in an Nx2 xy matrix 
   
+  static bool SetGaussianKernel(float_Matrix* kernel, float sigma);
+  // "new" the matrix before passing to this method - a larger sigma creates a flatter gaussian
+  
   static bool Blur(float_Matrix& img, int kernel_size);
   // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise apply a square equal-weighting blurring kernel to the image
+
+  static bool SimulateAcuity(float_Matrix& img, int visual_angle);
+  // #CAT_ImageProc simulates visual acuity by progressively increasing blur as eccentricy increases. Blur is created with a gaussian kernel. Visual angle is the max visual angle you are simulating and not related to the image size
 
   static bool ReplaceColor(float_Matrix& img,
                            float oc_r, float oc_g, float oc_b, float oc_a,
