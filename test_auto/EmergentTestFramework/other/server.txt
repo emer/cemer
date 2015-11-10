@@ -53,6 +53,22 @@ General RunState
 Program RunState
     ${output} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
     Status OK Match Result     ${output}             4
+
+OpenProj
+    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../proj_templates/LeabraFlex.proj"}   300 sec
+    Status OK No Result        ${output}
+
+OpenProjNoProject
+    ${output} =                Run Command Completion          {"command": "OpenProject"}   300 sec
+    Status Error Match         ${output}   0		       Did not specify valid project file
+
+OpenOpenProj
+    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../proj_templates/LeabraStd.proj"}   300 sec
+    Status OK No Result        ${output}
+
+OpenNonExistentProj
+    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../proj_templates/LeabraaaaStd.proj"}   300 sec
+    Status Error Match         ${output}   0		       file \\\"../proj_templates/LeabraaaaStd.proj\\\" not found   
     
 RunProgram
     ${output} =                Run Command Completion          {"command": "RunProgram", "program": "LeabraBatch"}   300 sec
@@ -65,6 +81,30 @@ Program RunState After Init
 General RunState After Init
     ${output} =                Run Command Wait      {"command": "GetRunState"}
     Status OK Match Result     ${output}             0
+
+RunProgramRelativePath
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]"}   300 sec
+    Status OK No Result        ${output}
+
+RunProgramRelativeBrokenPath
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBaaatch\\\"]"}   300 sec
+    Status Error Match         ${output}   5		       Program '.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBaaatch\\\"]' not found
+
+RunProgramProgramsPath
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]"}   300 sec
+    Status OK No Result        ${output}
+
+RunProgramProjectPath
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".projects[\\\"LeabraStd\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]"}   300 sec
+    Status OK No Result        ${output}
+
+RunProgramOtherProjectPath
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".projects[\\\"LeabraFlex\\\"].programs.gp[\\\"ConfigProgs\\\"][\\\"MasterBatch\\\"]"}   600 sec
+    Status OK No Result        ${output}
+
+RunProgramOtherProjectErrorPath
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".projects[\\\"LeabraFlex\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]"}   300 sec
+    Status Error Match         ${output}   5		       Program '.projects[\\\"LeabraFlex\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]' not found
     
 RunProgramAsync
     Ensure Emergent Free
