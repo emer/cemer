@@ -31,6 +31,8 @@ INHERITED(SpecMemberBase)
 public:
   float         mnt_ach_inhib;  // how much does the PRESENCE of ACh from the TAN units drive extra inhibition to maintenance-gating Matrix units -- gi += mnt_ach_inhib * ach -- provides a bias for maint gating on non-reward trials
   float         out_ach_inhib;  // how much does the LACK of ACh from the TAN units drive extra inhibition to output-gating Matrix units -- gi += out_ach_inhib * (1-ach) -- provides a bias for output gating on reward trials
+  bool          mnt_deep_mod;   // engage deep_mod for maintenance units based on projections from mnt deep layer -- allows biasing
+  bool          out_deep_mod;   // engage deep_mod for output units based on projections from mnt deep layer -- allows biasing
   
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
