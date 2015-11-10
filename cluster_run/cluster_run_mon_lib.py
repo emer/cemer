@@ -1380,6 +1380,12 @@ class SubversionPoller(object):
             if debug:
                 ("Checking if dat file: %s exists to commit to SVN" % fdf)
             if os.path.exists(fdf):
+                # first, "touch" the file so it should get the very latest data
+                fhandle = open(fdf, 'a')
+                try:
+                    os.utime(fdf, None)
+                finally:
+                    fhandle.close()
                 cmd = ['svn', 'add', '--username', self.username,
                        '--non-interactive', fdf]
                 # Don't check_output, just dump it to stdout (or nohup.out).
