@@ -14,18 +14,17 @@
 //   Lesser General Public License for more details.
 
 #ifndef taImageProc_h
-#define taImageProc_h 1
 
 // parent includes:
 #include <taNBase>
 #include "network_def.h"
+#include <taVector2f>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class float_Matrix; // 
 class int_Matrix; // 
-class taVector2f; //
 class taVector2i; //
 
 
@@ -151,7 +150,7 @@ public:
   static bool Blur(float_Matrix& img, int kernel_size);
   // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise apply a square equal-weighting blurring kernel to the image
 
-  static bool SimulateAcuity(float_Matrix& img, int visual_angle);
+  static bool SimulateAcuity(float_Matrix& img, int visual_angle, taVector2f focal_point);
   // #CAT_ImageProc simulates visual acuity by progressively increasing blur as eccentricy increases. Blur is created with a gaussian kernel. Visual angle is the max visual angle you are simulating and not related to the image size
 
   static bool ReplaceColor(float_Matrix& img,

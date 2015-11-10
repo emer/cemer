@@ -1181,7 +1181,7 @@ bool taImageProc::Blur(float_Matrix& img, int kernel_size) {
   return rval;
 }
 
-bool taImageProc::SimulateAcuity(float_Matrix& img, int visual_angle) {
+bool taImageProc::SimulateAcuity(float_Matrix& img, int visual_angle, taVector2f focal_point) {
   bool rval = false;
   
   // assumes square image
@@ -1222,9 +1222,9 @@ bool taImageProc::SimulateAcuity(float_Matrix& img, int visual_angle) {
     out_matrix = new float_Matrix(2, img_size.x, img_size.y);
     
     int offset = (kernel_size-1)/2;
-    taVector2i img_center;
-    img_center.x = img.dim(0)/2;
-    img_center.y = img.dim(1)/2;
+    taVector2i img_focus;
+    img_focus.x = img.dim(0) * focal_point.x;
+    img_focus.y = img.dim(1) * focal_point.y;
     
     
     for(int i=0; i<img.Frames(); i++) {
@@ -1233,8 +1233,8 @@ bool taImageProc::SimulateAcuity(float_Matrix& img, int visual_angle) {
         float dnorm = 0.0;
         float_Matrix* cur_kernel;
         taVector2i dist_from_center;
-        dist_from_center.x = ABS(img_center.x - i);
-        dist_from_center.y = ABS(img_center.y - j);
+        dist_from_center.x = ABS(img_focus.x - i);
+        dist_from_center.y = ABS(img_focus.y - j);
         int eccentricity_in_pixels = sqrtf(dist_from_center.x * dist_from_center.x + dist_from_center.y * dist_from_center.y);
         int eccentricity_in_degrees = eccentricity_in_pixels/visual_angle;  // total simulated angle
         if (eccentricity_in_degrees <= 1) {
