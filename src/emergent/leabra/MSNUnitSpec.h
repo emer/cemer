@@ -78,6 +78,9 @@ public:
     (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
      LeabraInhib* thr, float ival) override;
 
+  void  Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  
+
   TA_SIMPLE_BASEFUNS(MSNUnitSpec);
 protected:
   SPEC_DEFAULTS;

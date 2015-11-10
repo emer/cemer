@@ -72,3 +72,18 @@ void MSNUnitSpec::Compute_ApplyInhib
     u->gc_i += matrix.out_ach_inhib * (1.0f - u->ach);
   }
 }
+
+void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {
+    GateType gt = MatrixGateType(u, net, thr_no);
+    if(gt == MAINT) {
+      u->deep_lrn = u->deep_mod = 1.0f; // no mod for maint!
+    }
+    else { // OUT
+      LeabraUnitSpec::Compute_DeepMod(u, net, thr_no); // use regular one
+    }
+  }
+  else {
+    inherited::Compute_DeepMod(u, net, thr_no); // use D1D2 one
+  }
+}
