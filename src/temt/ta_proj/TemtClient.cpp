@@ -28,6 +28,7 @@
 #include <QTcpSocket>
 #include <QTimer>
 #include <QFile>
+#include <QFileInfo>
 #include <QByteArray>
 #include <QString>
 
@@ -193,28 +194,48 @@ void TemtClient::cmdEcho() {
 }
 
 void TemtClient::cmdOpenProject() {
-  //TEMP
-  SendError("OpenProject not implemented yet");
-  return;
-  
-  //TODO: checks:
-  // * cannot be one open (OR: auto close it???)
-  // * maybe check if already open, ignore??? say ok??? error???
-  
-  String proj_file = pos_params.SafeEl(0); // always arg 1
-  taBase* proj_ = NULL;
-  //TODO: pathing???
-  if (tabMisc::root->projects.Load(proj_file, &proj_)) {
-    taProject* proj = dynamic_cast<taProject*>(proj_);
-    if (proj) {
-      if (taMisc::gui_active) {
-        MainWindowViewer::NewProjectBrowser(proj);
+  String proj_file = taMisc::ExpandFilePath(name_params.GetVal("project").toString());
+  if (proj_file == "") {
+    SendError("Did not specify valid project file");
+    return;
+  }
+  taProject* proj = NULL;
+  // canonicalize name, for comparison to open projects
+  QFileInfo fi(proj_file);
+  bool exists = fi.exists();
+  if (exists) {
+    proj_file = fi.canonicalFilePath();
+    for (int i = 0; i < tabMisc::root->projects.size; ++i) {
+      proj = tabMisc::root->projects.FastEl(i);
+      if (proj && proj->file_name == proj_file) {
+        break; // break out of loop
       }
+      proj = NULL; // in case we fall out of loop
     }
+  } else {
+    SendError("file \"" + proj_file + "\" not found");
+    return;
+  }
+  // if proj has a value, then we should view the existing, else open it
+  bool clear_dirty = true; // only for new loads, or old views when not dirty already
+  if (proj) {
     SendOk();
     return;
   } else {
-    SendError("file \"" + proj_file + "\" not found");
+    taBase* el = NULL;
+    tabMisc::root->projects.Load(proj_file, &el);
+    proj = dynamic_cast<taProject*>(el);
+    if (proj) {
+      taMisc::Info("Yeah, got project open");
+      //if (taMisc::gui_active) {
+      //  MainWindowViewer::NewProjectBrowser(proj);
+      //}
+      SendOk();
+      return;
+    } else {
+      SendError("file \"" + proj_file + "\" not found");
+      return;
+    }
   }
 }
 
@@ -1242,7 +1263,10 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
       else if (node_name == "json_format") {
         name_params.SetVal("json_format", obj_iter.value().toString());  // enable or disable
       }
-      
+      else if (node_name == "project") {
+        name_params.SetVal("project", obj_iter.value().toString());  // enable or disable
+      }
+
       else {
         String err_msg = "Unknown parameter: " + node_name;
         SendErrorJSON(err_msg, TemtClient::UNKNOWN_PARAM);
@@ -1312,6 +1336,9 @@ void TemtClient::RunCommand(const String& cmd) {
   else if (cmd == "ClearConsoleOutput") {
     cmdClearConsoleOutput();
   }
+  else if (cmd == "OpenProject") {
+    cmdOpenProject();
+  }
 #if (QT_VERSION >= 0x050000)
   else if (cmd == "SetJsonFormat") {
     cmdSetJsonFormat();
@@ -1334,10 +1361,7 @@ void TemtClient::RunCommand(const String& cmd) {
   //TODO: we can (should!) look up and dispatch via name!
   /*  if (cmd == "CloseProject") {
    cmdCloseProject();
-   } else
-   if (cmd == "OpenProject") {
-   cmdOpenProject();
-   } else { */
+   } */
 }
 
 void TemtClient::SetSocket(QTcpSocket* sock_) {
