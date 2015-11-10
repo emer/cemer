@@ -120,6 +120,7 @@ void DataTable::CutLinks() {
   diff_row_list.CutLinks();
   last_sort_spec.CutLinks();
   if(log_file) {
+    log_file->Close();
     taRefN::unRefDone(log_file);
     log_file = NULL;
   }

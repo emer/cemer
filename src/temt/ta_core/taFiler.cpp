@@ -97,6 +97,7 @@ void taFiler::Close() {
   file_exists = false; // exists now, but could be deleted etc.
   bool was_ostrm = false;
   if (fstrm) {
+    FlushOutStream();
     fstrm->close();
     delete fstrm;
     fstrm = NULL;

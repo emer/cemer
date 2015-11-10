@@ -23,6 +23,27 @@
 
 // declare all other types mentioned but not required to include:
 
+eTypeDef_Of(MatrixActSpec);
+
+class E_API MatrixActSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for matrix MSN unit activation
+INHERITED(SpecMemberBase)
+public:
+  float         mnt_ach_inhib;  // how much does the PRESENCE of ACh from the TAN units drive extra inhibition to maintenance-gating Matrix units -- gi += mnt_ach_inhib * ach -- provides a bias for maint gating on non-reward trials
+  float         out_ach_inhib;  // how much does the LACK of ACh from the TAN units drive extra inhibition to output-gating Matrix units -- gi += out_ach_inhib * (1-ach) -- provides a bias for output gating on reward trials
+  
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(MatrixActSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void  Initialize();
+  void  Destroy()       { };
+  void  Defaults_init();
+};
+
+
 eTypeDef_Of(MSNUnitSpec);
 
 class E_API MSNUnitSpec : public D1D2UnitSpec {
@@ -39,11 +60,24 @@ public:
     VENTRAL,                    // ventral striatum -- projects to VTA, LHB, ventral pallidum -- drives updating of OFC, ACC and modulation of VTA dopamine
   };
 
+  enum GateType {               // type of gating that Matrix unit engages in
+    MAINT,                      // maintenance gating
+    OUT,                        // output gating
+  };
+  
   DAReceptor            dar;            // type of dopamine receptor: D1 vs. D2 -- also determines direct vs. indirect pathway in dorsal striatum
   MatrixPatch           matrix_patch;   // matrix vs. patch specialization
   DorsalVentral         dorsal_ventral; // dorsal vs. ventral specialization
   Valence               valence;        // #CONDSHOW_ON_dorsal_ventral:VENTRAL US valence coding of the ventral neurons
+  MatrixActSpec         matrix;         // #CONDSHOW_ON_matrix_patch:MATRIX parameters for Matrix activation dynamics
   
+  virtual GateType      MatrixGateType(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // get type of gating that given unit participates in
+  
+  void Compute_ApplyInhib
+    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
+     LeabraInhib* thr, float ival) override;
+
   TA_SIMPLE_BASEFUNS(MSNUnitSpec);
 protected:
   SPEC_DEFAULTS;

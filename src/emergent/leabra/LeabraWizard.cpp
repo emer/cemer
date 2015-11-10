@@ -2343,7 +2343,7 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int pfc_gp_x, int pfc_gp
                 n_matrix_units_x, n_matrix_units_y, true);
   set_n_stripes(net, prefix, "MatrixNoGo", bg_gp_x, bg_gp_y,
                 n_matrix_units_x, n_matrix_units_y, true);
-  set_n_stripes(net, prefix, "Patch",  pfc_gp_x, pfc_gp_y, 1, 1,
+  set_n_stripes(net, prefix, "PFCmnt_patch",  pfc_gp_x, pfc_gp_y, 1, 1,
                 true);
 
   set_n_stripes(net, prefix, "GPi", bg_gp_x, bg_gp_y, -1, -1, true);
@@ -2624,6 +2624,7 @@ can be sure everything is ok.";
     net->FindMakePrjn(matrix_go, il, fullprjn, PbwmSp("MatrixConsGo", MSNConSpec));
     net->FindMakePrjn(matrix_nogo, il, fullprjn,
                       PbwmSp("MatrixConsNoGo", MSNConSpec));
+    net->FindMakePrjn(matrix_tan, il, fullprjn, PbwmSp("ToTANs", LeabraDeltaConSpec));
   }
   
   LeabraUnitSpec* input_units = PbwmSp("PFCInputUnits", LeabraUnitSpec);
@@ -2638,6 +2639,8 @@ can be sure everything is ok.";
       net->FindMakePrjn(matrix_nogo, il, fullprjn,
                         PbwmSp("MatrixConsNoGo", MSNConSpec));
     }
+    net->FindMakePrjn(matrix_tan, il, fullprjn, PbwmSp("ToTANs", LeabraDeltaConSpec));
+                      
     net->FindMakePrjn(pfc_mnt, il, fullprjn, PbwmSp("ToPFC", LeabraConSpec));
     net->FindMakePrjn(pfc_mnt_trc, il, PbwmSp("DeepToTRC", TiledGpRFPrjnSpec),
                       PbwmSp(prefix + "DeepRawPlus", SendDeepRawConSpec));
