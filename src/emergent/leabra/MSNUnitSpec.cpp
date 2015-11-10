@@ -79,7 +79,6 @@ void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr
   if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     LeabraLayer* lay = (LeabraLayer*)un->own_lay();
-    LeabraUnGpData* ugd = lay->UnGpDataUn(un);
     float dp_lrn = 1.0f;
     float dp_mod = 1.0f;
     if(lay->am_deep_mod_net.max > 0.1f) {
