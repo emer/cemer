@@ -159,5 +159,101 @@ ParseObjectMemberSelectMethodOrMemberSeeded
     Prog Var Should Match	path_rest	      cell_view
     Prog Var Should Match	base_path	      DataTable_28.cell_view
 
+ParseCallFunctionOtherProgram
+    Ensure Emergent Free
+    Set Suite Variable   ${program_test}       "call_function_other_program"
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
+    Status OK No Result        ${output}
+    
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
+    Status OK 		       ${output}
+    Json Value Should Equal    ${output}             /result  6
+
+    Prog Var Should Be Empty	lookup_seed
+    Prog Var Should Match	prepend_txt		has_function
+    Prog Var Should Be Empty	append_txt
+    Prog Var Should Be Empty	prog_el_txt
+    Prog Var Should Be Empty	path_var	      
+    Prog Var Should Match	path_prepend_txt      has_function()
+    Prog Var Should Be Empty	path_rest
+    Prog Var Should Match	base_path	      has_function
+
+ParseMethodArgumentsFirstArg
+    Ensure Emergent Free
+    Set Suite Variable   ${program_test}       "method_arguments_first_arg"
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
+    Status OK No Result        ${output}
+    
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
+    Status OK 		       ${output}
+    Json Value Should Equal    ${output}             /result  1
+
+    Prog Var Should Match	lookup_seed	     x
+    Prog Var Should Match	prepend_txt	     Random::UniformMeanRange(
+    Prog Var Should Be Empty	append_txt	     
+    Prog Var Should Be Empty	prog_el_txt
+    Prog Var Should Match	path_var	     Random	      
+    Prog Var Should Match	path_prepend_txt     Random::UniformMeanRange(
+    Prog Var Should Match	path_rest	     UniformMeanRange
+    Prog Var Should Match	base_path	     Random::UniformMeanRange
+
+ParseMethodArgumentsSecondArg
+    Ensure Emergent Free
+    Set Suite Variable   ${program_test}       "method_arguments_second_arg"
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
+    Status OK No Result        ${output}
+    
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
+    Status OK 		       ${output}
+    Json Value Should Equal    ${output}             /result  1
+
+    Prog Var Should Match	lookup_seed	     x
+    Prog Var Should Match	prepend_txt	     Random::UniformMeanRange(0,\ \ 
+    Prog Var Should Be Empty	append_txt	     
+    Prog Var Should Match	prog_el_txt	     x
+    Prog Var Should Be Empty	path_var	     	      
+    Prog Var Should Be Empty	path_prepend_txt     
+    Prog Var Should Be Empty	path_rest	     
+    Prog Var Should Be Empty	base_path	     
+
+ParseVarAfterConditional
+    Ensure Emergent Free
+    Set Suite Variable   ${program_test}       "var_after_conditional"
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
+    Status OK No Result        ${output}
+    
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
+    Status OK 		       ${output}
+    Json Value Should Equal    ${output}             /result  1
+
+    Prog Var Should Be Empty	lookup_seed	     
+    Prog Var Should Match	prepend_txt	     bool = (a ==\ \ \ 
+    Prog Var Should Be Empty	append_txt	     
+    Prog Var Should Be Empty	prog_el_txt	     
+    Prog Var Should Match	path_var	     Random	     	      
+    Prog Var Should Be Empty	path_prepend_txt     
+    Prog Var Should Be Empty	path_rest	     
+    Prog Var Should Be Empty	base_path	     
+
+ParseObjectMemberAfterPrint
+    Ensure Emergent Free
+    Set Suite Variable   ${program_test}       "object_member_after_print"
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ${program_test}}
+    Status OK No Result        ${output}
+    
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "lookup_type"}
+    Status OK 		       ${output}
+    Json Value Should Equal    ${output}             /result  2
+
+    Prog Var Should Be Empty	lookup_seed	     
+    Prog Var Should Match	prepend_txt	     print .projects[\\\"TestLookupParse\\\"].programs.gp[\\\"TestPrograms\\\"][\\\"object_member_after_print\\\"].objs[\\\"DataTable_32\\\"
+    Prog Var Should Be Empty	append_txt	     
+    Prog Var Should Be Empty	prog_el_txt	     
+    Prog Var Should Be Empty	path_var	     	     	      
+    Prog Var Should Match	path_prepend_txt     print .projects[\\\"TestLookupParse\\\"].programs.gp[\\\"TestPrograms\\\"][\\\"object_member_after_print\\\"].objs[\\\"DataTable_32\\\"].
+    Prog Var Should Be Empty	path_rest	     
+    Prog Var Should Match	base_path	     ]	     
+
+
 
 
