@@ -194,7 +194,7 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
   float thal_eff = 0.0f;
 
   // first, before anything else happens, see if we need to clear previous maint
-  if(pfc.out_gate && u->thal_cnt == 1) { // time to clear out maint
+  if(pfc.out_gate && deep.IsSuper() && u->thal_cnt == 1) { // time to clear out maint
     ClearOtherMaint(u, net, thr_no);     // this is tiny bit more expensive to do repeatedly
     // but much clearer to have it done here than any other time
   }
@@ -294,6 +294,12 @@ void PFCUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, i
 }
 
 void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+  LeabraUnGpData* ugd = lay->UnGpDataUn(un);
+  if(ugd->acts_eq.max < 0.1f)   // we can't clear anyone if nobody in our group is active!
+    return;
+  
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
@@ -305,7 +311,7 @@ void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr
       if(uv->thal_cnt >= 1.0f) { // important!  only for established maint, not just gated!
         uv->thal_cnt = -1.0f; // terminate!
         if(pfc.clear_decay > 0.0f) {
-          DecayState(uv, net, thr_no, pfc.clear_decay); // note: thr_no is WRONG here!
+          DecayState(uv, net, thr_no, pfc.clear_decay); // note: thr_no is WRONG here! but shouldn't matter..
         }
       }
     }
