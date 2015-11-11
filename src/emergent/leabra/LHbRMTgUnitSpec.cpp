@@ -188,7 +188,6 @@ bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u, LeabraLayer*& patch_dir_lay,
   return true;
 }
 
-// modeled after VTAUnitSpec::Compute_da()
 void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* patch_dir_lay = NULL;
   LeabraLayer* patch_ind_lay = NULL;
@@ -231,11 +230,15 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   if(matrix_ind_lay)
     matrix_ind = matrix_ind_lay->acts_eq.avg * matrix_ind_lay->units.size;
   float dms_matrix_dir = 0.0f;
-  if(dms_matrix_dir_lay)
-    dms_matrix_dir = dms_matrix_dir_lay->acts_eq.max; //* dms_matrix_dir_lay->units.size;
+  if(dms_matrix_dir_lay) {
+    //dms_matrix_dir = dms_matrix_dir_lay->acts_eq.max;
+    dms_matrix_dir = dms_matrix_dir_lay->acts_eq.avg * dms_matrix_dir_lay->units.size;
+  }
   float dms_matrix_ind = 0.0f;
-  if(dms_matrix_ind_lay)
-    dms_matrix_ind = dms_matrix_ind_lay->acts_eq.max; //* dms_matrix_ind_lay->units.size;
+  if(dms_matrix_ind_lay) {
+    //dms_matrix_ind = dms_matrix_ind_lay->acts_eq.max;
+    dms_matrix_ind = dms_matrix_ind_lay->acts_eq.avg * dms_matrix_ind_lay->units.size;
+  }
   float pv_pos = pv_pos_lay->acts_eq.avg * pv_pos_lay->units.size;
   float pv_neg = pv_neg_lay->acts_eq.avg * pv_neg_lay->units.size;
   
