@@ -46,6 +46,7 @@ General RunState
     ${output} =                Run Command Wait      {"command": "GetRunState"}
     Status OK Match Result     ${output}             4
 
+
 CopyProgram
     Set Suite Variable     ${program_test}       "TestGroup"
     Ensure Emergent Free
@@ -258,6 +259,29 @@ MoveProgramCodeOutOfLoop
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
     Status OK No Result        ${output}
 
+CopyProgramCodeBetweenProjects
+    Restart Emergent
+    Set Suite Variable     ${program_test}       "TestGroup"
+
+    Ensure Emergent Free
+
+    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../test_auto/EmergentTestFramework/test-projects/TestPointerUpdates_copy_into.proj"}   300 sec
+    Status OK No Result        ${output}
+
+    Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"]
+    Prog Group Should Match    2                     NONE
+    Prog Group Secondary Project Should Match	     1	  .projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_one\\"]
+    Prog Group Secondary Project Should Match	     2	  NONE
+    
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_callee_caller_into_project"}
+    Status OK No Result        ${output}
+
+
+    Prog Group Should Match    2                     NONE
+    Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
+    Prog Group Secondary Project Should Match	     1	  .projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_one\\"]
+    Prog Group Secondary Project Should Match	     2	  .projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_two\\"]
+
 
 *** Keywords ***
 
@@ -271,6 +295,18 @@ Prog Group Should Match
     Status OK No Result        ${output}
 
     Prog Var Should Match      group_name            ${group_name}
+
+Prog Group Secondary Project Should Match
+    [Arguments]        ${prog_group}   ${group_name}
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": ".projects[\\\"TestPointerUpdates_copy_into\\\"].programs.gp[\\\"TesterPrograms\\\"][\\\"TestGroup\\\"]", "var_name": "which_group", "var_value": ${prog_group}}
+    Status OK                  ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ".projects[\\\"TestPointerUpdates_copy_into\\\"].programs.gp[\\\"TesterPrograms\\\"][\\\"TestGroup\\\"]"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ".projects[\\\"TestPointerUpdates_copy_into\\\"].programs.gp[\\\"TesterPrograms\\\"][\\\"TestGroup\\\"]", "var_name": "group_name"}
+    Status OK                  ${output}
+    Json String Should Match    ${output}             /result   ${group_name}
 
 DataTable Value Should Match
     [Arguments]        ${prog_group}   ${table_value}
