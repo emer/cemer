@@ -54,14 +54,15 @@ class E_API PVLVDaGains : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gains for various VTA inputs
 INHERITED(SpecMemberBase)
 public:
-  float         da_gain;       // #DEF_0:2 #MIN_0 overall multiplier for dopamine values
-  float         pptg_gain;     // #DEF_1 gain on bursts from PPTg
-  float         lhb_gain;      // #DEF_1 gain on dips from LHbRMTg
-  float         pv_gain;       // #DEF_1 gain on positive PV component of total phasic DA signal (net after subtracting VSPatchIndir (PVi) shunt signal)
-  float         pvi_d1_gain;  // #DEF_1 gain on VSPatchD1 component of PVi shunt signal
+  float         da_gain;      // #DEF_0:2 #MIN_0 overall multiplier for dopamine values
+  float         pptg_gain;    // #DEF_1 gain on bursts from PPTg
+  float         lhb_gain;     // #DEF_1 gain on dips from LHbRMTg
+  float         pv_gain;      // #DEF_1 gain on positive PV component of total phasic DA signal (net after subtracting VSPatchIndir (PVi) shunt signal)
+  bool          subtract_d2r; // #DEF_false if true, subtract VSPatchD2 act in computing PVi shunt value
+  float         pvi_d1_gain;  // #COND_SHOW_subtract_d2r:true #DEF_1 gain on VSPatchD1 component of PVi shunt signal
   float         pvi_d2_gain;  // #DEF_1 gain on VSPatchD2 component of PVi shunt signal
-  bool          subtract_d2r;  // #DEF_false if true, subtract VSPatchD2 act in computing PVi shunt value
-  float         pvi_gain;      // #DEF_1 gain on VSPatch (PVi) shunt signal - higher pvi_gain == more shunting
+  
+  float         pvi_gain;     // #DEF_1 gain on VSPatch (PVi) shunt signal - higher pvi_gain == more shunting
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 

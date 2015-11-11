@@ -48,6 +48,9 @@ void PVLVDaGains::Defaults_init() {
   pptg_gain = 1.0f;
   lhb_gain = 1.0f;
   pv_gain = 1.0f;
+  subtract_d2r = false;
+  pvi_d1_gain = 1.0f;
+  pvi_d2_gain = 1.0f;
   pvi_gain = 1.0f;
 }
 
@@ -239,8 +242,8 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
       vspvi = vspatch_lay->acts_q0.avg * vspatch_lay->units.size;
     }
     else {
-      vspvi = (gains.pvi_d1_gain * vspatch_lay->acts_eq.avg * vspatch_lay->units.size) -
-      (gains.pvi_d2_gain * vspatch_d2_lay->acts_eq.avg * vspatch_d2_lay->units.size);
+      vspvi = (gains.pvi_d1_gain * vspatch_lay->acts_q0.avg * vspatch_lay->units.size) -
+      (gains.pvi_d2_gain * vspatch_d2_lay->acts_q0.avg * vspatch_d2_lay->units.size);
     }
 }
   float burst_lhb_da = MIN(lhb_da, 0.0f); // if neg, promotes bursting

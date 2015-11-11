@@ -56,6 +56,7 @@ public:
   float         all;            // #MIN_0 #DEF_1 final overall gain on everything
   float         patch_dir;      // #MIN_0 #DEF_1 VS patch direct pathway versus positive PV outcomes
   float         patch_ind;      // #MIN_0 #DEF_1 VS patch indirect pathway versus negative PV outcomes
+  float         vs_patch_net_neg_gain; // #DEF_0.2 proportion of positive reward prediction error (RPE) to use if RPE results from a predicted omission of positive reinforcement - e.g., conditioned inhibitor
   float         vs_matrix_dir;  // #MIN_0 #DEF_1 gain on VS matrix dir
   float         vs_matrix_ind;  // #MIN_0 #DEF_1 - VS matrix indir
   float         dms_matrix_dir; // #MIN_0 #DEF_1 - DMS matrix_dir

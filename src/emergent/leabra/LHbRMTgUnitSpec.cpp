@@ -43,6 +43,7 @@ void LHbRMTgGains::Defaults_init() {
   all = 1.0f;
   patch_dir = 1.0f;
   patch_ind = 1.0f;
+  vs_patch_net_neg_gain = 0.2f;
   vs_matrix_dir = 1.0f;
   vs_matrix_ind = 1.0f;
   dms_matrix_dir = 1.0f;
@@ -216,6 +217,13 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   else
     patch_ind = patch_ind_lay->acts_q0.avg * patch_ind_lay->units.size;
     
+  
+  float vs_patch_net = (gains.patch_dir * patch_dir) - (gains.patch_ind * patch_ind);
+  if (vs_patch_net <0.0f) {
+    vs_patch_net *= gains.vs_patch_net_neg_gain;
+  }
+  
+  
   float matrix_dir = 0.0f;
   if(matrix_dir_lay)
     matrix_dir = matrix_dir_lay->acts_eq.avg * matrix_dir_lay->units.size;
@@ -263,8 +271,7 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
 //  float net_lhb = net_pv_neg - (gains.patch_ind * patch_ind) - net_pv_pos +
 //                           (gains.patch_dir * patch_dir) - (gains.dms_matrix_dir * dms_matrix_dir) + (gains.dms_matrix_ind * dms_matrix_ind) + residual_pvneg;
   
-  float net_lhb = net_neg - net_pos - (gains.patch_ind * patch_ind) +
-  (gains.patch_dir * patch_dir) + residual_pvneg;
+  float net_lhb = net_neg - net_pos + vs_patch_net + residual_pvneg;
   
   net_lhb *=gains.all;
   
