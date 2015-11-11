@@ -5561,7 +5561,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
      ProgVar @["ctrlPanelVar"] {
       name="ctrlPanelVar";
-      var_type=T_Int;
+      var_type=T_Object;
       objs_ptr=0;
       flags=USED|EDIT_VAL;
       reference=0;
@@ -5820,22 +5820,22 @@ LeabraProject .projects["TestPointerUpdates"] {
      expr=;
     };
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["ctrlPanel"] {
@@ -5858,17 +5858,17 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -5895,16 +5895,16 @@ LeabraProject .projects["TestPointerUpdates"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="ctrlPanel = tabMisc::root->ElemPath(\".projects[\"TestPointerUpdates_copy_into\"].ctrl_panels[\\\"ControlPanel\\\"]\",NULL, false);";
-      pre_compile_code_string="ctrlPanel = tabMisc::root->ElemPath(\".projects[\\\"TestPointerUpdates_copy_into\\\"].ctrl_panels[\\\"ControlPanel\\\"]\",NULL, false);";
+      pre_compile_code_string="ctrlPanel = tabMisc::root->ElemPath(\".projects[\\\"TestPointerUpdates_copy_into\\\"].ctrl_panels[\\\"ControlPanel\\\"].mbrs\",NULL, false);";
       expr {
-       expr="ctrlPanel = tabMisc::root->ElemPath(\".projects[\\\"TestPointerUpdates_copy_into\\\"].ctrl_panels[\\\"ControlPanel\\\"]\",NULL, false);";
+       expr="ctrlPanel = tabMisc::root->ElemPath(\".projects[\\\"TestPointerUpdates_copy_into\\\"].ctrl_panels[\\\"ControlPanel\\\"].mbrs\",NULL, false);";
       };
      };
      MethodCall @[3] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="ctrlPanel->CopyChildBeforeIndex(ctrlPanelElem,-1)";
-      pre_compile_code_string="ctrlPanel->CopyChildBeforeIndex()";
+      pre_compile_code_string="ctrlPanel->CopyChildBeforeIndex(ctrlPanelElem, -1)";
       result_var=NULL;
       obj=.projects["TestPointerUpdates"].programs.gp["TesteePrograms"]["copy_control_var_into_proj"].vars["ctrlPanel"]$$;
       method=taBase::CopyChildBeforeIndex;
@@ -8996,7 +8996,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=-0.002785515;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -9006,12 +9006,12 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=1.002786;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=1;
+     value 8 0=0.7993159;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -9210,7 +9210,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.05555556;
+       value 8 0=0.03078677;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
@@ -9220,7 +9220,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.9222222;
+       value 8 0=0.6944128;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
