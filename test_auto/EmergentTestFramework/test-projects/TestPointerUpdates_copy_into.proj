@@ -5397,9 +5397,9 @@ LeabraProject .projects["TestPointerUpdates_copy_into"] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="ctrlPanel = tabMisc::root->ElemPath(\".ctrl_panels[\\\"ControlPanel\\\"].mbrs[\\\"TestGroup_which_group\\\"]\",NULL,true);";
-      pre_compile_code_string="ctrlPanel = tabMisc::root->ElemPath(\".ctrl_panels[\\\"ControlPanel\\\"].mbrs[\\\"TestGroup_which_group\\\"]\",NULL,true);";
+      pre_compile_code_string="ctrlPanel = tabMisc::root->ElemPath(\".projects[\\\"TestPointerUpdates_copy_into\\\"].ctrl_panels[\\\"ControlPanel\\\"].mbrs[\\\"TestGroup_which_group\\\"]\",NULL,true);";
       expr {
-       expr="ctrlPanel = tabMisc::root->ElemPath(\".ctrl_panels[\\\"ControlPanel\\\"].mbrs[\\\"TestGroup_which_group\\\"]\",NULL,true);";
+       expr="ctrlPanel = tabMisc::root->ElemPath(\".projects[\\\"TestPointerUpdates_copy_into\\\"].ctrl_panels[\\\"ControlPanel\\\"].mbrs[\\\"TestGroup_which_group\\\"]\",NULL,true);";
       };
      };
      AssignExpr @[2] {
@@ -8070,7 +8070,7 @@ LeabraProject .projects["TestPointerUpdates_copy_into"] {
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.05929304;
+     value 8 0=0.05865658;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -8080,7 +8080,7 @@ LeabraProject .projects["TestPointerUpdates_copy_into"] {
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7993159;
+     value 8 0=0.7984863;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -8274,22 +8274,22 @@ LeabraProject .projects["TestPointerUpdates_copy_into"] {
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 8 0=-0.002785515;
+       value 8 0=-0.002087683;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.03078677;
+       value 8 0=0.02554399;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.05710306;
+       value 8 0=0.04279749;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.6944128;
+       value 8 0=0.7114475;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
