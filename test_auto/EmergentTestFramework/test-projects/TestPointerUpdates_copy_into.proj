@@ -5322,22 +5322,22 @@ LeabraProject .projects["TestPointerUpdates_copy_into"] {
      expr=;
     };
     objs {
-     name="ProgObjList_59";
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name="ProgType_List_1";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name="ProgVar_List_1";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_1";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["ctrlPanel"] {
@@ -5351,7 +5351,7 @@ LeabraProject .projects["TestPointerUpdates_copy_into"] {
      };
      ProgVar @["ctrlPanelVar"] {
       name="ctrlPanelVar";
-      var_type=T_Int;
+      var_type=T_Object;
       objs_ptr=0;
       flags=USED|EDIT_VAL;
       reference=0;
@@ -5369,17 +5369,17 @@ LeabraProject .projects["TestPointerUpdates_copy_into"] {
      };
     };
     functions {
-     name="Function_List_59";
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name="ProgEl_List_325";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_326";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -8065,12 +8065,12 @@ LeabraProject .projects["TestPointerUpdates_copy_into"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.2263231;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.06043329;
+     value 8 0=0.05929304;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
