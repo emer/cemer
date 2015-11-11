@@ -2699,6 +2699,16 @@ String taMisc::ExpandFilePath(const String& path, taProject* proj) {
     }
     else if(ep.startsWith("CR:")) {
       ep = proj->GetClusterRunPath() + path_sep + ep.after("CR:");
+    } else if(ep.startsWith("CRRM:")) { //Choose the file, either local or in the cluster_run directory, that actually exists
+      String test_path;
+      test_path = proj->proj_dir + path_sep + ep.after("CRRM:");
+      if (FileExists(test_path)) {
+        return test_path;
+      } else {
+        test_path = proj->GetClusterRunPath() + path_sep + "results" + path_sep + ep.after("CRRM:");
+        return test_path;
+      }
+
     }
   }
   return ep;
