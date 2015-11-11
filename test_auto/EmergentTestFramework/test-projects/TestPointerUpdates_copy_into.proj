@@ -493,7 +493,7 @@ LeabraProject .projects["TestPointerUpdates_copy_into"] {
   };
   Program_Group @.gp["group_two"] { 
   };
-  Program_Group @.gp["TesterPrograms"] = [3] { 
+  Program_Group @.gp["TesterPrograms"] = [4] { 
    Program @["TestGroup"] { 
     ProgObjList @.objs = [0] {
     };
@@ -726,6 +726,38 @@ LeabraProject .projects["TestPointerUpdates_copy_into"] {
        };
       };
      };
+    };
+   };
+   Program @["TestCtrlPanel"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [3] {
+     ProgVar @["ctrlPanel"] { };
+     ProgVar @["ctrlPanelVar"] { };
+     ProgVar @["set_val"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [4] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     CssExpr @[1] { };
+     AssignExpr @[2] { };
+     CssExpr @[3] { };
     };
    };
   };
@@ -5280,6 +5312,119 @@ LeabraProject .projects["TestPointerUpdates_copy_into"] {
     step_prog=NULL;
     step_n=1;
    };
+   Program @["TestCtrlPanel"] {
+    name="TestCtrlPanel";
+    short_nm="TsCtrP";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="ProgObjList_59";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="ProgType_List_1";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_1";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_1";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["ctrlPanel"] {
+      name="ctrlPanel";
+      var_type=T_Object;
+      objs_ptr=0;
+      flags=USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["ctrlPanelVar"] {
+      name="ctrlPanelVar";
+      var_type=T_Int;
+      objs_ptr=0;
+      flags=USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["set_val"] {
+      name="set_val";
+      var_type=T_Int;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="Function_List_59";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_325";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_326";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (0 vars)";
+      pre_compile_code_string="LocalVars (0 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     CssExpr @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="ctrlPanel = tabMisc::root->ElemPath(\".ctrl_panels[\\\"ControlPanel\\\"].mbrs[\\\"TestGroup_which_group\\\"]\",NULL,true);";
+      pre_compile_code_string="ctrlPanel = tabMisc::root->ElemPath(\".ctrl_panels[\\\"ControlPanel\\\"].mbrs[\\\"TestGroup_which_group\\\"]\",NULL,true);";
+      expr {
+       expr="ctrlPanel = tabMisc::root->ElemPath(\".ctrl_panels[\\\"ControlPanel\\\"].mbrs[\\\"TestGroup_which_group\\\"]\",NULL,true);";
+      };
+     };
+     AssignExpr @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="ctrlPanelVar2 = ctrlPanel->base";
+      pre_compile_code_string="ctrlPanelVar = ctrlPanel->base";
+      result_var=.projects["TestPointerUpdates_copy_into"].programs.gp["TesterPrograms"]["TestCtrlPanel"].vars["ctrlPanelVar"]$$;
+      expr {
+       expr="ctrlPanel->base";
+      };
+     };
+     CssExpr @[3] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="ctrlPanelVar2->int_val = 12345;";
+      pre_compile_code_string="ctrlPanelVar->int_val = set_val;";
+      expr {
+       expr="ctrlPanelVar->int_val = set_val;";
+      };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
   };
   Program_Group @.gp["TesteePrograms"] {
    name="TesteePrograms";
@@ -7920,12 +8065,12 @@ LeabraProject .projects["TestPointerUpdates_copy_into"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=0.2263231;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0;
+     value 8 0=0.06043329;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {

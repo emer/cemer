@@ -259,6 +259,50 @@ MoveProgramCodeOutOfLoop
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
     Status OK No Result        ${output}
 
+CopyProgramSubGroup 
+    Set Suite Variable     ${program_test}       "TestGroup" 
+    Restart Emergent 
+    Ensure Emergent Free 
+ 
+    Prog Group Should Match    3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"] 
+    Prog Group Should Match    -3                     NONE   
+     
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_callee_caller_into_subgroup"} 
+    Status OK No Result        ${output} 
+ 
+ 
+    Prog Group Should Match    3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"] 
+    Prog Group Should Match    -3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"].gp[\\"sub_group_three\\"] 
+ 
+MoveProgramIntoSubGroup 
+    Set Suite Variable     ${program_test}       "TestGroup" 
+    Restart Emergent 
+    Ensure Emergent Free 
+ 
+    Prog Group Should Match    3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"] 
+    Prog Group Should Match    -3                     NONE   
+     
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_callee_caller_into_subgroup"} 
+    Status OK No Result        ${output} 
+ 
+ 
+    Prog Group Should Match    3                     NONE 
+    Prog Group Should Match    -3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"].gp[\\"sub_group_three\\"]  
+ 
+MoveProgramOutOfSubGroup 
+    Set Suite Variable     ${program_test}       "TestGroup" 
+    Ensure Emergent Free 
+ 
+    Prog Group Should Match    3                     NONE 
+    Prog Group Should Match    -3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"].gp[\\"sub_group_three\\"]  
+     
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_callee_caller_out_of_subgroup"} 
+    Status OK No Result        ${output} 
+ 
+    Prog Group Should Match    3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"] 
+    Prog Group Should Match    -3                     NONE 
+
+
 CopyProgramCodeBetweenProjects
     Restart Emergent
     Set Suite Variable     ${program_test}       "TestGroup"
@@ -281,6 +325,53 @@ CopyProgramCodeBetweenProjects
     Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
     Prog Group Secondary Project Should Match	     1	  .projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_one\\"]
     Prog Group Secondary Project Should Match	     2	  .projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_two\\"]
+
+MoveProgramBetweenProjects
+    Set Suite Variable     ${program_test}       "TestGroup"
+    Restart Emergent
+    Ensure Emergent Free
+
+    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../test_auto/EmergentTestFramework/test-projects/TestPointerUpdates_copy_into.proj"}   300 sec
+    Status OK No Result        ${output}
+
+    Prog Group Should Match    2                     NONE
+    Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
+    Prog Group Secondary Project Should Match        1    .projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_one\\"]
+    Prog Group Secondary Project Should Match        2    NONE
+    
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_callee_caller_into_project"}
+    Status OK No Result        ${output}
+
+    Prog Group Should Match    2                     NONE
+    Prog Group Should Match    1                     NONE
+    Prog Group Secondary Project Should Match        1    .projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_one\\"]
+    Prog Group Secondary Project Should Match        2    .projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_two\\"]
+
+CopyControlpanelBetweenProjects
+    Set Suite Variable     ${program_test}       "TestGroup"
+    Restart Emergent
+    Ensure Emergent Free
+
+    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../test_auto/EmergentTestFramework/test-projects/TestPointerUpdates_copy_into.proj"}   300 sec
+    Status OK No Result        ${output}
+
+    Prog Var Should Match      which_group           0
+    
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_control_var_into_proj"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": ".projects[\\\"TestPointerUpdates_copy_into\\\"].programs.gp[\\\"TesterPrograms\\\"][\\\"TestCtrlPanel\\\"]", "var_name": "set_val", "var_value": 2345}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": ".projects[\\\"TestPointerUpdates_copy_into\\\"].programs.gp[\\\"TesterPrograms\\\"][\\\"TestCtrlPanel\\\"]"}
+    Status OK No Result        ${output}
+
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": ".projects[\\\"TestPointerUpdates_copy_into\\\"].programs.gp[\\\"TesterPrograms\\\"][\\\"TestGroup\\\"]", "var_name":"which_group"}
+    Status OK        ${output}
+    Json String Should Match    ${output}             /result   2345
+
+    Prog Var Should Match      which_group           0
+    
 
 
 *** Keywords ***
