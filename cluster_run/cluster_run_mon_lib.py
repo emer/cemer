@@ -1368,6 +1368,25 @@ class SubversionPoller(object):
         other_files = self.jobs_submit.get_val(row, "other_files")
         self._svn_add_dat_files("no tag", other_files)
 
+    def _touch_dat_files(self, tag, dat_files):
+        if len(dat_files) == 0:
+            if debug:
+                print "tag: %s has no dat files (yet)" % tag
+            return
+        dats = dat_files.split()
+        resdir = self.cur_proj_root + "/results/"
+        for df in dats:
+            fdf = resdir + df
+            if debug:
+                ("Checking if dat file: %s exists to touch" % fdf)
+            if os.path.exists(fdf):
+                # "touch" the file so it should get the very latest data
+                fhandle = open(fdf, 'a')
+                try:
+                    os.utime(fdf, None)
+                finally:
+                    fhandle.close()
+
     def _svn_add_dat_files(self, tag, dat_files):
         if len(dat_files) == 0:
             if debug:
@@ -1380,12 +1399,6 @@ class SubversionPoller(object):
             if debug:
                 ("Checking if dat file: %s exists to commit to SVN" % fdf)
             if os.path.exists(fdf):
-                # first, "touch" the file so it should get the very latest data
-                fhandle = open(fdf, 'a')
-                try:
-                    os.utime(fdf, None)
-                finally:
-                    fhandle.close()
                 cmd = ['svn', 'add', '--username', self.username,
                        '--non-interactive', fdf]
                 # Don't check_output, just dump it to stdout (or nohup.out).
@@ -1801,7 +1814,9 @@ class SubversionPoller(object):
         pb_batches = self.jobs_done.get_val(row, "pb_batches")
         status = self.jobs_done.get_val(row, "status")
         submit_job = self.jobs_done.get_val(row, "submit_job")
+        dat_files = self.jobs_done.get_val(row, "dat_files")
         if pb_batches > 1 and status == "DONE" and submit_job == "000":
+            self._touch_dat_files(tag, dat_files) # always touch!
             return   # don't overwrite consolidated batch guy
 
         try: eddt = datetime(*(time.strptime(end_time, time_format)[0:6]))
@@ -1816,7 +1831,12 @@ class SubversionPoller(object):
 
             all_files = self._get_dat_files(tag)
 
-            self.jobs_done.set_val(row, "dat_files", all_files[0])
+            if dat_files != all_files[0]:
+                dat_files = all_files[0]
+                self.jobs_done.set_val(row, "dat_files", dat_files)
+                self._svn_add_dat_files(tag, dat_files)
+            else:
+                self._touch_dat_files(tag, dat_files) # always touch!
             self.jobs_done.set_val(row, "other_files", all_files[1])
 #        elif deadtime.seconds > job_update_window * 60: # dead long enough to cleanup
 #            self._remove_job_files(job_out_file, job_no, tag)
