@@ -29,6 +29,8 @@ void PFCMiscSpec::Initialize() {
 
 void PFCMiscSpec::Defaults_init() {
   out_mnt = 1;
+  out_clr_cnt = 0;
+  mnt_clr_cnt = 1;
   max_mnt = 100;
   clear_decay = 1.0f;
   mnt_thal = 1.0f;
@@ -81,25 +83,25 @@ void  PFCUnitSpec::InitDynTable() {
   if(pfc.out_gate)
     n_dyns = 1;
   else
-    n_dyns = 5;
+    n_dyns = 5; 
   FormatDynTable();
 
   int cur = 0;
-  SetDynVal("phasic", DYN_NAME, cur);
-  SetDynVal("immediate phasic response to gating event", DYN_DESC, cur);
-  SetDynVal(1.0f, DYN_INIT, cur);
-  SetDynVal(0.0f, DYN_RISE_TAU, cur);
-  SetDynVal(1.0f, DYN_DECAY_TAU, cur);
-
-  if(pfc.out_gate)
-    return;
-  
-  cur++;
   SetDynVal("maint_flat", DYN_NAME, cur);
   SetDynVal("maintained, flat stable sustained activation", DYN_DESC, cur);
   SetDynVal(1.0f, DYN_INIT, cur);
   SetDynVal(0.0f, DYN_RISE_TAU, cur);
   SetDynVal(0.0f, DYN_DECAY_TAU, cur);
+
+  if(pfc.out_gate)
+    return;
+  
+  cur++;
+  SetDynVal("phasic", DYN_NAME, cur);
+  SetDynVal("immediate phasic response to gating event", DYN_DESC, cur);
+  SetDynVal(1.0f, DYN_INIT, cur);
+  SetDynVal(0.0f, DYN_RISE_TAU, cur);
+  SetDynVal(1.0f, DYN_DECAY_TAU, cur);
 
   cur++;
   SetDynVal("maint_rise", DYN_NAME, cur);
@@ -194,7 +196,8 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
   float thal_eff = 0.0f;
 
   // first, before anything else happens, see if we need to clear previous maint
-  if(pfc.out_gate && deep.IsSuper() && u->thal_cnt == 1) { // time to clear out maint
+  if(pfc.out_gate && deep.IsSuper() && u->thal_cnt >= pfc.out_clr_cnt) {
+    // time to clear out maint
     ClearOtherMaint(u, net, thr_no);     // this is tiny bit more expensive to do repeatedly
     // but much clearer to have it done here than any other time
   }
@@ -294,8 +297,8 @@ void PFCUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, i
 }
 
 void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+  LeabraLayer* lay = (LeabraLayer*)un->own_lay();
   LeabraUnGpData* ugd = lay->UnGpDataUn(un);
   if(ugd->acts_eq.max < 0.1f)   // we can't clear anyone if nobody in our group is active!
     return;
@@ -308,7 +311,7 @@ void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr
     if(!cs->IsMarkerCon()) continue;
     for(int j=0;j<send_gp->size; j++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)send_gp->UnVars(j,net);
-      if(uv->thal_cnt >= 1.0f) { // important!  only for established maint, not just gated!
+      if(uv->thal_cnt >= pfc.mnt_clr_cnt) { // important!  only for established maint, not just gated!
         uv->thal_cnt = -1.0f; // terminate!
         if(pfc.clear_decay > 0.0f) {
           DecayState(uv, net, thr_no, pfc.clear_decay); // note: thr_no is WRONG here! but shouldn't matter..

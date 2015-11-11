@@ -32,6 +32,8 @@ INHERITED(SpecMemberBase)
 public:
   bool          out_gate;       // if true, this PFC layer is an output gate layer, which means that it only has transient activation during gating
   int           out_mnt;        // #CONDSHOW_ON_out_gate #DEF_1:2 number of effective trials (updates of deep state, following deep_qtr updates) to maintain output gating signals
+  int           out_clr_cnt;    // #CONDSHOW_ON_out_gate #DEF_0 min thal_cnt count of the output gating stripe for when to drive out-go-clear of corresponding maintenance stripe(s)
+  int           mnt_clr_cnt;    // #CONDSHOW_ON_out_gate #DEF_1 min thal_cnt count of the maintenance stripe for when to drive out-go-clear of corresponding maintenance stripe(s)
   int           max_mnt;        // #CONDSHOW_OFF_out_gate maximum duration of maintenance for any stripe -- beyond this limit, the maintenance is just automatically cleared
   float         s_mnt_gain;     // #DEF_0.05;0.1 for superficial neurons, how much of deep_lrn to add into excitatory net input to support maintenance, from deep maintenance signal
   float         clear_decay;    // how much to clear out maintenance activations when an output go signal fires and clears maintenance
