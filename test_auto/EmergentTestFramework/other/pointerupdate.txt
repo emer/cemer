@@ -355,7 +355,7 @@ CopyControlpanelBetweenProjects
     ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../test_auto/EmergentTestFramework/test-projects/TestPointerUpdates_copy_into.proj"}   300 sec
     Status OK No Result        ${output}
 
-    Prog Var Should Match      which_group           0
+    Prog Var Should Equal      which_group           0
     
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_control_var_into_proj"}
     Status OK No Result        ${output}
@@ -368,9 +368,9 @@ CopyControlpanelBetweenProjects
 
     ${output} =                Run Command Wait      {"command": "GetVar", "program": ".projects[\\\"TestPointerUpdates_copy_into\\\"].programs.gp[\\\"TesterPrograms\\\"][\\\"TestGroup\\\"]", "var_name":"which_group"}
     Status OK        ${output}
-    Json String Should Match    ${output}             /result   2345
+    Json Value Should Equal    ${output}             /result   2345
 
-    Prog Var Should Match      which_group           0
+    Prog Var Should Equal      which_group           0
     
 
 
