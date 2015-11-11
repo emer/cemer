@@ -40,13 +40,6 @@ public:
     BORDER,			// render/preserve a 1 pixel border around everything
     WRAP,			// wrap the image around to the other side: no edges!
   };
-
-  static float_Matrix* kernel_one_degree;
-  static float_Matrix* kernel_two_degree;
-  static float_Matrix* kernel_three_degree;
-  static float_Matrix* kernel_five_degree;
-  static float_Matrix* kernel_max_degree;
-  static float_Matrix* kernel_second_pass;
   
   static bool	GetBorderColor_float(float_Matrix& img_data,
                                      float& r, float& g, float& b, float& a,
@@ -149,9 +142,6 @@ public:
   
   static bool Blur(float_Matrix& img, int kernel_size);
   // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise apply a square equal-weighting blurring kernel to the image
-
-  static bool SimulateAcuity(float_Matrix& img, int visual_angle, taVector2f focal_point);
-  // #CAT_ImageProc simulates visual acuity by progressively increasing blur as eccentricy increases. Blur is created with a gaussian kernel. Visual angle is the max visual angle you are simulating and not related to the image size
 
   static bool ReplaceColor(float_Matrix& img,
                            float oc_r, float oc_g, float oc_b, float oc_a,
