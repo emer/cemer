@@ -956,7 +956,14 @@ void LeabraUnitSpec::Quarter_Init_TargFlags(LeabraUnitVars* u, LeabraNetwork* ne
 
 void LeabraUnitSpec::Quarter_Init_PrvVals(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no) {
-  u->net_prv_q = u->net;
+  if(deep.on && deep_raw_qtr & Q2) { // if using beta rhythm, this happens at that interval
+    if(Quarter_DeepRawPrevQtr(net->quarter)) {
+      u->net_prv_q = u->net;
+    }
+  }
+  else {
+    u->net_prv_q = u->net;
+  }
 }
 
 void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
