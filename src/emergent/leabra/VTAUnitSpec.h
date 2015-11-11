@@ -58,7 +58,10 @@ public:
   float         pptg_gain;     // #DEF_1 gain on bursts from PPTg
   float         lhb_gain;      // #DEF_1 gain on dips from LHbRMTg
   float         pv_gain;       // #DEF_1 gain on positive PV component of total phasic DA signal (net after subtracting VSPatchIndir (PVi) shunt signal)
-  float         pvi_gain;      // #DEF_1 gain on VSPatchIndir (PVi) shunt signal - higher pvi_gain == more shunting
+  float         pvi_d1_gain;  // #DEF_1 gain on VSPatchD1 component of PVi shunt signal
+  float         pvi_d2_gain;  // #DEF_1 gain on VSPatchD2 component of PVi shunt signal
+  bool          subtract_d2r;  // #DEF_false if true, subtract VSPatchD2 act in computing PVi shunt value
+  float         pvi_gain;      // #DEF_1 gain on VSPatch (PVi) shunt signal - higher pvi_gain == more shunting
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -115,8 +118,9 @@ public:
   // compute negative-valence dopamine
 
   virtual bool  GetRecvLayers_P(LeabraUnit* u,
-                              LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,
-                              LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay);
+                                LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,
+                                LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay,
+                                LeabraLayer*& vspatch_d2_lay);
     // get the recv layers to VTAp (DA_P case)
   
   virtual bool  GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay, LeabraLayer*& pptg_lay_n);

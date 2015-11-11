@@ -117,8 +117,9 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     LeabraLayer* lhb_lay = NULL;
     LeabraLayer* pospv_lay = NULL;
     LeabraLayer* vspatch_lay = NULL;
+    LeabraLayer* vspatch_d2_lay = NULL;
   
-    GetRecvLayers_P(u, pptg_lay_p, lhb_lay, pospv_lay, vspatch_lay);
+    GetRecvLayers_P(u, pptg_lay_p, lhb_lay, pospv_lay, vspatch_lay, vspatch_d2_lay);
   
     if(u->CheckError(!pptg_lay_p, quiet, rval,
                      "did not find PPTg layer to get DA bursts from (looks for PPTgUnitSpec)")) {
@@ -136,6 +137,12 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
                      "did not find VS Patch Direct layer to get pos PV shunting (cancelling) signal from (looks for layer with Patch in name)")) {
       rval = false;
     }
+    if(gains.subtract_d2r) {
+      if(u->CheckError(!vspatch_d2_lay, quiet, rval,
+                       "did not find VS Patch indirect layer to subtract from direct pos PV shunting (cancelling) signal from (not clear what should look for here)")) {
+        rval = false;
+      }
+    }
   }
   else {
     // TODO: add more recv layer checks as we determine which layers VTAn should receive from - only sure of NegPV currently
@@ -152,12 +159,14 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 }
 
 bool VTAUnitSpec::GetRecvLayers_P(LeabraUnit* u,
-                                LeabraLayer*& pptg_lay_p, LeabraLayer*& lhb_lay,
-                                LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay) {
+                                  LeabraLayer*& pptg_lay_p, LeabraLayer*& lhb_lay,
+                                  LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay,
+                                  LeabraLayer*& vspatch_d2_lay) {
   pptg_lay_p = NULL;
   lhb_lay = NULL;
   pospv_lay = NULL;
   vspatch_lay = NULL;
+  vspatch_d2_lay = NULL;
   
   const int nrg = u->NRecvConGps();
   for(int g=0; g<nrg; g++) {
@@ -173,8 +182,12 @@ bool VTAUnitSpec::GetRecvLayers_P(LeabraUnit* u,
       else if(fmlay->name.contains("PV")) {
         pospv_lay = fmlay;
       }
-      else if(us->InheritsFrom(TA_MSNUnitSpec)) vspatch_lay = fmlay;
-      // todo: could discriminate diff types of these now!
+      else if(us->InheritsFrom(TA_MSNUnitSpec) && fmlay->name.contains("D1")) {
+        vspatch_lay = fmlay;
+      }
+      else if(us->InheritsFrom(TA_MSNUnitSpec) && fmlay->name.contains("D2")) {
+        vspatch_d2_lay = fmlay;
+      }
     }
   }
   return true;
@@ -207,11 +220,12 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   LeabraLayer* lhb_lay = NULL;
   LeabraLayer* pospv_lay = NULL;
   LeabraLayer* vspatch_lay = NULL;
+  LeabraLayer* vspatch_d2_lay = NULL;
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
   
   LeabraLayer* lay = un->own_lay();
 
-  GetRecvLayers_P(un, pptg_lay_p, lhb_lay, pospv_lay, vspatch_lay);
+  GetRecvLayers_P(un, pptg_lay_p, lhb_lay, pospv_lay, vspatch_lay, vspatch_d2_lay);
     
   // use total activation over whole layer
   float pptg_da_p = pptg_lay_p->acts_eq.avg * pptg_lay_p->units.size;
@@ -220,9 +234,15 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   float vspvi;
   if(da.patch_cur) 
     vspvi = vspatch_lay->acts_eq.avg * vspatch_lay->units.size;
-  else
-    vspvi = vspatch_lay->acts_q0.avg * vspatch_lay->units.size;
-
+  else {
+    if(!gains.subtract_d2r) {
+      vspvi = vspatch_lay->acts_q0.avg * vspatch_lay->units.size;
+    }
+    else {
+      vspvi = (gains.pvi_d1_gain * vspatch_lay->acts_eq.avg * vspatch_lay->units.size) -
+      (gains.pvi_d2_gain * vspatch_d2_lay->acts_eq.avg * vspatch_d2_lay->units.size);
+    }
+}
   float burst_lhb_da = MIN(lhb_da, 0.0f); // if neg, promotes bursting
   float dip_lhb_da = MAX(lhb_da, 0.0f); // else, promotes dipping
     
