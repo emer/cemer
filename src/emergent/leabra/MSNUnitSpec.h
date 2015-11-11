@@ -29,16 +29,21 @@ class E_API MatrixActSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for matrix MSN unit activation
 INHERITED(SpecMemberBase)
 public:
+  float         gate_inhib;     // amount of post-gating inhibition to apply (proportion of current inhibition level)
+  float         gate_i_tau;     // decay time for post-gating inhibition, in units of deep active periods (e.g., beta frequency) -- determined by deep_raw_qtr 
   float         mnt_ach_inhib;  // how much does the PRESENCE of ACh from the TAN units drive extra inhibition to maintenance-gating Matrix units -- gi += mnt_ach_inhib * ach -- provides a bias for maint gating on non-reward trials
   float         out_ach_inhib;  // how much does the LACK of ACh from the TAN units drive extra inhibition to output-gating Matrix units -- gi += out_ach_inhib * (1-ach) -- provides a bias for output gating on reward trials
   bool          mnt_deep_mod;   // engage deep_mod for maintenance units based on projections from mnt deep layer -- allows biasing
   bool          out_deep_mod;   // engage deep_mod for output units based on projections from mnt deep layer -- allows biasing
+
+  float         gate_i_dt;      // #READ_ONLY #EXPERT rate = 1/gate_i_tau
   
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(MatrixActSpec);
 protected:
   SPEC_DEFAULTS;
+  void  UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy()       { };
@@ -81,7 +86,8 @@ public:
      LeabraInhib* thr, float ival) override;
 
   void  Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-  
+
+  void  Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(MSNUnitSpec);
 protected:

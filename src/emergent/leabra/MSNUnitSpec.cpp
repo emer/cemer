@@ -25,12 +25,19 @@ void MatrixActSpec::Initialize() {
 }
 
 void MatrixActSpec::Defaults_init() {
+  gate_inhib = 0.0f;
+  gate_i_tau = 2.0f;
   out_ach_inhib = 0.0f;
   mnt_ach_inhib = 0.0f;
   mnt_deep_mod = false;
   out_deep_mod = false;
+  gate_i_dt = 1.0f / gate_i_tau;
 }
 
+void MatrixActSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  gate_i_dt = 1.0f / gate_i_tau;
+}
 
 void MSNUnitSpec::Initialize() {
   dar = D1R;
@@ -66,6 +73,8 @@ void MSNUnitSpec::Compute_ApplyInhib
 
   if(matrix_patch != MATRIX) return;
 
+  u->gc_i += u->misc_1;         // post-gating inhibition
+  
   GateType gt = MatrixGateType(u, net, thr_no);
   if(gt == MAINT) {
     u->gc_i += matrix.mnt_ach_inhib * u->ach;
@@ -109,3 +118,18 @@ void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr
     inherited::Compute_DeepMod(u, net, thr_no); // use D1D2 one
   }
 }
+
+void MSNUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
+
+  inherited::Compute_DeepStateUpdt(u, net, thr_no);
+  if(matrix_patch != MATRIX) return;
+
+  if(u->thal > 0.0f) {          // we gated
+    u->misc_1 = matrix.gate_inhib * u->gc_i;
+  }
+  else {
+    u->misc_1 -= matrix.gate_i_dt * u->misc_1; // decay
+  }
+}
+
