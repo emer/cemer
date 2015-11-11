@@ -375,7 +375,7 @@ public: // XxxGui versions provide feedback to the user
 
   virtual bool          AddCtrlFunsToControlPanel(ControlPanel* ctrl_panel,
               const String& extra_label = "", const String& sub_gp_nm = "");
-  // #MENU #NO_MENU_PANEL #MENU_SEP_BEFORE #NULL_OK_0  #NULL_TEXT_0_CtrlPanel #CAT_Display add the program control functions (Init, Run, Step, Stop) to a project control_panel - a panel that is a user chosen collection of members and methods from one or more objects (if ctrl_panel is NULL, a new one is created in .ctrl_panels). returns false if method was already selected.   extra_label is prepended to item names, and if sub_gp_nm is specified, items will be put in this sub-group (new one will be made if it does not yet exist)
+  // #MENU #MENU_SEP_BEFORE #NULL_OK_0  #NULL_TEXT_0_CtrlPanel #CAT_Display add the program control functions (Init, Run, Step, Stop) to a project control_panel - a panel that is a user chosen collection of members and methods from one or more objects (if ctrl_panel is NULL, a new one is created in .ctrl_panels). returns false if method was already selected.   extra_label is prepended to item names, and if sub_gp_nm is specified, items will be put in this sub-group (new one will be made if it does not yet exist)
 
   virtual iPanelOfProgram* FindMyProgramPanel();
   // #IGNORE find my program panel, which contains the program editor -- useful for browser-specific operations
