@@ -621,6 +621,14 @@ void LeabraLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
 //      Quarter_Final
 
 void LeabraLayerSpec::Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->acts_prvq = lay->acts_eq;
+  if(lay->unit_groups) {
+    for(int g=0; g < lay->gp_geom.n; g++) {
+      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
+      gpd->acts_prvq = gpd->acts_eq;
+    }
+  }
+  
   if(net->quarter == 2) {       // quarter still pre-increment?
     Quarter_Final_GetMinus(lay, net);
   }

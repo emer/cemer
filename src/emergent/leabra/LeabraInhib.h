@@ -62,11 +62,13 @@ public:
   AvgMaxVals	acts;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum activation values for the layer
   AvgMaxVals	acts_eq;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_eq values for the layer
   AvgMaxVals	acts_raw;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_raw values for the layer
+  AvgMaxVals	acts_prvq;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_eq values for the layer, for the previous quarter (updated every quarter)
   AvgMaxVals	acts_m;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum minus-phase activation stats for the layer (from acts_eq at end of minus phase)
   AvgMaxVals	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum plus-phase activation stats for the layer (from acts_eq at end of plus phase)
   AvgMaxVals	acts_q0;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum previous-trial activation stats for the layer (from acts_p at start of new trial)
   AvgMaxVals	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum unit total inhibitory conductance values (optionally updated -- use for unit inhibition case)
   AvgMaxVals    am_deep_raw;    // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_raw values for the layer
+  AvgMaxVals    am_deep_raw_net;  // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_raw_net values for the layer
   AvgMaxVals    am_deep_mod_net; // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_mod_net values for the layer
   AvgMaxVals    am_deep_ctxt;    // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_ctxt values for the layer
 

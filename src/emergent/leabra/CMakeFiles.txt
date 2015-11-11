@@ -91,8 +91,7 @@ set(leabra_HEADS_MAKETA
   PFCUnitSpec.h
   PFCPrjnSpec.h
   BgPfcPrjnSpec.h
-  PFCTRCUnitSpec.h
-  
+    
   GpCustomPrjnSpecBase.h
   RowColPrjnSpec.h
   TopoWtsPrjnSpec.h
@@ -216,8 +215,7 @@ set(leabra_SRCS
   PFCUnitSpec.cpp
   PFCPrjnSpec.cpp
   BgPfcPrjnSpec.cpp
-  PFCTRCUnitSpec.cpp
-  
+    
   GpCustomPrjnSpecBase.cpp
   RowColPrjnSpec.cpp
   TopoWtsPrjnSpec.cpp

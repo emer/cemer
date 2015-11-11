@@ -357,6 +357,7 @@ void DeepSpec::Defaults_init() {
   raw_thr_abs = 0.1f;
   mod_min = 0.8f;
   trc_p_only_m = false;
+  trc_thal_gate = false;
   trc_trace = false;
   mod_range = 1.0f - mod_min;
 }
@@ -1379,7 +1380,8 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     LeabraUnGpData* ugd = lay->UnGpDataUn(un);
     if(deep.trc_p_only_m) {
-      if(ugd->acts_m.max > 0.1f) {  // only activate if we got minus phase activation!
+      if(ugd->acts_prvq.max > 0.1f && ugd->am_deep_raw_net.max > 0.1f) {
+        // only activate if we got prior and current activation
         net_syn = u->deep_raw_net; // only gets from deep!  and no extras!
       }
     }
@@ -1522,6 +1524,9 @@ void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
   }
   else if(deep.IsTRC()) {
     u->deep_lrn = u->deep_mod = 1.0f;         // don't do anything interesting
+    if(deep.trc_thal_gate) {
+      u->net *= u->thal;
+    }
   }
   // must be SUPER units at this point
   else if(lay->am_deep_mod_net.max < 0.1f) { // not enough yet 
