@@ -960,9 +960,9 @@ void LeabraUnitSpec::Quarter_Init_PrvVals(LeabraUnitVars* u, LeabraNetwork* net,
     // if using beta rhythm, this happens at that interval
     if(Quarter_DeepRawPrevQtr(net->quarter)) {
       if(net->quarter == 0)
-        u->net_prv_q = u->net_prv_trl; // net was cleared
+        u->net_prv_q = u->act_q0; // net_prv_trl; // net was cleared
       else
-        u->net_prv_q = u->net;
+        u->net_prv_q = u->act_eq; // net;
     }
   }
   else {
