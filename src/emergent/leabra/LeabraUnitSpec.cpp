@@ -956,13 +956,20 @@ void LeabraUnitSpec::Quarter_Init_TargFlags(LeabraUnitVars* u, LeabraNetwork* ne
 
 void LeabraUnitSpec::Quarter_Init_PrvVals(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no) {
-  if(deep.on && deep_raw_qtr & Q2) { // if using beta rhythm, this happens at that interval
+  if(deep.on && (deep_raw_qtr & Q2)) {
+    // if using beta rhythm, this happens at that interval
     if(Quarter_DeepRawPrevQtr(net->quarter)) {
-      u->net_prv_q = u->net;
+      if(net->quarter == 0)
+        u->net_prv_q = u->net_prv_trl; // net was cleared
+      else
+        u->net_prv_q = u->net;
     }
   }
   else {
-    u->net_prv_q = u->net;
+    if(net->quarter == 0)
+      u->net_prv_q = u->net_prv_trl; // net was cleared
+    else
+      u->net_prv_q = u->net;
   }
 }
 

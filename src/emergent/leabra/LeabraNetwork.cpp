@@ -616,11 +616,20 @@ void LeabraNetwork::Quarter_Init() {
 //   Compute_NetinScale();       // compute net scaling
 //   Compute_HardClamp();        // clamp all hard-clamped input acts
 
+  Quarter_Init_Deep();
+
   Compute_NetinScale_Senders(); // second phase after recv-based NetinScale
   // put it after Quarter_Init_Layer to allow for mods to netin scale in that guy..
-  Compute_HardClamp_Layer();
 
-  Quarter_Init_Deep();
+  // also, super important to do this AFTER the Quarter_Init_Unit call so net is still
+  // around for functions that use the previous value of it
+  // NOTE: *everyone* has to init netins when scales change across quarters, because any existing netin has already been weighted at the previous scaled -- no way to rescale that aggregate -- just have to start over..
+  if((phase == LeabraNetwork::PLUS_PHASE && net_misc.diff_scale_p) ||
+     (quarter == 1 && net_misc.diff_scale_q1)) {
+    Init_Netins();
+  }
+  
+  Compute_HardClamp_Layer();
 }
 
 void LeabraNetwork::Quarter_Init_Counters() {
@@ -632,12 +641,6 @@ void LeabraNetwork::Quarter_Init_Counters() {
 }
 
 void LeabraNetwork::Quarter_Init_Unit() {
-  // NOTE: *everyone* has to init netins when scales change across quarters, because any existing netin has already been weighted at the previous scaled -- no way to rescale that aggregate -- just have to start over..
-  if((phase == LeabraNetwork::PLUS_PHASE && net_misc.diff_scale_p) ||
-     (quarter == 1 && net_misc.diff_scale_q1)) {
-    Init_Netins();
-  }
-
   NET_THREAD_CALL(LeabraNetwork::Quarter_Init_Unit_Thr);
 }
 

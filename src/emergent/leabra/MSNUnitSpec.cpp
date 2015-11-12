@@ -126,7 +126,7 @@ void MSNUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, i
   if(matrix_patch != MATRIX) return;
 
   if(u->thal > 0.0f) {          // we gated
-    u->misc_1 += matrix.gate_inhib * u->net; // keep the net, not the inhib!
+    u->misc_1 += matrix.gate_inhib * u->net_prv_q; // keep the net, not the inhib!
   }
   else {
     u->misc_1 -= matrix.gate_i_dt * u->misc_1; // decay
