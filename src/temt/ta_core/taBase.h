@@ -1574,7 +1574,10 @@ public:
 
   virtual int   UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   // #IGNORE replace all pointers to old_ptr with new_ptr: walks the entire structure (members, lists, etc) and iteratively calls; returns number changed
-
+  
+  virtual void  WarnSettingToNull(taBase* old_par, taBase* new_par);
+  // #IGNORE only emit setting to NULL warning if copy/move between projects
+  
   ///////////////////////////////////////////////////////////////////////////
   //    DMem -- distributed memory (MPI)
 

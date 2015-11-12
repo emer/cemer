@@ -3713,7 +3713,7 @@ bool taBase::UpdatePointers_NewPar_Ptr(taBase** ptr, taBase* old_par, taBase* ne
     if(null_not_found) {
       taBase::SetPointer(ptr, NULL);
       if (this->GetName().nonempty()) {
-        taMisc::Warning(this->GetName(), " not found in new location - setting to NULL");
+       WarnSettingToNull(old_par, new_par);
       }
     }
     return false;
@@ -3772,7 +3772,7 @@ bool taBase::UpdatePointers_NewPar_SmPtr(taSmartPtr& ref, taBase* old_par, taBas
   taBase* old_own = ref.ptr()->GetOwner(old_par->GetTypeDef());
   if(old_own != old_par) {
     if (this->GetName().nonempty()) {
-      taMisc::Warning(this->GetName(), " not found in new location - setting to NULL");
+     WarnSettingToNull(old_par, new_par);
     }
     return false; // if not scoped in our guy, bail
   }
@@ -3784,7 +3784,7 @@ bool taBase::UpdatePointers_NewPar_SmPtr(taSmartPtr& ref, taBase* old_par, taBas
     if(null_not_found) {
       ref.set(NULL);            // reset to null if not found!
       if (this->GetName().nonempty()) {
-        taMisc::Warning(this->GetName(), " not found in new location - setting to NULL");
+       WarnSettingToNull(old_par, new_par);
       }
     }
     return false;
@@ -3799,7 +3799,7 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
     if (ref.ptr() && null_not_found) {
       ref.set(NULL);
       if (this->GetName().nonempty()) {
-        taMisc::Warning(this->GetName(), " not found in new location - setting to NULL");
+       WarnSettingToNull(old_par, new_par);
       }
     }
     return false;
@@ -3821,7 +3821,7 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
       if(null_not_found) {
         ref.set(NULL);            // reset to null if not found!
         if (this->GetName().nonempty()) {
-          taMisc::Warning(this->GetName(), " not found in new location - setting to NULL");
+         WarnSettingToNull(old_par, new_par);
         }
       }
       return false;
@@ -3848,7 +3848,7 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
         if(null_not_found) {
           ref.set(NULL);            // reset to null if not found!
           if (this->GetName().nonempty()) {
-            taMisc::Warning(this->GetName(), " not found in new location - setting to NULL");
+           WarnSettingToNull(old_par, new_par);
           }
         }
       }
@@ -3860,7 +3860,7 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
   if (rval == false && null_not_found) {
     ref.set(NULL);
     if (this->GetName().nonempty()) {
-      taMisc::Warning(this->GetName(), " not found in new location - setting to NULL");
+     WarnSettingToNull(old_par, new_par);
     }
   }
   return rval;
@@ -3880,7 +3880,7 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       if(md->HasOption("NO_SET_POINTER")) {
         int chg = UpdatePointers_NewPar_PtrNoSet(ptr, old_par, new_par);
         if (chg == 0 && this->GetName().nonempty()) {
-          taMisc::Warning(this->GetName(), " not found in new location - setting to NULL");
+         WarnSettingToNull(old_par, new_par);
         }
         nchg += chg; mychg += chg;
       }
@@ -4201,3 +4201,12 @@ int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
     UpdateAfterEdit();          // uae me: i changed
   return nchg;
 }
+
+void taBase::WarnSettingToNull(taBase* old_par, taBase* new_par) {
+  taProject* old_proj = old_par->GetMyProj();
+  taProject* new_proj = new_par->GetMyProj();
+  if (old_proj != new_proj) {
+    taMisc::Warning(this->GetName(), " not found in new location - setting to NULL");
+  }
+}
+
