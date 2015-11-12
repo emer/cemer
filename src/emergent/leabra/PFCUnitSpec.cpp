@@ -23,18 +23,17 @@ TA_BASEFUNS_CTORS_DEFN(PFCUnitSpec);
 
 void PFCMiscSpec::Initialize() {
   out_gate = false;
-  s_mnt_gain = 0.05f;
   Defaults_init();
 }
 
 void PFCMiscSpec::Defaults_init() {
-  out_mnt = 1;
-  out_clr_cnt = 0;
-  mnt_clr_cnt = 1;
-  max_mnt = 100;
-  clear_decay = 1.0f;
+  s_mnt_gain = 0.25f;
+  clear = 0.5f;
+  out_clear = 0.5f;
   mnt_thal = 1.0f;
   use_dyn = true;
+  max_mnt = 100;
+  out_mnt = 1;
   gate_thr = 0.1f;
 }
 
@@ -43,7 +42,7 @@ void PFCUnitSpec::Initialize() {
 }
 
 void PFCUnitSpec::Defaults_init() {
-  InitDynTable();
+  DefaultDynTable();
   SetUnique("deep", true);
   deep_raw_qtr = Q2_Q4;
   deep.on = true;
@@ -79,7 +78,7 @@ void  PFCUnitSpec::FormatDynTable() {
   dyn_table.EnforceRows(n_dyns);
 }
 
-void  PFCUnitSpec::InitDynTable() {
+void  PFCUnitSpec::DefaultDynTable(float std_tau) {
   if(pfc.out_gate)
     n_dyns = 1;
   else
@@ -107,7 +106,7 @@ void  PFCUnitSpec::InitDynTable() {
   SetDynVal("maint_rise", DYN_NAME, cur);
   SetDynVal("maintained, rising value over time", DYN_DESC, cur);
   SetDynVal(0.1f, DYN_INIT, cur);
-  SetDynVal(10.0f, DYN_RISE_TAU, cur);
+  SetDynVal(std_tau, DYN_RISE_TAU, cur);
   SetDynVal(0.0f, DYN_DECAY_TAU, cur);
 
   cur++;
@@ -115,14 +114,14 @@ void  PFCUnitSpec::InitDynTable() {
   SetDynVal("maintained, decaying value over time", DYN_DESC, cur);
   SetDynVal(1.0f, DYN_INIT, cur);
   SetDynVal(0.0f, DYN_RISE_TAU, cur);
-  SetDynVal(10.0f, DYN_DECAY_TAU, cur);
+  SetDynVal(std_tau, DYN_DECAY_TAU, cur);
 
   cur++;
   SetDynVal("maint_updn", DYN_NAME, cur);
   SetDynVal("maintained, rising then falling alue over time", DYN_DESC, cur);
   SetDynVal(0.1f, DYN_INIT, cur);
-  SetDynVal(5.0f, DYN_RISE_TAU, cur);
-  SetDynVal(10.0f, DYN_DECAY_TAU, cur);
+  SetDynVal(.5f * std_tau, DYN_RISE_TAU, cur);
+  SetDynVal(std_tau, DYN_DECAY_TAU, cur);
 
   UpdtDynTable();
 }
@@ -171,11 +170,82 @@ void PFCUnitSpec::UpdateAfterEdit_impl() {
 float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
-  if(deep.IsSuper() && u->thal_cnt >= 0.0f) { // only if in maintenance!  not for cleared!
-    net_ex += pfc.s_mnt_gain * u->deep_mod_net;
+  if(deep.IsSuper()) {
+    if(pfc.out_gate) {          // special logic here to maintain if nothing coming in
+      if(u->thal_cnt == 0.0f) { // just gated!
+        LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+        LeabraLayer* lay = (LeabraLayer*)un->own_lay();
+        LeabraUnGpData* ugd = lay->UnGpDataUn(un);
+        if(ugd->netin.max < 0.05f) { // weak..
+          net_ex += pfc.s_mnt_gain * u->deep_mod_net;
+        }
+      }
+      else if(u->thal_cnt > 0.0f) { // do it!
+        net_ex += pfc.s_mnt_gain * u->deep_mod_net;
+      }
+    }
+    else {                      // maint
+      if(u->thal_cnt > 0.0f) { // only if in maintenance!  not for cleared! or just gated!!
+        net_ex += pfc.s_mnt_gain * u->deep_mod_net;
+      }
+    }
   }
   return net_ex;
 }
+
+
+void PFCUnitSpec::Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!deep.IsSuper() || !Quarter_DeepRawNextQtr(net->quarter))
+    return;
+
+  const int cyc_per_qtr = net->times.quarter;
+  const int qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
+  const int half_cyc = cyc_per_qtr / 2;
+
+  if(pfc.out_gate) {
+    if(qtr_cyc != half_cyc - 1) // out gate goes first so maint can override clear!
+      return;
+  }
+  else {
+    if(qtr_cyc != half_cyc)
+      return;
+  }
+
+  // first, test for over-duration maintenance -- allow for active gating to override
+  if(pfc.out_gate) {
+    if(u->thal_cnt >= pfc.out_mnt) {
+      u->thal_cnt = -1.0f;
+    }
+  }
+  else {                        // maint gating
+    if(u->thal_cnt >= pfc.max_mnt) {
+      u->thal_cnt = -1.0f;
+    }
+  }
+  
+  if(u->thal > pfc.gate_thr) { // new gating signal -- reset counter
+    if(u->thal_cnt >= 1.0f) { // already maintaining
+      if(pfc.clear > 0.0f) {
+        DecayState(u, net, thr_no, pfc.clear);
+      }
+    }
+    u->thal_cnt = 0.0f;        // this is the "just gated" signal
+    if(pfc.out_gate) {         // time to clear out maint
+      ClearOtherMaint(u, net, thr_no); 
+    }
+  }
+}
+
+void PFCUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Rate(u, net, thr_no);
+  Compute_PFCGating(u, net, thr_no);
+}
+
+void PFCUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Spike(u, net, thr_no);
+  Compute_PFCGating(u, net, thr_no);
+}
+
 
 void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!deep.on || !Quarter_DeepRawNow(net->quarter)) return;
@@ -194,33 +264,7 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
   }
 
   float thal_eff = 0.0f;
-
-  // first, before anything else happens, see if we need to clear previous maint
-  if(pfc.out_gate && deep.IsSuper() && u->thal_cnt >= pfc.out_clr_cnt) {
-    // time to clear out maint
-    ClearOtherMaint(u, net, thr_no);     // this is tiny bit more expensive to do repeatedly
-    // but much clearer to have it done here than any other time
-  }
-  
-  // need to do all gating updates NOW, because otherwise we'll send bad info to deep and
-  // generally be out of sync
-  if(pfc.out_gate) {
-    if(u->thal_cnt >= pfc.out_mnt) {
-      u->thal_cnt = -1.0f;
-    }
-  }
-  else {                        // maint gating
-    if(u->thal_cnt >= pfc.max_mnt) {
-      u->thal_cnt = -1.0f;
-    }
-  }
-  
-  if(u->thal > pfc.gate_thr) { // new gating signal -- reset counter
-    u->thal_cnt = 0.0f;        // catches ANY gating signal within gating window here!
-    // note this can reset the thal_cnt above to perpetuate over-max gating
-    thal_eff = MAX(u->thal, pfc.mnt_thal);
-  }
-  else if(u->thal_cnt >= 0.0f) {
+  if(u->thal_cnt >= 0.0f) {     // gated or maintaining
     thal_eff = MAX(u->thal, pfc.mnt_thal);
   }
   
@@ -311,10 +355,10 @@ void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr
     if(!cs->IsMarkerCon()) continue;
     for(int j=0;j<send_gp->size; j++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)send_gp->UnVars(j,net);
-      if(uv->thal_cnt >= pfc.mnt_clr_cnt) { // important!  only for established maint, not just gated!
+      if(uv->thal_cnt >= 1.0f) { // important!  only for established maint, not just gated!
         uv->thal_cnt = -1.0f; // terminate!
-        if(pfc.clear_decay > 0.0f) {
-          DecayState(uv, net, thr_no, pfc.clear_decay); // note: thr_no is WRONG here! but shouldn't matter..
+        if(pfc.out_clear > 0.0f) {
+          DecayState(uv, net, thr_no, pfc.out_clear); // note: thr_no is WRONG here! but shouldn't matter..
         }
       }
     }

@@ -690,6 +690,9 @@ public:
   inline  bool Quarter_DeepRawPrevQtr(int qtr)
   { if(qtr == 0) qtr = 3; else qtr--; return deep_raw_qtr & (1 << qtr); }
   // #CAT_Activation test whether the previous quarter was when deep_raw was updated
+  inline  bool Quarter_DeepRawNextQtr(int qtr)
+  { return deep_raw_qtr & (1 << (qtr + 1)); }
+  // #CAT_Activation test whether the next quarter will be when deep_raw is updated
 
   virtual void Quarter_Init_Unit(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Activation quarter unit-level initialization functions: Init_TargFlags, Init_PrvNet, NetinScale

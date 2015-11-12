@@ -47,7 +47,7 @@ private:
 eTypeDef_Of(TANUnitSpec);
 
 class E_API TANUnitSpec : public LeabraUnitSpec {
-  // Models the Tonically Active Neurons of the Striatum, which are driven in part by the parafasicular pathway conveying projections from the CNA, PPTG, and OFC, and exhibit a burst-pause firing dynamic at the time of actual rewards and expected rewards, which has a net disinhibitory effect on MSN's -- we hypothesize that this drives consolidation of MSN synaptic traces and updates the sign with concurrent dopamine firing, and then clears the trace
+  // Models the Tonically Active Neurons of the Striatum, which are driven in part by the parafasicular pathway conveying projections from the CNA, PPTG, and OFC, and exhibit a burst-pause firing dynamic at the time of actual rewards and expected rewards, which has a net disinhibitory effect on MSN's -- we hypothesize that this drives consolidation of MSN synaptic traces and updates the sign with concurrent dopamine firing, and then clears the trace -- only sends ACh during deep_raw_qtr
 INHERITED(LeabraUnitSpec)
 public:
   TANActSpec      tan;             // parameters for computing TAN activation

@@ -80,7 +80,8 @@ void TANUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int th
   }
   else {
     inherited::Compute_Act_Rate(u, net, thr_no);
-    Send_ACh(u, net, thr_no);
+    if(Quarter_DeepRawNow(net->quarter))
+      Send_ACh(u, net, thr_no);
   }
 }
 
@@ -93,7 +94,8 @@ void TANUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int t
   }
   else {
     inherited::Compute_Act_Spike(u, net, thr_no);
-    Send_ACh(u, net, thr_no);
+    if(Quarter_DeepRawNow(net->quarter))
+      Send_ACh(u, net, thr_no);
   }
 }
 

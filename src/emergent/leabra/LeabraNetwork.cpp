@@ -1893,7 +1893,7 @@ void LeabraNetwork::Compute_dWt_Thr(int thr_no) {
     LeabraConGroup* scg = (LeabraConGroup*)ThrSendConGroup(thr_no, i);
     if(scg->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)scg->con_spec;
-    if(!cs->Quarter_LearnNow(this->quarter)) return;
+    if(!cs->Quarter_LearnNow(this->quarter)) continue;
     cs->Compute_dWt(scg, this, thr_no);
   }
 

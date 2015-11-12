@@ -31,14 +31,13 @@ class E_API PFCMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          out_gate;       // if true, this PFC layer is an output gate layer, which means that it only has transient activation during gating
-  int           out_mnt;        // #CONDSHOW_ON_out_gate #DEF_1:2 number of effective trials (updates of deep state, following deep_qtr updates) to maintain output gating signals
-  int           out_clr_cnt;    // #CONDSHOW_ON_out_gate #DEF_0 min thal_cnt count of the output gating stripe for when to drive out-go-clear of corresponding maintenance stripe(s)
-  int           mnt_clr_cnt;    // #CONDSHOW_ON_out_gate #DEF_1 min thal_cnt count of the maintenance stripe for when to drive out-go-clear of corresponding maintenance stripe(s)
-  int           max_mnt;        // #CONDSHOW_OFF_out_gate maximum duration of maintenance for any stripe -- beyond this limit, the maintenance is just automatically cleared
-  float         s_mnt_gain;     // #DEF_0.05;0.1 for superficial neurons, how much of deep_lrn to add into excitatory net input to support maintenance, from deep maintenance signal
-  float         clear_decay;    // how much to clear out maintenance activations when an output go signal fires and clears maintenance
-  float         mnt_thal;       // #DEF_1 effective thal activation to use for continued maintenance beyond the initial thal signal provided by the BG -- also sets and effective minimum thal value regardless of the actual gating thal value
+  float         s_mnt_gain;     // #DEF_0.25 for superficial neurons, how much of deep_lrn to add into excitatory net input to support maintenance, from deep maintenance signal
+  float         clear;          // #MIN_0 #MAX_1 how much to clear out (decay) super activations when the stripe itself gates and was previously maintaining something
+  float         out_clear;      // #MIN_0 #MAX_1 #CONDSHOW_ON_out_gate how much to clear out (decay) corresponding maintenance stripe activations when an output gating signal fires
+  float         mnt_thal;       // #DEF_1 effective thal activation to use in computing the deep_raw activation sent from super to deep layers, for continued maintenance beyond the initial thal signal provided by the BG -- also sets and effective minimum thal value regardless of the actual gating thal value
   bool          use_dyn;        // use fixed dynamics for updating deep_ctxt activations -- defined in dyn_table -- this also preserves the initial gating deep_ctxt value in misc_1 -- otherwise it is up to the recurrent loops between super and deep for maintenance
+  int           max_mnt;        // #CONDSHOW_OFF_out_gate maximum duration of maintenance for any stripe -- beyond this limit, the maintenance is just automatically cleared
+  int           out_mnt;        // #CONDSHOW_ON_out_gate #DEF_1:2 number of effective trials (updates of deep state, following deep_qtr updates) to maintain output gating signals
   float         gate_thr;       // #DEF_0.1 threshold on thalamic gating signal to drive gating -- when using GpiInvUnitSpec gpi, this parameter ususally doesn't matter!  set the gpi.gate_thr value instead -- the only constraint is that this value be <= gpi.min_thal as that determines the minimum thalamic value for gated stripes
   
   String        GetTypeDecoKey() const override { return "UnitSpec"; }
@@ -86,24 +85,27 @@ public:
   
   virtual void  FormatDynTable();
   // #IGNORE format the dyn table
-  virtual void  InitDynTable();
-  // default initial dynamics table
+  virtual void  DefaultDynTable(float std_tau = 10);
+  // #BUTTON default initial dynamics table -- specifies flat maint for output gating and all combinations of up / down dynamics for maint gating -- the std_tau parameter defines the number of update steps over which the dynamics occur (e.g., rises in std_tau time steps)
   virtual void  UpdtDynTable();
-  // #BUTTON update the dt values from the tau values
+  // check and make sure table is all OK
+
+  virtual void GetThalCntFromSuper(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // #IGNORE deep guys get thal_cnt from super
+  virtual void Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // called 1/2 way through phase prior to official gating phase, determines if gating happened and sets thal_cnt to 0 if so, and clears existing activations per params -- output gating layers call this 1 cycle prior to maint layers, to allow maint to override clear with new gating if present
+  virtual void ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // clear maintenance in other layers we project to using MarkerConSpec
 
   float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
                             int thr_no, float& net_syn) override;
-
   void Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
   void Quarter_Init_Deep(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
-  virtual void GetThalCntFromSuper(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
-  // #IGNORE deep guys get thal_cnt from super
+  void Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void Send_DeepCtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
   void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
-  virtual void ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
-  // clear maintenance in other layers we project to using MarkerConSpec
-  
   virtual void	GraphPFCDyns(DataTable* graph_data, int n_trials=20);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the pfc dynamics for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_raw is computed (typically once per trial)
   
