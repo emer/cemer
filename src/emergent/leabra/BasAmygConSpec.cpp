@@ -15,11 +15,23 @@
 
 #include "BasAmygConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(BasAmygLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(BasAmygConSpec);
 
-void BasAmygConSpec::Initialize() {
-  burst_da_gain = 1.0f;
+void BasAmygLearnSpec::Initialize() {
   dip_da_gain = 1.0f;
+  Defaults_init();
+}
+
+void BasAmygLearnSpec::Defaults_init() {
+  burst_da_gain = 1.0f;
+  us_delta = true;
+  delta_da = false;
+}
+
+
+void BasAmygConSpec::Initialize() {
+  Defaults_init();
 }
 
 void BasAmygConSpec::Defaults_init() {

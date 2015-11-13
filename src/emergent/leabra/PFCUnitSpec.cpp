@@ -171,23 +171,17 @@ float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
   if(deep.IsSuper()) {
-    if(pfc.out_gate) {          // special logic here to maintain if nothing coming in
-      if(u->thal_cnt == 0.0f) { // just gated!
-        LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
-        LeabraLayer* lay = (LeabraLayer*)un->own_lay();
-        LeabraUnGpData* ugd = lay->UnGpDataUn(un);
-        if(ugd->netin.max < 0.05f) { // weak..
-          net_ex += pfc.s_mnt_gain * u->deep_mod_net;
-        }
-      }
-      else if(u->thal_cnt > 0.0f) { // do it!
+    if(u->thal_cnt == 0.0f) { // just gated!
+      // special logic here to maintain if nothing coming in
+      LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+      LeabraLayer* lay = (LeabraLayer*)un->own_lay();
+      LeabraUnGpData* ugd = lay->UnGpDataUn(un);
+      if(ugd->netin.max < 0.05f) { // weak..
         net_ex += pfc.s_mnt_gain * u->deep_mod_net;
       }
     }
-    else {                      // maint
-      if(u->thal_cnt > 0.0f) { // only if in maintenance!  not for cleared! or just gated!!
-        net_ex += pfc.s_mnt_gain * u->deep_mod_net;
-      }
+    else if(u->thal_cnt > 0.0f) { // do it!
+      net_ex += pfc.s_mnt_gain * u->deep_mod_net;
     }
   }
   return net_ex;

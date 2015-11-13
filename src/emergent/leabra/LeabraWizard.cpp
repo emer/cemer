@@ -1088,10 +1088,9 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baap_cons->wt_scale.abs = 2.0f;
   baap_cons->SetUnique("wt_sig", true);
   baap_cons->wt_sig.gain = 1.0f;
-  baap_cons->SetUnique("burst_da_gain", true);
-  baap_cons->burst_da_gain = 1.0f;
-  baap_cons->SetUnique("dip_da_gain", true);
-  baap_cons->dip_da_gain = 0.1f;
+  baap_cons->SetUnique("ba_learn", true);
+  baap_cons->ba_learn.burst_da_gain = 1.0f;
+  baap_cons->ba_learn.dip_da_gain = 0.05f;
 
   // baan_cons->SetUnique("lrate", true); // keep same as baap actually
   // baan_cons->lrate = 0.1f;
@@ -1109,10 +1108,9 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   bae_cons->deep.on = true;
   bae_cons->deep.bg_lrate = 0.0f;
   bae_cons->deep.fg_lrate = 1.0f;
-  bae_cons->SetUnique("burst_da_gain", true);
-  bae_cons->burst_da_gain = 1.0f;
-  bae_cons->SetUnique("dip_da_gain", true);
-  bae_cons->dip_da_gain = 1.0f;
+  bae_cons->SetUnique("ba_learn", true);
+  bae_cons->ba_learn.burst_da_gain = 1.0f;
+  bae_cons->ba_learn.dip_da_gain = 1.0f;
 
   vspatch_cons->SetUnique("rnd", true);
   vspatch_cons->rnd.mean = 0.01f;
