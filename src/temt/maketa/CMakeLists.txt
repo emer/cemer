@@ -118,6 +118,17 @@ endif (WIN32)
 # to NOT use it here.
 add_executable(maketa ${maketa_SRCS})
 
+if (QT_USE_5)
+  set(CMAKE_PREFIX_PATH ${QTDIR}/lib/cmake)
+  find_package(Qt5Core)
+  include_directories(${Qt5Core_INCLUDE_DIRS})
+  target_link_libraries(maketa ${Qt5Core_LIBRARIES})
+else (QT_USE_5)
+  find_package(Qt4 REQUIRED QtCore)
+  include_directories(${QT_INCLUDES})
+  include(${QT_USE_FILE})
+endif (QT_USE_5)  
+
 ########### running bison on mta_parse.y ###############
 
 # note: change TARGET -> COMMAND and uncomment OUTPUT to get auto-building

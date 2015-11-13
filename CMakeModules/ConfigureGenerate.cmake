@@ -6,10 +6,10 @@
 # for different bulid types existing on the same machine
 
 # note: putting in source but default is to put in CMAKE_BINARY_DIR
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake_config.h.in ${CMAKE_SOURCE_DIR}/config.h)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake_config.h.in ${CMAKE_SOURCE_DIR}/taconfig.h)
 
 # don't forget to install this guy!
-install(FILES ${CMAKE_SOURCE_DIR}/config.h DESTINATION ${EMERGENT_INCLUDE_DEST})
+install(FILES ${CMAKE_SOURCE_DIR}/taconfig.h DESTINATION ${EMERGENT_INCLUDE_DEST})
 
 # VERSION is separate
 

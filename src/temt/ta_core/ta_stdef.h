@@ -19,7 +19,7 @@
 
 // standard definitions, etc
 
-#include "config.h"
+#include "taconfig.h"
 
 #ifndef __MAKETA__
 # if defined(_MSC_VER) //&& defined (_WIN64)
@@ -28,11 +28,11 @@
 # include <stdlib.h>
 # include <string.h>
 # include <limits.h>
-#endif
 
-//NOTE: qconfig.h has the endianness and ptr size, but no dependencies, and
-// no Qt-dependencies -- note that on Mac/frameworks, it is in QtCore
-#include <qconfig.h>
+// as of Qt5.6, we need to include qtglobal to get processor information -- it is
+// no longer included in qconfig.h, and the qprocessor* file that has it includes
+// qglobal anyway
+#include <qglobal.h>
 
 // we don't support PA RISC because of the nutty 5-int QAtomicInt
 #ifdef QT_ARCH_PARISC
@@ -50,6 +50,8 @@
 // BYTE_ORDER is one of TA_BIG or LITTLE -- tests must fail if neither
 #define TA_BYTE_ORDER Q_BYTE_ORDER
 
+#endif
+
 
 // misc optional debugging extras
 #ifdef DEBUG
@@ -60,9 +62,6 @@
 // when building maketa we want to make sure to turn off qt
 #ifdef NO_TA_BASE
 // configure should handle these, but we make sure we don't include Qt at all, or Inventor for maketa
-#  ifdef TA_USE_QT
-#    undef TA_USE_QT
-#  endif
 #  ifdef TA_GUI
 #    undef TA_GUI
 #  endif
@@ -231,8 +230,6 @@ typedef unsigned char   byte;
 # define isinf(x) (!_finite(x))
 #endif //_MSC_VER < 1800
 # endif // intptr_t hacks
-#endif // skip over for maketa
-
 
 // wordsize dependent stuff -- MSVC is (of course!) different
 #if (TA_POINTER_SIZE == 4)
@@ -262,6 +259,24 @@ typedef unsigned char   byte;
 #else
 # error "TA_POINTER_SIZE should be 4 or 8"
 #endif
+
+#else  // maketa
+
+// use the TA_POINTER_SIZE == 8 case -- shouldn't matter that much..
+# if defined(_WIN64)
+    typedef long long           intptr_t;
+    typedef unsigned long long  uintptr_t;
+    typedef long long           ta_intptr_t;
+    typedef unsigned long long  ta_uintptr_t;
+# else // gcc
+    typedef long long           ta_intptr_t;
+    typedef unsigned long long  ta_uintptr_t;
+# endif
+# define QVARIANT_TO_INTPTR(qv) (qv.toLongLong())
+
+#endif // skip over for maketa
+
+
 
 typedef long long             ta_int64_t;
 typedef unsigned long long    ta_uint64_t;
