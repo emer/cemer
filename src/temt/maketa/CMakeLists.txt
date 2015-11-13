@@ -124,11 +124,11 @@ if (QT_USE_5)
   include_directories(${Qt5Core_INCLUDE_DIRS})
   target_link_libraries(maketa ${Qt5Core_LIBRARIES})
 else (QT_USE_5)
-  find_package(Qt4 REQUIRED QtCore QtGui QtXml)
+  find_package(Qt4 REQUIRED QtCore)
   set(QT_USE_QT3SUPPORT 0)
-  set(QT_USE_QTXML 1)
   include_directories(${QT_INCLUDES})
   include(${QT_USE_FILE})
+  target_link_libraries(maketa ${QT_LIBRARIES})
 endif (QT_USE_5)  
 
 ########### running bison on mta_parse.y ###############
