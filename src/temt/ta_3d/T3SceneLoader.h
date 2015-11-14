@@ -30,7 +30,7 @@ class TA_API T3SceneLoader : public T3Entity {
   INHERITED(T3Entity)
 public:
   QUrl  source;
-  Qt3DCore::QSceneLoader* loader;
+  Qt3DRender::QSceneLoader* loader;
 
   virtual void  setSource(const QUrl& src);
   

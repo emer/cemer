@@ -118,11 +118,11 @@ public:
 #ifdef TA_QT3D
 #ifndef __MAKETA__
   T3RenderView*        view3d;       // surface that we render onto
-  Qt3DRender::QAspectEngine* engine;       // overall master engine that does stuff
+  Qt3DCore::QAspectEngine* engine;       // overall master engine that does stuff
   Qt3DRender::QRenderAspect* render;       // controls rendering
   Qt3DInput::QInputAspect*  input;        // controls input 
   Qt3DCore::QEntity*       root_entity;  // root of entire scenegraph, containing camera, then scene
-  Qt3DRender::QCamera*       camera;       // camera
+  Qt3DCore::QCamera*       camera;       // camera
   Qt3DRender::QFrameGraph*   framegraph;   // framegraph for rendering
   Qt3DRender::QViewport*     viewport;     // viewport for rendering
   Qt3DCore::QEntity*       scene;        // root of the actual objects being viewed -- below camera
@@ -194,7 +194,7 @@ public:
   //   Functions that actually do stuff
 
 #ifdef TA_QT3D
-  Qt3DRender::QCamera*        getViewerCamera() const  { return camera; }
+  Qt3DCore::QCamera*        getViewerCamera() const  { return camera; }
   void                  setSceneGraph(Qt3DCore::QEntity* root);
   // set scene graph to given new root -- added under root_entity
   Qt3DCore::QEntity*        getSceneGraph() const  { return scene; }

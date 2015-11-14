@@ -180,7 +180,7 @@ T3DataViewRoot* iT3Panel::root() {
 }
 
 #ifdef TA_QT3D
-void iT3Panel::setSceneTop(Qt3D::QEntity* node) {
+void iT3Panel::setSceneTop(Qt3DCore::QEntity* node) {
   t3vs->setSceneGraph(node);
 }
 #else

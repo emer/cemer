@@ -58,14 +58,14 @@ void T3SavedView::UpdateAfterEdit_impl() {
   }
 }
 
-void T3SavedView::getCameraParams(Qt3D::QCamera* cam) {
+void T3SavedView::getCameraParams(Qt3DCore::QCamera* cam) {
   pos = cam->position();
   look_at = cam->viewCenter();
   up = cam->upVector();
   view_saved = true;
 }
 
-bool T3SavedView::setCameraParams(Qt3D::QCamera* cam) {
+bool T3SavedView::setCameraParams(Qt3DCore::QCamera* cam) {
   if(!view_saved) return false;
   cam->setPosition(pos);
   cam->setViewCenter(look_at);

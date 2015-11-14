@@ -15,9 +15,9 @@
 
 #include "T3LineStrip.h"
 
-#include <Qt3DRender/Buffer>
+#include <Qt3DRender/QBuffer>
 #include <Qt3DRender/QBufferFunctor>
-#include <Qt3DRender/Attribute>
+#include <Qt3DRender/QAttribute>
 #include <Qt3DRender/QPhongMaterial>
 #include <Qt3DRender/QPerVertexColorMaterial>
 
@@ -35,7 +35,7 @@ QByteArray createLineStripVertexData(int n_points, float* points) {
   return vertexBytes;
 }
 
-class LineStripVertexBufferFunctor : public Qt3D::QBufferFunctor {
+class LineStripVertexBufferFunctor : public Qt3DRender::QBufferFunctor {
 public:
   int     n_points;
   float*  points;
@@ -55,7 +55,7 @@ public:
     return createLineStripVertexData(n_points, points);
   }
 
-  bool operator ==(const Qt3D::QBufferFunctor &other) const {
+  bool operator ==(const Qt3DRender::QBufferFunctor &other) const {
     // return false;               // always update!!!
     const LineStripVertexBufferFunctor *otherFunctor
       = dynamic_cast<const LineStripVertexBufferFunctor *>(&other);
@@ -74,7 +74,7 @@ QByteArray createLineStripIndexData(int n_indexes, int* indexes) {
   return indexBytes;
 }
 
-class LineStripIndexBufferFunctor : public Qt3D::QBufferFunctor {
+class LineStripIndexBufferFunctor : public Qt3DRender::QBufferFunctor {
 public:
   int     n_indexes;
   int*    indexes;
@@ -94,7 +94,7 @@ public:
     return createLineStripIndexData(n_indexes, indexes);
   }
 
-  bool operator ==(const Qt3D::QBufferFunctor &other) const {
+  bool operator ==(const Qt3DRender::QBufferFunctor &other) const {
     // return false;               // always update!!!
     const LineStripIndexBufferFunctor *otherFunctor
       = dynamic_cast<const LineStripIndexBufferFunctor *>(&other);
@@ -116,7 +116,7 @@ QByteArray createLineStripColorData(int n_colors, float* colors) {
   return colorBytes;
 }
 
-class LineStripColorBufferFunctor : public Qt3D::QBufferFunctor {
+class LineStripColorBufferFunctor : public Qt3DRender::QBufferFunctor {
 public:
   int     n_colors;
   float*  colors;
@@ -136,7 +136,7 @@ public:
     return createLineStripColorData(n_colors, colors);
   }
 
-  bool operator ==(const Qt3D::QBufferFunctor &other) const {
+  bool operator ==(const Qt3DRender::QBufferFunctor &other) const {
     // return false;               // always update!!!
     const LineStripColorBufferFunctor *otherFunctor
       = dynamic_cast<const LineStripColorBufferFunctor *>(&other);
@@ -153,47 +153,47 @@ public:
 ////////////////////////////////////////////////////
 //      Geometry
 
-class LineStripGeometry : public Qt3D::QGeometry {
+class LineStripGeometry : public Qt3DRender::QGeometry {
   // Q_OBJECT
 public:
-  explicit LineStripGeometry(Qt3D::QNode *parent)
-    : Qt3D::QGeometry(parent)
+  explicit LineStripGeometry(Qt3DCore::QNode *parent)
+    : Qt3DRender::QGeometry(parent)
     , m_mesh((T3LineStripMesh*)parent)
-    , m_positionAttribute(new Qt3D::QAttribute(this))
-    , m_indexAttribute(new Qt3D::QAttribute(this))
-    , m_colorAttribute(new Qt3D::QAttribute(this))
-    , m_vertexBuffer(new Qt3D::QBuffer(Qt3D::QBuffer::VertexBuffer, this))
-    , m_indexBuffer(new Qt3D::QBuffer(Qt3D::QBuffer::IndexBuffer, this))
-    , m_colorBuffer(new Qt3D::QBuffer(Qt3D::QBuffer::VertexBuffer, this))
+    , m_positionAttribute(new Qt3DRender::QAttribute(this))
+    , m_indexAttribute(new Qt3DRender::QAttribute(this))
+    , m_colorAttribute(new Qt3DRender::QAttribute(this))
+    , m_vertexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this))
+    , m_indexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::IndexBuffer, this))
+    , m_colorBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this))
   {
-    m_positionAttribute->setName(Qt3D::QAttribute::defaultPositionAttributeName());
-    m_positionAttribute->setDataType(Qt3D::QAttribute::Float);
+    m_positionAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+    m_positionAttribute->setDataType(Qt3DRender::QAttribute::Float);
     m_positionAttribute->setDataSize(3);
-    m_positionAttribute->setAttributeType(Qt3D::QAttribute::VertexAttribute);
+    m_positionAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
     m_positionAttribute->setBuffer(m_vertexBuffer);
     m_positionAttribute->setByteStride(3 * sizeof(float));
     m_positionAttribute->setCount(m_mesh->pointCount());
 
-    m_indexAttribute->setAttributeType(Qt3D::QAttribute::IndexAttribute);
-    m_indexAttribute->setDataType(Qt3D::QAttribute::UnsignedInt);
+    m_indexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
+    m_indexAttribute->setDataType(Qt3DRender::QAttribute::UnsignedInt);
     m_indexAttribute->setBuffer(m_indexBuffer);
     m_indexAttribute->setCount(m_mesh->indexCount());
 
-    m_colorAttribute->setName(Qt3D::QAttribute::defaultColorAttributeName());
-    m_colorAttribute->setDataType(Qt3D::QAttribute::Float);
+    m_colorAttribute->setName(Qt3DRender::QAttribute::defaultColorAttributeName());
+    m_colorAttribute->setDataType(Qt3DRender::QAttribute::Float);
     m_colorAttribute->setDataSize(4);
-    m_colorAttribute->setAttributeType(Qt3D::QAttribute::VertexAttribute);
+    m_colorAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
     m_colorAttribute->setBuffer(m_colorBuffer);
     m_colorAttribute->setByteStride(4 * sizeof(float));
     m_colorAttribute->setCount(m_mesh->colorCount());
 
     
     m_vertexBuffer->setBufferFunctor
-      (Qt3D::QBufferFunctorPtr(new LineStripVertexBufferFunctor(*m_mesh)));
+      (Qt3DRender::QBufferFunctorPtr(new LineStripVertexBufferFunctor(*m_mesh)));
     m_indexBuffer->setBufferFunctor
-      (Qt3D::QBufferFunctorPtr(new LineStripIndexBufferFunctor(*m_mesh)));
+      (Qt3DRender::QBufferFunctorPtr(new LineStripIndexBufferFunctor(*m_mesh)));
     m_colorBuffer->setBufferFunctor
-      (Qt3D::QBufferFunctorPtr(new LineStripColorBufferFunctor(*m_mesh)));
+      (Qt3DRender::QBufferFunctorPtr(new LineStripColorBufferFunctor(*m_mesh)));
 
     addAttribute(m_positionAttribute);
     addAttribute(m_indexAttribute);
@@ -201,25 +201,25 @@ public:
   }
 
   ~LineStripGeometry() {
-    Qt3D::QGeometry::cleanup();
+    Qt3DRender::QGeometry::cleanup();
   }
 
   void updateIndices() {
     m_indexAttribute->setCount(m_mesh->indexCount());
     m_indexBuffer->setBufferFunctor
-      (Qt3D::QBufferFunctorPtr(new LineStripIndexBufferFunctor(*m_mesh)));
+      (Qt3DRender::QBufferFunctorPtr(new LineStripIndexBufferFunctor(*m_mesh)));
   }
 
   void updateVertices() {
     m_positionAttribute->setCount(m_mesh->pointCount());
     m_vertexBuffer->setBufferFunctor
-      (Qt3D::QBufferFunctorPtr(new LineStripVertexBufferFunctor(*m_mesh)));
+      (Qt3DRender::QBufferFunctorPtr(new LineStripVertexBufferFunctor(*m_mesh)));
   }
   
   void updateColors() {
     m_colorAttribute->setCount(m_mesh->colorCount());
     m_colorBuffer->setBufferFunctor
-      (Qt3D::QBufferFunctorPtr(new LineStripColorBufferFunctor(*m_mesh)));
+      (Qt3DRender::QBufferFunctorPtr(new LineStripColorBufferFunctor(*m_mesh)));
   }
 
   void updateAll() {
@@ -229,12 +229,12 @@ public:
   }
   
 private:
-  Qt3D::QAttribute *m_positionAttribute;
-  Qt3D::QAttribute *m_indexAttribute;
-  Qt3D::QAttribute *m_colorAttribute;
-  Qt3D::QBuffer *m_vertexBuffer;
-  Qt3D::QBuffer *m_indexBuffer;
-  Qt3D::QBuffer *m_colorBuffer;
+  Qt3DRender::QAttribute *m_positionAttribute;
+  Qt3DRender::QAttribute *m_indexAttribute;
+  Qt3DRender::QAttribute *m_colorAttribute;
+  Qt3DRender::QBuffer *m_vertexBuffer;
+  Qt3DRender::QBuffer *m_indexBuffer;
+  Qt3DRender::QBuffer *m_colorBuffer;
   T3LineStripMesh* m_mesh;
 };
 
@@ -257,7 +257,7 @@ T3LineStripMesh::T3LineStripMesh(Qt3DNode* parent)
 }
 
 T3LineStripMesh::~T3LineStripMesh() {
-  Qt3D::QNode::cleanup();
+  Qt3DCore::QNode::cleanup();
 }
 
 void T3LineStripMesh::setNodeUpdating(bool updating) {

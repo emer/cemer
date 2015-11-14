@@ -33,7 +33,7 @@ T3Sphere::T3Sphere(Qt3DNode* parent, float rad)
 }
 
 void T3Sphere::init() {
-  Qt3D::QSphereMesh* cb = new Qt3D::QSphereMesh();
+  Qt3DRender::QSphereMesh* cb = new Qt3DRender::QSphereMesh();
   addMesh(cb);
   updateRadius();
 }
@@ -49,7 +49,7 @@ void T3Sphere::setRadius(float rad) {
 
 void T3Sphere::updateRadius() {
   size = QVector3D(radius, radius, radius);
-  Qt3D::QSphereMesh* cb = dynamic_cast<Qt3D::QSphereMesh*>(mesh);
+  Qt3DRender::QSphereMesh* cb = dynamic_cast<Qt3DRender::QSphereMesh*>(mesh);
   cb->setRadius(radius);
 }
 

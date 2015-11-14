@@ -19,7 +19,7 @@ T3Texture::T3Texture(Qt3DNode* parent)
   : inherited(parent)
   , specular(0.2f)
   , shininess(150.0f)
-  , texture(new Qt3D::QTextureImage(this))
+  , texture(new Qt3DRender::QTextureImage(this))
 {
   diffuse()->addTextureImage(texture);
 }

@@ -161,7 +161,8 @@ iPanelOfDocView::iPanelOfDocView()
 }
 
 iPanelOfDocView::~iPanelOfDocView() {
-  taiMisc::net_access_mgr->setMainWindow(NULL); // not us anymore -- someone else will set..
+  if(taiMisc::net_access_mgr)
+    taiMisc::net_access_mgr->setMainWindow(NULL); // not us anymore -- someone else will set..
   m_doc = NULL;
 }
 
@@ -342,7 +343,8 @@ void iPanelOfDocView::UpdatePanel_impl() {
   taDoc* doc_ = this->doc();
   if(!doc_) return;
 
-  taiMisc::net_access_mgr->setMainWindow(viewerWindow());
+  if(taiMisc::net_access_mgr)
+    taiMisc::net_access_mgr->setMainWindow(viewerWindow());
 
   wiki_edit->setText(doc_->wiki);
   url_edit->setText(doc_->url);

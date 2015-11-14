@@ -1690,7 +1690,8 @@ bool taRootBase::Startup_MakeMainWin() {
   if (bw) { //note: already constrained to max screen size, so we don't have to check
     // main win handle internal app urls
     taiMisc::main_window = bw;
-    taiMisc::net_access_mgr->setMainWindow(bw);
+    if(taiMisc::net_access_mgr)
+      taiMisc::net_access_mgr->setMainWindow(bw);
     QDesktopServices::setUrlHandler("ta", bw, "taUrlHandler");
     QDesktopServices::setUrlHandler("http", bw, "httpUrlHandler");
     bw->show(); // when we start event loop

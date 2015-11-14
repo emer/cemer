@@ -183,7 +183,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   view3d = new T3RenderView(scr);
   QWidget* container = QWidget::createWindowContainer(view3d);
   main_hbox->addWidget(container, 1);
-  engine = new Qt3DRender::QAspectEngine;
+  engine = new Qt3DCore::QAspectEngine;
   render = new Qt3DRender::QRenderAspect();
   engine->registerAspect(render);
   input = new Qt3DInput::QInputAspect;
@@ -226,7 +226,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   // transAnno->setName(QStringLiteral("renderingStyle"));
   // transAnno->setValue(QStringLiteral("transparent"));
   // trans_rend->addInclude(transAnno);
-  Qt3DCore::QCameraSelector* cam = new Qt3DCore::QCameraSelector(cb);
+  Qt3DRender::QCameraSelector* cam = new Qt3DRender::QCameraSelector(cb);
   cam->setCamera(camera);
   
   // Qt3DRender::QRenderPassFilter* opaque_rend = new Qt3DRender::QRenderPassFilter(cb);

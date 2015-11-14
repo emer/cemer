@@ -33,7 +33,7 @@ T3TwoDText::T3TwoDText(Qt3DNode* parent)
   label.setFont(fnt);
   texture = new T3TwoDTexture();
   plane = new T3Entity(this);
-  plane->addMesh(new Qt3D::QPlaneMesh());
+  plane->addMesh(new Qt3DRender::QPlaneMesh());
   T3DiffuseTransMapMaterial* mat = new T3DiffuseTransMapMaterial;
   mat->setSpecular(QColor::fromRgbF(0.2f, 0.2f, 0.2f, 1.0f));
   mat->setShininess(10000.0f);
@@ -70,7 +70,7 @@ void T3TwoDText::updateRender() {
   QSize sz = label.sizeHint();
   if(sz.width() < 1) sz.setWidth(1);
   if(sz.height() < 1) sz.setHeight(1);
-  Qt3D::QPlaneMesh* pmesh = dynamic_cast<Qt3D::QPlaneMesh*>(plane->mesh);
+  Qt3DRender::QPlaneMesh* pmesh = dynamic_cast<Qt3DRender::QPlaneMesh*>(plane->mesh);
   float wd = (float)sz.width() / (float)sz.height();
   // width in height units -- norm ht to 1
   size.setX(wd); size.setY(1.0f); size.setZ(1.0e-06f);
@@ -110,13 +110,13 @@ void T3TwoDText::updateRender() {
 
 
 T3TwoDTexture::T3TwoDTexture(Qt3DNode* parent)
-  : Qt3D::QAbstractTextureImage(parent)
+  : Qt3DRender::QAbstractTextureImage(parent)
 {
   image = NULL;
 }
 
 T3TwoDTexture::~T3TwoDTexture() {
-  Qt3D::QNode::cleanup();
+  Qt3DCore::QNode::cleanup();
   // no!
   // if(image)
   //   delete image;
@@ -141,25 +141,25 @@ void T3TwoDTexture::renderLabel(T3TwoDText& txt) {
   update();
 }
 
-class T3TwoDTextureDataFunctor : public Qt3D::QTextureDataFunctor {
+class T3TwoDTextureDataFunctor : public Qt3DRender::QTextureDataFunctor {
 public:
   QImage image;
   
   T3TwoDTextureDataFunctor(QImage* img)
-    : Qt3D::QTextureDataFunctor()
+    : Qt3DRender::QTextureDataFunctor()
     , image(*img)
   {}
 
   // Will be executed from within a QAspectJob
-  Qt3D::TexImageDataPtr operator ()() Q_DECL_FINAL
+  Qt3DRender::QTexImageDataPtr operator ()() Q_DECL_FINAL
   {
-    Qt3D::TexImageDataPtr dataPtr;
-    dataPtr.reset(new Qt3D::TexImageData());
+    Qt3DRender::QTexImageDataPtr dataPtr;
+    dataPtr.reset(new Qt3DRender::QTexImageData());
     dataPtr->setImage(image);
     return dataPtr;
   }
 
-  bool operator ==(const Qt3D::QTextureDataFunctor &other) const Q_DECL_FINAL
+  bool operator ==(const Qt3DRender::QTextureDataFunctor &other) const Q_DECL_FINAL
   {
     const T3TwoDTextureDataFunctor *otherFunctor = dynamic_cast<const T3TwoDTextureDataFunctor*>(&other);
     return (otherFunctor != Q_NULLPTR && otherFunctor->image == image);
@@ -168,8 +168,8 @@ public:
   QT3D_FUNCTOR(T3TwoDTextureDataFunctor)
 };
 
-Qt3D::QTextureDataFunctorPtr T3TwoDTexture::dataFunctor() const {
-  return Qt3D::QTextureDataFunctorPtr(new T3TwoDTextureDataFunctor(image));
+Qt3DRender::QTextureDataFunctorPtr T3TwoDTexture::dataFunctor() const {
+  return Qt3DRender::QTextureDataFunctorPtr(new T3TwoDTextureDataFunctor(image));
 }
 
 void T3TwoDTexture::copy(const Qt3DNode *ref) {

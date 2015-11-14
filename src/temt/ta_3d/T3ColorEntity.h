@@ -26,7 +26,7 @@
 class T3TransparentMaterial;
 class T3PerVertexTransMaterial;
 
-namespace Qt3D {
+namespace Qt3DRender {
   class QPerVertexColorMaterial;
 }
 

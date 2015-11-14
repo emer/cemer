@@ -15,9 +15,9 @@
 
 #include "T3LineBox.h"
 
-#include <Qt3DRender/Buffer>
+#include <Qt3DRender/QBuffer>
 #include <Qt3DRender/QBufferFunctor>
-#include <Qt3DRender/Attribute>
+#include <Qt3DRender/QAttribute>
 #include <Qt3DRender/QPhongMaterial>
 
 #include <T3Misc>
@@ -88,7 +88,7 @@ QByteArray createLineBoxVertexData(const QVector3D& size) {
   return vertexBytes;
 }
   
-class LineBoxVertexBufferFunctor : public Qt3D::QBufferFunctor {
+class LineBoxVertexBufferFunctor : public Qt3DRender::QBufferFunctor {
 public:
   QVector3D size;
   
@@ -101,7 +101,7 @@ public:
     return createLineBoxVertexData(size);
   }
 
-  bool operator ==(const Qt3D::QBufferFunctor &other) const {
+  bool operator ==(const Qt3DRender::QBufferFunctor &other) const {
     const LineBoxVertexBufferFunctor *otherFunctor =
       dynamic_cast<const LineBoxVertexBufferFunctor *>(&other);
     if (otherFunctor != Q_NULLPTR)
@@ -141,7 +141,7 @@ QByteArray createLineBoxIndexData(const QVector3D& size) {
   return indexBytes;
 }
 
-class LineBoxIndexBufferFunctor : public Qt3D::QBufferFunctor {
+class LineBoxIndexBufferFunctor : public Qt3DRender::QBufferFunctor {
 public:
   QVector3D size;
   
@@ -154,7 +154,7 @@ public:
     return createLineBoxIndexData(size);
   }
 
-  bool operator ==(const Qt3D::QBufferFunctor &other) const {
+  bool operator ==(const Qt3DRender::QBufferFunctor &other) const {
     const LineBoxIndexBufferFunctor *otherFunctor =
       dynamic_cast<const LineBoxIndexBufferFunctor *>(&other);
     if (otherFunctor != Q_NULLPTR)
@@ -168,53 +168,53 @@ public:
 ////////////////////////////////////////////////////
 //      Geometry
 
-class LineBoxGeometry : public Qt3D::QGeometry {
+class LineBoxGeometry : public Qt3DRender::QGeometry {
   // Q_OBJECT
 public:
-  explicit LineBoxGeometry(Qt3D::QNode *parent)
-    : Qt3D::QGeometry(parent)
+  explicit LineBoxGeometry(Qt3DCore::QNode *parent)
+    : Qt3DRender::QGeometry(parent)
     , m_mesh((T3LineBoxMesh*)parent)
-    , m_positionAttribute(new Qt3D::QAttribute(this))
-    , m_indexAttribute(new Qt3D::QAttribute(this))
-    , m_vertexBuffer(new Qt3D::QBuffer(Qt3D::QBuffer::VertexBuffer, this))
-    , m_indexBuffer(new Qt3D::QBuffer(Qt3D::QBuffer::IndexBuffer, this))
+    , m_positionAttribute(new Qt3DRender::QAttribute(this))
+    , m_indexAttribute(new Qt3DRender::QAttribute(this))
+    , m_vertexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this))
+    , m_indexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::IndexBuffer, this))
   {
-    m_positionAttribute->setName(Qt3D::QAttribute::defaultPositionAttributeName());
-    m_positionAttribute->setDataType(Qt3D::QAttribute::Float);
+    m_positionAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+    m_positionAttribute->setDataType(Qt3DRender::QAttribute::Float);
     m_positionAttribute->setDataSize(3);
-    m_positionAttribute->setAttributeType(Qt3D::QAttribute::VertexAttribute);
+    m_positionAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
     m_positionAttribute->setBuffer(m_vertexBuffer);
     m_positionAttribute->setByteStride(3 * sizeof(float));
     m_positionAttribute->setCount(8);
 
-    m_indexAttribute->setAttributeType(Qt3D::QAttribute::IndexAttribute);
-    m_indexAttribute->setDataType(Qt3D::QAttribute::UnsignedShort);
+    m_indexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
+    m_indexAttribute->setDataType(Qt3DRender::QAttribute::UnsignedShort);
     m_indexAttribute->setBuffer(m_indexBuffer);
     m_indexAttribute->setCount(24);
 
     m_vertexBuffer->setBufferFunctor
-      (Qt3D::QBufferFunctorPtr(new LineBoxVertexBufferFunctor(*m_mesh)));
+      (Qt3DRender::QBufferFunctorPtr(new LineBoxVertexBufferFunctor(*m_mesh)));
     m_indexBuffer->setBufferFunctor
-      (Qt3D::QBufferFunctorPtr(new LineBoxIndexBufferFunctor(*m_mesh)));
+      (Qt3DRender::QBufferFunctorPtr(new LineBoxIndexBufferFunctor(*m_mesh)));
 
     addAttribute(m_positionAttribute);
     addAttribute(m_indexAttribute);
   }
 
   ~LineBoxGeometry() {
-    Qt3D::QGeometry::cleanup();
+    Qt3DRender::QGeometry::cleanup();
   }
 
   void updateSize() {
     m_vertexBuffer->setBufferFunctor
-      (Qt3D::QBufferFunctorPtr(new LineBoxVertexBufferFunctor(*m_mesh)));
+      (Qt3DRender::QBufferFunctorPtr(new LineBoxVertexBufferFunctor(*m_mesh)));
   }
 
 private:
-  Qt3D::QAttribute *m_positionAttribute;
-  Qt3D::QAttribute *m_indexAttribute;
-  Qt3D::QBuffer *m_vertexBuffer;
-  Qt3D::QBuffer *m_indexBuffer;
+  Qt3DRender::QAttribute *m_positionAttribute;
+  Qt3DRender::QAttribute *m_indexAttribute;
+  Qt3DRender::QBuffer *m_vertexBuffer;
+  Qt3DRender::QBuffer *m_indexBuffer;
   T3LineBoxMesh* m_mesh;
 };
 
@@ -238,7 +238,7 @@ T3LineBoxMesh::T3LineBoxMesh(Qt3DNode* parent, const QVector3D* sz)
 }
 
 T3LineBoxMesh::~T3LineBoxMesh() {
-  Qt3D::QNode::cleanup();
+  Qt3DCore::QNode::cleanup();
 }
 
 void T3LineBoxMesh::setSize(const QVector3D& sz) {

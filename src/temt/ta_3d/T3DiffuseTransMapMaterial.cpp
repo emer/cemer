@@ -21,7 +21,7 @@
 #include <Qt3DRender/QShaderProgram>
 #include <Qt3DRender/QParameter>
 #include <Qt3DRender/QRenderPass>
-#include <Qt3DRender/QOpenglFilter>
+//#include <Qt3DRender/QOpenGLFilter> // TODO!
 #include <Qt3DRender/QCullFace>
 #include <Qt3DRender/QDepthTest>
 #include <Qt3DRender/QDepthMask>
@@ -36,13 +36,13 @@ T3DiffuseTransMapMaterial::T3DiffuseTransMapMaterial(Qt3DCore::QNode *parent)
   : inherited(parent)
   , m_transEffect(new Qt3DRender::QEffect())
   , m_diffuseTexture(new Qt3DRender::QTexture2D())
-  , m_ambientParameter(new Qt3DCore::QParameter(QStringLiteral("ka"), QColor::fromRgbF(0.05f, 0.05f, 0.05f, 1.0f)))
-  , m_diffuseParameter(new Qt3DCore::QParameter(QStringLiteral("diffuseTexture"), m_diffuseTexture))
-  , m_specularParameter(new Qt3DCore::QParameter(QStringLiteral("ks"), QColor::fromRgbF(0.95f, 0.95f, 0.95f, 1.0f)))
-  , m_shininessParameter(new Qt3DCore::QParameter(QStringLiteral("shininess"), 150.0f))
-    , m_textureScaleParameter(new Qt3DCore::QParameter(QStringLiteral("texCoordScale"), 1.0f))
-  , m_lightPositionParameter(new Qt3DCore::QParameter(QStringLiteral("lightPosition"), QVector4D(1.0f, 1.0f, 0.0f, 1.0f)))
-  , m_lightIntensityParameter(new Qt3DCore::QParameter(QStringLiteral("lightIntensity"), QVector3D(1.0f, 1.0f, 1.0f)))
+  , m_ambientParameter(new Qt3DRender::QParameter(QStringLiteral("ka"), QColor::fromRgbF(0.05f, 0.05f, 0.05f, 1.0f)))
+  , m_diffuseParameter(new Qt3DRender::QParameter(QStringLiteral("diffuseTexture"), m_diffuseTexture))
+  , m_specularParameter(new Qt3DRender::QParameter(QStringLiteral("ks"), QColor::fromRgbF(0.95f, 0.95f, 0.95f, 1.0f)))
+  , m_shininessParameter(new Qt3DRender::QParameter(QStringLiteral("shininess"), 150.0f))
+    , m_textureScaleParameter(new Qt3DRender::QParameter(QStringLiteral("texCoordScale"), 1.0f))
+  , m_lightPositionParameter(new Qt3DRender::QParameter(QStringLiteral("lightPosition"), QVector4D(1.0f, 1.0f, 0.0f, 1.0f)))
+  , m_lightIntensityParameter(new Qt3DRender::QParameter(QStringLiteral("lightIntensity"), QVector3D(1.0f, 1.0f, 1.0f)))
   , m_transGL3Technique(new Qt3DRender::QTechnique())
   , m_transGL2Technique(new Qt3DRender::QTechnique())
   , m_transES2Technique(new Qt3DRender::QTechnique())
@@ -198,20 +198,21 @@ void T3DiffuseTransMapMaterial::init() {
   // m_transGL2ES2Shader->setVertexShaderCode(Qt3DRender::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/phongalpha.vert"))));
   // m_transGL2ES2Shader->setFragmentShaderCode(Qt3DRender::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/phongalpha.frag"))));
 
-  m_transGL3Technique->openGLFilter()->setApi(Qt3DRender::QOpenGLFilter::Desktop);
-  m_transGL3Technique->openGLFilter()->setMajorVersion(3);
-  m_transGL3Technique->openGLFilter()->setMinorVersion(1);
-  m_transGL3Technique->openGLFilter()->setProfile(Qt3DRender::QOpenGLFilter::Core);
+  // todo:
+  // m_transGL3Technique->openGLFilter()->setApi(Qt3DRender::QOpenGLFilter::Desktop);
+  // m_transGL3Technique->openGLFilter()->setMajorVersion(3);
+  // m_transGL3Technique->openGLFilter()->setMinorVersion(1);
+  // m_transGL3Technique->openGLFilter()->setProfile(Qt3DRender::QOpenGLFilter::Core);
 
-  m_transGL2Technique->openGLFilter()->setApi(Qt3DRender::QOpenGLFilter::Desktop);
-  m_transGL2Technique->openGLFilter()->setMajorVersion(2);
-  m_transGL2Technique->openGLFilter()->setMinorVersion(0);
-  m_transGL2Technique->openGLFilter()->setProfile(Qt3DRender::QOpenGLFilter::None);
+  // m_transGL2Technique->openGLFilter()->setApi(Qt3DRender::QOpenGLFilter::Desktop);
+  // m_transGL2Technique->openGLFilter()->setMajorVersion(2);
+  // m_transGL2Technique->openGLFilter()->setMinorVersion(0);
+  // m_transGL2Technique->openGLFilter()->setProfile(Qt3DRender::QOpenGLFilter::None);
 
-  m_transES2Technique->openGLFilter()->setApi(Qt3DRender::QOpenGLFilter::ES);
-  m_transES2Technique->openGLFilter()->setMajorVersion(2);
-  m_transES2Technique->openGLFilter()->setMinorVersion(0);
-  m_transES2Technique->openGLFilter()->setProfile(Qt3DRender::QOpenGLFilter::None);
+  // m_transES2Technique->openGLFilter()->setApi(Qt3DRender::QOpenGLFilter::ES);
+  // m_transES2Technique->openGLFilter()->setMajorVersion(2);
+  // m_transES2Technique->openGLFilter()->setMinorVersion(0);
+  // m_transES2Technique->openGLFilter()->setProfile(Qt3DRender::QOpenGLFilter::None);
 
   m_transGL3RenderPass->setShaderProgram(m_transGL3Shader);
   m_transGL2RenderPass->setShaderProgram(m_transGL2ES2Shader);

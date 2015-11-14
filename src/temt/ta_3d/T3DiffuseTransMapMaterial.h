@@ -25,7 +25,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-namespace Qt3D {
+namespace Qt3DRender {
 
 class QEffect;
 class QTechnique;
@@ -73,13 +73,13 @@ public:
  protected:
   Qt3DRender::QEffect *m_transEffect;
   Qt3DRender::QAbstractTextureProvider *m_diffuseTexture;
-  Qt3DCore::QParameter *m_ambientParameter;
-  Qt3DCore::QParameter *m_diffuseParameter;
-  Qt3DCore::QParameter *m_specularParameter;
-  Qt3DCore::QParameter *m_shininessParameter;
-  Qt3DCore::QParameter *m_textureScaleParameter;
-  Qt3DCore::QParameter *m_lightPositionParameter;
-  Qt3DCore::QParameter *m_lightIntensityParameter;
+  Qt3DRender::QParameter *m_ambientParameter;
+  Qt3DRender::QParameter *m_diffuseParameter;
+  Qt3DRender::QParameter *m_specularParameter;
+  Qt3DRender::QParameter *m_shininessParameter;
+  Qt3DRender::QParameter *m_textureScaleParameter;
+  Qt3DRender::QParameter *m_lightPositionParameter;
+  Qt3DRender::QParameter *m_lightIntensityParameter;
   Qt3DRender::QTechnique *m_transGL3Technique;
   Qt3DRender::QTechnique *m_transGL2Technique;
   Qt3DRender::QTechnique *m_transES2Technique;

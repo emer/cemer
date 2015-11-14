@@ -24,7 +24,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-namespace Qt3D {
+namespace Qt3DRender {
 
 class QEffect;
 class QTechnique;
@@ -43,7 +43,7 @@ public:
   Q_PROPERTY(float ambient READ ambient WRITE setAmbient NOTIFY ambientChanged)
   Q_PROPERTY(float shininess READ shininess WRITE setShininess NOTIFY shininessChanged)
 
-  explicit T3PerVertexTransMaterial(Qt3D::QNode *parent = 0);
+  explicit T3PerVertexTransMaterial(Qt3DCore::QNode *parent = 0);
   ~T3PerVertexTransMaterial();
 
   QColor specular() const;
@@ -61,11 +61,11 @@ public:
 
  protected:
   Qt3DRender::QEffect *m_transEffect;
-  Qt3DCore::QParameter *m_ambientParameter;
-  Qt3DCore::QParameter *m_specularParameter;
-  Qt3DCore::QParameter *m_shininessParameter;
-  Qt3DCore::QParameter *m_lightPositionParameter;
-  Qt3DCore::QParameter *m_lightIntensityParameter;
+  Qt3DRender::QParameter *m_ambientParameter;
+  Qt3DRender::QParameter *m_specularParameter;
+  Qt3DRender::QParameter *m_shininessParameter;
+  Qt3DRender::QParameter *m_lightPositionParameter;
+  Qt3DRender::QParameter *m_lightIntensityParameter;
   Qt3DRender::QTechnique *m_transGL3Technique;
   Qt3DRender::QTechnique *m_transGL2Technique;
   Qt3DRender::QTechnique *m_transES2Technique;

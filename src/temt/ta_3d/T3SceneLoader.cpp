@@ -17,7 +17,7 @@
 
 T3SceneLoader::T3SceneLoader(Qt3DNode* parent)
   : inherited(parent)
-  , loader(new Qt3D::QSceneLoader(this))
+  , loader(new Qt3DRender::QSceneLoader(this))
 {
   addComponent(loader);
 }
