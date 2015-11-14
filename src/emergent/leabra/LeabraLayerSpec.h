@@ -280,6 +280,9 @@ public:
   virtual void	Init_Acts_Layer(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation initialize unit-level dynamic state variables (activations, etc)
 
+  virtual void	DecayState(LeabraLayer* lay, LeabraNetwork* net, float decay);
+  // #CAT_Activation decay the state of this layer -- not normally called but available for programs etc to control specific layers
+
   ///////////////////////////////////////////////////////////////////////
   //	Trial_Init -- at start of trial
 

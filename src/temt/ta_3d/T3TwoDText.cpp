@@ -16,7 +16,7 @@
 #include "T3TwoDText.h"
 
 #include <T3DiffuseTransMapMaterial>
-#include <Qt3DRenderer/QPlaneMesh>
+#include <Qt3DRender/QPlaneMesh>
 #include <QPalette>
 #include <QPainter>
 

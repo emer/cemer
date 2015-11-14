@@ -18,16 +18,16 @@
 
 // parent includes:
 #include <T3ColorEntity>
-#include <Qt3DRenderer/QGeometryRenderer>
+#include <Qt3DRender/QGeometryRenderer>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API T3FrameMesh : public Qt3D::QGeometryRenderer {
+class TA_API T3FrameMesh : public Qt3DRender::QGeometryRenderer {
   // a picture-frame shape -- rectangular with a width and thickness, oriented in XY plane
   Q_OBJECT
-  INHERITED(Qt3D::QGeometryRenderer)
+  INHERITED(Qt3DRender::QGeometryRenderer)
 
   Q_PROPERTY(float width READ width WRITE setWidth NOTIFY widthChanged)
   Q_PROPERTY(float height READ height WRITE setHeight NOTIFY heightChanged)

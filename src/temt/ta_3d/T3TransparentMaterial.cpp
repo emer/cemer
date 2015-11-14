@@ -15,18 +15,18 @@
 
 #include "T3TransparentMaterial.h"
 
-#include <Qt3DRenderer/QMaterial>
-#include <Qt3DRenderer/QEffect>
-#include <Qt3DRenderer/QTechnique>
-#include <Qt3DRenderer/QShaderProgram>
-#include <Qt3DRenderer/QParameter>
-#include <Qt3DRenderer/QRenderPass>
-#include <Qt3DRenderer/QOpenglFilter>
-#include <Qt3DRenderer/QCullFace>
-#include <Qt3DRenderer/QDepthTest>
-#include <Qt3DRenderer/QDepthMask>
-#include <Qt3DRenderer/QBlendState>
-#include <Qt3DRenderer/QBlendEquation>
+#include <Qt3DRender/QMaterial>
+#include <Qt3DRender/QEffect>
+#include <Qt3DRender/QTechnique>
+#include <Qt3DRender/QShaderProgram>
+#include <Qt3DRender/QParameter>
+#include <Qt3DRender/QRenderPass>
+#include <Qt3DRender/QOpenglFilter>
+#include <Qt3DRender/QCullFace>
+#include <Qt3DRender/QDepthTest>
+#include <Qt3DRender/QDepthMask>
+#include <Qt3DRender/QBlendState>
+#include <Qt3DRender/QBlendEquation>
 #include <QUrl>
 #include <QVector3D>
 #include <QVector4D>

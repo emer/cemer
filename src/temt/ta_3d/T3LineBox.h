@@ -18,16 +18,16 @@
 
 // parent includes:
 #include <T3ColorEntity>
-#include <Qt3DRenderer/QGeometryRenderer>
+#include <Qt3DRender/QGeometryRenderer>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API T3LineBoxMesh : public Qt3D::QGeometryRenderer {
+class TA_API T3LineBoxMesh : public Qt3DRender::QGeometryRenderer {
   // mesh for a 3D line box  -- good for bounding boxes etc
   Q_OBJECT
-  INHERITED(Qt3D::QGeometryRenderer)
+  INHERITED(Qt3DRender::QGeometryRenderer)
 public:
   QVector3D     size;           // size of the frame box
     

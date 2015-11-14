@@ -20,7 +20,7 @@
 #include <T3ColorEntity>
 
 // member includes:
-#include <Qt3DRenderer/QGeometryRenderer>
+#include <Qt3DRender/QGeometryRenderer>
 #include <float_Matrix>
 #include <int_Array>
 #include <taVector3f>
@@ -28,10 +28,10 @@
 
 // declare all other types mentioned but not required to include:
 
-class TA_API T3LineStripMesh : public Qt3D::QGeometryRenderer {
+class TA_API T3LineStripMesh : public Qt3DRender::QGeometryRenderer {
   // mesh for an arbitrary line strip with verticies and indexes
   Q_OBJECT
-  INHERITED(Qt3D::QGeometryRenderer)
+  INHERITED(Qt3DRender::QGeometryRenderer)
 public:
   bool  node_updating;          // is the node currently updating its structure, and thus rendering should be blocked, or not?
   virtual void setNodeUpdating(bool updating);

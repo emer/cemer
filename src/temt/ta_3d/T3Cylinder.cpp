@@ -15,8 +15,8 @@
 
 #include "T3Cylinder.h"
 
-#include <Qt3DRenderer/QCylinderMesh>
-#include <Qt3DRenderer/QPhongMaterial>
+#include <Qt3DRender/QCylinderMesh>
+#include <Qt3DRender/QPhongMaterial>
 
 T3Cylinder::T3Cylinder(Qt3DNode* parent)
   : inherited(parent)
@@ -37,9 +37,9 @@ T3Cylinder::T3Cylinder(Qt3DNode* parent, LongAxis ax, float rad, float len)
 }
 
 void T3Cylinder::init() {
-  axis_rotate = new Qt3D::QRotateTransform;
+  axis_rotate = new Qt3DCore::QRotateTransform;
   transform->addTransform(axis_rotate);
-  Qt3D::QCylinderMesh* cb = new Qt3D::QCylinderMesh();
+  Qt3DRender::QCylinderMesh* cb = new Qt3DRender::QCylinderMesh();
   addMesh(cb);
   updateGeom();
 }
@@ -71,7 +71,7 @@ void T3Cylinder::setLength(float len) {
 }
 
 void T3Cylinder::updateGeom() {
-  Qt3D::QCylinderMesh* cb = dynamic_cast<Qt3D::QCylinderMesh*>(mesh);
+  Qt3DRender::QCylinderMesh* cb = dynamic_cast<Qt3DRender::QCylinderMesh*>(mesh);
   cb->setRadius(radius);
   cb->setLength(length);
   switch(axis) {

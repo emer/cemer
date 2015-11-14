@@ -65,7 +65,7 @@ public:
 
   T3DataViewRoot*       root();
 #ifdef TA_QT3D
-  virtual void          setSceneTop(Qt3D::QEntity* node); // set top of scene -- usually called during Render_post
+  virtual void          setSceneTop(Qt3DCore::QEntity* node); // set top of scene -- usually called during Render_post
 #else
   virtual void          setSceneTop(SoNode* node); // set top of scene -- usually called during Render_post
 #endif

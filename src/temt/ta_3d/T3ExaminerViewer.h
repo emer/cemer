@@ -60,7 +60,7 @@ namespace Qt3D {
 class T3CameraParams; //
 
 #include <Qt3DCore>
-#include <Qt3DRenderer>
+#include <Qt3DRender>
 #include <Qt3DInput>
 #include <QWindow>
 
@@ -118,15 +118,15 @@ public:
 #ifdef TA_QT3D
 #ifndef __MAKETA__
   T3RenderView*        view3d;       // surface that we render onto
-  Qt3D::QAspectEngine* engine;       // overall master engine that does stuff
-  Qt3D::QRenderAspect* render;       // controls rendering
-  Qt3D::QInputAspect*  input;        // controls input 
-  Qt3D::QEntity*       root_entity;  // root of entire scenegraph, containing camera, then scene
-  Qt3D::QCamera*       camera;       // camera
-  Qt3D::QFrameGraph*   framegraph;   // framegraph for rendering
-  Qt3D::QViewport*     viewport;     // viewport for rendering
-  Qt3D::QEntity*       scene;        // root of the actual objects being viewed -- below camera
-  Qt3D::QMouseController* mouse_ctrl; // overall mouse controller for scene -- lives in root_entity
+  Qt3DRender::QAspectEngine* engine;       // overall master engine that does stuff
+  Qt3DRender::QRenderAspect* render;       // controls rendering
+  Qt3DInput::QInputAspect*  input;        // controls input 
+  Qt3DCore::QEntity*       root_entity;  // root of entire scenegraph, containing camera, then scene
+  Qt3DRender::QCamera*       camera;       // camera
+  Qt3DRender::QFrameGraph*   framegraph;   // framegraph for rendering
+  Qt3DRender::QViewport*     viewport;     // viewport for rendering
+  Qt3DCore::QEntity*       scene;        // root of the actual objects being viewed -- below camera
+  Qt3DInput::QMouseController* mouse_ctrl; // overall mouse controller for scene -- lives in root_entity
   QColor               bg_color;     // background color
 #endif
 #else
@@ -194,10 +194,10 @@ public:
   //   Functions that actually do stuff
 
 #ifdef TA_QT3D
-  Qt3D::QCamera*        getViewerCamera() const  { return camera; }
-  void                  setSceneGraph(Qt3D::QEntity* root);
+  Qt3DRender::QCamera*        getViewerCamera() const  { return camera; }
+  void                  setSceneGraph(Qt3DCore::QEntity* root);
   // set scene graph to given new root -- added under root_entity
-  Qt3D::QEntity*        getSceneGraph() const  { return scene; }
+  Qt3DCore::QEntity*        getSceneGraph() const  { return scene; }
   // current scene being viewed
   void                  setBackgroundColor(const QColor & color);
   QColor                backgroundColor() const { return bg_color; }

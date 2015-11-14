@@ -15,8 +15,8 @@
 
 #include "T3Plane.h"
 
-#include <Qt3DRenderer/QPlaneMesh>
-#include <Qt3DRenderer/QPhongMaterial>
+#include <Qt3DRender/QPlaneMesh>
+#include <Qt3DRender/QPhongMaterial>
 
 T3Plane::T3Plane(Qt3DNode* parent)
   : inherited(parent)

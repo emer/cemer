@@ -15,7 +15,7 @@
 
 #include "T3Sphere.h"
 
-#include <Qt3DRenderer/QSphereMesh>
+#include <Qt3DRender/QSphereMesh>
 
 
 T3Sphere::T3Sphere(Qt3DNode* parent)

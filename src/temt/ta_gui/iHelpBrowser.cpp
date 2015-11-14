@@ -41,6 +41,15 @@
 #include <QCoreApplication>
 #include <QKeyEvent>
 
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+
+#include <QWebPage>
+
+#endif // USE_QT_WEBENGINE
+
+
 
 class QSleazyFakeTreeWidget: public QTreeWidget {
 public:
@@ -289,17 +298,29 @@ void iHelpBrowser::back_clicked() {
 void iHelpBrowser::find_clear_clicked() {
   find_text->clear();
   last_find.clear();
+
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+ 
 #if (QT_VERSION >= 0x040600)
   curWebView()->page()->findText("", QWebPage::HighlightAllOccurrences);
 #else
   curWebView()->page()->findText("");
 #endif
+
+#endif // USE_QT_WEBENGINE
 }
 
 void iHelpBrowser::find_next_clicked() {
   QString cur_find = find_text->text();
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+
   if(cur_find != last_find) {
     // first one highlights all then goes to first one
+
 #if (QT_VERSION >= 0x040600)
     curWebView()->page()->findText(cur_find, QWebPage::HighlightAllOccurrences);
 #endif
@@ -310,10 +331,19 @@ void iHelpBrowser::find_next_clicked() {
     // subsequent ones go through one by one
     curWebView()->page()->findText(cur_find, QWebPage::FindWrapsAroundDocument);
   }
+
+#endif // USE_QT_WEBENGINE
 }
 
 void iHelpBrowser::find_prev_clicked() {
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+  
   curWebView()->page()->findText(find_text->text(), QWebPage::FindWrapsAroundDocument | QWebPage::FindBackward);
+
+#endif // USE_QT_WEBENGINE
+
 }
 
 void iHelpBrowser::AddTypesR(TypeSpace* ts) {
@@ -337,38 +367,58 @@ void iHelpBrowser::AddTypesR(TypeSpace* ts) {
   }
 }
 
-QWebView* iHelpBrowser::AddWebView(const String& label) {
+iWebView* iHelpBrowser::AddWebView(const String& label) {
   ++m_changing;
-  QWebView* brow = new iWebView;
-  QWebPage* wp = brow->page();
+  iWebView* brow = new iWebView;
 #if (QT_VERSION >= 0x050000)
   float trg_font_sz = 14.0f;    // fonts got upsized..
 #else
   float trg_font_sz = 12.0f;
 #endif
-  brow->setTextSizeMultiplier(taMisc::doc_text_scale * ((float)taMisc::font_size / trg_font_sz));
-  wp->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
-  wp->setNetworkAccessManager(taiMisc::net_access_mgr);
+
+
+#ifdef USE_QT_WEBENGINE
+#else // USE_QT_WEBENGINE
+  
+  brow->setTextSizeMultiplier(taMisc::doc_text_scale * ((float)taMisc::font_size /
+                                                        trg_font_sz));
+#endif // USE_QT_WEBENGINE
+
   int tidx = tab->addTab(brow, label.toQString());
   tab->setCurrentIndex(tidx); // not automatic
   url_text->setText("");// something else has to make it valid
-  connect(brow, SIGNAL(linkClicked(const QUrl&)),
-    this, SLOT(brow_linkClicked(const QUrl&)) );
+
   connect(brow, SIGNAL(statusBarMessage(const QString&)),
     status_bar, SLOT(showMessage(const QString&)) );
+
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+
+  QWebPage* wp = brow->page();
+  
+  wp->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
+  connect(brow, SIGNAL(linkClicked(const QUrl&)),
+    this, SLOT(brow_linkClicked(const QUrl&)) );
   connect(brow, SIGNAL(sigCreateWindow(QWebPage::WebWindowType,
-    QWebView*&)), this, SLOT(brow_createWindow(QWebPage::WebWindowType,
-    QWebView*&)) );
-  connect(brow, SIGNAL(urlChanged(const QUrl&)),
-    this, SLOT(brow_urlChanged(const QUrl&)) );
-  // note: WebView doesn't show hover links in status by default so we do it
+    iWebView*&)), this, SLOT(brow_createWindow(QWebPage::WebWindowType,
+    iWebView*&)) );
+
+  wp->setNetworkAccessManager(taiMisc::net_access_mgr);
   connect(wp, SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
     status_bar, SLOT(showMessage(const QString&)) );
   connect(wp, SIGNAL(unsupportedContent(QNetworkReply*)),
     this, SLOT(page_unsupportedContent(QNetworkReply*)) );
+
+  wp->setForwardUnsupportedContent(true);
+  
+#endif // USE_QT_WEBENGINE
+
+  connect(brow, SIGNAL(urlChanged(const QUrl&)),
+    this, SLOT(brow_urlChanged(const QUrl&)) );
+  // note: WebView doesn't show hover links in status by default so we do it
   connect(brow, SIGNAL(loadProgress(int)), prog_bar, SLOT(setValue(int)) );
   connect(brow, SIGNAL(loadStarted()), prog_bar, SLOT(reset()) );
-  wp->setForwardUnsupportedContent(true);
 
   brow->installEventFilter(this); // translate keys..
 
@@ -402,13 +452,19 @@ void iHelpBrowser::ApplyFiltering() {
   --m_changing;
 }
 
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+
 void iHelpBrowser::brow_createWindow(QWebPage::WebWindowType type,
-    QWebView*& window)
+    iWebView*& window)
 {
   if (type == QWebPage::WebBrowserWindow) {
     window = AddWebView(_nilString);
   }
 }
+
+#endif // USE_QT_WEBENGINE
 
 void iHelpBrowser::brow_linkClicked(const QUrl& url)
 {
@@ -445,14 +501,14 @@ void iHelpBrowser::ClearFilter() {
   --m_changing;
 }
 
-QWebView* iHelpBrowser::curWebView() {
+iWebView* iHelpBrowser::curWebView() {
   if (tab->count() == 0)
     return AddWebView(_nilString);
-  return (QWebView*)tab->currentWidget();
+  return (iWebView*)tab->currentWidget();
 }
 
-QWebView* iHelpBrowser::EmptyWebView(int& idx) {
-  QWebView* rval = NULL;
+iWebView* iHelpBrowser::EmptyWebView(int& idx) {
+  iWebView* rval = NULL;
   for (idx = 0; idx < tab->count(); ++idx) {
     rval = webView(idx);
     String turl = rval->url().toString();
@@ -493,14 +549,14 @@ QTreeWidgetItem* iHelpBrowser::FindItem(const String& typ_name_) {
   return NULL;
 }
 
-QWebView* iHelpBrowser::FindWebView(const String& url, int& idx) {
+iWebView* iHelpBrowser::FindWebView(const String& url, int& idx) {
   String base_url = url; // common
   if (url.contains("#")) {
     base_url = url.before("#");
   }
 
   for (idx = 0; idx < tab->count(); ++idx) {
-    QWebView* rval = webView(idx);
+    iWebView* rval = webView(idx);
     String turl = rval->url().toString();
     if (turl.startsWith(base_url))
       return rval;
@@ -576,7 +632,7 @@ void iHelpBrowser::LoadExternal_impl(const String& url)
 {
   last_find.clear();
   int idx;
-  QWebView* wv = FindWebView(url, idx);
+  iWebView* wv = FindWebView(url, idx);
   if (!wv)
     wv = EmptyWebView(idx); // always succeeds
   ++m_changing;
@@ -612,7 +668,7 @@ void iHelpBrowser::LoadType_impl(TypeDef* typ, const String& base_url,
     --m_changing;
   }
   int idx;
-  QWebView* wv = FindWebView(url, idx);
+  iWebView* wv = FindWebView(url, idx);
   if (!wv)
     wv = EmptyWebView(idx); // always succeeds
   ++m_changing;
@@ -710,7 +766,7 @@ void iHelpBrowser::stop_clicked() {
 
 void iHelpBrowser::tab_currentChanged(int index) {
   if (m_changing) return; // already expected
-  QWebView* wv = webView(index); // safe
+  iWebView* wv = webView(index); // safe
   ++m_changing;
   if (wv) {
     url_text->setText(wv->url().toString());
@@ -766,10 +822,10 @@ void iHelpBrowser::UpdateTreeItem() {
   }
 }
 
-QWebView* iHelpBrowser::webView(int index) {
+iWebView* iHelpBrowser::webView(int index) {
   if ((index < 0) || (index >= tab->count()))
     return NULL;
-  return (QWebView*)tab->widget(index);
+  return (iWebView*)tab->widget(index);
 }
 
 bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {

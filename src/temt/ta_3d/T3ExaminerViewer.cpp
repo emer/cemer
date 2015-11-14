@@ -55,16 +55,16 @@
 #include <Qt3DInput/QInputAspect>
 #include <Qt3DInput/QMouseController>
 
-#include <Qt3DRenderer/QRenderAspect>
-#include <Qt3DRenderer/QFrameGraph>
-#include <Qt3DRenderer/QPhongMaterial>
+#include <Qt3DRender/QRenderAspect>
+#include <Qt3DRender/QFrameGraph>
+#include <Qt3DRender/QPhongMaterial>
 
-#include <Qt3DRenderer/QViewport>
-#include <Qt3DRenderer/QCameraSelector>
-#include <Qt3DRenderer/QClearBuffer>
-#include <Qt3DRenderer/QTechniqueFilter>
-#include <Qt3DRenderer/QRenderPassFilter>
-#include <Qt3DRenderer/QAnnotation>
+#include <Qt3DRender/QViewport>
+#include <Qt3DRender/QCameraSelector>
+#include <Qt3DRender/QClearBuffer>
+#include <Qt3DRender/QTechniqueFilter>
+#include <Qt3DRender/QRenderPassFilter>
+#include <Qt3DRender/QAnnotation>
 
 #include <QKeyEvent>
 #include <QOpenGLContext>
@@ -183,10 +183,10 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   view3d = new T3RenderView(scr);
   QWidget* container = QWidget::createWindowContainer(view3d);
   main_hbox->addWidget(container, 1);
-  engine = new Qt3D::QAspectEngine;
-  render = new Qt3D::QRenderAspect();
+  engine = new Qt3DRender::QAspectEngine;
+  render = new Qt3DRender::QRenderAspect();
   engine->registerAspect(render);
-  input = new Qt3D::QInputAspect;
+  input = new Qt3DInput::QInputAspect;
   engine->registerAspect(input);
   engine->initialize();
   QVariantMap data;
@@ -195,8 +195,8 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   data.insert(QStringLiteral("eventSource"), QVariant::fromValue(view3d));
   engine->setData(data);
 
-  root_entity = new Qt3D::QEntity();
-  camera = new Qt3D::QCamera(root_entity);
+  root_entity = new Qt3DCore::QEntity();
+  camera = new Qt3DCore::QCamera(root_entity);
 
   QSize sz = container->size();
   float aspect_ratio = (float)sz.width() / (float)sz.height();
@@ -213,33 +213,33 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
   input->setCamera(camera);
 
-  framegraph = new Qt3D::QFrameGraph();
+  framegraph = new Qt3DRender::QFrameGraph();
 
-  viewport = new Qt3D::QViewport; // head node -- common stuff
+  viewport = new Qt3DRender::QViewport; // head node -- common stuff
   viewport->setRect(QRectF(0.0f, 0.0f, 1.0f, 1.0f));
   viewport->setClearColor(bg_color);
-  Qt3D::QClearBuffer* cb = new Qt3D::QClearBuffer(viewport);
-  cb->setBuffers(Qt3D::QClearBuffer::ColorDepthBuffer);
+  Qt3DRender::QClearBuffer* cb = new Qt3DRender::QClearBuffer(viewport);
+  cb->setBuffers(Qt3DRender::QClearBuffer::ColorDepthBuffer);
 
-  // Qt3D::QRenderPassFilter* trans_rend = new Qt3D::QRenderPassFilter(cb);
-  // Qt3D::QAnnotation* transAnno = new Qt3D::QAnnotation(trans_rend);
+  // Qt3DRender::QRenderPassFilter* trans_rend = new Qt3DRender::QRenderPassFilter(cb);
+  // Qt3DRender::QAnnotation* transAnno = new Qt3DRender::QAnnotation(trans_rend);
   // transAnno->setName(QStringLiteral("renderingStyle"));
   // transAnno->setValue(QStringLiteral("transparent"));
   // trans_rend->addInclude(transAnno);
-  Qt3D::QCameraSelector* cam = new Qt3D::QCameraSelector(cb);
+  Qt3DCore::QCameraSelector* cam = new Qt3DCore::QCameraSelector(cb);
   cam->setCamera(camera);
   
-  // Qt3D::QRenderPassFilter* opaque_rend = new Qt3D::QRenderPassFilter(cb);
-  // Qt3D::QAnnotation* opaqueAnno = new Qt3D::QAnnotation(opaque_rend);
+  // Qt3DRender::QRenderPassFilter* opaque_rend = new Qt3DRender::QRenderPassFilter(cb);
+  // Qt3DRender::QAnnotation* opaqueAnno = new Qt3DRender::QAnnotation(opaque_rend);
   // opaqueAnno->setName(QStringLiteral("renderingStyle"));
   // opaqueAnno->setValue(QStringLiteral("opaque"));
   // opaque_rend->addInclude(opaqueAnno);
-  // Qt3D::QCameraSelector* cam2 = new Qt3D::QCameraSelector(opaque_rend);
+  // Qt3DRender::QCameraSelector* cam2 = new Qt3DRender::QCameraSelector(opaque_rend);
   // cam2->setCamera(camera);
 
   framegraph->setActiveFrameGraph(viewport);
 
-  mouse_ctrl = new Qt3D::QMouseController(root_entity);
+  mouse_ctrl = new Qt3DInput::QMouseController(root_entity);
   
   root_entity->addComponent(framegraph);
   engine->setRootEntity(root_entity);
@@ -969,7 +969,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
 
 #ifdef TA_QT3D
 
-void T3ExaminerViewer::setSceneGraph(Qt3D::QEntity* root) {
+void T3ExaminerViewer::setSceneGraph(Qt3DCore::QEntity* root) {
   if(scene) {
     scene->setParent((Qt3DNode*)NULL);
   }
@@ -1034,7 +1034,7 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
   //  float multiplicator = float(exp(diffvalue));
   float multiplicator = -diffvalue;
 
-  if (camera->projectionType() == Qt3D::QCameraLens::OrthogonalProjection) {
+  if (camera->projectionType() == Qt3DCore::QCameraLens::OrthogonalProjection) {
     // Since there's no perspective, "zooming" in the original sense
     // of the word won't have any visible effect. So we just increase
     // or decrease the field-of-view values of the camera instead, to
@@ -1042,7 +1042,7 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
     float view_size = camera->aspectRatio();
     camera->setAspectRatio(view_size * multiplicator);
   }
-  else if (camera->projectionType() == Qt3D::QCameraLens::PerspectiveProjection) {
+  else if (camera->projectionType() == Qt3DCore::QCameraLens::PerspectiveProjection) {
     QVector3D direction(0.0f, 0.0f, -1.0f); // just move back in z for now
     const QVector3D oldpos = camera->position();
     const QVector3D newpos = oldpos + multiplicator * direction;
@@ -1053,7 +1053,7 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
 
     // this kinda works but then doesn't after a while..
     
-    // Qt3D::QTransform* trns = camera->transform();
+    // Qt3DCore::QTransform* trns = camera->transform();
     // QVector3D direction = trns->matrix().mapVector(QVector3D(0.0f, 0.0f, -1.0f));
     
     // const QVector3D oldpos = camera->position();

@@ -20,7 +20,7 @@
 #include <T3Entity>
 
 // member includes:
-#include <Qt3DRenderer/QSceneLoader>
+#include <Qt3DRender/QSceneLoader>
 
 // declare all other types mentioned but not required to include:
 
@@ -30,7 +30,7 @@ class TA_API T3SceneLoader : public T3Entity {
   INHERITED(T3Entity)
 public:
   QUrl  source;
-  Qt3D::QSceneLoader* loader;
+  Qt3DCore::QSceneLoader* loader;
 
   virtual void  setSource(const QUrl& src);
   

@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "T3ColorEntity.h"
-#include <Qt3DRenderer/QPhongMaterial>
-#include <Qt3DRenderer/QPerVertexColorMaterial>
+#include <Qt3DRender/QPhongMaterial>
+#include <Qt3DRender/QPerVertexColorMaterial>
 #include <T3TransparentMaterial>
 #include <T3PerVertexTransMaterial>
 
@@ -103,7 +103,7 @@ void T3ColorEntity::updateColor() {
     removeAllBut(PHONG);
     bool add = false;
     if(!phong) {
-      phong = new Qt3D::QPhongMaterial();
+      phong = new Qt3DRender::QPhongMaterial();
       add = true;
     }
     phong->setDiffuse(color);
@@ -160,7 +160,7 @@ void T3ColorEntity::updateColor() {
   case PER_VERTEX: {
     removeAllBut(PER_VERTEX);
     if(!per_vertex) {
-      per_vertex = new Qt3D::QPerVertexColorMaterial;
+      per_vertex = new Qt3DRender::QPerVertexColorMaterial;
       addMaterial(per_vertex);
     }
     break;

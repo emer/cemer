@@ -16,8 +16,6 @@ if (QT_USE_5)
   find_package(Qt5OpenGL)
   find_package(Qt5Xml)
   find_package(Qt5Network)
-  find_package(Qt5WebKit)
-  find_package(Qt5WebKitWidgets)
   find_package(Qt5PrintSupport)
 
     #  qt5_use_modules(Emergent Widgets Network WebKit OpenGL Xml)
@@ -26,31 +24,46 @@ if (QT_USE_5)
   # Add compiler flags for building executables (-fPIE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
-  include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS}
-    ${Qt5Xml_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5WebKit_INCLUDE_DIRS}
-    ${Qt5WebKitWidgets_INCLUDE_DIRS} ${Qt5PrintSupport_INCLUDE_DIRS})
+  include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS}
+    ${Qt5OpenGL_INCLUDE_DIRS}
+    ${Qt5Xml_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5PrintSupport_INCLUDE_DIRS})
+  
   add_definitions(${Qt5Widgets_DEFINITIONS})
 
   set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES}
     ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES}
-    ${Qt5Network_LIBRARIES} ${Qt5WebKit_LIBRARIES} ${Qt5WebKitWidgets_LIBRARIES}
-    ${Qt5PrintSupport_LIBRARIES})
+    ${Qt5Network_LIBRARIES} ${Qt5PrintSupport_LIBRARIES})
 
   if (QT_USE_3D)
+    find_package(Qt5WebEngineCore)
+    find_package(Qt5WebEngine)
+    find_package(Qt5WebEngineWidgets)
+    
     find_package(Qt53DCore)
-    find_package(Qt53DRenderer)
+    find_package(Qt53DRender)
     find_package(Qt53DInput)
-    add_definitions(-DTA_QT3D)
+
+    add_definitions(-DTA_QT3D -DUSE_QT_WEBENGINE)
 
     include_directories(${Qt53DCore_INCLUDE_DIRS} ${Qt53DRenderer_INCLUDE_DIRS}
-      ${Qt53DInput_INCLUDE_DIRS})
+      ${Qt53DInput_INCLUDE_DIRS} ${Qt5WebEngineCore_INCLUDE_DIRS}
+      ${Qt5WebEngine_INCLUDE_DIRS} ${Qt5WebEngineWidgets_INCLUDE_DIRS})
 
     set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt53DCore_LIBRARIES} ${Qt53DRenderer_LIBRARIES}
-       ${Qt53DInput_LIBRARIES})
+      ${Qt53DInput_LIBRARIES} ${Qt5WebEngineCore_LIBRARIES} ${Qt5WebEngine_LIBRARIES}
+      ${Qt5WebEngineWidgets_LIBRARIES})
   else (QT_USE_3D)
+
+    find_package(Qt5WebKit)
+    find_package(Qt5WebKitWidgets)
+     
     find_package(Coin REQUIRED)
     find_package(Quarter REQUIRED)
     find_package(OpenGL REQUIRED)
+
+    include_directories(${Qt5WebKit_INCLUDE_DIRS} ${Qt5WebKitWidgets_INCLUDE_DIRS})
+    set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5WebKit_LIBRARIES} ${Qt5WebKitWidgets_LIBRARIES})
+
   endif (QT_USE_3D)
 
   # find_package(Coin REQUIRED)

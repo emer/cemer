@@ -23,14 +23,20 @@
 #endif
 
 // member includes:
-#include <QWebPage>
 #include <ContextFlag>
 #include <taString>
 
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+
+#include <QWebPage>
+
+#endif // USE_QT_WEBENGINE
 
 // declare all other types mentioned but not required to include:
+class iWebView; //
 class QProgressBar; //
-class QWebView; //
 class QNetworkReply; //
 class TypeSpace; //
 class iLineEdit; //
@@ -93,9 +99,9 @@ public:
   QStatusBar*           status_bar;
 
   String                curUrl() const {return m_curUrl;} // current pseudo Url (w/o #xxx anchor)
-  QWebView*             curWebView(); // always returns one
-  QWebView*             webView(int index);
-  QWebView*             AddWebView(const String& label); // add a new tab
+  iWebView*             curWebView(); // always returns one
+  iWebView*             webView(int index);
+  iWebView*             AddWebView(const String& label); // add a new tab
 
 protected:
   static const int      num_sorts = 3;
@@ -107,8 +113,8 @@ protected:
   QString               last_find;
   QTimer*               timFilter; // timer for filter changes
 
-  QWebView*             FindWebView(const String& url, int& idx); // find existing tab w/ this base url (#anchors ok)
-  QWebView*             EmptyWebView(int& idx); // find existing tab w/ no url, else make new
+  iWebView*             FindWebView(const String& url, int& idx); // find existing tab w/ this base url (#anchors ok)
+  iWebView*             EmptyWebView(int& idx); // find existing tab w/ no url, else make new
   void                  SetFilter(const QString& filt); // apply a filter
   void                  ClearFilter(); // remove filtering
   void                  ApplyFiltering();
@@ -133,7 +139,11 @@ protected slots:
   void                  forward_clicked();
   void                  back_clicked();
   void                  addTab_clicked(); // or return in url_text
-  void                  brow_createWindow(QWebPage::WebWindowType type, QWebView*& window);
+#ifdef USE_QT_WEBENGINE
+  
+#else // USE_QT_WEBENGINE
+  void                  brow_createWindow(QWebPage::WebWindowType type, iWebView*& window);
+#endif // USE_QT_WEBENGINE
   void                  brow_linkClicked(const QUrl& url);
   void                  brow_urlChanged(const QUrl& url);
   void                  page_unsupportedContent(QNetworkReply* reply);

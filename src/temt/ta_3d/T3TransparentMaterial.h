@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <ta_def.h>
-#include <Qt3DRenderer/QMaterial>
+#include <Qt3DRender/QMaterial>
 #include <QColor>
 
 
@@ -35,10 +35,10 @@ class QRenderPass;
 class QParameterMapping;
 }
 
-class TA_API T3TransparentMaterial : public Qt3D::QMaterial {
+class TA_API T3TransparentMaterial : public Qt3DRender::QMaterial {
   // material supporting transparency alpha channel blending -- need to pull out alpha as a separat parameter based on the QParameter mechanism
   Q_OBJECT
-  INHERITED(Qt3D::QMaterial)
+  INHERITED(Qt3DRender::QMaterial)
 public:
   Q_PROPERTY(QColor ambient READ ambient WRITE setAmbient NOTIFY ambientChanged)
   Q_PROPERTY(QColor diffuse READ diffuse WRITE setDiffuse NOTIFY diffuseChanged)
@@ -46,7 +46,7 @@ public:
   Q_PROPERTY(float shininess READ shininess WRITE setShininess NOTIFY shininessChanged)
   Q_PROPERTY(float alpha READ alpha WRITE setAlpha NOTIFY alphaChanged)
 
-  explicit T3TransparentMaterial(Qt3D::QNode *parent = 0);
+  explicit T3TransparentMaterial(Qt3DCore::QNode *parent = 0);
   ~T3TransparentMaterial();
 
   
@@ -70,25 +70,25 @@ public:
   void alphaChanged();
 
  protected:
-  Qt3D::QEffect *m_transEffect;
-  Qt3D::QParameter *m_ambientParameter;
-  Qt3D::QParameter *m_diffuseParameter;
-  Qt3D::QParameter *m_specularParameter;
-  Qt3D::QParameter *m_shininessParameter;
-  Qt3D::QParameter *m_alphaParameter;
-  Qt3D::QParameter *m_lightPositionParameter;
-  Qt3D::QParameter *m_lightIntensityParameter;
-  Qt3D::QTechnique *m_transGL3Technique;
-  Qt3D::QTechnique *m_transGL2Technique;
-  Qt3D::QTechnique *m_transES2Technique;
-  Qt3D::QRenderPass *m_transGL3RenderPass;
-  Qt3D::QRenderPass *m_transGL2RenderPass;
-  Qt3D::QRenderPass *m_transES2RenderPass;
-  Qt3D::QShaderProgram *m_transGL3Shader;
-  Qt3D::QShaderProgram *m_transGL2ES2Shader;
+  Qt3DRender::QEffect *m_transEffect;
+  Qt3DCore::QParameter *m_ambientParameter;
+  Qt3DCore::QParameter *m_diffuseParameter;
+  Qt3DCore::QParameter *m_specularParameter;
+  Qt3DCore::QParameter *m_shininessParameter;
+  Qt3DCore::QParameter *m_alphaParameter;
+  Qt3DCore::QParameter *m_lightPositionParameter;
+  Qt3DCore::QParameter *m_lightIntensityParameter;
+  Qt3DRender::QTechnique *m_transGL3Technique;
+  Qt3DRender::QTechnique *m_transGL2Technique;
+  Qt3DRender::QTechnique *m_transES2Technique;
+  Qt3DRender::QRenderPass *m_transGL3RenderPass;
+  Qt3DRender::QRenderPass *m_transGL2RenderPass;
+  Qt3DRender::QRenderPass *m_transES2RenderPass;
+  Qt3DRender::QShaderProgram *m_transGL3Shader;
+  Qt3DRender::QShaderProgram *m_transGL2ES2Shader;
 
   void init();
-  void init_render_pass(Qt3D::QRenderPass* pass);
+  void init_render_pass(Qt3DRender::QRenderPass* pass);
 };
 
 #endif // T3TransparentMaterial_h

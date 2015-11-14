@@ -133,6 +133,13 @@ public: //
   ConGroup*             FindRecvConGroupFromName(const String& fm_nm) const;
   // #CAT_Structure get receiving connection group from given sending layer name
 
+  bool                  SetCnValName(float val, const Variant& prjn,
+                                     int idx, const String& var_nm);
+  // #CAT_Access set recv connection variable (specified by name, e.g., wt, dwt, pdw) in given projection (can be specified by name or index), to given value -- for use by programs, which cannot assign the value through the SafeCn function 
+  float                 GetCnValName(const Variant& prjn, int idx, const String& var_nm);
+  // #CAT_Access get recv connection variable value (specified by name, e.g., wt, dwt, pdw) in given projection (can be specified by name or index) -- for use by programs, which cannot assign the value through the SafeCn function 
+  
+  
   inline void           SetUnitFlag(UnitFlags flg)   { flags = (UnitFlags)(flags | flg); }
   // set flag state on
   inline void           ClearUnitFlag(UnitFlags flg) { flags = (UnitFlags)(flags & ~flg); }

@@ -15,11 +15,11 @@
 
 #include "T3Frame.h"
 
-#include <Qt3DRenderer/Buffer>
-#include <Qt3DRenderer/QBufferFunctor>
-#include <Qt3DRenderer/Attribute>
-#include <Qt3DRenderer/QPerVertexColorMaterial>
-#include <Qt3DRenderer/QPhongMaterial>
+#include <Qt3DRender/Buffer>
+#include <Qt3DRender/QBufferFunctor>
+#include <Qt3DRender/Attribute>
+#include <Qt3DRender/QPerVertexColorMaterial>
+#include <Qt3DRender/QPhongMaterial>
 
 
 ///////////////////////////////////////////////

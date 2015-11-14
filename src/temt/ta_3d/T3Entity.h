@@ -40,8 +40,8 @@ class Qt3DNode; // #IGNORE
 #include <Qt3DCore/QScaleTransform>
 #include <Qt3DCore/QTranslateTransform>
 #include <Qt3DCore/QRotateTransform>
-#include <Qt3DRenderer/QGeometryRenderer>
-#include <Qt3DRenderer/QMaterial>
+#include <Qt3DRender/QGeometryRenderer>
+#include <Qt3DRender/QMaterial>
 #include <Qt3DInput/QMouseInput>
 #include <QColor>
 
@@ -50,12 +50,12 @@ namespace Qt3D {
 }
 
 // for maketa:
-typedef Qt3D::QNode Qt3DNode; 
+typedef Qt3DCore::QNode Qt3DNode; 
 
-class TA_API T3Entity : public Qt3D::QEntity {
+class TA_API T3Entity : public Qt3DCore::QEntity {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS Qt3D entity that retains pointers to the standard components for rendering, for convenience, and automatically adds the standard transforms (scale, translate, rotation) in the constructor
   Q_OBJECT
-  INHERITED(Qt3D::QEntity)
+  INHERITED(Qt3DCore::QEntity)
 public:
   Q_PROPERTY(bool node_updating READ nodeUpdating WRITE setNodeUpdating NOTIFY nodeUpdatingChanged)
   // use this property to control notifcation of updates to a node -- calls blockNotifications(true) if setNodeUpdating(true) is called, and when the corresponding false call is made, then it also calls nodeUpdatingChanged signal, which then triggers an actual node update -- blockNotifications(false) should do this but it doesn't!
@@ -64,28 +64,28 @@ public:
   virtual void setNodeUpdating(bool updating);
   bool  nodeUpdating()  { return node_updating; }
   
-  Qt3D::QTransform*          transform; // overall transform applied to this node -- contains each of the following items:
-  Qt3D::QScaleTransform*     scale;     // overall scale transform applied to this node
-  Qt3D::QTranslateTransform* translate; // overall translation transform applied to this node
-  Qt3D::QRotateTransform*    rotate;    // overall rotation transform applied to this node
-  Qt3D::QGeometryRenderer*   mesh;      // mesh component for this node
-  Qt3D::QMaterial*           material;  // material for this node
-  Qt3D::QMouseInput*         mouse;     // mouse input object if created
+  Qt3DCore::QTransform*          transform; // overall transform applied to this node -- contains each of the following items:
+  Qt3DCore::QScaleTransform*     scale;     // overall scale transform applied to this node
+  Qt3DCore::QTranslateTransform* translate; // overall translation transform applied to this node
+  Qt3DCore::QRotateTransform*    rotate;    // overall rotation transform applied to this node
+  Qt3DRender::QGeometryRenderer*   mesh;      // mesh component for this node
+  Qt3DRender::QMaterial*           material;  // material for this node
+  Qt3DInput::QMouseInput*         mouse;     // mouse input object if created
   QVector3D                  size;      // overall size of the object (if known) -- 0 if not
   
-  void  addMesh(Qt3D::QGeometryRenderer* msh)
+  void  addMesh(Qt3DRender::QGeometryRenderer* msh)
   { mesh = msh; addComponent(mesh); }
   // adds mesh component, records the last one added
 
-  void  addMaterial(Qt3D::QMaterial* mat)
+  void  addMaterial(Qt3DRender::QMaterial* mat)
   { material = mat; addComponent(material); }
   // adds material component, records the last one added
 
-  void  removeMaterial(Qt3D::QMaterial* mat)
+  void  removeMaterial(Qt3DRender::QMaterial* mat)
   { removeComponent(mat); if(material == mat) material = NULL; }
   // remove material component
 
-  void  addMouseInput(Qt3D::QMouseController* mouse_ctrl);
+  void  addMouseInput(Qt3DInput::QMouseController* mouse_ctrl);
   // add a QMouseInput component and send its clicked, double-clicked signals to this object's mouse* slots -- needs the mouse_ctrl from the T3ExaminerViewer
   
   inline void   Translate(const QVector3D& pos)
@@ -138,17 +138,17 @@ public:
 
 public slots:
   // these are all mouse actions -- first two enabled when addMouseInput is connected -- others can be added with connect method from mouse object
-  virtual void mouseClicked(Qt3D::Q3DMouseEvent* mouse) { };
-  virtual void mouseDoubleClicked(Qt3D::Q3DMouseEvent* mouse) { };
+  virtual void mouseClicked(Qt3DInput::Q3DMouseEvent* mouse) { };
+  virtual void mouseDoubleClicked(Qt3DInput::Q3DMouseEvent* mouse) { };
 
   virtual void mouseEntered() { };
   virtual void mouseExited() { };
 
-  virtual void mousePressed(Qt3D::Q3DMouseEvent* mouse)  { };
-  virtual void mouseReleased(Qt3D::Q3DMouseEvent* mouse) { };
-  virtual void mousePressAndHold(Qt3D::Q3DMouseEvent* mouse) { };
-  virtual void mousePositionChanged(Qt3D::Q3DMouseEvent* mouse) { };
-  virtual void mouseWheel(Qt3D::Q3DWheelEvent* wheel) { };
+  virtual void mousePressed(Qt3DInput::Q3DMouseEvent* mouse)  { };
+  virtual void mouseReleased(Qt3DInput::Q3DMouseEvent* mouse) { };
+  virtual void mousePressAndHold(Qt3DInput::Q3DMouseEvent* mouse) { };
+  virtual void mousePositionChanged(Qt3DInput::Q3DMouseEvent* mouse) { };
+  virtual void mouseWheel(Qt3DInput::Q3DWheelEvent* wheel) { };
   
 signals:
   void  nodeUpdatingChanged();

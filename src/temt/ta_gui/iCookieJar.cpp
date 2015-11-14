@@ -767,7 +767,13 @@ void iNetworkCookieJar::setSecondLevelDomains(const QStringList &secondLevelDoma
 #include <QSettings>
 #include <QUrl>
 
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+
 #include <QWebSettings>
+
+#endif // USE_QT_WEBENGINE
 
 #include <qdebug.h>
 
@@ -945,12 +951,16 @@ QList<QNetworkCookie> iCookieJar::cookiesForUrl(const QUrl &url) const
   if (!m_loaded)
     that->load();
 
+#ifdef USE_QT_WEBENGINE
+  
+#else // USE_QT_WEBENGINE
   QWebSettings *globalSettings = QWebSettings::globalSettings();
   if (globalSettings->testAttribute(QWebSettings::PrivateBrowsingEnabled)) {
     QList<QNetworkCookie> noCookies;
     return noCookies;
   }
-
+#endif // USE_QT_WEBENGINE
+  
   return iNetworkCookieJar::cookiesForUrl(url);
 }
 
@@ -964,9 +974,15 @@ bool iCookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, cons
   qDebug() << cookieList;
 #endif
 
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+  
   QWebSettings *globalSettings = QWebSettings::globalSettings();
   if (globalSettings->testAttribute(QWebSettings::PrivateBrowsingEnabled))
     return false;
+  
+#endif // USE_QT_WEBENGINE
 
   QString host = url.host();
   bool eBlock = qBinaryFind(m_exceptions_block.begin(), m_exceptions_block.end(), host) != m_exceptions_block.end();

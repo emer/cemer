@@ -30,11 +30,18 @@
 #include <QVBoxLayout>
 #include <QToolBar>
 #include <QProgressBar>
-#include <QWebView>
-#include <QWebFrame>
+#include <iWebView>
 #include <QDesktopServices>
 #include <QKeyEvent>
 #include <QApplication>
+
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+
+#include <QWebFrame>
+
+#endif // USE_QT_WEBENGINE
 
 
 #if (QT_VERSION >= 0x050000)
@@ -113,9 +120,6 @@ iPanelOfDocView::iPanelOfDocView()
   webview = new iWebView(wb_widg);
   wb_box->addWidget(webview);
 
-  webview->page()->setNetworkAccessManager(taiMisc::net_access_mgr);
-  webview->page()->setForwardUnsupportedContent(true);
-
   setCentralWidget(wb_widg);
 
   webview->installEventFilter(this); // translate keys..
@@ -136,12 +140,20 @@ iPanelOfDocView::iPanelOfDocView()
   connect(webview, SIGNAL(loadStarted()), this, SLOT(doc_loadStarted()) );
   connect(webview, SIGNAL(loadFinished(bool)), this, SLOT(doc_loadFinished(bool)) );
 
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+  webview->page()->setNetworkAccessManager(taiMisc::net_access_mgr);
+  webview->page()->setForwardUnsupportedContent(true);
+
   webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   connect(webview->page(), SIGNAL(linkClicked(const QUrl&)),
           this, SLOT(doc_linkClicked(const QUrl&)) );
   connect(webview, SIGNAL(sigCreateWindow(QWebPage::WebWindowType,
-    QWebView*&)), this, SLOT(doc_createWindow(QWebPage::WebWindowType,
-    QWebView*&)) );
+    iWebView*&)), this, SLOT(doc_createWindow(QWebPage::WebWindowType,
+    iWebView*&)) );
+#endif // USE_QT_WEBENGINE
+
 
 //TODO  connect(txtText, SIGNAL(copyAvailable(bool)),
 //      this, SLOT(textText_copyAvailable(bool)) );
@@ -157,13 +169,19 @@ QWidget* iPanelOfDocView::firstTabFocusWidget() {
   return url_edit;
 }
 
-void iPanelOfDocView::doc_createWindow(QWebPage::WebWindowType type, QWebView*& window) {
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+
+void iPanelOfDocView::doc_createWindow(QWebPage::WebWindowType type, iWebView*& window) {
   // fork to browser
   if (type == QWebPage::WebBrowserWindow) {
     iHelpBrowser* hbrow = iHelpBrowser::instance();
     window = hbrow->AddWebView(_nilString);
   }
 }
+
+#endif // USE_QT_WEBENGINE
 
 void iPanelOfDocView::doc_linkClicked(const QUrl& url) {
   String path = url.toString();
@@ -219,9 +237,12 @@ void iPanelOfDocView::doc_loadFinished(bool ok) {
   taDoc* doc_ = this->doc();
   if(!doc_) return;
   if(!webview) return;
+#ifdef USE_QT_WEBENGINE
+#else // USE_QT_WEBENGINE
   QWebFrame* mnfrm = webview->page()->mainFrame();
   if(!mnfrm) return;
   doc_->html_text = mnfrm->toHtml(); // harvest it!
+#endif // USE_QT_WEBENGINE
 }
 
 void iPanelOfDocView::doc_goPressed() {
@@ -260,17 +281,29 @@ void iPanelOfDocView::doc_seturlPressed() {
 
 void iPanelOfDocView::find_clear_clicked() {
   find_text->clear();
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+  
 #if (QT_VERSION >= 0x040600)
   webview->page()->findText("", QWebPage::HighlightAllOccurrences);
 #else
   webview->page()->findText("");
 #endif
+
+#endif // USE_QT_WEBENGINE
+  
 }
 
 void iPanelOfDocView::find_next_clicked() {
   QString cur_find = find_text->text();
 //   if(cur_find != last_find) {
     // first one highlights all then goes to first one
+
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+  
 #if (QT_VERSION >= 0x040600)
     webview->page()->findText(cur_find, QWebPage::HighlightAllOccurrences);
 #endif
@@ -281,10 +314,18 @@ void iPanelOfDocView::find_next_clicked() {
 //     // subsequent ones go through one by one
 //     curWebView()->page()->findText(cur_find, QWebPage::FindWrapsAroundDocument);
 //   }
+
+#endif // USE_QT_WEBENGINE
+    
 }
 
 void iPanelOfDocView::find_prev_clicked() {
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
   webview->page()->findText(find_text->text(), QWebPage::FindWrapsAroundDocument | QWebPage::FindBackward);
+
+#endif // USE_QT_WEBENGINE
 }
 
 bool iPanelOfDocView::ignoreSigEmit() const {
@@ -313,7 +354,14 @@ void iPanelOfDocView::UpdatePanel_impl() {
 #endif
   if(doc_->url.empty() || doc_->url == "local")
     trg_font_sz = 14.0f;
-  webview->setTextSizeMultiplier(taMisc::doc_text_scale * doc_->text_size * ((float)taMisc::font_size / trg_font_sz));
+
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+  
+  webview->setTextSizeMultiplier(taMisc::doc_text_scale * doc_->text_size *
+                                 ((float)taMisc::font_size / trg_font_sz));
+#endif // USE_QT_WEBENGINE
 
   String nw_url = doc_->GetURL();
   bool net_doc = nw_url.contains(":/") && !nw_url.startsWith("file:");
@@ -346,13 +394,13 @@ void iPanelOfDocView::UpdatePanel_impl() {
   }
 }
 
-  void iPanelOfDocView::SigEmit_impl(int sls, void* op1_, void* op2_) {
-    inherited::SigEmit_impl(sls, op1_, op2_);
-    if (sls <= SLS_ITEM_UPDATED_ND) {
-      this->m_update_req = true; // so we update next time we show
-      UpdatePanel();
-    }
+void iPanelOfDocView::SigEmit_impl(int sls, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(sls, op1_, op2_);
+  if (sls <= SLS_ITEM_UPDATED_ND) {
+    this->m_update_req = true; // so we update next time we show
+    UpdatePanel();
   }
+}
 
 /* todo int iPanelOfDocView::EditAction(int ea) {
   int rval = 0;

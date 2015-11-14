@@ -21,10 +21,9 @@
 
 // member includes:
 #ifndef __MAKETA__
-#include <QWebView>
-#include <QWebPage>
+#include <iWebView>
 #else
-class QWebView; //
+class iWebView; //
 class QAction; //
 #endif
 
@@ -44,7 +43,7 @@ INHERITED(iPanel)
 public:
   QWidget*              wb_widg;  // overall widget for web browser case
   QVBoxLayout*          wb_box; // web browser vbox
-  QWebView*             webview; // the web_doc case
+  iWebView*             webview; // the web_doc case
   QToolBar*             url_bar; // toolbar in url box
   QLabel*               wiki_label;
   iLineEdit*            wiki_edit;
@@ -88,7 +87,10 @@ protected:
 #ifndef __MAKETA__
 protected slots:
   void                  doc_linkClicked(const QUrl& url);
-  void                  doc_createWindow(QWebPage::WebWindowType type, QWebView*& window);
+#ifdef USE_QT_WEBENGINE
+#else // USE_QT_WEBENGINE
+  void                  doc_createWindow(QWebPage::WebWindowType type, iWebView*& window);
+#endif // USE_QT_WEBENGINE
   void                  doc_goPressed();
   void                  doc_bakPressed();
   void                  doc_fwdPressed();

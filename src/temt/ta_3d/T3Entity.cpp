@@ -19,11 +19,11 @@
 #include <taiMisc>
 
 T3Entity::T3Entity(Qt3DNode* parent)
-  : Qt3D::QEntity(parent)
-  , transform(new Qt3D::QTransform())
-  , translate(new Qt3D::QTranslateTransform())
-  , scale(new Qt3D::QScaleTransform())
-  , rotate(new Qt3D::QRotateTransform())
+  : Qt3DCore::QEntity(parent)
+  , transform(new Qt3DCore::QTransform())
+  , translate(new Qt3DCore::QTranslateTransform())
+  , scale(new Qt3DCore::QScaleTransform())
+  , rotate(new Qt3DCore::QRotateTransform())
   , node_updating(false)
 {
   mesh = NULL;
@@ -40,19 +40,19 @@ T3Entity::~T3Entity() {
   // todo: call cleanup here or not??
 }
 
-void T3Entity::addMouseInput(Qt3D::QMouseController* mouse_ctrl) {
+void T3Entity::addMouseInput(Qt3DInput::QMouseController* mouse_ctrl) {
   if(mouse) return;
-  mouse = new Qt3D::QMouseInput();
+  mouse = new Qt3DInput::QMouseInput();
   mouse->setController(mouse_ctrl);
   addComponent(mouse);
   // todo: clicked actually not implemented yet!
-  // connect(mouse, SIGNAL(clicked(Qt3D::Q3DMouseEvent*)), this,
-  //         SLOT(mouseClicked(Qt3D::Q3DMouseEvent*)));
-  // connect(mouse, SIGNAL(doubleClicked(Qt3D::Q3DMouseEvent*)), this,
-  //         SLOT(mouseDoubleClicked(Qt3D::Q3DMouseEvent*)));
+  // connect(mouse, SIGNAL(clicked(Qt3DInput::Q3DMouseEvent*)), this,
+  //         SLOT(mouseClicked(Qt3DInput::Q3DMouseEvent*)));
+  // connect(mouse, SIGNAL(doubleClicked(Qt3DInput::Q3DMouseEvent*)), this,
+  //         SLOT(mouseDoubleClicked(Qt3DInput::Q3DMouseEvent*)));
   // others not needed so frequently -- add manually if wanted
-  connect(mouse, SIGNAL(released(Qt3D::Q3DMouseEvent*)), this,
-          SLOT(mouseClicked(Qt3D::Q3DMouseEvent*)));
+  connect(mouse, SIGNAL(released(Qt3DInput::Q3DMouseEvent*)), this,
+          SLOT(mouseClicked(Qt3DInput::Q3DMouseEvent*)));
 }
 
 void T3Entity::setNodeUpdating(bool updating) {
@@ -120,7 +120,7 @@ void T3Entity::removeAllChildren() {
   // taiMisc::DeleteChildrenLater(this);
   const QObjectList& ol = children();
   for(int i = ol.count()-1; i >= 0; i--) {
-    Qt3D::QNode* nd = dynamic_cast<Qt3D::QNode*>(ol.at(i));
+    Qt3DCore::QNode* nd = dynamic_cast<Qt3DCore::QNode*>(ol.at(i));
     if(nd) {
       nd->setParent((QNode*)NULL);
       // nd->deleteLater(); // no deleting -- causes crashes -- threads still have these guys hanging around -- not sure what to do about the orphans though?  surely we'll be getting leaks?
@@ -132,7 +132,7 @@ void T3Entity::removeChildrenFrom(int idx) {
   // taiMisc::DeleteChildrenLater(this);
   const QObjectList& ol = children();
   for(int i = ol.count()-1; i >= idx; i--) {
-    Qt3D::QNode* nd = dynamic_cast<Qt3D::QNode*>(ol.at(i));
+    Qt3DCore::QNode* nd = dynamic_cast<Qt3DCore::QNode*>(ol.at(i));
     if(nd) {
       nd->setParent((QNode*)NULL);
       // nd->deleteLater(); // no deleting -- causes crashes -- threads still have these guys hanging around -- not sure what to do about the orphans though?  surely we'll be getting leaks?

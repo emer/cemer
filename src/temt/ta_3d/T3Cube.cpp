@@ -15,7 +15,7 @@
 
 #include "T3Cube.h"
 
-#include <Qt3DRenderer/QCuboidMesh>
+#include <Qt3DRender/QCuboidMesh>
 
 
 T3Cube::T3Cube(Qt3DNode* parent)
@@ -33,7 +33,7 @@ T3Cube::T3Cube(Qt3DNode* parent, const QVector3D& sz)
 }
 
 void T3Cube::init() {
-  Qt3D::QCuboidMesh* cb = new Qt3D::QCuboidMesh();
+  Qt3DRender::QCuboidMesh* cb = new Qt3DRender::QCuboidMesh();
   addMesh(cb);
   updateSize();
 }
@@ -52,7 +52,7 @@ void T3Cube::setSize(const QVector3D& sz) {
 }
 
 void T3Cube::updateSize() {
-  Qt3D::QCuboidMesh* cb = dynamic_cast<Qt3D::QCuboidMesh*>(mesh);
+  Qt3DRender::QCuboidMesh* cb = dynamic_cast<Qt3DRender::QCuboidMesh*>(mesh);
   cb->setXExtent(size.x());
   cb->setYExtent(size.y());
   cb->setZExtent(size.z());

@@ -36,12 +36,18 @@
 #include <QCursor>
 #include <QDesktopWidget>
 #include <QApplication>
-#include <QWebSettings>
 #include <QPushButton>
 #include <QMenuBar>
 #include <QScrollBar>
 #include <QDebug>
 
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+
+#include <QWebSettings>
+
+#endif // USE_QT_WEBENGINE
 
 #define record_cursor_width 16
 #define record_cursor_height 16
@@ -139,11 +145,17 @@ void taiMisc::Init(bool gui) {
   connect(dw, SIGNAL(workAreaResized(int)),
     this, SLOT(desktopWidget_workAreaResized(int)));
 
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+  
   QWebSettings *defaultSettings = QWebSettings::globalSettings();
   defaultSettings->setAttribute(QWebSettings::PluginsEnabled, true);
 
   net_access_mgr = new iNetworkAccessManager;
   net_access_mgr->setCookieJar(new iCookieJar(net_access_mgr));
+  
+#endif // USE_QT_WEBENGINE
 }
 
 int taiMisc::Exec_impl() {

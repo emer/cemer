@@ -108,6 +108,10 @@ public:
   { if(spec) spec->Init_Acts_Layer(this, (LeabraNetwork*)net); }
   // #CAT_Activation layer-level initialization taking place after Init_Acts on units
 
+  virtual void	DecayState(LeabraNetwork* net, float decay)
+  { if(spec) spec->DecayState(this, net, decay); }
+  // #CAT_Activation decay the state of this layer -- not normally called but available for programs etc to control specific layers
+
   void  Init_InputData(Network* net) override;
 
   void  Init_Stats(Network* net) override

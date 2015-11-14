@@ -27,22 +27,22 @@ class T3TwoDText; // #IGNORE
 
 #ifndef __MAKETA__
 
-#include <Qt3DRenderer/QAbstractTextureImage>
+#include <Qt3DRender/QAbstractTextureImage>
 
 #include <QLabel>
 #include <QImage>
 
-class TA_API T3TwoDTexture : public Qt3D::QAbstractTextureImage {
+class TA_API T3TwoDTexture : public Qt3DRender::QAbstractTextureImage {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS texture provider that returns a texture of a QLabel text object
   Q_OBJECT
-  INHERITED(Qt3D::QAbstractTextureImage)
+  INHERITED(Qt3DRender::QAbstractTextureImage)
 public:
   QImage*       image;          // image that the label is rendered into, used for the image data
 
   virtual void  renderLabel(T3TwoDText& txt);
   // render the label to the image
   
-  Qt3D::QTextureDataFunctorPtr dataFunctor() const override;
+  Qt3DRender::QTextureDataFunctorPtr dataFunctor() const override;
 
   explicit T3TwoDTexture(Qt3DNode* parent = 0);
   ~T3TwoDTexture();

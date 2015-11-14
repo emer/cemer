@@ -17,6 +17,10 @@
 
 #include <taiMisc>
 
+#ifdef USE_QT_WEBENGINE
+
+#else // USE_QT_WEBENGINE
+
 QWebView* iWebView::createWindow(QWebPage::WebWindowType type) {
   QWebView* rval = NULL;
   emit sigCreateWindow(type, rval);
@@ -24,6 +28,8 @@ QWebView* iWebView::createWindow(QWebPage::WebWindowType type) {
     rval = inherited::createWindow(type);
   return rval;
 }
+
+#endif // USE_QT_WEBENGINE
 
 void iWebView::keyPressEvent(QKeyEvent* e) {
   taiMisc::UpdateUiOnCtrlPressed(this, e);

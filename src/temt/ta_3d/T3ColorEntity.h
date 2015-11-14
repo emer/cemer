@@ -68,10 +68,10 @@ public slots:
 protected:
 
   void removeAllBut(ColorType typ);
-  Qt3D::QPhongMaterial* phong;  // phong material -- null if using texture mode
+  Qt3DRender::QPhongMaterial* phong;  // phong material -- null if using texture mode
   T3TransparentMaterial* trans;
   T3Texture*    texture;        // texture -- null if using phong mode
-  Qt3D::QPerVertexColorMaterial* per_vertex;
+  Qt3DRender::QPerVertexColorMaterial* per_vertex;
   T3PerVertexTransMaterial* per_vertex_trans;
 };
 

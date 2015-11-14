@@ -77,7 +77,7 @@
 #include <QTextEdit>
 #include <QTextCursor>
 #include <QClipboard>
-#include <QWebView>
+#include <iWebView>
 #include <QMenuBar>
 
 int iMainWindowViewer::s_next_unique_id;
@@ -2355,9 +2355,12 @@ void iMainWindowViewer::editCut() {
     lineEdit->cut();
     return;
   }
-  QWebView*  webViewEdit = dynamic_cast<QWebView*>(focusWidget());
+  iWebView*  webViewEdit = dynamic_cast<iWebView*>(focusWidget());
   if (webViewEdit) {
+#ifdef USE_QT_WEBENGINE
+#else // USE_QT_WEBENGINE
     webViewEdit->page()->triggerAction(QWebPage::Cut);
+#endif // USE_QT_WEBENGINE
     return;
   }
   QTextEdit*  textEdit = dynamic_cast<QTextEdit*>(focusWidget());
@@ -2378,9 +2381,12 @@ void iMainWindowViewer::editCopy() {
     lineEdit->copy();
     return;
   }
-  QWebView*  webViewEdit = dynamic_cast<QWebView*>(focusWidget());
+  iWebView*  webViewEdit = dynamic_cast<iWebView*>(focusWidget());
   if (webViewEdit) {
+#ifdef USE_QT_WEBENGINE
+#else // USE_QT_WEBENGINE
     webViewEdit->page()->triggerAction(QWebPage::Copy);
+#endif // USE_QT_WEBENGINE
     return;
   }
   QTextEdit*  textEdit = dynamic_cast<QTextEdit*>(focusWidget());
@@ -2400,9 +2406,12 @@ void iMainWindowViewer::editPaste() {
     lineEdit->paste();
     return;
   }
-  QWebView*  webViewEdit = dynamic_cast<QWebView*>(focusWidget());
+  iWebView*  webViewEdit = dynamic_cast<iWebView*>(focusWidget());
   if (webViewEdit) {
+#ifdef USE_QT_WEBENGINE
+#else // USE_QT_WEBENGINE
     webViewEdit->page()->triggerAction(QWebPage::Paste);
+#endif // USE_QT_WEBENGINE
     return;
   }
   QTextEdit*  textEdit = dynamic_cast<QTextEdit*>(focusWidget());
@@ -2914,7 +2923,7 @@ void iMainWindowViewer::UpdateUi() {
 
   QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(focusWidget());
   QTextEdit*  textEdit = dynamic_cast<QTextEdit*>(focusWidget());
-  QWebView*  webViewEdit = dynamic_cast<QWebView*>(focusWidget());
+  iWebView*  webViewEdit = dynamic_cast<iWebView*>(focusWidget());
 
   if (lineEdit != NULL) {
     editCutAction->setEnabled(lineEdit->hasSelectedText());

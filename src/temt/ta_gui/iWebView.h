@@ -19,12 +19,34 @@
 // parent includes:
 #include "ta_def.h"
 #ifndef __MAKETA__
+
+#ifdef USE_QT_WEBENGINE
+#include <QWebEngineView>
+#else // USE_QT_WEBENGINE
 #include <QWebView>
+#endif // USE_QT_WEBENGINE
 #endif
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+
+#ifdef USE_QT_WEBENGINE
+
+class iWebView: public QWebEngineView {
+Q_OBJECT
+INHERITED(QWebEngineView);
+public:
+  iWebView(QWidget* parent = 0):inherited(parent) {}
+signals:
+  // void          sigCreateWindow(QWebPage::WebWindowType type,
+  //   QWebView*& window);
+protected:
+  // QWebView* createWindow(QWebPage::WebWindowType type) override;
+  void keyPressEvent(QKeyEvent* e) override;
+};
+
+#else // USE_QT_WEBENGINE
 
 class iWebView: public QWebView {
 Q_OBJECT
@@ -38,5 +60,8 @@ protected:
   QWebView* createWindow(QWebPage::WebWindowType type) override;
   void keyPressEvent(QKeyEvent* e) override;
 };
+
+#endif // USE_QT_WEBENGINE
+
 
 #endif // iWebView_h

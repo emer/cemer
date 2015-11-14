@@ -335,6 +335,40 @@ ConGroup* Unit::FindRecvConGroupFromName(const String& fm_nm) const {
   return NULL;
 }
 
+bool Unit::SetCnValName(float val, const Variant& prjn, int idx, const String& var_nm) {
+  ConGroup* cg = NULL;
+  if(prjn.isStringType()) {
+    cg = FindRecvConGroupFromName(prjn.toString());
+  }
+  else {
+    int ridx =prjn.toInt();
+    if(ridx < NRecvConGps()) {
+      cg = RecvConGroup(ridx);
+    }
+  }
+  if(TestError(!cg, "SetCnValName", "recv projection not found from:", prjn.toString())) {
+    return false;
+  }
+  return cg->SetCnValName(val, idx, var_nm);
+}
+  
+float Unit::GetCnValName(const Variant& prjn, int idx, const String& var_nm) {
+  ConGroup* cg = NULL;
+  if(prjn.isStringType()) {
+    cg = FindRecvConGroupFromName(prjn.toString());
+  }
+  else {
+    int ridx =prjn.toInt();
+    if(ridx < NRecvConGps()) {
+      cg = RecvConGroup(ridx);
+    }
+  }
+  if(TestError(!cg, "GetCnValName", "recv projection not found from:", prjn.toString())) {
+    return false;
+  }
+  return cg->SafeCnName(idx, var_nm);
+}
+
 int Unit::NRecvConGpsSafe() const {
   return own_net()->UnNRecvConGpsSafe(flat_idx);
 }
