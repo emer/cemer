@@ -28,6 +28,10 @@ def submitJob(jm, opts, args):
                 job.enableThreaded()
             if opts.queue != None:
                 job.setQueue(opts.queue)
+            if opts.qos:
+                job.setQOS(True)
+            else:
+                job.setQOS(False)
             if opts.memory != None:
                  if False == job.setMemory( opts.memory ):
                      print job.lastErr()
@@ -87,6 +91,10 @@ def submitJob(jm, opts, args):
                 job.enableThreaded()
             if opts.queue != None:
                 job.setQueue(opts.queue)
+            if opts.qos:
+                job.setQOS(True)
+            else:
+                job.setQOS(False)
             if opts.memory != None:
                  if False == job.setMemory( opts.memory ):
                      print job.lastErr()
@@ -143,7 +151,7 @@ def submitJob(jm, opts, args):
 
 if __name__ == "__main__":
     
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(filename='cluster_run_mon.log',level=logging.DEBUG)
     logging.info(sys.argv)
     ''' Main function - generates and submits a job to PBS or SGE for Emergent-like jobs'''
     p = optparse.OptionParser( description="Cluster job submission program",
@@ -153,6 +161,7 @@ if __name__ == "__main__":
     p.disable_interspersed_args()
     p.add_option("--jobtype", action="store", help="specify job type (e.g. dm or sp)", default='')
     p.add_option("--queue","-q", action="store", help="specify queue name", default=None)
+    p.add_option("--qos","-Q", action="store_true", help="specify if to use partition or qos", default=False)
     p.add_option("--memory","-m", action="store", help="specify memory in mb or gb", default=None)
     p.add_option("--quick", action="store_true", help="enables quick/quiet output", default=False)
     p.add_option("--verbose", "-v", action="store_true", help="enables verbose output", default=False)

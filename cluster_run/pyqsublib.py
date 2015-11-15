@@ -375,8 +375,12 @@ class SlurmJobManager( ClusterJobManager ):
         if job.queueName() == '':
             job.setQueue('blanca-ccn')
 
-        file.write("#SBATCH --qos=%s\n" % job.queueName() )
-        self.subCmd.append("--qos=%s" % job.queueName() )
+        if job.useQOS:
+            file.write("#SBATCH --qos=%s\n" % job.queueName() )
+            self.subCmd.append("--qos=%s" % job.queueName() )
+        else:
+            file.write("#SBATCH -p %s\n" % job.queueName() )
+            self.subCmd.append("-p %s" % job.queueName() )
         if job.mail_user != None:
             file.write("#SBATCH --mail-type=%s\n" % job.mail_type)
             file.write("#SBATCH --mail-user=%s\n" % job.mail_user)
@@ -492,6 +496,7 @@ class ClusterJob:
         self.mail_type = "FAIL"
         self.job_launcher = "mpirun" # hardcode program name so fails gracefully
         self.path_setup_script = None
+        self.useQOS = True
     def isThreaded(self):
         return self.threaded
     def enableThreaded( self ):
@@ -590,6 +595,8 @@ class ClusterJob:
             return ''
         else:
             return self.queue
+    def setQOS(self, t):
+        self.useQOS = t    
     def setMemory( self, mem):
         # check that it's of format: Nmb|gb (e.g. 4mb or 4gb)
         m = mem.lower()

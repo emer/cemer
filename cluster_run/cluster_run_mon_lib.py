@@ -157,7 +157,10 @@ def check_output(cmd):
     if (proc_output.returncode != 0):
         logging.error("Failed to execute command " + str(cmd) + " " + str(proc_output.returncode))
         raise Exception("Command was not executed successfully: " + proc_output.communicate()[1])
-    return proc_output.communicate()[0]
+    tmp = proc_output.communicate()
+    if debug:
+        logging.info(tmp[1])
+    return tmp[0]
     
 
 
@@ -1031,7 +1034,7 @@ class SubversionPoller(object):
         self._start_job_cluster(filename, rev, row);
 
     def _start_job_cluster(self, filename, rev, row):
-        global mail_user, clust_queue
+        global mail_user, clust_queue, use_qos
         proj = self.model_files[0]  
         proj = os.path.abspath(proj)
         self.cur_proj_file = proj
@@ -1081,6 +1084,12 @@ class SubversionPoller(object):
                     args_eff = args_eff + ["-s", path_setup]
                 else:
                     args_eff = ["-s", path_setup]
+            if (('use_qos' in globals()) and use_qos):
+                if (len(args_eff) > 0):
+                    logging.info("use_qos: " + str(use_qos))
+                    args_eff = args_eff + ["-Q"]
+                else:
+                    args_eff = ["-Q"]
             if len(queue) > 0:
                 if (len(args_eff) > 0):
                     args_eff = args_eff + ["-q", queue]
@@ -1123,6 +1132,11 @@ class SubversionPoller(object):
                     args_eff = args_eff + ["-s", path_setup]
                 else:
                     args_eff = ["-s", path_setup]
+            if (('use_qos' in globals()) and use_qos):
+                if (len(args_eff) > 0):
+                    args_eff = args_eff + ["-Q"]
+                else:
+                    args_eff = ["-Q"]
             if len(queue) > 0:
                 if (len(args_eff) > 0):
                     args_eff = args_eff + ["-q", queue]
@@ -1145,6 +1159,8 @@ class SubversionPoller(object):
         status = 'SUBMITTED'
 
         try:
+            if debug:
+                logging.info("cmdsub: " + str(cmdsub))
             result = check_output(cmdsub)
             #print "result: %s" % result
 
