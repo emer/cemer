@@ -1528,6 +1528,7 @@ class SubversionPoller(object):
     def _query_job_queue_sge(self, row, status, force_updt = False):
         job_no = self.jobs_running.get_val(row, "job_no")
         tag = self.jobs_running.get_val(row, "tag")
+        q_out = ""
         if qstat_args != '':
             cmd = [qstat_cmd, qstat_args, job_no]
         else:
@@ -1611,6 +1612,7 @@ class SubversionPoller(object):
     def _query_job_queue_slurm(self, row, status, force_updt = False):
         job_no = self.jobs_running.get_val(row, "job_no")
         tag = self.jobs_running.get_val(row, "tag")
+        q_out = ""
         if qstat_args != '':
             cmd = [qstat_cmd] + qstat_args + [job_no]
         else:
@@ -1621,7 +1623,6 @@ class SubversionPoller(object):
             q_out = check_output(cmd)
         except:
             logging.warning("Failed to execute command " + str(cmd))
-            logging.info(q_out)
 
         # regexp for output of qstat that tells you that the job is running
         qstat_running_re = r"\s*JobState=RUNNING.*"
@@ -2084,6 +2085,7 @@ class SubversionPoller(object):
                 procs = scols[8]
 
                 #Can't get the start time from squeue, so need to run scontrol show job for each.
+                q_out = ""
                 if qstat_args != '':
                     cmd = [qstat_cmd] + qstat_args + [job_no]
                 else:
