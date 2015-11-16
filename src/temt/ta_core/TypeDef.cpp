@@ -33,6 +33,7 @@
 #include <tabMisc>
 #include <taRootBase>
 #include <dumpMisc>
+#include <taGroup_impl>
 
 #ifdef DMEM_COMPILE
 #include <DMemShare>
@@ -1184,7 +1185,22 @@ MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
       net_mbr_off = *((ta_memb_ptr*)&cur_base_off);
     }
   }
-  MemberDef* md = own_td->members.FindName(pth);
+  MemberDef* md = NULL;
+  if (pth.lastchar() == ']') {
+    int idx = pth.index('[', -1);
+    String group_path = pth.before(idx);
+    md = own_td->members.FindName(group_path);
+    if(md) {
+//      if (md->type) {
+//        if (md->type->DerivesFrom(&TA_taGroup_impl)) {
+//          
+//        }
+//      }
+    }
+  }
+  else {
+    md = own_td->members.FindName(pth);
+  }
   if(!md) {
     if(warn) {
       taMisc::Warning("FindMemberPathStatic: member:", pth, "not found in object type:",
