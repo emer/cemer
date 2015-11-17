@@ -25,8 +25,9 @@ void MatrixActSpec::Initialize() {
 }
 
 void MatrixActSpec::Defaults_init() {
-  gate_inhib = 0.0f;
-  gate_i_tau = 2.0f;
+  mnt_gate_inhib = 0.0f;
+  out_gate_inhib = 0.0f;
+  gate_i_tau = 4.0f;
   out_ach_inhib = 0.0f;
   mnt_ach_inhib = 0.0f;
   mnt_deep_mod = false;
@@ -126,7 +127,13 @@ void MSNUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, i
   if(matrix_patch != MATRIX) return;
 
   if(u->thal > 0.0f) {          // we gated
-    u->misc_1 += matrix.gate_inhib * u->net_prv_q; // keep the net, not the inhib!
+    GateType gt = MatrixGateType(u, net, thr_no);
+    if(gt == MAINT) {
+      u->misc_1 += matrix.mnt_gate_inhib * u->net_prv_q; // keep the net, not the inhib!
+    }
+    else {
+      u->misc_1 += matrix.out_gate_inhib * u->net_prv_q; // keep the net, not the inhib!
+    }
   }
   else {
     u->misc_1 -= matrix.gate_i_dt * u->misc_1; // decay

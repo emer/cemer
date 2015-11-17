@@ -23,13 +23,9 @@ void MSNTraceSpec::Initialize() {
 }
 
 void MSNTraceSpec::Defaults_init() {
-  tr_decay = 1.0f;
   otr_lrate = 0.5f;
-  protect_pos = false;
-  da_reset_tr = 0.1f;
+  da_reset_tr = 0.2f;
   ach_reset_thr = 0.5f;
-  thal_mult = false;
-  tr_max = 1.0f;
 }
 
 void MSNTraceSpec::UpdateAfterEdit_impl() {

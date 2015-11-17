@@ -1967,6 +1967,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMSpec(LeabraConSpec, bg_lrn_cons, pbwmspgp, "BgLrnCons");
   FMChild(MSNConSpec, mtx_cons_go, bg_lrn_cons, "MatrixConsGo");
   FMChild(MSNConSpec, mtx_cons_no, mtx_cons_go, "MatrixConsNoGo");
+  FMChild(MSNConSpec, mtx_cons_fm_pfc, mtx_cons_go, "MatrixConsFmPFC");
   FMChild(LeabraDeltaConSpec, to_tans, bg_lrn_cons, "ToTANs");
 
   FMSpec(LeabraConSpec, pfc_lrn_cons, pbwmspgp, "PfcLrnCons");
@@ -1979,7 +1980,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMSpec(LeabraConSpec, fix_cons, pbwmspgp, prefix + "FixedCons");
   FMChild(LeabraBiasSpec, fix_bias, fix_cons, prefix + "FixedBias");
   FMChild(MarkerConSpec, marker_cons, fix_cons, prefix + "MarkerCons");
-  FMChild(SendDeepModConSpec, pfcd_to_s, fix_cons, "PFCdToSuperMod");
+  FMChild(SendDeepModConSpec, pfc_deep_mod, fix_cons, "PFCSendDeepMod");
   FMChild(LeabraConSpec, pfcd_mnt_out, fix_cons, "PFCdMntToOut");
   FMChild(SendDeepRawConSpec, d5b_lrn_cons, fix_cons, prefix + "DeepRawPlus");
 
@@ -1991,6 +1992,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMChild(LeabraLayerSpec, gpi_sp, pbwm_sp, "GPiLayer");
   FMChild(LeabraLayerSpec, gp_nogo_sp, gpi_sp, "GPeNoGoLayer");
   FMChild(LeabraLayerSpec, pfc_sp, pbwm_sp, "PFCLayer");
+  FMChild(LeabraLayerSpec, pfc_trc_sp, pbwm_sp, "PFCTrcLayer");
 
   ////////////	PrjnSpecs
 
@@ -2043,7 +2045,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfc_mnt_units->SetUnique("deep", true);
   pfc_mnt_units->deep.on = true;
   pfc_mnt_units->deep.role = DeepSpec::SUPER;
-  pfc_mnt_units->pfc.s_mnt_gain = 0.05f;
+  pfc_mnt_units->pfc.s_mnt_gain = 0.3f;
 
   pfc_mnt_d_units->SetUnique("deep", true);
   pfc_mnt_d_units->deep.on = true;
@@ -2053,7 +2055,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfc_mnt_units->deep.on = true;
   pfc_mnt_units->deep.role = DeepSpec::SUPER;
   pfc_out_units->pfc.out_gate = true;
-  pfc_out_units->pfc.s_mnt_gain = 0.1f;
+  pfc_out_units->pfc.s_mnt_gain = 0.25f;
   pfc_out_units->n_dyns = 1;
 
   pfc_out_d_units->SetUnique("deep", true);
@@ -2074,7 +2076,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   ////////////	ConSpecs
 
   bg_lrn_cons->SetUnique("lrate", true);
-  bg_lrn_cons->lrate = 0.05f;
+  bg_lrn_cons->lrate = 0.01f;
   bg_lrn_cons->SetUnique("learn_qtr", true);
   bg_lrn_cons->learn_qtr = LeabraConSpec::Q2_Q4; // beta by default
   bg_lrn_cons->SetUnique("wt_limits", true);
@@ -2082,7 +2084,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   mtx_cons_go->SetUnique("wt_limits", false);
   mtx_cons_go->SetUnique("lrate", true);
-  mtx_cons_go->lrate = .05f;
+  mtx_cons_go->lrate = .01f;
   mtx_cons_go->SetUnique("wt_sig", true);
   mtx_cons_go->wt_sig.gain = 1.0f;
   mtx_cons_go->SetUnique("su_act_var", true);
@@ -2099,6 +2101,15 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   mtx_cons_no->SetUnique("ru_act_var", false);
   mtx_cons_no->SetUnique("learn_rule", false);
 
+  mtx_cons_fm_pfc->SetUnique("wt_limits", false);
+  mtx_cons_fm_pfc->SetUnique("lrate", false);
+  mtx_cons_fm_pfc->SetUnique("wt_sig", false);
+  mtx_cons_fm_pfc->SetUnique("su_act_var", false);
+  mtx_cons_fm_pfc->SetUnique("ru_act_var", false);
+  mtx_cons_fm_pfc->SetUnique("learn_rule", false);
+  mtx_cons_fm_pfc->SetUnique("wt_scale", true);
+  mtx_cons_fm_pfc->wt_scale.rel = 0.1f;
+  
   to_tans->SetUnique("wt_limits", false);
   to_tans->SetUnique("learn_qtr", true);
   to_tans->learn_qtr = LeabraConSpec::Q4; // only get learn at end
@@ -2106,8 +2117,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   to_tans->lrate = 0.1f;
 
   pfc_lrn_cons->SetUnique("lrate", true);
-  pfc_lrn_cons->lrate = 0.005f;
-  pfc_lrn_cons->learn_qtr = LeabraConSpec::Q4; // TODO: ??
+  pfc_lrn_cons->lrate = 0.002f;
+  pfc_lrn_cons->learn_qtr = LeabraConSpec::Q2_Q4;
 
   deep_ctxt->SetUnique("wt_scale", true); // just make sure 1,1
 
@@ -2133,9 +2144,9 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   fix_cons->SetUnique("learn", true);
   fix_cons->learn = false;
 
-  pfcd_to_s->rnd.mean = 0.8f;
-  pfcd_to_s->rnd.var = 0.0f;
-  pfcd_to_s->wt_limits.sym = false;
+  pfc_deep_mod->rnd.mean = 0.8f;
+  pfc_deep_mod->rnd.var = 0.0f;
+  pfc_deep_mod->wt_limits.sym = false;
 
   ////////////	LayerSpecs
 
@@ -2146,6 +2157,9 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_sp->unit_gp_inhib.gi = 2.3f;
   matrix_sp->unit_gp_inhib.ff = 1.0f;
   matrix_sp->unit_gp_inhib.fb = 0.0f;
+  matrix_sp->SetUnique("lay_inhib", true);
+  matrix_sp->lay_inhib.on = true;
+  matrix_sp->lay_inhib.gi = 1.9f;
   matrix_sp->SetUnique("avg_act", true);
   matrix_sp->avg_act.init = 0.4f;
   matrix_sp->avg_act.fixed = true;
@@ -2171,7 +2185,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   gpi_sp->SetUnique("lay_inhib", true);
   gpi_sp->lay_inhib.on = true;
-  gpi_sp->lay_inhib.gi = 2.2f;
+  gpi_sp->lay_inhib.gi = 2.1f;
   gpi_sp->lay_inhib.ff = 1.0f;
   gpi_sp->lay_inhib.fb = 0.5f;
   gpi_sp->SetUnique("unit_gp_inhib", true);
@@ -2179,7 +2193,11 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   gpi_sp->SetUnique("avg_act", true);
   gpi_sp->avg_act.init = 0.2f;
   gpi_sp->avg_act.fixed = true;
+  gpi_sp->UpdateAfterEdit();       // spread before override
 
+  gp_nogo_sp->SetUnique("lay_inhib", true);
+  gp_nogo_sp->lay_inhib.gi = 2.2f;
+  
   pfc_sp->SetUnique("lay_inhib", true);
   pfc_sp->lay_inhib.on = false;
   pfc_sp->SetUnique("unit_gp_inhib", true);
@@ -2278,18 +2296,20 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
     
     subgp = "BG";
     matrix_sp->AddToControlPanelNm("unit_gp_inhib", cp, "matrix", subgp);
+    matrix_sp->AddToControlPanelNm("lay_inhib", cp, "matrix", subgp);
     matrix_sp->AddToControlPanelNm("inhib_misc", cp, "matrix", subgp);
     matrix_sp->AddToControlPanelNm("del_inhib", cp, "matrix", subgp);
 
+    mtx_cons_go->AddToControlPanelNm("lrate", cp, "matrix", subgp,
+                                     "Default Matrix lrate is .01");
     mtx_cons_go->AddToControlPanelNm("trace", cp, "matrix", subgp);
-    
-    bg_lrn_cons->AddToControlPanelNm("lrate", cp, "bg_lrn", subgp,
-                                     "Default Matrix lrate is .005");
     mtx_cons_go->AddToControlPanelNm("matrix", cp, "matrix", subgp);
+    mtx_cons_fm_pfc->AddToControlPanelNm("wt_scale", cp, "matrix", subgp);
 
     gpi_units->AddToControlPanelNm("gpi", cp, "gpi", subgp);
 
     gpi_sp->AddToControlPanelNm("lay_inhib", cp, "gpi", subgp);
+    gp_nogo_sp->AddToControlPanelNm("lay_inhib", cp, "gpe_nogo", subgp);
 
     cp->EditPanel(true, true);
   }
@@ -2556,6 +2576,7 @@ can be sure everything is ok.";
   BgPfcPrjnSpec* bgpfcprjn = PbwmSp("BgPfcPrjn", BgPfcPrjnSpec);
 
   LeabraConSpec* fix_cons = PbwmSp(prefix + "FixedCons", LeabraConSpec);
+  SendDeepModConSpec* pfc_send_deep = PbwmSp("PFCSendDeepMod", SendDeepModConSpec);
 
  //	  	 	   to		 from		prjn_spec	con_spec
 
@@ -2563,12 +2584,18 @@ can be sure everything is ok.";
   net->FindMakePrjn(matrix_go, vta, fullprjn, marker_cons);
   net->FindMakePrjn(matrix_go, matrix_tan, fullprjn, marker_cons);
   net->FindMakePrjn(matrix_go, patch, bgpfcprjn, marker_cons);
+  net->FindMakePrjn(matrix_go, pfc_mnt_d, PbwmSp("BgPfcPrjnToOut", BgPfcPrjnSpec),
+                    pfc_send_deep);
+  net->FindMakePrjn(matrix_go, pfc_mnt_d, fullprjn, PbwmSp("MatrixConsFmPFC", MSNConSpec));
   // also ctrl input
 
   net->FindMakePrjn(matrix_nogo, gpi, gponetoone, marker_cons);
   net->FindMakePrjn(matrix_nogo, vta, fullprjn, marker_cons);
   net->FindMakePrjn(matrix_nogo, matrix_tan, fullprjn, marker_cons);
   net->FindMakePrjn(matrix_nogo, patch, bgpfcprjn, marker_cons);
+  net->FindMakePrjn(matrix_nogo, pfc_mnt_d, PbwmSp("BgPfcPrjnToOut", BgPfcPrjnSpec),
+                    pfc_send_deep);
+  net->FindMakePrjn(matrix_nogo, pfc_mnt_d, fullprjn, PbwmSp("MatrixConsFmPFC", MSNConSpec));
   // also ctrl input
 
   if(pos_pv) {
@@ -2594,8 +2621,7 @@ can be sure everything is ok.";
   net->FindMakePrjn(gpi, gpenogo, gponetoone, fix_cons);
 
   net->FindMakePrjn(pfc_mnt, gpi, bgpfcprjn, marker_cons);
-  net->FindMakePrjn(pfc_mnt, pfc_mnt_d, onetoone,
-                    PbwmSp("PFCdToSuperMod", SendDeepModConSpec));
+  net->FindMakePrjn(pfc_mnt, pfc_mnt_d, onetoone, pfc_send_deep);
   net->FindMakePrjn(pfc_mnt, pfc_out, onetoone, marker_cons);
   net->FindMakePrjn(pfc_mnt, pfc_mnt_trc, gponetoone,
                     PbwmSp("PFCfmTRC", LeabraConSpec));

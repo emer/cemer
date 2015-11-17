@@ -31,9 +31,9 @@ class E_API PFCMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          out_gate;       // if true, this PFC layer is an output gate layer, which means that it only has transient activation during gating
-  float         s_mnt_gain;     // #DEF_0.25 for superficial neurons, how much of deep_lrn to add into excitatory net input to support maintenance, from deep maintenance signal
-  float         clear;          // #MIN_0 #MAX_1 how much to clear out (decay) super activations when the stripe itself gates and was previously maintaining something
-  float         out_clear;      // #MIN_0 #MAX_1 #CONDSHOW_ON_out_gate how much to clear out (decay) corresponding maintenance stripe activations when an output gating signal fires
+  float         s_mnt_gain;     // #DEF_0.25;0.3 for superficial neurons, how much of deep_lrn to add into excitatory net input to support maintenance, from deep maintenance signal -- 0.25 is generally minimum to support maintenance
+  float         clear;          // #MIN_0 #MAX_1 #DEF_0.5 how much to clear out (decay) super activations when the stripe itself gates and was previously maintaining something
+  float         out_clear;      // #MIN_0 #MAX_1 #CONDSHOW_ON_out_gate #DEF_0.5 how much to clear out (decay) corresponding maintenance stripe activations when an output gating signal fires
   float         mnt_thal;       // #DEF_1 effective thal activation to use in computing the deep_raw activation sent from super to deep layers, for continued maintenance beyond the initial thal signal provided by the BG -- also sets and effective minimum thal value regardless of the actual gating thal value
   bool          use_dyn;        // use fixed dynamics for updating deep_ctxt activations -- defined in dyn_table -- this also preserves the initial gating deep_ctxt value in misc_1 -- otherwise it is up to the recurrent loops between super and deep for maintenance
   int           max_mnt;        // #CONDSHOW_OFF_out_gate maximum duration of maintenance for any stripe -- beyond this limit, the maintenance is just automatically cleared
