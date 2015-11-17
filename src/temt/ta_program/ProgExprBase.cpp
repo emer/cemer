@@ -544,11 +544,14 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       expr_start = txt.length();
       prepend_txt = txt.before(expr_start);
     }
-    else if(path_base_not_null) {
-      lookup_type = ProgExprBase::OBJ_MEMB_METH;
-      lookup_seed = txt.from(expr_start);
-      prepend_txt = txt.before(expr_start);
-    }
+    // rohrlich - this will be true if the code is already compiled and that is causing a problem - see bug 2453
+    // - honestly I don't know of any situation that uses this and I think we should always take the code as uncompiled
+    // so commenting out to see if there are repercussions
+//    else if(path_base_not_null) {
+//      lookup_type = ProgExprBase::OBJ_MEMB_METH;
+//      lookup_seed = txt.from(expr_start);
+//      prepend_txt = txt.before(expr_start);
+//    }
     else {
       lookup_type = ProgExprBase::VARIOUS;
       lookup_seed = txt.from(expr_start);
@@ -610,7 +613,9 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   int expr_start = 0;
   
 
-  bool path_base_not_null = (path_base_typ != NULL || path_base != NULL);
+  bool path_base_not_null = false;
+  // Rohrlich - see note in the parse code - remove this variable if all goes well
+//  bool path_base_not_null = (path_base_typ != NULL || path_base != NULL);
   lookup_type = ParseForLookup(cur_txt, cur_pos, prepend_txt, path_prepend_txt, append_txt, prog_el_txt, base_path, lookup_seed, path_var, path_rest, path_base_not_null, expr_start);
 
   lookup_seed.trim();
