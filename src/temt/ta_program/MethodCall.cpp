@@ -24,6 +24,8 @@
 #include <taiWidgetTokenChooser>
 #include <taiWidgetMethodDefChooser>
 
+#include <ProgVar>
+
 
 TA_BASEFUNS_CTORS_DEFN(MethodCall);
 
@@ -156,8 +158,9 @@ bool MethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 bool MethodCall::CvtFmCode(const String& code) {
   if (code == GetDisplayName())  // don't bother to parse
     return true;
-  
-  String lhs = trim(code.before('('));
+ 
+  String code_copy = code;
+  String lhs = trim(code_copy.before('('));
   String mthobj = lhs;
   String rval;
   if(lhs.contains('=')) {
@@ -186,7 +189,11 @@ bool MethodCall::CvtFmCode(const String& code) {
     UpdateAfterEdit_impl();                        // update based on obj
   }
   // now tackle the args
-  String args = trim(code.after('('));
+  // if none of the args have been set we need to get them added to the args list before parsing
+  if (meth_args.size == 0) {
+    meth_args.UpdateFromMethod(md);
+  }
+  String args = trim(code_copy.after('('));
   meth_args.ParseArgString(args);
   return true;
 }
@@ -199,7 +206,7 @@ bool MethodCall::ChooseMe() {
     chooser->item_filter = (item_filter_fun)ProgEl::ObjProgVarFilter;
     chooser->SetTitleText("Choose the object for the method call");
     Program* scope_program = GET_MY_OWNER(Program);
-    chooser->GetImageScoped(NULL, &TA_ProgVar   , scope_program, &TA_Program); // scope to this guy
+    chooser->GetImageScoped(NULL, &TA_ProgVar, scope_program, &TA_Program); // scope to this guy
     bool okc = chooser->OpenChooser();
     if(okc && chooser->token()) {
       ProgVar* tok = (ProgVar*)chooser->token();
