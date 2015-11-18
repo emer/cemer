@@ -29,9 +29,9 @@ void GPiMiscSpec::Initialize() {
 void GPiMiscSpec::Defaults_init() {
   net_gain = 1.0f;
   nogo = 1.0f;
-  gate_thr = 0.1f;
+  gate_thr = 0.2f;
   thr_act = true;
-  min_thal = 1.0f;
+  min_thal = 0.2f;
   tot_gain = net_gain + nogo;
   thal_rescale = (1.0f - min_thal) / (1.0f - gate_thr);
 }

@@ -48,7 +48,7 @@ void PFCUnitSpec::Defaults_init() {
   deep.on = true;
   deep.raw_thr_rel = 0.1f;
   deep.raw_thr_abs = 0.1f; // todo??
-  deep.mod_min = 0.9f;
+  deep.mod_min = 1.0f;
 }
 
 void  PFCUnitSpec::FormatDynTable() {

@@ -30,12 +30,12 @@ class E_API MatrixActSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         mnt_gate_inhib; // amount of post-gating inhibition to apply (proportion of netin present at time of gating quarter) -- for maintenance gating units
-  float         out_gate_inhib; // amount of post-gating inhibition to apply (proportion of netin present at time of gating quarter) -- for output gating units
-  float         gate_i_tau;     // decay time for post-gating inhibition, in units of deep active periods (e.g., beta frequency) -- determined by deep_raw_qtr 
-  float         mnt_ach_inhib;  // how much does the PRESENCE of ACh from the TAN units drive extra inhibition to maintenance-gating Matrix units -- gi += mnt_ach_inhib * ach -- provides a bias for maint gating on non-reward trials
-  float         out_ach_inhib;  // how much does the LACK of ACh from the TAN units drive extra inhibition to output-gating Matrix units -- gi += out_ach_inhib * (1-ach) -- provides a bias for output gating on reward trials
-  bool          mnt_deep_mod;   // engage deep_mod for maintenance units based on projections from mnt deep layer -- allows biasing
-  bool          out_deep_mod;   // engage deep_mod for output units based on projections from mnt deep layer -- allows biasing
+  float         out_gate_inhib; // #DEF_0 amount of post-gating inhibition to apply (proportion of netin present at time of gating quarter) -- for output gating units
+  float         gate_i_tau;     // #DEF_4 decay time for post-gating inhibition, in units of deep active periods (e.g., beta frequency) -- determined by deep_raw_qtr 
+  float         mnt_ach_inhib;  // #DEF_0 how much does the PRESENCE of ACh from the TAN units drive extra inhibition to maintenance-gating Matrix units -- gi += mnt_ach_inhib * ach -- provides a bias for maint gating on non-reward trials
+  float         out_ach_inhib;  // #DEF_0.02 how much does the LACK of ACh from the TAN units drive extra inhibition to output-gating Matrix units -- gi += out_ach_inhib * (1-ach) -- provides a bias for output gating on reward trials
+  bool          mnt_deep_mod;   // #DEF_false engage deep_mod for maintenance units based on projections from mnt deep layer -- allows biasing
+  bool          out_deep_mod;   // #DEF_true engage deep_mod for output units based on projections from mnt deep layer -- allows biasing of stripes that are already maintaining to be favored for output gating -- strength of bias is in deep.mod_min
 
   float         gate_i_dt;      // #READ_ONLY #EXPERT rate = 1/gate_i_tau
   
