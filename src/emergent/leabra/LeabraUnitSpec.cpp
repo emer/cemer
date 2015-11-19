@@ -1186,7 +1186,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
         LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
         if(send_gp->NotActive()) continue;
         LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
-        if(deep.SendDeepMod() && cs->IsDeepModCon()) {
+        if(cs->IsDeepModCon()) {
           SendDeepModConSpec* sp = (SendDeepModConSpec*)cs;
           sp->Send_DeepModNetDelta(send_gp, net, thr_no, act_delta);
         }
@@ -1209,7 +1209,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
       LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
       if(send_gp->NotActive()) continue;
       LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
-      if(deep.SendDeepMod() && cs->IsDeepModCon()) {
+      if(cs->IsDeepModCon()) {
         SendDeepModConSpec* sp = (SendDeepModConSpec*)cs;
         sp->Send_DeepModNetDelta(send_gp, net, thr_no, act_delta);
       }
