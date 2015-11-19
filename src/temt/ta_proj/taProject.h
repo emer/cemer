@@ -189,6 +189,8 @@ public:
   // #CAT_File get a file name to save project to, with suffix but file extension *removed*, based on any existing file name, project name, and type
   virtual bool          AutoSave(bool force = false);
   // #CAT_File called automatically by the wait process -- if enough time has passed or force is true, save current project to an auto save backup file (file name + _autosave)
+  virtual void          AutoNameProj(const String& fname);
+  // #CAT_File update the name of the project based on given file name
 
   bool                  SetFileName(const String& val) override;
   int                   Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0) override;

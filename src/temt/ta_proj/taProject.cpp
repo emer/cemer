@@ -455,6 +455,9 @@ bool taProject::SetFileName(const String& val) {
   if (GetFileName() == val)
     return true;
   inherited::SetFileName(val);
+  if(taMisc::interactive && auto_name) {
+    AutoNameProj(file_name);
+  }
   MainWindowViewer* vwr = GetDefaultProjectBrowser();
   if(vwr) {
     vwr->SetWinName();
@@ -502,6 +505,13 @@ int taProject::Save() {
   return SaveAs(fname);
 }
 
+
+void taProject::AutoNameProj(const String& fname) {
+  String nwnm = taMisc::GetFileFmPath(fname);
+  if(nwnm.contains(".proj")) nwnm = nwnm.before(".proj",-1);
+  SetName(nwnm);
+}
+
 int taProject::SaveAs(const String& fname) {
   if (save_view == true) { // save current view with project
     for (int i = 0; i < viewers.size; ++i) {
@@ -525,9 +535,7 @@ int taProject::SaveAs(const String& fname) {
     proj_dir = fi.absolutePath();
     QDir::setCurrent(fi.absolutePath());
     if(auto_name) {
-      String nwnm = taMisc::GetFileFmPath(flr->FileName());
-      if(nwnm.contains(".proj")) nwnm = nwnm.before(".proj",-1);
-      SetName(nwnm);
+      AutoNameProj(flr->FileName());
     }
     Save_strm(*(flr->ostrm));
     flr->Close();

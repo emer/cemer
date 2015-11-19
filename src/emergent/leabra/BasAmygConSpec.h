@@ -36,7 +36,7 @@ public:
   float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign! should be small for acq, but roughly equal to burst_da_gain for ext 
   
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(BasAmygLearnSpec);
 protected:
