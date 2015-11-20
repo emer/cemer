@@ -135,7 +135,21 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
       }
     }
       break;
-      //Qt::CheckStateRole
+      
+    case Qt::CheckStateRole: {
+        DataCol* dc = m_dt->data.FastEl(index.column());
+        if (dc && dc->isBool()) {
+          int val = dc->GetValAsInt(index.row());
+          if (val == 0) {
+            return Qt::Unchecked;
+          }
+          else {
+            return Qt::Checked;
+          }
+        }
+      break;
+    }
+      
     default:
       break;
   }
@@ -178,6 +192,9 @@ Qt::ItemFlags iDataTableModel::flags(const QModelIndex& index) const {
       if (col && !(col->is_matrix || (col->col_flags & DataCol::READ_ONLY) ||
                    col->isGuiReadOnly()) )
         rval |= Qt::ItemIsEditable;
+      if (col && col->isBool()) {
+        rval |= Qt::ItemIsUserCheckable;
+      }
     }
   }
   return rval;
@@ -254,6 +271,13 @@ bool iDataTableModel::setData(const QModelIndex& index, const QVariant & value, 
       --notifying;
       rval = true;
     }
+    case Qt::CheckStateRole: {
+      m_dt->SetValAsVar(value, index.column(), index.row());
+      ++notifying;
+      emit_dataChanged(index, index);
+      col->SigEmit(SLS_ITEM_UPDATED); // for calc refresh
+      --notifying;
+      rval = true;    }
     default: break;
   }
   return rval;
