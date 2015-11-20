@@ -270,6 +270,7 @@ bool iDataTableModel::setData(const QModelIndex& index, const QVariant & value, 
       col->SigEmit(SLS_ITEM_UPDATED); // for calc refresh
       --notifying;
       rval = true;
+      break;
     }
     case Qt::CheckStateRole: {
       m_dt->SetValAsVar(value, index.column(), index.row());
@@ -277,8 +278,11 @@ bool iDataTableModel::setData(const QModelIndex& index, const QVariant & value, 
       emit_dataChanged(index, index);
       col->SigEmit(SLS_ITEM_UPDATED); // for calc refresh
       --notifying;
-      rval = true;    }
-    default: break;
+      rval = true;
+      break;
+    }
+    default:
+      break;
   }
   return rval;
 }
