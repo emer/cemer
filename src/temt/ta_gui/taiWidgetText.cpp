@@ -76,6 +76,13 @@ iLineEdit* taiWidgetText::rep() const { return leText; }
 void taiWidgetText::GetImage(const String& val) {
   if(!rep()) return;
   rep()->setText(val);
+  // the field may not show the full text if it is too small
+  if (GetValue().nonempty()) {
+    rep()->setToolTip(GetValue());
+  }
+  else {
+    rep()->setToolTip(Base()->GetDesc());
+  }
 }
 
 String taiWidgetText::GetValue() const {
