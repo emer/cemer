@@ -25,6 +25,9 @@
 #include <T3Misc>
 #include <taMisc>
 
+using namespace Qt3DCore;
+using namespace Qt3DRender;
+using namespace Qt3DInput;
 
 QByteArray createTriangleStripVertexData(int n_vndata, float* vndata) {
   // Populate a buffer with the interleaved per-vertex data with
@@ -35,7 +38,7 @@ QByteArray createTriangleStripVertexData(int n_vndata, float* vndata) {
   return vertexBytes;
 }  
 
-class TriangleStripVertexBufferFunctor : public Qt3DRender::QBufferFunctor {
+class TriangleStripVertexBufferFunctor : public QBufferFunctor {
 public:
   int     n_vndata;
   float*  vndata;
@@ -55,7 +58,7 @@ public:
     return createTriangleStripVertexData(n_vndata, vndata);
   }
 
-  bool operator ==(const Qt3DRender::QBufferFunctor &other) const {
+  bool operator ==(const QBufferFunctor &other) const {
     return false;               // always update!!
     const TriangleStripVertexBufferFunctor *otherFunctor =
       dynamic_cast<const TriangleStripVertexBufferFunctor *>(&other);
@@ -75,7 +78,7 @@ QByteArray createTriangleStripIndexData(int n_indexes, int* indexes) {
   return indexBytes;
 }
 
-class TriangleStripIndexBufferFunctor : public Qt3DRender::QBufferFunctor {
+class TriangleStripIndexBufferFunctor : public QBufferFunctor {
 public:
   int     n_indexes;
   int*    indexes;
@@ -95,7 +98,7 @@ public:
     return createTriangleStripIndexData(n_indexes, indexes);
   }
 
-  bool operator ==(const Qt3DRender::QBufferFunctor &other) const {
+  bool operator ==(const QBufferFunctor &other) const {
     //    return false;               // always update!!
     const TriangleStripIndexBufferFunctor *otherFunctor =
       dynamic_cast<const TriangleStripIndexBufferFunctor *>(&other);
@@ -114,7 +117,7 @@ QByteArray createTriangleStripColorData(int n_colors, float* colors) {
   return colorBytes;
 }
 
-class TriangleStripColorBufferFunctor : public Qt3DRender::QBufferFunctor {
+class TriangleStripColorBufferFunctor : public QBufferFunctor {
 public:
   int     n_vndata;
   float*  vndata;
@@ -139,7 +142,7 @@ public:
     return createTriangleStripColorData(n_colors, colors);
   }
 
-  bool operator ==(const Qt3DRender::QBufferFunctor &other) const {
+  bool operator ==(const QBufferFunctor &other) const {
     return false;               // always update!!
     const TriangleStripColorBufferFunctor *otherFunctor =
       dynamic_cast<const TriangleStripColorBufferFunctor *>(&other);
@@ -156,56 +159,56 @@ public:
 ////////////////////////////////////////////////////
 //      Geometry
 
-class TriangleStripGeometry : public Qt3DRender::QGeometry {
+class TriangleStripGeometry : public QGeometry {
   //  Q_OBJECT
 public:
-  explicit TriangleStripGeometry(Qt3DCore::QNode *parent)
-    : Qt3DRender::QGeometry(parent)
+  explicit TriangleStripGeometry(QNode *parent)
+    : QGeometry(parent)
     , m_mesh((T3TriangleStripMesh*)parent)
-    , m_positionAttribute(new Qt3DRender::QAttribute(this))
-    , m_normalAttribute(new Qt3DRender::QAttribute(this))
-    , m_indexAttribute(new Qt3DRender::QAttribute(this))
-    , m_colorAttribute(new Qt3DRender::QAttribute(this))
-    , m_vertexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this))
-    , m_indexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::IndexBuffer, this))
-    , m_colorBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this))
+    , m_positionAttribute(new QAttribute(this))
+    , m_normalAttribute(new QAttribute(this))
+    , m_indexAttribute(new QAttribute(this))
+    , m_colorAttribute(new QAttribute(this))
+    , m_vertexBuffer(new QBuffer(QBuffer::VertexBuffer, this))
+    , m_indexBuffer(new QBuffer(QBuffer::IndexBuffer, this))
+    , m_colorBuffer(new QBuffer(QBuffer::VertexBuffer, this))
   {
-    m_positionAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
-    m_positionAttribute->setDataType(Qt3DRender::QAttribute::Float);
+    m_positionAttribute->setName(QAttribute::defaultPositionAttributeName());
+    m_positionAttribute->setDataType(QAttribute::Float);
     m_positionAttribute->setDataSize(3);
-    m_positionAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+    m_positionAttribute->setAttributeType(QAttribute::VertexAttribute);
     m_positionAttribute->setBuffer(m_vertexBuffer);
     m_positionAttribute->setByteStride(3 * 2 * sizeof(float));
     m_positionAttribute->setCount(m_mesh->vertexCount());
 
-    m_normalAttribute->setName(Qt3DRender::QAttribute::defaultNormalAttributeName());
-    m_normalAttribute->setDataType(Qt3DRender::QAttribute::Float);
+    m_normalAttribute->setName(QAttribute::defaultNormalAttributeName());
+    m_normalAttribute->setDataType(QAttribute::Float);
     m_normalAttribute->setDataSize(3);
-    m_normalAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+    m_normalAttribute->setAttributeType(QAttribute::VertexAttribute);
     m_normalAttribute->setBuffer(m_vertexBuffer);
     m_normalAttribute->setByteStride(3 * 2 * sizeof(float));
     m_normalAttribute->setByteOffset(3 * sizeof(float));
     m_normalAttribute->setCount(m_mesh->vertexCount());
 
-    m_indexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
-    m_indexAttribute->setDataType(Qt3DRender::QAttribute::UnsignedInt);
+    m_indexAttribute->setAttributeType(QAttribute::IndexAttribute);
+    m_indexAttribute->setDataType(QAttribute::UnsignedInt);
     m_indexAttribute->setBuffer(m_indexBuffer);
     m_indexAttribute->setCount(m_mesh->indexCount());
 
-    m_colorAttribute->setName(Qt3DRender::QAttribute::defaultColorAttributeName());
-    m_colorAttribute->setDataType(Qt3DRender::QAttribute::Float);
+    m_colorAttribute->setName(QAttribute::defaultColorAttributeName());
+    m_colorAttribute->setDataType(QAttribute::Float);
     m_colorAttribute->setDataSize(4);
-    m_colorAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+    m_colorAttribute->setAttributeType(QAttribute::VertexAttribute);
     m_colorAttribute->setBuffer(m_colorBuffer);
     m_colorAttribute->setByteStride(4 * sizeof(float));
     m_colorAttribute->setCount(m_mesh->colorCount());
 
     m_vertexBuffer->setBufferFunctor
-      (Qt3DRender::QBufferFunctorPtr(new TriangleStripVertexBufferFunctor(*m_mesh)));
+      (QBufferFunctorPtr(new TriangleStripVertexBufferFunctor(*m_mesh)));
     m_indexBuffer->setBufferFunctor
-      (Qt3DRender::QBufferFunctorPtr(new TriangleStripIndexBufferFunctor(*m_mesh)));
+      (QBufferFunctorPtr(new TriangleStripIndexBufferFunctor(*m_mesh)));
     m_colorBuffer->setBufferFunctor
-      (Qt3DRender::QBufferFunctorPtr(new TriangleStripColorBufferFunctor(*m_mesh)));
+      (QBufferFunctorPtr(new TriangleStripColorBufferFunctor(*m_mesh)));
 
     addAttribute(m_positionAttribute);
     addAttribute(m_normalAttribute);
@@ -214,26 +217,26 @@ public:
   }
 
   ~TriangleStripGeometry() {
-    Qt3DRender::QGeometry::cleanup();
+    QGeometry::cleanup();
   }
 
   void updateIndices() {
     m_indexAttribute->setCount(m_mesh->indexCount());
     m_indexBuffer->setBufferFunctor
-      (Qt3DRender::QBufferFunctorPtr(new TriangleStripIndexBufferFunctor(*m_mesh)));
+      (QBufferFunctorPtr(new TriangleStripIndexBufferFunctor(*m_mesh)));
   }
 
   void updateVertices() {
     m_positionAttribute->setCount(m_mesh->vertexCount());
     m_normalAttribute->setCount(m_mesh->vertexCount());
     m_vertexBuffer->setBufferFunctor
-      (Qt3DRender::QBufferFunctorPtr(new TriangleStripVertexBufferFunctor(*m_mesh)));
+      (QBufferFunctorPtr(new TriangleStripVertexBufferFunctor(*m_mesh)));
   }
   
   void updateColors() {
     m_colorAttribute->setCount(m_mesh->colorCount());
     m_colorBuffer->setBufferFunctor
-      (Qt3DRender::QBufferFunctorPtr(new TriangleStripColorBufferFunctor(*m_mesh)));
+      (QBufferFunctorPtr(new TriangleStripColorBufferFunctor(*m_mesh)));
   }
 
   void updateAll() {
@@ -243,13 +246,13 @@ public:
   }
   
 private:
-  Qt3DRender::QAttribute *m_positionAttribute;
-  Qt3DRender::QAttribute *m_normalAttribute;
-  Qt3DRender::QAttribute *m_indexAttribute;
-  Qt3DRender::QAttribute *m_colorAttribute;
-  Qt3DRender::QBuffer *m_vertexBuffer;
-  Qt3DRender::QBuffer *m_indexBuffer;
-  Qt3DRender::QBuffer *m_colorBuffer;
+  QAttribute *m_positionAttribute;
+  QAttribute *m_normalAttribute;
+  QAttribute *m_indexAttribute;
+  QAttribute *m_colorAttribute;
+  QBuffer *m_vertexBuffer;
+  QBuffer *m_indexBuffer;
+  QBuffer *m_colorBuffer;
   T3TriangleStripMesh* m_mesh;
 };
 
@@ -273,7 +276,7 @@ T3TriangleStripMesh::T3TriangleStripMesh(Qt3DNode* parent)
 }
 
 T3TriangleStripMesh::~T3TriangleStripMesh() {
-  Qt3DCore::QNode::cleanup();
+  QNode::cleanup();
 }
 
 void T3TriangleStripMesh::setNodeUpdating(bool updating) {

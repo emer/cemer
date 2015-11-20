@@ -15,11 +15,15 @@
 
 #include "T3Texture.h"
 
+using namespace Qt3DCore;
+using namespace Qt3DRender;
+using namespace Qt3DInput;
+
 T3Texture::T3Texture(Qt3DNode* parent)
   : inherited(parent)
   , specular(0.2f)
   , shininess(150.0f)
-  , texture(new Qt3DRender::QTextureImage(this))
+  , texture(new QTextureImage(this))
 {
   diffuse()->addTextureImage(texture);
 }

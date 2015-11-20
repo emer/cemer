@@ -18,6 +18,10 @@
 #include <Qt3DRender/QCylinderMesh>
 #include <Qt3DRender/QPhongMaterial>
 
+using namespace Qt3DCore;
+using namespace Qt3DRender;
+using namespace Qt3DInput;
+
 T3Capsule::T3Capsule(Qt3DNode* parent)
   : inherited(parent)
 {
@@ -37,10 +41,10 @@ T3Capsule::T3Capsule(Qt3DNode* parent, LongAxis ax, float rad, float len)
 }
 
 void T3Capsule::init() {
-  axis_rotate = new Qt3DCore::QRotateTransform;
+  axis_rotate = new QRotateTransform;
   transform->addTransform(axis_rotate);
   // todo: update to capsule!
-  Qt3DRender::QCylinderMesh* cb = new Qt3DRender::QCylinderMesh();
+  QCylinderMesh* cb = new QCylinderMesh();
   addMesh(cb);
   updateGeom();
 }
@@ -72,7 +76,7 @@ void T3Capsule::setLength(float len) {
 }
 
 void T3Capsule::updateGeom() {
-  Qt3DRender::QCylinderMesh* cb = dynamic_cast<Qt3DRender::QCylinderMesh*>(mesh);
+  QCylinderMesh* cb = dynamic_cast<QCylinderMesh*>(mesh);
   cb->setRadius(radius);
   cb->setLength(length);
   switch(axis) {

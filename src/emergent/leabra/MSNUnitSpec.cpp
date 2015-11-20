@@ -25,7 +25,7 @@ void MatrixActSpec::Initialize() {
 }
 
 void MatrixActSpec::Defaults_init() {
-  mnt_gate_inhib = 0.0f;
+  mnt_gate_inhib = 0.002f;
   out_gate_inhib = 0.0f;
   gate_i_tau = 4.0f;
   out_ach_inhib = 0.02f;

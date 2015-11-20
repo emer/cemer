@@ -18,6 +18,11 @@
 #include <Qt3DRender/QPlaneMesh>
 #include <Qt3DRender/QPhongMaterial>
 
+using namespace Qt3DCore;
+using namespace Qt3DRender;
+using namespace Qt3DInput;
+
+
 T3Plane::T3Plane(Qt3DNode* parent)
   : inherited(parent)
 {
@@ -37,7 +42,7 @@ T3Plane::T3Plane(Qt3DNode* parent, PlaneAxis ax, const QSize& sz)
 
 void T3Plane::init() {
   sub = new T3Entity(this);
-  Qt3DRender::QPlaneMesh* cb = new Qt3DRender::QPlaneMesh();
+  QPlaneMesh* cb = new QPlaneMesh();
   sub->addMesh(cb);
 
   sub->addMaterial(phong);
@@ -61,7 +66,7 @@ void T3Plane::setSize(const QSize& sz) {
 }
 
 void T3Plane::updateSize() {
-  Qt3DRender::QPlaneMesh* cb = dynamic_cast<Qt3DRender::QPlaneMesh*>(sub->mesh);
+  QPlaneMesh* cb = dynamic_cast<QPlaneMesh*>(sub->mesh);
   cb->setWidth(plane_size.width());
   cb->setHeight(plane_size.height());
 }

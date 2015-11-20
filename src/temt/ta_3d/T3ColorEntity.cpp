@@ -19,6 +19,10 @@
 #include <T3TransparentMaterial>
 #include <T3PerVertexTransMaterial>
 
+using namespace Qt3DCore;
+using namespace Qt3DRender;
+using namespace Qt3DInput;
+
 T3ColorEntity::T3ColorEntity(Qt3DNode* parent)
   : inherited(parent)
   , phong(NULL)
@@ -103,7 +107,7 @@ void T3ColorEntity::updateColor() {
     removeAllBut(PHONG);
     bool add = false;
     if(!phong) {
-      phong = new Qt3DRender::QPhongMaterial();
+      phong = new QPhongMaterial();
       add = true;
     }
     phong->setDiffuse(color);
@@ -160,7 +164,7 @@ void T3ColorEntity::updateColor() {
   case PER_VERTEX: {
     removeAllBut(PER_VERTEX);
     if(!per_vertex) {
-      per_vertex = new Qt3DRender::QPerVertexColorMaterial;
+      per_vertex = new QPerVertexColorMaterial;
       addMaterial(per_vertex);
     }
     break;

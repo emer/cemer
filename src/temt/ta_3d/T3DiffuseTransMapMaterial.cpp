@@ -21,7 +21,7 @@
 #include <Qt3DRender/QShaderProgram>
 #include <Qt3DRender/QParameter>
 #include <Qt3DRender/QRenderPass>
-//#include <Qt3DRender/QOpenGLFilter> // TODO!
+#include <Qt3DRender/QGraphicsApiFilter> 
 #include <Qt3DRender/QCullFace>
 #include <Qt3DRender/QDepthTest>
 #include <Qt3DRender/QDepthMask>
@@ -32,25 +32,28 @@
 #include <QVector3D>
 #include <QVector4D>
 
-T3DiffuseTransMapMaterial::T3DiffuseTransMapMaterial(Qt3DCore::QNode *parent)
+using namespace Qt3DCore;
+using namespace Qt3DRender;
+
+T3DiffuseTransMapMaterial::T3DiffuseTransMapMaterial(QNode *parent)
   : inherited(parent)
-  , m_transEffect(new Qt3DRender::QEffect())
-  , m_diffuseTexture(new Qt3DRender::QTexture2D())
-  , m_ambientParameter(new Qt3DRender::QParameter(QStringLiteral("ka"), QColor::fromRgbF(0.05f, 0.05f, 0.05f, 1.0f)))
-  , m_diffuseParameter(new Qt3DRender::QParameter(QStringLiteral("diffuseTexture"), m_diffuseTexture))
-  , m_specularParameter(new Qt3DRender::QParameter(QStringLiteral("ks"), QColor::fromRgbF(0.95f, 0.95f, 0.95f, 1.0f)))
-  , m_shininessParameter(new Qt3DRender::QParameter(QStringLiteral("shininess"), 150.0f))
-    , m_textureScaleParameter(new Qt3DRender::QParameter(QStringLiteral("texCoordScale"), 1.0f))
-  , m_lightPositionParameter(new Qt3DRender::QParameter(QStringLiteral("lightPosition"), QVector4D(1.0f, 1.0f, 0.0f, 1.0f)))
-  , m_lightIntensityParameter(new Qt3DRender::QParameter(QStringLiteral("lightIntensity"), QVector3D(1.0f, 1.0f, 1.0f)))
-  , m_transGL3Technique(new Qt3DRender::QTechnique())
-  , m_transGL2Technique(new Qt3DRender::QTechnique())
-  , m_transES2Technique(new Qt3DRender::QTechnique())
-  , m_transGL3RenderPass(new Qt3DRender::QRenderPass())
-  , m_transGL2RenderPass(new Qt3DRender::QRenderPass())
-  , m_transES2RenderPass(new Qt3DRender::QRenderPass())
-  , m_transGL3Shader(new Qt3DRender::QShaderProgram())
-  , m_transGL2ES2Shader(new Qt3DRender::QShaderProgram())
+  , m_transEffect(new QEffect())
+  , m_diffuseTexture(new QTexture2D())
+  , m_ambientParameter(new QParameter(QStringLiteral("ka"), QColor::fromRgbF(0.05f, 0.05f, 0.05f, 1.0f)))
+  , m_diffuseParameter(new QParameter(QStringLiteral("diffuseTexture"), m_diffuseTexture))
+  , m_specularParameter(new QParameter(QStringLiteral("ks"), QColor::fromRgbF(0.95f, 0.95f, 0.95f, 1.0f)))
+  , m_shininessParameter(new QParameter(QStringLiteral("shininess"), 150.0f))
+    , m_textureScaleParameter(new QParameter(QStringLiteral("texCoordScale"), 1.0f))
+  , m_lightPositionParameter(new QParameter(QStringLiteral("lightPosition"), QVector4D(1.0f, 1.0f, 0.0f, 1.0f)))
+  , m_lightIntensityParameter(new QParameter(QStringLiteral("lightIntensity"), QVector3D(1.0f, 1.0f, 1.0f)))
+  , m_transGL3Technique(new QTechnique())
+  , m_transGL2Technique(new QTechnique())
+  , m_transES2Technique(new QTechnique())
+  , m_transGL3RenderPass(new QRenderPass())
+  , m_transGL2RenderPass(new QRenderPass())
+  , m_transES2RenderPass(new QRenderPass())
+  , m_transGL3Shader(new QShaderProgram())
+  , m_transGL2ES2Shader(new QShaderProgram())
 {
   QObject::connect(m_ambientParameter, SIGNAL(valueChanged()), this, SIGNAL(ambientChanged()));
   QObject::connect(m_diffuseParameter, SIGNAL(valueChanged()), this, SIGNAL(diffuseChanged()));
@@ -58,9 +61,9 @@ T3DiffuseTransMapMaterial::T3DiffuseTransMapMaterial(Qt3DCore::QNode *parent)
   QObject::connect(m_shininessParameter, SIGNAL(valueChanged()), this, SIGNAL(shininessChanged()));
   QObject::connect(m_textureScaleParameter, SIGNAL(valueChanged()), this, SIGNAL(textureScaleChanged()));
 
-  m_diffuseTexture->setMagnificationFilter(Qt3DRender::QAbstractTextureProvider::Linear);
-  m_diffuseTexture->setMinificationFilter(Qt3DRender::QAbstractTextureProvider::LinearMipMapLinear);
-  m_diffuseTexture->setWrapMode(Qt3DRender::QTextureWrapMode(Qt3DRender::QTextureWrapMode::Repeat));
+  m_diffuseTexture->setMagnificationFilter(QAbstractTextureProvider::Linear);
+  m_diffuseTexture->setMinificationFilter(QAbstractTextureProvider::LinearMipMapLinear);
+  m_diffuseTexture->setWrapMode(QTextureWrapMode(QTextureWrapMode::Repeat));
   m_diffuseTexture->setGenerateMipMaps(true);
   m_diffuseTexture->setMaximumAnisotropy(16.0f);
   
@@ -68,7 +71,7 @@ T3DiffuseTransMapMaterial::T3DiffuseTransMapMaterial(Qt3DCore::QNode *parent)
 }
 
 /*!
-  \fn Qt3DRender::T3DiffuseTransMapMaterial::~T3DiffuseTransMapMaterial()
+  \fn T3DiffuseTransMapMaterial::~T3DiffuseTransMapMaterial()
 
   Destroys the T3DiffuseTransMapMaterial.
 */
@@ -77,7 +80,7 @@ T3DiffuseTransMapMaterial::~T3DiffuseTransMapMaterial()
 }
 
 /*!
-  \property Qt3DRender::T3DiffuseTransMapMaterial::ambient
+  \property T3DiffuseTransMapMaterial::ambient
 
   Holds the ambient color.
 */
@@ -87,17 +90,17 @@ QColor T3DiffuseTransMapMaterial::ambient() const
 }
 
 /*!
-  \property Qt3DRender::T3DiffuseTransMapMaterial::diffuse
+  \property T3DiffuseTransMapMaterial::diffuse
 
   Holds the diffuse color.
 */
-Qt3DRender::QAbstractTextureProvider* T3DiffuseTransMapMaterial::diffuse() const
+QAbstractTextureProvider* T3DiffuseTransMapMaterial::diffuse() const
 {
-  return m_diffuseParameter->value().value<Qt3DRender::QAbstractTextureProvider *>();
+  return m_diffuseParameter->value().value<QAbstractTextureProvider *>();
 }
 
 /*!
-  \property QColor Qt3DRender::T3DiffuseTransMapMaterial::specular
+  \property QColor T3DiffuseTransMapMaterial::specular
 
   Holds the specular color.
 */
@@ -107,7 +110,7 @@ QColor T3DiffuseTransMapMaterial::specular() const
 }
 
 /*!
-  \property Qt3DRender::T3DiffuseTransMapMaterial::shininess
+  \property T3DiffuseTransMapMaterial::shininess
 
   Holds the shininess exponent.
 */
@@ -136,7 +139,7 @@ void T3DiffuseTransMapMaterial::setShininess(float shininess)
   m_shininessParameter->setValue(shininess);
 }
 
-void T3DiffuseTransMapMaterial::setDiffuse(Qt3DRender::QAbstractTextureProvider *diffuseMap)
+void T3DiffuseTransMapMaterial::setDiffuse(QAbstractTextureProvider *diffuseMap)
 {
   m_diffuseParameter->setValue(QVariant::fromValue(diffuseMap));
 }
@@ -161,58 +164,57 @@ void T3DiffuseTransMapMaterial::setTextureScale(float textureScale)
 //     shaderProgram: alphaPhong
 
 
-void T3DiffuseTransMapMaterial::init_render_pass(Qt3DRender::QRenderPass* pass) {
+void T3DiffuseTransMapMaterial::init_render_pass(QRenderPass* pass) {
   // this is how we separate these out
-  Qt3DRender::QAnnotation* techannote = new Qt3DRender::QAnnotation;
+  QAnnotation* techannote = new QAnnotation;
   techannote->setName("renderingStyle");
   techannote->setValue("transparent");
   pass->addAnnotation(techannote);
   
-  Qt3DRender::QCullFace* cf = new Qt3DRender::QCullFace;
-  cf->setMode(Qt3DRender::QCullFace::Back);
+  QCullFace* cf = new QCullFace;
+  cf->setMode(QCullFace::Back);
   pass->addRenderState(cf);
 
-  Qt3DRender::QDepthTest* dt = new Qt3DRender::QDepthTest;
-  dt->setFunc(Qt3DRender::QDepthTest::Less);
+  QDepthTest* dt = new QDepthTest;
+  dt->setFunc(QDepthTest::Less);
   pass->addRenderState(dt);
 
-  Qt3DRender::QDepthMask* dm = new Qt3DRender::QDepthMask;
+  QDepthMask* dm = new QDepthMask;
   dm->setMask(false);
   pass->addRenderState(dm);
   
-  Qt3DRender::QBlendState* bs = new Qt3DRender::QBlendState;
-  bs->setSrcRGB(Qt3DRender::QBlendState::SrcAlpha);
-  bs->setDstRGB(Qt3DRender::QBlendState::OneMinusSrcAlpha);
+  QBlendState* bs = new QBlendState;
+  bs->setSrcRGB(QBlendState::SrcAlpha);
+  bs->setDstRGB(QBlendState::OneMinusSrcAlpha);
   pass->addRenderState(bs);
 
-  Qt3DRender::QBlendEquation* be = new Qt3DRender::QBlendEquation;
-  be->setMode(Qt3DRender::QBlendEquation::FuncAdd);
+  QBlendEquation* be = new QBlendEquation;
+  be->setMode(QBlendEquation::FuncAdd);
   pass->addRenderState(be);
   
 }
 
 // TODO: Define how lights are properties are set in the shaders. Ideally using a QShaderData
 void T3DiffuseTransMapMaterial::init() {
-  m_transGL3Shader->setVertexShaderCode(Qt3DRender::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap.vert"))));
-  m_transGL3Shader->setFragmentShaderCode(Qt3DRender::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap.frag"))));
-  // m_transGL2ES2Shader->setVertexShaderCode(Qt3DRender::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/phongalpha.vert"))));
-  // m_transGL2ES2Shader->setFragmentShaderCode(Qt3DRender::QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/phongalpha.frag"))));
+  m_transGL3Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap.vert"))));
+  m_transGL3Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap.frag"))));
+  // m_transGL2ES2Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/phongalpha.vert"))));
+  // m_transGL2ES2Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/phongalpha.frag"))));
 
-  // todo:
-  // m_transGL3Technique->openGLFilter()->setApi(Qt3DRender::QOpenGLFilter::Desktop);
-  // m_transGL3Technique->openGLFilter()->setMajorVersion(3);
-  // m_transGL3Technique->openGLFilter()->setMinorVersion(1);
-  // m_transGL3Technique->openGLFilter()->setProfile(Qt3DRender::QOpenGLFilter::Core);
+  m_transGL3Technique->graphicsApiFilter()->setApi(QGraphicsApiFilter::OpenGL);
+  m_transGL3Technique->graphicsApiFilter()->setMajorVersion(3);
+  m_transGL3Technique->graphicsApiFilter()->setMinorVersion(1);
+  m_transGL3Technique->graphicsApiFilter()->setProfile(QGraphicsApiFilter::CoreProfile);
 
-  // m_transGL2Technique->openGLFilter()->setApi(Qt3DRender::QOpenGLFilter::Desktop);
-  // m_transGL2Technique->openGLFilter()->setMajorVersion(2);
-  // m_transGL2Technique->openGLFilter()->setMinorVersion(0);
-  // m_transGL2Technique->openGLFilter()->setProfile(Qt3DRender::QOpenGLFilter::None);
+  m_transGL2Technique->graphicsApiFilter()->setApi(QGraphicsApiFilter::OpenGL);
+  m_transGL2Technique->graphicsApiFilter()->setMajorVersion(2);
+  m_transGL2Technique->graphicsApiFilter()->setMinorVersion(0);
+  m_transGL2Technique->graphicsApiFilter()->setProfile(QGraphicsApiFilter::NoProfile);
 
-  // m_transES2Technique->openGLFilter()->setApi(Qt3DRender::QOpenGLFilter::ES);
-  // m_transES2Technique->openGLFilter()->setMajorVersion(2);
-  // m_transES2Technique->openGLFilter()->setMinorVersion(0);
-  // m_transES2Technique->openGLFilter()->setProfile(Qt3DRender::QOpenGLFilter::None);
+  m_transES2Technique->graphicsApiFilter()->setApi(QGraphicsApiFilter::OpenGLES);
+  m_transES2Technique->graphicsApiFilter()->setMajorVersion(2);
+  m_transES2Technique->graphicsApiFilter()->setMinorVersion(0);
+  m_transES2Technique->graphicsApiFilter()->setProfile(QGraphicsApiFilter::NoProfile);
 
   m_transGL3RenderPass->setShaderProgram(m_transGL3Shader);
   m_transGL2RenderPass->setShaderProgram(m_transGL2ES2Shader);

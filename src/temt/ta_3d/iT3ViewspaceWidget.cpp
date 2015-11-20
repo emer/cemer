@@ -30,7 +30,11 @@
 #include <QGLWidget>
 
 #ifdef TA_QT3D
+
 #include <T3Entity>
+
+using namespace Qt3DCore;
+
 #else
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
@@ -71,7 +75,7 @@ void iT3ViewspaceWidget::init() {
 
 #ifdef TA_QT3D
   sel_so = NULL;
-  m_root_so = new Qt3DCore::QEntity();
+  m_root_so = new QEntity();
   m_scene = NULL;
 #else
   m_root_so = new SoSeparator(); // refs
@@ -167,7 +171,7 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
 
 #ifdef TA_QT3D
 
-void iT3ViewspaceWidget::setSceneGraph(Qt3DCore::QEntity* sg) {
+void iT3ViewspaceWidget::setSceneGraph(QEntity* sg) {
   if (!m_t3viewer) return; //not supposed to happen
   if (m_scene == sg) return;
   if (m_scene) { //had to have already been initialized before

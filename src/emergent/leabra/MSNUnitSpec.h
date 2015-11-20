@@ -29,7 +29,7 @@ class E_API MatrixActSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for matrix MSN unit activation
 INHERITED(SpecMemberBase)
 public:
-  float         mnt_gate_inhib; // amount of post-gating inhibition to apply (proportion of netin present at time of gating quarter) -- for maintenance gating units
+  float         mnt_gate_inhib; // #DEF_0.002 amount of post-gating inhibition to apply (proportion of netin present at time of gating quarter) -- for maintenance gating units
   float         out_gate_inhib; // #DEF_0 amount of post-gating inhibition to apply (proportion of netin present at time of gating quarter) -- for output gating units
   float         gate_i_tau;     // #DEF_4 decay time for post-gating inhibition, in units of deep active periods (e.g., beta frequency) -- determined by deep_raw_qtr 
   float         mnt_ach_inhib;  // #DEF_0 how much does the PRESENCE of ACh from the TAN units drive extra inhibition to maintenance-gating Matrix units -- gi += mnt_ach_inhib * ach -- provides a bias for maint gating on non-reward trials

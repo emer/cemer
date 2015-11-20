@@ -28,6 +28,10 @@
 
 #include <taMisc>
 
+using namespace Qt3DCore;
+using namespace Qt3DRender;
+using namespace Qt3DInput;
+
 T3MatrixGrid::T3MatrixGrid(Qt3DNode* par, taMatrix* mat, int slice, bool oddy,
                            ColorScale* sc, MatrixLayout layout, bool val_txt)
   : inherited(par)
@@ -447,12 +451,12 @@ void T3MatrixGrid::renderSvg(taMatrix* matptr, const taVector2i& pos, iColor& cl
            << taSvg::PathEnd();
 }
 
-void T3MatrixGrid::mouseClicked(Qt3DInput::Q3DMouseEvent* mouse) {
+void T3MatrixGrid::mouseClicked(Q3DMouseEvent* mouse) {
   int xp = mouse->x();
   int yp = mouse->y();
   taMisc::Info("mouse: ", String(xp), ",", String(yp));
 }
 
-void T3MatrixGrid::mouseDoubleClicked(Qt3DInput::Q3DMouseEvent* mouse) {
+void T3MatrixGrid::mouseDoubleClicked(Q3DMouseEvent* mouse) {
   
 }
