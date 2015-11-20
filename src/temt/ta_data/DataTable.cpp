@@ -53,6 +53,7 @@ taTypeDef_Of(int_Data);
 taTypeDef_Of(byte_Data);
 taTypeDef_Of(String_Data);
 taTypeDef_Of(Variant_Data);
+taTypeDef_Of(bool_Data);
 
 #include <taMisc>
 #include <tabMisc>
@@ -1377,33 +1378,36 @@ DataCol* DataTable::NewCol_gui(DataCol::ValType val_type, const String& col_nm) 
 }
 
 DataCol* DataTable::NewCol_impl(DataCol::ValType val_type,
-    const String& col_nm, int& col_idx)
+                                const String& col_nm, int& col_idx)
 {
   TypeDef* td;
   switch (val_type) {
-  case VT_STRING: td = &TA_String_Data; break;
-  case VT_FLOAT:  td = &TA_float_Data; break;
-  case VT_DOUBLE:  td = &TA_double_Data; break;
-  case VT_INT:  td = &TA_int_Data; break;
-  case VT_BYTE:  td = &TA_byte_Data; break;
-  case VT_VARIANT:  td = &TA_Variant_Data; break;
-  default: return NULL; // compiler food
+    case VT_STRING: td = &TA_String_Data; break;
+    case VT_FLOAT:  td = &TA_float_Data; break;
+    case VT_DOUBLE:  td = &TA_double_Data; break;
+    case VT_INT:  td = &TA_int_Data; break;
+    case VT_BYTE:  td = &TA_byte_Data; break;
+    case VT_VARIANT:  td = &TA_Variant_Data; break;
+    case VT_BOOL: td = &TA_bool_Data; break;
+    default: return NULL; // compiler food
   }
   col_idx = data.size; // next idx
   DataCol* rval = (DataCol*) data.New(1, td, col_nm);
   // additional specialized initialization
   switch (val_type) {
-  case VT_STRING:
-    break;
-  case VT_FLOAT:
-  case VT_DOUBLE:
-    break;
-  case VT_INT:
-    rval->SetUserData(DataCol::udkey_narrow, true);
-    break;
-  case VT_BYTE:
-    break;
-  default: break; // compiler food
+    case VT_STRING:
+      break;
+    case VT_FLOAT:
+    case VT_DOUBLE:
+      break;
+    case VT_INT:
+      rval->SetUserData(DataCol::udkey_narrow, true);
+      break;
+    case VT_BYTE:
+      break;
+    case VT_BOOL:
+      break;
+    default: break; // compiler food
   }
   // DPF: Shouldn't need this line now that col_nm gets passed into New?
   // Name isn't made unique in New call since owner isn't set, and doesn't
@@ -1415,30 +1419,33 @@ DataCol* DataTable::NewCol_impl(DataCol::ValType val_type,
 DataCol* DataTable::NewColToken_impl(DataCol::ValType val_type, const String& col_nm) {
   TypeDef* td;
   switch (val_type) {
-  case VT_STRING: td = &TA_String_Data; break;
-  case VT_FLOAT:  td = &TA_float_Data; break;
-  case VT_DOUBLE:  td = &TA_double_Data; break;
-  case VT_INT:  td = &TA_int_Data; break;
-  case VT_BYTE:  td = &TA_byte_Data; break;
-  case VT_VARIANT:  td = &TA_Variant_Data; break;
-  default: return NULL; // compiler food
+    case VT_STRING: td = &TA_String_Data; break;
+    case VT_FLOAT:  td = &TA_float_Data; break;
+    case VT_DOUBLE:  td = &TA_double_Data; break;
+    case VT_INT:  td = &TA_int_Data; break;
+    case VT_BYTE:  td = &TA_byte_Data; break;
+    case VT_VARIANT:  td = &TA_Variant_Data; break;
+    case VT_BOOL: td = &TA_bool_Data; break;
+    default: return NULL; // compiler food
   }
   DataCol* rval = (DataCol*) taBase::MakeToken(td);
   if(!rval) return rval;
   rval->SetName(col_nm);
   // additional specialized initialization
   switch (val_type) {
-  case VT_STRING:
-    break;
-  case VT_FLOAT:
-  case VT_DOUBLE:
-    break;
-  case VT_INT:
-    rval->SetUserData(DataCol::udkey_narrow, true);
-    break;
-  case VT_BYTE:
-    break;
-  default: break; // compiler food
+    case VT_STRING:
+      break;
+    case VT_FLOAT:
+    case VT_DOUBLE:
+      break;
+    case VT_INT:
+      rval->SetUserData(DataCol::udkey_narrow, true);
+      break;
+    case VT_BYTE:
+      break;
+    case VT_BOOL:
+      break;
+    default: break; // compiler food
   }
   return rval;
 }
