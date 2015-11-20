@@ -104,6 +104,8 @@ public:
   // #CAT_Access true if data is float, double
   virtual bool          isString() const {return false;}
   // #CAT_Access true if data is string
+  virtual bool          isBool() const {return false;}
+  // #CAT_Access true if data is bool
   virtual bool          isImage() const;
   // #CAT_Access true if the cell contains an image
   virtual int           imageComponents() const;

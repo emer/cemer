@@ -119,6 +119,7 @@ set(ta_core_HEADS_MAKETA_NOMOC
   int_Matrix.h
   slice_Matrix.h
   byte_Matrix.h
+  bool_Matrix.h
   Variant_Matrix.h
   voidptr_Matrix.h
   CircMatrix.h
@@ -380,6 +381,7 @@ set(ta_core_SRCS_MAKETA
   slice_Matrix.cpp
   byte_Matrix.cpp
   Variant_Matrix.cpp
+  bool_Matrix.cpp
   voidptr_Matrix.cpp
   CircMatrix.cpp
 

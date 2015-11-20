@@ -2724,14 +2724,16 @@ const String taBase::ValTypeToStr(ValType vt) {
   static String str_int("int");
   static String str_byte("byte");
   static String str_Variant("Variant");
+  static String str_bool("bool");
   switch (vt) {
-  case VT_STRING: return str_String;
-  case VT_DOUBLE: return str_double;
-  case VT_FLOAT: return str_float;
-  case VT_INT: return str_int;
-  case VT_BYTE: return str_byte;
-  case VT_VARIANT: return str_Variant;
-  default: return _nilString; // compiler food
+    case VT_STRING: return str_String;
+    case VT_DOUBLE: return str_double;
+    case VT_FLOAT: return str_float;
+    case VT_INT: return str_int;
+    case VT_BYTE: return str_byte;
+    case VT_VARIANT: return str_Variant;
+    case VT_BOOL: return str_bool;
+    default: return _nilString; // compiler food
   }
 }
 

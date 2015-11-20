@@ -527,6 +527,7 @@ public:
     VT_BYTE,            // #LABEL_byte an unsigned 8-bit integer; used mostly for image components (rgb)
     VT_VARIANT,         // #LABEL_Variant a Variant, which can hold scalars, strings, matrices, and objects
     VT_VOIDPTR,         // #LABEL_void* a generic pointer (void*)
+    VT_BOOL,            // #LABEL_bool a boolean value
   };
 
   enum IndexMode {              // what kind of index is specified in the Elem access function

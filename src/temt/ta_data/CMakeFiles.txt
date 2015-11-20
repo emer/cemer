@@ -29,6 +29,7 @@ set(ta_data_HEADS_MAKETA
   float_Data.h
   int_Data.h
   byte_Data.h
+  bool_Data.h
     
   DataOpEl.h
   DataOpList.h
@@ -107,6 +108,7 @@ set(ta_data_SRCS
   float_Data.cpp
   int_Data.cpp
   byte_Data.cpp
+  bool_Data.cpp
     
   DataOpEl.cpp
   DataOpList.cpp

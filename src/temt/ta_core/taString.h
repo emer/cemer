@@ -299,6 +299,7 @@ public:
   operator double() const { return atof(chars()); }
   operator char*() const { return (char*)chars(); }
   operator const char*() const {return mrep->s;}
+  operator bool() const { return toBool(); }
 
   bool                  isInt() const;
   // #CAT_Convert true if the string contains a value that can be interpreted as an integer [+-]dd*
