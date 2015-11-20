@@ -79,6 +79,9 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
     case Qt::EditRole: {
       if (col->is_matrix)
         return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
+      else if (col->isBool()) {
+        return col->GetValAsString(index.row());
+      }
       else {
         int dx;
         if(m_dt->idx(index.row(), dx))

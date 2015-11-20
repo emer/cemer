@@ -36,7 +36,7 @@ public:
   ValType      GetDataValType() const override {return VT_BOOL;}
   
   bool         StrValIsValid(const String& str, String* err_msg = NULL) const override;
-  // accepts 0/1
+  // accepts > 0, t, T
   
   virtual void          InitVals(bool val=false)
   { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
@@ -48,7 +48,7 @@ public:
   
 public:
   float         El_GetFloat_(const void* it) const override { return (float)*((bool*)it); } // #IGNORE
-  const String  El_GetStr_(const void* it) const override { return *((bool*)it); } // #IGNORE note: implicit conversion avoids problems on some compilers
+  const String  El_GetStr_(const void* it) const override { return (String)*((bool*)it); } // #IGNORE note: implicit conversion avoids problems on some compilers
   void          El_SetFmStr_(void* it, const String& str) override {*((bool*)it) = (bool)str;}  // #IGNORE
   const Variant El_GetVar_(const void* it) const override {return Variant(*((bool*)it));} // #IGNORE
   void          El_SetFmVar_(void* it, const Variant& var) override {*((bool*)it) = var.toBool(); };  // #IGNORE

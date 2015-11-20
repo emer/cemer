@@ -2112,7 +2112,7 @@ bool Variant::toBool() const {
       if (str.empty()) return false;
       else {
         char c = str[0];
-        return ((c == 't') || (c == 'T') || (c == '1'));
+        return ((c == 't') || (c == 'T') || ((c >= '1') && (c <= '9')));
       }
     } break;
     case T_Ptr:
