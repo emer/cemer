@@ -1348,7 +1348,7 @@ taBase* taList_impl::New_gui(int no, TypeDef* typ, const String& name_) {
     if (taMisc::gui_active && !taMisc::no_auto_expand) {
       if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL"))
       {
-//        tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
+        tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
         tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
       }
     }
