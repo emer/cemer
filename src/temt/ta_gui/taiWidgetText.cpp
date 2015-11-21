@@ -81,7 +81,9 @@ void taiWidgetText::GetImage(const String& val) {
     rep()->setToolTip(GetValue());
   }
   else {
-    rep()->setToolTip(Base()->GetDesc());
+    if (Base()) {
+      rep()->setToolTip(Base()->GetDesc());
+    }
   }
 }
 
