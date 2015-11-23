@@ -52,7 +52,7 @@ void StaticMethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 void StaticMethodCall::GenCssBody_impl(Program* prog) {
-  if (!method) {
+  if (!method || !object_type) {
     prog->AddLine(this, "//WARNING: StaticMethodCall not generated here -- object or method not specified", true);
     return;
   }
@@ -73,6 +73,11 @@ void StaticMethodCall::GenCssBody_impl(Program* prog) {
 String StaticMethodCall::GetDisplayName() const {
   String rval;
 
+  if(!object_type) {
+    rval += "ObjectType::Method()";
+    return rval;
+  }
+  
   if (!method) {
     rval += object_type->name + "::";
     rval += "      // to look up methods place cursor after :: and press Control + 'l'";
@@ -114,7 +119,7 @@ bool StaticMethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const 
 }
 
 bool StaticMethodCall::CvtFmCode(const String& code) {
-  String code_copy;
+  String code_copy = code;
   String lhs = trim(code_copy.before('('));
   String mthobj = lhs;
   String rval;
@@ -125,6 +130,9 @@ bool StaticMethodCall::CvtFmCode(const String& code) {
   String objnm = mthobj.before("::");
   String methnm = mthobj.after("::");
   object_type = TypeDef::FindGlobalTypeName(objnm, false);
+  if(!object_type) {
+    return false;
+  }
   if(rval.nonempty())
     result_var = FindVarNameInScope(rval, true); // true = give option to make one
   UpdateAfterEdit_impl();                          // update based on obj
