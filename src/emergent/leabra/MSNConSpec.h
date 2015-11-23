@@ -71,6 +71,7 @@ public:
     DA_HEBB_VS,                 // ventral striatum version of DA_HEBB, which uses MAX(deep_lrn, ru_act) for recv term in dopamine * send * recv activation triplet to drive learning
     TRACE_THAL,                 // send * recv activation establishes a trace (long-lasting synaptic tag), with thalamic activation determining sign of the trace (if thal active (gated) then sign is positive, else sign is negative) -- when dopamine later arrives, the trace is applied * dopamine, and the amount of dopamine and/or any above-threshold ach from TAN units resets the trace
     TRACE_NO_THAL,              // send * recv activation establishes a trace (long-lasting synaptic tag), with no influence of thalamic gating signal -- when dopamine later arrives, the trace is applied * dopamine, and any above-threshold ach from TAN units resets the trace
+    TRACE_NO_THAL_VS,            // ventral striatum version of TRACE_NO_THAL, which uses MAX(deep_lrn, ru_act) for recv term to set trace
     WM_DEPENDENT,               // learning depends on a working memory trace.. 
   };
     
@@ -200,6 +201,30 @@ public:
     tr += ntr - decay_factor * tr;
   }
   // #IGNORE
+  
+  inline void C_Compute_dWt_Trace_NoThalVS
+  (float& dwt, float& ntr, float& tr, const float da_p, const float ach, const bool d2r,
+   const float ru_act, const float deep_lrn, const float su_act, const float lrate_eff) {
+    
+    const float da = GetDa(da_p, d2r);
+    dwt += lrate_eff * da * tr;
+    
+    if(ach >= trace.ach_reset_thr) {
+      tr = 0.0f;
+    }
+    else if(trace.da_reset_tr > 0.0f) {
+      float reset_factor = (trace.da_reset_tr - fabs(da)) / trace.da_reset_tr;
+      if(reset_factor < 0.0f) reset_factor = 0.0f;
+      tr *= reset_factor;
+    }
+    
+    ntr = MAX(ru_act, deep_lrn) * su_act;
+    
+    float decay_factor = fabs(ntr); // decay is function of new trace
+    if(decay_factor > 1.0f) decay_factor = 1.0f;
+    tr += ntr - decay_factor * tr;
+  }
+  // #IGNORE
 
   inline void ClearMSNTrace(LeabraConGroup* scg, LeabraNetwork* net, int thr_no) {
     float* trs = scg->OwnCnVar(TR);
@@ -284,6 +309,20 @@ public:
       }
       break;
     }
+      case TRACE_NO_THAL_VS: {
+        for(int i=0; i<sz; i++) {
+          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+          float lrate_eff = clrate;
+          if(deep_on) {
+//            lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
+            lrate_eff *= (bg_lrate + fg_lrate); // TODO: deep_lrn was turning off before phaDA hits
+          }
+          float ru_act = GetActVal(ru, ru_act_var);
+          C_Compute_dWt_Trace_NoThalVS(dwts[i], ntrs[i], trs[i], ru->da_p, ru->ach, d2r,
+                                       ru_act, ru->deep_lrn, su_act, lrate_eff);
+        }
+        break;
+      }
     case WM_DEPENDENT: {
       // todo!
       break;
