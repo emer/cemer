@@ -1259,3 +1259,8 @@ void NetMonItem::SetObject(taBase* obj) {
   object = obj;
   UpdateAfterEdit();
 }
+
+void NetMonItem::ToggleOffFlag() {
+  off = !off;
+  SigEmitUpdated();
+}

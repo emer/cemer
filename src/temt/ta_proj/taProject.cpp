@@ -455,7 +455,7 @@ bool taProject::SetFileName(const String& val) {
   if (GetFileName() == val)
     return true;
   inherited::SetFileName(val);
-  if(taMisc::interactive && auto_name) {
+  if(taMisc::interactive && auto_name && !file_name.contains("_autosave")) {
     AutoNameProj(file_name);
   }
   MainWindowViewer* vwr = GetDefaultProjectBrowser();
@@ -832,6 +832,10 @@ bool taProject::CleanFiles() {
     QFile::remove(console.chars());
 
     recover = fnm + "_autosave_recover" + String(i) + ".proj";
+    got_one |= QFile::remove(recover.chars());
+    tabMisc::root->recent_files.RemoveEl(recover);
+
+    recover = fnm + "_recover" + String(i) + "_autosave.proj";
     got_one |= QFile::remove(recover.chars());
     tabMisc::root->recent_files.RemoveEl(recover);
 

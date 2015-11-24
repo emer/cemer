@@ -133,6 +133,8 @@ public:
   
   void          SetObject(taBase* obj);
   // #DYN1 #TYPE_taNBase
+  void          ToggleOffFlag();
+  // #MENU #MENU_ON_Object #DYN1 toggle the off flag to opposite of current state: flag indicates whether monitor should be recorded now or not
 
   static const KeyString key_obj_name; // #IGNORE
   static const KeyString key_obj_type; // #IGNORE
