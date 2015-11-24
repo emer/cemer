@@ -1,0 +1,217 @@
+** Settings ***
+
+Library          Telnet
+Library          HttpLibrary.HTTP
+Library          Process
+Library          OperatingSystem
+
+Resource         Server_lib.txt
+
+Suite Setup      Initialize Emergent    ../../test/TestPointerUpdates.proj
+Suite Teardown   Shutdown Emergent
+
+*** Variables ***
+
+# use 'pybot -v debug:true server.txt' on the command line to
+#      output the transmissions to/from Emergent using warnings
+${debug} =       false
+
+*** Test Cases ***
+
+# Ideas on things to test
+#  - SetDataTableCell and Matrix Cell
+
+#
+# Initialization and general tests
+#
+
+Initialize
+    Set Suite Variable     ${verbose}       ${false}
+    Set Suite Variable     ${project}       ../../test/TestPointerUpdates.proj
+    Set Suite Variable	   ${secondary_project}		../../../demo/programs/program_examples.proj
+    Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
+
+Connection
+    Sleep                  1 sec
+    ${output} =            Read
+    Print                  ${output}
+    Should Contain         ${output}    Emergent Server v7.
+
+# TODO: Start another process and check for the "Too many connections already" error.
+
+#
+# ParserTest
+#
+
+General RunState
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             4
+
+
+TestFor
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "${secondary_project}"}   300 sec
+    Status OK No Result        ${output}
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Control\\"][\\"For\\"]
+
+TestForEach
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Control\\"][\\"Foreach\\"]
+
+TestSwitch
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Control\\"][\\"Switch\\"]
+
+TestIfElse
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Control\\"][\\"If_Else\\"]
+
+TestConditionalPrinting
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Control\\"][\\"Conditional_Printing\\"]
+
+TestStrings
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Variables\\"][\\"Strings\\"]
+
+TestDynEnum
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Variables\\"][\\"DynEnum\\"]
+
+TestMatrix
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Variables\\"][\\"Matrix\\"]
+
+TestGlobalVsLocal
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Variables\\"][\\"Global_vs_Local\\"]
+
+TestReadAndPrintAllRows
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"BasicDataReadWrite\\"][\\"ReadAndPrintAllRows\\"]
+
+TestReadRowBySpecifyingByNumber
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"BasicDataReadWrite\\"][\\"ReadRowBySpecifyingByNumber\\"]
+
+TestReadRowBySpecifyingByValue
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"BasicDataReadWrite\\"][\\"ReadRowBySpecifyingValue\\"]
+
+TestAddRowsAndWriteToTable
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"BasicDataReadWrite\\"][\\"AddRowsAndWriteToTable\\"]
+
+TestReadFromManyColumns
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"BasicDataReadWrite\\"][\\"ReadFromManyColumns\\"]
+
+#TestBasicDataReadWrite
+#    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+#    Ensure Emergent Free
+#    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"BasicDataReadWrite\\"][\\"BasicDataReadWrite[5]\\"]
+
+TestExportImport
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"BasicDataReadWrite\\"][\\"ExportImport\\"]
+
+TestReadAndPrintAllRows
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"BasicDataReadWrite\\"][\\"ReadAndPrintAllRows\\"]
+
+
+TestUseLocalVarWhenAccessingMatrices
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"DataAccessUsingCss\\"][\\"UseLocalVarWhenAccessingMatrices\\"]
+
+TestDataTable_css
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"DataAccessUsingCss\\"][\\"DataTable_css\\"]
+
+TestDataLoop
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"DataOperations\\"][\\"DataLoop\\"]
+
+TestDataCalcLoop
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"DataOperations\\"][\\"DataCalcLoop\\"]
+
+TestDataSelect
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"DataOperations\\"][\\"DataSelect\\"]
+
+TestDataGroup
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"DataOperations\\"][\\"DataGroup\\"]
+
+TestDataSort
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"DataOperations\\"][\\"DataSort\\"]
+
+TestDataJoin
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"DataOperations\\"][\\"DataJoin\\"]
+
+TestFindMatchingRows
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"DataOperations\\"][\\"FindMatchingRows\\"]
+
+
+TestRandomInteger
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Math\\"][\\"RandomInteger\\"]
+
+TestMiscMath
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Math\\"][\\"MiscMath\\"]
+
+TestCallFunctionReturnValue
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"ProgramsAndFunctions\\"][\\"CallFunctionReturnValue\\"]
+
+TestProgramSeekingValue
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"ProgramsAndFunctions\\"].gp[\\"AccessVariablesInAnotherProgram\\"][\\"ProgramSeekingValue\\"]
+
+
+*** Keywords ***
+
+
+Test Program Browser Edit
+    [Arguments]        ${prog_path}
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "TestProgramBrowserEdit", "var_name": "testee_program_path", "var_value": "${prog_path}"}
+    Status OK                  ${output}
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "TestProgramBrowserEdit"}
+    Status OK No Result        ${output}
+
+    Prog Var Should Equal   test_result            true
