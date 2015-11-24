@@ -41,13 +41,16 @@ void LHbRMTgGains::Initialize() {
 
 void LHbRMTgGains::Defaults_init() {
   all = 1.0f;
-  patch_dir = 1.0f;
-  patch_ind = 1.0f;
-  vs_patch_net_neg_gain = 0.2f;
-  vs_matrix_dir = 1.0f;
-  vs_matrix_ind = 1.0f;
-  dms_matrix_dir = 1.0f;
-  dms_matrix_ind = 1.0f;
+  vspatch_pos_D1 = 1.0f;
+  vspatch_pos_D2 = 1.0f;
+  vspatch_pos_net_neg_gain = 0.2f;
+  vsmatrix_pos_D1 = 1.0f;
+  vsmatrix_pos_D2 = 1.0f;
+  vspatch_neg_D1 = 1.0f;
+  vspatch_neg_D2 = 1.0f;
+  vsmatrix_neg_D1 = 1.0f;
+  vsmatrix_neg_D2 = 1.0f;
+  vspatch_neg_net_neg_gain = 0.2f;
 }
 
 void LHbRMTgUnitSpec::Initialize() {
@@ -83,27 +86,32 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* u, bool quiet) {
   net->SetNetFlag(Network::NETIN_PER_PRJN); // this is required for this computation!
 
   bool rval = true;
-
-  LeabraLayer* patch_dir_lay = NULL;
-  LeabraLayer* patch_ind_lay = NULL;
-  LeabraLayer* matrix_dir_lay = NULL;
-  LeabraLayer* matrix_ind_lay = NULL;
-  LeabraLayer* pv_pos_lay = NULL;
-  LeabraLayer* pv_neg_lay = NULL;
-  LeabraLayer* dms_matrix_dir_lay = NULL;
-  LeabraLayer* dms_matrix_ind_lay = NULL;
   
-  GetRecvLayers(un, patch_dir_lay, patch_ind_lay, matrix_dir_lay, matrix_ind_lay,
-                dms_matrix_dir_lay, dms_matrix_ind_lay, pv_pos_lay, pv_neg_lay);
+  LeabraLayer* pv_pos_lay = NULL;
+  LeabraLayer* vspatch_pos_D1_lay = NULL;
+  LeabraLayer* vspatch_pos_D2_lay = NULL;
+  LeabraLayer* vsmatrix_pos_D1_lay = NULL;
+  LeabraLayer* vsmatrix_pos_D2_lay = NULL;
+  
+  LeabraLayer* pv_neg_lay = NULL;
+  LeabraLayer* vspatch_neg_D1_lay = NULL;
+  LeabraLayer* vspatch_neg_D2_lay = NULL;
+  LeabraLayer* vsmatrix_neg_D1_lay = NULL;
+  LeabraLayer* vsmatrix_neg_D2_lay = NULL;
+  
+  GetRecvLayers(un, pv_pos_lay, vspatch_pos_D1_lay, vspatch_pos_D2_lay, vsmatrix_pos_D1_lay, vsmatrix_pos_D2_lay, pv_neg_lay, vspatch_neg_D1_lay, vspatch_neg_D2_lay,
+                vsmatrix_neg_D1_lay, vsmatrix_neg_D2_lay);
 
-  if(u->CheckError(!patch_dir_lay, quiet, rval,
+  if(u->CheckError(!vspatch_pos_D1_lay, quiet, rval,
                    "did not find VS Patch D1R recv projection -- searches for MSNUnitSpec::PATCH, D1R")) {
     rval = false;
   }
-  if(u->CheckError(!patch_ind_lay, quiet, rval,
+  if(u->CheckError(!vspatch_pos_D2_lay, quiet, rval,
                    "did not find VS Patch D2R recv projection -- searches for MSNUnitSpec::PATCH, D2R")) {
     rval = false;
   }
+  // TODO: all the AVERSIVE guys optional?
+  
   // matrix is optional
   // if(u->CheckError(!matrix_dir_lay, quiet, rval,
   //                  "did not find VS Matrix Direct recv projection -- searches for Matrix and *not* Ind or NoGo in layer name")) {
@@ -126,22 +134,28 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* u, bool quiet) {
   return rval;
 }
 
-bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u, LeabraLayer*& patch_dir_lay,
-                                    LeabraLayer*& patch_ind_lay,
-                                    LeabraLayer*& matrix_dir_lay,
-                                    LeabraLayer*& matrix_ind_lay,
-                                    LeabraLayer*& dms_matrix_dir_lay,
-                                    LeabraLayer*& dms_matrix_ind_lay,
+bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u,
                                     LeabraLayer*& pv_pos_lay,
-                                    LeabraLayer*& pv_neg_lay) {
-  patch_dir_lay = NULL;
-  patch_ind_lay = NULL;
-  matrix_dir_lay = NULL;
-  matrix_ind_lay = NULL;
-  dms_matrix_dir_lay = NULL;
-  dms_matrix_ind_lay = NULL;
+                                    LeabraLayer*& vspatch_pos_D1_lay,
+                                    LeabraLayer*& vspatch_pos_D2_lay,
+                                    LeabraLayer*& vsmatrix_pos_D1_lay,
+                                    LeabraLayer*& vsmatrix_pos_D2_lay,
+                                    LeabraLayer*& pv_neg_lay,
+                                    LeabraLayer*& vspatch_neg_D1_lay,
+                                    LeabraLayer*& vspatch_neg_D2_lay,
+                                    LeabraLayer*& vsmatrix_neg_D1_lay,
+                                    LeabraLayer*& vsmatrix_neg_D2_lay) {
+  
   pv_pos_lay = NULL;
+  vspatch_pos_D1_lay = NULL;
+  vspatch_pos_D2_lay = NULL;
+  vsmatrix_pos_D1_lay = NULL;
+  vsmatrix_pos_D2_lay = NULL;
   pv_neg_lay = NULL;
+  vspatch_neg_D1_lay = NULL;
+  vspatch_neg_D2_lay = NULL;
+  vsmatrix_neg_D1_lay = NULL;
+  vsmatrix_neg_D2_lay = NULL;
   
   const int nrg = u->NRecvConGps();
   for(int g=0; g<nrg; g++) {
@@ -152,29 +166,23 @@ bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u, LeabraLayer*& patch_dir_lay,
     if(us->InheritsFrom(&TA_MSNUnitSpec)) {
       MSNUnitSpec* mus = (MSNUnitSpec*)us;
       if(mus->matrix_patch == MSNUnitSpec::PATCH) {
-        if(mus->dar == MSNUnitSpec::D2R) {
-          patch_ind_lay = fmlay;
+        if(mus->dar == MSNUnitSpec::D2R ) {
+          if(mus->valence == MSNUnitSpec::APPETITIVE) { vspatch_pos_D2_lay = fmlay; }
+          else { vspatch_neg_D2_lay = fmlay; }
         }
-        else {
-          patch_dir_lay = fmlay;
+        else { // D1R
+          if(mus->valence == MSNUnitSpec::APPETITIVE) { vspatch_pos_D1_lay = fmlay; }
+          else { vspatch_neg_D1_lay = fmlay; }
         }
       }
       else if(mus->matrix_patch == MSNUnitSpec::MATRIX) {
         if(mus->dar == MSNUnitSpec::D2R) {
-          if (mus->dorsal_ventral == MSNUnitSpec::DORSAL) {
-            dms_matrix_ind_lay = fmlay;
-          }
-          else {
-            matrix_ind_lay = fmlay;
-          }
+          if (mus->valence == MSNUnitSpec::APPETITIVE) { vsmatrix_pos_D2_lay = fmlay; }
+          else { vsmatrix_neg_D2_lay = fmlay; }
         }
         else { // D1R
-          if (mus->dorsal_ventral == MSNUnitSpec::DORSAL) {
-            dms_matrix_dir_lay = fmlay;
-          }
-          else {
-            matrix_dir_lay = fmlay;
-          }
+          if (mus->valence == MSNUnitSpec::APPETITIVE) { vsmatrix_pos_D1_lay = fmlay; }
+          else { vsmatrix_neg_D1_lay = fmlay; }
         }
       }
     }
@@ -189,55 +197,80 @@ bool LHbRMTgUnitSpec::GetRecvLayers(LeabraUnit* u, LeabraLayer*& patch_dir_lay,
 }
 
 void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  LeabraLayer* patch_dir_lay = NULL;
-  LeabraLayer* patch_ind_lay = NULL;
-  LeabraLayer* matrix_dir_lay = NULL;
-  LeabraLayer* matrix_ind_lay = NULL;
-  LeabraLayer* dms_matrix_dir_lay = NULL;
-  LeabraLayer* dms_matrix_ind_lay = NULL;
   LeabraLayer* pv_pos_lay = NULL;
+  LeabraLayer* vspatch_pos_D1_lay = NULL;
+  LeabraLayer* vspatch_pos_D2_lay = NULL;
+  LeabraLayer* vsmatrix_pos_D1_lay = NULL;
+  LeabraLayer* vsmatrix_pos_D2_lay = NULL;
   LeabraLayer* pv_neg_lay = NULL;
+  LeabraLayer* vspatch_neg_D1_lay = NULL;
+  LeabraLayer* vspatch_neg_D2_lay = NULL;
+  LeabraLayer* vsmatrix_neg_D1_lay = NULL;
+  LeabraLayer* vsmatrix_neg_D2_lay = NULL;
+  
   
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
-  GetRecvLayers(un, patch_dir_lay, patch_ind_lay, matrix_dir_lay, matrix_ind_lay,
-                dms_matrix_dir_lay, dms_matrix_ind_lay, pv_pos_lay, pv_neg_lay);
+  GetRecvLayers(un, pv_pos_lay, vspatch_pos_D1_lay, vspatch_pos_D2_lay,
+                vsmatrix_pos_D1_lay, vsmatrix_pos_D2_lay, pv_neg_lay,
+                vspatch_neg_D1_lay, vspatch_neg_D2_lay,
+                vsmatrix_neg_D1_lay, vsmatrix_neg_D2_lay);
   
   // use avg act over layer..
   // note: need acts_q0 for patch to reflect previous trial..
-  float patch_dir;
+  float vspatch_pos_D1;
   if(lhb.patch_cur)
-    patch_dir = patch_dir_lay->acts_eq.avg * patch_dir_lay->units.size;
+    vspatch_pos_D1 = vspatch_pos_D1_lay->acts_eq.avg * vspatch_pos_D1_lay->units.size;
   else
-    patch_dir = patch_dir_lay->acts_q0.avg * patch_dir_lay->units.size;
+    vspatch_pos_D1 = vspatch_pos_D1_lay->acts_q0.avg * vspatch_pos_D1_lay->units.size;
     
-  float patch_ind;
+  float vspatch_pos_D2;
   if(lhb.patch_cur)
-    patch_ind = patch_ind_lay->acts_eq.avg * patch_ind_lay->units.size;
+    vspatch_pos_D2 = vspatch_pos_D2_lay->acts_eq.avg * vspatch_pos_D2_lay->units.size;
   else
-    patch_ind = patch_ind_lay->acts_q0.avg * patch_ind_lay->units.size;
-    
-  
-  float vs_patch_net = (gains.patch_dir * patch_dir) - (gains.patch_ind * patch_ind);
-  if (vs_patch_net <0.0f) {
-    vs_patch_net *= gains.vs_patch_net_neg_gain;
+    vspatch_pos_D2 = vspatch_pos_D2_lay->acts_q0.avg * vspatch_pos_D2_lay->units.size;
+
+  float vspatch_pos_net = (gains.vspatch_pos_D1 * vspatch_pos_D1) - (gains.vspatch_pos_D2 * vspatch_pos_D2); // positive number is net excitatory in LHb, i.e., the "dipper"
+  if (vspatch_pos_net < 0.0f) {
+    vspatch_pos_net *= gains.vspatch_pos_net_neg_gain;
   }
   
+  // repeat for AVERSIVE guys...
+  float vspatch_neg_D1;
+  if(lhb.patch_cur)
+    vspatch_neg_D1 = vspatch_neg_D1_lay->acts_eq.avg * vspatch_neg_D1_lay->units.size;
+  else
+    vspatch_neg_D1 = vspatch_neg_D1_lay->acts_q0.avg * vspatch_neg_D1_lay->units.size;
   
-  float matrix_dir = 0.0f;
-  if(matrix_dir_lay)
-    matrix_dir = matrix_dir_lay->acts_eq.avg * matrix_dir_lay->units.size;
-  float matrix_ind = 0.0f;
-  if(matrix_ind_lay)
-    matrix_ind = matrix_ind_lay->acts_eq.avg * matrix_ind_lay->units.size;
-  float dms_matrix_dir = 0.0f;
-  if(dms_matrix_dir_lay) {
-    //dms_matrix_dir = dms_matrix_dir_lay->acts_eq.max;
-    dms_matrix_dir = dms_matrix_dir_lay->acts_eq.avg * dms_matrix_dir_lay->units.size;
+  float vspatch_neg_D2;
+  if(lhb.patch_cur)
+    vspatch_neg_D2 = vspatch_neg_D2_lay->acts_eq.avg * vspatch_neg_D2_lay->units.size;
+  else
+    vspatch_neg_D2 = vspatch_neg_D2_lay->acts_q0.avg * vspatch_neg_D2_lay->units.size;
+  
+  // TODO: do I need anything like the net_neg_gain guy??????
+  float vspatch_neg_net = (gains.vspatch_neg_D2 * vspatch_neg_D2) - (gains.vspatch_neg_D1 * vspatch_neg_D1); // positive number is net inhibitory in LHb - disinhibitory "burster"
+  
+// TODO: 0.2 gain here seems to be preventing any mitigation of the neg PV
+  //  if (vspatch_neg_net > 0.0f) {
+//    vspatch_neg_net *= gains.vspatch_neg_net_neg_gain; // TODO: probably only need one gain here, but will keep them separate for now...
+//  }
+  
+  
+  float vsmatrix_pos_D1 = 0.0f;
+  if(vsmatrix_pos_D1_lay)
+    vsmatrix_pos_D1 = vsmatrix_pos_D1_lay->acts_eq.avg * vsmatrix_pos_D1_lay->units.size;
+  float vsmatrix_pos_D2 = 0.0f;
+  if(vsmatrix_pos_D2_lay)
+    vsmatrix_pos_D2 = vsmatrix_pos_D2_lay->acts_eq.avg * vsmatrix_pos_D2_lay->units.size;
+
+  float vsmatrix_neg_D1 = 0.0f;
+  if(vsmatrix_neg_D1_lay) {
+    vsmatrix_neg_D1 = vsmatrix_neg_D1_lay->acts_eq.avg * vsmatrix_neg_D1_lay->units.size;
   }
-  float dms_matrix_ind = 0.0f;
-  if(dms_matrix_ind_lay) {
+  float vsmatrix_neg_D2 = 0.0f;
+  if(vsmatrix_neg_D2_lay) {
     //dms_matrix_ind = dms_matrix_ind_lay->acts_eq.max;
-    dms_matrix_ind = dms_matrix_ind_lay->acts_eq.avg * dms_matrix_ind_lay->units.size;
+    vsmatrix_neg_D2 = vsmatrix_neg_D2_lay->acts_eq.avg * vsmatrix_neg_D2_lay->units.size;
   }
   float pv_pos = pv_pos_lay->acts_eq.avg * pv_pos_lay->units.size;
   float pv_neg = pv_neg_lay->acts_eq.avg * pv_neg_lay->units.size;
@@ -254,27 +287,35 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   // TODO: maybe no longer need the net_pv_pos absorb somehow?
   // TODO: OR, also take the MAX(net_pv_pos, net_lv_pos); // call it net_pos and ONLY use that!
   // TODO: this latter seems the best so far...
+
+  
+  // net out the VS matrix D1 versus D2 pairs...WATCH the signs - double negatives!
+  float vsmatrix_pos_net = (gains.vsmatrix_pos_D1 * vsmatrix_pos_D1) - (gains.vsmatrix_pos_D2 * vsmatrix_pos_D2); // positive number net inhibitory!
+  float vsmatrix_neg_net = (gains.vsmatrix_neg_D2 * vsmatrix_neg_D2) - (gains.vsmatrix_neg_D1 * vsmatrix_neg_D1); // positive number net excitatory!
+  
   
   
   // don't double count pv going through the matrix guys
-  float net_pv_pos = MAX(pv_pos, gains.vs_matrix_dir * matrix_dir);
-  float net_pv_neg = MAX(pv_neg, gains.vs_matrix_ind * matrix_ind);
+  float net_pos = vsmatrix_pos_net;
+  if(pv_pos) { net_pos = MAX(pv_pos, vsmatrix_pos_net); }
+  float net_neg = vsmatrix_neg_net;
+  if(pv_neg) { net_neg = MAX(pv_neg, vsmatrix_neg_net); }
   
-  // don't double count lv going through the two (four) separate matrix guys
-  float net_lv_pos = MAX(gains.dms_matrix_dir * dms_matrix_dir,
-                         gains.vs_matrix_dir * matrix_dir);
-  float net_lv_neg = MAX(gains.dms_matrix_ind * dms_matrix_ind,
-                         gains.vs_matrix_ind * matrix_ind);
+  // likewise, don't double count lv going through the matrix guys - SHOULD BE ALREADY DONE NOW!
+//  float net_lv_pos = MAX(gains.dms_matrix_dir * dms_matrix_dir,
+//                         gains.vs_matrix_dir * matrix_dir);
+//  float net_lv_neg = MAX(gains.dms_matrix_ind * dms_matrix_ind,
+//                         gains.vs_matrix_ind * matrix_ind);
   
   
   // TODO: better approach to double matrix counting
-  float net_pos = MAX(net_pv_pos, net_lv_pos);
-  float net_neg = MAX(net_pv_neg, net_lv_neg);
+//  float net_pos = MAX(net_pv_pos, net_lv_pos);
+//  float net_neg = MAX(net_pv_neg, net_lv_neg);
   
 //  float net_lhb = net_pv_neg - (gains.patch_ind * patch_ind) - net_pv_pos +
 //                           (gains.patch_dir * patch_dir) - (gains.dms_matrix_dir * dms_matrix_dir) + (gains.dms_matrix_ind * dms_matrix_ind) + residual_pvneg;
   
-  float net_lhb = net_neg - net_pos + vs_patch_net + residual_pvneg;
+  float net_lhb = net_neg - net_pos + vspatch_pos_net - vspatch_neg_net + residual_pvneg;
   
   net_lhb *=gains.all;
   
@@ -287,18 +328,19 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     LeabraLayer* lay = un->own_lay();
     lay->SetUserData("pv_pos", pv_pos);
-    lay->SetUserData("patch_dir", patch_dir);
-    lay->SetUserData("net_pv_pos", net_pv_pos);
+    lay->SetUserData("vsmatrix_pos_D1", vsmatrix_pos_D1);
+    lay->SetUserData("vsmatrix_pos_D2", vsmatrix_pos_D2);
+    lay->SetUserData("net_pos", net_pos);
+    lay->SetUserData("vspatch_pos_D1", vspatch_pos_D1);
+    lay->SetUserData("vspatch_pos_D2", vspatch_pos_D2);
+    
     lay->SetUserData("pv_neg", pv_neg);
-    lay->SetUserData("patch_ind", patch_ind);
-    lay->SetUserData("net_pv_neg", net_pv_neg);
-    lay->SetUserData("matrix_dir", matrix_dir);
-    lay->SetUserData("matrix_ind", matrix_ind);
-    //lay->SetUserData("matrix_net", matrix_net);
-    lay->SetUserData("dms_matrix_dir", dms_matrix_dir);
-    lay->SetUserData("dms_matrix_ind", dms_matrix_ind);
-    lay->SetUserData("net_lv_pos", net_lv_pos);
-    lay->SetUserData("net_lv_neg", net_lv_neg);
+    lay->SetUserData("vsmatrix_neg_D1", vsmatrix_neg_D1);
+    lay->SetUserData("vsmatrix_neg_D2", vsmatrix_neg_D2);
+    lay->SetUserData("net_neg", net_neg);
+    lay->SetUserData("vspatch_neg_D1", vspatch_neg_D1);
+    lay->SetUserData("vspatch_neg_D2", vspatch_neg_D2);
+    
     lay->SetUserData("residual_pvneg", residual_pvneg);
     lay->SetUserData("net_lhb", net_lhb);
   }
@@ -329,7 +371,8 @@ void LHbRMTgUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int t
         if(recv_gp->NotActive()) continue;
         LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
         if(from->name.contains("Matrix") && (from->name.contains("Ind") ||
-                                             from->name.contains("NoGo"))) {
+                                             from->name.contains("NoGo") ||
+                                             from->name.contains("D2"))) {
           matrix_ind += recv_gp->net_raw;
         }
       }

@@ -31,7 +31,10 @@ class E_API LHbRMTgSpecs : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          patch_cur;      // #DEF_false use current trial patch activations -- otherwise use previous trial -- current trial is appropriate for simple discrete trial environments (e.g., with some PBWM models), whereas previous is more approprate for trials with more realistic temporal structure
+  
+  // TODO: matrix_td will need extensive rework if we still want to use it because of four different matrix inputs now entering LHb - LHbRMTgUnitSpec::see Quarter_Final()
   bool          matrix_td;      // #DEF_false compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
+  
   float         min_pvneg;      // #DEF_0.1 #MIN_0 #MAX_1 proportion of PVNeg that cannot be predicted away - can never afford to take danger for granted!
   
   bool          rec_data;       // #DEF_false record values
@@ -54,13 +57,18 @@ class E_API LHbRMTgGains : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         all;            // #MIN_0 #DEF_1 final overall gain on everything
-  float         patch_dir;      // #MIN_0 #DEF_1 VS patch direct pathway versus positive PV outcomes
-  float         patch_ind;      // #MIN_0 #DEF_1 VS patch indirect pathway versus negative PV outcomes
-  float         vs_patch_net_neg_gain; // #DEF_0.2 proportion of positive reward prediction error (RPE) to use if RPE results from a predicted omission of positive reinforcement - e.g., conditioned inhibitor
-  float         vs_matrix_dir;  // #MIN_0 #DEF_1 gain on VS matrix dir
-  float         vs_matrix_ind;  // #MIN_0 #DEF_1 - VS matrix indir
-  float         dms_matrix_dir; // #MIN_0 #DEF_1 - DMS matrix_dir
-  float         dms_matrix_ind; // #MIN_0 #DEF_1 - DMS matrix_indir
+  float         vspatch_pos_D1;      // #MIN_0 #DEF_1 VS patch D1 APPETITIVE pathway - versus pos PV outcomes
+  float         vspatch_pos_D2;      // #MIN_0 #DEF_1 VS patch D2 APPETITIVE pathway versus vspatch_pos_D1
+  float         vspatch_pos_net_neg_gain; // #DEF_0.2 proportion of positive reward prediction error (RPE) to use if RPE results from a predicted omission of positive reinforcement - e.g., conditioned inhibitor
+  float         vsmatrix_pos_D1;  // #MIN_0 #DEF_1 gain on VS matrix D1 APPETITIVE guys
+  float         vsmatrix_pos_D2;  // #MIN_0 #DEF_1 - VS matrix D2 APPETITIVE
+  
+  float         vspatch_neg_D1;      // #MIN_0 #DEF_1 VS patch D1 pathway versus neg PV outcomes
+  float         vspatch_neg_D2;      // #MIN_0 #DEF_1 VS patch D2 pathway versus vspatch_neg_D1
+  float         vspatch_neg_net_neg_gain; // #DEF_0.2 TODO: do we need any version of this guy?
+  
+  float         vsmatrix_neg_D1; // #MIN_0 #DEF_1 - VS matrix D1 AVERSIVE
+  float         vsmatrix_neg_D2; // #MIN_0 #DEF_1 - VS matrix D2 AVERSIVE
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -86,14 +94,16 @@ public:
   // compute the LHb value based on recv projections from VSMatrix_dir/ind, VSPatch_dir/ind, and PV_pos/neg
   
   virtual bool  GetRecvLayers(LeabraUnit* u,
-                              LeabraLayer*& patch_dir_lay,
-                              LeabraLayer*& patch_ind_lay,
-                              LeabraLayer*& matrix_dir_lay,
-                              LeabraLayer*& matrix_ind_lay,
                               LeabraLayer*& pv_pos_lay,
+                              LeabraLayer*& vspatch_pos_D1_lay,
+                              LeabraLayer*& vspatch_pos_D2_lay,
+                              LeabraLayer*& vsmatrix_pos_D1_lay,
+                              LeabraLayer*& vsmatrix_pos_D2_lay,
                               LeabraLayer*& pv_neg_lay,
-                              LeabraLayer*& dms_matrix_dir_lay,
-                              LeabraLayer*& dms_matrix_ind_lay);
+                              LeabraLayer*& vspatch_neg_D1_lay,
+                              LeabraLayer*& vspatch_neg_D2_lay,
+                              LeabraLayer*& vsmatrix_neg_D1_lay,
+                              LeabraLayer*& vsmatrix_neg_D2_lay);
   // get the recv layers..
   
   void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };

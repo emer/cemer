@@ -2258,8 +2258,6 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   LHbRMTgUnitSpec* lhbrmtg_units = PvlvSp("LHbRMTgUnits", LHbRMTgUnitSpec);
   lhbrmtg_units->lhb.patch_cur = true;
-  lhbrmtg_units->gains.dms_matrix_dir = 0.0f; // not currently useful.
-  lhbrmtg_units->gains.dms_matrix_ind = 0.0f;
 
   VTAUnitSpec* vtap_units = PvlvSp("VTAUnits_p", VTAUnitSpec);
   vtap_units->da.patch_cur = true;
