@@ -116,14 +116,14 @@ bool ProgEl_List::BrowserCollapseAll() {
 }
 
 bool ProgEl_List::BrowserEditTest() {
-  bool any_err = false;
+  bool all_ok = true;
   for (int i = 0; i < size; ++i) {
     ProgEl* el = FastEl(i);
-    bool err = el->BrowserEditTest();
-    if(err) 
-      any_err = true;
+    if(!el->BrowserEditTest()) {
+      all_ok = false;
+    }
   }
-  return any_err;
+  return all_ok;
 }
 
 bool ProgEl_List::RemoveIdx(int idx) {

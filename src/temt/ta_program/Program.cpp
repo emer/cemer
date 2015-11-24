@@ -2211,6 +2211,6 @@ void Program::UpdateProgElCodeStrings() {
 bool Program::BrowserEditTest() {
   bool rval = init_code.BrowserEditTest();
   bool rv2 = prog_code.BrowserEditTest();
-  return rval | rv2;
+  return rval && rv2;
 }
 #endif
