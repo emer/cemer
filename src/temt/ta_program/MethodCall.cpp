@@ -194,7 +194,10 @@ bool MethodCall::CvtFmCode(const String& code) {
     meth_args.UpdateFromMethod(md);
   }
   String args = trim(code_copy.after('('));
+  int right_parens_pos = args.index(')');
+  args = args.before(right_parens_pos);
   meth_args.ParseArgString(args);
+  
   return true;
 }
 

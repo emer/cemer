@@ -470,7 +470,33 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   ProgExprBase::LookUpType lookup_type = NOT_SET;
   
   if(delim_pos.size > 0) {
-    if(txt[delim_pos[0]] == '.') { // path sep = .
+    if(delim_pos.size > 1 && txt[delim_pos[1]] == ')' && txt[delim_pos[0]] == '.') { // path sep = .
+      base_path = txt.at(expr_start, delim_pos[0]-expr_start);
+      int length = base_path.length();
+      base_path = triml(base_path);
+      int shift = length - base_path.length(); // shift to compensate for trim
+      expr_start += shift;
+      prepend_txt = txt.before(expr_start);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = ProgExprBase::METHOD;
+      delims_used = delim_pos.size;  // this will keep us from falling into the conditional "delim_pos.size > delims_used" until that bit is eliminated
+      
+      // check for both '.' and "->" delimiters
+      int left_parens_pos = base_path.index('(', delim_pos[1] - base_path.length());
+      path_rest = base_path.before(left_parens_pos);
+      int dot_pos = path_rest.index('.', -1);
+      int arrow_tip_pos = base_path.index('>', -1);
+      
+      if (arrow_tip_pos != -1 && base_path[arrow_tip_pos-1] == '-' && arrow_tip_pos > dot_pos) {
+        path_rest = path_rest.after(arrow_tip_pos);
+        path_var = base_path.before(arrow_tip_pos - 1);
+      }
+      else {
+        path_rest = path_rest.after(dot_pos);
+        path_var = base_path.before(dot_pos);
+      }
+    }
+    else if(txt[delim_pos[0]] == '.') { // path sep = .
       base_path = txt.at(expr_start, delim_pos[0]-expr_start);
       int length = base_path.length();
       base_path = triml(base_path);
@@ -481,7 +507,35 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_type = ProgExprBase::OBJ_MEMB_METH;
       delims_used = 1;
     }
-    else if(txt[delim_pos[0]] == '>' && delim_pos.size > 1 && txt[delim_pos[1]] == '-'
+    else if(delim_pos.size > 2 && txt[delim_pos[2]] == ')' && txt[delim_pos[0]] == '>' && txt[delim_pos[1]] == '-'
+            && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ->
+      base_path = txt.at(expr_start, delim_pos[1]-expr_start);
+      int length = base_path.length();
+      base_path = triml(base_path);
+      int shift = length - base_path.length(); // shift to compensate for trim
+      expr_start += shift;
+      prepend_txt = txt.before(expr_start);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = ProgExprBase::METHOD;
+      delims_used = delim_pos.size;  // this will keep us from falling into the conditional "delim_pos.size > delims_used" until that bit is eliminated
+      
+      // check for both '.' and "->" delimiters
+      int left_parens_pos = base_path.index('(', delim_pos[1] - base_path.length());
+      path_rest = base_path.before(left_parens_pos);
+      int dot_pos = path_rest.index('.', -1);
+      int arrow_tip_pos = base_path.index('>', -1);
+      
+      if (arrow_tip_pos != -1 && base_path[arrow_tip_pos-1] == '-' && arrow_tip_pos > dot_pos) {
+        path_rest = path_rest.after(arrow_tip_pos);
+        path_var = base_path.before(arrow_tip_pos - 1);
+      }
+      else {
+        path_rest = path_rest.after(dot_pos);
+        path_var = base_path.before(dot_pos);
+      }
+
+    }
+    else if(delim_pos.size > 1 && txt[delim_pos[0]] == '>' && txt[delim_pos[1]] == '-'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ->
       base_path = txt.at(expr_start, delim_pos[1]-expr_start);
       int length = base_path.length();
@@ -493,7 +547,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_type = ProgExprBase::OBJ_MEMB_METH;
       delims_used = 2;
     }
-    else if(txt[delim_pos[0]] == ':' && delim_pos.size > 1 && txt[delim_pos[1]] == ':'
+    else if(delim_pos.size > 1 && txt[delim_pos[0]] == ':' && txt[delim_pos[1]] == ':'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ::
       base_path = txt.at(expr_start, delim_pos[1]-expr_start);
       int length = base_path.length();
@@ -505,7 +559,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_type = ProgExprBase::SCOPED;
       delims_used = 2;
     }
-    else if(txt[delim_pos[0]] == ')' && delim_pos.size > 1 && txt[delim_pos[1]] == '(') { // program () which can be followed by a function in that program
+    else if(delim_pos.size > 1 && txt[delim_pos[0]] == ')' && txt[delim_pos[1]] == '(') { // program () which can be followed by a function in that program
       base_path = txt.at(expr_start, delim_pos[1]-expr_start);
       int length = base_path.length();
       base_path = triml(base_path);
@@ -516,7 +570,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_type = ProgExprBase::PROGRAM_FUNCTION;
       delims_used = 2;
     }
-    else if(txt[delim_pos[0]] == '(') { // handles cases such as methods my_method(xxx or if(
+    else if(txt[delim_pos[0]] == '(') { // handles method arguments and more - cases such as my_method(xxx or if(
       base_path = txt.at(expr_start, delim_pos[0]-expr_start);
       int length = base_path.length();
       base_path = triml(base_path);
@@ -534,7 +588,6 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_type = ProgExprBase::VARIOUS;
       delims_used = 1;
     }
-    // todo: [] - I think this means we need to handle arrays - rohrlich 9/2/2015
   }
   else {
     prog_el_txt = txt.at(prog_el_start_pos, txt.length() - prog_el_start_pos);
@@ -562,13 +615,13 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   // cases such as var.member.<lookup>
   if(delim_pos.size > delims_used) {
     // is one of the delimiters a '(' - we want to start from there
-    int parens_pos = base_path.index('(', cur_pos-base_path.length());
-    if (parens_pos != -1) {
+    int left_parens_pos = base_path.index('(', cur_pos-base_path.length());
+    if (left_parens_pos != -1) {
       int parens_index = 0;
       // which delimiter is it
-      parens_index = delim_pos.FindEl(parens_pos);
-      // path_var will be the string between parens_pos and the next delimiter pos to the right
-      path_var = base_path.at(parens_pos + 1, delim_pos[parens_index - 1] - parens_pos - 1);
+      parens_index = delim_pos.FindEl(left_parens_pos);
+      // path_var will be the string between left_parens_pos and the next delimiter pos to the right
+      path_var = base_path.at(left_parens_pos + 1, delim_pos[parens_index - 1] - left_parens_pos - 1);
       
       if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
         path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
@@ -612,7 +665,6 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   int lookup_type;
   int expr_start = 0;
   
-
   bool path_base_not_null = false;
   // Rohrlich - see note in the parse code - remove this variable if all goes well
 //  bool path_base_not_null = (path_base_typ != NULL || path_base != NULL);
@@ -708,8 +760,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
           }
         }
         else {
-          taMisc::Info("Var lookup: cannot find variable:", path_var,
-                       "as start of lookup path:", base_path);
+          taMisc::Info("Var lookup: cannot find variable:", path_var, "as start of lookup path:", base_path);
         }
       }
       if(base_base && !lookup_td) {
@@ -798,6 +849,41 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
           if(lookup_md->TypeInfoKind() == TypeItem::TIK_MEMBER) {
             path_md = (MemberDef*)lookup_md;
           }
+        }
+      }
+      break;
+    }
+      
+    case ProgExprBase::METHOD: {
+      TypeDef* lookup_td = NULL;
+      ProgVar* st_var = NULL;
+      st_var = own_prg->FindVarName(path_var);
+      if (st_var) {
+        TypeDef* td = st_var->object_type;
+        if (td) {
+          MethodDef* md = td->methods.FindName(path_rest);
+          if (md) {
+            lookup_td = md->type;  // get the return type
+          }
+        }
+      }
+      if (lookup_td) {
+        TypeItem* lookup_md = NULL;
+        taiWidgetMemberMethodDefChooser* mdlkup = new taiWidgetMemberMethodDefChooser
+        (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
+        mdlkup->GetImage((MemberDef*)NULL, lookup_td);
+        bool okc = mdlkup->OpenChooser();
+        if(okc && mdlkup->md()) {
+          lookup_md = mdlkup->md();
+        }
+        delete mdlkup;
+        
+        if(lookup_md) {
+          rval = path_prepend_txt + lookup_md->name;
+          if(lookup_md->TypeInfoKind() == TypeItem::TIK_METHOD)
+            rval += "()";
+          new_pos = rval.length();
+          rval += append_txt;
         }
       }
       break;
