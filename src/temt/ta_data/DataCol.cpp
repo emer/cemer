@@ -442,13 +442,14 @@ int DataCol::displayWidth() const {
     }
     else {
       switch (valType()) {
-      case VT_STRING: rval = 16; break; // maximum width for strings
-      case VT_DOUBLE: rval = 16; break;
-      case VT_FLOAT: rval = 8; break;
-      case VT_INT: rval = 8; break;
-      case VT_BYTE: rval = 3; break;
-      case VT_VARIANT: rval = 10; break;
-      default: break;
+        case VT_STRING: rval = 16; break; // maximum width for strings
+        case VT_DOUBLE: rval = 16; break;
+        case VT_FLOAT: rval = 8; break;
+        case VT_INT: rval = 8; break;
+        case VT_BYTE: rval = 3; break;
+        case VT_VARIANT: rval = 10; break;
+        case VT_BOOL: rval = 5; break;
+        default: break;
       }
     }
   }
@@ -456,7 +457,7 @@ int DataCol::displayWidth() const {
     rval = 8; // default
   // include name: not
   //  rval = MAX(rval, name.length());
-
+  
   return rval;
 }
 
@@ -814,17 +815,17 @@ bool DataCol::GetMinMaxScale(MinMax& mm) {
   return true;
 }
 
-
 String DataCol::EncodeHeaderName(const MatrixIndex& dims) const {
   String typ_info;
   switch (valType()) {
-  case VT_STRING:       typ_info = "$"; break;
-  case VT_FLOAT:        typ_info = "%"; break;
-  case VT_DOUBLE:       typ_info = "#"; break;
-  case VT_INT:          typ_info = "|"; break;
-  case VT_BYTE:         typ_info = "@"; break;
-  case VT_VARIANT:      typ_info = "&"; break;
-  case VT_VOIDPTR:      typ_info = "*"; break;
+    case VT_STRING:       typ_info = "$"; break;
+    case VT_FLOAT:        typ_info = "%"; break;
+    case VT_DOUBLE:       typ_info = "#"; break;
+    case VT_INT:          typ_info = "|"; break;
+    case VT_BYTE:         typ_info = "@"; break;
+    case VT_VARIANT:      typ_info = "&"; break;
+    case VT_VOIDPTR:      typ_info = "*"; break;
+    case VT_BOOL:         typ_info = "^"; break;
   }
   String mat_info;
   if(is_matrix) {               // specify which cell in matrix this is [dims:d0,d1,d2..]
@@ -867,6 +868,9 @@ void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
   } else if (nm[0] == '*') {
     nm = nm.after('*');
     vt = VT_VOIDPTR;
+  } else if (nm[0] == '^') {
+    nm = nm.after('^');
+    vt = VT_BOOL;
   } /*no: caller must set default else {
     vt = VT_FLOAT;
   }*/

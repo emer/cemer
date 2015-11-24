@@ -249,6 +249,11 @@ public:
   bool          SetValAsByte(byte val, int row)
   // #EXPERT #CAT_Modify valid if type is numeric, -ve row is from end (-1=last)
   {return SetValAsByte_impl(val, row, 0);}
+  byte          GetValAsBool(int row) const {return GetValAsBool_impl(row, 0);}
+  // #EXPERT #CAT_Access valid only if type is byte, -ve row is from end (-1=last)
+  bool          SetValAsBool(bool val, int row)
+  // #EXPERT #CAT_Modify valid if type is numeric, -ve row is from end (-1=last)
+  {return SetValAsBool_impl(val, row, 0);}
 
   ///////////////////////////////////////////////////////////////
   // Matrix versions, cell index
@@ -278,6 +283,11 @@ public:
   bool          SetValAsIntM(int val, int row, int cell)
   // #EXPERT #CAT_Modify valid if type is int or float, -ve row is from end (-1=last)
   {return SetValAsInt_impl(val, row, cell);}
+  bool          GetValAsBoolM(int row, int cell) const {return GetValAsBool_impl(row, cell);}
+  // #EXPERT #CAT_Access valid if type is int or byte, -ve row is from end (-1=last)
+  bool          SetValAsBoolM(bool val, int row, int cell)
+  // #EXPERT #CAT_Modify valid if type is int or float, -ve row is from end (-1=last)
+  {return SetValAsBool_impl(val, row, cell);}
   byte          GetValAsByteM(int row, int cell) const {return GetValAsByte_impl(row, cell);}
   // #EXPERT #CAT_Access valid only if type is byte, -ve row is from end (-1=last)
   bool          SetValAsByteM(byte val, int row, int cell)
@@ -318,6 +328,12 @@ public:
   bool          SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
   {return SetValAsInt_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));}
   // #EXPERT #CAT_Modify valid if type is int or float, -ve row is from end (-1=last)
+  bool          GetValAsBoolMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return GetValAsBool_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
+  // #EXPERT #CAT_Access valid if type is bool or byte, -ve row is from end (-1=last)
+  bool          SetValAsBoolMDims(bool val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  {return SetValAsBool_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));}
+  // #EXPERT #CAT_Modify valid if type is bool or float, -ve row is from end (-1=last)
   byte          GetValAsByteMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
   { return GetValAsByte_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
   // #EXPERT #CAT_Access valid only if type is byte, -ve row is from end (-1=last)
@@ -450,6 +466,7 @@ protected:
   virtual double        GetValAsDouble_impl(int row, int cell) const { return 0.0; }
   virtual float         GetValAsFloat_impl(int row, int cell) const { return 0.0f; }
   virtual int           GetValAsInt_impl(int row, int cell) const { return 0; }
+  virtual bool          GetValAsBool_impl(int row, int cell) const { return false; }
   virtual byte          GetValAsByte_impl(int row, int cell) const
   { return (byte)GetValAsInt_impl(row, cell); }
 
@@ -459,6 +476,7 @@ protected:
   virtual bool   SetValAsDouble_impl(double val, int row, int cell) {return false;}
   virtual bool   SetValAsFloat_impl(float val, int row, int cell) { return false; }
   virtual bool   SetValAsInt_impl(int val, int row, int cell)  { return false; }
+  virtual bool   SetValAsBool_impl(bool val, int row, int cell)  { return false; }
   virtual bool   SetValAsByte_impl(byte val, int row, int cell)
   { return SetValAsInt_impl((int)val, row, cell); }
 

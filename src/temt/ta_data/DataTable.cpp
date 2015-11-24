@@ -841,6 +841,14 @@ int DataTable::GetValAsInt(const Variant& col, int row) const {
   else return 0;
 }
 
+bool DataTable::GetValAsBool(const Variant& col, int row) const {
+  DataCol* da = GetColData(col);
+  int i;
+  if (da &&  idx_err(row, i))
+    return da->GetValAsBool(i);
+  else return false;
+}
+
 const String DataTable::GetValAsString(const Variant& col, int row) const {
   DataCol* da = GetColData(col);
   int i;
@@ -1083,6 +1091,17 @@ bool DataTable::SetValAsInt(int val, const Variant& col, int row) {
   } else return false;
 }
 
+bool DataTable::SetValAsBool(bool val, const Variant& col, int row) {
+  DataCol* da = GetColData(col);
+  if (!da) return false;
+  if (da->is_matrix_err()) return false;
+  int i;
+  if (idx_err(row, i)) {
+    da->SetValAsBool(val, i);
+    return true;
+  } else return false;
+}
+
 bool DataTable::SetValAsString(const String& val, const Variant& col, int row) {
   DataCol* da = GetColData(col);
   if (!da) return false;
@@ -1159,6 +1178,15 @@ int DataTable::GetValAsIntM(const Variant& col, int row, int cell) const {
   else return 0;
 }
 
+bool DataTable::GetValAsBoolM(const Variant& col, int row, int cell) const {
+  DataCol* da = GetColData(col);
+  if (!da || (cell > 0 && da->not_matrix_err())) return false;
+  int i;
+  if (da &&  idx_err(row, i))
+    return da->GetValAsBoolM(i, cell);
+  else return 0;
+}
+
 const String DataTable::GetValAsStringM(const Variant& col, int row, int cell, bool na) const {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
@@ -1206,6 +1234,16 @@ bool DataTable::SetValAsIntM(int val, const Variant& col, int row, int cell) {
   int i;
   if (idx_err(row, i)) {
     da->SetValAsIntM(val, i, cell);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsBoolM(bool val, const Variant& col, int row, int cell) {
+  DataCol* da = GetColData(col);
+  if (!da || (cell > 0 && da->not_matrix_err())) return false;
+  int i;
+  if (idx_err(row, i)) {
+    da->SetValAsBoolM(val, i, cell);
     return true;
   } else return false;
 }
@@ -1260,6 +1298,15 @@ int DataTable::GetValAsIntMDims(const Variant& col, int row, int d0, int d1, int
   else return 0;
 }
 
+bool DataTable::GetValAsBoolMDims(const Variant& col, int row, int d0, int d1, int d2, int d3) const {
+  DataCol* da = GetColData(col);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (da &&  idx_err(row, i))
+    return da->GetValAsBoolMDims(i, d0, d1, d2, d3);
+  else return 0;
+}
+
 const String DataTable::GetValAsStringMDims(const Variant& col, int row, int d0, int d1, int d2, int d3, bool na) const {
   DataCol* da = GetColData(col);
   if (!da || da->not_matrix_err()) return false;
@@ -1307,6 +1354,16 @@ bool DataTable::SetValAsIntMDims(int val, const Variant& col, int row, int d0, i
   int i;
   if (idx_err(row, i)) {
     da->SetValAsIntMDims(val, i, d0, d1, d2, d3);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsBoolMDims(bool val, const Variant& col, int row, int d0, int d1, int d2, int d3) {
+  DataCol* da = GetColData(col);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (idx_err(row, i)) {
+    da->SetValAsBoolMDims(val, i, d0, d1, d2, d3);
     return true;
   } else return false;
 }
@@ -2330,6 +2387,9 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
             break;
           case VT_BYTE:
             values.append(dc->GetValAsByte(j));
+            break;
+          case VT_BOOL:
+            values.append(dc->GetValAsBool(j));
             break;
           case VT_VARIANT:
             values.append(QString(dc->GetValAsString(j).chars()));

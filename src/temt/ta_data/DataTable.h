@@ -810,6 +810,10 @@ public:
   // #EXPERT #CAT_Access get data of scalar type, in int form, for given col, row; if data is NULL, then 0 is returned
   bool                  SetValAsInt(int val, const Variant& col, int row);
   // #EXPERT #CAT_Modify set data of scalar type, in int form, for given column, row; does nothing if no cell' 'true' if set
+  bool                  GetValAsBool(const Variant& col, int row) const;
+  // #EXPERT #CAT_Access get data of scalar type, in bool form, for given col, row; if data is NULL, then false is returned
+  bool                  SetValAsBool(bool val, const Variant& col, int row);
+  // #EXPERT #CAT_Modify set data of scalar type, in bool form, for given column, row; does nothing if no cell' 'true' if set
   const String          GetValAsString(const Variant& col, int row) const;
   // #EXPERT #CAT_Access get data of scalar type, in String form, for given column, row; if data is NULL, then "n/a" is returned
   bool                  SetValAsString(const String& val, const Variant& col, int row);
@@ -834,6 +838,10 @@ public:
   // #EXPERT #CAT_Access get data of matrix type, in int form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool                  SetValAsIntM(int val, const Variant& col, int row, int cell);
   // #EXPERT #CAT_Modify set data of matrix type, in int form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  bool                  GetValAsBoolM(const Variant& col, int row, int cell) const;
+  // #EXPERT #CAT_Access get data of matrix type, in bool form, for given col, row, and cell (flat index) in matrix; if data is NULL, then false is returned
+  bool                  SetValAsBoolM(bool val, const Variant& col, int row, int cell);
+  // #EXPERT #CAT_Modify set data of matrix type, in bool form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
   const String          GetValAsStringM(const Variant& col, int row, int cell,
                                         bool na = true) const;
   // #EXPERT #CAT_Access get data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
@@ -868,7 +876,13 @@ public:
   bool                  SetValAsIntMDims(int val, const Variant& col, int row, int d0,
                                          int d1=0, int d2=0, int d3=0);
   // #EXPERT #CAT_Modify set data of matrix type, in int form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  const String          GetValAsStringMDims(const Variant& col, int row, int d0,
+  bool                  GetValAsBoolMDims(const Variant& col, int row, int d0,
+                                         int d1=0, int d2=0, int d3=0) const;
+  // #EXPERT #CAT_Access get data of matrix type, in bool form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  bool                  SetValAsBoolMDims(bool val, const Variant& col, int row, int d0,
+                                         int d1=0, int d2=0, int d3=0);
+  // #EXPERT #CAT_Modify set data of matrix type, in bool form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+ const String          GetValAsStringMDims(const Variant& col, int row, int d0,
                                             int d1=0, int d2=0, int d3=0,
                                             bool na = true) const;
   // #EXPERT #CAT_Access get data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
