@@ -67,20 +67,17 @@ ProgEl* ProgCode::CvtCodeToProgEl() {
   String code_mod = code.expr;
   String code_orig = code.expr;  // will need to reset if Css expression
   bool has_final_semi = false;
-  // rohrlich 8/3/2014 - this handling of blankline is for bug 2020 - is this an improvement??
   if(code_mod.empty()) {
     candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_BlankLineEl));
   }
   if(code_mod.startsWith("//") || code_mod.startsWith("/*")) {
     candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_Comment));
   }
+  else if (code_mod.endsWith(';')) {
+    has_final_semi = true;
+    candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_CssExpr));
+  }
   else {
-    if(code_mod.endsWith(';')) {
-      // just make CssExpr the first choice, but sometimes you don't want it but just
-      // type the ; by accident..
-      has_final_semi = true;
-      candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_CssExpr));
-    }
     bool had_var = CvtCodeToVar(code_mod);
     if(had_var) {
       code.expr = code_mod;     // code was truncated..
