@@ -190,13 +190,15 @@ bool MethodCall::CvtFmCode(const String& code) {
   }
   // now tackle the args
   // if none of the args have been set we need to get them added to the args list before parsing
-  if (meth_args.size == 0) {
-    meth_args.UpdateFromMethod(md);
+  if (md) {
+    if (meth_args.size == 0) {
+      meth_args.UpdateFromMethod(md);
+    }
+    String args = trim(code_copy.after('('));
+    int right_parens_pos = args.index(')');
+    args = args.before(right_parens_pos);
+    meth_args.ParseArgString(args);
   }
-  String args = trim(code_copy.after('('));
-  int right_parens_pos = args.index(')');
-  args = args.before(right_parens_pos);
-  meth_args.ParseArgString(args);
   
   return true;
 }
