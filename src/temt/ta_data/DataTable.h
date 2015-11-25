@@ -56,6 +56,7 @@ class String_Array; //
 class Variant_Array; //
 class double_Array; //
 class float_Array; //
+class bool_Array; //
 
 #if (QT_VERSION >= 0x050000)
 class QJsonObject; //
@@ -264,6 +265,8 @@ public:
   virtual bool          SetColumnFromJSON(const QJsonObject& aCol, int start_row = 0, int start_cell = 0);
   // #IGNORE #CAT_FILE parse column data and write to data table, row = -1 means append, >=0 means overwrite
   virtual void          ParseJSONMatrixIntToFlat(const QJsonArray& aMatrix, int_Array& values);
+  // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
+  virtual void          ParseJSONMatrixBoolToFlat(const QJsonArray& aMatrix, bool_Array& values);
   // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
   virtual void          ParseJSONMatrixFloatToFlat(const QJsonArray& aMatrix, float_Array& values);
   // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array

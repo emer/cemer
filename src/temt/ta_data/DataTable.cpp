@@ -31,6 +31,7 @@
 #include <float_Array>
 #include <double_Array>
 #include <String_Array>
+#include <bool_Array>
 #include <Variant_Array>
 #include <DataSelectSpec>
 #include <DataSelectEl>
@@ -2301,6 +2302,9 @@ bool DataTable::GetDataMatrixCellAsJSON(QJsonObject& json_obj, const String& col
     case VT_INT:
       result = dc->GetValAsIntM(row, cell);
       break;
+    case VT_BOOL:
+      result = dc->GetValAsBoolM(row, cell);
+      break;
     case VT_BYTE:
       result = dc->GetValAsByteM(row, cell);
       break;
@@ -2385,11 +2389,11 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
           case VT_INT:
             values.append(dc->GetValAsInt(j));
             break;
-          case VT_BYTE:
-            values.append(dc->GetValAsByte(j));
-            break;
           case VT_BOOL:
             values.append(dc->GetValAsBool(j));
+            break;
+          case VT_BYTE:
+            values.append(dc->GetValAsByte(j));
             break;
           case VT_VARIANT:
             values.append(QString(dc->GetValAsString(j).chars()));
@@ -2421,6 +2425,9 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
                   break;
                 case VT_INT:
                   matrixDim_0Values.append(dc->GetValAsIntMDims(row, j, k));
+                  break;
+                case VT_BOOL:
+                  matrixDim_0Values.append(dc->GetValAsBoolMDims(row, j, k));
                   break;
                 case VT_BYTE:
                   matrixDim_0Values.append(dc->GetValAsByteMDims(row, j, k));
@@ -2460,6 +2467,9 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
                     break;
                   case VT_INT:
                     matrixDim_0Values.append(dc->GetValAsIntMDims(row,j, k, l));
+                    break;
+                  case VT_BOOL:
+                    matrixDim_0Values.append(dc->GetValAsBoolMDims(row,j, k, l));
                     break;
                   case VT_BYTE:
                     matrixDim_0Values.append(dc->GetValAsByteMDims(row,j, k, l));
@@ -2503,6 +2513,9 @@ bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, 
                       break;
                     case VT_INT:
                       matrixDim_0Values.append(dc->GetValAsIntMDims(row, j, k, l, m));
+                      break;
+                    case VT_BOOL:
+                      matrixDim_0Values.append(dc->GetValAsBoolMDims(row, j, k, l, m));
                       break;
                     case VT_BYTE:
                       matrixDim_0Values.append(dc->GetValAsByteMDims(row, j, k, l, m));
@@ -3055,6 +3068,8 @@ DataCol::ValType DataTable::StrToValType(String valTypeStr) {
     return VT_DOUBLE;
   else if (valTypeStr == "byte")
     return VT_BYTE;
+  else if (valTypeStr == "bool")
+    return VT_BOOL;
   else if (valTypeStr == "var")
     return VT_VARIANT;
   else {
@@ -3252,6 +3267,9 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
         case VT_INT:
           dc->SetValAsInt(value.toInt(), row);
           break;
+        case VT_BOOL:
+          dc->SetValAsBool(value.toBool(), row);
+          break;
         case VT_BYTE:
           dc->SetValAsInt(value.toInt(), row);
           break;
@@ -3274,6 +3292,7 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
     int valueCount = 0;  // how many values were passed in TOTAL for this column (rows * cell size)
     const QJsonArray matrixArray = theValues;
     int_Array intValues;
+    bool_Array boolValues;
     float_Array floatValues;
     double_Array doubleValues;
     String_Array stringValues;
@@ -3296,6 +3315,10 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
       case VT_INT:
         ParseJSONMatrixIntToFlat(matrixArray, intValues);
         valueCount = intValues.size;
+        break;
+      case VT_BOOL:
+        ParseJSONMatrixBoolToFlat(matrixArray, boolValues);
+        valueCount = boolValues.size;
         break;
       case VT_BYTE:
         ParseJSONMatrixIntToFlat(matrixArray, intValues);
@@ -3337,6 +3360,9 @@ bool DataTable::SetColumnFromJSON(const QJsonObject& aCol, int start_row, int st
           case VT_INT:
             SetValAsIntM(intValues[i*mg.Product() + j], columnName, r, k);
             break;
+          case VT_BOOL:
+            SetValAsBoolM(boolValues[i*mg.Product() + j], columnName, r, k);
+            break;
           case VT_BYTE:
             SetValAsIntM(intValues[i*mg.Product() + j], columnName, r, k);
             break;
@@ -3362,6 +3388,21 @@ void DataTable::ParseJSONMatrixIntToFlat(const QJsonArray& aMatrix, int_Array& v
     }
     else {
       int value = (*valueArray).toInt();
+      values.Insert(value, -1);
+    }
+    valueArray++;
+  }
+}
+
+void DataTable::ParseJSONMatrixBoolToFlat(const QJsonArray& aMatrix, bool_Array& values) { // not const we want to fill the array
+  QJsonArray::const_iterator valueArray = aMatrix.begin();
+  while (valueArray != aMatrix.end()) {
+    if ((*valueArray).isArray()) {
+      QJsonArray array = (*valueArray).toArray();
+      ParseJSONMatrixBoolToFlat(array, values);
+    }
+    else {
+      bool value = (*valueArray).toBool();
       values.Insert(value, -1);
     }
     valueArray++;

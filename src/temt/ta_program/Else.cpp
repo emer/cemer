@@ -118,5 +118,5 @@ bool Else::CvtFmCode(const String& code) {
 bool Else::BrowserEditTest() {
   bool rval = inherited::BrowserEditTest();
   bool rv2 = else_code.BrowserEditTest();
-  return rval | rv2;
+  return rval && rv2;
 }

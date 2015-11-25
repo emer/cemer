@@ -789,7 +789,8 @@ bool ProgEl::BrowserEditTest() {
 }
 
 bool ProgEl::BrowserEditTest_impl() {
-  String pre_str = BrowserEditString();
+//  String pre_str = BrowserEditString();
+  String pre_str = "for (int i=0; i<data_n;  i++)";
   bool setok = BrowserEditSet(pre_str, -11); // -11 is special code..
   if(TestWarning(!setok, "BrowserEditTest", "set failed to parse for\nexpr:",
                  pre_str)) {

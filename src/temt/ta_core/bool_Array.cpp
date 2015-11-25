@@ -13,12 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "CondBase.h"
+#include "bool_Array.h"
 
-TA_BASEFUNS_CTORS_DEFN(CondBase);
+TA_BASEFUNS_CTORS_DEFN(bool_Array);
+SMARTREF_OF_CPP(bool_Array)
 
-bool CondBase::BrowserEditTest() {
-  bool rval = inherited::BrowserEditTest();
-  bool rv2 = true_code.BrowserEditTest();
-  return rval && rv2;
-}
+
+const bool bool_Array::blank = false;
+

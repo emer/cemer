@@ -47,5 +47,5 @@ ProgVar* Loop::FindVarName(const String& var_nm) const {
 bool Loop::BrowserEditTest() {
   bool rval = inherited::BrowserEditTest();
   bool rv2 = loop_code.BrowserEditTest();
-  return rval | rv2;
+  return rval && rv2;
 }

@@ -78,5 +78,5 @@ bool CodeBlock::CvtFmCode(const String& code) {
 bool CodeBlock::BrowserEditTest() {
   bool rval = inherited::BrowserEditTest();
   bool rv2 = prog_code.BrowserEditTest();
-  return rval | rv2;
+  return rval && rv2;
 }

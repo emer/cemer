@@ -211,7 +211,7 @@ bool Switch::CvtFmCode(const String& code) {
 bool Switch::BrowserEditTest() {
   bool rval = inherited::BrowserEditTest();
   bool rv2 = cases.BrowserEditTest();
-  return rval | rv2;
+  return rval && rv2;
 }
 
 bool Switch::ChooseMe() {
