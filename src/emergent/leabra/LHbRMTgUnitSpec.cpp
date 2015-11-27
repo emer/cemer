@@ -50,7 +50,7 @@ void LHbRMTgGains::Defaults_init() {
   vspatch_neg_D2 = 1.0f;
   vsmatrix_neg_D1 = 1.0f;
   vsmatrix_neg_D2 = 1.0f;
-  vspatch_neg_net_neg_gain = 0.2f;
+  vspatch_neg_net_neg_gain = 0.0f;
 }
 
 void LHbRMTgUnitSpec::Initialize() {

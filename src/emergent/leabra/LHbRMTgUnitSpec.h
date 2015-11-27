@@ -65,7 +65,7 @@ public:
   
   float         vspatch_neg_D1;      // #MIN_0 #DEF_1 VS patch D1 pathway versus neg PV outcomes
   float         vspatch_neg_D2;      // #MIN_0 #DEF_1 VS patch D2 pathway versus vspatch_neg_D1
-  float         vspatch_neg_net_neg_gain; // #DEF_0.2 TODO: do we need any version of this guy?
+  float         vspatch_neg_net_neg_gain; // #DEF_0.0 TODO: do we need any version of this guy?
   
   float         vsmatrix_neg_D1; // #MIN_0 #DEF_1 - VS matrix D1 AVERSIVE
   float         vsmatrix_neg_D2; // #MIN_0 #DEF_1 - VS matrix D2 AVERSIVE

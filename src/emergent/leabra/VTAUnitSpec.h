@@ -58,7 +58,7 @@ public:
   float         pptg_gain;    // #DEF_1 gain on bursts from PPTg
   float         lhb_gain;     // #DEF_1 gain on dips from LHbRMTg
   float         pv_gain;      // #DEF_1 gain on positive PV component of total phasic DA signal (net after subtracting VSPatchIndir (PVi) shunt signal)
-  bool          subtract_d2r; // #DEF_false if true, subtract VSPatchD2 act in computing PVi shunt value
+  bool          subtract_d2r; // #DEF_true if true, subtract VSPatchD2 act in computing PVi shunt value
   float         pvi_d1_gain;  // #COND_SHOW_subtract_d2r:true #DEF_1 gain on VSPatchD1 component of PVi shunt signal
   float         pvi_d2_gain;  // #DEF_1 gain on VSPatchD2 component of PVi shunt signal
   

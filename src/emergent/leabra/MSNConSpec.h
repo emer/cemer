@@ -35,6 +35,7 @@ public:
   float         otr_lrate;      // #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less than 1 -- the non-gated trace has the opposite sign (negative) from the gated trace -- encourages exploration of other alternatives if a negative outcome occurs, so that otr = opposite trace or opponent trace as well as other trace
   float         da_reset_tr;    // #DEF_0.2;0 amount of dopamine needed to completely reset the trace -- if > 0, then either da or ach can reset the trace
   float         ach_reset_thr;  // #MIN_0 #DEF_0.5 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
+  bool          otr_no_nogo;  // nogo firing blocks the application of otr_lrate -- uses deep_raw_net as a nogo activation signal (use SendDeepRawConSpec projections from GPeNoGo)
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -151,7 +152,8 @@ public:
   inline void C_Compute_dWt_Trace_Thal
     (float& dwt, float& ntr, float& tr, const float otr_lr, const float da_p,
      const float ach, const bool d2r,
-     const float ru_thal, const float ru_act, const float su_act, const float lrate_eff) {
+     const float ru_thal, const float ru_act, const float su_act, const float lrate_eff,
+     const float ru_deep_raw_net) {
 
     const float da = GetDa(da_p, d2r);
     dwt += lrate_eff * da * tr;
@@ -169,7 +171,15 @@ public:
       ntr = ru_act * su_act;
     }
     else {                      // non-gated, do otr: opposite / other / opponent trace
-      ntr = otr_lr * ru_act * su_act;
+      if(trace.otr_no_nogo) {
+        if(ru_deep_raw_net < 0.2f)
+          ntr = otr_lr * ru_act * su_act;
+        else
+          ntr = 0.0f;
+      }
+      else {
+        ntr = otr_lr * ru_act * su_act;
+      }
     }
 
     float decay_factor = fabs(ntr); // decay is function of new trace
@@ -292,7 +302,8 @@ public:
         }
         float ru_act = GetActVal(ru, ru_act_var);
         C_Compute_dWt_Trace_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
-                         ru->da_p, ru->ach, d2r, ru->thal, ru_act, su_act, lrate_eff);
+                                 ru->da_p, ru->ach, d2r, ru->thal, ru_act, su_act, lrate_eff,
+                                 ru->deep_raw_net);
       }
       break;
     }

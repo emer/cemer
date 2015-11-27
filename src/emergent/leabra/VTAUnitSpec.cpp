@@ -48,8 +48,8 @@ void PVLVDaGains::Defaults_init() {
   pptg_gain = 1.0f;
   lhb_gain = 1.0f;
   pv_gain = 1.0f;
-  subtract_d2r = false;
-  pvi_d1_gain = 1.0f;
+  subtract_d2r = true;
+  pvi_d1_gain = 1.2f;
   pvi_d2_gain = 1.0f;
   pvi_gain = 1.0f;
 }

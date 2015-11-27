@@ -922,21 +922,29 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMChild(BasAmygUnitSpec, baepd2_units, baapd1_units, "BAExtPosD2Units");
   FMChild(BasAmygUnitSpec, baand2_units, baapd1_units, "BAAcqNegD2Units");
   FMChild(BasAmygUnitSpec, baend1_units, baapd1_units, "BAExtNegD1Units");
-  FMChild(MSNUnitSpec, vspapd1_units, pvlv_units, "VSPatchAcqPosD1Units");
-  FMChild(MSNUnitSpec, vspand2_units, vspapd1_units, "VSPatchAcqNegD2Units");
-  FMChild(MSNUnitSpec, vsmapd1_units, vspapd1_units, "VSMatrixAcqPosD1Units");
-  FMChild(MSNUnitSpec, vsmand2_units, vspapd1_units, "VSMatrixAcqNegD2Units");
-  FMChild(MSNUnitSpec, dmsapd1_units, pvlv_units, "DMSMatrixAcqPosD1Units");
-  FMChild(MSNUnitSpec, dmsand2_units, pvlv_units, "DMSMatrixAcqNegD2Units");
+
+  FMChild(MSNUnitSpec, vsppd1_units, pvlv_units, "VSPatchPosD1Units");
+  FMChild(MSNUnitSpec, vsppd2_units, vsppd1_units, "VSPatchPosD2Units");
+  FMChild(MSNUnitSpec, vspnd2_units, vsppd1_units, "VSPatchNegD2Units");
+  FMChild(MSNUnitSpec, vspnd1_units, vsppd1_units, "VSPatchNegD1Units");
+
+  FMChild(MSNUnitSpec, vsmpd1_units, vsppd1_units, "VSMatrixPosD1Units");
+  FMChild(MSNUnitSpec, vsmpd2_units, vsppd1_units, "VSMatrixPosD2Units");
+  FMChild(MSNUnitSpec, vsmnd2_units, vsppd1_units, "VSMatrixNegD2Units");
+  FMChild(MSNUnitSpec, vsmnd1_units, vsppd1_units, "VSMatrixNegD1Units");
 
   FMSpec(LeabraConSpec, pvlv_cons, pvlvspgp, "PVLVLrnCons");
   FMChild(LatAmygConSpec, la_cons, pvlv_cons, "LatAmygCons");
   FMChild(BasAmygConSpec, baap_cons, pvlv_cons, "BasAmygCons_acq_pos");
   FMChild(BasAmygConSpec, baan_cons, baap_cons, "BasAmygCons_acq_neg");
   FMChild(BasAmygConSpec, bae_cons, baap_cons, "BasAmygCons_ext");
-  FMChild(MSNConSpec, vspatch_cons, pvlv_cons, "VSPatchCons");
-  FMChild(MSNConSpec, vsmatrix_cons, pvlv_cons, "VSMatrixCons");
-  FMChild(MSNConSpec, dmsmatrix_cons, pvlv_cons, "DMSMatrixCons");
+  FMChild(MSNConSpec, vspatch_cons_pd1nd2, pvlv_cons, "VSPatchCons_ToPosD1NegD2");
+  FMChild(MSNConSpec, vspatch_cons_pd2nd1, vspatch_cons_pd1nd2,
+          "VSPatchCons_ToPosD2NegD1");
+  FMChild(MSNConSpec, vsmatrix_cons_pd1, pvlv_cons, "VSMatrixCons_ToPosD1");
+  FMChild(MSNConSpec, vsmatrix_cons_nd2, vsmatrix_cons_pd1, "VSMatrixCons_ToNegD2");
+  FMChild(MSNConSpec, vsmatrix_cons_pd2, vsmatrix_cons_pd1, "VSMatrixCons_ToPosD2");
+  FMChild(MSNConSpec, vsmatrix_cons_nd1, vsmatrix_cons_pd1, "VSMatrixCons_ToNegD1");
 
   FMSpec(LeabraConSpec, fix_cons, pvlvspgp, "PVLVFixedCons");
   FMChild(LeabraBiasSpec, fix_bias, fix_cons, "PVLVFixedBias");
@@ -972,6 +980,11 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   pvlv_units->UpdateAfterEdit();
   pvlv_units->bias_spec.SetSpec(fix_bias);
 
+  pv_units->SetUnique("deep", true);
+  pv_units->deep.on = true;
+  pv_units->deep.role = DeepSpec::SUPER;
+  pv_units->deep.mod_min = 1.0f;
+
   vtap_units->SetUnique("deep_raw_qtr", true);
   vtap_units->deep_raw_qtr = LeabraUnitSpec::Q4;
   vtap_units->SetUnique("da_val", true);
@@ -988,6 +1001,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   
   baepd2_units->SetUnique("deep", true);
   baepd2_units->deep.role = DeepSpec::SUPER;
+  baepd2_units->deep.mod_min = 0.0f;
   baepd2_units->SetUnique("acq_ext", true);
   baepd2_units->acq_ext = BasAmygUnitSpec::EXT;
   baepd2_units->SetUnique("valence", true);
@@ -1004,6 +1018,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   
   baend1_units->SetUnique("deep", true);
   baend1_units->deep.role = DeepSpec::SUPER;
+  baend1_units->deep.mod_min = 0.0f;
   baend1_units->SetUnique("acq_ext", true);
   baend1_units->acq_ext = BasAmygUnitSpec::EXT;
   baend1_units->SetUnique("valence", true);
@@ -1011,65 +1026,93 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baend1_units->SetUnique("g_bar", true);
   baend1_units->g_bar.l = 0.3f; // todo: control panel!
   
-  vspapd1_units->SetUnique("deep", true);
-  vspapd1_units->deep.on = true;
-  vspapd1_units->deep.role = DeepSpec::SUPER;
-  vspapd1_units->deep.raw_thr_rel = 0.1f;
-  vspapd1_units->deep.raw_thr_abs = 0.1f;
-  vspapd1_units->SetUnique("dar", true);
-  vspapd1_units->dar = MSNUnitSpec::D1R;
-  vspapd1_units->SetUnique("matrix_patch", true);
-  vspapd1_units->matrix_patch = MSNUnitSpec::PATCH;
-  vspapd1_units->SetUnique("dorsal_ventral", true);
-  vspapd1_units->dorsal_ventral = MSNUnitSpec::VENTRAL;
-  vspapd1_units->SetUnique("valence", true);
-  vspapd1_units->valence = MSNUnitSpec::APPETITIVE;
-  
-  vsmapd1_units->SetUnique("deep", false);
-  vspand2_units->SetUnique("dar", true);
-  vspand2_units->dar = MSNUnitSpec::D2R;
-  vspand2_units->SetUnique("matrix_patch", true);
-  vspand2_units->matrix_patch = MSNUnitSpec::PATCH;
-  vspand2_units->SetUnique("dorsal_ventral", true);
-  vspand2_units->dorsal_ventral = MSNUnitSpec::VENTRAL;
-  vspand2_units->SetUnique("valence", true);
-  vspand2_units->valence = MSNUnitSpec::AVERSIVE;
-  
-  vsmapd1_units->SetUnique("deep", false);
-  vsmapd1_units->SetUnique("dar", true);
-  vsmapd1_units->dar = MSNUnitSpec::D1R;
-  vsmapd1_units->SetUnique("matrix_patch", true);
-  vsmapd1_units->matrix_patch = MSNUnitSpec::MATRIX;
-  vsmapd1_units->SetUnique("dorsal_ventral", true);
-  vsmapd1_units->dorsal_ventral = MSNUnitSpec::VENTRAL;
-  vsmapd1_units->SetUnique("valence", true);
-  vsmapd1_units->valence = MSNUnitSpec::APPETITIVE;
-  
-  vsmand2_units->SetUnique("deep", false);
-  vsmand2_units->SetUnique("dar", true);
-  vsmand2_units->dar = MSNUnitSpec::D2R;
-  vsmand2_units->SetUnique("matrix_patch", true);
-  vsmand2_units->matrix_patch = MSNUnitSpec::MATRIX;
-  vsmand2_units->SetUnique("dorsal_ventral", true);
-  vsmand2_units->dorsal_ventral = MSNUnitSpec::VENTRAL;
-  vsmand2_units->SetUnique("valence", true);
-  vsmand2_units->valence = MSNUnitSpec::AVERSIVE;
+  cem_units->SetUnique("act", true);
+  cem_units->act.gain = 400.0f;
 
-  dmsapd1_units->SetUnique("deep", false);
-  dmsapd1_units->SetUnique("dar", true);
-  dmsapd1_units->dar = MSNUnitSpec::D1R;
-  dmsapd1_units->SetUnique("matrix_patch", true);
-  dmsapd1_units->matrix_patch = MSNUnitSpec::MATRIX;
-  dmsapd1_units->SetUnique("dorsal_ventral", true);
-  dmsapd1_units->dorsal_ventral = MSNUnitSpec::DORSAL;
+  vsppd1_units->SetUnique("deep", true);
+  vsppd1_units->deep.on = true;
+  vsppd1_units->deep.role = DeepSpec::SUPER;
+  vsppd1_units->deep.raw_thr_rel = 0.1f;
+  vsppd1_units->deep.raw_thr_abs = 0.1f;
+  vsppd1_units->deep.mod_min = 0.0f;
+  vsppd1_units->SetUnique("dar", true);
+  vsppd1_units->dar = MSNUnitSpec::D1R;
+  vsppd1_units->SetUnique("matrix_patch", true);
+  vsppd1_units->matrix_patch = MSNUnitSpec::PATCH;
+  vsppd1_units->SetUnique("dorsal_ventral", true);
+  vsppd1_units->dorsal_ventral = MSNUnitSpec::VENTRAL;
+  vsppd1_units->SetUnique("valence", true);
+  vsppd1_units->valence = MSNUnitSpec::APPETITIVE;
   
-  dmsand2_units->SetUnique("deep", false);
-  dmsand2_units->SetUnique("dar", true);
-  dmsand2_units->dar = MSNUnitSpec::D2R;
-  dmsand2_units->SetUnique("matrix_patch", true);
-  dmsand2_units->matrix_patch = MSNUnitSpec::MATRIX;
-  dmsand2_units->SetUnique("dorsal_ventral", true);
-  dmsand2_units->dorsal_ventral = MSNUnitSpec::DORSAL;
+  vsppd2_units->SetUnique("deep", false);
+  vsppd2_units->SetUnique("dar", true);
+  vsppd2_units->dar = MSNUnitSpec::D2R;
+  vsppd2_units->SetUnique("matrix_patch", true);
+  vsppd2_units->matrix_patch = MSNUnitSpec::PATCH;
+  vsppd2_units->SetUnique("dorsal_ventral", true);
+  vsppd2_units->dorsal_ventral = MSNUnitSpec::VENTRAL;
+  vsppd2_units->SetUnique("valence", true);
+  vsppd2_units->valence = MSNUnitSpec::APPETITIVE;
+  
+  vspnd2_units->SetUnique("deep", false);
+  vspnd2_units->SetUnique("dar", true);
+  vspnd2_units->dar = MSNUnitSpec::D2R;
+  vspnd2_units->SetUnique("matrix_patch", true);
+  vspnd2_units->matrix_patch = MSNUnitSpec::PATCH;
+  vspnd2_units->SetUnique("dorsal_ventral", true);
+  vspnd2_units->dorsal_ventral = MSNUnitSpec::VENTRAL;
+  vspnd2_units->SetUnique("valence", true);
+  vspnd2_units->valence = MSNUnitSpec::AVERSIVE;
+  
+  vspnd1_units->SetUnique("deep", false);
+  vspnd1_units->SetUnique("dar", true);
+  vspnd1_units->dar = MSNUnitSpec::D1R;
+  vspnd1_units->SetUnique("matrix_patch", true);
+  vspnd1_units->matrix_patch = MSNUnitSpec::PATCH;
+  vspnd1_units->SetUnique("dorsal_ventral", true);
+  vspnd1_units->dorsal_ventral = MSNUnitSpec::VENTRAL;
+  vspnd1_units->SetUnique("valence", true);
+  vspnd1_units->valence = MSNUnitSpec::AVERSIVE;
+  
+  vsmpd1_units->SetUnique("deep", false);
+  vsmpd1_units->SetUnique("dar", true);
+  vsmpd1_units->dar = MSNUnitSpec::D1R;
+  vsmpd1_units->SetUnique("matrix_patch", true);
+  vsmpd1_units->matrix_patch = MSNUnitSpec::MATRIX;
+  vsmpd1_units->SetUnique("dorsal_ventral", true);
+  vsmpd1_units->dorsal_ventral = MSNUnitSpec::VENTRAL;
+  vsmpd1_units->SetUnique("valence", true);
+  vsmpd1_units->valence = MSNUnitSpec::APPETITIVE;
+  
+  vsmnd2_units->SetUnique("deep", false);
+  vsmnd2_units->SetUnique("dar", true);
+  vsmnd2_units->dar = MSNUnitSpec::D2R;
+  vsmnd2_units->SetUnique("matrix_patch", true);
+  vsmnd2_units->matrix_patch = MSNUnitSpec::MATRIX;
+  vsmnd2_units->SetUnique("dorsal_ventral", true);
+  vsmnd2_units->dorsal_ventral = MSNUnitSpec::VENTRAL;
+  vsmnd2_units->SetUnique("valence", true);
+  vsmnd2_units->valence = MSNUnitSpec::AVERSIVE;
+
+  vsmpd2_units->SetUnique("deep", false);
+  vsmpd2_units->SetUnique("dar", true);
+  vsmpd2_units->dar = MSNUnitSpec::D2R;
+  vsmpd2_units->SetUnique("matrix_patch", true);
+  vsmpd2_units->matrix_patch = MSNUnitSpec::MATRIX;
+  vsmpd2_units->SetUnique("dorsal_ventral", true);
+  vsmpd2_units->dorsal_ventral = MSNUnitSpec::VENTRAL;
+  vsmpd2_units->SetUnique("valence", true);
+  vsmpd2_units->valence = MSNUnitSpec::APPETITIVE;
+  
+  vsmnd1_units->SetUnique("deep", false);
+  vsmnd1_units->SetUnique("dar", true);
+  vsmnd1_units->dar = MSNUnitSpec::D1R;
+  vsmnd1_units->SetUnique("matrix_patch", true);
+  vsmnd1_units->matrix_patch = MSNUnitSpec::MATRIX;
+  vsmnd1_units->SetUnique("dorsal_ventral", true);
+  vsmnd1_units->dorsal_ventral = MSNUnitSpec::VENTRAL;
+  vsmnd1_units->SetUnique("valence", true);
+  vsmnd1_units->valence = MSNUnitSpec::AVERSIVE;
 
   //////  Cons
   pvlv_cons->UpdateAfterEdit();
@@ -1082,10 +1125,11 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   la_cons->SetUnique("lrate", true);
   la_cons->lrate = 0.1f;
+  la_cons->neg_da_gain = 0.05f;
   baap_cons->SetUnique("lrate", true);
   baap_cons->lrate = 0.1f;
   baap_cons->SetUnique("wt_scale", true);
-  baap_cons->wt_scale.abs = 2.0f;
+  baap_cons->wt_scale.abs = 0.95f;
   baap_cons->SetUnique("wt_sig", true);
   baap_cons->wt_sig.gain = 1.0f;
   baap_cons->SetUnique("ba_learn", true);
@@ -1101,9 +1145,9 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   bae_cons->rnd.mean = 0.1f;
   bae_cons->rnd.var = 0.0f;
   bae_cons->SetUnique("lrate", true);
-  bae_cons->lrate = 0.01f;
+  bae_cons->lrate = 0.02f;
   bae_cons->SetUnique("wt_scale", true);
-  bae_cons->wt_scale.abs = 1.0f;
+  bae_cons->wt_scale.abs = 1.2f;
   bae_cons->SetUnique("deep", true);
   bae_cons->deep.on = true;
   bae_cons->deep.bg_lrate = 0.0f;
@@ -1111,77 +1155,108 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   bae_cons->SetUnique("ba_learn", true);
   bae_cons->ba_learn.burst_da_gain = 1.0f;
   bae_cons->ba_learn.dip_da_gain = 1.0f;
+  bae_cons->ba_learn.us_delta = false;
 
-  vspatch_cons->SetUnique("rnd", true);
-  vspatch_cons->rnd.mean = 0.01f;
-  vspatch_cons->rnd.var = 0.0f;
-  vspatch_cons->SetUnique("wt_scale", true);
-  vspatch_cons->wt_scale.abs = 1.0f;
-  vspatch_cons->SetUnique("lrate", true);
-  vspatch_cons->lrate = 0.2f;
-  vspatch_cons->SetUnique("wt_sig", true);
-  vspatch_cons->wt_sig.gain = 1.0f;
-  vspatch_cons->SetUnique("deep", true);
-  vspatch_cons->deep.on = true;
-  vspatch_cons->deep.bg_lrate = 0.0f;
-  vspatch_cons->deep.fg_lrate = 1.0f;
-  vspatch_cons->SetUnique("su_act_var", true);
-  vspatch_cons->su_act_var = MSNConSpec::PREV_TRIAL;
-  vspatch_cons->SetUnique("ru_act_var", true);
-  vspatch_cons->ru_act_var = MSNConSpec::ACT_P;
-  vspatch_cons->SetUnique("learn_rule", true);
-  vspatch_cons->learn_rule = MSNConSpec::DA_HEBB_VS;
-  vspatch_cons->SetUnique("burst_da_gain", true);
-  vspatch_cons->burst_da_gain = 1.0f;
-  vspatch_cons->SetUnique("dip_da_gain", true);
-  vspatch_cons->dip_da_gain = 1.0f;
+  vspatch_cons_pd1nd2->SetUnique("rnd", true);
+  vspatch_cons_pd1nd2->rnd.mean = 0.01f;
+  vspatch_cons_pd1nd2->rnd.var = 0.0f;
+  vspatch_cons_pd1nd2->SetUnique("wt_scale", true);
+  vspatch_cons_pd1nd2->wt_scale.abs = 1.0f;
+  vspatch_cons_pd1nd2->SetUnique("lrate", true);
+  vspatch_cons_pd1nd2->lrate = 0.02f;
+  vspatch_cons_pd1nd2->SetUnique("wt_sig", true);
+  vspatch_cons_pd1nd2->wt_sig.gain = 1.0f;
+  vspatch_cons_pd1nd2->SetUnique("deep", true);
+  vspatch_cons_pd1nd2->deep.on = true;
+  vspatch_cons_pd1nd2->deep.bg_lrate = 0.0f;
+  vspatch_cons_pd1nd2->deep.fg_lrate = 1.0f;
+  vspatch_cons_pd1nd2->SetUnique("su_act_var", true);
+  vspatch_cons_pd1nd2->su_act_var = MSNConSpec::PREV_TRIAL;
+  vspatch_cons_pd1nd2->SetUnique("ru_act_var", true);
+  vspatch_cons_pd1nd2->ru_act_var = MSNConSpec::PREV_TRIAL;
+  vspatch_cons_pd1nd2->SetUnique("learn_rule", true);
+  vspatch_cons_pd1nd2->learn_rule = MSNConSpec::DA_HEBB_VS;
+  vspatch_cons_pd1nd2->SetUnique("burst_da_gain", true);
+  vspatch_cons_pd1nd2->burst_da_gain = 1.0f;
+  vspatch_cons_pd1nd2->SetUnique("dip_da_gain", true);
+  vspatch_cons_pd1nd2->dip_da_gain = 0.1f;
+
+  vspatch_cons_pd2nd1->SetUnique("rnd", false);
+  vspatch_cons_pd2nd1->SetUnique("wt_scale", false);
+  vspatch_cons_pd2nd1->SetUnique("lrate", true);
+  vspatch_cons_pd2nd1->lrate = 0.01f;
+  vspatch_cons_pd2nd1->SetUnique("wt_sig", false);
+  vspatch_cons_pd2nd1->SetUnique("deep", false);
+  vspatch_cons_pd2nd1->SetUnique("su_act_var", false);
+  vspatch_cons_pd2nd1->SetUnique("ru_act_var", false);
+  vspatch_cons_pd2nd1->SetUnique("learn_rule", false);
+  vspatch_cons_pd2nd1->SetUnique("burst_da_gain", true);
+  vspatch_cons_pd2nd1->burst_da_gain = 1.0f;
+  vspatch_cons_pd2nd1->SetUnique("dip_da_gain", true);
+  vspatch_cons_pd2nd1->dip_da_gain = 1.0f;
   
-  // vsmatrix_cons->SetUnique("rnd", true);
-  // vsmatrix_cons->rnd.mean = 0.1f;
-  vsmatrix_cons->SetUnique("wt_scale", true);
-  vsmatrix_cons->wt_scale.abs = 1.0f;
-  vsmatrix_cons->SetUnique("lrate", true);
-  vsmatrix_cons->lrate = 0.05f;
-  vsmatrix_cons->SetUnique("wt_sig", true);
-  vsmatrix_cons->wt_sig.gain = 1.0f;
-  vsmatrix_cons->SetUnique("deep", true);
-  vsmatrix_cons->deep.on = true;
-  vsmatrix_cons->deep.bg_lrate = 0.0f;
-  vsmatrix_cons->deep.fg_lrate = 1.0f;
-  vsmatrix_cons->SetUnique("su_act_var", true);
-  vsmatrix_cons->su_act_var = MSNConSpec::ACT_P;
-  vsmatrix_cons->SetUnique("ru_act_var", true);
-  vsmatrix_cons->ru_act_var = MSNConSpec::ACT_P;
-  vsmatrix_cons->SetUnique("learn_rule", true);
-  vsmatrix_cons->learn_rule = MSNConSpec::TRACE_NO_THAL;
-  vsmatrix_cons->SetUnique("burst_da_gain", true);
-  vsmatrix_cons->burst_da_gain = 1.0f;
-  vsmatrix_cons->SetUnique("dip_da_gain", true);
-  vsmatrix_cons->dip_da_gain = 1.0f;
+  vsmatrix_cons_pd1->SetUnique("rnd", true);
+  vsmatrix_cons_pd1->rnd.mean = 0.01f;
+  vsmatrix_cons_pd1->rnd.var = 0.0f;
+  vsmatrix_cons_pd1->SetUnique("wt_scale", true);
+  vsmatrix_cons_pd1->wt_scale.abs = 0.5f;
+  vsmatrix_cons_pd1->SetUnique("lrate", true);
+  vsmatrix_cons_pd1->lrate = 0.02f;
+  vsmatrix_cons_pd1->SetUnique("wt_sig", true);
+  vsmatrix_cons_pd1->wt_sig.gain = 1.0f;
+  vsmatrix_cons_pd1->SetUnique("deep", true);
+  vsmatrix_cons_pd1->deep.on = true;
+  vsmatrix_cons_pd1->deep.bg_lrate = 0.0f;
+  vsmatrix_cons_pd1->deep.fg_lrate = 1.0f;
+  vsmatrix_cons_pd1->SetUnique("su_act_var", true);
+  vsmatrix_cons_pd1->su_act_var = MSNConSpec::ACT_P;
+  vsmatrix_cons_pd1->SetUnique("ru_act_var", true);
+  vsmatrix_cons_pd1->ru_act_var = MSNConSpec::ACT_P;
+  vsmatrix_cons_pd1->SetUnique("learn_rule", true);
+  vsmatrix_cons_pd1->learn_rule = MSNConSpec::TRACE_NO_THAL_VS;
+  vsmatrix_cons_pd1->SetUnique("burst_da_gain", true);
+  vsmatrix_cons_pd1->burst_da_gain = 1.0f;
+  vsmatrix_cons_pd1->SetUnique("dip_da_gain", true);
+  vsmatrix_cons_pd1->dip_da_gain = 0.1f;
 
-  dmsmatrix_cons->SetUnique("rnd", true);
-  dmsmatrix_cons->rnd.mean = 0.1f;
-  dmsmatrix_cons->rnd.var = 0.0f;
-  dmsmatrix_cons->SetUnique("wt_scale", true);
-  dmsmatrix_cons->wt_scale.abs = 0.5f;
-  dmsmatrix_cons->SetUnique("lrate", true);
-  dmsmatrix_cons->lrate = 0.05f;
-  dmsmatrix_cons->SetUnique("wt_sig", true);
-  dmsmatrix_cons->wt_sig.gain = 1.0f;
-  dmsmatrix_cons->SetUnique("deep", true);
-  dmsmatrix_cons->deep.on = true;
-  dmsmatrix_cons->deep.bg_lrate = 0.0f;
-  dmsmatrix_cons->deep.fg_lrate = 1.0f;
-  dmsmatrix_cons->SetUnique("su_act_var", true);
-  dmsmatrix_cons->su_act_var = MSNConSpec::ACT_P;
-  dmsmatrix_cons->SetUnique("ru_act_var", true);
-  dmsmatrix_cons->ru_act_var = MSNConSpec::ACT_P;
-  dmsmatrix_cons->SetUnique("learn_rule", true);
-  dmsmatrix_cons->learn_rule = MSNConSpec::TRACE_NO_THAL;
-  dmsmatrix_cons->SetUnique("burst_da_gain", true);
-  dmsmatrix_cons->burst_da_gain = 1.0f;
-  dmsmatrix_cons->SetUnique("dip_da_gain", true);
-  dmsmatrix_cons->dip_da_gain = 1.0f;
+  vsmatrix_cons_nd2->SetUnique("rnd", false);
+  vsmatrix_cons_nd2->SetUnique("wt_scale", false);
+  vsmatrix_cons_nd2->SetUnique("lrate", false);
+  vsmatrix_cons_nd2->SetUnique("wt_sig", false);
+  vsmatrix_cons_nd2->SetUnique("deep", false);
+  vsmatrix_cons_nd2->SetUnique("su_act_var", false);
+  vsmatrix_cons_nd2->SetUnique("ru_act_var", false);
+  vsmatrix_cons_nd2->SetUnique("learn_rule", false);
+  vsmatrix_cons_nd2->SetUnique("burst_da_gain", true);
+  vsmatrix_cons_nd2->burst_da_gain = 0.1f;
+  vsmatrix_cons_nd2->SetUnique("dip_da_gain", true);
+  vsmatrix_cons_nd2->dip_da_gain = 1.0f;
+
+  vsmatrix_cons_pd2->SetUnique("rnd", false);
+  vsmatrix_cons_pd2->SetUnique("wt_scale", false);
+  vsmatrix_cons_pd2->SetUnique("lrate", false);
+  vsmatrix_cons_pd2->SetUnique("wt_sig", false);
+  vsmatrix_cons_pd2->SetUnique("deep", false);
+  vsmatrix_cons_pd2->SetUnique("su_act_var", false);
+  vsmatrix_cons_pd2->SetUnique("ru_act_var", false);
+  vsmatrix_cons_pd2->SetUnique("learn_rule", false);
+  vsmatrix_cons_pd2->SetUnique("burst_da_gain", true);
+  vsmatrix_cons_pd2->burst_da_gain = 1.0f;
+  vsmatrix_cons_pd2->SetUnique("dip_da_gain", true);
+  vsmatrix_cons_pd2->dip_da_gain = 1.0f;
+
+  vsmatrix_cons_nd1->SetUnique("rnd", false);
+  vsmatrix_cons_nd1->SetUnique("wt_scale", false);
+  vsmatrix_cons_nd1->SetUnique("lrate", false);
+  vsmatrix_cons_nd1->SetUnique("wt_sig", false);
+  vsmatrix_cons_nd1->SetUnique("deep", false);
+  vsmatrix_cons_nd1->SetUnique("su_act_var", false);
+  vsmatrix_cons_nd1->SetUnique("ru_act_var", false);
+  vsmatrix_cons_nd1->SetUnique("learn_rule", false);
+  vsmatrix_cons_nd1->SetUnique("burst_da_gain", true);
+  vsmatrix_cons_nd1->burst_da_gain = 1.0f;
+  vsmatrix_cons_nd1->SetUnique("dip_da_gain", true);
+  vsmatrix_cons_nd1->dip_da_gain = 1.0f;
 
   fix_cons->UpdateAfterEdit();
   fix_cons->learn = false;
@@ -1191,7 +1266,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   fix_cons->lrate = 0.0f;
 
   ba_to_vsm->SetUnique("wt_scale", true);
-  ba_to_vsm->wt_scale.abs = 0.4f;
+  ba_to_vsm->wt_scale.abs = 0.15f;
 
   bae_to_cem_inh->SetUnique("wt_scale", true);
   bae_to_cem_inh->wt_scale.abs = 0.5f;
@@ -1199,7 +1274,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   bae_to_cem_inh->inhib = true;
 
   bae_to_baa_inh->SetUnique("wt_scale", true);
-  bae_to_baa_inh->wt_scale.abs = 1.0f;
+  bae_to_baa_inh->wt_scale.abs = 1.1f;
   bae_to_baa_inh->SetUnique("inhib", true);
   bae_to_baa_inh->inhib = true;
 
@@ -1272,9 +1347,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
     baap_cons->AddToControlPanelNm("lrate", cp, "bas_amyg_acq");
     baap_cons->AddToControlPanelNm("dip_da_gain", cp, "bas_amyg_acq");
     bae_cons->AddToControlPanelNm("lrate", cp, "bas_amyg_ext");
-    vspatch_cons->AddToControlPanelNm("lrate", cp, "vs_patch");
-    vsmatrix_cons->AddToControlPanelNm("lrate", cp, "vs_matrix");
-    dmsmatrix_cons->AddToControlPanelNm("lrate", cp, "dms_matrix");
+    vspatch_cons_pd1nd2->AddToControlPanelNm("lrate", cp, "vs_patch");
+    vsmatrix_cons_pd1->AddToControlPanelNm("lrate", cp, "vs_matrix");
 
     baepd2_units->AddToControlPanelNm("g_bar", cp, "bas_amyg_ext_pos");
     baend1_units->AddToControlPanelNm("g_bar", cp, "bas_amyg_ext_neg");
@@ -1363,13 +1437,14 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
 
   bool new_vs = false;
   LeabraLayer* vsppd1 = (LeabraLayer*)vs_gp->FindMakeLayer("VSPatchPosD1", NULL, new_vs);
+  LeabraLayer* vsppd2 = (LeabraLayer*)vs_gp->FindMakeLayer("VSPatchPosD2");
   LeabraLayer* vspnd2 = (LeabraLayer*)vs_gp->FindMakeLayer("VSPatchNegD2");
-  LeabraLayer* vsmpd1 = (LeabraLayer*)vs_gp->FindMakeLayer("VSMatrixPosD1");
-  LeabraLayer* vsmnd2 = (LeabraLayer*)vs_gp->FindMakeLayer("VSMatrixNegD2");
+  LeabraLayer* vspnd1 = (LeabraLayer*)vs_gp->FindMakeLayer("VSPatchNegD1");
 
-  bool new_dms = false;
-  LeabraLayer* dmsmpd1 = (LeabraLayer*)dms_gp->FindMakeLayer("DMSMatrixPosD1", NULL, new_dms);
-  LeabraLayer* dmsmnd2 = (LeabraLayer*)dms_gp->FindMakeLayer("DMSMatrixNegD2");
+  LeabraLayer* vsmpd1 = (LeabraLayer*)vs_gp->FindMakeLayer("VSMatrixPosD1");
+  LeabraLayer* vsmpd2 = (LeabraLayer*)vs_gp->FindMakeLayer("VSMatrixPosD2");
+  LeabraLayer* vsmnd2 = (LeabraLayer*)vs_gp->FindMakeLayer("VSMatrixNegD2");
+  LeabraLayer* vsmnd1 = (LeabraLayer*)vs_gp->FindMakeLayer("VSMatrixNegD1");
 
   bool new_da = false;
   LeabraLayer* pptg_p = (LeabraLayer*)da_gp->FindMakeLayer("PPTg_p", NULL, new_da);
@@ -1449,9 +1524,14 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   caneg->brain_area = ".*/.*/.*/.*/Amygdala Central Nucleus CNA";
 
   vsppd1->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
+  vsppd2->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
   vspnd2->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
+  vspnd1->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
+
   vsmpd1->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
+  vsmpd2->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
   vsmnd2->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
+  vsmnd1->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
 
   pptg_p->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA"; // todo
   vtap->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA";
@@ -1500,20 +1580,26 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   vsppd1->un_geom.SetXYN(1,1,1);
   vsppd1->gp_geom.SetXY(n_pos_pv, 1);  vsppd1->unit_groups = true;
 
+  vsppd2->un_geom.SetXYN(1,1,1);
+  vsppd2->gp_geom.SetXY(n_pos_pv, 1);  vsppd2->unit_groups = true;
+
   vspnd2->un_geom.SetXYN(1,1,1);
   vspnd2->gp_geom.SetXY(n_neg_pv, 1);  vspnd2->unit_groups = true;
+
+  vspnd1->un_geom.SetXYN(1,1,1);
+  vspnd1->gp_geom.SetXY(n_neg_pv, 1);  vspnd1->unit_groups = true;
 
   vsmpd1->un_geom.SetXYN(1,1,1);
   vsmpd1->gp_geom.SetXY(n_pos_pv, 1);  vsmpd1->unit_groups = true;
 
+  vsmpd2->un_geom.SetXYN(1,1,1);
+  vsmpd2->gp_geom.SetXY(n_pos_pv, 1);  vsmpd2->unit_groups = true;
+
   vsmnd2->un_geom.SetXYN(1,1,1);
   vsmnd2->gp_geom.SetXY(n_neg_pv, 1);  vsmnd2->unit_groups = true;
 
-  dmsmpd1->un_geom.SetXYN(n_pos_pv + n_neg_pv,1,n_pos_pv + n_neg_pv);
-  dmsmpd1->unit_groups = true;
-
-  dmsmnd2->un_geom.SetXYN(n_pos_pv + n_neg_pv,1,n_pos_pv + n_neg_pv);
-  dmsmnd2->unit_groups = true;
+  vsmnd1->un_geom.SetXYN(1,1,1);
+  vsmnd1->gp_geom.SetXY(n_neg_pv, 1);  vsmnd1->unit_groups = true;
 
   pptg_p->un_geom.SetXYN(1,1,1);
   vtap->un_geom.SetXYN(1,1,1);
@@ -1559,15 +1645,14 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
 
   if(new_vs) {
     vsppd1->PositionBehind(pptg_p, 2*sp);
-    vspnd2->PositionRightOf(vsppd1, sp);
+    vspnd1->PositionRightOf(vsppd1, sp);
+    vsppd2->PositionBehind(vsppd1, sp);
+    vspnd2->PositionRightOf(vsppd2, sp);
 
-    vsmpd1->PositionBehind(vsppd1, sp);
-    vsmnd2->PositionRightOf(vsmpd1, sp);
-  }
-
-  if(new_dms) {
-    dmsmpd1->PositionBehind(vsmpd1, sp);
-    dmsmnd2->PositionBehind(dmsmpd1, sp);
+    vsmpd1->PositionBehind(vsppd2, 2*sp);
+    vsmnd1->PositionRightOf(vsmpd1, sp);
+    vsmpd2->PositionBehind(vsmpd1, sp);
+    vsmnd2->PositionRightOf(vsmpd2, sp);
   }
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -1607,21 +1692,25 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   baend1->SetLayerSpec(amygsp);
   caneg->SetLayerSpec(amygsp);
 
-  vsppd1->SetUnitSpec(PvlvSp("VSPatchAcqPosD1Units", MSNUnitSpec));
-  vspnd2->SetUnitSpec(PvlvSp("VSPatchAcqNegD2Units", MSNUnitSpec));
-  vsmpd1->SetUnitSpec(PvlvSp("VSMatrixAcqPosD1Units", MSNUnitSpec));
-  vsmnd2->SetUnitSpec(PvlvSp("VSMatrixAcqNegD2Units", MSNUnitSpec));
+  vsppd1->SetUnitSpec(PvlvSp("VSPatchPosD1Units", MSNUnitSpec));
+  vsppd2->SetUnitSpec(PvlvSp("VSPatchPosD2Units", MSNUnitSpec));
+  vspnd2->SetUnitSpec(PvlvSp("VSPatchNegD2Units", MSNUnitSpec));
+  vspnd1->SetUnitSpec(PvlvSp("VSPatchNegD1Units", MSNUnitSpec));
+
+  vsmpd1->SetUnitSpec(PvlvSp("VSMatrixPosD1Units", MSNUnitSpec));
+  vsmpd2->SetUnitSpec(PvlvSp("VSMatrixPosD2Units", MSNUnitSpec));
+  vsmnd2->SetUnitSpec(PvlvSp("VSMatrixNegD2Units", MSNUnitSpec));
+  vsmnd1->SetUnitSpec(PvlvSp("VSMatrixNegD1Units", MSNUnitSpec));
 
   vsppd1->SetLayerSpec(PvlvSp("VSPatchLayer", LeabraLayerSpec));
+  vsppd2->SetLayerSpec(PvlvSp("VSPatchLayer", LeabraLayerSpec));
   vspnd2->SetLayerSpec(PvlvSp("VSPatchLayer", LeabraLayerSpec));
+  vspnd1->SetLayerSpec(PvlvSp("VSPatchLayer", LeabraLayerSpec));
+
   vsmpd1->SetLayerSpec(PvlvSp("VSMatrixLayer", LeabraLayerSpec));
+  vsmpd2->SetLayerSpec(PvlvSp("VSMatrixLayer", LeabraLayerSpec));
   vsmnd2->SetLayerSpec(PvlvSp("VSMatrixLayer", LeabraLayerSpec));
-
-  dmsmpd1->SetUnitSpec(PvlvSp("DMSMatrixAcqPosD1Units", MSNUnitSpec));
-  dmsmnd2->SetUnitSpec(PvlvSp("DMSMatrixAcqNegD2Units", MSNUnitSpec));
-
-  dmsmpd1->SetLayerSpec(PvlvSp("DMSMatrixLayer", LeabraLayerSpec));
-  dmsmnd2->SetLayerSpec(PvlvSp("DMSMatrixLayer", LeabraLayerSpec));
+  vsmnd1->SetLayerSpec(PvlvSp("VSMatrixLayer", LeabraLayerSpec));
 
   LeabraLayerSpec* dasp = PvlvSp("DALayers", LeabraLayerSpec);
   pptg_p->SetUnitSpec(PvlvSp("PPTgUnits", PPTgUnitSpec));
@@ -1696,32 +1785,35 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   SendDeepModConSpec* bavsmod_cons = PvlvSp("BAAcqToVS_DeepMod", SendDeepModConSpec);
   // patch, matrix:
   net->FindMakePrjn(vsppd1, vtap, fullprjn, marker_cons);
+  net->FindMakePrjn(vsppd2, vtap, fullprjn, marker_cons);
   net->FindMakePrjn(vspnd2, vtap, fullprjn, marker_cons);
+  net->FindMakePrjn(vspnd1, vtap, fullprjn, marker_cons);
+  
   net->FindMakePrjn(vsmpd1, vtap, fullprjn, marker_cons);
+  net->FindMakePrjn(vsmpd2, vtap, fullprjn, marker_cons);
   net->FindMakePrjn(vsmnd2, vtap, fullprjn, marker_cons);
+  net->FindMakePrjn(vsmnd1, vtap, fullprjn, marker_cons);
 
   net->FindMakePrjn(vsppd1, baapd1, gponetoone, bavsmod_cons);
+  net->FindMakePrjn(vsppd2, baapd1, gponetoone, bavsmod_cons);
   net->FindMakePrjn(vspnd2, baand2, gponetoone, bavsmod_cons);
+  net->FindMakePrjn(vspnd1, baand2, gponetoone, bavsmod_cons);
+
   net->FindMakePrjn(vsmpd1, baapd1, gponetoone, bavsmod_cons);
+  net->FindMakePrjn(vsmpd2, vsmpd1, gponetoone, bavsmod_cons);
   net->FindMakePrjn(vsmnd2, baand2, gponetoone, bavsmod_cons);
+  net->FindMakePrjn(vsmnd1, vsmnd2, gponetoone, bavsmod_cons);
   // only stimtime (should be OFC) projections into patch
 
-  net->FindMakePrjnAdd(vsmpd1, baapd1, gponetoone, PvlvSp("BAtoVSMatrix", LeabraConSpec));
-  net->FindMakePrjnAdd(vsmnd2, baand2, gponetoone, PvlvSp("BAtoVSMatrix", LeabraConSpec));
-  // no stim projections into matrix!  direct BA drive!  need add b/c this is 2nd prjn from same layer
-
-  net->FindMakePrjn(dmsmpd1, vtap, fullprjn, marker_cons);
-  net->FindMakePrjn(dmsmnd2, vtap, fullprjn, marker_cons);
-
-  MSNConSpec* vsp_cons = PvlvSp("VSPatchCons", MSNConSpec);
-  MSNConSpec* dms_cons = PvlvSp("DMSMatrixCons", MSNConSpec);
   LatAmygConSpec* la_cons = PvlvSp("LatAmygCons", LatAmygConSpec);
   BasAmygConSpec* bae_cons = PvlvSp("BasAmygCons_ext", BasAmygConSpec);
   
   for(i=0;i<time_in_lays.size;i++) {
     Layer* il = (Layer*)time_in_lays[i];
-    net->FindMakePrjn(vsppd1, il, fullprjn, vsp_cons);
-    net->FindMakePrjn(vspnd2, il, fullprjn, vsp_cons);
+    net->FindMakePrjn(vsppd1, il, fullprjn, PvlvSp("VSPatchCons_ToPosD1NegD2", MSNConSpec));
+    net->FindMakePrjn(vsppd2, il, fullprjn, PvlvSp("VSPatchCons_ToPosD2NegD1", MSNConSpec));
+    net->FindMakePrjn(vspnd2, il, fullprjn, PvlvSp("VSPatchCons_ToPosD1NegD2", MSNConSpec));
+    net->FindMakePrjn(vspnd1, il, fullprjn, PvlvSp("VSPatchCons_ToPosD2NegD1", MSNConSpec));
   }
   
   for(i=0;i<ctxt_in_lays.size;i++) {
@@ -1733,12 +1825,17 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   for(i=0;i<input_lays.size;i++) {
     Layer* il = (Layer*)input_lays[i];
     net->FindMakePrjn(lat_amyg, il, fullprjn, la_cons);
-    net->FindMakePrjn(dmsmpd1, il, onetoone, dms_cons);
-    net->FindMakePrjn(dmsmnd2, il, onetoone, dms_cons);
 
+    net->FindMakePrjn(vsmpd1, il, fullprjn, PvlvSp("VSMatrixCons_ToPosD1", MSNConSpec));
+    net->FindMakePrjn(vsmpd2, il, fullprjn, PvlvSp("VSMatrixCons_ToPosD2", MSNConSpec));
+    net->FindMakePrjn(vsmnd2, il, fullprjn, PvlvSp("VSMatrixCons_ToNegD2", MSNConSpec));
+    net->FindMakePrjn(vsmnd1, il, fullprjn, PvlvSp("VSMatrixCons_ToNegD1", MSNConSpec));
+    
     if(time_in_lays.size == 0) { // take what we can..
-      net->FindMakePrjn(vsppd1, il, fullprjn, vsp_cons);
-      net->FindMakePrjn(vspnd2, il, fullprjn, vsp_cons);
+      net->FindMakePrjn(vsppd1, il, fullprjn, PvlvSp("VSPatchCons_ToPosD1NegD2", MSNConSpec));
+      net->FindMakePrjn(vsppd2, il, fullprjn, PvlvSp("VSPatchCons_ToPosD2NegD1", MSNConSpec));
+      net->FindMakePrjn(vspnd2, il, fullprjn, PvlvSp("VSPatchCons_ToPosD1NegD2", MSNConSpec));
+      net->FindMakePrjn(vspnd1, il, fullprjn, PvlvSp("VSPatchCons_ToPosD2NegD1", MSNConSpec));
     }
     if(ctxt_in_lays.size == 0) {
       net->FindMakePrjn(baepd2, il, fullprjn, bae_cons);
@@ -1758,21 +1855,27 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   net->FindMakePrjn(vtap, lhb, fullprjn, marker_cons);
   net->FindMakePrjn(vtap, pos_pv, fullprjn, marker_cons);
   net->FindMakePrjn(vtap, vsppd1, fullprjn, marker_cons);
+  net->FindMakePrjn(vtap, vsppd2, fullprjn, marker_cons);
 
-  net->FindMakePrjn(lhb, vsmpd1, fullprjn, marker_cons);
-  net->FindMakePrjn(lhb, vsmnd2, fullprjn, marker_cons);
-  net->FindMakePrjn(lhb, vsppd1, fullprjn, marker_cons);
-  net->FindMakePrjn(lhb, vspnd2, fullprjn, marker_cons);
-  net->FindMakePrjn(lhb, dmsmpd1, fullprjn, marker_cons);
-  net->FindMakePrjn(lhb, dmsmnd2, fullprjn, marker_cons);
   net->FindMakePrjn(lhb, pos_pv, fullprjn, marker_cons);
   net->FindMakePrjn(lhb, neg_pv, fullprjn, marker_cons);
+
+  net->FindMakePrjn(lhb, vsppd1, fullprjn, marker_cons);
+  net->FindMakePrjn(lhb, vsppd2, fullprjn, marker_cons);
+  net->FindMakePrjn(lhb, vspnd2, fullprjn, marker_cons);
+  net->FindMakePrjn(lhb, vspnd1, fullprjn, marker_cons);
+
+  net->FindMakePrjn(lhb, vsmpd1, fullprjn, marker_cons);
+  net->FindMakePrjn(lhb, vsmpd2, fullprjn, marker_cons);
+  net->FindMakePrjn(lhb, vsmnd2, fullprjn, marker_cons);
+  net->FindMakePrjn(lhb, vsmnd1, fullprjn, marker_cons);
   
   net->FindMakePrjn(pptg_n, caneg, fullprjn, fix_cons);
 
   net->FindMakePrjn(vtan, pptg_n, fullprjn, marker_cons);
   net->FindMakePrjn(vtan, neg_pv, fullprjn, marker_cons);
   // net->FindMakePrjn(vtan, vspnd2, fullprjn, marker_cons);
+  // net->FindMakePrjn(vtan, vspnd1, fullprjn, marker_cons);
 
   net->FindMakePrjn(drn, neg_pv, fullprjn, marker_cons);
   net->FindMakePrjn(drn, pos_pv, fullprjn, marker_cons);
@@ -2250,8 +2353,9 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   
   ////////////  Fix PVLV Specs!
 
-  MSNConSpec* vspatch_cons = PvlvSp("VSPatchCons", MSNConSpec);
+  MSNConSpec* vspatch_cons = PvlvSp("VSPatchCons_ToPosD1NegD2", MSNConSpec);
   vspatch_cons->su_act_var = MSNConSpec::ACT_P;
+  vspatch_cons->ru_act_var = MSNConSpec::ACT_P;
   vspatch_cons->learn_rule = MSNConSpec::DA_HEBB_VS; // def needs vs
   vspatch_cons->rnd.mean = 0.01f;
   vspatch_cons->lrate = 0.02f;
