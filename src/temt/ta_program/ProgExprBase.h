@@ -123,6 +123,8 @@ public:
   
   static LookUpType ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt, String& path_prepend_txt, String& append_txt, String& prog_el_txt, String& base_path, String& lookup_seed, String& path_var, String& path_rest, bool path_base_not_null, int& expr_start);
   // return the lookup type
+  static bool   FindPathSeparator(const String& path, int& separator_start, int& separator_end, bool backwards = true);
+  // locate either '.' or '->' working backwards
   
   // Signature must match that of the item_filter_fun typedef.
   static bool   ExprLookupVarFilter(void* base, void* var); // special filter used in ExprLookupFun

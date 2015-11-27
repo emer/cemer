@@ -415,23 +415,61 @@ bool ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
   return true;
 }
 
+bool ProgExprBase::FindPathSeparator(const String& path, int& separator_start, int& separator_end, bool backwards) {
+  int dot_pos = path.index('.', -1);
+  int arrow_tip_pos = path.index('>', -1);
+  
+  if (arrow_tip_pos != -1 && path[arrow_tip_pos-1] == '-' && arrow_tip_pos > dot_pos) {
+    separator_end = arrow_tip_pos;
+    separator_start = separator_end-1;
+    return true;
+  }
+  if (dot_pos != -1) {
+    separator_end = dot_pos;
+    separator_start = separator_end;
+    return true;
+  }
+  return false;
+}
+
+
 ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt, String& path_prepend_txt, String& append_txt, String& prog_el_txt, String& base_path, String& lookup_seed, String& path_var, String& path_rest, bool path_base_not_null, int& expr_start) {
   
   String txt = cur_txt.before(cur_pos);
   String extra_txt = cur_txt.from(cur_pos);
   
-  int delims_used = 0;
+  int       delims_used = 0;
   int_Array delim_pos;
-  int prog_el_start_pos = -1;
-  int c = '\0';
+  int       prog_el_start_pos = -1;
+  int       c = '\0';
+  int       c_next = '\0';
+  int       c_previous = '\0';
+  int       left_parens_cnt = 0;
+  int       right_parens_cnt = 0;
   
   // ** Working backwards - delimiters will be in reverse order **
   for(int i=cur_pos-1; i>= 0; i--) {
     c = txt[i];
-// if there is a space, like in "print something" then expr_start should be after the ' ' - Rohrlich 10/15/2015
-//    if(isdigit(c) || (c == '_') || (c == ',') || (c == ' ')) {
-      if(isdigit(c) || (c == '_') || (c == ',')) {
+    if(isdigit(c) || (c == '_')) {
       continue;
+    }
+    if(c == ' ') {
+      if (i != txt.length()-1) {  // not the last char
+        c_next = txt[i+1];
+        if (c_next == '(' || c_next == ',' || c_next == ' ') {
+          continue;
+        }
+      }
+      if (i > 0) {
+        c_previous = txt[i-1];
+        if (c_previous == '(' || c_previous == ',' || c_previous == ' ') {
+          continue;
+        }
+      }
+      else {
+        expr_start = i+1;
+        break;
+      }
     }
     if(isalpha(c)) {
       if (delim_pos.size > 0) {  // we only collect chars just before the preceeding position
@@ -442,7 +480,23 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
         continue;
       }
     }
-    if(c == ']' || c == '[' || c == '.' || c == '>' || c == '-' || c == ':' || c == '(' || c == ')') {
+    if(c == ']' || c == '[' || c == '.' || c == '>' || c == '-' || c == ':') {
+      delim_pos.Add(i);
+      continue;
+    }
+    if (c == '(') {
+      left_parens_cnt++;
+      if (left_parens_cnt > right_parens_cnt) {
+        expr_start = i+1;
+        break;
+      }
+      else {
+        delim_pos.Add(i);
+        continue;
+      }
+    }
+    if (c == ')') {
+      right_parens_cnt++;
       delim_pos.Add(i);
       continue;
     }
@@ -481,19 +535,21 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_type = ProgExprBase::METHOD;
       delims_used = delim_pos.size;  // this will keep us from falling into the conditional "delim_pos.size > delims_used" until that bit is eliminated
       
-      // check for both '.' and "->" delimiters
-      int left_parens_pos = base_path.index('(', delim_pos[1] - base_path.length());
+      int left_parens_pos = base_path.index('(', -1);
       path_rest = base_path.before(left_parens_pos);
-      int dot_pos = path_rest.index('.', -1);
-      int arrow_tip_pos = base_path.index('>', -1);
       
-      if (arrow_tip_pos != -1 && base_path[arrow_tip_pos-1] == '-' && arrow_tip_pos > dot_pos) {
-        path_rest = path_rest.after(arrow_tip_pos);
-        path_var = base_path.before(arrow_tip_pos - 1);
+      int separator_start = -1;
+      int separator_end = -1;
+      // check for both '.' and "->" delimiters
+      bool has_separator = FindPathSeparator(path_rest, separator_start, separator_end, true);
+      if (has_separator) {
+        path_rest = path_rest.after(separator_end);
+        path_var = base_path.before(separator_start);
       }
-      else {
-        path_rest = path_rest.after(dot_pos);
-        path_var = base_path.before(dot_pos);
+      // path_var is at the start of the path - handles cases where path has more than one separator
+      // we still don't handle var.member.method. or similar paths with intermediate members/methods
+      if (FindPathSeparator(path_var, separator_start, separator_end, false)) {
+        path_var = path_var.before(separator_start);
       }
     }
     else if(txt[delim_pos[0]] == '.') { // path sep = .
@@ -520,20 +576,22 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       delims_used = delim_pos.size;  // this will keep us from falling into the conditional "delim_pos.size > delims_used" until that bit is eliminated
       
       // check for both '.' and "->" delimiters
-      int left_parens_pos = base_path.index('(', delim_pos[1] - base_path.length());
+      int left_parens_pos = base_path.index('(', -1);
       path_rest = base_path.before(left_parens_pos);
-      int dot_pos = path_rest.index('.', -1);
-      int arrow_tip_pos = base_path.index('>', -1);
       
-      if (arrow_tip_pos != -1 && base_path[arrow_tip_pos-1] == '-' && arrow_tip_pos > dot_pos) {
-        path_rest = path_rest.after(arrow_tip_pos);
-        path_var = base_path.before(arrow_tip_pos - 1);
+      int separator_start = -1;
+      int separator_end = -1;
+      // check for both '.' and "->" delimiters
+      bool has_separator = FindPathSeparator(path_rest, separator_start, separator_end, true);
+      if (has_separator) {
+        path_rest = path_rest.after(separator_end);
+        path_var = base_path.before(separator_start);
       }
-      else {
-        path_rest = path_rest.after(dot_pos);
-        path_var = base_path.before(dot_pos);
+      // path_var is at the start of the path - handles cases where path has more than one separator
+      // we still don't handle var.member.method. or similar paths with intermediate members/methods
+      if (FindPathSeparator(path_var, separator_start, separator_end, false)) {
+        path_var = path_var.before(separator_end);
       }
-
     }
     else if(delim_pos.size > 1 && txt[delim_pos[0]] == '>' && txt[delim_pos[1]] == '-'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ->
@@ -613,8 +671,9 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
   }
   
   // cases such as var.member.<lookup>
+  
   if(delim_pos.size > delims_used) {
-    // is one of the delimiters a '(' - we want to start from there
+    // is one of the delimiters a '(' - we want to start from there unless balanced with right parens
     int left_parens_pos = base_path.index('(', cur_pos-base_path.length());
     if (left_parens_pos != -1) {
       int parens_index = 0;
@@ -622,6 +681,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       parens_index = delim_pos.FindEl(left_parens_pos);
       // path_var will be the string between left_parens_pos and the next delimiter pos to the right
       path_var = base_path.at(left_parens_pos + 1, delim_pos[parens_index - 1] - left_parens_pos - 1);
+      path_var = path_var.trim();
       
       if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
         path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
@@ -631,6 +691,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     else {
       // note: any ref to base path needs to subtract expr_start relative to delim_pos!
       path_var = base_path.before(delim_pos.SafeEl(-1)-expr_start); // use last one = first in list
+      path_var = path_var.trim();
       if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
         path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
       else
@@ -693,7 +754,9 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       varlkup->type_list.Link(&TA_ProgVar);
       varlkup->type_list.Link(&TA_DynEnumItem);
       varlkup->type_list.Link(&TA_Function);
-      varlkup->type_list.Link(&TA_Program);
+      if (expr_start == 0) {
+        varlkup->type_list.Link(&TA_Program);
+      }
       varlkup->GetImageScoped(NULL, &TA_ProgVar, own_prg, &TA_Program);
       bool okc = varlkup->OpenChooser();
       if(okc && varlkup->token()) {
