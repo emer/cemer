@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.4.0 rev8765
+// ta_Dump File v3.0 -- code v7.8.4.0 rev8960
 LeabraProject .projects["TestLookupParse"] { 
  Doc_Group @.docs = [0] {
  };
@@ -288,7 +288,7 @@ LeabraProject .projects["TestLookupParse"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [9] {
+    ProgVar_List @.vars = [10] {
      ProgVar @["lookup_type"] { };
      ProgVar @["lookup_seed"] { };
      ProgVar @["prepend_txt"] { };
@@ -298,6 +298,7 @@ LeabraProject .projects["TestLookupParse"] {
      ProgVar @["path_prepend_txt"] { };
      ProgVar @["path_rest"] { };
      ProgVar @["base_path"] { };
+     ProgVar @["lookup_group_default"] { };
     };
 
     Function_List @.functions = [0] {
@@ -321,7 +322,7 @@ LeabraProject .projects["TestLookupParse"] {
       };
      };
      StaticMethodCall @[4] { 
-      ProgArg_List @.meth_args = [11] {
+      ProgArg_List @.meth_args = [12] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
@@ -333,6 +334,7 @@ LeabraProject .projects["TestLookupParse"] {
        ProgArg @[8] { };
        ProgArg @[9] { };
        ProgArg @[10] { };
+       ProgArg @[11] { };
       };
      };
      PrintVar @[5] { };
@@ -356,7 +358,7 @@ LeabraProject .projects["TestLookupParse"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [10] {
+    ProgVar_List @.vars = [11] {
      ProgVar @["DataTable_28"] { };
      ProgVar @["lookup_type"] { };
      ProgVar @["lookup_seed"] { };
@@ -367,6 +369,7 @@ LeabraProject .projects["TestLookupParse"] {
      ProgVar @["path_prepend_txt"] { };
      ProgVar @["path_rest"] { };
      ProgVar @["base_path"] { };
+     ProgVar @["lookup_group_default"] { };
     };
 
     Function_List @.functions = [0] {
@@ -390,7 +393,7 @@ LeabraProject .projects["TestLookupParse"] {
       };
      };
      StaticMethodCall @[4] { 
-      ProgArg_List @.meth_args = [11] {
+      ProgArg_List @.meth_args = [12] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
@@ -402,6 +405,7 @@ LeabraProject .projects["TestLookupParse"] {
        ProgArg @[8] { };
        ProgArg @[9] { };
        ProgArg @[10] { };
+       ProgArg @[11] { };
       };
      };
      PrintVar @[5] { };
@@ -425,7 +429,7 @@ LeabraProject .projects["TestLookupParse"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [10] {
+    ProgVar_List @.vars = [11] {
      ProgVar @["DataTable_28"] { };
      ProgVar @["lookup_type"] { };
      ProgVar @["lookup_seed"] { };
@@ -435,6 +439,7 @@ LeabraProject .projects["TestLookupParse"] {
      ProgVar @["path_var"] { };
      ProgVar @["path_prepend_txt"] { };
      ProgVar @["path_rest"] { };
+     ProgVar @["lookup_group_default"] { };
      ProgVar @["base_path"] { };
     };
 
@@ -459,7 +464,7 @@ LeabraProject .projects["TestLookupParse"] {
       };
      };
      StaticMethodCall @[4] { 
-      ProgArg_List @.meth_args = [11] {
+      ProgArg_List @.meth_args = [12] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
@@ -471,6 +476,7 @@ LeabraProject .projects["TestLookupParse"] {
        ProgArg @[8] { };
        ProgArg @[9] { };
        ProgArg @[10] { };
+       ProgArg @[11] { };
       };
      };
      PrintVar @[5] { };
@@ -487,7 +493,7 @@ LeabraProject .projects["TestLookupParse"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [9] {
+    ProgVar_List @.vars = [10] {
      ProgVar @["lookup_type"] { };
      ProgVar @["lookup_seed"] { };
      ProgVar @["prepend_txt"] { };
@@ -497,6 +503,7 @@ LeabraProject .projects["TestLookupParse"] {
      ProgVar @["path_prepend_txt"] { };
      ProgVar @["path_rest"] { };
      ProgVar @["base_path"] { };
+     ProgVar @["lookup_group_default"] { };
     };
 
     Function_List @.functions = [0] {
@@ -520,7 +527,7 @@ LeabraProject .projects["TestLookupParse"] {
       };
      };
      StaticMethodCall @[4] { 
-      ProgArg_List @.meth_args = [11] {
+      ProgArg_List @.meth_args = [12] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
@@ -532,6 +539,7 @@ LeabraProject .projects["TestLookupParse"] {
        ProgArg @[8] { };
        ProgArg @[9] { };
        ProgArg @[10] { };
+       ProgArg @[11] { };
       };
      };
      PrintVar @[5] { };
@@ -548,7 +556,7 @@ LeabraProject .projects["TestLookupParse"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [9] {
+    ProgVar_List @.vars = [10] {
      ProgVar @["lookup_type"] { };
      ProgVar @["lookup_seed"] { };
      ProgVar @["prepend_txt"] { };
@@ -558,6 +566,7 @@ LeabraProject .projects["TestLookupParse"] {
      ProgVar @["path_prepend_txt"] { };
      ProgVar @["path_rest"] { };
      ProgVar @["base_path"] { };
+     ProgVar @["lookup_group_default"] { };
     };
 
     Function_List @.functions = [0] {
@@ -581,7 +590,7 @@ LeabraProject .projects["TestLookupParse"] {
       };
      };
      StaticMethodCall @[4] { 
-      ProgArg_List @.meth_args = [11] {
+      ProgArg_List @.meth_args = [12] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
@@ -593,6 +602,7 @@ LeabraProject .projects["TestLookupParse"] {
        ProgArg @[8] { };
        ProgArg @[9] { };
        ProgArg @[10] { };
+       ProgArg @[11] { };
       };
      };
      PrintVar @[5] { };
@@ -616,7 +626,7 @@ LeabraProject .projects["TestLookupParse"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [10] {
+    ProgVar_List @.vars = [11] {
      ProgVar @["DataTable_28"] { };
      ProgVar @["lookup_type"] { };
      ProgVar @["lookup_seed"] { };
@@ -627,6 +637,7 @@ LeabraProject .projects["TestLookupParse"] {
      ProgVar @["path_prepend_txt"] { };
      ProgVar @["path_rest"] { };
      ProgVar @["base_path"] { };
+     ProgVar @["lookup_group_default"] { };
     };
 
     Function_List @.functions = [0] {
@@ -650,7 +661,7 @@ LeabraProject .projects["TestLookupParse"] {
       };
      };
      StaticMethodCall @[4] { 
-      ProgArg_List @.meth_args = [11] {
+      ProgArg_List @.meth_args = [12] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
@@ -662,6 +673,7 @@ LeabraProject .projects["TestLookupParse"] {
        ProgArg @[8] { };
        ProgArg @[9] { };
        ProgArg @[10] { };
+       ProgArg @[11] { };
       };
      };
      PrintVar @[5] { };
@@ -685,7 +697,7 @@ LeabraProject .projects["TestLookupParse"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [10] {
+    ProgVar_List @.vars = [11] {
      ProgVar @["DataTable_28"] { };
      ProgVar @["lookup_type"] { };
      ProgVar @["lookup_seed"] { };
@@ -696,6 +708,7 @@ LeabraProject .projects["TestLookupParse"] {
      ProgVar @["path_prepend_txt"] { };
      ProgVar @["path_rest"] { };
      ProgVar @["base_path"] { };
+     ProgVar @["lookup_group_default"] { };
     };
 
     Function_List @.functions = [0] {
@@ -719,7 +732,7 @@ LeabraProject .projects["TestLookupParse"] {
       };
      };
      StaticMethodCall @[4] { 
-      ProgArg_List @.meth_args = [11] {
+      ProgArg_List @.meth_args = [12] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
@@ -731,6 +744,7 @@ LeabraProject .projects["TestLookupParse"] {
        ProgArg @[8] { };
        ProgArg @[9] { };
        ProgArg @[10] { };
+       ProgArg @[11] { };
       };
      };
      PrintVar @[5] { };
@@ -747,7 +761,7 @@ LeabraProject .projects["TestLookupParse"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [9] {
+    ProgVar_List @.vars = [10] {
      ProgVar @["lookup_type"] { };
      ProgVar @["lookup_seed"] { };
      ProgVar @["prepend_txt"] { };
@@ -757,6 +771,7 @@ LeabraProject .projects["TestLookupParse"] {
      ProgVar @["path_prepend_txt"] { };
      ProgVar @["path_rest"] { };
      ProgVar @["base_path"] { };
+     ProgVar @["lookup_group_default"] { };
     };
 
     Function_List @.functions = [0] {
@@ -780,7 +795,7 @@ LeabraProject .projects["TestLookupParse"] {
       };
      };
      StaticMethodCall @[4] { 
-      ProgArg_List @.meth_args = [11] {
+      ProgArg_List @.meth_args = [12] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
@@ -792,6 +807,7 @@ LeabraProject .projects["TestLookupParse"] {
        ProgArg @[8] { };
        ProgArg @[9] { };
        ProgArg @[10] { };
+       ProgArg @[11] { };
       };
      };
      PrintVar @[5] { };
@@ -808,7 +824,7 @@ LeabraProject .projects["TestLookupParse"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [9] {
+    ProgVar_List @.vars = [10] {
      ProgVar @["lookup_type"] { };
      ProgVar @["lookup_seed"] { };
      ProgVar @["prepend_txt"] { };
@@ -818,6 +834,7 @@ LeabraProject .projects["TestLookupParse"] {
      ProgVar @["path_prepend_txt"] { };
      ProgVar @["path_rest"] { };
      ProgVar @["base_path"] { };
+     ProgVar @["lookup_group_default"] { };
     };
 
     Function_List @.functions = [0] {
@@ -841,7 +858,7 @@ LeabraProject .projects["TestLookupParse"] {
       };
      };
      StaticMethodCall @[4] { 
-      ProgArg_List @.meth_args = [11] {
+      ProgArg_List @.meth_args = [12] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
@@ -853,6 +870,7 @@ LeabraProject .projects["TestLookupParse"] {
        ProgArg @[8] { };
        ProgArg @[9] { };
        ProgArg @[10] { };
+       ProgArg @[11] { };
       };
      };
      PrintVar @[5] { };
@@ -869,7 +887,7 @@ LeabraProject .projects["TestLookupParse"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [9] {
+    ProgVar_List @.vars = [10] {
      ProgVar @["lookup_type"] { };
      ProgVar @["lookup_seed"] { };
      ProgVar @["prepend_txt"] { };
@@ -879,6 +897,7 @@ LeabraProject .projects["TestLookupParse"] {
      ProgVar @["path_prepend_txt"] { };
      ProgVar @["path_rest"] { };
      ProgVar @["base_path"] { };
+     ProgVar @["lookup_group_default"] { };
     };
 
     Function_List @.functions = [0] {
@@ -902,7 +921,7 @@ LeabraProject .projects["TestLookupParse"] {
       };
      };
      StaticMethodCall @[4] { 
-      ProgArg_List @.meth_args = [11] {
+      ProgArg_List @.meth_args = [12] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
@@ -914,6 +933,7 @@ LeabraProject .projects["TestLookupParse"] {
        ProgArg @[8] { };
        ProgArg @[9] { };
        ProgArg @[10] { };
+       ProgArg @[11] { };
       };
      };
      PrintVar @[5] { };
@@ -930,7 +950,7 @@ LeabraProject .projects["TestLookupParse"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [9] {
+    ProgVar_List @.vars = [10] {
      ProgVar @["lookup_type"] { };
      ProgVar @["lookup_seed"] { };
      ProgVar @["prepend_txt"] { };
@@ -940,6 +960,7 @@ LeabraProject .projects["TestLookupParse"] {
      ProgVar @["path_prepend_txt"] { };
      ProgVar @["path_rest"] { };
      ProgVar @["base_path"] { };
+     ProgVar @["lookup_group_default"] { };
     };
 
     Function_List @.functions = [1] {
@@ -974,7 +995,7 @@ LeabraProject .projects["TestLookupParse"] {
       };
      };
      StaticMethodCall @[4] { 
-      ProgArg_List @.meth_args = [11] {
+      ProgArg_List @.meth_args = [12] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
@@ -986,6 +1007,7 @@ LeabraProject .projects["TestLookupParse"] {
        ProgArg @[8] { };
        ProgArg @[9] { };
        ProgArg @[10] { };
+       ProgArg @[11] { };
       };
      };
      PrintVar @[5] { };
@@ -1009,7 +1031,7 @@ LeabraProject .projects["TestLookupParse"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [9] {
+    ProgVar_List @.vars = [11] {
      ProgVar @["lookup_type"] { };
      ProgVar @["lookup_seed"] { };
      ProgVar @["prepend_txt"] { };
@@ -1019,6 +1041,8 @@ LeabraProject .projects["TestLookupParse"] {
      ProgVar @["path_prepend_txt"] { };
      ProgVar @["path_rest"] { };
      ProgVar @["base_path"] { };
+     ProgVar @["lookup_group_default"] { };
+     ProgVar @["DataTable_32"] { };
     };
 
     Function_List @.functions = [0] {
@@ -1042,7 +1066,7 @@ LeabraProject .projects["TestLookupParse"] {
       };
      };
      StaticMethodCall @[4] { 
-      ProgArg_List @.meth_args = [11] {
+      ProgArg_List @.meth_args = [12] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
@@ -1054,6 +1078,7 @@ LeabraProject .projects["TestLookupParse"] {
        ProgArg @[8] { };
        ProgArg @[9] { };
        ProgArg @[10] { };
+       ProgArg @[11] { };
       };
      };
      PrintVar @[5] { };
@@ -3341,6 +3366,16 @@ LeabraProject .projects["TestLookupParse"] {
       desc="set by parser";
       init_from=NULL;
      };
+     ProgVar @["lookup_group_default"] {
+      name="lookup_group_default";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -3359,7 +3394,7 @@ LeabraProject .projects["TestLookupParse"] {
      LocalVars @[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="LocalVars (12 vars)";
+      code_string="LocalVars (3 vars)";
       pre_compile_code_string="LocalVars (3 vars)";
       local_vars {
        name="local_vars";
@@ -3436,8 +3471,8 @@ LeabraProject .projects["TestLookupParse"] {
      StaticMethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
-      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
       result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["no_text"].vars["lookup_type"]$$;
       object_type=ProgExprBase;
       method=ProgExprBase::Test_ParseForLookup;
@@ -3451,7 +3486,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="test_name";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="this.name";
 	expr {
 	 expr="this.name";
 	};
@@ -3462,7 +3497,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="input_text";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input";
 	expr {
 	 expr="input";
 	};
@@ -3473,7 +3508,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="cursor_pos";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="cursor_pos";
 	expr {
 	 expr="cursor_pos";
 	};
@@ -3484,7 +3519,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="lookup_seed";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="lookup_seed";
 	expr {
 	 expr="lookup_seed";
 	};
@@ -3495,7 +3530,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prepend_txt";
 	expr {
 	 expr="prepend_txt";
 	};
@@ -3506,7 +3541,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="append_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="append_txt";
 	expr {
 	 expr="append_txt";
 	};
@@ -3517,7 +3552,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prog_el_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prog_el_txt";
 	expr {
 	 expr="prog_el_txt";
 	};
@@ -3528,7 +3563,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_var";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_var";
 	expr {
 	 expr="path_var";
 	};
@@ -3539,7 +3574,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_prepend_txt";
 	expr {
 	 expr="path_prepend_txt";
 	};
@@ -3550,7 +3585,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_rest";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_rest";
 	expr {
 	 expr="path_rest";
 	};
@@ -3561,9 +3596,20 @@ LeabraProject .projects["TestLookupParse"] {
 	name="base_path";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="base_path";
 	expr {
 	 expr="base_path";
+	};
+       };
+       ProgArg @[11] {
+	arg_type=bool_ref;
+	type="bool&";
+	name="lookup_group_default";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_group_default";
 	};
        };
       };
@@ -3571,7 +3617,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["no_text"].prog_code[0].local_vars["test_name"]$;
@@ -3585,7 +3631,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["no_text"].prog_code[0].local_vars["test_name"]$;
@@ -3753,6 +3799,16 @@ LeabraProject .projects["TestLookupParse"] {
       desc="set by parser";
       init_from=NULL;
      };
+     ProgVar @["lookup_group_default"] {
+      name="lookup_group_default";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -3848,8 +3904,8 @@ LeabraProject .projects["TestLookupParse"] {
      StaticMethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
-      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
       result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member"].vars["lookup_type"]$$;
       object_type=ProgExprBase;
       method=ProgExprBase::Test_ParseForLookup;
@@ -3896,7 +3952,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="lookup_seed";
 	required=1;
 	def_val=;
-	prev_expr="prepend";
+	prev_expr="lookup_seed";
 	expr {
 	 expr="lookup_seed";
 	};
@@ -3907,7 +3963,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr="prog_el_text";
+	prev_expr="prepend_txt";
 	expr {
 	 expr="prepend_txt";
 	};
@@ -3918,7 +3974,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="append_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="append_txt";
 	expr {
 	 expr="append_txt";
 	};
@@ -3929,7 +3985,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prog_el_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prog_el_txt";
 	expr {
 	 expr="prog_el_txt";
 	};
@@ -3940,7 +3996,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_var";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_var";
 	expr {
 	 expr="path_var";
 	};
@@ -3951,7 +4007,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_prepend_txt";
 	expr {
 	 expr="path_prepend_txt";
 	};
@@ -3962,7 +4018,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_rest";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_rest";
 	expr {
 	 expr="path_rest";
 	};
@@ -3973,9 +4029,20 @@ LeabraProject .projects["TestLookupParse"] {
 	name="base_path";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="base_path";
 	expr {
 	 expr="base_path";
+	};
+       };
+       ProgArg @[11] {
+	arg_type=bool_ref;
+	type="bool&";
+	name="lookup_group_default";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_group_default";
 	};
        };
       };
@@ -3983,7 +4050,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member"].prog_code[0].local_vars["test_name"]$;
@@ -3997,7 +4064,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member"].prog_code[0].local_vars["test_name"]$;
@@ -4069,7 +4136,7 @@ LeabraProject .projects["TestLookupParse"] {
       var_type=T_Object;
       object_type=DataTable;
       object_val=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].objs["DataTable_28"]$$;
-      objs_ptr=0;
+      objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -4151,6 +4218,16 @@ LeabraProject .projects["TestLookupParse"] {
       string_val=;
       objs_ptr=0;
       flags=SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["lookup_group_default"] {
+      name="lookup_group_default";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc="set by parser";
       init_from=NULL;
@@ -4260,8 +4337,8 @@ LeabraProject .projects["TestLookupParse"] {
      StaticMethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
-      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
       result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].vars["lookup_type"]$$;
       object_type=ProgExprBase;
       method=ProgExprBase::Test_ParseForLookup;
@@ -4275,7 +4352,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="test_name";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="this.name";
 	expr {
 	 expr="this.name";
 	};
@@ -4286,7 +4363,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="input_text";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input";
 	expr {
 	 expr="input";
 	};
@@ -4297,7 +4374,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="cursor_pos";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="cursor_pos";
 	expr {
 	 expr="cursor_pos";
 	};
@@ -4308,7 +4385,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="lookup_seed";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="lookup_seed";
 	expr {
 	 expr="lookup_seed";
 	};
@@ -4319,7 +4396,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prepend_txt";
 	expr {
 	 expr="prepend_txt";
 	};
@@ -4330,7 +4407,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="append_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="append_txt";
 	expr {
 	 expr="append_txt";
 	};
@@ -4341,7 +4418,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prog_el_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prog_el_txt";
 	expr {
 	 expr="prog_el_txt";
 	};
@@ -4352,7 +4429,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_var";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_var";
 	expr {
 	 expr="path_var";
 	};
@@ -4363,7 +4440,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_prepend_txt";
 	expr {
 	 expr="path_prepend_txt";
 	};
@@ -4374,7 +4451,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_rest";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_rest";
 	expr {
 	 expr="path_rest";
 	};
@@ -4385,9 +4462,20 @@ LeabraProject .projects["TestLookupParse"] {
 	name="base_path";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="base_path";
 	expr {
 	 expr="base_path";
+	};
+       };
+       ProgArg @[11] {
+	arg_type=bool_ref;
+	type="bool&";
+	name="lookup_group_default";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_group_default";
 	};
        };
       };
@@ -4395,7 +4483,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].prog_code[0].local_vars["test_name"]$;
@@ -4409,7 +4497,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_select_method_or_member_copy"].prog_code[0].local_vars["test_name"]$;
@@ -4542,6 +4630,16 @@ LeabraProject .projects["TestLookupParse"] {
       desc="set by parser";
       init_from=NULL;
      };
+     ProgVar @["lookup_group_default"] {
+      name="lookup_group_default";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -4560,7 +4658,7 @@ LeabraProject .projects["TestLookupParse"] {
      LocalVars @[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="LocalVars (6 vars)";
+      code_string="LocalVars (3 vars)";
       pre_compile_code_string="LocalVars (3 vars)";
       local_vars {
        name="local_vars";
@@ -4637,8 +4735,8 @@ LeabraProject .projects["TestLookupParse"] {
      StaticMethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, , prepend_txt, , prog_el_text, , , , )";
-      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
       result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random"].vars["lookup_type"]$$;
       object_type=ProgExprBase;
       method=ProgExprBase::Test_ParseForLookup;
@@ -4652,7 +4750,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="test_name";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="this.name";
 	expr {
 	 expr="this.name";
 	};
@@ -4663,7 +4761,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="input_text";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input";
 	expr {
 	 expr="input";
 	};
@@ -4674,7 +4772,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="cursor_pos";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="cursor_pos";
 	expr {
 	 expr="cursor_pos";
 	};
@@ -4685,7 +4783,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="lookup_seed";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="lookup_seed";
 	expr {
 	 expr="lookup_seed";
 	};
@@ -4696,7 +4794,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prepend_txt";
 	expr {
 	 expr="prepend_txt";
 	};
@@ -4707,7 +4805,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="append_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="append_txt";
 	expr {
 	 expr="append_txt";
 	};
@@ -4718,7 +4816,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prog_el_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prog_el_txt";
 	expr {
 	 expr="prog_el_txt";
 	};
@@ -4729,7 +4827,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_var";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_var";
 	expr {
 	 expr="path_var";
 	};
@@ -4740,7 +4838,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_prepend_txt";
 	expr {
 	 expr="path_prepend_txt";
 	};
@@ -4751,7 +4849,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_rest";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_rest";
 	expr {
 	 expr="path_rest";
 	};
@@ -4762,9 +4860,20 @@ LeabraProject .projects["TestLookupParse"] {
 	name="base_path";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="base_path";
 	expr {
 	 expr="base_path";
+	};
+       };
+       ProgArg @[11] {
+	arg_type=bool_ref;
+	type="bool&";
+	name="lookup_group_default";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_group_default";
 	};
        };
       };
@@ -4772,7 +4881,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random"].prog_code[0].local_vars["test_name"]$;
@@ -4786,7 +4895,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name path_var prepend_txt path_rest base_path";
+      code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random"].prog_code[0].local_vars["test_name"]$;
@@ -4919,6 +5028,16 @@ LeabraProject .projects["TestLookupParse"] {
       desc="set by parser";
       init_from=NULL;
      };
+     ProgVar @["lookup_group_default"] {
+      name="lookup_group_default";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -4937,7 +5056,7 @@ LeabraProject .projects["TestLookupParse"] {
      LocalVars @[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="LocalVars (6 vars)";
+      code_string="LocalVars (3 vars)";
       pre_compile_code_string="LocalVars (3 vars)";
       local_vars {
        name="local_vars";
@@ -5014,8 +5133,8 @@ LeabraProject .projects["TestLookupParse"] {
      StaticMethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, , prepend_txt, , prog_el_text, , , , )";
-      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
       result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random_seeded"].vars["lookup_type"]$$;
       object_type=ProgExprBase;
       method=ProgExprBase::Test_ParseForLookup;
@@ -5029,7 +5148,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="test_name";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="this.name";
 	expr {
 	 expr="this.name";
 	};
@@ -5040,7 +5159,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="input_text";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input";
 	expr {
 	 expr="input";
 	};
@@ -5051,7 +5170,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="cursor_pos";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="cursor_pos";
 	expr {
 	 expr="cursor_pos";
 	};
@@ -5062,7 +5181,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="lookup_seed";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="lookup_seed";
 	expr {
 	 expr="lookup_seed";
 	};
@@ -5073,7 +5192,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prepend_txt";
 	expr {
 	 expr="prepend_txt";
 	};
@@ -5084,7 +5203,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="append_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="append_txt";
 	expr {
 	 expr="append_txt";
 	};
@@ -5095,7 +5214,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prog_el_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prog_el_txt";
 	expr {
 	 expr="prog_el_txt";
 	};
@@ -5106,7 +5225,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_var";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_var";
 	expr {
 	 expr="path_var";
 	};
@@ -5117,7 +5236,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_prepend_txt";
 	expr {
 	 expr="path_prepend_txt";
 	};
@@ -5128,7 +5247,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_rest";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_rest";
 	expr {
 	 expr="path_rest";
 	};
@@ -5139,9 +5258,20 @@ LeabraProject .projects["TestLookupParse"] {
 	name="base_path";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="base_path";
 	expr {
 	 expr="base_path";
+	};
+       };
+       ProgArg @[11] {
+	arg_type=bool_ref;
+	type="bool&";
+	name="lookup_group_default";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_group_default";
 	};
        };
       };
@@ -5149,7 +5279,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random_seeded"].prog_code[0].local_vars["test_name"]$;
@@ -5163,7 +5293,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name path_var prepend_txt path_rest base_path";
+      code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["static_method_random_seeded"].prog_code[0].local_vars["test_name"]$;
@@ -5331,6 +5461,16 @@ LeabraProject .projects["TestLookupParse"] {
       desc="set by parser";
       init_from=NULL;
      };
+     ProgVar @["lookup_group_default"] {
+      name="lookup_group_default";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -5349,7 +5489,7 @@ LeabraProject .projects["TestLookupParse"] {
      LocalVars @[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="LocalVars (6 vars)";
+      code_string="LocalVars (3 vars)";
       pre_compile_code_string="LocalVars (3 vars)";
       local_vars {
        name="local_vars";
@@ -5426,8 +5566,8 @@ LeabraProject .projects["TestLookupParse"] {
      StaticMethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, , prepend_txt, , prog_el_text, , , , )";
-      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
       result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member"].vars["lookup_type"]$$;
       object_type=ProgExprBase;
       method=ProgExprBase::Test_ParseForLookup;
@@ -5441,7 +5581,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="test_name";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="this.name";
 	expr {
 	 expr="this.name";
 	};
@@ -5452,7 +5592,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="input_text";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input";
 	expr {
 	 expr="input";
 	};
@@ -5463,7 +5603,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="cursor_pos";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="cursor_pos";
 	expr {
 	 expr="cursor_pos";
 	};
@@ -5474,7 +5614,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="lookup_seed";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="lookup_seed";
 	expr {
 	 expr="lookup_seed";
 	};
@@ -5485,7 +5625,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prepend_txt";
 	expr {
 	 expr="prepend_txt";
 	};
@@ -5496,7 +5636,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="append_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="append_txt";
 	expr {
 	 expr="append_txt";
 	};
@@ -5507,7 +5647,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prog_el_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prog_el_txt";
 	expr {
 	 expr="prog_el_txt";
 	};
@@ -5518,7 +5658,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_var";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_var";
 	expr {
 	 expr="path_var";
 	};
@@ -5529,7 +5669,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_prepend_txt";
 	expr {
 	 expr="path_prepend_txt";
 	};
@@ -5540,7 +5680,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_rest";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_rest";
 	expr {
 	 expr="path_rest";
 	};
@@ -5551,9 +5691,20 @@ LeabraProject .projects["TestLookupParse"] {
 	name="base_path";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="base_path";
 	expr {
 	 expr="base_path";
+	};
+       };
+       ProgArg @[11] {
+	arg_type=bool_ref;
+	type="bool&";
+	name="lookup_group_default";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_group_default";
 	};
        };
       };
@@ -5561,7 +5712,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member"].prog_code[0].local_vars["test_name"]$;
@@ -5575,7 +5726,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name path_var prepend_txt path_rest base_path";
+      code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member"].prog_code[0].local_vars["test_name"]$;
@@ -5743,6 +5894,16 @@ LeabraProject .projects["TestLookupParse"] {
       desc="set by parser";
       init_from=NULL;
      };
+     ProgVar @["lookup_group_default"] {
+      name="lookup_group_default";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -5761,7 +5922,7 @@ LeabraProject .projects["TestLookupParse"] {
      LocalVars @[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="LocalVars (6 vars)";
+      code_string="LocalVars (3 vars)";
       pre_compile_code_string="LocalVars (3 vars)";
       local_vars {
        name="local_vars";
@@ -5838,8 +5999,8 @@ LeabraProject .projects["TestLookupParse"] {
      StaticMethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, , prepend_txt, , prog_el_text, , , , )";
-      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
       result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member_seeded"].vars["lookup_type"]$$;
       object_type=ProgExprBase;
       method=ProgExprBase::Test_ParseForLookup;
@@ -5853,7 +6014,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="test_name";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="this.name";
 	expr {
 	 expr="this.name";
 	};
@@ -5864,7 +6025,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="input_text";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input";
 	expr {
 	 expr="input";
 	};
@@ -5875,7 +6036,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="cursor_pos";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="cursor_pos";
 	expr {
 	 expr="cursor_pos";
 	};
@@ -5886,7 +6047,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="lookup_seed";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="lookup_seed";
 	expr {
 	 expr="lookup_seed";
 	};
@@ -5897,7 +6058,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prepend_txt";
 	expr {
 	 expr="prepend_txt";
 	};
@@ -5908,7 +6069,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="append_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="append_txt";
 	expr {
 	 expr="append_txt";
 	};
@@ -5919,7 +6080,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prog_el_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prog_el_txt";
 	expr {
 	 expr="prog_el_txt";
 	};
@@ -5930,7 +6091,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_var";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_var";
 	expr {
 	 expr="path_var";
 	};
@@ -5941,7 +6102,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_prepend_txt";
 	expr {
 	 expr="path_prepend_txt";
 	};
@@ -5952,7 +6113,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_rest";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_rest";
 	expr {
 	 expr="path_rest";
 	};
@@ -5963,9 +6124,20 @@ LeabraProject .projects["TestLookupParse"] {
 	name="base_path";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="base_path";
 	expr {
 	 expr="base_path";
+	};
+       };
+       ProgArg @[11] {
+	arg_type=bool_ref;
+	type="bool&";
+	name="lookup_group_default";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_group_default";
 	};
        };
       };
@@ -5973,7 +6145,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member_seeded"].prog_code[0].local_vars["test_name"]$;
@@ -5987,7 +6159,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name path_var prepend_txt path_rest base_path";
+      code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_select_method_or_member_seeded"].prog_code[0].local_vars["test_name"]$;
@@ -6120,6 +6292,16 @@ LeabraProject .projects["TestLookupParse"] {
       desc="set by parser";
       init_from=NULL;
      };
+     ProgVar @["lookup_group_default"] {
+      name="lookup_group_default";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -6138,7 +6320,7 @@ LeabraProject .projects["TestLookupParse"] {
      LocalVars @[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="LocalVars (6 vars)";
+      code_string="LocalVars (3 vars)";
       pre_compile_code_string="LocalVars (3 vars)";
       local_vars {
        name="local_vars";
@@ -6215,8 +6397,8 @@ LeabraProject .projects["TestLookupParse"] {
      StaticMethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
-      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
       result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["call_function_other_program"].vars["lookup_type"]$$;
       object_type=ProgExprBase;
       method=ProgExprBase::Test_ParseForLookup;
@@ -6230,7 +6412,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="test_name";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="this.name";
 	expr {
 	 expr="this.name";
 	};
@@ -6241,7 +6423,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="input_text";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input";
 	expr {
 	 expr="input";
 	};
@@ -6252,7 +6434,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="cursor_pos";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="cursor_pos";
 	expr {
 	 expr="cursor_pos";
 	};
@@ -6263,7 +6445,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="lookup_seed";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="lookup_seed";
 	expr {
 	 expr="lookup_seed";
 	};
@@ -6274,7 +6456,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prepend_txt";
 	expr {
 	 expr="prepend_txt";
 	};
@@ -6285,7 +6467,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="append_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="append_txt";
 	expr {
 	 expr="append_txt";
 	};
@@ -6296,7 +6478,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prog_el_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prog_el_txt";
 	expr {
 	 expr="prog_el_txt";
 	};
@@ -6307,7 +6489,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_var";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_var";
 	expr {
 	 expr="path_var";
 	};
@@ -6318,7 +6500,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_prepend_txt";
 	expr {
 	 expr="path_prepend_txt";
 	};
@@ -6329,7 +6511,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_rest";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_rest";
 	expr {
 	 expr="path_rest";
 	};
@@ -6340,9 +6522,20 @@ LeabraProject .projects["TestLookupParse"] {
 	name="base_path";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="base_path";
 	expr {
 	 expr="base_path";
+	};
+       };
+       ProgArg @[11] {
+	arg_type=bool_ref;
+	type="bool&";
+	name="lookup_group_default";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_group_default";
 	};
        };
       };
@@ -6350,7 +6543,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["call_function_other_program"].prog_code[0].local_vars["test_name"]$;
@@ -6364,7 +6557,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["call_function_other_program"].prog_code[0].local_vars["test_name"]$;
@@ -6497,6 +6690,16 @@ LeabraProject .projects["TestLookupParse"] {
       desc="set by parser";
       init_from=NULL;
      };
+     ProgVar @["lookup_group_default"] {
+      name="lookup_group_default";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -6592,8 +6795,8 @@ LeabraProject .projects["TestLookupParse"] {
      StaticMethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
-      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
       result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_first_arg"].vars["lookup_type"]$$;
       object_type=ProgExprBase;
       method=ProgExprBase::Test_ParseForLookup;
@@ -6607,7 +6810,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="test_name";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="this.name";
 	expr {
 	 expr="this.name";
 	};
@@ -6618,7 +6821,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="input_text";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input";
 	expr {
 	 expr="input";
 	};
@@ -6629,7 +6832,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="cursor_pos";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="cursor_pos";
 	expr {
 	 expr="cursor_pos";
 	};
@@ -6640,7 +6843,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="lookup_seed";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="lookup_seed";
 	expr {
 	 expr="lookup_seed";
 	};
@@ -6651,7 +6854,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prepend_txt";
 	expr {
 	 expr="prepend_txt";
 	};
@@ -6662,7 +6865,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="append_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="append_txt";
 	expr {
 	 expr="append_txt";
 	};
@@ -6673,7 +6876,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prog_el_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prog_el_txt";
 	expr {
 	 expr="prog_el_txt";
 	};
@@ -6684,7 +6887,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_var";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_var";
 	expr {
 	 expr="path_var";
 	};
@@ -6695,7 +6898,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_prepend_txt";
 	expr {
 	 expr="path_prepend_txt";
 	};
@@ -6706,7 +6909,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_rest";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_rest";
 	expr {
 	 expr="path_rest";
 	};
@@ -6717,9 +6920,20 @@ LeabraProject .projects["TestLookupParse"] {
 	name="base_path";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="base_path";
 	expr {
 	 expr="base_path";
+	};
+       };
+       ProgArg @[11] {
+	arg_type=bool_ref;
+	type="bool&";
+	name="lookup_group_default";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_group_default";
 	};
        };
       };
@@ -6727,7 +6941,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_first_arg"].prog_code[0].local_vars["test_name"]$;
@@ -6741,7 +6955,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_first_arg"].prog_code[0].local_vars["test_name"]$;
@@ -6874,6 +7088,16 @@ LeabraProject .projects["TestLookupParse"] {
       desc="set by parser";
       init_from=NULL;
      };
+     ProgVar @["lookup_group_default"] {
+      name="lookup_group_default";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -6969,8 +7193,8 @@ LeabraProject .projects["TestLookupParse"] {
      StaticMethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
-      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
       result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_second_arg"].vars["lookup_type"]$$;
       object_type=ProgExprBase;
       method=ProgExprBase::Test_ParseForLookup;
@@ -6984,7 +7208,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="test_name";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="this.name";
 	expr {
 	 expr="this.name";
 	};
@@ -6995,7 +7219,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="input_text";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input";
 	expr {
 	 expr="input";
 	};
@@ -7006,7 +7230,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="cursor_pos";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="cursor_pos";
 	expr {
 	 expr="cursor_pos";
 	};
@@ -7017,7 +7241,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="lookup_seed";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="lookup_seed";
 	expr {
 	 expr="lookup_seed";
 	};
@@ -7028,7 +7252,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prepend_txt";
 	expr {
 	 expr="prepend_txt";
 	};
@@ -7039,7 +7263,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="append_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="append_txt";
 	expr {
 	 expr="append_txt";
 	};
@@ -7050,7 +7274,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prog_el_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prog_el_txt";
 	expr {
 	 expr="prog_el_txt";
 	};
@@ -7061,7 +7285,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_var";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_var";
 	expr {
 	 expr="path_var";
 	};
@@ -7072,7 +7296,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_prepend_txt";
 	expr {
 	 expr="path_prepend_txt";
 	};
@@ -7083,7 +7307,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_rest";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_rest";
 	expr {
 	 expr="path_rest";
 	};
@@ -7094,9 +7318,20 @@ LeabraProject .projects["TestLookupParse"] {
 	name="base_path";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="base_path";
 	expr {
 	 expr="base_path";
+	};
+       };
+       ProgArg @[11] {
+	arg_type=bool_ref;
+	type="bool&";
+	name="lookup_group_default";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_group_default";
 	};
        };
       };
@@ -7104,7 +7339,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_second_arg"].prog_code[0].local_vars["test_name"]$;
@@ -7118,7 +7353,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["method_arguments_second_arg"].prog_code[0].local_vars["test_name"]$;
@@ -7251,6 +7486,16 @@ LeabraProject .projects["TestLookupParse"] {
       desc="set by parser";
       init_from=NULL;
      };
+     ProgVar @["lookup_group_default"] {
+      name="lookup_group_default";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -7258,8 +7503,8 @@ LeabraProject .projects["TestLookupParse"] {
      el_def=0;
      Function @["Function_3"] {
       desc=;
-      flags=0;
-      code_string=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="Function_3() returns: int";
       pre_compile_code_string="Function_3() returns: int";
       name="Function_3";
       return_type=T_Int;
@@ -7275,8 +7520,8 @@ LeabraProject .projects["TestLookupParse"] {
        el_def=0;
        LocalVars @[0] {
 	desc=;
-	flags=0;
-	code_string=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="LocalVars (0 vars)";
 	pre_compile_code_string="LocalVars (0 vars)";
 	local_vars {
 	 name="local_vars";
@@ -7376,8 +7621,8 @@ LeabraProject .projects["TestLookupParse"] {
      StaticMethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
-      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
       result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["var_after_conditional"].vars["lookup_type"]$$;
       object_type=ProgExprBase;
       method=ProgExprBase::Test_ParseForLookup;
@@ -7391,7 +7636,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="test_name";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="this.name";
 	expr {
 	 expr="this.name";
 	};
@@ -7402,7 +7647,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="input_text";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input";
 	expr {
 	 expr="input";
 	};
@@ -7413,7 +7658,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="cursor_pos";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="cursor_pos";
 	expr {
 	 expr="cursor_pos";
 	};
@@ -7424,7 +7669,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="lookup_seed";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="lookup_seed";
 	expr {
 	 expr="lookup_seed";
 	};
@@ -7435,7 +7680,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prepend_txt";
 	expr {
 	 expr="prepend_txt";
 	};
@@ -7446,7 +7691,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="append_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="append_txt";
 	expr {
 	 expr="append_txt";
 	};
@@ -7457,7 +7702,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prog_el_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prog_el_txt";
 	expr {
 	 expr="prog_el_txt";
 	};
@@ -7468,7 +7713,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_var";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_var";
 	expr {
 	 expr="path_var";
 	};
@@ -7479,7 +7724,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_prepend_txt";
 	expr {
 	 expr="path_prepend_txt";
 	};
@@ -7490,7 +7735,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_rest";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_rest";
 	expr {
 	 expr="path_rest";
 	};
@@ -7501,9 +7746,20 @@ LeabraProject .projects["TestLookupParse"] {
 	name="base_path";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="base_path";
 	expr {
 	 expr="base_path";
+	};
+       };
+       ProgArg @[11] {
+	arg_type=bool_ref;
+	type="bool&";
+	name="lookup_group_default";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_group_default";
 	};
        };
       };
@@ -7511,7 +7767,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
+      code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       pre_compile_code_string="Print  test_name lookup_type lookup_seed prepend_txt append_txt prog_el_txt";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["var_after_conditional"].prog_code[0].local_vars["test_name"]$;
@@ -7525,7 +7781,7 @@ LeabraProject .projects["TestLookupParse"] {
      PrintVar @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Print: test_name path_var path_prepend_txt path_rest base_path";
+      code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       pre_compile_code_string="Print  test_name path_var path_prepend_txt path_rest base_path";
       message=;
       print_var=$.projects["TestLookupParse"].programs.gp["TestPrograms"]["var_after_conditional"].prog_code[0].local_vars["test_name"]$;
@@ -7550,7 +7806,7 @@ LeabraProject .projects["TestLookupParse"] {
      expr=;
     };
     objs {
-     name=;
+     name="objs";
      el_typ=DataTable;
      el_def=0;
      DataTable @["DataTable_32"] {
@@ -7566,10 +7822,10 @@ LeabraProject .projects["TestLookupParse"] {
       auto_load_file=;
       keygen 4 0=0;
       row_indexes {
-       name=;
+       name="row_indexes";
       [0]       };
       last_sort_spec {
-       name="DataSortSpec_37";
+       name="last_sort_spec";
        ops {
 	name="ops";
 	el_typ=DataSortEl;
@@ -7579,17 +7835,17 @@ LeabraProject .projects["TestLookupParse"] {
      };
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["lookup_type"] {
@@ -7682,19 +7938,40 @@ LeabraProject .projects["TestLookupParse"] {
       desc="set by parser";
       init_from=NULL;
      };
+     ProgVar @["lookup_group_default"] {
+      name="lookup_group_default";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="set by parser";
+      init_from=NULL;
+     };
+     ProgVar @["DataTable_32"] {
+      name="DataTable_32";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].objs["DataTable_32"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -7777,8 +8054,8 @@ LeabraProject .projects["TestLookupParse"] {
      StaticMethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
-      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path)";
+      code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
+      pre_compile_code_string="lookup_type = ProgExprBase::Test_ParseForLookup(this.name, input, cursor_pos, lookup_seed, prepend_txt, append_txt, prog_el_txt, path_var, path_prepend_txt, path_rest, base_path, lookup_group_default)";
       result_var=.projects["TestLookupParse"].programs.gp["TestPrograms"]["object_member_after_print"].vars["lookup_type"]$$;
       object_type=ProgExprBase;
       method=ProgExprBase::Test_ParseForLookup;
@@ -7792,7 +8069,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="test_name";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="this.name";
 	expr {
 	 expr="this.name";
 	};
@@ -7803,7 +8080,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="input_text";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input";
 	expr {
 	 expr="input";
 	};
@@ -7814,7 +8091,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="cursor_pos";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="cursor_pos";
 	expr {
 	 expr="cursor_pos";
 	};
@@ -7825,7 +8102,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="lookup_seed";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="lookup_seed";
 	expr {
 	 expr="lookup_seed";
 	};
@@ -7836,7 +8113,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prepend_txt";
 	expr {
 	 expr="prepend_txt";
 	};
@@ -7847,7 +8124,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="append_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="append_txt";
 	expr {
 	 expr="append_txt";
 	};
@@ -7858,7 +8135,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="prog_el_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="prog_el_txt";
 	expr {
 	 expr="prog_el_txt";
 	};
@@ -7869,7 +8146,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_var";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_var";
 	expr {
 	 expr="path_var";
 	};
@@ -7880,7 +8157,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_prepend_txt";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_prepend_txt";
 	expr {
 	 expr="path_prepend_txt";
 	};
@@ -7891,7 +8168,7 @@ LeabraProject .projects["TestLookupParse"] {
 	name="path_rest";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="path_rest";
 	expr {
 	 expr="path_rest";
 	};
@@ -7902,9 +8179,20 @@ LeabraProject .projects["TestLookupParse"] {
 	name="base_path";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="base_path";
 	expr {
 	 expr="base_path";
+	};
+       };
+       ProgArg @[11] {
+	arg_type=bool_ref;
+	type="bool&";
+	name="lookup_group_default";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="lookup_group_default";
 	};
        };
       };
@@ -7984,8 +8272,8 @@ LeabraProject .projects["TestLookupParse"] {
      el_def=0;
      Function @["Function_2"] {
       desc=;
-      flags=0;
-      code_string=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="Function_2() returns: int";
       pre_compile_code_string="Function_2() returns: int";
       name="Function_2";
       return_type=T_Int;
@@ -8001,8 +8289,8 @@ LeabraProject .projects["TestLookupParse"] {
        el_def=0;
        LocalVars @[0] {
 	desc=;
-	flags=0;
-	code_string=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="LocalVars (0 vars)";
 	pre_compile_code_string="LocalVars (0 vars)";
 	local_vars {
 	 name="local_vars";
@@ -8024,8 +8312,8 @@ LeabraProject .projects["TestLookupParse"] {
      el_def=0;
      LocalVars @[0] {
       desc=;
-      flags=0;
-      code_string=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (0 vars)";
       pre_compile_code_string="LocalVars (0 vars)";
       local_vars {
        name="local_vars";
@@ -8050,22 +8338,22 @@ LeabraProject .projects["TestLookupParse"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=0.03599374;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0;
+     value 8 0=0.01905434;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=1;
+     value 8 0=0.7856025;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7417162;
+     value 8 0=0.7417079;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -8075,7 +8363,7 @@ LeabraProject .projects["TestLookupParse"] {
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAAEsAAAAmsAAAAAAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAABSQAABi4AAAAAAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -8264,17 +8552,17 @@ LeabraProject .projects["TestLookupParse"] {
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.02463891;
+       value 8 0=0.02046577;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04279749;
+       value 8 0=0.03208138;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.6618522;
+       value 8 0=0.6753705;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {

@@ -432,20 +432,19 @@ bool ProgExprBase::FindPathSeparator(const String& path, int& separator_start, i
   return false;
 }
 
-
-ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt, String& path_prepend_txt, String& append_txt, String& prog_el_txt, String& base_path, String& lookup_seed, String& path_var, String& path_rest, bool path_base_not_null, int& expr_start) {
+ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt, String& path_prepend_txt, String& append_txt, String& prog_el_txt, String& base_path, String& lookup_seed, String& path_var, String& path_rest, bool path_base_not_null, int& expr_start, bool& lookup_group_default) {
   
   String txt = cur_txt.before(cur_pos);
   String extra_txt = cur_txt.from(cur_pos);
   
-  int       delims_used = 0;
-  int_Array delim_pos;
   int       prog_el_start_pos = -1;
   int       c = '\0';
   int       c_next = '\0';
   int       c_previous = '\0';
   int       left_parens_cnt = 0;
   int       right_parens_cnt = 0;
+  int       delims_used = 0;
+  int_Array delim_pos;
   
   // ** Working backwards - delimiters will be in reverse order **
   for(int i=cur_pos-1; i>= 0; i--) {
@@ -562,6 +561,9 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = ProgExprBase::OBJ_MEMB_METH;
       delims_used = 1;
+      if (delim_pos.size > 1 && txt[delim_pos[1]] == ']') {
+        lookup_group_default = true;
+      }
     }
     else if(delim_pos.size > 2 && txt[delim_pos[2]] == ')' && txt[delim_pos[0]] == '>' && txt[delim_pos[1]] == '-'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ->
@@ -604,6 +606,9 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = ProgExprBase::OBJ_MEMB_METH;
       delims_used = 2;
+      if (delim_pos.size > 1 && txt[delim_pos[2]] == ']') {
+        lookup_group_default = true;
+      }
     }
     else if(delim_pos.size > 1 && txt[delim_pos[0]] == ':' && txt[delim_pos[1]] == ':'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ::
@@ -723,13 +728,14 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   String base_path;             // path to base element(s) if present
   String lookup_seed;           // start of text to seed lookup process
 
-  int lookup_type;
-  int expr_start = 0;
+  int   lookup_type;
+  int   expr_start = 0;
+  bool  lookup_group_default = false;
   
   bool path_base_not_null = false;
   // Rohrlich - see note in the parse code - remove this variable if all goes well
 //  bool path_base_not_null = (path_base_typ != NULL || path_base != NULL);
-  lookup_type = ParseForLookup(cur_txt, cur_pos, prepend_txt, path_prepend_txt, append_txt, prog_el_txt, base_path, lookup_seed, path_var, path_rest, path_base_not_null, expr_start);
+  lookup_type = ParseForLookup(cur_txt, cur_pos, prepend_txt, path_prepend_txt, append_txt, prog_el_txt, base_path, lookup_seed, path_var, path_rest, path_base_not_null, expr_start, lookup_group_default);
 
   lookup_seed.trim();
 
@@ -754,7 +760,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       varlkup->type_list.Link(&TA_ProgVar);
       varlkup->type_list.Link(&TA_DynEnumItem);
       varlkup->type_list.Link(&TA_Function);
-      if (expr_start == 0) {
+      if (expr_start == 0) {  // program calls must be at beginning of line
         varlkup->type_list.Link(&TA_Program);
       }
       varlkup->GetImageScoped(NULL, &TA_ProgVar, own_prg, &TA_Program);
@@ -844,7 +850,16 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
         MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off,
                                                       net_mbr_off, path_rest, false);
         // no warn
-        if(md) lookup_td = md->type;
+        if(md)
+          lookup_td = md->type;
+        
+        if (lookup_td && lookup_group_default) { // lookup is for group member vs group - i.e. group[0]. vs group.
+          taBase* tab = tabMisc::root->GetTemplateInstance(lookup_td);
+          if (tab && tab->InheritsFrom(&TA_taList_impl)) {
+            taList_impl* some_list = (taList_impl*)tab;
+            lookup_td = some_list->GetElType();
+          }
+        }
       }
       if(!lookup_td) {
         taMisc::Info("Var lookup: cannot find path:", path_rest, "in variable:",
@@ -1111,12 +1126,12 @@ String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 int ProgExprBase::Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
                                       String& lookup_seed, String& prepend_txt, String& append_txt,
                                       String& prog_el_txt, String& path_var, String& path_prepend_txt,
-                                      String& path_rest, String& base_path) {
+                                      String& path_rest, String& base_path, bool& lookup_group_default) {
   int     lookup_type = 0;
   bool    path_base_not_null = false;
   int     expr_start = 0;
   
-  lookup_type = ParseForLookup(input_text, cursor_pos, prepend_txt, path_prepend_txt, append_txt, prog_el_txt, base_path, lookup_seed, path_var, path_rest, path_base_not_null, expr_start);
+  lookup_type = ParseForLookup(input_text, cursor_pos, prepend_txt, path_prepend_txt, append_txt, prog_el_txt, base_path, lookup_seed, path_var, path_rest, path_base_not_null, expr_start, lookup_group_default);
   
 //  taMisc::DebugInfo("lookup_type = ", (String)lookup_type);
 //  taMisc::DebugInfo("lookup_seed = ", lookup_seed);

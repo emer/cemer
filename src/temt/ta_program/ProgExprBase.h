@@ -121,8 +121,9 @@ public:
   String StringFieldLookupFun(const String& cur_txt, int cur_pos,
                               const String& mbr_name, int& new_pos) override;
   
-  static LookUpType ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt, String& path_prepend_txt, String& append_txt, String& prog_el_txt, String& base_path, String& lookup_seed, String& path_var, String& path_rest, bool path_base_not_null, int& expr_start);
-  // return the lookup type
+  static LookUpType ParseForLookup(const String& cur_txt, int cur_pos, String& prepend_txt, String& path_prepend_txt, String& append_txt, String& prog_el_txt, String& base_path, String& lookup_seed, String& path_var, String& path_rest, bool path_base_not_null, int& expr_start, bool& lookup_group_default);
+  // return the lookup type and set many arguments
+  
   static bool   FindPathSeparator(const String& path, int& separator_start, int& separator_end, bool backwards = true);
   // locate either '.' or '->' working backwards
   
@@ -133,7 +134,7 @@ public:
   static int   Test_ParseForLookup(const String test_name, const String input_text, const int cursor_pos,
                                    String& lookup_seed, String& prepend_txt, String& append_txt,
                                    String& prog_el_txt, String& path_var, String& path_prepend_txt,
-                                   String& path_rest, String& base_path);
+                                   String& path_rest, String& base_path, bool& lookup_group_default);
   // ONLY for testing - returns the lookup type and sets many variables
 
   void  InitLinks();
