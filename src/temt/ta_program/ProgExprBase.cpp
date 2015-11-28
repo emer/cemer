@@ -606,7 +606,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = ProgExprBase::OBJ_MEMB_METH;
       delims_used = 2;
-      if (delim_pos.size > 1 && txt[delim_pos[2]] == ']') {
+      if (delim_pos.size > 2 && txt[delim_pos[2]] == ']') {
         lookup_group_default = true;
       }
     }
