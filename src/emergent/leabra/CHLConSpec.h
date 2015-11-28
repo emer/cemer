@@ -112,24 +112,30 @@ public:
   }
 
   inline void	C_Compute_Weights_LeabraCHL
-    (float& wt, float& dwt, float& fwt, float& swt)
+    (float& wt, float& dwt, float& fwt, float& swt, float& scale)
   { if(dwt != 0.0f) {
       fwt += dwt;
       swt = fwt;                // keep sync'd -- not tech necc..
-      wt = SigFmLinWt(fwt);
+      wt = scale * SigFmLinWt(fwt);
       dwt = 0.0f;
     }
   }
   // #IGNORE 
 
-  inline void	C_Compute_Weights_LeabraCHL_fast
-    (const float decay_dt, const float wt_dt, const float slow_lrate,
-     float& wt, float& dwt, float& fwt, float& swt)
+  inline void	C_Compute_Weights_LeabraCHL_slow
+    (float& wt, float& dwt, float& fwt, float& swt, float& scale, int tot_trials)
   { 
-    fwt += dwt + decay_dt * (swt - fwt);
-    swt += dwt * slow_lrate;
-    float nwt = SigFmLinWt(fwt);
-    wt += wt_dt * (nwt - wt);
+    fwt += dwt;
+    float eff_wt = slow_wts.swt_pct * swt + slow_wts.fwt_pct * fwt;
+    float nwt = scale * SigFmLinWt(eff_wt);
+    wt += slow_wts.wt_dt * (nwt - wt);
+    if(slow_wts.cont_swt) {
+      swt += slow_wts.slow_dt * (fwt - swt);
+    }
+    else {
+      if(tot_trials % slow_wts.slow_tau == 0)
+        swt = fwt;
+    }
     dwt = 0.0f;
   }
   // #IGNORE 
@@ -147,17 +153,15 @@ public:
     float* dwts = cg->OwnCnVar(DWT);
     float* fwts = cg->OwnCnVar(FWT);
     float* swts = cg->OwnCnVar(SWT);
+    float* scales = cg->OwnCnVar(SCALE);
 
-    if(fast_wts.on) {
-      const float decay_dt = fast_wts.decay_dt;
-      const float wt_dt = fast_wts.wt_dt;
-      const float slow_lrate = fast_wts.slow_lrate;
-      CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL_fast
-                     (decay_dt, wt_dt, slow_lrate, wts[i], dwts[i], fwts[i], swts[i]));
+    if(slow_wts.on) {
+      CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL_slow
+                     (wts[i], dwts[i], fwts[i], swts[i], scales[i], net->total_trials));
     }
     else {
       CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL
-                     (wts[i], dwts[i], fwts[i], swts[i]));
+                     (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
     }
   }
 

@@ -186,25 +186,25 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-eTypeDef_Of(FastWtsSpec);
+eTypeDef_Of(SlowWtsSpec);
 
-class E_API FastWtsSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra fast and slow weight specifications
+class E_API SlowWtsSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // are fast weights enabled at all?  if not, then there is just one effective weight value at each synapse
-  float         nofast_lrate;   // #CONDSHOW_OFF_on #DEF_2 if fast weights are NOT being used, this is an additional multiplier on the learning rate, applied in computing the cur_lrate, to make the overall effective learning rate comparable between using fast weights and not (i.e., the same basic lrate parameter can be used) -- note that the switch to cascaded average activations for avg_s and avg_m caused a reduction in effective learning rate, which this or fast weights then compensates for, allowing use of historical learning rate parameters (.02 default)
-  float         decay_tau;      // #CONDSHOW_ON_on #DEF_100:3000 time constant of fast weight decay in trials (computed at Compute_Weights -- fast weights decay back to slow weight values) -- the biological decay time is ~10 min, so for 100 msec trials = 10 trials per second, this is 6,000 trials -- effective weight decay rate is also affected slightly by wt_tau and contrast enhancement -- a value of roughly 3000 produces a reasonable curve -- see GraphFastWtsFun to see time course -- more coarse-grained simulations should set this value lower (e.g., 300 for 1 trial / sec = 600 trial total decay time)
-  float         wt_tau;         // #CONDSHOW_ON_on #DEF_4:60 time constant for how quickly the effective weight (wt) adapts to changes in the fast weight values -- the biological rise time to maximum fast weight change is about 20 seconds, so for 100 msec trials = 10 trials per second, that is ~200 trials -- a value of 44 produces this result -- for more coarse-grained time scales, e.g., 1 trial / sec, scale proportionally, e.g., a value of 5 for 20 trials
-  float         fast_lrate;     // #CONDSHOW_ON_on #MIN_1 #DEF_5:10 how much more quickly do the fast weights change compared to the slow weights -- this is a multiplier on top of the standard learning rate parameter lrate -- it will show up in cur_lrate, and then gets undone for updating the slow weights
+  bool          on;             // are slow weights enabled?  if not, then there is just one effective weight value at each synapse, updated using the current cur_lrate factor (based on lrate plus any learning rate schedule)  if so, then a slowly adapting swt factor is updated to track the faster weight changes
+  float         swt_pct;        // #CONDSHOW_ON_on #MIN_0 #MAX_1 what proportion the slowly adapting, more stable weight value contributes to the net effective weight value used in computing activations -- biologically this reflects the proportion of AMPA receptors that are stabilized vs. those that are subject to rapid insertion / removal
+  int           slow_tau;      // #CONDSHOW_ON_on #DEF_100:3000 time #MIN_1 constant for adaptation of the slow weight value to track the fast weight value, in trials (computed at Compute_Weights) -- biologically the corresponding window of tag capture, and late-LTP transition times, are roughly 90 minutes or more, so for 100 msec trials = 10 trials per second, this is 54,000 trials -- but more typical values of around the size of an epoch are more appropriate for smaller more artificial networks
+  bool          cont_swt;      // #CONDSHOW_ON_on update swt continuously on every trial using a rate constant = 1/slow_tau -- alternatively swt will be discretely updated every slow_tau trials
+  float         wt_tau;        // #CONDSHOW_ON_on #DEF_1;4:60 #MIN_1 time constant for how quickly the effective weight (wt) adapts to changes in the fast weight values -- the biological rise time to maximum fast weight change is about 20 seconds, so for 100 msec trials = 10 trials per second, that is ~200 trials -- a value of 44 produces this result -- for more coarse-grained time scales, e.g., 1 trial / sec, scale proportionally, e.g., a value of 5 for 20 trials -- computationally this value is optional and 1 will negate its effects
 
-  float		decay_dt;	// #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of decay = 1 / decay_tau
+  float         fwt_pct;       // #CONDSHOW_ON_on #READ_ONLY #EXPERT percent of fast contribution to effective weight = 1 - swt_pct
+  float		slow_dt;	// #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of slow updating = 1 / slow_tau
   float         wt_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of wt adaptation = 1 / wt_tau
-  float		slow_lrate;	// #CONDSHOW_ON_on #READ_ONLY #EXPERT 1 / fast_lrate (* lrs_mult if fast_no_lrs is in effect)
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
-  TA_SIMPLE_BASEFUNS(FastWtsSpec);
+  TA_SIMPLE_BASEFUNS(SlowWtsSpec);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
@@ -267,7 +267,7 @@ public:
 
   bool		learn;		// #CAT_Learning #DEF_true individual control over whether learning takes place in this connection spec -- if false, no learning will take place regardless of any other settings -- if true, learning will take place if it is enabled at the network and other relevant levels
   Quarters      learn_qtr;      // #CAT_Learning #CONDSHOW_ON_learn quarters after which learning (Compute_dWt) should take place
-  float		lrate;		// #CAT_Learning #CONDSHOW_ON_learn #DEF_0.01;0.02 #MIN_0 [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience
+  float		lrate;		// #CAT_Learning #CONDSHOW_ON_learn #DEF_0.04 #MIN_0  learning rate -- how fast the weights change per experience -- since version 7.8.5, a hidden factor of 2 has been removed, so this should be 2x what you used to use previously (e.g., default used to be .02, now is .04) -- this governs the rate of change for the fastest adapting weights -- see slow_wts for a more slowly adapting factor
   bool          use_lrate_sched; // #CAT_Learning #CONDSHOW_ON_learn use the lrate_sched learning rate schedule if one exists -- allows learning rate to change over time as a function of epoch count
   float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CONDSHOW_ON_learn #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
   float		lrs_mult;	// #READ_ONLY #NO_INHERIT #CAT_Learning learning rate multiplier obtained from the learning rate schedule
@@ -276,7 +276,7 @@ public:
 
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
-  FastWtsSpec   fast_wts;       // #CAT_Learning #CONDSHOW_ON_learn fast weights specifications -- parameters for how fast and slowly adapting weights learning
+  SlowWtsSpec   slow_wts;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
   DeepLrateSpec deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
 
   FunLookup	wt_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes wt sigmoidal fun 
@@ -452,27 +452,34 @@ public:
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts
 
-  inline void	C_Compute_Weights_CtLeabraXCAL_fast
-    (const float decay_dt, const float wt_dt, const float slow_lrate,
-     float& wt, float& dwt, float& fwt, float& swt, float& scale)
+  inline void	C_Compute_Weights_CtLeabraXCAL_slow
+    (float& wt, float& dwt, float& fwt, float& swt, float& scale, int tot_trials)
   { 
     if(dwt > 0.0f)	dwt *= (1.0f - fwt);
     else		dwt *= fwt;
-    fwt += dwt + decay_dt * (swt - fwt);
-    swt += dwt * slow_lrate;
-    float nwt = scale * SigFmLinWt(fwt);
-    wt += wt_dt * (nwt - wt);
+    fwt += dwt;
+    float eff_wt = slow_wts.swt_pct * swt + slow_wts.fwt_pct * fwt;
+    float nwt = scale * SigFmLinWt(eff_wt);
+    wt += slow_wts.wt_dt * (nwt - wt);
+    if(slow_wts.cont_swt) {
+      swt += slow_wts.slow_dt * (fwt - swt);
+    }
+    else {
+      if(tot_trials % slow_wts.slow_tau == 0)
+        swt = fwt;
+    }
+      
     dwt = 0.0f;
   }
-  // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- fast wts
+  // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- slow wts
 
 #ifdef TA_VEC_USE
   inline void	Compute_Weights_CtLeabraXCAL_vec
     (LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales);
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts -- vectorized
-  inline void	Compute_Weights_CtLeabraXCAL_fast_vec
-    (LeabraConGroup* cg, const float decay_dt, const float wt_dt, const float slow_lrate,
-     float* wts, float* dwts, float* fwts, float* swts, float* scales);
+  inline void	Compute_Weights_CtLeabraXCAL_slow_vec
+    (LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales,
+     int tot_trials);
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- fast wts -- vectorized
 #endif
 
@@ -515,10 +522,10 @@ public:
     float& fwt = uv->bias_fwt;
     float& swt = uv->bias_swt;
     fwt += dwt;
-    if(fast_wts.on) {
-      fwt += fast_wts.decay_dt * (swt - fwt);
-      swt += fast_wts.slow_lrate * dwt;
-      wt += fast_wts.wt_dt * (fwt - wt);
+    if(slow_wts.on) {
+      float eff_wt = slow_wts.swt_pct * swt + slow_wts.fwt_pct * fwt;
+      wt += slow_wts.wt_dt * (eff_wt - wt);
+      swt += slow_wts.slow_dt * (fwt - swt);
     }
     else {
       swt = fwt;
@@ -550,7 +557,7 @@ public:
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the xcal dWt function for given threshold value (NULL = new data table)
   virtual void	GraphXCalSoftBoundFun(DataTable* graph_data = NULL);
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the xcal soft weight bounding function (NULL = new data table)
-  virtual void	GraphFastWtsFun(int trials = 6000, DataTable* graph_data = NULL);
+  virtual void	GraphSlowWtsFun(int trials = 6000, DataTable* graph_data = NULL);
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the trajectory of fast and slow weight change dynamics over trials, in response to a single .1 dwt change (NULL = new data table)
 
   virtual void 	WtScaleCvt(float slay_kwta_pct=.25, int slay_n_units=100,

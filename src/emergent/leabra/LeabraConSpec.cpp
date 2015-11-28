@@ -23,7 +23,7 @@
 TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
-TA_BASEFUNS_CTORS_DEFN(FastWtsSpec);
+TA_BASEFUNS_CTORS_DEFN(SlowWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepLrateSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
 SMARTREF_OF_CPP(LeabraConSpec);
@@ -94,28 +94,29 @@ void WtSigSpec::UpdateAfterEdit_impl() {
   if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
 }
 
-void FastWtsSpec::Initialize() {
+void SlowWtsSpec::Initialize() {
   on = false;
-  decay_tau = 300.0f;
-  wt_tau = 5.0f;
-  fast_lrate = 5.0f;
+  swt_pct = 0.5f;
+  slow_tau = 100;
+  cont_swt = true;
+  wt_tau = 1.0f;
 
-  decay_dt = 1.0f / decay_tau;
+  fwt_pct = 1.0f - swt_pct;
+  slow_dt = 1.0f /(float)slow_tau;
   wt_dt = 1.0f / wt_tau;
-  slow_lrate = 1.0f / fast_lrate;
 
   Defaults_init();
 }
 
-void FastWtsSpec::Defaults_init() {
-  nofast_lrate = 2.0f;
+void SlowWtsSpec::Defaults_init() {
+
 }
 
-void FastWtsSpec::UpdateAfterEdit_impl() {
+void SlowWtsSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  decay_dt = 1.0f / decay_tau;
+  fwt_pct = 1.0f - swt_pct;
+  slow_dt = 1.0f /(float)slow_tau;
   wt_dt = 1.0f / wt_tau;
-  slow_lrate = 1.0f / fast_lrate;
 }
 
 void DeepLrateSpec::Initialize() {
@@ -168,7 +169,7 @@ void LeabraConSpec::Defaults_init() {
 
   rnd.mean = .5f;
   rnd.var = .25f;
-  lrate = .02f;
+  lrate = .04f;
   use_lrate_sched = true;
   cur_lrate = .02f;
   lrs_mult = 1.0f;
@@ -189,11 +190,22 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
 
   inherited::UpdateAfterEdit_impl();
   lrate_sched.UpdateAfterEdit_NoGui();
-  fast_wts.UpdateAfterEdit_NoGui();
+  slow_wts.UpdateAfterEdit_NoGui();
   xcal.UpdateAfterEdit_NoGui(); // this calls owner
   CreateWtSigFun();
 
   ClearBaseFlag(BF_MISC2);      // done..
+
+  if(taMisc::is_loading) {
+    taVersion v785(7, 8, 5);
+    if(taMisc::loading_version < v785 && !HasBaseFlag(BF_MISC4)) { // prevent repeated updates!
+      lrate = 2.0f * lrate;
+      cur_lrate = 2.0f * cur_lrate;
+      SetBaseFlag(BF_MISC4);
+      TestWarning(true, "UAE",
+                  "updated lrate in conspec = 2 * previous value -- as of version 7.8.5 a previous implicit 2x factor was removed");
+    }
+  }
 }
 
 void LeabraConSpec::GetPrjnName(Projection& prjn, String& nm) {
@@ -276,12 +288,6 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
     if(wt_sig.rugp_wt_sync) {
       net->net_misc.rugp_wt_sync = true;
     }
-  }
-  if(fast_wts.on) {
-    cur_lrate *= fast_wts.fast_lrate;
-  }
-  else {
-    cur_lrate *= fast_wts.nofast_lrate;
   }
 
   if(use_lrate_sched) {
@@ -407,10 +413,10 @@ void LeabraConSpec::GraphXCalSoftBoundFun(DataTable* graph_data) {
   graph_data->FindMakeGraphView();
 }
 
-void LeabraConSpec::GraphFastWtsFun(int trials, DataTable* graph_data) {
+void LeabraConSpec::GraphSlowWtsFun(int trials, DataTable* graph_data) {
   taProject* proj = GetMyProj();
   if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_FastWtsFun", true);
+    graph_data = proj->GetNewAnalysisDataTable(name + "_SlowWtsFun", true);
   }
   graph_data->StructUpdate(true);
   graph_data->ResetData();
@@ -431,14 +437,9 @@ void LeabraConSpec::GraphFastWtsFun(int trials, DataTable* graph_data) {
   float swt = 0.5f;
   float scale = 1.0f;
   for(int trl = 0; trl < trials; trl++) {
-    if(trl == 0)
-      dwt = 0.1f;
-    else
-      dwt = 0.0f;
+    dwt = Random::UniformMinMax(-lrate, lrate);
     float dwt_save = dwt;
-    C_Compute_Weights_CtLeabraXCAL_fast
-      (fast_wts.decay_dt, fast_wts.wt_dt, fast_wts.slow_lrate,
-       wt, dwt, fwt, swt, scale);
+    C_Compute_Weights_CtLeabraXCAL_slow(wt, dwt, fwt, swt, scale, trl);
     graph_data->AddBlankRow();
     trialc->SetValAsInt(trl, -1);
     dwtc->SetValAsFloat(dwt_save, -1);
