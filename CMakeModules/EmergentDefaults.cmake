@@ -79,14 +79,12 @@ else (WIN32) # assume gcc!!!
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fabi-version=6 ")
   endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
-  if (APPLE)
-    # on Mac, DEBUG is not defined!
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+  # on Mac/Linux, DEBUG is not defined!
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 #    message(STATUS "CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
 #    add the automatically determined parts of the RPATH
 #    which point to directories outside the build tree to the install RPATH
-    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-  endif (APPLE)
+  SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 endif (WIN32)
 
