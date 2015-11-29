@@ -1215,41 +1215,49 @@ taBase* taBase::ElemPath(const String& path, TypeDef* expect_type, bool err_msg)
 }
 
 taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) const {
-  if(((int)path.length() <= start) || (path == ".")) {
+  String effective_path = path;
+  if(((int)effective_path.length() <= start) || (effective_path == ".")) {
     ret_md = NULL;
     return (taBase*)this;
   }
-  if((path == "Null") || (path == "NULL")) {
+  if((effective_path == "Null") || (effective_path == "NULL")) {
     ret_md = NULL;
     return NULL;
   }
 
   taBase* rval = NULL;
   bool ptrflag = false;
-  int length = path.length();
+  int length = effective_path.length();
 
   while(start < length) {
-    if(path[start] == '*') {    // path is a pointer
-      start += 2;
+    if(effective_path[start] == '*') {    // path is a pointer
+      start += 2;               // assumes "*("
       ptrflag = true;
+      if (effective_path[length-1] == ')') {
+        effective_path = effective_path.before(length-1);  // remove the trailing parens
+      }
     }
-    if(path[start] == '.') {    // must be root, so search on next stuff
+    if(effective_path[start] == '.') {    // must be root, so search on next stuff
       start++;
       continue;
     }
 
-    int delim_pos = taBase::GetNextPathDelimPos(path, start);
-    String el_path = path(start,delim_pos-start); // element is between start and delim
+    int delim_pos = taBase::GetNextPathDelimPos(effective_path, start);
+    String el_path = effective_path(start,delim_pos-start); // element is between start and delim
     int next_pos = delim_pos+1;
-    if((delim_pos < length) && (path[delim_pos] == '['))
+    if((delim_pos < length) && (effective_path[delim_pos] == '['))
       next_pos--;
 
     MemberDef* md;
     void* tmp_ptr = FindMembeR(el_path, md);
+    if (tmp_ptr && md && md->type->IsPointer()) {
+      taBase* mbr = (taBase*)tmp_ptr;
+      rval = mbr;
+    }
     if(tmp_ptr && (!md || md->type->IsActualTaBase())) { // null md = taBase
       taBase* mbr = (taBase*)tmp_ptr;
       if(delim_pos < length) {  // there's more to be done..
-        rval = mbr->FindFromPath(path, ret_md, next_pos); // start from after delim
+        rval = mbr->FindFromPath(effective_path, ret_md, next_pos); // start from after delim
       }
       else {
         rval = mbr;             // that's all folks..

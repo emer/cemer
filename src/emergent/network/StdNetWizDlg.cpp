@@ -94,8 +94,8 @@ bool StdNetWizDlg::DoDialog() {
   int new_net;  new_net = 0;
   String curow;
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  String mypath = GetPath();
-
+  String mypath = GetPath(NULL, proj);  // stop at proj - just use path from wizards on
+  
   Dlg1 = new taGuiDialog;
   taBase::Own(Dlg1, this);
   Dlg2 = new taGuiDialog;
@@ -126,7 +126,6 @@ bool StdNetWizDlg::DoDialog() {
   Dlg1->AddIntField(&n_layers, "n_layers", "main", curow, "tooltip=enter the number of layers to create here\n you will be able to change this later too;");
   Dlg1->AddStretch(curow);
   Dlg1->AddPushButton("NLayersFmNetwork", "main", curow, "mdlg.NLayersFmNetwork()", "label=Get N Layers From Network; tooltip=get the number of layers from the existing network;");
-
   Dlg1->FixAllUrl("mdlg.", mypath); // update all the urls
 
   int drval = Dlg1->PostDialog(true);
