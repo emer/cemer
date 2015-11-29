@@ -7,7 +7,7 @@ Library          OperatingSystem
 
 Resource         Server_lib.txt
 
-Suite Setup      Initialize Emergent    ../../test/TestPointerUpdates.proj
+Suite Setup      Initialize Emergent    ../test/TestBrowserEdit.proj
 Suite Teardown   Shutdown Emergent
 
 *** Variables ***
@@ -27,7 +27,7 @@ ${debug} =       false
 
 Initialize
     Set Suite Variable     ${verbose}       ${false}
-    Set Suite Variable     ${project}       ../../test/TestPointerUpdates.proj
+    Set Suite Variable     ${project}       ../test/TestBrowserEdit.proj
     Set Suite Variable	   ${secondary_project}		../../../demo/programs/program_examples.proj
     Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
 
@@ -129,12 +129,6 @@ TestExportImport
     Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
     Ensure Emergent Free
     Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"BasicDataReadWrite\\"][\\"ExportImport\\"]
-
-TestReadAndPrintAllRows
-    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
-    Ensure Emergent Free
-    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Data\\"].gp[\\"BasicDataReadWrite\\"][\\"ReadAndPrintAllRows\\"]
-
 
 TestUseLocalVarWhenAccessingMatrices
     Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
