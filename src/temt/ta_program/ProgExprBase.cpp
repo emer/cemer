@@ -708,6 +708,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
     path_prepend_txt = txt.through(delim_pos[0]);
   }
   
+  lookup_seed.trim();
   return lookup_type;
 }
 
@@ -736,8 +737,6 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   // Rohrlich - see note in the parse code - remove this variable if all goes well
 //  bool path_base_not_null = (path_base_typ != NULL || path_base != NULL);
   lookup_type = ParseForLookup(cur_txt, cur_pos, prepend_txt, path_prepend_txt, append_txt, prog_el_txt, base_path, lookup_seed, path_var, path_rest, path_base_not_null, expr_start, lookup_group_default);
-
-  lookup_seed.trim();
 
   String rval = _nilString;
   path_own_obj = NULL;
