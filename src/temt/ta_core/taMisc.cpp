@@ -2463,6 +2463,19 @@ String taMisc::PathsToLinks(const String& str) {
   return rval;
 }
 
+bool taMisc::IsLegalCVar(const String& str) {
+  for(int i=0;i<str.length();i++) {
+    char c = str[i];
+    if(isalnum(c) || c == '_') {
+      if(i==0 && isdigit(c))
+        return false;
+    }
+    else {
+      return false;
+    }
+  }
+  return true;
+}
 
 String taMisc::StringCVar(const String& str) {
   String rval;

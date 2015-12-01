@@ -1,3 +1,4 @@
+
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -896,12 +897,12 @@ bool ProgEl::CvtCodeToVar(String& code) {
   
   bool exists = prg->FindVarName(var_nm);
   if (exists) {
-    code = ckcode;  // return without type (i.e. int x = 9 -> x = 9)
+    code = code.before(vtype) + ckcode; // this is the code minus the variable type
     return true;
   }
 
   // ONLY modify the code if we're actually going to prompt!
-  code = code.before(vtype) + ckcode; // this is just the code minus the variable type
+  code = code.before(vtype) + ckcode; // this is the code minus the variable type
   
   ProgVar::VarType var_type = ProgVar::GetTypeFromTypeDef(td);
   ProgElChoiceDlg dlg;

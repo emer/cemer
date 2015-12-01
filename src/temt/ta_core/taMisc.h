@@ -771,6 +771,8 @@ public:
 
   static String StringCVar(const String& str);
   // #CAT_Utility make return string in a form that would be valid as a variable name in C (i.e., alpha + numeric (not at start) + _
+  
+  static bool IsLegalCVar(const String& str);
 
   static String& IndentString(String& strm, int indent)
   { return strm << String(MAX(indent,0) * indent_spc, 0, ' '); }
