@@ -891,9 +891,16 @@ bool ProgEl::CvtCodeToVar(String& code) {
     else
       break;
   }
- 
-  if (var_nm.empty()) // no var_name 
+  
+  if (var_nm.empty()) // no var_name
     return true;      // return true??
+
+  // bad var name - replace with good one
+  if (!taMisc::IsLegalCVar(var_nm)){
+    String good_var = taMisc::StringCVar(var_nm);
+    ckcode = ckcode.repl(var_nm, good_var);
+    var_nm = good_var;
+  }
   
   bool exists = prg->FindVarName(var_nm);
   if (exists) {
