@@ -18,6 +18,7 @@
 #include <ProgVar_List>
 #include <MethodDef>
 #include <BuiltinTypeDefs>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ProgArg_List);
 
@@ -231,7 +232,9 @@ void ProgArg_List::ParseArgString(const String& args_in) {
     ProgArg* pa = FastEl(i);
     String arg;
     read_one_arg(args, arg);
-    pa->expr.SetExpr(arg);
+    // make sure it is a legal C var
+    String good_arg = taMisc::StringCVar(arg);
+    pa->expr.SetExpr(good_arg);
     if(args.empty()) break;
   }
   TestWarning(!args.empty(), "ParseArgString",
