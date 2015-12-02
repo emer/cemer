@@ -89,6 +89,10 @@ ProgEl* ProgCode::CvtCodeToProgEl() {
     if(candidates.size == 0)
       return NULL;
   }
+  // assign is a fall back when there is more than one choice - methods take precence over assignment
+  if (candidates.size > 1) {
+    candidates.RemoveEl_((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_AssignExpr));
+  }
   ProgEl* cvt = candidates[0];
   if(candidates.size > 1) {
     int ctrl_n = 0;
