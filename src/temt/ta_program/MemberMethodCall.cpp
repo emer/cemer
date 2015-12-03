@@ -197,6 +197,9 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
   UpdateAfterEdit_impl();                          // update based on obj and path
   if(!obj_type) return false;
   MethodDef* md = obj_type->methods.FindName(methnm);
+  
+  if(!md) return false;
+  
   if(md) {
     method = md;
     UpdateAfterEdit_impl();                        // update based on obj
