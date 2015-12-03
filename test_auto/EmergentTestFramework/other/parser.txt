@@ -1,4 +1,4 @@
-** Settings ***
+*** Settings ***
 
 Library          Telnet
 Library          HttpLibrary.HTTP
@@ -63,6 +63,7 @@ ParseNoText
     Prog Var Should Be Empty	path_prepend_txt
     Prog Var Should Be Empty	path_rest
     Prog Var Should Be Empty	base_path
+    Prog Var Should Equal	lookup_group_default   false
 
 ParseObjectSelectMethodOrMember
     Ensure Emergent Free
@@ -82,6 +83,7 @@ ParseObjectSelectMethodOrMember
     Prog Var Should Match	path_prepend_txt      DataTable_28->
     Prog Var Should Be Empty	   path_rest
     Prog Var Should Match	base_path	      DataTable_28
+    Prog Var Should Equal	lookup_group_default   false
 
 ParseStaticMethodRandom
     Ensure Emergent Free
@@ -191,7 +193,7 @@ ParseMethodArgumentsFirstArg
     Prog Var Should Match	lookup_seed	     x
     Prog Var Should Match	prepend_txt	     Random::UniformMeanRange(
     Prog Var Should Be Empty	append_txt	     
-    Prog Var Should Be Empty	prog_el_txt
+    Prog Var Should Match	prog_el_txt	     x
     Prog Var Should Match	path_var	     Random	      
     Prog Var Should Match	path_prepend_txt     Random::UniformMeanRange(
     Prog Var Should Match	path_rest	     UniformMeanRange
@@ -208,7 +210,7 @@ ParseMethodArgumentsSecondArg
     Json Value Should Equal    ${output}             /result  1
 
     Prog Var Should Match	lookup_seed	     x
-    Prog Var Should Match	prepend_txt	     Random::UniformMeanRange(0,\ \ 
+    Prog Var Should Match	prepend_txt	     Random::UniformMeanRange(0,
     Prog Var Should Be Empty	append_txt	     
     Prog Var Should Match	prog_el_txt	     x
     Prog Var Should Be Empty	path_var	     	      
@@ -227,7 +229,7 @@ ParseVarAfterConditional
     Json Value Should Equal    ${output}             /result  1
 
     Prog Var Should Be Empty	lookup_seed	     
-    Prog Var Should Match	prepend_txt	     bool = (a ==\ \ \ 
+    Prog Var Should Match	prepend_txt	     bool = (a ==
     Prog Var Should Be Empty	append_txt	     
     Prog Var Should Be Empty	prog_el_txt	     
     Prog Var Should Match	path_var	     Random	     	      
