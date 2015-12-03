@@ -232,9 +232,11 @@ void ProgArg_List::ParseArgString(const String& args_in) {
     ProgArg* pa = FastEl(i);
     String arg;
     read_one_arg(args, arg);
+    // rohrlich - 12/3/15 - this fix doesn't work because an arg has different rules than a var - need a different fix
     // make sure it is a legal C var
-    String good_arg = taMisc::StringCVar(arg);
-    pa->expr.SetExpr(good_arg);
+//    String good_arg = taMisc::StringCVar(arg);
+    //    pa->expr.SetExpr(good_arg);
+        pa->expr.SetExpr(arg);
     if(args.empty()) break;
   }
   TestWarning(!args.empty(), "ParseArgString",
