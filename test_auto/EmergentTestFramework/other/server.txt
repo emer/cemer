@@ -51,7 +51,7 @@ General RunState
     Status OK Match Result     ${output}             4
 
 Program RunState
-    ${output} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
+    ${output} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraTrain"}
     Status OK Match Result     ${output}             4
 
 OpenProj
@@ -71,11 +71,11 @@ OpenNonExistentProj
     Status Error Match         ${output}   0		       file \\\"../proj_templates/LeabraaaaStd.proj\\\" not found   
     
 RunProgram
-    ${output} =                Run Command Completion          {"command": "RunProgram", "program": "LeabraBatch"}   300 sec
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": "LeabraTrain"}   300 sec
     Status OK No Result        ${output}
 
 Program RunState After Init
-    ${output} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
+    ${output} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraTrain"}
     Status OK Match Result     ${output}             0
 
 General RunState After Init
@@ -83,7 +83,7 @@ General RunState After Init
     Status OK Match Result     ${output}             0
 
 RunProgramRelativePath
-    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]"}   300 sec
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".gp[\\\"LeabraAll_Std\\\"][\\\"LeabraTrain\\\"]"}   300 sec
     Status OK No Result        ${output}
 
 RunProgramRelativeBrokenPath
@@ -91,24 +91,24 @@ RunProgramRelativeBrokenPath
     Status Error Match         ${output}   5		       Program '.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBaaatch\\\"]' not found
 
 RunProgramProgramsPath
-    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]"}   300 sec
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraTrain\\\"]"}   300 sec
     Status OK No Result        ${output}
 
 RunProgramProjectPath
-    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".projects[\\\"LeabraStd\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]"}   300 sec
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".projects[\\\"LeabraStd\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraTrain\\\"]"}   300 sec
     Status OK No Result        ${output}
 
 RunProgramOtherProjectPath
-    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".projects[\\\"LeabraFlex\\\"].programs.gp[\\\"ConfigProgs\\\"][\\\"MasterBatch\\\"]"}   600 sec
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".projects[\\\"LeabraFlex\\\"].programs.gp[\\\"ConfigProgs\\\"][\\\"MasterTrain\\\"]"}   600 sec
     Status OK No Result        ${output}
 
 RunProgramOtherProjectErrorPath
-    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".projects[\\\"LeabraFlex\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]"}   300 sec
-    Status Error Match         ${output}   5		       Program '.projects[\\\"LeabraFlex\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraBatch\\\"]' not found
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": ".projects[\\\"LeabraFlex\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraTrain\\\"]"}   300 sec
+    Status Error Match         ${output}   5		       Program '.projects[\\\"LeabraFlex\\\"].programs.gp[\\\"LeabraAll_Std\\\"][\\\"LeabraTrain\\\"]' not found
     
 RunProgramAsync
     Ensure Emergent Free
-    Run Emergent Program       LeabraBatch
+    Run Emergent Program       LeabraTrain
 
 #
 # General and RunProgram error tests
