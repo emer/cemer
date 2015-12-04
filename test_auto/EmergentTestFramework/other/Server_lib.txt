@@ -151,6 +151,7 @@ Run Command Completion
 
 Run Emergent Program
     [Arguments]        ${program}
+    
     ${output} =        Run Command      {"command": "CollectConsoleOutput", "enable": true}     500ms
     Status OK No Result        ${output}
     ${output} =        Run Command      {"command": "ClearConsoleOutput"}       500ms
@@ -170,9 +171,9 @@ Run Emergent Program
     Should Be Equal  ${runstate}             "0"
     Print              Completed running program in ${i} seconds
     ${output} =        Run Command      {"command": "GetConsoleOutput"}         500ms
-    Status OK Has Result   ${output}
-    ${console} =      Get Json Value   ${output}       /result
-    Print     ${output}
+    Status OK   ${output}
+    ${console}	Set Variable	""
+    ${output2}    ${console} =     Run Keyword And Ignore Error	Get Json Value   ${output}       /result
     ${output} =        Run Command      {"command": "CollectConsoleOutput", "enable": false}    500ms
     Status OK No Result        ${output}
     ${output} =        Run Command      {"command": "ClearConsoleOutput"}       500ms
