@@ -19,7 +19,7 @@
 
 // css_qtconsole.h -- abstraction of qt-based console (unix only)
 
-#include "config.h"
+#include "taconfig.h"
 #include "css_console.h"
 #include "css_machine.h"
 
