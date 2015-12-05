@@ -42,8 +42,10 @@ void T3UnitNode_Cylinder::setAppearance_impl(NetView* nv, float act, const iColo
   cylinder->setColor(clr, .2f, 0.95f, 150.0f);
   cylinder->setLength(ht);
 
-  float xp = translate->dx();
-  float zp = translate->dz();
+  QVector3D trans = transform->translation();
+  
+  float xp = trans.x();
+  float zp = trans.z();
   float dy = ((max_height - base_height) * act * 0.5f) / max_z;
   // cylinder->Translate(xp, yp, dz);
   Translate(xp, dy, zp);

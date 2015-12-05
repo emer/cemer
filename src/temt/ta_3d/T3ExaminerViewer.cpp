@@ -71,7 +71,6 @@
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
-using namespace Qt3DInput;
 
 
 T3RenderView::T3RenderView(QScreen *screen)
@@ -191,7 +190,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   engine = new QAspectEngine;
   render = new QRenderAspect();
   engine->registerAspect(render);
-  input = new QInputAspect;
+  input = new Qt3DInput::QInputAspect;
   engine->registerAspect(input);
   engine->initialize();
   QVariantMap data;
@@ -244,7 +243,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
   framegraph->setActiveFrameGraph(viewport);
 
-  mouse_ctrl = new QMouseController(root_entity);
+  mouse_ctrl = new Qt3DInput::QMouseController(root_entity);
   
   root_entity->addComponent(framegraph);
   engine->setRootEntity(root_entity);
@@ -1039,7 +1038,7 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
   //  float multiplicator = float(exp(diffvalue));
   float multiplicator = -diffvalue;
 
-  if (camera->projectionType() == QCameraLens::OrthogonalProjection) {
+  if (camera->projectionType() == QCameraLens::OrthographicProjection) {
     // Since there's no perspective, "zooming" in the original sense
     // of the word won't have any visible effect. So we just increase
     // or decrease the field-of-view values of the camera instead, to

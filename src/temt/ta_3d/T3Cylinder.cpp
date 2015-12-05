@@ -41,8 +41,8 @@ T3Cylinder::T3Cylinder(Qt3DNode* parent, LongAxis ax, float rad, float len)
 }
 
 void T3Cylinder::init() {
-  axis_rotate = new QRotateTransform;
-  transform->addTransform(axis_rotate);
+  axis_rotate = new Qt3DCore::QTransform;
+  addComponent(axis_rotate);
   QCylinderMesh* cb = new QCylinderMesh();
   addMesh(cb);
   updateGeom();
@@ -81,18 +81,21 @@ void T3Cylinder::updateGeom() {
   switch(axis) {
   case LONG_X:
     size = QVector3D(length, 2.0f*radius, 2.0f*radius);
-    axis_rotate->setAxis(QVector3D(0.0f, 0.0f, 1.0f));
-    axis_rotate->setAngleDeg(-90.0f);
+    axis_rotate->setRotation
+      (Qt3DCore::QTransform::fromAxisAndAngle(QVector3D(0.0f, 0.0f, 1.0f),
+                                    taMath_float::deg_to_rad(-90.0f)));
     break;
   case LONG_Y:
     size = QVector3D(2.0f*radius, length, 2.0f*radius);
-    axis_rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
-    axis_rotate->setAngleDeg(0.0f);
+    axis_rotate->setRotation
+      (Qt3DCore::QTransform::fromAxisAndAngle(QVector3D(1.0f, 0.0f, 0.0f),
+                                    taMath_float::deg_to_rad(0.0f)));
     break;
   case LONG_Z:
     size = QVector3D(2.0f*radius, 2.0f*radius, length);
-    axis_rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
-    axis_rotate->setAngleDeg(-90.0f);
+    axis_rotate->setRotation
+      (Qt3DCore::QTransform::fromAxisAndAngle(QVector3D(1.0f, 0.0f, 0.0f),
+                                    taMath_float::deg_to_rad(-90.0f)));
     break;
   }    
 }

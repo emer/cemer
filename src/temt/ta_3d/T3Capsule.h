@@ -34,7 +34,7 @@ public:
     LONG_Z,                     // long axis is in Z direction
   };
 
-  Qt3DCore::QRotateTransform*    axis_rotate;    // extra axis rotation
+  Qt3DCore::QTransform*    axis_rotate;    // extra axis rotation
   LongAxis      axis;
   float         radius;
   float         length;

@@ -23,10 +23,9 @@ TA_BASEFUNS_CTORS_LITE_DEFN(taTransform);
 
 void taTransform::CopyTo(T3Entity* ent) {
   if (!ent) return;
-  ent->translate->setTranslation(translate);
-  ent->rotate->setAxis(rotate);
-  ent->rotate->setAngleRad(rotate.rot);
-  ent->scale->setScale3D(scale);
+  ent->Translate(translate);
+  ent->RotateRad(rotate, rotate.rot);
+  ent->Scale3D(scale);
 }
 
 #else // TA_QT3D

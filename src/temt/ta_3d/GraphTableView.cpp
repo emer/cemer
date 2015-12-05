@@ -727,8 +727,8 @@ void GraphTableView::UpdateDisplay(bool update_panel) {
   if (update_panel) UpdatePanel();
 
 #ifdef TA_QT3D
-  Render();                     // this is brute force and works, for now..
-  return;
+  // Render();                     // this is brute force and works, for now..
+  // return;
   //  RemoveGraph();
 #endif // TA_QT3D
 

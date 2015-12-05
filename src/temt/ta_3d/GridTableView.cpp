@@ -259,8 +259,8 @@ void GridTableView::SigRecvUpdateView_impl() {
   if (!isVisible()) return;
 
 #ifdef TA_QT3D
-  Render();                     // this is brute force and works, for now..
-  return;
+  // Render();                     // this is brute force and works, for now..
+  // return;
   //  RemoveGraph();
 #endif // TA_QT3D
   UpdateDisplay(true);
@@ -450,8 +450,8 @@ void GridTableView::UpdateDisplay(bool update_panel) {
     if(update_panel && (view_range.max < old_rows-1) && (view_range.max > 0)) {
       UpdatePanel();
 #ifdef TA_QT3D
-      Render();                     // this is brute force and works, for now..
-      return;
+      // Render();                     // this is brute force and works, for now..
+      // return;
       //  RemoveGraph();
 #endif // TA_QT3D
       Render_impl();
@@ -466,8 +466,8 @@ void GridTableView::UpdateDisplay(bool update_panel) {
   if (update_panel) UpdatePanel();
 
 #ifdef TA_QT3D
-  Render();                     // this is brute force and works, for now..
-  return;
+  // Render();                     // this is brute force and works, for now..
+  // return;
   //  RemoveGraph();
 #endif // TA_QT3D
   

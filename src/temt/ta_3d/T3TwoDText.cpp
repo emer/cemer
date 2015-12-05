@@ -82,8 +82,8 @@ void T3TwoDText::updateRender() {
     pmesh->setHeight(1.0f);
   if(pmesh->width() != wd)
     pmesh->setWidth(wd);
-  float scx = scale->scale3D().x();
-  float scy = scale->scale3D().y();
+  float scx = transform->scale3D().x();
+  float scy = transform->scale3D().y();
   float xoff = 0.0f;
   float yoff = 0.0f;
   switch(align) {

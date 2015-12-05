@@ -37,9 +37,6 @@ class Qt3DNode; // #IGNORE
 
 #include <Qt3DCore/QEntity>
 #include <Qt3DCore/QTransform>
-#include <Qt3DCore/QScaleTransform>
-#include <Qt3DCore/QTranslateTransform>
-#include <Qt3DCore/QRotateTransform>
 #include <Qt3DRender/QGeometryRenderer>
 #include <Qt3DRender/QMaterial>
 #include <Qt3DInput/QMouseInput>
@@ -51,6 +48,9 @@ namespace Qt3DRender {
 
 // for maketa:
 typedef Qt3DCore::QNode Qt3DNode; 
+
+
+#include <taMath_float>
 
 class TA_API T3Entity : public Qt3DCore::QEntity {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS Qt3D entity that retains pointers to the standard components for rendering, for convenience, and automatically adds the standard transforms (scale, translate, rotation) in the constructor
@@ -65,9 +65,6 @@ public:
   bool  nodeUpdating()  { return node_updating; }
   
   Qt3DCore::QTransform*          transform; // overall transform applied to this node -- contains each of the following items:
-  Qt3DCore::QScaleTransform*     scale;     // overall scale transform applied to this node
-  Qt3DCore::QTranslateTransform* translate; // overall translation transform applied to this node
-  Qt3DCore::QRotateTransform*    rotate;    // overall rotation transform applied to this node
   Qt3DRender::QGeometryRenderer*   mesh;      // mesh component for this node
   Qt3DRender::QMaterial*           material;  // material for this node
   Qt3DInput::QMouseInput*         mouse;     // mouse input object if created
@@ -89,23 +86,25 @@ public:
   // add a QMouseInput component and send its clicked, double-clicked signals to this object's mouse* slots -- needs the mouse_ctrl from the T3ExaminerViewer
   
   inline void   Translate(const QVector3D& pos)
-  { translate->setTranslation(pos); }
+  { transform->setTranslation(pos); }
   inline void   Translate(float dx, float dy, float dz)
-  { translate->setTranslation(QVector3D(dx, dy, dz)); }
+  { transform->setTranslation(QVector3D(dx, dy, dz)); }
   inline void   Scale(float sc)
-  { scale->setScale(sc); }
+  { transform->setScale(sc); }
   inline void   Scale3D(const QVector3D& sc)
-  { scale->setScale3D(sc); }
+  { transform->setScale3D(sc); }
   inline void   Scale3D(float sx, float sy, float sz)
-  { scale->setScale3D(QVector3D(sx, sy, sz)); }
+  { transform->setScale3D(QVector3D(sx, sy, sz)); }
   inline void   RotateDeg(const QVector3D& axis, float ang_deg)
-  { rotate->setAxis(axis); rotate->setAngleDeg(ang_deg); }
+  { transform->setRotation(Qt3DCore::QTransform::fromAxisAndAngle
+                           (axis, taMath_float::deg_to_rad(ang_deg))); }
   inline void   RotateRad(const QVector3D& axis, float ang_rad)
-  { rotate->setAxis(axis); rotate->setAngleRad(ang_rad); }
+  { transform->setRotation(Qt3DCore::QTransform::fromAxisAndAngle
+                           (axis, ang_rad)); }
   inline void   RotateDeg(float ax, float ay, float az, float ang_deg)
-  { rotate->setAxis(QVector3D(ax, ay, az)); rotate->setAngleDeg(ang_deg); }
+  { RotateDeg(QVector3D(ax, ay, az), ang_deg); }
   inline void   RotateRad(float ax, float ay, float az, float ang_rad)
-  { rotate->setAxis(QVector3D(ax, ay, az)); rotate->setAngleRad(ang_rad); }
+  { RotateRad(QVector3D(ax, ay, az), ang_rad); }
 
   virtual void TranslateXLeftTo(const QVector3D& pos);
   // move the X dim left edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set

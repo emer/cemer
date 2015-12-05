@@ -25,18 +25,11 @@ using namespace Qt3DInput;
 T3Entity::T3Entity(Qt3DNode* parent)
   : QEntity(parent)
   , transform(new Qt3DCore::QTransform())
-  , translate(new QTranslateTransform())
-  , scale(new QScaleTransform())
-  , rotate(new QRotateTransform())
   , node_updating(false)
 {
   mesh = NULL;
   material = NULL;
   mouse = NULL;
-  // order MATTERS in setting these -- used in *reverse* order
-  transform->addTransform(rotate);
-  transform->addTransform(scale);
-  transform->addTransform(translate);
   addComponent(transform);
 }
 
@@ -70,45 +63,45 @@ void T3Entity::setNodeUpdating(bool updating) {
 
 void T3Entity::TranslateXLeftTo(const QVector3D& pos) {
   QVector3D ps = pos;
-  ps.setX(pos.x() + 0.5f * size.x() * scale->scale3D().x());
+  ps.setX(pos.x() + 0.5f * size.x() * transform->scale3D().x());
   Translate(ps);
 }
 
 void T3Entity::TranslateXRightTo(const QVector3D& pos) {
   QVector3D ps = pos;
-  ps.setX(pos.x() - 0.5f * size.x() * scale->scale3D().x());
+  ps.setX(pos.x() - 0.5f * size.x() * transform->scale3D().x());
   Translate(ps);
 }
 
 void T3Entity::TranslateYBotTo(const QVector3D& pos) {
   QVector3D ps = pos;
-  ps.setY(pos.y() + 0.5f * size.y() * scale->scale3D().y());
+  ps.setY(pos.y() + 0.5f * size.y() * transform->scale3D().y());
   Translate(ps);
 }
 
 void T3Entity::TranslateYTopTo(const QVector3D& pos) {
   QVector3D ps = pos;
-  ps.setY(pos.y() - 0.5f * size.y() * scale->scale3D().y());
+  ps.setY(pos.y() - 0.5f * size.y() * transform->scale3D().y());
   Translate(ps);
 }
 
 void T3Entity::TranslateZFrontTo(const QVector3D& pos) {
   QVector3D ps = pos;
-  ps.setZ(pos.z() - 0.5f * size.z() * scale->scale3D().z());
+  ps.setZ(pos.z() - 0.5f * size.z() * transform->scale3D().z());
   Translate(ps);
 }
 
 void T3Entity::TranslateZBackTo(const QVector3D& pos) {
   QVector3D ps = pos;
-  ps.setZ(pos.z() + 0.5f * size.z() * scale->scale3D().z());
+  ps.setZ(pos.z() + 0.5f * size.z() * transform->scale3D().z());
   Translate(ps);
 }
 
 void T3Entity::TranslateLLFTo(const QVector3D& pos) {
   QVector3D ps = pos;
-  ps.setX(pos.x() - 0.5f * size.x() * scale->scale3D().x());
-  ps.setY(pos.y() - 0.5f * size.y() * scale->scale3D().y());
-  ps.setZ(pos.z() - 0.5f * size.z() * scale->scale3D().z());
+  ps.setX(pos.x() - 0.5f * size.x() * transform->scale3D().x());
+  ps.setY(pos.y() - 0.5f * size.y() * transform->scale3D().y());
+  ps.setZ(pos.z() - 0.5f * size.z() * transform->scale3D().z());
   Translate(ps);
 }
 
