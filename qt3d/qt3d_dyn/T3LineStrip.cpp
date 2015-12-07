@@ -20,17 +20,15 @@
 #include <Qt3DRender/QAttribute>
 #include <Qt3DRender/QPhongMaterial>
 #include <Qt3DRender/QPerVertexColorMaterial>
-
-#include <taMisc>
+#include <QVector3D>
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
-using namespace Qt3DInput;
 
 /////////////////////////////////////////////
 //      rendering
 
-QByteArray createLineStripVertexData(int n_points, float* points) {
+QByteArray createLineStripVertexData(int n_points, const float* points) {
   // Populate a buffer with the interleaved per-vertex data with
   // vec3 pos; // not: vec2 texCoord, vec3 normal, vec4 tangent
   const quint32 elementSize = 3; // + 2 + 3 + 4;
@@ -42,10 +40,10 @@ QByteArray createLineStripVertexData(int n_points, float* points) {
 class LineStripVertexBufferFunctor : public QBufferFunctor {
 public:
   int     n_points;
-  float*  points;
+  const float*  points;
   
   LineStripVertexBufferFunctor(const T3LineStripMesh& mesh)
-    : points(mesh.points.el)
+    : points(mesh.points.data())
   {
     if(mesh.node_updating) {
       n_points = 0;
@@ -59,7 +57,7 @@ public:
     return createLineStripVertexData(n_points, points);
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
+  bool operator ==(const QBufferFunctor &other) const override {
     // return false;               // always update!!!
     const LineStripVertexBufferFunctor *otherFunctor
       = dynamic_cast<const LineStripVertexBufferFunctor *>(&other);
@@ -72,7 +70,7 @@ public:
   QT3D_FUNCTOR(LineStripVertexBufferFunctor)
 };
 
-QByteArray createLineStripIndexData(int n_indexes, int* indexes) {
+QByteArray createLineStripIndexData(int n_indexes, const int* indexes) {
   QByteArray indexBytes = QByteArray::fromRawData((const char*)indexes,
                                                   n_indexes *  sizeof(int));
   return indexBytes;
@@ -81,10 +79,10 @@ QByteArray createLineStripIndexData(int n_indexes, int* indexes) {
 class LineStripIndexBufferFunctor : public QBufferFunctor {
 public:
   int     n_indexes;
-  int*    indexes;
+  const int*    indexes;
   
   LineStripIndexBufferFunctor(const T3LineStripMesh& mesh)
-    : indexes(mesh.indexes.el)
+    : indexes(mesh.indexes.data())
   {
     if(mesh.node_updating) {
       n_indexes = 0;
@@ -98,7 +96,7 @@ public:
     return createLineStripIndexData(n_indexes, indexes);
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
+  bool operator ==(const QBufferFunctor &other) const override {
     // return false;               // always update!!!
     const LineStripIndexBufferFunctor *otherFunctor
       = dynamic_cast<const LineStripIndexBufferFunctor *>(&other);
@@ -111,7 +109,7 @@ public:
   QT3D_FUNCTOR(LineStripIndexBufferFunctor)
 };
 
-QByteArray createLineStripColorData(int n_colors, float* colors) {
+QByteArray createLineStripColorData(int n_colors, const float* colors) {
   if(n_colors == 0) {
     return QByteArray();
   }
@@ -123,10 +121,10 @@ QByteArray createLineStripColorData(int n_colors, float* colors) {
 class LineStripColorBufferFunctor : public QBufferFunctor {
 public:
   int     n_colors;
-  float*  colors;
+  const float*  colors;
   
   LineStripColorBufferFunctor(const T3LineStripMesh& mesh)
-    : colors(mesh.colors.el)
+    : colors(mesh.colors.data())
   {
     if(mesh.node_updating) {
       n_colors = 0;
@@ -140,7 +138,7 @@ public:
     return createLineStripColorData(n_colors, colors);
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
+  bool operator ==(const QBufferFunctor &other) const override {
     // return false;               // always update!!!
     const LineStripColorBufferFunctor *otherFunctor
       = dynamic_cast<const LineStripColorBufferFunctor *>(&other);
@@ -159,8 +157,8 @@ public:
 
 LineStripGeometry::LineStripGeometry(QNode *parent)
   : QGeometry(parent)
-  , m_mesh((T3LineStripMesh*)parent)
   , m_positionAttribute(new QAttribute(this))
+  , m_mesh((T3LineStripMesh*)parent)
   , m_indexAttribute(new QAttribute(this))
   , m_colorAttribute(new QAttribute(this))
   , m_vertexBuffer(new QBuffer(QBuffer::VertexBuffer, this))
@@ -233,12 +231,9 @@ void LineStripGeometry::updateAll() {
 ///////////////////////////////////////////////////////////////////
 //              Main Mesh
 
-T3LineStripMesh::T3LineStripMesh(Qt3DNode* parent)
-  : inherited(parent)
+T3LineStripMesh::T3LineStripMesh(Qt3DCore::QNode* parent)
+  : QGeometryRenderer(parent)
 {
-  points.SetGeom(2,3,0);        // 0 = extensible frames
-  colors.SetGeom(2,4,0);
-
   setPrimitiveType(LineStrip);
   setPrimitiveRestart(true);
   setRestartIndex(0xFFFFFFFF);
@@ -257,105 +252,70 @@ void T3LineStripMesh::setNodeUpdating(bool updating) {
   node_updating = updating;
   blockNotifications(node_updating); // block if updating
   if(should_render) {
-#ifdef DEBUG    
-    // taMisc::Info("LineStrip mesh update");
-    if(colors.Frames() > 0 && colors.Frames() != points.Frames()) {
-      taMisc::Warning("T3LineStripMesh: colors != points vertices, colors:",
-                      String(colors.Frames()), " vs. points:", String(points.Frames()));
-    }
-#endif
     updateLines();
   }
 }
 
 void T3LineStripMesh::restart() {
-  points.EnforceFrames(0);
-  indexes.SetSize(0);
-  colors.EnforceFrames(0);
+  points.resize(0);
+  indexes.resize(0);
+  colors.resize(0);
 }
 
 int T3LineStripMesh::addPoint(const QVector3D& pos) {
-  points.AddFrame();
-  int idx = points.Frames()-1;
-  points.Set(pos.x(), 0, idx);
-  points.Set(pos.y(), 1, idx);
-  points.Set(pos.z(), 2, idx);
+  int idx = pointCount();
+  points.append(pos.x());
+  points.append(pos.y());
+  points.append(pos.z());
   return idx;
 }
 
 void T3LineStripMesh::moveTo(const QVector3D& pos) {
   int idx = addPoint(pos);
-  if(indexes.size > 0)
-    indexes.Add(0xFFFFFFFF);        // stop
-  indexes.Add(idx);
+  if(indexes.size() > 0)
+    indexes.append(0xFFFFFFFF);        // stop
+  indexes.append(idx);
 }
 
 void T3LineStripMesh::lineTo(const QVector3D& pos) {
   int idx = addPoint(pos);
-  indexes.Add(idx);
-}
-
-int T3LineStripMesh::addPoint(const taVector3f& pos) {
-  points.AddFrame();
-  int idx = points.Frames()-1;
-  points.Set(pos.x, 0, idx);
-  points.Set(pos.y, 1, idx);
-  points.Set(pos.z, 2, idx);
-  return idx;
-}
-
-void T3LineStripMesh::moveTo(const taVector3f& pos) {
-  int idx = addPoint(pos);
-  if(indexes.size > 0)
-    indexes.Add(0xFFFFFFFF);        // stop
-  indexes.Add(idx);
-}
-
-void T3LineStripMesh::lineTo(const taVector3f& pos) {
-  int idx = addPoint(pos);
-  indexes.Add(idx);
+  indexes.append(idx);
 }
 
 void T3LineStripMesh::moveToIdx(int idx) {
-  if(indexes.size > 0)
-    indexes.Add(0xFFFFFFFF);        // stop
-  indexes.Add(idx);
+  if(indexes.size() > 0)
+    indexes.append(0xFFFFFFFF);        // stop
+  indexes.append(idx);
 }
 
 void T3LineStripMesh::lineToIdx(int idx) {
-  indexes.Add(idx);
+  indexes.append(idx);
 }
 
 int T3LineStripMesh::addColor(const QColor& clr) {
-  colors.AddFrame();
-  int idx = colors.Frames()-1;
-  colors.Set(clr.redF(), 0, idx);
-  colors.Set(clr.greenF(), 1, idx);
-  colors.Set(clr.blueF(), 2, idx);
-  colors.Set(clr.alphaF(), 3, idx);
+  int idx = colorCount();
+  colors.append(clr.redF());
+  colors.append(clr.greenF());
+  colors.append(clr.blueF());
+  colors.append(clr.alphaF());
   return idx;
 }
 
 void T3LineStripMesh::setPointColor(int idx, const QColor& clr) {
-  if(idx < 0 || idx >= colors.Frames()) return;
-  colors.Set(clr.redF(), 0, idx);
-  colors.Set(clr.greenF(), 1, idx);
-  colors.Set(clr.blueF(), 2, idx);
-  colors.Set(clr.alphaF(), 3, idx);
+  if(idx < 0 || idx >= colorCount()) return;
+  int stidx = idx * 4;
+  colors[stidx + 0] = clr.redF();
+  colors[stidx + 1] = clr.greenF();
+  colors[stidx + 2] = clr.blueF();
+  colors[stidx + 3] = clr.alphaF();
 }
 
 void T3LineStripMesh::setPoint(int idx, const QVector3D& pos) {
-  if(idx < 0 || idx >= points.Frames()) return;
-  points.Set(pos.x(), 0, idx);
-  points.Set(pos.y(), 1, idx);
-  points.Set(pos.z(), 2, idx);
-}
-
-void T3LineStripMesh::setPoint(int idx, const taVector3f& pos) {
-  if(idx < 0 || idx >= points.Frames()) return;
-  points.Set(pos.x, 0, idx);
-  points.Set(pos.y, 1, idx);
-  points.Set(pos.z, 2, idx);
+  if(idx < 0 || idx >= pointCount()) return;
+  int stidx = idx * 3;
+  points[stidx + 0] = pos.x();
+  points[stidx + 1] = pos.y();
+  points[stidx + 2] = pos.z();
 }
 
 void T3LineStripMesh::updateLines() {
@@ -363,39 +323,3 @@ void T3LineStripMesh::updateLines() {
 }
   
 
-///////////////////////
-
-T3LineStrip::T3LineStrip(Qt3DNode* parent)
-  : inherited(parent)
-{
-  line_width = 1.0f;
-  ambient = 1.0f;               // lines are all ambient..
-  per_vertex_color = false;
-  lines = new T3LineStripMesh();
-  addMesh(lines);
-}
-
-T3LineStrip::~T3LineStrip() {
-  
-}
-
-void T3LineStrip::setNodeUpdating(bool updating) {
-  lines->setNodeUpdating(updating);
-  inherited::setNodeUpdating(updating);
-}
-
-void T3LineStrip::updateLines() {
-  lines->updateLines();
-}
-
-void T3LineStrip::setPerVertexColor(bool per_vtx) {
-  per_vertex_color = per_vtx;
-  if(per_vertex_color) {
-    color_type = PER_VERTEX;
-    updateColor();
-  }
-  else {
-    color_type = PHONG;
-    updateColor();
-  }
-}

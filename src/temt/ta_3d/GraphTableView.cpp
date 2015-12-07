@@ -744,9 +744,9 @@ void GraphTableView::SigRecvUpdateView_impl() {
   if (!isVisible()) return;
 
 #ifdef TA_QT3D
-  Render();                     // this is brute force and works, for now..
-  return;
-  //  RemoveGraph();
+  // Render();                     // this is brute force and works, for now..
+  // return;
+  RemoveGraph();
 #endif // TA_QT3D
   
   if(delta_rows > 0) {

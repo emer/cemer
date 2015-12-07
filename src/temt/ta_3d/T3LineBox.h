@@ -24,6 +24,11 @@
 
 // declare all other types mentioned but not required to include:
 
+namespace Qt3DRender {
+  class QBuffer;
+  class QAttribute;
+}
+
 class TA_API T3LineBoxMesh : public Qt3DRender::QGeometryRenderer {
   // mesh for a 3D line box  -- good for bounding boxes etc
   Q_OBJECT
@@ -40,6 +45,22 @@ public:
   ~T3LineBoxMesh(); 
 };
 
+
+class LineBoxGeometry : public Qt3DRender::QGeometry {
+  Q_OBJECT
+public:
+  explicit LineBoxGeometry(Qt3DCore::QNode *parent = NULL);
+  ~LineBoxGeometry();
+
+  void updateSize();
+
+private:
+  Qt3DRender::QAttribute *m_positionAttribute;
+  Qt3DRender::QAttribute *m_indexAttribute;
+  Qt3DRender::QBuffer *m_vertexBuffer;
+  Qt3DRender::QBuffer *m_indexBuffer;
+  T3LineBoxMesh* m_mesh;
+};
 
 class TA_API T3LineBox : public T3ColorEntity {
   // a 3D box of lines -- sets mesh to T3LineBoxMesh -- good for bounding boxes etc

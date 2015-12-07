@@ -43,7 +43,7 @@ T3TwoDText::T3TwoDText(Qt3DNode* parent)
   mat->setShininess(10000.0f);
   mat->diffuse()->addTextureImage(texture);
   plane->addMaterial(mat);
-  plane->RotateDeg(1.0f, 0.0f, 0.0f, 90.0f); // flip up by default
+  plane->RotateRad(1.0f, 0.0f, 0.0f, 1.5f); // flip up by default
 }
 
 T3TwoDText::~T3TwoDText() {

@@ -28,6 +28,11 @@
 
 // declare all other types mentioned but not required to include:
 
+namespace Qt3DRender {
+  class QBuffer;
+  class QAttribute;
+}
+
 class TA_API T3LineStripMesh : public Qt3DRender::QGeometryRenderer {
   // mesh for an arbitrary line strip with verticies and indexes
   Q_OBJECT
@@ -78,6 +83,28 @@ public slots:
   virtual void  updateLines(); // update the rendered lines
 };
 
+
+class LineStripGeometry : public Qt3DRender::QGeometry {
+  Q_OBJECT
+public:
+  explicit LineStripGeometry(Qt3DCore::QNode *parent = NULL);
+
+  ~LineStripGeometry();
+  
+  void updateIndices();
+  void updateVertices();
+  void updateColors();
+  void updateAll();
+  
+private:
+  Qt3DRender::QAttribute *m_positionAttribute;
+  Qt3DRender::QAttribute *m_indexAttribute;
+  Qt3DRender::QAttribute *m_colorAttribute;
+  Qt3DRender::QBuffer *m_vertexBuffer;
+  Qt3DRender::QBuffer *m_indexBuffer;
+  Qt3DRender::QBuffer *m_colorBuffer;
+  T3LineStripMesh* m_mesh;
+};
 
 class TA_API T3LineStrip : public T3ColorEntity {
   // strip of lines, either all one color or with per-vertex color

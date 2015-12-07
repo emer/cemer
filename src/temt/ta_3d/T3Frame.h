@@ -24,6 +24,11 @@
 
 // declare all other types mentioned but not required to include:
 
+namespace Qt3DRender {
+  class QBuffer;
+  class QAttribute;
+}
+
 class TA_API T3FrameMesh : public Qt3DRender::QGeometryRenderer {
   // a picture-frame shape -- rectangular with a width and thickness, oriented in XY plane
   Q_OBJECT
@@ -68,6 +73,25 @@ signals:
   void  frameWidthChanged();
 };
 
+
+class FrameGeometry : public Qt3DRender::QGeometry {
+  Q_OBJECT
+public:
+  explicit FrameGeometry(Qt3DCore::QNode *parent = NULL);
+  ~FrameGeometry();
+
+  void updateGeometry();
+
+private:
+  Qt3DRender::QAttribute *m_positionAttribute;
+  Qt3DRender::QAttribute *m_texCoordAttribute;
+  Qt3DRender::QAttribute *m_normalAttribute;
+  Qt3DRender::QAttribute *m_tangentAttribute;
+  Qt3DRender::QAttribute *m_indexAttribute;
+  Qt3DRender::QBuffer *m_vertexBuffer;
+  Qt3DRender::QBuffer *m_indexBuffer;
+  T3FrameMesh* m_mesh;
+};
 
 class TA_API T3Frame : public T3ColorEntity {
   // a picture-frame shape -- rectangular with a width and thickness, oriented in XY plane

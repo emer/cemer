@@ -173,56 +173,44 @@ public:
 ////////////////////////////////////////////////////
 //      Geometry
 
-class LineBoxGeometry : public QGeometry {
-  // Q_OBJECT
-public:
-  explicit LineBoxGeometry(QNode *parent)
-    : QGeometry(parent)
-    , m_mesh((T3LineBoxMesh*)parent)
-    , m_positionAttribute(new QAttribute(this))
-    , m_indexAttribute(new QAttribute(this))
-    , m_vertexBuffer(new QBuffer(QBuffer::VertexBuffer, this))
-    , m_indexBuffer(new QBuffer(QBuffer::IndexBuffer, this))
-  {
-    m_positionAttribute->setName(QAttribute::defaultPositionAttributeName());
-    m_positionAttribute->setDataType(QAttribute::Float);
-    m_positionAttribute->setDataSize(3);
-    m_positionAttribute->setAttributeType(QAttribute::VertexAttribute);
-    m_positionAttribute->setBuffer(m_vertexBuffer);
-    m_positionAttribute->setByteStride(3 * sizeof(float));
-    m_positionAttribute->setCount(8);
+LineBoxGeometry::LineBoxGeometry(QNode *parent)
+  : QGeometry(parent)
+  , m_mesh((T3LineBoxMesh*)parent)
+  , m_positionAttribute(new QAttribute(this))
+  , m_indexAttribute(new QAttribute(this))
+  , m_vertexBuffer(new QBuffer(QBuffer::VertexBuffer, this))
+  , m_indexBuffer(new QBuffer(QBuffer::IndexBuffer, this))
+{
+  m_positionAttribute->setName(QAttribute::defaultPositionAttributeName());
+  m_positionAttribute->setDataType(QAttribute::Float);
+  m_positionAttribute->setDataSize(3);
+  m_positionAttribute->setAttributeType(QAttribute::VertexAttribute);
+  m_positionAttribute->setBuffer(m_vertexBuffer);
+  m_positionAttribute->setByteStride(3 * sizeof(float));
+  m_positionAttribute->setCount(8);
 
-    m_indexAttribute->setAttributeType(QAttribute::IndexAttribute);
-    m_indexAttribute->setDataType(QAttribute::UnsignedShort);
-    m_indexAttribute->setBuffer(m_indexBuffer);
-    m_indexAttribute->setCount(24);
+  m_indexAttribute->setAttributeType(QAttribute::IndexAttribute);
+  m_indexAttribute->setDataType(QAttribute::UnsignedShort);
+  m_indexAttribute->setBuffer(m_indexBuffer);
+  m_indexAttribute->setCount(24);
 
-    m_vertexBuffer->setBufferFunctor
-      (QBufferFunctorPtr(new LineBoxVertexBufferFunctor(*m_mesh)));
-    m_indexBuffer->setBufferFunctor
-      (QBufferFunctorPtr(new LineBoxIndexBufferFunctor(*m_mesh)));
+  m_vertexBuffer->setBufferFunctor
+    (QBufferFunctorPtr(new LineBoxVertexBufferFunctor(*m_mesh)));
+  m_indexBuffer->setBufferFunctor
+    (QBufferFunctorPtr(new LineBoxIndexBufferFunctor(*m_mesh)));
 
-    addAttribute(m_positionAttribute);
-    addAttribute(m_indexAttribute);
-  }
+  addAttribute(m_positionAttribute);
+  addAttribute(m_indexAttribute);
+}
 
-  ~LineBoxGeometry() {
-    QGeometry::cleanup();
-  }
+LineBoxGeometry::~LineBoxGeometry() {
+  QGeometry::cleanup();
+}
 
-  void updateSize() {
-    m_vertexBuffer->setBufferFunctor
-      (QBufferFunctorPtr(new LineBoxVertexBufferFunctor(*m_mesh)));
-  }
-
-private:
-  QAttribute *m_positionAttribute;
-  QAttribute *m_indexAttribute;
-  QBuffer *m_vertexBuffer;
-  QBuffer *m_indexBuffer;
-  T3LineBoxMesh* m_mesh;
-};
-
+void LineBoxGeometry::updateSize() {
+  m_vertexBuffer->setBufferFunctor
+    (QBufferFunctorPtr(new LineBoxVertexBufferFunctor(*m_mesh)));
+}
 
 ///////////////////////////////////
 //      Mesh
