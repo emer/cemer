@@ -21,15 +21,12 @@
 #include <Qt3DRender/QPerVertexColorMaterial>
 #include <Qt3DRender/QPhongMaterial>
 
-#include <T3PerVertexTransMaterial>
-#include <T3Misc>
-#include <taMisc>
+#include <QVector3D>
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
-using namespace Qt3DInput;
 
-QByteArray createTriangleStripVertexData(int n_vndata, float* vndata) {
+QByteArray createTriangleStripVertexData(int n_vndata, const float* vndata) {
   // Populate a buffer with the interleaved per-vertex data with
   // vec3 pos + vec3 normal; // not: vec2 texCoord, vec3 normal, vec4 tangent
   const quint32 elementSize = 3 + 3; // + 2 + 3 + 4;
@@ -41,10 +38,10 @@ QByteArray createTriangleStripVertexData(int n_vndata, float* vndata) {
 class TriangleStripVertexBufferFunctor : public QBufferFunctor {
 public:
   int     n_vndata;
-  float*  vndata;
+  const float*  vndata;
   
   TriangleStripVertexBufferFunctor(const T3TriangleStripMesh& mesh)
-    : vndata(mesh.vndata.el)
+    : vndata(mesh.vndata.data())
   {
     // if(mesh.node_updating) {
     //   n_vndata = 0;
@@ -58,7 +55,7 @@ public:
     return createTriangleStripVertexData(n_vndata, vndata);
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
+  bool operator ==(const QBufferFunctor &other) const override {
     return false;               // always update!!
     const TriangleStripVertexBufferFunctor *otherFunctor =
       dynamic_cast<const TriangleStripVertexBufferFunctor *>(&other);
@@ -72,7 +69,7 @@ public:
 };
 
 
-QByteArray createTriangleStripIndexData(int n_indexes, int* indexes) {
+QByteArray createTriangleStripIndexData(int n_indexes, const int* indexes) {
   QByteArray indexBytes = QByteArray::fromRawData((const char*)indexes,
                                                   n_indexes *  sizeof(int));
   return indexBytes;
@@ -81,10 +78,10 @@ QByteArray createTriangleStripIndexData(int n_indexes, int* indexes) {
 class TriangleStripIndexBufferFunctor : public QBufferFunctor {
 public:
   int     n_indexes;
-  int*    indexes;
+  const int*    indexes;
   
   TriangleStripIndexBufferFunctor(const T3TriangleStripMesh& mesh)
-    : indexes(mesh.indexes.el)
+    : indexes(mesh.indexes.data())
   {
     // if(mesh.node_updating) {
     //   n_indexes = 0;
@@ -98,7 +95,7 @@ public:
     return createTriangleStripIndexData(n_indexes, indexes);
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
+  bool operator ==(const QBufferFunctor &other) const override {
     //    return false;               // always update!!
     const TriangleStripIndexBufferFunctor *otherFunctor =
       dynamic_cast<const TriangleStripIndexBufferFunctor *>(&other);
@@ -111,7 +108,7 @@ public:
   QT3D_FUNCTOR(TriangleStripIndexBufferFunctor)
 };
 
-QByteArray createTriangleStripColorData(int n_colors, float* colors) {
+QByteArray createTriangleStripColorData(int n_colors, const float* colors) {
   QByteArray colorBytes = QByteArray::fromRawData((const char*)colors,
                                                   n_colors *  4 * sizeof(float));
   return colorBytes;
@@ -119,15 +116,11 @@ QByteArray createTriangleStripColorData(int n_colors, float* colors) {
 
 class TriangleStripColorBufferFunctor : public QBufferFunctor {
 public:
-  int     n_vndata;
-  float*  vndata;
-  int     n_indexes;
-  int*    indexes;
   int     n_colors;
-  float*    colors;
+  const float*    colors;
   
   TriangleStripColorBufferFunctor(const T3TriangleStripMesh& mesh)
-    : colors(mesh.colors.el)
+    : colors(mesh.colors.data())
   {
     // if(mesh.node_updating) {
     //   n_vndata = 0;
@@ -142,8 +135,8 @@ public:
     return createTriangleStripColorData(n_colors, colors);
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
-    return false;               // always update!!
+  bool operator ==(const QBufferFunctor &other) const override {
+    // return false;               // always update!!
     const TriangleStripColorBufferFunctor *otherFunctor =
       dynamic_cast<const TriangleStripColorBufferFunctor *>(&other);
     if (otherFunctor != Q_NULLPTR)
@@ -246,18 +239,15 @@ void TriangleStripGeometry::updateAll() {
 //              Main Mesh
 
 
-T3TriangleStripMesh::T3TriangleStripMesh(Qt3DNode* parent)
-  : inherited(parent)
+T3TriangleStripMesh::T3TriangleStripMesh(QNode* parent)
+  : QGeometryRenderer(parent)
 {
-  vndata.SetGeom(3,3,2,0);        // 0 = extensible frames
-  colors.SetGeom(2,4,0);
-
   setPrimitiveType(TriangleStrip);
   setPrimitiveRestart(true);
   setRestartIndex(0xFFFFFFFF);
   
   TriangleStripGeometry* geometry = new TriangleStripGeometry(this);
-  inherited::setGeometry(geometry);
+  QGeometryRenderer::setGeometry(geometry);
 }
 
 T3TriangleStripMesh::~T3TriangleStripMesh() {
@@ -270,113 +260,62 @@ void T3TriangleStripMesh::setNodeUpdating(bool updating) {
   node_updating = updating;
   blockNotifications(node_updating); // block if updating
   if(should_render) {
-#ifdef DEBUG
-    // taMisc::Info("TriangleStrip mesh update");
-    if(colors.Frames() > 0 && colors.Frames() != vndata.Frames()) {
-      taMisc::Warning("T3TriangleStripMesh: colors != vndata vertices, colors:",
-                      String(colors.Frames()), " vs. verticies:", String(vndata.Frames()));
-    }
-#endif
     updateMesh();
   }
 }
 
 void T3TriangleStripMesh::restart() {
-  vndata.EnforceFrames(0);
-  colors.EnforceFrames(0);
-  indexes.SetSize(0);
+  vndata.resize(0);
+  colors.resize(0);
+  indexes.resize(0);
 }
 
 int T3TriangleStripMesh::addVertex(const QVector3D& pos, const QVector3D& norm) {
-  vndata.AddFrame();
-  int idx = vndata.Frames()-1;
-  vndata.Set(pos.x(), 0, VTX, idx);
-  vndata.Set(pos.y(), 1, VTX, idx);
-  vndata.Set(pos.z(), 2, VTX, idx);
+  int idx = vertexCount();
+  vndata.append(pos.x());
+  vndata.append(pos.y());
+  vndata.append(pos.z());
 
-  vndata.Set(norm.x(), 0, NRM, idx);
-  vndata.Set(norm.y(), 1, NRM, idx);
-  vndata.Set(norm.z(), 2, NRM, idx);
-  return idx;
-}
-
-int T3TriangleStripMesh::addVertex(const taVector3f& pos, const taVector3f& norm) {
-  vndata.AddFrame();
-  int idx = vndata.Frames()-1;
-  vndata.Set(pos.x, 0, VTX, idx);
-  vndata.Set(pos.y, 1, VTX, idx);
-  vndata.Set(pos.z, 2, VTX, idx);
-
-  vndata.Set(norm.x, 0, NRM, idx);
-  vndata.Set(norm.y, 1, NRM, idx);
-  vndata.Set(norm.z, 2, NRM, idx);
+  vndata.append(norm.x());
+  vndata.append(norm.y());
+  vndata.append(norm.z());
   return idx;
 }
 
 void T3TriangleStripMesh::addTriangle(int v0, int v1, int v2) {
-  indexes.Add(v0);
-  indexes.Add(v1);
-  indexes.Add(v2);
+  indexes.append(v0);
+  indexes.append(v1);
+  indexes.append(v2);
 }
 
 void T3TriangleStripMesh::addIndex(int v0) {
-  indexes.Add(v0);
+  indexes.append(v0);
 }
 
 void T3TriangleStripMesh::addBreak() {
-  indexes.Add(0xFFFFFFFF);        // stop
+  indexes.append(0xFFFFFFFF);        // stop
 }
 
 int T3TriangleStripMesh::addColor(const QColor& clr) {
-  colors.AddFrame();
-  int idx = colors.Frames()-1;
-  colors.Set(clr.redF(), 0, idx);
-  colors.Set(clr.greenF(), 1, idx);
-  colors.Set(clr.blueF(), 2, idx);
-  colors.Set(clr.alphaF(), 3, idx);
+  int idx = colorCount();
+  colors.append(clr.redF());
+  colors.append(clr.greenF());
+  colors.append(clr.blueF());
+  colors.append(clr.alphaF());
   return idx;
 }
 
 void T3TriangleStripMesh::setPointColor(int idx, const QColor& clr) {
-  if(idx < 0 || idx >= colors.Frames()) return;
-  colors.Set(clr.redF(), 0, idx);
-  colors.Set(clr.greenF(), 1, idx);
-  colors.Set(clr.blueF(), 2, idx);
-  colors.Set(clr.alphaF(), 3, idx);
+  if(idx < 0 || idx >= colorCount()) return;
+  int stidx = 4 * idx;
+  colors[stidx + 0] = clr.redF();
+  colors[stidx + 1] = clr.greenF();
+  colors[stidx + 2] = clr.blueF();
+  colors[stidx + 3] = clr.alphaF();
 }
 
 void T3TriangleStripMesh::updateMesh() {
   static_cast<TriangleStripGeometry *>(geometry())->updateAll();
 }
   
-
-///////////////////////
-
-T3TriangleStrip::T3TriangleStrip(Qt3DNode* parent)
-  : inherited(parent)
-{
-  tris = new T3TriangleStripMesh();
-  addMesh(tris);
-
-  // not too big of a spot..
-  shininess = 10000.0f;
-  specular = 0.5f;
-  
-  color_type = PER_VERTEX_TRANS; // default
-  updateColor();
-}
-
-T3TriangleStrip::~T3TriangleStrip() {
-  
-}
-
-void T3TriangleStrip::setNodeUpdating(bool updating) {
-  tris->setNodeUpdating(updating);
-  inherited::setNodeUpdating(updating);
-}
-
-void T3TriangleStrip::updateMesh() {
-  tris->updateMesh();
-}
-
 

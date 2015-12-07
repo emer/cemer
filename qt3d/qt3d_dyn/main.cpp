@@ -56,6 +56,8 @@
 #include <QPropertyAnimation>
 
 #include "T3LineStrip.h"
+#include "T3TriangleStrip.h"
+#include "T3Frame.h"
 
 #include <random>
 
@@ -144,11 +146,12 @@ int main(int argc, char* argv[])
     // Material
     Qt3DRender::QMaterial *material = new Qt3DRender::QPhongMaterial(rootEntity);
 
+#if 0    
     // Lines
     Qt3DCore::QEntity *linesEntity = new Qt3DCore::QEntity(rootEntity);
     T3LineStripMesh *linesMesh = new T3LineStripMesh;
 
-    linesMesh->moveTo(QVector3D(0,0,0));
+    linesMesh->moveTo(QVector3D(0,0,0)); // attempt to prevent crash.
     linesMesh->lineTo(QVector3D(1,0,0));
     linesMesh->updateLines();
     
@@ -166,7 +169,52 @@ int main(int argc, char* argv[])
 
     linesEntity->addComponent(linesMesh);
     linesEntity->addComponent(material);
+#endif
+    
+    // Tris
+    Qt3DCore::QEntity *trisEntity = new Qt3DCore::QEntity(rootEntity);
+    T3TriangleStripMesh *trisMesh = new T3TriangleStripMesh;
 
+    QVector3D norm(0,0,1.0);
+    
+    // basic rectangle
+    trisMesh->addVertex(QVector3D(0,0,0),norm);
+    trisMesh->addVertex(QVector3D(10,0,0),norm);
+    trisMesh->addVertex(QVector3D(0,10,0),norm);
+    trisMesh->addVertex(QVector3D(10,10,0),norm);
+
+    trisMesh->addTriangle(0,1,2);
+    trisMesh->addTriangle(2,1,0);
+
+    // NOTE: uncomment this line to get the crash, comment it out to see that frame is fine
+    trisMesh->updateMesh();
+    
+    // LineDrawController *controller = new LineDrawController(trisMesh);
+    // controller->setTarget(trisMesh);
+
+    // QPropertyAnimation *lineDrawAnim = new QPropertyAnimation(trisMesh);
+    // lineDrawAnim->setTargetObject(controller);
+    // lineDrawAnim->setPropertyName("time");
+    // lineDrawAnim->setStartValue(QVariant::fromValue(0));
+    // lineDrawAnim->setEndValue(QVariant::fromValue(1000));
+    // lineDrawAnim->setDuration(10000);
+    // lineDrawAnim->setLoopCount(-1);
+    // lineDrawAnim->start();
+
+    trisEntity->addComponent(trisMesh);
+    trisEntity->addComponent(material);
+
+    // Frame test -- works fine
+    Qt3DCore::QEntity *frameEntity = new Qt3DCore::QEntity(rootEntity);
+    T3FrameMesh *frameMesh = new T3FrameMesh;
+    frameEntity->addComponent(frameMesh);
+    frameEntity->addComponent(material);
+
+    frameMesh->setWidth(10.0);
+    frameMesh->setHeight(8.0);
+    frameMesh->setDepth(2.0);
+    frameMesh->setFrameWidth(2.0);
+    
     view.setRootEntity(rootEntity);
     view.show();
 
