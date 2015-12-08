@@ -827,6 +827,7 @@ void ClusterRun::GetProjAtRev() {
   int svn_rev = -1;
   String user_name;
   String cluster;
+  String orig_filename;
   // Get the (inclusive) range of rows to process
   int st_row, end_row;
   if (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive) {
@@ -836,6 +837,7 @@ void ClusterRun::GetProjAtRev() {
       svn_rev = cur_table->GetVal("submit_svn", st_row).toInt();
       user_name = cur_table->GetVal("user", st_row).toString();
       cluster = cur_table->GetVal("cluster", st_row).toString();
+      orig_filename = cur_table->GetVal("filename", st_row).toString();
     }
     else {
       taMisc::Warning("No rows selected -- project not loaded");
@@ -843,7 +845,7 @@ void ClusterRun::GetProjAtRev() {
   }
   if(TestError(svn_rev < 0, "GetProjAtRev", "valid svn revision not found"))
     return;
-  m_cm->GetProjectAtRev(cluster, user_name, svn_rev);
+  m_cm->GetProjectAtRev(cluster, user_name, orig_filename, svn_rev);
   taMisc::Info("Note: GetProjAtRev does NOT require a new checkin -- do not hit Update or wait for auto-update -- the file will be in the main project directory now, or very soon.");
 }
 

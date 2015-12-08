@@ -245,7 +245,7 @@ ClusterManager::RemoveFiles(String_PArray& files, bool force, bool keep_local)
 }
 
 bool
-ClusterManager::GetProjectAtRev(String cluster, String username, int rev) {
+ClusterManager::GetProjectAtRev(String cluster, String username, String orig_filename, int rev) {
   if (!m_valid) return false; // Ensure proper construction.
   if(!CheckPrefs()) return false;
 
@@ -264,7 +264,7 @@ ClusterManager::GetProjectAtRev(String cluster, String username, int rev) {
   files.Add(m_proj_copy_filename_tmp);
   try {
     m_svn_client->UpdateFiles(files, rev);
-    String nwfnm = m_proj_copy_filename.before(".proj");
+    String nwfnm = orig_filename;
     nwfnm += "_" + String(rev) + ".proj";
     nwfnm = taMisc::GetFileFmPath(nwfnm);
     nwfnm = taMisc::GetDirFmPath(m_proj->file_name) + "/" + nwfnm; // use orig proj dir
