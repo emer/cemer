@@ -47,7 +47,7 @@ extern "C" {
 #include <string.h>
 #include <stdarg.h>
 
-#include "config.h"
+#include "taconfig.h"
 
 #ifdef HAVE_ZLIB
 #if defined(ITKZLIB)
