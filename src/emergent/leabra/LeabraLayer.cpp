@@ -153,6 +153,11 @@ void LeabraLayer::BuildUnits() {
   multigp_data.SetSize(gp_geom.n);
 }
 
+LeabraUnit* LeabraLayer::GetMostActiveUnit() {
+  if(acts.max_i < 0 || !own_net) return NULL;
+  return (LeabraUnit*)own_net->UnFmIdx(acts.max_i);
+}
+
 #ifdef DMEM_COMPILE
 void LeabraLayer::DMem_InitAggs() {
   dmem_agg_sum.ScanMembers(GetTypeDef(), (void*)this);

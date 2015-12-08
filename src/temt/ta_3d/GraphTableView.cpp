@@ -505,15 +505,17 @@ void GraphTableView::UpdateAfterEdit_impl(){
     }
   }
 #endif
-  
-  if (!color_axis.group_by_initialized || last_color_axis.GetColPtr() != color_axis.GetColPtr()) {
-    GraphColView* gcv = color_axis.GetColPtr();
-    if (gcv) {
-      DataCol* col = gcv->dataCol();
-      if (col) {
-        col->GetUniqueColumnValues(color_axis.group_by_values);
-        color_axis.group_by_initialized = true;
-        last_color_axis = color_axis;
+
+  if(color_mode == BY_GROUP) {
+    if (!color_axis.group_by_initialized || last_color_axis.GetColPtr() != color_axis.GetColPtr()) {
+      GraphColView* gcv = color_axis.GetColPtr();
+      if (gcv) {
+        DataCol* col = gcv->dataCol();
+        if (col) {
+          col->GetUniqueColumnValues(color_axis.group_by_values);
+          color_axis.group_by_initialized = true;
+          last_color_axis = color_axis;
+        }
       }
     }
   }
@@ -780,22 +782,25 @@ void GraphTableView::ComputeAxisRanges() {
   GraphPlotView* alty = AltY();
   
   x_axis.ComputeRange();
-  if(graph_type == MATRIX && matrix_mode == Z_INDEX && mainy) {
-    DataCol* da_y = mainy->GetDAPtr();
-    if(da_y && da_y->is_matrix) {
-      z_axis.SetRange_impl(0.0f, da_y->cell_size());
+  if(z_axis.on) {
+    if(graph_type == MATRIX && matrix_mode == Z_INDEX && mainy) {
+      DataCol* da_y = mainy->GetDAPtr();
+      if(da_y && da_y->is_matrix) {
+        z_axis.SetRange_impl(0.0f, da_y->cell_size());
+      }
+      else {
+        z_axis.ComputeRange();
+      }
     }
     else {
       z_axis.ComputeRange();
     }
   }
-  else {
-    z_axis.ComputeRange();
-  }
   
   for(int i=0;i<plots.size;i++) {
     GraphPlotView* pl = plots[i];
-    pl->ComputeRange();
+    if(pl->on)
+      pl->ComputeRange();
   }
   
   if(mainy) {
@@ -814,14 +819,16 @@ void GraphTableView::ComputeAxisRanges() {
     }
   }
   
-  if(color_mode == BY_VARIABLE)
+  if(color_mode == BY_VARIABLE) {
     color_axis.ComputeRange();
-  if(color_mode == BY_GROUP) {
+  }
+  else if(color_mode == BY_GROUP) {
     // the range is the number of groups
     color_axis.SetRange(0, color_axis.group_by_values.size - 1);
   }
-  if(graph_type == RASTER)
+  if(graph_type == RASTER) {
     raster_axis.ComputeRange();
+  }
 }
 
 #ifndef TA_QT3D
@@ -2181,7 +2188,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       ax_clr = &yax;
       da_clr = plv.GetDAPtr();
     }
-    else {
+    else { // BY_VARIABLE or BY_GROUP
       ax_clr = &color_axis;
       da_clr = color_axis.GetDAPtr();
     }
@@ -2306,7 +2313,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
         int index = color_axis.group_by_values.FindEl(group);
         clr = GetValueColor(ax_clr, index);
       }
-      else {
+      else { // BY_VARIABLE
         clr = GetValueColor(ax_clr, ax_clr->GetDataVal(da_clr, row));
       }
     }
@@ -2571,7 +2578,12 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
       if(color_mode == BY_VALUE) {
         clr = GetValueColor(ax_clr, dat.y);
       }
-      else {
+      else if (color_mode == BY_GROUP) {
+        String group = da_clr->GetValAsString(row);
+        int index = color_axis.group_by_values.FindEl(group);
+        clr = GetValueColor(ax_clr, index);
+      }
+      else { // BY_VARIABLE
         clr = GetValueColor(ax_clr, ax_clr->GetDataVal(da_clr, row));
       }
     }

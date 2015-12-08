@@ -262,7 +262,6 @@ bool GraphAxisBase::UpdateRange_impl(float first, float last) {
 }
 
 void GraphAxisBase::ComputeRange() {
-  if(!on) return;
   GraphColView* gcv = GetColPtr();
   if(gcv) {
     DataCol* da = gcv->dataCol();

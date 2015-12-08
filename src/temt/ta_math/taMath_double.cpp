@@ -1240,12 +1240,17 @@ double taMath_double::vec_ss_mean(const double_Matrix* vec) {
   return rval;
 }
 
-void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, double bin_size,
-                                  double min_val, double max_val) {
+void taMath_double::vec_histogram
+(double_Matrix* vec, const double_Matrix* oth, double bin_size,
+ double min_val, double max_val, double_Matrix* bin_vec) {
   if(!vec_check_type(vec) || !vec_check_type(oth)) return;
   if(oth->size == 0) return;
   vec->SetGeom(1,0);
   vec->Reset();
+  if(bin_vec) {
+    bin_vec->SetGeom(1,0);
+    bin_vec->Reset();
+  }
   double_Array tmp;
   tmp.SetSize(oth->IterCount());
   TA_FOREACH_INDEX(i, *oth) {
@@ -1266,11 +1271,37 @@ void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, 
   for(double cur_val = min_v; cur_val <= max_v; cur_val += bin_size, trg_idx++) {
     double cur_max = cur_val + bin_size;
     vec->Add(0);
+    if(bin_vec) {
+      bin_vec->Add(cur_val);
+    }
     double& cur_hist = vec->FastEl_Flat(trg_idx);
     while((src_idx < tmp.size) && (tmp.FastEl(src_idx) < cur_max)) {
       cur_hist += 1.0;
       src_idx++;
     }
+  }
+}
+
+void taMath_double::vec_histogram_bins(double_Matrix* vec, const double_Matrix* oth,
+                                      double bin_size, double min_val, double max_val) {
+  if(!vec_check_type(vec) || !vec_check_type(oth)) return;
+  if(oth->size == 0) return;
+  vec->SetGeom(1,0);
+  vec->Reset();
+  double_Array tmp;
+  tmp.SetSize(oth->IterCount());
+  TA_FOREACH_INDEX(i, *oth) {
+    tmp[FOREACH_itr.count] = oth->FastEl_Flat(i);
+  }
+  tmp.Sort();
+  double min_v = tmp.FastEl(0);
+  double max_v = tmp.Peek();
+  if(min_val != max_val) {
+    min_v = min_val;
+    max_v = max_val;
+  }
+  for(double cur_val = min_v; cur_val <= max_v; cur_val += bin_size) {
+    vec->Add(cur_val);
   }
 }
 

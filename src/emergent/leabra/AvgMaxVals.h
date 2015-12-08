@@ -35,7 +35,7 @@ class E_API AvgMaxValsRaw {
 public:
   float		avg;		// #DMEM_AGG_SUM average value
   float		max;		// #DMEM_AGG_SUM maximum value
-  int 		max_i;		// index of unit with maximum value
+  int 		max_i;		// flat (network-wide) index of unit with maximum value
   float		sum;		// #DMEM_AGG_SUM sum for computing average
   int		n;		// #DMEM_AGG_SUM number of items in sum
 

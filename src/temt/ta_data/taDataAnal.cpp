@@ -1622,6 +1622,67 @@ bool taDataAnal::Matrix3DGraph(DataTable* data, const String& x_axis_col, const 
   return true;
 }
 
+bool taDataAnal::Histogram(DataTable* hist_data, DataTable* src_data,
+                           const String& src_col, float bin_size,
+                           float min_val, float max_val, bool view) {
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::Histogram -- src_data is NULL or has no data -- must pass in this data");
+    return false;
+  }
+  
+  GetDest(hist_data, src_data, "Histogram");
+
+  DataCol* da = GetNumDataCol(src_data, src_col);
+  if(!da) return false;
+
+  hist_data->StructUpdate(true);
+  int idx;
+
+  if(da->valType() == VT_FLOAT) {
+    DataCol* binda = hist_data->FindMakeColName(da->name, idx, VT_FLOAT);
+    DataCol* hda = hist_data->FindMakeColName("count", idx, VT_FLOAT);
+    float_Matrix bin_tmp(false);
+    taMath_float::vec_histogram_bins(&bin_tmp, (float_Matrix*)da->AR(),  
+                                bin_size, min_val, max_val);
+    hist_data->EnforceRows(bin_tmp.size);
+    binda->AR()->CopyFrom(&bin_tmp);
+    taMath_float::vec_histogram((float_Matrix*)hda->AR(), (float_Matrix*)da->AR(),  
+                                bin_size, min_val, max_val);
+  }
+  else if(da->valType() == VT_DOUBLE) {
+    DataCol* binda = hist_data->FindMakeColName(da->name, idx, VT_DOUBLE);
+    DataCol* hda = hist_data->FindMakeColName("count", idx, VT_DOUBLE);
+    double_Matrix bin_tmp(false);
+    taMath_double::vec_histogram_bins(&bin_tmp, (double_Matrix*)da->AR(),  
+                                bin_size, min_val, max_val);
+    hist_data->EnforceRows(bin_tmp.size);
+    binda->AR()->CopyFrom(&bin_tmp);
+    taMath_double::vec_histogram((double_Matrix*)hda->AR(), (double_Matrix*)da->AR(),  
+                                 bin_size, min_val, max_val);
+  }
+  else if(da->valType() == VT_INT) { // convert
+    float_Matrix float_tmp(false);
+    int_Matrix* mat = (int_Matrix*)da->AR();
+    taMath_float::vec_fm_ints(&float_tmp, mat);
+    DataCol* binda = hist_data->FindMakeColName(da->name, idx, VT_FLOAT);
+    DataCol* hda = hist_data->FindMakeColName("count", idx, VT_FLOAT);
+    float_Matrix bin_tmp(false);
+    taMath_float::vec_histogram_bins(&bin_tmp, &float_tmp,  
+                                bin_size, min_val, max_val);
+    hist_data->EnforceRows(bin_tmp.size);
+    binda->AR()->CopyFrom(&bin_tmp);
+    taMath_float::vec_histogram((float_Matrix*)hda->AR(), &float_tmp,  
+                                bin_size, min_val, max_val);
+  }
+
+  hist_data->SetUserData("GRAPH_TYPE", "BAR");
+  
+  hist_data->StructUpdate(false);
+  if(view) hist_data->FindMakeGraphView();
+  
+  return true;
+}
+
 /*
 void Environment::PatFreqGrid(GridLog* disp_log, float act_thresh, bool prop) {
   if(events.leaves == 0)

@@ -192,6 +192,11 @@ public:
   static bool	Matrix3DGraph(DataTable* data, const String& x_axis_col, const String& z_axis_col);
   // #CAT_Graph #MENU_BUTTON #MENU_ON_Graph prepare data for a 3D matrix graph, where data is plotted by X and Z axis values -- sorts data by X then Z, then adds a duplicate copy of data sorted by Z then X, which produces a matrix grid in a graph view plot (turn off the Z neg draw flag)
 
+  static bool	Histogram(DataTable* hist_data, DataTable* src_data,
+                          const String& src_col, float bin_size,
+                          float min_val = 0.0, float max_val = 0.0, bool view = true);
+  // #CAT_Graph #MENU_BUTTON #MENU_ON_Graph create a histogram of src_col data in src_data data table, using bin size, and optionally specifying fixed min and max values (only used if range between is non-zero) -- results go into hist_data table, by default creates a bar graph (can turn this off with the view option)
+
   String 	GetTypeDecoKey() const override { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };

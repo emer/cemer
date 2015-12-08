@@ -398,8 +398,12 @@ public:
   static double vec_ss_mean(const double_Matrix* vec);
   // #CAT_Statistics sum-of-squares around the mean of the vector
   static void   vec_histogram(double_Matrix* hist_vec, const double_Matrix* src_vec,
+                              double bin_size, double min_val = 0.0, double max_val = 0.0,
+                              double_Matrix* bin_vec = NULL);
+  // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector -- min and maximum ranges to compute within are also optional args -- only used if min != max -- optionally populate bin_vec with X axis bin values if non-null
+  static void   vec_histogram_bins(double_Matrix* bin_vec, const double_Matrix* src_vec,
                               double bin_size, double min_val = 0.0, double max_val = 0.0);
-  // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector -- min and maximum ranges to compute within are also optional args -- only used if min != max
+  // #CAT_Statistics gets the bin values (X axis) for a histogram of source vector -- min and maximum ranges to compute within are also optional args -- only used min != max
   static double vec_count(const double_Matrix* vec, Relation& rel);
   // #CAT_Statistics count number of times relationship is true
   static double vec_percent(const double_Matrix* vec, Relation& rel);

@@ -232,7 +232,9 @@ public:
   void  Compute_EpochStats(Network* net) override
   { return spec->Compute_EpochStats(this, (LeabraNetwork*)net); }
 
-  
+  virtual LeabraUnit* GetMostActiveUnit();
+  // #CAT_Statistic return the most active unit in the layer according to current activation statistics -- could be NULL if no acts.max_i set right now
+
   ////////////////////////////////////////////////////////////////////////////////
   //	Parameter Adaptation over longer timesales
 

@@ -29,7 +29,7 @@ using namespace Qt3DCore;
 using namespace Qt3DRender;
 using namespace Qt3DInput;
 
-QByteArray createTriangleStripVertexData(int n_vndata, float* vndata) {
+QByteArray createTriangleStripVertexData(int n_vndata, const float* vndata) {
   // Populate a buffer with the interleaved per-vertex data with
   // vec3 pos + vec3 normal; // not: vec2 texCoord, vec3 normal, vec4 tangent
   const quint32 elementSize = 3 + 3; // + 2 + 3 + 4;
@@ -41,7 +41,7 @@ QByteArray createTriangleStripVertexData(int n_vndata, float* vndata) {
 class TriangleStripVertexBufferFunctor : public QBufferFunctor {
 public:
   int     n_vndata;
-  float*  vndata;
+  const float*  vndata;
   
   TriangleStripVertexBufferFunctor(const T3TriangleStripMesh& mesh)
     : vndata(mesh.vndata.el)
@@ -58,7 +58,7 @@ public:
     return createTriangleStripVertexData(n_vndata, vndata);
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
+  bool operator ==(const QBufferFunctor &other) const override {
     return false;               // always update!!
     const TriangleStripVertexBufferFunctor *otherFunctor =
       dynamic_cast<const TriangleStripVertexBufferFunctor *>(&other);
@@ -81,7 +81,7 @@ QByteArray createTriangleStripIndexData(int n_indexes, int* indexes) {
 class TriangleStripIndexBufferFunctor : public QBufferFunctor {
 public:
   int     n_indexes;
-  int*    indexes;
+  const int*    indexes;
   
   TriangleStripIndexBufferFunctor(const T3TriangleStripMesh& mesh)
     : indexes(mesh.indexes.el)
@@ -98,8 +98,7 @@ public:
     return createTriangleStripIndexData(n_indexes, indexes);
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
-    //    return false;               // always update!!
+  bool operator ==(const QBufferFunctor &other) const override {
     const TriangleStripIndexBufferFunctor *otherFunctor =
       dynamic_cast<const TriangleStripIndexBufferFunctor *>(&other);
     if (otherFunctor != Q_NULLPTR)
@@ -111,7 +110,7 @@ public:
   QT3D_FUNCTOR(TriangleStripIndexBufferFunctor)
 };
 
-QByteArray createTriangleStripColorData(int n_colors, float* colors) {
+QByteArray createTriangleStripColorData(int n_colors, const float* colors) {
   QByteArray colorBytes = QByteArray::fromRawData((const char*)colors,
                                                   n_colors *  4 * sizeof(float));
   return colorBytes;
@@ -119,12 +118,8 @@ QByteArray createTriangleStripColorData(int n_colors, float* colors) {
 
 class TriangleStripColorBufferFunctor : public QBufferFunctor {
 public:
-  int     n_vndata;
-  float*  vndata;
-  int     n_indexes;
-  int*    indexes;
   int     n_colors;
-  float*    colors;
+  const float*    colors;
   
   TriangleStripColorBufferFunctor(const T3TriangleStripMesh& mesh)
     : colors(mesh.colors.el)
@@ -142,8 +137,8 @@ public:
     return createTriangleStripColorData(n_colors, colors);
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
-    return false;               // always update!!
+  bool operator ==(const QBufferFunctor &other) const override {
+    // return false;               // always update!!
     const TriangleStripColorBufferFunctor *otherFunctor =
       dynamic_cast<const TriangleStripColorBufferFunctor *>(&other);
     if (otherFunctor != Q_NULLPTR)
