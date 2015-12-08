@@ -1264,21 +1264,29 @@ void taMath_double::vec_histogram
     max_v = max_val;
   }
   int src_idx = 0;
-  int trg_idx = 0;
   while((src_idx < tmp.size) && (tmp.FastEl(src_idx) < min_v)) { // skip up to the min
     src_idx++;
   }
+  vec->Add(0);                  // always bracket with 0's
+  if(bin_vec) {
+    bin_vec->Add(min_v);
+  }
+  int trg_idx = 1;              // skip 1
   for(double cur_val = min_v; cur_val <= max_v; cur_val += bin_size, trg_idx++) {
     double cur_max = cur_val + bin_size;
     vec->Add(0);
     if(bin_vec) {
-      bin_vec->Add(cur_val);
+      bin_vec->Add(cur_val + .5 * bin_size); // midpoint
     }
     double& cur_hist = vec->FastEl_Flat(trg_idx);
     while((src_idx < tmp.size) && (tmp.FastEl(src_idx) < cur_max)) {
       cur_hist += 1.0;
       src_idx++;
     }
+  }
+  vec->Add(0);                  // always bracket with 0's
+  if(bin_vec) {
+    bin_vec->Add(max_v+bin_size);
   }
 }
 
@@ -1300,9 +1308,11 @@ void taMath_double::vec_histogram_bins(double_Matrix* vec, const double_Matrix* 
     min_v = min_val;
     max_v = max_val;
   }
+  vec->Add(min_v);
   for(double cur_val = min_v; cur_val <= max_v; cur_val += bin_size) {
-    vec->Add(cur_val);
+    vec->Add(cur_val + .5 * bin_size); // midpoint
   }
+  vec->Add(max_v+bin_size);
 }
 
 double taMath_double::vec_count(const double_Matrix* vec, Relation& rel) {

@@ -1259,21 +1259,29 @@ void taMath_float::vec_histogram
     max_v = max_val;
   }
   int src_idx = 0;
-  int trg_idx = 0;
   while((src_idx < tmp.size) && (tmp.FastEl(src_idx) < min_v)) { // skip up to the min
     src_idx++;
   }
+  vec->Add(0);                  // always bracket with 0's
+  if(bin_vec) {
+    bin_vec->Add(min_v);
+  }
+  int trg_idx = 1;              // skip 1
   for(float cur_val = min_v; cur_val <= max_v; cur_val += bin_size, trg_idx++) {
     float cur_max = cur_val + bin_size;
     vec->Add(0);
     if(bin_vec) {
-      bin_vec->Add(cur_val);
+      bin_vec->Add(cur_val + .5 * bin_size); // midpoint
     }
     float& cur_hist = vec->FastEl_Flat(trg_idx);
     while((src_idx < tmp.size) && (tmp.FastEl(src_idx) < cur_max)) {
       cur_hist += 1.0;
       src_idx++;
     }
+  }
+  vec->Add(0);                  // always bracket with 0's
+  if(bin_vec) {
+    bin_vec->Add(max_v+bin_size);
   }
 }
 
@@ -1295,9 +1303,11 @@ void taMath_float::vec_histogram_bins(float_Matrix* vec, const float_Matrix* oth
     min_v = min_val;
     max_v = max_val;
   }
+  vec->Add(min_v);
   for(float cur_val = min_v; cur_val <= max_v; cur_val += bin_size) {
-    vec->Add(cur_val);
+    vec->Add(cur_val + .5 * bin_size); // midpoint
   }
+  vec->Add(max_v+bin_size);
 }
 
 float taMath_float::vec_count(const float_Matrix* vec, Relation& rel) {
