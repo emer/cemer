@@ -1258,6 +1258,13 @@ void taMath_float::vec_histogram
     min_v = min_val;
     max_v = max_val;
   }
+  if(max_v == min_v) {
+    taMisc::Error("Histogram: Min and Max are equal -- no range!");
+    return;
+  }
+  if(bin_size <= 0.0) {
+    bin_size = (max_v - min_v) / 10.0;
+  }
   int src_idx = 0;
   while((src_idx < tmp.size) && (tmp.FastEl(src_idx) < min_v)) { // skip up to the min
     src_idx++;
@@ -1302,6 +1309,13 @@ void taMath_float::vec_histogram_bins(float_Matrix* vec, const float_Matrix* oth
   if(min_val != max_val) {
     min_v = min_val;
     max_v = max_val;
+  }
+  if(max_v == min_v) {
+    taMisc::Error("Histogram: Min and Max are equal -- no range!");
+    return;
+  }
+  if(bin_size <= 0.0) {
+    bin_size = (max_v - min_v) / 10.0;
   }
   vec->Add(min_v);
   for(float cur_val = min_v; cur_val <= max_v; cur_val += bin_size) {
