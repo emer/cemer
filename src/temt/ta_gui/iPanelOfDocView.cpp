@@ -192,15 +192,20 @@ void iPanelOfDocView::doc_linkClicked(const QUrl& url) {
   QUrlQuery urq(url);
 #else
 #endif
-  if(path.startsWith("ta:") || path.startsWith("."))
+  if(path.startsWith("ta:") || path.startsWith(".")) {
     ta_path = true;
+  }
+  String qry;
 #if (QT_VERSION >= 0x050000)
   if(!ta_path && urq.hasQueryItem("title")) { // wiki versions of our action urls get translated into queries with title=...
-    String qry = urq.queryItemValue("title");
+    qry = urq.queryItemValue("title");
+  }
 #else
   if(!ta_path && url.hasQueryItem("title")) { // wiki versions of our action urls get translated into queries with title=...
-    String qry = url.queryItemValue("title");
+    qry = url.queryItemValue("title");
+  }
 #endif
+  if(qry.nonempty()) {
     if(qry.startsWith("ta:") || qry.startsWith(".")) {
       if(!qry.startsWith("ta:"))
         qry = "ta:"+qry;        // rectify
@@ -324,10 +329,10 @@ void iPanelOfDocView::find_prev_clicked() {
 #ifdef USE_QT_WEBENGINE
 
 #else // USE_QT_WEBENGINE
-  webview->page()->findText(find_text->text(), QWebPage::FindWrapsAroundDocument | QWebPage::FindBackward);
+   webview->page()->findText(find_text->text(), QWebPage::FindWrapsAroundDocument | QWebPage::FindBackward);
 
 #endif // USE_QT_WEBENGINE
-}
+ }
 
 bool iPanelOfDocView::ignoreSigEmit() const {
   return false;
@@ -374,10 +379,10 @@ void iPanelOfDocView::UpdatePanel_impl() {
     String nw_url = doc_->GetURL();
     if(cur_url != nw_url)
       webview->load(QUrl(nw_url));
-//     url_edit->setEnabled(true);
+        url_edit->setEnabled(true);
     fwd_but->setEnabled(true);
     bak_but->setEnabled(true);
-//     go_but->setEnabled(true);
+    //     go_but->setEnabled(true);
     seturl_but->setEnabled(true);
   }
   else {
@@ -404,22 +409,6 @@ void iPanelOfDocView::SigEmit_impl(int sls, void* op1_, void* op2_) {
   }
 }
 
-/* todo int iPanelOfDocView::EditAction(int ea) {
-  int rval = 0;
-//todo
-  return rval;
-}
-
-
-int iPanelOfDocView::GetEditActions() {
-  int rval = 0;
-  QTextCursor tc(txtText->textCursor());
-  if (tc.hasSelection())
-    rval |= iClipData::EA_COPY;
-//TODO: more, if not readonly
-  return rval;
-} */
-
 void iPanelOfDocView::setDoc(taDoc* doc) {
   if (m_doc == doc) return;
   // if the doc is NULL, or different (regardless of NULL->val or val1->val2)
@@ -439,75 +428,74 @@ void iPanelOfDocView::setDoc(taDoc* doc) {
   }
 }
   
-  
-  bool iPanelOfDocView::eventFilter(QObject* obj, QEvent* event) {
-    if (event->type() != QEvent::KeyPress) {
-      return inherited::eventFilter(obj, event);
-    }
-    QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
-    if (!taiMisc::KeyEventCtrlPressed(key_event)) {
-      return false;
-    }
-    QCoreApplication* app = QCoreApplication::instance();
-    switch (key_event->key()) {
-      case Qt::Key_P:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
-        return true;                // we absorb this event
-      case Qt::Key_N:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-        return true;                // we absorb this event
-      case Qt::Key_F:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
-        return true;                // we absorb this event
-      case Qt::Key_B:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
-        return true;                // we absorb this event
-      case Qt::Key_U:
-      case Qt::Key_Up:              // translate ctrl+up to page up
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
-        return true;                // we absorb this event
-      case Qt::Key_Down:            // translate ctrl+down to page down
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
-        return true;
-#ifdef TA_OS_MAC
-      case Qt::Key_V:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
-        return true;              // we absorb this event
-#endif
-      case Qt::Key_D:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
-        return true;              // we absorb this event
-      case Qt::Key_H:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier));
-        return true;              // we absorb this event
-      case Qt::Key_K:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
-        return true;              // we absorb this event
-      case Qt::Key_Y:             // this doesn't seem to work to generate paste event
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
-        return true;              // we absorb this event
-      case Qt::Key_W:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
-        return true;              // we absorb this event
-      case Qt::Key_Slash:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-        return true;              // we absorb this event
-      case Qt::Key_Minus:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-        return true;              // we absorb this event
-    }
-    if(key_event->modifiers() & Qt::AltModifier && (key_event->key() == Qt::Key_W
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-                                            || key_event->key() == 0x2211   // weird mac key
-#endif
-                                            )) { // copy
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
-      return true;                // we absorb this event
-    }
+bool iPanelOfDocView::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }
+  QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
+  if (!taiMisc::KeyEventCtrlPressed(key_event)) {
+    return false;
+  }
+  QCoreApplication* app = QCoreApplication::instance();
+  switch (key_event->key()) {
+  case Qt::Key_P:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
+    return true;                // we absorb this event
+  case Qt::Key_N:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
+    return true;                // we absorb this event
+  case Qt::Key_F:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
+    return true;                // we absorb this event
+  case Qt::Key_B:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
+    return true;                // we absorb this event
+  case Qt::Key_U:
+  case Qt::Key_Up:              // translate ctrl+up to page up
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
+    return true;                // we absorb this event
+  case Qt::Key_Down:            // translate ctrl+down to page down
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
+    return true;
+#ifdef TA_OS_MAC
+  case Qt::Key_V:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
+    return true;              // we absorb this event
+#endif
+  case Qt::Key_D:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
+    return true;              // we absorb this event
+  case Qt::Key_H:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier));
+    return true;              // we absorb this event
+  case Qt::Key_K:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
+    return true;              // we absorb this event
+  case Qt::Key_Y:             // this doesn't seem to work to generate paste event
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
+    return true;              // we absorb this event
+  case Qt::Key_W:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
+    return true;              // we absorb this event
+  case Qt::Key_Slash:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+    return true;              // we absorb this event
+  case Qt::Key_Minus:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+    return true;              // we absorb this event
+  }
+  if(key_event->modifiers() & Qt::AltModifier && (key_event->key() == Qt::Key_W
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+                                                  || key_event->key() == 0x2211   // weird mac key
+#endif
+                                                  )) { // copy
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+    return true;                // we absorb this event
+  }
+  return inherited::eventFilter(obj, event);
+}
 
-/*void iPanelOfDocView::br_copyAvailable (bool) {
-  viewerWindow()->UpdateUi();
-}*/
+ /*void iPanelOfDocView::br_copyAvailable (bool) {
+   viewerWindow()->UpdateUi();
+   }*/
 

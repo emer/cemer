@@ -72,7 +72,7 @@ public:
 };
 
 
-QByteArray createTriangleStripIndexData(int n_indexes, int* indexes) {
+QByteArray createTriangleStripIndexData(int n_indexes, const int* indexes) {
   QByteArray indexBytes = QByteArray::fromRawData((const char*)indexes,
                                                   n_indexes *  sizeof(int));
   return indexBytes;
