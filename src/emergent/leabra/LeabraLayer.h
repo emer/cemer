@@ -170,6 +170,9 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 
+  void	Compute_CycleStats_Pre(LeabraNetwork* net)
+  { spec->Compute_CycleStats_Pre(this, net); }
+  // #CAT_Statistic pre-cycle-stats -- done in single thread prior to cycle stats -- good place to intervene for whole-layer dynamics
   void	Compute_OutputName(LeabraNetwork* net)
   { spec->Compute_OutputName(this, net); }
   // #CAT_Statistic compute output name based on most active unit name

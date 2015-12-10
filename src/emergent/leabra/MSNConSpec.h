@@ -302,8 +302,8 @@ public:
         }
         float ru_act = GetActVal(ru, ru_act_var);
         C_Compute_dWt_Trace_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
-                                 ru->da_p, ru->ach, d2r, ru->thal, ru_act, su_act, lrate_eff,
-                                 ru->deep_raw_net);
+                        ru->da_p, ru->ach, d2r, ru->thal_cnt, ru_act, su_act, lrate_eff,
+                        ru->deep_raw_net);
       }
       break;
     }
@@ -320,20 +320,20 @@ public:
       }
       break;
     }
-      case TRACE_NO_THAL_VS: {
-        for(int i=0; i<sz; i++) {
-          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-          float lrate_eff = clrate;
-          if(deep_on) {
-//            lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
-            lrate_eff *= (bg_lrate + fg_lrate); // TODO: deep_lrn was turning off before phaDA hits
-          }
-          float ru_act = GetActVal(ru, ru_act_var);
-          C_Compute_dWt_Trace_NoThalVS(dwts[i], ntrs[i], trs[i], ru->da_p, ru->ach, d2r,
-                                       ru_act, ru->deep_lrn, su_act, lrate_eff);
+    case TRACE_NO_THAL_VS: {
+      for(int i=0; i<sz; i++) {
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+        float lrate_eff = clrate;
+        if(deep_on) {
+          //            lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
+          lrate_eff *= (bg_lrate + fg_lrate); // TODO: deep_lrn was turning off before phaDA hits
         }
-        break;
+        float ru_act = GetActVal(ru, ru_act_var);
+        C_Compute_dWt_Trace_NoThalVS(dwts[i], ntrs[i], trs[i], ru->da_p, ru->ach, d2r,
+                                     ru_act, ru->deep_lrn, su_act, lrate_eff);
       }
+      break;
+    }
     case WM_DEPENDENT: {
       // todo!
       break;

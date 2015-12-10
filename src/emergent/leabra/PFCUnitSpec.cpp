@@ -230,16 +230,10 @@ void PFCUnitSpec::Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int t
   }
 }
 
-void PFCUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  inherited::Compute_Act_Rate(u, net, thr_no);
+void PFCUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Post(u, net, thr_no);
   Compute_PFCGating(u, net, thr_no);
 }
-
-void PFCUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  inherited::Compute_Act_Spike(u, net, thr_no);
-  Compute_PFCGating(u, net, thr_no);
-}
-
 
 void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!deep.on || !Quarter_DeepRawNow(net->quarter)) return;

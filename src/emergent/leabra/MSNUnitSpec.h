@@ -86,9 +86,13 @@ public:
     (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
      LeabraInhib* thr, float ival) override;
 
-  void  Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  virtual void  SaveGatingThal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // save gating value into thal_cnt when it actually takes effect -- synchronized with PFCUnitSpec timing of gating computation
+  
+  void Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
-  void  Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(MSNUnitSpec);
 protected:

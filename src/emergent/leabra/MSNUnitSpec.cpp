@@ -85,6 +85,26 @@ void MSNUnitSpec::Compute_ApplyInhib
   }
 }
 
+void MSNUnitSpec::SaveGatingThal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!Quarter_DeepRawNextQtr(net->quarter))
+    return;
+
+  const int cyc_per_qtr = net->times.quarter;
+  const int qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
+  const int half_cyc = cyc_per_qtr / 2;
+
+  if(qtr_cyc == half_cyc) {
+    u->thal_cnt = u->thal;      // save into thal_cnt!
+  }
+}
+
+void MSNUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Post(u, net, thr_no);
+  if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {
+    SaveGatingThal(u, net, thr_no);
+  }
+}
+
 void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(dorsal_ventral == DORSAL && matrix_patch == MATRIX) {
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
@@ -115,41 +135,9 @@ void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr
       }
     }
   }
-//  // TODO: trying verbatim copy of the DORSAL, MATRIX version - trying to produce BAext-like behavior
-//  if(dorsal_ventral == VENTRAL && matrix_patch == MATRIX) {
-//    LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
-//    LeabraLayer* lay = (LeabraLayer*)un->own_lay();
-//    float dp_lrn = 1.0f;
-//    float dp_mod = 1.0f;
-//    if(lay->am_deep_mod_net.max > 0.1f) {
-//      dp_lrn = u->deep_mod_net / lay->am_deep_mod_net.max;
-//      dp_mod = deep.mod_min + deep.mod_range * dp_lrn;
-//    }
-//    GateType gt = MatrixGateType(u, net, thr_no);
-//    if(gt == MAINT) {
-//      if(matrix.mnt_deep_mod) {
-//        u->deep_lrn = dp_lrn;
-//        u->deep_mod = dp_mod;
-//      }
-//      else {
-//        u->deep_lrn = u->deep_mod = 1.0f;         // everybody gets 100%
-//      }
-//    }
-//    else { // gt == OUT
-//      if(matrix.out_deep_mod) {
-//        u->deep_lrn = dp_lrn;
-//        u->deep_mod = dp_mod;
-//      }
-//      else {
-//        u->deep_lrn = u->deep_mod = 1.0f;         // everybody gets 100%
-//      }
-//    }
-//  }
-  // TODO: trying verbatim copy of the BasAmyg version - since want BAext-like behavior
   else if(dorsal_ventral == VENTRAL && matrix_patch == MATRIX) {
     LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
     if(deep.SendDeepMod()) {
-//    if(deep.on) { // TODO: didn't work; in fact shut down VSMatrixD1 guy completely!!!
       u->deep_lrn = u->deep_mod = u->act;      // record what we send!
     }
     else if(deep.IsTRC()) {
@@ -165,8 +153,6 @@ void MSNUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr
       u->deep_mod = 1.0f;                               // do not modulate with deep_mod!
     }
   }
-  
-
   else { // must be VENTRAL, PATCH
     inherited::Compute_DeepMod(u, net, thr_no); // use D1D2 one
   }

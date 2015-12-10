@@ -63,8 +63,7 @@ public:
   virtual void  Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // send the act value as thal to sending projections: every cycle
 
-  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   // no learning in this one..
   void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };

@@ -1327,6 +1327,10 @@ void LeabraNetwork::Compute_Act_Post_Thr(int thr_no) {
 void LeabraNetwork::Compute_CycleStats_Pre() {
   // stats are never threadable due to updating at higher levels
   trg_max_act = 0.0f;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(lay->lesioned()) continue;
+    lay->Compute_CycleStats_Pre(this);
+  }
 }
 
 void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {

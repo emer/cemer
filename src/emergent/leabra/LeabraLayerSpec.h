@@ -343,6 +343,9 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 
+  virtual void	Compute_CycleStats_Pre(LeabraLayer* lay, LeabraNetwork* net) { };
+  // #CAT_Statistic pre-cycle-stats -- done in single thread prior to cycle stats -- good place to intervene for whole-layer dynamics
+
   virtual void Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
   virtual void Compute_OutputName_ugp(LeabraLayer* lay, 

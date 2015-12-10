@@ -140,13 +140,8 @@ void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
   }
 }
 
-void GPiInvUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  inherited::Compute_Act_Rate(u, net, thr_no);
-  Send_Thal(u, net, thr_no);
-}
-
-void GPiInvUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  inherited::Compute_Act_Spike(u, net, thr_no);
+void GPiInvUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Post(u, net, thr_no);
   Send_Thal(u, net, thr_no);
 }
 
