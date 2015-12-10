@@ -1880,7 +1880,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
     if(time_in_lays.size == 0) { // take what we can..
       net->FindMakePrjn(vsppd1, il, fullprjn, PvlvSp("VSPatchCons_ToPosD1", MSNConSpec));
       net->FindMakePrjn(vsppd2, il, fullprjn, PvlvSp("VSPatchCons_ToPosD2NegD1", MSNConSpec));
-      net->FindMakePrjn(vspnd2, il, fullprjn, PvlvSp("VSPatchCons_NegD2", MSNConSpec));
+      net->FindMakePrjn(vspnd2, il, fullprjn, PvlvSp("VSPatchCons_ToNegD2", MSNConSpec));
       net->FindMakePrjn(vspnd1, il, fullprjn, PvlvSp("VSPatchCons_ToPosD2NegD1", MSNConSpec));
     }
     if(ctxt_in_lays.size == 0) {
@@ -2188,6 +2188,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_no_units->SetUnique("noise_type", false);
   matrix_no_units->SetUnique("noise", false);
   matrix_no_units->SetUnique("noise_adapt", false);
+  matrix_no_units->SetUnique("deep", false);
   matrix_no_units->SetUnique("dar", true);
   matrix_no_units->dar = MSNUnitSpec::D2R;
   matrix_no_units->SetUnique("matrix_patch", true);
