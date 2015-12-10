@@ -293,17 +293,17 @@ GetDataMatrixCell
 # Modifying data tables - normal operation tests
 #   Note, these tests must be done in order, and require that the Program operations above be run
 
-SetData Row Specified
-    Ensure Emergent Free
-    ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "row_from": 3, "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
-    Status OK No Result          ${output}
-    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "row_from": 3, "rows": 1}
-    Status OK Has Result         ${output}
-    Column Value Should Match    ${output}      0      batch    8
-    Column Value Should Match    ${output}      0      trial    3
-    Column Value Should Match    ${output}      0      epoch    6
-    Column Value Should Match    ${output}      0      trial_name       letrial
-    Column Float Value Should Match    ${output}      0      sse              4.4
+#SetData Row Specified
+#    Ensure Emergent Free
+#    ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "row_from": 3, "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
+#    Status OK No Result          ${output}
+#    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "row_from": 3, "rows": 1}
+#    Status OK Has Result         ${output}
+#    Column Value Should Match    ${output}      0      batch    8
+#    Column Value Should Match    ${output}      0      trial    3
+#    Column Value Should Match    ${output}      0      epoch    6
+#    Column Value Should Match    ${output}      0      trial_name       letrial
+#    Column Float Value Should Match    ${output}      0      sse              4.4
 
 RemoveData First Two Rows
     Ensure Emergent Free
@@ -315,17 +315,17 @@ RemoveData First Two Rows
     Column Value Should Match    ${output}      1      trial    3
     Column Value Should Match    ${output}      2      trial    4
 
-SetData No Row Specified
-    Ensure Emergent Free
-    ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
-    Status OK No Result          ${output}
-    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "rows": 1}
-    Status OK Has Result         ${output}
-    Column Value Should Match    ${output}      0       batch   8
-    Column Value Should Match    ${output}      0       epoch   6
-    Column Value Should Match    ${output}      0       trial   2
-    Column Value Should Match    ${output}      0       trial_name      letrial
-    Column Float Value Should Match    ${output}      0       sse             4.4
+#SetData No Row Specified
+#    Ensure Emergent Free
+#    ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
+#    Status OK No Result          ${output}
+#    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "rows": 1}
+#    Status OK Has Result         ${output}
+#    Column Value Should Match    ${output}      0       batch   8
+#    Column Value Should Match    ${output}      0       epoch   6
+#    Column Value Should Match    ${output}      0       trial   2
+#    Column Value Should Match    ${output}      0       trial_name      letrial
+#    Column Float Value Should Match    ${output}      0       sse             4.4
 
 RemoveData All Rows                    
     Ensure Emergent Free
@@ -335,36 +335,36 @@ RemoveData All Rows
     Status OK Has Result         ${output}
     Json Value Should Not Exist  ${output}             /result/columns/0/result/0
 
-AppendData
-    Ensure Emergent Free
-    ${output} =                  Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] }, { "name": "trial_name", "values": ["mytrial"] }, { "name": "sse", "values": [10.2] } ] } }
-    Status OK No Result          ${output}
-    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
-    Status OK Has Result         ${output}
-    Column Value Should Match    ${output}      0       batch   7
-    Column Value Should Match    ${output}      0       epoch   9
-    Column Value Should Match    ${output}      0       trial_name      mytrial
-    Column Float Value Should Match    ${output}      0       sse             10.2
+#AppendData
+#    Ensure Emergent Free
+#    ${output} =                  Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] }#, { "name": "trial_name", "values": ["mytrial"] }, { "name": "sse", "values": [10.2] } ] } }
+#    Status OK No Result          ${output}
+#    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+#    Status OK Has Result         ${output}
+#    Column Value Should Match    ${output}      0       batch   7
+#    Column Value Should Match    ${output}      0       epoch   9
+#    Column Value Should Match    ${output}      0       trial_name      mytrial
+#    Column Float Value Should Match    ${output}      0       sse             10.2
 
-SetData Add Column
-    Ensure Emergent Free
-    ${output} =                  Run Command Wait      {"command": "SetData", "create": true, "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [10] }, { "name": "trial_name", "values": ["mytrial2"] }, { "name": "sse", "values": [10.3] }, { "name": "new_col", "values": ["new_col_value"] } ] } }
-    Status OK No Result          ${output}
-    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
-    Status OK Has Result         ${output}
-    Column Value Should Match    ${output}      0       batch   8
-    Column Value Should Match    ${output}      0       epoch   10
-    Column Value Should Match    ${output}      0       trial_name      mytrial2
-    Column Float Value Should Match    ${output}      0       sse             10.3
-    Column Value Should Match    ${output}      0       new_col         new_col_value
+#SetData Add Column
+#    Ensure Emergent Free
+#    ${output} =                  Run Command Wait      {"command": "SetData", "create": true, "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [10] }, { "name": "trial_name", "values": ["mytrial2"] }, { "name": "sse", "values": [10.3] }, { "name": "new_col", "values": ["new_col_value"] } ] } }
+#    Status OK No Result          ${output}
+#    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+#    Status OK Has Result         ${output}
+#    Column Value Should Match    ${output}      0       batch   8
+#    Column Value Should Match    ${output}      0       epoch   10
+#    Column Value Should Match    ${output}      0       trial_name      mytrial2
+#    Column Float Value Should Match    ${output}      0       sse             10.3
+#    Column Value Should Match    ${output}      0       new_col         new_col_value
 
-SetData Matrix Cell
-    Ensure Emergent Free
-    ${output} =                  Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1, "cell": 12, "data": { "columns": [ { "name": "Output", "values": [0] } ] } }
-    Status OK No Result          ${output}
-    ${output} =                  Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 1, "rows": 1, "column": "Output", "cell": 12}
-    # change next 2 lines if "value" is changed to "result"
-    Status OK Equal Result       ${output}             0
+#SetData Matrix Cell
+#    Ensure Emergent Free
+#    ${output} =                  Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1, "cell": 12, "data": { "columns": [ { "name": "Output", "values": [0] } ] } }
+#    Status OK No Result          ${output}
+#    ${output} =                  Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 1, "rows": 1, "column": "Output", "cell": 12}
+#    # change next 2 lines if "value" is changed to "result"
+#    Status OK Equal Result       ${output}             0
 
 # Data Table error tests
 
@@ -456,49 +456,49 @@ GetDataMatrixCell Column Not Found Error
     ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn", "cell": 12}
     Status Error Match         ${output}             7                  GetDataMatrixCell: column not found; column not found
 
-AppendData Column Not Found Error
-    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             7                  Column name 'NotAColumn' not found in data table 'TrialOutputData'
+#AppendData Column Not Found Error
+#    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+#    Status Error Match         ${output}             7                  Column name 'NotAColumn' not found in data table 'TrialOutputData'
 
-SetData Column Not Found No Create Error
-    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             7                  Column name 'NotAColumn' not found in data table 'TrialOutputData'
+#SetData Column Not Found No Create Error
+#    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+#    Status Error Match         ${output}             7                  Column name 'NotAColumn' not found in data table 'TrialOutputData'
 
-SetData Column Not Found Create False Error
-    ${output} =                Run Command Wait      {"command": "SetData", "create": false, "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             7                  Column name 'NotAColumn' not found in data table 'TrialOutputData'
+#SetData Column Not Found Create False Error
+#    ${output} =                Run Command Wait      {"command": "SetData", "create": false, "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+#    Status Error Match         ${output}             7                  Column name 'NotAColumn' not found in data table 'TrialOutputData'
 
 # Set Data Matrix error
 
-SetData Matrix Cell Error
-    ${output} =                  Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1, "cell": 1024, "data": { "columns": [ { "name": "Output", "values": [0] } ] } }
-    Status Error Match           ${output}           7                  SetData: cell range error
+#SetData Matrix Cell Error
+#    ${output} =                  Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1, "cell": 1024, "data": { "columns": [ { "name": "Output", "values": [0] } ] } }
+#    Status Error Match           ${output}           7                  SetData: cell range error
 
 # Bad data format for Append / SetData
 
-AppendData Bad Data Format (data)
-    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "dater": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             4                  Unknown parameter: dater
+#AppendData Bad Data Format (data)
+#    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "dater": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+#    Status Error Match         ${output}             4                  Unknown parameter: dater
 
-AppendData Bad Data Format (columns)
-    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "corumns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             7                  Columns member not found in data
+#AppendData Bad Data Format (columns)
+#    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "corumns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+#    Status Error Match         ${output}             7                  Columns member not found in data
 
-AppendData Bad Data Format (name)
-    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "gname": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             7                  Column member 'name' not found
+#AppendData Bad Data Format (name)
+#    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "gname": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+#    Status Error Match         ${output}             7                  Column member 'name' not found
 
-SetData Bad Data Format (data)
-    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "dater": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             4                  Unknown parameter: dater
+#SetData Bad Data Format (data)
+#    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "dater": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+#    Status Error Match         ${output}             4                  Unknown parameter: dater
 
-SetData Bad Data Format (columns)
-    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "corumns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             7                  Columns member not found in data
+#SetData Bad Data Format (columns)
+#    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "corumns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+#    Status Error Match         ${output}             7                  Columns member not found in data
 
-SetData Bad Data Format (name)
-    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "gname": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             7                  Column member 'name' not found
+#SetData Bad Data Format (name)
+#    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "gname": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+#    Status Error Match         ${output}             7                  Column member 'name' not found
 
 # RemoveData Errors
 
