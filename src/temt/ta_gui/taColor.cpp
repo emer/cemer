@@ -35,3 +35,13 @@ void taColor::setColorName(const String& nm) {
   }
 }
 
+void taColor::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  QuantizeFloats();
+}
+
+void taColor::QuantizeFloats() {
+  r = ((float)((int)(r * 1000.0f))) / 1000.0f;
+  g = ((float)((int)(g * 1000.0f))) / 1000.0f;
+  b = ((float)((int)(b * 1000.0f))) / 1000.0f;
+}

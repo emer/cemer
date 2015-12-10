@@ -44,15 +44,20 @@ public:
   // set from standard X11 color names, most of which are also web/html standard color names
 
   void                  Set(float r_, float g_, float b_, float a_ = 1)
-  { r=r_; g=g_; b=b_; a=a_; }
+  { r=r_; g=g_; b=b_; a=a_; QuantizeFloats(); }
 
-  TA_BASEFUNS_LITE(taColor);
-
+  void                  QuantizeFloats();
+  // quantize the r,g,b values to .001 resolution -- prevents excessive precision and enables direct comparisons among values
+  
   operator iColor() const {return color();}
 
+  TA_BASEFUNS_LITE(taColor);
+protected:
+  void UpdateAfterEdit_impl();
+  
 private:
   void  Copy_(const taColor& cp) {r=cp.r; g=cp.g; b=cp.b; a=cp.a;}// not no_a
-  void  Initialize() {no_a = false; r = g = b = 0; a = 1;}
+  void  Initialize() {no_a = false; r = g = b = 0; a = 1.0f;}
   void  Destroy() {}
 };
 

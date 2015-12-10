@@ -153,10 +153,11 @@ void Projection::UpdateAfterEdit_impl() {
   }
 
   UpdateConSpecs((bool)taMisc::is_loading);
-//   if(taMisc::is_loading) return;
-//   if(!taMisc::gui_active) return;
-//   Network* net = GET_MY_OWNER(Network);
-//   if(!net) return;
+
+  // somehow the colors get out-of-whack on these guys
+  if(fabsf(prjn_clr.g - .9f) <= .011f) prjn_clr.g = .9f;
+  if(fabsf(prjn_clr.b - .5f) <= .011f) prjn_clr.b = .5f;
+  prjn_clr.QuantizeFloats(); // fix floats
 }
 
 void Projection::UpdateName() {
