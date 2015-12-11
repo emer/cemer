@@ -2103,6 +2103,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMChild(MSNUnitSpec, matrix_go_units, pbwm_units, "MatrixGoUnits");
   FMChild(MSNUnitSpec, matrix_no_units, matrix_go_units, "MatrixNoGoUnits");
   FMChild(GPiInvUnitSpec, gpi_units, pbwm_units, "GPiUnits");
+  FMChild(LeabraUnitSpec, gpe_units, pbwm_units, "GPeNoGoUnits");
   FMChild(PatchUnitSpec, patch_units, pbwm_units, "PatchUnits");
   FMChild(PFCUnitSpec, pfc_mnt_units, pbwm_units, "PFCmntUnits");
   FMChild(PFCUnitSpec, pfc_mnt_d_units, pfc_mnt_units, "PFCmntdUnits");
@@ -2195,6 +2196,10 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_no_units->matrix_patch = MSNUnitSpec::MATRIX;
   matrix_no_units->SetUnique("dorsal_ventral", true);
   matrix_no_units->dorsal_ventral = MSNUnitSpec::DORSAL;
+
+  gpe_units->SetUnique("deep", true);
+  gpe_units->deep.on = true;
+  gpe_units->deep.role = DeepSpec::SUPER;
 
   pfc_mnt_units->SetUnique("deep", true);
   pfc_mnt_units->deep.on = true;
@@ -2620,12 +2625,12 @@ can be sure everything is ok.";
   LeabraLayer* pfc_out_d = NULL;
 
   bool new_matrix = false;
+  gpenogo = (LeabraLayer*)pbwm_laygp->FindMakeLayer("GPeNoGo", NULL);
+  gpi = (LeabraLayer*)pbwm_laygp->FindMakeLayer("GPi", NULL);
   matrix_go = (LeabraLayer*)pbwm_laygp->FindMakeLayer("MatrixGo", NULL, new_matrix);
   matrix_nogo = (LeabraLayer*)pbwm_laygp->FindMakeLayer("MatrixNoGo", NULL);
   matrix_tan = (LeabraLayer*)pbwm_laygp->FindMakeLayer("MatrixTAN", NULL);
   patch = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt_patch", NULL);
-  gpenogo = (LeabraLayer*)pbwm_laygp->FindMakeLayer("GPeNoGo", NULL);
-  gpi = (LeabraLayer*)pbwm_laygp->FindMakeLayer("GPi", NULL);
   bool new_pfc  = false;
   pfc_mnt = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt", NULL, new_pfc);
   pfc_mnt_d = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt_deep", NULL);
@@ -2707,7 +2712,7 @@ can be sure everything is ok.";
   gpi->SetUnitSpec(PbwmSp("GPiUnits",GPiInvUnitSpec));
   gpi->SetLayerSpec(PbwmSp("GPiLayer",LeabraLayerSpec));
 
-  gpenogo->SetUnitSpec(PbwmSp(prefix + "Units",LeabraUnitSpec));
+  gpenogo->SetUnitSpec(PbwmSp("GPeNoGoUnits",LeabraUnitSpec));
   gpenogo->SetLayerSpec(PbwmSp("GPeNoGoLayer",LeabraLayerSpec));
 
   pfc_mnt->SetUnitSpec(PbwmSp("PFCmntUnits",PFCUnitSpec));

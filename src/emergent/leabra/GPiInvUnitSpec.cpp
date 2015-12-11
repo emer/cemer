@@ -116,34 +116,36 @@ void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
   const int qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
   const int half_cyc = cyc_per_qtr / 2;
   const int gate_cyc = half_cyc -2; // 1 cycle earlier than earliest PFC gating
+
+  float snd_val = 0.0f;
+  if(net->quarter == 0 && qtr_cyc <= 1) { // reset
+    u->thal_cnt = 0.0f;
+  }
   
-  if(gate_qtr && qtr_cyc > gate_cyc) {
-    u->act = u->act_eq = u->thal_cnt; // show and record the previously gated value!
-  }
-
-  float snd_val;
-  if(gpi.thr_act) {
-    if(u->act_eq <= gpi.gate_thr) u->act_eq = 0.0f;
-    snd_val = u->act_eq;
-  }
-  else {
-    snd_val = (u->act_eq > gpi.gate_thr ? u->act_eq : 0.0f);
-  }
-
-  if(snd_val > 0.0f && gpi.min_thal > gpi.gate_thr) {
-    if(gpi.min_thal == 1.0f) {
-      snd_val = 1.0f;
+  if(gate_qtr && qtr_cyc == gate_cyc) {
+    if(gpi.thr_act) {
+      if(u->act_eq <= gpi.gate_thr) u->act_eq = 0.0f;
+      snd_val = u->act_eq;
     }
     else {
-      snd_val = gpi.min_thal + (snd_val - gpi.gate_thr) * gpi.thal_rescale;
+      snd_val = (u->act_eq > gpi.gate_thr ? u->act_eq : 0.0f);
     }
-  }
 
-  u->thal = snd_val;            // record what we send, always
-  if(gate_qtr && qtr_cyc == gate_cyc) {
+    if(snd_val > 0.0f && gpi.min_thal > gpi.gate_thr) {
+      if(gpi.min_thal == 1.0f) {
+        snd_val = 1.0f;
+      }
+      else {
+        snd_val = gpi.min_thal + (snd_val - gpi.gate_thr) * gpi.thal_rescale;
+      }
+    }
     u->thal_cnt = snd_val;      // save gating value!
   }
+  else {
+    snd_val = u->thal_cnt;
+  }
   
+  u->thal = snd_val;            // record what we send, always
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);

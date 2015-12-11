@@ -910,6 +910,7 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnitVars* u, LeabraNetwork* net, int
   u->da_p = 0.0f;
   u->da_n = 0.0f;
   u->ach = 0.0f;
+  u->thal = 0.0f;
   //  u->sev = 0.0f; // longer time-course
   // reset all the time vars so it isn't ambiguous as these update
   if(taMisc::gui_active) {
@@ -1381,7 +1382,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   if(lay->hard_clamped) {
-    TestWrite(u->thal, 0.0f);     // reset here before thalamic writing
+    // TestWrite(u->thal, 0.0f);     // reset here before thalamic writing
     return;
   }
 
@@ -1427,7 +1428,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
     u->net *= Compute_Noise(u, net, thr_no);
   }
 
-  TestWrite(u->thal, 0.0f);     // reset here before thalamic writing
+  // TestWrite(u->thal, 0.0f);     // reset here before thalamic writing
 }
 
 float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
