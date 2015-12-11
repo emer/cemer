@@ -77,6 +77,8 @@ public:
 
   bool          set_proj_name;  // set the project name to use -- overrides the default which is to use the actual name of the project -- this can be useful for running multiple variants of the same project with different local file names, all under a common cluster-run project name, so they can all share the same results etc
   String        proj_name;      // #CONDSHOW_ON_set_proj_name project name to use in lieu of the actual project name, when set_proj_name is active
+  int           auto_updt_interval; // (10 default) how many seconds to wait between auto-update while waiting for information back from the cluster
+  int           auto_updt_timeout; // (30 default) how many seconds to wait before giving up on receiving information back from the cluster -- when it times out, then you can just hit the update button manually
   String        clusters;       // space-separated list of cluster names to include in listing jobs for this project
   String        users;          // space-separated list of user names to include in listing jobs for this project
   int           cur_svn_rev;    // #READ_ONLY #SHOW #NO_SAVE #METHBOX_LABEL the current svn revision that we've updated to (-1 if not yet updated)

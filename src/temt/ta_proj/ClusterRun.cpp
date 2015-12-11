@@ -58,6 +58,8 @@ void ClusterRun::InitLinks() {
 
 void ClusterRun::Initialize() {
   set_proj_name = false;
+  auto_updt_interval = 10;
+  auto_updt_timeout = 30;
   cur_svn_rev = -1;
   exe_cmd = taMisc::app_name;
   use_search_algo = false;
@@ -1908,7 +1910,7 @@ bool ClusterRun::WaitProcAutoUpdate() {
   taDateTime curtime;
   curtime.currentDateTime();
   int delay = wait_proc_last_updt.secsTo(curtime);
-  if(delay < 5) {
+  if(delay < wait_proc_updt->auto_updt_interval) {
     return false;
   }
   if(QApplication::activeModalWidget() != NULL) {
@@ -1927,8 +1929,8 @@ bool ClusterRun::WaitProcAutoUpdate() {
     wait_proc_trg_rev = -1;
     return true;
   }
-  if(wait_proc_start.secsTo(curtime) > 120) {
-    taMisc::Info("ClusterRun: time out on updating cluster run, cur rev:",
+  if(wait_proc_start.secsTo(curtime) > wait_proc_updt->auto_updt_timeout) {
+    taMisc::Info("ClusterRun: time out on updating cluster run -- press the Update button manually to get the updates, cur rev:",
                  String(wait_proc_updt->cur_svn_rev));
     wait_proc_updt = NULL;
     wait_proc_trg_rev = -1;
