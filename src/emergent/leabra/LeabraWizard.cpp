@@ -2278,7 +2278,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   to_tans->lrate = 0.1f;
 
   pfc_lrn_cons->SetUnique("lrate", true);
-  pfc_lrn_cons->lrate = 0.002f;
+  pfc_lrn_cons->lrate = 0.004f;
   pfc_lrn_cons->learn_qtr = LeabraConSpec::Q2_Q4;
 
   deep_ctxt->SetUnique("wt_scale", true); // just make sure 1,1
@@ -2410,7 +2410,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   vspatch_cons->ru_act_var = MSNConSpec::ACT_P;
   vspatch_cons->learn_rule = MSNConSpec::DA_HEBB_VS; // def needs vs
   vspatch_cons->rnd.mean = 0.01f;
-  vspatch_cons->lrate = 0.02f;
+  vspatch_cons->lrate = 0.04f;
 
   LHbRMTgUnitSpec* lhbrmtg_units = PvlvSp("LHbRMTgUnits", LHbRMTgUnitSpec);
   lhbrmtg_units->lhb.patch_cur = true;
