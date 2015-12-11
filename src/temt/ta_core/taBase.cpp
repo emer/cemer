@@ -3538,53 +3538,6 @@ bool taBase::AddToControlPanelNm(const String& member, ControlPanel* ctrl_panel,
   return ctrl_panel->SelectMemberNm(this, member, extra_label, desc, sub_gp_nm);
 }
 
-int taBase::AddToControlPanelSearch(const String& memb_contains, ControlPanel*& ctrl_panel) {
-  if(!ctrl_panel) {
-    taProject* proj = GetMyProj();
-    if(TestError(!proj, "AddToControlPanelSearch", "cannot find project")) return -1;
-    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
-    ctrl_panel->name = "Srch_" + memb_contains;
-    ctrl_panel->desc = "Search of members containing: " + memb_contains
-      + " in object: " + GetDisplayName();
-    ctrl_panel->SigEmitUpdated(); // so name updates in treee
-  }
-  TypeDef* td = GetTypeDef();
-  int nfound = 0;
-  // look for guys on me
-  for(int m=0;m<td->members.size;m++) {
-    MemberDef* md = td->members[m];
-    if(md->name.contains(memb_contains)) {
-      nfound++;
-      ctrl_panel->SelectMember(this, md, GetName());
-    }
-  }
-  // then look in my sub-guys
-  for(int m=0;m<td->members.size;m++) {
-    MemberDef* md = td->members[m];
-    if(md->type->IsNotPtr()) {
-      if(md->type->IsActualTaBase()) {
-        taBase* obj = (taBase*)md->GetOff(this);
-        nfound += obj->AddToControlPanelSearch(memb_contains, ctrl_panel);
-      }
-    }
-  }
-  return nfound;
-}
-
-int taBase::AddToControlPanelCompare(taBase*cmp_obj, ControlPanel*& ctrl_panel, bool no_ptrs) {
-  if(TestError(!cmp_obj, "AddToControlPanelCompare", "cmp_obj is null")) return -1;
-  if(TestError(GetTypeDef() != cmp_obj->GetTypeDef(), "AddToControlPanelCompare",
-               "objects must have the exact same type to be able to be compared")) return -1;
-  if(!ctrl_panel) {
-    taProject* proj = GetMyProj();
-    if(TestError(!proj, "AddToControlPanelCompare", "cannot find project")) return -1;
-    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
-  }
-  int rval = ctrl_panel->CompareObjs(this, cmp_obj, no_ptrs);
-  tabMisc::DelayedFunCall_gui(ctrl_panel, "BrowserSelectMe");
-  return rval;
-}
-
 bool taBase::AddFunToControlPanel(MethodDef* function, ControlPanel* ctrl_panel,
                               const String& extra_label, const String& sub_gp_nm) {
   if(TestError(!function, "AddControlFunForEdit", "function is null")) return false;

@@ -77,10 +77,9 @@ public: // public API
   virtual void  GoToObject(int idx);
   // select object for given member field for editing in the gui
 
-  virtual int   SearchMembers(taNBase* obj, const String& memb_contains);
-  // #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE search given object for member names that contain given string, and add them to this editor
-  virtual int   CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs = true);
-  // #MENU #TYPE_taNBase compare two objects (must be of same type) and add the differences in this control panel; no_ptrs = ignore pointer fields
+  virtual ParamSet*  CopyToParamSet(ParamSet* param_set = NULL);
+  // #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewParamSet copy all the members from this control panel into a (new if NULL) param set, and save all the current values in that param set -- provides a quick backup and checkpoint of a set of variables
+
   virtual bool  SelectMember(taBase* base, MemberDef* md,
                      const String& xtra_lbl = _nilString, const String& desc = _nilString,
                      const String& sub_gp_nm = _nilString);

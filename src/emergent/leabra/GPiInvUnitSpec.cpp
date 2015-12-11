@@ -110,6 +110,17 @@ void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
 }
 
 void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  bool gate_qtr = Quarter_DeepRawNextQtr(net->quarter);
+
+  const int cyc_per_qtr = net->times.quarter;
+  const int qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
+  const int half_cyc = cyc_per_qtr / 2;
+  const int gate_cyc = half_cyc -2; // 1 cycle earlier than earliest PFC gating
+  
+  if(gate_qtr && qtr_cyc > gate_cyc) {
+    u->act = u->act_eq = u->thal_cnt; // show and record the previously gated value!
+  }
+
   float snd_val;
   if(gpi.thr_act) {
     if(u->act_eq <= gpi.gate_thr) u->act_eq = 0.0f;
@@ -128,6 +139,11 @@ void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
     }
   }
 
+  u->thal = snd_val;            // record what we send, always
+  if(gate_qtr && qtr_cyc == gate_cyc) {
+    u->thal_cnt = snd_val;      // save gating value!
+  }
+  
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);

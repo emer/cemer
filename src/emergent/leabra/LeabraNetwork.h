@@ -542,7 +542,7 @@ public:
   //	Cycle Stats
 
   virtual void	Compute_CycleStats_Pre();
-  // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level pre-step
+  // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level pre-step -- happens after Compute_Act and prior to Compute_Act_Post -- good place to insert any layer-level modification of unit-level activations
   virtual void	Compute_CycleStats_Thr(int thr_no);
   // #IGNORE compute cycle-level stats -- acts AvgMax -- fast layer level computation
   virtual void	Compute_ActEqStats_Thr(int thr_no);

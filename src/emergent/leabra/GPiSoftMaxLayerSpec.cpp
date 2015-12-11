@@ -22,6 +22,7 @@ TA_BASEFUNS_CTORS_DEFN(GPiSoftMaxSpec);
 TA_BASEFUNS_CTORS_DEFN(GPiSoftMaxLayerSpec);
 
 void GPiSoftMaxSpec::Initialize() {
+  n_gate = 2;
   temp = 1.0f;
   rnd_p = 0.02f;
   Defaults_init();
@@ -35,41 +36,59 @@ void GPiSoftMaxLayerSpec::Initialize() {
 }
 
 void GPiSoftMaxLayerSpec::Compute_SoftMax(LeabraLayer* lay, LeabraNetwork* net) {
-  float sum = 0.0f;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-    float eval = taMath_float::exp(uv->net / soft_max.temp);
-    uv->misc_1 = eval;
-    sum += eval;
-  }
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
+  
+  if(!us->Quarter_DeepRawNextQtr(net->quarter))
+    return;
 
-  if(sum > 0.0f) {
+  const int cyc_per_qtr = net->times.quarter;
+  const int qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
+  const int half_cyc = cyc_per_qtr / 2;
+  const int gate_cyc = half_cyc - 2;   // 2 trials prior to first gating in PFC!
+  
+  if(qtr_cyc != gate_cyc)
+    return;
+  
+  int_Array gated;
+
+  for(int gt=0; gt < soft_max.n_gate; gt++) {
+    float sum = 0.0f;
     FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
       if(u->lesioned()) continue;
       LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-      uv->misc_1 /= sum;
+      float eval = taMath_float::exp(uv->net / soft_max.temp);
+      uv->misc_1 = eval;
+      sum += eval;
     }
-  }
 
-  int chosen_i = 0;
-  if(sum == 0.0f || Random::BoolProb(soft_max.rnd_p)) {
-    chosen_i = Random::IntZeroN(lay->units.leaves, taMisc::dmem_proc);
-  }
-  else {
-    float rndval = Random::ZeroOne(taMisc::dmem_proc);
-    sum = 0.0f;
-    FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-      if(u->lesioned()) {
-        chosen_i++;
-        continue;
+    if(sum > 0.0f) {
+      FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+        if(u->lesioned()) continue;
+        LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+        uv->misc_1 /= sum;
       }
-      LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-      sum += uv->misc_1;
-      if(sum >= rndval)
-        break;
-      chosen_i++;
     }
+
+    int chosen_i = 0;
+    if(sum == 0.0f || Random::BoolProb(soft_max.rnd_p)) {
+      chosen_i = Random::IntZeroN(lay->units.leaves, taMisc::dmem_proc);
+    }
+    else {
+      float rndval = Random::ZeroOne(taMisc::dmem_proc);
+      sum = 0.0f;
+      FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+        if(u->lesioned()) {
+          chosen_i++;
+          continue;
+        }
+        LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+        sum += uv->misc_1;
+        if(sum >= rndval)
+          break;
+        chosen_i++;
+      }
+    }
+    gated.Add(chosen_i);
   }
 
   int leaf = 0;
@@ -80,7 +99,7 @@ void GPiSoftMaxLayerSpec::Compute_SoftMax(LeabraLayer* lay, LeabraNetwork* net) 
     }
     LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
     float act = 0.0f;
-    if(leaf == chosen_i) {
+    if(gated.FindEl(leaf) >= 0) {
       act = 1.0f;
     }
     uv->act = uv->act_eq = act;

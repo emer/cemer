@@ -17,6 +17,10 @@
 #include <voidptr_PArray>
 #include <taGuiDialog>
 #include <Program>
+#include <ParamSet>
+#include <taProject>
+
+#include <QDateTime>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -154,35 +158,6 @@ void ControlPanel::SigEmit_Group(taGroup_impl* grp,
   ReShowEdit(true);
 }
 
-int ControlPanel::CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs) {
-  if(TestError(!obj_a || !obj_b, "CompareObjs", "null object(s)")) return -1;
-  if(TestError(obj_a->GetTypeDef() != obj_b->GetTypeDef(), "CompareObjs",
-               "objects must have the exact same type to be able to be compared")) return -1;
-  name = "Cmp_" + obj_a->GetName() + "_" + obj_b->GetName();
-  desc = "Differences between: A: " + obj_a->GetDisplayName() + " and B: " +
-    obj_b->GetDisplayName();
-  Member_List mds;
-  voidptr_PArray trg_bases;
-  voidptr_PArray src_bases;
-  TypeSpace base_types;
-  obj_a->CompareSameTypeR(mds, base_types, trg_bases, src_bases, obj_b, no_ptrs);
-  taMisc::Info("ControlPanel::CompareObjs generated", (String)mds.size, "differences");
-  for(int i=0;i<mds.size;i++) {
-    TypeDef* td = base_types[i];
-    if(!td->IsActualTaBase()) continue;
-    //    MemberDef* md = mds[i];
-    taBase* itma = (taBase*)trg_bases[i];
-    taBase* itmb = (taBase*)src_bases[i];
-    String nma = "A: " + itma->GetDisplayName().elidedTo(20) + "." + mds[i]->name;
-    String nmb = "B: " + itmb->GetDisplayName().elidedTo(20) + "." + mds[i]->name;
-    SelectMember_impl(itma, mds[i], nma, _nilString);
-    SelectMember_impl(itmb, mds[i], nmb, _nilString);
-  }
-  SigEmitUpdated(); // so name updates in tree
-  ReShowEdit(true);
-  return mds.size;
-}
-
 void ControlPanel::RemoveField(int idx) {
   RemoveField_impl(idx);
   ReShowEdit(true); //forced
@@ -238,13 +213,21 @@ bool ControlPanel::ReShowEdit(bool force) {
 }
 
 
-int ControlPanel::SearchMembers(taNBase* obj, const String& memb_contains) {
-  if(TestError(!obj || memb_contains.empty(), "SearchMembers",
-               "null object or empty search")) return -1;
-  ControlPanel* se = this;
-  int rval = obj->AddToControlPanelSearch(memb_contains, se);
-  ReShowEdit(true); //forced
-  return rval;
+ParamSet* ControlPanel::CopyToParamSet(ParamSet* param_set) {
+  if(!param_set) {
+    taProject* proj = GetMyProj();
+    if(!proj) return NULL;
+    param_set = proj->param_sets.NewEl(1);
+    param_set->SetName(name + "_" +
+                       (String)QDateTime::currentDateTime().toString("dd_MM_yy"));
+  }
+  
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, mbrs) {
+    EditMbrItem* itm = (EditMbrItem*)sei->Clone();
+    param_set->mbrs.Add(itm);
+  }
+  param_set->CopyActiveToSaved();
+  return param_set;
 }
 
 bool ControlPanel::SelectMember(taBase* base, MemberDef* mbr,

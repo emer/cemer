@@ -193,12 +193,6 @@ void taGroup_impl::Copy_Borrow(const taGroup_impl& cp) {
   gp.Copy_Borrow(cp.gp);
 }
 
-int taGroup_impl::AddToControlPanelSearch(const String& memb_contains, ControlPanel*& editor) {
-  int nfound = inherited::AddToControlPanelSearch(memb_contains, editor);
-  nfound += gp.AddToControlPanelSearch(memb_contains, editor);
-  return nfound;
-}
-
 void taGroup_impl::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
                                  taBase_PtrList* owners, bool text_only,
                                  bool contains, bool case_sensitive,

@@ -1424,29 +1424,6 @@ int taList_impl::SetDefaultElType(TypeDef* it) {
   return idx;
 }
 
-int taList_impl::AddToControlPanelSearch(const String& memb_contains, ControlPanel*& ctrl_panel) {
-  int nfound = taOBase::AddToControlPanelSearch(memb_contains, ctrl_panel);
-  
-  for(int i=0;i<size;i++) {
-    taBase* itm = (taBase*)el[i];
-    if(!itm)
-      continue;
-    if(itm->GetOwner() == this) { // for guys we own (not links; prevents loops)
-      if (itm->GetName().contains(memb_contains)) {
-        TypeDef* itm_td = itm->GetTypeDef();
-        if (itm_td->InheritsFrom(&TA_ProgVar)) {
-          MemberDef* var_md = dynamic_cast<ProgVar*>(itm)->GetValMemberDef();
-          bool was_added = ctrl_panel->SelectMember(itm, var_md, "");
-          if (was_added)
-            nfound++;
-            }
-      }
-      nfound += itm->AddToControlPanelSearch(memb_contains, ctrl_panel);
-    }
-  }
-  return nfound;
-}
-
 void taList_impl::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
                                 taBase_PtrList* owners, bool text_only,
                                 bool contains, bool case_sensitive,

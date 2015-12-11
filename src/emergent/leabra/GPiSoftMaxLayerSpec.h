@@ -29,6 +29,7 @@ class E_API GPiSoftMaxSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra soft max specs
 INHERITED(SpecMemberBase)
 public:
+  int           n_gate;         // how many units to select for gating on each trial
   float         temp;           // temperature for softmax
   float         rnd_p;          // probability of selecting completely at random (uniform random choice across all stripes) -- combines epsilon greedy with softmax..
   

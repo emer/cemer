@@ -367,7 +367,9 @@ bool iConsole::stdDisplay(QTextStream* s) {
       if(line.endsWith("invalid drawable")) continue; // skip this error!
       n_lines_recvd++;
       promptDisp = false;
-      append(line);
+      if(taMisc::verbose_load > taMisc::QUIET) {
+        append(line);
+      }
       if(logfile.isOpen()) {
         logfile.write(line.toLocal8Bit());
         logfile.write("\n", strlen("\n"));
@@ -384,7 +386,9 @@ bool iConsole::stdDisplay(QTextStream* s) {
       n_lines_recvd++;
       if(!quitPager) {
         promptDisp = false;
-        append(line);
+        if(taMisc::verbose_load > taMisc::QUIET) {
+          append(line);
+        }
         if(logfile.isOpen()) {
           logfile.write(line.toLocal8Bit());
           logfile.write("\n", strlen("\n"));

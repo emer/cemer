@@ -1414,10 +1414,6 @@ public:
                 const String& extra_label = _nilString, const String& sub_gp_nm = _nilString,
                 const String& desc = _nilString);
   // #CAT_Display select a  member (by name) for adding to a project control_panel - a panel that is a user chosen collection of members and methods from one or more objects (if ctrl_panel is NULL, a new one is created in .ctrl_panels).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist).  desc is a custom description -- will show up as tooltip for user (default is info from member)
-  virtual int           AddToControlPanelSearch(const String& memb_contains, ControlPanel*& ctrl_panel);
-  // #MENU #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel #CAT_Display search among this object and any sub-objects for members containing given string, and add to given control_panel (if NULL, a new one is created in .ctrl_panels).  returns number found
-  virtual int           AddToControlPanelCompare(taBase* cmp_obj, ControlPanel*& ctrl_panel, bool no_ptrs = true);
-  // #MENU #NULL_OK_1  #NULL_TEXT_1_NewCtrlPanel  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object, adding any differences to given control_panel (if NULL, a new one is created in .ctrl_panels).  returns number of differences.  no_ptrs = ignore differences in pointer fields
   virtual bool          AddFunToControlPanel(MethodDef* function, ControlPanel* ctrl_panel,
          const String& extra_label = "", const String& sub_gp_nm = "");
   // #MENU #NULL_OK_1  #NULL_TEXT_1_NewCtrlPanel  #CAT_Display select a function (method) for calling from a project control_panel - a panel that is a user chosen collection of members and methods from one or more objects (if ctrl_panel is NULL, a new one is created in .ctrl_panels). returns false if method was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)

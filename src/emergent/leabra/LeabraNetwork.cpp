@@ -947,23 +947,24 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
     Compute_Act_Thr(thr_no);
     threads.SyncSpin(thr_no, 2);
 
-    if(thr_no == 0) {           // do this well before, so addn'l sync not needed
-      Compute_CycleStats_Pre();
+    if(thr_no == 0) {
+      Compute_CycleStats_Pre(); // prior to act post!
     }
+    threads.SyncSpin(thr_no, 0);
 
     Compute_Act_Post_Thr(thr_no);
-    threads.SyncSpin(thr_no, 0);
+    threads.SyncSpin(thr_no, 1);
 
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->cycstats.StartTimer(true); // reset
 
     Compute_CycleStats_Thr(thr_no);
-    threads.SyncSpin(thr_no, 1);
+    threads.SyncSpin(thr_no, 2);
     
     if(thr_no == 0) {
       Compute_CycleStats_Post();
     }
-    threads.SyncSpin(thr_no, 2);
+    threads.SyncSpin(thr_no, 0);
 
     if(deep.on && deep.Quarter_DeepRawNow(quarter)) {
       int qtrcyc = cycle % times.quarter;
@@ -971,7 +972,7 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
         Compute_DeepRaw_Thr(thr_no);
       }
     }
-    threads.SyncSpin(thr_no, 0);
+    threads.SyncSpin(thr_no, 1);
 
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->cycstats.EndIncrAvg();

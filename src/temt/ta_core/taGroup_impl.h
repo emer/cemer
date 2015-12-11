@@ -278,7 +278,6 @@ public:
   int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) override;
   int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) override;
   int  UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr) override;
-  int  AddToControlPanelSearch(const String& memb_contains, ControlPanel*& editor) override; //
 
   bool         ChildCanDuplicate(const taBase* chld, bool quiet = true) const override;
   taBase*      ChildDuplicate(const taBase* chld) override;

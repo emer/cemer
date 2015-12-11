@@ -210,7 +210,6 @@ taBase*       CopyChildBeforeIndex(taBase* src, int child_pos) override;
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   String       ChildGetColText(void* child, TypeDef* typ, const KeyString& key,
                                int itm_idx = -1) const override;        // #IGNORE
-  int          AddToControlPanelSearch(const String& memb_contains, ControlPanel*& editor) override;
 
   void  CutLinks();
   void  UpdateAfterEdit(); // we skip the taOBase version, and inherit only taBase (DPF: what does that mean?)

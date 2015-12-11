@@ -92,8 +92,9 @@ void MSNUnitSpec::SaveGatingThal(LeabraUnitVars* u, LeabraNetwork* net, int thr_
   const int cyc_per_qtr = net->times.quarter;
   const int qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
   const int half_cyc = cyc_per_qtr / 2;
+  const int gate_cyc = half_cyc -1; // earliest PFC gating
 
-  if(qtr_cyc == half_cyc) {
+  if(qtr_cyc == gate_cyc) {
     u->thal_cnt = u->thal;      // save into thal_cnt!
   }
 }
