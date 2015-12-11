@@ -619,6 +619,11 @@ bool DataCol::SetValAsVar_impl(const Variant& val, int row, int cell) {
   return true;
 }
 
+bool DataCol::SetValAsBool_impl(bool val, int row, int cell) {
+  AR()->SetFmVar_Flat(val, IndexOfEl_Flat(row, cell)); // note: safe operation
+  return true;
+}
+
 bool DataCol::InitVals(const Variant& init_val)  {
   AR()->InitValsFmVar(init_val);
   return true;

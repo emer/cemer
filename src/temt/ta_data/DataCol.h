@@ -476,7 +476,7 @@ protected:
   virtual bool   SetValAsDouble_impl(double val, int row, int cell) {return false;}
   virtual bool   SetValAsFloat_impl(float val, int row, int cell) { return false; }
   virtual bool   SetValAsInt_impl(int val, int row, int cell)  { return false; }
-  virtual bool   SetValAsBool_impl(bool val, int row, int cell)  { return false; }
+  virtual bool   SetValAsBool_impl(bool val, int row, int cell);
   virtual bool   SetValAsByte_impl(byte val, int row, int cell)
   { return SetValAsInt_impl((int)val, row, cell); }
 
