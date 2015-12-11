@@ -32,6 +32,8 @@ taTypeDef_Of(ElseIf);
 taTypeDef_Of(Else);
 taTypeDef_Of(UserScript);
 taTypeDef_Of(BlankLineEl);
+taTypeDef_Of(MethodCall
+             );
 
 void ProgCode::Initialize() {
   SetProgExprFlags();
@@ -92,6 +94,26 @@ ProgEl* ProgCode::CvtCodeToProgEl() {
   // assign is a fall back when there is more than one choice - methods take precence over assignment
   if (candidates.size > 1) {
     candidates.RemoveEl_((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_AssignExpr));
+  }
+  // no ProgEl for MethodMethodCall so convert to CSS
+  bool isMethodCall = candidates.FindType(&TA_MethodCall);
+  if (isMethodCall) {
+    String after_method = code.expr.after(')');
+    if (after_method.length() > 0) {
+      candidates.RemoveEl_((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_MethodCall));
+      ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(&TA_AssignExpr);
+      if(obj) {
+        if(obj->CanCvtFmCode(code_orig, this)) {
+          candidates.LinkUnique(obj);  // make it an AssignExpr
+        }
+        else {
+          candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_CssExpr));
+        }
+      }
+      else {  // best to be safe
+        candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_CssExpr));
+      }
+    }
   }
   ProgEl* cvt = candidates[0];
   if(candidates.size > 1) {
