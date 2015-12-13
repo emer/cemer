@@ -53,8 +53,11 @@ public:
   // #PROJ_SCOPE the target layer to compute receptive fields for: each unit in the layer gets a row of the data table, and the columns in that row show the activation based receptive field for that unit for all the other layers in the network
   NormMode	norm_mode;
   // how to normalize the resulting values
+  String        var;
+  // what variable to record (act) by default
   float		threshold;
   // threshold on absolute value of target unit activation for including in overall average -- can produce sharper results by increasing the threshold to only include cases where the unit is strongly active
+  MemberDef*    var_md; // #NO_SAVE #HIDDEN member for variable
 
   virtual void	ConfigDataTable(DataTable* dt, Network* net);
   // #CAT_ActBasedRF configure data table based on current network (called internally for rf_data, sum_data, and wt_data)

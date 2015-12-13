@@ -16,6 +16,7 @@
 #include "MSNUnitSpec.h"
 
 #include <LeabraNetwork>
+#include <PFCUnitSpec>
 
 TA_BASEFUNS_CTORS_DEFN(MatrixActSpec);
 TA_BASEFUNS_CTORS_DEFN(MSNUnitSpec);
@@ -89,11 +90,9 @@ void MSNUnitSpec::SaveGatingThal(LeabraUnitVars* u, LeabraNetwork* net, int thr_
   if(!Quarter_DeepRawNextQtr(net->quarter))
     return;
 
-  const int cyc_per_qtr = net->times.quarter;
-  const int qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
-  const int half_cyc = cyc_per_qtr / 2;
-  const int gate_cyc = half_cyc -1; // earliest PFC gating
-
+  int qtr_cyc;
+  int gate_cyc = PFCUnitSpec::PFCGatingCycle(net, true, qtr_cyc); // get earliest value
+  
   if(qtr_cyc == gate_cyc) {
     u->thal_cnt = u->thal;      // save into thal_cnt!
   }

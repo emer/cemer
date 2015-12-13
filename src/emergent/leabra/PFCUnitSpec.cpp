@@ -188,21 +188,28 @@ float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
 }
 
 
+int PFCUnitSpec::PFCGatingCycle(LeabraNetwork* net, bool pfc_out_gate, int& qtr_cyc) {
+  const int cyc_per_qtr = net->times.quarter;
+  qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
+  const int half_cyc = cyc_per_qtr / 2;
+  int gate_cyc = half_cyc;
+  if(net->quarter == 0)         // first quarter gating should be delayed
+    gate_cyc = cyc_per_qtr - 4;
+  if(pfc_out_gate)  // out gate goes first so maint can override clear!
+    gate_cyc -= 1;
+  return gate_cyc;
+}
+
+
 void PFCUnitSpec::Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!deep.IsSuper() || !Quarter_DeepRawNextQtr(net->quarter))
     return;
 
-  const int cyc_per_qtr = net->times.quarter;
-  const int qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
-  const int half_cyc = cyc_per_qtr / 2;
+  int qtr_cyc;
+  int gate_cyc = PFCUnitSpec::PFCGatingCycle(net, pfc.out_gate, qtr_cyc);
 
-  if(pfc.out_gate) {
-    if(qtr_cyc != half_cyc - 1) // out gate goes first so maint can override clear!
-      return;
-  }
-  else {
-    if(qtr_cyc != half_cyc)
-      return;
+  if(qtr_cyc != gate_cyc) {
+    return;
   }
 
   // first, test for over-duration maintenance -- allow for active gating to override

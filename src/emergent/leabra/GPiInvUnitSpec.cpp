@@ -16,6 +16,7 @@
 #include "GPiInvUnitSpec.h"
 
 #include <LeabraNetwork>
+#include <PFCUnitSpec>
 
 #include <taMisc>
 
@@ -111,11 +112,8 @@ void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
 
 void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   bool gate_qtr = Quarter_DeepRawNextQtr(net->quarter);
-
-  const int cyc_per_qtr = net->times.quarter;
-  const int qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
-  const int half_cyc = cyc_per_qtr / 2;
-  const int gate_cyc = half_cyc -2; // 1 cycle earlier than earliest PFC gating
+  int qtr_cyc;
+  int gate_cyc = PFCUnitSpec::PFCGatingCycle(net, true, qtr_cyc); // get out gate value
 
   float snd_val = 0.0f;
   if(net->quarter == 0 && qtr_cyc <= 1) { // reset

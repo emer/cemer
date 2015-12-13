@@ -15,13 +15,16 @@
 
 #include "ActBasedRF.h"
 #include <taMath_float>
+#include <MemberDef>
 
 TA_BASEFUNS_CTORS_DEFN(ActBasedRF);
 
 
 void ActBasedRF::Initialize() {
   norm_mode = NORM_TRG_UNIT_RF_LAY;
+  var = "act";
   threshold = .5f;
+  var_md = NULL;
 }
 
 void ActBasedRF::UpdateAfterEdit_impl() {
@@ -78,6 +81,11 @@ void ActBasedRF::InitData() {
   }
   wt_array.InitVals();
   rf_data->UpdateAllViews();
+
+  var_md = network->unit_vars_type->members.FindName(var);
+  TestError(!var_md, "InitData", "variable named:", var,
+            "not found in unit vars of type:",
+            network->unit_vars_type->name);
 }
 
 void ActBasedRF::InitAll(DataTable* dt, Network* net, Layer* tlay) {
@@ -92,7 +100,7 @@ void ActBasedRF::InitAll(DataTable* dt, Network* net, Layer* tlay) {
 }
 
 bool ActBasedRF::IncrementSums() {
-  if(!network || !rf_data || !trg_layer) return false;
+  if(!network || !rf_data || !trg_layer || !var_md) return false;
 
   int idx;
   FOREACH_ELEM_IN_GROUP(Layer, lay, network->layers) {
@@ -111,7 +119,8 @@ bool ActBasedRF::IncrementSums() {
     Unit* tu;
     taLeafItr tui;
     for(tu = trg_layer->units.FirstEl(tui); tu; tu = trg_layer->units.NextEl(tui), tidx++) {
-      float tact = fabsf(tu->act());
+      UnitVars* tuv = tu->GetUnitVars();
+      const float tact = fabsf(*((float*)var_md->GetOff(tuv)));
       if(tact < threshold) continue; // not this time!
 
       wt_array.FastEl1d(tidx) += tact;
@@ -122,7 +131,9 @@ bool ActBasedRF::IncrementSums() {
       Unit* su;
       taLeafItr sui;
       for(su = lay->units.FirstEl(sui); su; su = lay->units.NextEl(sui), sidx++) {
-        sum_mat->FastEl1d(sidx) += tu->act() * su->act();
+        UnitVars* suv = su->GetUnitVars();
+        const float sact = *((float*)var_md->GetOff(suv));
+        sum_mat->FastEl1d(sidx) += tact * sact;
       }
       taBase::unRefDone(sum_mat);
     }

@@ -219,7 +219,7 @@ ParamSet* ControlPanel::CopyToParamSet(ParamSet* param_set) {
     if(!proj) return NULL;
     param_set = proj->param_sets.NewEl(1);
     param_set->SetName(name + "_" +
-                       (String)QDateTime::currentDateTime().toString("dd_MM_yy"));
+                       (String)QDateTime::currentDateTime().toString("MM_dd_yy"));
   }
   
   FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, mbrs) {
