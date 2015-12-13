@@ -138,7 +138,7 @@ void Program_Group::RestorePanels() {
   }
 }
 
-#ifdef DEBUG
+
 bool Program_Group::BrowserEditTest() {
   bool any_errs = false;
   FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
@@ -149,7 +149,7 @@ bool Program_Group::BrowserEditTest() {
   }
   return any_errs;
 }
-#endif
+
 
 bool Program_Group::InDebugMode() {
   if (debug_mode) {

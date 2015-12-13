@@ -389,10 +389,10 @@ public: // XxxGui versions provide feedback to the user
   virtual bool          BrowserCollapseAll_ProgItem(taOBase* itm);
   // #IGNORE perform BrowserCollapseAll function for program sub-item (prog el, etc)
 
-#ifdef DEBUG
+
   virtual bool          BrowserEditTest();
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE test the parsing functions of all program elements in this program -- just compares output of BrowserEditString before and after running BrowserEditSet on BrowserEditString -- does the thing parse its own output string?
-#endif
+
   virtual void          BrowserScrollToMe_ProgItem();
   // #EXPERT scroll to given program item
 

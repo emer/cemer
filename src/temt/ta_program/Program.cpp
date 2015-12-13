@@ -2207,10 +2207,10 @@ void Program::UpdateProgElCodeStrings() {
   }
 }
 
-#ifdef DEBUG
+
 bool Program::BrowserEditTest() {
   bool rval = init_code.BrowserEditTest();
   bool rv2 = prog_code.BrowserEditTest();
   return rval && rv2;
 }
-#endif
+
