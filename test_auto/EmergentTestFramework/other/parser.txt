@@ -194,7 +194,7 @@ ParseMethodArgumentsFirstArg
     Prog Var Should Match	prepend_txt	     Random::UniformMeanRange(
     Prog Var Should Be Empty	append_txt	     
     Prog Var Should Match	prog_el_txt	     x
-    Prog Var Should Match	path_var	     Random	      
+    Prog Var Should Be Empty	path_var	      
     Prog Var Should Match	path_prepend_txt     Random::UniformMeanRange(
     Prog Var Should Match	path_rest	     UniformMeanRange
     Prog Var Should Match	base_path	     Random::UniformMeanRange
