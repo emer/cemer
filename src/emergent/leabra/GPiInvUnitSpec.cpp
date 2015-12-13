@@ -114,7 +114,7 @@ void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
   bool gate_qtr = Quarter_DeepRawNextQtr(net->quarter);
   int qtr_cyc;
   int gate_cyc = PFCUnitSpec::PFCGatingCycle(net, true, qtr_cyc); // get out gate value
-  // gate_cyc -= 1;                                                  // go one earlier!
+  //  gate_cyc -= 1;                                                  // go one earlier!
 
   float snd_val = 0.0f;
   if(net->quarter == 0 && qtr_cyc <= 1) { // reset

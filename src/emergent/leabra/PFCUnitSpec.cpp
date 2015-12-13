@@ -193,8 +193,8 @@ int PFCUnitSpec::PFCGatingCycle(LeabraNetwork* net, bool pfc_out_gate, int& qtr_
   qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
   const int half_cyc = cyc_per_qtr / 2;
   int gate_cyc = half_cyc;
-  if(net->quarter == 0)         // first quarter gating should be delayed
-    gate_cyc += 2;              // add a few more cycles
+  // if(net->quarter == 0)         // first quarter gating should be delayed
+  //   gate_cyc += 2;              // add a few more cycles
   if(pfc_out_gate)  // out gate goes first so maint can override clear!
     gate_cyc -= 1;
   return gate_cyc;
