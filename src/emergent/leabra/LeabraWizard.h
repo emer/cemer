@@ -67,12 +67,17 @@ public:
   virtual bool 	PVLV_Specs(LeabraNetwork* net);
   // create and configure PVLV (pavlovian primary value and learned value) specs -- these are always created in a group called PVLV
 
-  virtual bool PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
+  virtual bool 	PVLV_Defaults(LeabraNetwork* net);
+  // #MENU_BUTTON set the parameters in the specs of the network to the latest default values for the PVLV model, and also ensures that the standard control panels are built and contain relevant parameters -- this is only for a model that already has PVLV configured
+
+  virtual bool PVLV_SetLrate(LeabraNetwork* net, float base_lrate=0.04);
+  // #MENU_BUTTON set the learning rate for PVLV network -- does a coordinated update across the different learning rates, to keep default dynamics balanced -- given value is the base lrate that applies to Patch, Matrix, and BAext layers -- rest of Amyg layers use 10x that value
+  virtual bool PVLV_ConnectCSLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
 				 bool disconnect = false);
-  // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connections between given sending_layer in given network and the learning PVLV layers (PVr, PVi, LVe, LVi, NV), each of which should typically receive from the same sending layers
-  virtual bool PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
+  // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connections between given CS-encoding sending_layer in given network and the relevant PVLV layers (Lateral Amygdala, VSMatrix)
+  virtual bool PVLV_OutToExtRew(LeabraNetwork* net, LeabraLayer* output_layer,
 				 bool disconnect = false);
-  // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the PVe layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
+  // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the ExtRew layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
 
   virtual bool 	PBWM(LeabraNetwork* net, int pfc_gp_x = 2, int pfc_gp_y = 2,
                      bool add_on = false, const String& prefix = "PBWM");
@@ -84,7 +89,7 @@ public:
 
   virtual bool 	PBWM_Defaults(LeabraNetwork* net, 
                               const String& prefix = "PBWM");
-  // #MENU_BUTTON set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard select edits are built and contain relevant parameters -- this is only for a model that already has PBWM configured
+  // #MENU_BUTTON set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard control panels are built and contain relevant parameters -- this is only for a model that already has PBWM configured
 
   virtual bool PBWM_SetNStripes
     (LeabraNetwork* net, int pfc_gp_x = 2, int pfc_gp_y = 2,

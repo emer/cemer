@@ -3391,6 +3391,10 @@ Layer_Group* Network::FindMakeLayerGroup(const String& nm, TypeDef* td, bool& nw
   return layers.FindMakeLayerGroup(nm, td, nw_itm, alt_nm);
 }
 
+Layer_Group* Network::FindLayerGroup(const String& nm) {
+  return (Layer_Group*)layers.gp.FindName(nm);
+}
+
 Projection* Network::FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* cs, bool& nw_itm)
 {
   nw_itm = false; // default, esp for early return

@@ -102,10 +102,12 @@ String LeabraWizard::RenderWizDoc_network() {
 * [[<this>.Hippo()|Hippo]] -- configure a Hippocampus using theta-phase specs -- high functioning hippocampal episodic memory system.\n\
 * [[<this>.TD()|Temporal Differences (TD)]] -- configure temporal-differences (TD) reinforcement learning layers.\n\
 * [[<this>.PVLV()|PVLV]] -- configure PVLV (Primary Value, Learned Value) biologically-motivated reinforcement learning layers -- provides a simulated dopamine signal that reflects unexpected primary rewards (PV = primary value system) and unexpected learned reward assocations (conditioned stimuli; LV = learned value = system).\n\
-:* [[<this>.PVLV_ConnectLayer()|PVLV Connect Layer]] -- connect or disconnect a layer as an input to the PVLV system -- multiple PVLV layers should be connected together so this automates that process and is strongly recommended.\n\
-:* [[<this>.PVLV_OutToPVe()|PVLV Connect Output to PVe]] -- connect or disconnect an Output layer to the PVe (primary value, excitatory) layer, which then computes reward based on network success in producing target outputs.\n\
+:* [[<this>.PVLV_Defaults()|PVLV Defaults]] -- set the parameters in the specs of the network to the latest default values for the PVLV model, and also ensures that the standard control panels are built and contain relevant parameters -- this is only for a model that already has PVLV configured and in a standard current format.\n\
+:* [[<this>.PVLV_SetLrate()|PVLV Set Lrate]] -- set the learning rate for PVLV network -- does a coordinated update across the different learning rates, to keep default dynamics balanced -- given value is the base lrate that applies to Patch, Matrix, and BAext layers -- rest of Amyg layers use 10x that value.\n\
+:* [[<this>.PVLV_ConnectCSLayer()|PVLV Connect CS Layer]] -- connect or disconnect a CS layer as an input to the PVLV system -- connects to the relevant PVLV layers (Lateral Amygdala, VSMatrix).\n\
+:* [[<this>.PVLV_OutToExtRew()|PVLV Connect Output to ExtRew]] -- connect or disconnect an Output layer to the ExtRew layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance.\n\
 * [[<this>.PBWM()|PBWM]] -- create and configure prefrontal cortex basal ganglia working memory (PBWM) layers in the network -- also does a PVLV configuration, which does the reinforcement learning for PBWM.\n\
-:* [[<this>.PBWM_Defaults()|PBWM Defaults]] -- set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard select edits are built and contain relevant parameters -- this is only for a model that already has PBWM configured and in a standard current format (i.e., everything in groups).\n\
+:* [[<this>.PBWM_Defaults()|PBWM Defaults]] -- set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard control panels are built and contain relevant parameters -- this is only for a model that already has PBWM configured and in a standard current format.\n\
 :* [[<this>.PBWM_SetNStripes()|PBWM Set N Stripes]] -- set the number of stripes (unit groups) throughout the set of PFC and BG layers that have stripes -- easier than doing it manually for each layer.\n\
 :* [[<this>.PBWM_Remove()|PBWM Remove]] -- Remove PBWM layers and specs from a network -- can be useful for converting between PBWM versions -- ONLY works when layers are organized into groups.\n\
 ");
@@ -895,6 +897,15 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
 //                      PVLV
 ///////////////////////////////////////////////////////////////
 
+bool LeabraWizard::PVLV_Defaults(LeabraNetwork* net) {
+  if(!net) {
+    if(TestError(!net, "PVLV", "network is NULL -- must be passed and already PVLV configured -- aborting!"))
+      return false;
+  }
+
+  return PVLV_Specs(net); // true = set defaults
+}
+
 // this is how to access a pvlv spec of a given type, by name:
 #define PvlvSp(pth,T) ((T*)pvlvspgp->ElemPath(pth, T::StatTypeDef(0), true))
 
@@ -1126,19 +1137,20 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmnd1_units->valence = MSNUnitSpec::AVERSIVE;
 
   //////  Cons
+
+  const float base_lrate = 0.04f;
+  
   pvlv_cons->UpdateAfterEdit();
-  pvlv_cons->lrate = 0.05f;    // best for pbwm
-  // pvlv_cons->xcal.raw_l_mix = true;
-  // pvlv_cons->xcal.thr_l_mix = 0.0f; // no hebbian at all..
+  pvlv_cons->lrate = base_lrate;
   pvlv_cons->rnd.mean = 0.01f;
   pvlv_cons->rnd.var = 0.0f;
   pvlv_cons->wt_limits.sym = false;
 
   la_cons->SetUnique("lrate", true);
-  la_cons->lrate = 0.4f;
+  la_cons->lrate = 10.0f * base_lrate;
   la_cons->neg_da_gain = 0.05f;
   baap_cons->SetUnique("lrate", true);
-  baap_cons->lrate = 0.4f;
+  baap_cons->lrate = 10.0f * base_lrate;
   baap_cons->SetUnique("wt_scale", true);
   baap_cons->wt_scale.abs = 0.95f;
   baap_cons->SetUnique("wt_sig", true);
@@ -1147,8 +1159,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baap_cons->ba_learn.burst_da_gain = 1.0f;
   baap_cons->ba_learn.dip_da_gain = 0.05f;
 
-  // baan_cons->SetUnique("lrate", true); // keep same as baap actually
-  // baan_cons->lrate = 0.1f;
+  baan_cons->SetUnique("lrate", false);
   baan_cons->SetUnique("wt_sig", false);
   
   bae_cons->SetUnique("wt_sig", false);
@@ -1156,7 +1167,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   bae_cons->rnd.mean = 0.1f;
   bae_cons->rnd.var = 0.0f;
   bae_cons->SetUnique("lrate", true);
-  bae_cons->lrate = 0.08f;
+  bae_cons->lrate = base_lrate; // todo: was 2x base..
   bae_cons->SetUnique("wt_scale", true);
   bae_cons->wt_scale.abs = 1.2f;
   bae_cons->SetUnique("deep", true);
@@ -1174,7 +1185,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons_pd1->SetUnique("wt_scale", true);
   vspatch_cons_pd1->wt_scale.abs = 1.0f;
   vspatch_cons_pd1->SetUnique("lrate", true);
-  vspatch_cons_pd1->lrate = 0.08f;
+  vspatch_cons_pd1->lrate = base_lrate;
   vspatch_cons_pd1->SetUnique("wt_sig", true);
   vspatch_cons_pd1->wt_sig.gain = 1.0f;
   vspatch_cons_pd1->SetUnique("deep", true);
@@ -1194,8 +1205,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   vspatch_cons_pd2nd1->SetUnique("rnd", false);
   vspatch_cons_pd2nd1->SetUnique("wt_scale", false);
-  vspatch_cons_pd2nd1->SetUnique("lrate", true);
-  vspatch_cons_pd2nd1->lrate = 0.04f;
+  vspatch_cons_pd2nd1->SetUnique("lrate", false);
   vspatch_cons_pd2nd1->SetUnique("wt_sig", false);
   vspatch_cons_pd2nd1->SetUnique("deep", false);
   vspatch_cons_pd2nd1->SetUnique("su_act_var", false);
@@ -1208,8 +1218,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   
   vspatch_cons_nd2->SetUnique("rnd", false);
   vspatch_cons_nd2->SetUnique("wt_scale", false);
-  vspatch_cons_nd2->SetUnique("lrate", true);
-  vspatch_cons_nd2->lrate = 0.04f;
+  vspatch_cons_nd2->SetUnique("lrate", false);
   vspatch_cons_nd2->SetUnique("wt_sig", false);
   vspatch_cons_nd2->SetUnique("deep", false);
   vspatch_cons_nd2->SetUnique("su_act_var", false);
@@ -1226,7 +1235,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons_pd1->SetUnique("wt_scale", true);
   vsmatrix_cons_pd1->wt_scale.abs = 0.5f;
   vsmatrix_cons_pd1->SetUnique("lrate", true);
-  vsmatrix_cons_pd1->lrate = 0.08f;
+  vsmatrix_cons_pd1->lrate = base_lrate;
   vsmatrix_cons_pd1->SetUnique("wt_sig", true);
   vsmatrix_cons_pd1->wt_sig.gain = 1.0f;
   vsmatrix_cons_pd1->SetUnique("deep", true);
@@ -1407,6 +1416,36 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
     cp->EditPanel(true, true);
   }
 
+  return true;
+}
+
+
+bool LeabraWizard::PVLV_SetLrate(LeabraNetwork* net, float base_lrate) {
+  if(!net) {
+    if(TestError(!net, "PVLV_SetLrate", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
+      return false;
+  }
+
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_SetLrate before -- actually saves network specifically");
+  }
+
+  String pvlvprefix = "PVLV";
+  BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
+  if(!pvlvspgp) return false;
+
+  PvlvSp("PVLVLrnCons", LeabraConSpec)->lrate = base_lrate;
+  PvlvSp("LatAmygCons", LatAmygConSpec)->lrate = 10.0f * base_lrate;
+  PvlvSp("BasAmygCons_acq_pos", BasAmygConSpec)->lrate = 10.0f * base_lrate;
+  PvlvSp("BasAmygCons_ext", BasAmygConSpec)->lrate = base_lrate; // todo: was 2x base..
+
+  PvlvSp("VSPatchCons_ToPosD1", MSNConSpec)->lrate = base_lrate;
+  PvlvSp("VSMatrixCons_ToPosD1", MSNConSpec)->lrate = base_lrate;
+
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_SetLrate after -- actually saves network specifically");
+  }
   return true;
 }
 
@@ -1973,99 +2012,94 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   return true;
 }
 
-bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
-                                      bool disconnect) {
+bool LeabraWizard::PVLV_ConnectCSLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
+                                       bool disconnect) {
   taMisc::Error("PVLV_ConnectLayer: not yet implemented for latest PVLV version");
-//   if(TestError(!net || !sending_layer, "PVLV_ConnectLayer", "must specify a network and a sending layer!")) return false;
+  if(TestError(!net || !sending_layer, "PVLV_ConnectLayer", "must specify a network and a sending layer!")) return false;
 
-//   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-//   if(proj) {
-//     proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ConnectLayer before -- actually saves network specifically");
-//   }
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ConnectCSLayer before -- actually saves network specifically");
+  }
 
-//   // String pvenm = "PVe";
-//   String pvinm = "PVi";  String pvrnm = "PVr";
-//   String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
+  Layer_Group* amyg_gp = net->FindLayerGroup("PVLV_Amyg");
+  Layer_Group* vs_gp = net->FindLayerGroup("PVLV_VS");
+  if(!amyg_gp || !vs_gp) {
+    taMisc::Error("PVLV_Amyg or PVLV_VS layer groups not found!");
+    return false;
+  }
 
-// //   LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
-//   LeabraLayer* pvr = (LeabraLayer*)net->FindLayer(pvrnm);
-//   LeabraLayer* pvi = (LeabraLayer*)net->FindLayer(pvinm);
-//   LeabraLayer* lve = (LeabraLayer*)net->FindLayer(lvenm);
-//   LeabraLayer* lvi = (LeabraLayer*)net->FindLayer(lvinm);
-//   LeabraLayer* nv =  (LeabraLayer*)net->FindLayer(nvnm);
+  LeabraLayer* lat_amyg = (LeabraLayer*)amyg_gp->FindName("LatAmyg");
+  LeabraLayer* vsmpd1 = (LeabraLayer*)vs_gp->FindName("VSMatrixPosD1");
+  LeabraLayer* vsmpd2 = (LeabraLayer*)vs_gp->FindName("VSMatrixPosD2");
+  LeabraLayer* vsmnd2 = (LeabraLayer*)vs_gp->FindName("VSMatrixNegD2");
+  LeabraLayer* vsmnd1 = (LeabraLayer*)vs_gp->FindName("VSMatrixNegD1");
 
-//   String pvlvprefix = "PVLV";
-//   BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
+  String pvlvprefix = "PVLV";
+  BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
 
-//   FullPrjnSpec* fullprjn = PvlvSp("PvlvFullPrjn", FullPrjnSpec);
-//   if(TestError(!fullprjn, "PVLV_ConnectLayer",
-//                "fullprjn not found -- PVLV was not properly configured -- everything has been updated since version 6.4.0, so you need to reconfigure using the PVLV wizard")) {
-//     return false;
-//   }
+  FullPrjnSpec* fullprjn = PvlvSp("PVLVFullPrjn", FullPrjnSpec);
 
-//   if(disconnect) {
-//     if(pvr)
-//       net->RemovePrjn(pvr, sending_layer);
-//     if(pvi)
-//       net->RemovePrjn(pvi, sending_layer);
-//     if(lve)
-//       net->RemovePrjn(lve, sending_layer);
-//     if(lvi)
-//       net->RemovePrjn(lvi, sending_layer);
-//     if(nv)
-//       net->RemovePrjn(nv,  sending_layer);
-//   }
-//   else {
-//     if(pvr)
-//       net->FindMakePrjn(pvr, sending_layer, fullprjn, PvlvSp("PVrCons", PVrConSpec));
-//     if(pvi)
-//       net->FindMakePrjn(pvi, sending_layer, fullprjn, PvlvSp("PViCons", PVConSpec));
-//     if(lve)
-//       net->FindMakePrjn(lve, sending_layer, fullprjn, PvlvSp("LVeCons", PVConSpec));
-//     // if(lvi && lvi_cons)
-//     //   net->FindMakePrjn(lvi, sending_layer, fullprjn, lvi_cons);
-//     if(nv)
-//       net->FindMakePrjn(nv,  sending_layer, fullprjn, PvlvSp("NVCons", PVConSpec));
-//   }
-//   if(proj) {
-//     proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ConnectLayer before -- actually saves network specifically");
-//   }
+  if(disconnect) {
+    net->RemovePrjn(lat_amyg, sending_layer);
+    net->RemovePrjn(vsmpd1, sending_layer);
+    net->RemovePrjn(vsmpd2, sending_layer);
+    net->RemovePrjn(vsmnd2, sending_layer);
+    net->RemovePrjn(vsmnd1, sending_layer);
+  }
+  else {
+    net->FindMakePrjn(lat_amyg, sending_layer, fullprjn, PvlvSp("LatAmygCons", LatAmygConSpec));
+
+    net->FindMakePrjn(vsmpd1, sending_layer, fullprjn, PvlvSp("VSMatrixCons_ToPosD1", MSNConSpec));
+    net->FindMakePrjn(vsmpd2, sending_layer, fullprjn, PvlvSp("VSMatrixCons_ToPosD2", MSNConSpec));
+    net->FindMakePrjn(vsmnd2, sending_layer, fullprjn, PvlvSp("VSMatrixCons_ToNegD2", MSNConSpec));
+    net->FindMakePrjn(vsmnd1, sending_layer, fullprjn, PvlvSp("VSMatrixCons_ToNegD1", MSNConSpec));
+  }
+
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ConnectCSLayer after -- actually saves network specifically");
+  }
+  
   return true;
 }
 
-bool LeabraWizard::PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
+bool LeabraWizard::PVLV_OutToExtRew(LeabraNetwork* net, LeabraLayer* output_layer,
                                      bool disconnect) {
-  taMisc::Error("PVLV_OutToPVe: not yet implemented for latest PVLV version");
+  if(TestError(!net || !output_layer, "PVLV_OutToExtRew", "must specify a network and an output layer!")) return false;
 
-  // if(TestError(!net || !output_layer, "PVLV_OutToPVe", "must specify a network and an output layer!")) return false;
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToExtRew before -- actually saves network specifically");
+  }
 
-  // LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  // if(proj) {
-  //   proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToPVe before -- actually saves network specifically");
-  // }
+  Layer_Group* pv_gp = net->FindLayerGroup("PVLV_PV");
 
-  // String pvenm = "PVe";
-  // LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
+  if(!pv_gp) {
+    taMisc::Error("PVLV_PV layer group not found!");
+    return false;
+  }
 
-  // String pvlvprefix = "PVLV";
-  // BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
+  LeabraLayer* ext_rew = (LeabraLayer*)pv_gp->FindName("ExtRew");
 
-  // MarkerConSpec* marker_cons = PvlvSp("PvlvMarker", MarkerConSpec);
-  // OneToOnePrjnSpec* onetoone = PvlvSp("PvlvOneToOne", OneToOnePrjnSpec);
-  // if(TestError(!marker_cons, "PVLV_OutToPVe",
-  //              "marker_cons not found -- PVLV was not properly configured -- everything has been updated since version 6.4.0, so you need to reconfigure using the PVLV wizard")) {
-  //   return false;
-  // }
+  String pvlvprefix = "PVLV";
+  BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
 
-  // if(disconnect) {
-  //   net->RemovePrjn(pve, output_layer);
-  // }
-  // else {
-  //   net->FindMakePrjn(pve, output_layer, onetoone, marker_cons);
-  // }
-  // if(proj) {
-  //   proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToPVe after -- actually saves network specifically");
-  // }
+  FullPrjnSpec* fullprjn = PvlvSp("PVLVFullPrjn", FullPrjnSpec);
+  MarkerConSpec* marker_cons = PvlvSp("PVLVMarkerCons", MarkerConSpec);
+  if(TestError(!marker_cons, "PVLV_OutToExtRew",
+               "marker_cons not found -- PVLV was not properly configured")) {
+    return false;
+  }
+
+  if(disconnect) {
+    net->RemovePrjn(ext_rew, output_layer);
+  }
+  else {
+    net->FindMakePrjn(ext_rew, output_layer, fullprjn, marker_cons);
+  }
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToExtRew after -- actually saves network specifically");
+  }
   return true;
 }
 

@@ -1016,6 +1016,8 @@ public:
   virtual Layer_Group* FindMakeLayerGroup(const String& nm, TypeDef* td = NULL,
                           bool& nw_itm = nw_itm_def_arg, const String& alt_nm = "");
   // #CAT_Structure find a given layer group and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
+  virtual Layer_Group* FindLayerGroup(const String& nm);
+  // #CAT_Structure find a given layer group -- only searches in top-level layer groups
   virtual Layer* FindLayer(const String& nm) { return (Layer*)layers.FindLeafName(nm); }
   // #CAT_Structure find layer by name
   virtual Projection* FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps = NULL, ConSpec* cs = NULL, bool& nw_itm = nw_itm_def_arg);
