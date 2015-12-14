@@ -33,8 +33,8 @@ class E_API MSNTraceSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         otr_lrate;      // #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less than 1 -- the non-gated trace has the opposite sign (negative) from the gated trace -- encourages exploration of other alternatives if a negative outcome occurs, so that otr = opposite trace or opponent trace as well as other trace
-  float         tr_rnd_var;   // variance of gaussian random noise added to tr learning signals -- for weights into units that gate on a given trial -- noise is multiplied by acts * lrate
-  float         otr_rnd_var;  // variance of gaussian random noise added to otr learning signals (see otr_lrate) -- noise is multiplied by acts * lrate
+  bool          otr_neg_da;     // only do otr learning for negative dopamine cases on negative traces -- resulting learning will be positive encouraging exploration of other alternatives -- don't decrement weights for other non-gated stripes for successful trials
+  float         p_otr_lrn;      // #MIN_0 #MAX_1 probability of otr learning actually taking place on a given trial
   float         da_reset_tr;    // #DEF_0.2;0 amount of dopamine needed to completely reset the trace -- if > 0, then either da or ach can reset the trace
   float         ach_reset_thr;  // #MIN_0 #DEF_0.5 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
   bool          otr_no_nogo;  // nogo firing blocks the application of otr_lrate -- uses deep_raw_net as a nogo activation signal (use SendDeepRawConSpec projections from GPeNoGo)
@@ -158,7 +158,19 @@ public:
      const float ru_deep_raw_net, int thr_no) {
 
     const float da = GetDa(da_p, d2r);
-    dwt += lrate_eff * da * tr;
+    if(trace.otr_neg_da) {
+      if(tr >= 0.0f) {          // gated trace -- gets full bidir learning
+        dwt += lrate_eff * da * tr;
+      }
+      else {
+        if(da < 0.0f) {         // only apply negative da to otr's
+          dwt += lrate_eff * da * tr;
+        }
+      }
+    }
+    else {
+      dwt += lrate_eff * da * tr;
+    }
 
     if(ach >= trace.ach_reset_thr) {
       tr = 0.0f;
@@ -171,15 +183,14 @@ public:
 
     if(ru_thal > 0.0f) {              // gated
       ntr = ru_act * su_act;
-      if(trace.tr_rnd_var > 0.0f) {
-        ntr += ntr * Random::Gauss(trace.tr_rnd_var, thr_no);
-      }
     }
     else {                      // non-gated, do otr: opposite / other / opponent trace
-      if(!trace.otr_no_nogo || ru_deep_raw_net < 0.2f) {
-        ntr = otr_lr * ru_act * su_act;
-        if(trace.otr_rnd_var > 0.0f) {
-          ntr += ntr * Random::Gauss(trace.otr_rnd_var, thr_no);
+      if((trace.p_otr_lrn == 1.0f) || Random::BoolProb(trace.p_otr_lrn, thr_no)) {
+        if(!(trace.otr_no_nogo || ru_deep_raw_net < 0.2f)) {
+          ntr = otr_lr * ru_act * su_act;
+        }
+        else {
+          ntr = 0.0f;
         }
       }
       else {
