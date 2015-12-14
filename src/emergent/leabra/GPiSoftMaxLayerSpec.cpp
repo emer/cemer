@@ -16,6 +16,7 @@
 #include "GPiSoftMaxLayerSpec.h"
 
 #include <LeabraNetwork>
+#include <PFCUnitSpec>
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(GPiSoftMaxSpec);
@@ -41,10 +42,9 @@ void GPiSoftMaxLayerSpec::Compute_SoftMax(LeabraLayer* lay, LeabraNetwork* net) 
   if(!us->Quarter_DeepRawNextQtr(net->quarter))
     return;
 
-  const int cyc_per_qtr = net->times.quarter;
-  const int qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
-  const int half_cyc = cyc_per_qtr / 2;
-  const int gate_cyc = half_cyc - 2;   // 2 trials prior to first gating in PFC!
+  int qtr_cyc;
+  int gate_cyc = PFCUnitSpec::PFCGatingCycle(net, true, qtr_cyc); // get out gate value
+  gate_cyc -= 1;                                                  // go one earlier!
   
   if(qtr_cyc != gate_cyc)
     return;
