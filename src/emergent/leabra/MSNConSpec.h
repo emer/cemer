@@ -33,7 +33,8 @@ class E_API MSNTraceSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         otr_lrate;      // #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less than 1 -- the non-gated trace has the opposite sign (negative) from the gated trace -- encourages exploration of other alternatives if a negative outcome occurs, so that otr = opposite trace or opponent trace as well as other trace
-  float         otr_rnd_var;  // variance of gaussian random noise added to otr learning signals (see otr_lrate)
+  float         tr_rnd_var;   // variance of gaussian random noise added to tr learning signals -- for weights into units that gate on a given trial -- noise is multiplied by acts * lrate
+  float         otr_rnd_var;  // variance of gaussian random noise added to otr learning signals (see otr_lrate) -- noise is multiplied by acts * lrate
   float         da_reset_tr;    // #DEF_0.2;0 amount of dopamine needed to completely reset the trace -- if > 0, then either da or ach can reset the trace
   float         ach_reset_thr;  // #MIN_0 #DEF_0.5 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
   bool          otr_no_nogo;  // nogo firing blocks the application of otr_lrate -- uses deep_raw_net as a nogo activation signal (use SendDeepRawConSpec projections from GPeNoGo)
@@ -170,6 +171,9 @@ public:
 
     if(ru_thal > 0.0f) {              // gated
       ntr = ru_act * su_act;
+      if(trace.tr_rnd_var > 0.0f) {
+        ntr += ntr * Random::Gauss(trace.tr_rnd_var, thr_no);
+      }
     }
     else {                      // non-gated, do otr: opposite / other / opponent trace
       if(!trace.otr_no_nogo || ru_deep_raw_net < 0.2f) {
