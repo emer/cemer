@@ -7,7 +7,7 @@ Library          OperatingSystem
 
 Resource         Server_lib.txt
 
-Suite Setup      Initialize Emergent    ../test/TestBrowserEdit.proj
+Suite Setup      Initialize Emergent    ./test-projects/TestBrowserEdit.proj
 Suite Teardown   Shutdown Emergent
 
 *** Variables ***
@@ -27,7 +27,7 @@ ${debug} =       false
 
 Initialize
     Set Suite Variable     ${verbose}       ${false}
-    Set Suite Variable     ${project}       ../test/TestBrowserEdit.proj
+    Set Suite Variable     ${project}       ./test-projects/TestBrowserEdit.proj
     Set Suite Variable	   ${secondary_project}		../../../demo/programs/program_examples.proj
     Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
 
