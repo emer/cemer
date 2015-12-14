@@ -186,7 +186,7 @@ public:
     }
     else {                      // non-gated, do otr: opposite / other / opponent trace
       if((trace.p_otr_lrn == 1.0f) || Random::BoolProb(trace.p_otr_lrn, thr_no)) {
-        if(!(trace.otr_no_nogo || ru_deep_raw_net < 0.2f)) {
+        if(!trace.otr_no_nogo || ru_deep_raw_net < 0.2f) {
           ntr = otr_lr * ru_act * su_act;
         }
         else {
