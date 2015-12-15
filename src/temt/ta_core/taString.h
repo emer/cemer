@@ -268,7 +268,9 @@ public:
   // #CAT_Access true if the string is empty
   inline bool           nonempty() const {return (mrep->len > 0);}
   // #CAT_Access true if the string is nonempty
-
+  bool                  HasUpper() const;
+  // #CAT_Access true if any character is uppercase
+  
   int                   allocation() const {return mrep->sz;}
   // #IGNORE
   int                   assertLength();

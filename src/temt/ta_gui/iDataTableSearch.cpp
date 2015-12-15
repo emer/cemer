@@ -136,7 +136,9 @@ void iDataTableSearch::Search(iDataTableSearch::SearchMode mode) {
   found_list = new taVector2i_List();
   bool contains = (search_mode == CONTAINS);
 //  table_view->dataTable()->FindAllScalar(found_list, srch_text->text(), contains);
-  table_view->dataTable()->FindAll(found_list, srch_text->text(), contains);
+  
+  bool case_insensitive = !(String(srch_text->text()).HasUpper());
+  table_view->dataTable()->FindAll(found_list, srch_text->text(), contains, case_insensitive);
 
   table_view->dataTable()->DataUpdate(true);
   for (int i=0; i<found_list->size; i++) {

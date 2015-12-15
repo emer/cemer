@@ -111,13 +111,7 @@ void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
   found_items.Reset();
   if(!tree_view) return;
   String ftxt = srch_text->text();
-  bool case_sens = false;
-  for(int i=0;i<ftxt.length();i++) {
-    if(isupper(ftxt[i])) {
-      case_sens = true;
-      break;
-    }
-  }
+  bool case_sens = ftxt.HasUpper();
   if(!case_sens) {
     ftxt.downcase();
   }

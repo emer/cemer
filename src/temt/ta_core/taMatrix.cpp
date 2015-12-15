@@ -30,6 +30,7 @@
 #include <taFiler>
 #include <MTRnd>
 #include <taArray_base>
+#include <taString>
 
 #include <taMisc>
 
@@ -1372,6 +1373,23 @@ int taMatrix::FindValAsString_Flat(const String& val, int st_idx, bool contains)
     }
     else {
       if(mval.toString() == val)
+        return i;
+    }
+  }
+  return -1;
+}
+
+int taMatrix::FindValAsStringCi_Flat(const String& val, int st_idx, bool contains) const {
+  for(int i=st_idx;i<size; i++) {
+    Variant mval = FastElAsVar_Flat(i);
+    if (contains) {
+      if(mval.toString().contains_ci(val))
+        return i;
+    }
+    else {
+      String mval_copy = mval.toString();
+      String val_copy = val;
+      if(mval_copy.downcase() == val_copy.downcase())
         return i;
     }
   }

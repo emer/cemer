@@ -945,6 +945,16 @@ bool taString::matches_regexp(const taString& wild) const {
 
 #endif
 
+bool taString::HasUpper() const {
+  for (int i=0; i<this->length(); ++i) {
+    if (isupper(mrep->s[i])) {
+      return true;
+      break;
+    }
+  }
+  return false;
+}
+
 bool taString::endsWith(char c) const {
   return matches(c, length() - 1);
 }

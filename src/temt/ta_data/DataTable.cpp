@@ -4620,7 +4620,7 @@ void DataTable::FindAllScalar(taVector2i_List* found_list, const String& search_
   DataUpdate(false);
 }
 
-void DataTable::FindAll(taVector2i_List* found_list, const String& search_str, bool contains) {
+void DataTable::FindAll(taVector2i_List* found_list, const String& search_str, bool contains, bool case_insensitive) {
   DataUpdate(true);
   for (int col_idx = 0; col_idx < cols(); ++col_idx) {
     DataCol* col = data.FastEl(col_idx);
@@ -4630,10 +4630,16 @@ void DataTable::FindAll(taVector2i_List* found_list, const String& search_str, b
       while (keep_searching) {
         int row;
         if (contains) {
-          row = col->FindValPartial(search_str, start_row);
+          if (case_insensitive) {
+            // case sensitive
+            row = col->FindValPartialCi(search_str, start_row);
+          }
+          else {
+            row = col->FindValPartial(search_str, start_row);
+          }
         }
-        else {
-          row = col->FindVal(search_str, start_row);
+        else {  // match whole string
+          row = col->FindVal(search_str, start_row);  // match whole string is always case sensitive
         }
         if (row != -1) {
           taVector2i* cell = new taVector2i;
@@ -4661,7 +4667,12 @@ void DataTable::FindAll(taVector2i_List* found_list, const String& search_str, b
       int total_cells = col->cell_size() * rows;
       while (keep_searching) {
         int cell;
-        cell = col->AR()->FindValAsString_Flat(search_str, start_cell, contains);
+        if (case_insensitive) {
+          cell = col->AR()->FindValAsStringCi_Flat(search_str, start_cell, contains);
+        }
+        else {
+          cell = col->AR()->FindValAsString_Flat(search_str, start_cell, contains);
+        }
         if (cell != -1) {
           taVector2i* match = new taVector2i;
           match->x = cell;
