@@ -112,7 +112,7 @@ Initialize Emergent
     [Arguments]          ${project_arg}
     Set Suite Variable   ${project}       ${project_arg}
     Log       ${project}                  WARN
-    ${pid} =             Start Process      emergent_dbg -nogui -server -p ${project}    shell=True
+    ${pid} =             Start Process      emergent -nogui -server -p ${project}    shell=True
     Set Suite Variable   ${pid}
     Log	      ${pid}	 WARN
     Sleep                8 sec   # Could do a loop and use Is Process Running but not a big deal

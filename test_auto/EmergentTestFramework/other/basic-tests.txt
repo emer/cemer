@@ -2,7 +2,7 @@
 Resource           Emergent.txt
 
 *** Variables ***
-${emergent} =      emergent_dbg
+${emergent} =      emergent
 ${css-option} =    --nogui -s
 
 *** Test Cases ***
