@@ -24,7 +24,7 @@ void MSNTraceSpec::Initialize() {
 
 void MSNTraceSpec::Defaults_init() {
   otr_lrate = 0.5f;
-  otr_neg_da = false;
+  otr_pos_da = 1.0f;
   p_otr_lrn = 1.0f;
   da_reset_tr = 0.2f;
   ach_reset_thr = 0.5f;

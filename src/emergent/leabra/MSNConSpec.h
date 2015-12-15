@@ -33,7 +33,7 @@ class E_API MSNTraceSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         otr_lrate;      // #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less than 1 -- the non-gated trace has the opposite sign (negative) from the gated trace -- encourages exploration of other alternatives if a negative outcome occurs, so that otr = opposite trace or opponent trace as well as other trace
-  bool          otr_neg_da;     // only do otr learning for negative dopamine cases on negative traces -- resulting learning will be positive encouraging exploration of other alternatives -- don't decrement weights for other non-gated stripes for successful trials
+  float         otr_pos_da;     // learning rate multiplier for otr changes with positive dopamine signals -- 1 = symmetric with negative da, < 1 = do less learning with this
   float         p_otr_lrn;      // #MIN_0 #MAX_1 probability of otr learning actually taking place on a given trial
   float         da_reset_tr;    // #DEF_0.2;0 amount of dopamine needed to completely reset the trace -- if > 0, then either da or ach can reset the trace
   float         ach_reset_thr;  // #MIN_0 #DEF_0.5 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
@@ -158,18 +158,16 @@ public:
      const float ru_deep_raw_net, int thr_no) {
 
     const float da = GetDa(da_p, d2r);
-    if(trace.otr_neg_da) {
-      if(tr >= 0.0f) {          // gated trace -- gets full bidir learning
+    if(tr >= 0.0f) {          // gated trace -- gets full bidir learning
+      dwt += lrate_eff * da * tr;
+    }
+    else {                    // otr
+      if(da_p < 0.0f) {       // negative dopamine -- an error
         dwt += lrate_eff * da * tr;
       }
       else {
-        if(da < 0.0f) {         // only apply negative da to otr's
-          dwt += lrate_eff * da * tr;
-        }
+        dwt += trace.otr_pos_da * lrate_eff * da * tr;
       }
-    }
-    else {
-      dwt += lrate_eff * da * tr;
     }
 
     if(ach >= trace.ach_reset_thr) {
