@@ -188,7 +188,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   engine->registerAspect(render);
   input = new Qt3DInput::QInputAspect;
   engine->registerAspect(input);
-  engine->initialize();
+  // engine->initialize();
   QVariantMap data;
   data.insert(QStringLiteral("surface"),
               QVariant::fromValue(static_cast<QSurface *>(view3d)));

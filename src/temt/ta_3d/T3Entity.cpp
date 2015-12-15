@@ -43,13 +43,13 @@ void T3Entity::addMouseInput(QMouseController* mouse_ctrl) {
   mouse->setController(mouse_ctrl);
   addComponent(mouse);
   // todo: clicked actually not implemented yet!
-  // connect(mouse, SIGNAL(clicked(Q3DMouseEvent*)), this,
-  //         SLOT(mouseClicked(Q3DMouseEvent*)));
-  // connect(mouse, SIGNAL(doubleClicked(Q3DMouseEvent*)), this,
-  //         SLOT(mouseDoubleClicked(Q3DMouseEvent*)));
+  // connect(mouse, SIGNAL(clicked(QMouseEvent*)), this,
+  //         SLOT(mouseClicked(QMouseEvent*)));
+  // connect(mouse, SIGNAL(doubleClicked(QMouseEvent*)), this,
+  //         SLOT(mouseDoubleClicked(QMouseEvent*)));
   // others not needed so frequently -- add manually if wanted
-  connect(mouse, SIGNAL(released(Q3DMouseEvent*)), this,
-          SLOT(mouseClicked(Q3DMouseEvent*)));
+  connect(mouse, SIGNAL(released(QMouseEvent*)), this,
+          SLOT(mouseClicked(QMouseEvent*)));
 }
 
 void T3Entity::setNodeUpdating(bool updating) {

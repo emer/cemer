@@ -137,17 +137,17 @@ public:
 
 public slots:
   // these are all mouse actions -- first two enabled when addMouseInput is connected -- others can be added with connect method from mouse object
-  virtual void mouseClicked(Qt3DInput::Q3DMouseEvent* mouse) { };
-  virtual void mouseDoubleClicked(Qt3DInput::Q3DMouseEvent* mouse) { };
+  virtual void mouseClicked(Qt3DInput::QMouseEvent* mouse) { };
+  virtual void mouseDoubleClicked(Qt3DInput::QMouseEvent* mouse) { };
 
   virtual void mouseEntered() { };
   virtual void mouseExited() { };
 
-  virtual void mousePressed(Qt3DInput::Q3DMouseEvent* mouse)  { };
-  virtual void mouseReleased(Qt3DInput::Q3DMouseEvent* mouse) { };
-  virtual void mousePressAndHold(Qt3DInput::Q3DMouseEvent* mouse) { };
-  virtual void mousePositionChanged(Qt3DInput::Q3DMouseEvent* mouse) { };
-  virtual void mouseWheel(Qt3DInput::Q3DWheelEvent* wheel) { };
+  virtual void mousePressed(Qt3DInput::QMouseEvent* mouse)  { };
+  virtual void mouseReleased(Qt3DInput::QMouseEvent* mouse) { };
+  virtual void mousePressAndHold(Qt3DInput::QMouseEvent* mouse) { };
+  virtual void mousePositionChanged(Qt3DInput::QMouseEvent* mouse) { };
+  virtual void mouseWheel(Qt3DInput::QWheelEvent* wheel) { };
   
 signals:
   void  nodeUpdatingChanged();
