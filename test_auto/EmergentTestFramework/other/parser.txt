@@ -195,9 +195,9 @@ ParseMethodArgumentsFirstArg
     Prog Var Should Be Empty	append_txt	     
     Prog Var Should Match	prog_el_txt	     x
     Prog Var Should Be Empty	path_var	      
-    Prog Var Should Match	path_prepend_txt     Random::UniformMeanRange(
-    Prog Var Should Match	path_rest	     UniformMeanRange
-    Prog Var Should Match	base_path	     Random::UniformMeanRange
+    Prog Var Should Be Empty	path_prepend_txt
+    Prog Var Should Be Empty	path_rest	     
+    Prog Var Should Be Empty	base_path	  
 
 ParseMethodArgumentsSecondArg
     Ensure Emergent Free
