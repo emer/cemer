@@ -181,10 +181,10 @@ TestRandomInteger
     Ensure Emergent Free
     Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Math\\"][\\"RandomInteger\\"]
 
-TestMiscMath
-    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
-    Ensure Emergent Free
-    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Math\\"][\\"MiscMath\\"]
+#TestMiscMath
+#    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+#    Ensure Emergent Free
+#    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Math\\"][\\"MiscMath\\"]
 
 TestCallFunctionReturnValue
     Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
