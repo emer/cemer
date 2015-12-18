@@ -84,9 +84,7 @@ void MSNUnitSpec::Compute_ApplyInhib
     }
   }
   else { // OUT
-    if(u->ach == 0.0f) {
-      u->gc_i += matrix.out_ach_inhib;
-    }
+    u->gc_i += matrix.out_ach_inhib * (1.0f - u->ach);
   }
 }
 
