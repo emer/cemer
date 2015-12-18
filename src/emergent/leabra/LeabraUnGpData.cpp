@@ -23,13 +23,26 @@ void LeabraUnGpData::Initialize() {
 
 void LeabraUnGpData::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(netin, this);
-  taBase::Own(acts, this);
-
-  taBase::Own(acts_p, this);
-  taBase::Own(acts_m, this);
 
   taBase::Own(i_val, this);
+  
+  taBase::Own(netin, this);
+  taBase::Own(netin_raw, this);
+  taBase::Own(acts, this);
+  taBase::Own(acts_eq, this);
+  taBase::Own(acts_raw, this);
+  taBase::Own(acts_prvq, this);
+
+  taBase::Own(acts_m, this);
+  taBase::Own(acts_p, this);
+  taBase::Own(acts_q0, this);
+
+  taBase::Own(un_g_i, this);
+  
+  taBase::Own(am_deep_raw, this);
+  taBase::Own(am_deep_raw_net, this);
+  taBase::Own(am_deep_mod_net, this);
+  taBase::Own(am_deep_ctxt, this);
 }
 
 void LeabraUnGpData::Copy_(const LeabraUnGpData& cp) {

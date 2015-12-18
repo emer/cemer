@@ -176,7 +176,7 @@ float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
       LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
       LeabraLayer* lay = (LeabraLayer*)un->own_lay();
       LeabraUnGpData* ugd = lay->UnGpDataUn(un);
-      if(ugd->netin.max < 0.05f) { // weak..
+      if(ugd->netin_raw.max < 0.05f) { // key to use *raw* so not affected by self-maint!
         net_ex += pfc.s_mnt_gain * u->deep_mod_net;
       }
     }
@@ -214,6 +214,9 @@ void PFCUnitSpec::Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int t
 
   // first, test for over-duration maintenance -- allow for active gating to override
   if(pfc.out_gate) {
+    // if(u->thal_cnt == 1) {
+    //   ClearOtherMaint(u, net, thr_no); 
+    // }
     if(u->thal_cnt >= pfc.out_mnt) {
       u->thal_cnt = -1.0f;
     }

@@ -233,7 +233,7 @@ public:
 
   enum AvgMaxVars { // variables that we collect average and max values of -- thread optimized -- coordintate with LeabraInhib.h
     AM_NET,
-    AM_TD_NET,
+    AM_NET_RAW,
     AM_ACT,
     AM_ACT_EQ,
     AM_ACT_RAW,

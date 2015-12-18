@@ -54,13 +54,27 @@ void LeabraLayer::Initialize() {
 void LeabraLayer::InitLinks() {
   inherited::InitLinks();
   taBase::Own(spec, this);
-  taBase::Own(netin, this);
-  taBase::Own(acts, this);
 
-  taBase::Own(acts_p, this);
-  taBase::Own(acts_m, this);
-
+  // own all the LeabraInhib guys! -- also update in LeabraUnGpData::InitLinks()
   taBase::Own(i_val, this);
+  
+  taBase::Own(netin, this);
+  taBase::Own(netin_raw, this);
+  taBase::Own(acts, this);
+  taBase::Own(acts_eq, this);
+  taBase::Own(acts_raw, this);
+  taBase::Own(acts_prvq, this);
+
+  taBase::Own(acts_m, this);
+  taBase::Own(acts_p, this);
+  taBase::Own(acts_q0, this);
+
+  taBase::Own(un_g_i, this);
+  
+  taBase::Own(am_deep_raw, this);
+  taBase::Own(am_deep_raw_net, this);
+  taBase::Own(am_deep_mod_net, this);
+  taBase::Own(am_deep_ctxt, this);
 
   taBase::Own(avg_netin, this);
   taBase::Own(avg_netin_sum, this);

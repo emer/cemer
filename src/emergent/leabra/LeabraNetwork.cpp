@@ -1042,6 +1042,8 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
       continue;
     AvgMaxValsRaw* am_net = ThrLayAvgMax(thr_no, li, AM_NET);
     am_net->InitVals();
+    AvgMaxValsRaw* am_net_raw = ThrLayAvgMax(thr_no, li, AM_NET_RAW);
+    am_net_raw->InitVals();
     
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
@@ -1050,6 +1052,7 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_net->UpdtVals(uv->net, flat_idx); 
+      am_net_raw->UpdtVals(uv->net_raw, flat_idx); 
     }
   }
 
@@ -1061,6 +1064,8 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
       continue;
     AvgMaxValsRaw* am_net = ThrUnGpAvgMax(thr_no, li, AM_NET);
     am_net->InitVals();
+    AvgMaxValsRaw* am_net_raw = ThrUnGpAvgMax(thr_no, li, AM_NET_RAW);
+    am_net_raw->InitVals();
     
     const int ust = ThrUnGpUnStart(thr_no, li);
     const int ued = ThrUnGpUnEnd(thr_no, li);
@@ -1069,6 +1074,7 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_net->UpdtVals(uv->net, flat_idx); 
+      am_net_raw->UpdtVals(uv->net_raw, flat_idx); 
     }
   }
 }
@@ -1084,12 +1090,17 @@ void LeabraNetwork::Compute_NetinStats_Post() {
       continue;
     AvgMaxVals& netin = lay->netin;
     netin.InitVals();
+    AvgMaxVals& netin_raw = lay->netin_raw;
+    netin_raw.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_net = ThrLayAvgMax(i, li, AM_NET);
       netin.UpdtFmAvgMaxRaw(*am_net);
+      AvgMaxValsRaw* am_net_raw = ThrLayAvgMax(i, li, AM_NET_RAW);
+      netin_raw.UpdtFmAvgMaxRaw(*am_net_raw);
     }
     netin.CalcAvg();
+    netin_raw.CalcAvg();
   }
 
   // then by unit groups
@@ -1102,12 +1113,17 @@ void LeabraNetwork::Compute_NetinStats_Post() {
     LeabraUnGpData* gpd = lay->ungp_data.FastEl(ugidx);
     AvgMaxVals& netin = gpd->netin;
     netin.InitVals();
+    AvgMaxVals& netin_raw = gpd->netin_raw;
+    netin_raw.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_net = ThrUnGpAvgMax(i, li, AM_NET);
       netin.UpdtFmAvgMaxRaw(*am_net);
+      AvgMaxValsRaw* am_net_raw = ThrUnGpAvgMax(i, li, AM_NET_RAW);
+      netin_raw.UpdtFmAvgMaxRaw(*am_net_raw);
     }
     netin.CalcAvg();
+    netin_raw.CalcAvg();
   }
 }
 
