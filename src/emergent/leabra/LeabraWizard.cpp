@@ -2238,7 +2238,9 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfc_mnt_units->SetUnique("deep", true);
   pfc_mnt_units->deep.on = true;
   pfc_mnt_units->deep.role = DeepSpec::SUPER;
-  pfc_mnt_units->pfc.s_mnt_gain = 0.3f;
+  pfc_mnt_units->maint.s_mnt_min = 0.3f;
+  pfc_mnt_units->maint.s_mnt_max = 0.3f;
+  pfc_mnt_units->maint.max_mnt = 100;
 
   pfc_mnt_d_units->SetUnique("deep", true);
   pfc_mnt_d_units->deep.on = true;
@@ -2247,14 +2249,16 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfc_out_units->SetUnique("deep", true);
   pfc_mnt_units->deep.on = true;
   pfc_mnt_units->deep.role = DeepSpec::SUPER;
-  pfc_out_units->pfc.out_gate = true;
-  pfc_out_units->pfc.s_mnt_gain = 0.25f;
+  pfc_out_units->SetUnique("gate", true);
+  pfc_out_units->SetUnique("maint", true);
+  pfc_out_units->gate.out_gate = true;
+  pfc_out_units->maint.max_mnt = 1;
+  // todo: many other params
   pfc_out_units->n_dyns = 1;
 
   pfc_out_d_units->SetUnique("deep", true);
   pfc_out_d_units->deep.on = true;
   pfc_out_d_units->deep.role = DeepSpec::DEEP;
-  pfc_out_d_units->pfc.out_gate = true;
   
   pfc_trc_units->SetUnique("deep", true);
   pfc_trc_units->deep.on = true;
