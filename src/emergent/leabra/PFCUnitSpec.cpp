@@ -179,7 +179,8 @@ void PFCUnitSpec::UpdateAfterEdit_impl() {
 float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
-  if(deep.IsSuper()) {
+  // todo: this needs fixed!
+  if(deep.IsSuper() && u->thal_cnt >= 1.0f) { // only for maintaining!
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     LeabraLayer* lay = (LeabraLayer*)un->own_lay();
     LeabraUnGpData* ugd = lay->UnGpDataUn(un);
@@ -207,8 +208,16 @@ int PFCUnitSpec::PFCGatingCycle(LeabraNetwork* net, bool pfc_out_gate, int& qtr_
 
 
 void PFCUnitSpec::Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(!deep.IsSuper() || !Quarter_DeepRawNextQtr(net->quarter))
-    return;
+  if(!deep.IsSuper()) return;
+
+  if(gate.prv_qtr) {
+    if(!Quarter_DeepRawNextQtr(net->quarter))
+      return;
+  }
+  else {
+    if(!Quarter_DeepRawNow(net->quarter))
+      return;
+  }
 
   int qtr_cyc;
   int gate_cyc = PFCUnitSpec::PFCGatingCycle(net, gate.out_gate, qtr_cyc);
