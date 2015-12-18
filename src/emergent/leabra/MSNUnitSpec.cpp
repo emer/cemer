@@ -79,10 +79,14 @@ void MSNUnitSpec::Compute_ApplyInhib
   
   GateType gt = MatrixGateType(u, net, thr_no);
   if(gt == MAINT) {
-    u->gc_i += matrix.mnt_ach_inhib * u->ach;
+    if(u->ach > 0.0f) {
+      u->gc_i += matrix.mnt_ach_inhib;
+    }
   }
   else { // OUT
-    u->gc_i += matrix.out_ach_inhib * (1.0f - u->ach);
+    if(u->ach == 0.0f) {
+      u->gc_i += matrix.out_ach_inhib;
+    }
   }
 }
 
