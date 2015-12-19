@@ -122,7 +122,7 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     LeabraLayer* vspatch_lay = NULL;
     LeabraLayer* vspatch_d2_lay = NULL;
   
-    GetRecvLayers_P(u, pptg_lay_p, lhb_lay, pospv_lay, vspatch_lay, vspatch_d2_lay);
+    GetRecvLayers_P(u, pospv_lay, pptg_lay_p, lhb_lay, vspatch_lay, vspatch_d2_lay);
   
     if(u->CheckError(!pptg_lay_p, quiet, rval,
                      "did not find PPTg layer to get DA bursts from (looks for PPTgUnitSpec)")) {
@@ -151,23 +151,31 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     // TODO: add more recv layer checks as we determine which layers VTAn should receive from - only sure of NegPV currently
     LeabraLayer* negpv_lay = NULL;
     LeabraLayer* pptg_lay_n = NULL;
-    GetRecvLayers_N(u, negpv_lay, pptg_lay_n);
+    LeabraLayer* lhb_lay_n = NULL;
+    GetRecvLayers_N(u, negpv_lay, pptg_lay_n, lhb_lay_n);
 
     if(u->CheckError(!negpv_lay, quiet, rval,
                      "did not find NegPV layer to get negative PV from -- looks for PV and Neg in layer name")) {
+      rval = false;
+    }
+    if(u->CheckError(!pptg_lay_n, quiet, rval,
+                     "did not find PPTg_n layer to get DA bursts from (looks for PPTgUnitSpec)")) {
+      rval = false;
+    }
+    if(u->CheckError(!lhb_lay_n, quiet, rval,
+                     "did not find LHbRMTg layer from (looks for LHbRMTgUnitSpec)")) {
       rval = false;
     }
   }
   return rval;
 }
 
-bool VTAUnitSpec::GetRecvLayers_P(LeabraUnit* u,
+bool VTAUnitSpec::GetRecvLayers_P(LeabraUnit* u, LeabraLayer*& pospv_lay,
                                   LeabraLayer*& pptg_lay_p, LeabraLayer*& lhb_lay,
-                                  LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay,
-                                  LeabraLayer*& vspatch_d2_lay) {
+                                  LeabraLayer*& vspatch_lay, LeabraLayer*& vspatch_d2_lay) {
+  pospv_lay = NULL;
   pptg_lay_p = NULL;
   lhb_lay = NULL;
-  pospv_lay = NULL;
   vspatch_lay = NULL;
   vspatch_d2_lay = NULL;
   
@@ -196,9 +204,11 @@ bool VTAUnitSpec::GetRecvLayers_P(LeabraUnit* u,
   return true;
 }
 
-bool VTAUnitSpec::GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay, LeabraLayer*& pptg_lay_n) {
+bool VTAUnitSpec::GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay, LeabraLayer*& pptg_lay_n, LeabraLayer*& lhb_lay) {
   // TODO: add more recv layer checks as we determine which layers VTAn should receive from - only sure of NegPV currently
   negpv_lay = NULL;
+  pptg_lay_n = NULL;
+  lhb_lay = NULL;
   
   const int nrg = u->NRecvConGps();
   for(int g=0; g<nrg; g++) {
@@ -209,10 +219,9 @@ bool VTAUnitSpec::GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay, Leabra
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
     LeabraUnitSpec* us = (LeabraUnitSpec*)fmlay->GetUnitSpec();
     if(cs->IsMarkerCon()) {
-      if(us->InheritsFrom(TA_PPTgUnitSpec)) pptg_lay_n = fmlay;
-      if(fmlay->name.contains("PV")) {
-        negpv_lay = fmlay;
-      }
+      if(us->InheritsFrom(TA_PPTgUnitSpec)) { pptg_lay_n = fmlay; }
+      else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) { lhb_lay = fmlay; }
+      else if(fmlay->name.contains("PV")) { negpv_lay = fmlay; }
     }
   }
   return true;
@@ -228,7 +237,7 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   
   LeabraLayer* lay = un->own_lay();
 
-  GetRecvLayers_P(un, pptg_lay_p, lhb_lay, pospv_lay, vspatch_lay, vspatch_d2_lay);
+  GetRecvLayers_P(un, pospv_lay, pptg_lay_p, lhb_lay, vspatch_lay, vspatch_d2_lay);
     
   // use total activation over whole layer
   float pptg_da_p = pptg_lay_p->acts_eq.avg * pptg_lay_p->units.size;
@@ -247,7 +256,7 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
     }
 }
   float burst_lhb_da = MIN(lhb_da, 0.0f); // if neg, promotes bursting
-  float dip_lhb_da = MAX(lhb_da, 0.0f); // else, promotes dipping
+  float dip_lhb_da = MAX(lhb_da, 0.0f);   // else, promotes dipping
     
   // absorbing PosPV value - prevents double counting
   float tot_burst_da = MAX(gains.pv_gain * pospv, gains.pptg_gain * pptg_da_p);
@@ -287,25 +296,33 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
 }
 
 void VTAUnitSpec::Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  LeabraLayer* pptg_lay_n = NULL;
   LeabraLayer* negpv_lay = NULL;
+  LeabraLayer* pptg_lay_n = NULL;
+  LeabraLayer* lhb_lay_n = NULL;
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
   
   LeabraLayer* lay = un->own_lay();
 
-  GetRecvLayers_N(un, negpv_lay, pptg_lay_n);
+  GetRecvLayers_N(un, negpv_lay, pptg_lay_n, lhb_lay_n);
   float negpv = negpv_lay->acts_eq.avg * negpv_lay->units.size;
   float pptg_da_n = pptg_lay_n->acts_eq.avg * pptg_lay_n->units.size;
+  float lhb_da_n = lhb_lay_n->acts_eq.avg * lhb_lay_n->units.size;
 
+  float burst_lhb_da_n = MAX(lhb_da_n, 0.0f); // if pos, promotes bursting
+  float dip_lhb_da_n = MIN(lhb_da_n, 0.0f);   // else, promotes dipping
+  
   // absorbing NegPV value - prevents double counting
-  float tot_burst_da = MAX(gains.pv_gain * negpv, gains.pptg_gain * pptg_da_n);
-    
   float negpv_da = negpv;
-  negpv_da = MAX(negpv_da, 0.0f); // in case we add shunting later...
-  float net_da = MAX(gains.pv_gain * negpv_da, gains.pptg_gain * pptg_da_n);
-    
-  net_da = tot_burst_da;        // TOM: this just completely overwrote net_da from above!!
-  // currently, no reason for PVi-like shunting identified
+  negpv_da = MAX(negpv_da, 0.0f); // in case we add PVi-like shunting later...
+  float tot_burst_da = MAX(gains.pv_gain * negpv_da, gains.pptg_gain * pptg_da_n);
+  tot_burst_da = MAX(tot_burst_da, gains.lhb_gain * burst_lhb_da_n);
+  
+  float tot_dip_da = dip_lhb_da_n;
+  
+//  float net_da = MAX(gains.pv_gain * negpv_da, gains.pptg_gain * pptg_da_n);
+  
+  float net_da = tot_burst_da + tot_dip_da;
+  
   net_da *= gains.da_gain;
     
   u->da_n = net_da;
@@ -315,9 +332,11 @@ void VTAUnitSpec::Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   u->da = 0.0f;
 
   if(da.rec_data) {
-    lay->SetUserData("tot_burst_da", tot_burst_da);
     lay->SetUserData("negpv", negpv);
     lay->SetUserData("pptg_da_n", pptg_da_n);
+    lay->SetUserData("lhb_da_n", lhb_da_n);
+    lay->SetUserData("tot_burst_da", tot_burst_da);
+    lay->SetUserData("tot_dip_da", tot_dip_da);
     lay->SetUserData("net_da", net_da);
   }
 }

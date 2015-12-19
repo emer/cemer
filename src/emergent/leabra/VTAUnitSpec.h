@@ -118,13 +118,13 @@ public:
   virtual void  Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // compute negative-valence dopamine
 
-  virtual bool  GetRecvLayers_P(LeabraUnit* u,
+  virtual bool  GetRecvLayers_P(LeabraUnit* u, LeabraLayer*& pospv_lay,
                                 LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,
-                                LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay,
-                                LeabraLayer*& vspatch_d2_lay);
+                                LeabraLayer*& vspatch_lay, LeabraLayer*& vspatch_d2_lay);
     // get the recv layers to VTAp (DA_P case)
   
-  virtual bool  GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay, LeabraLayer*& pptg_lay_n);
+  virtual bool  GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay,
+                                LeabraLayer*& pptg_lay_n, LeabraLayer*& lhb_lay);
   // get the recv layers to VTAn (DA_N case)
 
   void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
