@@ -179,11 +179,22 @@ void PFCUnitSpec::UpdateAfterEdit_impl() {
 float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
-  // todo: this needs fixed!
-  if(deep.IsSuper() && u->thal_cnt >= 1.0f) { // only for maintaining!
-    LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
-    LeabraLayer* lay = (LeabraLayer*)un->own_lay();
-    LeabraUnGpData* ugd = lay->UnGpDataUn(un);
+  if(!deep.IsSuper()) {
+    return net_ex;
+  }
+  if(u->thal_cnt < 0.0f) {      // not even close to maintaining..
+    return net_ex;
+  }
+  
+  LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+  LeabraLayer* lay = (LeabraLayer*)un->own_lay();
+  LeabraUnGpData* ugd = lay->UnGpDataUn(un);
+  if(u->thal_cnt == 0.0f) {     // just gated -- only maint if nothing else
+    if(ugd->netin_raw.max < 0.05f) { //
+      net_ex += maint.s_mnt_max * u->deep_mod_net;
+    }
+  }
+  else {                        // maintaining
     const float eff_netin_max = MIN(ugd->netin_raw.max, maint.mnt_net_max);
     const float netin_factor = 1.0f - (eff_netin_max / maint.mnt_net_max);
     const float mnt_net = maint.s_mnt_min +
