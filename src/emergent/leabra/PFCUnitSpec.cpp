@@ -39,7 +39,7 @@ void PFCMaintSpec::Initialize() {
 }
 
 void PFCMaintSpec::Defaults_init() {
-  s_mnt_min = 0.2f;
+  s_mnt_min = 0.3f;
   s_mnt_max = 0.5f;
   mnt_net_max = 0.5f;
   clear = 0.5f;
@@ -208,10 +208,7 @@ float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
 int PFCUnitSpec::PFCGatingCycle(LeabraNetwork* net, bool pfc_out_gate, int& qtr_cyc) {
   const int cyc_per_qtr = net->times.quarter;
   qtr_cyc = net->cycle - net->quarter * cyc_per_qtr; // quarters into this cyc
-  const int half_cyc = cyc_per_qtr / 2;
-  int gate_cyc = half_cyc;
-  // if(net->quarter == 0)         // first quarter gating should be delayed
-  //   gate_cyc += 2;              // add a few more cycles
+  int gate_cyc = net->times.gate_cyc;
   if(pfc_out_gate)  // out gate goes first so maint can override clear!
     gate_cyc -= 1;
   return gate_cyc;
