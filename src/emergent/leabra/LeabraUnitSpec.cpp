@@ -74,6 +74,7 @@ void LeabraActMiscSpec::Initialize() {
 void LeabraActMiscSpec::Defaults_init() {
   rec_nd = true;
   avg_nd = true;
+  net_gain = 1.0f;
   act_max_hz = 100.0f;
   avg_tau = 200.0f;
   avg_init = 0.15f;
@@ -1389,7 +1390,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   Compute_NetinRaw(u, net, thr_no);
   // u->net_raw and u->gi_syn now have proper values integrated from deltas
 
-  float net_syn = u->net_raw;
+  float net_syn = act_misc.net_gain * u->net_raw;
   float net_ex = 0.0f;
   if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);

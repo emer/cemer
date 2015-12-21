@@ -51,7 +51,7 @@ void LeabraCudaSpec::Initialize() {
 void LeabraTimes::Initialize() {
   quarter = 25;
   cycle_qtr = true;
-  gate_cyc = 20;
+  gate_cyc = 15;
   deep_cyc = 5;
   time_inc = 0.001f;
 
