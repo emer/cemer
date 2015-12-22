@@ -59,13 +59,13 @@ public:
   float         all;            // #MIN_0 #DEF_1 final overall gain on everything
   float         vspatch_pos_D1;      // #MIN_0 #DEF_1 VS patch D1 APPETITIVE pathway - versus pos PV outcomes
   float         vspatch_pos_D2;      // #MIN_0 #DEF_1 VS patch D2 APPETITIVE pathway versus vspatch_pos_D1
-  float         vspatch_pos_net_neg_gain; // #DEF_0.2 proportion of positive reward prediction error (RPE) to use if RPE results from a predicted omission of positive reinforcement - e.g., conditioned inhibitor
+  float         vspatch_pos_disinhib_gain; // #DEF_0.2 proportion of positive reward prediction error (RPE) to use if RPE results from a predicted omission of positive reinforcement - e.g., conditioned inhibitor
   float         vsmatrix_pos_D1;  // #MIN_0 #DEF_1 gain on VS matrix D1 APPETITIVE guys
   float         vsmatrix_pos_D2;  // #MIN_0 #DEF_1 - VS matrix D2 APPETITIVE
   
   float         vspatch_neg_D1;      // #MIN_0 #DEF_1 VS patch D1 pathway versus neg PV outcomes
   float         vspatch_neg_D2;      // #MIN_0 #DEF_1 VS patch D2 pathway versus vspatch_neg_D1
-  float         vspatch_neg_net_neg_gain; // #DEF_0.0 TODO: do we need any version of this guy?
+  float         vspatch_neg_deexcit_gain; // #DEF_1 TODO: do we need any version of this guy?
   
   float         vsmatrix_neg_D1; // #MIN_0 #DEF_1 - VS matrix D1 AVERSIVE
   float         vsmatrix_neg_D2; // #MIN_0 #DEF_1 - VS matrix D2 AVERSIVE

@@ -43,14 +43,14 @@ void LHbRMTgGains::Defaults_init() {
   all = 1.0f;
   vspatch_pos_D1 = 1.0f;
   vspatch_pos_D2 = 1.0f;
-  vspatch_pos_net_neg_gain = 0.2f;
+  vspatch_pos_disinhib_gain = 0.2f;
   vsmatrix_pos_D1 = 1.0f;
   vsmatrix_pos_D2 = 1.0f;
   vspatch_neg_D1 = 1.0f;
   vspatch_neg_D2 = 1.0f;
   vsmatrix_neg_D1 = 1.0f;
   vsmatrix_neg_D2 = 1.0f;
-  vspatch_neg_net_neg_gain = 0.0f;
+  vspatch_neg_deexcit_gain = 1.0f;
 }
 
 void LHbRMTgUnitSpec::Initialize() {
@@ -216,45 +216,52 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
                 vsmatrix_neg_D1_lay, vsmatrix_neg_D2_lay);
   
   // use avg act over layer..
-  // note: need acts_q0 for patch to reflect previous trial..
+  // by default, patch uses acts_q0 for patch to reflect previous trial..
   float vspatch_pos_D1;
-  if(lhb.patch_cur)
+  if(lhb.patch_cur) { // use current timestep's acts instead...
     vspatch_pos_D1 = vspatch_pos_D1_lay->acts_eq.avg * vspatch_pos_D1_lay->units.size;
-  else
+  }
+  else {
     vspatch_pos_D1 = vspatch_pos_D1_lay->acts_q0.avg * vspatch_pos_D1_lay->units.size;
-    
+  }
+  
   float vspatch_pos_D2;
-  if(lhb.patch_cur)
+  if(lhb.patch_cur) {
     vspatch_pos_D2 = vspatch_pos_D2_lay->acts_eq.avg * vspatch_pos_D2_lay->units.size;
-  else
+  }
+  else {
     vspatch_pos_D2 = vspatch_pos_D2_lay->acts_q0.avg * vspatch_pos_D2_lay->units.size;
-
-  float vspatch_pos_net = (gains.vspatch_pos_D1 * vspatch_pos_D1) - (gains.vspatch_pos_D2 * vspatch_pos_D2); // positive number is net excitatory in LHb, i.e., the "dipper"
+  }
+  
+  float vspatch_pos_net = (gains.vspatch_pos_D1 * vspatch_pos_D1) - (gains.vspatch_pos_D2 * vspatch_pos_D2); // positive number net excitatory in LHb, i.e., the "dipper"
   if (vspatch_pos_net < 0.0f) {
-    vspatch_pos_net *= gains.vspatch_pos_net_neg_gain;
+    vspatch_pos_net *= gains.vspatch_pos_disinhib_gain;
   }
   
   // repeat for AVERSIVE guys...
   float vspatch_neg_D1;
-  if(lhb.patch_cur)
+  if(lhb.patch_cur) {
     vspatch_neg_D1 = vspatch_neg_D1_lay->acts_eq.avg * vspatch_neg_D1_lay->units.size;
-  else
+  }
+  else {
     vspatch_neg_D1 = vspatch_neg_D1_lay->acts_q0.avg * vspatch_neg_D1_lay->units.size;
+  }
   
   float vspatch_neg_D2;
-  if(lhb.patch_cur)
+  if(lhb.patch_cur) {
     vspatch_neg_D2 = vspatch_neg_D2_lay->acts_eq.avg * vspatch_neg_D2_lay->units.size;
-  else
+  }
+  else {
     vspatch_neg_D2 = vspatch_neg_D2_lay->acts_q0.avg * vspatch_neg_D2_lay->units.size;
+  }
   
-  // TODO: do I need anything like the net_neg_gain guy??????
   float vspatch_neg_net = (gains.vspatch_neg_D2 * vspatch_neg_D2) - (gains.vspatch_neg_D1 * vspatch_neg_D1); // positive number is net inhibitory in LHb - disinhibitory "burster"
-  
-// TODO: 0.2 gain here seems to be preventing any mitigation of the neg PV
-  //  if (vspatch_neg_net > 0.0f) {
-//    vspatch_neg_net *= gains.vspatch_neg_net_neg_gain; // TODO: probably only need one gain here, but will keep them separate for now...
-//  }
-  
+
+//TODO: do I need anything like the net_neg_gain guy??????
+//TODO: 0.2 gain here seems to be preventing any mitigation of the neg PV
+    if (vspatch_neg_net > 0.0f) {
+      vspatch_neg_net *= gains.vspatch_neg_deexcit_gain;
+    }
   
   float vsmatrix_pos_D1 = 0.0f;
   if(vsmatrix_pos_D1_lay)
@@ -269,7 +276,6 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   }
   float vsmatrix_neg_D2 = 0.0f;
   if(vsmatrix_neg_D2_lay) {
-    //dms_matrix_ind = dms_matrix_ind_lay->acts_eq.max;
     vsmatrix_neg_D2 = vsmatrix_neg_D2_lay->acts_eq.avg * vsmatrix_neg_D2_lay->units.size;
   }
   float pv_pos = pv_pos_lay->acts_eq.avg * pv_pos_lay->units.size;
@@ -277,50 +283,25 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   
   // actual punishments should never be completely predicted away...
-   float residual_pvneg = lhb.min_pvneg * pv_neg;
+  float residual_pvneg = 0.0f;
+  if(pv_neg) {residual_pvneg = lhb.min_pvneg * pv_neg; }
   residual_pvneg = MAX(residual_pvneg, 0.0f); // just a precaution
  
-  // TODO: still double counting matrix_dir via its reflection in both net_pv_pos and net_lv_pos; QUICK FIX
-  
-  //matrix_dir = matrix_ind = 0.0f; // TODO: quick fix - just ignore it
-  
-  // TODO: maybe no longer need the net_pv_pos absorb somehow?
-  // TODO: OR, also take the MAX(net_pv_pos, net_lv_pos); // call it net_pos and ONLY use that!
-  // TODO: this latter seems the best so far...
-
-  
   // net out the VS matrix D1 versus D2 pairs...WATCH the signs - double negatives!
   float vsmatrix_pos_net = (gains.vsmatrix_pos_D1 * vsmatrix_pos_D1) - (gains.vsmatrix_pos_D2 * vsmatrix_pos_D2); // positive number net inhibitory!
   float vsmatrix_neg_net = (gains.vsmatrix_neg_D2 * vsmatrix_neg_D2) - (gains.vsmatrix_neg_D1 * vsmatrix_neg_D1); // positive number net excitatory!
-  
-  
   
   // don't double count pv going through the matrix guys
   float net_pos = vsmatrix_pos_net;
   if(pv_pos) { net_pos = MAX(pv_pos, vsmatrix_pos_net); }
   float net_neg = vsmatrix_neg_net;
-  if(pv_neg) { net_neg = MAX(pv_neg, vsmatrix_neg_net); }
+  if(pv_neg) { net_neg = MAX(pv_neg - residual_pvneg, vsmatrix_neg_net); }
   
-  // likewise, don't double count lv going through the matrix guys - SHOULD BE ALREADY DONE NOW!
-//  float net_lv_pos = MAX(gains.dms_matrix_dir * dms_matrix_dir,
-//                         gains.vs_matrix_dir * matrix_dir);
-//  float net_lv_neg = MAX(gains.dms_matrix_ind * dms_matrix_ind,
-//                         gains.vs_matrix_ind * matrix_ind);
+  float net_lhb = net_neg - net_pos + vspatch_pos_net - vspatch_neg_net;
   
-  
-  // TODO: better approach to double matrix counting
-//  float net_pos = MAX(net_pv_pos, net_lv_pos);
-//  float net_neg = MAX(net_pv_neg, net_lv_neg);
-  
-//  float net_lhb = net_pv_neg - (gains.patch_ind * patch_ind) - net_pv_pos +
-//                           (gains.patch_dir * patch_dir) - (gains.dms_matrix_dir * dms_matrix_dir) + (gains.dms_matrix_ind * dms_matrix_ind) + residual_pvneg;
-  
-  float net_lhb = net_neg - net_pos + vspatch_pos_net - vspatch_neg_net + residual_pvneg;
+  if(pv_neg) { net_lhb = MAX(net_lhb, residual_pvneg); }
   
   net_lhb *=gains.all;
-  
-  // TODO: tweak the gains.params here and for initialization, defaults, etc.
-  // TODO: note should matrix (and patch?) dir vs. indirect guys be netted out first to reflect the Go/NoGo competition?
   
   u->act_eq = u->act_nd = u->act = u->net = u->ext = net_lhb;
   

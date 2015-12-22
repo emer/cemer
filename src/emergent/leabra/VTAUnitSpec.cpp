@@ -152,7 +152,10 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     LeabraLayer* negpv_lay = NULL;
     LeabraLayer* pptg_lay_n = NULL;
     LeabraLayer* lhb_lay_n = NULL;
-    GetRecvLayers_N(u, negpv_lay, pptg_lay_n, lhb_lay_n);
+    LeabraLayer* vspatch_lay_n = NULL;
+    LeabraLayer* vspatch_d1_lay_n = NULL;
+    
+    GetRecvLayers_N(u, negpv_lay, pptg_lay_n, lhb_lay_n, vspatch_lay_n, vspatch_d1_lay_n);
 
     if(u->CheckError(!negpv_lay, quiet, rval,
                      "did not find NegPV layer to get negative PV from -- looks for PV and Neg in layer name")) {
@@ -204,8 +207,10 @@ bool VTAUnitSpec::GetRecvLayers_P(LeabraUnit* u, LeabraLayer*& pospv_lay,
   return true;
 }
 
-bool VTAUnitSpec::GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay, LeabraLayer*& pptg_lay_n, LeabraLayer*& lhb_lay) {
-  // TODO: add more recv layer checks as we determine which layers VTAn should receive from - only sure of NegPV currently
+bool VTAUnitSpec::GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay,
+                                  LeabraLayer*& pptg_lay_n, LeabraLayer*& lhb_lay,
+                                  LeabraLayer*& vspatch_lay_n, LeabraLayer*& vspatch_d1_lay_n) {
+  // TODO: add more recv layer checks as we determine which layers VTAn should receive from...
   negpv_lay = NULL;
   pptg_lay_n = NULL;
   lhb_lay = NULL;
@@ -222,6 +227,12 @@ bool VTAUnitSpec::GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay, Leabra
       if(us->InheritsFrom(TA_PPTgUnitSpec)) { pptg_lay_n = fmlay; }
       else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) { lhb_lay = fmlay; }
       else if(fmlay->name.contains("PV")) { negpv_lay = fmlay; }
+      else if(us->InheritsFrom(TA_MSNUnitSpec) && fmlay->name.contains("D2")) {
+        vspatch_lay_n = fmlay;
+      }
+      else if(us->InheritsFrom(TA_MSNUnitSpec) && fmlay->name.contains("D1")) {
+        vspatch_d1_lay_n = fmlay;
+      }
     }
   }
   return true;
@@ -299,29 +310,50 @@ void VTAUnitSpec::Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   LeabraLayer* negpv_lay = NULL;
   LeabraLayer* pptg_lay_n = NULL;
   LeabraLayer* lhb_lay_n = NULL;
+  LeabraLayer* vspatch_lay_n = NULL;
+  LeabraLayer* vspatch_d1_lay_n = NULL;
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
   
   LeabraLayer* lay = un->own_lay();
 
-  GetRecvLayers_N(un, negpv_lay, pptg_lay_n, lhb_lay_n);
+  GetRecvLayers_N(un, negpv_lay, pptg_lay_n, lhb_lay_n, vspatch_lay_n, vspatch_d1_lay_n);
   float negpv = negpv_lay->acts_eq.avg * negpv_lay->units.size;
   float pptg_da_n = pptg_lay_n->acts_eq.avg * pptg_lay_n->units.size;
   float lhb_da_n = lhb_lay_n->acts_eq.avg * lhb_lay_n->units.size;
 
+  float vspvi_n;
+  if(da.patch_cur) {
+    vspvi_n = vspatch_lay_n->acts_eq.avg * vspatch_lay_n->units.size;
+  }
+  else {
+    if(!gains.subtract_d2r) {
+      vspvi_n = vspatch_lay_n->acts_q0.avg * vspatch_lay_n->units.size;
+    }
+    else {
+      vspvi_n = (gains.pvi_d2_gain * vspatch_lay_n->acts_q0.avg * vspatch_lay_n->units.size) -
+      (gains.pvi_d1_gain * vspatch_d1_lay_n->acts_q0.avg * vspatch_d1_lay_n->units.size);
+    }
+  }
   float burst_lhb_da_n = MAX(lhb_da_n, 0.0f); // if pos, promotes bursting
   float dip_lhb_da_n = MIN(lhb_da_n, 0.0f);   // else, promotes dipping
   
   // absorbing NegPV value - prevents double counting
   float negpv_da = negpv;
   negpv_da = MAX(negpv_da, 0.0f); // in case we add PVi-like shunting later...
+    
+    
   float tot_burst_da = MAX(gains.pv_gain * negpv_da, gains.pptg_gain * pptg_da_n);
   tot_burst_da = MAX(tot_burst_da, gains.lhb_gain * burst_lhb_da_n);
   
-  float tot_dip_da = dip_lhb_da_n;
+  // PVi shunting
+  float net_burst_da = tot_burst_da - (gains.pvi_gain * vspvi_n);
+  net_burst_da = MAX(net_burst_da, 0.0f);
+    
+  float tot_dip_da = gains.lhb_gain * dip_lhb_da_n;
   
 //  float net_da = MAX(gains.pv_gain * negpv_da, gains.pptg_gain * pptg_da_n);
   
-  float net_da = tot_burst_da + tot_dip_da;
+  float net_da = net_burst_da + tot_dip_da;
   
   net_da *= gains.da_gain;
     

@@ -124,7 +124,8 @@ public:
     // get the recv layers to VTAp (DA_P case)
   
   virtual bool  GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay,
-                                LeabraLayer*& pptg_lay_n, LeabraLayer*& lhb_lay);
+                                LeabraLayer*& pptg_lay_n, LeabraLayer*& lhb_lay,
+                                LeabraLayer*& vspatch_lay_n, LeabraLayer*& vspatch_d1_lay_n);
   // get the recv layers to VTAn (DA_N case)
 
   void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
