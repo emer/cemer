@@ -1138,7 +1138,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   //////  Cons
 
-  const float base_lrate = 0.04f;
+  const float base_lrate = 0.02f;
+  const float base_da_gain = 1.0f;
   
   pvlv_cons->UpdateAfterEdit();
   pvlv_cons->lrate = base_lrate;
@@ -1148,7 +1149,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   la_cons->SetUnique("lrate", true);
   la_cons->lrate = 10.0f * base_lrate;
-  la_cons->neg_da_gain = 0.05f;
+  la_cons->neg_da_gain = 0.05f * base_da_gain;
   baap_cons->SetUnique("lrate", true);
   baap_cons->lrate = 10.0f * base_lrate;
   baap_cons->SetUnique("wt_scale", true);
@@ -1156,11 +1157,21 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baap_cons->SetUnique("wt_sig", true);
   baap_cons->wt_sig.gain = 1.0f;
   baap_cons->SetUnique("ba_learn", true);
-  baap_cons->ba_learn.burst_da_gain = 1.0f;
-  baap_cons->ba_learn.dip_da_gain = 0.05f;
+  baap_cons->ba_learn.burst_da_gain = base_da_gain;
+  baap_cons->ba_learn.dip_da_gain = 0.05f * base_da_gain;
 
-  baan_cons->SetUnique("lrate", false);
-  baan_cons->SetUnique("wt_sig", false);
+//  baan_cons->SetUnique("lrate", false);
+//  baan_cons->SetUnique("wt_sig", false);
+  
+  baan_cons->SetUnique("lrate", true);
+  baan_cons->lrate = 10.0f * base_lrate;
+  baan_cons->SetUnique("wt_scale", true);
+  baan_cons->wt_scale.abs = 0.95f;
+  baan_cons->SetUnique("wt_sig", true);
+  baan_cons->wt_sig.gain = 1.0f;
+  baan_cons->SetUnique("ba_learn", true);
+  baan_cons->ba_learn.burst_da_gain = 0.05f * base_da_gain;
+  baan_cons->ba_learn.dip_da_gain = base_da_gain;
   
   bae_cons->SetUnique("wt_sig", false);
   bae_cons->SetUnique("rnd", true);
@@ -1199,9 +1210,9 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons_pd1->SetUnique("learn_rule", true);
   vspatch_cons_pd1->learn_rule = MSNConSpec::DA_HEBB_VS;
   vspatch_cons_pd1->SetUnique("burst_da_gain", true);
-  vspatch_cons_pd1->burst_da_gain = 1.0f;
+  vspatch_cons_pd1->burst_da_gain = base_da_gain;
   vspatch_cons_pd1->SetUnique("dip_da_gain", true);
-  vspatch_cons_pd1->dip_da_gain = 0.2f;
+  vspatch_cons_pd1->dip_da_gain = 0.2f * base_da_gain;
 
   vspatch_cons_pd2nd1->SetUnique("rnd", false);
   vspatch_cons_pd2nd1->SetUnique("wt_scale", false);
@@ -1212,9 +1223,9 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons_pd2nd1->SetUnique("ru_act_var", false);
   vspatch_cons_pd2nd1->SetUnique("learn_rule", false);
   vspatch_cons_pd2nd1->SetUnique("burst_da_gain", true);
-  vspatch_cons_pd2nd1->burst_da_gain = 1.0f;
+  vspatch_cons_pd2nd1->burst_da_gain = base_da_gain;
   vspatch_cons_pd2nd1->SetUnique("dip_da_gain", true);
-  vspatch_cons_pd2nd1->dip_da_gain = 1.0f;
+  vspatch_cons_pd2nd1->dip_da_gain = base_da_gain;
   
   vspatch_cons_nd2->SetUnique("rnd", false);
   vspatch_cons_nd2->SetUnique("wt_scale", false);
@@ -1225,9 +1236,9 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons_nd2->SetUnique("ru_act_var", false);
   vspatch_cons_nd2->SetUnique("learn_rule", false);
   vspatch_cons_nd2->SetUnique("burst_da_gain", true);
-  vspatch_cons_nd2->burst_da_gain = 0.2f;
+  vspatch_cons_nd2->burst_da_gain = 0.2f * base_da_gain;
   vspatch_cons_nd2->SetUnique("dip_da_gain", true);
-  vspatch_cons_nd2->dip_da_gain = 1.0f;
+  vspatch_cons_nd2->dip_da_gain = base_da_gain;
   
   vsmatrix_cons_pd1->SetUnique("rnd", true);
   vsmatrix_cons_pd1->rnd.mean = 0.01f;
@@ -1249,48 +1260,49 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons_pd1->SetUnique("learn_rule", true);
   vsmatrix_cons_pd1->learn_rule = MSNConSpec::TRACE_NO_THAL_VS;
   vsmatrix_cons_pd1->SetUnique("burst_da_gain", true);
-  vsmatrix_cons_pd1->burst_da_gain = 1.0f;
+  vsmatrix_cons_pd1->burst_da_gain = base_da_gain;
   vsmatrix_cons_pd1->SetUnique("dip_da_gain", true);
-  vsmatrix_cons_pd1->dip_da_gain = 0.2f;
-
+  vsmatrix_cons_pd1->dip_da_gain = 0.2f * base_da_gain;
   vsmatrix_cons_nd2->SetUnique("rnd", false);
   vsmatrix_cons_nd2->SetUnique("wt_scale", false);
   vsmatrix_cons_nd2->SetUnique("lrate", false);
+  vsmatrix_cons_nd2->lrate = 2.0f * base_lrate;
   vsmatrix_cons_nd2->SetUnique("wt_sig", false);
   vsmatrix_cons_nd2->SetUnique("deep", false);
   vsmatrix_cons_nd2->SetUnique("su_act_var", false);
   vsmatrix_cons_nd2->SetUnique("ru_act_var", false);
   vsmatrix_cons_nd2->SetUnique("learn_rule", false);
   vsmatrix_cons_nd2->SetUnique("burst_da_gain", true);
-  vsmatrix_cons_nd2->burst_da_gain = 0.1f;
+  vsmatrix_cons_nd2->burst_da_gain = 0.2f * base_da_gain;
   vsmatrix_cons_nd2->SetUnique("dip_da_gain", true);
-  vsmatrix_cons_nd2->dip_da_gain = 1.0f;
-
+  vsmatrix_cons_nd2->dip_da_gain = base_da_gain;
   vsmatrix_cons_pd2->SetUnique("rnd", false);
   vsmatrix_cons_pd2->SetUnique("wt_scale", false);
   vsmatrix_cons_pd2->SetUnique("lrate", false);
+  vsmatrix_cons_pd2->lrate = base_lrate;
   vsmatrix_cons_pd2->SetUnique("wt_sig", false);
   vsmatrix_cons_pd2->SetUnique("deep", false);
   vsmatrix_cons_pd2->SetUnique("su_act_var", false);
   vsmatrix_cons_pd2->SetUnique("ru_act_var", false);
   vsmatrix_cons_pd2->SetUnique("learn_rule", false);
   vsmatrix_cons_pd2->SetUnique("burst_da_gain", true);
-  vsmatrix_cons_pd2->burst_da_gain = 1.0f;
+  vsmatrix_cons_pd2->burst_da_gain = base_da_gain;
   vsmatrix_cons_pd2->SetUnique("dip_da_gain", true);
-  vsmatrix_cons_pd2->dip_da_gain = 1.0f;
+  vsmatrix_cons_pd2->dip_da_gain = base_da_gain;
 
   vsmatrix_cons_nd1->SetUnique("rnd", false);
   vsmatrix_cons_nd1->SetUnique("wt_scale", false);
   vsmatrix_cons_nd1->SetUnique("lrate", false);
+  vsmatrix_cons_nd1->lrate = 2.0f * base_lrate;
   vsmatrix_cons_nd1->SetUnique("wt_sig", false);
   vsmatrix_cons_nd1->SetUnique("deep", false);
   vsmatrix_cons_nd1->SetUnique("su_act_var", false);
   vsmatrix_cons_nd1->SetUnique("ru_act_var", false);
   vsmatrix_cons_nd1->SetUnique("learn_rule", false);
   vsmatrix_cons_nd1->SetUnique("burst_da_gain", true);
-  vsmatrix_cons_nd1->burst_da_gain = 1.0f;
+  vsmatrix_cons_nd1->burst_da_gain = base_da_gain;
   vsmatrix_cons_nd1->SetUnique("dip_da_gain", true);
-  vsmatrix_cons_nd1->dip_da_gain = 1.0f;
+  vsmatrix_cons_nd1->dip_da_gain = base_da_gain;
 
   fix_cons->UpdateAfterEdit();
   fix_cons->learn = false;
