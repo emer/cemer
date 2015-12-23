@@ -1958,9 +1958,10 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   net->FindMakePrjn(pptg_n, caneg, fullprjn, fix_cons);
 
   net->FindMakePrjn(vtan, pptg_n, fullprjn, marker_cons);
+  net->FindMakePrjn(vtan, lhb, fullprjn, marker_cons);
   net->FindMakePrjn(vtan, neg_pv, fullprjn, marker_cons);
-  // net->FindMakePrjn(vtan, vspnd2, fullprjn, marker_cons);
-  // net->FindMakePrjn(vtan, vspnd1, fullprjn, marker_cons);
+  net->FindMakePrjn(vtan, vspnd2, fullprjn, marker_cons);
+  net->FindMakePrjn(vtan, vspnd1, fullprjn, marker_cons);
 
   net->FindMakePrjn(drn, neg_pv, fullprjn, marker_cons);
   net->FindMakePrjn(drn, pos_pv, fullprjn, marker_cons);

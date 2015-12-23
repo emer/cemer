@@ -166,7 +166,15 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
       rval = false;
     }
     if(u->CheckError(!lhb_lay_n, quiet, rval,
-                     "did not find LHbRMTg layer from (looks for LHbRMTgUnitSpec)")) {
+                     "did not find LHbRMTg layer projection (looks for LHbRMTgUnitSpec)")) {
+      rval = false;
+    }
+    if(u->CheckError(!vspatch_lay_n, quiet, rval,
+                     "did not find VSPatch D2 layer projection (looks for MSNUnitSpec and D2")) {
+      rval = false;
+    }
+    if(u->CheckError(!vspatch_d1_lay_n, quiet, rval,
+                     "did not find VSPatch D1 layer projection (looks for MSNUnitSpec and D1)")) {
       rval = false;
     }
   }
@@ -196,11 +204,14 @@ bool VTAUnitSpec::GetRecvLayers_P(LeabraUnit* u, LeabraLayer*& pospv_lay,
       else if(fmlay->name.contains("PV")) {
         pospv_lay = fmlay;
       }
-      else if(us->InheritsFrom(TA_MSNUnitSpec) && fmlay->name.contains("D1")) {
-        vspatch_lay = fmlay;
-      }
-      else if(us->InheritsFrom(TA_MSNUnitSpec) && fmlay->name.contains("D2")) {
-        vspatch_d2_lay = fmlay;
+      else if(us->InheritsFrom(TA_MSNUnitSpec)) {
+        MSNUnitSpec* msus = (MSNUnitSpec*)us;
+        if(msus->dar == MSNUnitSpec::D1R) {
+          vspatch_lay = fmlay;
+        }
+        else if(msus->dar == MSNUnitSpec::D2R) {
+          vspatch_d2_lay = fmlay;
+        }
       }
     }
   }
@@ -227,11 +238,14 @@ bool VTAUnitSpec::GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay,
       if(us->InheritsFrom(TA_PPTgUnitSpec)) { pptg_lay_n = fmlay; }
       else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) { lhb_lay = fmlay; }
       else if(fmlay->name.contains("PV")) { negpv_lay = fmlay; }
-      else if(us->InheritsFrom(TA_MSNUnitSpec) && fmlay->name.contains("D2")) {
-        vspatch_lay_n = fmlay;
-      }
-      else if(us->InheritsFrom(TA_MSNUnitSpec) && fmlay->name.contains("D1")) {
-        vspatch_d1_lay_n = fmlay;
+      else if(us->InheritsFrom(TA_MSNUnitSpec)) {
+        MSNUnitSpec* msus = (MSNUnitSpec*)us;
+        if(msus->dar == MSNUnitSpec::D1R) {
+          vspatch_d1_lay_n = fmlay;
+        }
+        else if(msus->dar == MSNUnitSpec::D2R) {
+          vspatch_lay_n = fmlay;
+        }
       }
     }
   }
