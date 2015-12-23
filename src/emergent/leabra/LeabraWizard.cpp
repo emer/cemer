@@ -950,8 +950,10 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMChild(BasAmygConSpec, baan_cons, baap_cons, "BasAmygCons_acq_neg");
   FMChild(BasAmygConSpec, bae_cons, baap_cons, "BasAmygCons_ext");
   FMChild(MSNConSpec, vspatch_cons_pd1, pvlv_cons, "VSPatchCons_ToPosD1");
-  FMChild(MSNConSpec, vspatch_cons_pd2nd1, vspatch_cons_pd1,
-          "VSPatchCons_ToPosD2NegD1");
+  FMChild(MSNConSpec, vspatch_cons_pd2, vspatch_cons_pd1,
+          "VSPatchCons_ToPosD2");
+  FMChild(MSNConSpec, vspatch_cons_nd1, vspatch_cons_pd1,
+          "VSPatchCons_ToNegD1");
   FMChild(MSNConSpec, vspatch_cons_nd2, vspatch_cons_pd1,
           "VSPatchCons_ToNegD2");
   FMChild(MSNConSpec, vsmatrix_cons_pd1, pvlv_cons, "VSMatrixCons_ToPosD1");
@@ -1214,19 +1216,33 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons_pd1->SetUnique("dip_da_gain", true);
   vspatch_cons_pd1->dip_da_gain = 0.2f * base_da_gain;
 
-  vspatch_cons_pd2nd1->SetUnique("rnd", false);
-  vspatch_cons_pd2nd1->SetUnique("wt_scale", false);
-  vspatch_cons_pd2nd1->SetUnique("lrate", true);
-  vspatch_cons_pd2nd1->lrate = 0.5f * base_lrate;
-  vspatch_cons_pd2nd1->SetUnique("wt_sig", false);
-  vspatch_cons_pd2nd1->SetUnique("deep", false);
-  vspatch_cons_pd2nd1->SetUnique("su_act_var", false);
-  vspatch_cons_pd2nd1->SetUnique("ru_act_var", false);
-  vspatch_cons_pd2nd1->SetUnique("learn_rule", false);
-  vspatch_cons_pd2nd1->SetUnique("burst_da_gain", true);
-  vspatch_cons_pd2nd1->burst_da_gain = base_da_gain;
-  vspatch_cons_pd2nd1->SetUnique("dip_da_gain", true);
-  vspatch_cons_pd2nd1->dip_da_gain = base_da_gain;
+  vspatch_cons_pd2->SetUnique("rnd", false);
+  vspatch_cons_pd2->SetUnique("wt_scale", false);
+  vspatch_cons_pd2->SetUnique("lrate", true);
+  vspatch_cons_pd2->lrate = 0.5f * base_lrate;
+  vspatch_cons_pd2->SetUnique("wt_sig", false);
+  vspatch_cons_pd2->SetUnique("deep", false);
+  vspatch_cons_pd2->SetUnique("su_act_var", false);
+  vspatch_cons_pd2->SetUnique("ru_act_var", false);
+  vspatch_cons_pd2->SetUnique("learn_rule", false);
+  vspatch_cons_pd2->SetUnique("burst_da_gain", true);
+  vspatch_cons_pd2->burst_da_gain = base_da_gain;
+  vspatch_cons_pd2->SetUnique("dip_da_gain", true);
+  vspatch_cons_pd2->dip_da_gain = base_da_gain;
+  
+  vspatch_cons_nd1->SetUnique("rnd", false);
+  vspatch_cons_nd1->SetUnique("wt_scale", false);
+  vspatch_cons_nd1->SetUnique("lrate", true);
+  vspatch_cons_nd1->lrate = 0.5f * base_lrate;
+  vspatch_cons_nd1->SetUnique("wt_sig", false);
+  vspatch_cons_nd1->SetUnique("deep", false);
+  vspatch_cons_nd1->SetUnique("su_act_var", false);
+  vspatch_cons_nd1->SetUnique("ru_act_var", false);
+  vspatch_cons_nd1->SetUnique("learn_rule", false);
+  vspatch_cons_nd1->SetUnique("burst_da_gain", true);
+  vspatch_cons_nd1->burst_da_gain = base_da_gain;
+  vspatch_cons_nd1->SetUnique("dip_da_gain", true);
+  vspatch_cons_nd1->dip_da_gain = base_da_gain;
   
   vspatch_cons_nd2->SetUnique("rnd", false);
   vspatch_cons_nd2->SetUnique("wt_scale", false);
@@ -1912,9 +1928,9 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   for(i=0;i<time_in_lays.size;i++) {
     Layer* il = (Layer*)time_in_lays[i];
     net->FindMakePrjn(vsppd1, il, fullprjn, PvlvSp("VSPatchCons_ToPosD1", MSNConSpec));
-    net->FindMakePrjn(vsppd2, il, fullprjn, PvlvSp("VSPatchCons_ToPosD2NegD1", MSNConSpec));
+    net->FindMakePrjn(vsppd2, il, fullprjn, PvlvSp("VSPatchCons_ToPosD2", MSNConSpec));
     net->FindMakePrjn(vspnd2, il, fullprjn, PvlvSp("VSPatchCons_ToNegD2", MSNConSpec));
-    net->FindMakePrjn(vspnd1, il, fullprjn, PvlvSp("VSPatchCons_ToPosD2NegD1", MSNConSpec));
+    net->FindMakePrjn(vspnd1, il, fullprjn, PvlvSp("VSPatchCons_ToNegD1", MSNConSpec));
   }
   
   for(i=0;i<ctxt_in_lays.size;i++) {
@@ -1934,9 +1950,9 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
     
     if(time_in_lays.size == 0) { // take what we can..
       net->FindMakePrjn(vsppd1, il, fullprjn, PvlvSp("VSPatchCons_ToPosD1", MSNConSpec));
-      net->FindMakePrjn(vsppd2, il, fullprjn, PvlvSp("VSPatchCons_ToPosD2NegD1", MSNConSpec));
+      net->FindMakePrjn(vsppd2, il, fullprjn, PvlvSp("VSPatchCons_ToPosD2", MSNConSpec));
       net->FindMakePrjn(vspnd2, il, fullprjn, PvlvSp("VSPatchCons_ToNegD2", MSNConSpec));
-      net->FindMakePrjn(vspnd1, il, fullprjn, PvlvSp("VSPatchCons_ToPosD2NegD1", MSNConSpec));
+      net->FindMakePrjn(vspnd1, il, fullprjn, PvlvSp("VSPatchCons_ToNegD1", MSNConSpec));
     }
     if(ctxt_in_lays.size == 0) {
       net->FindMakePrjn(baepd2, il, fullprjn, bae_cons);
