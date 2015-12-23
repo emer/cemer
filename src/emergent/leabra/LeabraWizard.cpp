@@ -1942,7 +1942,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   // only stimtime (should be OFC) projections into patch
 
   LatAmygConSpec* la_cons = PvlvSp("LatAmygCons", LatAmygConSpec);
-  BasAmygConSpec* bae_cons = PvlvSp("BasAmygCons_ext", BasAmygConSpec);
+  BasAmygConSpec* baep_cons = PvlvSp("BasAmygCons_ext_pos", BasAmygConSpec);
+  BasAmygConSpec* baen_cons = PvlvSp("BasAmygCons_ext_neg", BasAmygConSpec);
   
   for(i=0;i<time_in_lays.size;i++) {
     Layer* il = (Layer*)time_in_lays[i];
@@ -1954,8 +1955,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   
   for(i=0;i<ctxt_in_lays.size;i++) {
     Layer* il = (Layer*)ctxt_in_lays[i];
-    net->FindMakePrjn(baepd2, il, fullprjn, bae_cons);
-    net->FindMakePrjn(baend1, il, fullprjn, bae_cons);
+    net->FindMakePrjn(baepd2, il, fullprjn, baep_cons);
+    net->FindMakePrjn(baend1, il, fullprjn, baen_cons);
   }
   
   for(i=0;i<input_lays.size;i++) {
@@ -1974,8 +1975,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
       net->FindMakePrjn(vspnd1, il, fullprjn, PvlvSp("VSPatchCons_ToNegD1", MSNConSpec));
     }
     if(ctxt_in_lays.size == 0) {
-      net->FindMakePrjn(baepd2, il, fullprjn, bae_cons);
-      net->FindMakePrjn(baend1, il, fullprjn, bae_cons);
+      net->FindMakePrjn(baepd2, il, fullprjn, baep_cons);
+      net->FindMakePrjn(baend1, il, fullprjn, baen_cons);
     }
   }
 
