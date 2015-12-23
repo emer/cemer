@@ -1216,7 +1216,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   vspatch_cons_pd2nd1->SetUnique("rnd", false);
   vspatch_cons_pd2nd1->SetUnique("wt_scale", false);
-  vspatch_cons_pd2nd1->SetUnique("lrate", false);
+  vspatch_cons_pd2nd1->SetUnique("lrate", true);
+  vspatch_cons_pd2nd1->lrate = 0.5f * base_lrate;
   vspatch_cons_pd2nd1->SetUnique("wt_sig", false);
   vspatch_cons_pd2nd1->SetUnique("deep", false);
   vspatch_cons_pd2nd1->SetUnique("su_act_var", false);
@@ -1229,7 +1230,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   
   vspatch_cons_nd2->SetUnique("rnd", false);
   vspatch_cons_nd2->SetUnique("wt_scale", false);
-  vspatch_cons_nd2->SetUnique("lrate", false);
+  vspatch_cons_nd2->SetUnique("lrate", true);
+  vspatch_cons_nd2->lrate = base_lrate;
   vspatch_cons_nd2->SetUnique("wt_sig", false);
   vspatch_cons_nd2->SetUnique("deep", false);
   vspatch_cons_nd2->SetUnique("su_act_var", false);
@@ -1263,9 +1265,10 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons_pd1->burst_da_gain = base_da_gain;
   vsmatrix_cons_pd1->SetUnique("dip_da_gain", true);
   vsmatrix_cons_pd1->dip_da_gain = 0.2f * base_da_gain;
+  
   vsmatrix_cons_nd2->SetUnique("rnd", false);
   vsmatrix_cons_nd2->SetUnique("wt_scale", false);
-  vsmatrix_cons_nd2->SetUnique("lrate", false);
+  vsmatrix_cons_nd2->SetUnique("lrate", true);
   vsmatrix_cons_nd2->lrate = 2.0f * base_lrate;
   vsmatrix_cons_nd2->SetUnique("wt_sig", false);
   vsmatrix_cons_nd2->SetUnique("deep", false);
@@ -1276,9 +1279,10 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons_nd2->burst_da_gain = 0.2f * base_da_gain;
   vsmatrix_cons_nd2->SetUnique("dip_da_gain", true);
   vsmatrix_cons_nd2->dip_da_gain = base_da_gain;
+  
   vsmatrix_cons_pd2->SetUnique("rnd", false);
   vsmatrix_cons_pd2->SetUnique("wt_scale", false);
-  vsmatrix_cons_pd2->SetUnique("lrate", false);
+  vsmatrix_cons_pd2->SetUnique("lrate", true);
   vsmatrix_cons_pd2->lrate = base_lrate;
   vsmatrix_cons_pd2->SetUnique("wt_sig", false);
   vsmatrix_cons_pd2->SetUnique("deep", false);
@@ -1292,7 +1296,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   vsmatrix_cons_nd1->SetUnique("rnd", false);
   vsmatrix_cons_nd1->SetUnique("wt_scale", false);
-  vsmatrix_cons_nd1->SetUnique("lrate", false);
+  vsmatrix_cons_nd1->SetUnique("lrate", true);
   vsmatrix_cons_nd1->lrate = 2.0f * base_lrate;
   vsmatrix_cons_nd1->SetUnique("wt_sig", false);
   vsmatrix_cons_nd1->SetUnique("deep", false);
