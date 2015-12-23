@@ -948,7 +948,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMChild(LatAmygConSpec, la_cons, pvlv_cons, "LatAmygCons");
   FMChild(BasAmygConSpec, baap_cons, pvlv_cons, "BasAmygCons_acq_pos");
   FMChild(BasAmygConSpec, baan_cons, baap_cons, "BasAmygCons_acq_neg");
-  FMChild(BasAmygConSpec, bae_cons, baap_cons, "BasAmygCons_ext");
+  FMChild(BasAmygConSpec, baep_cons, baap_cons, "BasAmygCons_ext_pos");
+  FMChild(BasAmygConSpec, baen_cons, baap_cons, "BasAmygCons_ext_neg");
   FMChild(MSNConSpec, vspatch_cons_pd1, pvlv_cons, "VSPatchCons_ToPosD1");
   FMChild(MSNConSpec, vspatch_cons_pd2, vspatch_cons_pd1,
           "VSPatchCons_ToPosD2");
@@ -1175,23 +1176,40 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baan_cons->ba_learn.burst_da_gain = 0.05f * base_da_gain;
   baan_cons->ba_learn.dip_da_gain = base_da_gain;
   
-  bae_cons->SetUnique("wt_sig", false);
-  bae_cons->SetUnique("rnd", true);
-  bae_cons->rnd.mean = 0.1f;
-  bae_cons->rnd.var = 0.0f;
-  bae_cons->SetUnique("lrate", true);
-  bae_cons->lrate = base_lrate; // todo: was 2x base..
-  bae_cons->SetUnique("wt_scale", true);
-  bae_cons->wt_scale.abs = 1.2f;
-  bae_cons->SetUnique("deep", true);
-  bae_cons->deep.on = true;
-  bae_cons->deep.bg_lrate = 0.0f;
-  bae_cons->deep.fg_lrate = 1.0f;
-  bae_cons->SetUnique("ba_learn", true);
-  bae_cons->ba_learn.burst_da_gain = 1.0f;
-  bae_cons->ba_learn.dip_da_gain = 1.0f;
-  bae_cons->ba_learn.us_delta = false;
+  baep_cons->SetUnique("wt_sig", false);
+  baep_cons->SetUnique("rnd", true);
+  baep_cons->rnd.mean = 0.1f;
+  baep_cons->rnd.var = 0.0f;
+  baep_cons->SetUnique("lrate", true);
+  baep_cons->lrate = base_lrate; // todo: was 2x base..
+  baep_cons->SetUnique("wt_scale", true);
+  baep_cons->wt_scale.abs = 1.2f;
+  baep_cons->SetUnique("deep", true);
+  baep_cons->deep.on = true;
+  baep_cons->deep.bg_lrate = 0.0f;
+  baep_cons->deep.fg_lrate = 1.0f;
+  baep_cons->SetUnique("ba_learn", true);
+  baep_cons->ba_learn.burst_da_gain = 1.0f;
+  baep_cons->ba_learn.dip_da_gain = 1.0f;
+  baep_cons->ba_learn.us_delta = false;
 
+  baen_cons->SetUnique("wt_sig", false);
+  baen_cons->SetUnique("rnd", true);
+  baen_cons->rnd.mean = 0.1f;
+  baen_cons->rnd.var = 0.0f;
+  baen_cons->SetUnique("lrate", true);
+  baen_cons->lrate = base_lrate; // todo: was 2x base..
+  baen_cons->SetUnique("wt_scale", true);
+  baen_cons->wt_scale.abs = 1.2f;
+  baen_cons->SetUnique("deep", true);
+  baen_cons->deep.on = true;
+  baen_cons->deep.bg_lrate = 0.0f;
+  baen_cons->deep.fg_lrate = 1.0f;
+  baen_cons->SetUnique("ba_learn", true);
+  baen_cons->ba_learn.burst_da_gain = 1.0f;
+  baen_cons->ba_learn.dip_da_gain = 1.0f;
+  baen_cons->ba_learn.us_delta = false;
+  
   vspatch_cons_pd1->SetUnique("rnd", true);
   vspatch_cons_pd1->rnd.mean = 0.01f;
   vspatch_cons_pd1->rnd.var = 0.0f;
@@ -1426,9 +1444,14 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
      // cp->SetUserData("user_pinned", true);
     // pvlv_cons->AddToControlPanelNm("lrate", cp, "pvlv"); 
     la_cons->AddToControlPanelNm("lrate", cp, "lat_amyg"); 
-    baap_cons->AddToControlPanelNm("lrate", cp, "bas_amyg_acq");
-    baap_cons->AddToControlPanelNm("dip_da_gain", cp, "bas_amyg_acq");
-    bae_cons->AddToControlPanelNm("lrate", cp, "bas_amyg_ext");
+    baap_cons->AddToControlPanelNm("lrate", cp, "bas_amyg_acq_pos");
+    baap_cons->AddToControlPanelNm("dip_da_gain", cp, "bas_amyg_acq_pos");
+    baan_cons->AddToControlPanelNm("lrate", cp, "bas_amyg_acq_neg");
+    baan_cons->AddToControlPanelNm("dip_da_gain", cp, "bas_amyg_acq_neg");
+    baep_cons->AddToControlPanelNm("lrate", cp, "bas_amyg_ext_pos");
+    baep_cons->AddToControlPanelNm("dip_da_gain", cp, "bas_amyg_ext_pos");
+    baen_cons->AddToControlPanelNm("lrate", cp, "bas_amyg_ext_neg");
+    baen_cons->AddToControlPanelNm("dip_da_gain", cp, "bas_amyg_ext_neg");
     vspatch_cons_pd1->AddToControlPanelNm("lrate", cp, "vs_patch");
     vsmatrix_cons_pd1->AddToControlPanelNm("lrate", cp, "vs_matrix");
 
@@ -1868,9 +1891,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   net->FindMakePrjn(baepd2, baapd1, gponetoone, PvlvSp("BAAcqToBAExt_DeepMod",
                                                        SendDeepModConSpec));
   net->FindMakePrjn(baepd2, vtap, fullprjn, marker_cons);
-  net->FindMakePrjn(baepd2, lat_amyg, fullprjn, PvlvSp("BasAmygCons_ext",
-                                                       BasAmygConSpec));
-  // also context in
+  net->FindMakePrjn(baepd2, lat_amyg, fullprjn, PvlvSp("BasAmygCons_ext_pos",                                           BasAmygConSpec));
+   // TODO: also fm context in..
   
   net->FindMakePrjn(capos, pos_pv, gponetoone, PvlvSp("FmPV_Fixed", LeabraConSpec));
   net->FindMakePrjn(capos, baapd1, gponetoone, PvlvSp("BAtoCA_Fixed", LeabraConSpec));
@@ -1880,13 +1902,11 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   net->FindMakePrjn(baand2, lat_amyg, fullprjn, PvlvSp("BasAmygCons_acq_neg", BasAmygConSpec));
   net->FindMakePrjn(baand2, baend1, gponetoone, PvlvSp("BAExtToBAAcq_Inhib", LeabraConSpec));
   
-  net->FindMakePrjn(baend1, baand2, gponetoone, PvlvSp("BAAcqToBAExt_DeepMod",
-                                                       SendDeepModConSpec));
+  net->FindMakePrjn(baend1, baand2, gponetoone, PvlvSp("BAAcqToBAExt_DeepMod", SendDeepModConSpec));
   net->FindMakePrjn(baend1, neg_pv, gponetoone, pvtoba);
   net->FindMakePrjn(baend1, vtap, fullprjn, marker_cons);
-  net->FindMakePrjn(baend1, lat_amyg, fullprjn, PvlvSp("BasAmygCons_ext",
-                                                       BasAmygConSpec));
-  // also context in
+  net->FindMakePrjn(baend1, lat_amyg, fullprjn, PvlvSp("BasAmygCons_ext_neg", BasAmygConSpec));
+  // TODO: also fm context in..
   
   net->FindMakePrjn(caneg, neg_pv, gponetoone, PvlvSp("FmPV_Fixed", LeabraConSpec));
   net->FindMakePrjn(caneg, baand2, gponetoone, fix_cons); // todo BAtoCA_Fixed??
@@ -1896,8 +1916,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   net->FindMakePrjn(ext_rew, rew_targ, fullprjn, marker_cons);
 
   SendDeepModConSpec* bavsmod_cons = PvlvSp("BAAcqToVS_DeepMod", SendDeepModConSpec);
-  SendDeepModConSpec* vsvsmod_cons = PvlvSp("VSMatrixToVSMatrix_DeepMod",
-                                            SendDeepModConSpec);
+  SendDeepModConSpec* vsvsmod_cons = PvlvSp("VSMatrixToVSMatrix_DeepMod", SendDeepModConSpec);
 
 
   // patch, matrix:
