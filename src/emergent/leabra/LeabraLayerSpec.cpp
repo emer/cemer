@@ -45,7 +45,7 @@ void LeabraInhibSpec::Defaults_init() {
   fb_tau = 1.4f;
   ff0 = 0.1f;
   ff_max = 0.0f;
-  ff_max0 = 0.3f;
+  ff_max0 = 0.5f;
   
   fb_dt = 1.0f / fb_tau;
 }

@@ -45,7 +45,7 @@ public:
   float         fb_tau;         // #CONDSHOW_ON_on #MIN_0 #DEF_1.4 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for integrating feedback inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid 1.4 typically works, but may need to go longer if oscillations are a problem
   float         ff0;            // #CONDSHOW_ON_on #DEF_0.1 feedforward zero point for average netinput -- below this level, no FF inhibition is computed based on avg netinput, and this value is subtraced from the ff inhib contribution above this value -- the 0.1 default should be good for most cases (and helps FF_FB produce k-winner-take-all dynamics), but if average netinputs are lower than typical, you may need to lower it
   float         ff_max;         // #CONDSHOW_ON_on #DEF_0 amount of feedforward inhibition based on the maximum netinput, instead of the average netinput used by the basic ff factor -- max is not sensitive to the full distribution of net inputs, so it can enforce a stronger k-winner-take-all dynamic where that is needed
-  float         ff_max0;        // #CONDSHOW_OFF_on:false||ff_max:0 #DEF_0.3 feedforward zero point for max netinput -- below this level, no FF inhibition is computed based on max netinput, and this value is subtraced from the ff inhib contribution above this value
+  float         ff_max0;        // #CONDSHOW_OFF_on:false||ff_max:0 #DEF_0.5 feedforward zero point for max netinput -- below this level, no FF inhibition is computed based on max netinput, and this value is subtraced from the ff inhib contribution above this value
 
   float		fb_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 

@@ -32,7 +32,7 @@ INHERITED(SpecMemberBase)
 public:
   bool          out_gate;       // if true, this PFC layer is an output gate layer, which means that it only has transient activation during gating
   float         mnt_thal;       // #DEF_1 effective thal activation to use in computing the deep_raw activation sent from super to deep layers, for continued maintenance beyond the initial thal signal provided by the BG -- also sets and effective minimum thal value regardless of the actual gating thal value
-  float         gate_thr;       // #DEF_0.1 threshold on thalamic gating signal to drive gating -- when using GpiInvUnitSpec gpi, this parameter ususally doesn't matter!  set the gpi.gate_thr value instead -- the only constraint is that this value be <= gpi.min_thal as that determines the minimum thalamic value for gated stripes
+  float         gate_thr;       // #DEF_0.2 threshold on thalamic gating signal to drive gating -- when using GpiInvUnitSpec gpi, this parameter ususally doesn't matter!  set the gpi.gate_thr value instead -- the only constraint is that this value be <= gpi.min_thal as that determines the minimum thalamic value for gated stripes
   bool          prv_qtr;        // does gating happen in the previous quarter or otherwise in the same quarter as the deep_raw_qtr?  for maintenance layers, typically you set Q2_Q4 for deep_raw_qtr, and gating happens in quarters 1 and 3, so prv_qtr should be true -- for output layers, gating in Q1 and prv_qtr = false allows gating to happen after first quarter instead of waiting until later -- this allows the output gating to happen quicker to influence responses within the trial
   
   String        GetTypeDecoKey() const override { return "UnitSpec"; }

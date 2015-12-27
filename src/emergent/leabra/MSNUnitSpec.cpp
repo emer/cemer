@@ -29,7 +29,7 @@ void MatrixActSpec::Defaults_init() {
   mnt_gate_inhib = 0.002f;
   out_gate_inhib = 0.0f;
   gate_i_tau = 4.0f;
-  out_ach_inhib = 0.02f;
+  out_ach_inhib = 0.3f;
   mnt_ach_inhib = 0.0f;
   mnt_deep_mod = false;
   out_deep_mod = true;
