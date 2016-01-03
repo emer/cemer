@@ -24,7 +24,7 @@ void PatchUnitSpec::Initialize() {
 }
 
 void PatchUnitSpec::Defaults_init() {
-  shunt_factor = 0.0f;
+  shunt_factor = 0.05f;
   shunt_ach = true;
 }
 

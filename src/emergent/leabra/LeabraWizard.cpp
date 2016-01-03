@@ -2243,6 +2243,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   FMSpec(TiledGpRFPrjnSpec, deep_prjn, pbwmspgp, "DeepToTRC");
 
+  // todo: include a TesselOneToOne 
+  
   //////////////////////////////////////////////////////////////////////////////////
   // first: all the basic defaults from specs
 
@@ -2297,7 +2299,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfc_mnt_units->deep.on = true;
   pfc_mnt_units->deep.role = DeepSpec::SUPER;
   pfc_mnt_units->maint.s_mnt_min = 0.3f;
-  pfc_mnt_units->maint.s_mnt_max = 0.3f;
+  pfc_mnt_units->maint.s_mnt_max = 0.5f;
   pfc_mnt_units->maint.max_mnt = 100;
 
   pfc_mnt_d_units->SetUnique("deep", true);
@@ -2340,7 +2342,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   bg_lrn_cons->SetUnique("wt_limits", true);
   bg_lrn_cons->wt_limits.sym = false;
 
-  mtx_cons_go->SetUnique("rnd", false);
+  mtx_cons_go->SetUnique("rnd", true);
   mtx_cons_go->rnd.mean = 0.5f;
   mtx_cons_go->rnd.var = 0.1f;
   mtx_cons_go->SetUnique("wt_limits", false);
@@ -2354,6 +2356,13 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   mtx_cons_go->ru_act_var = MSNConSpec::ACT_EQ;
   mtx_cons_go->SetUnique("learn_rule", true);
   mtx_cons_go->learn_rule = MSNConSpec::TRACE_THAL;
+  mtx_cons_go->SetUnique("slow_wts", true);
+  mtx_cons_go->slow_wts.on = true;
+  mtx_cons_go->slow_wts.swt_pct = 0.95f;
+  mtx_cons_go->slow_wts.slow_tau = 100.0f;
+  mtx_cons_go->slow_wts.cont_swt = true;
+  mtx_cons_go->slow_wts.wt_tau = 1.0f;
+  mtx_cons_go->slow_wts.UpdateAfterEdit();
 
   mtx_cons_no->SetUnique("rnd", false);
   mtx_cons_no->SetUnique("wt_limits", false);
@@ -2517,7 +2526,9 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   vspatch_cons->ru_act_var = MSNConSpec::ACT_P;
   vspatch_cons->learn_rule = MSNConSpec::DA_HEBB_VS; // def needs vs
   vspatch_cons->rnd.mean = 0.01f;
-  vspatch_cons->lrate = 0.04f;
+  vspatch_cons->lrate = 0.1f;
+
+  // todo: all sub-specs now have overrides on lrate..
 
   LHbRMTgUnitSpec* lhbrmtg_units = PvlvSp("LHbRMTgUnits", LHbRMTgUnitSpec);
   lhbrmtg_units->lhb.patch_cur = true;
