@@ -64,6 +64,7 @@ void DataCol::InitLinks() {
     SetMatrixViewMode();
   }
   AutoNameMyMembers();
+  taBase::Own(control_panel_cell, this);
 }
 
 void DataCol::SetMatrixViewMode() {
@@ -87,6 +88,7 @@ void DataCol::CutLinks() {
   calc_expr.CutLinks();
   dim_names.CutLinks();
   RemoveHashTable();
+  control_panel_cell.CutLinks();
   inherited::CutLinks();
 }
 
@@ -980,3 +982,13 @@ void DataCol::GetUniqueColumnValues(String_Array& groups) {
     }
   }
 }
+
+void DataCol::GetControlPanelText(MemberDef* mbr, const String& extra_label, String& full_lbl, String& desc) const {
+    full_lbl = dataTable()->name + "_" + this->name + "_column";
+}
+
+void DataCol::GetDataTableCellRowCol(const Variant& col) {
+  DataCol* dc = dataTable()->data.FindName(col.toString());
+  control_panel_cell.row_column = dc;
+}
+

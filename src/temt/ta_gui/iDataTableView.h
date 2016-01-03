@@ -25,6 +25,7 @@
 class DataTable; // 
 class iDataTableColHeaderView; //
 class iDataTableRowHeaderView; //
+class Variant; //
 
 class TA_API iDataTableView: public iTableView {
   // widget with some customizations to display submatrix views
@@ -66,6 +67,9 @@ protected:
   
 public slots:
   void          doubleClicked(const QModelIndex & index) override;
+  
+protected slots:
+  void          AddCellToControlPanel(); // calls DataTable to create a control panel item that points back into the data table
 };
 
 #endif // iDataTableView_h

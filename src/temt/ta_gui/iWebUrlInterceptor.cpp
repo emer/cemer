@@ -17,8 +17,7 @@
 
 #ifdef USE_QT_WEBENGINE
 
-bool iWebUrlInterceptor::interceptRequest(QWebEngineUrlRequestInfo &info) {
-  return false;
+void iWebUrlInterceptor::interceptRequest(QWebEngineUrlRequestInfo &info) {
 }
 
 #endif // USE_QT_WEBENGINE

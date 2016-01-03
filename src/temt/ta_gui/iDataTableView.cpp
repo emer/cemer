@@ -274,10 +274,22 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   gui_edit_op = false;
 }
 
-void iDataTableView::FillContextMenu_impl(ContextArea ca,
-    taiWidgetMenu* menu, const CellRange& sel)
+void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel)
 {
   inherited::FillContextMenu_impl(ca, menu, sel);
+  
+  DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
+  if (!dc) return;
+  
+  if (((ca == CA_COL_HDR) && (sel.width() == 1) && !dc->isMatrix()) ||
+      ((ca != CA_ROW_HDR) && (sel.width() == 1) && (sel.height() == 1) && !dc->isMatrix())) {
+    menu->AddSep();
+    iAction* act = NULL;
+    taiWidgetMenu* sub_menu = menu->AddSubMenu("Control Panel");
+    
+    act = sub_menu->AddItem("Add To Control Panel", taiWidgetMenu::normal, iAction::men_act, this, SLOT(AddCellToControlPanel()));
+    act->setEnabled(true);
+  }
 }
 
 void iDataTableView::doubleClicked(const QModelIndex& index) {
@@ -286,4 +298,12 @@ void iDataTableView::doubleClicked(const QModelIndex& index) {
   if(!flags.testFlag(Qt::ItemIsEditable)) {
     ViewAction(0);
   }
+}
+
+void iDataTableView::AddCellToControlPanel() {
+  // should only ever be one column or a single cell
+  CellRange sel(selectionModel()->selectedIndexes());
+  int row = sel.row_fr;
+  DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
+  dataTable()->AddCellToControlPanel(dc, row);
 }

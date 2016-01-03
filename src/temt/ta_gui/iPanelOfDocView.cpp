@@ -37,6 +37,9 @@
 
 #ifdef USE_QT_WEBENGINE
 
+#include <QWebEnginePage>
+#include <QWebEngineProfile>
+
 #else // USE_QT_WEBENGINE
 
 #include <QWebFrame>
@@ -141,7 +144,15 @@ iPanelOfDocView::iPanelOfDocView()
   connect(webview, SIGNAL(loadFinished(bool)), this, SLOT(doc_loadFinished(bool)) );
 
 #ifdef USE_QT_WEBENGINE
-
+//  webview->page()->setNetworkAccessManager(taiMisc::net_access_mgr);
+//  webview->page()->setForwardUnsupportedContent(true);
+//  webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+  connect(webview->page(), SIGNAL(linkClicked(const QUrl&)),
+          this, SLOT(doc_linkClicked(const QUrl&)) );
+  connect(webview, SIGNAL(sigCreateWindow(QWebEnginePage::WebWindowType,
+                                          iWebView*&)), this, SLOT(doc_createWindow(QWebEnginePage::WebWindowType,
+                                                                                    iWebView*&)) );
+  QWebEngineProfile* profile = webview->page()->prof
 #else // USE_QT_WEBENGINE
   webview->page()->setNetworkAccessManager(taiMisc::net_access_mgr);
   webview->page()->setForwardUnsupportedContent(true);

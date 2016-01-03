@@ -37,6 +37,7 @@
 #include <DataSelectEl>
 #include <AnalysisRun>
 #include <taProject>
+#include <ControlPanel>
 #include <iDialogChoice>
 #include <taVector2i_List>
 
@@ -90,8 +91,6 @@ void DataTable::Initialize() {
   table_model = NULL;
   row_indexes.SetGeom(1,0);  // always should be set to 1d
   base_diff_row = -1;  // no base comparison row at start
-//  found_cell_item.x = -1;
-//  found_cell_item.y = -1;
   change_col = NULL;
   change_col_type = -1;
 }
@@ -130,7 +129,7 @@ void DataTable::CutLinks() {
     delete calc_script;
     calc_script = NULL;
   }
-  inherited::CutLinks();
+//  inherited::CutLinks();
 }
 
 void DataTable::Copy_(const DataTable& cp) {
@@ -2112,6 +2111,32 @@ void DataTable::ToggleSaveRows() {
   SigEmitUpdated();
 }
 
+void DataTable::AddCellToControlPanel(DataCol* column, int row) { // this is the column used for choosing a row - e.g. config_id column
+  if(!column) return;
+  
+  taProject* proj = GetMyProj();
+  if (!proj) return;
+  
+  DataTableCell* cell = &column->control_panel_cell;
+  cell->row = row;
+  cell->value = column->GetValAsString(cell->row);
+  
+  // now get the column that will be used to select the row - the user will be able to change this from the control panel
+  // use column 0 until I get the dialog via CallFun() to work!
+  cell->row_column = data.FastEl(0);
+  if (!cell->row_column) return;
+  
+  column->CallFun("GetDataTableCellRowCol");
+    
+  // NEED CONTROL PANEL CHOICE DIALOG
+  ControlPanel* my_cp = proj->FindMakeControlPanel("my_cp");
+  if (!my_cp) return;
+  
+  MemberDef* md = column->FindMember("control_panel_cell");
+  if (!md) return;
+  
+  my_cp->SelectMemberPrompt(column, md);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 ///     Saving / Loading from Emergent or Plain Text Files

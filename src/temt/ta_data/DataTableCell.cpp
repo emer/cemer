@@ -13,34 +13,21 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef iWebUrlInterceptor_h
-#define iWebUrlInterceptor_h 1
+#include "DataTableCell.h"
+#include <DataTable>
 
-// parent includes:
-#include "ta_def.h"
-#ifndef __MAKETA__
+TA_BASEFUNS_CTORS_DEFN(DataTableCell);
 
-#ifdef USE_QT_WEBENGINE
-#include <QWebEngineUrlRequestInterceptor>
-#else // USE_QT_WEBENGINE
-// nothing
-#endif // USE_QT_WEBENGINE
-#endif
+void  DataTableCell::Initialize() {
+  row_column = NULL;
+  value = "";
+}
 
-// member includes:
-
-// declare all other types mentioned but not required to include:
-
-#ifdef USE_QT_WEBENGINE
-
-class iWebUrlInterceptor : public QWebEngineUrlRequestInterceptor {
-  // catch the url request and pass to a UrlHandler
-  Q_OBJECT
-  INHERITED(QWebEngineUrlRequestInterceptor)
-public:
-  void          interceptRequest(QWebEngineUrlRequestInfo &info);
-};
-
-#endif // USE_QT_WEBENGINE
-
-#endif // iWebUrlInterceptor_h
+void DataTableCell::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  
+  DataCol* dc = (DataCol*)GetOwner();
+  if (dc) {
+    dc->SetValAsVar(value, row);
+  }
+}

@@ -19,6 +19,14 @@
 
 #ifdef USE_QT_WEBENGINE
 
+QWebEngineView* iWebView::createWindow(QWebEnginePage::WebWindowType type) {
+  QWebEngineView* rval = NULL;
+  emit sigCreateWindow(type, rval);
+  if (!rval)
+    rval = inherited::createWindow(type);
+  return rval;
+}
+
 #else // USE_QT_WEBENGINE
 
 QWebView* iWebView::createWindow(QWebPage::WebWindowType type) {

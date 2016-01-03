@@ -34,28 +34,28 @@
 #ifdef USE_QT_WEBENGINE
 
 class iWebView: public QWebEngineView {
-Q_OBJECT
-INHERITED(QWebEngineView);
+  Q_OBJECT
+  INHERITED(QWebEngineView);
 public:
   iWebView(QWidget* parent = 0):inherited(parent) {}
 signals:
-  // void          sigCreateWindow(QWebPage::WebWindowType type,
-  //   QWebView*& window);
+  void            sigCreateWindow(QWebEnginePage::WebWindowType type,
+                                  QWebEngineView*& window);
 protected:
-  // QWebView* createWindow(QWebPage::WebWindowType type) override;
+  QWebEngineView* createWindow(QWebEnginePage::WebWindowType type) override;
   void keyPressEvent(QKeyEvent* e) override;
 };
 
 #else // USE_QT_WEBENGINE
 
 class iWebView: public QWebView {
-Q_OBJECT
-INHERITED(QWebView);
+  Q_OBJECT
+  INHERITED(QWebView);
 public:
   iWebView(QWidget* parent = 0):inherited(parent) {}
 signals:
   void          sigCreateWindow(QWebPage::WebWindowType type,
-    QWebView*& window);
+                                QWebView*& window);
 protected:
   QWebView* createWindow(QWebPage::WebWindowType type) override;
   void keyPressEvent(QKeyEvent* e) override;

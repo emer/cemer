@@ -35,6 +35,7 @@ class taiSigLink; //
 class taSigLink; //
 class DataTable; //
 class QModelIndex; //
+class DataCol; //
 
 
 
@@ -95,7 +96,7 @@ protected:
   bool                  setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
   // for editing
 #endif
-    
+        
 public: // ISigLinkClient i/f
   void*                 This() override {return this;}
   TypeDef*              GetTypeDef() const override {return &TA_iDataTableModel;}
