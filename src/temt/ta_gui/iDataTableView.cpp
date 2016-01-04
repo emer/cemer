@@ -285,18 +285,25 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
   if (((ca == CA_COL_HDR) && (sel.width() == 1) && !dc->isMatrix()) ||
       ((ca != CA_ROW_HDR) && (sel.width() == 1) && (sel.height() == 1) && !dc->isMatrix())) {
     menu->AddSep();
-    iAction* act = NULL;
-    taiWidgetMenu* sub_menu = menu->AddSubMenu("Add To Control Panel");
+    iAction* add_act = NULL;
+    iAction* remove_act = NULL;
+    taiWidgetMenu* add_menu = menu->AddSubMenu("Add To Control Panel");
+    taiWidgetMenu* remove_menu = menu->AddSubMenu("Remove From Control Panel");
     taProject* proj = dataTable()->GetMyProj();
     for (int i = 0; i < proj->ctrl_panels.leaves; ++i) {
       ControlPanel* cp = proj->ctrl_panels.Leaf(i);
-      String menu_string;
-      menu_string = "Add To " + cp->GetName();
-      act = sub_menu->AddItem(menu_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddCellToControlPanel(int)), i);
+      String add_string;
+      add_string = "Add To " + cp->GetName();
+      add_act = add_menu->AddItem(add_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddCellToControlPanel(int)), i);
+      add_act->setEnabled(true);
+      String remove_string = "Remove From " + cp->GetName();
+      remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddCellToControlPanel(int)), i);
+      remove_act->setEnabled(false);
       DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
       String label = dc->control_panel_cell.GetLabel();
       if (cp->FindMbrName("control_panel_cell", label)) {
-          act->setEnabled(false);
+        add_act->setEnabled(false);
+        remove_act->setEnabled(true);
       }
     }
   }
