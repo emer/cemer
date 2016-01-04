@@ -64,7 +64,9 @@ EditMbrItem* EditMbrItem_Group::FindMbrName(const String& mbr_nm, const String& 
           return sei;
         }
       }
-      return sei;
+      else {
+        return sei;
+      }
     }
   }
   return NULL;

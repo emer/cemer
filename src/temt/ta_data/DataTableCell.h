@@ -37,7 +37,8 @@ public:
   String              value;       //
   
   String              name;        //  #HIDDEN - hide the objects name - is there a better way?
-
+  String              GetLabel();
+  
   TA_BASEFUNS_NOCOPY(DataTableCell);
   
 protected:

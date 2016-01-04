@@ -458,7 +458,8 @@ public:
 
   void          GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
                                   String& full_lbl, String& desc) const override;
-  // #IGNORE set a default name that is data table name + column name -- user can edit
+  // #IGNORE set a default label
+  
   virtual void        GetDataTableCellRowCol(const Variant& col);
   // sets the control_panel_link row_column member
 

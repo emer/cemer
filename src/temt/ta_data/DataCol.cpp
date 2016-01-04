@@ -984,11 +984,10 @@ void DataCol::GetUniqueColumnValues(String_Array& groups) {
 }
 
 void DataCol::GetControlPanelText(MemberDef* mbr, const String& extra_label, String& full_lbl, String& desc) const {
-    full_lbl = dataTable()->name + "_" + this->name + "_column";
+    full_lbl = dataTable()->name + "__" + this->name;
 }
 
 void DataCol::GetDataTableCellRowCol(const Variant& col) {
   DataCol* dc = dataTable()->data.FindName(col.toString());
   control_panel_cell.row_column = dc;
 }
-

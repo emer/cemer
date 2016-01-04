@@ -2127,15 +2127,11 @@ void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row
   if (!cell->row_column) return;
   
   column->CallFun("GetDataTableCellRowCol");
-    
-//  // NEED CONTROL PANEL CHOICE DIALOG
-//  ControlPanel* my_cp = proj->FindMakeControlPanel("my_cp");
-//  if (!my_cp) return;
   
   MemberDef* md = column->FindMember("control_panel_cell");
   if (!md) return;
   
-  cp->SelectMemberPrompt(column, md);
+  cp->SelectMember(column, md);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -293,8 +293,9 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
       String menu_string;
       menu_string = "Add To " + cp->GetName();
       act = sub_menu->AddItem(menu_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddCellToControlPanel(int)), i);
-      DataCol* col = dataTable()->data.SafeEl(0);
-      if (cp->FindMbrName("control_panel_cell")) {
+      DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
+      String label = dc->control_panel_cell.GetLabel();
+      if (cp->FindMbrName("control_panel_cell", label)) {
           act->setEnabled(false);
       }
     }
