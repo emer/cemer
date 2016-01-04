@@ -69,7 +69,7 @@ public slots:
   void          doubleClicked(const QModelIndex & index) override;
   
 protected slots:
-  void          AddCellToControlPanel(); // calls DataTable to create a control panel item that points back into the data table
+  void          AddCellToControlPanel(int menu_item_position); // calls DataTable to create a control panel item that points back into the data table
 };
 
 #endif // iDataTableView_h

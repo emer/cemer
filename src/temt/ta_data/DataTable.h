@@ -57,6 +57,7 @@ class Variant_Array; //
 class double_Array; //
 class float_Array; //
 class bool_Array; //
+class ControlPanel; //
 
 #if (QT_VERSION >= 0x050000)
 class QJsonObject; //
@@ -607,7 +608,7 @@ public:
   void                  ToggleSaveRows();
   // #CAT_Rows #MENU #DYN1 toggle the SAVE_ROWS flag to opposite of current state: flag indicates whether data rows should be saved or not within the project (often useful to save room by not saving temp data)
 
-  virtual void          AddCellToControlPanel(DataCol* data_col, int row);  // creates a DataTableCell so that a table cell can be set from a control panel - scalar only
+  virtual void          AddCellToControlPanel(ControlPanel* cp, DataCol* data_col, int row);  // creates a DataTableCell so that a table cell can be set from a control panel - scalar only
 
   /////////////////////////////////////////////////////////
   // Main data value access/modify (Get/Set) routines: for Programs and very general use

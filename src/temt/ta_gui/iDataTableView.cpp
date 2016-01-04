@@ -26,6 +26,7 @@
 #include <taiSigLink>
 #include <taiWidgetMenu>
 #include <taiEditorOfString>
+#include <ControlPanel>
 
 #include <taMisc>
 
@@ -285,10 +286,18 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
       ((ca != CA_ROW_HDR) && (sel.width() == 1) && (sel.height() == 1) && !dc->isMatrix())) {
     menu->AddSep();
     iAction* act = NULL;
-    taiWidgetMenu* sub_menu = menu->AddSubMenu("Control Panel");
-    
-    act = sub_menu->AddItem("Add To Control Panel", taiWidgetMenu::normal, iAction::men_act, this, SLOT(AddCellToControlPanel()));
-    act->setEnabled(true);
+    taiWidgetMenu* sub_menu = menu->AddSubMenu("Add To Control Panel");
+    taProject* proj = dataTable()->GetMyProj();
+    for (int i = 0; i < proj->ctrl_panels.leaves; ++i) {
+      ControlPanel* cp = proj->ctrl_panels.Leaf(i);
+      String menu_string;
+      menu_string = "Add To " + cp->GetName();
+      act = sub_menu->AddItem(menu_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddCellToControlPanel(int)), i);
+      DataCol* col = dataTable()->data.SafeEl(0);
+      if (cp->FindMbrName("control_panel_cell")) {
+          act->setEnabled(false);
+      }
+    }
   }
 }
 
@@ -300,10 +309,12 @@ void iDataTableView::doubleClicked(const QModelIndex& index) {
   }
 }
 
-void iDataTableView::AddCellToControlPanel() {
+void iDataTableView::AddCellToControlPanel(int menu_item_position) {
   // should only ever be one column or a single cell
   CellRange sel(selectionModel()->selectedIndexes());
   int row = sel.row_fr;
   DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
-  dataTable()->AddCellToControlPanel(dc, row);
+  taProject* proj = dataTable()->GetMyProj();
+  ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
+  dataTable()->AddCellToControlPanel(cp, dc, row);
 }

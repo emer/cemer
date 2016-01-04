@@ -2111,8 +2111,8 @@ void DataTable::ToggleSaveRows() {
   SigEmitUpdated();
 }
 
-void DataTable::AddCellToControlPanel(DataCol* column, int row) { // this is the column used for choosing a row - e.g. config_id column
-  if(!column) return;
+void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row) { // this is the column used for choosing a row - e.g. config_id column
+  if(!column || !cp) return;
   
   taProject* proj = GetMyProj();
   if (!proj) return;
@@ -2128,14 +2128,14 @@ void DataTable::AddCellToControlPanel(DataCol* column, int row) { // this is the
   
   column->CallFun("GetDataTableCellRowCol");
     
-  // NEED CONTROL PANEL CHOICE DIALOG
-  ControlPanel* my_cp = proj->FindMakeControlPanel("my_cp");
-  if (!my_cp) return;
+//  // NEED CONTROL PANEL CHOICE DIALOG
+//  ControlPanel* my_cp = proj->FindMakeControlPanel("my_cp");
+//  if (!my_cp) return;
   
   MemberDef* md = column->FindMember("control_panel_cell");
   if (!md) return;
   
-  my_cp->SelectMemberPrompt(column, md);
+  cp->SelectMemberPrompt(column, md);
 }
 
 //////////////////////////////////////////////////////////////////////////////
