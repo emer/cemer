@@ -2134,6 +2134,24 @@ void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row
   cp->SelectMember(column, md);
 }
 
+void DataTable::RemoveFromControlPanel(ControlPanel* cp, DataCol* column) { // this is the column used for choosing a row - e.g. config_id column
+  if(!column || !cp) return;
+  
+  taProject* proj = GetMyProj();
+  if (!proj) return;
+  
+  DataTableCell* cell = &column->control_panel_cell;
+
+//  String label = column->control_panel_cell.GetLabel();
+  MemberDef* md = column->FindMember("control_panel_cell");
+  if (!md) return;
+ int idx =  cp->FindMbrBase(column, md);
+  if (idx > -1) {
+    cp->RemoveField(idx);
+  }
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 ///     Saving / Loading from Emergent or Plain Text Files
 

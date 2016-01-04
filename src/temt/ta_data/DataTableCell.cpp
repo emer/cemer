@@ -31,12 +31,3 @@ void DataTableCell::UpdateAfterEdit_impl() {
     dc->SetValAsVar(value, row);
   }
 }
-
-String DataTableCell::GetLabel() {
-  String label;
-  DataCol* dc = (DataCol*)GetOwner();
-  if (dc) {
-    label = dc->dataTable()->name + "__" + dc->name;
-  }
-  return label;
-}

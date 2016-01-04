@@ -297,11 +297,10 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
       add_act = add_menu->AddItem(add_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddCellToControlPanel(int)), i);
       add_act->setEnabled(true);
       String remove_string = "Remove From " + cp->GetName();
-      remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddCellToControlPanel(int)), i);
+      remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(RemoveFromControlPanel(int)), i);
       remove_act->setEnabled(false);
-      DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
-      String label = dc->control_panel_cell.GetLabel();
-      if (cp->FindMbrName("control_panel_cell", label)) {
+      MemberDef* md = dc->FindMember("control_panel_cell");
+      if (cp->FindMbrBase(dc, md) > -1) {
         add_act->setEnabled(false);
         remove_act->setEnabled(true);
       }
@@ -325,4 +324,12 @@ void iDataTableView::AddCellToControlPanel(int menu_item_position) {
   taProject* proj = dataTable()->GetMyProj();
   ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
   dataTable()->AddCellToControlPanel(cp, dc, row);
+}
+
+void iDataTableView::RemoveFromControlPanel(int menu_item_position) {
+  CellRange sel(selectionModel()->selectedIndexes());
+  DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
+  taProject* proj = dataTable()->GetMyProj();
+  ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
+  dataTable()->RemoveFromControlPanel(cp, dc);
 }
