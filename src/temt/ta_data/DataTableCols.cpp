@@ -99,3 +99,14 @@ DataCol* DataTableCols::GetFirstNonMatrixCol() const {
   return NULL;
 }
 
+int DataTableCols::NonMatrixCount() const {
+  int count = 0;
+  for (int i=0; i<size; i++) {
+    DataCol* col = this->SafeEl(i);
+    if (!col->isMatrix()) {
+      ++count;
+    }
+  }
+  return count;
+}
+

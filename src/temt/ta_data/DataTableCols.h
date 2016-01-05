@@ -51,6 +51,7 @@ public:
   String              GetTypeDecoKey() const override { return "DataTable"; }
   taBase*             ChildDuplicate(const taBase* chld) override;
   virtual DataCol*    GetFirstNonMatrixCol() const;
+  virtual int         NonMatrixCount() const;
 
   TA_BASEFUNS(DataTableCols);
 protected: // these guys must only be used by DataTable, but no external guys
