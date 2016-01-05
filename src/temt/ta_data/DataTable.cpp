@@ -93,6 +93,7 @@ void DataTable::Initialize() {
   base_diff_row = -1;  // no base comparison row at start
   change_col = NULL;
   change_col_type = -1;
+  last_chosen_column = NULL;
 }
 
 void DataTable::Destroy() {
@@ -111,6 +112,7 @@ void DataTable::InitLinks() {
   taBase::Own(diff_row_list, this);
   taBase::Own(change_col_geom, this);
   taBase::Own(last_sort_spec, this);
+  taBase::Own(last_chosen_column, this);
   log_file = taFiler::New("DataTable", ".dat");
   taRefN::Ref(log_file);
 }
@@ -120,6 +122,9 @@ void DataTable::CutLinks() {
   row_indexes.CutLinks();
   diff_row_list.CutLinks();
   last_sort_spec.CutLinks();
+  if (last_chosen_column) {
+    last_chosen_column->CutLinks();
+  }
   if(log_file) {
     log_file->Close();
     taRefN::unRefDone(log_file);
@@ -2111,25 +2116,30 @@ void DataTable::ToggleSaveRows() {
   SigEmitUpdated();
 }
 
+void DataTable::GetDataTableCellRowCol(DataCol* column) {
+  last_chosen_column = column;
+}
+
 void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row) { // this is the column used for choosing a row - e.g. config_id column
   if(!column || !cp) return;
   
+  MemberDef* md = column->FindMember("control_panel_cell");
+  if (!md) return;
+
   taProject* proj = GetMyProj();
   if (!proj) return;
   
   DataTableCell* cell = &column->control_panel_cell;
-  cell->row = row;
-  cell->value = column->GetValAsString(cell->row);
+  cell->current_row = row;
+  cell->value = column->GetValAsString(cell->current_row);
   
-  // now get the column that will be used to select the row - the user will be able to change this from the control panel
-  // use column 0 until I get the dialog via CallFun() to work!
-  cell->row_column = data.FastEl(0);
-  if (!cell->row_column) return;
-  
-  column->CallFun("GetDataTableCellRowCol");
-  
-  MemberDef* md = column->FindMember("control_panel_cell");
-  if (!md) return;
+  // DON'T USE UNTIL WE HAVE THE CONTROL PANEL UI SET FOR THIS FEATURE
+  // Get the column that will populate the "row" menu so the user can choose the row they want to set - only makes sense for the column to be non-matrix
+//  CallFun("GetDataTableCellRowCol");
+//  cell->row_column = last_chosen_column;
+//  if (!cell->row_column || cell->row_column->isMatrix()) {
+//    cell->row_column = data.GetFirstNonMatrixCol();
+//  }
   
   cp->SelectMember(column, md);
 }

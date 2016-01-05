@@ -146,6 +146,9 @@ public:
   DataSortSpec          last_sort_spec;
   // #HIDDEN the last table sort specification
   
+  DataCol*              last_chosen_column;
+  // #HIDDEN #NO_SAVE hack to save value from GetDataTableCellRowCol() called by CallFun() because return value is not possible
+  
   /////////////////////////////////////////////
   // Flags
 
@@ -610,6 +613,8 @@ public:
 
   virtual void          AddCellToControlPanel(ControlPanel* cp, DataCol* data_col, int row);  // creates a DataTableCell so that a table cell can be set from a control panel - scalar only
   virtual void          RemoveFromControlPanel(ControlPanel* cp, DataCol* data_col);  // creates a DataTableCell so that a table cell can be set from a control panel - scalar only
+  virtual void          GetDataTableCellRowCol(DataCol* column);
+  // #BUTTON #FROM_GROUP_data sets the control_panel_cell row_column member
 
   /////////////////////////////////////////////////////////
   // Main data value access/modify (Get/Set) routines: for Programs and very general use

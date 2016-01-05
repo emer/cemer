@@ -89,3 +89,13 @@ const KeyString DataTableCols::GetListColKey(int col) const {
   }
 }
 
+DataCol* DataTableCols::GetFirstNonMatrixCol() const {
+  for (int i=0; i<size; i++) {
+    DataCol* col = this->SafeEl(i);
+    if (!col->isMatrix()) {
+      return col;
+    }
+  }
+  return NULL;
+}
+

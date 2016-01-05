@@ -43,14 +43,14 @@ public:
   taBase*               New_gui(int n_objs=1, TypeDef* typ=NULL,
     const String& name="(default name)"); // #NO_MENU
 #endif
-  int          NumListCols() const override {return 3;}
+  int                 NumListCols() const override {return 3;}
   // name, val_type (float, etc.), desc
-  String       GetColHeading(const KeyString& key) const override;
+  String              GetColHeading(const KeyString& key) const override;
   // header text for the indicated column
-  const KeyString GetListColKey(int col) const override;
-
-  String       GetTypeDecoKey() const override { return "DataTable"; }
-  taBase*      ChildDuplicate(const taBase* chld) override;
+  const KeyString     GetListColKey(int col) const override;
+  String              GetTypeDecoKey() const override { return "DataTable"; }
+  taBase*             ChildDuplicate(const taBase* chld) override;
+  virtual DataCol*    GetFirstNonMatrixCol() const;
 
   TA_BASEFUNS(DataTableCols);
 protected: // these guys must only be used by DataTable, but no external guys

@@ -459,9 +459,6 @@ public:
   void          GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
                                   String& full_lbl, String& desc) const override;
   // #IGNORE set a default label
-  
-  virtual void        GetDataTableCellRowCol(const Variant& col);
-  // sets the control_panel_link row_column member
 
   void  InitLinks(); //note: ok to do own AR here, because never called in constructor
   void  CutLinks(); //note: NOT ok to do disown AR here, because called in destructor

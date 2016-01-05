@@ -31,9 +31,9 @@ class TA_API DataTableCell : public taOBase {
   // ##INLINE ##NO_TOKENS  A set of key bindings for shortcuts on menu items and for keyPressEvent interpretation
 INHERITED(taOBase)
 public:
-//  DynEnumTableCol     row_values;     // values of the row_column
+//  DynEnumTableCol     row;     // values of the row_column
   DataCol*            row_column;  // #HIDDEN the values in this column will be displayed so the user can choose a row without referring to the row by number
-  int                 row;         //
+  int                 current_row; //
   String              value;       //
   
   String              name;        //  #HIDDEN - hide the objects name - is there a better way?

@@ -20,6 +20,7 @@ TA_BASEFUNS_CTORS_DEFN(DataTableCell);
 
 void  DataTableCell::Initialize() {
   row_column = NULL;
+  current_row = 0;
   value = "";
 }
 
@@ -28,6 +29,6 @@ void DataTableCell::UpdateAfterEdit_impl() {
   
   DataCol* dc = (DataCol*)GetOwner();
   if (dc) {
-    dc->SetValAsVar(value, row);
+    dc->SetValAsVar(value, current_row);
   }
 }
