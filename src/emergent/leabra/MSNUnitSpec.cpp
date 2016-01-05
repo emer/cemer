@@ -17,6 +17,7 @@
 
 #include <LeabraNetwork>
 #include <PFCUnitSpec>
+#include <MSNConSpec>
 
 TA_BASEFUNS_CTORS_DEFN(MatrixActSpec);
 TA_BASEFUNS_CTORS_DEFN(MSNUnitSpec);
@@ -97,6 +98,18 @@ void MSNUnitSpec::SaveGatingThal(LeabraUnitVars* u, LeabraNetwork* net, int thr_
   
   if(qtr_cyc == gate_cyc) {
     u->thal_cnt = u->thal;      // save into thal_cnt!
+
+    // compute learning trace!
+    const int nrg = u->NRecvConGps(net, thr_no); 
+    for(int g=0; g< nrg; g++) {
+      LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+      if(recv_gp->NotActive()) continue;
+      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+      if(!cs->InheritsFrom(&TA_MSNConSpec)) continue;
+      MSNConSpec* mcs = (MSNConSpec*)cs;
+      if(mcs->learn_rule != MSNConSpec::TRACE_THAL_SEP) continue;
+      mcs->Compute_Trace_Thal(recv_gp, net, thr_no);
+    }
   }
 }
 
