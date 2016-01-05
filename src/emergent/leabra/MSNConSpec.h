@@ -81,7 +81,7 @@ public:
   LearnActVal        su_act_var;     // what variable to use for sending unit activation
   LearnActVal        ru_act_var;     // what variable to use for recv unit activation
   LearningRule       learn_rule;     // what kind of learning rule to use
-  MSNTraceSpec       trace;          // #AKA_matrix #CONDSHOW_ON_learn_rule:TRACE_THAL,TRACE_NO_THAL parameters for trace-based learning 
+  MSNTraceSpec       trace;          // #AKA_matrix #CONDSHOW_ON_learn_rule:TRACE_THAL,TRACE_THAL_SEP,TRACE_NO_THAL parameters for trace-based learning 
   float              burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float              dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
 

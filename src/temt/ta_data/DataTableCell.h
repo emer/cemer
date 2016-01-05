@@ -28,7 +28,7 @@ class DataCol; //
 taTypeDef_Of(DataTableCell);
 
 class TA_API DataTableCell : public taOBase {
-  // ##INLINE ##NO_TOKENS  A set of key bindings for shortcuts on menu items and for keyPressEvent interpretation
+  // ##INLINE ##NO_TOKENS represents a single cell within a data column, for interfacing with control panels 
 INHERITED(taOBase)
 public:
 //  DynEnumTableCol     row;     // values of the row_column

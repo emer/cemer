@@ -20,7 +20,7 @@ TA_BASEFUNS_CTORS_DEFN(DataTableCell);
 
 void  DataTableCell::Initialize() {
   row_column = NULL;
-  current_row = 0;
+  current_row = -1;             // start with invalid row
   value = "";
 }
 
@@ -29,6 +29,13 @@ void DataTableCell::UpdateAfterEdit_impl() {
   
   DataCol* dc = (DataCol*)GetOwner();
   if (dc) {
-    dc->SetValAsVar(value, current_row);
+    // todo: almost certainly don't want to ALWAYS have the value setting here..
+    // can we get away with not caching the value at all, and instead always
+    // dynamically reading / writing cell value when needed -- otherwise it
+    // creates a huge sync'ing problem!
+    // also, important to check valid range -- starts invalid so not setting to null
+    if(current_row < dc->rows() && current_row >= 0) {
+      dc->SetValAsVar(value, current_row);
+    }
   }
 }
