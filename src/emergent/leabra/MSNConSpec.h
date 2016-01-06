@@ -33,10 +33,11 @@ class E_API MSNTraceSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         otr_lrate;      // #MIN_0 #DEF_0.3 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less than 1 -- the non-gated trace has the opposite sign (negative) from the gated trace -- encourages exploration of other alternatives if a negative outcome occurs, so that otr = opposite trace or opponent trace as well as other trace
-  float         otr_pos_da;     // #MIN_0 #DEF_0.9 learning rate multiplier for otr changes with positive dopamine signals -- 1 = symmetric with negative da, < 1 = do less learning with this
+  float         otr_pos_da;     // #MIN_0 #DEF_0.9 learning rate multiplier for otr changes with positive dopamine signals -- 1 = symmetric with negative da, < 1 = do less learning for positive da than negative da -- works better that way
+  bool          otr_nogo_veto;  // #AKA_otr_no_nogo #DEF_true nogo firing blocks the application of otr_lrate -- uses deep_raw_net as a nogo activation signal (use SendDeepRawConSpec projections from GPeNoGo) -- this is very beneficial -- see nogo_max for scaling of this effect
+  float         nogo_max;       // #DEF_0.2 #CONDSHOW_ON_otr_nogo_veto nogo activation (conveyed by deep_raw_net) at which the otr_nogo_veto effect is maximal -- anything above this activation has full veto effect, and anything below this value has a proportional veto effect, down to 0 at 0 nogo activation
   float         da_reset_tr;    // #DEF_0.2;0 amount of dopamine needed to completely reset the trace -- if > 0, then either da or ach can reset the trace
   float         ach_reset_thr;  // #MIN_0 #DEF_0.5 threshold on receiving unit ach value, sent by TAN units, for reseting the trace -- only applicable for trace-based learning
-  bool          otr_no_nogo;  // nogo firing blocks the application of otr_lrate -- uses deep_raw_net as a nogo activation signal (use SendDeepRawConSpec projections from GPeNoGo)
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -182,11 +183,13 @@ public:
       ntr = ru_act * su_act;
     }
     else {                      // non-gated, do otr: opposite / other / opponent trace
-      if(!trace.otr_no_nogo || ru_deep_raw_net < 0.2f) {
-        ntr = otr_lr * ru_act * su_act;
+      if(trace.otr_nogo_veto) {
+        float nogo_factor = 1.0f - (ru_deep_raw_net / trace.nogo_max);
+        if(nogo_factor < 0.0f) nogo_factor = 0.0f;
+        ntr = nogo_factor * otr_lr * ru_act * su_act;
       }
       else {
-        ntr = 0.0f;
+        ntr = otr_lr * ru_act * su_act;
       }
     }
 
@@ -231,12 +234,7 @@ public:
       ntr = ru_act * su_act;
     }
     else {                      // non-gated, do otr: opposite / other / opponent trace
-      if(!trace.otr_no_nogo || ru_deep_raw_net < 0.2f) {
-        ntr = otr_lr * ru_act * su_act;
-      }
-      else {
-        ntr = 0.0f;
-      }
+      ntr = otr_lr * ru_act * su_act; // otr_lr already takes into nogo_veto into account
     }
 
     float decay_factor = fabs(ntr); // decay is function of new trace
@@ -415,7 +413,12 @@ public:
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LeabraUnitVars* ru = (LeabraUnitVars*)rcg->ThrOwnUnVars(net, thr_no);
 
-    const float otr_lr = -trace.otr_lrate;
+    float otr_lr = -trace.otr_lrate;
+    if(trace.otr_nogo_veto) {
+      float nogo_factor = 1.0f - (ru->deep_raw_net / trace.nogo_max);
+      if(nogo_factor < 0.0f) nogo_factor = 0.0f;
+      otr_lr *= nogo_factor;
+    }
     
     const int sz = rcg->size;
     for(int i=0; i<sz; i++) {
