@@ -2316,6 +2316,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfc_out_units->SetUnique("gate", true);
   pfc_out_units->SetUnique("maint", true);
   pfc_out_units->gate.out_gate = true;
+  pfc_out_units->gate.prv_qtr = false;
   pfc_out_units->maint.max_mnt = 1;
   pfc_out_units->n_dyns = 1;
 
