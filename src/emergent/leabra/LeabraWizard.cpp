@@ -2243,6 +2243,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   FMSpec(TiledGpRFPrjnSpec, deep_prjn, pbwmspgp, "DeepToTRC");
 
+  FMSpec(TesselPrjnSpec, tessel1to1, pbwmspgp, "TesselOneToOne");
+
   // todo: include a TesselOneToOne 
   
   //////////////////////////////////////////////////////////////////////////////////
@@ -2518,6 +2520,9 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   deep_prjn->gp_gauss.wrap_wts = false;
   deep_prjn->wt_range.min = 0.3f;
   deep_prjn->wt_range.max = 0.7f;
+
+  tessel1to1->MakeRectangle(1, 1, 0, 0);
+  tessel1to1->wrap = true;
   
   ////////////  Fix PVLV Specs!
 
@@ -2528,7 +2533,11 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   vspatch_cons->rnd.mean = 0.01f;
   vspatch_cons->lrate = 0.1f;
 
-  // todo: all sub-specs now have overrides on lrate..
+  // override any specialized lrates here..
+  for(int i=0;i<vspatch_cons->children.size;i++) {
+    MSNConSpec* vsp = (MSNConSpec*)vspatch_cons->children[i];
+    vsp->SetUnique("lrate", false);
+  }
 
   LHbRMTgUnitSpec* lhbrmtg_units = PvlvSp("LHbRMTgUnits", LHbRMTgUnitSpec);
   lhbrmtg_units->lhb.patch_cur = true;
@@ -2869,6 +2878,8 @@ can be sure everything is ok.";
   net->FindMakePrjn(matrix_go, patch, bgpfcprjn, marker_cons);
   net->FindMakePrjn(matrix_go, pfc_mnt_d, PbwmSp("BgPfcPrjnToOut", BgPfcPrjnSpec),
                     pfc_send_deep);
+  net->FindMakePrjn(matrix_go, gpenogo, gponetoone,
+                    PbwmSp(prefix + "DeepRawPlus", SendDeepRawConSpec));
   net->FindMakePrjnAdd(matrix_go, pfc_mnt_d, fullprjn,
                        PbwmSp("MatrixConsFmPFC", MSNConSpec));
   net->FindMakePrjnAdd(matrix_go, pfc_mnt, fullprjn,
@@ -2882,6 +2893,8 @@ can be sure everything is ok.";
   net->FindMakePrjn(matrix_nogo, patch, bgpfcprjn, marker_cons);
   net->FindMakePrjn(matrix_nogo, pfc_mnt_d, PbwmSp("BgPfcPrjnToOut", BgPfcPrjnSpec),
                     pfc_send_deep);
+  net->FindMakePrjn(matrix_nogo, gpenogo, gponetoone,
+                    PbwmSp(prefix + "DeepRawPlus", SendDeepRawConSpec));
   net->FindMakePrjnAdd(matrix_nogo, pfc_mnt_d, fullprjn,
                        PbwmSp("MatrixConsFmPFC", MSNConSpec));
   net->FindMakePrjnAdd(matrix_nogo, pfc_mnt, fullprjn,

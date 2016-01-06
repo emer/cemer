@@ -28,6 +28,11 @@ void TANActSpec::Initialize() {
 }
 
 void TANUnitSpec::Initialize() {
+  Defaults_init();
+}
+
+void TANUnitSpec::Defaults_init() {
+  deep_raw_qtr = QALL;
 }
 
 void TANUnitSpec::HelpConfig() {

@@ -71,7 +71,7 @@ protected:
 private:
   void  Initialize();
   void  Destroy()     { };
-  void  Defaults_init() { Initialize(); }
+  void  Defaults_init();
 };
 
 #endif // TANUnitSpec_h
