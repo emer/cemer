@@ -28,7 +28,7 @@
 #include <ColCalcExpr>
 #include <String_Matrix>
 #include <Relation>
-#include <DataTableCell>
+//#include <DataTableCell>
 
 // declare all other types mentioned but not required to include:
 class taHashTable; // 
@@ -82,7 +82,7 @@ public:
   taHashTable*          hash_table; // #READ_ONLY #NO_SAVE #NO_COPY hash table of column (scalar only) values to speed up finding in large fixed tables -- this is created by BuildHashTable() function, and destroyed after any insertion or removal of rows -- it is up to the user to call this when relevant data is all in place -- cannot track value changes
   int	                  width; // #HIDDEN the column display width in pixels
   
-  DataTableCell         control_panel_cell;
+//  DataTableCell         control_panel_cell;
   // a way to have a control panel member point back to a cell (row) in this column so that the cell contents can be editing from the control panel
   
   virtual const taMatrix*       AR() const = 0;
@@ -455,10 +455,6 @@ public:
 
   virtual void GetUniqueColumnValues(String_Array& groups);
   // make a list of the unique values of the column
-
-  void          GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
-                                  String& full_lbl, String& desc) const override;
-  // #IGNORE set a default label
 
   void  InitLinks(); //note: ok to do own AR here, because never called in constructor
   void  CutLinks(); //note: NOT ok to do disown AR here, because called in destructor

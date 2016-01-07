@@ -79,6 +79,7 @@ set(ta_data_HEADS_MAKETA
   taDataGen.h
   DataGenCall.h
   DataTableCell.h
+  DataTableCell_List.h
 )
 
 # no headers that need Qt moc run
@@ -159,6 +160,7 @@ set(ta_data_SRCS
   taDataGen.cpp
   DataGenCall.cpp
   DataTableCell.cpp
+  DataTableCell_List.cpp
 )
 
 set(ta_data_FILES ${ta_data_HEADS} ${ta_data_SRCS})

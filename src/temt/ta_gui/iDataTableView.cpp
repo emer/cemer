@@ -280,6 +280,7 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
   inherited::FillContextMenu_impl(ca, menu, sel);
   
   DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
+  int row = sel.row_fr;
   if (!dc) return;
   
   if (((ca == CA_COL_HDR) && (sel.width() == 1) && !dc->isMatrix()) ||
@@ -299,10 +300,16 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
       String remove_string = "Remove From " + cp->GetName();
       remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(RemoveFromControlPanel(int)), i);
       remove_act->setEnabled(false);
-      MemberDef* md = dc->FindMember("control_panel_cell");
-      if (cp->FindMbrBase(dc, md) > -1) {
-        add_act->setEnabled(false);
-        remove_act->setEnabled(true);
+      
+      // First check our list of cells on control panels - then check the control panel
+      DataTableCell* dtc = dataTable()->control_panel_cells.FindCell(dc, row);
+      if (dtc) {
+        MemberDef* md = dtc->FindMember("value");
+        // now check control panel
+        if (md && cp->FindMbrBase(dtc, md) > -1) {
+          add_act->setEnabled(false);
+          remove_act->setEnabled(true);
+        }
       }
     }
   }
@@ -329,7 +336,8 @@ void iDataTableView::AddCellToControlPanel(int menu_item_position) {
 void iDataTableView::RemoveFromControlPanel(int menu_item_position) {
   CellRange sel(selectionModel()->selectedIndexes());
   DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
+  int row = sel.row_fr;
   taProject* proj = dataTable()->GetMyProj();
   ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
-  dataTable()->RemoveFromControlPanel(cp, dc);
+  dataTable()->RemoveFromControlPanel(cp, dc, row);
 }

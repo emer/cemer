@@ -33,6 +33,7 @@
 #include <DataSortSpec>
 #include <taVector2i>
 #include <taVector2i_List>
+#include <DataTableCell_List>
 
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
@@ -88,6 +89,7 @@ class TA_API DataTable : public taFBase {
   friend class DataTableCols;
   friend class iDataTableModel;
   friend class DataCol;
+  friend class DataTableCell_List;
 public:
   enum DataFlags { // #BITS flags for data table
     DF_NONE             = 0, // #NO_BIT
@@ -148,6 +150,9 @@ public:
   
   DataCol*              last_chosen_column;
   // #HIDDEN #NO_SAVE hack to save value from GetDataTableCellRowCol() called by CallFun() because return value is not possible
+  
+  DataTableCell_List    control_panel_cells;
+  // #HIDDEN a list of DataTableCell objects that provide the link between data table cells and control panels -- needed because cells are not themselves object members
   
   /////////////////////////////////////////////
   // Flags
@@ -611,10 +616,13 @@ public:
   void                  ToggleSaveRows();
   // #CAT_Rows #MENU #DYN1 toggle the SAVE_ROWS flag to opposite of current state: flag indicates whether data rows should be saved or not within the project (often useful to save room by not saving temp data)
 
-  virtual void          AddCellToControlPanel(ControlPanel* cp, DataCol* data_col, int row);  // creates a DataTableCell so that a table cell can be set from a control panel - scalar only
-  virtual void          RemoveFromControlPanel(ControlPanel* cp, DataCol* data_col);  // creates a DataTableCell so that a table cell can be set from a control panel - scalar only
-  virtual void          GetDataTableCellRowCol(DataCol* column);
-  // #BUTTON #FROM_GROUP_data sets the control_panel_cell row_column member
+  virtual void          AddCellToControlPanel(ControlPanel* cp, DataCol* data_col, int row);
+  // creates a DataTableCell so that a table cell can be set from a control panel - scalar only
+  virtual void          RemoveFromControlPanel(ControlPanel* cp, DataCol* data_col, int row);
+  // Remove DataTableCell from list and remove from control panel
+
+  //  virtual void          GetDataTableCellRowCol(DataCol* column);
+// //   #BUTTON #FROM_GROUP_data sets the control_panel_cell row_column member
 
   /////////////////////////////////////////////////////////
   // Main data value access/modify (Get/Set) routines: for Programs and very general use

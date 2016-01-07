@@ -122,6 +122,7 @@ set(ta_gui_HEADS_MAKETA_NOMOC
   taiMemberOfTokenPtrFromGroup.h
   taiMemberOfDynEnum.h
   taiMemberOfProgVarIntVal.h
+  taiMemberOfTableCellValueVal.h
 
   taiMethod.h
   taiMethodOfActuator.h
@@ -627,6 +628,7 @@ set(ta_gui_SRCS_MAKETA
   taiMemberOfTokenPtrFromGroup.cpp
   taiMemberOfDynEnum.cpp
   taiMemberOfProgVarIntVal.cpp
+  taiMemberOfTableCellValueVal.cpp
 
   taiMethod.cpp
   taiMethodOfActuator.cpp

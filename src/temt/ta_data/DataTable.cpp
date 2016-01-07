@@ -40,6 +40,8 @@
 #include <ControlPanel>
 #include <iDialogChoice>
 #include <taVector2i_List>
+#include <DataTableCell>
+#include <DataTableCell_List>
 
 #if (QT_VERSION >= 0x050000)
 #include <QJsonDocument>
@@ -113,10 +115,11 @@ void DataTable::InitLinks() {
   taBase::Own(change_col_geom, this);
   taBase::Own(last_sort_spec, this);
   taBase::Own(last_chosen_column, this);
+  taBase::Own(control_panel_cells, this);
   log_file = taFiler::New("DataTable", ".dat");
   taRefN::Ref(log_file);
 }
-
+//
 void DataTable::CutLinks() {
   data.CutLinks();
   row_indexes.CutLinks();
@@ -134,6 +137,7 @@ void DataTable::CutLinks() {
     delete calc_script;
     calc_script = NULL;
   }
+  control_panel_cells.CutLinks();
 //  inherited::CutLinks();
 }
 
@@ -2116,48 +2120,65 @@ void DataTable::ToggleSaveRows() {
   SigEmitUpdated();
 }
 
-void DataTable::GetDataTableCellRowCol(DataCol* column) {
-  last_chosen_column = column;
-}
+//void DataTable::GetDataTableCellRowCol(DataCol* column) {
+//  last_chosen_column = column;
+//}
 
 void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row) { // this is the column used for choosing a row - e.g. config_id column
-  if(!column || !cp) return;
+  if(!column || !cp || column->isMatrix()) return;
   
-  MemberDef* md = column->FindMember("control_panel_cell");
-  if (!md) return;
-
   taProject* proj = GetMyProj();
   if (!proj) return;
   
-  DataTableCell* cell = &column->control_panel_cell;
-  cell->current_row = row;
-  cell->value = column->GetValAsString(cell->current_row);
+  DataTableCell* cell = new DataTableCell();
+  cell->value_column = column;
+  cell->row = row;
+  cell->value = column->GetValAsString(cell->row);
+  control_panel_cells.Add(cell);
   
-  // DON'T USE UNTIL WE HAVE THE CONTROL PANEL UI SET FOR THIS FEATURE
+  // This may or may not get used
   // Get the column that will populate the "row" menu so the user can choose the row they want to set - only makes sense for the column to be non-matrix
-//  CallFun("GetDataTableCellRowCol");
-//  cell->row_column = last_chosen_column;
-//  if (!cell->row_column || cell->row_column->isMatrix()) {
+//  int non_matrix_count = data.NonMatrixCount();
+//  if (non_matrix_count == 1) {
 //    cell->row_column = data.GetFirstNonMatrixCol();
 //  }
+//  else {
+//    CallFun("GetDataTableCellRowCol");
+//    cell->row_column = last_chosen_column;
+//    if (!cell->row_column || cell->row_column->isMatrix()) {
+//      cell->row_column = data.GetFirstNonMatrixCol();
+//    }
+// }
+//  
+//  DynEnumType* det = new DynEnumType();
+//  cell->row.enum_type = det;
+//  for (int i=0; i<column->rows(); i++) {
+//    String name = column->GetValAsString(i);
+//    det->AddEnum(name, i);
+//  }
   
-  cp->SelectMember(column, md);
+  
+  MemberDef* md = cell->FindMember("value");
+  if (!md) return;
+
+  cp->SelectMemberPrompt(cell, md);
 }
 
-void DataTable::RemoveFromControlPanel(ControlPanel* cp, DataCol* column) { // this is the column used for choosing a row - e.g. config_id column
+void DataTable::RemoveFromControlPanel(ControlPanel* cp, DataCol* column, int row) {
   if(!column || !cp) return;
   
   taProject* proj = GetMyProj();
   if (!proj) return;
   
-  DataTableCell* cell = &column->control_panel_cell;
-
-//  String label = column->control_panel_cell.GetLabel();
-  MemberDef* md = column->FindMember("control_panel_cell");
-  if (!md) return;
- int idx =  cp->FindMbrBase(column, md);
-  if (idx > -1) {
-    cp->RemoveField(idx);
+  DataTableCell* dtc = control_panel_cells.FindCell(column, row);
+  
+  if (dtc) {
+    MemberDef* md = dtc->FindMember("value");
+    if (!md) return;
+    int idx =  cp->FindMbrBase(dtc, md);
+    if (idx > -1) {
+      cp->RemoveField(idx);
+    }
   }
 }
 
