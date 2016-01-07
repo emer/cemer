@@ -29,6 +29,8 @@ TA_BASEFUNS_CTORS_DEFN(V1sNeighInhib);
 TA_BASEFUNS_CTORS_DEFN(V1GaborSpec);
 
 void V1GaborSpec::Initialize() {
+  on = true;
+  wt = 1.0f;
   gain = 2.0f;
   n_angles = 4;
   filter_size = 8;
@@ -213,6 +215,8 @@ void VisSpatIntegSpec::UpdateAfterEdit_impl() {
 typedef void (V1RegionSpec::*V1RegionMethod)(int, int);
 
 void V1RegionSpec::Initialize() {
+  v1s_specs_2.on = false;
+  v1s_specs_3.on = false;
   v1s_renorm = NO_RENORM;
   v1s_save = (DataSave)(SAVE_DATA | ONLY_GUI);
   v1s_feat_geom.SetXYN(4, 2, 8);
@@ -253,11 +257,15 @@ void V1RegionSpec::Initialize() {
   cur_hist = NULL;
   cur_v1b_in_r = NULL;
   cur_v1b_in_l = NULL;
+  cur_v1s_gabor_filter = NULL;
+  cur_v1s_off = 0;
 }
 
 void V1RegionSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   v1s_specs.UpdateAfterEdit_NoGui();
+  v1s_specs_2.UpdateAfterEdit_NoGui();
+  v1s_specs_3.UpdateAfterEdit_NoGui();
   v1s_kwta.UpdateAfterEdit_NoGui();
   v1s_neigh_inhib.UpdateAfterEdit_NoGui();
   v1s_motion.UpdateAfterEdit_NoGui();
@@ -306,6 +314,10 @@ void V1RegionSpec::UpdateGeom() {
   //                    V1 S
 
   n_polarities = 2;             // justin case
+  if(v1s_specs_2.on)
+    n_polarities += 2;
+  if(v1s_specs_3.on)
+    n_polarities += 2;
   if(region.color == VisRegionParams::COLOR) {
     n_colors = 4;
   }
@@ -484,6 +496,10 @@ bool V1RegionSpec::InitFilters() {
 bool V1RegionSpec::InitFilters_V1Simple() {
 
   v1s_specs.RenderFilters(v1s_gabor_filters);
+  if(v1s_specs_2.on)
+    v1s_specs_2.RenderFilters(v1s_gabor_filters_2);
+  if(v1s_specs_3.on)
+    v1s_specs_3.RenderFilters(v1s_gabor_filters_3);
 
   // config: x,y coords by tot_ni_len, by angles
   v1s_ni_stencils.SetGeom(3, 2, v1s_neigh_inhib.tot_ni_len, v1s_specs.n_angles);
@@ -1003,7 +1019,20 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_
   }
   cur_adapt = adapt;
 
+  cur_v1s_gabor_filter = &v1s_gabor_filters;
+  cur_v1s_off = 0;
   IMG_THREAD_CALL(V1RegionSpec::V1SimpleFilter_Static_thread);
+
+  if(v1s_specs_2.on) {
+    cur_v1s_gabor_filter = &v1s_gabor_filters_2;
+    cur_v1s_off = n_colors * 2;
+    IMG_THREAD_CALL(V1RegionSpec::V1SimpleFilter_Static_thread);
+  }
+  if(v1s_specs_3.on) {
+    cur_v1s_gabor_filter = &v1s_gabor_filters_3;
+    cur_v1s_off = n_colors * 4;
+    IMG_THREAD_CALL(V1RegionSpec::V1SimpleFilter_Static_thread);
+  }
 
   if(v1s_renorm != NO_RENORM) {            // always renorm prior to any kwta
     RenormOutput(v1s_renorm, cur_out);
@@ -1068,11 +1097,11 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int thr_no) {
           v1s_img = GetImageForChan(cchan);
         }
 
-        int fcy = chan * n_polarities; // starting of y axis -- add 1 for off-polarity
+        int fcy = chan * 2 + cur_v1s_off; // starting of y axis -- add 1 for off-polarity
 
         for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
-          const float* flt = (const float*)v1s_gabor_filters.el +
-            v1s_gabor_filters.FastElIndex3d(0, 0, ang);
+          const float* flt = (const float*)cur_v1s_gabor_filter->el +
+            cur_v1s_gabor_filter->FastElIndex3d(0, 0, ang);
         
           float cnv_sum = 0.0f;               // convolution sum
           if(chan == 0 || rgb_img) {          // only rgb images if chan > 0
@@ -1195,15 +1224,74 @@ void V1RegionSpec::V1SimpleFilter_PolInvar_thread(int thr_no) {
   GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
 
   taVector2i oc;         // current coord -- output space
-  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
-    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
-      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-        float max_pi = 0.0f;
-        for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
-          float val = cur_in->FastEl4d(ang, polclr, oc.x, oc.y);
-          max_pi = MAX(max_pi, val);
+
+  if(v1s_specs_3.on) {
+    const float wt_sum = v1s_specs.wt + v1s_specs_2.wt + v1s_specs_3.wt;
+    const float wt1 = v1s_specs.wt / wt_sum;
+    const float wt2 = v1s_specs_2.wt / wt_sum;
+    const float wt3 = v1s_specs_3.wt / wt_sum;
+    const int nper = n_colors * 2;
+    const int nper2 = nper * 2;
+    const int nper3 = nper * 3;
+    for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+      for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+        for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+          float max_pi = 0.0f;
+          for(int polclr = 0; polclr < nper; polclr++) { // polclr features
+            float val = cur_in->FastEl4d(ang, polclr, oc.x, oc.y);
+            max_pi = MAX(max_pi, val);
+          }
+          float max_pi2 = 0.0f;
+          for(int polclr = nper; polclr < nper2; polclr++) { // polclr features
+            float val = cur_in->FastEl4d(ang, polclr, oc.x, oc.y);
+            max_pi2 = MAX(max_pi2, val);
+          }
+          float max_pi3 = 0.0f;
+          for(int polclr = nper2; polclr < nper3; polclr++) { // polclr features
+            float val = cur_in->FastEl4d(ang, polclr, oc.x, oc.y);
+            max_pi3 = MAX(max_pi3, val);
+          }
+          cur_out->FastEl4d(ang, 0, oc.x, oc.y) = wt1 * max_pi + wt2 * max_pi2 +
+            wt3 * max_pi3;
         }
-        cur_out->FastEl4d(ang, 0, oc.x, oc.y) = max_pi;
+      }
+    }
+  }
+  else if(v1s_specs_2.on) {
+    const float wt_sum = v1s_specs.wt + v1s_specs_2.wt;
+    const float wt1 = v1s_specs.wt / wt_sum;
+    const float wt2 = v1s_specs_2.wt / wt_sum;
+    const int nper = n_colors * 2;
+    const int nper2 = nper * 2;
+    for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+      for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+        for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+          float max_pi = 0.0f;
+          for(int polclr = 0; polclr < nper; polclr++) { // polclr features
+            float val = cur_in->FastEl4d(ang, polclr, oc.x, oc.y);
+            max_pi = MAX(max_pi, val);
+          }
+          float max_pi2 = 0.0f;
+          for(int polclr = nper; polclr < nper2; polclr++) { // polclr features
+            float val = cur_in->FastEl4d(ang, polclr, oc.x, oc.y);
+            max_pi2 = MAX(max_pi2, val);
+          }
+          cur_out->FastEl4d(ang, 0, oc.x, oc.y) = wt1 * max_pi + wt2 * max_pi2;
+        }
+      }
+    }
+  }
+  else {
+    for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+      for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+        for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+          float max_pi = 0.0f;
+          for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
+            float val = cur_in->FastEl4d(ang, polclr, oc.x, oc.y);
+            max_pi = MAX(max_pi, val);
+          }
+          cur_out->FastEl4d(ang, 0, oc.x, oc.y) = max_pi;
+        }
       }
     }
   }
@@ -2294,8 +2382,13 @@ int  V1RegionSpec::AngleDeg(int ang_no) {
   return ang_no * ang_inc;
 }
 
-void V1RegionSpec::GridGaborFilters(DataTable* graph_data) {
-  v1s_specs.GridFilters(v1s_gabor_filters, graph_data);
+void V1RegionSpec::GridGaborFilters(DataTable* graph_data, int which_filter) {
+  if(which_filter == 2)
+    v1s_specs_2.GridFilters(v1s_gabor_filters_2, graph_data);
+  else if(which_filter == 3)
+    v1s_specs_3.GridFilters(v1s_gabor_filters_3, graph_data);
+  else
+    v1s_specs.GridFilters(v1s_gabor_filters, graph_data);
 }
 
 void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {

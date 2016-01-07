@@ -36,15 +36,17 @@ class E_API V1GaborSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells as gabor filters: 2d Gaussian envelope times a sinusoidal plane wave -- by default produces 2 phase asymmetric edge detector filters
 INHERITED(taOBase)
 public:
-  float		gain;		// #DEF_2 overall gain multiplier applied after gabor filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
-  int		n_angles;	// #DEF_4 number of different angles encoded -- currently only 4 is supported
-  int		filter_size;	// #DEF_6;8;12;16;24 size of the overall filter -- number of pixels wide and tall for a square matrix used to encode the filter -- filter is centered within this square -- computational speed advantage for it to be a multiple of 4
-  int		spacing;	// how far apart to space the centers of the gabor filters -- 1 = every pixel, 2 = every other pixel, etc -- high-res should be 1 or 2, lower res can be increments therefrom
-  float		wvlen;		// #DEF_6;12;18;24  wavelength of the sine waves -- number of pixels over which a full period of the wave takes place (computation adds a 2 PI factor to translate into pixels instead of radians)
-  float		gauss_sig_len;	// #DEF_0.225;0.3 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter_size
-  float		gauss_sig_wd;	// #DEF_0.15;0.2 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter_size
-  float		phase_off;	// #DEF_0;1.5708 offset for the sine phase -- can make it into a symmetric gabor by using PI/2 = 1.5708
-  bool		circle_edge;	// #DEF_true cut off the filter (to zero) outside a circle of diameter filter_size -- makes the filter more radially symmetric
+  bool          on;             // is this filter active?
+  float         wt;             // #CONDSHOW_ON_on how much relative weight does this filter have when combined with other filters (e.g., in the polarity-independent filters)
+  float		gain;		// #CONDSHOW_ON_on #DEF_2 overall gain multiplier applied after gabor filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
+  int		n_angles;	// #CONDSHOW_ON_on #DEF_4 number of different angles encoded -- currently only 4 is supported
+  int		filter_size;	// #CONDSHOW_ON_on #DEF_6;8;12;16;24 size of the overall filter -- number of pixels wide and tall for a square matrix used to encode the filter -- filter is centered within this square -- computational speed advantage for it to be a multiple of 4
+  int		spacing;	// #CONDSHOW_ON_on how far apart to space the centers of the gabor filters -- 1 = every pixel, 2 = every other pixel, etc -- high-res should be 1 or 2, lower res can be increments therefrom
+  float		wvlen;		// #CONDSHOW_ON_on #DEF_6;12;18;24  wavelength of the sine waves -- number of pixels over which a full period of the wave takes place (computation adds a 2 PI factor to translate into pixels instead of radians)
+  float		gauss_sig_len;	// #CONDSHOW_ON_on #DEF_0.225;0.3 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter_size
+  float		gauss_sig_wd;	// #CONDSHOW_ON_on #DEF_0.15;0.2 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter_size
+  float		phase_off;	// #CONDSHOW_ON_on #DEF_0;1.5708 offset for the sine phase -- can make it into a symmetric gabor by using PI/2 = 1.5708
+  bool		circle_edge;	// #CONDSHOW_ON_on #DEF_true cut off the filter (to zero) outside a circle of diameter filter_size -- makes the filter more radially symmetric
 
   virtual void	RenderFilters(float_Matrix& fltrs);
   // generate filters into the given matrix, which is formatted as: [filter_size][filter_size][n_angles]
@@ -208,6 +210,8 @@ public:
 
   /////////// Simple
   V1GaborSpec	v1s_specs;	// specs for V1 simple filters, computed using gabor filters directly onto the incoming image
+  V1GaborSpec	v1s_specs_2;	// specs for second set of V1 simple filters, computed using gabor filters directly onto the incoming image -- MUST have same n_angles, spacing as v1s_specs, and generally good to have same size
+  V1GaborSpec	v1s_specs_3;	// specs for third set of V1 simple filters, computed using gabor filters directly onto the incoming image -- MUST have same n_angles, spacing as v1s_specs, and generally good to have same size
   RenormMode	v1s_renorm;	// #DEF_NO_RENORM how to renormalize the output of v1s static filters -- applied prior to kwta
   V1KwtaSpec	v1s_kwta;	// k-winner-take-all inhibitory dynamics for the v1 simple stage -- important for cleaning up these representations for subsequent stages, especially binocluar disparity and motion processing, which require correspondence matching, and end stop detection
   V1sNeighInhib	v1s_neigh_inhib; // specs for V1 simple neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
@@ -249,6 +253,8 @@ public:
   int		n_polarities;	// #READ_ONLY #DEF_2 number of polarities per color -- always 2
   int		n_polclr;	// #READ_ONLY number of polarities * number of colors -- y dimension of simple features for example
   float_Matrix	v1s_gabor_filters; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [filter_size][filter_size][n_angles]
+  float_Matrix	v1s_gabor_filters_2; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [filter_size][filter_size][n_angles]
+  float_Matrix	v1s_gabor_filters_3; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [filter_size][filter_size][n_angles]
   float_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each of the angles
   float_Matrix	v1s_ang_slopes_raw; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each of the angles -- non-normalized
   int_Matrix	v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
@@ -330,8 +336,8 @@ public:
 
   int		AngleDeg(int ang_no);
   // get angle value in degress based on angle number
-  virtual void	GridGaborFilters(DataTable* disp_data);
-  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 Gabor Filters into the data table
+  virtual void	GridGaborFilters(DataTable* disp_data, int which_filters = 1);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 Gabor Filters into the data table -- which_filters = 1 for basic ones, 2 = 2nd set, 3 = 3rd set
   virtual void	GridV1Stencils(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 stencils into data table and generate a grid view -- these are the effective receptive fields at each level of processing
   virtual void	PlotSpacing(DataTable* disp_data, bool reset = true);
@@ -345,6 +351,8 @@ protected:
   float_Matrix* cur_hist;	// cur hist for motion
   float_Matrix* cur_v1b_in_r;	// current v1b input, r
   float_Matrix* cur_v1b_in_l;	// current v1b input, l
+  float_Matrix* cur_v1s_gabor_filter;	// currrent gabor filter
+  int           cur_v1s_off;            // v1s y offset
 
   void	UpdateAfterEdit_impl() override;
 
