@@ -193,6 +193,7 @@ set(ta_3d_HEADS
 #  ${ta_3d_HEADS_MAKETA_MOC}
   ${ta_3d_HEADS_NOMAKETA_NOMOC}
   ${ta_3d_HEADS_NOMAKETA_MOC}
+  ${ta_3d_HEADS_MAKETA_MI}
 )
 
 # NOTE: do NOT include .moc files -- auto generated

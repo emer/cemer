@@ -251,14 +251,6 @@ set(ta_core_HEADS_MOC
   ${ta_core_HEADS_NOMAKETA_MOC}
 )
 
-# all heads
-set(ta_core_HEADS
-  ${ta_core_HEADS_MAKETA_NOMOC}
-  ${ta_core_HEADS_MAKETA_MOC}
-  ${ta_core_HEADS_NOMAKETA_NOMOC}
-  ${ta_core_HEADS_NOMAKETA_MOC}
-)
-
 # multiple inheritence -- in correspondence with deps below
 set(ta_core_HEADS_MAKETA_MI
   taArray_base.h
@@ -270,6 +262,15 @@ set(ta_core_HEADS_MAKETA_MI
 set(ta_core_HEADS_MAKETA_MI_DEPS
   "taBase.h;taArray_impl.h"
   "taBase.h;taPtrList_impl.h"
+)
+
+# all heads
+set(ta_core_HEADS
+  ${ta_core_HEADS_MAKETA_NOMOC}
+  ${ta_core_HEADS_MAKETA_MOC}
+  ${ta_core_HEADS_NOMAKETA_NOMOC}
+  ${ta_core_HEADS_NOMAKETA_MOC}
+  ${ta_core_HEADS_MAKETA_MI}
 )
 
 # NOTE: do NOT include .moc files -- auto generated

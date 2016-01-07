@@ -207,6 +207,7 @@ set(network_HEADS
   ${network_HEADS_MAKETA}
   ${network_HEADS_MAKETA_MI}
   ${network_HEADS_NOMAKETA}
+  ${network_HEADS_MAKETA_MI}
 )
 
 # gui-related source files: NOTE: do NOT include TA or .moc files -- auto generated

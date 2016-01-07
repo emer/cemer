@@ -117,6 +117,7 @@ set(ta_program_HEADS_MAKETA_MI_DEPS
 # all heads
 set(ta_program_HEADS
   ${ta_program_HEADS_MAKETA}
+  ${ta_program_HEADS_MAKETA_MI}
 )
 
 # NOTE: do NOT include .moc files -- auto generated

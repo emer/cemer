@@ -108,6 +108,7 @@ set(ta_proj_HEADS
   ${ta_proj_HEADS_MAKETA_MOC}
   ${ta_proj_HEADS_NOMAKETA_NOMOC}
   ${ta_proj_HEADS_NOMAKETA_MOC}
+  ${ta_proj_HEADS_MAKETA_MI}
 )
 
 # NOTE: do NOT include .moc files -- auto generated

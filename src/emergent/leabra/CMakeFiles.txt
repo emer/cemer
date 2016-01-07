@@ -126,9 +126,10 @@ set(leabra_HEADS_NOMAKETA
 
 # all heads -- include maketa generated ones here
 set(leabra_HEADS
-    ${leabra_HEADS_MAKETA}
-    ${leabra_HEADS_MAKETA_MI}
-    ${leabra_HEADS_NOMAKETA}
+  ${leabra_HEADS_MAKETA}
+  ${leabra_HEADS_MAKETA_MI}
+  ${leabra_HEADS_NOMAKETA}
+  ${leabra_HEADS_MAKETA_MI}
 )
 
 # all source files to compile: NOTE: do NOT include TA_ or .moc files -- auto generated
