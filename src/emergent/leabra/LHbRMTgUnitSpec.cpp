@@ -295,7 +295,7 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   float net_pos = vsmatrix_pos_net;
   if(pv_pos) { net_pos = MAX(pv_pos, vsmatrix_pos_net); }
   float net_neg = vsmatrix_neg_net;
-  if(pv_neg) { net_neg = MAX(pv_neg - residual_pvneg, vsmatrix_neg_net); }
+  if(pv_neg) { net_neg = MAX(pv_neg, vsmatrix_neg_net); }
   
   float net_lhb = net_neg - net_pos + vspatch_pos_net - vspatch_neg_net;
   
