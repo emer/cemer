@@ -621,8 +621,8 @@ public:
   virtual void          RemoveFromControlPanel(ControlPanel* cp, DataCol* data_col, int row);
   // Remove DataTableCell from list and remove from control panel
 
-  //  virtual void          GetDataTableCellRowCol(DataCol* column);
-// //   #BUTTON #FROM_GROUP_data sets the control_panel_cell row_column member
+  virtual void          GetDataTableCellRowCol(DataCol* column);
+  //   #BUTTON #FROM_GROUP_data sets the control_panel_cell row_column member
 
   /////////////////////////////////////////////////////////
   // Main data value access/modify (Get/Set) routines: for Programs and very general use

@@ -36,13 +36,4 @@ void DataTableCell::GetControlPanelText(MemberDef* mbr, const String& extra_labe
   else {
     full_lbl = value_column->dataTable()->GetName() + "__" + value_column->GetName() + "__" + "row_" + String(row);
   }
-
-//  for (int i=0; i<value_column->rows(); i++) {
-//    String str_1 = value_column->GetValAsString(i);
-////    taMisc::DebugInfo(str_1);
-//    value_column->UnSetMatrixViewMode();
-//    String str_2 = value_column->AR()->SafeElAsStr(i);
-////    taMisc::DebugInfo(str_2);
-//    value_column->SetMatrixViewMode();
-//  }
 }

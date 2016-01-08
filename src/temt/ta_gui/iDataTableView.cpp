@@ -283,8 +283,7 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
   int row = sel.row_fr;
   if (!dc) return;
   
-  if (((ca == CA_COL_HDR) && (sel.width() == 1) && !dc->isMatrix()) ||
-      ((ca != CA_ROW_HDR) && (sel.width() == 1) && (sel.height() == 1) && !dc->isMatrix())) {
+  if ((ca != CA_ROW_HDR) && (sel.width() == 1) && (sel.height() == 1) && !dc->isMatrix()) {
     menu->AddSep();
     iAction* add_act = NULL;
     iAction* remove_act = NULL;

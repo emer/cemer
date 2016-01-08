@@ -114,7 +114,6 @@ void DataTable::InitLinks() {
   taBase::Own(diff_row_list, this);
   taBase::Own(change_col_geom, this);
   taBase::Own(last_sort_spec, this);
-  taBase::Own(last_chosen_column, this);
   taBase::Own(control_panel_cells, this);
   log_file = taFiler::New("DataTable", ".dat");
   taRefN::Ref(log_file);
@@ -126,7 +125,8 @@ void DataTable::CutLinks() {
   diff_row_list.CutLinks();
   last_sort_spec.CutLinks();
   if (last_chosen_column) {
-    last_chosen_column->CutLinks();
+    delete last_chosen_column;
+    last_chosen_column = NULL;
   }
   if(log_file) {
     log_file->Close();
@@ -178,7 +178,6 @@ void DataTable::Copy_DataOnly(const DataTable& cp) {
 void DataTable::CopyFromRow(int dest_row, const DataTable& src, int src_row) {
   data.CopyFromRow(dest_row, src.data, src_row);
 }
-
 
 bool DataTable::CopyCell(const Variant& dest_col, int dest_row, const DataTable& src,
     const Variant& src_col, int src_row)
@@ -2120,9 +2119,9 @@ void DataTable::ToggleSaveRows() {
   SigEmitUpdated();
 }
 
-//void DataTable::GetDataTableCellRowCol(DataCol* column) {
-//  last_chosen_column = column;
-//}
+void DataTable::GetDataTableCellRowCol(DataCol* column) {
+  last_chosen_column = column;
+}
 
 void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row) { // this is the column used for choosing a row - e.g. config_id column
   if(!column || !cp || column->isMatrix()) return;
@@ -2136,27 +2135,17 @@ void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row
   cell->value = column->GetValAsString(cell->row);
   control_panel_cells.Add(cell);
   
-  // This may or may not get used
-  // Get the column that will populate the "row" menu so the user can choose the row they want to set - only makes sense for the column to be non-matrix
-//  int non_matrix_count = data.NonMatrixCount();
-//  if (non_matrix_count == 1) {
-//    cell->row_column = data.GetFirstNonMatrixCol();
-//  }
-//  else {
-//    CallFun("GetDataTableCellRowCol");
-//    cell->row_column = last_chosen_column;
-//    if (!cell->row_column || cell->row_column->isMatrix()) {
-//      cell->row_column = data.GetFirstNonMatrixCol();
-//    }
-// }
-//  
-//  DynEnumType* det = new DynEnumType();
-//  cell->row.enum_type = det;
-//  for (int i=0; i<column->rows(); i++) {
-//    String name = column->GetValAsString(i);
-//    det->AddEnum(name, i);
-//  }
-  
+  // Get the column will be used to set the label for the control panel item
+  //  (i.e. the column/row cell that is the label vs the column/row that is the editable value)
+  int non_matrix_count = data.NonMatrixCount();
+  if (non_matrix_count > 1) {
+    CallFun("GetDataTableCellRowCol");
+    cell->row_column = last_chosen_column;
+    if (!cell->row_column || cell->row_column->isMatrix()) {
+      cell->row_column = data.GetFirstNonMatrixCol();
+    }
+    last_chosen_column = NULL;  // set to NULL because the column might get deleted and we don't need anymore
+  }
   
   MemberDef* md = cell->FindMember("value");
   if (!md) return;

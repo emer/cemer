@@ -30,10 +30,11 @@ class TA_API DataTableCell : public taOBase {
   // ##INLINE ##NO_TOKENS represents a single cell within a data column, for interfacing with control panels 
 INHERITED(taOBase)
 public:
-  DataCol*            row_column;   // the values in this column will be displayed so the user can choose a row without referring to the row by number
-  DataCol*            value_column; //
-  int                 row;          //
-  String              value;        //
+  DataCol*            row_column;       // the value in this column/row will be used in the label
+  DataCol*            value_column;     // the column with the editable value
+  int                 row;              // the row as the user sees it
+  int                 row_indexes_row;  // #HIDDEN the row in the underlying matrix that holds all rows, visible and hidden
+  String              value;            // content of the table cell
   
   void                GetControlPanelText(MemberDef* mbr, const String& xtra_lbl, String& full_lbl, String& desc) const override;
   // #IGNORE set a default label
