@@ -983,7 +983,6 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMChild(LeabraLayerSpec, amyextp, amygsp, "AmygExtLayer");
   FMChild(LeabraLayerSpec, vspsp, laysp, "VSPatchLayer");
   FMChild(LeabraLayerSpec, vsmsp, laysp, "VSMatrixLayer");
-  FMChild(LeabraLayerSpec, dmsmsp, laysp, "DMSMatrixLayer");
   FMChild(ExtRewLayerSpec, ersp, laysp, "ExtRewLayer");
 
   FMSpec(FullPrjnSpec, fullprjn, pvlvspgp, "PVLVFullPrjn");
@@ -1409,11 +1408,6 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmsp->del_inhib.on = true;
   vsmsp->del_inhib.prv_trl = 6.0f;
   vsmsp->del_inhib.prv_q = 0.0f;
-
-  dmsmsp->SetUnique("del_inhib", true);
-  dmsmsp->del_inhib.on = true;
-  dmsmsp->del_inhib.prv_trl = 6.0f;
-  dmsmsp->del_inhib.prv_q = 0.0f;
 
   ersp->unit_range.min = 0.0f;
   ersp->unit_range.max = 1.0f;

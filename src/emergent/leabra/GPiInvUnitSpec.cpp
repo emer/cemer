@@ -96,7 +96,7 @@ void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
 
     recv_gp->net_raw += g_nw_nt;
 
-    if(from->name.contains("NoGo")) {
+    if(from->name.contains("NoGo") || from->name.contains("D2")) {
       nogo_in += recv_gp->net_raw;
     }
     else {

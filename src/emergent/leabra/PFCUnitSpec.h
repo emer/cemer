@@ -130,6 +130,8 @@ public:
   void Send_DeepCtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
   void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
+  void ClearDeepActs(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  
   virtual void	GraphPFCDyns(DataTable* graph_data, int n_trials=20);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the pfc dynamics for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_raw is computed (typically once per trial)
   

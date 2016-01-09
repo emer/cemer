@@ -386,6 +386,12 @@ void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr
   }
 }
 
+void PFCUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::ClearDeepActs(u, net, thr_no);
+  u->thal_cnt = 0.0f;
+  u->misc_1 = 0.0f;
+}
+
 void PFCUnitSpec::GraphPFCDyns(DataTable* graph_data, int n_trials) {
   taProject* proj = GetMyProj();
   if(!graph_data) {
