@@ -93,7 +93,7 @@ public:
 
   // these move the data
   static bool  Permute(DataTable* dest, DataTable* src, int thr_no = 0);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON permute (randomly reorder) the rows of the data table -- note that it is typically much more efficient to just use a permuted index to access the data rather than physically permuting the items -- if src == dest, then a temp dest is used and results are copied back to src (i.e., in-place operation) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #ARGC_2 #CAT_Order #MENU_BUTTON permute (randomly reorder) the rows of the data table -- note that it is typically much more efficient to just use a permuted index to access the data rather than physically permuting the items -- if src == dest, then a temp dest is used and results are copied back to src (i.e., in-place operation) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
   static bool  Group(DataTable* dest, DataTable* src, DataGroupSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON group data from src into dest according to grouping specifications in spec (if dest is NULL, a new one is created in proj.data.AnalysisData) -- if src == dest, then a temp dest is used and results are copied back to src (i.e., in-place operation)
   static bool  Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec);
