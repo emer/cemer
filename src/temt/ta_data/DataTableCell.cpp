@@ -22,18 +22,31 @@
 TA_BASEFUNS_CTORS_DEFN(DataTableCell);
 
 void  DataTableCell::Initialize() {
-  row = -1;             // start with invalid row
+  view_row = -1;             // start with invalid row
+  index_row = -1;             // start with invalid row
   value = "";
   value_column = NULL;
   row_column = NULL;
+  control_panel = NULL;
+  enabled = true;
 }
 
 void DataTableCell::GetControlPanelText(MemberDef* mbr, const String& extra_label, String& full_lbl, String& desc) const {
   if (!value_column) return;
   if (row_column) {
-    full_lbl = value_column->dataTable()->GetName() + "__" + value_column->GetName() + "__" + row_column->GetValAsString(row);
+    full_lbl = value_column->dataTable()->GetName() + "__" + value_column->GetName() + "__" + row_column->GetValAsString(view_row);
   }
   else {
-    full_lbl = value_column->dataTable()->GetName() + "__" + value_column->GetName() + "__" + "row_" + String(row);
+    full_lbl = value_column->dataTable()->GetName() + "__" + value_column->GetName() + "__" + "row_" + String(view_row);
+  }
+}
+
+void DataTableCell::SetControlPanelEnabled(bool do_enable) {
+  enabled = do_enable;
+  if (!do_enable) {
+    SetBaseFlag(taBase::BF_GUI_READ_ONLY);
+  }
+  else {
+    ClearBaseFlag(taBase::BF_GUI_READ_ONLY);
   }
 }

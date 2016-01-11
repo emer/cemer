@@ -386,6 +386,11 @@ bool DataTable::AutoSaveData() {
 
 void DataTable::Dump_Load_post() {
   inherited::Dump_Load_post();
+  
+  if(taMisc::is_undo_loading) {
+    UpdateDataTableCells();
+  }
+  
   if(taMisc::is_undo_loading) return; // none of this.
   // this is an attempt to fix BugID:66, but it leads to problems when loading the project
   //  StructUpdate(true);
@@ -1935,6 +1940,16 @@ String DataTable::RangeToTSV(const CellRange& cr) {
 void DataTable::RemoveCol(const Variant& col) {
   DataCol* da = GetColData(col);
   if(!da) return;
+  
+  // Remove the DataTableCell objects and the corresponding control panel items from all the rows (visible or hidden) in the column
+  for (int row = 0; row < row_indexes.size; row++) {
+    DataTableCell* cell = NULL;
+    while ((cell = control_panel_cells.FindCellIndexRow(da, row)) != NULL) {
+      RemoveFromControlPanel(cell->control_panel, cell->value_column, row);
+      control_panel_cells.RemoveEl(cell);
+    }
+  }
+
   StructUpdate(true);
   da->Close();
   StructUpdate(false);
@@ -2003,6 +2018,7 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
     }
   }
   DataUpdate(false);
+  UpdateDataTableCells();
   return rval;
 }
 
@@ -2023,9 +2039,31 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
       "end row not in range:",String(end_row)))
     return false;
   DataUpdate(true);
+  
+  // Remove the DataTableCell objects and the corresponding control panel items from all the rows
+  // can be as many as one per column of each row
+  for (int row = end_row; row >= st_row; row--) {
+    DataTableCell* cell = NULL;
+    while ((cell = control_panel_cells.FindCellEnabled(NULL, row)) != NULL) {
+      cell->SetControlPanelEnabled(false);
+    }
+  }
+
+//  for (int row = end_row; row >= st_row; row--) {
+//    DataTableCell* cell = NULL;
+//    while ((cell = control_panel_cells.FindCell(NULL, row)) != NULL) {
+//      RemoveFromControlPanel(cell->control_panel, cell->value_column, row);
+//      control_panel_cells.RemoveEl(cell);
+//    }
+//  }
+  
   row_indexes.RemoveFrames(st_row, n_rows);
   rows -= n_rows;		// the number of rows not hidden by filtering or hiding
-  if (rows == 0)  keygen.setInt64(0);
+  if (rows == 0) {
+    keygen.setInt64(0);
+  }
+  UpdateDataTableCells();  // update the DataTableCells - must keep in sync
+  
   DataUpdate(false);
   return true;
 }
@@ -2070,7 +2108,6 @@ bool DataTable::RowInRangeNormalize(int& row) {
   return ((row >= 0) && (row < rows));
 }
 
-// jar 5/19/13 - look into these different resets
 void DataTable::Reset() {
   StructUpdate(true);
   data.Reset();
@@ -2101,6 +2138,9 @@ void DataTable::ResetData() {  // this permanently deletes all row data!
   // also update itrs in case using simple itr mode
   read_idx = -1;
   write_idx = -1;
+  
+  // get rid of the DataTableCells linking this table to control panels
+  control_panel_cells.RemoveAll();
 }
 
 void DataTable::RowsAdding(int n, bool begin) {
@@ -2131,8 +2171,10 @@ void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row
   
   DataTableCell* cell = new DataTableCell();
   cell->value_column = column;
-  cell->row = row;
-  cell->value = column->GetValAsString(cell->row);
+  cell->view_row = row;
+  cell->index_row = GetIndexRow(row);
+  cell->value = column->GetValAsString(cell->view_row);
+  cell->control_panel = cp;
   control_panel_cells.Add(cell);
   
   // Get the column will be used to set the label for the control panel item
@@ -2757,7 +2799,7 @@ bool DataTable::FlattenTo(DataTable* flattened_table) {
     flattened_table->CopyFromRow(row, *this, row);
   }
   flattened_table->StructUpdate(false);
-
+  
   if(in_place) {
     this->CopyFrom(flattened_table);
     this->SetName(old_name);
@@ -4259,11 +4301,13 @@ bool DataTable::FilterByScript(const String& filter_expr) {
   if(TestError(!ok, "Filter", "error in filter expression, see console for errors"))
     return false;
   calc_script->Run();
+  UpdateDataTableCells();
   return true;
 }
 
 bool DataTable::FilterBySpec(DataSelectSpec* spec) {
   return taDataProc::SelectRows(this, this, spec);
+  UpdateDataTableCells();
 }
 
 void DataTable::CompareRows(int st_row, int n_rows) {
@@ -4348,6 +4392,7 @@ void DataTable::PermuteRows(int thr_no) {
   StructUpdate(true);
   row_indexes.Permute(thr_no);
   StructUpdate(false);
+  UpdateDataTableCells();
 }
 
 bool DataTable::MatrixColToScalars(const Variant& mtx_col, const String& scalar_col_name_stub) {
@@ -4754,3 +4799,21 @@ void DataTable::FindAll(taVector2i_List* found_list, const String& search_str, b
   }
   DataUpdate(false);
 }
+
+int DataTable::GetViewRow(int index_row) {
+  for (int i=0; i<rows; i++) {
+    if (index_row == row_indexes[i]) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+int DataTable::GetIndexRow(int view_row) {
+  return row_indexes[view_row];
+}
+
+void DataTable::UpdateDataTableCells() {
+  control_panel_cells.UpdateViewRows();
+}
+

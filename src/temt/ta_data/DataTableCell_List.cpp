@@ -15,14 +15,61 @@
 
 #include "DataTableCell_List.h"
 
+#include <DataTable>
+
 TA_BASEFUNS_CTORS_DEFN(DataTableCell_List);
 
-DataTableCell*          DataTableCell_List::FindCell(DataCol* value_column, int row) {
+DataTableCell* DataTableCell_List::FindCell(DataCol* value_column, int row) {
   for(int i = 0; i < size; ++i) {
     DataTableCell* cell = FastEl(i);
-    if (cell->value_column == value_column && cell->row == row) {
+    if (!value_column && cell->view_row == row) {
+      return cell;
+    }
+    else if (cell->value_column == value_column && cell->view_row == row) {
       return cell;
     }
   }
   return NULL;
+}
+
+DataTableCell* DataTableCell_List::FindCellEnabled(DataCol* value_column, int row) {
+  for(int i = 0; i < size; ++i) {
+    DataTableCell* cell = FastEl(i);
+    if (!value_column && cell->view_row == row && cell->enabled) {
+      return cell;
+    }
+    else if (cell->value_column == value_column && cell->view_row == row && cell->enabled) {
+      return cell;
+    }
+  }
+  return NULL;
+}
+
+DataTableCell* DataTableCell_List::FindCellIndexRow(DataCol* value_column, int index_row) {
+  for(int i = 0; i < size; ++i) {
+    DataTableCell* cell = FastEl(i);
+    if (!value_column && cell->index_row == index_row) {
+      return cell;
+    }
+    else if (cell->value_column == value_column && cell->index_row == index_row) {
+      return cell;
+    }
+  }
+  return NULL;
+}
+
+void DataTableCell_List::UpdateViewRows() {
+  DataTable* dt = (DataTable*)this->GetOwner();
+  for (int i=0; i<size; i++) {
+    DataTableCell* dtc = FastEl(i);
+    dtc->view_row = dt->GetViewRow(dtc->index_row);
+    
+    // set enabled state
+    if (dtc->view_row == -1) {
+      dtc->SetControlPanelEnabled(false);
+    }
+    else {
+      dtc->SetControlPanelEnabled(true);
+    }
+  }
 }

@@ -247,6 +247,7 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
   String eff_desc; // = desc -- this is our desc -- not relevant
   String full_lbl;
   base->GetControlPanelText(mbr, _nilString, full_lbl, eff_desc);
+  String full_lbl_copy = full_lbl;
 
   taGuiDialog dlg;
   dlg.Reset();
@@ -262,8 +263,13 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
   if(drval == 0) {
     return false;
   }
+  bool custom_label = false;
+  if (full_lbl != full_lbl_copy) {
+    custom_label = true;
+  }
+
   full_lbl = taMisc::StringCVar(full_lbl);
-  bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, _nilString);
+  bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, _nilString, custom_label);
   ReShowEdit(true); //forced
   return rval;
 }
@@ -278,7 +284,7 @@ bool ControlPanel::SelectMemberNm(taBase* base, const String& md_nm,
 }
 
 bool ControlPanel::SelectMember_impl(taBase* base, MemberDef* md,
-            const String& full_lbl, const String& dscr, const String& sub_gp_nm)
+            const String& full_lbl, const String& dscr, const String& sub_gp_nm, bool custom_label)
 {
   int bidx = -1;
   // this looks at the leaves:
@@ -290,6 +296,7 @@ bool ControlPanel::SelectMember_impl(taBase* base, MemberDef* md,
     item->mbr = md;
     item->item_nm = md->name;
     item->label = full_lbl;
+    item->cust_label = custom_label;
     item->desc = dscr; // even if empty
     if(dscr.nonempty())
       item->cust_desc = true;

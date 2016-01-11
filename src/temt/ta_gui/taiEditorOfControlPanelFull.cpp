@@ -120,6 +120,17 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
     }
     for (int i = 0; i < grp->size; ++i) {
       EditMbrItem* item = grp->FastEl(i);
+      
+      if (!item->cust_label) {  // if not custom - update
+        String extra_label;
+        String full_lbl;
+        String desc;
+        item->base->GetControlPanelText(item->mbr, extra_label, full_lbl, desc); // if it is a data table cell it may have changed
+        item->label = full_lbl;
+      }
+      
+      bool disable = false;
+      disable = item->base->GetEditableState(taBase::BF_GUI_READ_ONLY);
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL))
         continue; // should only happen if created manually (Bad!)
@@ -145,6 +156,9 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           
           memb_set->widget_el.Add(mash_widg);
           QWidget* data = mash_widg->GetRep();
+          if (disable) {
+            data->setEnabled(false);
+          }
           help_text = item->GetDesc();
           String new_lbl = item->caption();
           AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
@@ -173,6 +187,9 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           
           memb_set->widget_el.Add(mash_widg);
           QWidget* data = mash_widg->GetRep();
+          if (disable) {
+            data->setEnabled(false);
+          }
           help_text = item->GetDesc();
           String new_lbl = item->caption();
           AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
@@ -203,6 +220,9 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           //          taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
           memb_set->widget_el.Add(mash_widg);
           QWidget* data = mash_widg->GetRep();
+          if (disable) {
+            data->setEnabled(false);
+          }
           help_text = item->GetDesc();
           String new_lbl = item->caption();
           AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);

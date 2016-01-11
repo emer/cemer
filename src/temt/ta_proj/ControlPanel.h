@@ -134,7 +134,7 @@ protected:
   virtual void          RemoveField_impl(int idx);
   virtual void          RemoveFun_impl(int idx);
   virtual bool          SelectMember_impl(taBase* base, MemberDef* md,
-                  const String& lbl, const String& desc, const String& sub_gp_nm = _nilString);
+                  const String& lbl, const String& desc, const String& sub_gp_nm = _nilString, bool custom_label = false);
   virtual bool          SelectMethod_impl(taBase* base, MethodDef* md,
                                           const String& lbl, const String& desc,
                                           const String& sub_gp_nm = _nilString);

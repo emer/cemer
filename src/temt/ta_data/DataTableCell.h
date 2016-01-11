@@ -32,13 +32,17 @@ INHERITED(taOBase)
 public:
   DataCol*            row_column;       // the value in this column/row will be used in the label
   DataCol*            value_column;     // the column with the editable value
-  int                 row;              // the row as the user sees it
-  int                 row_indexes_row;  // #HIDDEN the row in the underlying matrix that holds all rows, visible and hidden
+  int                 view_row;         // #HIDDEN the row as the user sees it
+  int                 index_row;        // #HIDDEN the row in the underlying matrix that holds all rows, visible and hidden
   String              value;            // content of the table cell
+  ControlPanel*       control_panel;    // the control panel that includes this cell in its member list
+  bool                enabled;          // #HIDDEN #GUI_READ_ONLY
   
   void                GetControlPanelText(MemberDef* mbr, const String& xtra_lbl, String& full_lbl, String& desc) const override;
   // #IGNORE set a default label
-
+  virtual void        SetControlPanelEnabled(bool do_enable);     // #IGNORE set for control panel to show enabled/disabled
+  // set the taBase::BF_GUI_READ_ONLY so the control panel item will be disabled -- used when rows are hidden
+  
   TA_BASEFUNS_NOCOPY(DataTableCell);
   
 protected:

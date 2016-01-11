@@ -67,6 +67,7 @@ bool ControlPanelItem::StatRemoveItemBase(taGroup_impl* grp, taBase* base) {
 void ControlPanelItem::Initialize() {
   base = NULL;
   cust_desc = false;
+  cust_label = false;
 }
 
 void ControlPanelItem::Destroy() {
@@ -74,6 +75,7 @@ void ControlPanelItem::Destroy() {
 
 void ControlPanelItem::Copy_(const ControlPanelItem& cp) {
   label = cp.label;
+  cust_label = cp.cust_label;
   desc = cp.desc;
   cust_desc = cp.cust_desc;
   prv_desc = desc;             // no change here

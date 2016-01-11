@@ -434,7 +434,7 @@ bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
 
   delete[] order;
   dt->StructUpdate(false);
-
+  dt->UpdateDataTableCells();  // maybe better if this happened through structupdate
   return true;
 }
 
@@ -537,6 +537,7 @@ bool taDataProc::Permute(DataTable* dest, DataTable* src, int thr_no) {
     dest->CopyFromRow(-1, *src, idxs[row]);
   }
   dest->StructUpdate(false);
+  src->UpdateDataTableCells();  // maybe better if this happened through structupdate
   return true;
 }
 

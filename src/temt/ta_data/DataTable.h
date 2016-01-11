@@ -154,6 +154,13 @@ public:
   DataTableCell_List    control_panel_cells;
   // #HIDDEN a list of DataTableCell objects that provide the link between data table cells and control panels -- needed because cells are not themselves object members
   
+  int                   GetViewRow(int index_row);
+  //  #EXPERT Get the visible row corresponding the row number as stored
+  int                   GetIndexRow(int view_row);
+  //  #EXPERT Get the index of row as stored in list of all rows
+  void                  UpdateDataTableCells();
+  // #IGNORE called by dataproc sort/permute but really would be better if somehow this happened without the need
+
   /////////////////////////////////////////////
   // Flags
 
@@ -622,7 +629,7 @@ public:
   // Remove DataTableCell from list and remove from control panel
 
   virtual void          GetDataTableCellRowCol(DataCol* column);
-  //   #BUTTON #FROM_GROUP_data sets the control_panel_cell row_column member
+  //   #BUTTON #NO_SHOW #FROM_GROUP_data sets the control_panel_cell row_column member - button needed to call method with CallFun and have gui arg dialog appear
 
   /////////////////////////////////////////////////////////
   // Main data value access/modify (Get/Set) routines: for Programs and very general use
@@ -1075,7 +1082,7 @@ public:
   virtual String        ColStatsName(const String& col_name);
   // #EXPERT #CAT_DataProc compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
   virtual void          PermuteRows(int thr_no = 0);
-  // #CAT_DataProc #MENU permute the order of rows in the data table -- randomly shuffles the rows -- this is very efficiently implemented by shuffling the row_indexes lookup table, not the actual rows in memory.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Permute you would need to run Flatten first -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
+  // #CAT_DataProc #ARGC_0 #MENU permute the order of rows in the data table -- randomly shuffles the rows -- this is very efficiently implemented by shuffling the row_indexes lookup table, not the actual rows in memory.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Permute you would need to run Flatten first -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
   virtual void          CompareRows(int st_row, int n_rows);
   // ##CAT_Rows compare cell values in selected rows (first selected row to all others) does not test matrices
   virtual void          ClearCompareRows();

@@ -31,7 +31,12 @@ class TA_API DataTableCell_List : public taList<DataTableCell> {
 INHERITED(taList<DataTableCell>)
 public:
   DataTableCell*          FindCell(DataCol* value_column, int row);
-
+  DataTableCell*          FindCellEnabled(DataCol* value_column, int row);
+  // Only if the cell is currently enabled on control panel
+  DataTableCell*          FindCellIndexRow(DataCol* value_column, int row_index_row);
+  
+  void                    UpdateViewRows();
+  
   TA_BASEFUNS_NOCOPY(DataTableCell_List);
 private:
   void Initialize()  { SetBaseType(&TA_DataTableCell); };

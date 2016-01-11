@@ -45,6 +45,7 @@ public:
     // remove any items with this base
 
   String                label;          // full display label for item in edit dialog
+  bool                  cust_label;     // the label is customized over the default and thus protected from automatic updates -- this flag is automatically set by editing, but can also be set manually if desired
   String                desc;           // #EDIT_DIALOG description (appears as tooltip for item)
   bool                  cust_desc;      // the description (desc) is customized over the default and thus protected from automatic updates -- otherwise desc is obtained from the member or method type information -- this flag is automatically set by editing, but can also be set manually if desired
   taBase*               base;           // #READ_ONLY #SHOW #NO_SET_POINTER #UPDATE_POINTER the mbr/mth base (not ref'ed)
