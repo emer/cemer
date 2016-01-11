@@ -32,6 +32,7 @@ void TANUnitSpec::Initialize() {
 }
 
 void TANUnitSpec::Defaults_init() {
+  SetUnique("deep_raw_qtr", true);
   deep_raw_qtr = QALL;
 }
 

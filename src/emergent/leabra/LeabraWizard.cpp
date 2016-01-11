@@ -1011,6 +1011,9 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vtan_units->SetUnique("da_val", true);
   vtan_units->da_val = VTAUnitSpec::DA_N;
 
+  tan_units->SetUnique("deep_raw_qtr", true);
+  tan_units->deep_raw_qtr = LeabraUnitSpec::QALL;
+
   baapd1_units->SetUnique("deep", true);
   baapd1_units->deep.role = DeepSpec::DEEP;
   baapd1_units->SetUnique("acq_ext", true);
