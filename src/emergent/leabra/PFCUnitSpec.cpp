@@ -234,21 +234,6 @@ void PFCUnitSpec::Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int t
     return;
   }
 
-  // first, test for over-duration maintenance -- allow for active gating to override
-  if(gate.out_gate) {
-    // if(u->thal_cnt == 1) {
-    //   ClearOtherMaint(u, net, thr_no); 
-    // }
-    if(u->thal_cnt >= maint.max_mnt) {
-      u->thal_cnt = -1.0f;
-    }
-  }
-  else {                        // maint gating
-    if(u->thal_cnt >= maint.max_mnt) {
-      u->thal_cnt = -1.0f;
-    }
-  }
-  
   if(u->thal > gate.gate_thr) { // new gating signal -- reset counter
     if(u->thal_cnt >= 1.0f) { // already maintaining
       if(maint.clear > 0.0f) {
@@ -259,6 +244,11 @@ void PFCUnitSpec::Compute_PFCGating(LeabraUnitVars* u, LeabraNetwork* net, int t
     if(gate.out_gate) {         // time to clear out maint
       ClearOtherMaint(u, net, thr_no); 
     }
+  }
+
+  // test for over-duration maintenance -- allow for active gating to override
+  if(u->thal_cnt >= maint.max_mnt) {
+    u->thal_cnt = -1.0f;
   }
 }
 
