@@ -2768,6 +2768,7 @@ void DataTable::ShowAllRows() {
   ResetRowIndexes();
   ClearCompareRows();
   StructUpdate(false);
+  UpdateDataTableCells();
 }
 
 bool DataTable::Flatten() {

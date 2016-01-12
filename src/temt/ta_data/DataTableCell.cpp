@@ -37,7 +37,12 @@ void DataTableCell::GetControlPanelText(MemberDef* mbr, const String& extra_labe
     full_lbl = value_column->dataTable()->GetName() + "__" + value_column->GetName() + "__" + row_column->GetValAsString(view_row);
   }
   else {
-    full_lbl = value_column->dataTable()->GetName() + "__" + value_column->GetName() + "__" + "row_" + String(view_row);
+    if (view_row != -1) {
+      full_lbl = value_column->dataTable()->GetName() + "__" + value_column->GetName() + "__" + "row_" + String(view_row);
+    }
+    else {
+      full_lbl = value_column->dataTable()->GetName() + "__" + value_column->GetName() + "__" + "hidden row";
+    }
   }
 }
 
