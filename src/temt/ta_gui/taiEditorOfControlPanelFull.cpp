@@ -125,8 +125,10 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
         String extra_label;
         String full_lbl;
         String desc;
+        if (item->base->InheritsFrom(&TA_DataTableCell)) {
         item->base->GetControlPanelText(item->mbr, extra_label, full_lbl, desc); // if it is a data table cell it may have changed
         item->label = full_lbl;
+        }
       }
       
       bool disable = false;
