@@ -132,7 +132,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
       }
       
       bool disable = false;
-      disable = item->base->GetEditableState(taBase::BF_GUI_READ_ONLY);
+//      disable = item->base->GetEditableState(taBase::BF_GUI_READ_ONLY);
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL))
         continue; // should only happen if created manually (Bad!)
