@@ -121,13 +121,13 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
     for (int i = 0; i < grp->size; ++i) {
       EditMbrItem* item = grp->FastEl(i);
       
-      if (!item->cust_label) {  // if not custom - update
-        String extra_label;
-        String full_lbl;
-        String desc;
-        item->base->GetControlPanelText(item->mbr, extra_label, full_lbl, desc); // if it is a data table cell it may have changed
-        item->label = full_lbl;
-      }
+//      if (!item->cust_label) {  // if not custom - update
+//        String extra_label;
+//        String full_lbl;
+//        String desc;
+//        item->base->GetControlPanelText(item->mbr, extra_label, full_lbl, desc); // if it is a data table cell it may have changed
+//        item->label = full_lbl;
+//      }
       
       bool disable = false;
 //      disable = item->base->GetEditableState(taBase::BF_GUI_READ_ONLY);
