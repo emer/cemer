@@ -86,17 +86,19 @@ TA_API taiMisc* taiM_ = NULL;
 const int taiMisc::FONT_MED = 1;
 const int taiMisc::FONT_SM = 2;
 
+const int taiMisc::CP_ITEM_ELIDE_LENGTH = 16;
+
 const String taiMisc::DEFAULT_PROJ_SPLITTERS = "AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQE=";
 
-taiDialogEditor_List      taiMisc::active_dialogs;
-taiEditorOfClass_List    taiMisc::active_edits;
-taiEditorOfClass_List    taiMisc::css_active_edits;
-iTopLevelWindow_List    taiMisc::active_wins;
-TypeSpace               taiMisc::arg_types;
+taiDialogEditor_List        taiMisc::active_dialogs;
+taiEditorOfClass_List       taiMisc::active_edits;
+taiEditorOfClass_List       taiMisc::css_active_edits;
+iTopLevelWindow_List        taiMisc::active_wins;
+TypeSpace                   taiMisc::arg_types;
 QPointer<iMainWindowViewer> taiMisc::main_window;
-taBase_PtrList          taiMisc::unopened_windows;
+taBase_PtrList              taiMisc::unopened_windows;
 void (*taiMisc::Update_Hook)(taBase*) = NULL;
-iNetworkAccessManager*  taiMisc::net_access_mgr = NULL;
+iNetworkAccessManager*      taiMisc::net_access_mgr = NULL;
 
 int taiMisc::busy_count = 0;
 

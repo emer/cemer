@@ -31,6 +31,7 @@ taTypeDef_Of(taProject);
 
 #include <taMisc>
 #include <tabMisc>
+#include <taiMisc>
 
 #include <css_machine.h>
 #include <css_ta.h>
@@ -331,10 +332,10 @@ void ProgVar::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
     if (lbl.empty()) { //note: typically is empty
       Program* prog = GET_MY_OWNER(Program);
       if (prog)
-        lbl = prog->GetName().elidedTo(16);
+        lbl = prog->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH);
     }
     if (lbl.nonempty()) lbl += "_";
-    lbl += GetName().elidedTo(16); 	// var name, not the member name
+    lbl += GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH); 	// var name, not the member name
     full_lbl = taMisc::StringCVar(lbl);
     eff_desc = GetDesc();		// always use our desc, not default
   }

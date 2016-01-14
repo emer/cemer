@@ -382,7 +382,8 @@ public:
 
   static const int      FONT_MED; // #DEF_1 pts to subtract from BIG
   static const int      FONT_SM;  // #DEF_2 pts to subtract frm BIG
-
+  
+  static const int      CP_ITEM_ELIDE_LENGTH;  // max length of control panel item "piece" -- e.g. program and variable each can be up to this length before being elided
 
   static taiDialogEditor_List    active_dialogs; // #IGNORE list of active (NoBlock) dialogs
   static taiEditorOfClass_List   active_edits;   // #IGNORE list of active edit dialogs

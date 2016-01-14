@@ -18,6 +18,7 @@
 #include <DataTable>
 
 #include <taMisc>
+#include <taiMisc>
 
 TA_BASEFUNS_CTORS_DEFN(DataTableCell);
 
@@ -33,15 +34,18 @@ void  DataTableCell::Initialize() {
 
 void DataTableCell::GetControlPanelText(MemberDef* mbr, const String& extra_label, String& full_lbl, String& desc) const {
   if (!value_column) return;
+
+  String table_str = value_column->dataTable()->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH);
+  String column_str = value_column->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH);
   if (row_column) {
-    full_lbl = value_column->dataTable()->GetName() + "_" + value_column->GetName() + "_" + row_column->GetValAsString(view_row);
+    full_lbl = table_str + "_" + column_str + "_" + row_column->GetValAsString(view_row);
   }
   else {
     if (view_row != -1) {
-      full_lbl = value_column->dataTable()->GetName() + "_" + value_column->GetName() + "_" + "row_" + String(view_row);
+      full_lbl = table_str + "_" + column_str + "_" + "row_" + String(view_row);
     }
     else {
-      full_lbl = value_column->dataTable()->GetName() + "_" + value_column->GetName() + "_" + "hidden row";
+      full_lbl = table_str + "_" + column_str + "_" + "hidden row";
     }
   }
 }

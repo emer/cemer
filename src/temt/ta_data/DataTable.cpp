@@ -2183,9 +2183,6 @@ void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row
   if (non_matrix_count > 1) {
     CallFun("GetDataTableCellRowCol");
     cell->row_column = last_chosen_column;
-    if (!cell->row_column || cell->row_column->isMatrix()) {
-      cell->row_column = data.GetFirstNonMatrixCol();
-    }
     last_chosen_column = NULL;  // set to NULL because the column might get deleted and we don't need anymore
   }
   
