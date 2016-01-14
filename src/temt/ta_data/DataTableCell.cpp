@@ -34,14 +34,14 @@ void  DataTableCell::Initialize() {
 void DataTableCell::GetControlPanelText(MemberDef* mbr, const String& extra_label, String& full_lbl, String& desc) const {
   if (!value_column) return;
   if (row_column) {
-    full_lbl = value_column->dataTable()->GetName() + "__" + value_column->GetName() + "__" + row_column->GetValAsString(view_row);
+    full_lbl = value_column->dataTable()->GetName() + "_" + value_column->GetName() + "_" + row_column->GetValAsString(view_row);
   }
   else {
     if (view_row != -1) {
-      full_lbl = value_column->dataTable()->GetName() + "__" + value_column->GetName() + "__" + "row_" + String(view_row);
+      full_lbl = value_column->dataTable()->GetName() + "_" + value_column->GetName() + "_" + "row_" + String(view_row);
     }
     else {
-      full_lbl = value_column->dataTable()->GetName() + "__" + value_column->GetName() + "__" + "hidden row";
+      full_lbl = value_column->dataTable()->GetName() + "_" + value_column->GetName() + "_" + "hidden row";
     }
   }
 }
