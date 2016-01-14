@@ -79,10 +79,13 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
     case Qt::EditRole: {
       if (col->is_matrix)
         return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
-      else if (col->isBool()) {
+      else if (col->isBool() && !(col->col_flags & DataCol::CHECKBOX)) {
         return col->GetValAsString(index.row());
       }
       else {
+        if (col->isBool()) {
+          break;
+        }
         int dx;
         if(m_dt->idx(index.row(), dx))
           return static_cast<const char *>(col->GetValAsString(dx));
@@ -137,16 +140,16 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
       break;
       
     case Qt::CheckStateRole: {
-        DataCol* dc = m_dt->data.FastEl(index.column());
-        if (dc && dc->isBool()) {
-          int val = dc->GetValAsInt(index.row());
-          if (val == 0) {
-            return Qt::Unchecked;
-          }
-          else {
-            return Qt::Checked;
-          }
+      DataCol* dc = m_dt->data.FastEl(index.column());
+      if (dc && dc->isBool() && (dc->col_flags & DataCol::CHECKBOX)) {
+        int val = dc->GetValAsInt(index.row());
+        if (val == 0) {
+          return Qt::Unchecked;
         }
+        else {
+          return Qt::Checked;
+        }
+      }
       break;
     }
       

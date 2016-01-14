@@ -68,6 +68,7 @@ public:
     CALC                = 0x0010, // calculate value of this column based on calc_expr expression
     READ_ONLY           = 0x0020, // this column is read-only in the gui (helps protect keys or programmatically generated data items)
     PAT_4D              = 0x0040, // (4d cells only) displays cells in the same geometry as grouped network layers -- NOTE: data is still copied/pasted in clipboard in a 2d format
+    CHECKBOX            = 0x0100, // bool data cells will have a functioning checkbox - otherwise the strings "true" or "false" will be used
   };
 
   String                desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
