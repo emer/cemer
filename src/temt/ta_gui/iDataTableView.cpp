@@ -283,7 +283,9 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
   int row = sel.row_fr;
   if (!dc) return;
   
-  if ((ca != CA_ROW_HDR) && (sel.width() == 1) && (sel.height() == 1) && !dc->isMatrix()) {
+  // single cell or single column
+  if (((ca != CA_ROW_HDR) && (sel.width() == 1) && (sel.height() == 1) && !dc->isMatrix()) ||
+      ((ca == CA_COL_HDR) && (sel.width() == 1) && !dc->isMatrix())) {
     menu->AddSep();
     iAction* add_act = NULL;
     iAction* remove_act = NULL;
@@ -302,6 +304,16 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
       
       // First check our list of cells on control panels - then check the control panel
       DataTableCell* dtc = dataTable()->control_panel_cells.FindCell(dc, row);
+      if (dtc) {
+        MemberDef* md = dtc->FindMember("value");
+        // now check control panel
+        if (md && cp->FindMbrBase(dtc, md) > -1) {
+          add_act->setEnabled(false);
+          remove_act->setEnabled(true);
+        }
+      }
+      // now check the column_type dtcs
+      dtc = dataTable()->control_panel_cells.FindColumnTypeDTC(dc);
       if (dtc) {
         MemberDef* md = dtc->FindMember("value");
         // now check control panel
@@ -329,7 +341,13 @@ void iDataTableView::AddCellToControlPanel(int menu_item_position) {
   DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
   taProject* proj = dataTable()->GetMyProj();
   ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
-  dataTable()->AddCellToControlPanel(cp, dc, row);
+  
+  bool is_column_type_dtc = false;
+  if (sel.row_fr == 0 && sel.row_to == dataTable()->rows-1) {
+    is_column_type_dtc = true;
+  }
+
+  dataTable()->AddCellToControlPanel(cp, dc, row, is_column_type_dtc);
 }
 
 void iDataTableView::RemoveFromControlPanel(int menu_item_position) {

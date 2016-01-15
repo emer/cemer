@@ -2163,15 +2163,28 @@ void DataTable::GetDataTableCellRowCol(DataCol* column) {
   last_chosen_column = column;
 }
 
-void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row) { // this is the column used for choosing a row - e.g. config_id column
+void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row, bool is_column_type_dtc) { // this is the column used for choosing a row - e.g. config_id column
   if(!column || !cp || column->isMatrix()) return;
   
   taProject* proj = GetMyProj();
   if (!proj) return;
   
+  if (is_column_type_dtc) {
+    // only one column_type_dtc per column
+    if (control_panel_cells.FindColumnTypeDTC(column)) {
+      taMisc::Info("Only one column type control panel item per column");	
+      return;
+    }
+  }
   DataTableCell* cell = new DataTableCell();
+  cell->column_type_dtc = is_column_type_dtc;
   cell->value_column = column;
-  cell->view_row = row;
+  if (cell->column_type_dtc) {
+    cell->view_row = -1;
+  }
+  else {
+    cell->view_row = row;
+  }
   cell->index_row = GetIndexRow(row);
   cell->value = column->GetValAsString(cell->view_row);
   cell->control_panel = cp;
@@ -2210,6 +2223,14 @@ void DataTable::RemoveFromControlPanel(ControlPanel* cp, DataCol* column, int ro
   }
 }
 
+void DataTable::SetCellsFromConfig(int row) {
+  for (int i=0; i<control_panel_cells.size; i++) {
+    DataTableCell* dtc = (DataTableCell*)control_panel_cells.FastEl_(i);
+    if (dtc && dtc->column_type_dtc == true) {
+     dtc->value_column->SetValAsVar(dtc->column_value, row);
+    }
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////////
 ///     Saving / Loading from Emergent or Plain Text Files

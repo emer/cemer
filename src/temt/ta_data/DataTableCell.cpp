@@ -30,6 +30,8 @@ void  DataTableCell::Initialize() {
   row_column = NULL;
   control_panel = NULL;
   enabled = true;
+  column_type_dtc = false;
+  column_value = "";
 }
 
 void DataTableCell::GetControlPanelText(MemberDef* mbr, const String& extra_label, String& full_lbl, String& desc) const {
@@ -37,7 +39,10 @@ void DataTableCell::GetControlPanelText(MemberDef* mbr, const String& extra_labe
 
   String table_str = value_column->dataTable()->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH);
   String column_str = value_column->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH);
-  if (row_column) {
+  if (column_type_dtc) {
+    full_lbl = "* " + table_str + "_" + column_str;
+  }
+  else if (row_column) {
     full_lbl = table_str + "_" + column_str + "_" + row_column->GetValAsString(view_row);
   }
   else {

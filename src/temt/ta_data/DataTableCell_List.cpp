@@ -58,6 +58,16 @@ DataTableCell* DataTableCell_List::FindCellIndexRow(DataCol* value_column, int i
   return NULL;
 }
 
+DataTableCell* DataTableCell_List::FindColumnTypeDTC(DataCol* value_column) {
+  for(int i = 0; i < size; ++i) {
+    DataTableCell* cell = FastEl(i);
+    if (cell->value_column == value_column && cell->column_type_dtc) {
+      return cell;
+    }
+  }
+  return NULL;
+}
+
 void DataTableCell_List::UpdateViewRows() {
   DataTable* dt = (DataTable*)this->GetOwner();
   for (int i=0; i<size; i++) {

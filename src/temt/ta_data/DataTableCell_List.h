@@ -34,6 +34,8 @@ public:
   DataTableCell*          FindCellEnabled(DataCol* value_column, int row);
   // Only if the cell is currently enabled on control panel
   DataTableCell*          FindCellIndexRow(DataCol* value_column, int row_index_row);
+  DataTableCell*          FindColumnTypeDTC(DataCol* value_column);
+  // Find a DataTableCell for particular column where column_type_dtc is true
   
   void                    UpdateViewRows();
   

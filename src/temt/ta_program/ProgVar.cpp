@@ -327,7 +327,8 @@ void ProgVar::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
   const String& mn = mbr->name;
   String lbl = xtra_lbl;
   if ((mn == "int_val") || (mn == "real_val") || (mn == "string_val") ||
-    (mn == "bool_val") || (mn == "object_val") || (mn == "dyn_enum_val"))
+//      (mn == "bool_val") || (mn == "object_val") || (mn == "dyn_enum_val"))
+    (mn == "bool_val") || (mn == "object_val"))
   {
     if (lbl.empty()) { //note: typically is empty
       Program* prog = GET_MY_OWNER(Program);
