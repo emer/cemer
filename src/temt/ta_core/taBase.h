@@ -1426,7 +1426,9 @@ public:
   // #MENU #MENU_ON_ParamSet #NO_MENU_PANEL #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewParamSet select an object member to be added to a project param_set
   virtual void          GetControlPanelText(MemberDef* mbr, const String& extra_label,
     String& full_lbl, String& desc) const; // #IGNORE supply extra_label (optional); provides the canonical full label and (if empty) desc
-
+  virtual void          RemovingFromControlPanel(taBase* cp_item_base) { };
+  // let this owner know that control panel item is being removed
+  
   ///////////////////////////////////////////////////////////////////////////
   //    User Data: optional configuration settings for objects
 public:

@@ -164,9 +164,25 @@ void ControlPanel::RemoveField(int idx) {
 }
 
 void ControlPanel::RemoveField_impl(int idx) {
+  taBase* base_owner = NULL;
   EditMbrItem* item = mbrs.Leaf(idx);
+  
+  taBase* mbrown = NULL;
+  if(item && item->base) {
+    mbrown = item->base->GetMemberOwner(true);
+    if(!mbrown)
+      mbrown = item->base;       // must be object itself?
+  }
+  
+  if (mbrown) {
+    base_owner = mbrown->GetOwner();
+  }
   if (item)
     item->Close();
+  
+  if(base_owner) {
+    base_owner->RemovingFromControlPanel(mbrown);
+  }
 }
 
 void ControlPanel::GoToObject(int idx) {

@@ -83,3 +83,8 @@ void DataTableCell_List::UpdateViewRows() {
     }
   }
 }
+
+void DataTableCell_List::RemovingFromControlPanel(taBase* cp_item_base) {
+  this->RemoveEl_(cp_item_base);
+}
+

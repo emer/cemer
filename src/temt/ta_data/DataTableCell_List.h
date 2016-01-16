@@ -38,6 +38,7 @@ public:
   // Find a DataTableCell for particular column where column_type_dtc is true
   
   void                    UpdateViewRows();
+  void                    RemovingFromControlPanel(taBase* cp_item_base) override;
   
   TA_BASEFUNS_NOCOPY(DataTableCell_List);
 private:
