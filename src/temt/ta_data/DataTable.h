@@ -631,8 +631,10 @@ public:
   virtual void          GetDataTableCellRowCol(DataCol* column);
   //   #BUTTON #NO_SHOW #FROM_GROUP_data sets the control_panel_cell row_column member - button needed to call method with CallFun and have gui arg dialog appear
 
-  virtual void          SetCellsFromConfig(int row);
+  virtual void          SetCellsInRow(int row);
   // set the values of table cells in the specified row using the current values in control panel items for columns where there is a column_type DataTableCell (i.e. column_type_dtc == true)
+  virtual void          SetCellsFromConfig(String column_name, String value);
+  // set the values of table cells in the row with value matching the "value" arg of column matching "column_name" arg
   
   /////////////////////////////////////////////////////////
   // Main data value access/modify (Get/Set) routines: for Programs and very general use

@@ -2223,13 +2223,19 @@ void DataTable::RemoveFromControlPanel(ControlPanel* cp, DataCol* column, int ro
   }
 }
 
-void DataTable::SetCellsFromConfig(int row) {
+void DataTable::SetCellsInRow(int row) {
   for (int i=0; i<control_panel_cells.size; i++) {
     DataTableCell* dtc = (DataTableCell*)control_panel_cells.FastEl_(i);
     if (dtc && dtc->column_type_dtc == true) {
      dtc->value_column->SetValAsVar(dtc->column_value, row);
     }
   }
+}
+
+void DataTable::SetCellsFromConfig(String column_name, String value) {
+  int row = -1;
+  row = FindVal(value, column_name, 0);
+  SetCellsInRow(row);
 }
 
 //////////////////////////////////////////////////////////////////////////////
