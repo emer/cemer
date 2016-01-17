@@ -181,7 +181,7 @@ void ControlPanel::RemoveField_impl(int idx) {
     item->Close();
   
   if(base_owner) {
-    base_owner->RemovingFromControlPanel(mbrown);
+    base_owner->SigEmit(SLS_ITEM_DELETING, mbrown);
   }
 }
 

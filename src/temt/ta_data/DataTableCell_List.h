@@ -38,8 +38,8 @@ public:
   // Find a DataTableCell for particular column where column_type_dtc is true
   
   void                    UpdateViewRows();
-  void                    RemovingFromControlPanel(taBase* cp_item_base) override;
-  
+  void                    SigEmit(int sls, void* op1, void* op2) override;
+
   TA_BASEFUNS_NOCOPY(DataTableCell_List);
 private:
   void Initialize()  { SetBaseType(&TA_DataTableCell); };

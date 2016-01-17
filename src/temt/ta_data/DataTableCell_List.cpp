@@ -16,6 +16,7 @@
 #include "DataTableCell_List.h"
 
 #include <DataTable>
+#include <SigLinkSignal>
 
 TA_BASEFUNS_CTORS_DEFN(DataTableCell_List);
 
@@ -84,7 +85,9 @@ void DataTableCell_List::UpdateViewRows() {
   }
 }
 
-void DataTableCell_List::RemovingFromControlPanel(taBase* cp_item_base) {
-  this->RemoveEl_(cp_item_base);
+void DataTableCell_List::SigEmit(int sls, void* op1, void* op2) {
+  if (sls == SLS_ITEM_DELETING) {
+    this->RemoveEl_(op1);
+  }
+  inherited::SigEmit(sls, op1, op2);
 }
-
