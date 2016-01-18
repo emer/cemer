@@ -35,24 +35,23 @@ eTypeDef_Of(LeabraUnGpData);
 eTypeDef_Of(LeabraInhibSpec);
 
 class E_API LeabraInhibSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is computed in Leabra system -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any unit-level inhibition is just added on top of this computed inhibition
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is computed in Leabra system -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average (or maximum) netinput (FF) and activation (FB) -- any unit-level inhibition is just added on top of this computed inhibition
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable this form of inhibition (layer or unit group) -- if only using inhibitory interneurons, both can be turned off
   float         gi;             // #CONDSHOW_ON_on #MIN_0 #AKA_lay_gi [1.5-2.3 typical, can go much lower or higher as needed] overall inhibition gain -- this is main paramter to adjust to change overall activation levels -- it scales both the the ff and fb factors uniformly
-  float		ff;		// #CONDSHOW_ON_on #MIN_0 #DEF_1 overall inhibitory contribution from feedforward inhibition -- just multiplies average netinput (i.e., synaptic drive into layer) -- this anticipates upcoming changes in excitation, but if set too high, it can make activity slow to emerge
-  float		fb;		// #CONDSHOW_ON_on #MIN_0 #DEF_0.5;1 overall inhibitory contribution from feedback inhibition -- just multiplies average activation -- this reacts to layer activation levels and works more like a thermostat (turnign up when the 'heat' in the layer is to high)
+  float		ff;		// #CONDSHOW_ON_on #MIN_0 #DEF_1 overall inhibitory contribution from feedforward inhibition -- multiplies a computed proportion of max vs average (see max_vs_avg) netinput (i.e., synaptic drive into layer) -- this anticipates upcoming changes in excitation, but if set too high, it can make activity slow to emerge -- see also ff0 for a zero-point for this value and its relationship to max_vs_avg
+  float		fb;		// #CONDSHOW_ON_on #MIN_0 #DEF_0.5;1 overall inhibitory contribution from feedback inhibition -- multiplies average activation -- this reacts to layer activation levels and works more like a thermostat (turnign up when the 'heat' in the layer is to high)
   float         fb_tau;         // #CONDSHOW_ON_on #MIN_0 #DEF_1.4 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for integrating feedback inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid 1.4 typically works, but may need to go longer if oscillations are a problem
-  float         ff0;            // #CONDSHOW_ON_on #DEF_0.1 feedforward zero point for average netinput -- below this level, no FF inhibition is computed based on avg netinput, and this value is subtraced from the ff inhib contribution above this value -- the 0.1 default should be good for most cases (and helps FF_FB produce k-winner-take-all dynamics), but if average netinputs are lower than typical, you may need to lower it
-  float         ff_max;         // #CONDSHOW_ON_on #DEF_0 amount of feedforward inhibition based on the maximum netinput, instead of the average netinput used by the basic ff factor -- max is not sensitive to the full distribution of net inputs, so it can enforce a stronger k-winner-take-all dynamic where that is needed
-  float         ff_max0;        // #CONDSHOW_OFF_on:false||ff_max:0 #DEF_0.5 feedforward zero point for max netinput -- below this level, no FF inhibition is computed based on max netinput, and this value is subtraced from the ff inhib contribution above this value
+  float         ff0;            // #CONDSHOW_ON_on #DEF_0.1;0.5 feedforward zero point for average netinput -- below this level, no FF inhibition is computed based on avg netinput, and this value is subtraced from the ff inhib contribution above this value -- the 0.1 default should be good for most cases (and helps FF_FB produce k-winner-take-all dynamics), but if average netinputs are lower than typical, you may need to lower it -- and as max_vs_avg is placed higher toward max (closer to 1) then you may need to raise this value -- e.g., a value of 0.5 works well for max_vs_avg = 1
+  float         max_vs_avg;    // #CONDSHOW_ON_on #DEF_0 what proportion of the maximum vs. average netinput to use in the feedforward inhibition computation -- 0 = all average, 1 = all max, and values in between = proportional mix between average and max (ff_netin = avg + max_vs_avg * (max - avg)) -- including more max can be beneficial especially in situations where the average can vary significantly but the activity should not -- i.e., max is more robust in many situations but less flexible and sensitive to the overall distribution -- e.g., max is better for cases more closely approximating single or strictly fixed winner-take-all behavior -- as max_vs_avg is increased, generally need to proportionally increase ff0 upwards toward .5
 
   float		fb_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
   inline float    FFInhib(const float avg_netin, const float max_netin) {
+    const float ff_netin = avg_netin + max_vs_avg * (max_netin - avg_netin);
     float ffi = 0.0f;
-    if(avg_netin > ff0) ffi = ff * (avg_netin - ff0);
-    if(ff_max > 0.0f && max_netin > ff_max0) ffi += ff_max * (max_netin - ff_max0);
+    if(ff_netin > ff0) ffi = ff * (ff_netin - ff0);
     return ffi;
   }
   // feedforward inhibition value as function of netinput
