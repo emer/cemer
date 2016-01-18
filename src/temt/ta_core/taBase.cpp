@@ -3514,16 +3514,14 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
   return true;
 }
 
-
-bool taBase::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel, const String& extra_label,
-                           const String& sub_gp_nm) {
+bool taBase::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) {
   if(TestError(!member,"AddToControlPanel", "member is null")) return false;
   if(!ctrl_panel) {
     taProject* proj = GetMyProj();
     if(TestError(!proj, "AddToControlPanel", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->SelectMember(this, member, extra_label, "", sub_gp_nm);
+  return ctrl_panel->SelectMemberPrompt(this, member);
 }
 
 bool taBase::AddToControlPanelNm(const String& member, ControlPanel* ctrl_panel,
@@ -3538,41 +3536,37 @@ bool taBase::AddToControlPanelNm(const String& member, ControlPanel* ctrl_panel,
   return ctrl_panel->SelectMemberNm(this, member, extra_label, desc, sub_gp_nm);
 }
 
-bool taBase::AddFunToControlPanel(MethodDef* function, ControlPanel* ctrl_panel,
-                              const String& extra_label, const String& sub_gp_nm) {
+bool taBase::AddFunToControlPanel(MethodDef* function, ControlPanel* ctrl_panel) {
   if(TestError(!function, "AddControlFunForEdit", "function is null")) return false;
   if(!ctrl_panel) {
     taProject* proj = GetMyProj();
     if(TestError(!proj, "AddControlFunForEdit", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->SelectMethod(this, function, extra_label, "", sub_gp_nm);
+  return ctrl_panel->SelectMethod(this, function);
 }
 
 bool taBase::AddFunToControlPanelNm(const String& function, ControlPanel* ctrl_panel,
-                                const String& extra_label, const String& sub_gp_nm,
                                 const String& desc) {
   if(!ctrl_panel) {
     taProject* proj = GetMyProj();
     if(TestError(!proj, "AddControlFunForEditNm", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->SelectMethodNm(this, function, extra_label, desc, sub_gp_nm);
+  return ctrl_panel->SelectMethodNm(this, function, desc);
 }
 
-bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set, const String& extra_label,
-                               const String& sub_gp_nm) {
+bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set) {
   if(TestError(!member,"AddToParamSet", "member is null")) return false;
   if(!param_set) {
     taProject* proj = GetMyProj();
     if(TestError(!proj, "AddToParamSet", "cannot find project")) return false;
     param_set = (ParamSet*)proj->param_sets.New(1);
   }
-  return param_set->SelectMember(this, member, extra_label, "", sub_gp_nm);
+  return param_set->SelectMemberPrompt(this, member);
 }
 
-void taBase::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
-                                  String& full_lbl, String& desc) const {
+void taBase::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl, String& full_lbl, String& desc) const {
   String lbl = xtra_lbl;
   if (lbl.empty()) {
     lbl = GetDisplayName().CamelToSnake().elidedTo(48); //16

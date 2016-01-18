@@ -392,7 +392,8 @@ MemberDef* ProgVar::GetValMemberDef() {
   else if(var_type == T_Object)
     return TA_ProgVar.members.FindName("object_val");
   else if(var_type == T_HardEnum)
-    return TA_ProgVar.members.FindName("hard_enum_type");
+//    return TA_ProgVar.members.FindName("hard_enum_type");
+    return TA_ProgVar.members.FindName("int_val");  // rohrlich - 1/17/16
   else if(var_type == T_DynEnum)
     return TA_ProgVar.members.FindName("dyn_enum_val");
   return NULL;
@@ -979,7 +980,7 @@ String ProgVar::GetColText(const KeyString& key, int itm_idx) const {
   return inherited::GetColText(key, itm_idx);
 }
 
-bool ProgVar::AddToProjectControlPanel(ControlPanel* ctrl_panel, const String& extra_label, const String sub_gp_nm) {
+bool ProgVar::AddToProjectControlPanel(ControlPanel* ctrl_panel) {
   if(!ctrl_panel) {
     taProject* proj = GetMyProj();
     if(TestError(!proj, "AddToControlPanel", "cannot find project")) return false;
@@ -987,7 +988,7 @@ bool ProgVar::AddToProjectControlPanel(ControlPanel* ctrl_panel, const String& e
   }
   MemberDef* md = GetValMemberDef();
   if (md) {
-    return ctrl_panel->SelectMember(this, md, extra_label, "", sub_gp_nm);
+    return ctrl_panel->SelectMemberPrompt(this, md);
   }
   return false;
 }

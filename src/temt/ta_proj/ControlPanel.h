@@ -80,9 +80,8 @@ public: // public API
   virtual ParamSet*  CopyToParamSet(ParamSet* param_set = NULL);
   // #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewParamSet copy all the members from this control panel into a (new if NULL) param set, and save all the current values in that param set -- provides a quick backup and checkpoint of a set of variables
 
-  virtual bool  SelectMember(taBase* base, MemberDef* md,
-                     const String& xtra_lbl = _nilString, const String& desc = _nilString,
-                     const String& sub_gp_nm = _nilString);
+  virtual bool  SelectMember(taBase* base, MemberDef* md, const String& xtra_lbl = _nilString,
+                             const String& desc = _nilString, const String& sub_gp_nm = _nilString);
   // add new member to edit if it isn't already here (returns true), optionally in a sub group
   virtual bool  SelectMemberPrompt(taBase* base, MemberDef* md);
   // add new member to edit, prompting for exact label to us
@@ -90,13 +89,9 @@ public: // public API
                                const String& xtra_lbl, const String& desc = _nilString,
                                const String& sub_gp_nm = _nilString);
   // add new member to edit if it isn't already here (returns true), optionally in a sub group
-  virtual bool  SelectMethod(taBase* base, MethodDef* md,
-                             const String& xtra_lbl, const String& desc = _nilString,
-                             const String& sub_gp_nm = _nilString);
+  virtual bool  SelectMethod(taBase* base, MethodDef* md, const String& desc = _nilString);
   // add new method to edit if it isn't already here (returns true), optionally in a sub group
-  virtual bool  SelectMethodNm(taBase* base, const String& md,
-                               const String& xtra_lbl, const String& desc = _nilString,
-                               const String& sub_gp_nm = _nilString);
+  virtual bool  SelectMethodNm(taBase* base, const String& md, const String& desc = _nilString);
   // add new method to edit if it isn't already here (returns true), optionally in a sub group
 
   virtual int   FindMbrBase(taBase* base, MemberDef* md);
@@ -135,9 +130,7 @@ protected:
   virtual void          RemoveFun_impl(int idx);
   virtual bool          SelectMember_impl(taBase* base, MemberDef* md,
                   const String& lbl, const String& desc, const String& sub_gp_nm = _nilString, bool custom_label = false);
-  virtual bool          SelectMethod_impl(taBase* base, MethodDef* md,
-                                          const String& lbl, const String& desc,
-                                          const String& sub_gp_nm = _nilString);
+  virtual bool          SelectMethod_impl(taBase* base, MethodDef* md, const String& desc);
   bool                  ReShowEdit(bool force = false); // this is just really a synonym for doing a SigEmit
 
 private:

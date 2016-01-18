@@ -246,8 +246,8 @@ ParamSet* ControlPanel::CopyToParamSet(ParamSet* param_set) {
   return param_set;
 }
 
-bool ControlPanel::SelectMember(taBase* base, MemberDef* mbr,
-  const String& xtra_lbl, const String& dscr, const String& sub_gp_nm)
+bool ControlPanel::SelectMember(taBase* base, MemberDef* mbr, const String& xtra_lbl,
+                                const String& dscr, const String& sub_gp_nm)
 {
   if (!base) return false;
   String eff_desc = dscr; // non-const
@@ -264,17 +264,22 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
   String full_lbl;
   base->GetControlPanelText(mbr, _nilString, full_lbl, eff_desc);
   String full_lbl_copy = full_lbl;
+  String sub_grp_name;
 
   taGuiDialog dlg;
   dlg.Reset();
-  dlg.prompt = "Enter label for control panel item -- will be converted to a valid C name automatically";
-  dlg.win_title = "Enter ControlPanel label";
+  dlg.prompt = "Enter label for control panel item -- will be converted to a valid C name automatically.\n Leave Subgroup empty to create item in main group";
+  dlg.win_title = "Enter ControlPanelItem label & group";
   dlg.AddWidget("main", "", "");
   dlg.AddVBoxLayout("mainv","","main","");
   String curow = "lbl";
   dlg.AddHBoxLayout(curow, "mainv","","");
   dlg.AddLabel("full_lbl_lbl", "main", curow, "label=Label: ;");
   dlg.AddStringField(&full_lbl, "full_lbl", "main", curow, "tooltip=enter label to use;");
+  curow = "grp";
+  dlg.AddHBoxLayout(curow, "mainv","","");
+  dlg.AddLabel("sub_grp_name", "main", curow, "label=Subgroup: ;");
+  dlg.AddStringField(&sub_grp_name, "sub_grp_name", "main", curow, "tooltip=enter subgroup name or leave blank if item not in a subgroup;");
   int drval = dlg.PostDialog(true);
   if(drval == 0) {
     return false;
@@ -285,7 +290,7 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
   }
 
   full_lbl = taMisc::StringCVar(full_lbl);
-  bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, _nilString, custom_label);
+  bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, sub_grp_name, custom_label);
   ReShowEdit(true); //forced
   return rval;
 }
@@ -338,25 +343,22 @@ bool ControlPanel::SelectMember_impl(taBase* base, MemberDef* md,
   return rval;
 }
 
-bool ControlPanel::SelectMethod(taBase* base, MethodDef* md,
-  const String& xtra_lbl, const String& dscr, const String& sub_gp_nm)
+bool ControlPanel::SelectMethod(taBase* base, MethodDef* md, const String& dscr)
 {
-  bool rval = SelectMethod_impl(base, md, xtra_lbl, dscr, sub_gp_nm);
+  bool rval = SelectMethod_impl(base, md, dscr);
   ReShowEdit(true); //forced
   return rval;
 }
 
-bool ControlPanel::SelectMethodNm(taBase* base, const String& md_nm,
-  const String& xtra_lbl, const String& dscr, const String& sub_gp_nm)
+bool ControlPanel::SelectMethodNm(taBase* base, const String& md_nm, const String& dscr)
 {
   if(base == NULL) return false;
   MethodDef* md = (MethodDef*)base->GetTypeDef()->methods.FindName(md_nm);
   if (md == NULL) return false;
-  return SelectMethod(base, md, xtra_lbl, dscr, sub_gp_nm);
+  return SelectMethod(base, md, dscr);
 }
 
-bool ControlPanel::SelectMethod_impl(taBase* base, MethodDef* mth,
-  const String& xtra_lbl, const String& dscr, const String& sub_gp_nm)
+bool ControlPanel::SelectMethod_impl(taBase* base, MethodDef* mth, const String& dscr)
 {
   int bidx = -1;
   // this looks at the leaves:
@@ -372,24 +374,9 @@ bool ControlPanel::SelectMethod_impl(taBase* base, MethodDef* mth,
       item->cust_desc = true;
     else
       item->cust_desc = false;
-    item->label = xtra_lbl;
-    if (item->label.nonempty()) item->label += " ";
-    item->label += mth->GetLabel();
-    if(sub_gp_nm.nonempty()) {
-      EditMthItem_Group* egp = (EditMthItem_Group*)mths.FindMakeGpName(sub_gp_nm);
-      egp->Add(item);
-    }
-    else {
-      mths.Add(item); // will call BaseAdded
-    }
+    item->label = mth->GetLabel();
+    mths.Add(item); // will call BaseAdded
     rval = true;
-  }
-  else if(sub_gp_nm.nonempty()) {
-    EditMthItem_Group* egp = (EditMthItem_Group*)item->owner;
-    if(egp == &mths || egp->name != sub_gp_nm) {
-      EditMthItem_Group* negp = (EditMthItem_Group*)mths.FindMakeGpName(sub_gp_nm);
-      negp->Transfer(item);     // grab it
-    }
   }
   item->UpdateAfterEdit();
   return rval;

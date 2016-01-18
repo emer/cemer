@@ -42,7 +42,7 @@ public:
   bool                enabled;          // #READ_ONLY
   
   void                GetControlPanelText(MemberDef* mbr, const String& xtra_lbl, String& full_lbl, String& desc) const override;
-  // #IGNORE set a default label
+  // #IGNORE provides the canonical full label and (if empty) desc for control panel item
   virtual void        SetControlPanelEnabled(bool do_enable);     // #IGNORE set for control panel to show enabled/disabled
   // set the taBase::BF_GUI_READ_ONLY so the control panel item will be disabled -- used when rows are hidden
   

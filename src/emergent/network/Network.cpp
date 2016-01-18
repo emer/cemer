@@ -2888,7 +2888,7 @@ void Network::NetControlPanel(ControlPanel* ctrl_panel, const String& extra_labe
     if(!md->HasOption("VIEW")) continue;
     // filter by current guys..
     if(HasUserData(md->name) && !GetUserDataAsBool(md->name)) continue;
-    ctrl_panel->SelectMember(this, md, extra_label, "", sub_gp_nm);
+    ctrl_panel->SelectMember(this, md, "", sub_gp_nm);
   }
 }
 

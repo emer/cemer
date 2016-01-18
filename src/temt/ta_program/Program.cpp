@@ -1965,13 +1965,13 @@ bool Program::AddCtrlFunsToControlPanel(ControlPanel* ctrl_panel, const String& 
   TypeDef* td = GetTypeDef();
   bool rval = true;
   MethodDef* md = td->methods.FindName("Init"); // "" = desc field
-  if(md) rval = ctrl_panel->SelectMethod(this, md, extra_label, "", sub_gp_nm);
+  if(md) rval = ctrl_panel->SelectMethod(this, md, "");
   md = td->methods.FindName("Run_Gui");
-  if(md) rval |= ctrl_panel->SelectMethod(this, md, extra_label, "", sub_gp_nm);
+  if(md) rval |= ctrl_panel->SelectMethod(this, md, "");
   md = td->methods.FindName("Step_Gui");
-  if(md) rval |= ctrl_panel->SelectMethod(this, md, extra_label, "", sub_gp_nm);
+  if(md) rval |= ctrl_panel->SelectMethod(this, md, "");
   md = td->methods.FindName("Stop");
-  if(md) rval |= ctrl_panel->SelectMethod(this, md, extra_label, "", sub_gp_nm);
+  if(md) rval |= ctrl_panel->SelectMethod(this, md, "");
   return rval;
 }
 
