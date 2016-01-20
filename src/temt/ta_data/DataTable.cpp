@@ -2781,6 +2781,15 @@ bool DataTable::WriteDataLogRow() {
   return false;
 }
 
+bool DataTable::SaveAllToDataLog() {
+  if(IsSavingDataLog()) {
+    SaveData_strm(*log_file->ostrm);
+    log_file->FlushOutStream(); // really flush!
+    return true;
+  }
+  return false;
+}
+
 bool DataTable::IsSavingDataLog() const {
   if(log_file && log_file->IsOpen())
     return true;

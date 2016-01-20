@@ -253,6 +253,8 @@ public:
   // #CAT_File close the data log file if it was previously open
   virtual bool          WriteDataLogRow();
   // #CAT_File write the current row to the data log, if it is open (returns true if successfully wrote) -- this is automatically called by WriteClose
+  virtual bool          SaveAllToDataLog();
+  // #CAT_File write the entire data table to the data log, if it is open (returns true if successfully wrote) -- useful for logging aggregate data tables that are not written incrementally row-by-row, but are rather generated whole and should be saved in their entirety
   virtual bool          IsSavingDataLog() const;
   // #CAT_File returns true if table is currently saving to a data log file (froom SaveDataLog), or not
 
