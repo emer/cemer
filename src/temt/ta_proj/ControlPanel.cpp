@@ -237,11 +237,7 @@ ParamSet* ControlPanel::CopyToParamSet(ParamSet* param_set) {
     param_set->SetName(name + "_" +
                        (String)QDateTime::currentDateTime().toString("MM_dd_yy"));
   }
-  
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, mbrs) {
-    EditMbrItem* itm = (EditMbrItem*)sei->Clone();
-    param_set->mbrs.Add(itm);
-  }
+  param_set->mbrs.Copy_Duplicate(mbrs);  // preserves subgroups
   param_set->CopyActiveToSaved();
   return param_set;
 }
