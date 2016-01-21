@@ -333,10 +333,10 @@ void ProgVar::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
     if (lbl.empty()) { //note: typically is empty
       Program* prog = GET_MY_OWNER(Program);
       if (prog)
-        lbl = prog->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
+        lbl = prog->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
     }
     if (lbl.nonempty()) lbl += "_";
-    lbl += GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT); 	// var name, not the member name
+    lbl += GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT); 	// var name, not the member name
     full_lbl = taMisc::StringCVar(lbl);
     eff_desc = GetDesc();		// always use our desc, not default
   }
@@ -354,12 +354,12 @@ void ProgVar::GetControlPanelLabel(MemberDef* mbr, String& label) const
   {
     Program* prog = GET_MY_OWNER(Program);
     if (prog) {
-      label = prog->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
+      label = prog->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
     }
     if (label.nonempty()) {
       label += "_";
     }
-    label += GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT); 	// var name, not the member name
+    label += GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT); 	// var name, not the member name
     label = taMisc::StringCVar(label);
   }
   else { // something else, just do default

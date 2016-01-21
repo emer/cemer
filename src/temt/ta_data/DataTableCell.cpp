@@ -43,8 +43,8 @@ void DataTableCell::GetControlPanelText(MemberDef* mbr, const String& extra_labe
 void DataTableCell::GetControlPanelLabel(MemberDef* mbr, String& label) const {
   if (!value_column) return;
   
-  String table_str = value_column->dataTable()->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
-  String column_str = value_column->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
+  String table_str = value_column->dataTable()->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
+  String column_str = value_column->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
   if (column_type_dtc) {
     label = "_ " + table_str + "_" + column_str;
   }
@@ -56,7 +56,7 @@ void DataTableCell::GetControlPanelLabel(MemberDef* mbr, String& label) const {
       label = table_str + "_" + column_str + "_" + "row_" + String(view_row);
     }
     else {
-      label = table_str + "_" + column_str + "_" + "hidden row";
+      label = table_str + "_" + column_str + "_" + "hidden_row";
     }
   }
 }
