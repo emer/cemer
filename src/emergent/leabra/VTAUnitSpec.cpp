@@ -269,8 +269,14 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   float lhb_da = lhb_lay->acts_eq.avg * lhb_lay->units.size;
   float pospv = pospv_lay->acts_eq.avg * pospv_lay->units.size;
   float vspvi;
-  if(da.patch_cur) 
-    vspvi = vspatch_lay->acts_eq.avg * vspatch_lay->units.size;
+  if(da.patch_cur)
+    if(!gains.subtract_d2r) {
+      vspvi = vspatch_lay->acts_eq.avg * vspatch_lay->units.size;
+    }
+    else {
+      vspvi = (gains.pvi_d1_gain * vspatch_lay->acts_eq.avg * vspatch_lay->units.size) -
+      (gains.pvi_d2_gain * vspatch_d2_lay->acts_eq.avg * vspatch_d2_lay->units.size);
+    }
   else {
     if(!gains.subtract_d2r) {
       vspvi = vspatch_lay->acts_q0.avg * vspatch_lay->units.size;
