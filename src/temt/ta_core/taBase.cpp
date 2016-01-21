@@ -3569,14 +3569,23 @@ bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set) {
 void taBase::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl, String& full_lbl, String& desc) const {
   String lbl = xtra_lbl;
   if (lbl.empty()) {
-    lbl = GetDisplayName().CamelToSnake().elidedTo(48); //16
+    lbl = GetDisplayName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
   }
   if (lbl.nonempty()) lbl += "_";
-  lbl += mbr->GetLabel().CamelToSnake();
+  lbl += mbr->GetLabel().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
   full_lbl = taMisc::StringCVar(lbl);
   // desc is the member description
 //   if (desc.empty())
 //     MemberDef::GetMembDesc(mbr, desc, "");
+}
+
+void taBase::GetControlPanelLabel(MemberDef* mbr, String& label) const {
+  label = GetDisplayName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG); //16
+  if (label.nonempty()) {
+    label += "_";
+  }
+  label += mbr->GetLabel().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
+  label = taMisc::StringCVar(label);
 }
 
 ///////////////////////////////////////////////////////////////////////////

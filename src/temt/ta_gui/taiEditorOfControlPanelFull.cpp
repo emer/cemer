@@ -254,6 +254,15 @@ void taiEditorOfControlPanelFull::DoGoToObject() {
     taMisc::DebugInfo("taiEditorOfControlPanelFull::DoGoToObject: could not find item");
 }
 
+void taiEditorOfControlPanelFull::DoEditLabel() {
+  int sel_item_index = membs.GetFlatWidgetIndex(sel_item_dat);
+  if (sel_item_index >= 0) {
+    sele->EditLabel(sel_item_index);
+  }
+  else
+    taMisc::DebugInfo("taiEditorOfControlPanelFull::EditLabel: could not find item");
+}
+
 void taiEditorOfControlPanelFull::FillLabelContextMenu_SelEdit(QMenu* menu,
   int& last_id)
 {
@@ -267,6 +276,7 @@ void taiEditorOfControlPanelFull::FillLabelContextMenu_SelEdit(QMenu* menu,
     menu->addAction("Remove from ControlPanel", this, SLOT(DoRemoveSelEdit()));
   }
   menu->addAction("Go To Object", this, SLOT(DoGoToObject()));
+  menu->addAction("Edit Label", this, SLOT(DoEditLabel()));
 }
 
 void taiEditorOfControlPanelFull::GetImage_Membs_def() {

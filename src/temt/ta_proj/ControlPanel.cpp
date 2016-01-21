@@ -137,11 +137,24 @@ void ControlPanel::SigEmit_Ref(taBase_RefList* src, taBase* ta,
         return;                     // skip any non-program updates while running!
     }
   }
+  
+  // possibly need to update labels
+  for (int i=0; i<mbrs.size; i++) {
+    EditMbrItem* item = (EditMbrItem*)mbrs.FastEl(i);
+    if (item->base == ta) {
+      if (!item->cust_label) {
+        // regenerate label as spec name or program name etc might have changed
+        String new_label;
+        ta->GetControlPanelLabel(item->mbr, new_label);
+        item->label = new_label;
+      }
+    }
+  }
   SigEmitUpdated();
 }
 
 void ControlPanel::SigEmit_Group(taGroup_impl* grp,
-    int sls, void* op1, void* op2)
+                                 int sls, void* op1, void* op2)
 {
   if (m_changing) return;
   if (taMisc::is_loading) return; // note: base's aren't set yet, so we can't add
@@ -190,9 +203,50 @@ void ControlPanel::GoToObject(int idx) {
   if(item && item->base) {
     taBase* mbrown = item->base->GetMemberOwner(true);
     if(!mbrown) 
-      mbrown = item->base;       // must be object itself?
+      mbrown = item->base;       // must be object itself
     taMisc::Info("Going to:", mbrown->GetPathNames());
     tabMisc::DelayedFunCall_gui(mbrown, "BrowserSelectMe");
+  }
+}
+
+void ControlPanel::EditLabel(int idx) {
+  EditMbrItem* item = mbrs.Leaf(idx);
+  if(item && item->base) {
+    String new_label = item->label;
+    taGuiDialog dlg;
+    dlg.Reset();
+    dlg.prompt = "Edit label or use default";
+    dlg.win_title = "Edit ControlPanelItem label";
+    dlg.AddWidget("main", "", "");
+    dlg.AddVBoxLayout("mainv","","main","");
+    String curow = "lbl";
+    dlg.AddHBoxLayout(curow, "mainv","","");
+    dlg.AddLabel("full_lbl_lbl", "main", curow, "label=Label: ;");
+    dlg.AddStringField(&new_label, "full_lbl", "main", curow, "tooltip=enter label to use;");
+
+    curow = "default";
+    bool use_default_label = false;
+    dlg.AddHBoxLayout(curow, "mainv","","");
+    dlg.AddLabel("use_default_label", "main", curow, "label=Use Default: ;");
+    dlg.AddBoolCheckbox(&use_default_label, "use_default_label", "main", curow,
+                        "tooltip=Use the default label generated from the member and owner name;");
+
+    int drval = dlg.PostDialog(true);
+    if(drval != 0) {
+      String default_label;
+      item->base->GetControlPanelLabel(item->mbr, default_label);
+      if (use_default_label) {
+        item->label = default_label;
+        item->cust_label = false;
+      }
+      else {
+        if (new_label != default_label) {
+          item->cust_label = true;
+        }
+        item->label = new_label;
+      }
+    }
+    ReShowEdit(true); //forced
   }
 }
 

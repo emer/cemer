@@ -129,6 +129,7 @@ public:
                   bool force_inline = false) override;
   void   GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
                              String& full_lbl, String& desc) const override;
+  void   GetControlPanelLabel(MemberDef* mbr, String& full_lbl) const override;
   String GetDesc() const override { return desc; }
   String GetDisplayName() const override;
   String GetTypeDecoKey() const override { return "ProgVar"; }

@@ -327,16 +327,16 @@ void ProgVar::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
   const String& mn = mbr->name;
   String lbl = xtra_lbl;
   if ((mn == "int_val") || (mn == "real_val") || (mn == "string_val") ||
-//      (mn == "bool_val") || (mn == "object_val") || (mn == "dyn_enum_val"))
-    (mn == "bool_val") || (mn == "object_val"))
+      //      (mn == "bool_val") || (mn == "object_val") || (mn == "dyn_enum_val"))
+      (mn == "bool_val") || (mn == "object_val"))
   {
     if (lbl.empty()) { //note: typically is empty
       Program* prog = GET_MY_OWNER(Program);
       if (prog)
-        lbl = prog->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH);
+        lbl = prog->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
     }
     if (lbl.nonempty()) lbl += "_";
-    lbl += GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH); 	// var name, not the member name
+    lbl += GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT); 	// var name, not the member name
     full_lbl = taMisc::StringCVar(lbl);
     eff_desc = GetDesc();		// always use our desc, not default
   }
@@ -345,6 +345,27 @@ void ProgVar::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
   }
 }
 
+void ProgVar::GetControlPanelLabel(MemberDef* mbr, String& label) const
+{
+  const String& mn = mbr->name;
+  if ((mn == "int_val") || (mn == "real_val") || (mn == "string_val") ||
+      //      (mn == "bool_val") || (mn == "object_val") || (mn == "dyn_enum_val"))
+      (mn == "bool_val") || (mn == "object_val"))
+  {
+    Program* prog = GET_MY_OWNER(Program);
+    if (prog) {
+      label = prog->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
+    }
+    if (label.nonempty()) {
+      label += "_";
+    }
+    label += GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT); 	// var name, not the member name
+    label = taMisc::StringCVar(label);
+  }
+  else { // something else, just do default
+    inherited::GetControlPanelLabel(mbr, label);
+  }
+}
 
 void ProgVar::SetParseCssEl() {
   if(!parse_css_el) {

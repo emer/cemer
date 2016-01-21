@@ -1419,7 +1419,8 @@ public:
   virtual bool          AddToParamSet(MemberDef* member, ParamSet* ctrl_panel);
   // #MENU #MENU_ON_ParamSet #NO_MENU_PANEL #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewParamSet select an object member to be added to a project param_set
   virtual void          GetControlPanelText(MemberDef* mbr, const String& extra_label,
-    String& full_lbl, String& desc) const; // #IGNORE supply extra_label (optional); provides the canonical full label and (if empty) desc
+                                            String& full_lbl, String& desc) const; // #IGNORE supply extra_label (optional); provides the canonical full label and (if empty) desc
+  virtual void          GetControlPanelLabel(MemberDef* mbr, String& label) const; // #IGNORE get label only
   
   ///////////////////////////////////////////////////////////////////////////
   //    User Data: optional configuration settings for objects
@@ -1429,7 +1430,7 @@ public:
   // #CAT_UserData #EXPERT gets the userdatalist for this class
   bool                  HasUserDataList() const
     {return (GetUserDataList(false) != NULL);}
-  // #CAT_UserData #EXPERT returns true if UserData exists at all
+  // #CAT_UserData #EXPERT returns true if UserData exists at al
   virtual void          CopyUserData(const taBase& cp);
   // #CAT_UserData copy our user data from the user data on another object (replaces any of our existing user data with the copy)
   virtual void          RemoveAllUserData() { };

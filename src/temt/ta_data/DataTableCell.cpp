@@ -37,20 +37,26 @@ void  DataTableCell::Initialize() {
 void DataTableCell::GetControlPanelText(MemberDef* mbr, const String& extra_label, String& full_lbl, String& desc) const {
   if (!value_column) return;
 
-  String table_str = value_column->dataTable()->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH);
-  String column_str = value_column->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH);
+  GetControlPanelLabel(mbr, full_lbl);
+}
+
+void DataTableCell::GetControlPanelLabel(MemberDef* mbr, String& label) const {
+  if (!value_column) return;
+  
+  String table_str = value_column->dataTable()->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
+  String column_str = value_column->GetName().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
   if (column_type_dtc) {
-    full_lbl = "* " + table_str + "_" + column_str;
+    label = "_ " + table_str + "_" + column_str;
   }
   else if (row_column) {
-    full_lbl = table_str + "_" + column_str + "_" + row_column->GetValAsString(view_row);
+    label = table_str + "_" + column_str + "_" + row_column->GetValAsString(view_row);
   }
   else {
     if (view_row != -1) {
-      full_lbl = table_str + "_" + column_str + "_" + "row_" + String(view_row);
+      label = table_str + "_" + column_str + "_" + "row_" + String(view_row);
     }
     else {
-      full_lbl = table_str + "_" + column_str + "_" + "hidden row";
+      label = table_str + "_" + column_str + "_" + "hidden row";
     }
   }
 }

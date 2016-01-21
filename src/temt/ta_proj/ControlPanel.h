@@ -65,7 +65,7 @@ public:
   String                GetDesc() const override { return desc; } //
   int                   UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
   String                GetToolbarName() const override { return "cntrl panel"; }
-
+  
 SIMPLE_LINKS(ControlPanel);
   TA_BASEFUNS(ControlPanel);
 
@@ -76,6 +76,8 @@ public: // public API
   //  remove function at given index
   virtual void  GoToObject(int idx);
   // select object for given member field for editing in the gui
+  virtual void  EditLabel(int idx);
+  // edit the current label - use_default will generate the label
 
   virtual ParamSet*  CopyToParamSet(ParamSet* param_set = NULL);
   // #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewParamSet copy all the members from this control panel into a (new if NULL) param set, and save all the current values in that param set -- provides a quick backup and checkpoint of a set of variables

@@ -86,7 +86,8 @@ TA_API taiMisc* taiM_ = NULL;
 const int taiMisc::FONT_MED = 1;
 const int taiMisc::FONT_SM = 2;
 
-const int taiMisc::CP_ITEM_ELIDE_LENGTH = 16;
+const int taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT = 16;
+const int taiMisc::CP_ITEM_ELIDE_LENGTH_LONG = 32;
 
 const String taiMisc::DEFAULT_PROJ_SPLITTERS = "AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQE=";
 

@@ -16,6 +16,7 @@
 #include "EditMbrItem.h"
 #include <BuiltinTypeDefs>
 #include <DynEnum>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(EditMbrItem);
 
@@ -46,6 +47,17 @@ void EditMbrItem::Copy_(const EditMbrItem& cp) {
 
 void EditMbrItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  
+  
+  if (taMisc::is_loading) {
+    // get default label - if not equal to current label mark as custom
+    String generated_label;
+    base->GetControlPanelLabel(mbr, generated_label);
+    if (this->label != generated_label) {
+      cust_label = true;
+    }
+  }
+
   if (!cust_desc && mbr) {
     desc = _nilString;
     MemberDef::GetMembDesc(mbr, desc, "");
