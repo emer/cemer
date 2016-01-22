@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.5.0 rev9084
+// ta_Dump File v3.0 -- code v7.8.5.0 rev9085
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -3349,10 +3349,12 @@ LeabraProject .projects["LeabraFlex"] {
    Weights_List @.weights = [0] {
    };
 
-   NetTiming_List NULL = [3] {
+   NetTiming_List NULL = [5] {
     LeabraNetTiming @[0] { };
     LeabraNetTiming @[1] { };
     LeabraNetTiming @[2] { };
+    LeabraNetTiming @[3] { };
+    LeabraNetTiming @[4] { };
    };
   };
  };
@@ -3400,7 +3402,7 @@ LeabraProject .projects["LeabraFlex"] {
    web_doc=1;
    wiki="emergent";
    url="LeabraFlexProgs";
-   full_url="https://grey.colorado.edu/emergent/index.php/LeabraFlexProgs";
+   full_url="http://grey.colorado.edu/emergent/index.php/LeabraFlexProgs";
    text_size=1;
    text="<html>
 <head></head>
@@ -3612,7 +3614,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":188});
+mw.config.set({\"wgBackendResponseTime\":146});
 } );</script>
 	
 
@@ -3660,7 +3662,7 @@ mw.config.set({\"wgBackendResponseTime\":188});
     el_typ=EditMbrItem;
     el_def=0;
     EditMbrItem @[0] {
-     label="cur_config";
+     label="config_id";
      desc="configuration to run -- selects from configs in the Config data table";
      cust_desc=1;
      base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["cur_config"].dyn_enum_val$$;
@@ -20589,22 +20591,22 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.002087683;
+     value 8 0=0.001956182;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.03568394;
+     value 8 0=0.03528582;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9953027;
+     value 8 0=0.9949139;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.797791;
+     value 8 0=0.7974594;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -22139,17 +22141,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.02463891;
+       value 8 0=0.02046577;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04279749;
+       value 8 0=0.03208138;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7179269;
+       value 8 0=0.7311221;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -22988,6 +22990,28 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
     };
     LeabraNetTiming @[2] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[3] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[4] {
      netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
      act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
      dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
