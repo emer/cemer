@@ -165,7 +165,7 @@ class SGEJobManager( ClusterJobManager ):
             stdoutstr = Popen(cmd, shell=True, stdout=PIPE).communicate()[0]
         except OSError:
             logging.error("Failed to submit command: %s " % cmd)
-        self.job_id = re.search('([0-9]+)', stdoutstr).group()
+        self.job_id = stdoutstr.split("\n")[-1].split(" ")[-1]
 
         cmd = ['qalter','-o','JOB.' + self.job_id + '.out', '-N', 'JOB.' + self.job_id + '.sh', self.job_id]
         if DEBUG:
@@ -305,8 +305,9 @@ class PBSJobManager( ClusterJobManager ):
             stdoutstr = Popen(cmd,stdout=PIPE).communicate()[0]
         except OSError:
             logging.error("Failed to submit command %s" % cmd)
-        
-        self.job_id = re.search('([0-9]+)', stdoutstr).group()
+
+        self.job_id = stdoutstr.split("\n")[-1].split(" ")[-1]
+
         cmd = ['mv',self.script_filename,'JOB.'+ self.job_id + '.sh']
         if DEBUG:
             print cmd
@@ -415,17 +416,23 @@ class SlurmJobManager( ClusterJobManager ):
             print cmd
         Popen(cmd)
         cmd = ['sbatch', '--begin=now+5',  self.script_filename]
+        # cmd = ['sbatch', self.script_filename]
         if DEBUG:
             print cmd
+
         try:
             stdoutstr = Popen(cmd,stdout=PIPE).communicate()[0]
         except:
             logging.error("Failed to submit command: %s" % cmd)
             return False
-
-        print stdoutstr
         try:
-            self.job_id = re.search('([0-9]+)', stdoutstr).group()
+            self.job_id = stdoutstr.strip().split("\n")[-1].split(" ")[-1]
+            try:
+                int(self.job_id)
+            except:
+                logging.error("JOBID NOT INT: %s" % self.job_id)
+                logging.error("STDOUTSTR: %s" % stdoutstr)
+
         except Exception as e:
             logging.error("Submit command failed: " + str(cmd) + ": " + str(e))
             return False
@@ -445,7 +452,9 @@ class SlurmJobManager( ClusterJobManager ):
 #            Popen(cmd)
         else:
             cmd = ['scontrol', 'update', 'JobId=' + self.job_id, 'name=' + 'JOB.'+ self.job_id + '.sh']
+            print "cmd: ", cmd
             if DEBUG:
+                logging.error("SCONTROLWTF: %s " % cmd)
                 print cmd
             Popen(cmd)
 #            time.sleep(5)
