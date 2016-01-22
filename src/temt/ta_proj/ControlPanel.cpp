@@ -312,7 +312,7 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
   if (!base) return false;
   String eff_desc; // = desc -- this is our desc -- not relevant
   String full_lbl;
-  base->GetControlPanelText(mbr, _nilString, full_lbl, eff_desc);
+  base->GetControlPanelLabel(mbr, full_lbl);
   String full_lbl_copy = full_lbl;
   String sub_grp_name;
 

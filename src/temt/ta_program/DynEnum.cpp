@@ -15,7 +15,8 @@
 
 #include "DynEnum.h"
 #include <ProgEl>
-
+#include <ProgVar>
+  
 TA_BASEFUNS_CTORS_DEFN(DynEnum);
 
 void DynEnum::Initialize() {
@@ -77,4 +78,11 @@ void  DynEnum::NumberToName_Matrix(String_Matrix& names, const int_Matrix& vals)
 void  DynEnum::NameToNumber_Matrix(int_Matrix& vals, const String_Matrix& names) const {
   if(!enum_type) return;
   enum_type->NameToNumber_Matrix(vals, names);
+}
+
+void  DynEnum::GetControlPanelLabel(MemberDef* mbr, String& label) const {
+  ProgVar* prog_var = (ProgVar*)GetOwner(&TA_ProgVar);
+  if (prog_var) {
+    prog_var->GetControlPanelLabel(mbr, label);
+  }
 }

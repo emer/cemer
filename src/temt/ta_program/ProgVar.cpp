@@ -328,7 +328,7 @@ void ProgVar::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
   String lbl = xtra_lbl;
   if ((mn == "int_val") || (mn == "real_val") || (mn == "string_val") ||
       //      (mn == "bool_val") || (mn == "object_val") || (mn == "dyn_enum_val"))
-      (mn == "bool_val") || (mn == "object_val"))
+      (mn == "bool_val") || (mn == "object_val") || (mn == "value"))  // value is the dyn_enum case
   {
     if (lbl.empty()) { //note: typically is empty
       Program* prog = GET_MY_OWNER(Program);
@@ -350,7 +350,7 @@ void ProgVar::GetControlPanelLabel(MemberDef* mbr, String& label) const
   const String& mn = mbr->name;
   if ((mn == "int_val") || (mn == "real_val") || (mn == "string_val") ||
       //      (mn == "bool_val") || (mn == "object_val") || (mn == "dyn_enum_val"))
-      (mn == "bool_val") || (mn == "object_val"))
+      (mn == "bool_val") || (mn == "object_val") || (mn == "value"))
   {
     Program* prog = GET_MY_OWNER(Program);
     if (prog) {
