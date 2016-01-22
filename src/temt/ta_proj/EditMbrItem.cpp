@@ -49,7 +49,7 @@ void EditMbrItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   
   
-  if (taMisc::is_loading) {
+  if (taMisc::is_loading && base && mbr) {
     // get default label - if not equal to current label mark as custom
     String generated_label;
     base->GetControlPanelLabel(mbr, generated_label);

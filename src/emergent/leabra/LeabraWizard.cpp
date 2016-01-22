@@ -2460,11 +2460,11 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   gpi_sp->SetUnique("lay_inhib", true);
   gpi_sp->lay_inhib.on = true;
-  gpi_sp->lay_inhib.gi = 2.0f;
+  gpi_sp->lay_inhib.gi = 0.6f;
   gpi_sp->lay_inhib.ff = 0.0f;
   gpi_sp->lay_inhib.ff_max_vs_avg = 1.0f;
   gpi_sp->lay_inhib.fb = 0.5f;
-  gpi_sp->lay_inhib.ff0 = 0.5f; // todo: change!
+  gpi_sp->lay_inhib.ff0 = 0.1f;
   gpi_sp->SetUnique("unit_gp_inhib", true);
   gpi_sp->unit_gp_inhib.on = false;
   gpi_sp->SetUnique("avg_act", true);
