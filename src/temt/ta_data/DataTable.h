@@ -158,9 +158,14 @@ public:
   //  #EXPERT Get the visible row corresponding the row number as stored
   int                   GetIndexRow(int view_row);
   //  #EXPERT Get the index of row as stored in list of all rows
-  void                  UpdateDataTableCells();
-  // #IGNORE called by dataproc sort/permute but really would be better if somehow this happened without the need
-
+  virtual void          RowUpdate();
+  // #IGNORE called by dataproc sort/permute etc if rows are moved about, deleted etc.
+  virtual void          TableUpdate();
+  // #IGNORE call to update DataTableCells if table name has been updated
+  virtual void          ColumnUpdate(DataCol* column);
+  // #IGNORE call to update DataTableCells if col name has been updated
+  virtual void          NotifyControlPanel(DataTableCell* cell);
+  // #IGNORE let the control panel know there is a member change
   /////////////////////////////////////////////
   // Flags
 
@@ -637,7 +642,6 @@ public:
   // set the values of table cells in the specified row using the current values in control panel items for columns where there is a column_type DataTableCell (i.e. column_type_dtc == true)
   virtual void          SetCellsFromConfig(String column_name, String value);
   // set the values of table cells in the row with value matching the "value" arg of column matching "column_name" arg
-  
   /////////////////////////////////////////////////////////
   // Main data value access/modify (Get/Set) routines: for Programs and very general use
 

@@ -106,6 +106,9 @@ public: // public API
   virtual int   FindMethBase(taBase* base, MethodDef* md);
   // find a given base and method, returns index
 
+  virtual void  MbrUpdated(taBase* base, MemberDef* mbr);
+  // let the panel know that a mbr has been updated
+  
   virtual void  Reset();
   // #MENU #CONFIRM reset (remove all) current members and methods
   virtual String  ToWikiTable();

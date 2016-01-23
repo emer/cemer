@@ -232,6 +232,10 @@ int DataCol::imageComponents() const {
 void DataCol::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Init();
+  DataTable* dt = dataTable();
+  if (dt) {
+    dt->ColumnUpdate(this);
+  }
 }
 
 void DataCol::SigEmit(int sls, void* op1, void* op2) {

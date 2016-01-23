@@ -37,7 +37,6 @@ public:
   DataTableCell*          FindColumnTypeDTC(DataCol* value_column);
   // Find a DataTableCell for particular column where column_type_dtc is true
   
-  void                    UpdateViewRows();
   void                    SigEmit(int sls, void* op1, void* op2) override;
 
   TA_BASEFUNS_NOCOPY(DataTableCell_List);

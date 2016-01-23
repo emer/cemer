@@ -211,6 +211,7 @@ void DataTable::UpdateAfterEdit_impl() {
   // the following is likely redundant:
   //  UpdateColCalcs();
   CheckForCalcs();
+  TableUpdate();
 }
 
 int DataTable::GetSpecialState() const {
@@ -388,7 +389,7 @@ void DataTable::Dump_Load_post() {
   inherited::Dump_Load_post();
   
   if(taMisc::is_undo_loading) {
-    UpdateDataTableCells();
+    RowUpdate();
   }
   
   if(taMisc::is_undo_loading) return; // none of this.
@@ -2018,7 +2019,7 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
     }
   }
   DataUpdate(false);
-  UpdateDataTableCells();
+  RowUpdate();
   return rval;
 }
 
@@ -2048,21 +2049,13 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
       cell->SetControlPanelEnabled(false);
     }
   }
-
-//  for (int row = end_row; row >= st_row; row--) {
-//    DataTableCell* cell = NULL;
-//    while ((cell = control_panel_cells.FindCell(NULL, row)) != NULL) {
-//      RemoveFromControlPanel(cell->control_panel, cell->value_column, row);
-//      control_panel_cells.RemoveEl(cell);
-//    }
-//  }
   
   row_indexes.RemoveFrames(st_row, n_rows);
   rows -= n_rows;		// the number of rows not hidden by filtering or hiding
   if (rows == 0) {
     keygen.setInt64(0);
   }
-  UpdateDataTableCells();  // update the DataTableCells - must keep in sync
+  RowUpdate();  // update the DataTableCells - must keep in sync
   
   DataUpdate(false);
   return true;
@@ -2801,7 +2794,7 @@ void DataTable::ShowAllRows() {
   ResetRowIndexes();
   ClearCompareRows();
   StructUpdate(false);
-  UpdateDataTableCells();
+  RowUpdate();
 }
 
 bool DataTable::Flatten() {
@@ -4335,13 +4328,13 @@ bool DataTable::FilterByScript(const String& filter_expr) {
   if(TestError(!ok, "Filter", "error in filter expression, see console for errors"))
     return false;
   calc_script->Run();
-  UpdateDataTableCells();
+  RowUpdate();
   return true;
 }
 
 bool DataTable::FilterBySpec(DataSelectSpec* spec) {
   return taDataProc::SelectRows(this, this, spec);
-  UpdateDataTableCells();
+  RowUpdate();
 }
 
 void DataTable::CompareRows(int st_row, int n_rows) {
@@ -4426,7 +4419,7 @@ void DataTable::PermuteRows(int thr_no) {
   StructUpdate(true);
   row_indexes.Permute(thr_no);
   StructUpdate(false);
-  UpdateDataTableCells();
+  RowUpdate();
 }
 
 bool DataTable::MatrixColToScalars(const Variant& mtx_col, const String& scalar_col_name_stub) {
@@ -4847,7 +4840,47 @@ int DataTable::GetIndexRow(int view_row) {
   return row_indexes[view_row];
 }
 
-void DataTable::UpdateDataTableCells() {
-  control_panel_cells.UpdateViewRows();
+void DataTable::RowUpdate() {
+  DataTableCell* cell = NULL;
+  for (int i=0; i<control_panel_cells.size; i++) {
+    cell = control_panel_cells.FastEl(i);
+    cell->view_row = GetViewRow(cell->index_row);
+    
+    // set enabled state
+    if (cell->view_row == -1) {
+      cell->SetControlPanelEnabled(false);
+    }
+    else {
+      cell->SetControlPanelEnabled(true);
+    }
+  }
+  TableUpdate();  // make sure the control panel also knows
 }
 
+void DataTable::TableUpdate() {
+  DataTableCell* cell = NULL;
+  for (int i=0; i<control_panel_cells.size; i++) {
+    cell = control_panel_cells.FastEl(i);
+    if (cell) {
+      NotifyControlPanel(cell);
+    }
+  }
+}
+
+void DataTable::ColumnUpdate(DataCol* column) {
+  DataTableCell* cell = NULL;
+  for (int i=0; i<control_panel_cells.size; i++) {
+    cell = control_panel_cells.FastEl(i);
+    if (cell && cell->value_column == column) {
+      NotifyControlPanel(cell);
+    }
+  }
+}
+
+void DataTable::NotifyControlPanel(DataTableCell* cell) {
+  if (!cell) return;
+  MemberDef* md = cell->FindMember("value");
+  if (md) {
+    cell->control_panel->MbrUpdated(cell, md);
+  }
+}

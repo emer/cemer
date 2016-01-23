@@ -28,7 +28,6 @@
 #include <ColCalcExpr>
 #include <String_Matrix>
 #include <Relation>
-//#include <DataTableCell>
 
 // declare all other types mentioned but not required to include:
 class taHashTable; // 
@@ -82,10 +81,7 @@ public:
   String_Matrix         dim_names; // special names for the dimensions of a matrix cell -- used for display purposes
   taHashTable*          hash_table; // #READ_ONLY #NO_SAVE #NO_COPY hash table of column (scalar only) values to speed up finding in large fixed tables -- this is created by BuildHashTable() function, and destroyed after any insertion or removal of rows -- it is up to the user to call this when relevant data is all in place -- cannot track value changes
   int	                  width; // #HIDDEN the column display width in pixels
-  
-//  DataTableCell         control_panel_cell;
-  // a way to have a control panel member point back to a cell (row) in this column so that the cell contents can be editing from the control panel
-  
+    
   virtual const taMatrix*       AR() const = 0;
   // #CAT_Access const version of the matrix pointer
   virtual taMatrix*     AR() = 0;

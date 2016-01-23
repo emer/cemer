@@ -69,22 +69,6 @@ DataTableCell* DataTableCell_List::FindColumnTypeDTC(DataCol* value_column) {
   return NULL;
 }
 
-void DataTableCell_List::UpdateViewRows() {
-  DataTable* dt = (DataTable*)this->GetOwner();
-  for (int i=0; i<size; i++) {
-    DataTableCell* dtc = FastEl(i);
-    dtc->view_row = dt->GetViewRow(dtc->index_row);
-    
-    // set enabled state
-    if (dtc->view_row == -1) {
-      dtc->SetControlPanelEnabled(false);
-    }
-    else {
-      dtc->SetControlPanelEnabled(true);
-    }
-  }
-}
-
 void DataTableCell_List::SigEmit(int sls, void* op1, void* op2) {
   if (sls == SLS_ITEM_DELETING) {
     this->RemoveEl_(op1);

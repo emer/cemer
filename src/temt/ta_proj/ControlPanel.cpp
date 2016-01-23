@@ -461,9 +461,23 @@ String ControlPanel::ToWikiTable() {
   FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, mbrs) {
     rval << "|-\n";
     rval << "| " << sei->label << " || " << sei->CurValAsString()
-         << " || " << sei->notes.notes << "\n";
+    << " || " << sei->notes.notes << "\n";
   }
-
+  
   rval << "|}\n";
   return rval;
+}
+
+void  ControlPanel::MbrUpdated(taBase* base, MemberDef* mbr) {
+  if (!base || !mbr) return;
+  int idx = FindMbrBase(base, mbr);
+  if (idx < 0) return;
+  
+  EditMbrItem* item = (EditMbrItem*)mbrs.FastEl(idx);
+  if (!item->cust_label) {
+    // regenerate label as spec name or program name etc might have changed
+    String new_label;
+    base->GetControlPanelLabel(item->mbr, new_label);
+    item->label = new_label;
+  }
 }

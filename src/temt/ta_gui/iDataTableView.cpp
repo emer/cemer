@@ -313,15 +313,15 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
         }
       }
       // now check the column_type dtcs
-      dtc = dataTable()->control_panel_cells.FindColumnTypeDTC(dc);
-      if (dtc) {
-        MemberDef* md = dtc->FindMember("value");
-        // now check control panel
-        if (md && cp->FindMbrBase(dtc, md) > -1) {
-          add_act->setEnabled(false);
-          remove_act->setEnabled(true);
-        }
-      }
+//      dtc = dataTable()->control_panel_cells.FindColumnTypeDTC(dc);
+//      if (dtc) {
+//        MemberDef* md = dtc->FindMember("value");
+//        // now check control panel
+//        if (md && cp->FindMbrBase(dtc, md) > -1) {
+//          add_act->setEnabled(false);
+//          remove_act->setEnabled(true);
+//        }
+//      }
     }
   }
 }
