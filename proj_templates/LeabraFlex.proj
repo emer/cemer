@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.5.0 rev9085
+// ta_Dump File v3.0 -- code v7.8.5.0 rev9090
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -3487,11 +3487,11 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 
 <!-- 
 NewPP limit report
-Cached time: 20160121225440
+Cached time: 20160123013453
 Cache expiry: 86400
 Dynamic content: false
-CPU time usage: 0.017 seconds
-Real time usage: 0.020 seconds
+CPU time usage: 0.025 seconds
+Real time usage: 0.028 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -3505,7 +3505,7 @@ Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 - -total
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160121225440 and revision id 11194
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160123013453 and revision id 11194
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\"					</div>
@@ -3614,7 +3614,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":146});
+mw.config.set({\"wgBackendResponseTime\":159});
 } );</script>
 	
 
@@ -3662,7 +3662,7 @@ mw.config.set({\"wgBackendResponseTime\":146});
     el_typ=EditMbrItem;
     el_def=0;
     EditMbrItem @[0] {
-     label="config_id";
+     label="cur_config";
      desc="configuration to run -- selects from configs in the Config data table";
      cust_desc=1;
      base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["cur_config"].dyn_enum_val$$;
@@ -3702,7 +3702,7 @@ mw.config.set({\"wgBackendResponseTime\":146});
      };
     };
     EditMbrItem @[2] {
-     label="cycle_update_net_view";
+     label="Cycle_update_net_view";
      desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
      cust_desc=1;
      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$$;
@@ -20591,17 +20591,17 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.001956182;
+     value 8 0=0.008215962;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.03528582;
+     value 8 0=0.08468596;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9949139;
+     value 8 0=0.9945227;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
