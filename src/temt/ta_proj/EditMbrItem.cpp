@@ -108,7 +108,14 @@ bool EditMbrItem::SetCurVal(const Variant& cur_val) {
     return false;
   if(TestError(!is_single, "SetCurVal", "item is not a single atomic value and thus not a valid control panel item to set from a command line.  member name:", mbr->name, "label:", label))
     return false;
-  mbr->type->SetValVar(cur_val, mbr->GetOff(base), NULL, mbr);
+  // rohrlich - 1/25/16 - special case to handle setting value when it comes
+  // in as string as for instance as a command line arg
+  if ((base->GetTypeDef()->DerivesFromName("DynEnum")) && (mbr->name == "value") && (cur_val.isStringType())) {
+    ((DynEnum*)base)->SetValStr(cur_val.toString());
+  }
+  else {
+    mbr->SetValVar(cur_val, mbr->GetOff(base), NULL);
+  }
   base->UpdateAfterEdit();
   return true;
 }
