@@ -7,7 +7,7 @@ Library          OperatingSystem
 
 Resource         Server_lib.txt
 
-Suite Setup      Initialize Emergent    ./test-projects/TestCtrlPanelFmArgs.proj master_train_cur_config=basic_train1 master_train_stop_train=true master_train_test_string=hello input_dist_fm_input=1.2 master_train_test_real=2.3
+Suite Setup      Initialize Emergent    ./test-projects/TestCtrlPanelFmArgs.proj master_train_cur_config=basic_train1 master_train_stop_train=true master_train_test_bool=true master_train_test_string=hello input_dist_fm_input=1.2 master_train_test_real=2.3
 Suite Teardown   Shutdown Emergent
 
 *** Variables ***
@@ -68,7 +68,7 @@ SetBoolFromArgs
     Set Suite Variable   ${program_test}       MasterStartup
     ${output} =                Run Emergent Program      ${program_test}
     
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": "MasterTrain", "var_name": "stop_train"}
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": "MasterTrain", "var_name": "TestBool"}
     Status OK 		       ${output}
     Json Value Should Equal    ${output}             /result  true
 
