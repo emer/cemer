@@ -110,7 +110,7 @@ bool EditMbrItem::SetCurVal(const Variant& cur_val) {
     return false;
   // rohrlich - 1/25/16 - special case to handle setting value when it comes
   // in as string as for instance as a command line arg
-  if ((base->GetTypeDef()->DerivesFromName("DynEnum")) && (mbr->name == "value") && (cur_val.isStringType())) {
+  if (base && (base->GetTypeDef()->DerivesFromName("DynEnum")) && (mbr->name == "value") && (cur_val.isStringType())) {
     ((DynEnum*)base)->SetNameVal(cur_val.toString());
   }
   else {
