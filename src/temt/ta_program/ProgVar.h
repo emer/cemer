@@ -163,8 +163,8 @@ public:
   inline void   RemoveFromProgramControlPanel()      { NoCtrlPanel(); }
   // #MENU #DYN1 #CAT_Display #GHOST_OFF_flags:CTRL_PANEL,CTRL_READ_ONLY remove this variable from program the control panel
 
-  virtual bool  AddToProjectControlPanel(ControlPanel* ctrl_panel);
-  // #MENU #DYN1 #CAT_Display #MENU_SEP_BEFORE #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel Add this variable to a project control panel. If ctrl_panel is set to NULL, a new one is created in .ctrl_panels.  (Returns false if member is already on the panel, extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group.
+//  virtual bool  AddToProjectControlPanel(ControlPanel* ctrl_panel);
+//  // #MENU #DYN1 #CAT_Display #MENU_SEP_BEFORE #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel Add this variable to a project control panel. If ctrl_panel is set to NULL, a new one is created in .ctrl_panels.  (Returns false if member is already on the panel, extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group.
   virtual void          SetFlagsByOwnership();
   // #IGNORE auto-set the LOCAL_VAR and FUN_ARG flags based on my owners
   virtual bool          UpdateUsedFlag();
