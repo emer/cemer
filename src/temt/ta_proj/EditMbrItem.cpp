@@ -114,7 +114,7 @@ bool EditMbrItem::SetCurVal(const Variant& cur_val) {
     ((DynEnum*)base)->SetNameVal(cur_val.toString());
   }
   else {
-    mbr->SetValVar(cur_val, mbr->GetOff(base), NULL);
+    mbr->type->SetValVar(cur_val, mbr->GetOff(base), NULL, mbr);
   }
   base->UpdateAfterEdit();
   return true;
