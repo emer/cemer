@@ -943,8 +943,10 @@ void TemtClient::cmdGetVar() {
         json_root_obj.insert("result", QJsonValue(QString(var->string_val.chars())));
         break;
       case ProgVar::T_HardEnum:
+	json_root_obj.insert("result", QJsonValue(var->int_val));
+        break;
       case ProgVar::T_DynEnum:
-        json_root_obj.insert("result", QJsonValue(var->int_val));
+        json_root_obj.insert("result", QJsonValue(var->dyn_enum_val.value));
         break;
       case ProgVar::T_Object:
         SendErrorJSON("Program variable is an object pointer", TemtClient::RUNTIME);
@@ -983,6 +985,7 @@ void TemtClient::cmdGetRunState() {
     if (!prog) return;
     run_state = prog->run_state;
   }
+
   SendOk(String(run_state));
 }
 
