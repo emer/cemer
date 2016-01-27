@@ -1002,7 +1002,9 @@ String ProgVar::GetColText(const KeyString& key, int itm_idx) const {
 }
 
 bool ProgVar::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) {
-  member = GetValMemberDef();
+  if (!member) {
+    member = GetValMemberDef();
+  }
   if(TestError(!member,"AddToControlPanel", "member is null")) return false;
   if(!ctrl_panel) {
     taProject* proj = GetMyProj();
