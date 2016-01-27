@@ -1001,15 +1001,13 @@ String ProgVar::GetColText(const KeyString& key, int itm_idx) const {
   return inherited::GetColText(key, itm_idx);
 }
 
-//bool ProgVar::AddToProjectControlPanel(ControlPanel* ctrl_panel) {
-//  if(!ctrl_panel) {
-//    taProject* proj = GetMyProj();
-//    if(TestError(!proj, "AddToControlPanel", "cannot find project")) return false;
-//    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
-//  }
-//  MemberDef* md = GetValMemberDef();
-//  if (md) {
-//    return ctrl_panel->SelectMemberPrompt(this, md);
-//  }
-//  return false;
-//}
+bool ProgVar::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) {
+  member = GetValMemberDef();
+  if(TestError(!member,"AddToControlPanel", "member is null")) return false;
+  if(!ctrl_panel) {
+    taProject* proj = GetMyProj();
+    if(TestError(!proj, "AddToControlPanel", "cannot find project")) return false;
+    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
+  }
+  return ctrl_panel->SelectMemberPrompt(this, member);
+}
