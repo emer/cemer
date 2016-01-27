@@ -413,8 +413,7 @@ MemberDef* ProgVar::GetValMemberDef() {
   else if(var_type == T_Object)
     return TA_ProgVar.members.FindName("object_val");
   else if(var_type == T_HardEnum)
-//    return TA_ProgVar.members.FindName("hard_enum_type");
-    return TA_ProgVar.members.FindName("int_val");  // rohrlich - 1/17/16
+    return TA_ProgVar.members.FindName("hard_enum_type");
   else if(var_type == T_DynEnum)
     return TA_ProgVar.members.FindName("dyn_enum_val");
   return NULL;
