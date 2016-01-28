@@ -17,6 +17,7 @@
 
 #include <LeabraNetwork>
 #include <PFCUnitSpec>
+#include <MSNUnitSpec>
 
 #include <taMisc>
 
@@ -87,6 +88,7 @@ void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
     if(recv_gp->NotActive()) continue;
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+    LeabraUnitSpec* us = (LeabraUnitSpec*)from->GetUnitSpec();
 
     float g_nw_nt = 0.0f;
     for(int j=0;j<nt;j++) {
@@ -96,11 +98,42 @@ void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
 
     recv_gp->net_raw += g_nw_nt;
 
-    if(from->name.contains("NoGo") || from->name.contains("D2")) {
-      nogo_in += recv_gp->net_raw;
+    if(us->InheritsFrom(&TA_MSNUnitSpec)) {
+      MSNUnitSpec* msu = (MSNUnitSpec*)us;
+      if(msu->dorsal_ventral == MSNUnitSpec::DORSAL) {
+        if(msu->dar == MSNUnitSpec::D1R) {
+          go_in += recv_gp->net_raw;
+        }
+        else { // D2R
+          nogo_in += recv_gp->net_raw;
+        }
+      }
+      else { // ventral
+        if(msu->valence == MSNUnitSpec::APPETITIVE) {
+          if(msu->dar == MSNUnitSpec::D1R) {
+            go_in += recv_gp->net_raw;
+          }
+          else { // D2R
+            nogo_in += recv_gp->net_raw;
+          }
+        }
+        else {                  // aversive
+          if(msu->dar == MSNUnitSpec::D2R) { // FLIPPED!!!
+            go_in += recv_gp->net_raw;
+          }
+          else { // D1R
+            nogo_in += recv_gp->net_raw;
+          }
+        }
+      }
     }
-    else {
-      go_in += recv_gp->net_raw;
+    else { // non-MSNUnitSpec inputs.. just go with the name..
+      if(from->name.contains("NoGo") || from->name.contains("D2")) {
+        nogo_in += recv_gp->net_raw;
+      }
+      else {
+        go_in += recv_gp->net_raw;
+      }
     }
   }
 
