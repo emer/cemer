@@ -328,7 +328,7 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
   dlg.AddStringField(&full_lbl, "full_lbl", "main", curow, "tooltip=enter label to use;");
   curow = "grp";
   dlg.AddHBoxLayout(curow, "mainv","","");
-  dlg.AddLabel("sub_grp_name", "main", curow, "label=Subgroup: ;");
+  dlg.AddLabel("sub_grp_name_lbl", "main", curow, "label=Subgroup: ;");
   dlg.AddStringField(&sub_grp_name, "sub_grp_name", "main", curow, "tooltip=enter subgroup name or leave blank if item not in a subgroup;");
   int drval = dlg.PostDialog(true);
   if(drval == 0) {
