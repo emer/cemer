@@ -144,6 +144,27 @@ void ProgEl::UpdateAfterEdit_impl() {
 }
 
 void ProgEl::UpdateAfterMove(taBase* old_owner) {
+  UpdateAfterMove_impl(old_owner);
+  
+  Program* old_par = NULL;
+  Program* new_par = NULL;
+  if (old_owner) {
+    if (old_owner->InheritsFrom(&TA_Program)) {
+      old_par = (Program*)old_owner;
+    }
+    else {
+      old_par = (Program*)old_owner->GetOwnerOfType(&TA_Program);
+    }
+  }
+  new_par = (Program*)this->GetOwnerOfType(&TA_Program);
+  if (old_par && new_par && old_par != new_par) {
+    UpdatePointers_NewPar(old_par, new_par); // update any pointers within this guy
+  }
+}
+
+void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
+  inherited::UpdateAfterMove_impl(old_owner);
+  
   Program* old_par = NULL;
   Program* new_par = NULL;
   if (old_owner) {
@@ -160,20 +181,6 @@ void ProgEl::UpdateAfterMove(taBase* old_owner) {
   if (old_par && new_par && old_par != new_par) {
     UpdatePointers_NewPar(old_par, new_par); // update any pointers within this guy
   }
-}
-
-void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
-  inherited::UpdateAfterMove_impl(old_owner);
-  
-  //  if(!old_owner) return;
-  //  Program* myprg = GET_MY_OWNER(Program);
-  //  Program* otprg = (Program*)old_owner->GetOwner(&TA_Program);
-  //  if(!myprg || !otprg || myprg == otprg) return;
-  //  // don't update if not relevant
-  //
-  //  // todo: this can now theoretically be done by UpdatePointers_NewPar_FindNew
-  //  // but this was written first and it works..
-  //  // automatically perform all necessary housekeeping functions!
   TypeDef* td = GetTypeDef();
   for(int i=0;i<td->members.size;i++) {
     MemberDef* md = td->members[i];
@@ -181,6 +188,7 @@ void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
       ProgExprBase* peb = (ProgExprBase*)md->GetOff((void*)this);
       peb->UpdateProgExpr_NewOwner();
     }
+    // might need this commented out code
 //    else if(md->type->InheritsFrom(&TA_ProgArg_List)) {
 //      ProgArg_List* peb = (ProgArg_List*)md->GetOff((void*)this);
 //      peb->UpdateProgExpr_NewOwner();
@@ -206,19 +214,11 @@ void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
 //      }
 //    }
   }
-    //
-    //  UpdatePointers_NewPar(otprg, myprg); // do the generic function to catch anything else..
-    //  taProject* myproj = myprg->GetMyProj();
-    //  taProject* otproj = otprg->GetMyProj();
-    //  if(myproj && otproj && (myproj != otproj))
-    //    UpdatePointers_NewPar(otproj, myproj);
-    // then do it again if moving between projects
 }
 
-void ProgEl::UpdatePointersAfterCopy_(const taBase& cp) {
-  if (taMisc::is_loading) {
-    return;
-  }
+void ProgEl::UpdatePointersAfterCopy_impl(const taBase& cp) {
+  inherited::UpdatePointersAfterCopy_impl(cp);
+  
   taBase* owner = GetOwner();
   if (owner) {
     if (!owner->HasBaseFlag(COPYING)) {
@@ -230,13 +230,7 @@ void ProgEl::UpdatePointersAfterCopy_(const taBase& cp) {
       }
     }
   }
-//  // for work we can't handle generically
-//  UpdatePointersAfterCopy_impl(cp);
-}
 
-void ProgEl::UpdatePointersAfterCopy_impl(const taBase& cp) {
-  inherited::UpdatePointersAfterCopy_impl(cp);
-  
   TypeDef* td = GetTypeDef();
   for(int i=0;i<td->members.size;i++) {
     MemberDef* md = td->members[i];
