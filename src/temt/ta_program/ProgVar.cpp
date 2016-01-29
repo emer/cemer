@@ -1001,14 +1001,26 @@ String ProgVar::GetColText(const KeyString& key, int itm_idx) const {
 }
 
 bool ProgVar::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) {
-  if (!member) {
-    member = GetValMemberDef();
+  taBase* base = this;
+  MemberDef* mbr = member;
+  
+  if (var_type == ProgVar::T_DynEnum) {
+    base = (taBase*)&this->dyn_enum_val;
+    if (base) {
+      mbr = base->FindMember("value");
+      if(TestError(!mbr,"AddToControlPanel", "member is null")) return false;
+    }
   }
-  if(TestError(!member,"AddToControlPanel", "member is null")) return false;
+  else {
+    if (!mbr) {
+      mbr = GetValMemberDef();
+    }
+  }
+  
   if(!ctrl_panel) {
     taProject* proj = GetMyProj();
     if(TestError(!proj, "AddToControlPanel", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return ctrl_panel->SelectMemberPrompt(this, member);
+  return ctrl_panel->SelectMemberPrompt(base, mbr);
 }
