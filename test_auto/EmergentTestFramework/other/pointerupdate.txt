@@ -288,6 +288,26 @@ MoveProgramIntoSubGroup
  
     Prog Group Should Match    3                     NONE 
     Prog Group Should Match    -3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"].gp[\\"sub_group_three\\"]  
+
+CopyExpressionWithVariableToProgram
+    Set Suite Variable     ${program_test}       "EmptyProgram" 
+    Ensure Emergent Free 
+ 
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": "EmptyProgram", "var_name": "i"}
+    Status OK        ${output}
+    Json Value Should Equal    ${output}             /result   2345   
+     
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_expression_with_variable_to_other_program"} 
+    Status OK No Result        ${output}
+
+    Prog Var Should Equal      i	0
+
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "EmptyProgram"} 
+    Status OK No Result        ${output}
+
+    Prog Var Should Equal      i	1
+ 
+	
  
 MoveProgramOutOfSubGroup 
     Set Suite Variable     ${program_test}       "TestGroup" 
