@@ -294,8 +294,7 @@ CopyExpressionWithVariableToProgram
     Ensure Emergent Free 
  
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "EmptyProgram", "var_name": "i"}
-    Status OK        ${output}
-    Json Value Should Equal    ${output}             /result   2345   
+    Status Error Match       ${output}     5         Var 'i' not found
      
     ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_expression_with_variable_to_other_program"} 
     Status OK No Result        ${output}
