@@ -53,8 +53,9 @@ CopyProgram
     Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"]
     Prog Group Should Match    2                     NONE  
     
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_callee_caller"}
-    Status OK No Result        ${output}
+    Run Emergent Program	copy_callee_caller
+#    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_callee_caller"}
+#    Status OK No Result        ${output}
 
 
     Prog Group Should Match    2                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_two\\"]
@@ -295,14 +296,28 @@ CopyExpressionWithVariableToProgram
  
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "EmptyProgram", "var_name": "i"}
     Status Error Match       ${output}     5         Var 'i' not found
-     
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_expression_with_variable_to_other_program"} 
-    Status OK No Result        ${output}
+    
+    Run Emergent Program       copy_expression_with_variable_to_other_program 
 
     Prog Var Should Equal      i	0
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "EmptyProgram"} 
-    Status OK No Result        ${output}
+    Run Emergent Program       EmptyProgram
+
+    Prog Var Should Equal      i	1
+
+MoveExpressionWithVariableToProgram
+    Set Suite Variable     ${program_test}       "EmptyProgram"
+    Restart Emergent 
+    Ensure Emergent Free 
+ 
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": "EmptyProgram", "var_name": "i"}
+    Status Error Match       ${output}     5         Var 'i' not found
+    
+    Run Emergent Program       move_expression_with_variable_to_other_program 
+
+    Prog Var Should Equal      i	0
+
+    Run Emergent Program       EmptyProgram
 
     Prog Var Should Equal      i	1
  
