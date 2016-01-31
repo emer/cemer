@@ -167,11 +167,13 @@ Run Emergent Program
     \       Sleep              1000ms
     \       ${output} =        Read
     \       ${runstate} =      Get Json Value   ${output}       /result
-    \       Exit For Loop If                 ${runstate} == "0"
-    Should Be Equal  ${runstate}             "0"
+    \       Exit For Loop If                 ${runstate} <> "2"
+    
     Print              Completed running program in ${i} seconds
     ${output} =        Run Command      {"command": "GetConsoleOutput"}         500ms
     Status OK   ${output}
+    Run Keyword If      '${runstate}' <> '0'         Log	${output}	WARN    
+    Should Be Equal  ${runstate}             "0"
     ${console}	Set Variable	""
     ${output2}    ${console} =     Run Keyword And Ignore Error	Get Json Value   ${output}       /result
     ${output} =        Run Command      {"command": "CollectConsoleOutput", "enable": false}    500ms
