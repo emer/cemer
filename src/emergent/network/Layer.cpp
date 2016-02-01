@@ -84,24 +84,30 @@ void Layer::Initialize() {
 void Layer::InitLinks() {
   inherited::InitLinks();
   taBase::Own(pos, this);
+  taBase::Own(pos_abs, this);
   taBase::Own(pos2d, this);
+  taBase::Own(pos2d_abs, this);
+  
   taBase::Own(un_geom, this);
   taBase::Own(gp_geom, this);
   taBase::Own(gp_spc, this);
   taBase::Own(flat_geom, this);
   taBase::Own(disp_geom, this);
   taBase::Own(scaled_disp_geom, this);
+  
   taBase::Own(projections, this);
   taBase::Own(send_prjns, this);
+  
   taBase::Own(units, this);
   taBase::Own(unit_spec, this);
+  taBase::Own(unit_names, this);
   taBase::Own(dist, this);
   taBase::Own(gp_output_names, this);
+  
   taBase::Own(avg_sse, this);
   taBase::Own(prerr, this);
   taBase::Own(sum_prerr, this);
   taBase::Own(epc_prerr, this);
-  taBase::Own(unit_names, this);
 
   AutoNameMyMembers();
 
@@ -123,19 +129,32 @@ void Layer::InitLinks() {
 void Layer::CutLinks() {
   if(!owner) return; // already replacing or already dead
   DisConnect();
-  gp_output_names.CutLinks();
-  unit_names.CutLinks();
+  pos.CutLinks();
+  pos_abs.CutLinks();
+  pos2d.CutLinks();
+  pos2d_abs.CutLinks();
+  
+  un_geom.CutLinks();
+  gp_geom.CutLinks();
+  gp_spc.CutLinks();
+  flat_geom.CutLinks();
   disp_geom.CutLinks();
   scaled_disp_geom.CutLinks();
-  flat_geom.CutLinks();
-  gp_spc.CutLinks();
-  gp_geom.CutLinks();
-  un_geom.CutLinks();
-  pos.CutLinks();
-  send_prjns.CutLinks();
+  
   projections.CutLinks();
+  send_prjns.CutLinks();
+  
   units.CutLinks();
   unit_spec.CutLinks();
+  unit_names.CutLinks();
+  dist.CutLinks();
+  gp_output_names.CutLinks();
+  
+  avg_sse.CutLinks();
+  prerr.CutLinks();
+  sum_prerr.CutLinks();
+  epc_prerr.CutLinks();
+  
   m_prv_unit_spec = NULL;
   m_prv_layer_flags = LF_NONE;
   inherited::CutLinks();
