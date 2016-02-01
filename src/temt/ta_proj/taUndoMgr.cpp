@@ -127,10 +127,10 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 
   // tell project to refresh ui, because otherwise the undo action does not get enabled
   // properly
-  taProject* proj = GetMyProj();
-  if(proj) {
-    tabMisc::DelayedFunCall_gui(proj,"UpdateUi");
-  }
+//  taProject* proj = GetMyProj();
+//  if(proj) {
+//    tabMisc::DelayedFunCall_gui(proj,"UpdateUi");
+//  }
 
   return true;                  // todo: need to check result of Save_String presumably
 }
