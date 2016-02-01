@@ -1986,13 +1986,13 @@ void DataTable::RemoveOrphanCols() {
   int cls_cnt = 0; // used to prevent spurious struct updates
   for(int i=data.size-1;i>=0;i--) {
     DataCol* da = data.FastEl(i);
-    if(da->HasColFlag(DataCol::MARK) && !da->HasColFlag(DataCol::PIN)) {
-      if(cls_cnt == 0) StructUpdate(true);
-      da->Close();
-      cls_cnt++;
-    }
-    da->ClearColFlag(DataCol::MARK);
-    da->ClearColFlag(DataCol::PIN);
+      if(da->HasColFlag(DataCol::MARK) && !da->HasColFlag(DataCol::PIN)) {
+        if(cls_cnt == 0) StructUpdate(true);
+        da->Close();
+        cls_cnt++;
+      }
+//    da->ClearColFlag(DataCol::MARK);
+//    da->ClearColFlag(DataCol::PIN);
   }
   if (cls_cnt)  {
     StructUpdate(false);
@@ -2133,7 +2133,7 @@ void DataTable::ResetData() {  // this permanently deletes all row data!
   write_idx = -1;
   
   // get rid of the DataTableCells linking this table to control panels
-  control_panel_cells.RemoveAll();
+//  control_panel_cells.RemoveAll();
 }
 
 void DataTable::RowsAdding(int n, bool begin) {
