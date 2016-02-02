@@ -17,7 +17,7 @@ FIND_LIBRARY(SNDFILE_LIBRARY NAMES sndfile PATHS
    /opt/local/lib
 ) 
 
-# handle the QUIETLY and REQUIRED arguments and set COIN_FOUND to TRUE if 
+# handle the QUIETLY and REQUIRED arguments and set x_FOUND to TRUE if 
 # all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Sndfile DEFAULT_MSG SNDFILE_LIBRARY SNDFILE_INCLUDE_DIR)

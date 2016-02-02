@@ -61,24 +61,24 @@ public:
   virtual bool	GetPixelRGB_float(int x, int y, float& r, float& g, float& b);
   // #CAT_Image get the pixel value as floating point RGB values for given coordinates
 
-  bool	ImageToMatrix_grey(float_Matrix& grey_data);
+  virtual bool	ImageToMatrix_grey(float_Matrix& grey_data);
   // #CAT_Data convert image to greyscale Matrix floating point image data (alias for ImageToGrey_float): note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
-  bool	ImageToMatrix_rgb(float_Matrix& rgb_data);
+  virtual bool	ImageToMatrix_rgb(float_Matrix& rgb_data);
   // #CAT_Data convert image to RGB Matrix floating point image data (alias for ImageToMatrix_rgb) -- rgb_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
-  bool	ImageToMatrix_rgba(float_Matrix& rgba_data);
+  virtual bool	ImageToMatrix_rgba(float_Matrix& rgba_data);
   // #CAT_Data convert image to RGBA Matrix floating point image data, preserving alpha channel -- rgba_data is 3 dimensional with 3rd dim = r,g,b,a: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
 
-  bool	ImageFromMatrix_grey(const float_Matrix& grey_data);
-  // #CAT_Data convert from greyscale Matrix floating point image data to this image: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
-  bool	ImageFromMatrix_rgb(const float_Matrix& rgb_data);
-  // #CAT_Data convert from RGB Matrix floating point image data to this image -- img_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
-  bool	ImageFromMatrix_rgba(const float_Matrix& rgba_data);
-  // #CAT_Data convert from RGBA Matrix floating point image data to this image -- img_data is 3 dimensional with 3rd dim = r,g,b,a: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
+  virtual bool	ImageFromMatrix_grey(const float_Matrix& grey_data);
+  // #CAT_Data convert from greyscale Matrix floating point image data to this image: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..  resulting image is size of matrix data (makes a new image)
+  virtual bool	ImageFromMatrix_rgb(const float_Matrix& rgb_data);
+  // #CAT_Data convert from RGB Matrix floating point image data to this image -- img_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left.. resulting image is size of matrix data (makes a new image)
+  virtual bool	ImageFromMatrix_rgba(const float_Matrix& rgba_data);
+  // #CAT_Data convert from RGBA Matrix floating point image data to this image -- img_data is 3 dimensional with 3rd dim = r,g,b,a: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left.. resulting image is size of matrix data (makes a new image)
 
   virtual bool	ImageToDataCell(DataTable* dt, const Variant& col, int row);
   // #BUTTON #CAT_Data set image to datatable cell indexed by col (name or number) and row -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row
   virtual bool	ImageFromDataCell(DataTable* dt, const Variant& col, int row);
-  // #BUTTON #CAT_Data set image from data in datatable cell indexed by col (name or number) and row -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row
+  // #BUTTON #CAT_Data set image from data in datatable cell indexed by col (name or number) and row -- resulting image is size of cell matrix data (makes a new image)
   virtual bool	ConfigDataColName(DataTable* dt, const String& col_nm, ValType val_type, 
 				  bool rgb = true);
   // #CAT_Data configure data column with given name (if it doesn't exist, it is created) to represent current image -- if rgb is false, then a greyscale image is configured (2d)
@@ -111,13 +111,13 @@ public:
   // #CAT_zzzObsolete convert image to RGB floating point image data -- img_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
 
 
-  void	Copy_(const taImage& cp);
   TA_BASEFUNS(taImage);
 protected:
 #ifdef TA_GUI
   QImage	q_img;
 #endif
 private:
+  void	Copy_(const taImage& cp);
   void 	Initialize();
   void	Destroy() { };
 };

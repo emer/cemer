@@ -67,6 +67,7 @@ set(virt_env_HEADS_MAKETA_NOMOC_base
   VEStaticView.h
   VESpaceView.h
   VEWorldView.h
+  SoundProc.h
 )
 
 # need both maketa and moc -- relatively rare
@@ -192,6 +193,7 @@ set(virt_env_SRCS
   T3VEJoint.cpp
   T3VESpace.cpp
   T3VEStatic.cpp
+  SoundProc.cpp
 )
 
 set(virt_env_FILES ${virt_env_HEADS} ${virt_env_SRCS})

@@ -17,6 +17,7 @@ if (QT_USE_5)
   find_package(Qt5Xml)
   find_package(Qt5Network)
   find_package(Qt5PrintSupport)
+  find_package(Qt5Multimedia)
 
     #  qt5_use_modules(Emergent Widgets Network WebKit OpenGL Xml)
 #  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -26,13 +27,14 @@ if (QT_USE_5)
 
   include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS}
     ${Qt5OpenGL_INCLUDE_DIRS}
-    ${Qt5Xml_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5PrintSupport_INCLUDE_DIRS})
+    ${Qt5Xml_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5PrintSupport_INCLUDE_DIRS}
+    ${Qt5Multimedia_INCLUDE_DIRS})
   
   add_definitions(${Qt5Widgets_DEFINITIONS})
 
   set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES}
     ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES}
-    ${Qt5Network_LIBRARIES} ${Qt5PrintSupport_LIBRARIES})
+    ${Qt5Network_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${Qt5Multimedia_LIBRARIES})
 
   if (QT_USE_3D)
     find_package(Qt5WebEngineCore)
@@ -96,7 +98,7 @@ else (QT_USE_5)
 
 endif (QT_USE_5)
 
-
+# subversion
 if (WIN32)
   # Give FindSubversionLibrary a hint to where the libs are installed on Windows.
   # TODO: verify this just works on its own on Linux/Mac.
@@ -104,6 +106,8 @@ if (WIN32)
 endif()
 find_package(SubversionLibrary REQUIRED)
 
+
+# readline / termcap
 if (NOT WIN32)
   find_package(Readline REQUIRED)
   if (APPLE)  
@@ -113,9 +117,14 @@ if (NOT WIN32)
     find_package(Termcap)
   endif (APPLE)
 endif (NOT WIN32)
+
+
+# ODE, GSL
 find_package(ODE)
 find_package(GSL)
 
+
+# ZLIB
 if (WIN32)
   if (QT_USE_5)
     find_package(ZLIB)
@@ -127,10 +136,27 @@ else (WIN32)
   find_package(ZLIB)
 endif (WIN32)
 
+
+# SndFile (optional)
+find_package(SndFile)
+if(SNDFILE_FOUND)
+  set(EMERGENT_OPT_LIBRARIES ${EMERGENT_OPT_LIBRARIES} ${SNDFILE_LIBRARY})
+  include_directories(${SNDFILE_INCLUDE_DIR})
+  add_definitions(-DTA_SNDFILE)
+  message(STATUS "Found optional libsndfile in ${SNDFILE_LIBRARY} -- enabling it for sound file I/O -- otherwise on Mac OS X no sound file I/O is avail")
+else (SNDFILE_FOUND)
+  if (APPLE)
+    message(STATUS "Did NOT found optional libsndfile on Mac OS X -- NO sound file I/O is available without it!")
+  endif (APPLE)
+endif(SNDFILE_FOUND)
+
+
+# HPC profiling
 if(HPCPROF_BUILD)
   set(EMERGENT_OPT_LIBRARIES ${EMERGENT_OPT_LIBRARIES} -L/usr/local/lib/hpctoolkit -lhpctoolkit)
   add_definitions(-DHPCPROF_COMPILE)
 endif(HPCPROF_BUILD)
+
 
 ##############################
 # CUDA (set -DCUDA_BUILD flag at compile time)

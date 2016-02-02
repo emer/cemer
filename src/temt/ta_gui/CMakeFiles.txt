@@ -16,6 +16,7 @@ set(ta_gui_HEADS_MAKETA_NOMOC
   iColor.h
 
   taImage.h
+  taSound.h
   
   taColor.h
   taColor_List.h
@@ -417,6 +418,8 @@ set(ta_gui_HEADS_NOMAKETA_MOC
 
   KeyActionPair.h
   KeyActionPair_PArray.h
+
+  taSound_QObj.h
 )
 
 set(ta_gui_HEADS_NOMAKETA_NOMOC
@@ -525,6 +528,7 @@ set(ta_gui_SRCS_MAKETA
   taFontSpec.cpp
 
   taImage.cpp
+  taSound.cpp
   
   taColor.cpp
   taColor_List.cpp
@@ -984,6 +988,7 @@ set(ta_gui_SRCS_NOMAKETA
   taiWidgetSubGroupEditButton.cpp
 
   iDialogRegexpPopulator.cpp
+  taSound_QObj.cpp
 )
 
 set(ta_gui_SRCS_UI
