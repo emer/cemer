@@ -20,6 +20,7 @@
 #include <TemtServer>
 #include <DataTable>
 #include <taImage.h>
+#include <MemberDef>
 
 #include <taMisc>
 #include <tabMisc>
@@ -1269,6 +1270,12 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
       else if (node_name == "project") {
         name_params.SetVal("project", obj_iter.value().toString());  // enable or disable
       }
+      else if (node_name == "path") {
+          name_params.SetVal("path", obj_iter.value().toString());  // path to a taBase object
+      }
+      else if (node_name == "member") {
+          name_params.SetVal("member", obj_iter.value().toString());  // member name
+      }
 
       else {
         String err_msg = "Unknown parameter: " + node_name;
@@ -1345,6 +1352,9 @@ void TemtClient::RunCommand(const String& cmd) {
 #if (QT_VERSION >= 0x050000)
   else if (cmd == "SetJsonFormat") {
     cmdSetJsonFormat();
+  }
+  else if (cmd == "GetMember") {
+      cmdGetMember();
   }
 #endif
   else
@@ -1778,3 +1788,43 @@ void TemtClient::cmdSetJsonFormat() {
   }
 }
 #endif
+
+#if (QT_VERSION >= 0x050000)
+void TemtClient::cmdGetMember() {
+    if (!name_params.GetVal("path").isNull()) {
+        String pnm = name_params.GetVal("path").toString();
+        taBase * obj = NULL;
+        MemberDef* md = NULL;
+        if (pnm.startsWith(".projects")) {
+            obj = tabMisc::root->FindFromPath(pnm, md);
+        } else {
+            taProject* proj = GetCurrentProject();
+            obj = proj->FindFromPath(pnm, md);
+        }
+
+        if(obj) {
+            if (!name_params.GetVal("member").isNull()) {
+                md = obj->GetTypeDef()->members.FindName(name_params.GetVal("member").toString());
+                if (!md) {
+                    SendErrorJSON("No member " + name_params.GetVal("member").toString() + " was found in " + name_params.GetVal("path").toString(), TemtClient::NOT_FOUND);
+                    return;
+                }
+                
+                SendOk(md->GetValVar(obj).toString());
+                return;
+            } else {
+                SendOk(obj->PrintStr());
+                return;
+            }
+        } else {
+            SendError("Path '" + pnm + "' not found", TemtClient::NOT_FOUND);
+            return;
+        }
+        SendErrorJSON("Working on the implementation", TemtClient::NOT_FOUND);
+    }
+    else {
+        SendErrorJSON("path param not found", TemtClient::MISSING_PARAM);
+    }
+}
+#endif
+

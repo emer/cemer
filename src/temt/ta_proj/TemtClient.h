@@ -127,6 +127,7 @@ public: // commands, all are cmdXXX where XXX is exact command name
   virtual void    cmdClearConsoleOutput();
 #if (QT_VERSION >= 0x050000)
   virtual void    cmdSetJsonFormat();
+    virtual void    cmdGetMember();
 #endif
   
 public: // slot forwardees
