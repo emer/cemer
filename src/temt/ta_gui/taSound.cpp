@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taSound.h"
+
+TA_BASEFUNS_CTORS_DEFN(taSound);
+
+
+#if (QT_VERSION >= 0x050000)
+
 #include <taFiler>
 #include <float_Matrix>
 #include <QAudioFormat>
@@ -23,11 +29,6 @@
 #ifdef TA_SNDFILE
 #include <sndfile.hh>
 #endif
-
-TA_BASEFUNS_CTORS_DEFN(taSound);
-
-
-#if (QT_VERSION >= 0x050000)
 
 void taSound::Initialize() {
   q_obj = NULL;
@@ -526,6 +527,16 @@ bool taSound::SoundFromMatrix(const float_Matrix& sound_data, int channel,
 
 #else // QT_VERSION >= 0x050000
 
+void taSound::Initialize() {
+  q_obj = NULL;
+}
+
+void taSound::Destroy() {
+}
+
+void taSound::Copy_(const taSound& cp) {
+}
+
 bool taSound::IsValid() const {
   return false;
 }
@@ -595,7 +606,7 @@ int taSound::FramesForDuration(int64_t duration) const {
   return -1;
 }
 
-bool taSound::InitBuffer(int sample_rate, int channels,
+bool taSound::InitBuffer(int frame_count, int sample_rate, int channels,
                          int sample_size, SoundSampleType sample_type,
                          Endian byte_order) {
   return false;

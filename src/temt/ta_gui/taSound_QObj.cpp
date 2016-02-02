@@ -15,6 +15,8 @@
 
 #include "taSound_QObj.h"
 
+#if (QT_VERSION >= 0x050000)
+
 #include <taSound>
 #include <QAudioDecoder>
 #include <QAudioFormat>
@@ -137,3 +139,10 @@ void taSound_QObj::PlayStateChanged(QAudio::State newState) {
     break;
   }
 }
+
+#else  // (QT_VERSION >= 0x050000)
+
+taSound_QObj::taSound_QObj(taSound* snd) {
+}
+
+#endif // (QT_VERSION >= 0x050000)

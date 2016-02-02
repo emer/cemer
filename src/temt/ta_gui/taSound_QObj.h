@@ -22,11 +22,14 @@
 #include <QObject>
 #endif
 
+class taSound;
+
+#if (QT_VERSION >= 0x050000)
+
 // member includes:
 #include <QAudio>
 
 // declare all other types mentioned but not required to include:
-class taSound;
 class QAudioDecoder;
 class QAudioFormat;
 class QString;
@@ -61,5 +64,19 @@ protected:
 
   taSound_QObj(taSound* snd);
 };
+
+#else  // (QT_VERSION >= 0x050000)
+
+class TA_API taSound_QObj : public QObject {
+ // #IGNORE this is a helper QObject that handles signals/slots
+Q_OBJECT
+friend class taSound;
+public:
+
+protected:
+  taSound_QObj(taSound* snd);
+};
+
+#endif // (QT_VERSION >= 0x050000)
 
 #endif // taSound_QObj_h
