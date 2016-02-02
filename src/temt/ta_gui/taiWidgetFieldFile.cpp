@@ -60,8 +60,10 @@ void taiWidgetFieldFile::lookupKeyPressed() {
         rep()->setText(flr->FileName());
       }
     }
-    flr->Close();
-    taRefN::unRefDone(flr);
+    if (flr) {
+      flr->Close();
+      taRefN::unRefDone(flr);
+    }
   }
   else {                        // do a static dialog
     taFiler* flr = taBase::StatGetFiler(NULL, file_ext, file_cmprs, file_type);
@@ -84,8 +86,10 @@ void taiWidgetFieldFile::lookupKeyPressed() {
         rep()->setText(flr->FileName());
       }
     }
-    flr->Close();
-    taRefN::unRefDone(flr);
+    if (flr) {
+      flr->Close();
+      taRefN::unRefDone(flr);
+    }
   }
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
