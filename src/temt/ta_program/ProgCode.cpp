@@ -98,7 +98,7 @@ ProgEl* ProgCode::CvtCodeToProgEl() {
   // no ProgEl for MethodMethodCall so convert to CSS
   bool isMethodCall = candidates.FindType(&TA_MethodCall);
   if (isMethodCall) {
-    String after_method = code.expr.after(')');
+    String after_method = code.expr.after(')', -1);
     if (after_method.length() > 0) {
       candidates.RemoveEl_((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_MethodCall));
       ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(&TA_AssignExpr);
