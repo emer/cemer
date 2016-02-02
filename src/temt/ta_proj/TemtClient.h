@@ -116,7 +116,7 @@ public: // commands, all are cmdXXX where XXX is exact command name
   virtual void 		cmdGetRunState();
   virtual void		cmdOpenProject();
   virtual void 		cmdRemoveData();
-  virtual void		cmdRunProgram(bool sync); 
+  virtual void		cmdRunProgram(bool sync);
   virtual void 		cmdSetData();
   virtual void 		cmdSetDataCell();
   virtual void 		cmdSetDataMatrixCell();
@@ -127,7 +127,7 @@ public: // commands, all are cmdXXX where XXX is exact command name
   virtual void    cmdClearConsoleOutput();
 #if (QT_VERSION >= 0x050000)
   virtual void    cmdSetJsonFormat();
-    virtual void    cmdGetMember();
+  virtual void    cmdGetMember();
 #endif
   
 public: // slot forwardees

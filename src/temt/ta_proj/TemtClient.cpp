@@ -1791,40 +1791,39 @@ void TemtClient::cmdSetJsonFormat() {
 
 #if (QT_VERSION >= 0x050000)
 void TemtClient::cmdGetMember() {
-    if (!name_params.GetVal("path").isNull()) {
-        String pnm = name_params.GetVal("path").toString();
-        taBase * obj = NULL;
-        MemberDef* md = NULL;
-        if (pnm.startsWith(".projects")) {
-            obj = tabMisc::root->FindFromPath(pnm, md);
-        } else {
-            taProject* proj = GetCurrentProject();
-            obj = proj->FindFromPath(pnm, md);
-        }
-
-        if(obj) {
-            if (!name_params.GetVal("member").isNull()) {
-                md = obj->GetTypeDef()->members.FindName(name_params.GetVal("member").toString());
-                if (!md) {
-                    SendErrorJSON("No member " + name_params.GetVal("member").toString() + " was found in " + name_params.GetVal("path").toString(), TemtClient::NOT_FOUND);
-                    return;
-                }
-                
-                SendOk(md->GetValVar(obj).toString());
-                return;
-            } else {
-                SendOk(obj->PrintStr());
-                return;
-            }
-        } else {
-            SendError("Path '" + pnm + "' not found", TemtClient::NOT_FOUND);
-            return;
-        }
-        SendErrorJSON("Working on the implementation", TemtClient::NOT_FOUND);
+  if (!name_params.GetVal("path").isNull()) {
+    String pnm = name_params.GetVal("path").toString();
+    taBase * obj = NULL;
+    MemberDef* md = NULL;
+    if (pnm.startsWith(".projects")) {
+      obj = tabMisc::root->FindFromPath(pnm, md);
+    } else {
+      taProject* proj = GetCurrentProject();
+      obj = proj->FindFromPath(pnm, md);
     }
-    else {
-        SendErrorJSON("path param not found", TemtClient::MISSING_PARAM);
+    
+    if(obj) {
+      if (!name_params.GetVal("member").isNull()) {
+        md = obj->GetTypeDef()->members.FindName(name_params.GetVal("member").toString());
+        if (!md) {
+          SendErrorJSON("No member " + name_params.GetVal("member").toString() + " was found in " + name_params.GetVal("path").toString(), TemtClient::NOT_FOUND);
+          return;
+        }
+        SendOk(md->GetValVar(obj).toString());
+        return;
+      } else {
+        SendOk(obj->PrintStr());
+        return;
+      }
+    } else {
+      SendError("Path '" + pnm + "' not found", TemtClient::NOT_FOUND);
+      return;
     }
+    SendErrorJSON("Working on the implementation", TemtClient::NOT_FOUND);
+  }
+  else {
+    SendErrorJSON("path param not found", TemtClient::MISSING_PARAM);
+  }
 }
 #endif
 
