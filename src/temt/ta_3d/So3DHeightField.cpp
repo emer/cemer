@@ -322,7 +322,7 @@ void So3DHeightField::render() {
 void So3DHeightField::render_text(bool build_text, int& t_idx, float xp, float yp,
 				  float zp, float ufontsz)
 {
-  if(build_text || cell_text_->getNumChildren() <= t_idx) {
+  if(build_text || (cell_text_ && cell_text_->getNumChildren() <= t_idx)) {
     SoSeparator* tsep = new SoSeparator;
     cell_text_->addChild(tsep);
     SoTranslation* tr = new SoTranslation;
@@ -331,8 +331,13 @@ void So3DHeightField::render_text(bool build_text, int& t_idx, float xp, float y
     txt->justification = SoAsciiText::CENTER;
     tsep->addChild(txt);
   }
+  if (!cell_text_) return;
   SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
+  
+  if (!tsep) return;
   SoTranslation* tr = (SoTranslation*)tsep->getChild(0);
+  
+  if (!tr) return;
   float yfp = yp - .5f * ufontsz;
   tr->translation.setValue(xp, MAX(zp,0.0f) + .01f, yfp); // y/z switched
   SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
