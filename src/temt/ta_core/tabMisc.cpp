@@ -92,7 +92,8 @@ bool tabMisc::DoDelayedCloses() {
   // note: this is sleazy, but very efficient -- we just completely
   // hijack the memory of the current list in this working copy
   taBase_RefList items;
-  items.Hijack(delayed_close);
+  items.Free(delayed_close);
+
   // we work fifo
   while (items.size > 0) {
     // note: active items can often have many refs, and CutLinks will typically

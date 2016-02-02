@@ -1,3 +1,5 @@
+
+
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -167,18 +169,12 @@ void* taPtrList_impl::FindName_(const String& nm) const {
 }
 
 
-void taPtrList_impl::Hijack(taPtrList_impl& src) {
-  // normally only used when already empty, but this guarantees it!
+void taPtrList_impl::Free(taPtrList_impl& src) {
   if (el) {
     Reset();
-    el = (void**)realloc((char *) el, 0);
+    free(el);
+    el = NULL;
   }
-  el = src.el;
-  size = src.size;
-  alloc_size = src.alloc_size;
-  src.el = NULL;
-  src.size = 0;
-  src.alloc_size = 0;
 }
 
 void taPtrList_impl::UpdateIndex_(int idx) {
