@@ -90,8 +90,11 @@ void taiViewTypeOftaOBase::CreateDataPanel_impl(taiSigLink* dl_)
       DataPanelCreated(bldp);
     }
   }
+  
   // if we have UserData, make a panel for it
+  if (!dl_) return;
   taOBase* tab = dynamic_cast<taOBase*>(dl_->taData());
+  
   if (!tab) return; // shouldn't happen
   UserDataItem_List* udl = tab->GetUserDataList(false); // no force
   if (udl) { // note: if not, can't have DocLink either...
