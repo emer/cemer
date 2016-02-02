@@ -79,7 +79,7 @@ PropertyDef* PropertySpace::AssertProperty_impl(const char* nm, bool& is_new,
     }
   }
   // new getters control all the opts, desc, etc.
-  if (is_new && get_nset) {
+  if (ti && pd && is_new && get_nset) {
     pd->desc = ti->desc;
     pd->opts = ti->opts;
     pd->lists = ti->lists;
