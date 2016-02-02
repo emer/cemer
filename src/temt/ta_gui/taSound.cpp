@@ -288,7 +288,7 @@ bool taSound::SaveSound(const String& fname) {
   
   return true;
 #else // TA_SNDFILE
-  TestError(true, "SaveSound", "Not compiled with the libsndfile library -- not able to save sound files!")) {
+  TestError(true, "SaveSound", "Not compiled with the libsndfile library -- not able to save sound files!");
   return false;
 #endif
 }
