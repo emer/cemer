@@ -186,6 +186,8 @@ void iMainWindowViewer::Init() {
   fileOpenFromWebMenu = NULL;
   filePublishProjectOnWebMenu = NULL;
   filePublishProjectOnWebAction = NULL;
+  fileUpdateProjectOnWebAction = NULL;
+  fileUploadFilesForProjectOnWebAction = NULL;
   fileCloseAction = NULL;
   fileCloseWindowAction = NULL;
   fileQuitAction = NULL;
@@ -506,8 +508,6 @@ void iMainWindowViewer::Constr_FileMenu()
   fileOpenRecentMenu = fileMenu->AddSubMenu("Open &Recent");
   fileMenu->AddAction(fileSaveAction);
   fileMenu->AddAction(fileSaveAsAction);
-  // fileExportMenu = fileMenu->AddSubMenu("Export"); // submenu -- empty and disabled in base
-  // fileMenu->AddAction(filePrintAction);
 
   fileMenu->insertSeparator();
   fileMenu->AddAction(fileSaveNotesAction);
@@ -592,7 +592,6 @@ void iMainWindowViewer::Constr_FileMenu()
   // Disable "Publish Project" -- won't be enabled until docs are first published.
 //  filePublishProjectOnWebAction->setEnabled(false);
 
-  // connect(filePrintAction, SIGNAL(activated()), this, SLOT(filePrint()));
   connect(fileOptionsAction, SIGNAL(Action()), this, SLOT(fileOptions()));
 
 #ifndef TA_OS_MAC
@@ -643,7 +642,6 @@ void iMainWindowViewer::Constr_EditMenu()
   editFindAction = AddAction(new iAction(0, "&Find...", ks_find, "editFindAction"));
   editFindAction->setIcon(QIcon(QPixmap(":/images/find_icon.png")));
 //  QKeySequence ks_find_next = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT);
-//  editFindNextAction = AddAction(new iAction(0, "Find &Next", ks_find_next, "editFindNextAction"));
 
   // Build menu items.
   editMenu->AddAction(editUndoAction);
@@ -664,7 +662,6 @@ void iMainWindowViewer::Constr_EditMenu()
 
   editMenu->insertSeparator();
   editMenu->AddAction(editFindAction);
-//  editMenu->AddAction(editFindNextAction);
 
   // Make connections.
   connect(editUndoAction, SIGNAL(Action()), this, SLOT(editUndo()));
@@ -681,7 +678,6 @@ void iMainWindowViewer::Constr_EditMenu()
   connect(editDeleteAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editDupeAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editFindAction, SIGNAL(Action()), this, SLOT(editFind()));
-//  connect(editFindNextAction, SIGNAL(Action()), this, SLOT(editFindNext()));
   
   editUndoAction->setEnabled(false);
   editRedoAction->setEnabled(false);
@@ -1469,15 +1465,6 @@ void iMainWindowViewer::editFind() {
   }
   if (!root) root = (taiSigLink*)tabMisc::root->GetSigLink();
   Find(root);
-}
-
-void iMainWindowViewer::editFindNext() {
-  // if we don't have a find window, just do Find
-  if (search_dialog) {
-    search_dialog->FindNext();
-  } else {
-    editFind();
-  }
 }
 
 void iMainWindowViewer::fileCloseWindow() {

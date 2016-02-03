@@ -95,7 +95,6 @@ public:
   
   taiWidgetMenu*              fileMenu;
   taiWidgetMenu*              fileOpenRecentMenu;
-  taiWidgetMenu*              fileExportMenu; // submenu -- empty and disabled in base
   taiWidgetMenu*              fileOpenFromWebMenu;
   taiWidgetMenu*              filePublishProjectOnWebMenu;
   taiWidgetMenu*              fileUpdateProjectOnWebMenu;
@@ -106,7 +105,6 @@ public:
   taiWidgetMenu*              ctrlMenu;
   taiWidgetMenu*              frameMenu;        // enumeration of all Frame guys
   taiWidgetMenu*              toolBarMenu;      // enumeration of all ToolBar guys
-  taiWidgetMenu*              dockMenu;         // enumeration of all Dock guys
   taiWidgetMenu*              dataMenu;
   taiWidgetMenu*              toolsMenu;
   taiWidgetMenu*              windowMenu;        // on-demand
@@ -135,7 +133,6 @@ public:
   iAction*            fileUploadFilesForProjectOnWebAction;
   iAction*            fileCloseAction;
   iAction*            fileOptionsAction;
-  iAction*            filePrintAction;
   iAction*            fileCloseWindowAction; //note: special, because it is always at bottom of File menu for non-root
   iAction*            fileQuitAction; //note: only on app window, except on all in Mac
   iAction*            fileRecentsClearAction;
@@ -154,7 +151,6 @@ public:
   iAction*            editLinkIntoAction;
   iAction*            editUnlinkAction;
   iAction*            editFindAction;
-  iAction*            editFindNextAction;
   
   iAction_List         dataProcCopyActions;
   iAction_List         dataProcOrderActions;
@@ -357,7 +353,6 @@ public slots:
   virtual void  editUndo();
   virtual void  editRedo();
   virtual void  editFind();
-  virtual void  editFindNext();
   virtual void  viewRefresh() { Refresh(); UpdateUi(); } // manually rebuild/refresh the current view
   virtual void  ViewReset(); // reset frames widths to original proportions
   virtual void  viewSaveView(); // save the current view state
