@@ -168,13 +168,13 @@ Run Emergent Program
     \       ${output} =        Read
     \       ${runstate} =      Get Json Value   ${output}       /result
     \       Exit For Loop If                 ${runstate} <> "2"
-    
+
     Print              Completed running program in ${i} seconds
     ${output} =        Run Command      {"command": "GetConsoleOutput"}         500ms
     Status OK   ${output}
     ${console}	Set Variable	""
     ${output2}    ${console} =     Run Keyword And Ignore Error	Get Json Value   ${output}       /result
-    Run Keyword If      '${runstate}' <> '0'         Log	${console}	WARN    
+    Run Keyword If      ${runstate} <> "0"     Log	${console}	WARN    
     Should Be Equal  ${runstate}             "0"
     Print  ${console}
     ${output} =        Run Command      {"command": "CollectConsoleOutput", "enable": false}    500ms
@@ -204,14 +204,14 @@ Prog Var Should Be Empty
 
 
 Restart Emergent
+    Log		"Resetting emergent"	WARN
     Shutdown Emergent
     Sleep    5
     Initialize Emergent         ${project}
     Sleep      5
     ${output} =       Read
-    Write Bare        {"command": "GetRunState"}
-    ${output} =       Read
-    Sleep     5
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             4
     Print     "Emergent was reset"
 
 Ensure Emergent Free

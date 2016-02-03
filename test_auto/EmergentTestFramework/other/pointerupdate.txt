@@ -54,9 +54,6 @@ CopyProgram
     Prog Group Should Match    2                     NONE  
     
     Run Emergent Program	copy_callee_caller
-#    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_callee_caller"}
-#    Status OK No Result        ${output}
-
 
     Prog Group Should Match    2                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_two\\"]
     Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
@@ -68,9 +65,8 @@ MoveProgram
 
     Prog Group Should Match    2                     NONE
     Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
-    
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_callee_caller"}
-    Status OK No Result        ${output}
+
+    Run Emergent Program       move_callee_caller
 
     Prog Group Should Match    1                     NONE
     Prog Group Should Match    2                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_two\\"] 
@@ -83,9 +79,8 @@ CopyDataTable
     DataTable Value Should Match        1       cat
     DataTable Value Should Match        2       -1
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_hasdatatable"}
-    Status OK No Result        ${output}
-
+    Run Emergent Program   copy_hasdatatable
+    
     DataTable Value Should Match        1       cat
     DataTable Value Should Match        2       cat
 
@@ -95,8 +90,7 @@ CopyDataTable
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "edit_datatable", "var_name": "SetValue", "var_value": "dog"}
     Status OK                  ${output}    
     
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "edit_datatable"}
-    Status OK No Result        ${output}
+    Run Emergent Program	edit_datatable
 
     DataTable Value Should Match        1       cat
     DataTable Value Should Match        2       dog
@@ -107,9 +101,8 @@ CopyDataTable
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "edit_datatable", "var_name": "SetValue", "var_value": "lion"}
     Status OK                  ${output}    
     
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "edit_datatable"}
-    Status OK No Result        ${output}
-
+    Run Emergent Program	edit_datatable
+    
     DataTable Value Should Match        1       lion
     DataTable Value Should Match        2       dog
 
@@ -121,8 +114,7 @@ MoveDataTable
     DataTable Value Should Match        1       cat
     DataTable Value Should Match        2       -1
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_hasdatatable"}
-    Status OK No Result        ${output}
+    Run Emergent Program   move_hasdatatable
 
     DataTable Value Should Match        1       -1
     DataTable Value Should Match        2       cat
@@ -133,8 +125,7 @@ MoveDataTable
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "edit_datatable", "var_name": "SetValue", "var_value": "dog"}
     Status OK                  ${output}    
     
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "edit_datatable"}
-    Status OK No Result        ${output}
+    Run Emergent Program	edit_datatable
 
     DataTable Value Should Match        2       dog    
 
@@ -142,33 +133,27 @@ CopyFunctionCodeIntoLoop
     Set Suite Variable   ${program_test}         "LoopCodeFunction"
     Ensure Emergent Free
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
-    Status OK No Result        ${output}
+    Run Emergent Program	LoopCodeFunction
 
     Prog Var Should Equal      j            1
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_function_code_into_loop"}
-    Status OK No Result        ${output}
+    Run Emergent Program       copy_function_code_into_loop
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
-    Status OK No Result        ${output}
-
+    Run Emergent Program       LoopCodeFunction
+    
     Prog Var Should Equal      j            3
 
 CopyFunctionCodeOutOfLoop
     Set Suite Variable   ${program_test}         "LoopCodeFunction"
     Ensure Emergent Free
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
-    Status OK No Result        ${output}
+    Run Emergent Program	LoopCodeFunction
 
     Prog Var Should Equal      j            3
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_function_code_out_of_loop"}
-    Status OK No Result        ${output}
+    Run Emergent Program       copy_function_code_out_of_loop
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
-    Status OK No Result        ${output}
+    Run Emergent Program       LoopCodeFunction
 
     Prog Var Should Equal      j            4
 
@@ -176,27 +161,21 @@ CopyProgramCodeIntoLoop
     Set Suite Variable   ${program_test}         "LoopCodeProgram"
     Ensure Emergent Free
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
-    Status OK No Result        ${output}
+    Run Emergent Program	LoopCodeProgram
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_program_code_into_loop"}
-    Status OK No Result        ${output}
+    Run Emergent Program       copy_program_code_into_loop
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
-    Status OK No Result        ${output}
-
+    Run Emergent Program       LoopCodeProgram
+    
 CopyProgramCodeOutOfLoop
     Set Suite Variable   ${program_test}         "LoopCodeProgram"
     Ensure Emergent Free
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
-    Status OK No Result        ${output}
+    Run Emergent Program       LoopCodeProgram
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_program_code_out_of_loop"}
-    Status OK No Result        ${output}
+    Run Emergent Program       copy_program_code_out_of_loop
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
-    Status OK No Result        ${output}
+    Run Emergent Program       LoopCodeProgram
 
 
 MoveFunctionCodeIntoLoop
@@ -204,16 +183,13 @@ MoveFunctionCodeIntoLoop
     Restart Emergent
     Ensure Emergent Free
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
-    Status OK No Result        ${output}
+    Run Emergent Program       LoopCodeFunction
 
     Prog Var Should Equal      j            1
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_function_code_into_loop"}
-    Status OK No Result        ${output}
+    Run Emergent Program       move_function_code_into_loop
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
-    Status OK No Result        ${output}
+    Run Emergent Program       LoopCodeFunction
 
     Prog Var Should Equal      j            2
 
@@ -221,16 +197,13 @@ MoveFunctionCodeOutOfLoop
     Set Suite Variable   ${program_test}         "LoopCodeFunction"
     Ensure Emergent Free
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
-    Status OK No Result        ${output}
+    Run Emergent Program       LoopCodeFunction
 
     Prog Var Should Equal      j            2
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_function_code_out_of_loop"}
-    Status OK No Result        ${output}
+    Run Emergent Program       move_function_code_out_of_loop
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeFunction"}
-    Status OK No Result        ${output}
+    Run Emergent Program       LoopCodeFunction
 
     Prog Var Should Equal      j            1
 
@@ -238,28 +211,22 @@ MoveProgramCodeIntoLoop
     Set Suite Variable   ${program_test}         "LoopCodeProgram"
     Ensure Emergent Free
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
-    Status OK No Result        ${output}
+    Run Emergent Program       LoopCodeProgram
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_program_code_into_loop"}
-    Status OK No Result        ${output}
+    Run Emergent Program       move_program_code_into_loop
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
-    Status OK No Result        ${output}
+    Run Emergent Program       LoopCodeProgram
 
 MoveProgramCodeOutOfLoop
     Set Suite Variable   ${program_test}         "LoopCodeProgram"
     Ensure Emergent Free
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
-    Status OK No Result        ${output}
-
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_program_code_out_of_loop"}
-    Status OK No Result        ${output}
-
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "LoopCodeProgram"}
-    Status OK No Result        ${output}
-
+    Run Emergent Program       LoopCodeProgram
+    
+    Run Emergent Program       move_program_code_out_of_loop
+    
+    Run Emergent Program       LoopCodeProgram
+    
 CopyProgramSubGroup 
     Set Suite Variable     ${program_test}       "TestGroup" 
     Restart Emergent 
@@ -268,8 +235,7 @@ CopyProgramSubGroup
     Prog Group Should Match    3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"] 
     Prog Group Should Match    -3                     NONE   
      
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_callee_caller_into_subgroup"} 
-    Status OK No Result        ${output} 
+    Run Emergent Program	copy_callee_caller_into_subgroup
  
  
     Prog Group Should Match    3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"] 
@@ -283,12 +249,24 @@ MoveProgramIntoSubGroup
     Prog Group Should Match    3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"] 
     Prog Group Should Match    -3                     NONE   
      
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_callee_caller_into_subgroup"} 
-    Status OK No Result        ${output} 
+    Run Emergent Program	move_callee_caller_into_subgroup
  
  
     Prog Group Should Match    3                     NONE 
     Prog Group Should Match    -3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"].gp[\\"sub_group_three\\"]  
+
+MoveProgramOutOfSubGroup 
+    Set Suite Variable     ${program_test}       "TestGroup" 
+    Ensure Emergent Free 
+ 
+    Prog Group Should Match    3                     NONE 
+    Prog Group Should Match    -3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"].gp[\\"sub_group_three\\"]  
+     
+    Run Emergent Program	move_callee_caller_out_of_subgroup
+ 
+    Prog Group Should Match    3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"] 
+    Prog Group Should Match    -3                     NONE 
+
 
 CopyExpressionWithVariableToProgram
     Set Suite Variable     ${program_test}       "EmptyProgram" 
@@ -321,21 +299,6 @@ MoveExpressionWithVariableToProgram
 
     Prog Var Should Equal      i	1
  
-	
- 
-MoveProgramOutOfSubGroup 
-    Set Suite Variable     ${program_test}       "TestGroup" 
-    Ensure Emergent Free 
- 
-    Prog Group Should Match    3                     NONE 
-    Prog Group Should Match    -3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"].gp[\\"sub_group_three\\"]  
-     
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_callee_caller_out_of_subgroup"} 
-    Status OK No Result        ${output} 
- 
-    Prog Group Should Match    3                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_three\\"] 
-    Prog Group Should Match    -3                     NONE 
-
 
 CopyProgramCodeBetweenProjects
     Restart Emergent
@@ -351,8 +314,7 @@ CopyProgramCodeBetweenProjects
     Prog Group Secondary Project Should Match	     1	  .projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_one\\"]
     Prog Group Secondary Project Should Match	     2	  NONE
     
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_callee_caller_into_project"}
-    Status OK No Result        ${output}
+    Run Emergent Program	copy_callee_caller_into_project
 
 
     Prog Group Should Match    2                     NONE
@@ -373,8 +335,7 @@ MoveProgramBetweenProjects
     Prog Group Secondary Project Should Match        1    .projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_one\\"]
     Prog Group Secondary Project Should Match        2    NONE
     
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "move_callee_caller_into_project"}
-    Status OK No Result        ${output}
+    Run Emergent Program	move_callee_caller_into_project
 
     Prog Group Should Match    2                     NONE
     Prog Group Should Match    1                     NONE
@@ -390,9 +351,8 @@ CopyControlpanelBetweenProjects
     Status OK No Result        ${output}
 
     Prog Var Should Equal      which_group           0
-    
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "copy_control_var_into_proj"}
-    Status OK No Result        ${output}
+
+    Run Emergent Program       copy_control_var_into_proj
 
     ${output} =                Run Command Wait      {"command": "SetVar", "program": ".projects[\\\"TestPointerUpdates_copy_into\\\"].programs.gp[\\\"TesterPrograms\\\"][\\\"TestCtrlPanel\\\"]", "var_name": "set_val", "var_value": 2345}
     Status OK No Result        ${output}
