@@ -257,14 +257,14 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layPageVals->addWidget(lblRowPageVal);
   fldRowPageVal = dl.Add(new taiWidgetFieldIncr(&TA_float, this, NULL, widg));
   layPageVals->addWidget(fldRowPageVal->GetRep());
-  ((iLineEdit*)fldRowPageVal->GetRep())->setCharWidth(8);
+//  ((taiWidgetFieldIncr*)fldRowPageVal->GetRep())->setCharWidth(8);
   
   lblColPageVal = taiM->NewLabel("  Column Paging ", widg, font_spec);
   lblColPageVal->setToolTip(taiMisc::ToolTipPreProcess("The number of columns to move when >> or << is clicked"));
   layPageVals->addWidget(lblColPageVal);
   fldColPageVal = dl.Add(new taiWidgetFieldIncr(&TA_float, this, NULL, widg));
   layPageVals->addWidget(fldColPageVal->GetRep());
-  ((iLineEdit*)fldColPageVal->GetRep())->setCharWidth(8);
+//  ((taiWidgetFieldIncr*)fldColPageVal->GetRep())->setCharWidth(8);
 
   layPageVals->addStretch();
   
