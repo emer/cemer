@@ -280,7 +280,7 @@ void iTreeView::InsertEl(bool after) {
       sbo->Insert(nwi, idx);
       // nwi->UpdateAfterEdit();
       selectionModel()->clearSelection(); // force clear!
-//      tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
+      tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
       tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
     }
   }
@@ -339,8 +339,8 @@ void iTreeView::InsertDefaultEl(bool after) {
       sbo->Insert(nwi, idx);
       // nwi->UpdateAfterEdit();
       selectionModel()->clearSelection(); // force clear!
-//      tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
-//      tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
+      tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
+      tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
     }
   }
 }
