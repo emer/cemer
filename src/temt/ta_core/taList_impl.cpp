@@ -644,8 +644,8 @@ taBase* taList_impl::CopyChildBefore(taBase* src, taBase* child_pos) {
 
 taBase* taList_impl::CopyChildBeforeIndex(taBase* src, int child_pos) {
   taBase* new_obj = src->MakeToken();
-  Insert(new_obj, child_pos);
   new_obj->UnSafeCopy(src);
+  Insert(new_obj, child_pos);
   new_obj->SetName(src->GetName());
   new_obj->UpdateAfterEdit();
   return new_obj;
