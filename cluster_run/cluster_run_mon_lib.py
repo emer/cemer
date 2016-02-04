@@ -680,10 +680,16 @@ class SubversionPoller(object):
         # The RE captures the whole (relative) filename to be retrieved
         # later in a m.group(1) call.
         esc_repo_dir = re.escape(self.repo_dir)
-        self.sub_re_comp = re.compile(
-            r'^\s*[AUGR]\s+(%s/[^/]+/submit/.*)' % esc_repo_dir)
-        self.mod_re_comp = re.compile(
-            r'^\s*[AUGR]\s+(%s/[^/]+/models/.*\.proj)' % esc_repo_dir)
+        if (self.check_user):
+            self.sub_re_comp = re.compile(
+                r'^\s*[AUGR]\s+(%s/[^/]+/submit/.*)' % esc_repo_dir)
+            self.mod_re_comp = re.compile(
+                r'^\s*[AUGR]\s+(%s/[^/]+/models/.*\.proj)' % esc_repo_dir)
+        else:
+            self.sub_re_comp = re.compile(
+                r'^\s*[AUGR]\s+(%s/[^/]+/[^/]+/submit/.*)' % esc_repo_dir)
+            self.mod_re_comp = re.compile(
+                r'^\s*[AUGR]\s+(%s/[^/]+/[^/]+/models/.*\.proj)' % esc_repo_dir)
         
     def _get_all_submit_files(self):
         submit_files = []
@@ -2159,13 +2165,18 @@ def main():
     clustername = config.get_clustername()
     repo_name, repo_url = config.choose_repo()
 
-    # Checkout or update the working copy.
-    # The path format matches ClusterManager::setPaths() in the C++ code.
-    repo_url += '/' + clustername + '/' + username
-    repo_dir = os.path.join(wc_root, repo_name)
-    print ''
     delay = config.get_poll_interval()
     check_user = config.get_check_user()
+
+    # Checkout or update the working copy.
+    # The path format matches ClusterManager::setPaths() in the C++ code.
+    if (check_user):
+        repo_url += '/' + clustername + '/' + username
+    else:
+        repo_url += '/' + clustername
+    repo_dir = os.path.join(wc_root, repo_name)
+    print ''
+    
 
     poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user)
     revision = poller.get_initial_wc()
