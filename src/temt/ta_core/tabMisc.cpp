@@ -90,13 +90,18 @@ void tabMisc::WaitProc() {
 bool tabMisc::DoDelayedCloses() {
   if (delayed_close.size == 0) return false;
 
+  // note: this is sleazy, but very efficient -- we just completely
+  // hijack the memory of the current list in this working copy
+  taBase_RefList items;
+  items.Hijack(delayed_close);
+
   // we work fifo
-  while (delayed_close.size > 0) {
+  while (items.size > 0) {
     // note: active items can often have many refs, and CutLinks will typically
     // resolve those (ex. Projection, which can have many cons)
     // so if item is owned, we just defer to it, otherwise
-    taBase* it = delayed_close.FastEl(0);
-    delayed_close.RemoveIdx(0);
+    taBase* it = items.FastEl(0);
+    items.RemoveIdx(0);
     int refn = taBase::GetRefn(it);
     if ((it->GetOwner() == NULL) && (refn != 1)) {
       taMisc::DebugInfo("tabMisc::delayed_close: item had refn != 1, was=",

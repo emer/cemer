@@ -1,5 +1,3 @@
-
-
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -28,8 +26,8 @@ taPtrList_impl taPtrList_impl::scratch_list;
 
 void taPtrList_impl::InitList_() {
   hash_table = NULL;
-//   alloc_size = 2;
-//   el = (void**)calloc(alloc_size, sizeof(void*));
+  //   alloc_size = 2;
+  //   el = (void**)calloc(alloc_size, sizeof(void*));
   // start out un-allocated
   alloc_size = 0;
   el = NULL;
@@ -107,7 +105,7 @@ void taPtrList_impl::BuildHashTable(int sz, KeyType key_typ) {
   if(!hash_table)
     hash_table = new taHashTable();
   hash_table->key_type = key_typ;
-
+  
   if(!hash_table->Alloc(sz)) return;
   for(int i=0; i<size; i++) {
     hash_table->AddHash(El_GetHashVal_(el[i]), i, El_GetHashString_(el[i]));
@@ -126,11 +124,11 @@ taHashVal taPtrList_impl::El_GetHashVal_(void* it) const {
   int kt = 0;
   if(hash_table) kt = hash_table->key_type;
   switch (kt) {
-  case taHashTable::KT_PTR:
-    return taHashEl::HashCode_Ptr(it);
-  case taHashTable::KT_NAME:
-  default:
-    return taHashEl::HashCode_String(El_GetName_(it));
+    case taHashTable::KT_PTR:
+      return taHashEl::HashCode_Ptr(it);
+    case taHashTable::KT_NAME:
+    default:
+      return taHashEl::HashCode_String(El_GetName_(it));
   }
 }
 
@@ -141,7 +139,7 @@ String taPtrList_impl::El_GetHashString_(void* it) const {
 int taPtrList_impl::FindEl_(const void* it) const {
   if (hash_table && (hash_table->key_type == taHashTable::KT_PTR))
     return hash_table->FindHashValPtr(it);
-
+  
   int i;
   for(i=0; i < size; i++) {
     if(el[i] == it)
@@ -153,7 +151,7 @@ int taPtrList_impl::FindEl_(const void* it) const {
 int taPtrList_impl::FindNameIdx(const String& nm) const {
   if (hash_table && (hash_table->key_type == taHashTable::KT_NAME))
     return hash_table->FindHashValString(nm);
-
+  
   for(int i=0; i < size; i++) {
     if(El_FindCheck_(el[i], nm)) {
       return i;
@@ -166,6 +164,20 @@ void* taPtrList_impl::FindName_(const String& nm) const {
   int idx = FindNameIdx(nm);
   if(idx >= 0) return el[idx];
   return NULL;
+}
+
+void taPtrList_impl::Hijack(taPtrList_impl& src) {
+  // normally only used when already empty, but this guarantees it!
+  if (el) {
+    Reset();
+    el = (void**)realloc((char *) el, 0);
+  }
+  el = src.el;
+  size = src.size;
+  alloc_size = src.alloc_size;
+  src.el = NULL;
+  src.size = 0;
+  src.alloc_size = 0;
 }
 
 void taPtrList_impl::UpdateIndex_(int idx) {
@@ -181,7 +193,7 @@ void taPtrList_impl::UpdateIndex_(int idx) {
 bool taPtrList_impl::MoveIdx(int fm, int to) {
   if (fm == to) return true; // nop
   if ((fm < 0) || (fm >= size) || (to < 0) || (to >= size)) return false;
-
+  
   void* itm = el[fm];
   // algo is diff depending on whether fm is > or < to
   if (fm < to) {
@@ -205,13 +217,13 @@ bool taPtrList_impl::MoveIdx(int fm, int to) {
 }
 
 bool taPtrList_impl::MoveBeforeIdx(int fm, int to) {
-// consistent api, used to move the item fm to before the to index
-// to move to end, use to=-1 or size
-// note that fm=to-1 is also a noop
+  // consistent api, used to move the item fm to before the to index
+  // to move to end, use to=-1 or size
+  // note that fm=to-1 is also a noop
   if ((fm < 0) || (fm >= size)) return false; // bad params
   if ((to < 0) || (to > size)) to = size;
   if ((fm == to) || ((fm + 1) == to)) return true; // nop
-
+  
   void* itm = el[fm];
   void* op2 = NULL;
   // algo is diff depending on whether fm is > or < to
@@ -268,8 +280,8 @@ bool taPtrList_impl::SwapIdx(int pos1, int pos2) {
 /////////////////////////
 
 void taPtrList_impl::AddOnly_(void* it) {
-//TODO: note, the logistics of the SigEmit are wrong, since ex. Add_
-// causes the notification before it has set the index and owned the item, renaming it
+  //TODO: note, the logistics of the SigEmit are wrong, since ex. Add_
+  // causes the notification before it has set the index and owned the item, renaming it
   if(size+1 >= alloc_size) {
     if(!Alloc(size+1)) return;
   }
@@ -604,7 +616,7 @@ void taPtrList_impl::Sort_(bool descending) {
   int n = size;
   int l,j,ir,i;
   void* tmp;
-
+  
   l = (n >> 1) + 1;
   ir = n;
   for(;;){
@@ -685,7 +697,7 @@ int taPtrList_impl::Scratch_Find_(const String& it) const {
 
 void taPtrList_impl::Trim(int n) {
   for (int i= size - 1; i >= n; --i)
-      RemoveIdx(i);
+    RemoveIdx(i);
 }
 
 void taPtrList_impl::Duplicate(const taPtrList_impl& cp) {
@@ -713,7 +725,7 @@ void taPtrList_impl::DupeUniqNameNew(const taPtrList_impl& cp) {
   if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
   scratch_list.Borrow(*this);   // get this into scratch for find (since replacing
-                                // we need to refer to these items (no stealth)
+  // we need to refer to these items (no stealth)
   int i;
   for(i=0; i < cp.size; i++) {
     if(cp.el[i] == NULL)  continue;
@@ -839,20 +851,20 @@ void taPtrList_impl::Copy_Duplicate_impl(const taPtrList_impl& cp) {
   for (int i=size; i < cp.size; i++) {
     void* cp_it = cp.el[i];
     switch (cp.El_Kind_(cp_it)) {
-    case EK_NULL:
-      Add_(NULL);
-      break;
-    case EK_OWN: {
-      ++taMisc::is_duplicating;
-      void* it = El_MakeToken_(cp_it);
-      Add_(it, true);
-      El_CopyN_(it, cp_it);
-      SigEmit(SLS_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2));
-      --taMisc::is_duplicating;
-    } break;
-    case EK_LINK:
-      Link_(cp_it);
-      break;
+      case EK_NULL:
+        Add_(NULL);
+        break;
+      case EK_OWN: {
+        ++taMisc::is_duplicating;
+        void* it = El_MakeToken_(cp_it);
+        Add_(it, true);
+        El_CopyN_(it, cp_it);
+        SigEmit(SLS_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2));
+        --taMisc::is_duplicating;
+      } break;
+      case EK_LINK:
+        Link_(cp_it);
+        break;
     }
   }
 }
@@ -901,7 +913,7 @@ void taPtrList_impl::Copy_Exact(const taPtrList_impl& cp) {
     // not commensurable,
     RemoveIdx(i);
     continue; // don't advance index
-cont:
+  cont:
     ++i;
   }
   // ok, now copy or link in any ones not in us
@@ -912,7 +924,7 @@ taPtrList_impl::ElKind taPtrList_impl::El_Kind_(void* it) const {
   if (!it) return EK_NULL;
   // if object is owned by us, or has no owner it is an instance
   else if ((El_GetOwnerList_(it) == this) ||
-    (El_GetOwnerObj_(it) == NULL))
+           (El_GetOwnerObj_(it) == NULL))
     return EK_OWN;
   // otherwise a link
   return EK_LINK;
