@@ -168,15 +168,6 @@ void* taPtrList_impl::FindName_(const String& nm) const {
   return NULL;
 }
 
-
-void taPtrList_impl::Free(taPtrList_impl& src) {
-  if (el) {
-    Reset();
-    free(el);
-    el = NULL;
-  }
-}
-
 void taPtrList_impl::UpdateIndex_(int idx) {
   if(el[idx] == NULL)
     return;
