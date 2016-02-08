@@ -17,6 +17,8 @@
 
 #include <taMath_float>
 #include <taSound>
+#include <DataTable>
+#include <taProject>
 
 TA_BASEFUNS_CTORS_DEFN(AudInputSpec);
 TA_BASEFUNS_CTORS_DEFN(MelFreqSpec);
@@ -25,6 +27,7 @@ TA_BASEFUNS_CTORS_DEFN(AuditoryProc);
 void AudInputSpec::Initialize() {
   win_msec = 25.0f;
   step_msec = 12.5f;
+  trial_msec = 100.0f;
   sample_rate = 16000;
   channels = 1;
   channel = 0;
@@ -162,17 +165,8 @@ bool AuditoryProc::InitOutMatrix() {
   window_in.SetGeom(1, input.win_samples);
   dft_out.SetGeom(2, 2, dft_size);
   dft_power_out.SetGeom(1, dft_use);
-  mel_filter_out.SetGeom(1, mel.n_filters);
-  log_mel_filter_out.SetGeom(1, mel.n_filters);
+  mel_fbank_out.SetGeom(1, mel.n_filters);
   mfcc_dct_out.SetGeom(1, n_mfcc);
-  return true;
-}
-
-bool AuditoryProc::InitDataTable() {
-  return true;
-}
-
-bool AuditoryProc::MelOutputToTable(DataTable* dtab, bool fmt_only) {
   return true;
 }
 
@@ -245,6 +239,9 @@ bool AuditoryProc::FilterWindow() {
   if(mel.on) {
     PowerOfDft();
     MelFilterDft();
+    if(mfcc_on) {
+      // todo
+    }
   }
   return true;
 }
@@ -275,11 +272,103 @@ void AuditoryProc::MelFilterDft() {
       const float pval = dft_power_out.FastEl_Flat(bin);
       sum += fval * pval;
     }
-    mel_filter_out.FastEl_Flat(mi) = sum;
+    mel_fbank_out.FastEl_Flat(mi) = logf(1.0f + sum); // todo: 1.0 + or not!?
   }
 }
 
 
-bool AuditoryProc::OutputToTable(int chan, int step) {
+bool AuditoryProc::InitDataTable() {
+  if(!data_table) {
+    return false;
+  }
+  if(input.channels > 1) {
+    for(int chan = 0; chan < input.channels; chan++) {
+      InitDataTable_chan(chan);
+    }
+  }
+  else {
+    InitDataTable_chan(input.channel);
+  }
   return true;
+}
+
+bool AuditoryProc::InitDataTable_chan(int chan) {
+  if(mel.on) {
+    MelOutputToTable(data_table, chan, 0, true);
+  }
+  return true;
+}
+
+bool AuditoryProc::OutputToTable(int chan, int step) {
+  if(!data_table) {
+    return false;
+  }
+  if(mel.on) {
+    MelOutputToTable(data_table, chan, step, false); // not fmt_only
+  }
+  return true;
+}
+
+bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, int step, bool fmt_only) {
+  DataCol* col;
+  int idx;
+  String col_sufx;
+  if(input.channels > 1) {
+    col_sufx = "_ch" + String(chan);
+  }
+  col = data_table->FindMakeColName(name + "_dft_pow" + col_sufx, idx,
+                                    DataTable::VT_FLOAT, 2,
+                                    input.trial_steps, dft_use);
+  if(!fmt_only) {
+    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    for(int i=0; i< dft_use; i++) {
+      dout->FastEl2d(step, i) = dft_power_out.FastEl_Flat(i);
+    }
+  }
+
+  col = data_table->FindMakeColName(name + "_mel_fbank" + col_sufx, idx,
+                                    DataTable::VT_FLOAT, 2,
+                                    input.trial_steps, mel.n_filters);
+  if(!fmt_only) {
+    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    for(int i=0; i< mel.n_filters; i++) {
+      dout->FastEl2d(step, i) = mel_fbank_out.FastEl_Flat(i);
+    }
+  }
+
+  // todo: mfcc_dct_out
+  
+  return true;
+}
+
+void AuditoryProc::PlotMelFilters(DataTable* graph_data) {
+  taProject* proj = GetMyProj();
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_MelFilters", true);
+  }
+  graph_data->StructUpdate(true);
+  int idx;
+  DataCol* bincol = graph_data->FindMakeColName("Bin", idx, VT_INT);
+  DataCol* fltcol = graph_data->FindMakeColName("Filters", idx, VT_FLOAT, 1,
+                                             mel.n_filters);
+
+  graph_data->ResetData();
+  for(int bin = 0; bin < dft_use; bin++) {
+    graph_data->AddBlankRow();
+    bincol->SetVal(bin, -1);
+    float_MatrixPtr mat; mat = (float_Matrix*)fltcol->GetValAsMatrix(-1);
+    for(int flt = 0; flt < mel.n_filters; flt++) {
+      int mxbin = mel_pts_bin[idx + 3];
+      int mnbin = mel_pts_bin[idx + 1];
+      float val = 0.0f;
+      if(bin >= mnbin && bin <= mxbin) {
+        int brel = bin - mnbin;
+        val = mel_filters.FastEl2d(brel, flt);
+      }
+      mat->FastEl_Flat(flt) = val;
+    }
+  }
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
+
 }

@@ -40,7 +40,7 @@ public:
   float         trial_msec;     // #DEF_100 length of a full trial's worth of input -- total number of milliseconds to accumulate into a complete trial of activations to present to a network -- must be a multiple of step_msec -- input will be trial_msec / step_msec = trial_steps wide in the X axis, and number of filters in the Y axis
   int           sample_rate;    // rate of sampling in our sound input (e.g., 16000 = 16Khz) -- can initialize this from a taSound object using InitFromSound method
   int           channels;       // total number of channels to process
-  int           channel;        // #CONDSHOW_ON_channels:1 specific channel to process, if input has multiple channels, and we only porcess one of them
+  int           channel;        // #CONDSHOW_ON_channels:1 specific channel to process, if input has multiple channels, and we only process one of them (-1 = process all)
   int           win_samples;    // #READ_ONLY #SHOW total number of samples to process (win_msec * .001 * sample_rate)
   int           step_samples;   // #READ_ONLY #SHOW total number of samples to step input by (step_msec * .001 * sample_rate)
   int           trial_samples;  // #READ_ONLY #SHOW total number of samples in a trial  (trail_msec * .001 * sample_rate)
@@ -120,7 +120,7 @@ public:
   DataSave	input_save;	// how to save the input sound for each filtering step
   AudInputSpec  input;          // specifications of the raw auditory input 
   MelFreqSpec   mel;            // specifications of the mel frequency sampling of the DFT (FFT) of the input sound
-  bool          mfcc_on;        // compute mel-frequency cepstrum coefficients
+  bool          mfcc_on;        // #CONDSHOW_ON_mel.on compute mel-frequency cepstrum coefficients
 
 
   ///////////////////////////////////////////////////
@@ -145,8 +145,7 @@ public:
   float_Matrix          window_in;  // #READ_ONLY #NO_SAVE [input.win_samples] the raw sound input, one channel at a time
   complex_float_Matrix	dft_out;   // #READ_ONLY #NO_SAVE [2, dft_size] discrete fourier transform (fft) output complex representation
   float_Matrix          dft_power_out; // #READ_ONLY #NO_SAVE [dft_use] power of the dft, only for range of frequencies of interest
-  float_Matrix          mel_filter_out; // #READ_ONLY #NO_SAVE [mel.n_filters] scale transformation of dft_power, using triangular filteres
-  float_Matrix          log_mel_filter_out; // #READ_ONLY #NO_SAVE log of mel_filter_out values
+  float_Matrix          mel_fbank_out; // #READ_ONLY #NO_SAVE [mel.n_filters] mel scale transformation of dft_power, using triangular filters, resulting in the mel filterbank output -- the natural log of this is typically applied
   float_Matrix          mfcc_dct_out; // #READ_ONLY #NO_SAVE discrete cosine transform of the log_mel_filter_out values, producing the final mel-frequency cepstral coefficients 
   
 
@@ -177,7 +176,10 @@ public:
   virtual bool  OutputToTable(int chan, int step);
   // #CAT_Auditory record the current filter output into data table for given channel and step
   
-protected:
+  virtual void	PlotMelFilters(DataTable* disp_data);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the Mel scale triangular filters
+
+ protected:
   void	UpdateAfterEdit_impl() override;
 
   virtual void  UpdateConfig();
@@ -193,8 +195,11 @@ protected:
   // initialize data output matrcies to fit output of filters
   virtual bool  InitDataTable();
   // initialize data table to fit data saving as configured
+  virtual bool  InitDataTable_chan(int chan);
+  // initialize data table to fit data saving as configured
 
-  virtual bool  MelOutputToTable(DataTable* dtab, bool fmt_only = false);
+  virtual bool  MelOutputToTable(DataTable* dtab, int chan, int step,
+                                 bool fmt_only = false);
   // mel filter bank to output table
 
   virtual void  DftInput();
