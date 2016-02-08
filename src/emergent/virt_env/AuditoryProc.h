@@ -60,16 +60,20 @@ private:
 };
 
 
-taTypeDef_Of(MelFreqSpec);
+taTypeDef_Of(MelFBankSpec);
 
-class E_API MelFreqSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound mel frequency sampling parameters
+class E_API MelFBankSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound mel frequency feature bank sampling parameters
 INHERITED(taOBase)
 public:
   bool          on;            // perform mel-frequency filtering of the fft input
   float         lo_hz;         // #DEF_300 #CONDSHOW_ON_on low frequency end of mel frequency spectrum
   float         hi_hz;         // #DEF_8000 #CONDSHOW_ON_on high frequency end of mel frequency spectrum -- must be <= sample_rate / 2 (i.e., less than the Nyquist frequency)
   int           n_filters;     // #DEF_26 #CONDSHOW_ON_on number of Mel frequency filters to compute
+  bool          log_plus_1;    // #CONDSHOW_ON_on add 1 when taking the log of the Mel filter sums to produce the filter-bank output -- this is appropriate when using the raw filter bank output as input to the network (keeps everything positive)
+  bool          renorm;        // #CONDSHOW_ON_on renormalize the feature bank outputs into a zero-one range according to given min / max parameters
+  float         ren_min;       // #CONDSHOW_ON_on&&renorm minimum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values -- depends also on whether log_plus_1 is set or not
+  float         ren_max;       // #CONDSHOW_ON_on&&renorm maximum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values -- depends also on whether log_plus_1 is set or not
   float         lo_mel;        // #READ_ONLY #SHOW #CONDSHOW_ON_on low end of mel scale in mel units
   float         hi_mel;        // #READ_ONLY #SHOW #CONDSHOW_ON_on high end of mel scale in mel units
 
@@ -86,7 +90,41 @@ public:
   { return (int)floor(((n_fft+1) * freq) / sample_rate); }
   // convert frequency into FFT bin number, using parameters of number of FFT bins and sample rate
 
-  TA_SIMPLE_BASEFUNS(MelFreqSpec);
+  TA_SIMPLE_BASEFUNS(MelFBankSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy() { };
+};
+
+
+taTypeDef_Of(MelCepstrumSpec);
+
+class E_API MelCepstrumSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound mel frequency sampling parameters
+INHERITED(taOBase)
+public:
+  bool          on;            // perform cepstrum discrete cosine transform of the mel-frequency filter bank features
+  bool          renorm;        // #CONDSHOW_ON_on renormalize the feature bank outputs into a zero-one range according to given min / max parameters
+  float         ren_min;       // #CONDSHOW_ON_on&&renorm minimum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values -- depends also on whether log_plus_1 is set or not
+  float         ren_max;       // #CONDSHOW_ON_on&&renorm maximum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values -- depends also on whether log_plus_1 is set or not
+
+
+  inline float         FreqToMel(const float freq)
+  { return 1127.01f * logf(1.0f + freq/700.0f); }
+  // convert frequency to mel scale
+  
+  inline float         MelToFreq(const float mel)
+  { return 700.0f * (expf(mel / 1127.01f) - 1.0f); }
+  // convert mel scale to frequency
+
+  inline int           FreqToBin(const float freq, const float n_fft,
+                                 const float sample_rate)
+  { return (int)floor(((n_fft+1) * freq) / sample_rate); }
+  // convert frequency into FFT bin number, using parameters of number of FFT bins and sample rate
+
+  TA_SIMPLE_BASEFUNS(MelCepstrumSpec);
 protected:
   void 	UpdateAfterEdit_impl();
 private:
@@ -119,8 +157,8 @@ public:
   SaveMode	save_mode;	// how to add new data to the data table
   DataSave	input_save;	// how to save the input sound for each filtering step
   AudInputSpec  input;          // specifications of the raw auditory input 
-  MelFreqSpec   mel;            // specifications of the mel frequency sampling of the DFT (FFT) of the input sound
-  bool          mfcc_on;        // #CONDSHOW_ON_mel.on compute mel-frequency cepstrum coefficients
+  MelFBankSpec  mel_fbank;      // specifications of the mel feature bank frequency sampling of the DFT (FFT) of the input sound
+  MelCepstrumSpec mfcc;         // #CONDSHOW_ON_mel_bank.on specifications of the mel cepstrum discrete cosine transform of the mel fbank filter features
 
 
   ///////////////////////////////////////////////////
@@ -129,7 +167,7 @@ public:
   int                   dft_size;    // #READ_ONLY #NO_SAVE full size of fft output -- should be input.win_samples
   int                   dft_use;     // #READ_ONLY #NO_SAVE number of dft outputs to actually use -- should be dft_size / 2 + 1
   int                   mel_n_filters_eff; // #READ_ONLY #NO_SAVE effective number of mel filters: mel.n_filters + 2
-  int                   n_mfcc;            // #READ_ONLY #NO_SAVE mel.n_filters / 2 -- number of coefficients
+  int                   n_mfcc;      // #READ_ONLY #NO_SAVE mel.n_filters / 2 -- number of coefficients
   float_Matrix          mel_pts_mel; // #READ_ONLY #NO_SAVE [mel_n_filters_eff] scale points in mel units (mels)
   float_Matrix          mel_pts_hz;  // #READ_ONLY #NO_SAVE [mel_n_filters_eff] mel scale points in hz units 
   int_Matrix            mel_pts_bin; // #READ_ONLY #NO_SAVE [mel_n_filters_eff] mel scale points in fft bins
@@ -141,7 +179,7 @@ public:
   //	Outputs
 
   float_Matrix          sound_full;  // #READ_ONLY #NO_SAVE the full sound input obtained from the sound input
-  int                   input_pos;   // #READ_ONLY #NO_SAVE current position in the sound_full input -- in terms of sample number
+  int                   input_pos;   // #READ_ONLY #NO_SAVE #SHOW current position in the sound_full input -- in terms of sample number
   float_Matrix          window_in;  // #READ_ONLY #NO_SAVE [input.win_samples] the raw sound input, one channel at a time
   complex_float_Matrix	dft_out;   // #READ_ONLY #NO_SAVE [2, dft_size] discrete fourier transform (fft) output complex representation
   float_Matrix          dft_power_out; // #READ_ONLY #NO_SAVE [dft_use] power of the dft, only for range of frequencies of interest
@@ -149,11 +187,14 @@ public:
   float_Matrix          mfcc_dct_out; // #READ_ONLY #NO_SAVE discrete cosine transform of the log_mel_filter_out values, producing the final mel-frequency cepstral coefficients 
   
 
+  virtual bool  NeedsInit();
+  // #CAT_Auditory does system need init?
+  
   virtual bool 	Init();
   // #BUTTON initialize everything to be ready to start filtering -- calls InitFilters, InitOutMatrix, InitDataTable
 
   virtual void  InitFromSound(taSound* sound, int n_chans = 1, int chan = 0);
-  // get sample_rate and channels info from given sound object -- n_chans arg is how many channels we want to process -- overrides number of channels present in sound obj if >= 1 (i.e., use -1 to just use number of channels present in sound object) -- if sound obj has multiple channels and n_chans = 1, then chan specifies which channel to read from
+  // #CAT_Auditory get sample_rate and channels info from given sound object -- n_chans arg is how many channels we want to process -- overrides number of channels present in sound obj if >= 1 (i.e., use -1 to just use number of channels present in sound object) -- if sound obj has multiple channels and n_chans = 1, then chan specifies which channel to read from
 
   virtual bool	LoadSound(taSound* sound);
   // #CAT_Auditory load a new sound into the system for subsequent processing -- grabs the sound data into sound_full
@@ -172,6 +213,9 @@ public:
 
   virtual bool  FilterWindow();
   // #CAT_Auditory filter the current window_in input data according to current settings -- called by ProcessStep, but can be called separately 
+  
+  virtual bool  NewTableRow();
+  // #CAT_Auditory prepare data_table for a new output, according to save_mode setting
   
   virtual bool  OutputToTable(int chan, int step);
   // #CAT_Auditory record the current filter output into data table for given channel and step

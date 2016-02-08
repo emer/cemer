@@ -19,9 +19,11 @@
 #include <taSound>
 #include <DataTable>
 #include <taProject>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(AudInputSpec);
-TA_BASEFUNS_CTORS_DEFN(MelFreqSpec);
+TA_BASEFUNS_CTORS_DEFN(MelFBankSpec);
+TA_BASEFUNS_CTORS_DEFN(MelCepstrumSpec);
 TA_BASEFUNS_CTORS_DEFN(AuditoryProc);
 
 void AudInputSpec::Initialize() {
@@ -67,19 +69,35 @@ void AudInputSpec::UpdateAfterEdit_impl() {
 
 
 
-void MelFreqSpec::Initialize() {
+void MelFBankSpec::Initialize() {
   on = true;
   lo_hz = 300.0f;
   hi_hz = 8000.0f;
   n_filters = 26;
+  log_plus_1 = false;
+  renorm = false;
+  ren_min = -12.5f;
+  ren_max = 3.5f;
   lo_mel = FreqToMel(lo_hz);
   hi_mel = FreqToMel(hi_hz);
 }
 
-void MelFreqSpec::UpdateAfterEdit_impl() {
+void MelFBankSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   lo_mel = FreqToMel(lo_hz);
   hi_mel = FreqToMel(hi_hz);
+}
+
+
+void MelCepstrumSpec::Initialize() {
+  on = true;
+  renorm = false;
+  ren_min = -12.5f;
+  ren_max = 3.5f;
+}
+
+void MelCepstrumSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
 }
 
 
@@ -88,18 +106,31 @@ void MelFreqSpec::UpdateAfterEdit_impl() {
 void AuditoryProc::Initialize() {
   save_mode = FIRST_ROW;
   input_save = NO_SAVE;
-  mfcc_on = true;
   input_pos = 0;
+  dft_size = 0;
+  dft_use = 0;
+  mel_n_filters_eff = 0;
+  n_mfcc = 0;
+  mel_filt_max_bins = 0;
 }
 
 void AuditoryProc::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateConfig();
+  if(!taMisc::is_loading) {
+    if(NeedsInit()) Init();
+  }
 }
 
 void AuditoryProc::UpdateConfig() {
   input.UpdateAfterEdit_NoGui();
-  mel.UpdateAfterEdit_NoGui();
+  mel_fbank.UpdateAfterEdit_NoGui();
+}
+
+bool AuditoryProc::NeedsInit() {
+  if(dft_size != input.win_samples || mel_n_filters_eff != mel_fbank.n_filters + 2)
+    return true;
+  return false;
 }
 
 bool AuditoryProc::Init() {
@@ -122,40 +153,40 @@ bool AuditoryProc::InitFilters() {
 }
 
 bool AuditoryProc::InitFilters_Mel() {
-  mel_n_filters_eff = mel.n_filters + 2;
+  mel_n_filters_eff = mel_fbank.n_filters + 2;
   mel_pts_mel.SetGeom(1, mel_n_filters_eff);
   mel_pts_hz.SetGeom(1, mel_n_filters_eff);
   mel_pts_bin.SetGeom(1, mel_n_filters_eff);
 
-  float mel_inc = (mel.hi_mel - mel.lo_mel) / (float)(mel.n_filters-1);
+  float mel_inc = (mel_fbank.hi_mel - mel_fbank.lo_mel) / (float)(mel_fbank.n_filters-1);
 
   for(int idx = 0; idx < mel_n_filters_eff; idx++) {
-    float ml = mel.lo_mel + (float)idx*mel_inc;
-    float hz = mel.MelToFreq(ml);
-    int bin = mel.FreqToBin(hz, dft_use, input.sample_rate);
+    float ml = mel_fbank.lo_mel + (float)idx*mel_inc;
+    float hz = mel_fbank.MelToFreq(ml);
+    int bin = mel_fbank.FreqToBin(hz, dft_use, input.sample_rate);
     mel_pts_mel[idx] = ml;
     mel_pts_hz[idx] = hz;
     mel_pts_bin[idx] = bin;
   }
 
   mel_filt_max_bins = mel_pts_bin[mel_n_filters_eff-1] - mel_pts_bin[mel_n_filters_eff-3] + 1;
-  mel_filters.SetGeom(2, mel_filt_max_bins, mel.n_filters);
+  mel_filters.SetGeom(2, mel_filt_max_bins, mel_fbank.n_filters);
 
-  for(int idx = 1; idx <= mel.n_filters; idx++) {
-    int mxbin = mel_pts_bin[idx + 1];
-    int mnbin = mel_pts_bin[idx - 1];
-    int pkbin = mel_pts_bin[idx];
+  for(int flt = 0; flt < mel_fbank.n_filters; flt++) {
+    int mnbin = mel_pts_bin[flt];
+    int pkbin = mel_pts_bin[flt+1];
+    int mxbin = mel_pts_bin[flt+2];
     float pkmin = (float)(pkbin - mnbin);
     float pkmax = (float)(mxbin - pkbin);
     int fi = 0;
     int bin;
     for(bin = mnbin; bin <= pkbin; bin++, fi++) {
       float fval = (float)(bin - mnbin) / pkmin;
-      mel_filters.FastEl2d(fi, idx) = fval;
+      mel_filters.FastEl2d(fi, flt) = fval;
     }
     for(; bin <= mxbin; bin++, fi++) {
       float fval = (float)(mxbin - bin) / pkmax;
-      mel_filters.FastEl2d(fi, idx) = fval;
+      mel_filters.FastEl2d(fi, flt) = fval;
     }
   }
   return true;
@@ -165,12 +196,14 @@ bool AuditoryProc::InitOutMatrix() {
   window_in.SetGeom(1, input.win_samples);
   dft_out.SetGeom(2, 2, dft_size);
   dft_power_out.SetGeom(1, dft_use);
-  mel_fbank_out.SetGeom(1, mel.n_filters);
+  mel_fbank_out.SetGeom(1, mel_fbank.n_filters);
   mfcc_dct_out.SetGeom(1, n_mfcc);
   return true;
 }
 
 bool AuditoryProc::LoadSound(taSound* sound) {
+  if(NeedsInit()) Init();
+  
   if(TestError(!sound || !sound->IsValid(), "LoadSound",
                "sound object NULL or not valid")) {
     return false;
@@ -191,6 +224,8 @@ int AuditoryProc::InputStepsLeft() {
 }
 
 bool AuditoryProc::ProcessTrial() {
+  if(NeedsInit()) Init();
+  NewTableRow();
   if(TestError(InputStepsLeft() < 1, "ProcessTrial",
                "no steps worth of input sound available -- load a new sound")) {
     return false;
@@ -236,10 +271,10 @@ bool AuditoryProc::SoundToWindow(int in_pos, int chan) {
 
 bool AuditoryProc::FilterWindow() {
   DftInput();
-  if(mel.on) {
+  if(mel_fbank.on) {
     PowerOfDft();
     MelFilterDft();
-    if(mfcc_on) {
+    if(mfcc.on) {
       // todo
     }
   }
@@ -261,9 +296,9 @@ void AuditoryProc::PowerOfDft() {
 
 void AuditoryProc::MelFilterDft() {
   int mi = 0;
-  for(int idx = 1; idx <= mel.n_filters; idx++, mi++) {
-    int mxbin = mel_pts_bin[idx + 1];
-    int mnbin = mel_pts_bin[idx - 1];
+  for(int flt = 0; flt < mel_fbank.n_filters; flt++, mi++) {
+    int mnbin = mel_pts_bin[flt];
+    int mxbin = mel_pts_bin[flt + 2];
 
     float sum = 0.0f;
     int fi=0;
@@ -272,7 +307,9 @@ void AuditoryProc::MelFilterDft() {
       const float pval = dft_power_out.FastEl_Flat(bin);
       sum += fval * pval;
     }
-    mel_fbank_out.FastEl_Flat(mi) = logf(1.0f + sum); // todo: 1.0 + or not!?
+    if(mel_fbank.log_plus_1)
+      sum += 1.0f;
+    mel_fbank_out.FastEl_Flat(mi) = logf(sum);
   }
 }
 
@@ -293,17 +330,30 @@ bool AuditoryProc::InitDataTable() {
 }
 
 bool AuditoryProc::InitDataTable_chan(int chan) {
-  if(mel.on) {
+  if(mel_fbank.on) {
     MelOutputToTable(data_table, chan, 0, true);
   }
   return true;
 }
 
-bool AuditoryProc::OutputToTable(int chan, int step) {
-  if(!data_table) {
+bool AuditoryProc::NewTableRow() {
+  if(!data_table || save_mode == NONE_SAVE) // bail now
     return false;
+  if(save_mode == FIRST_ROW) {
+    data_table->EnforceRows(1);
+    data_table->WriteItem(0);
+    data_table->ReadItem(0);
   }
-  if(mel.on) {
+  else {
+    data_table->AddBlankRow();
+  }
+  return true;
+}
+
+bool AuditoryProc::OutputToTable(int chan, int step) {
+  if(!data_table || save_mode == NONE_SAVE) // bail now
+    return false;
+  if(mel_fbank.on) {
     MelOutputToTable(data_table, chan, step, false); // not fmt_only
   }
   return true;
@@ -328,10 +378,10 @@ bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, int step, bool fm
 
   col = data_table->FindMakeColName(name + "_mel_fbank" + col_sufx, idx,
                                     DataTable::VT_FLOAT, 2,
-                                    input.trial_steps, mel.n_filters);
+                                    input.trial_steps, mel_fbank.n_filters);
   if(!fmt_only) {
     float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-    for(int i=0; i< mel.n_filters; i++) {
+    for(int i=0; i< mel_fbank.n_filters; i++) {
       dout->FastEl2d(step, i) = mel_fbank_out.FastEl_Flat(i);
     }
   }
@@ -342,6 +392,7 @@ bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, int step, bool fm
 }
 
 void AuditoryProc::PlotMelFilters(DataTable* graph_data) {
+  if(NeedsInit()) Init();
   taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_MelFilters", true);
@@ -350,16 +401,16 @@ void AuditoryProc::PlotMelFilters(DataTable* graph_data) {
   int idx;
   DataCol* bincol = graph_data->FindMakeColName("Bin", idx, VT_INT);
   DataCol* fltcol = graph_data->FindMakeColName("Filters", idx, VT_FLOAT, 1,
-                                             mel.n_filters);
+                                             mel_fbank.n_filters);
 
   graph_data->ResetData();
   for(int bin = 0; bin < dft_use; bin++) {
     graph_data->AddBlankRow();
     bincol->SetVal(bin, -1);
     float_MatrixPtr mat; mat = (float_Matrix*)fltcol->GetValAsMatrix(-1);
-    for(int flt = 0; flt < mel.n_filters; flt++) {
-      int mxbin = mel_pts_bin[idx + 3];
-      int mnbin = mel_pts_bin[idx + 1];
+    for(int flt = 0; flt < mel_fbank.n_filters; flt++) {
+      int mxbin = mel_pts_bin[flt + 2];
+      int mnbin = mel_pts_bin[flt];
       float val = 0.0f;
       if(bin >= mnbin && bin <= mxbin) {
         int brel = bin - mnbin;
