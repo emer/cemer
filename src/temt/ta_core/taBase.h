@@ -664,7 +664,7 @@ public:
   virtual taBase*       MakeToken() const       { return new taBase; }  // #IGNORE
   virtual taBase*       MakeTokenAry(int no) const { return new taBase[no]; } // #IGNORE
 //  taBase&             operator=(const taBase& cp) { Copy(cp); return *this;}
-  virtual TypeDef*      GetTypeDef() const;     // #IGNORE
+  virtual TypeDef*      GetTypeDef() const;     // 
   taBase*               New(int n_objs=1, TypeDef* type=NULL,
     const String& name = "(default name)")
     { return New_impl(n_objs, type, name);}
