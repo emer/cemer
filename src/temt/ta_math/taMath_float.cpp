@@ -21,7 +21,7 @@
 #include <double_Matrix>
 #include <float_Matrix>
 #include <int_Matrix>
-#include <complex_Matrix>
+#include <complex_float_Matrix>
 #include <MTRnd>
 #include <Random>
 #include <Aggregate>
@@ -46,9 +46,9 @@
 # include <gsl/gsl_eigen.h>
 # include <gsl/gsl_linalg.h>
 # include <gsl/gsl_fit.h>
-# include <gsl/gsl_fft_real.h>
-# include <gsl/gsl_fft_complex.h>
-# include <gsl/gsl_fft_halfcomplex.h>
+# include <gsl/gsl_fft_real_float.h>
+# include <gsl/gsl_fft_complex_float.h>
+# include <gsl/gsl_fft_halfcomplex_float.h>
 # include <gsl/gsl_multifit.h>
 # include <gsl/gsl_sf.h>
 # include <gsl/gsl_cdf.h>
@@ -2704,6 +2704,249 @@ bool taMath_float::mat_trim(float_Matrix* dest, float_Matrix* src, RelationFloat
   return true;
 }
 
+bool taMath_float::fft_real(complex_float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!vec_check_type(out_mat) || !vec_check_type(in_mat)) return false;
+  // just as efficient given all the memcopy etc in the real routine to copy to complex
+  out_mat->SetReal(*in_mat, true); // sets geom
+  out_mat->SetImagAll(0.0);	   // clear out imaginary numbers just to be safe
+  return fft_complex(out_mat);
+}
+
+bool taMath_float::fft_complex(complex_float_Matrix* mat) {
+  if(!vec_check_type(mat)) return false;
+  if(!complex_float_Matrix::CheckComplexGeom(mat->geom)) {
+    return false;
+  }
+
+  int n = mat->dim(1); // inner guy is frame size
+  if (n == 0) return false; // huh?
+  // calculate the number of flat d0 frames, often just 1
+  int frames = mat->size / (2 * n);
+
+  // make scratch -- declare all, so we can jump to exit
+  bool rval = false;
+  gsl_fft_complex_wavetable_float* gwt = NULL;
+  gsl_fft_complex_workspace_float* work = NULL;
+  const size_t stride = 1;
+
+  gwt = gsl_fft_complex_wavetable_float_alloc((size_t)n);
+  if (!gwt) goto exit; // unlikely
+  work = gsl_fft_complex_workspace_float_alloc((size_t) n);
+  if (!work) goto exit; // unlikely
+
+  for(int fr = 0; fr < frames; ++fr) {
+    int gsl_errno = gsl_fft_complex_float_forward((float*)mat->FastEl_Flat_(fr * n * 2),
+					    stride, (size_t) n, gwt, work);
+    if (gsl_errno != 0) {
+      taMisc::Warning("taMath_float::fft_complex", gsl_strerror(gsl_errno));
+      goto exit;
+    }
+  }
+
+  rval = true;
+exit:
+  // cleanup
+  if (work) gsl_fft_complex_workspace_float_free(work);
+  if (gwt) gsl_fft_complex_wavetable_float_free(gwt);
+  return rval;
+}
+
+bool taMath_float::ffti_complex(complex_float_Matrix* mat) {
+  if(!vec_check_type(mat)) return false;
+  if(!complex_float_Matrix::CheckComplexGeom(mat->geom)) {
+    return false;
+  }
+
+  int n = mat->dim(1); // inner guy is frame size
+  if (n == 0) return false; // huh?
+  // calculate the number of flat d0 frames, often just 1
+  int frames = mat->size / (2 * n);
+
+  // make scratch -- declare all, so we can jump to exit
+  bool rval = false;
+  gsl_fft_complex_wavetable_float* gwt = NULL;
+  gsl_fft_complex_workspace_float* work = NULL;
+  const size_t stride = 1;
+
+  gwt = gsl_fft_complex_wavetable_float_alloc((size_t)n);
+  if (!gwt) goto exit; // unlikely
+  work = gsl_fft_complex_workspace_float_alloc((size_t) n);
+  if (!work) goto exit; // unlikely
+
+  for (int fr = 0; fr < frames; ++fr) {
+    int gsl_errno = gsl_fft_complex_float_inverse((float*)mat->FastEl_Flat_(fr * n * 2),
+					    stride, (size_t) n, gwt, work);
+    if (gsl_errno != 0) {
+      taMisc::Warning("taMath_float::ffti_complex", gsl_strerror(gsl_errno));
+      goto exit;
+    }
+  }
+
+  rval = true;
+exit:
+  // cleanup
+  if (work) gsl_fft_complex_workspace_float_free(work);
+  if (gwt) gsl_fft_complex_wavetable_float_free(gwt);
+  return rval;
+}
+
+// fft 2d
+bool taMath_float::fft2_real(complex_float_Matrix* out_mat,  const float_Matrix* in_mat) {
+  if(!vec_check_type(out_mat) || !vec_check_type(in_mat)) return false;
+  if(in_mat->dims() < 2) {
+    taMisc::Error("fft2_real: input matrix is not 2d -- must have at least 2 dims");
+    return false;
+  }
+
+  // just as efficient given all the memcopy etc in the real routine to copy to complex
+  out_mat->SetReal(*in_mat, true); // sets geom
+  out_mat->SetImagAll(0.0);	   // clear out imaginary numbers just to be safe
+  return fft2_complex(out_mat);
+}
+
+bool taMath_float::fft2_complex(complex_float_Matrix* mat) {
+  if(!vec_check_type(mat)) return false;
+  if(mat->dims() < 3 || mat->dim(0) != 2) {
+    taMisc::Error("fft2_complex: input matrix is not complex 2d -- must have inner dim of size 2 which is real, imag numbers, and at least 2 other dims");
+    return false;
+  }
+
+  int cols = mat->dim(1);
+  int rows = mat->dim(2);
+  int frames = mat->size / (rows * cols * 2);
+
+  int gsl_errno = 0;
+  int rc2 = rows * cols * 2;
+  int c2 = cols * 2;
+
+  // make scratch -- declare all, so we can jump to exit
+  bool rval = false;
+  gsl_fft_complex_wavetable_float* gwt_rows = NULL;
+  gsl_fft_complex_workspace_float* work_rows = NULL;
+  gsl_fft_complex_wavetable_float* gwt_cols = NULL;
+  gsl_fft_complex_workspace_float* work_cols = NULL;
+  const size_t stride = 1;
+
+  gwt_cols = gsl_fft_complex_wavetable_float_alloc((size_t)cols);
+  if (!gwt_cols) goto exit; // unlikely
+  work_cols = gsl_fft_complex_workspace_float_alloc((size_t)cols);
+  if (!work_cols) goto exit; // unlikely
+
+  if(rows != cols) {
+    gwt_rows = gsl_fft_complex_wavetable_float_alloc((size_t)rows);
+    if (!gwt_rows) goto exit; // unlikely
+    work_rows = gsl_fft_complex_workspace_float_alloc((size_t)rows);
+    if (!work_rows) goto exit; // unlikely
+  }
+  else {
+    gwt_rows = gwt_cols;	// can reuse
+    work_rows = work_cols;
+  }
+
+  for (int fr = 0; fr < frames; ++fr) {
+    // first do rows
+    for (int row = 0; row < rows; ++row) {
+      gsl_errno = gsl_fft_complex_float_forward((float*)mat->FastEl_Flat_(fr * rc2 + row * c2),
+					  stride, (size_t)cols, gwt_cols, work_cols);
+      if (gsl_errno != 0) {
+	taMisc::Warning("taMath_float::fft2_complex", gsl_strerror(gsl_errno));
+	goto exit;
+      }
+    }
+
+    // then cols -- stride is cols -- might need to be cols*2??
+    for (int col = 0; col < cols; ++col) {
+      gsl_errno = gsl_fft_complex_float_forward((float*)mat->FastEl_Flat_(fr * rc2 + col * 2),
+				  (size_t)cols, (size_t)rows, gwt_rows, work_rows);
+      if (gsl_errno != 0) {
+	taMisc::Warning("taMath_float::fft2_complex", gsl_strerror(gsl_errno));
+	goto exit;
+      }
+    }
+  }
+  rval = true;
+exit:
+  // cleanup
+  if (work_cols) gsl_fft_complex_workspace_float_free(work_cols);
+  if (gwt_cols) gsl_fft_complex_wavetable_float_free(gwt_cols);
+  if(rows != cols) {
+    if (work_rows) gsl_fft_complex_workspace_float_free(work_rows);
+    if (gwt_rows) gsl_fft_complex_wavetable_float_free(gwt_rows);
+  }
+  return rval;
+}
+
+bool taMath_float::ffti2_complex(complex_float_Matrix* mat) {
+  if(!vec_check_type(mat)) return false;
+  if(mat->dims() < 3 || mat->dim(0) != 2) {
+    taMisc::Error("ffti2_complex: input matrix is not complex 2d -- must have inner dim of size 2 which is real, imag numbers, and at least 2 other dims");
+    return false;
+  }
+
+  int cols = mat->dim(1);
+  int rows = mat->dim(2);
+  int frames = mat->size / (rows * cols * 2);
+
+  int gsl_errno = 0;
+  int rc2 = rows * cols * 2;
+  int c2 = cols * 2;
+
+  // make scratch -- declare all, so we can jump to exit
+  bool rval = false;
+  gsl_fft_complex_wavetable_float* gwt_rows = NULL;
+  gsl_fft_complex_workspace_float* work_rows = NULL;
+  gsl_fft_complex_wavetable_float* gwt_cols = NULL;
+  gsl_fft_complex_workspace_float* work_cols = NULL;
+  const size_t stride = 1;
+
+  gwt_cols = gsl_fft_complex_wavetable_float_alloc((size_t)cols);
+  if (!gwt_cols) goto exit; // unlikely
+  work_cols = gsl_fft_complex_workspace_float_alloc((size_t)cols);
+  if (!work_cols) goto exit; // unlikely
+
+  if(rows != cols) {
+    gwt_rows = gsl_fft_complex_wavetable_float_alloc((size_t)rows);
+    if (!gwt_rows) goto exit; // unlikely
+    work_rows = gsl_fft_complex_workspace_float_alloc((size_t)rows);
+    if (!work_rows) goto exit; // unlikely
+  }
+  else {
+    gwt_rows = gwt_cols;	// can reuse
+    work_rows = work_cols;
+  }
+
+  for (int fr = 0; fr < frames; ++fr) {
+    // cols first for inverse -- stride is cols -- might need to be cols*2??
+    for (int col = 0; col < cols; ++col) {
+      gsl_errno = gsl_fft_complex_float_inverse((float*)mat->FastEl_Flat_(fr * rc2 + col * 2),
+				  (size_t)cols, (size_t)rows, gwt_rows, work_rows);
+      if (gsl_errno != 0) {
+	taMisc::Warning("taMath_float::ffti2_complex", gsl_strerror(gsl_errno));
+	goto exit;
+      }
+    }
+    // then do rows
+    for (int row = 0; row < rows; ++row) {
+      gsl_errno = gsl_fft_complex_float_inverse((float*)mat->FastEl_Flat_(fr * rc2 + row * c2),
+					  stride, (size_t)cols, gwt_cols, work_cols);
+      if (gsl_errno != 0) {
+	taMisc::Warning("taMath_float::ffti2_complex", gsl_strerror(gsl_errno));
+	goto exit;
+      }
+    }
+
+  }
+  rval = true;
+exit:
+  // cleanup
+  if (work_cols) gsl_fft_complex_workspace_float_free(work_cols);
+  if (gwt_cols) gsl_fft_complex_wavetable_float_free(gwt_cols);
+  if(rows != cols) {
+    if (work_rows) gsl_fft_complex_workspace_float_free(work_rows);
+    if (gwt_rows) gsl_fft_complex_wavetable_float_free(gwt_rows);
+  }
+  return rval;
+}
 
 #else // !HAVE_LIBGSL
 
@@ -3223,7 +3466,7 @@ bool taMath_float::mat_frame_percent(float_Matrix* out_mat, const float_Matrix* 
       if(tmp_rel.Evaluate(in_mat->FastEl_Flat(fsi + i))) sum += 1.0;
     }
     if(frn > 0)
-      sum /= (double)frn;
+      sum /= (float)frn;
     out_mat->FastEl_Flat(i) = sum;
   }
   return true;

@@ -117,6 +117,7 @@ set(ta_core_HEADS_MAKETA_NOMOC
   float_Matrix.h
   double_Matrix.h
   complex_Matrix.h
+  complex_float_Matrix.h
   int_Matrix.h
   slice_Matrix.h
   byte_Matrix.h
@@ -380,6 +381,7 @@ set(ta_core_SRCS_MAKETA
   float_Matrix.cpp
   double_Matrix.cpp
   complex_Matrix.cpp
+  complex_float_Matrix.cpp
   int_Matrix.cpp
   slice_Matrix.cpp
   byte_Matrix.cpp
