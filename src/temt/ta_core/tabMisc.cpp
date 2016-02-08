@@ -28,7 +28,7 @@ taBase*     tabMisc::cur_undo_save_owner = NULL;
 
 taBase_RefList  tabMisc::delayed_close;
 taBase_RefList  tabMisc::delayed_updateafteredit;
-taBase_FunCallList  tabMisc::delayed_funcalls;
+FunCall_RefList  tabMisc::delayed_funcalls_obj;
 ContextFlag  tabMisc::in_wait_proc;
 
 void tabMisc::DelayedClose(taBase* obj) {
@@ -47,13 +47,15 @@ void tabMisc::DelayedFunCall_gui(taBase* obj, const String& fun_name) {
   if(taMisc::quitting) return;
   if(!taMisc::gui_active) return;
   taMisc::do_wait_proc = true;
-  delayed_funcalls.AddBaseFun(obj, fun_name);
+  
+  delayed_funcalls_obj.AddWithFunName(obj, fun_name);
 }
 
 void tabMisc::DelayedFunCall_nogui(taBase* obj, const String& fun_name) {
   if(taMisc::quitting) return;
   taMisc::do_wait_proc = true;
-  delayed_funcalls.AddBaseFun(obj, fun_name);
+  
+  delayed_funcalls_obj.AddWithFunName(obj, fun_name);
 }
 
 void tabMisc::WaitProc() {
@@ -128,14 +130,12 @@ bool tabMisc::DoDelayedUpdateAfterEdits() {
 
 bool tabMisc::DoDelayedFunCalls() {
   bool did_some = false;
-  while (delayed_funcalls.size > 0) {// note this must be fifo!
-    // note: get all details before call, then remove
-    FunCallItem* fci = delayed_funcalls.FastEl(0);
-    taBase* it = fci->it;
-    String fun_name = fci->fun_name;
-    delayed_funcalls.RemoveIdx(0); // deletes fci
-    if (it) {
-      it->CallFun(fun_name);
+
+  while (delayed_funcalls_obj.size > 0) { // note this must be fifo!
+    taBase* it = delayed_funcalls_obj.SafeEl(0);
+    if (it && !it->isDestroying()) {
+      it->CallFun(delayed_funcalls_obj.GetFunName(0));
+      delayed_funcalls_obj.RemoveIdxAndFunName(0);
     }
     did_some = true;
   }
@@ -156,7 +156,7 @@ bool tabMisc::DoAutoSave() {
 void tabMisc::WaitProc_Cleanup() {
   taMisc::do_wait_proc = false; // just to be sure
   delayed_updateafteredit.Reset();
-  delayed_funcalls.Reset();
+  delayed_funcalls_obj.Reset();
   delayed_close.Reset();
 }
 

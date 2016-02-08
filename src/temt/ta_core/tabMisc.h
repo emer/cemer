@@ -19,8 +19,8 @@
 // parent includes:
 
 // member includes:
-#include <taBase_RefList>
-#include <taBase_FunCallList>
+#include <FunCall_RefList>
+//#include <taBase_FunCallList>
 #include <ContextFlag>
 
 // declare all other types mentioned but not required to include:
@@ -46,8 +46,10 @@ public:
 
   static taBase_RefList delayed_updateafteredit;
   // list of objs to be update-after-edit'd in the wait process
-  static taBase_FunCallList  delayed_funcalls;
-  // functions to call during the waiting process -- variant value is the object, and name is the function
+  
+  static FunCall_RefList delayed_funcalls_obj;
+  // objects on which to make function calls during the waiting process
+  
   static ContextFlag    in_wait_proc; // context -- don't do WaitProc
 
   static void           WaitProc();

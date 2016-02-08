@@ -173,9 +173,6 @@ public:
   iAction_List         imageProcImageProcActions;
   
   iAction*            viewRefreshAction;
-  iAction*            viewSplitVerticalAction;
-  iAction*            viewSplitHorizontalAction;
-  iAction*            viewCloseCurrentViewAction;
   iAction*            viewSetSaveViewAction;
   iAction*            viewResetViewAction;
 
