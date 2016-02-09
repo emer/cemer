@@ -1,0 +1,111 @@
+** Settings ***
+
+Library          Telnet
+Library          HttpLibrary.HTTP
+Library          Process
+Library          OperatingSystem
+
+Resource         Server_lib.txt
+
+Suite Setup      Initialize Emergent    ./test-projects/TestCvtFmCode.proj
+Suite Teardown   Shutdown Emergent
+
+*** Variables ***
+
+# use 'pybot -v debug:true server.txt' on the command line to
+#      output the transmissions to/from Emergent using warnings
+${debug} =       false
+
+*** Test Cases ***
+
+# Ideas on things to test
+#  - SetDataTableCell and Matrix Cell
+
+#
+# Initialization and general tests
+#
+
+Initialize
+    Set Suite Variable     ${verbose}       ${false}
+    Set Suite Variable     ${project}       ./test-projects/TestCvtFmCode.proj
+    Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
+
+Connection
+    Sleep                  1 sec
+    ${output} =            Read
+    Print                  ${output}
+    Should Contain         ${output}    Emergent Server v7.
+
+# TODO: Start another process and check for the "Too many connections already" error.
+
+#
+# ParserTest
+#
+
+General RunState
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             4
+
+
+LocalVars
+    Ensure Emergent Free
+    ProgEl Should Match		0	LocalVars
+
+Comment
+    Ensure Emergent Free
+    ProgEl Should Match		1	Comment
+
+AssignExpr
+    Ensure Emergent Free
+    ProgEl Should Match		2	AssignExpr
+
+ProgramCall
+    Ensure Emergent Free
+    ProgEl Should Match		3	ProgramCall
+
+ForLoop
+    Ensure Emergent Free
+    ProgEl Should Match		4	ForLoop
+
+Switch
+    Ensure Emergent Free
+    ProgEl Should Match		5	Switch
+
+if
+    Ensure Emergent Free
+    ProgEl Should Match		6	If
+
+Else
+    Ensure Emergent Free
+    ProgEl Should Match		7	Else
+
+PrintVar
+    Ensure Emergent Free
+    ProgEl Should Match		8	PrintVar
+
+PrintExpr
+    Ensure Emergent Free
+    ProgEl Should Match		9	PrintExpr
+
+BlankLineEl
+    Ensure Emergent Free
+    ProgEl Should Match		10	BlankLineEl
+
+
+
+
+
+
+*** Keywords ***
+
+ProgEl Should Match
+    [Arguments]		${prog_el_idx}	${expected_type}
+    Set Emergent Var	TestProgCodeCvtToProgEl		progel_idx	${prog_el_idx}
+    Set Emergent Var	TestProgCodeCvtToProgEl		should_match	"${expected_type}"
+    
+    ${console}=		       Run Emergent Program       TestProgCodeCvtToProgEl
+
+    ${does_match}=	       Get Emergent Var		  TestProgCodeCvtToProgEl		does_match
+
+    Run Keyword If      "${does_match}" <> "true"     Log	${console}	WARN
+    Should Be Equal    ${does_match}     true
