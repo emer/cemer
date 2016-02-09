@@ -1305,6 +1305,9 @@ public:
   bool          InheritsFromName(const char* nm) const
   { return GetTypeDef()->InheritsFromName(nm); }
   // #CAT_ObjectMgmt does this inherit from given type name?
+  bool          DerivesFromName(const char* nm) const
+  { return GetTypeDef()->DerivesFromName(nm); }
+  // #CAT_ObjectMgmt does this derive from given type name?
 
   TypeDef*      GetStemBase() const;
   // #IGNORE get first (from me) parent with STEM_BASE directive -- defines equivalence class -- if not found, then taBase is returned
