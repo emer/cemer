@@ -184,6 +184,19 @@ Run Emergent Program
     
     [Return]    ${console}
 
+Set Emergent Var
+    [Arguments]		${program}	${var_name}	${value}
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "${program}", "var_name": "${var_name}", "var_value": ${value}}
+    Status OK                  ${output}
+
+Get Emergent Var
+    [Arguments]		${program}	${var_name}
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": "${program}", "var_name": "${var_name}"}
+    Status OK                  ${output}
+    ${value} =   	       Get Json Value	     ${output}	/result
+
+    [Return] 		       ${value}
+    
 Prog Var Should Match
     [Arguments]         ${var_name}     ${should_match}
     ${output} =                Run Command Wait      {"command": "GetVar", "program": ${program_test}, "var_name": "${var_name}"}
