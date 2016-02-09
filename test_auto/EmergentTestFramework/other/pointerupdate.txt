@@ -376,8 +376,7 @@ Prog Group Should Match
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "TestGroup", "var_name": "which_group", "var_value": ${prog_group}}
     Status OK                  ${output}
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "TestGroup"}
-    Status OK No Result        ${output}
+    Run Emergent Program       TestGroup
 
     Prog Var Should Match      group_name            ${group_name}
 
@@ -398,7 +397,6 @@ DataTable Value Should Match
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "TestDataTableValue", "var_name": "which_group", "var_value": ${prog_group}}
     Status OK                  ${output}
 
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "TestDataTableValue"}
-    Status OK No Result        ${output}
+    Run Emergent Program       TestDataTableValue
 
     Prog Var Should Match      data_table_value           ${table_value}
