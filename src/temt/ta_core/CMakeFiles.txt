@@ -86,7 +86,6 @@ set(ta_core_HEADS_MAKETA_NOMOC
   taBase_List.h
   taBase_PtrList.h
   taBase_RefList.h
-  FunCall_RefList.h
   
   taSubGroup.h
   taLeafItr.h
@@ -350,7 +349,6 @@ set(ta_core_SRCS_MAKETA
   taBase_List.cpp
   taBase_PtrList.cpp
   taBase_RefList.cpp
-  FunCall_RefList.cpp
 
   taSubGroup.cpp
   taLeafItr.cpp
