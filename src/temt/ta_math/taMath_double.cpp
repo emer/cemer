@@ -2861,14 +2861,20 @@ bool taMath_double::fft_complex(complex_Matrix* mat) {
 
   // make scratch -- declare all, so we can jump to exit
   bool rval = false;
-  gsl_fft_complex_wavetable* gwt = NULL;
-  gsl_fft_complex_workspace* work = NULL;
+  static gsl_fft_complex_wavetable* gwt = NULL;
+  static gsl_fft_complex_workspace* work = NULL;
+  static int last_fft_size = 0;
   const size_t stride = 1;
 
-  gwt = gsl_fft_complex_wavetable_alloc((size_t)n);
-  if (!gwt) goto exit; // unlikely
-  work = gsl_fft_complex_workspace_alloc((size_t) n);
-  if (!work) goto exit; // unlikely
+  if(last_fft_size != n) {
+    if (work) gsl_fft_complex_workspace_free(work);
+    if (gwt) gsl_fft_complex_wavetable_free(gwt);
+    gwt = gsl_fft_complex_wavetable_alloc((size_t)n);
+    if (!gwt) goto exit; // unlikely
+    work = gsl_fft_complex_workspace_alloc((size_t) n);
+    if (!work) goto exit; // unlikely
+    last_fft_size = n;
+  }
 
   for(int fr = 0; fr < frames; ++fr) {
     int gsl_errno = gsl_fft_complex_forward((double*)mat->FastEl_Flat_(fr * n * 2),
@@ -2881,9 +2887,6 @@ bool taMath_double::fft_complex(complex_Matrix* mat) {
 
   rval = true;
 exit:
-  // cleanup
-  if (work) gsl_fft_complex_workspace_free(work);
-  if (gwt) gsl_fft_complex_wavetable_free(gwt);
   return rval;
 }
 
@@ -2900,14 +2903,20 @@ bool taMath_double::ffti_complex(complex_Matrix* mat) {
 
   // make scratch -- declare all, so we can jump to exit
   bool rval = false;
-  gsl_fft_complex_wavetable* gwt = NULL;
-  gsl_fft_complex_workspace* work = NULL;
+  static gsl_fft_complex_wavetable* gwt = NULL;
+  static gsl_fft_complex_workspace* work = NULL;
+  static int last_fft_size = 0;
   const size_t stride = 1;
 
-  gwt = gsl_fft_complex_wavetable_alloc((size_t)n);
-  if (!gwt) goto exit; // unlikely
-  work = gsl_fft_complex_workspace_alloc((size_t) n);
-  if (!work) goto exit; // unlikely
+  if(last_fft_size != n) {
+    if (work) gsl_fft_complex_workspace_free(work);
+    if (gwt) gsl_fft_complex_wavetable_free(gwt);
+    gwt = gsl_fft_complex_wavetable_alloc((size_t)n);
+    if (!gwt) goto exit; // unlikely
+    work = gsl_fft_complex_workspace_alloc((size_t) n);
+    if (!work) goto exit; // unlikely
+    last_fft_size = n;
+  }
 
   for (int fr = 0; fr < frames; ++fr) {
     int gsl_errno = gsl_fft_complex_inverse((double*)mat->FastEl_Flat_(fr * n * 2),
@@ -2920,9 +2929,6 @@ bool taMath_double::ffti_complex(complex_Matrix* mat) {
 
   rval = true;
 exit:
-  // cleanup
-  if (work) gsl_fft_complex_workspace_free(work);
-  if (gwt) gsl_fft_complex_wavetable_free(gwt);
   return rval;
 }
 
@@ -2957,28 +2963,34 @@ bool taMath_double::fft2_complex(complex_Matrix* mat) {
 
   // make scratch -- declare all, so we can jump to exit
   bool rval = false;
-  gsl_fft_complex_wavetable* gwt_rows = NULL;
-  gsl_fft_complex_workspace* work_rows = NULL;
-  gsl_fft_complex_wavetable* gwt_cols = NULL;
-  gsl_fft_complex_workspace* work_cols = NULL;
+  static gsl_fft_complex_wavetable* gwt_rows = NULL;
+  static gsl_fft_complex_workspace* work_rows = NULL;
+  static gsl_fft_complex_wavetable* gwt_cols = NULL;
+  static gsl_fft_complex_workspace* work_cols = NULL;
+  static int last_fft_size_rows = 0;
+  static int last_fft_size_cols = 0;
   const size_t stride = 1;
 
-  gwt_cols = gsl_fft_complex_wavetable_alloc((size_t)cols);
-  if (!gwt_cols) goto exit; // unlikely
-  work_cols = gsl_fft_complex_workspace_alloc((size_t)cols);
-  if (!work_cols) goto exit; // unlikely
+  if(cols != last_fft_size_cols) {
+    if (work_cols) gsl_fft_complex_workspace_free(work_cols);
+    if (gwt_cols) gsl_fft_complex_wavetable_free(gwt_cols);
+    gwt_cols = gsl_fft_complex_wavetable_alloc((size_t)cols);
+    if (!gwt_cols) goto exit; // unlikely
+    work_cols = gsl_fft_complex_workspace_alloc((size_t)cols);
+    if (!work_cols) goto exit; // unlikely
+    last_fft_size_cols = cols;
+  }
 
-  if(rows != cols) {
+  if(rows != last_fft_size_rows) {
+    if (work_rows) gsl_fft_complex_workspace_free(work_rows);
+    if (gwt_rows) gsl_fft_complex_wavetable_free(gwt_rows);
     gwt_rows = gsl_fft_complex_wavetable_alloc((size_t)rows);
     if (!gwt_rows) goto exit; // unlikely
     work_rows = gsl_fft_complex_workspace_alloc((size_t)rows);
     if (!work_rows) goto exit; // unlikely
+    last_fft_size_rows = rows;
   }
-  else {
-    gwt_rows = gwt_cols;	// can reuse
-    work_rows = work_cols;
-  }
-
+  
   for (int fr = 0; fr < frames; ++fr) {
     // first do rows
     for (int row = 0; row < rows; ++row) {
@@ -3002,13 +3014,6 @@ bool taMath_double::fft2_complex(complex_Matrix* mat) {
   }
   rval = true;
 exit:
-  // cleanup
-  if (work_cols) gsl_fft_complex_workspace_free(work_cols);
-  if (gwt_cols) gsl_fft_complex_wavetable_free(gwt_cols);
-  if(rows != cols) {
-    if (work_rows) gsl_fft_complex_workspace_free(work_rows);
-    if (gwt_rows) gsl_fft_complex_wavetable_free(gwt_rows);
-  }
   return rval;
 }
 
@@ -3029,26 +3034,32 @@ bool taMath_double::ffti2_complex(complex_Matrix* mat) {
 
   // make scratch -- declare all, so we can jump to exit
   bool rval = false;
-  gsl_fft_complex_wavetable* gwt_rows = NULL;
-  gsl_fft_complex_workspace* work_rows = NULL;
-  gsl_fft_complex_wavetable* gwt_cols = NULL;
-  gsl_fft_complex_workspace* work_cols = NULL;
+  static gsl_fft_complex_wavetable* gwt_rows = NULL;
+  static gsl_fft_complex_workspace* work_rows = NULL;
+  static gsl_fft_complex_wavetable* gwt_cols = NULL;
+  static gsl_fft_complex_workspace* work_cols = NULL;
+  static int last_fft_size_rows = 0;
+  static int last_fft_size_cols = 0;
   const size_t stride = 1;
 
-  gwt_cols = gsl_fft_complex_wavetable_alloc((size_t)cols);
-  if (!gwt_cols) goto exit; // unlikely
-  work_cols = gsl_fft_complex_workspace_alloc((size_t)cols);
-  if (!work_cols) goto exit; // unlikely
+  if(cols != last_fft_size_cols) {
+    if (work_cols) gsl_fft_complex_workspace_free(work_cols);
+    if (gwt_cols) gsl_fft_complex_wavetable_free(gwt_cols);
+    gwt_cols = gsl_fft_complex_wavetable_alloc((size_t)cols);
+    if (!gwt_cols) goto exit; // unlikely
+    work_cols = gsl_fft_complex_workspace_alloc((size_t)cols);
+    if (!work_cols) goto exit; // unlikely
+    last_fft_size_cols = cols;
+  }
 
-  if(rows != cols) {
+  if(rows != last_fft_size_rows) {
+    if (work_rows) gsl_fft_complex_workspace_free(work_rows);
+    if (gwt_rows) gsl_fft_complex_wavetable_free(gwt_rows);
     gwt_rows = gsl_fft_complex_wavetable_alloc((size_t)rows);
     if (!gwt_rows) goto exit; // unlikely
     work_rows = gsl_fft_complex_workspace_alloc((size_t)rows);
     if (!work_rows) goto exit; // unlikely
-  }
-  else {
-    gwt_rows = gwt_cols;	// can reuse
-    work_rows = work_cols;
+    last_fft_size_rows = rows;
   }
 
   for (int fr = 0; fr < frames; ++fr) {
@@ -3074,13 +3085,6 @@ bool taMath_double::ffti2_complex(complex_Matrix* mat) {
   }
   rval = true;
 exit:
-  // cleanup
-  if (work_cols) gsl_fft_complex_workspace_free(work_cols);
-  if (gwt_cols) gsl_fft_complex_wavetable_free(gwt_cols);
-  if(rows != cols) {
-    if (work_rows) gsl_fft_complex_workspace_free(work_rows);
-    if (gwt_rows) gsl_fft_complex_wavetable_free(gwt_rows);
-  }
   return rval;
 }
 

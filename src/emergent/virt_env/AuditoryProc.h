@@ -74,15 +74,16 @@ public:
   bool          renorm;        // #CONDSHOW_ON_on renormalize the feature bank outputs into a zero-one range according to given min / max parameters
   float         ren_min;       // #CONDSHOW_ON_on&&renorm minimum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values -- depends also on whether log_plus_1 is set or not
   float         ren_max;       // #CONDSHOW_ON_on&&renorm maximum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values -- depends also on whether log_plus_1 is set or not
+  float         ren_scale;     // #READ_ONLY 1.0 / (ren_max - ren_min)
   float         lo_mel;        // #READ_ONLY #SHOW #CONDSHOW_ON_on low end of mel scale in mel units
   float         hi_mel;        // #READ_ONLY #SHOW #CONDSHOW_ON_on high end of mel scale in mel units
 
   inline float         FreqToMel(const float freq)
-  { return 1127.01f * logf(1.0f + freq/700.0f); }
+  { return 1127.0f * logf(1.0f + freq/700.0f); }
   // convert frequency to mel scale
   
   inline float         MelToFreq(const float mel)
-  { return 700.0f * (expf(mel / 1127.01f) - 1.0f); }
+  { return 700.0f * (expf(mel / 1127.0f) - 1.0f); }
   // convert mel scale to frequency
 
   inline int           FreqToBin(const float freq, const float n_fft,
@@ -105,24 +106,11 @@ class E_API MelCepstrumSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound mel frequency sampling parameters
 INHERITED(taOBase)
 public:
-  bool          on;            // perform cepstrum discrete cosine transform of the mel-frequency filter bank features
+  bool          on;            // perform cepstrum discrete cosine transform (dct) of the mel-frequency filter bank features
+  int           n_coeff;       // #CONDSHOW_ON_on #DEF_13 number of mfcc coefficients to output -- typically 1/2 of the number of filterbank features
   bool          renorm;        // #CONDSHOW_ON_on renormalize the feature bank outputs into a zero-one range according to given min / max parameters
   float         ren_min;       // #CONDSHOW_ON_on&&renorm minimum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values -- depends also on whether log_plus_1 is set or not
   float         ren_max;       // #CONDSHOW_ON_on&&renorm maximum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values -- depends also on whether log_plus_1 is set or not
-
-
-  inline float         FreqToMel(const float freq)
-  { return 1127.01f * logf(1.0f + freq/700.0f); }
-  // convert frequency to mel scale
-  
-  inline float         MelToFreq(const float mel)
-  { return 700.0f * (expf(mel / 1127.01f) - 1.0f); }
-  // convert mel scale to frequency
-
-  inline int           FreqToBin(const float freq, const float n_fft,
-                                 const float sample_rate)
-  { return (int)floor(((n_fft+1) * freq) / sample_rate); }
-  // convert frequency into FFT bin number, using parameters of number of FFT bins and sample rate
 
   TA_SIMPLE_BASEFUNS(MelCepstrumSpec);
 protected:
@@ -158,7 +146,7 @@ public:
   DataSave	input_save;	// how to save the input sound for each filtering step
   AudInputSpec  input;          // specifications of the raw auditory input 
   MelFBankSpec  mel_fbank;      // specifications of the mel feature bank frequency sampling of the DFT (FFT) of the input sound
-  MelCepstrumSpec mfcc;         // #CONDSHOW_ON_mel_bank.on specifications of the mel cepstrum discrete cosine transform of the mel fbank filter features
+  MelCepstrumSpec mfcc;         // #CONDSHOW_ON_mel_fbank.on specifications of the mel cepstrum discrete cosine transform of the mel fbank filter features
 
 
   ///////////////////////////////////////////////////
@@ -167,7 +155,6 @@ public:
   int                   dft_size;    // #READ_ONLY #NO_SAVE full size of fft output -- should be input.win_samples
   int                   dft_use;     // #READ_ONLY #NO_SAVE number of dft outputs to actually use -- should be dft_size / 2 + 1
   int                   mel_n_filters_eff; // #READ_ONLY #NO_SAVE effective number of mel filters: mel.n_filters + 2
-  int                   n_mfcc;      // #READ_ONLY #NO_SAVE mel.n_filters / 2 -- number of coefficients
   float_Matrix          mel_pts_mel; // #READ_ONLY #NO_SAVE [mel_n_filters_eff] scale points in mel units (mels)
   float_Matrix          mel_pts_hz;  // #READ_ONLY #NO_SAVE [mel_n_filters_eff] mel scale points in hz units 
   int_Matrix            mel_pts_bin; // #READ_ONLY #NO_SAVE [mel_n_filters_eff] mel scale points in fft bins
@@ -252,6 +239,8 @@ public:
   // compute power of dft output
   virtual void  MelFilterDft();
   // apply mel filters to power of dft
+  virtual void  CepstrumDctMel();
+  // apply discrete cosine transform (DCT) to get the cepstrum coefficients on the mel filterbank values
   
 public:  
   TA_SIMPLE_BASEFUNS(AuditoryProc);

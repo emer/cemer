@@ -76,21 +76,24 @@ void MelFBankSpec::Initialize() {
   n_filters = 26;
   log_plus_1 = false;
   renorm = false;
-  ren_min = -12.5f;
-  ren_max = 3.5f;
+  ren_min = -10.0f;
+  ren_max = 7.0f;
   lo_mel = FreqToMel(lo_hz);
   hi_mel = FreqToMel(hi_hz);
+  ren_scale = 1.0f / (ren_max - ren_min);
 }
 
 void MelFBankSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   lo_mel = FreqToMel(lo_hz);
   hi_mel = FreqToMel(hi_hz);
+  ren_scale = 1.0f / (ren_max - ren_min);
 }
 
 
 void MelCepstrumSpec::Initialize() {
   on = true;
+  n_coeff = 13;
   renorm = false;
   ren_min = -12.5f;
   ren_max = 3.5f;
@@ -110,7 +113,6 @@ void AuditoryProc::Initialize() {
   dft_size = 0;
   dft_use = 0;
   mel_n_filters_eff = 0;
-  n_mfcc = 0;
   mel_filt_max_bins = 0;
 }
 
@@ -158,7 +160,7 @@ bool AuditoryProc::InitFilters_Mel() {
   mel_pts_hz.SetGeom(1, mel_n_filters_eff);
   mel_pts_bin.SetGeom(1, mel_n_filters_eff);
 
-  float mel_inc = (mel_fbank.hi_mel - mel_fbank.lo_mel) / (float)(mel_fbank.n_filters-1);
+  float mel_inc = (mel_fbank.hi_mel - mel_fbank.lo_mel) / (float)(mel_fbank.n_filters+1);
 
   for(int idx = 0; idx < mel_n_filters_eff; idx++) {
     float ml = mel_fbank.lo_mel + (float)idx*mel_inc;
@@ -197,7 +199,7 @@ bool AuditoryProc::InitOutMatrix() {
   dft_out.SetGeom(2, 2, dft_size);
   dft_power_out.SetGeom(1, dft_use);
   mel_fbank_out.SetGeom(1, mel_fbank.n_filters);
-  mfcc_dct_out.SetGeom(1, n_mfcc);
+  mfcc_dct_out.SetGeom(1, mel_fbank.n_filters);
   return true;
 }
 
@@ -275,7 +277,7 @@ bool AuditoryProc::FilterWindow() {
     PowerOfDft();
     MelFilterDft();
     if(mfcc.on) {
-      // todo
+      CepstrumDctMel();
     }
   }
   return true;
@@ -307,12 +309,32 @@ void AuditoryProc::MelFilterDft() {
       const float pval = dft_power_out.FastEl_Flat(bin);
       sum += fval * pval;
     }
-    if(mel_fbank.log_plus_1)
-      sum += 1.0f;
-    mel_fbank_out.FastEl_Flat(mi) = logf(sum);
+    float val;
+    if(mel_fbank.log_plus_1) {
+      val = logf(1.0f + sum);
+    }
+    else if(sum == 0.0f) {
+      val = -1.0e6f;
+    }
+    else {
+      val = logf(sum);
+    }
+    if(mel_fbank.renorm) {
+      val -= mel_fbank.ren_min;
+      if(val < 0.0f) val = 0.0f;
+      val *= mel_fbank.ren_scale;
+      if(val > 1.0f) val = 1.0f;
+    }
+    mel_fbank_out.FastEl_Flat(mi) = val;
   }
 }
 
+void AuditoryProc::CepstrumDctMel() {
+  memcpy(mfcc_dct_out.el, mel_fbank_out.el, mel_fbank.n_filters * sizeof(float));
+  taMath_float::dct(&mfcc_dct_out);
+  float& el0 = mfcc_dct_out.FastEl_Flat(0);
+  el0 = logf(1.0f + el0*el0);              // replace with log energy instead..
+}
 
 bool AuditoryProc::InitDataTable() {
   if(!data_table) {
@@ -386,8 +408,16 @@ bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, int step, bool fm
     }
   }
 
-  // todo: mfcc_dct_out
-  
+  col = data_table->FindMakeColName(name + "_mel_mfcc" + col_sufx, idx,
+                                    DataTable::VT_FLOAT, 2,
+                                    input.trial_steps, mfcc.n_coeff);
+  if(!fmt_only) {
+    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    for(int i=0; i< mfcc.n_coeff; i++) {
+      dout->FastEl2d(step, i) = mfcc_dct_out.FastEl_Flat(i);
+    }
+  }
+
   return true;
 }
 

@@ -690,6 +690,9 @@ public:
   static bool ffti2_complex(complex_float_Matrix* mat);
   // #CAT_FFT #NO_CSS_MATH compute the 2D inverse fast fourier transform (FFT) of the complex data in the matrix, in place (overwrites contents of mat). results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers stored as inner-most dimension of matrix, of size 2, first is real, 2nd is imag. if there are more than 2D dims in in_mat, the FFT is computed for each 2D frame
 
+  static bool dct(float_Matrix* in_mat);
+  // #CAT_FFT #NO_CSS_MATH compute the discrete cosine transform (DCT) of the real data in in_mat, producing results within same in_mat matrix (in place). results are much faster if size is divisible by many small factors, but any size can be used (radix-N).
+  
   TA_ABSTRACT_BASEFUNS_NOCOPY(taMath_float) //
 private:
   void Initialize() { };
