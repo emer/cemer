@@ -28,7 +28,7 @@ taBase*     tabMisc::cur_undo_save_owner = NULL;
 
 taBase_RefList  tabMisc::delayed_close;
 taBase_RefList  tabMisc::delayed_updateafteredit;
-FunCall_RefList  tabMisc::delayed_funcalls_obj;
+taBase_FunCallList  tabMisc::delayed_funcalls;
 ContextFlag  tabMisc::in_wait_proc;
 
 void tabMisc::DelayedClose(taBase* obj) {
@@ -47,15 +47,13 @@ void tabMisc::DelayedFunCall_gui(taBase* obj, const String& fun_name) {
   if(taMisc::quitting) return;
   if(!taMisc::gui_active) return;
   taMisc::do_wait_proc = true;
-  
-  delayed_funcalls_obj.AddWithFunName(obj, fun_name);
+  delayed_funcalls.AddBaseFun(obj, fun_name);
 }
 
 void tabMisc::DelayedFunCall_nogui(taBase* obj, const String& fun_name) {
   if(taMisc::quitting) return;
   taMisc::do_wait_proc = true;
-  
-  delayed_funcalls_obj.AddWithFunName(obj, fun_name);
+  delayed_funcalls.AddBaseFun(obj, fun_name);
 }
 
 void tabMisc::WaitProc() {
@@ -73,7 +71,7 @@ void tabMisc::WaitProc() {
   did |= rval;
   rval = DoDelayedFunCalls();
   did |= rval;
-
+  
   if(!did) {
     did = DoAutoSave();               // only once it is quiet
   }
@@ -82,21 +80,21 @@ void tabMisc::WaitProc() {
 
 
 /*
-  Object on this list will only have refs if they are owned, ex. in a list.
-  If the owner or mgr nukes the obj before we get to it, it will have been
-  automatically removed from the delayed_close list. Otherwise, we will
-  "nuke with extreme prejudice".
-  Note that it might be possible for objects to get added to the list
-  while deleting something -- we won't do those this cycle.
-*/
+ Object on this list will only have refs if they are owned, ex. in a list.
+ If the owner or mgr nukes the obj before we get to it, it will have been
+ automatically removed from the delayed_close list. Otherwise, we will
+ "nuke with extreme prejudice".
+ Note that it might be possible for objects to get added to the list
+ while deleting something -- we won't do those this cycle.
+ */
 bool tabMisc::DoDelayedCloses() {
   if (delayed_close.size == 0) return false;
-
+  
   // note: this is sleazy, but very efficient -- we just completely
   // hijack the memory of the current list in this working copy
   taBase_RefList items;
   items.Hijack(delayed_close);
-
+  
   // we work fifo
   while (items.size > 0) {
     // note: active items can often have many refs, and CutLinks will typically
@@ -130,12 +128,14 @@ bool tabMisc::DoDelayedUpdateAfterEdits() {
 
 bool tabMisc::DoDelayedFunCalls() {
   bool did_some = false;
-
-  while (delayed_funcalls_obj.size > 0) { // note this must be fifo!
-    taBase* it = delayed_funcalls_obj.SafeEl(0);
-    if (it && !it->isDestroying()) {
-      it->CallFun(delayed_funcalls_obj.GetFunName(0));
-      delayed_funcalls_obj.RemoveIdxAndFunName(0);
+  while (delayed_funcalls.size > 0) {// note this must be fifo!
+    // note: get all details before call, then remove
+    FunCallItem* fci = delayed_funcalls.FastEl(0);
+    taBase* it = fci->it;
+    String fun_name = fci->fun_name;
+    delayed_funcalls.RemoveIdx(0); // deletes fci
+    if (it) {
+      it->CallFun(fun_name);
     }
     did_some = true;
   }
@@ -156,7 +156,7 @@ bool tabMisc::DoAutoSave() {
 void tabMisc::WaitProc_Cleanup() {
   taMisc::do_wait_proc = false; // just to be sure
   delayed_updateafteredit.Reset();
-  delayed_funcalls_obj.Reset();
+  delayed_funcalls.Reset();
   delayed_close.Reset();
 }
 
