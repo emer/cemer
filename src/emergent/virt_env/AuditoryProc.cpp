@@ -23,6 +23,8 @@
 
 TA_BASEFUNS_CTORS_DEFN(AudInputSpec);
 TA_BASEFUNS_CTORS_DEFN(MelFBankSpec);
+TA_BASEFUNS_CTORS_DEFN(AudRenormSpec);
+TA_BASEFUNS_CTORS_DEFN(AudDeltaSpec);
 TA_BASEFUNS_CTORS_DEFN(MelCepstrumSpec);
 TA_BASEFUNS_CTORS_DEFN(AuditoryProc);
 
@@ -74,29 +76,44 @@ void MelFBankSpec::Initialize() {
   lo_hz = 300.0f;
   hi_hz = 8000.0f;
   n_filters = 26;
-  log_plus_1 = false;
-  renorm = false;
-  ren_min = -10.0f;
-  ren_max = 7.0f;
+  log_off = 0.0f;
+  log_min = -10.0f;
   lo_mel = FreqToMel(lo_hz);
   hi_mel = FreqToMel(hi_hz);
-  ren_scale = 1.0f / (ren_max - ren_min);
 }
 
 void MelFBankSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   lo_mel = FreqToMel(lo_hz);
   hi_mel = FreqToMel(hi_hz);
+}
+
+
+void AudRenormSpec::Initialize() {
+  on = true;
+  ren_min = -10.0f;
+  ren_max = 7.0f;
   ren_scale = 1.0f / (ren_max - ren_min);
+}
+
+void AudRenormSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  ren_scale = 1.0f / (ren_max - ren_min);
+}
+
+
+void AudDeltaSpec::Initialize() {
+  on = true;
+  n_steps = 2;
+  avg = true;
+  xx1_norm = true;
+  xx1_gain = 10.0f;
 }
 
 
 void MelCepstrumSpec::Initialize() {
   on = true;
   n_coeff = 13;
-  renorm = false;
-  ren_min = -12.5f;
-  ren_max = 3.5f;
 }
 
 void MelCepstrumSpec::UpdateAfterEdit_impl() {
@@ -198,8 +215,16 @@ bool AuditoryProc::InitOutMatrix() {
   window_in.SetGeom(1, input.win_samples);
   dft_out.SetGeom(2, 2, dft_size);
   dft_power_out.SetGeom(1, dft_use);
-  mel_fbank_out.SetGeom(1, mel_fbank.n_filters);
-  mfcc_dct_out.SetGeom(1, mel_fbank.n_filters);
+  if(mel_fbank.on) {
+    mel_fbank_out.SetGeom(1, mel_fbank.n_filters);
+    if(fbank_delta.on) {
+      mel_fbank_tavgs.SetGeom(2, fbank_delta.n_steps, mel_fbank.n_filters);
+      mel_fbank_deltas.SetGeom(2, fbank_delta.n_steps*2 + 1, mel_fbank.n_filters);
+    }
+    if(mfcc.on) {
+      mfcc_dct_out.SetGeom(1, mel_fbank.n_filters);
+    }
+  }
   return true;
 }
 
@@ -241,7 +266,7 @@ bool AuditoryProc::ProcessTrial() {
 bool AuditoryProc::ProcessStep(int step) {
   for(int chan=0; chan < input.channels; chan++) {
     SoundToWindow(input_pos, chan);
-    FilterWindow();
+    FilterWindow(chan, step);
     OutputToTable(chan, step);
   }
   input_pos += input.step_samples;
@@ -271,7 +296,7 @@ bool AuditoryProc::SoundToWindow(int in_pos, int chan) {
   return true;
 }
 
-bool AuditoryProc::FilterWindow() {
+bool AuditoryProc::FilterWindow(int chan, int step) {
   DftInput();
   if(mel_fbank.on) {
     PowerOfDft();
@@ -279,6 +304,7 @@ bool AuditoryProc::FilterWindow() {
     if(mfcc.on) {
       CepstrumDctMel();
     }
+    MelFilterDeltas(chan, step);
   }
   return true;
 }
@@ -309,23 +335,75 @@ void AuditoryProc::MelFilterDft() {
       const float pval = dft_power_out.FastEl_Flat(bin);
       sum += fval * pval;
     }
+    sum += mel_fbank.log_off;
     float val;
-    if(mel_fbank.log_plus_1) {
-      val = logf(1.0f + sum);
-    }
-    else if(sum == 0.0f) {
-      val = -1.0e6f;
+    if(sum == 0.0f) {
+      val = mel_fbank.log_min;
     }
     else {
       val = logf(sum);
     }
-    if(mel_fbank.renorm) {
-      val -= mel_fbank.ren_min;
+    if(fbank_renorm.on) {
+      val -= fbank_renorm.ren_min;
       if(val < 0.0f) val = 0.0f;
-      val *= mel_fbank.ren_scale;
+      val *= fbank_renorm.ren_scale;
       if(val > 1.0f) val = 1.0f;
     }
     mel_fbank_out.FastEl_Flat(mi) = val;
+  }
+}
+
+void AuditoryProc::MelFilterDeltas(int chan, int step) {
+  int idx;
+  String col_sufx;
+  if(input.channels > 1) {
+    col_sufx = "_ch" + String(chan);
+  }
+  DataCol* col = data_table->FindColName(name + "_mel_fbank" + col_sufx);
+  if(TestError(!col, "MelFilterDeltas", "cannot find mel_fbank column in data table!")) {
+    return;
+  }
+  float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+  for(int flt = 0; flt < mel_fbank.n_filters; flt++) {
+    for(int stp = 1; stp <= fbank_delta.n_steps; stp++) {
+      float cmp_val = 0.0f;
+      if(fbank_delta.avg) {
+        for(int bkstp = 1; bkstp <= stp; bkstp++) {
+          if(step >= bkstp) {
+            cmp_val += dout->FastEl2d(step-bkstp, flt);
+          }
+          else {
+            cmp_val += dout->FastEl2d(input.trial_steps + step-bkstp, flt); // wrap..
+          }
+        }
+        cmp_val /= (float)stp;
+      }
+      else {
+        if(step >= stp) {
+          cmp_val = dout->FastEl2d(step-stp, flt);
+        }
+        else {
+          cmp_val = dout->FastEl2d(input.trial_steps + step-stp, flt); // wrap..
+        }
+      }
+      mel_fbank_tavgs.FastEl2d((stp-1), flt) = cmp_val;
+
+      float cur = mel_fbank_out.FastEl_Flat(flt);
+      float del = cur - cmp_val;
+      float del_mag = fabsf(del);
+      if(fbank_delta.xx1_norm) {
+        del_mag = fbank_delta.XX1(del_mag);
+      }
+      int stidx = (stp-1)*2;
+      if(del >= 0.0f) {
+        mel_fbank_deltas.FastEl2d(stidx, flt) = del_mag;
+        mel_fbank_deltas.FastEl2d(stidx+1, flt) = 0.0f;
+      }
+      else {
+        mel_fbank_deltas.FastEl2d(stidx, flt) = 0.0f;
+        mel_fbank_deltas.FastEl2d(stidx+1, flt) = del_mag;
+      }
+    }
   }
 }
 
@@ -398,26 +476,59 @@ bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, int step, bool fm
     }
   }
 
-  col = data_table->FindMakeColName(name + "_mel_fbank" + col_sufx, idx,
-                                    DataTable::VT_FLOAT, 2,
-                                    input.trial_steps, mel_fbank.n_filters);
-  if(!fmt_only) {
-    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-    for(int i=0; i< mel_fbank.n_filters; i++) {
-      dout->FastEl2d(step, i) = mel_fbank_out.FastEl_Flat(i);
+  if(mel_fbank.on) {
+    col = data_table->FindMakeColName(name + "_mel_fbank" + col_sufx, idx,
+                                      DataTable::VT_FLOAT, 2,
+                                      input.trial_steps, mel_fbank.n_filters);
+    if(!fmt_only) {
+      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+      for(int i=0; i< mel_fbank.n_filters; i++) {
+        dout->FastEl2d(step, i) = mel_fbank_out.FastEl_Flat(i);
+      }
+    }
+
+    if(fbank_delta.on) {
+      col = data_table->FindMakeColName(name + "_mel_fbank_tavg" + col_sufx, idx,
+                                        DataTable::VT_FLOAT, 4,
+                                        1, fbank_delta.n_steps,
+                                        input.trial_steps, mel_fbank.n_filters);
+      if(!fmt_only) {
+        float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+        for(int i=0; i< mel_fbank.n_filters; i++) {
+          for(int stp=0; stp< fbank_delta.n_steps; stp++) {
+            dout->FastEl4d(0, stp, step, i) = mel_fbank_tavgs.FastEl2d(stp, i);
+          }
+        }
+      }
+
+      col = data_table->FindMakeColName(name + "_mel_fbank_delta" + col_sufx, idx,
+                                        DataTable::VT_FLOAT, 4,
+                                        1, fbank_delta.n_steps*2 + 1,
+                                        input.trial_steps, mel_fbank.n_filters);
+      if(!fmt_only) {
+        float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+        for(int i=0; i< mel_fbank.n_filters; i++) {
+          dout->FastEl4d(0, 0, step, i) = mel_fbank_out.FastEl_Flat(i);
+          for(int stp=0; stp< 2*fbank_delta.n_steps; stp++) {
+            dout->FastEl4d(0, 1 + stp, step, i) = mel_fbank_deltas.FastEl2d(stp, i);
+          }
+        }
+      }
     }
   }
 
-  col = data_table->FindMakeColName(name + "_mel_mfcc" + col_sufx, idx,
-                                    DataTable::VT_FLOAT, 2,
-                                    input.trial_steps, mfcc.n_coeff);
-  if(!fmt_only) {
-    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-    for(int i=0; i< mfcc.n_coeff; i++) {
-      dout->FastEl2d(step, i) = mfcc_dct_out.FastEl_Flat(i);
+  if(mfcc.on) {
+    col = data_table->FindMakeColName(name + "_mel_mfcc" + col_sufx, idx,
+                                      DataTable::VT_FLOAT, 2,
+                                      input.trial_steps, mfcc.n_coeff);
+    if(!fmt_only) {
+      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+      for(int i=0; i< mfcc.n_coeff; i++) {
+        dout->FastEl2d(step, i) = mfcc_dct_out.FastEl_Flat(i);
+      }
     }
   }
-
+  
   return true;
 }
 

@@ -70,11 +70,8 @@ public:
   float         lo_hz;         // #DEF_300 #CONDSHOW_ON_on low frequency end of mel frequency spectrum
   float         hi_hz;         // #DEF_8000 #CONDSHOW_ON_on high frequency end of mel frequency spectrum -- must be <= sample_rate / 2 (i.e., less than the Nyquist frequency)
   int           n_filters;     // #DEF_26 #CONDSHOW_ON_on number of Mel frequency filters to compute
-  bool          log_plus_1;    // #CONDSHOW_ON_on add 1 when taking the log of the Mel filter sums to produce the filter-bank output -- this is appropriate when using the raw filter bank output as input to the network (keeps everything positive)
-  bool          renorm;        // #CONDSHOW_ON_on renormalize the feature bank outputs into a zero-one range according to given min / max parameters
-  float         ren_min;       // #CONDSHOW_ON_on&&renorm minimum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values -- depends also on whether log_plus_1 is set or not
-  float         ren_max;       // #CONDSHOW_ON_on&&renorm maximum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values -- depends also on whether log_plus_1 is set or not
-  float         ren_scale;     // #READ_ONLY 1.0 / (ren_max - ren_min)
+  float         log_off;       // #CONDSHOW_ON_on add this amount when taking the log of the Mel filter sums to produce the filter-bank output -- e.g., 1.0 makes everything positive -- affects the relative contrast of the outputs
+  float         log_min;       // #CONDSHOW_ON_on minimum value a log can produce -- puts a lower limit on log output
   float         lo_mel;        // #READ_ONLY #SHOW #CONDSHOW_ON_on low end of mel scale in mel units
   float         hi_mel;        // #READ_ONLY #SHOW #CONDSHOW_ON_on high end of mel scale in mel units
 
@@ -100,6 +97,50 @@ private:
 };
 
 
+taTypeDef_Of(AudRenormSpec);
+
+class E_API AudRenormSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound auditory renormalization parameters
+INHERITED(taOBase)
+public:
+  bool          on;            // perform renormalization of this level of the auditory signal
+  float         ren_min;       // #CONDSHOW_ON_on minimum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values
+  float         ren_max;       // #CONDSHOW_ON_on maximum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values
+  float         ren_scale;     // #READ_ONLY 1.0 / (ren_max - ren_min)
+
+  TA_SIMPLE_BASEFUNS(AudRenormSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy() { };
+};
+
+
+taTypeDef_Of(AudDeltaSpec);
+
+class E_API AudDeltaSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound auditory delta coding -- differences in auditory filter outputs over time
+INHERITED(taOBase)
+public:
+  bool          on;            // add auditory delta filters, which encode positive and negative deltas as separate features (positve rectification)
+  int           n_steps;       // #CONDSHOW_ON_on number of time steps back to compute deltas -- does separate deltas for each step history amount, with each delta = current - avg(steps) or just step prior in time
+  bool          avg;           // #CONDSHOW_ON_on compute delta against average over prior time steps
+  bool          xx1_norm;      // #CONDSHOW_ON_on apply an x / (x+1) normalization to the deltas to keep within 0-1 range -- is relatively linear at the start then saturates 
+  float         xx1_gain;      // #CONDSHOW_ON_on&&xx1_norm gain on the xx1 normalization function
+
+  inline float  XX1(float delta)
+  { float gm = delta * xx1_gain; return gm / (1.0f + gm); }
+  // the X-over-X+1 normalization function
+  
+
+  TA_SIMPLE_BASEFUNS(AudDeltaSpec);
+private:
+  void 	Initialize();
+  void	Destroy() { };
+};
+
+
 taTypeDef_Of(MelCepstrumSpec);
 
 class E_API MelCepstrumSpec : public taOBase {
@@ -108,9 +149,6 @@ INHERITED(taOBase)
 public:
   bool          on;            // perform cepstrum discrete cosine transform (dct) of the mel-frequency filter bank features
   int           n_coeff;       // #CONDSHOW_ON_on #DEF_13 number of mfcc coefficients to output -- typically 1/2 of the number of filterbank features
-  bool          renorm;        // #CONDSHOW_ON_on renormalize the feature bank outputs into a zero-one range according to given min / max parameters
-  float         ren_min;       // #CONDSHOW_ON_on&&renorm minimum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values -- depends also on whether log_plus_1 is set or not
-  float         ren_max;       // #CONDSHOW_ON_on&&renorm maximum value to use for renormalization -- you must experiment with range of inputs to determine appropriate values -- depends also on whether log_plus_1 is set or not
 
   TA_SIMPLE_BASEFUNS(MelCepstrumSpec);
 protected:
@@ -146,6 +184,8 @@ public:
   DataSave	input_save;	// how to save the input sound for each filtering step
   AudInputSpec  input;          // specifications of the raw auditory input 
   MelFBankSpec  mel_fbank;      // specifications of the mel feature bank frequency sampling of the DFT (FFT) of the input sound
+  AudRenormSpec fbank_renorm;   // #CONDSHOW_ON_mel_fbank.on renormalization parmeters for the mel_fbank values
+  AudDeltaSpec  fbank_delta;    // #CONDSHOW_ON_mel_fbank.on delta-coding parmeters for the mel_fbank values
   MelCepstrumSpec mfcc;         // #CONDSHOW_ON_mel_fbank.on specifications of the mel cepstrum discrete cosine transform of the mel fbank filter features
 
 
@@ -172,6 +212,8 @@ public:
   float_Matrix          dft_power_out; // #READ_ONLY #NO_SAVE [dft_use] power of the dft, only for range of frequencies of interest
   float_Matrix          mel_fbank_out; // #READ_ONLY #NO_SAVE [mel.n_filters] mel scale transformation of dft_power, using triangular filters, resulting in the mel filterbank output -- the natural log of this is typically applied
   float_Matrix          mfcc_dct_out; // #READ_ONLY #NO_SAVE discrete cosine transform of the log_mel_filter_out values, producing the final mel-frequency cepstral coefficients 
+  float_Matrix          mel_fbank_tavgs; // #READ_ONLY #NO_SAVE [fbank_delta.n_steps][mel.n_filters] temporal averages of mel fbank values over different scales
+  float_Matrix          mel_fbank_deltas; // #READ_ONLY #NO_SAVE [fbank_delta.n_steps*2][mel.n_filters] full delta feature outputs 
   
 
   virtual bool  NeedsInit();
@@ -198,7 +240,7 @@ public:
   virtual bool	SoundToWindow(int in_pos, int chan);
   // #CAT_Auditory get sound from sound_full at given position and channel, into window_in -- pads with zeros for any amount not available in the sound_full input
 
-  virtual bool  FilterWindow();
+  virtual bool  FilterWindow(int chan, int step);
   // #CAT_Auditory filter the current window_in input data according to current settings -- called by ProcessStep, but can be called separately 
   
   virtual bool  NewTableRow();
@@ -239,6 +281,8 @@ public:
   // compute power of dft output
   virtual void  MelFilterDft();
   // apply mel filters to power of dft
+  virtual void  MelFilterDeltas(int chan, int step);
+  // compute deltas for mel filters
   virtual void  CepstrumDctMel();
   // apply discrete cosine transform (DCT) to get the cepstrum coefficients on the mel filterbank values
   
