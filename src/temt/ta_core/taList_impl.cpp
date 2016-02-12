@@ -647,6 +647,8 @@ taBase* taList_impl::CopyChildBeforeIndex(taBase* src, int child_pos) {
   new_obj->UnSafeCopy(src);
   Insert(new_obj, child_pos);
   new_obj->SetName(src->GetName());
+  taBase* old_par = src->GetOwner();
+  new_obj->UpdatePointers_NewPar(old_par, this);
   new_obj->UpdateAfterEdit();
   return new_obj;
 }
