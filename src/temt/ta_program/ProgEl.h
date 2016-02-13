@@ -175,7 +175,8 @@ public:
 
   void                  UpdateAfterMove(taBase* old_owner) override;
   // #IGNORE called after object has been moved from one location to another in the object hierarchy (i.e., list Transfer fun) -- actual functions should be put in the _impl version which should call inherited:: etc just as for UAE -- use for updating pointers etc
-  
+  void                 UpdatePointersAfterCopy_(const taBase& cp) override;
+
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;

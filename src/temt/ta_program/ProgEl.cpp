@@ -216,6 +216,19 @@ void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
   }
 }
 
+void ProgEl::UpdatePointersAfterCopy_(const taBase& cp) {
+  if (taMisc::is_loading) {
+    return;
+  }
+  // same program?  -- leave pointers alone
+  Program* old_par_program = (Program*)cp.GetOwnerOfType(&TA_Program);
+  Program* new_par_program = (Program*)this->GetOwnerOfType(&TA_Program);
+
+  if (new_par_program != old_par_program) {
+    inherited::UpdatePointersAfterCopy_(cp);
+  }
+}
+
 void ProgEl::UpdatePointersAfterCopy_impl(const taBase& cp) {
   inherited::UpdatePointersAfterCopy_impl(cp);
   
