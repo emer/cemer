@@ -105,7 +105,7 @@ void AudRenormSpec::UpdateAfterEdit_impl() {
 void AudDeltaSpec::Initialize() {
   on = true;
   n_steps = 2;
-  avg = true;
+  avg = false;
   xx1_norm = true;
   xx1_gain = 10.0f;
 }
@@ -157,6 +157,13 @@ bool AuditoryProc::Init() {
   InitFilters();
   InitOutMatrix();
   InitDataTable();
+  InitSound();
+  return true;
+}
+
+bool AuditoryProc::InitSound() {
+  input_pos = 0;
+  sound_full.Reset();
   return true;
 }
 
@@ -503,7 +510,7 @@ bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, int step, bool fm
 
       col = data_table->FindMakeColName(name + "_mel_fbank_delta" + col_sufx, idx,
                                         DataTable::VT_FLOAT, 4,
-                                        1, fbank_delta.n_steps*2 + 1,
+                                        fbank_delta.n_steps*2 + 1, 1,
                                         input.trial_steps, mel_fbank.n_filters);
       if(!fmt_only) {
         float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);

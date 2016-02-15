@@ -225,6 +225,9 @@ public:
   virtual void  InitFromSound(taSound* sound, int n_chans = 1, int chan = 0);
   // #CAT_Auditory get sample_rate and channels info from given sound object -- n_chans arg is how many channels we want to process -- overrides number of channels present in sound obj if >= 1 (i.e., use -1 to just use number of channels present in sound object) -- if sound obj has multiple channels and n_chans = 1, then chan specifies which channel to read from
 
+  virtual bool	InitSound();
+  // #CAT_Auditory reset the current sound information -- unloads any existing sound
+  
   virtual bool	LoadSound(taSound* sound);
   // #CAT_Auditory load a new sound into the system for subsequent processing -- grabs the sound data into sound_full
 
