@@ -22,6 +22,7 @@ TA_BASEFUNS_CTORS_DEFN(PPTgUnitSpec);
 void PPTgUnitSpec::Initialize() {
   d_net_gain = 1.0f;
   clamp_act = true;
+  act_thr = 0.0f;
 }
 
 void PPTgUnitSpec::Defaults_init() {
@@ -30,7 +31,7 @@ void PPTgUnitSpec::Defaults_init() {
 void PPTgUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   float net_save = u->net;
   u->net = d_net_gain * (u->net - u->misc_1); // convert to delta
-  if(u->net < 0.0f) u->net = 0.0f;
+  if(u->net < act_thr) u->net = 0.0f;
   // note: positive rectification means that trial after PV, which is often neg, will be nullified
   inherited::Compute_Act_Rate(u, net, thr_no);
   if(clamp_act) {

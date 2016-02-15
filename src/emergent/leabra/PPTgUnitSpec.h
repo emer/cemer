@@ -31,6 +31,7 @@ INHERITED(LeabraUnitSpec)
 public:
   float         d_net_gain;     // extra multiplicative gain factor to apply to the net input delta -- brings this delta back into the typical range so that more standard activation functions can be used
   bool          clamp_act;      // clamp the activation directly instead of driving net input -- still applies d_net_gain -- provides a purely linear y-dot reference signal
+  float         act_thr;        // #DEF_0 minimum activation to have before passing excitatory signal to VTA layers
 
   void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;

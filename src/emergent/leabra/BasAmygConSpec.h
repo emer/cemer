@@ -74,12 +74,12 @@ public:
         }
         dwt += delta;
       }
-      else {
+      else { // using us_delta, but no US present this timestep
         dwt += lrate_eff * su_act * ru_act * da;
       }
     }
-    else {
-      dwt += lrate_eff * su_act * ru_act * da;
+    else { // not using us_delta
+      dwt += lrate_eff * su_act * MAX(us, ru_act) * da;
     }
   }
   // #IGNORE acquisition
