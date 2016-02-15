@@ -460,9 +460,11 @@ bool AuditoryProc::NewTableRow() {
 bool AuditoryProc::OutputToTable(int chan, int step) {
   if(!data_table || save_mode == NONE_SAVE) // bail now
     return false;
+  data_table->StructUpdate(true);
   if(mel_fbank.on) {
     MelOutputToTable(data_table, chan, step, false); // not fmt_only
   }
+  data_table->StructUpdate(false);
   return true;
 }
 
@@ -517,7 +519,7 @@ bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, int step, bool fm
         for(int i=0; i< mel_fbank.n_filters; i++) {
           dout->FastEl4d(0, 0, step, i) = mel_fbank_out.FastEl_Flat(i);
           for(int stp=0; stp< 2*fbank_delta.n_steps; stp++) {
-            dout->FastEl4d(0, 1 + stp, step, i) = mel_fbank_deltas.FastEl2d(stp, i);
+            dout->FastEl4d(1 + stp, 0, step, i) = mel_fbank_deltas.FastEl2d(stp, i);
           }
         }
       }
