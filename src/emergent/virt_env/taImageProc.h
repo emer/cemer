@@ -158,6 +158,9 @@ public:
   static bool	CompositePartialImages(float_Matrix& img1, int x, int y, float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and img2 is smaller than img1. X/Y are coordinates within img1 where to place img2
 
+  static bool	CompositeAndCenterImage(float_Matrix& img1, float_Matrix& img2);
+  // #CAT_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and img2 is smaller than img1. img2 will be centered in img1
+  
   static bool   FlipY(float_Matrix& img1);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc invert the image in the Y axis -- emergent has 0,0 at lower-left, while many images have that as the top-left -- this deals with that..
   

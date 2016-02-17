@@ -1585,6 +1585,28 @@ bool taImageProc::FlipY(float_Matrix& img1) {
   return true;
 }
 
+bool taImageProc::CompositeAndCenterImage(float_Matrix& img1, float_Matrix& img2) {
+  if(img1.dims() != 3) {
+    taMisc::Error("img1 must be rgba format -- is only 2d greyscale");
+    return false;
+  }
+  if(img1.dim(2) != 4) {
+    taMisc::Error("img1 must be rgba format -- does not have 4 colors in outer dimension");
+    return false;
+  }
+  
+  if(img1.dim(0) < img2.dim(0) || img1.dim(1) < img2.dim(1)) {
+    taMisc::Error("img2 must be at least the size of img1");
+    return false;
+  }
+  
+  taVector2i img_1_size(img1.dim(0), img1.dim(1));
+  taVector2i img_2_size(img2.dim(0), img2.dim(1));
+  int x = (img_1_size.x - img_2_size.x) / 2;
+  int y = (img_1_size.y - img_2_size.y) / 2;
+  return CompositePartialImages(img1, x, y, img2);
+}
+
 bool taImageProc::CompositePartialImages(float_Matrix& img1, int x, int y, float_Matrix& img2) {
   if(img1.dims() != 3) {
     taMisc::Error("img1 must be rgba format -- is only 2d greyscale");
