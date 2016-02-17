@@ -829,6 +829,13 @@ void taMatrix::Add_(const void* it) {
     El_Copy_(FastEl_Flat_(idx), it);
 }
 
+void* taMatrix::El_GetErr_() const {
+#ifdef DEBUG
+  TestError(true, "El_GetErr", "safe el out of range");
+#endif
+  return El_GetBlank_();
+}
+
 bool taMatrix::AddFrames(int n) {
   return EnforceFrames(n + Frames());
 }

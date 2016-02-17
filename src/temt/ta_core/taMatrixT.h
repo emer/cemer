@@ -94,6 +94,17 @@ public:
   { return *((T*)(SafeEl_(idx))); }
   // #CAT_Access (safely) access the matrix as if it were a flat vector, for reading
 
+  T&                    SafeEl(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0)
+  { return *((T*)(SafeEl_(SafeElIndex(d0, d1, d2, d3, d4, d5, d6)))); }
+  // #CAT_Access (safely) access the element for reading
+  T&                    SafeElN(const MatrixIndex& indices)
+  { return *((T*)(SafeEl_(SafeElIndexN(indices)))); }
+  // #CAT_Access (safely) access the element for reading
+  T&                    SafeEl_Flat(int idx)
+  { return *((T*)(SafeEl_(idx))); }
+  // #CAT_Access (safely) access the matrix as if it were a flat vector, for reading
+  
   void                  Set(const T& item, int d0, int d1=0, int d2=0,
     int d3=0, int d4=0, int d5=0, int d6=0)
   { int idx = SafeElIndex(d0, d1, d2, d3, d4, d5, d6);
@@ -178,7 +189,7 @@ private:
   using taMatrix::operator=; \
   TA_BASEFUNS(y) \
 protected: \
-  const void*  El_GetBlank_() const    override { return (const void*)&blank; }
+  void*  El_GetBlank_() const    override { return (void*)&blank; }
 
 #define MAT_COPY_SAME_SLOW(y,T) \
   void  Copy_(const y& cp) { if(ElView() || cp.ElView()) { \

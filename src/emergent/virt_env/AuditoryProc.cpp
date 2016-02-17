@@ -290,10 +290,12 @@ bool AuditoryProc::SoundToWindow(int in_pos, int chan) {
       memcpy(window_in.el, sound_full.el + in_pos, sz);
     }
     else {
+      // todo: this is not right:
       memcpy(window_in.el, (void*)&(sound_full.FastEl2d(chan, in_pos)), sz);
     }
   }
 
+  samp_cpy = MAX(samp_cpy, 0);  // prevent negatives here -- otherwise overflows
   // pad remainder with zero
   int zero_n = input.win_samples - samp_cpy;
   if(zero_n > 0) {

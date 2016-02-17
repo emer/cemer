@@ -610,8 +610,11 @@ public:
   { return FastEl_Flat_(FastElIndexN(indices));}
   // #IGNORE
 
-  const void*   SafeEl_(int i) const
-  {if ((i >= 0) && (i < size)) return FastEl_Flat_(i); else return El_GetBlank_(); }
+  const void*           SafeEl_(int i) const
+  {if ((i >= 0) && (i < size)) return FastEl_Flat_(i); else return El_GetErr_(); }
+  // #IGNORE raw element in flat space, else NULL
+  void*                 SafeEl_(int i)
+  {if ((i >= 0) && (i < size)) return FastEl_Flat_(i); else return El_GetErr_(); }
   // #IGNORE raw element in flat space, else NULL
 
   // every subclass should implement these:
@@ -763,9 +766,9 @@ protected:
   // compatibility function -- only valid if dims=1
   virtual bool          El_Equal_(const void*, const void*) const = 0;
   // #IGNORE for finding
-  virtual const void*   El_GetBlank_() const = 0;
+  virtual void*         El_GetBlank_() const = 0;
   // #IGNORE address of a blank element, for initializing empty items -- can be static const
-  virtual const void*   El_GetErr_() const      { return El_GetBlank_();}
+  virtual void*         El_GetErr_() const;
   // #IGNORE address of an element to return when out of range -- defaults to blank el
   virtual void          El_Copy_(void*, const void*) = 0;
   // #IGNORE
