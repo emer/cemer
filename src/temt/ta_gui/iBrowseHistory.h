@@ -44,7 +44,7 @@ public:
   int                   max_items; // #DEF_20 number of history items
   int                   cur_item; // -1 when empty; max_items when off the end
 
-  taiSigLink_PList     items;
+  taiSigLink_PList      items;
   void                  reset(); // esp used to put all signals etc. in correct place
 
   void                  addItem(taiSigLink* link);
@@ -76,7 +76,7 @@ protected:
   ContextFlag           navigating; // so we ignore the callback
 
   void                  doEnabling();
-  void                  itemAdding(taiSigLink* link); // link if no refs
+  int                   itemAdding(taiSigLink* link); // link if no refs - return index if found
   void                  itemRemoved(taiSigLink* link); // unlink if no more refs
 };
 

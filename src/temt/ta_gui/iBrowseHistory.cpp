@@ -20,8 +20,6 @@
 
 #include <taMisc>
 
-
-
 iBrowseHistory::iBrowseHistory(QObject* parent)
   : inherited(parent)
 {
@@ -40,7 +38,11 @@ void iBrowseHistory::addItem(taiSigLink* dl) {
     items.RemoveIdx(0);
     itemRemoved(it);
   }
-  itemAdding(dl);
+  int index = itemAdding(dl);
+  if (index >= 0) {
+    // remove older
+    items.RemoveIdx(index);
+  }
   items.Add(dl);
   cur_item = items.size - 1;
   doEnabling();
@@ -89,11 +91,13 @@ void iBrowseHistory::SigLinkDestroying(taSigLink* dl) {
   doEnabling();
 }
 
-void iBrowseHistory::itemAdding(taiSigLink* dl) {
+int iBrowseHistory::itemAdding(taiSigLink* dl) {
   for (int i = 0; i < items.size; ++i) {
-    if (dl == items[i]) return;
+    if (dl == items[i])
+      return i;   // dl already
   }
   dl->AddSigClient(this);
+  return -1;
 }
 
 void iBrowseHistory::itemRemoved(taiSigLink* dl) {
