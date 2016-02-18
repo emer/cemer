@@ -2188,7 +2188,7 @@ void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row
   int non_matrix_count = data.NonMatrixCount();
   if (non_matrix_count > 1) {
     CallFun("GetDataTableCellRowCol");
-    cell->row_column = last_chosen_column;
+    cell->row_lookup_col = last_chosen_column;
     last_chosen_column = NULL;  // set to NULL because the column might get deleted and we don't need anymore
   }
   
@@ -2226,6 +2226,12 @@ void DataTable::SetCellsInRow(int row) {
 }
 
 void DataTable::SetCellsFromConfig(String column_name, String value) {
+  int row = -1;
+  row = FindVal(value, column_name, 0);
+  SetCellsInRow(row);
+}
+
+void DataTable::SetCellsFromRowLookup(String column_name, String value) {
   int row = -1;
   row = FindVal(value, column_name, 0);
   SetCellsInRow(row);

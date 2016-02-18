@@ -27,7 +27,7 @@ void  DataTableCell::Initialize() {
   index_row = -1;             // start with invalid row
   value = "";
   value_column = NULL;
-  row_column = NULL;
+  row_lookup_col = NULL;
   control_panel = NULL;
   enabled = true;
   column_type_dtc = false;
@@ -48,8 +48,8 @@ void DataTableCell::GetControlPanelLabel(MemberDef* mbr, String& label) const {
   if (column_type_dtc) {
     label = "_ " + table_str + "_" + column_str;
   }
-  else if (row_column) {
-    label = table_str + "_" + column_str + "_" + row_column->GetValAsString(view_row);
+  else if (row_lookup_col) {
+    label = table_str + "_" + column_str + "_" + row_lookup_col->GetValAsString(view_row);
   }
   else {
     if (view_row != -1) {
@@ -69,4 +69,19 @@ void DataTableCell::SetControlPanelEnabled(bool do_enable) {
   else {
     ClearBaseFlag(taBase::BF_GUI_READ_ONLY);
   }
+}
+
+void DataTableCell::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  
+  if (!value_column) {
+    taMisc::Error("Choose a data table column - DataTableCell::UpdateAfterEdit_impl() - NULL not allowed");
+    return;
+  }
+  // user may have changed view_row or value_column by editing from the property panel
+  DataTable* dt = value_column->dataTable();
+  index_row = dt->GetIndexRow(view_row);
+  value = value_column->GetValAsString(view_row);
+  
+  dt->NotifyControlPanel(this);
 }
