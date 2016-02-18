@@ -2170,9 +2170,9 @@ void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row
     }
   }
   DataTableCell* cell = new DataTableCell();
-  cell->column_type_dtc = is_column_type_dtc;
+  cell->dtc_is_column_type = is_column_type_dtc;
   cell->value_column = column;
-  if (cell->column_type_dtc) {
+  if (cell->dtc_is_column_type) {
     cell->view_row = -1;
   }
   else {
@@ -2219,8 +2219,8 @@ void DataTable::RemoveFromControlPanel(ControlPanel* cp, DataCol* column, int ro
 void DataTable::SetCellsInRow(int row) {
   for (int i=0; i<control_panel_cells.size; i++) {
     DataTableCell* dtc = (DataTableCell*)control_panel_cells.FastEl_(i);
-    if (dtc && dtc->column_type_dtc == true) {
-     dtc->value_column->SetValAsVar(dtc->column_value, row);
+    if (dtc && dtc->dtc_is_column_type == true) {
+     dtc->value_column->SetValAsVar(dtc->row_lookup_value, row);
     }
   }
 }

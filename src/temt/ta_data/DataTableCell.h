@@ -27,26 +27,26 @@ class DataCol; //
 taTypeDef_Of(DataTableCell);
 
 class TA_API DataTableCell : public taOBase {
-  // ##INLINE ##NO_TOKENS represents a single cell within a data column, for interfacing with control panels 
+  // ##INLINE ##NO_TOKENS this class serves to represent a single cell within a data column because data table cells are not themselves objects. These DataTableCells (DTCs) are used to link a cell to a control panel item   which normally points to an object instance member. The DataTable class keeps a list of these DTCs which are created as needed. If column_type_dtc is true then then DTC is not linked to a specific column and row but to a column with the row being able to change dynamically based on the row chosen in the 'value_column'.
 INHERITED(taOBase)
 public:
-  bool                column_type_dtc;  // #READ_ONLY only one of these per column - controllable from method
-  DataCol*            row_lookup_col;   // value in this column/row will be used in the label
-  DataCol*            value_column;     // the column with the editable value
+  bool                dtc_is_column_type;  // #READ_ONLY #SHOW - false if the cell is tied to a specific row and true if the row is set using lookup where lookup is the matching of 'row_lookup_value' in 'row_lookup_col'
+  DataCol*            value_column;     // the column with editable data table cell
   int                 view_row;         // the row as the user sees it
   int                 index_row;        // #READ_ONLY the row in the underlying matrix that holds all rows, visible and hidden
-  String              value;            // #NO_SAVE content of the table cell
-  String              column_value;     // value used when setting based on config
+  String              value;            // #NO_SAVE value in the table cell
+
+  DataCol*            row_lookup_col;   // the column that will be used for row lookup when column_type_dtc is true
+  String              row_lookup_value; // this value is used to find the row for which the user wants to set the cell value - the value will be matched against the values in the row_lookup_col
   
   ControlPanel*       control_panel;    // #READ_ONLY #SHOW the control panel that includes this cell in its member list
-  bool                enabled;          // #READ_ONLY
+  bool                enabled;          // #READ_ONLY if a DTC is in a row that is currently deleted or filtered and thus not visible the enabled flag is set to false so that the control panel can disable the item but keep it visible
   
   void                GetControlPanelText(MemberDef* mbr, const String& xtra_lbl, String& full_lbl, String& desc) const override;
   // #IGNORE provides the canonical full label and (if empty) desc for control panel item
   void                GetControlPanelLabel(MemberDef* mbr, String& full_lbl) const override;
-  // #IGNORE generate the label
-  void                SetControlPanelEnabled(bool do_enable);     // #IGNORE set for control panel to show enabled/disabled
-  // set the taBase::BF_GUI_READ_ONLY so the control panel item will be disabled -- used when rows are hidden
+  // #IGNORE generate the label for the control panel item based on column and row
+  void                SetControlPanelEnabled(bool do_enable);     // #IGNORE set for control panel to show enabled/disabled -- sets the taBase::BF_GUI_READ_ONLY so the control panel item will be disabled -- used when rows are hidden
   
   TA_BASEFUNS_NOCOPY(DataTableCell);
   

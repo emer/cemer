@@ -30,8 +30,8 @@ void  DataTableCell::Initialize() {
   row_lookup_col = NULL;
   control_panel = NULL;
   enabled = true;
-  column_type_dtc = false;
-  column_value = "";
+  dtc_is_column_type = false;
+  row_lookup_value = "";
 }
 
 void DataTableCell::GetControlPanelText(MemberDef* mbr, const String& extra_label, String& full_lbl, String& desc) const {
@@ -45,7 +45,7 @@ void DataTableCell::GetControlPanelLabel(MemberDef* mbr, String& label) const {
   
   String table_str = value_column->dataTable()->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
   String column_str = value_column->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
-  if (column_type_dtc) {
+  if (dtc_is_column_type) {
     label = "_ " + table_str + "_" + column_str;
   }
   else if (row_lookup_col) {

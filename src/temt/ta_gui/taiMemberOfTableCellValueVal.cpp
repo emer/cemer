@@ -39,8 +39,8 @@ void taiMemberOfTableCellValueVal::GetImage_impl(taiWidget* dat, const void* bas
     field_rep->GetImage(dtc->value_column->GetValAsString(dtc->view_row));
   }
   else {
-    if (dtc->column_type_dtc) {
-      field_rep->GetImage(dtc->column_value);
+    if (dtc->dtc_is_column_type) {
+      field_rep->GetImage(dtc->row_lookup_value);
     }
   }
 }
@@ -53,8 +53,8 @@ void taiMemberOfTableCellValueVal::GetMbrValue_impl(taiWidget* dat, void* base) 
     dtc->value_column->SetValAsString(field_rep->GetValue(), dtc->view_row);
   }
   else {
-    if (dtc->column_type_dtc) {
-      dtc->column_value = field_rep->GetValue();
+    if (dtc->dtc_is_column_type) {
+      dtc->row_lookup_value = field_rep->GetValue();
     }
   }
 }

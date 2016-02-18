@@ -62,7 +62,7 @@ DataTableCell* DataTableCell_List::FindCellIndexRow(DataCol* value_column, int i
 DataTableCell* DataTableCell_List::FindColumnTypeDTC(DataCol* value_column) {
   for(int i = 0; i < size; ++i) {
     DataTableCell* cell = FastEl(i);
-    if (cell->value_column == value_column && cell->column_type_dtc) {
+    if (cell->value_column == value_column && cell->dtc_is_column_type) {
       return cell;
     }
   }

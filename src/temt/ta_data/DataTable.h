@@ -152,7 +152,7 @@ public:
   // #HIDDEN #NO_SAVE hack to save value from GetDataTableCellRowCol() called by CallFun() because return value is not possible
   
   DataTableCell_List    control_panel_cells;
-  // #HIDDEN a list of DataTableCell objects that provide the link between data table cells and control panels -- needed because cells are not themselves object members
+  // a list of DataTableCell objects that provide the link between data table cells and control panels -- needed because cells are not themselves object members
   
   int                   GetViewRow(int index_row);
   //  #EXPERT Get the visible row corresponding the row number as stored
