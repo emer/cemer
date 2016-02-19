@@ -15,23 +15,25 @@
 
 #include "AuditoryProc.h"
 
-#include <taMath_float>
 #include <taSound>
 #include <DataTable>
 #include <taProject>
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(AudInputSpec);
+TA_BASEFUNS_CTORS_DEFN(AudDftSpec);
 TA_BASEFUNS_CTORS_DEFN(MelFBankSpec);
 TA_BASEFUNS_CTORS_DEFN(AudRenormSpec);
-TA_BASEFUNS_CTORS_DEFN(AudDeltaSpec);
+TA_BASEFUNS_CTORS_DEFN(AudTimeGaborSpec);
 TA_BASEFUNS_CTORS_DEFN(MelCepstrumSpec);
+TA_BASEFUNS_CTORS_DEFN(AudGaborSpec);
 TA_BASEFUNS_CTORS_DEFN(AuditoryProc);
 
 void AudInputSpec::Initialize() {
   win_msec = 25.0f;
   step_msec = 12.5f;
   trial_msec = 100.0f;
+  border_steps = 0;
   sample_rate = 16000;
   channels = 1;
   channel = 0;
@@ -39,10 +41,11 @@ void AudInputSpec::Initialize() {
 }
 
 void AudInputSpec::ComputeSamples() {
-  win_samples = (int)taMath_float::round(win_msec * 0.001f * (float)sample_rate);
-  step_samples = (int)taMath_float::round(step_msec * 0.001f * (float)sample_rate);
-  trial_samples = (int)taMath_float::round(trial_msec * 0.001f * (float)sample_rate);
-  trial_steps = (int)taMath_float::round(trial_msec / (float)step_msec);
+  win_samples = MSecToSamples(win_msec);
+  step_samples = MSecToSamples(step_msec);
+  trial_samples = MSecToSamples(trial_msec);
+  trial_steps = taMath_float::round(trial_msec / step_msec);
+  total_steps = 2*border_steps + trial_steps;
 }
 
 void AudInputSpec::InitFromSound(taSound* sound, int n_chans, int chan) {
@@ -70,6 +73,17 @@ void AudInputSpec::UpdateAfterEdit_impl() {
 }
 
 
+//////////////////////////////////////////
+//              AudDftSpec
+
+void AudDftSpec::Initialize() {
+  log_pow = false;
+  log_off = 0.0f;
+  log_min = -10.0f;
+}
+
+//////////////////////////////////////////
+//              MelFBankSpec
 
 void MelFBankSpec::Initialize() {
   on = true;
@@ -89,6 +103,9 @@ void MelFBankSpec::UpdateAfterEdit_impl() {
 }
 
 
+//////////////////////////////////////////
+//              AudRenormSpec
+
 void AudRenormSpec::Initialize() {
   on = true;
   ren_min = -10.0f;
@@ -102,14 +119,89 @@ void AudRenormSpec::UpdateAfterEdit_impl() {
 }
 
 
-void AudDeltaSpec::Initialize() {
+//////////////////////////////////////////
+//              AudTimeGaborSpec
+
+void AudTimeGaborSpec::Initialize() {
   on = true;
-  n_steps = 2;
-  avg = false;
+  st_half_size = 1;
+  ed_half_size = 3;
+  inc_half_size = 1;
   xx1_norm = true;
   xx1_gain = 10.0f;
+
+  max_size = 2 * ed_half_size;
+  n_filters = 1 + (ed_half_size - st_half_size) / inc_half_size;
 }
 
+void AudTimeGaborSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  max_size = 2 * ed_half_size;
+  n_filters = 1 + (ed_half_size - st_half_size) / inc_half_size;
+}
+
+void AudTimeGaborSpec::RenderFilters(float_Matrix& fltrs, int_Matrix& flt_sizes) {
+  fltrs.SetGeom(2, max_size, n_filters);
+  flt_sizes.SetGeom(1, n_filters);
+  int idx = 0;
+  for(int sz = st_half_size; sz <= ed_half_size; sz += inc_half_size, idx++) {
+    flt_sizes[idx] = sz;
+    int fsz = 2 * sz;
+    float fwdth = sz;
+    float fsum = 0.0f;
+    for(int fi = 0; fi < fsz; fi++) {
+      float pt = (fi - sz) + 0.5f;
+      float val = sinf((pt/fwdth) * taMath_float::pi);
+      fsum += fabsf(val);
+      fltrs.FastEl2d(fi, idx) = val;
+    }
+    fsum *= 0.5f;
+    for(int fi = 0; fi < fsz; fi++) {
+      fltrs.FastEl2d(fi, idx) /= fsum;
+    }
+  }
+}
+
+void AudTimeGaborSpec::GridFilters(float_Matrix& fltrs, int_Matrix& flt_sizes,
+                               DataTable* graph_data, bool reset) {
+  RenderFilters(fltrs, flt_sizes);         // just to make sure
+
+  String name;
+  if(owner) name = owner->GetName();
+
+  taProject* proj = GetMyProj();
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_AudTimeGabor_GridFilters", true);
+  }
+  graph_data->StructUpdate(true);
+  if(reset)
+    graph_data->ResetData();
+  int idx;
+  DataCol* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
+//   nmda->SetUserData("WIDTH", 10);
+  DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 1, max_size);
+
+  float maxv = taMath_float::vec_abs_max(&fltrs, idx);
+
+  graph_data->SetUserData("N_ROWS", 4);
+  graph_data->SetUserData("SCALE_MIN", -maxv);
+  graph_data->SetUserData("SCALE_MAX", maxv);
+  graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
+
+  for(int idx=0; idx < n_filters; idx++) {
+    graph_data->AddBlankRow();
+    float_MatrixPtr frm; frm = (float_Matrix*)fltrs.GetFrameSlice(idx);
+    matda->SetValAsMatrix(frm, -1);
+    nmda->SetValAsString("Sz: " + String(flt_sizes.FastEl_Flat(idx)), -1);
+  }
+
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGridView();
+}
+
+
+//////////////////////////////////////////
+//              MelCeptrumSpec
 
 void MelCepstrumSpec::Initialize() {
   on = true;
@@ -118,6 +210,126 @@ void MelCepstrumSpec::Initialize() {
 
 void MelCepstrumSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+}
+
+
+//////////////////////////////////////////
+//              AudGaborSpec
+
+void AudGaborSpec::Initialize() {
+  on = true;
+  gain = 2.0f;
+  n_horiz = 4;
+  sz_time_msec = 12;
+  sz_freq = 12;
+  spacing_pct = 0.5f;
+  wvlen = 6.0f;
+  gauss_sig_len = 0.25f;
+  gauss_sig_wd = 0.15f;
+  phase_off = 0.0f;
+  circle_edge = true;
+
+  n_filters = 3 + n_horiz;
+  sz_time_steps = 12;
+  spc_time_steps = 6;
+  spc_freq = (int)(spacing_pct * sz_freq);
+}
+
+void AudGaborSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  n_filters = 3 + n_horiz;
+  spc_freq = (int)(spacing_pct * sz_freq);
+}
+
+void AudGaborSpec::RenderFilters(float_Matrix& fltrs) {
+  // fltrs.SetGeom(3, filter_size, filter_size, n_angles);
+
+  // float ctr = (float)(filter_size-1) / 2.0f;
+  // float ang_inc = taMath_float::pi / (float)n_angles;
+
+  // float circ_radius = (float)(filter_size) / 2.0f;
+
+  // float gs_len_eff = gauss_sig_len * (float)filter_size;
+  // float gs_wd_eff = gauss_sig_wd * (float)filter_size;
+
+  // float len_norm = 1.0f / (2.0f * gs_len_eff * gs_len_eff);
+  // float wd_norm = 1.0f / (2.0f * gs_wd_eff * gs_wd_eff);
+
+  // float twopinorm = (2.0f * taMath_float::pi) / wvlen;
+
+  // for(int ang = 0; ang < n_angles; ang++) {
+  //   float angf = -(float)ang * ang_inc;
+
+  //   float pos_sum = 0.0f;
+  //   float neg_sum = 0.0f;
+  //   for(int x = 0; x < filter_size; x++) {
+  //     for(int y = 0; y < filter_size; y++) {
+  //       float xf = (float)x - ctr;
+  //       float yf = (float)y - ctr;
+
+  //       float dist = taMath_float::hypot(xf, yf);
+  //       float val = 0.0f;
+  //       if(!(circle_edge && (dist > circ_radius))) {
+  //         float nx = xf * cosf(angf) - yf * sinf(angf);
+  //         float ny = yf * cosf(angf) + xf * sinf(angf);
+  //         float gauss = expf(-(len_norm * (nx * nx) + wd_norm * (ny * ny)));
+  //         float sin_val = sinf(twopinorm * ny + phase_off);
+  //         val = gauss * sin_val;
+  //         if(val > 0.0f)        { pos_sum += val; }
+  //         else if(val < 0.0f)   { neg_sum += val; }
+  //       }
+  //       fltrs.FastEl3d(x, y, ang) = val;
+  //     }
+  //   }
+  //   // renorm each half
+  //   float pos_norm = 1.0f / pos_sum;
+  //   float neg_norm = -1.0f / neg_sum;
+  //   for(int x = 0; x < filter_size; x++) {
+  //     for(int y = 0; y < filter_size; y++) {
+  //       float& val = fltrs.FastEl3d(x, y, ang);
+  //       if(val > 0.0f)          { val *= pos_norm; }
+  //       else if(val < 0.0f)     { val *= neg_norm; }
+  //     }
+  //   }
+  // }
+}
+
+void AudGaborSpec::GridFilters(float_Matrix& fltrs, DataTable* graph_data, bool reset) {
+//   RenderFilters(fltrs);         // just to make sure
+
+//   String name;
+//   if(owner) name = owner->GetName();
+
+//   taProject* proj = GetMyProj();
+//   if(!graph_data) {
+//     graph_data = proj->GetNewAnalysisDataTable(name + "_V1Gabor_GridFilters", true);
+//   }
+//   graph_data->StructUpdate(true);
+//   if(reset)
+//     graph_data->ResetData();
+//   int idx;
+//   DataCol* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
+// //   nmda->SetUserData("WIDTH", 10);
+//   DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, filter_size, filter_size);
+
+//   float maxv = taMath_float::vec_abs_max(&fltrs, idx);
+
+//   graph_data->SetUserData("N_ROWS", 4);
+//   graph_data->SetUserData("SCALE_MIN", -maxv);
+//   graph_data->SetUserData("SCALE_MAX", maxv);
+//   graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
+
+//   int ang_inc = 180 / n_angles;
+
+//   for(int ang=0; ang<n_angles; ang++) {
+//     graph_data->AddBlankRow();
+//     float_MatrixPtr frm; frm = (float_Matrix*)fltrs.GetFrameSlice(ang);
+//     matda->SetValAsMatrix(frm, -1);
+//     nmda->SetValAsString("Angle: " + String(ang * ang_inc), -1);
+//   }
+
+//   graph_data->StructUpdate(false);
+//   graph_data->FindMakeGridView();
 }
 
 
@@ -142,8 +354,12 @@ void AuditoryProc::UpdateAfterEdit_impl() {
 }
 
 void AuditoryProc::UpdateConfig() {
+  if(fbank_tgabor.on) {
+    input.border_steps = fbank_tgabor.ed_half_size; // must be!
+  }
   input.UpdateAfterEdit_NoGui();
   mel_fbank.UpdateAfterEdit_NoGui();
+  fbank_tgabor.UpdateAfterEdit_NoGui();
 }
 
 bool AuditoryProc::NeedsInit() {
@@ -175,6 +391,9 @@ bool AuditoryProc::InitFilters() {
   dft_size = input.win_samples;
   dft_use = dft_size / 2 + 1;
   InitFilters_Mel();
+  if(fbank_tgabor.on) {
+    fbank_tgabor.RenderFilters(tgabor_filters, tgabor_flt_sizes);
+  }
   return true;
 }
 
@@ -222,14 +441,22 @@ bool AuditoryProc::InitOutMatrix() {
   window_in.SetGeom(1, input.win_samples);
   dft_out.SetGeom(2, 2, dft_size);
   dft_power_out.SetGeom(1, dft_use);
+  dft_power_trial_out.SetGeom(3, dft_use, input.total_steps, input.channels);
+  if(dft.log_pow) {
+    dft_log_power_out.SetGeom(1, dft_use);
+    dft_log_power_trial_out.SetGeom(3, dft_use, input.total_steps, input.channels);
+  }
   if(mel_fbank.on) {
     mel_fbank_out.SetGeom(1, mel_fbank.n_filters);
-    if(fbank_delta.on) {
-      mel_fbank_tavgs.SetGeom(2, fbank_delta.n_steps, mel_fbank.n_filters);
-      mel_fbank_deltas.SetGeom(2, fbank_delta.n_steps*2 + 1, mel_fbank.n_filters);
+    mel_fbank_trial_out.SetGeom(3, mel_fbank.n_filters, input.total_steps, input.channels);
+    if(fbank_tgabor.on) {
+      tgabor_trial_out.SetGeom(3, fbank_tgabor.n_filters * 2, mel_fbank.n_filters,
+                               input.trial_steps, input.channels);
     }
     if(mfcc.on) {
       mfcc_dct_out.SetGeom(1, mel_fbank.n_filters);
+      mfcc_dct_trial_out.SetGeom(3, mel_fbank.n_filters, input.total_steps,
+                                 input.channels);
     }
   }
   return true;
@@ -248,7 +475,25 @@ bool AuditoryProc::LoadSound(taSound* sound) {
   else {
     sound->SoundToMatrix(sound_full, input.channel);
   }
+  StartNewSound();
+  return true;
+}
+
+bool AuditoryProc::StartNewSound() {
   input_pos = 0;
+  dft_power_trial_out.InitVals(0.0f);
+  if(dft.log_pow) {
+    dft_log_power_trial_out.InitVals(0.0f);
+  }
+  if(mel_fbank.on) {
+    mel_fbank_trial_out.InitVals(0.0f);
+    if(fbank_tgabor.on) {
+      tgabor_trial_out.InitVals(0.0f);
+    }
+    if(mfcc.on) {
+      mfcc_dct_trial_out.InitVals(0.0f);
+    }
+  }
   return true;
 }
 
@@ -264,18 +509,54 @@ bool AuditoryProc::ProcessTrial() {
                "no steps worth of input sound available -- load a new sound")) {
     return false;
   }
-  for(int step = 0; step < input.trial_steps; step++) {
-    ProcessStep(step);
+  int st_in_pos = input_pos;
+  for(int chan=0; chan < input.channels; chan++) {
+    input_pos = st_in_pos;      // always start at same place per channel
+    WrapBorder(chan);
+    int tot_steps = input.total_steps;
+    int bord_eff = 2 * input.border_steps; // full amount to wrap
+    for(int step = bord_eff; step < tot_steps; step++) {
+      ProcessStep(chan, step);
+    }
+    FilterTrial(chan);
+    OutputToTable(chan);
   }
   return true;
 }
 
-bool AuditoryProc::ProcessStep(int step) {
-  for(int chan=0; chan < input.channels; chan++) {
-    SoundToWindow(input_pos, chan);
-    FilterWindow(chan, step);
-    OutputToTable(chan, step);
+bool AuditoryProc::WrapBorder(int chan) {
+  if(input.border_steps == 0) return true;
+  int bord_eff = 2 * input.border_steps; // full amount to wrap
+  int src_st_step = input.total_steps - bord_eff;
+  for(int step=0; step < bord_eff; step++) {
+    int src_step = src_st_step + step;
+    for(int i=0; i<dft_use; i++) {
+      dft_power_trial_out.FastEl3d(i, step, chan) =
+        dft_power_trial_out.FastEl3d(i, src_step, chan);
+      if(dft.log_pow) {
+        dft_log_power_trial_out.FastEl3d(i, step, chan) =
+          dft_log_power_trial_out.FastEl3d(i, src_step, chan);
+      }
+    }
+    if(mel_fbank.on) {
+      for(int i=0; i < mel_fbank.n_filters; i++) {
+        mel_fbank_trial_out.FastEl3d(i, step, chan) =
+          mel_fbank_trial_out.FastEl3d(i, src_step, chan);
+      }
+      if(mfcc.on) {
+        for(int i=0; i < mel_fbank.n_filters; i++) {
+          mfcc_dct_trial_out.FastEl3d(i, step, chan) =
+            mfcc_dct_trial_out.FastEl3d(i, src_step, chan);
+        }
+      }
+    }
   }
+  return true;
+}
+
+bool AuditoryProc::ProcessStep(int chan, int step) {
+  SoundToWindow(input_pos, chan);
+  FilterWindow(chan, step);
   input_pos += input.step_samples;
   return true;
 }
@@ -306,32 +587,51 @@ bool AuditoryProc::SoundToWindow(int in_pos, int chan) {
 }
 
 bool AuditoryProc::FilterWindow(int chan, int step) {
-  DftInput();
+  DftInput(chan, step);
   if(mel_fbank.on) {
-    PowerOfDft();
-    MelFilterDft();
+    PowerOfDft(chan, step);
+    MelFilterDft(chan, step);
     if(mfcc.on) {
-      CepstrumDctMel();
+      CepstrumDctMel(chan, step);
     }
-    MelFilterDeltas(chan, step);
   }
   return true;
 }
 
-void AuditoryProc::DftInput() {
+bool AuditoryProc::FilterTrial(int chan) {
+  if(fbank_tgabor.on) {
+    TimeGaborFilter(chan);
+  }
+  return true;
+}
+
+void AuditoryProc::DftInput(int chan, int step) {
   taMath_float::fft_real(&dft_out, &window_in);
 }
 
-void AuditoryProc::PowerOfDft() {
+void AuditoryProc::PowerOfDft(int chan, int step) {
   // Mag() is absolute value   SqMag is square of it - r*r + i*i
   for(int i=0; i<dft_use; i++) {
     float r = dft_out.FastEl_Flat(2*i);
     float j = dft_out.FastEl_Flat(2*i+1);
-    dft_power_out.FastEl_Flat(i) = r*r + j*j;
+    float powr = r*r + j*j;
+    dft_power_out.FastEl_Flat(i) = powr;
+    dft_power_trial_out.FastEl3d(i, step, chan) = powr;
+    if(dft.log_pow) {
+      powr += dft.log_off;
+      float logp;
+      if(powr == 0.0f) {
+        logp = dft.log_min;
+      }
+      else
+        logp = logf(powr);
+      dft_log_power_out.FastEl_Flat(i) = logp;
+      dft_log_power_trial_out.FastEl3d(i, step, chan) = logp;
+    }
   }
 }
 
-void AuditoryProc::MelFilterDft() {
+void AuditoryProc::MelFilterDft(int chan, int step) {
   int mi = 0;
   for(int flt = 0; flt < mel_fbank.n_filters; flt++, mi++) {
     int mnbin = mel_pts_bin[flt];
@@ -359,68 +659,50 @@ void AuditoryProc::MelFilterDft() {
       if(val > 1.0f) val = 1.0f;
     }
     mel_fbank_out.FastEl_Flat(mi) = val;
+    mel_fbank_trial_out.FastEl3d(mi, step, chan) = val;
   }
 }
 
-void AuditoryProc::MelFilterDeltas(int chan, int step) {
-  int idx;
-  String col_sufx;
-  if(input.channels > 1) {
-    col_sufx = "_ch" + String(chan);
-  }
-  DataCol* col = data_table->FindColName(name + "_mel_fbank" + col_sufx);
-  if(TestError(!col, "MelFilterDeltas", "cannot find mel_fbank column in data table!")) {
-    return;
-  }
-  float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-  for(int flt = 0; flt < mel_fbank.n_filters; flt++) {
-    for(int stp = 1; stp <= fbank_delta.n_steps; stp++) {
-      float cmp_val = 0.0f;
-      if(fbank_delta.avg) {
-        for(int bkstp = 1; bkstp <= stp; bkstp++) {
-          if(step >= bkstp) {
-            cmp_val += dout->FastEl2d(step-bkstp, flt);
-          }
-          else {
-            cmp_val += dout->FastEl2d(input.trial_steps + step-bkstp, flt); // wrap..
-          }
-        }
-        cmp_val /= (float)stp;
-      }
-      else {
-        if(step >= stp) {
-          cmp_val = dout->FastEl2d(step-stp, flt);
-        }
-        else {
-          cmp_val = dout->FastEl2d(input.trial_steps + step-stp, flt); // wrap..
-        }
-      }
-      mel_fbank_tavgs.FastEl2d((stp-1), flt) = cmp_val;
-
-      float cur = mel_fbank_out.FastEl_Flat(flt);
-      float del = cur - cmp_val;
-      float del_mag = fabsf(del);
-      if(fbank_delta.xx1_norm) {
-        del_mag = fbank_delta.XX1(del_mag);
-      }
-      int stidx = (stp-1)*2;
-      if(del >= 0.0f) {
-        mel_fbank_deltas.FastEl2d(stidx, flt) = del_mag;
-        mel_fbank_deltas.FastEl2d(stidx+1, flt) = 0.0f;
-      }
-      else {
-        mel_fbank_deltas.FastEl2d(stidx, flt) = 0.0f;
-        mel_fbank_deltas.FastEl2d(stidx+1, flt) = del_mag;
-      }
-    }
-  }
-}
-
-void AuditoryProc::CepstrumDctMel() {
+void AuditoryProc::CepstrumDctMel(int chan, int step) {
   memcpy(mfcc_dct_out.el, mel_fbank_out.el, mel_fbank.n_filters * sizeof(float));
   taMath_float::dct(&mfcc_dct_out);
   float& el0 = mfcc_dct_out.FastEl_Flat(0);
   el0 = logf(1.0f + el0*el0);              // replace with log energy instead..
+  for(int i=0; i<mel_fbank.n_filters; i++) {
+    mfcc_dct_trial_out.FastEl3d(i, step, chan) = mfcc_dct_out.FastEl_Flat(i);
+  }
+}
+
+void AuditoryProc::TimeGaborFilter(int chan) {
+  for(int stp = 0; stp < input.trial_steps; stp++) {
+    for(int flt = 0; flt < mel_fbank.n_filters; flt++) {
+      const int tgnf = fbank_tgabor.n_filters;
+      for(int ti = 0; ti < tgnf; ti++) {
+        int sz = tgabor_flt_sizes[ti];
+        int fsz = sz * 2;
+        int in_st = input.border_steps + stp - sz;
+        float fsum = 0.0f;
+        for(int fi = 0; fi < fsz; fi++) {
+          float fval = tgabor_filters.FastEl2d(fi, ti);
+          float ival = mel_fbank_trial_out.FastEl3d(flt, in_st + fi, chan);
+          fsum += fval * ival;
+        }
+        bool pos = (fsum >= 0.0f);
+        float act = fabsf(fsum);
+        if(fbank_tgabor.xx1_norm) {
+          act = fbank_tgabor.XX1(act);
+        }
+        if(pos) {
+          tgabor_trial_out.FastEl4d(ti, flt, stp, chan) = act;
+          tgabor_trial_out.FastEl4d(tgnf + ti, flt, stp, chan) = 0.0f;
+        }
+        else {
+          tgabor_trial_out.FastEl4d(ti, flt, stp, chan) = 0.0f;
+          tgabor_trial_out.FastEl4d(tgnf + ti, flt, stp, chan) = act;
+        }
+      }
+    }
+  }
 }
 
 bool AuditoryProc::InitDataTable() {
@@ -440,7 +722,7 @@ bool AuditoryProc::InitDataTable() {
 
 bool AuditoryProc::InitDataTable_chan(int chan) {
   if(mel_fbank.on) {
-    MelOutputToTable(data_table, chan, 0, true);
+    MelOutputToTable(data_table, chan, true);
   }
   return true;
 }
@@ -459,18 +741,18 @@ bool AuditoryProc::NewTableRow() {
   return true;
 }
 
-bool AuditoryProc::OutputToTable(int chan, int step) {
+bool AuditoryProc::OutputToTable(int chan) {
   if(!data_table || save_mode == NONE_SAVE) // bail now
     return false;
   data_table->StructUpdate(true);
   if(mel_fbank.on) {
-    MelOutputToTable(data_table, chan, step, false); // not fmt_only
+    MelOutputToTable(data_table, chan, false); // not fmt_only
   }
   data_table->StructUpdate(false);
   return true;
 }
 
-bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, int step, bool fmt_only) {
+bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, bool fmt_only) {
   DataCol* col;
   int idx;
   String col_sufx;
@@ -479,49 +761,48 @@ bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, int step, bool fm
   }
   col = data_table->FindMakeColName(name + "_dft_pow" + col_sufx, idx,
                                     DataTable::VT_FLOAT, 2,
-                                    input.trial_steps, dft_use);
+                                    input.total_steps, dft_use);
   if(!fmt_only) {
     float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-    for(int i=0; i< dft_use; i++) {
-      dout->FastEl2d(step, i) = dft_power_out.FastEl_Flat(i);
+    for(int stp = 0; stp < input.total_steps; stp++) {
+      for(int i=0; i< dft_use; i++) {
+        if(dft.log_pow) {
+          dout->FastEl2d(stp, i) = dft_log_power_trial_out.FastEl3d(i, stp, chan);
+        }
+        else {
+          dout->FastEl2d(stp, i) = dft_power_trial_out.FastEl3d(i, stp, chan);
+        }
+      }
     }
   }
 
   if(mel_fbank.on) {
     col = data_table->FindMakeColName(name + "_mel_fbank" + col_sufx, idx,
                                       DataTable::VT_FLOAT, 2,
-                                      input.trial_steps, mel_fbank.n_filters);
+                                      input.total_steps, mel_fbank.n_filters);
     if(!fmt_only) {
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-      for(int i=0; i< mel_fbank.n_filters; i++) {
-        dout->FastEl2d(step, i) = mel_fbank_out.FastEl_Flat(i);
+      for(int stp = 0; stp < input.total_steps; stp++) {
+        for(int i=0; i< mel_fbank.n_filters; i++) {
+          dout->FastEl2d(stp, i) = mel_fbank_trial_out.FastEl3d(i, stp, chan);
+        }
       }
     }
 
-    if(fbank_delta.on) {
-      col = data_table->FindMakeColName(name + "_mel_fbank_tavg" + col_sufx, idx,
+    if(fbank_tgabor.on) {
+      col = data_table->FindMakeColName(name + "_mel_tgabor" + col_sufx, idx,
                                         DataTable::VT_FLOAT, 4,
-                                        1, fbank_delta.n_steps,
+                                        fbank_tgabor.n_filters, 2,
                                         input.trial_steps, mel_fbank.n_filters);
       if(!fmt_only) {
         float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-        for(int i=0; i< mel_fbank.n_filters; i++) {
-          for(int stp=0; stp< fbank_delta.n_steps; stp++) {
-            dout->FastEl4d(0, stp, step, i) = mel_fbank_tavgs.FastEl2d(stp, i);
-          }
-        }
-      }
-
-      col = data_table->FindMakeColName(name + "_mel_fbank_delta" + col_sufx, idx,
-                                        DataTable::VT_FLOAT, 4,
-                                        fbank_delta.n_steps*2 + 1, 1,
-                                        input.trial_steps, mel_fbank.n_filters);
-      if(!fmt_only) {
-        float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-        for(int i=0; i< mel_fbank.n_filters; i++) {
-          dout->FastEl4d(0, 0, step, i) = mel_fbank_out.FastEl_Flat(i);
-          for(int stp=0; stp< 2*fbank_delta.n_steps; stp++) {
-            dout->FastEl4d(1 + stp, 0, step, i) = mel_fbank_deltas.FastEl2d(stp, i);
+        const int tgnf = fbank_tgabor.n_filters;
+        for(int stp = 0; stp < input.trial_steps; stp++) {
+          for(int i=0; i< mel_fbank.n_filters; i++) {
+            for(int ti=0; ti < tgnf; ti++) {
+              dout->FastEl4d(ti, 0, stp, i) = tgabor_trial_out.FastEl4d(ti, i, stp, chan);
+              dout->FastEl4d(ti, 1, stp, i) = tgabor_trial_out.FastEl4d(tgnf + ti, i, stp, chan);
+            }
           }
         }
       }
@@ -531,11 +812,13 @@ bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, int step, bool fm
   if(mfcc.on) {
     col = data_table->FindMakeColName(name + "_mel_mfcc" + col_sufx, idx,
                                       DataTable::VT_FLOAT, 2,
-                                      input.trial_steps, mfcc.n_coeff);
+                                      input.total_steps, mfcc.n_coeff);
     if(!fmt_only) {
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-      for(int i=0; i< mfcc.n_coeff; i++) {
-        dout->FastEl2d(step, i) = mfcc_dct_out.FastEl_Flat(i);
+      for(int stp = 0; stp < input.total_steps; stp++) {
+        for(int i=0; i< mfcc.n_coeff; i++) {
+          dout->FastEl2d(stp, i) = mfcc_dct_trial_out.FastEl3d(i, stp, chan);
+        }
       }
     }
   }
@@ -574,4 +857,9 @@ void AuditoryProc::PlotMelFilters(DataTable* graph_data) {
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();
 
+}
+
+void AuditoryProc::GridTimeGaborFilters(DataTable* graph_data) {
+  if(NeedsInit()) Init();
+  fbank_tgabor.GridFilters(tgabor_filters, tgabor_flt_sizes, graph_data, true);
 }

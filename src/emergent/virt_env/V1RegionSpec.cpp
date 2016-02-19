@@ -21,12 +21,12 @@
 
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(V1RegionSpec);
-TA_BASEFUNS_CTORS_DEFN(VisSpatIntegSpec);
-TA_BASEFUNS_CTORS_DEFN(V1ComplexSpec);
-TA_BASEFUNS_CTORS_DEFN(V1MotionSpec);
-TA_BASEFUNS_CTORS_DEFN(V1sNeighInhib);
 TA_BASEFUNS_CTORS_DEFN(V1GaborSpec);
+TA_BASEFUNS_CTORS_DEFN(V1sNeighInhib);
+TA_BASEFUNS_CTORS_DEFN(V1MotionSpec);
+TA_BASEFUNS_CTORS_DEFN(V1ComplexSpec);
+TA_BASEFUNS_CTORS_DEFN(VisSpatIntegSpec);
+TA_BASEFUNS_CTORS_DEFN(V1RegionSpec);
 
 void V1GaborSpec::Initialize() {
   on = true;
@@ -137,6 +137,9 @@ void V1GaborSpec::GridFilters(float_Matrix& fltrs, DataTable* graph_data, bool r
   graph_data->FindMakeGridView();
 }
 
+//////////////////////////////////////////
+//              V1sNeighInhib
+
 void V1sNeighInhib::Initialize() {
   on = true;
   inhib_d = 1;
@@ -149,6 +152,10 @@ void V1sNeighInhib::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   tot_ni_len = 2 * inhib_d + 1;
 }
+
+
+//////////////////////////////////////////
+//              V1MotionSpec
 
 void V1MotionSpec::Initialize() {
   r_only = true;
@@ -165,6 +172,9 @@ void V1MotionSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   tot_width = 1 + 2 * tuning_width;
 }
+
+//////////////////////////////////////////
+//              V1ComplexSpec
 
 void V1ComplexSpec::Initialize() {
   len_sum_len = 1;
@@ -192,6 +202,9 @@ void V1ComplexSpec::UpdateAfterEdit_impl() {
   len_sum_norm = 1.0f / (float)(len_sum_width);
 }
 
+//////////////////////////////////////////
+//              VisSpatIntegSpec
+
 void VisSpatIntegSpec::Initialize() {
   spat_rf = 6;
   gauss_sig = 0.8f;
@@ -210,6 +223,10 @@ void VisSpatIntegSpec::UpdateAfterEdit_impl() {
   spat_spacing = spat_half;
   spat_spacing.SetGtEq(1);
 }
+
+
+//////////////////////////////////////////
+//              V1RegionSpec
 
 // for thread function calling:
 typedef void (V1RegionSpec::*V1RegionMethod)(int, int);
