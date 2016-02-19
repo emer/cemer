@@ -30,11 +30,11 @@ class TA_API DataTableCell : public taOBase {
   // ##INLINE ##NO_TOKENS this class serves to represent a single cell within a data column because data table cells are not themselves objects. These DataTableCells (DTCs) are used to link a cell to a control panel item   which normally points to an object instance member. The DataTable class keeps a list of these DTCs which are created as needed. If dtc_is_column_type is true then then DTC is not linked to a specific column and row but to a column with the row being able to change dynamically based on the row chosen in the 'row_lookup_col'.
 INHERITED(taOBase)
 public:
-  bool                dtc_is_column_type;  // #READ_ONLY #SHOW - false if the cell is tied to a specific row and true if the row is set using lookup where lookup is the matching of 'row_lookup_value' in 'row_lookup_col'
+  bool                dtc_is_column_type;  // #READ_ONLY #SHOW - false if the cell is tied to a specific row and true if the row is set using lookup where lookup is the matching of 'row_lookup_value' in 'row_lookup_col'.
   DataCol*            value_column;     // the column with editable data table cell
   int                 view_row;         // the row as the user sees it
   int                 index_row;        // #READ_ONLY the row in the underlying matrix that holds all rows, visible and hidden
-  String              value;            // #NO_SAVE value in the table cell
+  String              value;            // #NO_SAVE this is the current value of the data table cell, reflected in the control panel item, and can be changed by editing the control panel value and applying. If the DataTableCell is of the 'column type' the value will be changed when MasterTrain runs so you won't see the change until that time. If you are running the program using ClusterRun the table value will be changed when MasterStartup runs.
 
   DataCol*            row_lookup_col;   // the column that will be used for row lookup when dtc_is_column_type is true
   String              row_lookup_value; // this value is used to find the row for which the user wants to set the cell value - the value will be matched against the values in the row_lookup_col

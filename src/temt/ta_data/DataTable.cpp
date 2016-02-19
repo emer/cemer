@@ -2225,12 +2225,6 @@ void DataTable::SetCellsInRow(int row) {
   }
 }
 
-void DataTable::SetCellsFromConfig(String column_name, String value) {
-  int row = -1;
-  row = FindVal(value, column_name, 0);
-  SetCellsInRow(row);
-}
-
 void DataTable::SetCellsFromRowLookup(String column_name, String value) {
   int row = -1;
   row = FindVal(value, column_name, 0);

@@ -46,7 +46,7 @@ void DataTableCell::GetControlPanelLabel(MemberDef* mbr, String& label) const {
   String table_str = value_column->dataTable()->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_LONG);
   String column_str = value_column->GetName().CamelToSnake().elidedTo(taiMisc::CP_ITEM_ELIDE_LENGTH_SHORT);
   if (dtc_is_column_type) {
-    label = "_ " + table_str + "_" + column_str;
+    label = table_str + "_" + column_str + "_lookup";
   }
   else if (row_lookup_col) {
     label = table_str + "_" + column_str + "_" + row_lookup_col->GetValAsString(view_row);
