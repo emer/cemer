@@ -290,6 +290,8 @@ public:
 
   float_Matrix          sound_full;  // #READ_ONLY #NO_SAVE the full sound input obtained from the sound input
   int                   input_pos;   // #READ_ONLY #NO_SAVE #SHOW current position in the sound_full input -- in terms of sample number
+  int                   trial_start_pos;   // #READ_ONLY #NO_SAVE #SHOW starting position of the current trial -- in terms of sample number
+  int                   trial_end_pos;   // #READ_ONLY #NO_SAVE #SHOW ending position of the current trial -- in terms of sample number
   float_Matrix          window_in;  // #READ_ONLY #NO_SAVE [input.win_samples] the raw sound input, one channel at a time
   complex_float_Matrix	dft_out;   // #READ_ONLY #NO_SAVE [2, dft_size] discrete fourier transform (fft) output complex representation
   float_Matrix          dft_power_out; // #READ_ONLY #NO_SAVE [dft_use] power of the dft, up to the nyquist limit frequency (1/2 input.win_samples)

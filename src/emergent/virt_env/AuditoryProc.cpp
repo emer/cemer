@@ -339,6 +339,8 @@ void AuditoryProc::Initialize() {
   save_mode = FIRST_ROW;
   input_save = NO_SAVE;
   input_pos = 0;
+  trial_start_pos = 0;
+  trial_end_pos = trial_start_pos + input.trial_samples;
   dft_size = 0;
   dft_use = 0;
   mel_n_filters_eff = 0;
@@ -481,6 +483,8 @@ bool AuditoryProc::LoadSound(taSound* sound) {
 
 bool AuditoryProc::StartNewSound() {
   input_pos = 0;
+  trial_start_pos = 0;
+  trial_end_pos = trial_start_pos + input.trial_samples;
   dft_power_trial_out.InitVals(0.0f);
   if(dft.log_pow) {
     dft_log_power_trial_out.InitVals(0.0f);
@@ -510,11 +514,13 @@ bool AuditoryProc::ProcessTrial() {
     return false;
   }
   int st_in_pos = input_pos;
+  int bord_eff = 2 * input.border_steps; // full amount to wrap
+  int tot_steps = input.total_steps;
+  trial_start_pos = input_pos - input.step_samples * input.border_steps;
+  trial_end_pos = trial_start_pos + input.trial_samples;
   for(int chan=0; chan < input.channels; chan++) {
     input_pos = st_in_pos;      // always start at same place per channel
     WrapBorder(chan);
-    int tot_steps = input.total_steps;
-    int bord_eff = 2 * input.border_steps; // full amount to wrap
     for(int step = bord_eff; step < tot_steps; step++) {
       ProcessStep(chan, step);
     }
