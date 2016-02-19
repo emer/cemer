@@ -33,7 +33,8 @@ Status OK Equal Result
 Status OK
     [Arguments]                   ${output}
     Should Be Valid Json          ${output}
-    Json String Should Match      ${output}          /status            OK
+    ${output2}    ${err_msg} =     Run Keyword And Ignore Error	Get Json Value   ${output}       /message
+    Json String Should Match      ${output}          /status            OK	 "Result not OK: ${err_msg}"
     Json Value Should Not Exist   ${output}          /message
     Json Value Should Not Exist   ${output}          /error
 
@@ -66,8 +67,11 @@ Json Value Should Not Exist
     Run Keyword And Expect Error  JsonPointerException*  Get Json Value  ${json}  ${pointer}
 
 Json String Should Match
-    [Arguments]        ${json}    ${pointer}    ${expected}
-    ${value} =         Get Json String    ${json}    ${pointer}
+    [Arguments]        ${json}    ${pointer}    ${expected}	${err_msg}="Json String did not match"
+    ${pass_fail}       ${value} =	  Run Keyword And Ignore Error         Get Json String    ${json}    ${pointer}
+    Run Keyword If	  "${pass_fail}" == "FAIL"	  LOG	 ${err_msg}    WARN
+    Run Keyword If	  "${value}" <> "${expected}" 	 LOG	       ${err_msg}	WARN       
+    Should Match	${pass_fail}	PASS
     Should Match       ${value}    ${expected}
 
 Json String Should Be Empty
