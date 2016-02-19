@@ -2156,29 +2156,44 @@ void DataTable::GetDataTableCellRowCol(DataCol* column) {
   last_chosen_column = column;
 }
 
-void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row, bool is_column_type_dtc) { // this is the column used for choosing a row - e.g. config_id column
+void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row) { // this is the column used for choosing a row - e.g. config_id column
   if(!column || !cp || column->isMatrix()) return;
   
   taProject* proj = GetMyProj();
   if (!proj) return;
   
-  if (is_column_type_dtc) {
-    // only one column_type_dtc per column
-    if (control_panel_cells.FindColumnTypeDTC(column)) {
-      taMisc::Info("Only one column type control panel item per column");	
-      return;
-    }
-  }
   DataTableCell* cell = new DataTableCell();
-  cell->dtc_is_column_type = is_column_type_dtc;
+  cell->dtc_is_column_type = false;
   cell->value_column = column;
-  if (cell->dtc_is_column_type) {
-    cell->view_row = -1;
+  cell->view_row = row;
+  cell->index_row = GetIndexRow(cell->view_row);
+  cell->value = column->GetValAsString(cell->view_row);
+  cell->control_panel = cp;
+  control_panel_cells.Add(cell);
+    
+  MemberDef* md = cell->FindMember("value");
+  if (!md) return;
+  
+  cp->SelectMemberPrompt(cell, md);
+}
+
+void DataTable::AddColumnToControlPanel(ControlPanel* cp, DataCol* column) { // this is the column used for choosing a row - e.g. config_id column
+  if(!column || !cp || column->isMatrix()) return;
+  
+  taProject* proj = GetMyProj();
+  if (!proj) return;
+  
+  if (control_panel_cells.FindColumnTypeDTC(column)) {
+    taMisc::Warning("Only one column type control panel item per column");
+    return;
   }
-  else {
-    cell->view_row = row;
-  }
-  cell->index_row = GetIndexRow(row);
+  
+  DataTableCell* cell = new DataTableCell();
+  cell->dtc_is_column_type = true;
+  cell->value_column = column;
+  cell->view_row = -1;
+
+  cell->index_row = GetIndexRow(cell->view_row);
   cell->value = column->GetValAsString(cell->view_row);
   cell->control_panel = cp;
   control_panel_cells.Add(cell);
@@ -2194,7 +2209,7 @@ void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row
   
   MemberDef* md = cell->FindMember("value");
   if (!md) return;
-
+  
   cp->SelectMemberPrompt(cell, md);
 }
 

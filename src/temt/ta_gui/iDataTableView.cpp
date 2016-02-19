@@ -286,6 +286,8 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
   // single cell or single column
   if (((ca != CA_ROW_HDR) && (sel.width() == 1) && (sel.height() == 1) && !dc->isMatrix()) ||
       ((ca == CA_COL_HDR) && (sel.width() == 1) && !dc->isMatrix())) {
+    bool column_selected = (ca == CA_COL_HDR);
+    
     menu->AddSep();
     iAction* add_act = NULL;
     iAction* remove_act = NULL;
@@ -296,7 +298,12 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
       ControlPanel* cp = proj->ctrl_panels.Leaf(i);
       String add_string;
       add_string = "Add To " + cp->GetName();
-      add_act = add_menu->AddItem(add_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddCellToControlPanel(int)), i);
+      if (column_selected) {
+        add_act = add_menu->AddItem(add_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddColumnToControlPanel(int)), i);
+      }
+      else {
+        add_act = add_menu->AddItem(add_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(AddCellToControlPanel(int)), i);
+      }
       add_act->setEnabled(true);
       String remove_string = "Remove From " + cp->GetName();
       remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(RemoveFromControlPanel(int)), i);
@@ -312,16 +319,6 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
           remove_act->setEnabled(true);
         }
       }
-      // now check the column_type dtcs
-//      dtc = dataTable()->control_panel_cells.FindColumnTypeDTC(dc);
-//      if (dtc) {
-//        MemberDef* md = dtc->FindMember("value");
-//        // now check control panel
-//        if (md && cp->FindMbrBase(dtc, md) > -1) {
-//          add_act->setEnabled(false);
-//          remove_act->setEnabled(true);
-//        }
-//      }
     }
   }
 }
@@ -335,19 +332,20 @@ void iDataTableView::doubleClicked(const QModelIndex& index) {
 }
 
 void iDataTableView::AddCellToControlPanel(int menu_item_position) {
-  // should only ever be one column or a single cell
   CellRange sel(selectionModel()->selectedIndexes());
   int row = sel.row_fr;
   DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
   taProject* proj = dataTable()->GetMyProj();
   ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
-  
-  bool is_column_type_dtc = false;
-  if (sel.row_fr == 0 && sel.row_to == dataTable()->rows-1) {
-    is_column_type_dtc = true;
-  }
+  dataTable()->AddCellToControlPanel(cp, dc, row);
+}
 
-  dataTable()->AddCellToControlPanel(cp, dc, row, is_column_type_dtc);
+void iDataTableView::AddColumnToControlPanel(int menu_item_position) {
+  CellRange sel(selectionModel()->selectedIndexes());
+  DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
+  taProject* proj = dataTable()->GetMyProj();
+  ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
+  dataTable()->AddColumnToControlPanel(cp, dc);
 }
 
 void iDataTableView::RemoveFromControlPanel(int menu_item_position) {
