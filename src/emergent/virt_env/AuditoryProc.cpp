@@ -530,30 +530,78 @@ bool AuditoryProc::ProcessTrial() {
   return true;
 }
 
+bool AuditoryProc::StepToSample(int samp_pos) {
+  if(NeedsInit()) Init();
+  NewTableRow();
+  if(TestError(InputStepsLeft() < 1, "StepToSample",
+               "no steps worth of input sound available -- load a new sound")) {
+    return false;
+  }
+  if(input_pos == 0)            // first process a trial if nothing loaded yet
+    ProcessTrial();
+
+  if(TestError(samp_pos < trial_start_pos, "StepToSample",
+               "target sample position is earlier than current trial start position!")) {
+    return false;
+  }
+  int steps_fwd = (samp_pos - trial_start_pos) / input.step_samples;
+
+  int end_step = input.total_steps-1;
+
+  for(int stp = 0; stp < steps_fwd; stp++) {
+    int st_in_pos = input_pos;
+    trial_start_pos += input.step_samples;
+    trial_end_pos += input.step_samples;
+    for(int chan=0; chan < input.channels; chan++) {
+      input_pos = st_in_pos;      // always start at same place per channel
+      StepForward(chan);
+      ProcessStep(chan, end_step);
+      FilterTrial(chan);
+    }
+  }
+
+  for(int chan=0; chan < input.channels; chan++) {
+    OutputToTable(chan);
+  }
+  return true;
+}
+
 bool AuditoryProc::WrapBorder(int chan) {
   if(input.border_steps == 0) return true;
   int bord_eff = 2 * input.border_steps; // full amount to wrap
   int src_st_step = input.total_steps - bord_eff;
   for(int step=0; step < bord_eff; step++) {
-    int src_step = src_st_step + step;
-    for(int i=0; i<dft_use; i++) {
-      dft_power_trial_out.FastEl3d(i, step, chan) =
-        dft_power_trial_out.FastEl3d(i, src_step, chan);
-      if(dft.log_pow) {
-        dft_log_power_trial_out.FastEl3d(i, step, chan) =
-          dft_log_power_trial_out.FastEl3d(i, src_step, chan);
-      }
+    CopyStepFromStep(step, src_st_step + step, chan);
+  }
+  return true;
+}
+
+bool AuditoryProc::StepForward(int chan) {
+  int tot_m1 = input.total_steps - 1;
+  for(int step=0; step < tot_m1; step++) {
+    CopyStepFromStep(step, step+1, chan);
+  }
+  return true;
+}
+
+bool AuditoryProc::CopyStepFromStep(int to_step, int fm_step, int chan) {
+  for(int i=0; i<dft_use; i++) {
+    dft_power_trial_out.FastEl3d(i, to_step, chan) =
+      dft_power_trial_out.FastEl3d(i, fm_step, chan);
+    if(dft.log_pow) {
+      dft_log_power_trial_out.FastEl3d(i, to_step, chan) =
+        dft_log_power_trial_out.FastEl3d(i, fm_step, chan);
     }
-    if(mel_fbank.on) {
+  }
+  if(mel_fbank.on) {
+    for(int i=0; i < mel_fbank.n_filters; i++) {
+      mel_fbank_trial_out.FastEl3d(i, to_step, chan) =
+        mel_fbank_trial_out.FastEl3d(i, fm_step, chan);
+    }
+    if(mfcc.on) {
       for(int i=0; i < mel_fbank.n_filters; i++) {
-        mel_fbank_trial_out.FastEl3d(i, step, chan) =
-          mel_fbank_trial_out.FastEl3d(i, src_step, chan);
-      }
-      if(mfcc.on) {
-        for(int i=0; i < mel_fbank.n_filters; i++) {
-          mfcc_dct_trial_out.FastEl3d(i, step, chan) =
-            mfcc_dct_trial_out.FastEl3d(i, src_step, chan);
-        }
+        mfcc_dct_trial_out.FastEl3d(i, to_step, chan) =
+          mfcc_dct_trial_out.FastEl3d(i, fm_step, chan);
       }
     }
   }

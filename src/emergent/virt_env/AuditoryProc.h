@@ -331,8 +331,17 @@ public:
   virtual bool	ProcessTrial();
   // #CAT_Auditory process a full trial worth of sound -- iterates over steps to fill a trial's worth of sound data
 
+  virtual bool	StepToSample(int samp_pos);
+  // #CAT_Auditory incrementally step forward through sound until given sample position is within the nearest step to the start of the trial
+
   virtual bool	WrapBorder(int chan);
   // #CAT_Auditory at start of trial, wrap-around previous end-of-trial border values to now be the current start-of-trial border values
+
+  virtual bool	StepForward(int chan);
+  // #CAT_Auditory Step the current trial's worth of data forward by one step -- just does a copy of the _trial output data one step to the left, making room for a new step at the end
+
+  virtual bool	CopyStepFromStep(int to_step, int fm_step, int chan);
+  // #CAT_Auditory copy a step of trial data to given step index from given step index
 
   virtual bool	ProcessStep(int chan, int step);
   // #CAT_Auditory process a step worth of sound input from current input_pos, and increment input_pos by input.step_samples
