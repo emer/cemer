@@ -2180,6 +2180,12 @@ void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row
 void DataTable::AddColumnToControlPanel(ControlPanel* cp, DataCol* column) { // this is the column used for choosing a row - e.g. config_id column
   if(!column || !cp || column->isMatrix()) return;
   
+  int non_matrix_count = data.NonMatrixCount();
+  if (non_matrix_count < 2) {
+    taMisc::Error("Column type control panel items are only allowed if there is a second non-matrix column to use for the row lookup. This feature is often used for a column of a 'config' table where the config_id column is used for the row lookup");
+    return;
+  }
+  
   taProject* proj = GetMyProj();
   if (!proj) return;
   
@@ -2200,12 +2206,9 @@ void DataTable::AddColumnToControlPanel(ControlPanel* cp, DataCol* column) { // 
   
   // Get the column will be used to set the label for the control panel item
   //  (i.e. the column/row cell that is the label vs the column/row that is the editable value)
-  int non_matrix_count = data.NonMatrixCount();
-  if (non_matrix_count > 1) {
-    CallFun("GetDataTableCellRowCol");
-    cell->row_lookup_col = last_chosen_column;
-    last_chosen_column = NULL;  // set to NULL because the column might get deleted and we don't need anymore
-  }
+  CallFun("GetDataTableCellRowCol");
+  cell->row_lookup_col = last_chosen_column;
+  last_chosen_column = NULL;  // set to NULL because the column might get deleted and we don't need anymore
   
   MemberDef* md = cell->FindMember("value");
   if (!md) return;
@@ -2235,7 +2238,7 @@ void DataTable::SetCellsInRow(int row) {
   for (int i=0; i<control_panel_cells.size; i++) {
     DataTableCell* dtc = (DataTableCell*)control_panel_cells.FastEl_(i);
     if (dtc && dtc->dtc_is_column_type == true) {
-     dtc->value_column->SetValAsVar(dtc->row_lookup_value, row);
+      dtc->value_column->SetValAsVar(dtc->row_lookup_value, row);
     }
   }
 }
