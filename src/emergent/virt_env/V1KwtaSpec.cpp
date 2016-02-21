@@ -27,7 +27,7 @@ void V1KwtaSpec::Initialize() {
   gp_k = 1;
   gi = 2.0f;
   lay_gi = 1.5f;
-  gp_g = 0.1f;
+  gp_g = 0.02f;
   kwta_pt = 0.5f;
   ff = 1.0f;
   fb = 0.5f;

@@ -127,7 +127,7 @@ void AudTimeGaborSpec::Initialize() {
   st_half_size = 1;
   ed_half_size = 3;
   inc_half_size = 1;
-  xx1_norm = true;
+  xx1_norm = false;
   xx1_gain = 10.0f;
 
   max_size = 2 * ed_half_size;
@@ -345,6 +345,12 @@ void AuditoryProc::Initialize() {
   dft_use = 0;
   mel_n_filters_eff = 0;
   mel_filt_max_bins = 0;
+  
+  tgabor_kwta.mode = V1KwtaSpec::FFFB;
+  tgabor_kwta.gi = 2.0f;
+  tgabor_kwta.lay_gi = 1.5f;
+  tgabor_kwta.gp_k = 1;
+  tgabor_kwta.gp_g = 0.02f;
 }
 
 void AuditoryProc::UpdateAfterEdit_impl() {
@@ -362,6 +368,7 @@ void AuditoryProc::UpdateConfig() {
   input.UpdateAfterEdit_NoGui();
   mel_fbank.UpdateAfterEdit_NoGui();
   fbank_tgabor.UpdateAfterEdit_NoGui();
+  tgabor_kwta.UpdateAfterEdit_NoGui();
 }
 
 bool AuditoryProc::NeedsInit() {
@@ -452,7 +459,9 @@ bool AuditoryProc::InitOutMatrix() {
     mel_fbank_out.SetGeom(1, mel_fbank.n_filters);
     mel_fbank_trial_out.SetGeom(3, mel_fbank.n_filters, input.total_steps, input.channels);
     if(fbank_tgabor.on) {
-      tgabor_trial_out.SetGeom(3, fbank_tgabor.n_filters * 2, mel_fbank.n_filters,
+      tgabor_trial_raw.SetGeom(5, fbank_tgabor.n_filters, 2, mel_fbank.n_filters,
+                               input.trial_steps, input.channels);
+      tgabor_trial_out.SetGeom(5, fbank_tgabor.n_filters, 2, mel_fbank.n_filters,
                                input.trial_steps, input.channels);
     }
     if(mfcc.on) {
@@ -492,6 +501,7 @@ bool AuditoryProc::StartNewSound() {
   if(mel_fbank.on) {
     mel_fbank_trial_out.InitVals(0.0f);
     if(fbank_tgabor.on) {
+      tgabor_trial_raw.InitVals(0.0f);
       tgabor_trial_out.InitVals(0.0f);
     }
     if(mfcc.on) {
@@ -747,15 +757,25 @@ void AuditoryProc::TimeGaborFilter(int chan) {
           act = fbank_tgabor.XX1(act);
         }
         if(pos) {
-          tgabor_trial_out.FastEl4d(ti, flt, stp, chan) = act;
-          tgabor_trial_out.FastEl4d(tgnf + ti, flt, stp, chan) = 0.0f;
+          tgabor_trial_raw.FastEl(ti, 0, flt, stp, chan) = act;
+          tgabor_trial_raw.FastEl(ti, 1, flt, stp, chan) = 0.0f;
         }
         else {
-          tgabor_trial_out.FastEl4d(ti, flt, stp, chan) = 0.0f;
-          tgabor_trial_out.FastEl4d(tgnf + ti, flt, stp, chan) = act;
+          tgabor_trial_raw.FastEl(ti, 0, flt, stp, chan) = 0.0f;
+          tgabor_trial_raw.FastEl(ti, 1, flt, stp, chan) = act;
         }
       }
     }
+  }
+
+  float_MatrixPtr raw_frm; raw_frm = (float_Matrix*)tgabor_trial_raw.GetFrameSlice(chan);
+  float_MatrixPtr out_frm; out_frm = (float_Matrix*)tgabor_trial_out.GetFrameSlice(chan);
+  
+  if(tgabor_kwta.On()) {
+    tgabor_kwta.Compute_Inhib(*raw_frm, *out_frm, tgabor_gci);
+  }
+  else {
+    memcpy(out_frm->el, raw_frm->el, raw_frm->size * sizeof(float));
   }
 }
 
@@ -854,8 +874,8 @@ bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, bool fmt_only) {
         for(int stp = 0; stp < input.trial_steps; stp++) {
           for(int i=0; i< mel_fbank.n_filters; i++) {
             for(int ti=0; ti < tgnf; ti++) {
-              dout->FastEl4d(ti, 0, stp, i) = tgabor_trial_out.FastEl4d(ti, i, stp, chan);
-              dout->FastEl4d(ti, 1, stp, i) = tgabor_trial_out.FastEl4d(tgnf + ti, i, stp, chan);
+              dout->FastEl4d(ti, 0, stp, i) = tgabor_trial_out.FastEl(ti, 0, i, stp, chan);
+              dout->FastEl4d(ti, 1, stp, i) = tgabor_trial_out.FastEl(ti, 1, i, stp, chan);
             }
           }
         }

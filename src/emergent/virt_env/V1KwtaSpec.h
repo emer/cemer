@@ -38,7 +38,7 @@ public:
     KWTA,                       // k-winner take all inhibition
   };
 
-  InhibMode     mode;	// what form of inhibition to use
+  InhibMode     mode;	// #DEF_FFFB what form of inhibition to use -- FFFB is default and KWTA is deprecated and may be removed at some point
   int		gp_k;	// #CONDSHOW_ON_mode:KWTA number of active units within a group (hyperocolumn) of features
   float 	gi;	// #CONDSHOW_ON_mode:FFFB #DEF_1.5:2 typically between 1.5-2 -- sets overall level of inhibition for feedforward / feedback inhibition at the unit group level (see lay_gi for layer level parameter)
   float		lay_gi;	// #CONDSHOW_ON_mode:FFFB #DEF_1:2 sets overall level of inhibition for feedforward / feedback inhibition for the entire layer level -- the actual inhibition at each unit group is then the MAX of this computed inhibition and that computed for the unit group individually

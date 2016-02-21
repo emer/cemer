@@ -20,6 +20,7 @@
 #include <ImgProcThreadBase>
 
 // member includes:
+#include <V1KwtaSpec>
 #include <DataTableRef>
 #include <float_Matrix>
 #include <int_Matrix>
@@ -266,8 +267,9 @@ public:
   AudDftSpec    dft;            // specifications for how to compute the discrete fourier transform (DFT, using FFT)
   MelFBankSpec  mel_fbank;      // specifications of the mel feature bank frequency sampling of the DFT (FFT) of the input sound
   AudRenormSpec fbank_renorm;   // #CONDSHOW_ON_mel_fbank.on renormalization parmeters for the mel_fbank values -- performed prior to further processing
-  AudTimeGaborSpec  fbank_tgabor;    // #CONDSHOW_ON_mel_fbank.on time-dimension only 1d gabor-like filters for transforming the normalized mel fbank outputs
+  AudTimeGaborSpec  fbank_tgabor; // #CONDSHOW_ON_mel_fbank.on time-dimension only 1d gabor-like filters for transforming the normalized mel fbank outputs
   MelCepstrumSpec mfcc;         // #CONDSHOW_ON_mel_fbank.on specifications of the mel cepstrum discrete cosine transform of the mel fbank filter features
+  V1KwtaSpec	tgabor_kwta;	// #CONDSHOW_ON_fbank_tgabor.on k-winner-take-all inhibitory dynamics for the time-gabor output
 
 
   ///////////////////////////////////////////////////
@@ -302,7 +304,9 @@ public:
   float_Matrix          mel_fbank_out; // #READ_ONLY #NO_SAVE [mel.n_filters] mel scale transformation of dft_power, using triangular filters, resulting in the mel filterbank output -- the natural log of this is typically applied
   float_Matrix          mel_fbank_trial_out; // #READ_ONLY #NO_SAVE [mel.n_filters][input.total_steps][input.channels] full trial's worth of mel feature-bank output -- only if using time gabors
 
-  float_Matrix          tgabor_trial_out; // #READ_ONLY #NO_SAVE [tgabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] full trial's worth of time gabor steps
+  float_Matrix          tgabor_trial_raw; // #READ_ONLY #NO_SAVE [tgabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] raw output of time gabor -- full trial's worth of time gabor steps
+  float_Matrix	        tgabor_gci;	 // #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
+  float_Matrix          tgabor_trial_out; // #READ_ONLY #NO_SAVE [tgabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] post-kwta output of full trial's worth of time gabor steps
   
   float_Matrix          mfcc_dct_out; // #READ_ONLY #NO_SAVE discrete cosine transform of the log_mel_filter_out values, producing the final mel-frequency cepstral coefficients 
   float_Matrix          mfcc_dct_trial_out; // #READ_ONLY #NO_SAVE full trial's worth of discrete cosine transform of the log_mel_filter_out values, producing the final mel-frequency cepstral coefficients 
