@@ -124,6 +124,7 @@ void AudRenormSpec::UpdateAfterEdit_impl() {
 
 void AudTimeGaborSpec::Initialize() {
   on = true;
+  gain = 2.0f;
   st_half_size = 1;
   ed_half_size = 3;
   inc_half_size = 1;
@@ -752,7 +753,7 @@ void AuditoryProc::TimeGaborFilter(int chan) {
           fsum += fval * ival;
         }
         bool pos = (fsum >= 0.0f);
-        float act = fabsf(fsum);
+        float act = fbank_tgabor.gain * fabsf(fsum);
         if(fbank_tgabor.xx1_norm) {
           act = fbank_tgabor.XX1(act);
         }
@@ -864,6 +865,23 @@ bool AuditoryProc::MelOutputToTable(DataTable* dtab, int chan, bool fmt_only) {
     }
 
     if(fbank_tgabor.on) {
+      col = data_table->FindMakeColName(name + "_mel_tgabor_raw" + col_sufx, idx,
+                                        DataTable::VT_FLOAT, 4,
+                                        fbank_tgabor.n_filters, 2,
+                                        input.trial_steps, mel_fbank.n_filters);
+      if(!fmt_only) {
+        float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+        const int tgnf = fbank_tgabor.n_filters;
+        for(int stp = 0; stp < input.trial_steps; stp++) {
+          for(int i=0; i< mel_fbank.n_filters; i++) {
+            for(int ti=0; ti < tgnf; ti++) {
+              dout->FastEl4d(ti, 0, stp, i) = tgabor_trial_raw.FastEl(ti, 0, i, stp, chan);
+              dout->FastEl4d(ti, 1, stp, i) = tgabor_trial_raw.FastEl(ti, 1, i, stp, chan);
+            }
+          }
+        }
+      }
+
       col = data_table->FindMakeColName(name + "_mel_tgabor" + col_sufx, idx,
                                         DataTable::VT_FLOAT, 4,
                                         fbank_tgabor.n_filters, 2,

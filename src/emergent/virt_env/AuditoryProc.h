@@ -154,6 +154,7 @@ class E_API AudTimeGaborSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool          on;            // use time-dimension gabors
+  float         gain;          // #CONDSHOW_ON_on low-level gain multiplier on output of filters
   int           st_half_size;  // #CONDSHOW_ON_on #DEF_1 starting half-size of filters in terms of time steps -- filters are always even sized 
   int           ed_half_size;  // #CONDSHOW_ON_on #DEF_3 ending half-size of filters in terms of time steps -- requires input.border_steps >= this number! -- filters are always even sized 
   int           inc_half_size; // #CONDSHOW_ON_on #DEF_1 increment in half-size steps to take between start and end sizes
