@@ -1944,13 +1944,19 @@ void DataTable::RemoveCol(const Variant& col) {
   
   // Remove the DataTableCell objects and the corresponding control panel items from all the rows (visible or hidden) in the column
   for (int row = 0; row < row_indexes.size; row++) {
-    DataTableCell* cell = NULL;
-    while ((cell = control_panel_cells.FindCellIndexRow(da, row)) != NULL) {
-      RemoveFromControlPanel(cell->control_panel, cell->value_column, row);
-      control_panel_cells.RemoveEl(cell);
+    DataTableCell* dtc = NULL;
+    while ((dtc = control_panel_cells.FindCellIndexRow(da, row)) != NULL) {
+      RemoveCellFromControlPanel(dtc->control_panel, dtc->value_column, row);
+      control_panel_cells.RemoveEl(dtc);
     }
   }
-
+  // Don't forget the column type DTC
+  DataTableCell* dtc = control_panel_cells.FindColumnTypeDTC(da);
+  if (dtc) {
+    RemoveColumnFromControlPanel(dtc->control_panel, dtc->value_column);
+    control_panel_cells.RemoveEl(dtc);
+  }
+  
   StructUpdate(true);
   da->Close();
   StructUpdate(false);
@@ -2216,13 +2222,31 @@ void DataTable::AddColumnToControlPanel(ControlPanel* cp, DataCol* column) { // 
   cp->SelectMemberPrompt(cell, md);
 }
 
-void DataTable::RemoveFromControlPanel(ControlPanel* cp, DataCol* column, int row) {
+void DataTable::RemoveCellFromControlPanel(ControlPanel* cp, DataCol* column, int row) {
   if(!column || !cp) return;
   
   taProject* proj = GetMyProj();
   if (!proj) return;
   
   DataTableCell* dtc = control_panel_cells.FindCell(column, row);
+  
+  if (dtc) {
+    MemberDef* md = dtc->FindMember("value");
+    if (!md) return;
+    int idx =  cp->FindMbrBase(dtc, md);
+    if (idx > -1) {
+      cp->RemoveField(idx);
+    }
+  }
+}
+
+void DataTable::RemoveColumnFromControlPanel(ControlPanel* cp, DataCol* column) {
+  if(!column || !cp) return;
+  
+  taProject* proj = GetMyProj();
+  if (!proj) return;
+  
+  DataTableCell* dtc = control_panel_cells.FindColumnTypeDTC(column);
   
   if (dtc) {
     MemberDef* md = dtc->FindMember("value");

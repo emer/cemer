@@ -306,11 +306,23 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
       }
       add_act->setEnabled(true);
       String remove_string = "Remove From " + cp->GetName();
-      remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(RemoveFromControlPanel(int)), i);
+
+      if (column_selected) {
+        remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(RemoveColumnFromControlPanel(int)), i);
+      }
+      else {
+        remove_act = remove_menu->AddItem(remove_string, taiWidgetMenu::normal, iAction::int_act, this, SLOT(RemoveCellFromControlPanel(int)), i);
+      }
       remove_act->setEnabled(false);
       
       // First check our list of cells on control panels - then check the control panel
-      DataTableCell* dtc = dataTable()->control_panel_cells.FindCell(dc, row);
+      DataTableCell* dtc = NULL;
+      if (column_selected) {
+        dtc = dataTable()->control_panel_cells.FindColumnTypeDTC(dc);
+      }
+      else {
+        dtc = dataTable()->control_panel_cells.FindCell(dc, row);
+      }
       if (dtc) {
         MemberDef* md = dtc->FindMember("value");
         // now check control panel
@@ -348,11 +360,19 @@ void iDataTableView::AddColumnToControlPanel(int menu_item_position) {
   dataTable()->AddColumnToControlPanel(cp, dc);
 }
 
-void iDataTableView::RemoveFromControlPanel(int menu_item_position) {
+void iDataTableView::RemoveCellFromControlPanel(int menu_item_position) {
   CellRange sel(selectionModel()->selectedIndexes());
   DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
   int row = sel.row_fr;
   taProject* proj = dataTable()->GetMyProj();
   ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
-  dataTable()->RemoveFromControlPanel(cp, dc, row);
+  dataTable()->RemoveCellFromControlPanel(cp, dc, row);
+}
+
+void iDataTableView::RemoveColumnFromControlPanel(int menu_item_position) {
+  CellRange sel(selectionModel()->selectedIndexes());
+  DataCol* dc = dataTable()->data.FastEl(sel.col_fr);
+  taProject* proj = dataTable()->GetMyProj();
+  ControlPanel* cp = proj->ctrl_panels.Leaf(menu_item_position);
+  dataTable()->RemoveColumnFromControlPanel(cp, dc);
 }

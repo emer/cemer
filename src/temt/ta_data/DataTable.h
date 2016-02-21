@@ -633,9 +633,11 @@ public:
   virtual void          AddCellToControlPanel(ControlPanel* cp, DataCol* data_col, int row);
   // creates a DataTableCell so that a table cell can be set from a control panel - scalar only
   virtual void          AddColumnToControlPanel(ControlPanel* cp, DataCol* data_col);
-  // creates a DataTableCell so that a table cell can be set from a control panel - scalar only
-  virtual void          RemoveFromControlPanel(ControlPanel* cp, DataCol* data_col, int row);
+  // creates a DataTableCell (of column type) so that a table cell can be set at runtime from a control panel - scalar only
+  virtual void          RemoveCellFromControlPanel(ControlPanel* cp, DataCol* data_col, int row);
   // Remove DataTableCell from list and remove from control panel
+  virtual void          RemoveColumnFromControlPanel(ControlPanel* cp, DataCol* data_col);
+  // Remove DataTableCell from list and remove from control panel - this one for DTC with dtc_is_column_type = true
 
   virtual void          GetDataTableCellRowCol(DataCol* column);
   //   #BUTTON #NO_SHOW #FROM_GROUP_data sets the control_panel_cell row_column member - button needed to call method with CallFun and have gui arg dialog appear
