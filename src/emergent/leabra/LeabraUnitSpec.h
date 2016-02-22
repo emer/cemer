@@ -46,10 +46,7 @@ INHERITED(SpecMemberBase)
 public:
   float         thr;                // #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button)
   float         gain;                // #DEF_100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network
-  float         nvar;                // #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 to produce NOISY_XX1 activation function -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
-  bool          lrn_act;             // use a different, threshold-linear activation function for learning compared to what is used for sending to other units
-  float         lrn_thr;             // #CONDSHOW_ON_lrn_act #DEF_-0.05 additional threshold for threshold-linear learning activation equation -- this is *relative to the already-thresholded g_e - thr value* 
-  float         lrn_gain;            // #CONDSHOW_ON_lrn_act #DEF_10 gain for threshold-linear learning activation equation
+  float         nvar;                // #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
 
   String        GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -270,9 +267,6 @@ public:
   float         s_tau;                // #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
   float         m_tau;                // #DEF_10;100 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome)
   float         m_in_s;                // #DEF_0.1 #MIN_0 #MAX_1 how much of the medium term average activation to include at the short (plus phase) avg_s_eff variable that is actually used in learning -- important to ensure that when unit turns off in plus phase (short time scale), enough medium-phase trace remains so that learning signal doesn't just go all the way to 0, at which point no learning would take place -- typically need faster time constant for updating s such that this trace of the m signal is lost
-  bool          net_mult;              // multiply activation by net input to give more graded signal
-  float         nm_gain;               // #CONDSHOW_ON_net_mult extra gain factor to compensate for reduced levels from net_mult
-  bool          nm_sqrt;               // #CONDSHOW_ON_net_mult take the square root after multiplying by net input and then apply nm gain factor after that
 
   float         s_in_s;              // #READ_ONLY #EXPERT 1-m_in_s
   float         ss_dt;               // #READ_ONLY #EXPERT rate = 1 / tau
