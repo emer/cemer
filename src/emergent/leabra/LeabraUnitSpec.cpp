@@ -219,6 +219,9 @@ void LeabraActAvgSpec::Defaults_init() {
   s_tau = 2.0f;
   m_tau = 10.0f;
   m_in_s = 0.1f;
+  net_mult = false;
+  nm_gain = 2.0f;
+  nm_sqrt = false;
 
   ss_dt = 1.0f / ss_tau;
   s_dt = 1.0f / s_tau;
@@ -1931,6 +1934,16 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int th
   }
   else {
     ru_act = u->act_eq;
+  }
+  if(act_avg.net_mult) {
+    LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+    if(!lay->hard_clamped) {
+      ru_act *= u->net;
+      if(act_avg.nm_sqrt) {
+        ru_act = sqrtf(ru_act);
+      }
+      ru_act *= act_avg.nm_gain;
+    }
   }
 
   u->avg_ss += dt.integ * act_avg.ss_dt * (ru_act - u->avg_ss);
