@@ -53,6 +53,9 @@ SMARTREF_OF_CPP(LeabraUnitSpec);
 
 void LeabraActFunSpec::Initialize() {
   Defaults_init();
+  lrn_act = false;
+  lrn_thr = -0.05f;
+  lrn_gain = 10.0f;
 }
 
 void LeabraActFunSpec::Defaults_init() {
@@ -565,6 +568,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
 
   u->act_eq = 0.0f;
   u->act_nd = 0.0f;
+  u->act_lrn = 0.0f;
   u->spike = 0.0f;
   u->act_q0 = 0.0f;
   u->act_q1 = 0.0f;
@@ -686,6 +690,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
 
   u->act_eq = u->act;
   u->act_nd = u->act_eq;
+  u->act_lrn = u->act;
   u->spike = 0.0f;
   u->act_q0 = 0.0f;
   u->act_q1 = 0.0f;
@@ -760,6 +765,7 @@ void LeabraUnitSpec::DecayState(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
     u->net -= decay * (u->net - init.netin);
     u->act_eq -= decay * (u->act_eq - init.act);
     u->act_nd -= decay * (u->act_nd - init.act);
+    u->act_lrn -= decay * (u->act_lrn - init.act);
     u->act_raw -= decay * (u->act_raw - init.act);
     u->gc_i -= decay * u->gc_i;
     u->v_m -= decay * (u->v_m - init.v_m);
@@ -1105,7 +1111,7 @@ void LeabraUnitSpec::Compute_HardClamp(LeabraUnitVars* u, LeabraNetwork* net, in
   }
   u->net = u->thal = ext_in;
   ext_in = clamp_range.Clip(ext_in);
-  u->act_eq = u->act_nd = u->act = ext_in;
+  u->act_eq = u->act_nd = u->act_lrn = u->act = ext_in;
   if(u->act_eq == 0.0f)
     u->v_m = e_rev.l;
   else
@@ -1135,7 +1141,7 @@ void LeabraUnitSpec::Compute_HardClampNoClip(LeabraUnitVars* u, LeabraNetwork* n
   }
   u->net = u->thal = ext_in;
   // ext_in = clamp_range.Clip(ext_in);
-  u->act_eq = u->act_nd = u->act = ext_in;
+  u->act_eq = u->act_nd = u->act_lrn = u->act = ext_in;
   if(u->act_eq == 0.0f)
     u->v_m = e_rev.l;
   else
@@ -1573,7 +1579,7 @@ void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int
       float ext_in = u->ext * u->deep_mod;
       u->net = u->thal = ext_in;
       ext_in = clamp_range.Clip(ext_in);
-      u->act_eq = u->act_nd = u->act = ext_in;
+      u->act_eq = u->act_nd = u->act_lrn = u->act = ext_in;
     }
     return; // don't re-compute
   }
@@ -1613,10 +1619,21 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     // the whole time, then units are active right away -- need v_m_eq dynamics to
     // drive subthreshold activation behavior
     new_act = Compute_ActFun_Rate_impl(u->v_m_eq - act.thr);
+    if(act.lrn_act) {
+      u->act_lrn = 0.0f;        // nothing for below threshold!
+    }
   }
   else {
-    float g_e_thr = Compute_EThresh(u);
-    new_act = Compute_ActFun_Rate_impl((u->net * g_bar.e) - g_e_thr);
+    const float g_e_thr = Compute_EThresh(u);
+    float val_sub_thr = (u->net * g_bar.e) - g_e_thr;
+    new_act = Compute_ActFun_Rate_impl(val_sub_thr);
+    if(act.lrn_act) {
+      float sub_lrn_thr = val_sub_thr - act.lrn_thr;
+      if(sub_lrn_thr <= 0.0f)
+        u->act_lrn = 0.0f;
+      else
+        u->act_lrn = act.lrn_gain * sub_lrn_thr; // linear!
+    }
   }
   if(net->cycle >= dt.fast_cyc) {
     new_act = u->act_nd + dt.integ * dt.vm_dt * (new_act - u->act_nd); // time integral with dt.vm_dt  -- use nd to avoid synd problems
@@ -1645,6 +1662,12 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     u->act = u->act_nd;
   }
   u->act_eq = u->act;           // for rate code, eq == act
+  if(!act.lrn_act) {
+    if(act_misc.avg_nd)
+      u->act_lrn = u->act_nd;
+    else
+      u->act_lrn = u->act_eq;
+  }
 
   // we now use the exact same vm-based dynamics as in SPIKE model, for full consistency!
   // note that v_m_eq is NOT reset here:
@@ -1929,12 +1952,18 @@ void LeabraUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int
 
 void LeabraUnitSpec::Compute_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   float ru_act;
-  if(act_misc.avg_nd) {
-    ru_act = u->act_nd;
+  if(act.lrn_act) {
+    ru_act = u->act_lrn;
   }
   else {
-    ru_act = u->act_eq;
+    if(act_misc.avg_nd) {
+      ru_act = u->act_nd;
+    }
+    else {
+      ru_act = u->act_eq;
+    }
   }
+
   if(act_avg.net_mult) {
     LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
     if(!lay->hard_clamped) {
