@@ -633,7 +633,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       lookup_type = ProgExprBase::PROGRAM_FUNCTION;
       delims_used = 2;
     }
-    else if(txt[delim_pos[0]] == '(') { // handles method arguments and more - cases such as my_method(xxx or if(
+    else if(txt[delim_pos[0]] == '(' || txt[delim_pos[0]] =='[') { // handles method arguments and more - cases such as my_method(xxx or if(
       base_path = txt.at(expr_start, delim_pos[0]-expr_start);
       int length = base_path.length();
       base_path = triml(base_path);
@@ -642,11 +642,13 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       prepend_txt = txt.through(txt[delim_pos[0]]);
       lookup_seed = txt.after(delim_pos[0]);
       
-      // we might have a string of arguments - only use text after last comma as seed
-      int last_comma_pos = lookup_seed.index(',', -1);
-      String addl_prepend = lookup_seed.through(last_comma_pos);
-      prepend_txt += addl_prepend;
-      lookup_seed = lookup_seed.after(last_comma_pos);
+      if (txt[delim_pos[0]] == '(') {
+        // we might have a string of arguments - only use text after last comma as seed
+        int last_comma_pos = lookup_seed.index(',', -1);
+        String addl_prepend = lookup_seed.through(last_comma_pos);
+        prepend_txt += addl_prepend;
+        lookup_seed = lookup_seed.after(last_comma_pos);
+      }
       
       lookup_type = ProgExprBase::VARIOUS;
       delims_used = 1;
