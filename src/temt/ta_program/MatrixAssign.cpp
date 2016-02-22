@@ -133,7 +133,7 @@ bool MatrixAssign::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.freq('=') >= 1) {
     String lhs = code.before('=');
     if(lhs.contains('[') && lhs.contains(']') && !lhs.contains('.') &&
-       !lhs.contains('-')) return true;
+       !lhs.contains("->")) return true;
   }
   return false;
 }
