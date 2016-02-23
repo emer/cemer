@@ -42,6 +42,7 @@
 #include <taVector2i_List>
 #include <DataTableCell>
 #include <DataTableCell_List>
+#include <taiWidgetTokenChooser>
 
 #if (QT_VERSION >= 0x050000)
 #include <QJsonDocument>
@@ -95,7 +96,6 @@ void DataTable::Initialize() {
   base_diff_row = -1;  // no base comparison row at start
   change_col = NULL;
   change_col_type = -1;
-  last_chosen_column = NULL;
 }
 
 void DataTable::Destroy() {
@@ -124,10 +124,6 @@ void DataTable::CutLinks() {
   row_indexes.CutLinks();
   diff_row_list.CutLinks();
   last_sort_spec.CutLinks();
-  if (last_chosen_column) {
-    delete last_chosen_column;
-    last_chosen_column = NULL;
-  }
   if(log_file) {
     log_file->Close();
     taRefN::unRefDone(log_file);
@@ -2158,8 +2154,17 @@ void DataTable::ToggleSaveRows() {
   SigEmitUpdated();
 }
 
-void DataTable::GetDataTableCellRowCol(DataCol* column) {
-  last_chosen_column = column;
+DataCol* DataTable::GetColumnForDTCLookup() {
+  taiWidgetTokenChooser* chooser =  new taiWidgetTokenChooser(&TA_DataCol, NULL, NULL, NULL, 0, "");
+  chooser->SetTitleText("Choose column for row selector. In MasterTrain call method SetCellsFromRowLookup. See LeabraFlex/MasterTrain program for example");
+  chooser->GetImageScoped(NULL, &TA_DataCol, this, &TA_DataTable); // scope to this guy
+  bool okc = chooser->OpenChooser();
+  DataCol* dc = NULL;
+  if(okc && chooser->token()) {
+   dc = (DataCol*)chooser->token();
+  }
+  delete chooser;
+  return dc;
 }
 
 void DataTable::AddCellToControlPanel(ControlPanel* cp, DataCol* column, int row) { // this is the column used for choosing a row - e.g. config_id column
@@ -2210,11 +2215,8 @@ void DataTable::AddColumnToControlPanel(ControlPanel* cp, DataCol* column) { // 
   cell->control_panel = cp;
   control_panel_cells.Add(cell);
   
-  // Get the column will be used to set the label for the control panel item
-  //  (i.e. the column/row cell that is the label vs the column/row that is the editable value)
-  CallFun("GetDataTableCellRowCol");
-  cell->row_lookup_col = last_chosen_column;
-  last_chosen_column = NULL;  // set to NULL because the column might get deleted and we don't need anymore
+  // Get the column that will be used for row lookup
+  cell->row_lookup_col =  GetColumnForDTCLookup();
   
   MemberDef* md = cell->FindMember("value");
   if (!md) return;

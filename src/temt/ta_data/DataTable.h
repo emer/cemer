@@ -148,9 +148,6 @@ public:
   DataSortSpec          last_sort_spec;
   // #HIDDEN the last table sort specification
   
-  DataCol*              last_chosen_column;
-  // #HIDDEN #NO_SAVE hack to save value from GetDataTableCellRowCol() called by CallFun() because return value is not possible
-  
   DataTableCell_List    control_panel_cells;
   // #HIDDEN a list of DataTableCell objects that provide the link between data table cells and control panels -- needed because cells are not themselves object members
   
@@ -631,21 +628,21 @@ public:
   // #CAT_Rows #MENU #DYN1 toggle the SAVE_ROWS flag to opposite of current state: flag indicates whether data rows should be saved or not within the project (often useful to save room by not saving temp data)
 
   virtual void          AddCellToControlPanel(ControlPanel* cp, DataCol* data_col, int row);
-  // creates a DataTableCell so that a table cell can be set from a control panel - scalar only
+  // #IGNORE creates a DataTableCell so that a table cell can be set from a control panel - scalar only
   virtual void          AddColumnToControlPanel(ControlPanel* cp, DataCol* data_col);
-  // creates a DataTableCell (of column type) so that a table cell can be set at runtime from a control panel - scalar only
+  // #IGNORE creates a DataTableCell (of column type) so that a table cell can be set at runtime from a control panel - scalar only
   virtual void          RemoveCellFromControlPanel(ControlPanel* cp, DataCol* data_col, int row);
-  // Remove DataTableCell from list and remove from control panel
+  // #IGNORE remove DataTableCell from list and remove from control panel
   virtual void          RemoveColumnFromControlPanel(ControlPanel* cp, DataCol* data_col);
-  // Remove DataTableCell from list and remove from control panel - this one for DTC with dtc_is_column_type = true
-
-  virtual void          GetDataTableCellRowCol(DataCol* column);
-  //   #BUTTON #NO_SHOW #FROM_GROUP_data sets the control_panel_cell row_column member - button needed to call method with CallFun and have gui arg dialog appear
+  // #IGNORE remove DataTableCell from list and remove from control panel - this one for DTC with dtc_is_column_type = true
+  virtual DataCol*      GetColumnForDTCLookup();
+  // #IGNORE sets the control_panel_cell row_column member - button needed to call method with CallFun and have gui arg dialog appear
 
   virtual void          SetCellsInRow(int row);
   // set the values of table cells in the specified row using the current values in control panel items for columns where there is a column_type DataTableCell (i.e. column_type_dtc == true)
   virtual void          SetCellsFromRowLookup(String column_name, String value);
   // set the values of table cells in the row with value matching the "value" arg of column matching "column_name" arg
+  
   /////////////////////////////////////////////////////////
   // Main data value access/modify (Get/Set) routines: for Programs and very general use
 
