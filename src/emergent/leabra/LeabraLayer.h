@@ -38,8 +38,7 @@ class E_API LeabraLayer : public Layer, public LeabraInhib {
 INHERITED(Layer)
 public:
   LeabraLayerSpec_SPtr	spec;	// #CAT_Structure the spec for this layer: controls all functions of layer
-  float         adapt_lay_gi;   // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS adaptive layer-level inhibitory gain value -- this is an *extra* multiplier on top of existing gi value in the spec -- adjusted by adaptive inhibition function -- saved with weight files
-  float         adapt_gp_gi;    // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS adaptive group-level inhibitory gain value -- this is an *extra* multiplier on top of existing gi value in the spec -- adjusted by adaptive inhibition function -- saved with weight files
+  float         adapt_gi;   // #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS adaptive  inhibitory gain value -- this is an *extra* multiplier on top of existing gi value in the layer, unit inhib specs, starts out at 1 and moves from there -- adjusted by adaptive inhibition function -- saved with weight files
   bool		hard_clamped;	// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation if true, indicates that this layer was actually hard clamped -- this is normally set by the Compute_HardClamp function called by Quarter_Init() or NewInputData_Init() -- see LayerSpec clamp.hard parameter to determine whether layer is hard clamped or not -- this flag is not to be manipulated directly
   String        minus_output_name;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW name for the output produced by the network in the minus phase -- for recording in logs as network's response (output_name in plus phase is clamped target value)
   float		da_p;           // #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning positive valence oriented dopamine-like modulatory value (where applicable)
@@ -106,9 +105,12 @@ public:
   void	Init_Weights_Layer(Network* net) override
   { if(spec) spec->Init_Weights_Layer(this, (LeabraNetwork*)net); }
   // #CAT_Learning layer-level initialization taking place after Init_Weights on units
-  virtual void	Init_Acts_Layer(Network* net)
-  { if(spec) spec->Init_Acts_Layer(this, (LeabraNetwork*)net); }
+  virtual void	Init_Acts_Layer(LeabraNetwork* net)
+  { if(spec) spec->Init_Acts_Layer(this, net); }
   // #CAT_Activation layer-level initialization taking place after Init_Acts on units
+  virtual void	Init_AdaptInhib(LeabraNetwork* net)
+  { if(spec) spec->Init_AdaptInhib(this, net); }
+  // #CAT_Activation initialize adaptive inhibition parameters -- undoes any existing adaptation of inhibitory gain for the layer
 
   virtual void	DecayState(LeabraNetwork* net, float decay)
   { if(spec) spec->DecayState(this, net, decay); }

@@ -27,8 +27,7 @@ void LeabraLayer::Initialize() {
   unit_spec.SetBaseType(&TA_LeabraUnitSpec);
 
   Inhib_Initialize();
-  adapt_lay_gi = 1.0f;
-  adapt_gp_gi = 1.0f;
+  adapt_gi = 1.0f;
   hard_clamped = false;
   da_p = 0.0f;
   da_n = 0.0f;

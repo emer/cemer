@@ -500,6 +500,13 @@ void LeabraNetwork::Init_Netins() {
   NET_THREAD_CALL(LeabraNetwork::Init_Netins_Thr);
 }
 
+void LeabraNetwork::Init_AdaptInhib() {
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->Init_AdaptInhib(this);
+  }
+}
+
 void LeabraNetwork::Init_Netins_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {

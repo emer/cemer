@@ -104,7 +104,7 @@ class E_API LayerAvgActSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
 INHERITED(SpecMemberBase)
 public:
-  float		init;	    // #AKA_pct #MIN_0 [typically 0.1 - 0.2] initial estimated average activity level in the layer -- this is used as a starting point for running average actual activity level (acts_m_avg and acts_p_avg) -- acts_m_avg is used primarily for automatic netinput scaling, to balance out layers that have different activity levels -- thus it is important that init be relatively accurate -- good idea to update from recorded acts_m_avg levels (see LayerAvgAct button, here and on network) -- see also adjust parameter
+  float		init;	    // #AKA_pct #MIN_0 [typically 0.1 - 0.2] initial estimated average activity level in the layer -- this is used as a starting point for running average actual activity level (acts_m_avg and acts_p_avg) -- acts_m_avg is used primarily for automatic netinput scaling, to balance out layers that have different activity levels -- thus it is important that init be relatively accurate -- good idea to update from recorded acts_m_avg levels (see LayerAvgAct button, here and on network) -- see also adjust parameter -- this is also the target of adaptive inhibition -- see those params
   bool          fixed;      // #DEF_false if true, then the init value is used as a constant for acts_p_avg_eff (the effective value used for netinput rescaling), instead of using the actual running average activation
   float         tau;        // #CONDSHOW_OFF_fixed #DEF_100 #MIN_1 time constant in trials for integrating time-average values at the layer level -- used for computing acts_m_avg and acts_p_avg
   float         adjust;     // #CONDSHOW_OFF_fixed #DEF_1 adjustment multiplier on the computed acts_p_avg value that is used to compute acts_p_avg_eff, which is actually used for netinput rescaling -- if based on connectivity patterns or other factors the actual running-average value is resulting in netinputs that are too high or low, then this can be used to adjust the effective average activity value -- reducing the average activity with a factor < 1 will increase netinput scaling (stronger net inputs from layers that receive from this layer), and vice-versa for increasing (decreases net inputs)
@@ -114,6 +114,41 @@ public:
   String        GetTypeDecoKey() const override { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(LayerAvgActSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
+eTypeDef_Of(LeabraAdaptInhib);
+
+class E_API LeabraAdaptInhib : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapt the overal inhibitory gain value (adapt_gi on layer) to keep overall layer activation within a given target range as specified by avg_act.init
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // enable adaptive inhibition function to adapt overall layer inhibition gain as stored in layer adapt_gi value
+  float         tol;            // #CONDSHOW_ON_on #DEF_0.03 tolerance around target average activation of avg_act.inhib -- only once activations move outside this tolerance are inhibitory values adapted
+  int           trial_interval; // #CONDSHOW_ON_on interval in trials between updates of the adaptive inhibition values -- only check and update this often -- typically the same order as the number of trials per epoch used in training the model
+  float		tau;		// #CONDSHOW_ON_on #DEF_10 time constant for rate of updating the inhibitory gain value, in terms of trial_interval periods (e.g., 10 = adapt gain over 10 trial intervals) -- adaptation rate is (acts_m_avg - trg_avg_act) / tau
+
+  float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
+
+
+  inline bool   AdaptInhib(float& gi, const float trg_avg_act, const float acts_m_avg) {
+    float delta = acts_m_avg - trg_avg_act;
+    if(fabsf(delta) >= tol) {
+      gi += dt * delta;
+      return true;
+    }
+    return false;
+  }
+
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraAdaptInhib);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
@@ -138,42 +173,6 @@ public:
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(LeabraInhibMisc);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init();
-};
-
-eTypeDef_Of(LeabraAdaptInhib);
-
-class E_API LeabraAdaptInhib : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapt the inhibitory gain value gi to keep overall layer activation within a given target range
-INHERITED(SpecMemberBase)
-public:
-  bool          on;             // enable adaptive inhibition function
-  float         trg_avg_act;    // #CONDSHOW_ON_on target long-term running average minus-phase activation value for this layer -- inhibition is adapted when the value is outside the tolerance around this value
-  float         tol;            // #CONDSHOW_ON_on tolerance around target average activation -- only once activations move outside this tolerance around trg_avg_act are inhibitory values adapted
-  int           trial_interval; // #CONDSHOW_ON_on interval in trials between updates of the adaptive inhibition values -- only check and update this often
-  float		tau;		// #CONDSHOW_ON_on time constant for rate of updating the inhibitory gain value, in terms of trial_interval periods (e.g., 10 = adapt gain over 10 trial intervals) -- adaptation rate is (acts_m_avg - trg_avg_act) / tau
-
-  float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
-
-
-  inline bool   AdaptInhib(float& gi, const float acts_m_avg) {
-    float delta = acts_m_avg - trg_avg_act;
-    if(fabsf(delta) >= tol) {
-      gi += dt * delta;
-      return true;
-    }
-    return false;
-  }
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LeabraAdaptInhib);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
@@ -289,9 +288,8 @@ public:
   LeabraMultiGpSpec multi_gp_geom; // #CAT_Activation #CONDSHOW_ON_multi_gp_inhib.on how to combine multiple unit groups for computing multi-group level inhibition
   LeabraInhibSpec lay_gp_inhib;	// #CAT_Activation inhibition computed across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- only the specs of the FIRST layer in the layer group are used for computing inhib -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
   LayerAvgActSpec avg_act;	// #CAT_Activation expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
+  LeabraAdaptInhib inhib_adapt; // #CAT_Activation adapt an extra inhibitory gain value to keep overall layer activation within a given target range, based on act_avg.init target value -- gain applies to all forms of inhibition (layer, unit group) that are in effect
   LeabraInhibMisc inhib_misc;	// #CAT_Activation extra parameters for special forms of inhibition beyond the basic FFFB dynamic specified in inhib
-  LeabraAdaptInhib lay_inhib_adapt; // #CONDSHOW_ON_lay_inhib.on #CAT_Activation adapt the layer inhibitory gain value to keep overall layer activation within a given target range
-  LeabraAdaptInhib gp_inhib_adapt; // #CONDSHOW_ON_unit_gp_inhib.on #CAT_Activation adapt the group inhibitory gain value to keep overall layer activation within a given target range
   LeabraClampSpec clamp;        // #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   LayerDecaySpec  decay;        // #CAT_Activation decay of activity state vars between trials
   LeabraDelInhib  del_inhib;	// #CAT_Activation delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
@@ -314,8 +312,8 @@ public:
 
   virtual void	Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning layer-level initialization taking place after Init_Weights on units
-    virtual void Init_Inhib(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Activation called in Init_Weights_Layer initialize the inhibitory state values
+    virtual void Init_AdaptInhib(LeabraLayer* lay, LeabraNetwork* net);
+    // #CAT_Activation called in Init_Weights_Layer initialize the adaptive inhibitory state values
     virtual void Init_Stats(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Statistic called in Init_Weights_Layer intialize statistic variables
 
@@ -363,13 +361,11 @@ public:
   virtual void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thr_no);
   // #CAT_Activation compute the inhibition for layer -- this is the main call point into this stage of processing
     virtual void Compute_Inhib_impl
-      (LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec,
-       float adapt_gi = 1.0f);
+      (LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of inhibition computation for either layer or unit group
 
     virtual void Compute_Inhib_FfFb
-      (LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec,
-       float adapt_gi = 1.0f);
+      (LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of feed-forward, feed-back inhibition computation
 
     virtual void Compute_MultiGpInhib(LeabraLayer* lay, LeabraNetwork* net, int thr_no);

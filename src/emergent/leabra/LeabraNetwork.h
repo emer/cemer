@@ -403,6 +403,9 @@ public:
   void	Init_Counters() override;
   void	Init_Stats() override;
 
+  virtual void  Init_AdaptInhib();
+  // #CAT_Activation Initialize adaptive inhibition gain value on all the layers -- undoes any adaptation that has taken place (including from loaded weights - the adaptive gain value is saved with the weights)
+
   virtual void  Init_Netins();
   // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
     virtual void  Init_Netins_Thr(int thr_no);
