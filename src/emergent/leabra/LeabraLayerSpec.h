@@ -133,15 +133,19 @@ public:
   float         tol_pct;        // #CONDSHOW_ON_on #DEF_0.25 tolerance around target average activation of avg_act.inhib as a proportion of that target value -- only once activations move outside this tolerance are inhibitory values adapted
   int           trial_interval; // #CONDSHOW_ON_on interval in trials between updates of the adaptive inhibition values -- only check and update this often -- typically the same order as the number of trials per epoch used in training the model
   float		tau;		// #CONDSHOW_ON_on #DEF_10 time constant for rate of updating the inhibitory gain value, in terms of trial_interval periods (e.g., 10 = adapt gain over 10 trial intervals) -- adaptation rate is (acts_m_avg - trg_avg_act) / tau
+  int           under_ok_epcs;  // #CONDSHOW_ON_on number of epochs during which inhibition gain is not lowered if the average activation is below the target value -- this can be useful for higher layers in some models that depend on earlier layers learning before they approach their target activation levels, and you don't want to artificially lower their inhibition just to have to raise it later
 
   float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
 
-  inline bool   AdaptInhib(float& gi, const float trg_avg_act, const float acts_m_avg) {
+  inline bool   AdaptInhib(float& gi, const float trg_avg_act, const float acts_m_avg,
+                           const int epochs) {
     float delta = acts_m_avg - trg_avg_act;
     if(fabsf(delta) >= (tol_pct * trg_avg_act)) {
-      gi += dt * delta;
-      return true;
+      if(!(epochs < under_ok_epcs && delta < 0.0f)) {
+        gi += dt * delta;
+        return true;
+      }
     }
     return false;
   }

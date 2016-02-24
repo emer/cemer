@@ -86,6 +86,7 @@ void LayerAvgActSpec::UpdateAfterEdit_impl() {
 
 void LeabraAdaptInhib::Initialize() {
   on = false;
+  under_ok_epcs = 0;
   Defaults_init();
 }
 
@@ -429,7 +430,7 @@ void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
     eff_trial_interval /= taMisc::dmem_nprocs;
   }
   if(inhib_adapt.on && ((net->total_trials+1) % eff_trial_interval == 0)) {
-    inhib_adapt.AdaptInhib(lay->adapt_gi, avg_act.init, lay->acts_m_avg);
+    inhib_adapt.AdaptInhib(lay->adapt_gi, avg_act.init, lay->acts_m_avg, net->epoch);
   }
 }
 
