@@ -425,7 +425,7 @@ void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   }
 
   
-  if(inhib_adapt.on && (net->total_trials+1 % inhib_adapt.trial_interval == 0)) {
+  if(inhib_adapt.on && ((net->total_trials+1) % inhib_adapt.trial_interval == 0)) {
     inhib_adapt.AdaptInhib(lay->adapt_gi, avg_act.init, lay->acts_m_avg);
   }
 }
