@@ -58,9 +58,9 @@ public:
   float 	acts_p_avg;	// #READ_ONLY #SHOW #CAT_Activation time-averaged plus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init
   float 	acts_p_avg_eff;	// #READ_ONLY #SHOW #CAT_Activation acts_p_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels
   LeabraInhibVals i_val;        // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation computed inhibitory values
-  AvgMaxVals	netin;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum net input values for the layer
+  AvgMaxVals	netin;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer
   AvgMaxVals	netin_raw;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum raw net input values for the layer (synaptic netinput only -- no extras)
-  AvgMaxVals	acts;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum activation values for the layer
+  AvgMaxVals	acts;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation average, maximum activation values for the layer
   AvgMaxVals	acts_eq;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_eq values for the layer
   AvgMaxVals	acts_raw;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_raw values for the layer
   AvgMaxVals	acts_prvq;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_eq values for the layer, for the previous quarter (updated every quarter)

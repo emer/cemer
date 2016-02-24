@@ -1204,10 +1204,52 @@ void Layer::Copy_Weights(const Layer* src) {
 
 void Layer::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt, Projection* prjn) {
   // name etc is saved & processed by network level guy -- this is equiv to unit group
+  
+  // save any #SAVE_WTS layer vals
+  TypeDef* td = GetTypeDef();
+  for(int i=0; i<td->members.size; i++) {
+    MemberDef* md = td->members[i];
+    if(!md->HasOption("SAVE_WTS")) continue;
+    strm << "<" << md->name << " " << md->GetValStr((void*)this) << ">\n";
+  }
+  
   units.SaveWeights_strm(strm, fmt, prjn);
 }
 
 int Layer::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet, Projection* prjn) {
+  // name etc is saved & processed by network level guy -- this is equiv to unit group
+
+  // load any #SAVE_WTS layer vals
+  TypeDef* td = GetTypeDef();
+  while(true) {
+    int c = strm.peek();          // check for <U for UnGp
+    if(c == '<') {
+      strm.get();
+      c = strm.peek();
+      if(c == 'U') {
+        strm.unget();           // < goes back
+        break;                  // done
+      }
+      else { // got a SAVE_WTS member
+        strm.unget();           // < goes back
+        String tag;
+        String val;
+        taMisc::read_tag(strm, tag, val);
+        MemberDef* md = td->members.FindName(tag);
+        if(md) {
+          md->SetValStr(val, (void*)this);
+        }
+        else {
+          TestWarning(true, "LoadWeights",
+                      "member not found:", tag, "value:", val);
+        }
+      }
+    }
+    else {
+      break;                  // some other badness
+    }
+  }
+  
   return units.LoadWeights_strm(strm, fmt, quiet, prjn);
 }
 

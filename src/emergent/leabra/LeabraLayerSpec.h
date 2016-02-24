@@ -147,6 +147,42 @@ private:
   void	Defaults_init();
 };
 
+eTypeDef_Of(LeabraAdaptInhib);
+
+class E_API LeabraAdaptInhib : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapt the inhibitory gain value gi to keep overall layer activation within a given target range
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // enable adaptive inhibition function
+  float         trg_avg_act;    // #CONDSHOW_ON_on target long-term running average minus-phase activation value for this layer -- inhibition is adapted when the value is outside the tolerance around this value
+  float         tol;            // #CONDSHOW_ON_on tolerance around target average activation -- only once activations move outside this tolerance around trg_avg_act are inhibitory values adapted
+  int           trial_interval; // #CONDSHOW_ON_on interval in trials between updates of the adaptive inhibition values -- only check and update this often
+  float		tau;		// #CONDSHOW_ON_on time constant for rate of updating the inhibitory gain value, in terms of trial_interval periods (e.g., 10 = adapt gain over 10 trial intervals) -- adaptation rate is (acts_m_avg - trg_avg_act) / tau
+
+  float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
+
+
+  inline bool   AdaptInhib(float& gi, const float acts_m_avg) {
+    float delta = acts_m_avg - trg_avg_act;
+    if(fabsf(delta) >= tol) {
+      gi += dt * delta;
+      return true;
+    }
+    return false;
+  }
+
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraAdaptInhib);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(LeabraClampSpec);
 
 class E_API LeabraClampSpec : public SpecMemberBase {
@@ -254,6 +290,8 @@ public:
   LeabraInhibSpec lay_gp_inhib;	// #CAT_Activation inhibition computed across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- only the specs of the FIRST layer in the layer group are used for computing inhib -- net inhibition is MAX of all operative inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
   LayerAvgActSpec avg_act;	// #CAT_Activation expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
   LeabraInhibMisc inhib_misc;	// #CAT_Activation extra parameters for special forms of inhibition beyond the basic FFFB dynamic specified in inhib
+  LeabraAdaptInhib lay_inhib_adapt; // #CONDSHOW_ON_lay_inhib.on #CAT_Activation adapt the layer inhibitory gain value to keep overall layer activation within a given target range
+  LeabraAdaptInhib gp_inhib_adapt; // #CONDSHOW_ON_unit_gp_inhib.on #CAT_Activation adapt the group inhibitory gain value to keep overall layer activation within a given target range
   LeabraClampSpec clamp;        // #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   LayerDecaySpec  decay;        // #CAT_Activation decay of activity state vars between trials
   LeabraDelInhib  del_inhib;	// #CAT_Activation delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
@@ -325,11 +363,13 @@ public:
   virtual void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thr_no);
   // #CAT_Activation compute the inhibition for layer -- this is the main call point into this stage of processing
     virtual void Compute_Inhib_impl
-      (LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
+      (LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec,
+       float adapt_gi = 1.0f);
     // #IGNORE implementation of inhibition computation for either layer or unit group
 
     virtual void Compute_Inhib_FfFb
-      (LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
+      (LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec,
+       float adapt_gi = 1.0f);
     // #IGNORE implementation of feed-forward, feed-back inhibition computation
 
     virtual void Compute_MultiGpInhib(LeabraLayer* lay, LeabraNetwork* net, int thr_no);

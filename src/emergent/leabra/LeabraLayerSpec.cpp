@@ -23,6 +23,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraInhibSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraMultiGpSpec);
 TA_BASEFUNS_CTORS_DEFN(LayerAvgActSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraInhibMisc);
+TA_BASEFUNS_CTORS_DEFN(LeabraAdaptInhib);
 TA_BASEFUNS_CTORS_DEFN(LeabraClampSpec);
 TA_BASEFUNS_CTORS_DEFN(LayerDecaySpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDelInhib);
@@ -98,6 +99,25 @@ void LeabraInhibMisc::Defaults_init() {
 void LeabraInhibMisc::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   self_dt = 1.0f / self_tau;
+}
+
+void LeabraAdaptInhib::Initialize() {
+  on = false;
+  trg_avg_act = 0.1f;
+  
+  Defaults_init();
+}
+
+void LeabraAdaptInhib::Defaults_init() {
+  tol = 0.03f;
+  trial_interval = 100;
+  tau = 10;
+  dt = 1.0f / tau;
+}
+
+void LeabraAdaptInhib::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  dt = 1.0f / tau;
 }
 
 void LeabraClampSpec::Initialize() {
@@ -293,6 +313,8 @@ void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::Init_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->adapt_lay_gi = 1.0f;
+  lay->adapt_gp_gi = 1.0f;
 }
 
 void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
@@ -404,6 +426,16 @@ void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
     lay->laygp_data.i_val.ffi -= decay.trial * lay->laygp_data.i_val.ffi;
     lay->laygp_data.i_val.fbi -= decay.trial * lay->laygp_data.i_val.fbi;
   }
+
+  int tot_trials = net->total_trials+1;
+  if(lay_inhib.on && lay_inhib_adapt.on &&
+     (tot_trials % lay_inhib_adapt.trial_interval == 0)) {
+    lay_inhib_adapt.AdaptInhib(lay->adapt_lay_gi, lay->acts_m_avg);
+  }
+  if(unit_gp_inhib.on && gp_inhib_adapt.on && 
+     (tot_trials % gp_inhib_adapt.trial_interval == 0)) {
+    gp_inhib_adapt.AdaptInhib(lay->adapt_gp_gi, lay->acts_m_avg);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -450,7 +482,7 @@ void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int th
   if(HasUnitGpInhib(lay)) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      Compute_Inhib_impl(lay, (LeabraInhib*)gpd, net, unit_gp_inhib);
+      Compute_Inhib_impl(lay, (LeabraInhib*)gpd, net, unit_gp_inhib, lay->adapt_gp_gi);
     }
 
   }
@@ -458,7 +490,7 @@ void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int th
     Compute_MultiGpInhib(lay, net, thr_no);
   }
   if(HasLayerInhib(lay)) {
-    Compute_Inhib_impl(lay, (LeabraInhib*)lay, net, lay_inhib);
+    Compute_Inhib_impl(lay, (LeabraInhib*)lay, net, lay_inhib, lay->adapt_lay_gi);
   }
 
   Compute_LayInhibToGps(lay, net); // sync it all up..
@@ -504,13 +536,13 @@ void LeabraLayerSpec::Compute_MultiGpInhib(LeabraLayer* lay, LeabraNetwork* net,
 }
 
 void LeabraLayerSpec::Compute_Inhib_impl
-(LeabraLayer* lay,  LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
-  Compute_Inhib_FfFb(lay, thr, net, ispec); // only one option right now..
+(LeabraLayer* lay,  LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec, float adapt_gi) {
+  Compute_Inhib_FfFb(lay, thr, net, ispec, adapt_gi); // only one option right now..
   thr->i_val.g_i_orig = thr->i_val.g_i; // retain original values..
 }
 
 void LeabraLayerSpec::Compute_Inhib_FfFb
-(LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
+(LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec, float adapt_gi) {
 
   if(!ispec.on) {
     thr->i_val.ffi = 0.0f;
@@ -537,7 +569,7 @@ void LeabraLayerSpec::Compute_Inhib_FfFb
     thr->i_val.fbi += ispec.fb_dt * (nw_fbi - thr->i_val.fbi);
   }
 
-  thr->i_val.g_i = ispec.gi * (nw_ffi + thr->i_val.fbi); // combine
+  thr->i_val.g_i = adapt_gi * ispec.gi * (nw_ffi + thr->i_val.fbi); // combine
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
