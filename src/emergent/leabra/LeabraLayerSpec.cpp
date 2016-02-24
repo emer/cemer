@@ -90,7 +90,7 @@ void LeabraAdaptInhib::Initialize() {
 }
 
 void LeabraAdaptInhib::Defaults_init() {
-  tol = 0.03f;
+  tol_pct = 0.25f;
   trial_interval = 100;
   tau = 10;
   dt = 1.0f / tau;

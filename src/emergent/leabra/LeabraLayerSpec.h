@@ -130,7 +130,7 @@ class E_API LeabraAdaptInhib : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable adaptive inhibition function to adapt overall layer inhibition gain as stored in layer adapt_gi value
-  float         tol;            // #CONDSHOW_ON_on #DEF_0.03 tolerance around target average activation of avg_act.inhib -- only once activations move outside this tolerance are inhibitory values adapted
+  float         tol_pct;        // #CONDSHOW_ON_on #DEF_0.25 tolerance around target average activation of avg_act.inhib as a proportion of that target value -- only once activations move outside this tolerance are inhibitory values adapted
   int           trial_interval; // #CONDSHOW_ON_on interval in trials between updates of the adaptive inhibition values -- only check and update this often -- typically the same order as the number of trials per epoch used in training the model
   float		tau;		// #CONDSHOW_ON_on #DEF_10 time constant for rate of updating the inhibitory gain value, in terms of trial_interval periods (e.g., 10 = adapt gain over 10 trial intervals) -- adaptation rate is (acts_m_avg - trg_avg_act) / tau
 
@@ -139,7 +139,7 @@ public:
 
   inline bool   AdaptInhib(float& gi, const float trg_avg_act, const float acts_m_avg) {
     float delta = acts_m_avg - trg_avg_act;
-    if(fabsf(delta) >= tol) {
+    if(fabsf(delta) >= (tol_pct * trg_avg_act)) {
       gi += dt * delta;
       return true;
     }
