@@ -424,8 +424,11 @@ void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
     lay->laygp_data.i_val.fbi -= decay.trial * lay->laygp_data.i_val.fbi;
   }
 
-  
-  if(inhib_adapt.on && ((net->total_trials+1) % inhib_adapt.trial_interval == 0)) {
+  int eff_trial_interval = inhib_adapt.trial_interval;
+  if(taMisc::dmem_nprocs > 1) {
+    eff_trial_interval /= taMisc::dmem_nprocs;
+  }
+  if(inhib_adapt.on && ((net->total_trials+1) % eff_trial_interval == 0)) {
     inhib_adapt.AdaptInhib(lay->adapt_gi, avg_act.init, lay->acts_m_avg);
   }
 }
