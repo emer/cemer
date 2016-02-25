@@ -7,7 +7,7 @@ Library          OperatingSystem
 
 Resource         Server_lib.txt
 
-Suite Setup      Initialize Emergent    ../../test/TestPointerUpdates.proj
+Suite Setup      Initialize Emergent    ./test-projects/TestPointerUpdates.proj
 Suite Teardown   Shutdown Emergent
 
 *** Variables ***
