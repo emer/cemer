@@ -27,7 +27,7 @@ ${debug} =       false
 
 Initialize
     Set Suite Variable     ${verbose}       ${false}
-    Set Suite Variable     ${project}       ../../test/TestPointerUpdates.proj
+    Set Suite Variable     ${project}       ./test-projects/TestPointerUpdates.proj
     Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
 
 Connection
