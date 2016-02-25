@@ -54,9 +54,9 @@ eTypeDef_Of(LeabraInhib);
 class E_API LeabraInhib {
   // ##CAT_Leabra holds inhibition computation values, used as a parent class for layers and UnitGr etc
 public:
-  float 	acts_m_avg;	// #READ_ONLY #SHOW #CAT_Activation time-averaged minus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- this is used for netinput scaling (via _eff version) and should match reasonably well with act_avg.init value
-  float 	acts_p_avg;	// #READ_ONLY #SHOW #CAT_Activation time-averaged plus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init
-  float 	acts_p_avg_eff;	// #READ_ONLY #SHOW #CAT_Activation acts_p_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels
+  float 	acts_m_avg;	// #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS time-averaged minus-phase activation stats for the layer -- this is used for adaptive inhibition tuning (inhib_adapt in LeabraLayerSpec) -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- saved with weights
+  float 	acts_p_avg;	// #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS time-averaged plus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- this is used for netinput scaling (via _eff version) and should match reasonably well with act_avg.init value -- saved with weights
+  float 	acts_p_avg_eff;	// #READ_ONLY #SHOW #CAT_Activation #SAVE_WTS acts_p_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels -- saved with weights
   LeabraInhibVals i_val;        // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation computed inhibitory values
   AvgMaxVals	netin;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation average, maximum net input values for the layer
   AvgMaxVals	netin_raw;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum raw net input values for the layer (synaptic netinput only -- no extras)

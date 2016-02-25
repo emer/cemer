@@ -138,9 +138,9 @@ public:
 
 
   inline bool   AdaptInhib(float& gi, const float trg_avg_act, const float acts_m_avg) {
-    float delta = acts_m_avg - trg_avg_act;
-    if(fabsf(delta) >= (tol_pct * trg_avg_act)) {
-      gi += dt * delta;
+    float delta_pct = (acts_m_avg - trg_avg_act) / trg_avg_act;
+    if(fabsf(delta_pct) >= tol_pct) {
+      gi += dt * delta_pct;
       return true;
     }
     return false;
