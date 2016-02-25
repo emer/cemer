@@ -432,7 +432,27 @@ DataTable* TemtClient::GetAssertTable(const String& nm) {
   if (pnm.empty()) {
     // global table
     tab = proj->data.FindLeafName(nm);
-  } else { // local table
+    
+    if (!tab) {
+      taBase* obj = NULL;
+      MemberDef* md = NULL;
+      if (nm.startsWith(".projects")) {
+        obj = tabMisc::root->FindFromPath(nm, md);
+      }
+      else {
+        obj = proj->FindFromPath(nm, md);
+      }
+      if(obj) {
+        if(obj->InheritsFrom(&TA_DataTable)) {
+          tab = (DataTable*)obj;
+        } else {
+          SendError("Path '" + nm + "' does not point to a DataTable", TemtClient::NOT_FOUND);
+          return NULL;
+        }
+      }
+    }
+  }
+  else { // local table
     Program* prog = GetAssertProgram(pnm);
     if (!prog) return NULL; //note: will already have sent error
     String tnm = nm.after(".");
