@@ -64,6 +64,7 @@ void taiViewTypeOftaBase::CreateDataPanel_impl(taiSigLink* dl)
 taiSigLink* taiViewTypeOftaBase::GetSigLink(void* data_, TypeDef* el_typ) {
   //NOTE: replaced in taiViewTypeOftaOBase with an optimized version
   taBase* data = (taBase*)data_;
+  if(data->isDestroying()) return NULL;
   taSigLink* dl = data->sig_link();
   if (dl) return (taiSigLink*)dl;
   else return CreateSigLink_impl(data);

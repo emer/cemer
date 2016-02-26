@@ -66,6 +66,13 @@ else (WIN32) # assume gcc!!!
 
   if(CMAKE_BUILD_TYPE MATCHES "Release" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -ffast-math")
+  else(CMAKE_BUILD_TYPE MATCHES "Release" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
+    # debug mode
+    # on Mac/Linux, DEBUG is not defined!
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+#      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=undefined")
+    endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif (CMAKE_BUILD_TYPE MATCHES "Release" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
 
   if(NOT NOT_NATIVE MATCHES "not-native")
@@ -79,8 +86,6 @@ else (WIN32) # assume gcc!!!
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fabi-version=6 ")
   endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
-  # on Mac/Linux, DEBUG is not defined!
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 #    message(STATUS "CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
 #    add the automatically determined parts of the RPATH
 #    which point to directories outside the build tree to the install RPATH

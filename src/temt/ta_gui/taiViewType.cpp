@@ -34,6 +34,7 @@ taiSigLink* taiViewType::StatGetSigLink(void* el, TypeDef* el_typ) {
 
   if (!el || !el_typ) return NULL;
   if (!el_typ->iv) return NULL;
+
   taiSigLink* rval = NULL;
   taiViewType* tiv = el_typ->iv;
   rval = tiv->GetSigLink(el, el_typ);
