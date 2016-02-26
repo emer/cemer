@@ -34,6 +34,7 @@ public:
   bool          patch_cur;      // #DEF_false use current trial patch activations -- otherwise use previous trial -- current trial is appropriate for simple discrete trial environments (e.g., with some PBWM models), whereas previous is more approprate for trials with more realistic temporal structure
   float         pv_thr;         // #DEF_0.1 threshold on pv max act for setting pv_detected
   float         vsp_thr;        // #DEF_0.1 threshold on VS Patch Indir max act for setting pv_detected
+  float         se_gain;        // strength of the serotonin 5HT inputs on the dopamine outputs -- sev values when present subtract from the dopamine value otherwise computed
   bool          rec_data;       // record all the internal computations in user data on the VTA layer
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }

@@ -30,6 +30,7 @@ TA_BASEFUNS_CTORS_DEFN(VTAUnitSpec);
 void PVLVDaSpec::Initialize() {
   patch_cur = false;
   rec_data = false;
+  se_gain = 0.1f;
   Defaults_init();
 }
 
@@ -305,7 +306,9 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   float net_da = net_burst_da - gains.lhb_gain * dip_lhb_da;
 
   net_da *= gains.da_gain;
-    
+
+  net_da -= da.se_gain * u->sev; // subtract 5HT serotonin -- has its own gain
+  
   u->da_p = net_da;
   lay->da_p = u->da_p;
   u->ext = da.tonic_da + u->da_p;
