@@ -209,11 +209,11 @@ public:
 			     TypeDef* new_td);
   // report that type new_td was NOT added because of existing type ext_td (if verbose is on)
 
-  void 		SetDesc(const char* comnt, String& desc, String_PArray& inh_opts,
+  void 		SetDesc(const String& comnt, String& desc, String_PArray& inh_opts,
 			String_PArray& opts, String_PArray& lists);
   // use for setting options & lists from user-supplied comments
 
-  TypeDef* 	FindName(const char* nm, int& lex_token);
+  TypeDef* 	FindName(const String& nm, int& lex_token);
   // search all the relevant lists for given name, return lex_token of that item
 
   bool          TypeSpace_Sort_Order(TypeSpace* ths);

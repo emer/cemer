@@ -411,7 +411,7 @@ void MTA::TypeNotAdded(const String& typ, TypeSpace* sp, TypeDef* ext_td, TypeDe
        "because of existing type:", ext_td->name, "idx:", String(ext_td->idx));
 }
 
-void MTA::SetDesc(const char* comnt, String& desc, String_PArray& inh_opts,
+void MTA::SetDesc(const String& comnt, String& desc, String_PArray& inh_opts,
                   String_PArray& opts, String_PArray& lists) {
   String tmp = comnt;
   tmp.gsub("\"", "'");          // don't let any quotes get through
@@ -439,7 +439,7 @@ void MTA::SetDesc(const char* comnt, String& desc, String_PArray& inh_opts,
   desc += tmp;
 }
 
-TypeDef* MTA::FindName(const char* nm, int& lex_token) {
+TypeDef* MTA::FindName(const String& nm, int& lex_token) {
   TypeDef* itm;
 
   lex_token = MP_TYPE;             // this is the default
