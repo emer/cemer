@@ -132,7 +132,7 @@ public:
   bool          on;             // enable adaptive inhibition function to adapt overall layer inhibition gain as stored in layer adapt_gi value
   float         tol_pct;        // #CONDSHOW_ON_on #DEF_0.25 tolerance around target average activation of avg_act.inhib as a proportion of that target value -- only once activations move outside this tolerance are inhibitory values adapted
   int           trial_interval; // #CONDSHOW_ON_on interval in trials between updates of the adaptive inhibition values -- only check and update this often -- typically the same order as the number of trials per epoch used in training the model
-  float		tau;		// #CONDSHOW_ON_on #DEF_10 time constant for rate of updating the inhibitory gain value, in terms of trial_interval periods (e.g., 10 = adapt gain over 10 trial intervals) -- adaptation rate is (acts_m_avg - trg_avg_act) / tau
+  float		tau;		// #CONDSHOW_ON_on #DEF_100 time constant for rate of updating the inhibitory gain value, in terms of trial_interval periods (e.g., 10 = adapt gain over 10 trial intervals) -- adaptation rate is (acts_m_avg - trg_avg_act) / tau
 
   float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
