@@ -354,6 +354,7 @@ void taBase::Destroying() {
   if(taMisc::is_loading) {
     dumpMisc::update_after.RemoveEl(this); // justin case we're on the list!
   }
+  tabMisc::RemoveFromAllDelayedLists(this); // double sure..
 }
 
 void taBase::SetTypeDefaults_impl(TypeDef* ttd, taBase* scope) {

@@ -34,11 +34,13 @@ ContextFlag  tabMisc::in_wait_proc;
 void tabMisc::DelayedClose(taBase* obj) {
   if(taMisc::quitting) return;
   taMisc::do_wait_proc = true;
+  if(obj->isDestroying()) return;
   delayed_close.LinkUnique(obj); // only add once!!!
 }
 
 void tabMisc::DelayedUpdateAfterEdit(taBase* obj) {
   if(taMisc::quitting) return;
+  if(obj->isDestroying()) return;
   taMisc::do_wait_proc = true;
   delayed_updateafteredit.Add(obj);
 }
@@ -46,12 +48,14 @@ void tabMisc::DelayedUpdateAfterEdit(taBase* obj) {
 void tabMisc::DelayedFunCall_gui(taBase* obj, const String& fun_name) {
   if(taMisc::quitting) return;
   if(!taMisc::gui_active) return;
+  if(obj->isDestroying()) return;
   taMisc::do_wait_proc = true;
   delayed_funcalls.AddBaseFun(obj, fun_name);
 }
 
 void tabMisc::DelayedFunCall_nogui(taBase* obj, const String& fun_name) {
   if(taMisc::quitting) return;
+  if(obj->isDestroying()) return;
   taMisc::do_wait_proc = true;
   delayed_funcalls.AddBaseFun(obj, fun_name);
 }
@@ -140,6 +144,12 @@ bool tabMisc::DoDelayedFunCalls() {
     did_some = true;
   }
   return did_some;
+}
+
+bool tabMisc::RemoveFromAllDelayedLists(taBase* obj) {
+  bool got_one = delayed_updateafteredit.RemoveEl(obj);
+  got_one |= delayed_funcalls.RemoveBase(obj);
+  return got_one;
 }
 
 bool tabMisc::DoAutoSave() {

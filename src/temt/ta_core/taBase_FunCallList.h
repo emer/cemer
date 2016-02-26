@@ -44,6 +44,9 @@ public:
 
   bool  AddBaseFun(taBase* obj, const String& fun_name); // add base + function -- no check for unique on base_funs
 
+  bool  RemoveBase(taBase* obj);
+  // remove item
+
   taBase_FunCallList() {}
   ~taBase_FunCallList() {Reset();}
 
