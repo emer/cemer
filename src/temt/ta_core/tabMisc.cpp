@@ -138,17 +138,15 @@ bool tabMisc::DoDelayedFunCalls() {
     taBase* it = fci->it;
     String fun_name = fci->fun_name;
     delayed_funcalls.RemoveIdx(0); // deletes fci
-    if (it) {
-      it->CallFun(fun_name);
-    }
+    it->CallFun(fun_name);
     did_some = true;
   }
   return did_some;
 }
 
 bool tabMisc::RemoveFromAllDelayedLists(taBase* obj) {
-  bool got_one = delayed_updateafteredit.RemoveEl(obj);
-  got_one |= delayed_funcalls.RemoveBase(obj);
+  // bool got_one = delayed_updateafteredit.RemoveEl(obj);
+  bool got_one = delayed_funcalls.RemoveBase(obj);
   return got_one;
 }
 

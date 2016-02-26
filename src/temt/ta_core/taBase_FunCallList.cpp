@@ -46,7 +46,7 @@ bool taBase_FunCallList::AddBaseFun(taBase* obj, const String& fun_name) {
 
 void taBase_FunCallList::SigLinkDestroying(taSigLink* dl) {
   taBase* obj = dl->taData();
-  if (!obj || obj->isDestroying()) return; // shouldn't happen;
+  if (!obj) return; // shouldn't happen;
   bool got_one = RemoveBase(obj);
   if(!got_one) {
     taMisc::Error("Internal error -- taBase_FunCallList SigDestroying_Ref didn't find base in base_funs!");

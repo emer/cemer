@@ -93,14 +93,14 @@ void taiMiscCore::OnQuitting(CancelOp& cancel_op) {
 }
 
 int taiMiscCore::ProcessEvents() {
-  if (taMisc::in_event_loop) {
+  if (taMisc::in_event_loop && !taMisc::in_waitproc) {
     QCoreApplication::processEvents();
   }
   return 0;
 }
 
 int taiMiscCore::RunPending() {
-  if (taMisc::in_event_loop) {
+  if (taMisc::in_event_loop && !taMisc::in_waitproc) {
     if(QCoreApplication::hasPendingEvents()) {
       QCoreApplication::processEvents();
       return true;
@@ -110,6 +110,10 @@ int taiMiscCore::RunPending() {
 }
 
 void taiMiscCore::WaitProc() {
+  if(taMisc::in_waitproc) return; // actually no recursive waitproc!!!
+
+  taMisc::in_waitproc++;
+
   ClusterRun::WaitProcAutoUpdate();
   if(!taMisc::do_wait_proc && taMisc::err_cancel) { // only count if not calling back
     taMisc::err_waitproc_cnt++;
@@ -118,9 +122,13 @@ void taiMiscCore::WaitProc() {
       taMisc::err_waitproc_cnt = 0;
     }
   }
-  if(!taMisc::do_wait_proc) return;
+  if(!taMisc::do_wait_proc) {
+    taMisc::in_waitproc--;
+    return;
+  }
   taMisc::do_wait_proc = false; // reset at the START so other waitproc guys can get on the list from within the current waitproc
   tabMisc::WaitProc();
+  taMisc::in_waitproc--;
 }
 
 taiMiscCore::taiMiscCore(QObject* parent)

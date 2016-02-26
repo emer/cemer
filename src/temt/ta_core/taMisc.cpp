@@ -415,6 +415,7 @@ ContextFlag     taMisc::in_gui_call;
 ContextFlag     taMisc::in_gui_multi_action;
 ContextFlag     taMisc::in_plugin_init;
 ContextFlag     taMisc::in_shutdown;
+ContextFlag     taMisc::in_waitproc;
 ContextFlag     taMisc::no_auto_expand;
 TypeDef*        taMisc::plugin_loading;
 
@@ -989,13 +990,21 @@ void taMisc::LogEvent(const String& log_data) {
   time_t tmp = time(NULL);
   String tstamp = ctime(&tmp);
   tstamp = tstamp.before('\n');
+
+  String thread_info;
+#ifndef NO_TA_BASE
+  if(QThread::currentThread() != QApplication::instance()->thread()) {
+    thread_info = String("thread ") << (String)QThread::currentThread()->objectName() << ": ";
+  }
+#endif
+
   if(taMisc::log_stream.bad()) {
     if(taMisc::gui_active) {
-      cout << tstamp << ": " << log_data << endl;
+      cout << tstamp << ": " << thread_info << log_data << endl;
     }
   }
   else {
-    taMisc::log_stream << tstamp << ": " << log_data << endl;
+    taMisc::log_stream << tstamp << ": " << thread_info << log_data << endl;
   }
 }
 
