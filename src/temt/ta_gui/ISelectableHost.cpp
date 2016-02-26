@@ -187,7 +187,12 @@ void ISelectableHost::EditAction_Delete(ISelectable::GuiContext gc_typ) {
   for (int i = ta_items.size - 1; i >= 0; --i) {
     taBase* tab = ta_items.SafeEl(i);
     if (!tab) continue;
-    tab->Close(); // if happens immediately, will get removed from list
+    if(tab->InheritsFromName("FunCallItem")) {
+      taMisc::Warning("deleting funcall item!!");
+    }
+    else {
+      tab->Close(); // if happens immediately, will get removed from list
+    }
   }
 }
 
