@@ -31,10 +31,10 @@ class TA_API taiTypeOfColor : public taiTypeOfClass { // special editor for colo
 public:
   bool handlesReadOnly() const override { return true; }
   bool requiresInline() const  override { return true; }
-  int           BidForType(TypeDef* td);
+  int           BidForType(TypeDef* td) override;
 protected:
   taiWidget*      GetWidgetRepInline_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
+    QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
 };
 
 #endif // taiTypeOfColor_h

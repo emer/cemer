@@ -32,9 +32,9 @@ class E_API NetMonItem_List: public taList<NetMonItem> {
 INHERITED(taList<NetMonItem>)
 public:
 
-  int	NumListCols() const {return 3;} 
-  const KeyString GetListColKey(int col) const;
-  String GetColHeading(const KeyString&) const; // header text for the indicated column
+  int	NumListCols() const override {return 3;} 
+  const KeyString GetListColKey(int col) const override;
+  String GetColHeading(const KeyString&) const override; // header text for the indicated column
   TA_BASEFUNS_NOCOPY(NetMonItem_List);
   
 private:

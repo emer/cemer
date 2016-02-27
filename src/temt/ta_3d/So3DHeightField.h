@@ -24,6 +24,8 @@
 class SoSeparator; //
 #endif
 
+#include <T3Node>
+
 // member includes:
 #include <taString>
 #include <taMatrix>
@@ -47,7 +49,7 @@ class TA_API So3DHeightField: public SoSeparator {
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
 
-  SO_NODE_HEADER(So3DHeightField);
+  TA_SO_NODE_HEADER(So3DHeightField);
 #endif // def __MAKETA__
 public:
   static void		initClass();
@@ -96,7 +98,7 @@ public:
   ~So3DHeightField();
 
 protected:
-  const char*  	getFileFormatName() const {return "Separator"; } 
+  const char*  	getFileFormatName() const override {return "Separator"; } 
 
   SoIndexedTriangleStripSet* shape_;
   SoTransform*		transform_; // for entire object: goes first in this

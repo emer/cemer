@@ -55,7 +55,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(VEMuscleJoint);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 
 private:
   void  Initialize();

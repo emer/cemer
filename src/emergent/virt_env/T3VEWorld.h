@@ -84,7 +84,7 @@ class E_API T3VEWorld : public T3NodeParent {
   // world parent for virtual environment
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
-  SO_NODE_HEADER(T3VEWorld);
+  TA_SO_NODE_HEADER(T3VEWorld);
 #endif // def __MAKETA__
 public:
   static void   initClass();

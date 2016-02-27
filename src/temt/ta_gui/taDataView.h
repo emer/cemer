@@ -249,7 +249,7 @@ TA_SMART_PTRS(TA_API, taDataView);
 // convenience, for declaring the safe strong-typed parent
 #define DATAVIEW_PARENT(T) \
   T* parent() const {return (T*)m_parent;} \
-  TypeDef* parentType() const {return &TA_ ## T;}
+  TypeDef* parentType() const override {return &TA_ ## T;}
 
 // for strongly-typed lists
 #define TA_DATAVIEWLISTFUNS(B,I,T) \

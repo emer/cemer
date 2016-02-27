@@ -175,8 +175,8 @@ public:
 
   void          SaveImageSVG(const String& svg_fname) override;
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   SIMPLE_COPY(GraphTableView);
   T3_DATAVIEWFUNS(GraphTableView, DataTableView)
 

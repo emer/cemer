@@ -42,7 +42,7 @@ class TA_API T3GridColViewNode: public T3NodeLeaf {
   // grid view column -- mainly just for editing column spec ifno
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
-  SO_NODE_HEADER(T3GridColViewNode);
+  TA_SO_NODE_HEADER(T3GridColViewNode);
 #endif // def __MAKETA__
 public:
   static void	initClass();

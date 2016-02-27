@@ -29,10 +29,10 @@ taTypeDef_Of(taiMethodOfStepButton);
 class TA_API taiMethodOfStepButton : public taiMethodOfActuator {
   TAI_METHOD_SUBCLASS(taiMethodOfStepButton, taiMethodOfActuator);
 public:
-  int                   BidForMethod(MethodDef* md, TypeDef* td);
+  int                   BidForMethod(MethodDef* md, TypeDef* td) override;
 protected:
-  taiWidgetMethod*        GetButtonMethodRep_impl(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_);
-  taiWidgetMethod*        GetMenuMethodRep_impl(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_);
+  taiWidgetMethod*        GetButtonMethodRep_impl(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_) override;
+  taiWidgetMethod*        GetMenuMethodRep_impl(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_) override;
 };
 
 #endif // taiMethodOfStepButton_h

@@ -40,7 +40,7 @@ public:
   TA_SIMPLE_BASEFUNS(ChlSpecs);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -82,7 +82,7 @@ public:
   {  dwt += cur_lrate * (chl.err * err + chl.hebb * heb); }
   // #IGNORE combine associative and error-driven weight change, actually update dwt
 
-  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) {
+  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
     if(!chl.use) {
       Compute_dWt(rcg, rnet, thr_no);
       return;
@@ -140,7 +140,7 @@ public:
   }
   // #IGNORE 
 
-  inline void Compute_Weights(ConGroup* rcg, Network* net, int thr_no) {
+  inline void Compute_Weights(ConGroup* rcg, Network* net, int thr_no) override {
     if(!chl.use) {
       Compute_Weights(rcg, net, thr_no);
       return;

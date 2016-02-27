@@ -30,9 +30,9 @@ class E_API taiSpecMember : public taiMember {
   // special for the spec type member (adds the unique box)
   TAI_MEMBER_SUBCLASS(taiSpecMember, taiMember);
 public:
-  int           BidForMember(MemberDef* md, TypeDef* td);
+  int           BidForMember(MemberDef* md, TypeDef* td) override;
 
-  void          CmpOrigVal(taiWidget* dat, const void* base, bool& first_diff); // replaces
+  void          CmpOrigVal(taiWidget* dat, const void* base, bool& first_diff) override; // replaces
 
   virtual bool  NoCheckBox(IWidgetHost* host_) const; // deterimine if check box should be used
 

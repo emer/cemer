@@ -91,15 +91,15 @@ public:
   taList_impl*	children_() override {return &items;}
   String	GetDisplayName() const override;
   
-  void	InitLinks();
-  void	CutLinks();
+  void	InitLinks() override;
+  void	CutLinks() override;
   void	Copy_(const NetMonitor& cp);
   TA_BASEFUNS(NetMonitor);
   
 protected:
   NetworkRef	 prev_network;  // previous network that was set
 
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
   void	CheckThisConfig_impl(bool quiet, bool& rval) override;
   void	CheckChildConfig_impl(bool quiet, bool& rval) override;
 

@@ -29,11 +29,11 @@ taTypeDef_Of(taiTypeOfFilePtr);
 class TA_API taiTypeOfFilePtr : public taiType {// ptr to tai_getFiles
   TAI_TYPEBASE_SUBCLASS(taiTypeOfFilePtr, taiType);
 public:
-  int           BidForType(TypeDef* td);
+  int           BidForType(TypeDef* td) override;
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  void          GetImage_impl(taiWidget* dat, const void* base);
-  void          GetValue_impl(taiWidget* dat, void* base);
+    QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetValue_impl(taiWidget* dat, void* base) override;
 };
 
 #endif // taiTypeOfFilePtr_h

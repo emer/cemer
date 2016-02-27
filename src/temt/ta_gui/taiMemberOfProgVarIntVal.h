@@ -30,12 +30,12 @@ class TA_API taiMemberOfProgVarIntVal : public taiMember {
   // the int_val member in a ProgVar -- switches from plain int to hard_enum
   TAI_MEMBER_SUBCLASS(taiMemberOfProgVarIntVal, taiMember);
 public:
-  int           BidForMember(MemberDef* md, TypeDef* td);
-  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr_);
+  int           BidForMember(MemberDef* md, TypeDef* td) override;
+  taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_) override;
 protected:
-  void GetImage_impl(taiWidget* dat, const void* base) override;
-  void GetMbrValue_impl(taiWidget* dat, void* base) override;
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetMbrValue_impl(taiWidget* dat, void* base) override;
 private:
   void          Initialize();
   void          Destroy() {};

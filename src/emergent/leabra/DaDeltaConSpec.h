@@ -51,7 +51,7 @@ public:
   }
   // #IGNORE dopamine multiplication
 
-  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) {
+  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
     LeabraConGroup* cg = (LeabraConGroup*)rcg;
@@ -83,7 +83,7 @@ public:
   TA_SIMPLE_BASEFUNS(DaDeltaConSpec);
 protected:
   SPEC_DEFAULTS;
-  // void	UpdateAfterEdit_impl();
+  // void	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy()		{ };

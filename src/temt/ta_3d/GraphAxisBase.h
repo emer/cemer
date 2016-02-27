@@ -134,8 +134,8 @@ public:
   void                   CopyFromView_base(GraphAxisBase* cp);
   // special copy function that just copies user view options in a robust manner
 
-void InitLinks();
-  void CutLinks();
+  void InitLinks() override;
+  void CutLinks() override;
   SIMPLE_COPY(GraphAxisBase);
   T3_DATAVIEWFUNS(GraphAxisBase, T3DataView)
 protected:

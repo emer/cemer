@@ -57,8 +57,8 @@ protected:
   void 		focusInEvent(QFocusEvent* e) override;
   void 		focusOutEvent(QFocusEvent* e) override;
   void 		keyPressEvent(QKeyEvent* e) override;
-  void 		wheelEvent(QWheelEvent * e);
-  bool 		event(QEvent * e);
+  void 		wheelEvent(QWheelEvent * e) override;
+  bool 		event(QEvent * e) override;
 
 private:
   void		init();

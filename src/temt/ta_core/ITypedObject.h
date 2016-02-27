@@ -35,7 +35,7 @@ public:
 };
 
 #define TYPED_OBJECT(T) \
-  void* This() {return this;} \
-  TypeDef* GetTypeDef() const {return &TA_##T;}
+  void* This() override {return this;} \
+  TypeDef* GetTypeDef() const override {return &TA_##T;}
 
 #endif // ITypedObject_h

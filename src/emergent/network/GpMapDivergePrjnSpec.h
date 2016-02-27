@@ -30,7 +30,7 @@ class E_API GpMapDivergePrjnSpec : public ProjectionSpec {
 INHERITED(ProjectionSpec)
 public:
   
-  void 		Connect_impl(Projection* prjn, bool make_cons);
+  void 		Connect_impl(Projection* prjn, bool make_cons) override;
 
   TA_SIMPLE_BASEFUNS(GpMapDivergePrjnSpec);
 protected:

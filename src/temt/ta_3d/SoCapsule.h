@@ -31,6 +31,8 @@
 #include <Inventor/nodes/SoCylinder.h>
 #endif
 
+#include <T3Node>
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
@@ -47,20 +49,20 @@ class TA_API SoCapsule : public SoCylinder {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS a cylinder with spheres at the ends
 #ifndef __MAKETA__
   typedef SoCylinder inherited;
-  SO_NODE_HEADER(SoCapsule);
+  TA_SO_NODE_HEADER(SoCapsule);
 #endif
 
 public:
   static void initClass();
   SoCapsule();
 
-  virtual void getPrimitiveCount(SoGetPrimitiveCountAction * action);  // #IGNORE 
-  virtual void GLRender(SoGLRenderAction * action); // #IGNORE 
+  virtual void getPrimitiveCount(SoGetPrimitiveCountAction * action) override;  // #IGNORE 
+  virtual void GLRender(SoGLRenderAction * action) override; // #IGNORE 
 
 protected:
   virtual ~SoCapsule();
 
-  virtual void generatePrimitives(SoAction * action);
+  virtual void generatePrimitives(SoAction * action) override;
 
   void generate_cylinder(const float radius,
                             const float height,

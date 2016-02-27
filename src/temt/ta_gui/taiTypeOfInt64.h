@@ -29,7 +29,7 @@ taTypeDef_Of(taiTypeOfInt64);
 class TA_API taiTypeOfInt64 : public taiType { // handles 64-bit numeric int types
   TAI_TYPEBASE_SUBCLASS(taiTypeOfInt64, taiType);
 public:
-  int           BidForType(TypeDef* td);
+  int           BidForType(TypeDef* td) override;
 };
 
 #endif // taiTypeOfInt64_h

@@ -78,7 +78,7 @@ public:
   void  Copy_(const GridColView& cp);
   TA_BASEFUNS(GridColView);
 protected:
-  void                  UpdateAfterEdit_impl();
+  void         UpdateAfterEdit_impl() override;
   void         UpdateFromDataCol_impl(bool first_time) override;
   void         DataColUnlinked() override; // called if data is NULL or destroys
 

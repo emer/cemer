@@ -24,6 +24,8 @@
 class SoSeparator; //
 #endif
 
+#include <T3Node>
+
 // member includes:
 #include <taString>
 #include <taVector3f>
@@ -43,7 +45,7 @@ class TA_API SoMatrixGrid: public SoSeparator {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS renders a matrix as a grid of 3d blocks, in X-Y plane, with block height = Z axis.  size = 1x1 unit
 INHERITED(SoSeparator)
 #ifndef __MAKETA__
-  SO_NODE_HEADER(SoMatrixGrid);
+  TA_SO_NODE_HEADER(SoMatrixGrid);
 #endif // def __MAKETA__
 public:
   enum MatrixLayout { 	// order of display for matrix cols
@@ -95,7 +97,7 @@ public:
   ~SoMatrixGrid();
 
 protected:
-  const char*  	getFileFormatName() const {return "Separator"; } 
+  const char*  	getFileFormatName() const override {return "Separator"; } 
 
   SoIndexedTriangleStripSet* shape_;
   SoTransform*		transform_; // for entire object: goes first in this

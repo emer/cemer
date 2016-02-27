@@ -29,11 +29,11 @@ taTypeDef_Of(taiTypeOfReal);
 class TA_API taiTypeOfReal : public taiType { // handles real types, provides validators
   TAI_TYPEBASE_SUBCLASS(taiTypeOfReal, taiType);
 public:
-  int           BidForType(TypeDef* td);
+  int           BidForType(TypeDef* td) override;
 protected:
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  void          GetValue_impl(taiWidget* dat, void* base);
+    QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
+  void          GetValue_impl(taiWidget* dat, void* base) override;
 };
 
 #endif // taiTypeOfReal_h

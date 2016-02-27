@@ -37,7 +37,7 @@ public:
                        taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
                        const String& flt_start_txt = "");
 protected:
-  const String          itemTag() const {return "Enum Type: ";}
+  const String          itemTag() const override {return "Enum Type: ";}
 
   bool                  AddType_Enum(TypeDef* typ_, TypeDef* par_typ); // true if should be shown to user
   int                   BuildChooser_0(iDialogItemChooser* ic, TypeDef* top_typ,

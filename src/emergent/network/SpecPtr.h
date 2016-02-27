@@ -95,7 +95,7 @@ public:
     return false;
   }
 
-  void		SetDefaultSpec(taBase* ownr, TypeDef* td)
+  void		SetDefaultSpec(taBase* ownr, TypeDef* td) override
   { SpecPtr_impl::SetDefaultSpec(ownr, td); }
   void		SetDefaultSpec(taBase* ownr)
   { SetDefaultSpec(ownr, T::StatTypeDef(1)); }
@@ -112,8 +112,8 @@ public:
   operator BaseSpec*() const	{ return SPtr(); }
   operator bool() const 	{ return (bool)spec; }
 
-  void  InitLinks()		{ SpecPtr_impl::InitLinks(); taBase::Own(spec, this); }
-  void  CutLinks()		{ spec.CutLinks(); SpecPtr_impl::CutLinks(); }
+  void  InitLinks() override	{ SpecPtr_impl::InitLinks(); taBase::Own(spec, this); }
+  void  CutLinks() override	{ spec.CutLinks(); SpecPtr_impl::CutLinks(); }
   
   TA_TMPLT_BASEFUNS_LITE(SpecPtr,T);
 private:

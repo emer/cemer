@@ -2127,15 +2127,17 @@ static cssEl* cssElCFun_putenv_stub(int, cssEl* arg[]) {
   for(i=0; i<env_vals.size; i++) {
     if(env_vals.FastEl(i).at(0,env_cue.length()) == env_cue) { // redefining existing
       env_vals.FastEl(i) = env_val;
-      if(putenv((char*)env_vals.FastEl(i)))
+      const char* val = (const char*)env_vals.FastEl(i);
+      if(setenv(val, val, 1))   // setenv preferred to putenv
 	return cssBI::true_int; // no sense in creating more baggage..
       else
 	return cssBI::false_int;
     }
   }
   env_vals.Add(env_val);
-  if(putenv((const char*)env_vals.Peek()))
-    return cssBI::true_int; // no sense in creating more baggage..
+  const char* val = (const char*)env_vals.Peek();
+  if(setenv(val, val, 1))       // setenv preferred to putenv
+    return cssBI::true_int;     // no sense in creating more baggage..
   else
     return cssBI::false_int;
 }

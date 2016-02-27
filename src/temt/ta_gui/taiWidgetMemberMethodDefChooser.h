@@ -49,8 +49,8 @@ public:
                            taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
                            const String& flt_start_txt = "");
 protected:
-  const String          itemTag() const {return "Member/Method: ";}
-  const String          labelNameNonNull() const;
+  const String          itemTag() const override {return "Member/Method: ";}
+  const String          labelNameNonNull() const override;
 
   void         BuildCategories_impl() override;
   void                  BuildChooser_0(iDialogItemChooser* ic); // all

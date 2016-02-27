@@ -30,11 +30,11 @@ taTypeDef_Of(taiMemberOfTokenPtrFromGroup);
 class TA_API taiMemberOfTokenPtrFromGroup : public taiMemberOfTokenPtr {
   TAI_MEMBER_SUBCLASS(taiMemberOfTokenPtrFromGroup, taiMemberOfTokenPtr);
 public:
-  int           BidForMember(MemberDef* md, TypeDef* td);
-  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  void          GetImage_impl(taiWidget* dat, const void* base);
-  void GetMbrValue(taiWidget* dat, void* base, bool& first_diff) override;
+  int           BidForMember(MemberDef* md, TypeDef* td) override;
+  taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetMbrValue(taiWidget* dat, void* base, bool& first_diff) override;
 
   virtual MemberDef*    GetFromMd();
   virtual taList_impl*       GetList(MemberDef* from_md, const void* base);

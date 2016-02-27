@@ -45,9 +45,9 @@ public:
   void  BgRunKilled() override;
   void	Dump_Load_post() override;
 
-  void 	InitLinks_impl(); // special, for this class only
-  void 	InitLinks_post(); // special, for this class only
-  void	CutLinks_impl(); // special, so we can do base class guys first (esp. viewers)
+  void 	InitLinks_impl() override; // special, for this class only
+  void 	InitLinks_post() override; // special, for this class only
+  void	CutLinks_impl() override; // special, so we can do base class guys first (esp. viewers)
   void	Copy_(const ProjectBase& cp);
   TA_BASEFUNS(ProjectBase);
 private:

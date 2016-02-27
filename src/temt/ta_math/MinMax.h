@@ -98,7 +98,7 @@ public:
 
   TA_BASEFUNS_LITE(MinMax);
  protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 private:
   void  Initialize()            { min = max = 0.0f; }
   void  Destroy()               { };

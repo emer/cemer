@@ -55,8 +55,8 @@ protected:
   taSmartRef            scope_ref;      // reference object for scoping, default is none
   TypeDef*              scope_typ;      // type of scope to use (NULL = default)
 
-  const String          itemTag() const {return "Token: ";}
-  const String          labelNameNonNull() const;
+  const String          itemTag() const override {return "Token: ";}
+  const String          labelNameNonNull() const override;
 
   int                   BuildChooser_0(iDialogItemChooser* ic, TypeDef* top_typ,
     QTreeWidgetItem* top_item); // we use this recursively

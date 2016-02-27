@@ -283,11 +283,11 @@ public:
   bool         CheckConfig_impl(bool quiet) override;
   void         CheckChildConfig_impl(bool quiet, bool& rval) override;
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(ActrModel);
 protected:
-  void UpdateAfterEdit_impl(); 
+  void UpdateAfterEdit_impl() override; 
 
 private:
   SIMPLE_COPY(ActrModel);

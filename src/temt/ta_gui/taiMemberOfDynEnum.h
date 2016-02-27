@@ -33,9 +33,9 @@ class TA_API taiMemberOfDynEnum : public taiMember {
   // an int member with #DYNENUM_ON_xxx flag indicating DynEnumType guy
   TAI_MEMBER_SUBCLASS(taiMemberOfDynEnum, taiMember);
 public:
-  int           BidForMember(MemberDef* md, TypeDef* td);
+  int           BidForMember(MemberDef* md, TypeDef* td) override;
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr_);
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_) override;
 
   static void   UpdateDynEnumCombo(taiWidgetComboBox* cb, DynEnum& de);
   // helper function for populating combobox with dyn enum values

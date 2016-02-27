@@ -37,7 +37,7 @@ public:
   void  GetMenu(taiWidgetActions* menu, iMenuAction* actn = NULL) override; // variant provided for MenuGroup_impl in winbase
   virtual void  UpdateMenu(iMenuAction* actn = NULL);
 
-  QWidget*      GetRep();
+  QWidget*      GetRep() override;
   void          GetImage(taList_impl* base_lst, taBase* it);
   taBase*       GetValue();
 

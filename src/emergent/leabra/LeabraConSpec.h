@@ -117,7 +117,7 @@ public:
   TA_BASEFUNS(XCalLearnSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -179,7 +179,7 @@ public:
   TA_SIMPLE_BASEFUNS(WtSigSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -207,7 +207,7 @@ public:
   TA_SIMPLE_BASEFUNS(SlowWtsSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -327,7 +327,7 @@ public:
     }
   }
 
-  void  LoadWeightVal(float wtval, ConGroup* cg, int cidx, Network* net) {
+  void  LoadWeightVal(float wtval, ConGroup* cg, int cidx, Network* net) override {
     cg->Cn(cidx, WT, net) = wtval;
     float linwt = LinFmSigWt(wtval / cg->Cn(cidx, SCALE, net));
     cg->Cn(cidx, SWT, net) = linwt;
@@ -402,7 +402,7 @@ public:
   inline float 	C_Compute_Netin(const float wt, const float su_act)
   { return wt * su_act;	}
   // #IGNORE NOTE: doesn't work with spiking -- need a separate function to use act_eq for that case -- using act_eq does NOT work with scalarval etc
-  inline float 	Compute_Netin(ConGroup* cg, Network* net, int thr_no);
+  inline float 	Compute_Netin(ConGroup* cg, Network* net, int thr_no) override;
   // #IGNORE
 
   ///////////////////////////////////////////////////////////////
@@ -570,12 +570,12 @@ public:
   void          GetPrjnName(Projection& prjn, String& nm) override;
   String        GetToolbarName() const override { return "connect spec"; }
 
-  void	InitLinks();
+  void	InitLinks() override;
   SIMPLE_COPY(LeabraConSpec);
   TA_BASEFUNS(LeabraConSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy()		{ };

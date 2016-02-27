@@ -52,8 +52,8 @@ protected:
     TC_NoAddCheckChildren, // typically for templates
     TC_Add // "normal" class types
   };
-  const String          itemTag() const {return "Type: ";}
-  const String          labelNameNonNull() const;
+  const String          itemTag() const override {return "Type: ";}
+  const String          labelNameNonNull() const override;
 
   TypeCat               AddType_Class(TypeDef* typ); // true if should be shown to user
   void         BuildCategories_impl() override;

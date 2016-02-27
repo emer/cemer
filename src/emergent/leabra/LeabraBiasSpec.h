@@ -51,7 +51,7 @@ public:
 
   void	Trial_Init_Specs(LeabraNetwork* net) override;
 
-  bool	CheckObjectType_impl(taBase* obj);
+  bool	CheckObjectType_impl(taBase* obj) override;
 
   TA_SIMPLE_BASEFUNS(LeabraBiasSpec);
 protected:

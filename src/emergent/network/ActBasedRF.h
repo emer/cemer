@@ -81,7 +81,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActBasedRF);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
   void	CheckThisConfig_impl(bool quiet, bool& rval) override;
     
 private:

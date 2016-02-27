@@ -25,6 +25,7 @@
 // member includes:
 #include <byte_Matrix>
 #include <iVec2i>
+#include <T3Node>
 
 // declare all other types mentioned but not required to include:
 class SbImage; // #IGNORE
@@ -55,7 +56,7 @@ class TA_API SoImageEx: public SoSeparator {
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
 
-  SO_NODE_HEADER(SoImageEx);
+  TA_SO_NODE_HEADER(SoImageEx);
 #endif // def __MAKETA__
 public:
   static void		initClass();
@@ -76,7 +77,7 @@ protected:
   static bool 		SetTextureFile_impl(SoTexture2* sotx, const String& fname,
     bool use_simage); 
 
-  const char*  	getFileFormatName() const {return "Separator"; } 
+  const char*  	getFileFormatName() const override {return "Separator"; } 
 
   SoRect*		shape;
   byte_Matrix		img;

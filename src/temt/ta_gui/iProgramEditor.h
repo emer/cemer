@@ -127,31 +127,31 @@ public slots:
 
 
 public: // ITypedObject i/f
-  void*                 This() {return this;}
-  TypeDef*              GetTypeDef() const {return &TA_iProgramEditor;}
+  void*                 This() override {return this;}
+  TypeDef*              GetTypeDef() const override {return &TA_iProgramEditor;}
 
 public: // ISigLinkClient i/f
-  void                  SigLinkDestroying(taSigLink* dl);
-  void                  SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
+  void                  SigLinkDestroying(taSigLink* dl) override;
+  void                  SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
 
 public: // IWidgetHost i/f -- some delegate up to mommy
-  const iColor          colorOfCurRow() const; // #IGNORE
-  bool                  HasChanged() {return m_modified;}
-  bool                  isConstructed() {return true;}
-  bool                  isModal() {return false;} // never for us
-  bool                  isReadOnly() {return read_only;}
+  const iColor          colorOfCurRow() const override; // #IGNORE
+  bool                  HasChanged() override {return m_modified;}
+  bool                  isConstructed() override {return true;}
+  bool                  isModal() override {return false;} // never for us
+  bool                  isReadOnly() override {return read_only;}
 #ifndef __MAKETA__
-  TypeItem::ShowMembs   show() const {return m_show;}
+  TypeItem::ShowMembs   show() const override {return m_show;}
 #endif
     // used by polydata
   iMainWindowViewer*    window() const;
-  void*                 Root() const {return (void*)base;} // base of the object
-  taBase*               Base() const {return base;} // root of the object, if a taBase
-  TypeDef*              GetRootTypeDef() const; // TypeDef on the base, for casting
-  void                  GetValue();
-  void                  GetImage();
-  void                  Changed(); // called by embedded item to indicate contents have changed
-  void                  Apply_Async();
+  void*                 Root() const override {return (void*)base;} // base of the object
+  taBase*               Base() const override {return base;} // root of the object, if a taBase
+  TypeDef*              GetRootTypeDef() const override; // TypeDef on the base, for casting
+  void                  GetValue() override;
+  void                  GetImage() override;
+  void                  Changed() override; // called by embedded item to indicate contents have changed
+  void                  Apply_Async() override;
 
 protected:
   int                   ln_sz; // const, the line size, without margins

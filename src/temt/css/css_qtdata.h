@@ -75,12 +75,12 @@ public:
   void          ShowReturnVal(cssEl* rval);
   void          UpdateAfter();  // update display after performing menu call
 
-  void          GenerateScript(); // output script code equivalent if recording
+  void          GenerateScript() override; // output script code equivalent if recording
 
   void         AddToMenu(taiWidgetActions* menu) override;
 
 public slots:
-  void          CallFun();      // (override) call the function..
+  void          CallFun() override;      // (override) call the function..
 };
 
 

@@ -39,7 +39,7 @@ public:
 
   bool          post(bool modal); // simplified version of post_xxx routines, returns true if accepted or false (if modal) if cancelled
   void          dismiss(bool accept_);
-  void          accept();
+  void          accept() override;
 
   void          iconify();   // Iv compatibility routine
   void          deiconify(); // Iv compatibility routine

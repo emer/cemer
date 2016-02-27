@@ -163,7 +163,7 @@ public:
   float		thr_sub_e_rev_e;// #READ_ONLY #NO_SAVE #HIDDEN thr - e_rev_e used for compute_ethresh
 
  protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 };
 
 #endif // V1KwtaSpec_h

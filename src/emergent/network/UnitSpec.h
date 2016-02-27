@@ -94,8 +94,8 @@ public:
   String        GetTypeDecoKey() const override { return "UnitSpec"; }
   String        GetToolbarName() const override { return "unit spec"; }
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   void  Copy_(const UnitSpec& cp);
   TA_BASEFUNS(UnitSpec);
 protected:

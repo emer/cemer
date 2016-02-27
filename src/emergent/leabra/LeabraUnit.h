@@ -243,7 +243,7 @@ public:
 
   void      BuildUnits() override;
 
-  void      CutLinks();
+  void      CutLinks() override;
   void      Copy_(const LeabraUnit& cp);
   TA_BASEFUNS(LeabraUnit);
 private:

@@ -22,6 +22,8 @@
 #include <Inventor/nodes/SoSeparator.h>
 #endif
 
+#include <T3Node>
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
@@ -35,7 +37,7 @@ class TA_API T3TransformBoxDragger: public SoSeparator {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS my custom transform box dragger kit for positioning T3 view guys
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
-  SO_NODE_HEADER(T3TransformBoxDragger);
+  TA_SO_NODE_HEADER(T3TransformBoxDragger);
 #endif // def __MAKETA__
 public:
   static void		initClass();
@@ -46,7 +48,7 @@ public:
   SoTransformBoxDragger* dragger_;	// #IGNORE dragger
   SoCalculator*		trans_calc_;    // #IGNORE translation calculator -- gets from translation of dragger
 protected:
-  const char*  	getFileFormatName() const {return "Separator"; } 
+  const char*  	getFileFormatName() const override {return "Separator"; } 
 };
 
 #endif // T3TransformBoxDragger_h

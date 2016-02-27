@@ -45,7 +45,7 @@ protected:
 
 protected:
   void         closeEvent(QCloseEvent* ev) override;
-  bool                  event(QEvent* ev);
+  bool                  event(QEvent* ev) override;
   void                  hideEvent(QHideEvent* e) override;
   void                  showEvent(QShowEvent* e) override;
   virtual void          Showing(bool showing); // #IGNORE called by the show/hide handlers

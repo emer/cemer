@@ -256,18 +256,18 @@ public:
   ////////////////////////////////////////////
   //	Misc structural routines
 
-  bool          SetLayerSpec(LayerSpec* sp);
-  LayerSpec*    GetLayerSpec()		{ return (LayerSpec*)spec.SPtr(); }
+  bool          SetLayerSpec(LayerSpec* sp) override;
+  LayerSpec*    GetLayerSpec() override	{ return (LayerSpec*)spec.SPtr(); }
   
   String        GetToolbarName() const override { return "layer"; }
 
 
-  void	InitLinks();
-  void	CutLinks();
+  void	InitLinks() override;
+  void	CutLinks() override;
   void	Copy_(const LeabraLayer& cp);
   TA_BASEFUNS(LeabraLayer);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
   void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 private:
   void	Initialize();

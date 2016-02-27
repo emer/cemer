@@ -185,8 +185,8 @@ public:
 
   bool ChangeMyType(TypeDef* new_type) override;
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   void  Copy_(const Projection& cp);
   TA_BASEFUNS(Projection);
 protected:

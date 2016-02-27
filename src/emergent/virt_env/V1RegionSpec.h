@@ -56,7 +56,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(V1GaborSpec);
 protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };
@@ -76,7 +76,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(V1sNeighInhib);
 protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };
@@ -99,7 +99,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(V1MotionSpec);
 protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };
@@ -125,7 +125,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(V1ComplexSpec);
 protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };
@@ -147,7 +147,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(VisSpatIntegSpec);
 protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };

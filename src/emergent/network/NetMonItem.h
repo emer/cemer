@@ -139,17 +139,17 @@ public:
   static const KeyString key_obj_name; // #IGNORE
   static const KeyString key_obj_type; // #IGNORE
   static const KeyString key_obj_var; // #IGNORE
-  String GetColText(const KeyString& key, int itm_idx = -1) const;
+  String GetColText(const KeyString& key, int itm_idx = -1) const override;
 
   void           CollectAllSpecs(NetMonitor* mon);
   // #IGNORE collect all the specs to parent monitor
 
   void           UpdatePointersAfterCopy_impl(const taBase& cp) override;
 
-  int		GetEnabled() const {return (off) ? 0 : 1;}
-  void	SetEnabled(bool value) {off = !value;}
-  void  InitLinks();
-  void	CutLinks();
+  int	GetEnabled() const override {return (off) ? 0 : 1;}
+  void	SetEnabled(bool value) override {off = !value;}
+  void  InitLinks() override;
+  void	CutLinks() override;
   void 	Copy_(const NetMonItem& cp);
   TA_BASEFUNS(NetMonItem);//
   

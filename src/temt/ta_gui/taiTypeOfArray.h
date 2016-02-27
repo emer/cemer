@@ -30,10 +30,10 @@ class TA_API taiTypeOfArray : public taiTypeOfClass {
   TAI_TYPEBASE_SUBCLASS(taiTypeOfArray, taiTypeOfClass);
 public:
   bool allowsInline() const override { return false; }
-  int           BidForType(TypeDef* td);
+  int           BidForType(TypeDef* td) override;
 protected:
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
+    QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
 };
 
 #endif // taiTypeOfArray_h

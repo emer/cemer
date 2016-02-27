@@ -93,22 +93,22 @@ public: // ISigLinkClient interface
   TypeDef*     GetTypeDef() const override {return &TA_iViewPanel;}
 
 public: // IWidgetHost i/f -- some delegate up to mommy
-  const iColor          colorOfCurRow() const; // #IGNORE probably not used, we just return our own bg color
-  bool                  HasChanged() {return m_modified;}
-  bool                  isConstructed() {return true;}
-  bool                  isModal() {return false;} // never for us
-  bool                  isReadOnly() {return read_only;}
-  TypeItem::ShowMembs   show() const;
+  const iColor          colorOfCurRow() const override; // #IGNORE probably not used, we just return our own bg color
+  bool                  HasChanged() override {return m_modified;}
+  bool                  isConstructed() override {return true;}
+  bool                  isModal() override {return false;} // never for us
+  bool                  isReadOnly() override {return read_only;}
+  TypeItem::ShowMembs   show() const override;
     // used by polydata
   iMainWindowViewer*    window() const {return (tabView()) ? tabView()->viewerWindow() : NULL;}
-  void*                 Root() const {return (void*)m_dv;} // (typical, could replace)
-  taBase*               Base() const {return m_dv;} // (typical, could replace)
-  TypeDef*              GetRootTypeDef() const {return (m_dv) ? m_dv->GetTypeDef() : NULL;} // (could replace)
-  void                  GetValue(); // does setup, override the impl
-  void                  GetImage() {UpdatePanel();}
+  void*                 Root() const override {return (void*)m_dv;} // (typical, could replace)
+  taBase*               Base() const override {return m_dv;} // (typical, could replace)
+  TypeDef*              GetRootTypeDef() const override {return (m_dv) ? m_dv->GetTypeDef() : NULL;} // (could replace)
+  void                  GetValue() override; // does setup, override the impl
+  void                  GetImage() override {UpdatePanel();}
 public slots:
-  void                  Changed(); // called by embedded item to indicate contents have changed
-  void                  Apply_Async();
+  void                  Changed() override; // called by embedded item to indicate contents have changed
+  void                  Apply_Async() override;
 
 protected:
   taiWidget_List           dl; // add any taiWidget guys you make to this, so they get deleted

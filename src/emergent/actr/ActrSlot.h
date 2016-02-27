@@ -109,11 +109,11 @@ public:
   String GetDisplayName() const override;
   String GetTypeDecoKey() const override { return "ProgType"; }
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(ActrSlot);
 protected:
-  void UpdateAfterEdit_impl(); 
+  void UpdateAfterEdit_impl() override; 
 
 private:
   SIMPLE_COPY(ActrSlot);

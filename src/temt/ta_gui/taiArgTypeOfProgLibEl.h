@@ -30,11 +30,11 @@ class TA_API taiArgTypeOfProgLibEl : public taiArgTypeOfFromGroup {
   // for ProgLibEl* ptr args
   TAI_ARGTYPE_SUBCLASS(taiArgTypeOfProgLibEl, taiArgTypeOfFromGroup);
 public:
-  int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
-  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr_);
-  void          GetImage_impl(taiWidget* dat, const void* base);
-  void          GetValue_impl(taiWidget* dat, void* base);
+  int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) override;
+  taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_) override;
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetValue_impl(taiWidget* dat, void* base) override;
 private:
   void          Initialize() {}
   void          Destroy() {}

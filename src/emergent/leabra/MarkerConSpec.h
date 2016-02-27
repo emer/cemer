@@ -29,7 +29,7 @@ class E_API MarkerConSpec : public LeabraConSpec {
   // connection spec that marks special projections: doesn't send netin or adapt weights
 INHERITED(LeabraConSpec)
 public:
-  bool  IsMarkerCon() { return true; }
+  bool  IsMarkerCon() override { return true; }
   bool  DoesStdNetin() override { return false; }
   bool  DoesStdDwt() override { return true; }
 

@@ -278,35 +278,35 @@ public:
   operator Int() const override;
   operator bool() const override;
 
-  void operator=(const cssEl& s);
+  void operator=(const cssEl& s) override;
   using cssTA_Base::operator=;
 
-  cssEl* operator+(cssEl& t);
-  cssEl* operator-(cssEl& t);
-  cssEl* operator*(cssEl& t);
-  cssEl* operator/(cssEl& t);
-  cssEl* operator%(cssEl& t);
-  cssEl* operator^(cssEl& s);
+  cssEl* operator+(cssEl& t) override;
+  cssEl* operator-(cssEl& t) override;
+  cssEl* operator*(cssEl& t) override;
+  cssEl* operator/(cssEl& t) override;
+  cssEl* operator%(cssEl& t) override;
+  cssEl* operator^(cssEl& s) override;
 
-  cssEl* operator-();
-  cssEl* operator*()		{ return cssTA_Base::operator*(); }
+  cssEl* operator-() override;
+  cssEl* operator*() override		{ return cssTA_Base::operator*(); }
 
-  void operator+=(cssEl& t);
-  void operator-=(cssEl& t);
-  void operator*=(cssEl& t);
-  void operator/=(cssEl& t);
-  void operator%=(cssEl& t);
+  void operator+=(cssEl& t) override;
+  void operator-=(cssEl& t) override;
+  void operator*=(cssEl& t) override;
+  void operator/=(cssEl& t) override;
+  void operator%=(cssEl& t) override;
 
-  cssEl* operator! ();
-  cssEl* operator&&(cssEl& s);
-  cssEl* operator||(cssEl& s);
+  cssEl* operator! () override;
+  cssEl* operator&&(cssEl& s) override;
+  cssEl* operator||(cssEl& s) override;
 
-  cssEl* operator< (cssEl& s);
-  cssEl* operator> (cssEl& s);
-  cssEl* operator<=(cssEl& s);
-  cssEl* operator>=(cssEl& s);
-  cssEl* operator==(cssEl& s);
-  cssEl* operator!=(cssEl& s);
+  cssEl* operator< (cssEl& s) override;
+  cssEl* operator> (cssEl& s) override;
+  cssEl* operator<=(cssEl& s) override;
+  cssEl* operator>=(cssEl& s) override;
+  cssEl* operator==(cssEl& s) override;
+  cssEl* operator!=(cssEl& s) override;
 };
 
 
@@ -352,14 +352,14 @@ public:
   cssSmartRef(const cssSmartRef& cp, const String& nm) : cssTA(cp, nm)
     { cssref = NULL; UpdateCssRef(); }
   cssCloneOnly(cssSmartRef);
-  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  cssEl*	MakeToken_stub(int, cssEl *arg[]) override
   { return new cssSmartRef((void*)NULL, ptr_cnt, type_def, (const String&)*(arg[1])); }
   ~cssSmartRef();
 
   // converters
   String GetStr() const override 	{ return cssref->GetStr(); }
   Variant GetVar() const override 	{ return cssref->GetVar(); }
-  operator Real() const override	 	{ return (Real)*(cssref); }
+  operator Real() const override	{ return (Real)*(cssref); }
   operator Int() const override	 	{ return (Int)*(cssref); }
   operator void*() const override	{ return (void*)*(cssref); }
   operator void**() const override	{ return (void**)*(cssref); }
@@ -371,16 +371,16 @@ public:
   void* 	GetVoidPtrOfType(const String& td) const override;
 
   // operators
-  void operator=(const String& s)	{ cssref->operator=(s); }
-  void operator=(const cssEl& s);
-  void operator=(taBase*);
-  void operator=(taBase**);
+  void operator=(const String& s) override	{ cssref->operator=(s); }
+  void operator=(const cssEl& s) override;
+  void operator=(taBase*) override;
+  void operator=(taBase**) override;
   using cssTA::operator=;
 
-  void CastFm(const cssEl& cp)	{ ArgCopy(cp); }
-  void ArgCopy(const cssEl& cp);
+  void CastFm(const cssEl& cp) override	{ ArgCopy(cp); }
+  void ArgCopy(const cssEl& cp) override;
 
-  void PtrAssignPtr(const cssEl& s);
+  void PtrAssignPtr(const cssEl& s) override;
 
   void UpdateAfterEdit() override	{ cssref->UpdateAfterEdit(); }
 
@@ -392,45 +392,45 @@ public:
   cssEl* GetMethodFmNo(int s) const override		{ return cssref->GetMethodFmNo(s); }
   cssEl* GetMethodFmName(const String& s) const override	{ return cssref->GetMethodFmName(s); }
   cssEl* GetScoped(const String& s) const override  	{ return cssref->GetScoped(s); }
-  cssEl* NewOpr()   				{ return cssref->NewOpr(); }
-  void	 DelOpr() 				{ cssref->DelOpr(); }
+  cssEl* NewOpr()  override  				{ return cssref->NewOpr(); }
+  void	 DelOpr()  override				{ cssref->DelOpr(); }
 
-  cssEl* operator+(cssEl& s) 	{ return cssref->operator+(s); }
-  cssEl* operator-(cssEl& s) 	{ return cssref->operator-(s); }
-  cssEl* operator*(cssEl& s) 	{ return cssref->operator*(s); }
-  cssEl* operator/(cssEl& s) 	{ return cssref->operator/(s); }
-  cssEl* operator%(cssEl& s) 	{ return cssref->operator%(s); }
-  cssEl* operator<<(cssEl& s)	{ return cssref->operator<<(s); }
-  cssEl* operator>>(cssEl& s)	{ return cssref->operator>>(s); }
-  cssEl* operator&(cssEl& s)	{ return cssref->operator&(s); }
-  cssEl* operator^(cssEl& s)	{ return cssref->operator^(s); }
-  cssEl* operator|(cssEl& s)	{ return cssref->operator|(s); }
-  cssEl* operator-()       	{ return cssref->operator-(); }
-  cssEl* operator~()       	{ return cssref->operator~(); }
-  cssEl* operator*()	   	{ return cssref->operator*(); }
-  cssEl* operator[](const Variant& idx) const	{ return cssref->operator[](idx); }
+  cssEl* operator+(cssEl& s) override 	{ return cssref->operator+(s); }
+  cssEl* operator-(cssEl& s) override 	{ return cssref->operator-(s); }
+  cssEl* operator*(cssEl& s) override 	{ return cssref->operator*(s); }
+  cssEl* operator/(cssEl& s) override 	{ return cssref->operator/(s); }
+  cssEl* operator%(cssEl& s) override 	{ return cssref->operator%(s); }
+  cssEl* operator<<(cssEl& s) override	{ return cssref->operator<<(s); }
+  cssEl* operator>>(cssEl& s) override	{ return cssref->operator>>(s); }
+  cssEl* operator&(cssEl& s) override	{ return cssref->operator&(s); }
+  cssEl* operator^(cssEl& s) override	{ return cssref->operator^(s); }
+  cssEl* operator|(cssEl& s) override	{ return cssref->operator|(s); }
+  cssEl* operator-() override       	{ return cssref->operator-(); }
+  cssEl* operator~() override       	{ return cssref->operator~(); }
+  cssEl* operator*() override	   	{ return cssref->operator*(); }
+  cssEl* operator[](const Variant& idx) const  override	{ return cssref->operator[](idx); }
 
-  cssEl* operator! ()		{ return cssref->operator!(); }
-  cssEl* operator&&(cssEl& s)	{ return cssref->operator&&(s); }
-  cssEl* operator||(cssEl& s)	{ return cssref->operator||(s); }
+  cssEl* operator! () override		{ return cssref->operator!(); }
+  cssEl* operator&&(cssEl& s) override	{ return cssref->operator&&(s); }
+  cssEl* operator||(cssEl& s) override	{ return cssref->operator||(s); }
 
-  cssEl* operator< (cssEl& s) 	{ return cssref->operator<(s); }
-  cssEl* operator> (cssEl& s) 	{ return cssref->operator>(s); }
-  cssEl* operator<=(cssEl& s) 	{ return cssref->operator<=(s); }
-  cssEl* operator>=(cssEl& s) 	{ return cssref->operator>=(s); }
-  cssEl* operator==(cssEl& s) 	{ return cssref->operator==(s); }
-  cssEl* operator!=(cssEl& s) 	{ return cssref->operator!=(s); }
+  cssEl* operator< (cssEl& s) override 	{ return cssref->operator<(s); }
+  cssEl* operator> (cssEl& s) override 	{ return cssref->operator>(s); }
+  cssEl* operator<=(cssEl& s) override 	{ return cssref->operator<=(s); }
+  cssEl* operator>=(cssEl& s) override 	{ return cssref->operator>=(s); }
+  cssEl* operator==(cssEl& s) override 	{ return cssref->operator==(s); }
+  cssEl* operator!=(cssEl& s) override 	{ return cssref->operator!=(s); }
 
-  void operator+=(cssEl& s) 	{ cssref->operator+=(s); }
-  void operator-=(cssEl& s) 	{ cssref->operator-=(s); }
-  void operator*=(cssEl& s) 	{ cssref->operator*=(s); }
-  void operator/=(cssEl& s) 	{ cssref->operator/=(s); }
-  void operator%=(cssEl& s) 	{ cssref->operator%=(s); }
-  void operator<<=(cssEl& s) 	{ cssref->operator<<=(s); }
-  void operator>>=(cssEl& s) 	{ cssref->operator>>=(s); }
-  void operator&=(cssEl& s) 	{ cssref->operator&=(s); }
-  void operator^=(cssEl& s) 	{ cssref->operator^=(s); }
-  void operator|=(cssEl& s) 	{ cssref->operator|=(s); }
+  void operator+=(cssEl& s) override 	{ cssref->operator+=(s); }
+  void operator-=(cssEl& s) override 	{ cssref->operator-=(s); }
+  void operator*=(cssEl& s) override 	{ cssref->operator*=(s); }
+  void operator/=(cssEl& s) override 	{ cssref->operator/=(s); }
+  void operator%=(cssEl& s) override 	{ cssref->operator%=(s); }
+  void operator<<=(cssEl& s) override 	{ cssref->operator<<=(s); }
+  void operator>>=(cssEl& s) override 	{ cssref->operator>>=(s); }
+  void operator&=(cssEl& s) override 	{ cssref->operator&=(s); }
+  void operator^=(cssEl& s) override 	{ cssref->operator^=(s); }
+  void operator|=(cssEl& s) override 	{ cssref->operator|=(s); }
 
 };
 
@@ -449,12 +449,12 @@ public:
   cssIOS(const cssIOS& cp) : cssTA(cp) { };
   cssIOS(const cssIOS& cp, const String& nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssIOS);
-  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  cssEl*	MakeToken_stub(int, cssEl *arg[]) override
   { return new cssIOS((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
   using cssTA::operator=;
 
-  void PtrAssignPtr(const cssEl& s); // use type casts to make it work right for diff offsets
+  void PtrAssignPtr(const cssEl& s) override; // use type casts to make it work right for diff offsets
 
   operator Real() const override;
   operator Int() const override;
@@ -471,8 +471,8 @@ public:
   operator std::fstream**() const override;
   operator std::stringstream**() const override;
 
-  cssEl* operator<<(cssEl& s);	// for iostreams..
-  cssEl* operator>>(cssEl& s);
+  cssEl* operator<<(cssEl& s) override;	// for iostreams..
+  cssEl* operator>>(cssEl& s) override;
 };
 
 class CSS_API cssFStream : public cssIOS {
@@ -492,18 +492,18 @@ public:
   ~cssFStream()			{ std::fstream* str = (std::fstream*)ptr; delete str; }
 
   cssCloneOnly(cssFStream);
-  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  cssEl*	MakeToken_stub(int, cssEl *arg[]) override
   { return new cssFStream(arg[1]->GetStr()); }
 
-  void operator=(Real) 		{ CvtErr("(Real)"); }
-  void operator=(Int)		{ CvtErr("(Int)"); }
-  void operator=(const String&)	{ CvtErr("(String)"); }
-  void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
-  void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+  void operator=(Real) override 	{ CvtErr("(Real)"); }
+  void operator=(Int) override		{ CvtErr("(Int)"); }
+  void operator=(const String&) override { CvtErr("(String)"); }
+  void operator=(void* cp) override	{ ptr = cp; ptr_cnt = 1; }
+  void operator=(void** cp) override	{ ptr = (void*)cp; ptr_cnt = 2; }
   using cssIOS::operator=;
 
   // operators
-  void operator=(const cssEl&)		{ NopErr("="); }
+  void operator=(const cssEl&) override		{ NopErr("="); }
 };
 
 class CSS_API cssSStream : public cssIOS {
@@ -525,15 +525,15 @@ public:
   cssEl*	MakeToken_stub(int, cssEl *arg[]) override
   { return new cssSStream((const String&)*(arg[1])); }
 
-  void operator=(Real) 		{ CvtErr("(Real)"); }
-  void operator=(Int)		{ CvtErr("(Int)"); }
-  void operator=(const String&)	{ CvtErr("(String)"); }
-  void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
-  void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+  void operator=(Real) override 	{ CvtErr("(Real)"); }
+  void operator=(Int) override		{ CvtErr("(Int)"); }
+  void operator=(const String&) override { CvtErr("(String)"); }
+  void operator=(void* cp) override	{ ptr = cp; ptr_cnt = 1; }
+  void operator=(void** cp) override	{ ptr = (void*)cp; ptr_cnt = 2; }
   using cssIOS::operator=;
 
   // operators
-  void operator=(const cssEl&)		{ NopErr("="); }
+  void operator=(const cssEl&) override		{ NopErr("="); }
 };
 
 class CSS_API cssLeafItr : public cssTA {
@@ -553,29 +553,29 @@ public:
   ~cssLeafItr();
 
   cssCloneOnly(cssLeafItr);
-  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  cssEl*	MakeToken_stub(int, cssEl *arg[]) override
   { return new cssLeafItr(arg[1]->GetStr()); }
 
-  void operator=(Real) 		{ CvtErr("(Real)"); }
-  void operator=(Int)		{ CvtErr("(Int)"); }
-  void operator=(const String&)	{ CvtErr("(String)"); }
-  void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
-  void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+  void operator=(Real) override 	{ CvtErr("(Real)"); }
+  void operator=(Int) override		{ CvtErr("(Int)"); }
+  void operator=(const String&) override { CvtErr("(String)"); }
+  void operator=(void* cp) override	{ ptr = cp; ptr_cnt = 1; }
+  void operator=(void** cp) override	{ ptr = (void*)cp; ptr_cnt = 2; }
   using cssTA::operator=;
 
   // operators
-  void operator=(const cssEl&)		{ NopErr("="); }
+  void operator=(const cssEl&) override		{ NopErr("="); }
 };
 
 class CSS_API cssTypeDef : public cssTA {
   // a pointer to a TypeDef (any number of ptr_cnt)
 public:
-  cssTATypes    GetTAType() const { return TAT_TypeDef; }
+  cssTATypes    GetTAType() const override { return TAT_TypeDef; }
 
-  String	PrintStr() const;
-  String	PrintFStr() const;
-  String&	PrintType(String& fh) const;
-  String&	PrintInherit(String& fh) const;
+  String	PrintStr() const override;
+  String	PrintFStr() const override;
+  String&	PrintType(String& fh) const override;
+  String&	PrintInherit(String& fh) const override;
 
   // constructors
   cssTypeDef() : cssTA() { };
@@ -584,13 +584,13 @@ public:
   cssTypeDef(const cssTypeDef& cp) : cssTA(cp) { };
   cssTypeDef(const cssTypeDef& cp, const String& nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssTypeDef);
-  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  cssEl*	MakeToken_stub(int, cssEl *arg[]) override
   { return new cssTypeDef((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
   operator TypeDef*() const override;
   String GetStr() const override;
-  void operator=(const String& s);
-  void operator=(const cssEl& s);
+  void operator=(const String& s) override;
+  void operator=(const cssEl& s) override;
   using cssTA::operator=;
 };
 
@@ -606,13 +606,13 @@ public:
   cssMemberDef(const cssMemberDef& cp) : cssTA(cp) { };
   cssMemberDef(const cssMemberDef& cp, const String& nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssMemberDef);
-  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  cssEl*	MakeToken_stub(int, cssEl *arg[]) override
   { return new cssMemberDef((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
   operator MemberDef*() const override;
   String GetStr() const override;
-  void operator=(const String& s);
-  void operator=(const cssEl& s);
+  void operator=(const String& s) override;
+  void operator=(const cssEl& s) override;
   using cssTA::operator=;
 };
 
@@ -628,13 +628,13 @@ public:
   cssMethodDef(const cssMethodDef& cp) : cssTA(cp) { };
   cssMethodDef(const cssMethodDef& cp, const String& nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssMethodDef);
-  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  cssEl*	MakeToken_stub(int, cssEl *arg[]) override
   { return new cssMethodDef((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
   operator MethodDef*() const override;
   String GetStr() const override;
-  void operator=(const String& s);
-  void operator=(const cssEl& s);
+  void operator=(const String& s) override;
+  void operator=(const cssEl& s) override;
   using cssTA::operator=;
 };
 

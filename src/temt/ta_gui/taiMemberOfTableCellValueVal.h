@@ -30,9 +30,9 @@ class TA_API taiMemberOfTableCellValueVal : public taiMember {
   TAI_MEMBER_SUBCLASS(taiMemberOfTableCellValueVal, taiMember);
 public:
 
-  int                   BidForMember(MemberDef* md, TypeDef* td);
+  int                   BidForMember(MemberDef* md, TypeDef* td) override;
   taiWidget*            GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-                          QWidget* gui_parent_, int flags_, MemberDef* mbr_);
+                          QWidget* gui_parent_, int flags_, MemberDef* mbr_) override;
 protected:
   void                  GetImage_impl(taiWidget* dat, const void* base) override;
   void                  GetMbrValue_impl(taiWidget* dat, void* base) override;

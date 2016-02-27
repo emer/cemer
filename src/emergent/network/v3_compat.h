@@ -106,7 +106,7 @@ public:
 
   void	Initialize()		{ };
   void	Destroy()		{ };
-  void	InitLinks();
+  void	InitLinks() override;
   void 	Copy_(const float_RArray& cp);
   TA_BASEFUNS(float_RArray);
 };

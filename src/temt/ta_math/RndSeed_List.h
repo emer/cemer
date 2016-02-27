@@ -50,7 +50,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(RndSeed_List);
 protected:
-  void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() override;
     
 private:
   void  Initialize()            { seeds.SetBaseType(&TA_RndSeed); }

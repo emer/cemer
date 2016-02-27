@@ -196,13 +196,13 @@ public:
                                     Layer::AccessMode acc_md, int gpidx);
     // #IGNORE
 
-  void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  void	HelpConfig() override;	// #BUTTON get help message for configuring this spec
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(ScalarValLayerSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy()		{ };

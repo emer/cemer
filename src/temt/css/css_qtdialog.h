@@ -84,12 +84,12 @@ public:
 
   void		Constr_ArgTypes();
   using inherited::GetImage;
-  void		GetImage(bool force); // force ignored
-  void		GetValue();
+  void		GetImage(bool force) override; // force ignored
+  void		GetValue() override;
   int	Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
   // ati is for when n leading args are predetermined by context, and so shouldn't be shown to the user
 
-  void		Ok();
+  void		Ok() override;
 
 
   taiArgType*	GetBestArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);

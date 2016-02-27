@@ -76,7 +76,7 @@ public:
   String        GetTypeDecoKey() const override { return "ProjectionSpec"; }
   String        GetToolbarName() const override { return "prjn spec"; }
 
-  void  InitLinks();
+  void  InitLinks() override;
   SIMPLE_COPY(ProjectionSpec);
   TA_BASEFUNS(ProjectionSpec);
 protected:

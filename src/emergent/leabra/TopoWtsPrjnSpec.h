@@ -41,7 +41,7 @@ class E_API IndexByGps: public SpecMemberBase {
   TA_SIMPLE_BASEFUNS(IndexByGps);
  protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 
  private:
   void Initialize() { };

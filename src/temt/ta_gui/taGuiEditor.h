@@ -65,8 +65,8 @@ public: // IWidgetHost i/f
   void         GetImage()      override { GetImage(true); }
   void         GetValue() override;
 public slots:
-  void          Changed() {inherited::Changed();}
-  void          Apply_Async() {inherited::Apply_Async(); }
+  void          Changed() override {inherited::Changed();}
+  void          Apply_Async() override {inherited::Apply_Async(); }
 };
 
 #endif // taGuiEditor_h

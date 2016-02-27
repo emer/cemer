@@ -64,7 +64,7 @@ public:
   void                  CopyFromView(GraphColView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
 
-  void InitLinks();
+  void InitLinks() override;
   SIMPLE_COPY(GraphColView);
   TA_BASEFUNS(GraphColView);
 protected:

@@ -53,7 +53,7 @@ class TA_API T3GraphBar : public T3NodeLeaf {
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
 
-  SO_NODE_HEADER(T3GraphBar);
+  TA_SO_NODE_HEADER(T3GraphBar);
 #endif // def __MAKETA__
 public:
 

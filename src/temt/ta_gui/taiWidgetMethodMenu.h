@@ -31,7 +31,7 @@ public:
       QWidget* gui_parent_, int flags_ = 0);
 
   QWidget* GetButtonRep() override {return MakeButton();}
-  QWidget*      GetRep()                { return (QWidget*)buttonRep; }
+  QWidget*      GetRep() override  { return (QWidget*)buttonRep; }
 };
 
 #endif // taiWidgetMethodMenu_h

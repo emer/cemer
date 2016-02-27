@@ -88,7 +88,7 @@ class TA_API T3Axis: public T3NodeLeaf {
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
 
-  SO_NODE_HEADER(T3Axis);
+  TA_SO_NODE_HEADER(T3Axis);
 #endif // def __MAKETA__
 public:
   enum Axis {
@@ -105,7 +105,7 @@ public:
   SoFont*		labelFont() const {return labelFont_;} // #IGNORE setup after creating
   float			fontSize() const { return font_size; }
 
-  void			clear();
+  void			clear() override;
   void			addLabel(const char* text, const iVec3f& at);
   // add the label text, justified per axis (used for tick labels)
   void			addLabel(const char* text, const iVec3f& at, int just);

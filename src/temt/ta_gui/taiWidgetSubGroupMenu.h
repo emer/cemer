@@ -38,7 +38,7 @@ public:
   void GetMenu(taiWidgetActions* menu, iMenuAction* actn = NULL) override;
   virtual void  UpdateMenu(iMenuAction* actn = NULL);
 
-  QWidget*      GetRep();
+  QWidget*      GetRep() override;
   void          GetImage(taGroup_impl* base_gp, taGroup_impl* gp);
   taGroup_impl*        GetValue();
 

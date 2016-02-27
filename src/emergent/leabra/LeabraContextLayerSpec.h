@@ -88,7 +88,7 @@ public:
   void TriggerUpdate(LeabraLayer* lay); // manually trigger an update of the context layer -- generally called at end of a Trial -- can always be called even if not on MANUAL
   
 #ifndef __MAKETA__
-  DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
+  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override;
 #endif
 
   TA_SIMPLE_BASEFUNS(LeabraContextLayerSpec);

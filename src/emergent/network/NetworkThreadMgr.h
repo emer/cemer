@@ -74,7 +74,7 @@ public:
 
   TA_BASEFUNS_NOCOPY(NetworkThreadMgr);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 
   int           n_threads_prev;         // #IGNORE number of threads set previously in net build -- for update diffs
 

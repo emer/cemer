@@ -77,7 +77,7 @@ public:
 
   void RenderWizDoc() override;
 
-  void	UpdateAfterEdit();
+  void	UpdateAfterEdit() override;
   TA_SIMPLE_BASEFUNS(Wizard);
 protected:
   void RenderWizDoc_impl() override;

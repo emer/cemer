@@ -134,8 +134,8 @@ public:
 
   String       GetTypeDecoKey() const override { return "Unit"; }
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   void  Copy_(const Unit_Group& cp);
   TA_BASEFUNS(Unit_Group);
 protected:

@@ -22,6 +22,8 @@
 #include <Inventor/nodes/SoSeparator.h>
 #endif
 
+#include <T3Node>
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
@@ -32,14 +34,14 @@ class TA_API T3Translate2Translator: public SoSeparator {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS parameterizes and uses default color of the translate2 translator
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
-  SO_NODE_HEADER(T3Translate2Translator);
+  TA_SO_NODE_HEADER(T3Translate2Translator);
 #endif // def __MAKETA__
 public:
   static void		initClass();
   T3Translate2Translator(bool active = false, float bar_len = 2.0f, float bar_width=0.1f,
 			   float cone_radius=0.25f, float cone_ht=.5f);
 protected:
-  const char*  	getFileFormatName() const {return "Separator"; } 
+  const char*  	getFileFormatName() const override {return "Separator"; } 
 };
 
 #endif // T3Translate2Translator_h

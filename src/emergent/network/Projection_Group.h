@@ -49,7 +49,7 @@ public:
 
   String       GetTypeDecoKey() const override { return "Projection"; }
 
-  void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
+  void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   TA_SIMPLE_BASEFUNS(Projection_Group);
 private:
   void  Initialize()            { SetBaseType(&TA_Projection); send_prjns = false; }

@@ -40,7 +40,7 @@ public:
   TA_SIMPLE_BASEFUNS(PFCGateSpec);
 protected:
   SPEC_DEFAULTS;
-  //  void  UpdateAfterEdit_impl();
+  //  void  UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -65,7 +65,7 @@ public:
   TA_SIMPLE_BASEFUNS(PFCMaintSpec);
 protected:
   SPEC_DEFAULTS;
-  //  void  UpdateAfterEdit_impl();
+  //  void  UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -138,7 +138,7 @@ public:
   TA_SIMPLE_BASEFUNS(PFCUnitSpec);
 protected:
   SPEC_DEFAULTS;
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
   
 private:
   void	Initialize();

@@ -150,7 +150,7 @@ class TA_API T3GraphLine: public T3NodeLeaf {
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
 
-  SO_NODE_HEADER(T3GraphLine);
+  TA_SO_NODE_HEADER(T3GraphLine);
 #endif // def __MAKETA__
 public:
   enum LineStyle { // corresponds to GraphColView::LineStyle
@@ -203,7 +203,7 @@ public:
   bool			valueColorMode(){return valueColorMode_;}
   void			setValueColorMode(bool value);
 
-  void			clear(); //
+  void			clear() override; //
 
   // text api
   void			textAt(const iVec3f& pt, const char* str);

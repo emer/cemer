@@ -37,7 +37,7 @@
 // MemberDefaults only calls Defaults for the type that owns the member, and only
 // for things above the BaseSpec level
 #define SPEC_DEFAULTS \
-  void Defaults_impl() { inherited::Defaults_impl(); Defaults_init(); }
+  void Defaults_impl() override { inherited::Defaults_impl(); Defaults_init(); }
 
 
 eTypeDef_Of(BaseSpec);
@@ -120,8 +120,8 @@ public:
   taBase*         ChooseNew(taBase* origin) override;
   bool            HasChooseNew() override { return true; }
 
-  void	InitLinks();
-  void	CutLinks();
+  void	InitLinks() override;
+  void	CutLinks() override;
   TA_BASEFUNS(BaseSpec);
 protected:
   void	UpdateAfterEdit_impl() override;

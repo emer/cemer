@@ -40,13 +40,13 @@ public:
   void	        Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
                                   int thr_no) override;
 
-  TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
-  void*		GetThisPtr()		{ return (void*)this; }
+  TypeDef*	GetThisTypeDef() const override	{ return GetTypeDef(); }
+  void*		GetThisPtr() override		{ return (void*)this; }
 
   virtual void	Compile();
   // #BUTTON compile script from script file into internal runnable format
 
-  void	InitLinks();
+  void	InitLinks() override;
   void	Copy_(const ScriptPrjnSpec& cp);
   TA_BASEFUNS(ScriptPrjnSpec);
 protected:

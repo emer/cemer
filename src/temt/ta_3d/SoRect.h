@@ -25,6 +25,8 @@
 #include <Inventor/fields/SoMFVec3f.h>
 #endif
 
+#include <T3Node>
+
 // declare all other types mentioned but not required to include:
 
 taTypeDef_Of(SoRect);
@@ -34,7 +36,7 @@ class TA_API SoRect: public SoTriangleStripSet {
 #ifndef __MAKETA__
 typedef SoTriangleStripSet inherited;
 
-  SO_NODE_HEADER(SoRect);
+  TA_SO_NODE_HEADER(SoRect);
 #endif // def __MAKETA__
 public:
   static void		initClass();
@@ -51,7 +53,7 @@ public:
   SoRect();
 
 protected:
-  const char*  	getFileFormatName() const {return "TriangleStripSet"; } 
+  const char*  	getFileFormatName() const override {return "TriangleStripSet"; } 
   void 		render(); // #IGNORE
   void 		renderH(); // #IGNORE
   void 		renderV(); // #IGNORE

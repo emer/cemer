@@ -33,7 +33,7 @@ public:
   T3Annotation*         Anno() const { return (T3Annotation*)data();}
   virtual void          SetAnno(T3Annotation* ob);
 
-  void  SetDefaultName() {} // leave it blank
+  void  SetDefaultName() override {} // leave it blank
   TA_BASEFUNS_NOCOPY(T3AnnotationView);
 protected:
   void  Initialize();

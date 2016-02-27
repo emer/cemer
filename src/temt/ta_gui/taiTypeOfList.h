@@ -29,10 +29,10 @@ taTypeDef_Of(taiTypeOfList);
 class TA_API taiTypeOfList : public taiTypeOfClass {
   TAI_TYPEBASE_SUBCLASS(taiTypeOfList, taiTypeOfClass);
 public:
-  int           BidForType(TypeDef* td);
+  int           BidForType(TypeDef* td) override;
 protected:
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
+    QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
 };
 
 #endif // taiTypeOfList_h

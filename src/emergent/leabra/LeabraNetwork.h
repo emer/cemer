@@ -94,7 +94,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(LeabraTimes);
 protected:
-  void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() override;
 
 private:
   void	Initialize();
@@ -757,7 +757,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(LeabraNetwork);
 protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{}

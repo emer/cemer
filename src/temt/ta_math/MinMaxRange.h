@@ -40,7 +40,7 @@ public:
 
   TA_BASEFUNS_LITE(MinMaxRange);
 protected:
-  void  UpdateAfterEdit_impl()
+  void  UpdateAfterEdit_impl() override
   { inherited::UpdateAfterEdit_impl();
     range = Range(); if(range != 0.0f) scale = 1.0f / range; }
 private:

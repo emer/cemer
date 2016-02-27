@@ -69,7 +69,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraInhibSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -116,7 +116,7 @@ public:
   TA_SIMPLE_BASEFUNS(LayerAvgActSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -151,7 +151,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraAdaptInhib);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -175,7 +175,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraInhibMisc);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -234,7 +234,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraDelInhib);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -268,7 +268,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraLayStats);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -480,12 +480,12 @@ public:
 
   String        GetToolbarName() const override { return "layer spec"; }
 
-  void	InitLinks();
+  void	InitLinks() override;
   SIMPLE_COPY(LeabraLayerSpec);
   TA_BASEFUNS(LeabraLayerSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy()		{ CutLinks(); }

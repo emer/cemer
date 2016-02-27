@@ -37,6 +37,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraNetinSpec);
 TA_BASEFUNS_CTORS_DEFN(OptThreshSpec);
 TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
+TA_BASEFUNS_CTORS_DEFN(AdaptLeakSpec);
 TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
 TA_BASEFUNS_CTORS_DEFN(RLrateSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraInitSpec);
@@ -330,6 +331,23 @@ void ShortPlastSpec::UpdateAfterEdit_impl() {
   fac_dt = 1.0f / fac_tau;
   kre_dt = 1.0f / kre_tau;
   oneo_p0_norm = 1.0f / p0_norm;
+}
+
+void AdaptLeakSpec::Initialize() {
+  on = false;
+  Defaults_init();
+}
+
+void AdaptLeakSpec::Defaults_init() {
+  tau = 100.0f;
+  tol_pct = 0.4f;
+
+  dt = 1.0f / tau;
+}
+
+void AdaptLeakSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  dt = 1.0f / tau;
 }
 
 void SynDelaySpec::Initialize() {

@@ -31,7 +31,7 @@ INHERITED(ProjectionSpec)
 public:
   void Connect_impl(Projection* prjn, bool make_cons) override;
   // Connection function for full connectivity
-  int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
+  int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f) override;
 
   TA_BASEFUNS_NOCOPY(FullPrjnSpec);
 private:

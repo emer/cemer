@@ -76,7 +76,7 @@ public:
 
   void                  ColorScaleFromData();
   virtual void          GetVars();
-  virtual void          InitPanel();
+  virtual void          InitPanel() override;
 
   iViewPanelOfBrain(BrainView* dv_);
   ~iViewPanelOfBrain();

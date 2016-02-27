@@ -63,7 +63,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(VEArmLengths);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 
 private:  
   void  Initialize();
@@ -94,7 +94,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(VEArmAngles);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 
 private:  
   void  Initialize();
@@ -119,7 +119,7 @@ public:
   
   TA_SIMPLE_BASEFUNS(VEArmDelays);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 
 private:
   void  Initialize();

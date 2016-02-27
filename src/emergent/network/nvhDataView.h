@@ -29,9 +29,9 @@ eTypeDef_Of(nvhDataView);
 class E_API nvhDataView: public nvDataView { // #VIRT_BASE highlightable guys
 INHERITED(nvDataView)
 public:
-  void                  setDefaultColor() {DoHighlightColor(false);}
+  void                  setDefaultColor() override {DoHighlightColor(false);}
     // restore to its default color
-  void                  setHighlightColor(const T3Color& color);
+  void                  setHighlightColor(const T3Color& color) override;
     // used for highlighting in gui, esp lay/prjn
 
   TA_BASEFUNS(nvhDataView)

@@ -93,12 +93,12 @@ public:
   virtual int	GetColIdx(DataTable* db);
   // #CAT_LayerData get column index from datatable
 
-  String	GetName() const			{ return col_name; }
+  String	GetName() const override		{ return col_name; }
   String	GetDisplayName() const override;
 
   TA_SIMPLE_BASEFUNS(LayerDataEl);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
   void 	CheckThisConfig_impl(bool quiet, bool& rval) override;
 
 private:

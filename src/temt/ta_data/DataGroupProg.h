@@ -42,7 +42,7 @@ public:
 
   String  GetDisplayName() const override;
   String	GetToolbarName() const override { return "group"; }
-  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool    CvtFmCode(const String& code) override;
 
   TA_SIMPLE_BASEFUNS(DataGroupProg);

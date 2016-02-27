@@ -29,10 +29,10 @@ taTypeDef_Of(taiTypeOftaColor);
 class TA_API taiTypeOftaColor : public taiTypeOfColor { // special editor for colors, add dialog
   TAI_TYPEBASE_SUBCLASS(taiTypeOftaColor, taiTypeOfColor);
 public:
-  int           BidForType(TypeDef* td);
+  int           BidForType(TypeDef* td) override;
 protected:
-  void          GetImage_impl(taiWidget* dat, const void* base);
-  void          GetValue_impl(taiWidget* dat, void* base);
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetValue_impl(taiWidget* dat, void* base) override;
 };
 
 #endif // taiTypeOftaColor_h

@@ -49,10 +49,10 @@ public:
   virtual void	UpdateSpec();
   // update from parent sub spec, if one exists
 
-  void	InitLinks();
+  void	InitLinks() override;
   TA_BASEFUNS(BaseSubSpec);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void 	Copy_(const BaseSubSpec& cp);
   void 	Initialize();

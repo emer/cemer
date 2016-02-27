@@ -49,7 +49,7 @@ public:
 
   void         SigDestroying() override;
 
-  void  SetDefaultName() {} // leave it blank
+  void  SetDefaultName() override {} // leave it blank
   void  Copy_(const DataColView& cp);
   TA_BASEFUNS(DataColView);
 protected:

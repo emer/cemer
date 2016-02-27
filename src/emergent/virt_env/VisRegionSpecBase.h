@@ -83,7 +83,7 @@ public:
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(VisRegionSizes);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 };
 
 taTypeDef_Of(VisAdaptation);
@@ -100,7 +100,7 @@ public:
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(VisAdaptation);
 // protected:
-//   void	UpdateAfterEdit_impl();
+//   void	UpdateAfterEdit_impl() override;
 };
 
 taTypeDef_Of(VisRegionSpecBase);

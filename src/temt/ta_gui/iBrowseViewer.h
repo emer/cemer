@@ -43,7 +43,7 @@ public:
   TypeDef*              root_typ() {return (browser()) ? browser()->root_typ : &TA_void;}
   MemberDef*            root_md() {return (browser()) ? browser()->root_md : NULL;} //
   taiSigLink*           rootLink() {return (browser()) ? browser()->rootLink() : NULL;}
-  virtual int           stretchFactor() const {return 1;} //  1/2 default
+  virtual int           stretchFactor() const override {return 1;} //  1/2 default
 
   void                  Reset();
   virtual void          ApplyRoot(); // #IGNORE actually applies the new root value

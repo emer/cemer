@@ -33,12 +33,12 @@ class TA_API taiArgTypeOfStream : public taiArgType {
 public:
   taFiler*      gf;
 
-  int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
-  cssEl*        GetElFromArg(const char* arg_nm, void* base);
-  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr_);
-  void          GetImage_impl(taiWidget* dat, const void* base);
-  void          GetValue_impl(taiWidget* dat, void* base);
+  int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) override;
+  cssEl*        GetElFromArg(const char* arg_nm, void* base) override;
+  taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_) override;
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetValue_impl(taiWidget* dat, void* base) override;
   virtual void  GetValueFromGF(); // actually get the value from the getfile
 
 private:

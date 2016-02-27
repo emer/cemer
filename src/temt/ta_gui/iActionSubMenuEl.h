@@ -35,7 +35,7 @@ public:
   bool                  isSubMenu() override    { return true; }
 
 protected: // only allowed to be used internally when creating submenus
-  void          this_triggered_toggled(bool checked) {} // override submenu items don't signal anything
+  void          this_triggered_toggled(bool checked) override {} // override submenu items don't signal anything
 
   iActionSubMenuEl(const String& label_, taiWidgetMenu* sub_menu_data); //
   ~iActionSubMenuEl();

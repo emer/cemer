@@ -53,7 +53,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraActFunSpec);
 protected:
   SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  void        UpdateAfterEdit_impl() override;
 private:
   void        Initialize();
   void        Destroy()        { };
@@ -82,7 +82,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraActMiscSpec);
 protected:
   SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  void        UpdateAfterEdit_impl() override;
 private:
   void        Initialize();
   void        Destroy()        { };
@@ -121,7 +121,7 @@ public:
   TA_SIMPLE_BASEFUNS(SpikeFunSpec);
 protected:
   SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  void        UpdateAfterEdit_impl() override;
 private:
   void        Initialize();
   void        Destroy()        { };
@@ -156,7 +156,7 @@ public:
   TA_SIMPLE_BASEFUNS(SpikeMiscSpec);
 protected:
   SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  void        UpdateAfterEdit_impl() override;
 private:
   void        Initialize();
   void        Destroy()        { };
@@ -183,7 +183,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraNetinSpec);
 protected:
   SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  void        UpdateAfterEdit_impl() override;
 private:
   void        Initialize();
   void        Destroy()        { };
@@ -250,7 +250,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraDtSpec);
 protected:
   SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  void        UpdateAfterEdit_impl() override;
 private:
   void        Initialize();
   void        Destroy()        { };
@@ -278,7 +278,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraActAvgSpec);
 protected:
   SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  void        UpdateAfterEdit_impl() override;
 private:
   void        Initialize();
   void        Destroy()        { };
@@ -311,7 +311,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraAvgLSpec);
 protected:
   SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  void        UpdateAfterEdit_impl() override;
 private:
   void        Initialize();
   void        Destroy()        { };
@@ -385,7 +385,7 @@ public:
   TA_SIMPLE_BASEFUNS(ActAdaptSpec);
 protected:
   SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  void        UpdateAfterEdit_impl() override;
 private:
   void        Initialize();
   void        Destroy()        { };
@@ -419,12 +419,37 @@ public:
   TA_SIMPLE_BASEFUNS(ShortPlastSpec);
 protected:
   SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  void        UpdateAfterEdit_impl() override;
 private:
   void        Initialize();
   void        Destroy()        { };
   void        Defaults_init();
 };
+
+eTypeDef_Of(AdaptLeakSpec);
+
+class E_API AdaptLeakSpec : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapting leak value -- a homeostatic adaptation using the bias weight values to keep units in their sensitive range of activation -- works along with the BCM function but operates at the whole-neuron level -- uses the avg_l value that reflects the long-term running average activation
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // perform leak adaptation?
+  float         tau;            // #CONDSHOW_ON_on #DEF_100 time constant for adapting the leak as a function of avg_l value
+  float         tol_pct;        // #CONDSHOW_ON_on #DEF_0.4 #MAX_0.5 #MIN_0 tolerance around the middle range of avg_l values -- no adaptation occurs when avg_l is in this middle range -- maximum value is < .5 as .5 covers the whole range
+
+  float         dt;         // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate =  1 / tau
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(AdaptLeakSpec);
+protected:
+  SPEC_DEFAULTS;
+  void        UpdateAfterEdit_impl() override;
+private:
+  void        Initialize();
+  void        Destroy()        { };
+  void        Defaults_init();
+};
+
 
 eTypeDef_Of(SynDelaySpec);
 
@@ -518,7 +543,7 @@ public:
   TA_SIMPLE_BASEFUNS(DeepSpec);
 protected:
   SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  void        UpdateAfterEdit_impl() override;
 
 private:
   void        Initialize();
@@ -568,7 +593,7 @@ public:
   TA_SIMPLE_BASEFUNS(NoiseAdaptSpec);
 protected:
   SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl();
+  void        UpdateAfterEdit_impl() override;
 
 private:
   void        Initialize();
@@ -624,6 +649,7 @@ public:
   LeabraChannels   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   LeabraChannels   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
   ActAdaptSpec     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
+  ActAdaptSpec     adapt_leak;      // #CAT_Activation adapting leak value -- a homeostatic adaptation using the bias weight values to keep units in their sensitive range of activation -- works along with the BCM function but operates at the whole-neuron level
   ShortPlastSpec   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   RLrateSpec       r_lrate;         // #CAT_Learning receiving-unit based learning rate specs -- sets effective learning rate multiplier based on activation profile of receiving unit, to promote greater translation invariance
@@ -903,13 +929,13 @@ public:
 
   String        GetToolbarName() const override { return "unit spec"; }
 
-  void          InitLinks();
+  void          InitLinks() override;
   SIMPLE_COPY(LeabraUnitSpec);
   TA_BASEFUNS(LeabraUnitSpec);
 protected:
   SPEC_DEFAULTS;
-  void         UpdateAfterEdit_impl();        // to set _impl sig
-  void         CheckThisConfig_impl(bool quiet, bool& rval);
+  void         UpdateAfterEdit_impl() override;        // to set _impl sig
+  void         CheckThisConfig_impl(bool quiet, bool& rval) override;
 
   LeabraChannels e_rev_sub_thr;        // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act.thr for each item -- used for compute_ithresh
   float          thr_sub_e_rev_i;// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.i * (act.thr - e_rev.i) used for compute_ithresh

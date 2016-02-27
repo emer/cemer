@@ -97,7 +97,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(T3SavedView);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy()       { };

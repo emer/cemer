@@ -33,17 +33,17 @@ public:
   bool handlesReadOnly() const override { return true; } // uses a RO PolyData or RO EditButton
   bool CanBrowse() const override;
 
-  int           BidForType(TypeDef* td);
+  int           BidForType(TypeDef* td) override;
   taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) override;
          // add in req for inline
-  void          GetImage_impl(taiWidget* dat, const void* base);
-  void          GetValue_impl(taiWidget* dat, void* base);
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetValue_impl(taiWidget* dat, void* base) override;
 protected:
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr_);
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_) override;
   taiWidget*      GetWidgetRepInline_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr_);
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_) override;
 };
 
 #endif // taiTypeOfClass_h

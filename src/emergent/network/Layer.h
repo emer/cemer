@@ -593,8 +593,8 @@ public:
 
   DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override;
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   void  Copy_(const Layer& cp);
   TA_BASEFUNS(Layer); //
 

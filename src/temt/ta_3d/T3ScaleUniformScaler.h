@@ -22,6 +22,8 @@
 #include <Inventor/nodes/SoSeparator.h>
 #endif
 
+#include <T3Node>
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
@@ -31,7 +33,7 @@ class TA_API T3ScaleUniformScaler: public SoSeparator {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS big version of the scaleUniformScaler
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
-  SO_NODE_HEADER(T3ScaleUniformScaler);
+  TA_SO_NODE_HEADER(T3ScaleUniformScaler);
 #endif // def __MAKETA__
 public:
   static void		initClass();

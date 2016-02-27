@@ -22,6 +22,8 @@
 #include <Inventor/nodes/SoIndexedLineSet.h>
 #endif
 
+#include <T3Node>
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
@@ -33,7 +35,7 @@ class TA_API SoLineBox3d : public SoIndexedLineSet {
 #ifndef __MAKETA__
 typedef SoIndexedLineSet inherited;
 
- SO_NODE_HEADER(SoLineBox3d);
+ TA_SO_NODE_HEADER(SoLineBox3d);
 #endif // def __MAKETA__
 public:
   static void		initClass();
@@ -47,7 +49,7 @@ public:
 
   SoLineBox3d(float wd = 1.0f, float ht = 1.0f, float dp = 1.0f, bool ctr = true);
 protected:
-  const char*  	getFileFormatName() const {return "IndexedLineSet"; } 
+  const char*  	getFileFormatName() const override {return "IndexedLineSet"; } 
 
 };
 

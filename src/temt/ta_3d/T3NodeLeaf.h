@@ -44,13 +44,13 @@ class TA_API T3NodeLeaf: public T3Node {
 #ifndef __MAKETA__
 typedef T3Node inherited;
 
-  SO_NODE_HEADER(T3NodeLeaf);
+  TA_SO_NODE_HEADER(T3NodeLeaf);
 #endif // def __MAKETA__
 public:
   static void		initClass();
 
   SoFont*		captionFont(bool auto_create = false) override;
-  SoSeparator*		shapeSeparator() {return this;}
+  SoSeparator*		shapeSeparator() override {return this;}
 
   T3NodeLeaf(T3DataView* dataView_ = NULL);
 

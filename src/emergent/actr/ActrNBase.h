@@ -51,8 +51,8 @@ public:
   ActrBuffer*             BufferNamed(const String& nm);
   // #CAT_ActrAccess get a buffer with the given name (use module->buffer for better access to major buffers)
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS_NOCOPY(ActrNBase);
 protected:
   ActrModel*            own_model; // the model that owns us -- init in InitLinks

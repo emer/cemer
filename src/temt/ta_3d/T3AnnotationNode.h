@@ -45,7 +45,7 @@ class TA_API T3AnnotationNode : public T3NodeLeaf {
   // 3d annotation inventor node
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
-  SO_NODE_HEADER(T3AnnotationNode);
+  TA_SO_NODE_HEADER(T3AnnotationNode);
 #endif
 public:
   static void	initClass();

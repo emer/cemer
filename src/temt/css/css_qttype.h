@@ -60,7 +60,7 @@ public:
   taiType*      use_it;         // if non-null, use this it instead of typ->it
 
 
-  int           BidForType(TypeDef*)    { return 0; } // don't do any real types!
+  int           BidForType(TypeDef*) override    { return 0; } // don't do any real types!
   virtual void          CallEdit() {}     // invoke an edit dialog (normally called from qobj)
   taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) override;

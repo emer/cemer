@@ -61,7 +61,7 @@ public:
   TA_SIMPLE_BASEFUNS(TDRewIntegLayerSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy()		{ };

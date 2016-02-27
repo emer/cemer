@@ -41,7 +41,7 @@ public:
   TA_SIMPLE_BASEFUNS(CerebGranuleSpecs);
 protected:
   SPEC_DEFAULTS;
-  //  void	UpdateAfterEdit_impl();
+  //  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -86,7 +86,7 @@ public:
   void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
-  bool CheckConfig_Unit(Unit* un, bool quiet);
+  bool CheckConfig_Unit(Unit* un, bool quiet) override;
 
   TA_SIMPLE_BASEFUNS(CerebGranuleUnitSpec);
 private:

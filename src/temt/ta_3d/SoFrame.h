@@ -25,6 +25,8 @@
 #include <Inventor/fields/SoMFVec3f.h>
 #endif
 
+#include <T3Node>
+
 // declare all other types mentioned but not required to include:
 
 taTypeDef_Of(SoFrame);
@@ -34,7 +36,7 @@ class TA_API SoFrame: public SoTriangleStripSet {
 #ifndef __MAKETA__
 typedef SoTriangleStripSet inherited;
 
-  SO_NODE_HEADER(SoFrame);
+  TA_SO_NODE_HEADER(SoFrame);
 #endif // def __MAKETA__
 public:
   enum Orientation {
@@ -62,7 +64,7 @@ public:
   SoFrame(Orientation ori = Hor, float in = 0.05f);
 
 protected:
-  const char*  	getFileFormatName() const {return "TriangleStripSet"; } 
+  const char*  	getFileFormatName() const override {return "TriangleStripSet"; } 
   void 		render(); // #IGNORE
   void 		renderH(); // #IGNORE
   void 		renderV(); // #IGNORE

@@ -40,13 +40,13 @@ public:
   bool handlesReadOnly() const override { return true; }
   TypeDef*      GetMinType(const void* base);
   taBase*       GetTokenPtr(const void* base) const; // depends on mode
-  int           BidForMember(MemberDef* md, TypeDef* td);
+  int           BidForMember(MemberDef* md, TypeDef* td) override;
 protected:
   Mode          mode; // set during first GetWidgetRep (is garbage until then)
-  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  void GetImage_impl(taiWidget* dat, const void* base) override;
-  void GetMbrValue_impl(taiWidget* dat, void* base) override;
+  taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetMbrValue_impl(taiWidget* dat, void* base) override;
 private:
   void          Initialize() { mode = MD_BASE; }
   void          Destroy() {}

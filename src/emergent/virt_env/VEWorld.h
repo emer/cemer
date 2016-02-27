@@ -56,7 +56,7 @@ public:
   SIMPLE_COPY(ODEWorldParams);
   TA_BASEFUNS(ODEWorldParams);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy()       { };

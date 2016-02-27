@@ -30,12 +30,12 @@ class TA_API taiArgTypeOfTokenPtr : public taiArgType {
   // for pointers to tokens (uses appropriate scoping)
   TAI_ARGTYPE_SUBCLASS(taiArgTypeOfTokenPtr, taiArgType);
 public:
-  int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
-  cssEl*        GetElFromArg(const char* arg_nm, void* base);
-  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  void          GetImage_impl(taiWidget* dat, const void* base);
-  void          GetValue_impl(taiWidget* dat, void* base);
+  int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) override;
+  cssEl*        GetElFromArg(const char* arg_nm, void* base) override;
+  taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetValue_impl(taiWidget* dat, void* base) override;
 
 private:
   void          Initialize() {}

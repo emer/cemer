@@ -37,8 +37,8 @@ public:
 
   void         RestorePanels();
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS_NOCOPY(Network_Group); //
 private:
   void  Initialize()            {SetBaseType(&TA_Network);}

@@ -29,7 +29,7 @@ taTypeDef_Of(taiEditOfArray);
 class TA_API taiEditOfArray : public taiEdit {
   TAI_TYPEBASE_SUBCLASS(taiEditOfArray, taiEdit);
 public:
-  int           BidForEdit(TypeDef* td);
+  int           BidForEdit(TypeDef* td) override;
 protected:
   taiEditorOfClass* CreateDataHost(void* base, bool readonly, bool modal) override;
   // called when we need a new instance

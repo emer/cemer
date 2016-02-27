@@ -70,7 +70,7 @@ public:
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(DoGFilter);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 };
 
 #endif // DoGFilter_h

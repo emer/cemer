@@ -55,7 +55,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(LayerWriter);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
   void	CheckThisConfig_impl(bool quiet, bool& rval) override;
   void CheckChildConfig_impl(bool quiet, bool& rval) override;
     

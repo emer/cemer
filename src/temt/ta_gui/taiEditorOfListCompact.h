@@ -36,7 +36,7 @@ public:
   taiEditorOfListCompact()                              { };
   ~taiEditorOfListCompact();
 
-  bool          ShowMember(MemberDef* md) const;
+  bool          ShowMember(MemberDef* md) const override;
 
 protected:
   void         GetImage_Membs() override;

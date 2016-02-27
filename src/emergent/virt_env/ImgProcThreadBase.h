@@ -71,7 +71,7 @@ public:
   
   TA_BASEFUNS_NOCOPY(ImgProcCallThreadMgr);
 protected:
-  void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() override;
   
 private:
   void	Initialize();

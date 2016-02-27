@@ -37,13 +37,13 @@ public:
   bool handlesReadOnly() const override { return true; } // uses a RO tokenptr button
   taBase*       GetTokenPtr(const void* base) const; // depends on mode
   TypeDef*      GetMinType(const void* base);
-  int           BidForType(TypeDef* td);
+  int           BidForType(TypeDef* td) override;
   void          Initialize() { mode = MD_BASE; }
 protected:
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  void          GetImage_impl(taiWidget* dat, const void* base);
-  void          GetValue_impl(taiWidget* dat, void* base);
+    QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetValue_impl(taiWidget* dat, void* base) override;
 
   Mode          mode; // set during first GetWidgetRep (is garbage until then)
 };

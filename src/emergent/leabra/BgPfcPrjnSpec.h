@@ -68,7 +68,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(BgPfcPrjnSpec);
 protected:
-  void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() override;
   
 private:
   void Initialize();

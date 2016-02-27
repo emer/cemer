@@ -30,10 +30,10 @@ class TA_API taiMemberOfEnumTypePtr : public taiMemberOfTypePtr {
   // typedef ptrs that have member-comment directives, Enums
   TAI_MEMBER_SUBCLASS(taiMemberOfEnumTypePtr, taiMemberOfTypePtr);
 public:
-  int           BidForMember(MemberDef* md, TypeDef* td);
+  int           BidForMember(MemberDef* md, TypeDef* td) override;
 protected:
   taiWidget*     GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
+    QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
 private:
   void          Initialize() {}
   void          Destroy() {}

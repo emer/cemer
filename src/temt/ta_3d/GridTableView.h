@@ -127,7 +127,7 @@ public:
 
   void         DataUnitsXForm(taVector3f& pos, taVector3f& size) override;
 
-  const iColor  bgColor(bool& ok) const {
+  const iColor  bgColor(bool& ok) const override {
     ok = true; return colorscale.background;
   } // #IGNORE
 
@@ -137,8 +137,8 @@ public:
 
   void          SaveImageSVG(const String& svg_fname) override;
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   void  Initialize();
   void  Destroy() {CutLinks();}
   void  Copy_(const GridTableView& cp);

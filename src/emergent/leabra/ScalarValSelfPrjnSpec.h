@@ -37,7 +37,7 @@ public:
 
   virtual void	Connect_UnitGroup(Layer* lay, Layer::AccessMode acc_md, int gpidx,
 				  Projection* prjn, bool make_cons);
-  void	Connect_impl(Projection* prjn, bool make_cons);
+  void	Connect_impl(Projection* prjn, bool make_cons) override;
   void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net, int thr_no)
     override;
 

@@ -66,7 +66,7 @@ protected:
   void          RowColOp_impl(int op_code, const CellRange& sel) override;
   
 public slots:
-  void          doubleClicked(const QModelIndex & index) override;
+  void          doubleClicked(const QModelIndex & index);
   
 protected slots:
   void          AddCellToControlPanel(int menu_item_position);

@@ -37,7 +37,7 @@ public:
   inline PosVector3i& operator=(float cp) { x = (int)cp; y = (int)cp; z = (int)cp; return *this;}
   inline PosVector3i& operator=(double cp) { x = (int)cp; y = (int)cp; z = (int)cp; return *this;}
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 private:
   NOCOPY(PosVector3i)
   void  Initialize()    { }

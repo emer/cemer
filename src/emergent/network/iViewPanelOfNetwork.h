@@ -136,7 +136,7 @@ public:
 
   void                  ColorScaleFromData();
   virtual void          GetVars();
-  virtual void          InitPanel();
+  virtual void          InitPanel() override;
 
   iViewPanelOfNetwork(NetView* dv_);
   ~iViewPanelOfNetwork();

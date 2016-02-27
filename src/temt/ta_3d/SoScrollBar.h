@@ -24,6 +24,8 @@
 class SoSeparator; //
 #endif
 
+#include <T3Node>
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
@@ -49,7 +51,7 @@ class TA_API SoScrollBar: public SoSeparator {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS a scrollbar for scrolling a view, uses same interface as QScrollBar from Qt -- length is 1.0, default orientation is in X plane -- put transform in front to change
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
-  SO_NODE_HEADER(SoScrollBar);
+  TA_SO_NODE_HEADER(SoScrollBar);
 #endif // def __MAKETA__
 public:
   static void		initClass();
@@ -86,7 +88,7 @@ public:
   void	DragFinishCB(SoTranslate1Dragger* dragger);
   // #IGNORE callback: do not touch!
 protected:
-  const char*  	getFileFormatName() const {return "Separator"; } 
+  const char*  	getFileFormatName() const override {return "Separator"; } 
 
   float	width_;
   float	depth_;	

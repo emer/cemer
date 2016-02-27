@@ -211,15 +211,15 @@ public:
   String          GetTypeDecoKey() const override { return "ConSpec"; }
   String          GetToolbarName() const override { return "con spec"; }
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   void  Copy_(const ConSpec& cp);
   TA_BASEFUNS(ConSpec);
 protected:
   SPEC_DEFAULTS;
   bool  CheckType_impl(TypeDef* td) override;
   bool  CheckObjectType_impl(taBase* obj) override; // don't do checking on 1st con group in units
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy()               { CutLinks(); }

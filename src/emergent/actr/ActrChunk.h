@@ -193,11 +193,11 @@ public:
   String GetTypeDecoKey() const override { return "ProgVar"; }
   int    GetSpecialState() const override;
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(ActrChunk);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 
 private:
   SIMPLE_COPY(ActrChunk);

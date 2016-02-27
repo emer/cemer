@@ -66,7 +66,7 @@ class TA_API T3GridViewNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 
-  SO_NODE_HEADER(T3GridViewNode);
+  TA_SO_NODE_HEADER(T3GridViewNode);
 #endif // def __MAKETA__
 public:
   static float 		frame_margin; // = .05 size of margin around stage for frame

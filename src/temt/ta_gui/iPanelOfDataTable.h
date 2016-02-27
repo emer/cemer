@@ -37,7 +37,7 @@ public:
   iDataTableEditor*     dte;
 
   DataTable*            dt() const {return (m_link) ? (DataTable*)(link()->data()) : NULL;}
-  virtual String        panel_type() const; // this string is on the subpanel button for this panel
+  virtual String        panel_type() const override; // this string is on the subpanel button for this panel
 
   virtual int           EditAction(int ea);
   virtual int           GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)

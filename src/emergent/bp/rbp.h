@@ -173,7 +173,7 @@ public:
   void    Compute_HardClampNet(BpNetwork* net, int thread_no=-1)
   { ((RBpUnitSpec*)GetUnitSpec())->Compute_HardClampNet(this, net, thread_no); }
 
-  void	InitLinks();
+  void	InitLinks() override;
   void	Copy_(const RBpUnit& cp);
   TA_BASEFUNS(RBpUnit);
 private:

@@ -42,7 +42,7 @@ public:
 
   int		units_per_feat_gp; // #READ_ONLY #NO_SAVE #SHOW number of units per feature group (computed from sending layer)
   
-  void 	Connect_impl(Projection* prjn, bool make_cons);
+  void 	Connect_impl(Projection* prjn, bool make_cons) override;
   void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net, int thr_no)
     override;
 
@@ -57,7 +57,7 @@ public:
   TA_SIMPLE_BASEFUNS(SaliencyPrjnSpec);
 protected:
   SPEC_DEFAULTS;
-  void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{ };

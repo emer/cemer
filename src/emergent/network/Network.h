@@ -1073,8 +1073,8 @@ public:
   taBase*      ChooseNew(taBase* origin) override;
   bool         HasChooseNew() override { return true; }
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   void  Copy_(const Network& cp);
   TA_BASEFUNS(Network);
 

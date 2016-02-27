@@ -131,7 +131,7 @@ public:
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(RetinaProc);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
   void CheckChildConfig_impl(bool quiet, bool& rval) override;
 
   virtual bool	TransformImageData_impl(float_Matrix& eye_image,
@@ -160,7 +160,7 @@ class E_API DoGRetinaProc : public RetinaProc {
   // Difference-of-Gaussians version of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
 INHERITED(RetinaProc)
 public:
-  virtual VisRegionSpecBase* AddRegion()
+  VisRegionSpecBase* AddRegion() override
   { return (VisRegionSpecBase*)regions.New(1, &TA_DoGRegionSpec); }
 
   void 	Initialize();
@@ -175,7 +175,7 @@ class E_API V1RetinaProc : public RetinaProc {
   // V1 version of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
 INHERITED(RetinaProc)
 public:
-  virtual VisRegionSpecBase* AddRegion()
+  VisRegionSpecBase* AddRegion() override
   { return (VisRegionSpecBase*)regions.New(1, &TA_V1RegionSpec); }
 
   void 	Initialize();

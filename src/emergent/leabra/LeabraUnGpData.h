@@ -37,7 +37,7 @@ public:
   virtual void		Init_State();
   // initialize state -- called during InitWeights -- mainly for derived classes
 
-  void	InitLinks();
+  void	InitLinks() override;
   void	Copy_(const LeabraUnGpData& cp);
   TA_BASEFUNS(LeabraUnGpData);
 private:

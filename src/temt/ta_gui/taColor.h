@@ -53,7 +53,7 @@ public:
 
   TA_BASEFUNS_LITE(taColor);
 protected:
-  void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() override;
   
 private:
   void  Copy_(const taColor& cp) {r=cp.r; g=cp.g; b=cp.b; a=cp.a;}// not no_a

@@ -214,6 +214,35 @@ NOTE: T3Node may be changed to look like this -- this change will be transparent
       transform: SoTransform
 */
 
+// NOTE: needed to fix these Coin macros for C++11 override compatibility
+
+#define TA_PRIVATE_NODE_TYPESYSTEM_HEADER( ) \
+public: \
+  static SoType getClassTypeId(void); \
+  virtual SoType getTypeId(void) const override; \
+private: \
+  static SoType classTypeId
+
+// FIXME: document. 20000103 mortene.
+#define TA_SO_NODE_ABSTRACT_HEADER(_class_) \
+  TA_PRIVATE_NODE_TYPESYSTEM_HEADER();         \
+protected: \
+  static const SoFieldData ** getFieldDataPtr(void); \
+  virtual const SoFieldData * getFieldData(void) const override; \
+private: \
+  static void atexit_cleanup(void); \
+  static const SoFieldData ** parentFieldData; \
+  static SoFieldData * fieldData; \
+  /* Counts number of instances of subclasses aswell as "direct" */ \
+  /* instances from non-abstract classes. */ \
+  static unsigned int classinstances
+
+
+// FIXME: document. 20000103 mortene.
+#define TA_SO_NODE_HEADER(_class_) \
+  TA_SO_NODE_ABSTRACT_HEADER(_class_); \
+private: \
+  static void * createInstance(void)
 
 taTypeDef_Of(T3Node);
 
@@ -224,7 +253,7 @@ class TA_API T3Node: public SoSeparator {
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
 
-  SO_NODE_ABSTRACT_HEADER(T3Node);
+  TA_SO_NODE_ABSTRACT_HEADER(T3Node);
 #endif // def __MAKETA__
 public:
 
@@ -267,7 +296,7 @@ public:
 
 protected:
   SoAsciiText*		captionNode_;
-  const char*  		getFileFormatName() const {return "Separator"; }
+  const char*  		getFileFormatName() const override {return "Separator"; }
   // makes output files fully general
   virtual SoSeparator*	captionSeparator(bool auto_create = false) = 0;
   SoTransform*		captionTransform(bool auto_create = false);

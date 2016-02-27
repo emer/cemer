@@ -51,15 +51,15 @@ public:
   float k;        // [N/m] passive stiffness
   float r;        // [m] resting length
 
-  taVector3f 	Contract(float stim);
+  taVector3f 	Contract(float stim) override;
   // #IGNORE Returns the force vector (pointing towards the proximal insertion point) resulting from a given stimulation of the muscle;
 
-  float Length();       // Returns current length of muscle
-  float Speed();  	// Returns muscle's contraction speed one world stepsize ago
-  void UpOld();		// update past values stored
-  void InitBuffs();     // Initialize the buffers that store past values
-  float Old_Length();   // Delayed value of muscle length
-  float Old_Speed();    // Delayed value of muscle speed
+  float Length() override;       // Returns current length of muscle
+  float Speed() override;  	// Returns muscle's contraction speed one world stepsize ago
+  void UpOld() override;	// update past values stored
+  void InitBuffs() override;     // Initialize the buffers that store past values
+  float Old_Length() override;   // Delayed value of muscle length
+  float Old_Speed() override;    // Delayed value of muscle speed
 
   TA_SIMPLE_BASEFUNS(VEHillMuscle);
 

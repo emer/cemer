@@ -40,7 +40,7 @@ public:
 
   void Connect_impl(Projection* prjn, bool make_cons) override;
   virtual void 	Connect_Reciprocal(Projection* prjn, bool make_cons);
-  int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
+  int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f) override;
   virtual void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
 				  int rgpidx, int suidx, int alloc_loop);
   // #IGNORE connect one recv unit group to all sending unit groups -- rgpidx = recv unit group idx, suidx = send unit idx within subgroups

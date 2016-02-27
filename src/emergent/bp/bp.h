@@ -154,7 +154,7 @@ public:
   virtual void	SetCurLrate(int epoch);
   // set current learning rate based on schedule given epoch
 
-  void InitLinks();
+  void InitLinks() override;
   SIMPLE_COPY(BpConSpec);
   TA_BASEFUNS(BpConSpec);
 protected:

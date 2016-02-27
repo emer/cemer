@@ -173,9 +173,9 @@ public:
   virtual void          CopyFromViewPanel(T3Panel* cp);
   // #CAT_Display copy key view information from another view panel (saved views, other view info)
 
-  void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL); // we notify viewer
-  void  InitLinks();
-  void  CutLinks();
+  void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override; // we notify viewer
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_DATAVIEWFUNS(T3Panel, taViewer)
 
 protected:

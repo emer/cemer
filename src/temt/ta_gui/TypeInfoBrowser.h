@@ -43,7 +43,7 @@ public:
   taiSigLink* rootLink() override
     {return (m_root) ? (taiSigLink*)((TypeItem*)m_root)->sig_link : NULL;}
 
-  void  UpdateAfterEdit();
+  void  UpdateAfterEdit() override;
   TA_DATAVIEWFUNS(TypeInfoBrowser, BrowseViewer) //
 protected:
   void*                 m_root; // #IGNORE

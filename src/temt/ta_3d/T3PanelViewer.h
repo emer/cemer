@@ -52,8 +52,8 @@ public:
   void                  PanelChanged(T3Panel* panel);
     // called by panel if changes, we update names
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   void  Copy_(const T3PanelViewer& cp);
   TA_DATAVIEWFUNS(T3PanelViewer, FrameViewer)
 

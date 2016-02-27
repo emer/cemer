@@ -30,8 +30,8 @@ class TA_API taiArgTypeOfListBasePtr : public taiArgTypeOfTokenPtr {
   // for taBase pointers in groups, sets the typedef to be the right one..
   TAI_ARGTYPE_SUBCLASS(taiArgTypeOfListBasePtr, taiArgTypeOfTokenPtr);
 public:
-  int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
-  cssEl*        GetElFromArg(const char* arg_nm, void* base);
+  int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) override;
+  cssEl*        GetElFromArg(const char* arg_nm, void* base) override;
 private:
   void          Initialize() {}
   void          Destroy() {}

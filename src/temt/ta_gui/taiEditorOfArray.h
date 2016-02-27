@@ -27,7 +27,7 @@ class TA_API taiEditorOfArray : public taiEditorOfClass {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiEditorOfClass)
 public:
-  bool          ShowMember(MemberDef* md) const;
+  bool          ShowMember(MemberDef* md) const override;
 
   taiEditorOfArray(void* base, TypeDef* typ_, bool read_only_ = false,
         bool modal_ = false, QObject* parent = 0);

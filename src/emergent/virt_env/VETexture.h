@@ -89,7 +89,7 @@ public:
   void  Destroy()       { };
   TA_SIMPLE_BASEFUNS(VETexture);
 // protected:
-//   void       UpdateAfterEdit_impl();
+//   void       UpdateAfterEdit_impl() override;
 };
 
 SMARTREF_OF(E_API, VETexture); // VETextureRef

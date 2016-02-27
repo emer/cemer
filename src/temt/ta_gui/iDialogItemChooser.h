@@ -109,7 +109,7 @@ protected:
   QTimer*               timFilter; // timer for filter changes
   bool                  is_dialog; // actually runing as a dialog -- otherwise body is just used in another widget but there is no popup dialog
 
-  void                  showEvent(QShowEvent* event); //override
+  void                  showEvent(QShowEvent* event) override;
 
   int                   ApplyFiltering();
   virtual void          Refresh();      // rebuild current view

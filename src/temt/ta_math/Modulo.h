@@ -35,7 +35,7 @@ public:
 
   TA_BASEFUNS_LITE(Modulo);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy()               { };

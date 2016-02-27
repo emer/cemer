@@ -49,7 +49,7 @@ public:
   bool			isVisible() const;
   bool		ignoreSigEmit() const override { return !isVisible(); }
 
-  void 	SetDefaultName() {} // leave it blank
+  void 	SetDefaultName() override {} // leave it blank
   TA_BASEFUNS_NOCOPY(VEJointView);
 protected:
   void	Initialize();

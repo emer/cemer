@@ -29,11 +29,11 @@ taTypeDef_Of(taiMemberOfLinkGroup);
 class TA_API taiMemberOfLinkGroup : public taiMember {
   TAI_MEMBER_SUBCLASS(taiMemberOfLinkGroup, taiMember);
 public:
-  int           BidForMember(MemberDef* md, TypeDef* td);
-  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  void          GetImage_impl(taiWidget* dat, const void* base);
-  void GetMbrValue(taiWidget* dat, void* base, bool& first_diff) override;
+  int           BidForMember(MemberDef* md, TypeDef* td) override;
+  taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetMbrValue(taiWidget* dat, void* base, bool& first_diff) override;
 
 private:
   void          Initialize() {}

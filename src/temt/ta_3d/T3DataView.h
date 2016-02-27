@@ -120,7 +120,7 @@ public:
 #endif
 
   void                  Close() override; // usually delegates to parent->CloseChild
-  virtual void          CloseChild(taDataView* child) {}
+  virtual void          CloseChild(taDataView* child) override {}
   virtual void          BuildAll() {}
   // subclass-dependent operation -- reinvoked after major update -- builds any sub-dataview objects, but not the corresponding So guys (which is done in render)
   void                  SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;

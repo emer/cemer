@@ -45,7 +45,7 @@ public:
   void	Compute_dWt_Norm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) { };
   void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
 
-  bool  CheckConfig_Unit(Unit* u, bool quiet=false);
+  bool  CheckConfig_Unit(Unit* u, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(LeabraMultCopyUnitSpec);
 protected:

@@ -65,14 +65,14 @@ class TA_API T3NodeParent: public T3Node {
 #ifndef __MAKETA__
 typedef T3Node inherited;
 
-  SO_NODE_HEADER(T3NodeParent);
+  TA_SO_NODE_HEADER(T3NodeParent);
 #endif // def __MAKETA__
 public:
   static void		initClass();
 
   SoFont*		captionFont(bool auto_create = false) override;
-  SoSeparator*		shapeSeparator() {return shapeSeparator_;}
-  virtual SoSeparator*	childNodes(); // use this to set/get T3Node children
+  SoSeparator*		shapeSeparator() override {return shapeSeparator_;}
+  virtual SoSeparator*	childNodes() override; // use this to set/get T3Node children
   
   void			addRemoveChildNode(SoNode* node, bool adding) override;
 

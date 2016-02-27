@@ -125,9 +125,9 @@ public:
 
   String GetTypeDecoKey() const override { return "Layer"; }
 
-  void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
-  void  InitLinks();
-  void  CutLinks();
+  void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(Layer_Group);
 protected:
   PosVector3i    prev_pos;      // previous 3d position

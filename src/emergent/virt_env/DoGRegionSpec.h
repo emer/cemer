@@ -61,7 +61,7 @@ public:
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(DoGRegionSpec);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 
   void	UpdateGeom() override;
 

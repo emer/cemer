@@ -110,8 +110,8 @@ public:
   int     GetEnabled() const override { return !HasActionFlag(OFF); }
   void    SetEnabled(bool value) override { SetActionFlagState(OFF, !value); }
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(ActrAction);
 protected:
   void  UpdateAfterEdit_impl() override;

@@ -31,11 +31,11 @@ class TA_API taiTypeOfInt : public taiType { // handles numeric int types, up to
 public:
   bool handlesReadOnly() const override { return true; } // uses a RO iSpinBox
 
-  int           BidForType(TypeDef* td);
-  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  void          GetImage_impl(taiWidget* dat, const void* base);
-  void          GetValue_impl(taiWidget* dat, void* base);
+  int           BidForType(TypeDef* td) override;
+  taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
+                         QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
+  void          GetImage_impl(taiWidget* dat, const void* base) override;
+  void          GetValue_impl(taiWidget* dat, void* base) override;
 };
 
 #endif // taiTypeOfInt_h

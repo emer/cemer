@@ -54,7 +54,7 @@ public:
 
   TA_BASEFUNS_LITE(XYNGeom);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 private:
   void  Copy_(const XYNGeom& cp)
   { n_not_xy = cp.n_not_xy; n = cp.n; z = cp.z; }

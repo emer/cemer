@@ -38,7 +38,7 @@ public:
   inline PosVector2i& operator=(const taVector2i& cp)
     {x = cp.x; y = cp.y; SetGtEq(0); return *this;}
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 private:
   void  Copy_(const PosVector2i&) {}
   void  Initialize()            { }

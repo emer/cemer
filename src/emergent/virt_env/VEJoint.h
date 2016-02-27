@@ -54,7 +54,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(VEJointStops);
 // protected:
-//   void       UpdateAfterEdit_impl();
+//   void       UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy()       { };
@@ -75,7 +75,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(VEJointMotor);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy()       { };
@@ -95,7 +95,7 @@ public:
   SIMPLE_COPY(ODEJointParams);
   TA_BASEFUNS(ODEJointParams);
 // protected:
-//   void       UpdateAfterEdit_impl();
+//   void       UpdateAfterEdit_impl() override;
 };
 
 taTypeDef_Of(VEJoint);
@@ -217,7 +217,7 @@ protected:
   dJointFeedback        ode_fdbk_obj;   // #IGNORE ode feedback object
 #endif
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 
   //  override CheckConfig_impl() // todo
 private:

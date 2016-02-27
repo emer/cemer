@@ -64,7 +64,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(AudInputSpec);
 protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };
@@ -83,7 +83,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(AudDftSpec);
 // protected:
-//   void 	UpdateAfterEdit_impl();
+//   void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };
@@ -120,7 +120,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(MelFBankSpec);
 protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };
@@ -140,7 +140,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(AudRenormSpec);
 protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };
@@ -177,7 +177,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(AudTimeGaborSpec);
 protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };
@@ -195,7 +195,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(MelCepstrumSpec);
 protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };
@@ -234,7 +234,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(AudGaborSpec);
 protected:
-  void 	UpdateAfterEdit_impl();
+  void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };

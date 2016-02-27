@@ -57,7 +57,7 @@ class TA_API T3ColorBar : public T3NodeLeaf {
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
 
-  SO_NODE_HEADER(T3ColorBar);
+  TA_SO_NODE_HEADER(T3ColorBar);
 #endif // def __MAKETA__
 public:
   static void		initClass();
