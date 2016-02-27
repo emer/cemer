@@ -55,11 +55,11 @@ public:
 
   TypeDef*	type_def;	// TypeDef Info
 
-  uint		GetSize() const		{ return sizeof(*this); }
-  const char*	GetTypeName() const	{ if(type_def) return type_def->name; return "ta"; }
-  cssEl*	GetTypeObject() const;
-  cssTypes	GetType() const		{ return T_TA; }
-  cssTypes	GetPtrType() const	{ return T_TA; }
+  uint		GetSize() const override		{ return sizeof(*this); }
+  const char*	GetTypeName() const override	{ if(type_def) return type_def->name; return "ta"; }
+  cssEl*	GetTypeObject() const override;
+  cssTypes	GetType() const override		{ return T_TA; }
+  cssTypes	GetPtrType() const override	{ return T_TA; }
   virtual cssTATypes  GetTAType() const { return TAT_TA; }
 
   virtual TypeDef* GetNonRefTypeDef() const	{ return type_def; }
@@ -69,21 +69,21 @@ public:
   virtual void* GetNonRefPtr() const		{ return ptr; }
   // any kind of reference-semantics object can override to de-ref'd ptr
 
-  String	PrintStr() const;
-  String	PrintFStr() const;
+  String	PrintStr() const override;
+  String	PrintFStr() const override;
 
 #ifdef TA_GUI
-  int		Edit(bool wait = false);
+  int		Edit(bool wait = false) override;
 #endif
 
-  String&	PrintType(String& fh) const;
-  String&	PrintInherit(String& fh) const;
+  String&	PrintType(String& fh) const override;
+  String&	PrintInherit(String& fh) const override;
 
-  void		Save(std::ostream& fh = std::cout);
-  void		Load(std::istream& fh = std::cin);
+  void		Save(std::ostream& fh = std::cout) override;
+  void		Load(std::istream& fh = std::cin) override;
 
-  String&	PrintTokens(String& fh) const;
-  cssEl*	GetToken(int idx) const;
+  String&	PrintTokens(String& fh) const override;
+  cssEl*	GetToken(int idx) const override;
 
   // constructors
   void		Constr();
@@ -100,33 +100,33 @@ public:
   // make an appropriate cssTA or subclass object based on actual typedef passed in -- does dynamic typedef inherits checking to find appropriate ta subtype to make -- used in css stub functions when type is not definitively known
 
   cssCloneOnly(cssTA);
-  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  cssEl*	MakeToken_stub(int, cssEl *arg[]) override
   { return new cssTA((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
 
   // converters
-  void* 	GetVoidPtrOfType(TypeDef* td) const;
-  void* 	GetVoidPtrOfType(const String& td) const;
+  void* 	GetVoidPtrOfType(TypeDef* td) const override;
+  void* 	GetVoidPtrOfType(const String& td) const override;
   // these are type-safe ways to convert a cssEl into a ptr to object of given type
 
-  String GetStr() const;
-  Variant GetVar() const;
-  operator void*() const;
+  String GetStr() const override;
+  Variant GetVar() const override;
+  operator void*() const override;
 
-  operator TypeDef*() const;
+  operator TypeDef*() const override;
 
-  void operator=(Real) 		{ CvtErr("(Real)"); }
-  void operator=(Int)		{ CvtErr("(Int)"); }
-  void operator=(const String& s);
-  void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
-  void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
-  using cssCPtr::operator=;;
+  void operator=(Real) override 		{ CvtErr("(Real)"); }
+  void operator=(Int) override		{ CvtErr("(Int)"); }
+  void operator=(const String& s) override;
+  void operator=(void* cp) override	{ ptr = cp; ptr_cnt = 1; }
+  void operator=(void** cp) override	{ ptr = (void*)cp; ptr_cnt = 2; }
+  using cssCPtr::operator=;
 
-  void 	ArgCopy(const cssEl& s);
+  void 	ArgCopy(const cssEl& s) override;
 
   // copying: uses typedef auto copy function for ptr_cnt = 0
-  void operator=(const cssEl& s);
-  void PtrAssignPtr(const cssEl& s);
+  void operator=(const cssEl& s) override;
+  void PtrAssignPtr(const cssEl& s) override;
   // for ArgCopy and ptr_cnt >= 2 -- assign our pointer
   bool AssignCheckSource(const cssEl& s) override;
   // make sure source is typedef compatible
@@ -181,34 +181,34 @@ public:
   // converters
   taBase*  GetTAPtr() const 	{ return (taBase*)GetVoidPtr(); }
 
-  operator taBase*() const	{ return GetTAPtr(); }
-  operator taBase**() const	{ return (taBase**)GetVoidPtr(2); }
-  String GetStr() const;
-  Variant GetVar() const 	{ return Variant(GetTAPtr());}
+  operator taBase*() const override	{ return GetTAPtr(); }
+  operator taBase**() const override	{ return (taBase**)GetVoidPtr(2); }
+  String GetStr() const override;
+  Variant GetVar() const override 	{ return Variant(GetTAPtr());}
 
   // operators
-  void operator=(const String& s);
-  void operator=(const cssEl& s); // use obj->UnSafeCopy for ptr_cnt == 0
-  void operator=(taBase*);
-  void operator=(taBase**);
-  void operator=(void* cp);	// these are very bad because of the ref counting but we just have to assume the pointer is a taBase*!
-  void operator=(void** cp);
-  using cssTA::operator=;;
+  void operator=(const String& s) override;
+  void operator=(const cssEl& s) override; // use obj->UnSafeCopy for ptr_cnt == 0
+  void operator=(taBase*) override;
+  void operator=(taBase**) override;
+  void operator=(void* cp) override;	// these are very bad because of the ref counting but we just have to assume the pointer is a taBase*!
+  void operator=(void** cp) override;
+  using cssTA::operator=;
 
-  void 	ArgCopy(const cssEl& s); // init pointers for ptr_cnt > 0
-  void 	InitAssign(const cssEl& s); // reset our object type to match source!
+  void 	ArgCopy(const cssEl& s) override; // init pointers for ptr_cnt > 0
+  void 	InitAssign(const cssEl& s) override; // reset our object type to match source!
   
-  void PtrAssignPtr(const cssEl& s);
+  void PtrAssignPtr(const cssEl& s) override;
   bool PtrAssignPtrPtr(void* new_ptr_val) override;
   // use SetPointer..
   void PtrAssignNull() override;
 
-  void UpdateAfterEdit();
+  void UpdateAfterEdit() override;
 
-  cssEl* operator[](const Variant& idx) const;
-  cssEl* GetMemberFmName(const String& memb) const; // use recursive path!
-  cssEl* NewOpr();		// only ta_base get a new operator..
-  void 	 DelOpr();		// and a del operator
+  cssEl* operator[](const Variant& idx) const override;
+  cssEl* GetMemberFmName(const String& memb) const override; // use recursive path!
+  cssEl* NewOpr() override;		// only ta_base get a new operator..
+  void 	 DelOpr() override;		// and a del operator
 
   virtual void InstallThis(cssProgSpace* sp); // install this into a progspace
 };
@@ -227,7 +227,7 @@ public:
   taMatrixPtr   tmp_cvt_matrix;
   // temporary conversion matrix -- this is set if we need to convert ourselves into a matrix of a different type -- delete when done
 
-  cssTATypes    GetTAType() const { return TAT_Matrix; }
+  cssTATypes    GetTAType() const override { return TAT_Matrix; }
 
 
   static bool IsMatrix(const cssEl& s);
@@ -249,20 +249,20 @@ public:
   ~cssTA_Matrix();
 
   cssCloneOnly(cssTA_Matrix);
-  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  cssEl*	MakeToken_stub(int, cssEl *arg[]) override
   { return new cssTA_Matrix((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
-  Variant GetVar() const 	{ return Variant(GetMatrixPtr()); }
-  String GetStr() const;
+  Variant GetVar() const override 	{ return Variant(GetMatrixPtr()); }
+  String GetStr() const override;
 
-  // void UpdateAfterEdit();
+  // void UpdateAfterEdit() override;
 
-  cssEl* operator[](const Variant& idx) const;
+  cssEl* operator[](const Variant& idx) const override;
 
   bool AssignCheckSource(const cssEl& s) override;
 
-  void* 	GetVoidPtrOfType(TypeDef* td) const;
-  void* 	GetVoidPtrOfType(const String& td) const;
+  void* 	GetVoidPtrOfType(TypeDef* td) const override;
+  void* 	GetVoidPtrOfType(const String& td) const override;
   // these are type-safe ways to convert a cssEl into a ptr to object of given type
 
 #ifndef NO_TA_BASE
