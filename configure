@@ -24,6 +24,8 @@ echo "  --qt5                        configure for Qt5 -- must set QTDIR enviro 
 echo "  --qt3d                       configure for Qt3D instead of Coin3D / Quarter"
 echo "  --qt4                        configure for Qt4 -- either qt5 or 4 must be explicitly set, just to be sure you got the right one"
 echo "  --c++11                      enable c++11 support, using e.g., -std=c++11 flag"
+echo "  --sanitize                   enable advanced sanitization on clang: -fsanitize=address"
+echo "                               (requires recent / latest clang version)"
 echo "  --enable-cuda (or --cuda)    enable NVIDIA CUDA support"
 echo "  --enable-hpcprof (or --hpcprof) enable hpctoolkit profiling control with root.MonControl method"
 echo "  --flags=\"your own flags\"     include your own custom flags"
@@ -144,6 +146,12 @@ do
       shift 1
     ;;
 
+    --sanitize | -sanitize | sanitize)
+      sanitize="sanitize"
+      cmake_cmd="$cmake_cmd -DSANITIZE=ON"
+      shift 1
+    ;;
+
     --c++11 | -c++11 | c++11)
       cmake_cmd="$cmake_cmd -DCMAKE_CXX_FLAGS=-std=c++11"
       c11="c++11"
@@ -201,6 +209,7 @@ echo "  build-dir:    $build_dir"
 echo "  qt-version:   $qt_version"
 echo "  generator:    $generator"
 echo "  verbose:      $verbose_build"
+echo "  sanitize:     $sanitize"
 echo "  c11:          $c11"
 echo "  flags:        $flgs"
 echo " "

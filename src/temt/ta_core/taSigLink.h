@@ -56,7 +56,7 @@ class taBase;
 
 */
 
-#define SL_FUNS(y)      TypeDef* GetTypeDef() const {return &TA_ ## y;} \
+#define SL_FUNS(y)      TypeDef* GetTypeDef() const override {return &TA_ ## y;} \
 
 taTypeDef_Of(taSigLink);
 

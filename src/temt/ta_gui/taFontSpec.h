@@ -39,9 +39,9 @@ public:
   // #BUTTON set font to given point size
 
   bool  Equals(const taFontSpec& b);
-  void  UpdateAfterEdit();
-  void  CutLinks();
-  void  InitLinks();
+  void  UpdateAfterEdit() override;
+  void  CutLinks() override;
+  void  InitLinks() override;
   void  Copy_(const taFontSpec& cp);
   TA_BASEFUNS(taFontSpec);
 private:

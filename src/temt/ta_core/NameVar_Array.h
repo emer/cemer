@@ -55,12 +55,14 @@ public:
 protected:
   Variant      El_GetVar_(const void* itm) const override
     { return (Variant)((NameVar*)itm)->value; }
-  int           El_Compare_(const void* a, const void* b) const
+  int           El_Compare_(const void* a, const void* b) const override
   { int rval=-1; if(((NameVar*)a)->value > ((NameVar*)b)->value) rval=1; else if(((NameVar*)a)->value == ((NameVar*)b)->value) rval=0; return rval; }
-  bool          El_Equal_(const void* a, const void* b) const
+  bool          El_Equal_(const void* a, const void* b) const override
   { return (((NameVar*)a)->value == ((NameVar*)b)->value); }
-  String        El_GetStr_(const void* it) const { return ((NameVar*)it)->GetStr(); }
-  void          El_SetFmStr_(void* it, const String& val) { ((NameVar*)it)->SetFmStr(val); }
+  String        El_GetStr_(const void* it) const override
+  { return ((NameVar*)it)->GetStr(); }
+  void          El_SetFmStr_(void* it, const String& val) override
+  { ((NameVar*)it)->SetFmStr(val); }
 private:
   void Initialize()     { };
   void Destroy()        { };

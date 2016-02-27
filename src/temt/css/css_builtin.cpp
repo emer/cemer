@@ -2134,7 +2134,7 @@ static cssEl* cssElCFun_putenv_stub(int, cssEl* arg[]) {
     }
   }
   env_vals.Add(env_val);
-  if(putenv((char*)env_vals.Peek()))
+  if(putenv((const char*)env_vals.Peek()))
     return cssBI::true_int; // no sense in creating more baggage..
   else
     return cssBI::false_int;

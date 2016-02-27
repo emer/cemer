@@ -33,7 +33,7 @@ public:
   iAction*            PeekNonSep(); // returns last non-separator item, if any
 
   ~iAction_List()            { Reset(); }
-  virtual String El_GetName_(void* it) const { return (((iAction*)it)->text()); }
+  virtual String El_GetName_(void* it) const override { return (((iAction*)it)->text()); }
 
 protected:
   void*        El_Ref_(void* it)  override { ((iAction*)it)->nref++; return it; }     // when pushed

@@ -70,9 +70,9 @@ else (WIN32) # assume gcc!!!
     # debug mode
     # on Mac/Linux, DEBUG is not defined!
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
-    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-#      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=undefined")
-    endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND SANITIZE)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+    endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND SANITIZE)
   endif (CMAKE_BUILD_TYPE MATCHES "Release" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
 
   if(NOT NOT_NATIVE MATCHES "not-native")

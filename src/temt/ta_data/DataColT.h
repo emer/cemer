@@ -33,8 +33,8 @@ public:
   const taMatrix* AR() const override { return &ar; } // the array pointer
   taMatrix*    AR()    override { return &ar; } // the array pointer
 
-  void  CutLinks()
-    {ar.CutLinks(); DataCol::CutLinks();}
+  void  CutLinks() override
+  { ar.CutLinks(); DataCol::CutLinks(); }
   TA_TMPLT_ABSTRACT_BASEFUNS(DataColT, T); //
 public: //DO NOT ACCESS DIRECTLY
   T             ar;             // #NO_SHOW  the array itself

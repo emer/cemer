@@ -81,22 +81,22 @@ public: // ISigLinkClient i/f -- note: only registered though for taiEDH and lat
   void          SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
 
 public: // IWidgetHost i/f
-  const iColor   colorOfCurRow() const {return colorOfRow(curRow());}
-  TypeItem::ShowMembs  show() const; // legacy -- just returns the app value
-  bool          HasChanged() {return modified;}
-  bool          isConstructed() {int s = state & STATE_MASK;
+  const iColor   colorOfCurRow() const override {return colorOfRow(curRow());}
+  TypeItem::ShowMembs  show() const override; // legacy -- just returns the app value
+  bool          HasChanged() override {return modified;}
+  bool          isConstructed() override {int s = state & STATE_MASK;
     return ((s >= CONSTRUCTED) && (s < ZOMBIE));}
-  bool          isModal() {return modal;}
-  bool          isReadOnly() {return read_only;} //
+  bool          isModal() override {return modal;}
+  bool          isReadOnly() override {return read_only;} //
 // iMainWindowViewer* viewerWindow() const; n/a here -- defined in taiEDH
-  void*         Root() const {return root;} // root of the object
-  taBase*       Base() const {return Base_();} // root of the object, if a taBase
-  TypeDef*      GetRootTypeDef() const {return typ;} // TypeDef on the root, for casting
-  void          GetImage()      {GetImage(true);}
-  void          GetValue()      { }
+  void*         Root() const override {return root;} // root of the object
+  taBase*       Base() const override {return Base_();} // root of the object, if a taBase
+  TypeDef*      GetRootTypeDef() const override {return typ;} // TypeDef on the root, for casting
+  void          GetImage()      override {GetImage(true);}
+  void          GetValue()      override { }
 public slots:
-  void          Changed() {inherited::Changed();}
-  void          Apply_Async() {inherited::Apply_Async(); }
+  void          Changed() override {inherited::Changed();}
+  void          Apply_Async() override {inherited::Apply_Async(); }
 
 protected:
   bool                  show_meth_buttons; // true if any are created

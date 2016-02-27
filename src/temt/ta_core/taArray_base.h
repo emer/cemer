@@ -68,13 +68,13 @@ public:
                               TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
 
 #ifndef __MAKETA__
-  int           Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0);
-  int           Dump_Load_Value(std::istream& strm, taBase* par=NULL);
+  int           Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0) override;
+  int           Dump_Load_Value(std::istream& strm, taBase* par=NULL) override;
 #endif
 
   void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 
-  void  CutLinks();
+  void  CutLinks() override;
   TA_ABSTRACT_BASEFUNS(taArray_base) //
 
 protected:

@@ -453,8 +453,8 @@ public:
   virtual void GetUniqueColumnValues(String_Array& groups);
   // make a list of the unique values of the column
 
-  void  InitLinks(); //note: ok to do own AR here, because never called in constructor
-  void  CutLinks(); //note: NOT ok to do disown AR here, because called in destructor
+  void  InitLinks() override; //note: ok to do own AR here, because never called in constructor
+  void  CutLinks() override; //note: NOT ok to do disown AR here, because called in destructor
   TA_ABSTRACT_BASEFUNS(DataCol) //
 
 protected:

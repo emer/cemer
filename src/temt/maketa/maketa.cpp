@@ -38,6 +38,7 @@ MTA::MTA() {
   cur_meth = NULL;
   last_memb = NULL;
   last_meth = NULL;
+  last_word_idx = 0;
 
   thisname = false;
   constcoln = false;

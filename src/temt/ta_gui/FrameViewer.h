@@ -38,8 +38,8 @@ public:
 
   inline MainWindowViewer* mainWindowViewer() {return parent();}
 
-//  void        InitLinks();
-//  void        CutLinks(); //
+//  void        InitLinks() override;
+//  void        CutLinks() override; //
 //  void        Copy_(const FrameViewer& cp);
   TA_DATAVIEWFUNS(FrameViewer, taViewer) //
 protected:

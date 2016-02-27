@@ -198,8 +198,8 @@ public:
   int           LoadPluginState(); // load state for plugins from user data
   int           Save() override;
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(taRootBase)
 
 public:

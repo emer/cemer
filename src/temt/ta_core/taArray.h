@@ -77,17 +77,17 @@ public:
 
   TA_TMPLT_BASEFUNS_NOCOPY(taArray,T); //
 public:
-  void*         FastEl_(int i)          { return &(el[i]); }// #IGNORE
-  const void*   FastEl_(int i) const    { return (const void*)&(el[i]); } // #IGNORE
+  void*         FastEl_(int i) override          { return &(el[i]); }// #IGNORE
+  const void*   FastEl_(int i) const override    { return (const void*)&(el[i]); } // #IGNORE
 protected:
   mutable T             tmp; // #IGNORE temporary item
 
   void*        MakeArray_(int n) const override { return new T[n]; }
   void         SetArray_(void* nw) override {if (el) delete [] el; el = (T*)nw;}
-  void          El_Copy_(void* to, const void* fm) { *((T*)to) = *((T*)fm); }
-  uint          El_SizeOf_() const              { return sizeof(T); }
-  const void*   El_GetErr_() const              { return (void*)&err; }
-  void*         El_GetTmp_() const              { return (void*)&tmp; } //
+  void          El_Copy_(void* to, const void* fm) override { *((T*)to) = *((T*)fm); }
+  uint          El_SizeOf_() const override              { return sizeof(T); }
+  const void*   El_GetErr_() const override              { return (void*)&err; }
+  void*         El_GetTmp_() const override              { return (void*)&tmp; } //
 private:
   void  Initialize() { el = NULL; }
   void  Destroy() { SetArray_(NULL); }

@@ -189,8 +189,8 @@ public:
 
   DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override; // don't save the unused vals
   void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(ProgVar);
 protected:
   String                m_this_sig; // the sig from most recent change

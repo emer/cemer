@@ -35,7 +35,7 @@ public:
   void          SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
                                  int sls, void* op1_, void* op2_) override;
 
-  void  InitLinks();
+  void  InitLinks() override;
   TA_BASEFUNS_NOCOPY(StartupWizard);
 private:
   void Initialize();

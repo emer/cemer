@@ -26,15 +26,15 @@ class CSS_API cssInt : public cssEl {
 public:
   Int		val;
 
-  int		GetParse() const	{ return CSS_VAR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_Int; }
-  const char*	GetTypeName() const	{ return "(Int)"; }
-  bool		IsNumericTypeStrict() const   { return true; }
+  int		GetParse() const override	{ return CSS_VAR; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_Int; }
+  const char*	GetTypeName() const override	{ return "(Int)"; }
+  bool		IsNumericTypeStrict() const override   { return true; }
 
-  String 	PrintStr() const
+  String 	PrintStr() const override
   { return String(GetTypeName())+" " + name + " = " + String(val); }
-  String	PrintFStr() const { return String(val); }
+  String	PrintFStr() const override { return String(val); }
 
   // constructors
   void 		Constr()		{ val = 0; }
@@ -49,11 +49,11 @@ public:
   cssCloneFuns(cssInt, 0);
 
   // converters
-  String GetStr() const		{ return String(val); }
-  Variant GetVar() const	{ return Variant(val); }
-  operator Real() const	 	{ return (Real)val; }
-  operator Int() const	 	{ return val; }
-  operator bool() const	 	{ return val; }
+  String GetStr() const override	{ return String(val); }
+  Variant GetVar() const override	{ return Variant(val); }
+  operator Real() const override	{ return (Real)val; }
+  operator Int() const override	 	{ return val; }
+  operator bool() const override	{ return val; }
 
   // allow NULL, which is an int, to convert to a NULL of any type..
   void* GetVoidPtrOfType(TypeDef* td) const override
@@ -64,97 +64,107 @@ public:
   void* 	NullPtrCvt(const String& typ_nm) const
   { if(val!=0) CvtErr(typ_nm); return NULL; }
 
-  operator void*() const	{ return NullPtrCvt("(void*)"); }
-  operator void**() const	{ return (void**)NullPtrCvt("(void**)"); }
+  operator void*() const override	{ return NullPtrCvt("(void*)"); }
+  operator void**() const override	{ return (void**)NullPtrCvt("(void**)"); }
 
-  operator int*() const		{ return (int*)NullPtrCvt("(int*)"); }
-  operator short*() const	{ return (short*)NullPtrCvt("(short*)"); }
-  operator long*() const	{ return (long*)NullPtrCvt("(long*)"); }
-  operator double*() const	{ return (double*)NullPtrCvt("(double*)"); }
-  operator float*() const	{ return (float*)NullPtrCvt("(float*)"); }
-  operator String*() const	{ return (String*)NullPtrCvt("(String*)"); }
-  operator Variant*() const	{ return (Variant*)NullPtrCvt("(Variant*)"); }
-  operator bool*() const	{ return (bool*)NullPtrCvt("(bool*)"); }
+  operator int*() const override	{ return (int*)NullPtrCvt("(int*)"); }
+  operator short*() const override	{ return (short*)NullPtrCvt("(short*)"); }
+  operator long*() const override	{ return (long*)NullPtrCvt("(long*)"); }
+  operator double*() const override	{ return (double*)NullPtrCvt("(double*)"); }
+  operator float*() const override	{ return (float*)NullPtrCvt("(float*)"); }
+  operator String*() const override	{ return (String*)NullPtrCvt("(String*)"); }
+  operator Variant*() const override	{ return (Variant*)NullPtrCvt("(Variant*)"); }
+  operator bool*() const override	{ return (bool*)NullPtrCvt("(bool*)"); }
 
-  operator int**() const	{ return (int**)NullPtrCvt("(int**)"); }
-  operator short**() const	{ return (short**)NullPtrCvt("(short**)"); }
-  operator long**() const	{ return (long**)NullPtrCvt("(long**)"); }
-  operator double**() const	{ return (double**)NullPtrCvt("(double**)"); }
-  operator float**() const	{ return (float**)NullPtrCvt("(float**)"); }
-  operator String**() const	{ return (String**)NullPtrCvt("(String**)"); }
-  operator Variant**() const	{ return (Variant**)NullPtrCvt("(Variant**)"); }
-  operator bool**() const	{ return (bool**)NullPtrCvt("(bool**)"); }
+  operator int**() const override	{ return (int**)NullPtrCvt("(int**)"); }
+  operator short**() const override	{ return (short**)NullPtrCvt("(short**)"); }
+  operator long**() const override	{ return (long**)NullPtrCvt("(long**)"); }
+  operator double**() const override	{ return (double**)NullPtrCvt("(double**)"); }
+  operator float**() const override	{ return (float**)NullPtrCvt("(float**)"); }
+  operator String**() const override	{ return (String**)NullPtrCvt("(String**)"); }
+  operator Variant**() const override	{ return (Variant**)NullPtrCvt("(Variant**)"); }
+  operator bool**() const override	{ return (bool**)NullPtrCvt("(bool**)"); }
 
-  operator std::ostream*() const	{ return (std::ostream*)NullPtrCvt("(ostream*)"); }
-  operator std::istream*() const	{ return (std::istream*)NullPtrCvt("(istream*)"); }
-  operator std::iostream*() const	{ return (std::iostream*)NullPtrCvt("(iostream*)"); }
-  operator std::fstream*() const	{ return (std::fstream*)NullPtrCvt("(fstream*)"); }
-  operator std::stringstream*() const { return (std::stringstream*)NullPtrCvt("(stringstream*)"); }
+  operator std::ostream*() const override
+    { return (std::ostream*)NullPtrCvt("(ostream*)"); }
+  operator std::istream*() const override
+    { return (std::istream*)NullPtrCvt("(istream*)"); }
+  operator std::iostream*() const override
+    { return (std::iostream*)NullPtrCvt("(iostream*)"); }
+  operator std::fstream*() const override
+    { return (std::fstream*)NullPtrCvt("(fstream*)"); }
+  operator std::stringstream*() const override
+    { return (std::stringstream*)NullPtrCvt("(stringstream*)"); }
 
-  operator std::ostream**() const	{ return (std::ostream**)NullPtrCvt("(ostream**)"); }
-  operator std::istream**() const	{ return (std::istream**)NullPtrCvt("(istream**)"); }
-  operator std::iostream**()	const	{ return (std::iostream**)NullPtrCvt("(iostream**)"); }
-  operator std::fstream**() const	{ return (std::fstream**)NullPtrCvt("(fstream**)"); }
-  operator std::stringstream**() const { return (std::stringstream**)NullPtrCvt("(stringstream**)"); }
+  operator std::ostream**() const override
+    { return (std::ostream**)NullPtrCvt("(ostream**)"); }
+  operator std::istream**() const override
+    { return (std::istream**)NullPtrCvt("(istream**)"); }
+  operator std::iostream**()	const override
+    { return (std::iostream**)NullPtrCvt("(iostream**)"); }
+  operator std::fstream**() const override
+    { return (std::fstream**)NullPtrCvt("(fstream**)"); }
+  operator std::stringstream**() const override
+    { return (std::stringstream**)NullPtrCvt("(stringstream**)"); }
 
-  operator taBase*() const	{ return (taBase*)NullPtrCvt("(taBase*)"); }
-  operator taBase**() const 	{ return (taBase**)NullPtrCvt("(taBase**)"); }
-  operator TypeDef*() const	{ return (TypeDef*)NullPtrCvt("(TypeDef*)"); }
-  operator MemberDef*() const	{ return (MemberDef*)NullPtrCvt("(MemberDef*)"); }
-  operator MethodDef*() const	{ return (MethodDef*)NullPtrCvt("(MethodDef*)"); }
+  operator taBase*() const override	{ return (taBase*)NullPtrCvt("(taBase*)"); }
+  operator taBase**() const override 	{ return (taBase**)NullPtrCvt("(taBase**)"); }
+  operator TypeDef*() const override	{ return (TypeDef*)NullPtrCvt("(TypeDef*)"); }
+  operator MemberDef*() const override	{ return (MemberDef*)NullPtrCvt("(MemberDef*)"); }
+  operator MethodDef*() const override	{ return (MethodDef*)NullPtrCvt("(MethodDef*)"); }
 
-  void operator=(Real cp) 		{ val = (int)cp; }
-  void operator=(Int cp)		{ val = cp; }
-  void operator=(const String& cp)	{ val = (int)strtol((const char*)cp, NULL, 0); }
+  void operator=(Real cp) override 		{ val = (int)cp; }
+  void operator=(Int cp) override		{ val = cp; }
+  void operator=(const String& cp) override	{ val = (int)strtol((const char*)cp, NULL, 0); }
 
-  void operator=(void*)	 	{ CvtErr("(void*)"); }
-  void operator=(void**)	{ CvtErr("(void**)"); }
+  void operator=(void*) override	{ CvtErr("(void*)"); }
+  void operator=(void**) override	{ CvtErr("(void**)"); }
   using cssEl::operator=;
 
   // operators
-  void operator=(const cssEl& s) { val = (Int)s; }
+  void operator=(const cssEl& s) override { val = (Int)s; }
 
-  cssEl* operator+(cssEl& t);
-  cssEl* operator-(cssEl& t);
-  cssEl* operator*(cssEl& t);
-  cssEl* operator/(cssEl& t);
-  cssEl* operator*()		{ return cssEl::operator*(); }
+  cssEl* operator+(cssEl& t) override;
+  cssEl* operator-(cssEl& t) override;
+  cssEl* operator*(cssEl& t) override;
+  cssEl* operator/(cssEl& t) override;
+  cssEl* operator*() override		{ return cssEl::operator*(); }
 
-  cssEl* operator%(cssEl& t)
+  cssEl* operator%(cssEl& t) override
   { cssInt* r = new cssInt(*this,""); r->val %= (Int)t; return r; }
-  cssEl* operator<<(cssEl& t)
+  cssEl* operator<<(cssEl& t) override
   { cssInt* r = new cssInt(*this,""); r->val <<= (Int)t; return r; }
-  cssEl* operator>>(cssEl& t)
+  cssEl* operator>>(cssEl& t) override
   { cssInt* r = new cssInt(*this,""); r->val >>= (Int)t; return r; }
-  cssEl* operator&(cssEl& t)
+  cssEl* operator&(cssEl& t) override
   { cssInt* r = new cssInt(*this,""); r->val &= (Int)t; return r; }
-  cssEl* operator^(cssEl& t)
+  cssEl* operator^(cssEl& t) override
   { cssInt* r = new cssInt(*this,""); r->val ^= (Int)t; return r; }
-  cssEl* operator|(cssEl& t)
+  cssEl* operator|(cssEl& t) override
   { cssInt* r = new cssInt(*this,""); r->val |= (Int)t; return r; }
 
-  cssEl* operator-()
+  cssEl* operator-() override
   { cssInt* r = new cssInt(*this,""); r->val = -val; return r; }
-  cssEl* operator~()
+  cssEl* operator~() override
   { cssInt* r = new cssInt(*this,""); r->val = ~val; return r; }
 
-  void operator+=(cssEl& t) 	{ val += (Int)t; }
-  void operator-=(cssEl& t) 	{ val -= (Int)t; }
-  void operator*=(cssEl& t) 	{ val *= (Int)t; }
-  void operator/=(cssEl& t) 	{ val /= (Int)t; }
-  void operator%=(cssEl& t) 	{ val %= (Int)t; }
-  void operator<<=(cssEl& t) 	{ val <<= (Int)t; }
-  void operator>>=(cssEl& t) 	{ val >>= (Int)t; }
-  void operator&=(cssEl& t) 	{ val &= (Int)t; }
-  void operator^=(cssEl& t) 	{ val ^= (Int)t; }
-  void operator|=(cssEl& t) 	{ val |= (Int)t; }
+  void operator+=(cssEl& t) override 	{ val += (Int)t; }
+  void operator-=(cssEl& t) override 	{ val -= (Int)t; }
+  void operator*=(cssEl& t) override 	{ val *= (Int)t; }
+  void operator/=(cssEl& t) override 	{ val /= (Int)t; }
+  void operator%=(cssEl& t) override 	{ val %= (Int)t; }
+  void operator<<=(cssEl& t) override 	{ val <<= (Int)t; }
+  void operator>>=(cssEl& t) override 	{ val >>= (Int)t; }
+  void operator&=(cssEl& t) override 	{ val &= (Int)t; }
+  void operator^=(cssEl& t) override 	{ val ^= (Int)t; }
+  void operator|=(cssEl& t) override 	{ val |= (Int)t; }
 
-  cssEl* operator< (cssEl& s) 	{ return new cssBool(val < (Int)s); }
-  cssEl* operator> (cssEl& s) 	{ return new cssBool(val > (Int)s); }
-  cssEl* operator<=(cssEl& s) 	{ return new cssBool(val <= (Int)s); }
-  cssEl* operator>=(cssEl& s) 	{ return new cssBool(val >= (Int)s); }
-  cssEl* operator==(cssEl& s) 	{ return new cssBool(val == (Int)s); }
-  cssEl* operator!=(cssEl& s) 	{ return new cssBool(val != (Int)s); }
+  cssEl* operator< (cssEl& s) override 	{ return new cssBool(val < (Int)s); }
+  cssEl* operator> (cssEl& s) override 	{ return new cssBool(val > (Int)s); }
+  cssEl* operator<=(cssEl& s) override 	{ return new cssBool(val <= (Int)s); }
+  cssEl* operator>=(cssEl& s) override 	{ return new cssBool(val >= (Int)s); }
+  cssEl* operator==(cssEl& s) override 	{ return new cssBool(val == (Int)s); }
+  cssEl* operator!=(cssEl& s) override 	{ return new cssBool(val != (Int)s); }
 };
 
 #define cssInt_inst(l,n,x)          l .Push(new cssInt((int) n,(const char *) #x))
@@ -174,25 +184,25 @@ public:
 
   cssCloneFuns(cssConstInt, 0);
 
-  void operator=(Real cp) 		{ NopErr("const ="); }
-  void operator=(Int cp)		{ NopErr("const ="); }
-  void operator=(const String& cp)	{ NopErr("const ="); }
+  void operator=(Real cp) override 		{ NopErr("const ="); }
+  void operator=(Int cp) override		{ NopErr("const ="); }
+  void operator=(const String& cp) override	{ NopErr("const ="); }
 
   using cssEl::operator=;
 
   // operators
-  void operator=(const cssEl& s) { NopErr("const ="); }
+  void operator=(const cssEl& s) override { NopErr("const ="); }
 
-  void operator+=(cssEl& t) 	{ NopErr("const +="); }
-  void operator-=(cssEl& t) 	{ NopErr("const -="); }
-  void operator*=(cssEl& t) 	{ NopErr("const *="); }
-  void operator/=(cssEl& t) 	{ NopErr("const /="); }
-  void operator%=(cssEl& t) 	{ NopErr("const %="); }
-  void operator<<=(cssEl& t) 	{ NopErr("const <<="); }
-  void operator>>=(cssEl& t) 	{ NopErr("const >>="); }
-  void operator&=(cssEl& t) 	{ NopErr("const &="); }
-  void operator^=(cssEl& t) 	{ NopErr("const ^="); }
-  void operator|=(cssEl& t) 	{ NopErr("const |="); }
+  void operator+=(cssEl& t) override 	{ NopErr("const +="); }
+  void operator-=(cssEl& t) override 	{ NopErr("const -="); }
+  void operator*=(cssEl& t) override 	{ NopErr("const *="); }
+  void operator/=(cssEl& t) override 	{ NopErr("const /="); }
+  void operator%=(cssEl& t) override 	{ NopErr("const %="); }
+  void operator<<=(cssEl& t) override 	{ NopErr("const <<="); }
+  void operator>>=(cssEl& t) override 	{ NopErr("const >>="); }
+  void operator&=(cssEl& t) override 	{ NopErr("const &="); }
+  void operator^=(cssEl& t) override 	{ NopErr("const ^="); }
+  void operator|=(cssEl& t) override 	{ NopErr("const |="); }
 };
 
 #define cssConstInt_inst(l,n,x)          l .Push(new cssConstInt((int) n,(const char *) #x))
@@ -205,19 +215,19 @@ class CSS_API cssInt64 : public cssEl {
 public:
   ta_int64_t		val;
 
-  int		GetParse() const	{ return CSS_VAR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_Int64; }
-  const char*	GetTypeName() const	{ return "(Int64)"; }
-  bool		IsNumericTypeStrict() const   { return true; }
+  int		GetParse() const override	{ return CSS_VAR; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_Int64; }
+  const char*	GetTypeName() const override	{ return "(Int64)"; }
+  bool		IsNumericTypeStrict() const override   { return true; }
 
-  String 	PrintStr() const
+  String 	PrintStr() const override
   { return String(GetTypeName())+" " + name + " = " + String(val); }
-  String	PrintFStr() const { return String(val); }
+  String	PrintFStr() const override { return String(val); }
 
   // constructors
   void 		Constr()		{ val = 0LL; }
-  void		Copy(const cssInt64& cp)	{ cssEl::Copy(cp); val = cp.val; }
+  void		Copy(const cssInt64& cp) { cssEl::Copy(cp); val = cp.val; }
   cssInt64()				{ Constr(); }
   cssInt64(Int vl)			{ Constr(); val = vl; }
   cssInt64(Int vl, const String& nm) 	{ Constr(); name = nm;  val = vl; }
@@ -227,76 +237,76 @@ public:
   cssCloneFuns(cssInt64, 0);
 
   // converters
-  String GetStr() const	{ return String(val); }
-  Variant GetVar() const { return Variant(val); }
-  operator Real() const	 	{ return (Real)val; }
-  operator Int() const	 	{ return (Int)val; }
-  operator bool() const	 	{ return val; }
-  operator float() const 		{ return (float)val; }
-  operator unsigned int() const 	{ return (unsigned int)val; }
-  operator unsigned char() const 	{ return (unsigned char)val; }
-  operator unsigned short() const	{ return (unsigned short)val; }
-  operator unsigned long() const	{ return (unsigned long)val; }
-  operator ta_int64_t() const	 	{ return val; }
-  operator ta_uint64_t() const	 	{ return (ta_uint64_t)val; }
+  String GetStr() const override	        { return String(val); }
+  Variant GetVar() const override               { return Variant(val); }
+  operator Real() const override	 	{ return (Real)val; }
+  operator Int() const override	 	        { return (Int)val; }
+  operator bool() const override	 	{ return val; }
+  operator float() const override 		{ return (float)val; }
+  operator unsigned int() const override 	{ return (unsigned int)val; }
+  operator unsigned char() const override 	{ return (unsigned char)val; }
+  operator unsigned short() const override	{ return (unsigned short)val; }
+  operator unsigned long() const override	{ return (unsigned long)val; }
+  operator ta_int64_t() const override	 	{ return val; }
+  operator ta_uint64_t() const override	 	{ return (ta_uint64_t)val; }
 
-//  operator void*() const; //TODO64 -- Int64 should hold pointers in 64-bit version
-//  operator void**() const;
+//  operator void*() const override; //TODO64 -- Int64 should hold pointers in 64-bit version
+//  operator void**() const override;
 
-  void operator=(Real cp) 		{ val = (ta_int64_t)cp; }
-  void operator=(Int cp)		{ val = (int)cp; }
-  void operator=(ta_int64_t cp)		{ val = cp; }
-  void operator=(ta_uint64_t cp)		{ val = cp; }
-  void operator=(const String& cp)	{ val = cp.toInt64(); }
+  void operator=(Real cp) override 		{ val = (ta_int64_t)cp; }
+  void operator=(Int cp) override		{ val = (int)cp; }
+  void operator=(ta_int64_t cp) override	{ val = cp; }
+  void operator=(ta_uint64_t cp) override	{ val = cp; }
+  void operator=(const String& cp) override	{ val = cp.toInt64(); }
 
-  void operator=(void*)	 	{ CvtErr("(void*)"); }
-  void operator=(void**)	{ CvtErr("(void**)"); }
+  void operator=(void*) override	 	{ CvtErr("(void*)"); }
+  void operator=(void**) override	{ CvtErr("(void**)"); }
   using cssEl::operator=;
 
   // operators
-  void operator=(const cssEl& s) { val = (ta_int64_t)s; }
+  void operator=(const cssEl& s) override { val = (ta_int64_t)s; }
 
-  cssEl* operator+(cssEl& t);
-  cssEl* operator-(cssEl& t);
-  cssEl* operator*(cssEl& t);
-  cssEl* operator/(cssEl& t);
-  cssEl* operator*()		{ return cssEl::operator*(); }
+  cssEl* operator+(cssEl& t) override;
+  cssEl* operator-(cssEl& t) override;
+  cssEl* operator*(cssEl& t) override;
+  cssEl* operator/(cssEl& t) override;
+  cssEl* operator*() override		{ return cssEl::operator*(); }
 
-  cssEl* operator%(cssEl& t)
+  cssEl* operator%(cssEl& t) override
   { cssInt64* r = new cssInt64(*this,""); r->val %= (ta_int64_t)t; return r; }
-  cssEl* operator<<(cssEl& t)
+  cssEl* operator<<(cssEl& t) override
   { cssInt64* r = new cssInt64(*this,""); r->val <<= (ta_int64_t)t; return r; }
-  cssEl* operator>>(cssEl& t)
+  cssEl* operator>>(cssEl& t) override
   { cssInt64* r = new cssInt64(*this,""); r->val >>= (ta_int64_t)t; return r; }
-  cssEl* operator&(cssEl& t)
+  cssEl* operator&(cssEl& t) override
   { cssInt64* r = new cssInt64(*this,""); r->val &= (ta_int64_t)t; return r; }
-  cssEl* operator^(cssEl& t)
+  cssEl* operator^(cssEl& t) override
   { cssInt64* r = new cssInt64(*this,""); r->val ^= (ta_int64_t)t; return r; }
-  cssEl* operator|(cssEl& t)
+  cssEl* operator|(cssEl& t) override
   { cssInt64* r = new cssInt64(*this,""); r->val |= (ta_int64_t)t; return r; }
 
-  cssEl* operator-()
+  cssEl* operator-() override
   { cssInt64* r = new cssInt64(*this,""); r->val = -val; return r; }
-  cssEl* operator~()
+  cssEl* operator~() override
   { cssInt64* r = new cssInt64(*this,""); r->val = ~val; return r; }
 
-  void operator+=(cssEl& t) 	{ val += (ta_int64_t)t; }
-  void operator-=(cssEl& t) 	{ val -= (ta_int64_t)t; }
-  void operator*=(cssEl& t) 	{ val *= (ta_int64_t)t; }
-  void operator/=(cssEl& t) 	{ val /= (ta_int64_t)t; }
-  void operator%=(cssEl& t) 	{ val %= (ta_int64_t)t; }
-  void operator<<=(cssEl& t) 	{ val <<= (ta_int64_t)t; }
-  void operator>>=(cssEl& t) 	{ val >>= (ta_int64_t)t; }
-  void operator&=(cssEl& t) 	{ val &= (ta_int64_t)t; }
-  void operator^=(cssEl& t) 	{ val ^= (ta_int64_t)t; }
-  void operator|=(cssEl& t) 	{ val |= (ta_int64_t)t; }
+  void operator+=(cssEl& t) override 	{ val += (ta_int64_t)t; }
+  void operator-=(cssEl& t) override 	{ val -= (ta_int64_t)t; }
+  void operator*=(cssEl& t) override 	{ val *= (ta_int64_t)t; }
+  void operator/=(cssEl& t) override 	{ val /= (ta_int64_t)t; }
+  void operator%=(cssEl& t) override 	{ val %= (ta_int64_t)t; }
+  void operator<<=(cssEl& t) override 	{ val <<= (ta_int64_t)t; }
+  void operator>>=(cssEl& t) override 	{ val >>= (ta_int64_t)t; }
+  void operator&=(cssEl& t) override 	{ val &= (ta_int64_t)t; }
+  void operator^=(cssEl& t) override 	{ val ^= (ta_int64_t)t; }
+  void operator|=(cssEl& t) override 	{ val |= (ta_int64_t)t; }
 
-  cssEl* operator< (cssEl& s) 	{ return new cssBool(val < (ta_int64_t)s); }
-  cssEl* operator> (cssEl& s) 	{ return new cssBool(val > (ta_int64_t)s); }
-  cssEl* operator<=(cssEl& s) 	{ return new cssBool(val <= (ta_int64_t)s); }
-  cssEl* operator>=(cssEl& s) 	{ return new cssBool(val >= (ta_int64_t)s); }
-  cssEl* operator==(cssEl& s) 	{ return new cssBool(val == (ta_int64_t)s); }
-  cssEl* operator!=(cssEl& s) 	{ return new cssBool(val != (ta_int64_t)s); }
+  cssEl* operator< (cssEl& s) override 	{ return new cssBool(val < (ta_int64_t)s); }
+  cssEl* operator> (cssEl& s) override 	{ return new cssBool(val > (ta_int64_t)s); }
+  cssEl* operator<=(cssEl& s) override 	{ return new cssBool(val <= (ta_int64_t)s); }
+  cssEl* operator>=(cssEl& s) override 	{ return new cssBool(val >= (ta_int64_t)s); }
+  cssEl* operator==(cssEl& s) override 	{ return new cssBool(val == (ta_int64_t)s); }
+  cssEl* operator!=(cssEl& s) override 	{ return new cssBool(val != (ta_int64_t)s); }
 };
 
 #define cssInt64_inst(l,n,x)          l .Push(new cssInt64((ta_int64_t) n,(const char *) #x))
@@ -307,13 +317,13 @@ public:
 class CSS_API cssChar : public cssInt {
   // a character (for string conversions)
 public:
-  const char*	GetTypeName() const { return "(char)"; }
-  bool		IsStringType() const   	{ return true; }
-  bool		IsNumericTypeStrict() const   { return true; }
+  const char*	GetTypeName() const override    { return "(char)"; }
+  bool		IsStringType() const override   { return true; }
+  bool		IsNumericTypeStrict() const override   { return true; }
 
-  String 	PrintStr() const
+  String 	PrintStr() const override
   { return String(GetTypeName())+" " + name + " = '" + (char)val + "'"; }
-  String	PrintFStr() const { return (char)val; }
+  String	PrintFStr() const override { return (char)val; }
 
   cssChar()                      : cssInt()		{ };
   cssChar(Int vl)                : cssInt(vl)		{ };
@@ -322,19 +332,19 @@ public:
   cssChar(const cssChar& cp, const String& nm) : cssInt(cp, nm) 	{ };
   cssCloneFuns(cssChar, *this);
 
-  String GetStr() const	{ return (String)(char)val; }
-  Variant GetVar() const { return Variant((char)val); }
+  String GetStr() const override  { return (String)(char)val; }
+  Variant GetVar() const override { return Variant((char)val); }
 
-  void operator=(Real cp) 		{ val = (int)cp; }
-  void operator=(Int cp)		{ val = cp; }
-  void operator=(const String& cp)	{ if(!cp.empty()) val = cp[0]; }
+  void operator=(Real cp) override 		{ val = (int)cp; }
+  void operator=(Int cp) override		{ val = cp; }
+  void operator=(const String& cp) override	{ if(!cp.empty()) val = cp[0]; }
 
-  void operator=(void*)	 	{ CvtErr("(void*)"); }
-  void operator=(void**)	{ CvtErr("(void**)"); }
+  void operator=(void*) override	 	{ CvtErr("(void*)"); }
+  void operator=(void**) override	{ CvtErr("(void**)"); }
   using cssInt::operator=;
 
   // operators
-  void operator=(const cssEl& s);
+  void operator=(const cssEl& s) override;
 };
 
 class CSS_API cssReal : public cssEl {
@@ -342,15 +352,15 @@ class CSS_API cssReal : public cssEl {
 public:
   Real		val;
 
-  int		GetParse() const	{ return CSS_VAR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_Real; }
-  const char*	GetTypeName() const 	{ return "(Real)"; }
-  bool		IsNumericTypeStrict() const   { return true; }
+  int		GetParse() const override	        { return CSS_VAR; }
+  uint		GetSize() const override		{ return sizeof(*this); }
+  cssTypes 	GetType() const override		{ return T_Real; }
+  const char*	GetTypeName() const override 	{ return "(Real)"; }
+  bool		IsNumericTypeStrict() const override    { return true; }
 
-  String 	PrintStr() const
+  String 	PrintStr() const override
   { return String(GetTypeName())+" "+ name + " = " + String(val); }
-  String	PrintFStr() const { return String(val); }
+  String	PrintFStr() const override { return String(val); }
 
   // constructors
   void 		Constr()		{ val = 0; }
@@ -364,49 +374,49 @@ public:
   cssCloneFuns(cssReal, 0.0);
 
   // converters
-  String GetStr() const	{ return String(val); }
-  Variant GetVar() const { return Variant(val); }
-  operator Real() const	 	{ return val; }
-  operator Int() const	 	{ return (int)val; }
-  operator bool() const	 	{ return val; }
+  String GetStr() const override	{ return String(val); }
+  Variant GetVar() const override       { return Variant(val); }
+  operator Real() const override	{ return val; }
+  operator Int() const override	 	{ return (int)val; }
+  operator bool() const override	{ return val; }
 
-  void operator=(Real cp) 		{ val = cp; }
-  void operator=(Int cp)		{ val = (Real)cp; }
-  void operator=(ta_int64_t cp)		{ operator=((Real)cp); }
-  void operator=(ta_uint64_t cp)		{ operator=((Real)cp); }
-  void operator=(const String& cp)	{ val = atof((const char*)cp); }
+  void operator=(Real cp) override 		{ val = cp; }
+  void operator=(Int cp) override		{ val = (Real)cp; }
+  void operator=(ta_int64_t cp) override	{ operator=((Real)cp); }
+  void operator=(ta_uint64_t cp) override	{ operator=((Real)cp); }
+  void operator=(const String& cp) override	{ val = atof((const char*)cp); }
 
-  void operator=(void*)	 	{ CvtErr("(void*)"); }
-  void operator=(void**)	{ CvtErr("(void**)"); }
+  void operator=(void*) override	 	{ CvtErr("(void*)"); }
+  void operator=(void**) override	{ CvtErr("(void**)"); }
   using cssEl::operator=;
 
   // operators
-  void operator=(const cssEl& s)	{ val = (Real)s; }
+  void operator=(const cssEl& s) override	{ val = (Real)s; }
 
-  cssEl* operator+(cssEl& t);
-  cssEl* operator-(cssEl& t);
-  cssEl* operator*(cssEl& t);
-  cssEl* operator/(cssEl& t);
-  cssEl* operator*()		{ return cssEl::operator*(); }
+  cssEl* operator+(cssEl& t) override;
+  cssEl* operator-(cssEl& t) override;
+  cssEl* operator*(cssEl& t) override;
+  cssEl* operator/(cssEl& t) override;
+  cssEl* operator*() override		{ return cssEl::operator*(); }
 
   // implement the to-the-power of operator as ^
-  cssEl* operator^(cssEl& t)
+  cssEl* operator^(cssEl& t) override
   { cssReal* r = new cssReal(); r->val = pow(val, (Real)t); return r; }
 
-  cssEl* operator-()
+  cssEl* operator-() override
   { cssReal* r = new cssReal(*this,""); r->val = -val; return r; }
 
-  void operator+=(cssEl& t) 	{ val += (Real)t; }
-  void operator-=(cssEl& t) 	{ val -= (Real)t; }
-  void operator*=(cssEl& t) 	{ val *= (Real)t; }
-  void operator/=(cssEl& t) 	{ val /= (Real)t; }
+  void operator+=(cssEl& t) override 	{ val += (Real)t; }
+  void operator-=(cssEl& t) override 	{ val -= (Real)t; }
+  void operator*=(cssEl& t) override 	{ val *= (Real)t; }
+  void operator/=(cssEl& t) override 	{ val /= (Real)t; }
 
-  cssEl* operator< (cssEl& s) { return new cssBool(val < (Real)s); }
-  cssEl* operator> (cssEl& s) { return new cssBool(val > (Real)s); }
-  cssEl* operator<=(cssEl& s) { return new cssBool(val <= (Real)s); }
-  cssEl* operator>=(cssEl& s) { return new cssBool(val >= (Real)s); }
-  cssEl* operator==(cssEl& s) { return new cssBool(val == (Real)s); }
-  cssEl* operator!=(cssEl& s) { return new cssBool(val != (Real)s); }
+  cssEl* operator< (cssEl& s) override { return new cssBool(val < (Real)s); }
+  cssEl* operator> (cssEl& s) override { return new cssBool(val > (Real)s); }
+  cssEl* operator<=(cssEl& s) override { return new cssBool(val <= (Real)s); }
+  cssEl* operator>=(cssEl& s) override { return new cssBool(val >= (Real)s); }
+  cssEl* operator==(cssEl& s) override { return new cssBool(val == (Real)s); }
+  cssEl* operator!=(cssEl& s) override { return new cssBool(val != (Real)s); }
 };
 
 #define cssReal_inst(l,n,x)		l .Push(new cssReal(n, #x))
@@ -434,33 +444,33 @@ class CSS_API cssConstReal : public cssReal {
   // a constant real value -- cannot be changed through std operators -- must assign directly to value in initialization
 public:
 
-  cssConstReal()				{ Constr(); }
-  cssConstReal(Real vl)			{ Constr(); val = vl; }
+  cssConstReal()			        { Constr(); }
+  cssConstReal(Real vl)			        { Constr(); val = vl; }
   cssConstReal(Real vl, const String& nm)	{ Constr(); val = vl; name = nm; }
   cssConstReal(const cssConstReal& cp)		{ Copy(cp); name = cp.name; }
   cssConstReal(const cssConstReal& cp, const String& nm){ Copy(cp); name = nm; }
 
   cssCloneFuns(cssConstReal, 0.0);
 
-  void operator=(Real cp) 		{ NopErr("const ="); }
-  void operator=(Int cp)		{ NopErr("const ="); }
-  void operator=(const String& cp)	{ NopErr("const ="); }
+  void operator=(Real cp) override 		{ NopErr("const ="); }
+  void operator=(Int cp) override		{ NopErr("const ="); }
+  void operator=(const String& cp) override	{ NopErr("const ="); }
 
   using cssEl::operator=;
 
   // operators
-  void operator=(const cssEl& s) { NopErr("const ="); }
+  void operator=(const cssEl& s) override { NopErr("const ="); }
 
-  void operator+=(cssEl& t) 	{ NopErr("const +="); }
-  void operator-=(cssEl& t) 	{ NopErr("const -="); }
-  void operator*=(cssEl& t) 	{ NopErr("const *="); }
-  void operator/=(cssEl& t) 	{ NopErr("const /="); }
-  void operator%=(cssEl& t) 	{ NopErr("const %="); }
-  void operator<<=(cssEl& t) 	{ NopErr("const <<="); }
-  void operator>>=(cssEl& t) 	{ NopErr("const >>="); }
-  void operator&=(cssEl& t) 	{ NopErr("const &="); }
-  void operator^=(cssEl& t) 	{ NopErr("const ^="); }
-  void operator|=(cssEl& t) 	{ NopErr("const |="); }
+  void operator+=(cssEl& t) override 	{ NopErr("const +="); }
+  void operator-=(cssEl& t) override 	{ NopErr("const -="); }
+  void operator*=(cssEl& t) override 	{ NopErr("const *="); }
+  void operator/=(cssEl& t) override 	{ NopErr("const /="); }
+  void operator%=(cssEl& t) override 	{ NopErr("const %="); }
+  void operator<<=(cssEl& t) override 	{ NopErr("const <<="); }
+  void operator>>=(cssEl& t) override 	{ NopErr("const >>="); }
+  void operator&=(cssEl& t) override 	{ NopErr("const &="); }
+  void operator^=(cssEl& t) override 	{ NopErr("const ^="); }
+  void operator|=(cssEl& t) override 	{ NopErr("const |="); }
 };
 
 #define cssConstReal_inst(l,n,x) l .Push(new cssConstReal(n, #x))
@@ -475,20 +485,20 @@ class CSS_API cssString : public cssEl {
 public:
   String	val;
 
-  int		GetParse() const	{ return CSS_VAR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_String; }
-  const char*	GetTypeName() const	{ return "(String)"; }
-  bool		IsStringType() const   	{ return true; }
+  int		GetParse() const override	{ return CSS_VAR; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_String; }
+  const char*	GetTypeName() const override	{ return "(String)"; }
+  bool		IsStringType() const override   { return true; }
 
-  String 	PrintStr() const
+  String 	PrintStr() const override
   { return String(GetTypeName())+" "+name + " = " + String(val); }
-  String	PrintFStr() const	{ return String(val); }
-  String&	PrintType(String& fh) const;
-  String&	PrintInherit(String& fh) const;
+  String	PrintFStr() const override	{ return String(val); }
+  String&	PrintType(String& fh) const override;
+  String&	PrintInherit(String& fh) const override;
 
-  void		Save(std::ostream& strm = std::cout);
-  void		Load(std::istream& strm = std::cin);
+  void		Save(std::ostream& strm = std::cout) override;
+  void		Load(std::istream& strm = std::cin) override;
 
   // special functions
   virtual String GetVal() 	 { return val; }
@@ -506,52 +516,52 @@ public:
   cssCloneFuns(cssString, "");
 
   // converters
-  String GetStr() const	  	{ return val; }
-  Variant GetVar() const 	{ return Variant(val); }
-  operator Real() const	 	{ Real r = atof((const char*)val); return r; }
-  operator Int() const		{ Int r = (int)strtol((const char*)val, NULL, 0); return r; }
-  operator bool() const;
+  String GetStr() const override	{ return val; }
+  Variant GetVar() const override 	{ return Variant(val); }
+  operator Real() const override	{ Real r = atof((const char*)val); return r; }
+  operator Int() const override		{ Int r = (int)strtol((const char*)val, NULL, 0); return r; }
+  operator bool() const override;
 
-  operator taBase*() const;	// lookup as a path..
-  operator TypeDef*() const;	// lookup as name
-  operator MemberDef*() const;
-  operator MethodDef*() const;  
+  operator taBase*() const override;	// lookup as a path..
+  operator TypeDef*() const override;	// lookup as name
+  operator MemberDef*() const override;
+  operator MethodDef*() const override;  
 
-  void operator=(Real cp) 		{ val = String(cp); }
-  void operator=(Int cp)		{ val = String(cp); }
-  void operator=(ta_int64_t cp)		{ val = String(cp); }
-  void operator=(ta_uint64_t cp)		{ val = String(cp); }
-  void operator=(const String& cp)	{ val = cp; }
+  void operator=(Real cp) override 		{ val = String(cp); }
+  void operator=(Int cp) override		{ val = String(cp); }
+  void operator=(ta_int64_t cp) override	{ val = String(cp); }
+  void operator=(ta_uint64_t cp) override	{ val = String(cp); }
+  void operator=(const String& cp) override	{ val = cp; }
 
-  void operator=(void*)	 	{ CvtErr("(void*)"); }
-  void operator=(void**)	{ CvtErr("(void**)"); }
+  void operator=(void*) override	 	{ CvtErr("(void*)"); }
+  void operator=(void**) override	{ CvtErr("(void**)"); }
   using cssEl::operator=;
 
   // operators
-  void operator=(const cssEl& s)	{ val = s.GetStr(); }
+  void operator=(const cssEl& s) override	{ val = s.GetStr(); }
 
-  cssEl* operator+(cssEl& t)
+  cssEl* operator+(cssEl& t) override
   { cssString* r = new cssString(*this,""); r->val += t.GetStr(); return r; }
-  cssEl* operator-(cssEl&)	{ NopErr("-"); return &cssMisc::Void; }
-  cssEl* operator/(cssEl&)	{ NopErr("/"); return &cssMisc::Void; }
-  cssEl* operator%(cssEl&)	{ NopErr("%"); return &cssMisc::Void; }
-  cssEl* operator-()    	{ NopErr("-"); return &cssMisc::Void; }
+  cssEl* operator-(cssEl&) override	{ NopErr("-"); return &cssMisc::Void; }
+  cssEl* operator/(cssEl&) override	{ NopErr("/"); return &cssMisc::Void; }
+  cssEl* operator%(cssEl&) override	{ NopErr("%"); return &cssMisc::Void; }
+  cssEl* operator-() override    	{ NopErr("-"); return &cssMisc::Void; }
 
-  void operator+=(cssEl& t) 	{ val += t.GetStr(); }
+  void operator+=(cssEl& t) override 	{ val += t.GetStr(); }
 
-  cssEl* operator< (cssEl& s) { return new cssBool(val < s.GetStr()); }
-  cssEl* operator> (cssEl& s) { return new cssBool(val > s.GetStr()); }
-  cssEl* operator<=(cssEl& s) { return new cssBool(val <= s.GetStr()); }
-  cssEl* operator>=(cssEl& s) { return new cssBool(val >= s.GetStr()); }
-  cssEl* operator==(cssEl& s) { return new cssBool(val == s.GetStr()); }
-  cssEl* operator!=(cssEl& s) { return new cssBool(val != s.GetStr()); }
+  cssEl* operator< (cssEl& s) override { return new cssBool(val < s.GetStr()); }
+  cssEl* operator> (cssEl& s) override { return new cssBool(val > s.GetStr()); }
+  cssEl* operator<=(cssEl& s) override { return new cssBool(val <= s.GetStr()); }
+  cssEl* operator>=(cssEl& s) override { return new cssBool(val >= s.GetStr()); }
+  cssEl* operator==(cssEl& s) override { return new cssBool(val == s.GetStr()); }
+  cssEl* operator!=(cssEl& s) override { return new cssBool(val != s.GetStr()); }
 
   // these use the TA info to perform actions
-  cssEl* operator[](const Variant& idx) const;
-  int	 GetMethodNo(const String& method) const;
-  cssEl* GetMethodFmNo(int memb) const;
-  cssEl* GetMethodFmName(const String& memb) const;
-  cssEl* GetScoped(const String& nm) const;
+  cssEl* operator[](const Variant& idx) const override;
+  int	 GetMethodNo(const String& method) const override;
+  cssEl* GetMethodFmNo(int memb) const override;
+  cssEl* GetMethodFmName(const String& memb) const override;
+  cssEl* GetScoped(const String& nm) const override;
 };
 
 #define cssString_inst(l,n,x)		l .Push(new cssString(n, #x))
@@ -572,18 +582,18 @@ public:
 
   cssCloneFuns(cssConstBool, false);
 
-  void operator=(Real cp) 		{ NopErr("const ="); }
-  void operator=(Int cp)		{ NopErr("const ="); }
-  void operator=(const String& cp)	{ NopErr("const ="); }
+  void operator=(Real cp) override 		{ NopErr("const ="); }
+  void operator=(Int cp) override		{ NopErr("const ="); }
+  void operator=(const String& cp) override	{ NopErr("const ="); }
 
   using cssEl::operator=;
 
   // operators
-  void operator=(const cssEl& s) { NopErr("const ="); }
+  void operator=(const cssEl& s) override { NopErr("const ="); }
 
-  void operator&=(cssEl& t) 	{ NopErr("const &="); }
-  void operator^=(cssEl& t) 	{ NopErr("const ^="); }
-  void operator|=(cssEl& t) 	{ NopErr("const |="); }
+  void operator&=(cssEl& t) override 	{ NopErr("const &="); }
+  void operator^=(cssEl& t) override 	{ NopErr("const ^="); }
+  void operator|=(cssEl& t) override 	{ NopErr("const |="); }
 };
 
 class CSS_API cssVariant: public cssEl {
@@ -592,17 +602,17 @@ INHERITED(cssEl)
 public:
   Variant	val;
 
-  int		GetParse() const	{ return CSS_VAR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_Variant; }
-  cssTypes 	GetPtrType() const;
-  const char*	GetTypeName() const 	{ return "(Variant)"; }
+  int		GetParse() const override	{ return CSS_VAR; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_Variant; }
+  cssTypes 	GetPtrType() const override;
+  const char*	GetTypeName() const override 	{ return "(Variant)"; }
 
-  String 	PrintStr() const;
-  String	PrintFStr() const { return val.toString(); }
+  String 	PrintStr() const override;
+  String	PrintFStr() const override { return val.toString(); }
 
-  String&	PrintType(String& fh) const;
-  String&	PrintInherit(String& fh) const;
+  String&	PrintType(String& fh) const override;
+  String&	PrintInherit(String& fh) const override;
 
   // constructors
   void 		Constr()		{ } // default is Invalid
@@ -617,67 +627,67 @@ public:
 
   // converters -- note, be as permissive as possible, because strings can easily arise
   // unexpectedly in most other atomic contexts (esp numeric)
-  String GetStr() const	{ return val.toString(); }
-  Variant GetVar() const { return val; }
-  operator Real() const	 { return val.toDouble();}
-  operator float() const { return val.toFloat();}
-  operator Int() const	 { return val.toInt();}
-  operator ta_int64_t() const { return val.toInt64(); }
-  operator ta_uint64_t() const { return val.toUInt64(); }
-  operator taBase*() const;
-  operator TypeDef*() const;
-  operator MemberDef*() const;
-  operator MethodDef*() const;
-  operator bool() const	{ return val.toBool(); }
+  String GetStr() const override	{ return val.toString(); }
+  Variant GetVar() const override       { return val; }
+  operator Real() const override	{ return val.toDouble();}
+  operator float() const override       { return val.toFloat();}
+  operator Int() const override	        { return val.toInt();}
+  operator ta_int64_t() const override  { return val.toInt64(); }
+  operator ta_uint64_t() const override { return val.toUInt64(); }
+  operator taBase*() const override;
+  operator TypeDef*() const override;
+  operator MemberDef*() const override;
+  operator MethodDef*() const override;
+  operator bool() const override	{ return val.toBool(); }
   
-  void operator=(Real cp) 		{ val = cp; }
-  void operator=(Int cp)		{ val = cp; }
-  void operator=(ta_int64_t cp)		{ val = cp; }
-  void operator=(ta_uint64_t cp)		{ val = cp; }
-  void operator=(const String& cp)	{ val = cp; }
-  void operator=(const Variant& cp)	{ val = cp;}
+  void operator=(Real cp) override 		{ val = cp; }
+  void operator=(Int cp) override		{ val = cp; }
+  void operator=(ta_int64_t cp) override	{ val = cp; }
+  void operator=(ta_uint64_t cp) override	{ val = cp; }
+  void operator=(const String& cp) override	{ val = cp; }
+  void operator=(const Variant& cp) override	{ val = cp;}
 
-  void operator=(void* ptr)	 	{ val = ptr; }
-  void operator=(void**)		{ CvtErr("(void**)"); }
+  void operator=(void* ptr) override	 	{ val = ptr; }
+  void operator=(void**) override		{ CvtErr("(void**)"); }
   using cssEl::operator=;
 
   // operators
-  void operator=(const cssEl& s)	{ val = s.GetVar(); }
+  void operator=(const cssEl& s) override	{ val = s.GetVar(); }
 
-  cssEl* operator+(cssEl& t);
-  cssEl* operator-(cssEl& t);
-  cssEl* operator*(cssEl& t);
-  cssEl* operator/(cssEl& t);
-  cssEl* operator*();
+  cssEl* operator+(cssEl& t) override;
+  cssEl* operator-(cssEl& t) override;
+  cssEl* operator*(cssEl& t) override;
+  cssEl* operator/(cssEl& t) override;
+  cssEl* operator*() override;
 
   // implement the to-the-power of operator as ^
-  cssEl* operator^(cssEl& t);
+  cssEl* operator^(cssEl& t) override;
 
-  cssEl* operator-();
-  cssEl* operator~();
+  cssEl* operator-() override;
+  cssEl* operator~() override;
 
-  void operator+=(cssEl& s)	{ val += s.GetVar(); }
-  void operator-=(cssEl& s)	{ val -= s.GetVar(); }
-  void operator*=(cssEl& s)	{ val *= s.GetVar(); }
-  void operator/=(cssEl& s)	{ val /= s.GetVar(); }
+  void operator+=(cssEl& s) override	{ val += s.GetVar(); }
+  void operator-=(cssEl& s) override	{ val -= s.GetVar(); }
+  void operator*=(cssEl& s) override	{ val *= s.GetVar(); }
+  void operator/=(cssEl& s) override	{ val /= s.GetVar(); }
 
-  cssEl* operator< (cssEl& s)  { return new cssBool(val < s.GetVar()); } 
-  cssEl* operator> (cssEl& s)  { return new cssBool(val > s.GetVar()); } 
-  cssEl* operator<=(cssEl& s)  { return new cssBool(val <= s.GetVar()); }
-  cssEl* operator>=(cssEl& s)  { return new cssBool(val >= s.GetVar()); }
-  cssEl* operator==(cssEl& s)  { return new cssBool(val == s.GetVar()); }
-  cssEl* operator!=(cssEl& s)  { return new cssBool(val != s.GetVar()); }
+  cssEl* operator< (cssEl& s) override  { return new cssBool(val < s.GetVar()); } 
+  cssEl* operator> (cssEl& s) override  { return new cssBool(val > s.GetVar()); } 
+  cssEl* operator<=(cssEl& s) override  { return new cssBool(val <= s.GetVar()); }
+  cssEl* operator>=(cssEl& s) override  { return new cssBool(val >= s.GetVar()); }
+  cssEl* operator==(cssEl& s) override  { return new cssBool(val == s.GetVar()); }
+  cssEl* operator!=(cssEl& s) override  { return new cssBool(val != s.GetVar()); }
   
   // these delegate to the string, base or variant
-  cssEl* operator[](const Variant& idx) const; // only valid for Matrixes, gets flat el
-  bool	 MembersDynamic()	{ return true; }
-  int	 GetMemberNo(const String& memb) const { return -1; } // don't do any advance lookup: always dynamic
-  cssEl* GetMemberFmNo(int memb) const;
-  cssEl* GetMemberFmName(const String& memb) const;
-  int	 GetMethodNo(const String& meth) const { return -1; } // keep it dynamic
-  cssEl* GetMethodFmNo(int meth) const;
-  cssEl* GetMethodFmName(const String& meth) const;
-  cssEl* GetScoped(const String& nm) const;
+  cssEl* operator[](const Variant& idx) const override; // only valid for Matrixes, gets flat el
+  bool	 MembersDynamic() override	{ return true; }
+  int	 GetMemberNo(const String& memb) const override { return -1; } // don't do any advance lookup: always dynamic
+  cssEl* GetMemberFmNo(int memb) const override;
+  cssEl* GetMemberFmName(const String& memb) const override;
+  int	 GetMethodNo(const String& meth) const override { return -1; } // keep it dynamic
+  cssEl* GetMethodFmNo(int meth) const override;
+  cssEl* GetMethodFmName(const String& meth) const override;
+  cssEl* GetScoped(const String& nm) const override;
 };
 
 #define cssVariant_inst(l,n,x)		l .Push(new cssVariant(n, #x))
@@ -692,30 +702,32 @@ public:
   cssElPtr	ptr;
   cssEl*	el_type;	// what type of element do we point to?
 
-  int		GetParse() const	{ return CSS_PTR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_Ptr; }
-  cssTypes	GetPtrType() const	{ return el_type->GetType(); }
-  const char*	GetTypeName() const	{ return el_type->GetTypeName(); }
-  cssEl*	GetTypeObject() const	{ return el_type; }
-  bool		IsStringType() const   	{ cssEl* el = ((cssPtr*)this)->GetActualObj();
+  int		GetParse() const override	{ return CSS_PTR; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_Ptr; }
+  cssTypes	GetPtrType() const override	{ return el_type->GetType(); }
+  const char*	GetTypeName() const override	{ return el_type->GetTypeName(); }
+  cssEl*	GetTypeObject() const override	{ return el_type; }
+  bool		IsStringType() const override
+  { cssEl* el = ((cssPtr*)this)->GetActualObj();
     if (el) return el->IsStringType(); else return false;}
-  bool		IsNumericTypeStrict() const { cssEl* el = ((cssPtr*)this)->GetActualObj();
+  bool		IsNumericTypeStrict() const override
+  { cssEl* el = ((cssPtr*)this)->GetActualObj();
     if (el) return el->IsNumericTypeStrict(); else return false;}
 
-  cssEl*	GetActualObj() const	{ return ptr.El()->GetActualObj(); }
-  cssEl*	GetNonPtrObj() const 	{ return ptr.El(); }
+  cssEl*	GetActualObj() const override	{ return ptr.El()->GetActualObj(); }
+  cssEl*	GetNonPtrObj() const override 	{ return ptr.El(); }
 
   virtual cssEl* GetNonPtrTypeObj() const;
   virtual cssTypes GetNonPtrType() const { return GetNonPtrTypeObj()->GetType(); }
 
-  String 	PrintStr() const;
-  String	PrintFStr() const 	{ return ptr.El()->PrintFStr(); }
+  String 	PrintStr() const override;
+  String	PrintFStr() const override 	{ return ptr.El()->PrintFStr(); }
 
-  void		SetPtr(const cssElPtr& pt) { cssEl::SetRefElPtr(ptr, pt); }
-  void		SetPtr(cssEl* it)	{ cssElPtr pt; pt.SetDirect(it); SetPtr(pt); }
+  void		SetPtr(const cssElPtr& pt)      { cssEl::SetRefElPtr(ptr, pt); }
+  void		SetPtr(cssEl* it) 	        { cssElPtr pt; pt.SetDirect(it); SetPtr(pt); }
 
-  void		SetElType(cssEl* typ) 	{ cssEl::SetRefPointer(&el_type, typ); }
+  void		SetElType(cssEl* typ)  	{ cssEl::SetRefPointer(&el_type, typ); }
 
   // constructors
   void		Constr()		{ el_type = &cssMisc::Void; }
@@ -733,86 +745,89 @@ public:
   ~cssPtr();
 
   cssCloneOnly(cssPtr);
-  cssEl*	MakeToken_stub(int, cssEl* arg[])
+  cssEl*	MakeToken_stub(int, cssEl* arg[]) override
   { return new cssPtr(el_type, arg[1]->GetStr()); }
 
-  bool	 MembersDynamic()	{ return true; }
-  int    GetMemberNo(const String& s) const; // check type even if ptr is null
-  cssEl* GetMemberFmNo(int s) const  		{ return ptr.El()->GetMemberFmNo(s); }
-  cssEl* GetMemberFmName(const String& s) const  	{ return ptr.El()->GetMemberFmName(s); }
-  int	 GetMethodNo(const String& s) const; // check type even if ptr is null
-  cssEl* GetMethodFmNo(int s) const; // check for virtual funs
-  cssEl* GetMethodFmName(const String& s) const;
-  cssEl* GetScoped(const String& s) const  	{ return ptr.El()->GetScoped(s); }
+  bool	 MembersDynamic() override	{ return true; }
+  int    GetMemberNo(const String& s) const override; // check type even if ptr is null
+  cssEl* GetMemberFmNo(int s) const override
+  { return ptr.El()->GetMemberFmNo(s); }
+  cssEl* GetMemberFmName(const String& s) const override
+  { return ptr.El()->GetMemberFmName(s); }
+  int	 GetMethodNo(const String& s) const override; // check type even if ptr is null
+  cssEl* GetMethodFmNo(int s) const override; // check for virtual funs
+  cssEl* GetMethodFmName(const String& s) const override;
+  cssEl* GetScoped(const String& s) const override
+  { return ptr.El()->GetScoped(s); }
 
   // converters
   Int		GetIntVal() const	// get integer value of pointer
   { Int rval = (Int)(long)(ptr.El()); if(ptr.El() == &cssMisc::Void) rval = 0;
     return rval; }
 
-  String	GetStr() const;
-  Variant	GetVar() const { return Variant((void*)ptr.El()); } // raw pointer
-  operator 	Real() const	{ return (Real)GetIntVal(); }
-  operator 	Int() const	{ return GetIntVal(); }
-  operator 	bool() const	{ return GetIntVal(); }
+  String	GetStr() const override;
+  Variant	GetVar() const override { return Variant((void*)ptr.El()); } // raw pointer
+  operator 	Real() const override	{ return (Real)GetIntVal(); }
+  operator 	Int() const override	{ return GetIntVal(); }
+  operator 	bool() const override	{ return GetIntVal(); }
 
-  void	DelOpr()		{ SetPtr(cssMisc::VoidElPtr); }
+  void	DelOpr() override		{ SetPtr(cssMisc::VoidElPtr); }
   // delete is done by unrefing thing we point to, seting ptr to null..
 
-//  void operator=(Real)	 	{ CvtErr("(Real)"); }
-//  void operator=(Int)		{ CvtErr("(Int)"); }
-//  void operator=(const String&)	{ CvtErr("(String)"); }
+//  void operator=(Real) override	 	{ CvtErr("(Real)"); }
+//  void operator=(Int) override		{ CvtErr("(Int)"); }
+//  void operator=(const String&) override	{ CvtErr("(String)"); }
 
-  void operator=(void*)	 	{ CvtErr("(void*)"); }
-  void operator=(void**)	{ CvtErr("(void**)"); }
+  void operator=(void*) override	 	{ CvtErr("(void*)"); }
+  void operator=(void**) override	{ CvtErr("(void**)"); }
   using cssEl::operator=;
 
   // operators
-  void operator=(const cssElPtr& s)	{ SetPtr(s); }
-  void operator=(const cssEl& s);
+  void operator=(const cssElPtr& s) 	{ SetPtr(s); }
+  void operator=(const cssEl& s) override; 
   void operator=(cssEl* s)              { SetPtr(s->GetAddr()); }
 
   virtual cssElPtr& GetOprPtr() const;
   // get the pointer for the purposes of following operators
   // if points to an array, this is the pointer of the array, not our pointer
 
-  cssEl* operator+(cssEl& t)
+  cssEl* operator+(cssEl& t) override
   { cssElPtr r = GetOprPtr(); r += (Int)t; return new cssPtr(el_type, r, ""); }
-  cssEl* operator-()		{ return cssEl::operator-(); }
-  cssEl* operator-(cssEl& t)
+  cssEl* operator-() override		{ return cssEl::operator-(); }
+  cssEl* operator-(cssEl& t) override
   { cssElPtr r = GetOprPtr(); r -= (Int)t; return new cssPtr(el_type, r, ""); }
-  cssEl* operator*(cssEl&)	{ NopErr("*"); return &cssMisc::Void; }
+  cssEl* operator*(cssEl&) override	{ NopErr("*"); return &cssMisc::Void; }
 
-  cssEl* operator*()	     	{ return GetOprPtr().El(); } // unary de-ptr
-  cssEl* operator[](const Variant& idx) const;
+  cssEl* operator*() override	     	{ return GetOprPtr().El(); } // unary de-ptr
+  cssEl* operator[](const Variant& idx) const override;
 
-  void operator+=(cssEl& t)
+  void operator+=(cssEl& t) override
   { cssElPtr r = GetOprPtr(); r += (Int)t; SetPtr(r); }
-  void operator-=(cssEl& t)
+  void operator-=(cssEl& t) override
   { cssElPtr r = GetOprPtr(); r -= (Int)t; SetPtr(r); }
 
-  cssEl* operator< (cssEl& s) { return new cssBool(GetIntVal() < (Int)s); }
-  cssEl* operator> (cssEl& s) { return new cssBool(GetIntVal() > (Int)s); }
-  cssEl* operator<=(cssEl& s) { return new cssBool(GetIntVal() <= (Int)s); }
-  cssEl* operator>=(cssEl& s) { return new cssBool(GetIntVal() >= (Int)s); }
-  cssEl* operator==(cssEl& s) { return new cssBool(GetIntVal() == (Int)s); }
-  cssEl* operator!=(cssEl& s) { return new cssBool(GetIntVal() != (Int)s); }
+  cssEl* operator< (cssEl& s) override { return new cssBool(GetIntVal() < (Int)s); }
+  cssEl* operator> (cssEl& s) override { return new cssBool(GetIntVal() > (Int)s); }
+  cssEl* operator<=(cssEl& s) override { return new cssBool(GetIntVal() <= (Int)s); }
+  cssEl* operator>=(cssEl& s) override { return new cssBool(GetIntVal() >= (Int)s); }
+  cssEl* operator==(cssEl& s) override { return new cssBool(GetIntVal() == (Int)s); }
+  cssEl* operator!=(cssEl& s) override { return new cssBool(GetIntVal() != (Int)s); }
 };
 
 class CSS_API cssArray : public cssPtr {
 public:
   cssSpace*	items;		// what's in the array
 
-  int		GetParse() const	{ return CSS_PTR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_Array; }
+  int		GetParse() const override	{ return CSS_PTR; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_Array; }
 
-  String	PrintStr() const;
-  String	PrintFStr() const;
-  String&	PrintType(String& fh) const;
+  String	PrintStr() const override;
+  String	PrintFStr() const override;
+  String&	PrintType(String& fh) const override;
 
-  void		Save(std::ostream& fh = std::cout);
-  void		Load(std::istream& fh = std::cin);
+  void		Save(std::ostream& fh = std::cout) override;
+  void		Load(std::istream& fh = std::cin) override;
 
   void		Constr();
   void 		Constr(int no);
@@ -832,32 +847,32 @@ public:
   ~cssArray();
 
   cssCloneOnly(cssArray);
-  cssEl*	MakeToken_stub(int na, cssEl* arg[]);
+  cssEl*	MakeToken_stub(int na, cssEl* arg[]) override;
 
-  RunStat	Do(cssProg* prg);
+  RunStat	Do(cssProg* prg) override;
   // set prog of the el_type also
 
   // converters
-  String	GetStr() const;
-  Variant	GetVar() const 	{ CvtErr("(Variant)"); return _nilVariant; }
-  operator 	Real() const	{ CvtErr("(Real)"); return 0; }
-  operator 	Int() const	{ CvtErr("(Int)"); return 0; }
-  operator 	bool() const	{ CvtErr("(bool)"); return 0; }
+  String	GetStr() const override;
+  Variant	GetVar() const override { CvtErr("(Variant)"); return _nilVariant; }
+  operator 	Real() const override	{ CvtErr("(Real)"); return 0; }
+  operator 	Int() const override	{ CvtErr("(Int)"); return 0; }
+  operator 	bool() const override	{ CvtErr("(bool)"); return 0; }
 
-  void operator=(Real)	 	{ CvtErr("(Real)"); }
-  void operator=(Int)		{ CvtErr("(Int)"); }
-  void operator=(const String&)	{ CvtErr("(String)"); }
-  void operator=(void*)	 	{ CvtErr("(void*)"); }
-  void operator=(void**)	{ CvtErr("(void**)"); }
+  void operator=(Real) override	 	{ CvtErr("(Real)"); }
+  void operator=(Int) override		{ CvtErr("(Int)"); }
+  void operator=(const String&) override { CvtErr("(String)"); }
+  void operator=(void*) override	{ CvtErr("(void*)"); }
+  void operator=(void**) override	{ CvtErr("(void**)"); }
   using cssPtr::operator=;
 
   // operators
-  cssElPtr& GetOprPtr()	const 	{ return (cssElPtr&)ptr; } // our ptr is always ours!
+  cssElPtr& GetOprPtr()	const override 	{ return (cssElPtr&)ptr; } // our ptr is always ours!
 
   void NoAssgn() 	{ cssMisc::Error(prog,"re-assigning base of array ptr is illegal"); }
-  void operator=(const cssElPtr&)	{ NoAssgn(); }
-  void operator=(cssEl*)		{ NoAssgn(); }
-  void operator=(const cssEl&);
+  void operator=(const cssElPtr&) 	{ NoAssgn(); }
+  void operator=(cssEl*) 		{ NoAssgn(); }
+  void operator=(const cssEl&)  override;
 };
 
 
@@ -866,23 +881,23 @@ class CSS_API cssArrayType : public cssArray {
 public:
   int           size;           // defined size of array
 
-  int           GetParse() const        { return CSS_PTR; }
-  uint          GetSize() const         { return sizeof(*this); }
-  cssTypes      GetType() const         { return T_ArrayType; }
+  int           GetParse() const override        { return CSS_PTR; }
+  uint          GetSize() const override         { return sizeof(*this); }
+  cssTypes      GetType() const override         { return T_ArrayType; }
 
-  void          SetSize(int no) { size = no; }
+  void          SetSize(int no)                 { size = no; }
 
-  String        PrintStr() const;
-  String        PrintFStr() const;
-  String&	PrintType(String& fh) const;
+  String        PrintStr() const override;
+  String        PrintFStr() const override;
+  String&	PrintType(String& fh) const override;
 
   void          Constr();
   void          Copy(const cssArrayType& cp);
   void          CopyType(const cssArrayType& cp);
 
-  virtual void  Fill(cssEl*) {};             // nop
-  virtual int   Alloc(int no) { size = no; return true; }   // just set size
-  virtual int   AllocAll(int na, cssEl* arg[]); // reallocate this and sub-arrays based on args
+  virtual void  Fill(cssEl*) override {};             // nop
+  virtual int   Alloc(int no)  override{ size = no; return true; }   // just set size
+  virtual int   AllocAll(int na, cssEl* arg[]) override; // reallocate this and sub-arrays based on args
 
   cssArrayType();
   cssArrayType(int no, cssEl* it);
@@ -892,36 +907,36 @@ public:
   ~cssArrayType();
 
   cssCloneOnly(cssArrayType);
-  cssEl*        MakeToken_stub(int na, cssEl* arg[]);
+  cssEl*        MakeToken_stub(int na, cssEl* arg[]) override;
 
   // converters
-  void operator=(Real)          { CvtErr("(Real)"); }
-  void operator=(Int)           { CvtErr("(Int)"); }
-  void operator=(const String&) { CvtErr("(String)"); }
-  void operator=(void*)         { CvtErr("(void*)"); }
-  void operator=(void**)        { CvtErr("(void**)"); }
+  void operator=(Real) override          { CvtErr("(Real)"); }
+  void operator=(Int)  override          { CvtErr("(Int)"); }
+  void operator=(const String&) override { CvtErr("(String)"); }
+  void operator=(void*) override         { CvtErr("(void*)"); }
+  void operator=(void**)  override       { CvtErr("(void**)"); }
   using cssArray::operator=;
 
   // operators
-  cssEl* operator+(cssEl&)      { NopErr("+"); return &cssMisc::Void; }
-  cssEl* operator-()            { NopErr("-"); return &cssMisc::Void; }
-  cssEl* operator-(cssEl&)      { NopErr("-"); return &cssMisc::Void; }
-  cssEl* operator*(cssEl&)      { NopErr("*"); return &cssMisc::Void; }
-  cssEl* operator*()            { NopErr("*"); return &cssMisc::Void; }
-  cssEl* operator[](const Variant& idx) const
+  cssEl* operator+(cssEl&) override      { NopErr("+"); return &cssMisc::Void; }
+  cssEl* operator-()       override      { NopErr("-"); return &cssMisc::Void; }
+  cssEl* operator-(cssEl&) override      { NopErr("-"); return &cssMisc::Void; }
+  cssEl* operator*(cssEl&) override      { NopErr("*"); return &cssMisc::Void; }
+  cssEl* operator*()       override      { NopErr("*"); return &cssMisc::Void; }
+  cssEl* operator[](const Variant& idx) const override
   { NopErr("[]"); return &cssMisc::Void; }
-  void operator+=(cssEl&)       { NopErr("+="); }
-  void operator-=(cssEl&)       { NopErr("-="); }
-  cssEl* operator< (cssEl&)       { NopErr("<"); return &cssMisc::Void; }
-  cssEl* operator> (cssEl&)       { NopErr(">"); return &cssMisc::Void; }
-  cssEl* operator<=(cssEl&)       { NopErr("<="); return &cssMisc::Void; }
-  cssEl* operator>=(cssEl&)       { NopErr(">="); return &cssMisc::Void; }
-  cssEl* operator==(cssEl&)       { NopErr("=="); return &cssMisc::Void; }
-  cssEl* operator!=(cssEl&)       { NopErr("!="); return &cssMisc::Void; }
+  void operator+=(cssEl&)  override     { NopErr("+="); }
+  void operator-=(cssEl&)  override     { NopErr("-="); }
+  cssEl* operator< (cssEl&) override       { NopErr("<"); return &cssMisc::Void; }
+  cssEl* operator> (cssEl&) override       { NopErr(">"); return &cssMisc::Void; }
+  cssEl* operator<=(cssEl&) override       { NopErr("<="); return &cssMisc::Void; }
+  cssEl* operator>=(cssEl&) override       { NopErr(">="); return &cssMisc::Void; }
+  cssEl* operator==(cssEl&) override       { NopErr("=="); return &cssMisc::Void; }
+  cssEl* operator!=(cssEl&) override       { NopErr("!="); return &cssMisc::Void; }
 
-  void operator=(const cssElPtr&)       { NopErr("="); }
-  void operator=(cssEl*)                { NopErr("="); }
-  void operator=(const cssEl&)          { NopErr("="); }
+  void operator=(const cssElPtr&)          { NopErr("="); }
+  void operator=(cssEl*)                   { NopErr("="); }
+  void operator=(const cssEl&) override    { NopErr("="); }
 };
 
 
@@ -930,37 +945,39 @@ class CSS_API cssRef : public cssEl {
 public:
   cssElPtr	ptr;
 
-  int		GetParse() const	{ return CSS_PTR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return ptr.El()->GetType(); }
-  cssTypes	GetPtrType() const	{ return ptr.El()->GetPtrType(); }
-  const char*	GetTypeName() const	{ return ptr.El()->GetTypeName(); }
-  cssEl*	GetTypeObject() const	{ return ptr.El()->GetTypeObject(); }
-  bool		IsTaMatrix() const	{ return ptr.El()->IsTaMatrix(); }
-  int		IsRef()	const		{ return true; }
-  bool		IsStringType() const   	{ return ptr.El()->IsStringType(); }
-  bool		IsNumericTypeStrict() const { return ptr.El()->IsNumericTypeStrict(); }
-  cssElPtr	GetAddr() const;
+  int		GetParse() const override	{ return CSS_PTR; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return ptr.El()->GetType(); }
+  cssTypes	GetPtrType() const override	{ return ptr.El()->GetPtrType(); }
+  const char*	GetTypeName() const override	{ return ptr.El()->GetTypeName(); }
+  cssEl*	GetTypeObject() const override	{ return ptr.El()->GetTypeObject(); }
+  bool		IsTaMatrix() const override	{ return ptr.El()->IsTaMatrix(); }
+  int		IsRef()	const override		{ return true; }
+  bool		IsStringType() const override   { return ptr.El()->IsStringType(); }
+  bool		IsNumericTypeStrict() const override
+  { return ptr.El()->IsNumericTypeStrict(); }
+  cssElPtr	GetAddr() const override;
 
-  cssEl*	GetActualObj() const	{ return ptr.El()->GetActualObj(); }
-  cssEl*	GetNonRefObj() const	{ return ptr.El(); }
+  cssEl*	GetActualObj() const override	{ return ptr.El()->GetActualObj(); }
+  cssEl*	GetNonRefObj() const override	{ return ptr.El(); }
 
-  int		Edit(bool wait=false)			{ return ptr.El()->Edit(wait); }
+  int		Edit(bool wait=false) override	{ return ptr.El()->Edit(wait); }
 
-  String 	PrintStr() const
+  String 	PrintStr() const override
   { String rv = ptr.El()->PrintStr(); rv.prepend("&"); return rv; }
-  String	PrintFStr() const 	{ return ptr.El()->PrintFStr(); }
+  String	PrintFStr() const override 	{ return ptr.El()->PrintFStr(); }
 
-  String&	PrintType(String& fh) const	{ return ptr.El()->PrintType(fh); }
-  String&	PrintInherit(String& fh) const  { return ptr.El()->PrintInherit(fh); }
+  String&	PrintType(String& fh) const override	{ return ptr.El()->PrintType(fh); }
+  String&	PrintInherit(String& fh) const override  { return ptr.El()->PrintInherit(fh); }
 
   // saving and loading objects to/from files (special format)
-  void		Save(std::ostream& fh = std::cout)	{ ptr.El()->Save(fh); }
-  void		Load(std::istream& fh = std::cin)	{ ptr.El()->Load(fh); }
+  void		Save(std::ostream& fh = std::cout) override	{ ptr.El()->Save(fh); }
+  void		Load(std::istream& fh = std::cin) override	{ ptr.El()->Load(fh); }
 
   // token information about a certain type
-  String&	PrintTokens(String& fh) const	{ return ptr.El()->PrintTokens(fh); }
-  cssEl*	GetToken(int idx) const		{ return ptr.El()->GetToken(idx); }
+  String&	PrintTokens(String& fh) const override	{ return ptr.El()->PrintTokens(fh); }
+  cssEl*	GetToken(int idx) const override
+  { return ptr.El()->GetToken(idx); }
 
   // constructors
   void		Constr()			{ }
@@ -974,123 +991,125 @@ public:
   cssRef(const cssRef& cp, const String& nm)	{ Copy(cp); name = nm; }
 
   cssCloneOnly(cssRef);
-  cssEl*	MakeToken_stub(int, cssEl* arg[])
+  cssEl*	MakeToken_stub(int, cssEl* arg[]) override
   { return new cssRef(ptr, arg[1]->GetStr()); }
 
   // converters
-  String GetStr() const 	{ return ptr.El()->GetStr(); }
-  Variant GetVar() const 	{ return ptr.El()->GetVar(); }
-  operator Real() const	 	{ return (Real)*(ptr.El()); }
-  operator Int() const	 	{ return (Int)*(ptr.El()); }
-  operator bool() const	 	{ return (bool)*(ptr.El()); }
-  operator void*() const	{ return (void*)*(ptr.El()); }
-  operator void**() const	{ return (void**)*(ptr.El()); }
+  String GetStr() const override 	{ return ptr.El()->GetStr(); }
+  Variant GetVar() const override 	{ return ptr.El()->GetVar(); }
+  operator Real() const override	{ return (Real)*(ptr.El()); }
+  operator Int() const override	 	{ return (Int)*(ptr.El()); }
+  operator bool() const override	{ return (bool)*(ptr.El()); }
+  operator void*() const override	{ return (void*)*(ptr.El()); }
+  operator void**() const override	{ return (void**)*(ptr.El()); }
 
-  void* GetVoidPtrOfType(TypeDef* td) const
+  void* GetVoidPtrOfType(TypeDef* td) const override
   { return ptr.El()->GetVoidPtrOfType(td); }
-  void* GetVoidPtrOfType(const String& td) const
+  void* GetVoidPtrOfType(const String& td) const override
   { return ptr.El()->GetVoidPtrOfType(td); }
 
-  operator int*() const	 	{ return (int*)*(ptr.El()); }
-  operator short*() const	{ return (short*)*(ptr.El()); }
-  operator long*() const	{ return (long*)*(ptr.El()); }
-  operator double*() const	{ return (double*)*(ptr.El()); }
-  operator float*() const	{ return (float*)*(ptr.El()); }
-  operator String*() const	{ return (String*)*(ptr.El()); }
-  operator bool*() const	{ return (bool*)*(ptr.El()); }
+  operator int*() const override	{ return (int*)*(ptr.El()); }
+  operator short*() const override	{ return (short*)*(ptr.El()); }
+  operator long*() const override	{ return (long*)*(ptr.El()); }
+  operator double*() const override	{ return (double*)*(ptr.El()); }
+  operator float*() const override	{ return (float*)*(ptr.El()); }
+  operator String*() const override	{ return (String*)*(ptr.El()); }
+  operator bool*() const override	{ return (bool*)*(ptr.El()); }
 
-  operator int**() const	{ return (int**)*(ptr.El()); }
-  operator short**() const	{ return (short**)*(ptr.El()); }
-  operator long**() const	{ return (long**)*(ptr.El()); }
-  operator double**() const	{ return (double**)*(ptr.El()); }
-  operator float**() const	{ return (float**)*(ptr.El()); }
-  operator String**() const	{ return (String**)*(ptr.El()); }
-  operator bool**() const	{ return (bool**)*(ptr.El()); }
+  operator int**() const override	{ return (int**)*(ptr.El()); }
+  operator short**() const override	{ return (short**)*(ptr.El()); }
+  operator long**() const override	{ return (long**)*(ptr.El()); }
+  operator double**() const override	{ return (double**)*(ptr.El()); }
+  operator float**() const override	{ return (float**)*(ptr.El()); }
+  operator String**() const override	{ return (String**)*(ptr.El()); }
+  operator bool**() const override	{ return (bool**)*(ptr.El()); }
 
-  operator std::ostream*() const	{ return (std::ostream*)*(ptr.El()); }
-  operator std::istream*() const	{ return (std::istream*)*(ptr.El()); }
-  operator std::iostream*() const	{ return (std::iostream*)*(ptr.El()); }
-  operator std::fstream*() const	{ return (std::fstream*)*(ptr.El()); }
-  operator std::stringstream*() const { return (std::stringstream*)*(ptr.El()); }
+  operator std::ostream*() const override	{ return (std::ostream*)*(ptr.El()); }
+  operator std::istream*() const override	{ return (std::istream*)*(ptr.El()); }
+  operator std::iostream*() const override	{ return (std::iostream*)*(ptr.El()); }
+  operator std::fstream*() const override	{ return (std::fstream*)*(ptr.El()); }
+  operator std::stringstream*() const override { return (std::stringstream*)*(ptr.El()); }
 
-  operator std::ostream**() const	{ return (std::ostream**)*(ptr.El()); }
-  operator std::istream**() const	{ return (std::istream**)*(ptr.El()); }
-  operator std::iostream**() const	{ return (std::iostream**)*(ptr.El()); }
-  operator std::fstream**() const	{ return (std::fstream**)*(ptr.El()); }
-  operator std::stringstream**() const	{ return (std::stringstream**)*(ptr.El()); }
+  operator std::ostream**() const override	{ return (std::ostream**)*(ptr.El()); }
+  operator std::istream**() const override	{ return (std::istream**)*(ptr.El()); }
+  operator std::iostream**() const override	{ return (std::iostream**)*(ptr.El()); }
+  operator std::fstream**() const override	{ return (std::fstream**)*(ptr.El()); }
+  operator std::stringstream**() const override	{ return (std::stringstream**)*(ptr.El()); }
 
   // support for external types
-  operator taBase*() const	{ return (taBase*)*(ptr.El()); }
-  operator taBase**() const	{ return (taBase**)*(ptr.El()); }
-  operator TypeDef*() const	{ return (TypeDef*)*(ptr.El()); }
-  operator MemberDef*() const	{ return (MemberDef*)*(ptr.El()); }
-  operator MethodDef*() const	{ return (MethodDef*)*(ptr.El()); }
+  operator taBase*() const override	{ return (taBase*)*(ptr.El()); }
+  operator taBase**() const override	{ return (taBase**)*(ptr.El()); }
+  operator TypeDef*() const override	{ return (TypeDef*)*(ptr.El()); }
+  operator MemberDef*() const override	{ return (MemberDef*)*(ptr.El()); }
+  operator MethodDef*() const override	{ return (MethodDef*)*(ptr.El()); }
 
   // assign from types
-  void operator=(Real cp) 		{ ptr.El()->operator=(cp); }
-  void operator=(Int cp)		{ ptr.El()->operator=(cp); }
-  void operator=(const String& cp)	{ ptr.El()->operator=(cp); }
+  void operator=(Real cp) override 		{ ptr.El()->operator=(cp); }
+  void operator=(Int cp) override		{ ptr.El()->operator=(cp); }
+  void operator=(const String& cp) override	{ ptr.El()->operator=(cp); }
 
-  void operator=(void* cp) 	{ ptr.El()->operator=(cp); }
-  void operator=(void** cp)	{ ptr.El()->operator=(cp); }
+  void operator=(void* cp) override 	{ ptr.El()->operator=(cp); }
+  void operator=(void** cp) override	{ ptr.El()->operator=(cp); }
   using cssEl::operator=;
 
-  void AssignFromType(TypeDef* td, void* bs)  	{ ptr.El()->AssignFromType(td, bs); }
-  void AssignFromType(const String& td, void* bs) { ptr.El()->AssignFromType(td, bs); }
+  void AssignFromType(TypeDef* td, void* bs) override
+  { ptr.El()->AssignFromType(td, bs); }
+  void AssignFromType(const String& td, void* bs)  override
+  { ptr.El()->AssignFromType(td, bs); }
 
   // operators
-  void operator=(const cssEl& cp);
-  void CastFm(const cssEl& cp)	{ ArgCopy(cp); }
-  void ArgCopy(const cssEl& cp);
-  void UpdateAfterEdit()	{ ptr.El()->UpdateAfterEdit(); }
+  void operator=(const cssEl& cp) override;
+  void CastFm(const cssEl& cp) override	{ ArgCopy(cp); }
+  void ArgCopy(const cssEl& cp) override;
+  void UpdateAfterEdit() override	{ ptr.El()->UpdateAfterEdit(); }
 
-  cssEl* operator+(cssEl& s) 	{ return ptr.El()->operator+(s); }
-  cssEl* operator-(cssEl& s) 	{ return ptr.El()->operator-(s); }
-  cssEl* operator*(cssEl& s) 	{ return ptr.El()->operator*(s); }
-  cssEl* operator/(cssEl& s) 	{ return ptr.El()->operator/(s); }
-  cssEl* operator%(cssEl& s) 	{ return ptr.El()->operator%(s); }
-  cssEl* operator<<(cssEl& s)	{ return ptr.El()->operator<<(s); }
-  cssEl* operator>>(cssEl& s)	{ return ptr.El()->operator>>(s); }
-  cssEl* operator&(cssEl& s)	{ return ptr.El()->operator&(s); }
-  cssEl* operator^(cssEl& s)	{ return ptr.El()->operator^(s); }
-  cssEl* operator|(cssEl& s)	{ return ptr.El()->operator|(s); }
-  cssEl* operator-()       	{ return ptr.El()->operator-(); }
-  cssEl* operator~()       	{ return ptr.El()->operator~(); }
-  cssEl* operator*()	   	{ return ptr.El()->operator*(); }
-  cssEl* operator[](const Variant& idx) const	{ return ptr.El()->operator[](idx); }
+  cssEl* operator+(cssEl& s) override 	{ return ptr.El()->operator+(s); }
+  cssEl* operator-(cssEl& s) override 	{ return ptr.El()->operator-(s); }
+  cssEl* operator*(cssEl& s) override 	{ return ptr.El()->operator*(s); }
+  cssEl* operator/(cssEl& s) override 	{ return ptr.El()->operator/(s); }
+  cssEl* operator%(cssEl& s) override 	{ return ptr.El()->operator%(s); }
+  cssEl* operator<<(cssEl& s) override	{ return ptr.El()->operator<<(s); }
+  cssEl* operator>>(cssEl& s) override	{ return ptr.El()->operator>>(s); }
+  cssEl* operator&(cssEl& s) override	{ return ptr.El()->operator&(s); }
+  cssEl* operator^(cssEl& s) override	{ return ptr.El()->operator^(s); }
+  cssEl* operator|(cssEl& s) override	{ return ptr.El()->operator|(s); }
+  cssEl* operator-() override       	{ return ptr.El()->operator-(); }
+  cssEl* operator~() override       	{ return ptr.El()->operator~(); }
+  cssEl* operator*() override	   	{ return ptr.El()->operator*(); }
+  cssEl* operator[](const Variant& idx) const  override	{ return ptr.El()->operator[](idx); }
 
-  bool	 MembersDynamic()	{ return true; }
-  int    GetMemberNo(const String& s) const; // emit errorless -1 for void
-  cssEl* GetMemberFmNo(int s) const  		{ return ptr.El()->GetMemberFmNo(s); }
-  cssEl* GetMemberFmName(const String& s) const { return ptr.El()->GetMemberFmName(s); }
-  int	 GetMethodNo(const String& s) const; // emit errorless -1 for void
-  cssEl* GetMethodFmNo(int s) const		{ return ptr.El()->GetMethodFmNo(s); }
-  cssEl* GetMethodFmName(const String& s) const	{ return ptr.El()->GetMethodFmName(s); }
-  cssEl* GetScoped(const String& s) const  	{ return ptr.El()->GetScoped(s); }
-  cssEl* NewOpr()   				{ return ptr.El()->NewOpr(); }
-  void	 DelOpr() 				{ ptr.El()->DelOpr(); }
+  bool	 MembersDynamic() override	{ return true; }
+  int    GetMemberNo(const String& s) const override; // emit errorless -1 for void
+  cssEl* GetMemberFmNo(int s) const override  		{ return ptr.El()->GetMemberFmNo(s); }
+  cssEl* GetMemberFmName(const String& s) const override { return ptr.El()->GetMemberFmName(s); }
+  int	 GetMethodNo(const String& s) const override; // emit errorless -1 for void
+  cssEl* GetMethodFmNo(int s) const override		{ return ptr.El()->GetMethodFmNo(s); }
+  cssEl* GetMethodFmName(const String& s) const override	{ return ptr.El()->GetMethodFmName(s); }
+  cssEl* GetScoped(const String& s) const override  	{ return ptr.El()->GetScoped(s); }
+  cssEl* NewOpr() override   				{ return ptr.El()->NewOpr(); }
+  void	 DelOpr() override 				{ ptr.El()->DelOpr(); }
 
-  cssEl* operator! ()		{ return ptr.El()->operator!(); }
-  cssEl* operator&&(cssEl& s)	{ return ptr.El()->operator&&(s); }
-  cssEl* operator||(cssEl& s)	{ return ptr.El()->operator||(s); }
+  cssEl* operator! () override		{ return ptr.El()->operator!(); }
+  cssEl* operator&&(cssEl& s) override	{ return ptr.El()->operator&&(s); }
+  cssEl* operator||(cssEl& s) override	{ return ptr.El()->operator||(s); }
 
-  cssEl* operator< (cssEl& s) 	{ return ptr.El()->operator<(s); }
-  cssEl* operator> (cssEl& s) 	{ return ptr.El()->operator>(s); }
-  cssEl* operator<=(cssEl& s) 	{ return ptr.El()->operator<=(s); }
-  cssEl* operator>=(cssEl& s) 	{ return ptr.El()->operator>=(s); }
-  cssEl* operator==(cssEl& s) 	{ return ptr.El()->operator==(s); }
-  cssEl* operator!=(cssEl& s) 	{ return ptr.El()->operator!=(s); }
+  cssEl* operator< (cssEl& s) override 	{ return ptr.El()->operator<(s); }
+  cssEl* operator> (cssEl& s) override 	{ return ptr.El()->operator>(s); }
+  cssEl* operator<=(cssEl& s) override 	{ return ptr.El()->operator<=(s); }
+  cssEl* operator>=(cssEl& s) override 	{ return ptr.El()->operator>=(s); }
+  cssEl* operator==(cssEl& s) override 	{ return ptr.El()->operator==(s); }
+  cssEl* operator!=(cssEl& s) override 	{ return ptr.El()->operator!=(s); }
 
-  void operator+=(cssEl& s) 	{ ptr.El()->operator+=(s); }
-  void operator-=(cssEl& s) 	{ ptr.El()->operator-=(s); }
-  void operator*=(cssEl& s) 	{ ptr.El()->operator*=(s); }
-  void operator/=(cssEl& s) 	{ ptr.El()->operator/=(s); }
-  void operator%=(cssEl& s) 	{ ptr.El()->operator%=(s); }
-  void operator<<=(cssEl& s) 	{ ptr.El()->operator<<=(s); }
-  void operator>>=(cssEl& s) 	{ ptr.El()->operator>>=(s); }
-  void operator&=(cssEl& s) 	{ ptr.El()->operator&=(s); }
-  void operator^=(cssEl& s) 	{ ptr.El()->operator^=(s); }
-  void operator|=(cssEl& s) 	{ ptr.El()->operator|=(s); }
+  void operator+=(cssEl& s)  override	{ ptr.El()->operator+=(s); }
+  void operator-=(cssEl& s)  override	{ ptr.El()->operator-=(s); }
+  void operator*=(cssEl& s)  override	{ ptr.El()->operator*=(s); }
+  void operator/=(cssEl& s)  override	{ ptr.El()->operator/=(s); }
+  void operator%=(cssEl& s)  override	{ ptr.El()->operator%=(s); }
+  void operator<<=(cssEl& s) override 	{ ptr.El()->operator<<=(s); }
+  void operator>>=(cssEl& s) override 	{ ptr.El()->operator>>=(s); }
+  void operator&=(cssEl& s)  override	{ ptr.El()->operator&=(s); }
+  void operator^=(cssEl& s)  override	{ ptr.El()->operator^=(s); }
+  void operator|=(cssEl& s)  override	{ ptr.El()->operator|=(s); }
 };
 
 
@@ -1106,15 +1125,15 @@ public:
   int		enum_cnt;	// last enum value assigned (for use during parsing..)
   cssSpace*	enums;		// the actual enums themselves (duplicated elsewhere..)
 
-  int		GetParse() const	{ return CSS_VAR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_EnumType; }
-  const char*	GetTypeName() const	{ return (const char*)type_name; }
-  cssEl*	GetTypeObject() const	{ return (cssEl*)this; }
+  int		GetParse() const override	{ return CSS_VAR; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_EnumType; }
+  const char*	GetTypeName() const override	{ return (const char*)type_name; }
+  cssEl*	GetTypeObject() const override	{ return (cssEl*)this; }
 
   virtual void	SetTypeName(const String& nm);
 
-  String&	PrintType(String& fh) const;
+  String&	PrintType(String& fh) const override;
 
   // constructors
   void 		Constr();
@@ -1129,9 +1148,9 @@ public:
   ~cssEnumType();
 
   cssCloneOnly(cssEnumType);
-  cssEl* 	MakeToken_stub(int, cssEl* arg[]); // make an instance instead
+  cssEl* 	MakeToken_stub(int, cssEl* arg[]) override; // make an instance instead
 
-  cssEl* 	GetScoped(const String& memb) const;
+  cssEl* 	GetScoped(const String& memb) const override;
   cssEl*	FindValue(int val) const;
 };
 
@@ -1140,12 +1159,12 @@ class CSS_API cssEnum : public cssInt {
 public:
   cssEnumType*	type_def;	// definition of the enum type
 
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_Enum; }
-  const char*	GetTypeName() const;
-  cssEl*	GetTypeObject() const	{ return type_def; }
-  String 	PrintStr() const;
-  String	PrintFStr() const;
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_Enum; }
+  const char*	GetTypeName() const override;
+  cssEl*	GetTypeObject() const override	{ return type_def; }
+  String 	PrintStr() const override;
+  String	PrintFStr() const override;
 
   void		SetEnumType(cssEnumType* et)
   { if(type_def != &cssMisc::VoidEnumType)  cssEl::unRefDone(type_def);
@@ -1166,22 +1185,22 @@ public:
   cssCloneFuns(cssEnum, *this);
 
   // converters
-  String GetStr() const; //
+  String GetStr() const override; //
   // Variant GetVar() const; same as base
 
-  void operator=(Real cp) 		{ val = (int)cp; }
-  void operator=(Int cp)		{ val = cp; }
-  void operator=(const String& cp);
+  void operator=(Real cp) override 		{ val = (int)cp; }
+  void operator=(Int cp) override		{ val = cp; }
+  void operator=(const String& cp) override;
 
-  void operator=(void*)	 		{ CvtErr("(void*)"); }
-  void operator=(void**)		{ CvtErr("(void**)"); }
+  void operator=(void*) override	 		{ CvtErr("(void*)"); }
+  void operator=(void**) override		{ CvtErr("(void**)"); }
   using cssInt::operator=;
 
   // operators
-  void operator=(const cssEl& s);
+  void operator=(const cssEl& s) override;
 
-  cssEl* operator==(cssEl& s);
-  cssEl* operator!=(cssEl& s);
+  cssEl* operator==(cssEl& s) override;
+  cssEl* operator!=(cssEl& s) override;
 };
 
 #define cssEnum_inst_nm(l,n,s)		l .Push(new cssEnum(n, s))
@@ -1197,14 +1216,14 @@ class CSS_API cssClassMember : public cssEl {
 public:
   cssEl*	mbr_type;	// type of this member
 
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_ClassMbr; }
-  cssEl*	GetTypeObject() const	{ return mbr_type; }
-  const char*	GetTypeName() const	{ return mbr_type->GetTypeName(); }
-  String 	PrintStr() const;
-  String	PrintFStr() const;
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_ClassMbr; }
+  cssEl*	GetTypeObject() const override	{ return mbr_type; }
+  const char*	GetTypeName() const override	{ return mbr_type->GetTypeName(); }
+  String 	PrintStr() const override;
+  String	PrintFStr() const override;
 
-  void		SetMbrType(cssEl* mbtp) { cssEl::SetRefPointer(&mbr_type, mbtp); }
+  void		SetMbrType(cssEl* mbtp)         { cssEl::SetRefPointer(&mbr_type, mbtp); }
 
   void		Constr();
   void		Copy(const cssClassMember& cp);
@@ -1219,13 +1238,13 @@ public:
   ~cssClassMember();
   cssCloneFuns(cssClassMember, *this);
 
-  int    GetMemberNo(const String& s) const	{ return mbr_type->GetMemberNo(s); }
-  cssEl* GetMemberFmNo(int s) const  		{ return mbr_type->GetMemberFmNo(s); }
-  cssEl* GetMemberFmName(const String& s) const  	{ return mbr_type->GetMemberFmName(s); }
-  int	 GetMethodNo(const String& s) const	{ return mbr_type->GetMethodNo(s); }
-  cssEl* GetMethodFmNo(int s) const		{ return mbr_type->GetMethodFmNo(s); }
-  cssEl* GetMethodFmName(const String& s) const	{ return mbr_type->GetMethodFmName(s); }
-  cssEl* GetScoped(const String& s) const  	{ return mbr_type->GetScoped(s); }
+  int    GetMemberNo(const String& s) const override	{ return mbr_type->GetMemberNo(s); }
+  cssEl* GetMemberFmNo(int s) const override  		{ return mbr_type->GetMemberFmNo(s); }
+  cssEl* GetMemberFmName(const String& s) const override  	{ return mbr_type->GetMemberFmName(s); }
+  int	 GetMethodNo(const String& s) const override	{ return mbr_type->GetMethodNo(s); }
+  cssEl* GetMethodFmNo(int s) const override		{ return mbr_type->GetMethodFmNo(s); }
+  cssEl* GetMethodFmName(const String& s) const override	{ return mbr_type->GetMethodFmName(s); }
+  cssEl* GetScoped(const String& s) const override  	{ return mbr_type->GetScoped(s); }
 };
 
 class CSS_API cssClassType : public cssEl {
@@ -1243,20 +1262,20 @@ public:
   cssProgSpace*	last_top;	// last top-level space that this object was defined in
   bool		multi_space;	// this class has been defined across multiple spaces
 
-  int		GetParse() const	{ return CSS_VAR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_ClassType; }
-  const char*	GetTypeName() const	{ return (const char*)type_name; }
-  cssEl*	GetTypeObject() const	{ return (cssEl*)this; }
+  int		GetParse() const override	{ return CSS_VAR; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_ClassType; }
+  const char*	GetTypeName() const override	{ return (const char*)type_name; }
+  cssEl*	GetTypeObject() const override	{ return (cssEl*)this; }
 
   void		SetTypeName(const String& nm);
   void  	AddParent(cssClassType* par);
 
-  String 	PrintStr() const;
-  String	PrintFStr() const;
+  String 	PrintStr() const override;
+  String	PrintFStr() const override;
 
-  String&	PrintType(String& fh) const;
-  String&	PrintInherit(String& fh) const;
+  String&	PrintType(String& fh) const override;
+  String&	PrintInherit(String& fh) const override;
 
   bool          InheritsFrom(const cssClassType* cp);
 
@@ -1280,7 +1299,7 @@ public:
   ~cssClassType();
   cssCloneOnly(cssClassType);
 
-  cssEl* 	MakeToken_stub(int, cssEl* arg[]); // make an instance instead
+  cssEl* 	MakeToken_stub(int, cssEl* arg[]) override; // make an instance instead
 
   void	CallVoidMethod(cssClassInst* tok, const String& meth_nm);	// call a method taking no args & returning nothing..
 
@@ -1311,19 +1330,19 @@ public:
   // extract info for options and desc for class object from comment
 
   // converters
-  String	GetStr() const;
-  Variant	GetVar() const 	{ CvtErr("(Variant)"); return _nilVariant; }
-  operator 	Real() const		{ CvtErr("(Real)"); return 0; }
-  operator 	Int() const		{ CvtErr("(Int)"); return 0; }
+  String	GetStr() const override;
+  Variant	GetVar() const override 	{ CvtErr("(Variant)"); return _nilVariant; }
+  operator 	Real() const override		{ CvtErr("(Real)"); return 0; }
+  operator 	Int() const override		{ CvtErr("(Int)"); return 0; }
 
-  int 	 GetMemberNo(const String& memb) const;
-  cssEl* GetMemberFmNo(int memb) const;
-  cssEl* GetMemberFmName(const String& memb) const;
-  int 	 GetMethodNo(const String& memb) const;
-  cssEl* GetMethodFmNo(int memb) const;
-  cssEl* GetMethodFmName(const String& memb) const;
-  cssEl* GetScoped(const String& memb) const;
-  cssEl* NewOpr();
+  int 	 GetMemberNo(const String& memb) const override;
+  cssEl* GetMemberFmNo(int memb) const override;
+  cssEl* GetMemberFmName(const String& memb) const override;
+  int 	 GetMethodNo(const String& memb) const override;
+  cssEl* GetMethodFmNo(int memb) const override;
+  cssEl* GetMethodFmName(const String& memb) const override;
+  cssEl* GetScoped(const String& memb) const override;
+  cssEl* NewOpr() override;
 };
 
 class CSS_API cssClassInst : public cssEl {
@@ -1332,27 +1351,27 @@ public:
   cssClassType*	type_def;	// defines the type of this class
   cssSpace*	members;	// members that actually belong to this one
 
-  int		GetParse() const	{ return CSS_VAR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_Class; }
-  const char*	GetTypeName() const;
-  cssEl*	GetTypeObject() const	{ return type_def; }
+  int		GetParse() const override	{ return CSS_VAR; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_Class; }
+  const char*	GetTypeName() const override;
+  cssEl*	GetTypeObject() const override	{ return type_def; }
 
   void		SetClassType(cssClassType* ct)
   { if(type_def != &cssMisc::VoidClassType)  cssEl::unRefDone(type_def);
     type_def = ct; if(type_def != &cssMisc::VoidClassType)  cssEl::Ref(type_def); }
 #ifdef TA_GUI
-  int		Edit(bool wait=false);	// uses stuff in css_iv to edit classes...
+  int		Edit(bool wait=false) override;	// uses stuff in css_iv to edit classes...
 #endif
-  String 	PrintStr() const;
-  String	PrintFStr() const;
+  String 	PrintStr() const override;
+  String	PrintFStr() const override;
 
-  String&	PrintType(String& fh) const;
-  String&	PrintInherit(String& fh) const;
+  String&	PrintType(String& fh) const override;
+  String&	PrintInherit(String& fh) const override;
 
   // saving and loading objects to/from files (special format)
-  void		Save(std::ostream& fh = std::cout);
-  void		Load(std::istream& fh = std::cin);
+  void		Save(std::ostream& fh = std::cout) override;
+  void		Load(std::istream& fh = std::cin) override;
 
   // constructors
   void 		Constr();
@@ -1373,31 +1392,31 @@ public:
   void	 DestructToken();	// call destructor on this class
 
   // converters
-  String	GetStr() const;
-  Variant	GetVar() const 	{ CvtErr("(Variant)"); return _nilVariant; }
-  operator 	Real() const		{ CvtErr("(Real)"); return 0; }
-  operator 	Int() const		{ CvtErr("(Int)"); return 0; }
-  operator 	bool() const		{ CvtErr("(bool)"); return 0; }
+  String	GetStr() const override;
+  Variant	GetVar() const override 	{ CvtErr("(Variant)"); return _nilVariant; }
+  operator 	Real() const override		{ CvtErr("(Real)"); return 0; }
+  operator 	Int() const override		{ CvtErr("(Int)"); return 0; }
+  operator 	bool() const override		{ CvtErr("(bool)"); return 0; }
 
-  void operator=(Real) 	 	{ CvtErr("(Real)"); }
-  void operator=(Int) 		{ CvtErr("(Int)"); }
-  void operator=(const String&)	{ CvtErr("(String)"); }
-  void operator=(void*)		{ CvtErr("(void*)"); }
-  void operator=(void**)	{ CvtErr("(void**)"); }
+  void operator=(Real) override 	 	{ CvtErr("(Real)"); }
+  void operator=(Int)  override		{ CvtErr("(Int)"); }
+  void operator=(const String&) override	{ CvtErr("(String)"); }
+  void operator=(void*) override		{ CvtErr("(void*)"); }
+  void operator=(void**) override	{ CvtErr("(void**)"); }
   using cssEl::operator=;
 
   // operators
-  void operator=(const cssEl& s);
+  void operator=(const cssEl& s) override;
 
-  void	UpdateAfterEdit();
+  void	UpdateAfterEdit() override;
 
-  int 	 GetMemberNo(const String& memb) const;
-  cssEl* GetMemberFmNo(int memb) const;
-  cssEl* GetMemberFmName(const String& memb) const;
-  int 	 GetMethodNo(const String& memb) const;
-  cssEl* GetMethodFmNo(int memb) const;
-  cssEl* GetMethodFmName(const String& memb) const;
-  cssEl* GetScoped(const String& memb) const;
+  int 	 GetMemberNo(const String& memb) const override;
+  cssEl* GetMemberFmNo(int memb) const override;
+  cssEl* GetMemberFmName(const String& memb) const override;
+  int 	 GetMethodNo(const String& memb) const override;
+  cssEl* GetMethodFmNo(int memb) const override;
+  cssEl* GetMethodFmName(const String& memb) const override;
+  cssEl* GetScoped(const String& memb) const override;
 };
 
 class CSS_API cssSubShell : public cssEl {
@@ -1405,13 +1424,13 @@ class CSS_API cssSubShell : public cssEl {
 public:
   cssProgSpace		prog_space;
 
-  int		GetParse() const	{ return CSS_VAR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_SubShell; }
-  const char*	GetTypeName() const	{ return "(SubShell)"; }
+  int		GetParse() const override	{ return CSS_VAR; }
+  uint		GetSize() const override		{ return sizeof(*this); }
+  cssTypes 	GetType() const override		{ return T_SubShell; }
+  const char*	GetTypeName() const override	{ return "(SubShell)"; }
 
-  String	PrintStr() const;
-  String	PrintFStr() const;
+  String	PrintStr() const override;
+  String	PrintFStr() const override;
 
   using cssEl::operator=;
 
@@ -1420,7 +1439,7 @@ public:
   cssSubShell(const cssSubShell& cp);
   cssSubShell(const cssSubShell& cp, const String& nm);
 
-  cssEl*	MakeToken_stub(int, cssEl* arg[])
+  cssEl*	MakeToken_stub(int, cssEl* arg[]) override
   { return new cssSubShell(arg[1]->GetStr()); }
 
   cssCloneOnly(cssSubShell);

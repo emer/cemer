@@ -51,7 +51,7 @@ public:
 
   TA_BASEFUNS_NOCOPY(ProgObjList);
 protected:
-  void*         El_Own_(void* it); // give anon objs a name
+  void*         El_Own_(void* it) override; // give anon objs a name
 
 private:
   void Initialize() { SetBaseType(&TA_taNBase); } // need name for var, owner to stream!

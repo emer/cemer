@@ -39,7 +39,7 @@ public:
   int UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
 
 public: // ISigLinkClient i/f
-  void*                 This() {return this;}  // #IGNORE
+  void*                 This() override {return this;}  // #IGNORE
   TypeDef*     GetTypeDef() const override {return &TA_taBase_RefList;} // #IGNORE
 protected: // we actually protect these
   void         SigLinkDestroying(taSigLink* dl) override; // #IGNORE
@@ -49,10 +49,10 @@ protected: // we actually protect these
 protected:
   IRefListClient*       m_own; // optional owner
 
-  String        El_GetName_(void* it) const { return ((taBase*)it)->GetName(); }
-  TypeDef*      El_GetType_(void* it) const {return ((taBase*)it)->GetTypeDef();}
-  void*         El_Ref_(void* it);
-  void*         El_unRef_(void* it);
+  String        El_GetName_(void* it) const override { return ((taBase*)it)->GetName(); }
+  TypeDef*      El_GetType_(void* it) const override {return ((taBase*)it)->GetTypeDef();}
+  void*         El_Ref_(void* it) override;
+  void*         El_unRef_(void* it) override;
 private:
   void Initialize();
 };

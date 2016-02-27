@@ -230,7 +230,7 @@ public:
   void         OpenViewers(); // open any yet unopen viewers
   void         CloseLater() override;
 
-  void  UpdateAfterEdit();
+  void  UpdateAfterEdit() override;
   virtual void          InitLinks_impl(); // #IGNORE use this instead of InitLinks in subclasses
   virtual void          CutLinks_impl(); // #IGNORE use this instead of CutLinks in subclasses -- you can call this first to nuke the viewers etc. before your own stuff
   TA_BASEFUNS(taProject);
@@ -239,7 +239,7 @@ protected:
   TimeUsed              auto_save_timer; // #IGNORE timer used for auto saving
 
   virtual void          InitLinks_post(); // #IGNORE called after all _impls (not called for undo_loading): assert things like default wizards in here
-  void  CutLinks(); // don't override this -- use _impl instead
+  void  CutLinks() override; // don't override this -- use _impl instead
   virtual MainWindowViewer* MakeProjectBrowser_impl(); // make a standard viewer for this project type
   int          GetOwnerEditableState_impl(int mask) const override
     {return 0;} // the readonly stops here!
@@ -247,7 +247,7 @@ protected:
 
 private:
   void  Copy_(const taProject& cp);
-  void  InitLinks(); // don't try to use this -- use _impl instead
+  void  InitLinks() override; // don't try to use this -- use _impl instead
   void  Initialize();
   void  Destroy();
 };

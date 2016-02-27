@@ -37,7 +37,7 @@ public:
 //  String     GetColText(const KeyString& key, int itm_idx = -1) const override;
   TA_BASEFUNS(EditMthItem);
 protected:
-  void                  UpdateAfterEdit_impl();
+  void                  UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy();

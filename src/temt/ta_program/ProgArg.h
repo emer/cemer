@@ -48,8 +48,8 @@ public:
   virtual bool          UpdateFromType(TypeDef* td);
   // updates our type information from method typedef that we apply to -- returns true if any changes
 
-  bool          SetName(const String& nm)       { name = nm; return true; }
-  String        GetName() const                 { return name; }
+  bool          SetName(const String& nm) override       { name = nm; return true; }
+  String        GetName() const           override       { return name; }
 
   String GetDisplayName() const override;
   String GetTypeDecoKey() const override { return "ProgArg"; }
@@ -60,8 +60,8 @@ public:
   bool         BrowserEditEnable() override { return true; }
   bool         BrowserEditSet(const String& new_val, int move_after = 0) override;
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(ProgArg);
 protected:
   void         CheckThisConfig_impl(bool quiet, bool& rval) override;

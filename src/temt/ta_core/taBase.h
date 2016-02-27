@@ -101,13 +101,13 @@ private: \
   void Copy__(const y& cp); \
 protected: \
   void Copy_impl(const y& cp); \
-  void UnSafeCopy(const taBase* cp); \
-  void CastCopyTo(taBase* cp) const; \
+  void UnSafeCopy(const taBase* cp) override;\
+  void CastCopyTo(taBase* cp) const override; \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
-  TypeDef* GetTypeDef() const { return &TA_##y; } \
+  TypeDef* GetTypeDef() const override { return &TA_##y; } \
   void Copy(const y& cp); \
-  bool Copy(const taBase* cp); \
+  bool Copy(const taBase* cp) override; \
   y& operator=(const y& cp);
 
 #define TA_BASEFUNS_MAIN_DEFN_(y) \
@@ -141,26 +141,26 @@ protected: \
       inherited::Copy_impl(cp); \
       Copy__(cp); \
     StructUpdate(false);} \
-  void  UnSafeCopy(const taBase* cp) { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y<T>*)cp)); \
+  void  UnSafeCopy(const taBase* cp) override { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y<T>*)cp)); \
     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
-  void  CastCopyTo(taBase* cp) const { y<T>& rf = *((y<T>*)cp); rf.Copy_impl(*this); } \
+  void  CastCopyTo(taBase* cp) const override { y<T>& rf = *((y<T>*)cp); rf.Copy_impl(*this); } \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
-  TypeDef* GetTypeDef() const { return &TA_##y; } \
+  TypeDef* GetTypeDef() const override { return &TA_##y; } \
   void Copy(const y<T>& cp) { Copy_impl(cp);} \
-  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
+  inline bool Copy(const taBase* cp) override {return taBase::Copy(cp);} \
   y<T>& operator=(const y<T>& cp) { Copy(cp); return *this; }
 
 // common defs used to make instances: Cloning and Tokens
 #define TA_BASEFUNS_INST_(y) \
-  taBase* Clone() const { return new y(*this); }  \
-  taBase* MakeToken() const { return (taBase*)(new y); } \
-  taBase* MakeTokenAry(int n) const { return (taBase*)(new y[n]); }
+  taBase* Clone() const override { return new y(*this); }  \
+  taBase* MakeToken() const override { return (taBase*)(new y); } \
+  taBase* MakeTokenAry(int n) const override { return (taBase*)(new y[n]); }
 
 #define TA_TMPLT_BASEFUNS_INST_(y,T) \
-  taBase* Clone() const { return new y<T>(*this); } \
-  taBase* MakeToken() const { return (taBase*)(new y<T>); }  \
-  taBase* MakeTokenAry(int n) const { return (taBase*)(new y<T>[n]); }
+  taBase* Clone() const override { return new y<T>(*this); } \
+  taBase* MakeToken() const override { return (taBase*)(new y<T>); }  \
+  taBase* MakeTokenAry(int n) const override { return (taBase*)(new y<T>[n]); }
 
 // ctors -- one size fits all (where used) thanks to Initialize__
 
@@ -319,7 +319,7 @@ public: \
 // for use with templates
 #define TA_TMPLT_TYPEFUNS(y,T) \
   static TypeDef* StatTypeDef(int) {  return &TA_##y##_##T; } \
-  TypeDef* GetTypeDef() const { return &TA_##y##_##T; }
+  TypeDef* GetTypeDef() const override { return &TA_##y##_##T; }
 
 // this guy is your friend for most simple classes! esp good in plugins
 #define SIMPLE_COPY(T) \
@@ -337,10 +337,10 @@ public: \
 
 // automated Init/Cut links guys -- esp good for code in Plugins
 #define SIMPLE_INITLINKS(T) \
-  void InitLinks() { inherited::InitLinks(); InitLinks_taAuto(&TA_##T); }
+  void InitLinks() override { inherited::InitLinks(); InitLinks_taAuto(&TA_##T); }
 
 #define SIMPLE_CUTLINKS(T) \
-  void CutLinks() { CutLinks_taAuto(&TA_##T); inherited::CutLinks(); }
+  void CutLinks() override { CutLinks_taAuto(&TA_##T); inherited::CutLinks(); }
 
 #define SIMPLE_LINKS(T) \
   SIMPLE_INITLINKS(T); \

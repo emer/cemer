@@ -55,8 +55,8 @@ public:
   bool			Constr(taiMimeSource* ms, const String& subkey = _nilString);
     // returns true if ok, otherwise false, and zombie set
     
-  void	SetIndex(int idx) {m_index = idx;} // iml index as convenience
-  int	GetIndex() const {return m_index;}
+  void	SetIndex(int idx) override {m_index = idx;} // iml index as convenience
+  int	GetIndex() const override {return m_index;}
   TA_BASEFUNS_NOCOPY(taiMimeItem);
 
 public: // TAI_xxx instance interface -- used for dynamic creation

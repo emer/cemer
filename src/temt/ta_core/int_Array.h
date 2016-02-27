@@ -49,12 +49,12 @@ public:
 protected:
   Variant      El_GetVar_(const void* itm) const override
     { return (Variant)(*(int*)itm); }
-  int           El_Compare_(const void* a, const void* b) const
+  int           El_Compare_(const void* a, const void* b) const override
   { int rval=-1; if(*((int*)a) > *((int*)b)) rval=1; else if(*((int*)a) == *((int*)b)) rval=0; return rval; }
-  bool          El_Equal_(const void* a, const void* b) const
+  bool          El_Equal_(const void* a, const void* b) const override
     { return (*((int*)a) == *((int*)b)); }
-  String        El_GetStr_(const void* it) const { return (*((int*)it)); }
-  void          El_SetFmStr_(void* it, const String& val)
+  String        El_GetStr_(const void* it) const override { return (*((int*)it)); }
+  void          El_SetFmStr_(void* it, const String& val) override
   { int tmp = (int)val; *((int*)it) = tmp; }
 };
 

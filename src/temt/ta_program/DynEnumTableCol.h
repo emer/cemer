@@ -34,8 +34,8 @@ public:
   DataTableRef        src_table; // #AKA_srcTable table to get enum data from
   String              src_column; // #AKA_srcColumn column within src_table to get data from
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
 
   virtual bool    EnumsFromDataTable(DataTable* dt, const Variant& col);
   // #BUTTON initialize enum values from values in given data table column (can be number or name). Updates to column will automatically be reflected in the enum

@@ -51,14 +51,14 @@ public:
   String	GetToolbarName() const override { return "for"; }
 
   PROGEL_SIMPLE_COPY(ForLoop);
-  void InitLinks();
+  void InitLinks() override;
   SIMPLE_CUTLINKS(ForLoop);
   TA_BASEFUNS(ForLoop)
 protected:
   virtual void	MakeIndexVar(const String& var_nm);
   // make default 'i' variable in program.vars -- just makes it easier to deal with loops in default case..
 
-  virtual void	UpdateAfterEdit_impl();
+  void	        UpdateAfterEdit_impl() override;
   virtual void	UpdateOnInsert_impl(); // check for being nested, and update def var 
   bool		ParentForLoopVarClashes(const String& loop_var); // true if a parent For loop is also using the loop_var
   void		MorphVar(String& cur_loop_var); // typically i,j,k, etc. or var2, var3, etc

@@ -138,7 +138,7 @@ public:
   ///////////////////////////////////////////////////////
   //    Input/Output/String
 
-  String&       Print(String& strm, int indent=0) const;
+  String&       Print(String& strm, int indent=0) const override;
 
   String        ToString(const char* ldelim = "[", const char* rdelim = "]") const;
   // #CAT_File returns human-friendly text in form: "[dims:{dim}{,dim}]"

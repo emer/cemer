@@ -31,8 +31,8 @@ taTypeDef_Of(TokenSpace);
 class TA_API TokenSpace : public taPtrList<void> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 protected:
-  String        GetListName_() const            { return name; }
-  String        El_GetName_(void* it) const;
+  String        GetListName_() const  override          { return name; }
+  String        El_GetName_(void* it) const override;
 
 public:
   static String tmp_el_name;    // for element names that need to be created

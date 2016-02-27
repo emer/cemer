@@ -36,9 +36,9 @@ public:
   String		version; // #AKA_plugin_version #READ_ONLY #SHOW  the plugin's version (as of when plugin was loaded)
   String		url; // #READ_ONLY #SHOW a url that provides information on the plugin; used mostly for when missing in a proj file
 
-  String        GetName() const { return name; } // note: user can't set name
-  void          SetDefaultName() {} 
-  String	GetDesc() const {return desc;}
+  String        GetName() const override { return name; } // note: user can't set name
+  void          SetDefaultName() override {} 
+  String	GetDesc() const override {return desc;}
   void		Copy_(const taPluginBase& cp); //note: we only use this for descs, not actual plugins
   TA_ABSTRACT_BASEFUNS(taPluginBase)
 private:

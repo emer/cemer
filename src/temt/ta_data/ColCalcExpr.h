@@ -54,8 +54,8 @@ public:
   String            GetDisplayName() const override;
   String            GetName() const override;
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   void  Copy_(const ColCalcExpr& cp);
   TA_BASEFUNS(ColCalcExpr);
 protected:

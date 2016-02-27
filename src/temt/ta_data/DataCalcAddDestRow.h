@@ -40,11 +40,11 @@ public:
   // get my data table ptrs from parent calc loop obj
 
   String    GetDisplayName() const override;
-  String	GetToolbarName() const override { return "+dest row"; }
+  String    GetToolbarName() const override { return "+dest row"; }
   bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool      CvtFmCode(const String& code) override;
 
-  void	InitLinks();
+  void	InitLinks() override;
   TA_BASEFUNS(DataCalcAddDestRow);
 protected:
   void      UpdateAfterEdit_impl() override;

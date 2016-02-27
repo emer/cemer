@@ -37,7 +37,7 @@ friend class iTabView;
 public:
   virtual taiSigLink*   sel_link() const {return (cur_item) ? cur_item->link() : NULL;} // siglink of selected item that is controlling the current data panel view, ex. siglink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
   virtual MemberDef*    sel_md() const {return (cur_item) ? cur_item->md() : NULL;}; // as for sel_link
-  virtual int           stretchFactor() const {return 4;} // 3/2 default
+  virtual int           stretchFactor() const  override {return 4;} // 3/2 default
   iTabView*             tabView() {return m_curTabView;} // currently active
   iTabBarBase*          tabBar();
 

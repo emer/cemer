@@ -59,7 +59,7 @@ public:
   String       GetDesc() const override;
   TA_BASEFUNS(ControlPanelItem);
 protected:
-  void                  UpdateAfterEdit_impl();
+  void                  UpdateAfterEdit_impl() override;
   String                prv_desc; // previous description -- for checking for changes
 
 private:

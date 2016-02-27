@@ -70,7 +70,7 @@ protected: // all related to taList or DEF_CHILD children_
     const taiMimeSource* ms, int& allowed, int& forbidden);
     // returns the operations allowed for list items (ex Paste)
 
-  virtual int   ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea);
+  int   ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea) override;
   virtual int   ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea);
   virtual int   ChildEditActionLD_impl_inproc(const MemberDef* md, taBase* lst_itm, taiMimeSource* ms, int ea);
   virtual int   ChildEditActionLD_impl_ext(const MemberDef* md, taBase* lst_itm, taiMimeSource* ms, int ea);

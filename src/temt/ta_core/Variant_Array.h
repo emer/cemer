@@ -37,12 +37,12 @@ public:
 protected:
   Variant      El_GetVar_(const void* itm) const override
     { return (*(Variant*)itm); }
-  int           El_Compare_(const void* a, const void* b) const
+  int           El_Compare_(const void* a, const void* b) const override
   { int rval=-1; if(*((Variant*)a) > *((Variant*)b)) rval=1; else if(*((Variant*)a) == *((Variant*)b)) rval=0; return rval; }
-  bool          El_Equal_(const void* a, const void* b) const
+  bool          El_Equal_(const void* a, const void* b) const override
     { return (*((Variant*)a) == *((Variant*)b)); }
-  String        El_GetStr_(const void* it) const { return ((Variant*)it)->toString(); }
-  void          El_SetFmStr_(void* it, const String& val)
+  String        El_GetStr_(const void* it) const override { return ((Variant*)it)->toString(); }
+  void          El_SetFmStr_(void* it, const String& val) override
   { Variant tmp = (Variant)val; *((Variant*)it) = tmp; }
 private:
   void Initialize()     {err = 0.0;};

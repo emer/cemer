@@ -64,7 +64,7 @@ public:
   taBase*      ChooseNew(taBase* origin) override;
   bool         HasChooseNew() override { return true; }
 
-  void  setStale();
+  void  setStale() override;
   TA_BASEFUNS(ProgVar_List);
 
 protected:

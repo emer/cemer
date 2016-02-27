@@ -32,7 +32,7 @@ class TA_API taiTreeNodeGroup: public taiTreeNodeList {
 INHERITED(taiTreeNodeList)
 public:
   taGroup_impl*         tadata() const {return ((taSigLinkGroup*)m_link)->data();}
-  taSigLinkGroup*     link() const {return (taSigLinkGroup*)m_link;}
+  taSigLinkGroup*     link() const override {return (taSigLinkGroup*)m_link;}
 
   bool         RebuildChildrenIfNeeded() override;
 

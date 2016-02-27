@@ -38,7 +38,8 @@ public:
   using inherited::data;
   taPtrList_impl*       data() {return ((taSigLinkTypeItemSpace*)m_link)->data();}
   taSigLinkTypeItem*   child_link(int idx);
-  taSigLinkTypeItemSpace*     link() const {return (taSigLinkTypeItemSpace*)m_link;}
+  taSigLinkTypeItemSpace*     link() const override
+  {return (taSigLinkTypeItemSpace*)m_link;}
   bool                  ShowItem(TypeItem* ti) const;
     // determine whether to show, ex. based on a filter
   bool                  ShowType(TypeDef* td) const;

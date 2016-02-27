@@ -44,9 +44,9 @@ public:
   taiSigLink* rootLink()  override {return (m_root) ?
     (taiSigLink*)m_root->GetSigLink() : NULL;}
 
-  void  UpdateAfterEdit(); // if root deletes, our window must die
-  void  InitLinks();
-  void  CutLinks();
+  void  UpdateAfterEdit() override; // if root deletes, our window must die
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_DATAVIEWFUNS(BrowseViewerTaBase, BrowseViewer) //
 
 protected:

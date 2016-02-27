@@ -1584,7 +1584,8 @@ void MTRnd::Destroy() {
 }
 
 MTRndPar* MTRnd::GetRnd(int thr_no) {
-  if(thr_no >= mtrnds.size || thr_no < 0) {
+  if(thr_no < 0) thr_no = taMisc::dmem_proc;
+  if(thr_no >= mtrnds.size) {
     taMisc::Error("MTRnd: thread number:", String(thr_no),
                   "out of range for number of parallel RNG's:", String(mtrnds.size));
     return NULL;

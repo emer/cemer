@@ -33,7 +33,7 @@ public:
   
   TA_SIMPLE_BASEFUNS(ParamSetItem);
 protected:
-  void              UpdateAfterEdit_impl();
+  void              UpdateAfterEdit_impl() override;
 
 private:
   void  Initialize()  { };

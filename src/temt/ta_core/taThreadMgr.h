@@ -119,11 +119,11 @@ public:
   static void	TerminateAllThreads();
   // static function for terminating all the threads, e.g., in the err signal handler or quit routine
   
-  void 	InitLinks();
-  void	CutLinks();
+  void 	InitLinks() override;
+  void	CutLinks() override;
   TA_BASEFUNS_NOCOPY(taThreadMgr);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 
   // these are the basic housekeeping functions that are called by InitAll and RemoveAll
 

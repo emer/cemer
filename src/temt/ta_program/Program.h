@@ -220,7 +220,7 @@ public:
   static void           SetLastRunState(RunState value);
   // #IGNORE sets last_global_run_state - saved for comparison needed in update UI
 
-  bool                  isStale() const {return m_stale;}
+  bool                  isStale() const override {return m_stale;}
   void                  setStale() override; // indicates a component has changed
   void                  SetRunState(RunState value);
   // #IGNORE sets the local AND global run state -- don't use for just local run state updates
@@ -448,8 +448,8 @@ public: // XxxGui versions provide feedback to the user
   void                  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   String                GetToolbarName() const override { return "program"; }
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(Program);
 
 public: // ScriptBase i/f

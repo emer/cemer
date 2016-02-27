@@ -37,7 +37,7 @@ public:
 protected:
   Variant      El_GetVar_(const void* itm) const override
     { return (Variant)(*(voidptr*)itm); }
-  bool          El_Equal_(const void* a, const void* b) const
+  bool          El_Equal_(const void* a, const void* b) const override
     { return (*((voidptr*)a) == *((voidptr*)b)); }
 private:
   void Initialize()     {err = 0; };

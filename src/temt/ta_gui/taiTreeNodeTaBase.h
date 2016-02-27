@@ -31,7 +31,7 @@ class TA_API taiTreeNodeTaBase: public taiTreeNode {
 INHERITED(taiTreeNode)
 public:
   taBase*               tadata() {return ((taSigLinkTaBase*)m_link)->data();}
-  taSigLinkTaBase*          link() const {return (taSigLinkTaBase*)m_link;}
+  taSigLinkTaBase*      link() const  override {return (taSigLinkTaBase*)m_link;}
 
   taiTreeNodeTaBase(taSigLinkTaBase* link_, MemberDef* md_, taiTreeNode* parent_,
     taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);

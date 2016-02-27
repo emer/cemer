@@ -50,7 +50,7 @@ public:
     const iColor& bgcol = def_color);
   //edit in a panel, prefer existing, else created new (note: rarely overridden)
 
-  virtual int           BidForType(TypeDef*) { return 0;}
+  int                   BidForType(TypeDef*) override { return 0;}
   virtual int           BidForEdit(TypeDef*) { return 1;}
   virtual void          AddEdit(TypeDef* td); // add an edit to a type
 

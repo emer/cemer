@@ -34,8 +34,8 @@ public:
   inline int		count() const {return items.size;}
   taiMimeItem*		item(int idx) const {return items.FastEl(idx);} //note: can be replaced with strongly typed version
   
-  void	InitLinks();
-  void	CutLinks();
+  void	InitLinks() override;
+  void	CutLinks() override;
   TA_ABSTRACT_BASEFUNS(taiMultiMimeItem)
   
 protected:

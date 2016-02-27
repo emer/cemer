@@ -286,7 +286,7 @@ public:
   
   SIMPLE_COPY(ClusterRun);
   SIMPLE_CUTLINKS(ClusterRun);
-  void InitLinks();
+  void InitLinks() override;
   TA_BASEFUNS(ClusterRun);
 protected:
   void                  UpdateAfterEdit_impl() override;

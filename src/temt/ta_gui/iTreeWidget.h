@@ -63,7 +63,7 @@ public:
   virtual void      clearExtSelection();	   // clear extended selection mode and also clear any existing selection
 
 #ifndef __MAKETA__
-  void              scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible);
+  void              scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
   void              scrollTo(QTreeWidgetItem* item, ScrollHint hint = EnsureVisible);
 #endif
 
@@ -102,8 +102,8 @@ protected:
   void              contextMenuEvent(QContextMenuEvent* e) override;
   void              doItemExpanded(QTreeWidgetItem* item, bool expanded);
   void              timerEvent(QTimerEvent* e) override;
-  Qt::DropActions   supportedDropActions() const;
-  void              setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command);
+  Qt::DropActions   supportedDropActions() const override;
+  void              setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
   // this is workaround for drag scrolling bug in qt5.2
   virtual void      dragScroll();
   void              keyPressEvent(QKeyEvent* e) override;
@@ -131,7 +131,7 @@ public:
   void              setModelData(QWidget* editor, QAbstractItemModel* model,
                             const QModelIndex& index) const override;
 
-  bool               eventFilter(QObject *object, QEvent *event);
+  bool               eventFilter(QObject *object, QEvent *event) override;
 };
 
 #endif // iTreeWidget_h

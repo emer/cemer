@@ -229,29 +229,29 @@ public:
 
   static double beta_den(double x, double a, double b);
   // #CAT_Probability beta probability density function evaluated at 0 < x < 1 for shape parameters a, b
-  static double beta_dev(double a, double b, int thr_no = 0);
-  // #CAT_Probability return a beta distribution deviate, characterized by parameters a > 0, b > 0 -- uses gamma_dev -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
+  static double beta_dev(double a, double b, int thr_no = -1);
+  // #CAT_Probability return a beta distribution deviate, characterized by parameters a > 0, b > 0 -- uses gamma_dev -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
 
   static double binom_den(int n, int j, double p);
   // #CAT_Probability binomial probability function
   static double binom_cum(int n, int j, double p);
   // #CAT_Probability cumulative binomial probability
-  static double binom_dev(int n, double p, int thr_no = 0);
-  // #CAT_Probability binomial deviate: p prob with n trials -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
+  static double binom_dev(int n, double p, int thr_no = -1);
+  // #CAT_Probability binomial deviate: p prob with n trials -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
 
   static double poisson_den(int j, double l);
   // #CAT_Probability poisson distribution
   static double poisson_cum(int j, double l);
   // #CAT_Probability cumulative Poisson P_l(<j) (0 thru j-1)
-  static double poisson_dev(double l, int thr_no = 0);
-  // #CAT_Probability poisson deviate:  mean is l -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
+  static double poisson_dev(double l, int thr_no = -1);
+  // #CAT_Probability poisson deviate:  mean is l -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
 
   static double gamma_den(int j, double l, double t);
   // #CAT_Probability gamma probability distribution: j events, l lambda, t time
   static double gamma_cum(int j, double l, double t);
   // #CAT_Probability gamma cumulative: j events, l lambda, t time
-  static double gamma_dev(double k, double lambda = 1.0, int thr_no = 0);
-  // #CAT_Probability gamma deviate: how long to wait until k events with given lambda variance -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
+  static double gamma_dev(double k, double lambda = 1.0, int thr_no = -1);
+  // #CAT_Probability gamma deviate: how long to wait until k events with given lambda variance -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
 
   static double gauss_den(double x);
   // #CAT_Probability gaussian (normal) distribution with uniform standard deviation: 1 / sqrt(2 * PI) * exp(-x^2 / 2)
@@ -267,8 +267,8 @@ public:
   // #CAT_Probability inverse of the cumulative for p: z value for given p
   static double gauss_inv_lim(double p);
   // #CAT_Probability inverse of the cumulative for p: z value for given p , returns a non-zero value for p==0 or p==1
-  static double gauss_dev(int thr_no = 0);
-  // #CAT_Probability gaussian deviate: normally distributed -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
+  static double gauss_dev(int thr_no = -1);
+  // #CAT_Probability gaussian deviate: normally distributed -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
   static double erf(double x);
   // #CAT_Probability the error function: used for computing the normal distribution
   static double erfc(double x);
@@ -423,8 +423,8 @@ public:
   static String vec_stats(const double_Matrix* vec);
   // #CAT_Statistics compute standard descriptive statistics on given vector data, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
-  static int   vec_prob_choose(double_Matrix* vec, int thr_no = 0);
-  // #CAT_Statistics given a vector of probability values, choose an index according to its corresponding probability -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
+  static int   vec_prob_choose(double_Matrix* vec, int thr_no = -1);
+  // #CAT_Statistics given a vector of probability values, choose an index according to its corresponding probability -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
 
   static void   vec_sort(double_Matrix* vec, bool descending = false);
   // #CAT_Statistics sort the given vector values in numerical order (in place) -- uses entire matrix, ignoring any view of sub-elements
@@ -455,8 +455,8 @@ public:
                                                int degree, double& chisq);
     // #CAT_Statistics This function computes the best-fit parameters c of the model y = X c for the observations y and the matrix of predictor variables X. The variance-covariance matrix of the model parameters cov is estimated from the scatter of the observations about the best-fit. The sum of squares of the residuals from the best-fit, chi^2, is returned in chisq. The best-fit is found by singular value decomposition of the matrix X using the preallocated workspace provided in work. The modified Golub-Reinsch SVD algorithm is used, with column scaling to improve the accuracy of the singular values. Any components which have zero singular value (to machine precision) are discarded from the fit. -- uses entire matrix, ignoring any view of sub-elements
 
-  static bool vec_jitter_gauss(double_Matrix* vec, double stdev, int thr_no = 0);
-  // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev rounded to the nearest int. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter -- uses entire matrix, ignoring any view of sub-elements -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
+  static bool vec_jitter_gauss(double_Matrix* vec, double stdev, int thr_no = -1);
+  // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev rounded to the nearest int. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter -- uses entire matrix, ignoring any view of sub-elements -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)

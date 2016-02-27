@@ -40,11 +40,11 @@ public:
   void          SetValue(const String& key, const String& value);
     // set or update the value for the key
 
-  int           Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0);
-  int           Dump_Load_Value(std::istream& strm, taBase* par=NULL);
+  int           Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0) override;
+  int           Dump_Load_Value(std::istream& strm, taBase* par=NULL) override;
 
-  void  UpdateAfterEdit();
-  void  InitLinks();
+  void  UpdateAfterEdit() override;
+  void  InitLinks() override;
   TA_BASEFUNS(SArg_Array);
 private:
   void  Copy_(const SArg_Array& cp);

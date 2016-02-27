@@ -383,7 +383,6 @@ int MTA::lex() {
           break;
         }
       }
-      last_word = LexBuf;
       continue;
     }
 
@@ -541,7 +540,11 @@ int MTA::lex() {
       yylval.typ = FindName(LexBuf, lx_tok);
       
       if(yylval.typ == NULL) {
-	yylval.chr = LexBuf;
+        String& lw = last_word[last_word_idx++];
+        if(last_word_idx >= 4)
+          last_word_idx = 0;
+        lw = LexBuf;
+	yylval.chr = lw;
 	return MP_NAME;
       }
       if(lx_tok == MP_OPERATOR) {

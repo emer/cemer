@@ -230,8 +230,8 @@ public:
   virtual void  PopAll();
   // #CAT_Modify pop all elements off the stack
   
-  virtual void  Permute(int thr_no = 0);
-  // #MENU #CONFIRM #CAT_Order permute the items in the list into a random order -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  virtual void  Permute(int thr_no = -1);
+  // #MENU #CONFIRM #CAT_Order permute the items in the list into a random order -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
   virtual void  Sort(bool descending=false);
   // #MENU #CONFIRM #CAT_Order sort the items in the list in alpha order according to name (or El_Compare_)
   virtual void  Sort_(bool descending=false);   // #IGNORE implementation of sorting function

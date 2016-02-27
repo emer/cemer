@@ -32,17 +32,17 @@ taTypeDef_Of(TypeSpace);
 class TA_API TypeSpace: public taPtrList<TypeDef> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of types; uses default string-based hashing
 protected:
-  String        GetListName_() const            { return name; }
-  String        El_GetName_(void* it) const;
-  taPtrList_impl* El_GetOwnerList_(void* it) const;
-  void*         El_SetOwner_(void* it);
-  void          El_SetIndex_(void* it, int i);
+  String        GetListName_() const override           { return name; }
+  String        El_GetName_(void* it) const override;
+  taPtrList_impl* El_GetOwnerList_(void* it) const override;
+  void*         El_SetOwner_(void* it) override;
+  void          El_SetIndex_(void* it, int i) override;
 
-  void*         El_Ref_(void* it);
-  void*         El_unRef_(void* it);
-  void          El_Done_(void* it);
-  void*         El_MakeToken_(void* it);
-  void*         El_Copy_(void* trg, void* src);
+  void*         El_Ref_(void* it) override;
+  void*         El_unRef_(void* it) override;
+  void          El_Done_(void* it) override;
+  void*         El_MakeToken_(void* it) override;
+  void*         El_Copy_(void* trg, void* src) override;
 
 public:
   String        name;           // of the space

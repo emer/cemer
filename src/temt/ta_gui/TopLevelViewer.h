@@ -50,8 +50,8 @@ public:
 
   void         WindowClosing(CancelOp& cancel_op) override;
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_DATAVIEWFUNS(TopLevelViewer, taViewer) //
 protected:
 

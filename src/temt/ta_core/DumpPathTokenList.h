@@ -30,8 +30,8 @@ class TA_API DumpPathTokenList : public taPtrList<DumpPathToken> {
   // ##NO_CSS ##NO_MEMBERS manages paths during both saving and loading -- uses a hash code on paths stored in DumpPathToken objects, plus an object-pointer hash table for finding objects
 INHERITED(taPtrList<DumpPathToken>)
 protected:
-  void		El_Done_(void* it)	{ delete (DumpPathToken*)it; }
-  String	El_GetName_(void* it) const { return ((DumpPathToken*)it)->path; }
+  void		El_Done_(void* it) override	     { delete (DumpPathToken*)it; }
+  String	El_GetName_(void* it) const override { return ((DumpPathToken*)it)->path; }
 public:
   taHashTable	obj_hash_table;	// optimized finding of objects
 

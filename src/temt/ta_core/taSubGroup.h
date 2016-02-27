@@ -46,7 +46,7 @@ public:
    void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   // forward LIST events as GROUP events to owner
 
-  bool  Transfer(taBase* item);
+  bool  Transfer(taBase* item) override;
 
   TA_BASEFUNS_NOCOPY(taSubGroup);
 private:

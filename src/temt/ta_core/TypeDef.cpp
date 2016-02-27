@@ -2607,7 +2607,7 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
 	*((taAtomicInt*)trg_base) = *((taAtomicInt*)src_base);
       }
       else if(DerivesFrom(TA_taBasicAtomicInt)) {
-	*((taBasicAtomicInt*)trg_base) = *((taBasicAtomicInt*)src_base);
+	*((taBasicAtomicInt*)trg_base) = (int)*((taBasicAtomicInt*)src_base);
       }
 #endif
     }

@@ -114,7 +114,7 @@ public:
   // generates a random number on [0,1) with 53-bit resolution
 
   double GenRandGaussDev();
-  // generate a gaussian-distributed random deviate -- generates 2x at a time, so it caches the 2nd one for greater efficiency -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
+  // generate a gaussian-distributed random deviate -- generates 2x at a time, so it caches the 2nd one for greater efficiency -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
 
   TA_SIMPLE_BASEFUNS(MTRndPar);
 protected:
@@ -161,38 +161,38 @@ public:
   static void  InitSeeds(uint32_t seed);
   // initialize state vector for all PRNG's in the list from given seed
 
-  static MTRndPar* GetRnd(int thr_no);
+  static MTRndPar* GetRnd(int thr_no = -1);
   // get generator for specific thread -- return null and emit error if beyond range of list of generators
 
-  static uint32_t GetCurSeed(int thr_no = 0)
+  static uint32_t GetCurSeed(int thr_no = -1)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0;
     return rng->GetCurSeed(); }
-  // returns current seed -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
-  static uint32_t GenRandInt32(int thr_no = 0)
+  // returns current seed -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+  static uint32_t GenRandInt32(int thr_no = -1)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0;
     return rng->GenRandInt32(); }
-  // generates a random number on [0,0xffffffff]-interval -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
-  static double GenRandReal1(int thr_no = 0)
+  // generates a random number on [0,0xffffffff]-interval -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+  static double GenRandReal1(int thr_no = -1)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0.0;
     return rng->GenRandReal1(); }
-  // generates a random number on [0,1]-real-interval -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
-  static double GenRandReal2(int thr_no = 0)
+  // generates a random number on [0,1]-real-interval -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+  static double GenRandReal2(int thr_no = -1)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0.0;
     return rng->GenRandReal2(); }
-  // generates a random number on [0,1)-real-interval -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
-  static double GenRandReal3(int thr_no = 0)
+  // generates a random number on [0,1)-real-interval -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+  static double GenRandReal3(int thr_no = -1)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0.0;
     return rng->GenRandReal3(); }
-  // generates a random number on (0,1)-real-interval -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
-  static double GenRandRes53(int thr_no = 0)
+  // generates a random number on (0,1)-real-interval -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+  static double GenRandRes53(int thr_no = -1)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0.0;
     return rng->GenRandRes53(); }
-  // generates a random number on [0,1) with 53-bit resolution -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
+  // generates a random number on [0,1) with 53-bit resolution -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
 
-  static double GenRandGaussDev(int thr_no = 0)
+  static double GenRandGaussDev(int thr_no = -1)
   { MTRndPar* rng = GetRnd(thr_no); if(!rng) return 0.0;
     return rng->GenRandGaussDev(); }
-  // generate a gaussian-distributed random deviate -- generates 2x at a time, so it caches the 2nd one for greater efficiency -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < 100)
+  // generate a gaussian-distributed random deviate -- generates 2x at a time, so it caches the 2nd one for greater efficiency -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
 
   static void  LoadInitParams();
   // #IGNORE load the initial parameters that were previously generated and saved within the source code -- this is called at an initialization step

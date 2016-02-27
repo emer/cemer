@@ -83,9 +83,9 @@ public:
 
   virtual void          SetScaleData(bool auto_scale_, float min_, float max_);
 
-  void  InitLinks();
-  void  CutLinks();
-  void  UpdateAfterEdit();
+  void  InitLinks() override;
+  void  CutLinks() override;
+  void  UpdateAfterEdit() override;
   TA_BASEFUNS(ColorScale);
   ColorScale(int chunk);
 private:

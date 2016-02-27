@@ -175,11 +175,11 @@ protected: // the following just call inherited then insert the DV_ version
     int& allowed, int& forbidden) override;
 
 public:
-  int           GetIndex() const {return m_index;}
-  void          SetIndex(int value) {m_index = value;}
-  taBase*       SetOwner(taBase* own); // update the parent; nulls it if not of parentType
-  void          CutLinks();
-  void          UpdateAfterEdit();
+  int           GetIndex() const override {return m_index;}
+  void          SetIndex(int value) override {m_index = value;}
+  taBase*       SetOwner(taBase* own) override; // update the parent; nulls it if not of parentType
+  void          CutLinks() override;
+  void          UpdateAfterEdit() override;
   TA_BASEFUNS(taDataView)
 
 public: // ISigLinkCLient

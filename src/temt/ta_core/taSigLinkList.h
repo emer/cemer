@@ -30,8 +30,8 @@ class TA_API taSigLinkList: public taSigLinkTaOBase {
   // SigLink for taList objects -- note that it also manages the ListView nodes
 INHERITED(taSigLinkTaOBase)
 public:
-  taList_impl*          list() {return (taList_impl*)m_data;}
-  taList_impl*          list() const {return (taList_impl*)m_data;}
+  taList_impl*          list()  override {return (taList_impl*)m_data;}
+  taList_impl*          list() const override {return (taList_impl*)m_data;}
   taiSigLink* listLink() override {return this;}
 
   taSigLinkList(taList_impl* data_);

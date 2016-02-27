@@ -66,8 +66,8 @@ public:
 
   virtual void 	ResetVar();	// #IGNORE reset variable info
 
-  void	InitLinks();
-  void	CutLinks();
+  void	InitLinks() override;
+  void	CutLinks() override;
   void	Copy_(const DMemShareVar& cp);
   TA_BASEFUNS(DMemShareVar);
 private:

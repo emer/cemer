@@ -36,7 +36,7 @@ public:
 
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
-  void	CutLinks();
+  void	CutLinks() override;
   void	Copy_(const ClustLink& cp);
   TA_BASEFUNS_LITE(ClustLink);
 };

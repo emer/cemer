@@ -50,7 +50,7 @@ public:
   bool                  isCondEdit() const;
   bool                  isCondShow() const;
 
-  int                   BidForType(TypeDef*) { return 0; }
+  int                   BidForType(TypeDef*) override { return 0; }
   // none of the member specific ones should apply types
   virtual int           BidForMember(MemberDef*, TypeDef*) { return 1; }
   // bid for (appropriateness) for given type of member (and members owner type)
@@ -87,7 +87,7 @@ public:
   virtual taiMember*    MembInst(MemberDef* md, TypeDef* td) const {
     return new taiMember(md, td);
   }
-  TypeDef*      GetTypeDef() const {return &TA_taiMember;}
+  TypeDef*      GetTypeDef() const override {return &TA_taiMember;}
 
 protected:
   // the "Arbitrate routines all apply the same logic of ro, and subtype, to call

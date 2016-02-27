@@ -30,7 +30,7 @@ taTypeDef_Of(taHashTable);
 class TA_API taHashTable : public taPtrList<taHashBucket> {
   // table has a number of buckets, each with some hash values
 protected:
-  void  El_Done_(void* it)      { delete (taHashBucket*)it; }
+  void  El_Done_(void* it) override     { delete (taHashBucket*)it; }
 public:
   static int    n_bucket_primes[]; // prime numbers for number of buckets
   static int    n_primes;        // number of prime numbers (86)

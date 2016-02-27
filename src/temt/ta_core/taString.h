@@ -299,7 +299,7 @@ public:
   operator unsigned long long() const {return toUInt64();}
   operator float() const { return (float)atof(chars()); }
   operator double() const { return atof(chars()); }
-  operator char*() const { return (char*)chars(); }
+  operator char*() { return (char*)chars_ptr(); }
   operator const char*() const {return mrep->s;}
   operator bool() const { return toBool(); }
 

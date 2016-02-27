@@ -60,11 +60,11 @@ public:
 
   void  Initialize();
   void  Destroy()               { };
-  void  InitLinks();
+  void  InitLinks() override;
   void  Copy_(const FunLookup& cp);
   TA_BASEFUNS(FunLookup);
  protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
 };
 
 #endif // FunLookup_h

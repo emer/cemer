@@ -89,8 +89,8 @@ public:
   virtual bool  InDebugMode();
   // test whether we are in debug mode or not -- looks at parent Program_Group's as well
   
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(Program_Group);
   
 private:

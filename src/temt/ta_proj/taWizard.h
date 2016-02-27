@@ -41,11 +41,11 @@ public:
 
   String       GetTypeDecoKey() const override { return "Wizard"; }
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(taWizard);
 protected:
-  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl() override;
   virtual void  RenderWizDoc_header(); // the doc header (very start) text
   virtual void  RenderWizDoc_footer(); // the doc footer (very end) text
   virtual void  RenderWizDoc_impl();   // main render of content

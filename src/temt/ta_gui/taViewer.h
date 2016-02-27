@@ -102,8 +102,8 @@ public:
 
   void          SetDefaultName_impl(int idx) override;
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   void  Copy_(const taViewer& cp);
   TA_DATAVIEWFUNS(taViewer, taDataView) //
 

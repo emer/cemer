@@ -45,7 +45,7 @@ public:
   int          Load_strm(std::istream& strm, taBase* par=NULL, taBase** loaded_obj_ptr = NULL) override;
   int          Load(const String& fname="", taBase** loaded_obj_ptr = NULL) override;
 
-  void  InitLinks();
+  void  InitLinks() override;
   TA_BASEFUNS_NOCOPY(Project_Group);
 private:
   void  Initialize()            { SetBaseType(&TA_taProject); }

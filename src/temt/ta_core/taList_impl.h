@@ -109,12 +109,12 @@ taBase*       CopyChildBeforeIndex(taBase* src, int child_pos) override;
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                            bool force_inline = false) override;
   int           ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-                              void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
-                              TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
+          void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
+          TypeDef::StrContext sc = TypeDef::SC_DEFAULT, bool replace_deep = true) override;
 
   taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
-                                       MemberDef* memb_def=NULL, const void* par=NULL,
-                                       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
+                         MemberDef* memb_def=NULL, const void* par=NULL,
+                         TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
 
 #ifndef __MAKETA__
   void Dump_Save_GetPluginDeps() override;
@@ -211,41 +211,41 @@ taBase*       CopyChildBeforeIndex(taBase* src, int child_pos) override;
   String       ChildGetColText(void* child, TypeDef* typ, const KeyString& key,
                                int itm_idx = -1) const override;        // #IGNORE
 
-  void  CutLinks();
-  void  UpdateAfterEdit(); // we skip the taOBase version, and inherit only taBase (DPF: what does that mean?)
+  void  CutLinks() override;
+  void  UpdateAfterEdit() override; // we skip the taOBase version, and inherit only taBase (DPF: what does that mean?)
   TA_BASEFUNS(taList_impl);
 
 protected:
   int           m_trg_load_size; // #IGNORE target load size -- set during Dump_Load -- used to enforce size to that which was saved, in case of load-over
 
-  String        GetListName_() const    { return name; }
-  void          El_SetIndex_(void* it, int idx) {((taBase*)it)->SetIndex(idx);}
-  void          El_SetDefaultName_(void*, int idx); // sets default name if child has DEF_NAME_LIST
-  String        El_GetName_(void* it) const { return ((taBase*)it)->GetName(); }
-  void          El_SetName_(void* it, const String& nm)  {((taBase*)it)->SetName(nm);}
-  taPtrList_impl*        El_GetOwnerList_(void* it) const
+  String        GetListName_() const override    { return name; }
+  void          El_SetIndex_(void* it, int idx) override {((taBase*)it)->SetIndex(idx);}
+  void          El_SetDefaultName_(void*, int idx) override; // sets default name if child has DEF_NAME_LIST
+  String        El_GetName_(void* it) const override { return ((taBase*)it)->GetName(); }
+  void          El_SetName_(void* it, const String& nm) override  {((taBase*)it)->SetName(nm);}
+  taPtrList_impl*        El_GetOwnerList_(void* it) const override 
   { return dynamic_cast<taList_impl*>(((taBase*)it)->GetOwner()); }
-  void*         El_GetOwnerObj_(void* it) const { return ((taBase*)it)->GetOwner(); }
-  void*         El_SetOwner_(void* it)  { ((taBase*)it)->SetOwner(this); return it; }
-  bool          El_FindCheck_(void* it, const String& nm) const
+  void*         El_GetOwnerObj_(void* it) const override { return ((taBase*)it)->GetOwner(); }
+  void*         El_SetOwner_(void* it) override  { ((taBase*)it)->SetOwner(this); return it; }
+  bool          El_FindCheck_(void* it, const String& nm) const override 
   {  if (((taBase*)it)->FindCheck(nm)) {
       taPtrList_impl* own = El_GetOwnerList_(it);
       return ((!own) || (own == (taPtrList_impl*)this));  }
     return false; }
 
-  void*         El_Ref_(void* it)       { taBase::Ref((taBase*)it); return it; }
-  void*         El_unRef_(void* it)     { taBase::unRef((taBase*)it); return it; }
-  void          El_Done_(void* it)      { taBase::Done((taBase*)it); }
-  void*         El_Own_(void* it)       { taBase::Own((taBase*)it,this); return it; }
-  void          El_disOwn_(void* it)
+  void*         El_Ref_(void* it) override       { taBase::Ref((taBase*)it); return it; }
+  void*         El_unRef_(void* it) override      { taBase::unRef((taBase*)it); return it; }
+  void          El_Done_(void* it) override       { taBase::Done((taBase*)it); }
+  void*         El_Own_(void* it) override        { taBase::Own((taBase*)it,this); return it; }
+  void          El_disOwn_(void* it) override 
   { if(El_GetOwnerList_(it) == this) {((taBase*)it)->Destroying(); ((taBase*)it)->CutLinks();}
     El_Done_(El_unRef_(it)); }
   // cut links to other objects when removed from owner group
 
-  void*         El_MakeToken_(void* it) { return (void*)((taBase*)it)->MakeToken(); }
-  void*         El_Copy_(void* trg, void* src)
+  void*         El_MakeToken_(void* it) override { return (void*)((taBase*)it)->MakeToken(); }
+  void*         El_Copy_(void* trg, void* src) override 
   { ((taBase*)trg)->UnSafeCopy((taBase*)src); return trg; }
-  void*         El_CopyN_(void* to, void* fm); // wrap in an update bracket
+  void*         El_CopyN_(void* to, void* fm) override; // wrap in an update bracket
 
 protected:
   void          CanCopy_impl(const taBase* cp_fm, bool quiet, bool& ok, bool virt) const override;

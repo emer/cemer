@@ -137,8 +137,8 @@ public:
                                    String& path_rest, String& base_path, bool& lookup_group_default);
   // ONLY for testing - returns the lookup type and sets many variables
 
-  void  InitLinks();
-  void  CutLinks();
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(ProgExprBase);
 protected:
 

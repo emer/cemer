@@ -46,7 +46,7 @@ public:
   bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool      CvtFmCode(const String& code) override;
 
-  void 	InitLinks();
+  void 	InitLinks() override;
   SIMPLE_COPY_EX(DataCalcCopyCommonCols,CopyInner_);
   TA_BASEFUNS(DataCalcCopyCommonCols);
 protected:

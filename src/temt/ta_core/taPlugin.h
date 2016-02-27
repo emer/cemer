@@ -68,8 +68,8 @@ public:
 				      String& plugin_nm);
   // parse the filename to extract the base path, and full plugin library file name, plus the short plugin name that should correspond to the source directory name
 
-  int	GetEnabled() const {return enabled && loaded;}
-  void	SetEnabled(bool value) {enabled = value;}
+  int	GetEnabled() const override {return enabled && loaded;}
+  void	SetEnabled(bool value) override {enabled = value;}
 
   void	Copy_(const taPlugin& cp); //note: we only use this for descs, not actual plugins
   TA_BASEFUNS(taPlugin);

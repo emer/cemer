@@ -55,7 +55,7 @@ public:
   const KeyString GetListColKey(int col) const override;
   String       GetTypeDecoKey() const override { return "ControlPanel"; }
   void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
-  void  InitLinks();
+  void  InitLinks() override;
   TA_BASEFUNS(EditMthItem_Group);
 #ifdef __MAKETA__ // dummy to supress New
   taBase*       New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW

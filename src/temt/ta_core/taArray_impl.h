@@ -104,8 +104,8 @@ public:
   // #CAT_Modify #MENU move item from index to index
   virtual bool  SwapIdx(int pos1, int pos2);
   // #CAT_Modify #CAT_Modify Swap the elements in the two given positions on the list
-  virtual void  Permute(int thr_no = 0);
-  // #CAT_Modify #MENU permute the items in the list into a random order -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  virtual void  Permute(int thr_no = -1);
+  // #CAT_Modify #MENU permute the items in the list into a random order -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
   virtual void  Sort(bool descending=false);
   // #CAT_Modify #MENU sort the list in ascending order (or descending if switched)
   virtual void  ShiftLeft(int nshift);

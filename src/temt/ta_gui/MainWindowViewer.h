@@ -138,9 +138,9 @@ public:
   void         ResetSplitterState();
   void         ResolveChanges(CancelOp& cancel_op) override;
 
-  void  UpdateAfterEdit();
-  void  InitLinks();
-  void  CutLinks();
+  void  UpdateAfterEdit() override;
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_DATAVIEWFUNS(MainWindowViewer, TopLevelViewer) //
 
 public: // Action methods

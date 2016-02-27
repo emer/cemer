@@ -33,7 +33,7 @@ public:
   ProgBrkPt_List        break_points;
   // #NO_SAVE a list of breakpoints each associated with a Program and ProgLine where the program will be stopped if the breakpoint is enabled
 
-  void  InitLinks();
+  void  InitLinks() override;
   TA_BASEFUNS_NOCOPY(Program_TopGroup);
 protected:
   void UpdateAfterEdit_impl() override;

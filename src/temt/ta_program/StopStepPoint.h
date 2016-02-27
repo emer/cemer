@@ -38,7 +38,7 @@ public:
   String	GetToolbarName() const override { return "stop/step"; }
 
   PROGEL_SIMPLE_COPY(StopStepPoint);
-  void InitLinks();
+  void InitLinks() override;
   SIMPLE_CUTLINKS(StopStepPoint);
   TA_BASEFUNS(StopStepPoint);
 protected:

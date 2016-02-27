@@ -38,7 +38,7 @@ public:
 
   taiMethod*            LowerBidder() { return static_cast<taiMethod*>(next_lower_bidder); }
 
-  int           BidForType(TypeDef*)                    { return 0; }
+  int           BidForType(TypeDef*) override                   { return 0; }
   // none of the method specific ones should apply to types
   virtual int   BidForMethod(MethodDef*, TypeDef*)      { return 0; }
   // bid for (appropriateness) for given type of method (default is not at all approp.)
@@ -58,7 +58,7 @@ public:
 
   virtual taiMethod*    MethInst(MethodDef* md, TypeDef* td) const
         { return new taiMethod(md,td);}
-  TypeDef*      GetTypeDef() const {return &TA_taiMethod;}
+  TypeDef*      GetTypeDef() const override {return &TA_taiMethod;}
 protected:
   virtual taiWidgetMethod* GetButtonMethodRep_impl(void* base, IWidgetHost* host_,
     taiWidget* par, QWidget* gui_parent_, int flags_) {return NULL;}

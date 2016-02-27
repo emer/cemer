@@ -101,8 +101,8 @@ public:
   iPanelOfEditor*        EditPanel(taiSigLink* link); // for panels
   iPanelOfEditor*        EditPanelDeferred(taiSigLink* link); // for panels
   using inherited::GetImage;
-  void                  GetImage(bool force); //override
-  void                  GetValue(); //override
+  void                  GetImage(bool force) override;
+  void                  GetValue() override;
   virtual bool          ShowMember(MemberDef* md) const; // #OBS
   void                  SetCurMenu(MethodDef* md); // sets or creates the cur_menu, for subsequent adding of items
   virtual void          SetCurMenu_Name(String men_nm); // sets or creates the cur_menu -- leave blank for implicit ("Actions")

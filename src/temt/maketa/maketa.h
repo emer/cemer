@@ -226,7 +226,8 @@ public:
   String	LexBuf;
   String	ComBuf;
   String	EqualsBuf;
-  String	last_word;
+  String	last_word[4];
+  int           last_word_idx;
 
   int	Getc();
   int	Peekc();

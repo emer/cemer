@@ -84,8 +84,8 @@ public:
 
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
-  void  InitLinks();
-  void	CutLinks();
+  void  InitLinks() override;
+  void	CutLinks() override;
   SIMPLE_COPY(ClustNode);
   TA_BASEFUNS(ClustNode);
 };

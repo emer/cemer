@@ -133,13 +133,13 @@ public:
   virtual bool AssignObjCheck(const cssEl& s);
   // do basic checks on us and source for Copy value assignment
 
-  int	 GetMemberNo(const String& memb) const;
-  cssEl* GetMemberFmName(const String& memb) const;
-  cssEl* GetMemberFmNo(int memb) const;
-  int	 GetMethodNo(const String& memb) const;
-  cssEl* GetMethodFmName(const String& memb) const;
-  cssEl* GetMethodFmNo(int memb) const;
-  cssEl* GetScoped(const String&) const;
+  int	 GetMemberNo(const String& memb) const override;
+  cssEl* GetMemberFmName(const String& memb) const override;
+  cssEl* GetMemberFmNo(int memb) const override;
+  int	 GetMethodNo(const String& memb) const override;
+  cssEl* GetMethodFmName(const String& memb) const override;
+  cssEl* GetMethodFmNo(int memb) const override;
+  cssEl* GetScoped(const String&) const override;
 };
 
 #define cssTA_inst(l,n,c,t)		l .Push(new cssTA(n, c, t, #n))
@@ -152,15 +152,15 @@ class CSS_API cssTA_Base : public cssTA {
   // specifically for taBase types -- calls the overloaded versions of TypeDef functions
 INHERITED(cssTA)
 public:
-  cssTATypes    GetTAType() const { return TAT_Base; }
+  cssTATypes    GetTAType() const override { return TAT_Base; }
 
-  String	PrintStr() const;
+  String	PrintStr() const override;
 
-  String&	PrintType(String& fh) const;
-  String&	PrintInherit(String& fh) const;
+  String&	PrintType(String& fh) const override;
+  String&	PrintInherit(String& fh) const override;
 
-  void		Save(std::ostream& fh = std::cout);
-  void		Load(std::istream& fh = std::cin);
+  void		Save(std::ostream& fh = std::cout) override;
+  void		Load(std::istream& fh = std::cin) override;
 
   // constructors
   void 		Constr();
@@ -175,7 +175,7 @@ public:
   ~cssTA_Base();
 
   cssCloneOnly(cssTA_Base);
-  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  cssEl*	MakeToken_stub(int, cssEl *arg[]) override
   { return new cssTA_Base((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
   // converters
@@ -274,9 +274,9 @@ public:
   operator Variant_Matrix*() const;
 #endif
 
-  operator Real() const;
-  operator Int() const;
-  operator bool() const;
+  operator Real() const override;
+  operator Int() const override;
+  operator bool() const override;
 
   void operator=(const cssEl& s);
   using cssTA_Base::operator=;
@@ -318,27 +318,27 @@ public:
   inline taSmartRef* GetSmartRef() const { if(ptr) return (taSmartRef*)ptr; return NULL; }
   inline taBase* GetSmartRefPtr() const  { taSmartRef* rf = GetSmartRef(); if(rf) return rf->ptr(); return NULL; }
 
-  cssTATypes    GetTAType() const { return TAT_SmartRef; }
+  cssTATypes    GetTAType() const override { return TAT_SmartRef; }
 
-  String	PrintStr() const;
-  String	PrintFStr() const;
+  String	PrintStr() const override;
+  String	PrintFStr() const override;
 
-  bool		IsTaMatrix() const	{ return cssref->IsTaMatrix(); }
-  cssTypes 	GetType() const		{ return cssref->GetType(); }
-  cssTypes	GetPtrType() const	{ return cssref->GetPtrType(); }
-  const char*	GetTypeName() const	{ return cssref->GetTypeName(); }
-  cssEl*	GetTypeObject() const	{ return cssref->GetTypeObject(); }
-  TypeDef* 	GetNonRefTypeDef() const { return cssref->GetNonRefTypeDef(); }
-  int 		GetNonRefPtrCnt() const  { return cssref->GetNonRefPtrCnt(); }
-  void* 	GetNonRefPtr() const     { return cssref->GetNonRefPtr(); }
+  bool		IsTaMatrix() const override	{ return cssref->IsTaMatrix(); }
+  cssTypes 	GetType() const override	{ return cssref->GetType(); }
+  cssTypes	GetPtrType() const override	{ return cssref->GetPtrType(); }
+  const char*	GetTypeName() const override	{ return cssref->GetTypeName(); }
+  cssEl*	GetTypeObject() const override	{ return cssref->GetTypeObject(); }
+  TypeDef* 	GetNonRefTypeDef() const override { return cssref->GetNonRefTypeDef(); }
+  int 		GetNonRefPtrCnt() const override  { return cssref->GetNonRefPtrCnt(); }
+  void* 	GetNonRefPtr() const override     { return cssref->GetNonRefPtr(); }
 
-  cssEl*	GetActualObj() const	{ return cssref->GetActualObj(); }
-  cssEl*	GetNonRefObj() const	{ return cssref; }
+  cssEl*	GetActualObj() const override	{ return cssref->GetActualObj(); }
+  cssEl*	GetNonRefObj() const override	{ return cssref; }
 
-  String&	PrintType(String& fh) const;
-  String&	PrintInherit(String& fh) const;
-  String&	PrintTokens(String& fh) const { return cssref->PrintTokens(fh); }
-  cssEl*	GetToken(int idx) const	      { return cssref->GetToken(idx); }
+  String&	PrintType(String& fh) const override;
+  String&	PrintInherit(String& fh) const override;
+  String&	PrintTokens(String& fh) const override { return cssref->PrintTokens(fh); }
+  cssEl*	GetToken(int idx) const override     { return cssref->GetToken(idx); }
 
   void		UpdateCssRef();	// update the cssref object based on current ptr()
 
@@ -357,18 +357,18 @@ public:
   ~cssSmartRef();
 
   // converters
-  String GetStr() const 	{ return cssref->GetStr(); }
-  Variant GetVar() const 	{ return cssref->GetVar(); }
-  operator Real() const	 	{ return (Real)*(cssref); }
-  operator Int() const	 	{ return (Int)*(cssref); }
-  operator void*() const	{ return (void*)*(cssref); }
-  operator void**() const	{ return (void**)*(cssref); }
+  String GetStr() const override 	{ return cssref->GetStr(); }
+  Variant GetVar() const override 	{ return cssref->GetVar(); }
+  operator Real() const override	 	{ return (Real)*(cssref); }
+  operator Int() const override	 	{ return (Int)*(cssref); }
+  operator void*() const override	{ return (void*)*(cssref); }
+  operator void**() const override	{ return (void**)*(cssref); }
 
-  operator bool() const		{ return (bool)*(cssref); }
-  operator taBase*() const	{ return (taBase*)*(cssref); }
+  operator bool() const override		{ return (bool)*(cssref); }
+  operator taBase*() const override	{ return (taBase*)*(cssref); }
 
-  void* 	GetVoidPtrOfType(TypeDef* td) const;
-  void* 	GetVoidPtrOfType(const String& td) const;
+  void* 	GetVoidPtrOfType(TypeDef* td) const override;
+  void* 	GetVoidPtrOfType(const String& td) const override;
 
   // operators
   void operator=(const String& s)	{ cssref->operator=(s); }
@@ -382,16 +382,16 @@ public:
 
   void PtrAssignPtr(const cssEl& s);
 
-  void UpdateAfterEdit()	{ cssref->UpdateAfterEdit(); }
+  void UpdateAfterEdit() override	{ cssref->UpdateAfterEdit(); }
 
-  bool	 MembersDynamic()	{ return true; }
-  int	 GetMemberNo(const String& memb) const { return -1; } // never static lookup
-  cssEl* GetMemberFmNo(int s) const  		{ return cssref->GetMemberFmNo(s); }
-  cssEl* GetMemberFmName(const String& s) const { return cssref->GetMemberFmName(s); }
-  int	 GetMethodNo(const String& memb) const { return -1; }
-  cssEl* GetMethodFmNo(int s) const		{ return cssref->GetMethodFmNo(s); }
-  cssEl* GetMethodFmName(const String& s) const	{ return cssref->GetMethodFmName(s); }
-  cssEl* GetScoped(const String& s) const  	{ return cssref->GetScoped(s); }
+  bool	 MembersDynamic() override	{ return true; }
+  int	 GetMemberNo(const String& memb) const override { return -1; } // never static lookup
+  cssEl* GetMemberFmNo(int s) const override  		{ return cssref->GetMemberFmNo(s); }
+  cssEl* GetMemberFmName(const String& s) const override { return cssref->GetMemberFmName(s); }
+  int	 GetMethodNo(const String& memb) const override { return -1; }
+  cssEl* GetMethodFmNo(int s) const override		{ return cssref->GetMethodFmNo(s); }
+  cssEl* GetMethodFmName(const String& s) const override	{ return cssref->GetMethodFmName(s); }
+  cssEl* GetScoped(const String& s) const override  	{ return cssref->GetScoped(s); }
   cssEl* NewOpr()   				{ return cssref->NewOpr(); }
   void	 DelOpr() 				{ cssref->DelOpr(); }
 
@@ -437,10 +437,10 @@ public:
 class CSS_API cssIOS : public cssTA {
   // a pointer to an iostream object of any sort: supports various streaming ops
 public:
-  cssTATypes    GetTAType() const { return TAT_IOS; }
+  cssTATypes    GetTAType() const override { return TAT_IOS; }
 
-  String	PrintFStr() const;
-  String	GetStr() const;
+  String	PrintFStr() const override;
+  String	GetStr() const override;
 
   // constructors
   cssIOS() : cssTA() { };
@@ -456,20 +456,20 @@ public:
 
   void PtrAssignPtr(const cssEl& s); // use type casts to make it work right for diff offsets
 
-  operator Real() const;
-  operator Int() const;
+  operator Real() const override;
+  operator Int() const override;
 
-  operator std::iostream*() const;
-  operator std::istream*() const;
-  operator std::ostream*() const;
-  operator std::fstream*() const;
-  operator std::stringstream*() const;
+  operator std::iostream*() const override;
+  operator std::istream*() const override;
+  operator std::ostream*() const override;
+  operator std::fstream*() const override;
+  operator std::stringstream*() const override;
 
-  operator std::iostream**() const;
-  operator std::istream**() const;
-  operator std::ostream**() const;
-  operator std::fstream**() const;
-  operator std::stringstream**() const;
+  operator std::iostream**() const override;
+  operator std::istream**() const override;
+  operator std::ostream**() const override;
+  operator std::fstream**() const override;
+  operator std::stringstream**() const override;
 
   cssEl* operator<<(cssEl& s);	// for iostreams..
   cssEl* operator>>(cssEl& s);
@@ -478,10 +478,10 @@ public:
 class CSS_API cssFStream : public cssIOS {
   // owns its own fstream with ptr_cnt = 0: manages the construction and destruction of obj
 public:
-  cssTATypes    GetTAType() const { return TAT_FStream; }
+  cssTATypes    GetTAType() const override { return TAT_FStream; }
 
   static TypeDef*	TA_TypeDef(); // returns TA_fstream
-  uint		GetSize() const	{ return sizeof(*this); }
+  uint		GetSize() const override	{ return sizeof(*this); }
 
   // constructors
   void		Constr()	{ ptr = new std::fstream; }
@@ -509,9 +509,9 @@ public:
 class CSS_API cssSStream : public cssIOS {
   // owns its own sstream with ptr_cnt = 0: manages the construction and destruction of obj
 public:
-  cssTATypes    GetTAType() const { return TAT_SStream; }
+  cssTATypes    GetTAType() const override { return TAT_SStream; }
 
-  uint		GetSize() const	{ return sizeof(*this); }
+  uint		GetSize() const override	{ return sizeof(*this); }
 
   // constructors
   void		Constr();
@@ -522,7 +522,7 @@ public:
   ~cssSStream();
 
   cssCloneOnly(cssSStream);
-  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  cssEl*	MakeToken_stub(int, cssEl *arg[]) override
   { return new cssSStream((const String&)*(arg[1])); }
 
   void operator=(Real) 		{ CvtErr("(Real)"); }
@@ -539,10 +539,10 @@ public:
 class CSS_API cssLeafItr : public cssTA {
   // owns its own leafitr with ptr_cnt = 0: manages the construction and destruction of obj
 public:
-  cssTATypes    GetTAType() const { return TAT_LeafItr; }
+  cssTATypes    GetTAType() const override { return TAT_LeafItr; }
 
   static TypeDef*	TA_TypeDef(); // returns TA_taLeafItr
-  uint		GetSize() const	{ return sizeof(*this); }
+  uint		GetSize() const override	{ return sizeof(*this); }
 
   // constructors
   void		Constr();
@@ -587,8 +587,8 @@ public:
   cssEl*	MakeToken_stub(int, cssEl *arg[])
   { return new cssTypeDef((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
-  operator TypeDef*() const;
-  String GetStr() const;
+  operator TypeDef*() const override;
+  String GetStr() const override;
   void operator=(const String& s);
   void operator=(const cssEl& s);
   using cssTA::operator=;
@@ -597,7 +597,7 @@ public:
 class CSS_API cssMemberDef : public cssTA {
   // a pointer to a MemberDef (any number of ptr_cnt)
 public:
-  cssTATypes    GetTAType() const { return TAT_MemberDef; }
+  cssTATypes    GetTAType() const override { return TAT_MemberDef; }
 
   // constructors
   cssMemberDef() : cssTA() { };
@@ -609,8 +609,8 @@ public:
   cssEl*	MakeToken_stub(int, cssEl *arg[])
   { return new cssMemberDef((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
-  operator MemberDef*() const;
-  String GetStr() const;
+  operator MemberDef*() const override;
+  String GetStr() const override;
   void operator=(const String& s);
   void operator=(const cssEl& s);
   using cssTA::operator=;
@@ -619,7 +619,7 @@ public:
 class CSS_API cssMethodDef : public cssTA {
   // a pointer to a MethodDef (any number of ptr_cnt)
 public:
-  cssTATypes    GetTAType() const { return TAT_MethodDef; }
+  cssTATypes    GetTAType() const override { return TAT_MethodDef; }
 
   // constructors
   cssMethodDef() : cssTA() { };
@@ -631,8 +631,8 @@ public:
   cssEl*	MakeToken_stub(int, cssEl *arg[])
   { return new cssMethodDef((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
-  operator MethodDef*() const;
-  String GetStr() const;
+  operator MethodDef*() const override;
+  String GetStr() const override;
   void operator=(const String& s);
   void operator=(const cssEl& s);
   using cssTA::operator=;

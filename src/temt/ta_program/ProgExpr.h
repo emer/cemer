@@ -36,7 +36,7 @@ public:
 
   ProgVar*      var_lookup;     // #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER #ITEM_FILTER_StdProgVarFilter lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
 
-  void  CutLinks();
+  void  CutLinks() override;
   TA_BASEFUNS_NOCOPY(ProgExpr);
 protected:
   void UpdateAfterEdit_impl() override;

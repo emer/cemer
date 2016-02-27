@@ -306,16 +306,16 @@ public:
 
 // macros for defining the cloning functions
 #define cssCloneFuns(x, init) \
-  cssEl* 	Clone()	const	  { return new x (*this); }	      \
-  cssEl* 	AnonClone() const { return new x (*this, _nilString); }	      \
-  cssEl* 	BlankClone() const { x* rval = new x; rval->CopyType(*this); return rval; } \
-  cssEl*	MakeToken_stub(int, cssEl* arg[])		      \
+  cssEl* 	Clone()	const override	  { return new x (*this); }	      \
+  cssEl* 	AnonClone() const override { return new x (*this, _nilString); }	      \
+  cssEl* 	BlankClone() const override { x* rval = new x; rval->CopyType(*this); return rval; } \
+  cssEl*	MakeToken_stub(int, cssEl* arg[])  override  \
   { return new x ( init , arg[1]->GetStr()); }		      \
 
 #define cssCloneOnly(x) \
-  cssEl* 	Clone()	const	{ return new x (*this); }	      \
-  cssEl* 	AnonClone() const { return new x (*this, _nilString); }	      \
-  cssEl* 	BlankClone() const { x* rval = new x(); rval->CopyType(*this); return rval; } \
+  cssEl* 	Clone()	const override	{ return new x (*this); }	      \
+  cssEl* 	AnonClone() const override { return new x (*this, _nilString); }	      \
+  cssEl* 	BlankClone() const override { x* rval = new x(); rval->CopyType(*this); return rval; } \
 
 
 class CSS_API cssEl {
@@ -839,13 +839,13 @@ public:
   cssEl*	(*funp)(int ac, cssEl* args[]); // function pointer
   String	help_str;			// help string for function
 
-  int		GetParse() const	{ return parse; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_ElCFun; }
-  const char*	GetTypeName() const	{ return "(ElCFun)"; }
-  cssEl*	GetTypeObject() const	{ return (cssEl*)this; }
+  int		GetParse() const override	{ return parse; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_ElCFun; }
+  const char*	GetTypeName() const override	{ return "(ElCFun)"; }
+  cssEl*	GetTypeObject() const override	{ return (cssEl*)this; }
 
-  cssEl::RunStat 	Do(cssProg* prg);
+  cssEl::RunStat 	Do(cssProg* prg) override;
 
   // constructors
   void 		Constr();
@@ -865,10 +865,10 @@ public:
   ~cssElCFun();
 
   cssCloneOnly(cssElCFun);
-  cssEl*	MakeToken_stub(int na, cssEl* arg[]);
+  cssEl*	MakeToken_stub(int na, cssEl* arg[]) override;
   // return retv_type token, else cssInt
-  String GetStr() const	{ return name; } // types can give strings...
-  Variant GetVar() const { return name; }
+  String GetStr() const override	{ return name; } // types can give strings...
+  Variant GetVar() const override { return name; }
 
   cssEl* CallFun(int act_argc, cssEl* args[]);
   // call funp, return rval
@@ -891,7 +891,7 @@ public:
 
   // funs are optimized to not check for void argstop marker
   void   		BindArgs(cssEl** args, int& act_argc);
-  cssEl::RunStat 	Do(cssProg* prog);
+  cssEl::RunStat 	Do(cssProg* prog) override;
 
   using cssElCFun::operator=;
 
@@ -919,11 +919,11 @@ public:
   void* 	ths;					   // type instance
   MethodDef*	methdef;			// member def for this fun
 
-  cssTypes 	GetType() const		{ return T_MbrCFun; }
-  const char*	GetTypeName() const	{ return "(MbrCFun)"; }
-  cssEl*	GetTypeObject() const	{ return (cssEl*)this; }
+  cssTypes 	GetType() const override	{ return T_MbrCFun; }
+  const char*	GetTypeName() const override	{ return "(MbrCFun)"; }
+  cssEl*	GetTypeObject() const override	{ return (cssEl*)this; }
 
-  cssEl::RunStat Do(cssProg* prog);
+  cssEl::RunStat Do(cssProg* prog) override;
 
   // constructors
   void		Constr();
@@ -949,7 +949,7 @@ public:
   cssEl* CallFunListArgs(int act_argc, cssEl* args[]);
   // call funp for FUN_ITR_LIST case
 
-  cssEl*	MakeToken_stub(int na, cssEl* arg[]);
+  cssEl*	MakeToken_stub(int na, cssEl* arg[]) override;
 };
 
 // return variable name
@@ -1010,20 +1010,20 @@ public:
   int		loop_back;	// if run, set the PC() of the calling prog back this number after running
   LoopType	loop_type;	// type of loop function
   
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const 	{ return T_CodeBlock; }
-  const char*	GetTypeName() const 	{ return "(CodeBlock)"; }
-  cssEl*	GetTypeObject() const	{ return (cssEl*)this; }
-  bool		HasSubProg() const    	{ return true; }
-  cssProg*	GetSubProg() const 	{ return code; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override 	{ return T_CodeBlock; }
+  const char*	GetTypeName() const override 	{ return "(CodeBlock)"; }
+  cssEl*	GetTypeObject() const override	{ return (cssEl*)this; }
+  bool		HasSubProg() const override    	{ return true; }
+  cssProg*	GetSubProg() const override 	{ return code; }
 
-  cssEl::RunStat Do(cssProg* prg);
-  cssEl::RunStat FunDone(cssProg* prg);
+  cssEl::RunStat Do(cssProg* prg) override;
+  cssEl::RunStat FunDone(cssProg* prg) override;
 
   bool		CleanDoubleBlock(); // if block just contains an embedded block, move it up
 
-  String	PrintStr() const;
-  String	PrintFStr() const		{ return PrintStr(); }
+  String	PrintStr() const override;
+  String	PrintFStr() const override		{ return PrintStr(); }
 
   // constructors
   void		Constr();
@@ -1038,7 +1038,7 @@ public:
   ~cssCodeBlock();
 
   cssCloneOnly(cssCodeBlock);
-  cssEl*	MakeToken_stub(int na, cssEl* arg[]);
+  cssEl*	MakeToken_stub(int na, cssEl* arg[]) override;
   // return retv_type token, else cssInt
 };
 
@@ -1048,18 +1048,18 @@ public:
   cssElPtr* 	argv;		// the actual argument holders (0 is retv)
   cssProg*	fun;		// sub prog containing function code
 
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const 	{ return T_ScriptFun; }
-  const char*	GetTypeName() const 	{ return "(ScriptFun)"; }
-  cssEl*	GetTypeObject() const	{ return (cssEl*)this; }
-  bool		HasSubProg() const      { return true; }
-  cssProg*	GetSubProg() const 	{ return fun; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override 	{ return T_ScriptFun; }
+  const char*	GetTypeName() const override 	{ return "(ScriptFun)"; }
+  cssEl*	GetTypeObject() const override	{ return (cssEl*)this; }
+  bool		HasSubProg() const override     { return true; }
+  cssProg*	GetSubProg() const override 	{ return fun; }
 
-  cssEl::RunStat Do(cssProg* prg);
-  cssEl::RunStat FunDone(cssProg* prg);
+  cssEl::RunStat Do(cssProg* prg) override;
+  cssEl::RunStat FunDone(cssProg* prg) override;
 
-  String	PrintStr() const;
-  String	PrintFStr() const		{ return PrintStr(); }
+  String	PrintStr() const override;
+  String	PrintFStr() const override		{ return PrintStr(); }
 
   virtual void	Define(cssProg* prg, bool decl = false, const String& nm = _nilString);
   // initialize the function (decl = true if in declaration, not definition)
@@ -1077,7 +1077,7 @@ public:
   ~cssScriptFun();
 
   cssCloneOnly(cssScriptFun);
-  cssEl*	MakeToken_stub(int na, cssEl* arg[]);
+  cssEl*	MakeToken_stub(int na, cssEl* arg[]) override;
   // return retv_type token, else cssInt
 };
 
@@ -1090,16 +1090,16 @@ public:
   bool		is_tor;		// is a constructor or destructor
   bool		is_virtual;	// is a virtual function
 
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const 	{ return T_MbrScriptFun; }
-  const char*	GetTypeName() const 	{ return "(MbrScriptFun)"; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override 	{ return T_MbrScriptFun; }
+  const char*	GetTypeName() const override 	{ return "(MbrScriptFun)"; }
 
-  cssEl::RunStat Do(cssProg* prg);
-  cssEl::RunStat FunDone(cssProg* prg);
+  cssEl::RunStat Do(cssProg* prg) override;
+  cssEl::RunStat FunDone(cssProg* prg) override;
 
-  String	PrintStr() const;
+  String	PrintStr() const override;
 
-  void		Define(cssProg* prg, bool decl = false, const String& nm = _nilString);
+  void		Define(cssProg* prg, bool decl = false, const String& nm = _nilString) override;
   // initialize the function
 
   void		SetDesc(const String& des); // get options from desc
@@ -1118,16 +1118,16 @@ public:
   ~cssMbrScriptFun();
 
   cssCloneOnly(cssMbrScriptFun);
-  cssEl*	MakeToken_stub(int na, cssEl* arg[]);
+  cssEl*	MakeToken_stub(int na, cssEl* arg[]) override;
   // return retv_type token, else cssInt
 };
 
 #define cssCPtr_CloneFuns(x, init) \
-  cssEl* 	Clone()	const	  { return new x (*this); }	      \
-  cssEl* 	AnonClone() const { return new x (*this, _nilString); }	      \
-  cssEl* 	BlankClone() const { x* rval = new x; rval->CopyType(*this); return rval; } \
-  cssEl*	MakeToken_stub(int, cssEl* arg[])		      \
-    { return new x ( init, ptr_cnt, arg[1]->GetStr()); }	      \
+  cssEl* 	Clone()	const override	  { return new x (*this); }	      \
+  cssEl* 	AnonClone() const override { return new x (*this, _nilString); }	      \
+  cssEl* 	BlankClone() const override { x* rval = new x; rval->CopyType(*this); return rval; } \
+  cssEl*	MakeToken_stub(int, cssEl* arg[]) override \
+    { return new x ( init, ptr_cnt, arg[1]->GetStr()); }   \
 
 
 class CSS_API cssCPtr : public cssEl {
@@ -1144,13 +1144,13 @@ public:
   PtrFlags	flags;		// flags controlling ptr
   cssEl*	class_parent;	// if this pointer was derived from a class structure
 
-  int		GetParse() const	{ return CSS_PTR; }
-  uint		GetSize() const		{ return 0; } // use for ptrs
-  cssTypes 	GetType() const		{ return T_C_Ptr; }
-  cssTypes	GetPtrType() const	{ return T_C_Ptr; } // still just a c ptr
-  const char*	GetTypeName() const 	{ return "(C_Ptr)"; }
-  String 	PrintStr() const;
-  String	PrintFStr() const 	{ return GetStr(); }
+  int		GetParse() const override	{ return CSS_PTR; }
+  uint		GetSize() const override	{ return 0; } // use for ptrs
+  cssTypes 	GetType() const override	{ return T_C_Ptr; }
+  cssTypes	GetPtrType() const override	{ return T_C_Ptr; } // still just a c ptr
+  const char*	GetTypeName() const override 	{ return "(C_Ptr)"; }
+  String 	PrintStr() const override;
+  String	PrintFStr() const override 	{ return GetStr(); }
 
   // constructors
   void		Constr();
@@ -1188,18 +1188,18 @@ public:
   // generates error if null
 
   // GetStr and GetVar are both nil as in base
-  operator bool() const		{ return (bool)ptr; } // test for ptr null..
+  operator bool() const override		{ return (bool)ptr; } // test for ptr null..
  
-  operator Real() const		{ CvtErr("(Real)"); return 0.0; }
-  operator Int() const		{ CvtErr("(Int)"); return 0; }
-  operator ta_int64_t() const	{ CvtErr("(ta_int64_t)"); return 0LL; }
-  operator ta_uint64_t() const	{ CvtErr("(ta_uint64_t)"); return 0ULL; }
+  operator Real() const override	{ CvtErr("(Real)"); return 0.0; }
+  operator Int() const override		{ CvtErr("(Int)"); return 0; }
+  operator ta_int64_t() const override	{ CvtErr("(ta_int64_t)"); return 0LL; }
+  operator ta_uint64_t() const override	{ CvtErr("(ta_uint64_t)"); return 0ULL; }
 
-  operator void*() const	{ return GetVoidPtr(1); }
-  operator void**() const	{ return (void**)GetVoidPtr(2); }
+  operator void*() const override	{ return GetVoidPtr(1); }
+  operator void**() const override	{ return (void**)GetVoidPtr(2); }
 
-  void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
-  void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+  void operator=(void* cp) override	{ ptr = cp; ptr_cnt = 1; }
+  void operator=(void** cp) override	{ ptr = (void*)cp; ptr_cnt = 2; }
   using cssEl::operator=;
 
   // operators
@@ -1214,17 +1214,17 @@ public:
   virtual bool 	PtrAssignPtrPtr(void* new_ptr_val);
   // we are a pointer-pointer -- set our pointer to new ptr value (special smart pointer refcounting etc might be needed) -- returns false if failed
 
-  void operator=(const cssEl& s);
+  void operator=(const cssEl& s) override;
 
-  void	UpdateAfterEdit();
+  void	UpdateAfterEdit()  override;
 
-  cssEl* operator*();
-  cssEl* operator*(cssEl&)	{ NopErr("*"); return &cssMisc::Void; }
+  cssEl* operator*() override;
+  cssEl* operator*(cssEl&)  override	{ NopErr("*"); return &cssMisc::Void; }
 
   virtual bool 	SamePtrLevel(cssCPtr* s); // if this and s have diff cnt, emit warning
 
-  cssEl* operator==(cssEl& s);	// these two check for sameptrlevel
-  cssEl* operator!=(cssEl& s);
+  cssEl* operator==(cssEl& s) override;	// these two check for sameptrlevel
+  cssEl* operator!=(cssEl& s) override;
 };
 
 #define cssCPtr_inst(l,n)		l .Push(new cssCPtr(& n,1,#n))
@@ -1237,14 +1237,14 @@ class CSS_API cssBool : public cssEl {
 public:
   bool		val;
 
-  int		GetParse() const	{ return CSS_VAR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_Bool; }
-  const char*	GetTypeName() const	{ return "(Bool)"; }
+  int		GetParse() const override	{ return CSS_VAR; }
+  uint		GetSize() const override	{ return sizeof(*this); }
+  cssTypes 	GetType() const override	{ return T_Bool; }
+  const char*	GetTypeName() const override	{ return "(Bool)"; }
 
-  String 	PrintStr() const
+  String 	PrintStr() const override
   { return String(GetTypeName())+" " + name + " = " + GetStr(); }
-  String	PrintFStr() const { return GetStr(); }
+  String	PrintFStr() const override { return GetStr(); }
 
   // constructors
   void 		Constr()			{ val = false; }
@@ -1259,37 +1259,37 @@ public:
   cssCloneFuns(cssBool, false);
 
   // converters
-  String GetStr() const;
-  Variant GetVar() const 	{ return Variant(val); }
-  operator Real() const	 	{ return (Real)val; }
-  operator Int() const	 	{ return val; }
-  operator bool() const	 	{ return val; }
+  String GetStr() const override;
+  Variant GetVar() const override 	{ return Variant(val); }
+  operator Real() const override	{ return (Real)val; }
+  operator Int() const override	 	{ return val; }
+  operator bool() const override	{ return val; }
 
-  void operator=(Real cp) 		{ val = (bool)cp; }
-  void operator=(Int cp)		{ val = (bool)cp; }
-  void operator=(const String& cp);
+  void operator=(Real cp) override 		{ val = (bool)cp; }
+  void operator=(Int cp) override		{ val = (bool)cp; }
+  void operator=(const String& cp) override;
 
-  void operator=(void*)	 	{ CvtErr("(void*)"); }
-  void operator=(void**)	{ CvtErr("(void**)"); }
+  void operator=(void*) override	 	{ CvtErr("(void*)"); }
+  void operator=(void**) override	{ CvtErr("(void**)"); }
   using cssEl::operator=;
 
   // operators
-  void operator=(const cssEl& s);
+  void operator=(const cssEl& s)  override;
 
-  cssEl* operator&(cssEl &t)
+  cssEl* operator&(cssEl &t) override
   { cssBool *r = new cssBool(val); r->val &= (bool)t; return r; }
-  cssEl* operator^(cssEl &t)
+  cssEl* operator^(cssEl &t) override
   { cssBool *r = new cssBool(val); r->val ^= (bool)t; return r; }
-  cssEl* operator|(cssEl &t)
+  cssEl* operator|(cssEl &t) override
   { cssBool *r = new cssBool(val); r->val |= (bool)t; return r; }
 
   // operators
-  void operator&=(cssEl& t) { val &= (bool)t; }
-  void operator^=(cssEl& t) { val ^= (bool)t; }
-  void operator|=(cssEl& t) { val |= (bool)t; }
+  void operator&=(cssEl& t) override { val &= (bool)t; }
+  void operator^=(cssEl& t) override { val ^= (bool)t; }
+  void operator|=(cssEl& t) override { val |= (bool)t; }
 
-  cssEl* operator==(cssEl& s) 	{ return new cssBool(val == (bool)s); }
-  cssEl* operator!=(cssEl& s) 	{ return new cssBool(val != (bool)s); }
+  cssEl* operator==(cssEl& s) override 	{ return new cssBool(val == (bool)s); }
+  cssEl* operator!=(cssEl& s) override 	{ return new cssBool(val != (bool)s); }
 };
 
 
@@ -1308,12 +1308,12 @@ public:
   String_Array	val;		// contains the bits and pieces that surround the args
   int_Array	which_arg;	// determines which arg to insert before each val item
 
-  int		GetParse() const	{ return CSS_PP_DEF; }
-  uint		GetSize() const 	{ return sizeof(*this); }
-  cssTypes 	GetType() const 	{ return T_PP_Def; }
-  const char*	GetTypeName() const  	{ return "#define"; }
+  int		GetParse() const override	{ return CSS_PP_DEF; }
+  uint		GetSize() const override 	{ return sizeof(*this); }
+  cssTypes 	GetType() const override 	{ return T_PP_Def; }
+  const char*	GetTypeName() const override  	{ return "#define"; }
 
-  cssEl::RunStat 	Do(cssProg* prog);
+  cssEl::RunStat 	Do(cssProg* prog) override;
 
   static void	Skip_To_Endif(cssProg* prog); // skip text to next endif
 
@@ -1380,7 +1380,7 @@ public:
   cssIJump(const cssProg* prg, css_progdx jmp, int lno, int clno);
   cssIJump(const cssIJump& cp);
 
-  virtual cssInst* Clone() { return new cssIJump(*this); }
+   cssInst* Clone() override { return new cssIJump(*this); }
 };
 
 class CSS_API cssFrame {

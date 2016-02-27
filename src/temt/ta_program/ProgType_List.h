@@ -52,7 +52,7 @@ public:
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
 
-  void  setStale();
+  void  setStale() override;
   TA_BASEFUNS_NOCOPY(ProgType_List);
 protected:
   void El_SetIndex_(void*, int) override;

@@ -44,7 +44,7 @@ public:
   bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool      CvtFmCode(const String& code) override;
 
-  void 	InitLinks();
+  void 	InitLinks() override;
   TA_BASEFUNS(DataCalcSetSrcRow);
 protected:
   void      UpdateAfterEdit_impl() override;

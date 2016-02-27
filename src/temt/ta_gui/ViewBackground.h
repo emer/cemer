@@ -39,7 +39,7 @@ public:
 
   String       GetDesc() const override { return desc; }
 
-  void  InitLinks();
+  void  InitLinks() override;
   TA_BASEFUNS(ViewBackground);
 private:
   SIMPLE_COPY(ViewBackground);

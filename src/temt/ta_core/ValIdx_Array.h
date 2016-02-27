@@ -37,8 +37,9 @@ public:
 protected:
   Variant      El_GetVar_(const void* itm) const override
   { return (Variant)(((ValIdx*)itm)->val); }
-  String        El_GetStr_(const void* it) const { return (String)((ValIdx*)it); } // #IGNORE
-  void          El_SetFmStr_(void* it, const String& val)
+  String        El_GetStr_(const void* it) const override
+  { return (String)((ValIdx*)it); } // #IGNORE
+  void          El_SetFmStr_(void* it, const String& val) override
   { ((ValIdx*)it)->val = (float)val; } // #IGNORE
 private:
   void Initialize()     { };

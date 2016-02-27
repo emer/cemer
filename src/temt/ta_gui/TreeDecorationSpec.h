@@ -34,9 +34,9 @@ public:
 
   RGBA                  text_color;
 
-//  void        UpdateAfterEdit();
-  void  InitLinks();
-  void  CutLinks();
+//  void        UpdateAfterEdit() override;
+  void  InitLinks() override;
+  void  CutLinks() override;
   TA_BASEFUNS(TreeDecorationSpec) //
 private:
   void  Copy_(const TreeDecorationSpec& cp);

@@ -185,7 +185,7 @@ private:
     {SetGeom(dims_, d0,d1,d2,d3,d4,d5,d6);} \
   explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \
   y(T* data_, const MatrixGeom& geom_) {SetFixedData(data_, geom_);} \
-  void CutLinks() { SetArray_(NULL); taMatrix::CutLinks(); } \
+  void CutLinks() override { SetArray_(NULL); taMatrix::CutLinks(); } \
   using taMatrix::operator=; \
   TA_BASEFUNS(y) \
 protected: \
@@ -210,7 +210,7 @@ protected: \
 private: \
   MAT_COPY_SAME_FAST(y,T) \
 protected: \
-  virtual bool fastAlloc() const {return true;} \
+  virtual bool fastAlloc() const override {return true;} \
 public: \
   TA_MATRIX_FUNS(y,T)
 
@@ -218,7 +218,7 @@ public: \
 private: \
   MAT_COPY_SAME_SLOW(y,T) \
 protected: \
-  virtual bool fastAlloc() const {return false;} \
+  virtual bool fastAlloc() const override {return false;} \
 public: \
   TA_MATRIX_FUNS(y,T)
 

@@ -52,8 +52,8 @@ public:
   String       GetDisplayName() const override;
   void         JumpToCode(); // #MENU #DYN1
 
-  void          InitLinks();
-  void          CutLinks();
+  void          InitLinks() override;
+  void          CutLinks() override;
   TA_BASEFUNS_NOCOPY(ProgBrkPt);
 
 protected:

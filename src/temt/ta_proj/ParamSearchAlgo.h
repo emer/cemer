@@ -42,7 +42,7 @@ public:
 
   TA_ABSTRACT_BASEFUNS_NOCOPY(ParamSearchAlgo) //
   SIMPLE_CUTLINKS(ParamSearchAlgo);
-  virtual void InitLinks();
+  virtual void InitLinks() override;
 protected:
   ClusterRun *m_cluster_run;
 private:

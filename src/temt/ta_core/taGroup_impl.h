@@ -49,8 +49,8 @@ public:
   taGroup_impl*        super_gp;       // #READ_ONLY #NO_SHOW #NO_SAVE #NO_SET_POINTER #CAT_taList super-group above this
   taGroup_impl*        root_gp;        // #READ_ONLY #NO_SHOW #NO_SAVE #NO_SET_POINTER #CAT_taList the root group, 'this' for root group itself; never NULL
 
-  bool          IsEmpty() const { return (leaves == 0) ? true : false; }
-  bool          IsRoot() const  { return (root_gp == this); } // 'true' if this is the root
+  bool          IsEmpty() const override { return (leaves == 0) ? true : false; }
+  bool          IsRoot() const { return (root_gp == this); } // 'true' if this is the root
 
   ////////////////////////////////////////////////
   //    functions that return the type          //
@@ -203,7 +203,7 @@ public:
   virtual void  InitLeafGp() const;
   // #CAT_Access Initialize the leaf group iter list, always ok to call
   virtual void  InitLeafGp_impl(taGroup_List* lg) const; // #IGNORE impl of init leaf gp
-  virtual void  AddOnly_(void* it);             // #IGNORE update leaf count
+  virtual void  AddOnly_(void* it) override;             // #IGNORE update leaf count
 
   virtual bool  RemoveLeafEl(taBase* item);
   // #CAT_Modify remove given leaf element
@@ -211,7 +211,7 @@ public:
   // #CAT_Modify remove given named leaf element
   virtual bool  RemoveLeafIdx(int idx);
   // #CAT_Modify Remove leaf element at leaf index
-  virtual void  RemoveAll();
+  virtual void  RemoveAll() override;
   // #CAT_Modify Remove all elements of the group
 
   virtual bool  RemoveGpIdx(int idx)
@@ -295,10 +295,10 @@ public:
   virtual void  Copy_Duplicate(const taGroup_impl& cp);
   virtual void  Copy_Borrow(const taGroup_impl& cp);
 
-  String& Print(String& strm, int indent=0) const;
+  String& Print(String& strm, int indent=0) const override;
 
-  void  InitLinks();            // inherit the el_typ from parent group..
-  void  CutLinks();
+  void  InitLinks() override;            // inherit the el_typ from parent group..
+  void  CutLinks() override;
   TA_BASEFUNS(taGroup_impl);
 private:
   void  Initialize();

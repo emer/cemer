@@ -46,16 +46,16 @@ public:
   virtual bool 	GetActive(char* memb_nm);	     // check active flag for member
   virtual void	UpdateToNameValue();		   // set the name value data from token
   virtual void	UpdateFromNameValue();		   // set the token form the name values
-  virtual void	SetTypeDefaults()		{ taNBase::SetTypeDefaults(); }
+  virtual void	SetTypeDefaults() override		{ taNBase::SetTypeDefaults(); }
   virtual void	SetTypeDefaults(taBase* tok);	   // set defaults for a given token
 
-  void	Dump_Load_pre();
-  int	Dump_Load_Value(std::istream& strm, taBase* par=NULL);
+  void	Dump_Load_pre() override;
+  int	Dump_Load_Value(std::istream& strm, taBase* par=NULL) override;
 
-  void	InitLinks();
+  void	InitLinks() override;
   TA_BASEFUNS(TypeDefault);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Copy_(const TypeDefault& cp);
   void  Initialize();

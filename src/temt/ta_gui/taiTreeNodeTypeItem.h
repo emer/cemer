@@ -35,7 +35,7 @@ public:
 
   using inherited::data;
   TypeItem*             data() {return ((taSigLinkTypeItem*)m_link)->data();}
-  taSigLinkTypeItem*   link() const {return (taSigLinkTypeItem*)m_link;}
+  taSigLinkTypeItem*   link() const  override {return (taSigLinkTypeItem*)m_link;}
 
 
   taiTreeNodeTypeItem(taSigLinkTypeItem* link_, MemberDef* md, taiTreeNode* parent_,

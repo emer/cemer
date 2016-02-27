@@ -32,16 +32,16 @@ public:
   T*            el;             // #HIDDEN #NO_SAVE #CAT_taArray Pointer to actual array memory
   T             err;            // #HIDDEN #CAT_taArray what is returned when out of range -- MUST INIT IN CONSTRUCTOR
 
-  void*         FastEl_(int i)          { return &(el[i]); } // #IGNORE
-  const void*   FastEl_(int i) const    { return (const void*)&(el[i]); } // #IGNORE
+  void*         FastEl_(int i)  override        { return &(el[i]); } // #IGNORE
+  const void*   FastEl_(int i) const override   { return (const void*)&(el[i]); } // #IGNORE
 
-  int           El_Compare_(const void* a, const void* b) const
+  int           El_Compare_(const void* a, const void* b) const override
   { int rval=-1; if(*((T*)a) > *((T*)b)) rval=1; else if(*((T*)a) == *((T*)b)) rval=0; return rval; }
   // #IGNORE
-  void          El_Copy_(void* to, const void* fm)      { *((T*)to) = *((T*)fm); } // #IGNORE
-  uint          El_SizeOf_() const              { return sizeof(T); }    // #IGNORE
-  void*         El_GetTmp_() const              { return (void*)&tmp; }  // #IGNORE
-  const void*   El_GetErr_() const              { return (void*)&err; }  // #IGNORE
+  void          El_Copy_(void* to, const void* fm) override { *((T*)to) = *((T*)fm); } // #IGNORE
+  uint          El_SizeOf_() const override     { return sizeof(T); }    // #IGNORE
+  void*         El_GetTmp_() const override     { return (void*)&tmp; }  // #IGNORE
+  const void*   El_GetErr_() const override     { return (void*)&err; }  // #IGNORE
 
   taPlainArray(int init_alloc)                  {el = NULL; Alloc(init_alloc); }
   taPlainArray()                                {el = NULL;}

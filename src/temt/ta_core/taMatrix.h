@@ -563,14 +563,14 @@ public:
   // #CAT_File #MENU #MENU_ON_Object #EXT_mat #FILE_DIALOG_LOAD loads data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
 
 
-  virtual void Permute(int thr_no = 0);
-  // #CAT_Modify permute the items in the matrix, using a flat view (anything can be moved anywhere) -- ignores any el_view settings -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  virtual void Permute(int thr_no = -1);
+  // #CAT_Modify permute the items in the matrix, using a flat view (anything can be moved anywhere) -- ignores any el_view settings -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
   virtual void Sort(bool descending);
   // #CAT_Modify sort elements in the matrix, using a flat view -- ignores any el_view settings
   virtual void Move(int from, int to);
   // #CAT_Modify move an element and shift
 
-  String&       Print(String& strm, int indent=0) const;
+  String&       Print(String& strm, int indent=0) const override;
   String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                             bool force_inline = false) const override;

@@ -108,8 +108,8 @@ public:
 
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
-  void	InitLinks();
-  void	CutLinks();
+  void	InitLinks() override;
+  void	CutLinks() override;
   void	Copy_(const DMemShare& cp);
   TA_BASEFUNS(DMemShare);
 };

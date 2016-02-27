@@ -39,7 +39,7 @@ public:
 #else
   void  Initialize()    {}
 #endif
-  void  CutLinks();
+  void  CutLinks() override;
   TA_BASEFUNS_NOCOPY(taOABase); //
 
 private:
