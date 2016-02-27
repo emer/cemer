@@ -213,7 +213,7 @@ public:
   virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0);
   // #BUTTON #NULL_OK graph the activation function (NULL = new graph log)
 
-  void	InitLinks();
+  void	InitLinks() override;
   SIMPLE_COPY(BpUnitSpec);
   TA_BASEFUNS(BpUnitSpec);
 protected:
