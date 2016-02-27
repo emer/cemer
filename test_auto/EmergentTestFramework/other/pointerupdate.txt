@@ -306,7 +306,7 @@ CopyProgramCodeBetweenProjects
 
     Ensure Emergent Free
 
-    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../test_auto/EmergentTestFramework/test-projects/TestPointerUpdates_copy_into.proj"}   300 sec
+    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "TestPointerUpdates_copy_into.proj"}   300 sec
     Status OK No Result        ${output}
 
     Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"]
@@ -327,7 +327,7 @@ MoveProgramBetweenProjects
     Restart Emergent
     Ensure Emergent Free
 
-    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../test_auto/EmergentTestFramework/test-projects/TestPointerUpdates_copy_into.proj"}   300 sec
+    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "TestPointerUpdates_copy_into.proj"}   300 sec
     Status OK No Result        ${output}
 
     Prog Group Should Match    2                     NONE
@@ -347,7 +347,7 @@ CopyControlpanelBetweenProjects
     Restart Emergent
     Ensure Emergent Free
 
-    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../test_auto/EmergentTestFramework/test-projects/TestPointerUpdates_copy_into.proj"}   300 sec
+    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "TestPointerUpdates_copy_into.proj"}   300 sec
     Status OK No Result        ${output}
 
     Prog Var Should Equal      which_group           0
