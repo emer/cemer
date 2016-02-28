@@ -3391,23 +3391,26 @@ void Network::SpecCompare(BaseSpec* parent_spec) {
   }
   
   String table_name = parent_spec->name + "_spec_table";
-  DataTable* dt = (DataTable*)spec_tables.FindLeafName_(table_name);
+  DataTable* spec_table = (DataTable*)spec_tables.FindLeafName_(table_name);
   
-  if (dt) {
-    dt->ResetData();
-    dt->RemoveAllCols();  // probably not work dealing with specs that have been deleted, changed name, etc.
+  if (spec_table) {
+    spec_table->StructUpdate(true);
+    spec_table->RemoveAllCols();  // not worth dealing with specs that have been deleted, changed name, etc.
   }
   else {
-    dt = spec_tables.NewEl(1, NULL);   // add a new data table to the group
-    dt->SetName(table_name);
+    spec_table = spec_tables.NewEl(1, NULL);   // add a new data table to the group
+    spec_table->SetName(table_name);
+    spec_table->StructUpdate(true);
   }
   
-  dt->NewColString("Member");
-  dt->NewColString(parent_spec->name);
+  spec_table->NewColString("Member");
+  spec_table->NewColString(parent_spec->name);
   
-  WriteSpecMbrNamesToTable(dt, parent_spec);
-  WriteSpecMbrValsToTable(dt, parent_spec);
-  AddChildToSpecCompareTable(dt, parent_spec);
+  WriteSpecMbrNamesToTable(spec_table, parent_spec);
+  WriteSpecMbrValsToTable(spec_table, parent_spec);
+  AddChildToSpecCompareTable(spec_table, parent_spec);
+  spec_table->StructUpdate(false);
+  tabMisc::DelayedFunCall_gui(spec_table, "BrowserSelectMe");
 }
 
 void Network::AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec) {
