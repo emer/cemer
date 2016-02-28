@@ -523,6 +523,9 @@ public:
   // #CAT_Columns mark all cols before updating, for orphan deleting
   virtual void          RemoveOrphanCols();
   // #CAT_Columns removes all non-pinned marked cols
+  
+  virtual void          SetColumnWidth(const Variant& col, int width_in_pixels);
+  // #CAT_Columns set the column width (in pixels)
 
   /////////////////////////////////////////////////////////
   // rows
@@ -995,6 +998,7 @@ public:
   void                  GetFlatGeom(const CellRange& cr, int& tot_cols,
                                     int& max_cell_rows); // #IGNORE get the total flat cols and max rows per cell; used for TSV output
   iDataTableModel*      GetTableModel(); // #IGNORE gets or makes the model -- kept around once made
+  virtual void          RefreshViews();
 
   String                HeaderToTSV(); // #IGNORE for tsv save
   String                RangeToTSV(const CellRange& cr); // #IGNORE for clip operations

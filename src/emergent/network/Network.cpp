@@ -3405,6 +3405,8 @@ void Network::SpecCompare(BaseSpec* parent_spec) {
   
   spec_table->NewColString("Member");
   spec_table->NewColString(parent_spec->name);
+  spec_table->SetColumnWidth("Member", 250);
+  spec_table->RefreshViews();
   
   WriteSpecMbrNamesToTable(spec_table, parent_spec);
   WriteSpecMbrValsToTable(spec_table, parent_spec);
