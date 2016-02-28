@@ -32,6 +32,7 @@
 #include <float_Matrix>
 #include <DMemComm>
 #include <DMemAggVars>
+#include <DataTable_Group>
 
 // NOTE: by including network, you end up including all the network code:
 // #include <Connection>
@@ -219,7 +220,8 @@ public:
   };
 
   static taBrainAtlas_List* brain_atlases;  // #NO_SAVE #NO_SHOW_TREE atlases available
-
+  
+  DataTable_Group spec_tables;  // #CAT_Structure Tables comparing parent and child specs
   BaseSpec_Group specs;         // #CAT_Structure Specifications for network parameters
   Layer_Group   layers;         // #CAT_Structure Layers or Groups of Layers
   Weights_List  weights;        // #CAT_Structure saved weights objects
@@ -1010,7 +1012,16 @@ public:
   virtual BaseSpec* FindSpecType(TypeDef* td);
   // #CAT_Structure find a given spec by type
 
-  virtual Layer* FindMakeLayer(const String& nm, TypeDef* td = NULL,
+  virtual void      SpecCompare(BaseSpec* parent_spec);
+  // creates a table with parent spec member values and shows child values that are different - will make data table if not existing
+  virtual void      AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec);
+  // #IGNORE called recursively to add a column for all child specs to spec data table -- called by SpecCompare()
+  virtual void      WriteSpecMbrNamesToTable(DataTable* spec_table, BaseSpec* spec);
+  // #IGNORE writes spec member names to a spec compare table -- See SpecCompare()
+  virtual void      WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec);
+  // #IGNORE writes spec member values to a spec compare table -- See SpecCompare()
+  
+  virtual Layer*    FindMakeLayer(const String& nm, TypeDef* td = NULL,
                        bool& nw_itm = nw_itm_def_arg, const String& alt_nm = "");
   // #CAT_Structure find a given layer and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
   virtual Layer_Group* FindMakeLayerGroup(const String& nm, TypeDef* td = NULL,

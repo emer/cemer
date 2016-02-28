@@ -27,6 +27,7 @@
 #include <SimpleMathSpec>
 #include <NetMonitor>
 #include <taMath_float>
+#include <SpecMemberBase>
 
 #include <tabMisc>
 #include <taMisc>
@@ -3381,6 +3382,91 @@ BaseSpec* Network::FindSpecType(TypeDef* td) {
   BaseSpec* rval = (BaseSpec*)specs.FindSpecType(td);
   TestError(!rval, "FindSpecType", "could not find spec of type:", td->name);
   return rval;
+}
+
+void Network::SpecCompare(BaseSpec* parent_spec) {
+  if (parent_spec->children.size == 0) {
+    taMisc::Warning("Spec has no children - nothing to compare to");
+    return;
+  }
+  
+  String table_name = parent_spec->name + "_spec_table";
+  DataTable* dt = (DataTable*)spec_tables.FindLeafName_(table_name);
+  
+  if (dt) {
+    dt->ResetData();
+    dt->RemoveAllCols();  // probably not work dealing with specs that have been deleted, changed name, etc.
+  }
+  else {
+    dt = spec_tables.NewEl(1, NULL);   // add a new data table to the group
+    dt->SetName(table_name);
+  }
+  
+  dt->NewColString("Member");
+  dt->NewColString(parent_spec->name);
+  
+  WriteSpecMbrNamesToTable(dt, parent_spec);
+  WriteSpecMbrValsToTable(dt, parent_spec);
+  AddChildToSpecCompareTable(dt, parent_spec);
+}
+
+void Network::AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec) {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, child, spec->children) {
+    spec_table->NewColString(child->name);
+    WriteSpecMbrValsToTable(spec_table, child); // rows already add by parent - pass false
+    if (child->children.size > 0) {
+      AddChildToSpecCompareTable(spec_table, child);  // recursion
+    }
+  }
+}
+
+void Network::WriteSpecMbrNamesToTable(DataTable* spec_table, BaseSpec* spec) {
+  BaseSpec* base_spec = new BaseSpec;
+  TypeDef* base_td = base_spec->GetTypeDef();
+  TypeDef* spec_td = spec->GetTypeDef();
+  
+  int index = 0;
+  for(int m=0; m<spec_td->members.size; m++) {
+    MemberDef* spec_td_md = spec_td->members.FastEl(m);
+    TypeDef* spec_member_td = spec_td_md->type;
+    if (spec_member_td->InheritsFrom(&TA_SpecMemberBase)) {
+      for(int n=0; n<spec_member_td->members.size; n++) {
+        MemberDef* spec_member_base_md = spec_member_td->members.FastEl(n);
+        if (!base_td->members.FindName(spec_member_base_md->name) && !spec_member_base_md->isReadOnly()) {  // if not in BaseSpec add it
+          spec_table->AddBlankRow();
+          String name = spec_td_md->name + "_" + spec_member_base_md->name;
+          spec_table->SetValAsVar(name, 0, index);
+          index++;
+        }
+      }
+    }
+  }
+}
+
+void Network::WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec) {
+  BaseSpec* base_spec = new BaseSpec;
+  TypeDef* base_td = base_spec->GetTypeDef();
+  TypeDef* spec_td = spec->GetTypeDef();
+  
+  int index = 0;
+  for(int m=0; m<spec_td->members.size; m++) {
+    MemberDef* spec_td_md = spec_td->members.FastEl(m);
+    TypeDef* spec_member_td = spec_td_md->type;
+    if (spec_member_td->InheritsFrom(&TA_SpecMemberBase)) {
+      for(int n=0; n<spec_member_td->members.size; n++) {
+        MemberDef* spec_member_base_md = spec_member_td->members.FastEl(n);
+        if (!base_td->members.FindName(spec_member_base_md->name) && !spec_member_base_md->isReadOnly()) {  // if not in BaseSpec add it
+          SpecMemberBase* new_base = (SpecMemberBase*)spec_td->members.SafeEl(m)->GetOff(spec);
+          String value = spec_member_base_md->GetValStr(new_base);
+          String parent_value = spec_table->GetValAsString(1, index);
+          if (value != parent_value) {
+            spec_table->SetValAsVar(value, spec->name, index);
+          }
+          index++;
+        }
+      }
+    }
+  }
 }
 
 Layer* Network::FindMakeLayer(const String& nm, TypeDef* td, bool& nw_itm, const String& alt_nm) {

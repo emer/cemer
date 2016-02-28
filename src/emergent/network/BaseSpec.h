@@ -117,9 +117,12 @@ public:
   virtual void    SetParam(const String& param_path, const String& value);
   // #DYN1 Set parameter at given path to given value, for all the specs within this group, and all the child specs underneath these specs
 
+  virtual void    CompareWithChildren();
+  // #BUTTON calls network::ComareSpecWithChildren to populate a table that compares this specs member values with its children's values
+  
   taBase*         ChooseNew(taBase* origin) override;
   bool            HasChooseNew() override { return true; }
-
+  
   void	InitLinks() override;
   void	CutLinks() override;
   TA_BASEFUNS(BaseSpec);

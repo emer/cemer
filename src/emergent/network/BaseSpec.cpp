@@ -21,6 +21,8 @@
 
 #include <taMisc>
 #include <taiWidgetTypeDefChooser>
+#include <Network>
+
 
 TA_BASEFUNS_CTORS_DEFN(BaseSpec);
 
@@ -127,6 +129,11 @@ BaseSpec* BaseSpec::FindParent() {
 bool BaseSpec::RemoveChild(const char* nm, TypeDef* td) {
   if(td == NULL) td = children.el_typ;
   return children.RemoveSpec(nm, td);
+}
+
+void BaseSpec::CompareWithChildren() {
+  Network* network = (Network*)GetOwnerOfType(&TA_Network);
+  network->SpecCompare(this);
 }
 
 void BaseSpec::SetUnique(const char* memb_nm, bool on) {
