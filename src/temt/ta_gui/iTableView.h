@@ -82,7 +82,6 @@ public:
   virtual void          SetCurrentAndSelect(int row, int col);
   // for selecting single cell only
 
-
   iTableView(QWidget* parent = NULL);
 
 #ifndef __MAKETA__
@@ -115,7 +114,8 @@ public:
     OP_RESIZE_TO_CONTENT_ALL  = 0x0200,
     OP_COMPARE                = 0x0400,
     OP_CLEAR_COMPARE          = 0x0800,
-    OP_SHOW_ALL               = 0x1000
+    OP_SHOW_ALL               = 0x1000,
+    OP_SET_WIDTH              = 0X2000
   };
   
   int                   last_x;

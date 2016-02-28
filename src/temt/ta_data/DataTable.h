@@ -636,7 +636,7 @@ public:
   virtual void          RemoveColumnFromControlPanel(ControlPanel* cp, DataCol* data_col);
   // #IGNORE remove DataTableCell from list and remove from control panel - this one for DTC with dtc_is_column_type = true
   virtual DataCol*      GetColumnForDTCLookup();
-  // #IGNORE sets the control_panel_cell row_column member - button needed to call method with CallFun and have gui arg dialog appear
+  // #IGNORE displays chooser to get the control_panel_cell row_column member
 
   virtual void          SetCellsInRow(int row);
   // set the values of table cells in the specified row using the current values in control panel items for columns where there is a column_type DataTableCell (i.e. column_type_dtc == true)

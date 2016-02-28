@@ -31,6 +31,9 @@
 #include <taMisc>
 
 #include <QHeaderView>
+#include <QInputDialog>
+
+const int iDataTableView::default_column_width_px(150);
 
 iDataTableView::iDataTableView(QWidget* parent)
 :inherited(parent)
@@ -257,6 +260,18 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
           tab->DuplicateCol(col);
         }
         tab->StructUpdate(false);
+      }
+    }
+    else if (op_code & OP_SET_WIDTH) {
+      if (sel.col_to == sel.col_fr) {
+        int width = QInputDialog::getInt(0, "Set Column Width", "Width:", columnWidth(sel.col_fr), 0, 1000);
+        this->setColumnWidth(sel.col_fr, width);
+      }
+      else {
+        int width = QInputDialog::getInt(0, "Set Column Width", "Width:", default_column_width_px, 0, 1000);
+        for (int col = sel.col_to; col >= sel.col_fr; --col) {
+          this->setColumnWidth(col, width);
+        }
       }
     }
     else if (op_code & OP_RESIZE_TO_CONTENT) {

@@ -225,6 +225,9 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
   iAction* act = NULL;
   // generic col guys
   if (ca == CA_COL_HDR) {
+    act = menu->AddItem("Set Column Width...", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_COL | OP_SET_WIDTH) );
     act = menu->AddItem("Resize Width to Content", taiWidgetMenu::normal,
                         iAction::int_act,
                         this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT) );
