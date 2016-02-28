@@ -280,7 +280,8 @@ void AdaptLeakSpec::Defaults_init() {
   tau = 100.0f;
   hi_thr = 1.2f;
   lo_thr = 0.4f;
-  min_leak_off = -0.05f;
+  min_bwt = 0.0f;
+  max_bwt = 0.0f;
   
   dt = 1.0f / tau;
   mid_thr = 0.5f * (hi_thr + lo_thr);
