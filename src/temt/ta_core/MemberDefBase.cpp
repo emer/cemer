@@ -43,15 +43,15 @@ MemberDefBase::MemberDefBase()
   Initialize();
 }
 
-MemberDefBase::MemberDefBase(const char* nm)
+MemberDefBase::MemberDefBase(const String& nm)
 :inherited()
 {
   Initialize();
   name = nm;
 }
 
-MemberDefBase::MemberDefBase(TypeDef* ty, const char* nm, const char* dsc,
-  const char* op, const char* lis, bool is_stat)
+MemberDefBase::MemberDefBase(TypeDef* ty, const String& nm, const String& dsc,
+  const String& op, const String& lis, bool is_stat)
 :inherited()
 {
   Initialize();

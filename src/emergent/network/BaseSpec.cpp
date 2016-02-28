@@ -117,7 +117,7 @@ BaseSpec* BaseSpec::NewChild(TypeDef* child_type) {
   return rval;
 }
 
-BaseSpec* BaseSpec::FindMakeChild(const char* nm, TypeDef* td, bool& nw_itm, const char* alt_nm) {
+BaseSpec* BaseSpec::FindMakeChild(const String& nm, TypeDef* td, bool& nw_itm, const String& alt_nm) {
   if(td == NULL) td = children.el_typ;
   return children.FindMakeSpec(nm, td, nw_itm, alt_nm);
 }
@@ -126,7 +126,7 @@ BaseSpec* BaseSpec::FindParent() {
   return GET_MY_OWNER(BaseSpec);
 }
 
-bool BaseSpec::RemoveChild(const char* nm, TypeDef* td) {
+bool BaseSpec::RemoveChild(const String& nm, TypeDef* td) {
   if(td == NULL) td = children.el_typ;
   return children.RemoveSpec(nm, td);
 }
@@ -136,7 +136,7 @@ void BaseSpec::CompareWithChildren() {
   network->SpecCompare(this);
 }
 
-void BaseSpec::SetUnique(const char* memb_nm, bool on) {
+void BaseSpec::SetUnique(const String& memb_nm, bool on) {
   MemberDef* md = FindMember(memb_nm);
   if(md)
     SetUnique(md->idx, on);
@@ -159,7 +159,7 @@ void BaseSpec::SetUnique(int memb_no, bool on) {
     unique.RemoveEl(md->name);
 }
 
-bool BaseSpec::GetUnique(const char* memb_nm) {
+bool BaseSpec::GetUnique(const String& memb_nm) {
   if(unique.FindEl(memb_nm) >= 0) return true;
   return false;
 }

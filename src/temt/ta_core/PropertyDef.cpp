@@ -35,14 +35,14 @@ PropertyDef::PropertyDef()
   Initialize();
 }
 
-PropertyDef::PropertyDef(const char* nm)
+PropertyDef::PropertyDef(const String& nm)
 :inherited(nm)
 {
   Initialize();
 }
 
-PropertyDef::PropertyDef(TypeDef* ty, const char* nm, const char* dsc,
-  const char* op, const char* lis, ta_prop_get_fun get, ta_prop_set_fun set,
+PropertyDef::PropertyDef(TypeDef* ty, const String& nm, const String& dsc,
+  const String& op, const String& lis, ta_prop_get_fun get, ta_prop_set_fun set,
   bool is_stat)
 :inherited(ty, nm, dsc, op, lis, is_stat)
 {

@@ -34,7 +34,7 @@ void PropertyDef::setType(TypeDef* typ) {
 }
 
 #ifdef NO_TA_BASE
-PropertyDef* PropertySpace::AssertProperty_impl(const char* nm, bool& is_new,
+PropertyDef* PropertySpace::AssertProperty_impl(const String& nm, bool& is_new,
     bool get_nset, MemberDef* mbr, MethodDef* mth)
 {
   MemberDefBase* md = FindName(nm);
@@ -92,7 +92,7 @@ PropertyDef* PropertySpace::AssertProperty_impl(const char* nm, bool& is_new,
 // PropertySpace: Find By Name  //
 //////////////////////////////////
 
-int PropertySpace::FindNameOrType(const char *nm) const {       // lookup by name
+int PropertySpace::FindNameOrType(const String& nm) const {       // lookup by name
   int rval = 0; //init just to keep msvc happy
   // first check names
   if(FindName(nm),rval)
@@ -102,7 +102,7 @@ int PropertySpace::FindNameOrType(const char *nm) const {       // lookup by nam
   return FindTypeName(nm);
 }
 
-int PropertySpace::FindTypeName(const char* nm) const {
+int PropertySpace::FindTypeName(const String& nm) const {
   for(int i=0; i<size; i++) {
     if(FastEl(i)->type->InheritsFrom(nm))
       return i;
@@ -110,7 +110,7 @@ int PropertySpace::FindTypeName(const char* nm) const {
   return -1;
 }
 
-MemberDefBase* PropertySpace::FindNameR(const char* nm) const {
+MemberDefBase* PropertySpace::FindNameR(const String& nm) const {
   if (MemberDefBase *rval = FindName(nm)) {
     return rval;
   }

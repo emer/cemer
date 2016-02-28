@@ -63,8 +63,8 @@ public:
   void          Initialize();
   void          Copy(const MethodDef& cp);
   MethodDef();
-  MethodDef(const char* nm);
-  MethodDef(TypeDef* ty, const char* nm, const char* dsc, const char* op, const char* lis,
+  MethodDef(const String& nm);
+  MethodDef(TypeDef* ty, const String& nm, const String& dsc, const String& op, const String& lis,
             int fover, int farc, int fard, bool is_stat = false, ta_void_fun funa = NULL,
             css_fun_stub_ptr stb = NULL, bool is_virt = false);
   MethodDef(const MethodDef& md);       // copy constructor

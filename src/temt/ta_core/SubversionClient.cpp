@@ -504,7 +504,7 @@ SubversionClient::~SubversionClient()
 }
 
 void
-SubversionClient::SetWorkingCopyPath(const char *working_copy_path)
+SubversionClient::SetWorkingCopyPath(const String& working_copy_path)
 {
   // Canonicalize the working copy path.
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
@@ -602,7 +602,7 @@ namespace { // anonymous, helpers for GetUsername().
 }
 
 std::string
-SubversionClient::GetUsername(const char *url, UsernameSource source) const
+SubversionClient::GetUsername(const String& url, UsernameSource source) const
 {
   QString realmString = urlToRealmString(url);
 
@@ -815,7 +815,7 @@ SubversionClient::createAuthProviders(apr_hash_t *config)
 }
 
 int
-SubversionClient::Checkout(const char *url, const char* to_wc, int rev, bool recurse)
+SubversionClient::Checkout(const String& url, const String& to_wc, int rev, bool recurse)
 {
   m_cancelled = false;
 
@@ -869,8 +869,8 @@ SubversionClient::Checkout(const char *url, const char* to_wc, int rev, bool rec
        m_pool))
   {
     svn_pool_destroy(m_pool);
-    throw Exception(
-      std::string("Subversion checkout error for URL ") + url, error);
+    throw Exception
+      (std::string("Subversion checkout error for URL ") + url.chars(), error);
   }
   svn_pool_destroy(m_pool);
   return result_rev;
@@ -909,7 +909,7 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
                        int_PArray& file_sizes,
                        int_PArray& file_revs, int_PArray& file_times,
                        int_PArray& file_kinds, String_PArray& file_authors,
-                       const char *url, int rev, bool recurse) {
+                       const String& url, int rev, bool recurse) {
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
@@ -964,7 +964,7 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
 }
 
 void 
-SubversionClient::GetFile(const char* from_url, String& to_str, int rev) {
+SubversionClient::GetFile(const String& from_url, String& to_str, int rev) {
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
@@ -1012,7 +1012,7 @@ SubversionClient::GetFile(const char* from_url, String& to_str, int rev) {
 }
 
 void 
-SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
+SubversionClient::SaveFile(const String& from_url, const String& to_path, int rev) {
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
@@ -1071,7 +1071,7 @@ SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
 }
 
 void 
-SubversionClient::GetDiffToPrev(const char* from_url, String& to_str, int rev) {
+SubversionClient::GetDiffToPrev(const String& from_url, String& to_str, int rev) {
   apr_pool_t* m_pool = svn_pool_create(0);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
@@ -1150,7 +1150,7 @@ SubversionClient::GetDiffToPrev(const char* from_url, String& to_str, int rev) {
 }
 
 void 
-SubversionClient::GetDiffWc(const char* from_url, String& to_str) {
+SubversionClient::GetDiffWc(const String& from_url, String& to_str) {
   apr_pool_t* m_pool = svn_pool_create(0);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
@@ -1311,7 +1311,7 @@ SubversionClient::GetLogs(int_PArray& revs, String_PArray& commit_msgs,
                           int_PArray& times, int_PArray& files_start_idx,
                           int_PArray& files_n, String_PArray& files,
                           String_PArray& actions,
-                          const char* url, int end_rev, int n_entries) {
+                          const String& url, int end_rev, int n_entries) {
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
@@ -1539,12 +1539,14 @@ SubversionClient::UpdateFiles(const String_PArray& files, int rev) {
 }
 
 void
-SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
+SubversionClient::Add(const String& f_or_d, bool recurse, bool add_parents)
 {
   m_cancelled = false;
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
+  String file_or_dir = f_or_d;
+  
   // canonicalize the path
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
   file_or_dir = svn_path_canonicalize(file_or_dir, m_pool);
@@ -1622,7 +1624,7 @@ SubversionClient::Delete(const String_PArray& files, bool force, bool keep_local
 }
 
 bool
-SubversionClient::MakeDir(const char *new_dir, bool make_parents)
+SubversionClient::MakeDir(const String& new_dir, bool make_parents)
 {
   m_cancelled = false;
 
@@ -1655,7 +1657,7 @@ SubversionClient::MakeDir(const char *new_dir, bool make_parents)
 }
 
 bool
-SubversionClient::TryMakeDir(const char *new_dir, bool make_parents)
+SubversionClient::TryMakeDir(const String& new_dir, bool make_parents)
 {
   m_cancelled = false;
 
@@ -1675,14 +1677,14 @@ SubversionClient::TryMakeDir(const char *new_dir, bool make_parents)
 }
 
 bool
-SubversionClient::MakeUrlDir(const char *url, const char *comment, bool make_parents)
+SubversionClient::MakeUrlDir(const String& url, const String& comment, bool make_parents)
 {
   m_commit_message = comment;
   return MakeDir(url, make_parents);
 }
 
 bool
-SubversionClient::TryMakeUrlDir(const char *url, const char *comment, bool make_parents)
+SubversionClient::TryMakeUrlDir(const String& url, const String& comment, bool make_parents)
 {
   m_commit_message = comment;
   return TryMakeDir(url, make_parents);
@@ -1691,7 +1693,7 @@ SubversionClient::TryMakeUrlDir(const char *url, const char *comment, bool make_
 // Commits files and returns the new revision number.
 // Throws on error; returns -1 if there was nothing to commit.
 int
-SubversionClient::Checkin(const char *comment) {
+SubversionClient::Checkin(const String& comment) {
   m_cancelled = false;
   m_commit_message = comment;
 
@@ -1744,7 +1746,7 @@ SubversionClient::Checkin(const char *comment) {
 }
 
 int
-SubversionClient::CheckinFiles(const String_PArray& files, const char *comment) {
+SubversionClient::CheckinFiles(const String_PArray& files, const String& comment) {
   m_cancelled = false;
   m_commit_message = comment;
 
@@ -1804,7 +1806,7 @@ SubversionClient::CheckinFiles(const String_PArray& files, const char *comment) 
 }
 
 int
-SubversionClient::GetLastChangedRevision(const char *path)
+SubversionClient::GetLastChangedRevision(const String& path)
 {
   m_cancelled = false;
   m_last_changed_revision = -1;
@@ -1833,7 +1835,7 @@ SubversionClient::GetLastChangedRevision(const char *path)
 }
 
 void
-SubversionClient::GetUrlFromPath(String& url, const char *path) {
+SubversionClient::GetUrlFromPath(String& url, const String& path) {
   const char* url_str;
 
   apr_pool_t* m_pool = svn_pool_create(0);
@@ -1860,7 +1862,7 @@ SubversionClient::GetUrlFromPath(String& url, const char *path) {
 }
 
 void
-SubversionClient::GetRootUrlFromPath(String& url, const char *path) {
+SubversionClient::GetRootUrlFromPath(String& url, const String& path) {
   const char* url_str;
   apr_pool_t* m_pool = svn_pool_create(0);
 

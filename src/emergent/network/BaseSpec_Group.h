@@ -44,13 +44,13 @@ public:
   virtual BaseSpec*	FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, taBase* for_obj = NULL);
   // find a spec that inherits from given type, searching in the children too
 
-  virtual BaseSpec*	FindSpecName(const char* nm);
+  virtual BaseSpec*	FindSpecName(const String& nm);
   // find a spec with given name, also searches in the children of each spec
 
-  virtual BaseSpec* 	FindMakeSpec(const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
+  virtual BaseSpec* 	FindMakeSpec(const String& nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg, const String& alt_nm = NULLStr);
   // find a given spec and if not found, make it  (if nm is not found and alt_nm != NULL, it is searched for)
 
-  virtual bool 		RemoveSpec(const char* nm, TypeDef* td);
+  virtual bool 		RemoveSpec(const String& nm, TypeDef* td);
   // find a given spec and remove it
 
   virtual BaseSpec*	FindParent();

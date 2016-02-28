@@ -140,10 +140,10 @@ public:
 
   String&       Print(String& strm, int indent=0) const override;
 
-  String        ToString(const char* ldelim = "[", const char* rdelim = "]") const;
+  String        ToString(const String& ldelim = "[", const String& rdelim = "]") const;
   // #CAT_File returns human-friendly text in form: "[dims:{dim}{,dim}]"
-  void          FromString(const String& str, const char* ldelim = "[",
-                               const char* rdelim = "]");
+  void          FromString(const String& str, const String& ldelim = "[",
+                               const String& rdelim = "]");
   // #CAT_File reads geometry from string (consuming text) in form: "[dims:{dim}{,dim}]"
   String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,

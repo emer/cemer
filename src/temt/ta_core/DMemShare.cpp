@@ -37,7 +37,7 @@ static String dmem_mpi_decode_err(int ercd) {
   return String(ercd) + " msg: " + String(errstr);
 }
 
-void DMemShare::DebugCmd(const char* function, const char* mpi_call) {
+void DMemShare::DebugCmd(const String& function, const String& mpi_call) {
   if(taMisc::dmem_debug) {
     String msg;
     msg << "proc: " << taMisc::dmem_proc << " fun: "
@@ -47,7 +47,7 @@ void DMemShare::DebugCmd(const char* function, const char* mpi_call) {
   }
 }
 
-bool DMemShare::ProcErr(int ercd, const char* function, const char* mpi_call) {
+bool DMemShare::ProcErr(int ercd, const String& function, const String& mpi_call) {
   if(ercd == MPI_SUCCESS) {
     if(taMisc::dmem_debug) {
       String msg;

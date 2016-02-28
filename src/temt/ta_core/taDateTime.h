@@ -69,7 +69,7 @@ public:
   { return (String)qDateTime().toString(format); }
   // convert to a string representation: format is: d=day number, dd=d with leading zero, ddd=short day name, dddd=long day name, M=month number, MM=M with leading zero, MMM=short month name, MMMM=long month name, yy=2 digit year, yyyy=4 digit year, h=hour, hh=hour with leading zero, m=minute, mm=minute with leading zero, s=second, ss=leading zero, AP=AM or PM, ap=am or pm
 
-  void fromString(const String &s, const String &format="");
+  void fromString(const String& s, const String& format=NULLStr);
   // convert to a string representation: if format is non-empty, format is: d=day number, dd=d with leading zero, ddd=short day name, dddd=long day name, M=month number, MM=M with leading zero, MMM=short month name, MMMM=long month name, yy=2 digit year, yyyy=4 digit year, h=hour, hh=hour with leading zero, m=minute, mm=minute with leading zero, s=second, ss=leading zero, AP=AM or PM, ap=am or pm
 
   void addSecs(int secs)        { fmQDateTime(qDateTime().addSecs(secs)); }

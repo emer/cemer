@@ -2120,34 +2120,34 @@ String& taBase::ListSigClients(String& strm, int indent) {
 //      Checking the configuration of objects prior to using them
 
 
-bool taBase::TestError_impl(bool test, const char* fun_name,
-                       const char* a, const char* b, const char* c,
-                       const char* d, const char* e, const char* f,
-                       const char* g, const char* h) const {
+bool taBase::TestError_impl(bool test, const String& fun_name,
+                       const String& a, const String& b, const String& c,
+                       const String& d, const String& e, const String& f,
+                       const String& g, const String& h) const {
   if(!test) return false;
   return taMisc::TestError_impl(this, test, fun_name, a, b, c, d, e, f, g, h);
 }
 
-bool taBase::TestWarning_impl(bool test, const char* fun_name,
-                         const char* a, const char* b, const char* c,
-                         const char* d, const char* e, const char* f,
-                         const char* g, const char* h) const {
+bool taBase::TestWarning_impl(bool test, const String& fun_name,
+                         const String& a, const String& b, const String& c,
+                         const String& d, const String& e, const String& f,
+                         const String& g, const String& h) const {
   if(!test) return false;
   return taMisc::TestWarning_impl(this, test, fun_name, a, b, c, d, e, f, g, h);
 }
 
-void taBase::DebugInfo(const char* fun_name,
-                       const char* a, const char* b, const char* c,
-                       const char* d, const char* e, const char* f,
-                       const char* g, const char* h) const {
+void taBase::DebugInfo(const String& fun_name,
+                       const String& a, const String& b, const String& c,
+                       const String& d, const String& e, const String& f,
+                       const String& g, const String& h) const {
   String objinfo = "obj: " + GetTypeDef()->name + " "
     + GetDisplayName() + "::" + fun_name + "() (path: " + GetPathNames() + ")\n";
   taMisc::DebugInfo(objinfo, a, b, c, d, e, f, g, h);
 }
 
-void taBase::CheckError_msg(const char* a, const char* b, const char* c,
-                            const char* d, const char* e, const char* f,
-                            const char* g, const char* h) const {
+void taBase::CheckError_msg(const String& a, const String& b, const String& c,
+                            const String& d, const String& e, const String& f,
+                            const String& g, const String& h) const {
   String objinfo = "Config Error in: " + GetTypeDef()->name + " "
     + GetDisplayName() + "\npath: " + GetPathNames() + "\n";
   taMisc::CheckError(objinfo, a, b, c, d, e, f, g, h);

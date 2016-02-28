@@ -29,13 +29,21 @@ inline void LeabraUnitSpec::Compute_SelfInhib(LeabraUnitVars* u, LeabraNetwork* 
 }
 
 inline float LeabraUnitSpec::Compute_EThresh(LeabraUnitVars* u) {
-  return ((g_bar.i * u->gc_i * (u->E_i - act.thr) + g_bar.l * e_rev_sub_thr.l - u->adapt) /
-	  thr_sub_e_rev_e);
+  float gc_l = g_bar.l;
+  if(adapt_leak.on)
+    gc_l += u->bias_wt;
+  return ((g_bar.i * u->gc_i * (u->E_i - act.thr)
+           + gc_l * e_rev_sub_thr.l - u->adapt) /
+          thr_sub_e_rev_e);
 } 
 
 inline float LeabraUnitSpec::Compute_EqVm(LeabraUnitVars* u) {
-  float new_v_m = (((u->net * e_rev.e) + (g_bar.l * e_rev.l) + (g_bar.i * u->gc_i * u->E_i)
-                    - u->adapt) / (u->net + g_bar.l + g_bar.i * u->gc_i));
+  float gc_l = g_bar.l;
+  if(adapt_leak.on)
+    gc_l += u->bias_wt;
+  float new_v_m = (((u->net * e_rev.e) + (gc_l * e_rev.l)
+                    + (g_bar.i * u->gc_i * u->E_i) - u->adapt) /
+                   (u->net + gc_l + g_bar.i * u->gc_i));
   return new_v_m;
 }
 

@@ -258,9 +258,9 @@ void ProgEl::UpdatePointersAfterCopy_impl(const taBase& cp) {
   }
 }
 
-void ProgEl::CheckError_msg(const char* a, const char* b, const char* c,
-                            const char* d, const char* e, const char* f,
-                            const char* g, const char* h) const {
+void ProgEl::CheckError_msg(const String& a, const String& b, const String& c,
+                            const String& d, const String& e, const String& f,
+                            const String& g, const String& h) const {
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if(prg) prognm = prg->name;

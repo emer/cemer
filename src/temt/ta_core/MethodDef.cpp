@@ -51,14 +51,14 @@ MethodDef::MethodDef()
   Initialize();
 }
 
-MethodDef::MethodDef(const char* nm)
+MethodDef::MethodDef(const String& nm)
 :inherited()
 {
   Initialize();
   name = nm;
 }
 
-MethodDef::MethodDef(TypeDef* ty, const char* nm, const char* dsc, const char* op, const char* lis,
+MethodDef::MethodDef(TypeDef* ty, const String& nm, const String& dsc, const String& op, const String& lis,
                      int fover, int farc, int fard, bool is_stat, ta_void_fun funa,
                      css_fun_stub_ptr stb, bool is_virt)
 :inherited()

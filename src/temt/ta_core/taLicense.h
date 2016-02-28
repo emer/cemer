@@ -51,7 +51,7 @@ public:
   String        lic_text;       // #HIDDEN #NO_SAVE full license text -- for view license
 
   void          ViewLicense();  // #BUTTON view the license text based on current selection
-  static String GetLicenseText(StdLicense lic, const String& owner, const String& year, const String& org=""); // get text for given license, given parameters
+  static String GetLicenseText(StdLicense lic, const String& owner, const String& year, const String& org=NULLStr); // get text for given license, given parameters
 
   TA_SIMPLE_BASEFUNS(taLicense);
 private:

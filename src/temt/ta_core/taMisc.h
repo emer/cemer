@@ -531,65 +531,65 @@ public:
   static bool   ErrorCancelSet(bool on = true);
   // #CAT_Dialog turn on (or off) canceling of errors
 
-  static String SuperCat(const char* a, const char* b, const char* c,
-                      const char* d, const char* e, const char* f,
-                      const char* g, const char* h, const char* i);
+  static String SuperCat(const String& a, const String& b, const String& c,
+                      const String& d, const String& e, const String& f,
+                      const String& g, const String& h, const String& i);
   // #CAT_Dialog concatenate strings with spaces between
 
-  static void   Error(const char* a, const char* b=0, const char* c=0,
-                      const char* d=0, const char* e=0, const char* f=0,
-                      const char* g=0, const char* h=0, const char* i=0);
+  static void   Error(const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                      const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                      const String& g=NULLStr, const String& h=NULLStr, const String& i=NULLStr);
   // #CAT_Dialog displays error either in a window+stderr if gui_active or to stderr only
-  static void   Error_nogui(const char* a, const char* b=0, const char* c=0,
-                            const char* d=0, const char* e=0, const char* f=0,
-                            const char* g=0, const char* h=0, const char* i=0);
+  static void   Error_nogui(const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                            const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                            const String& g=NULLStr, const String& h=NULLStr, const String& i=NULLStr);
   // #CAT_Dialog explicit no-gui version of error: displays error to stderr only
 
 #ifndef NO_TA_BASE
-  static bool   TestError_impl(const taBase* obj, bool test, const char* fun_name,
-                          const char* a, const char* b=0, const char* c=0,
-                          const char* d=0, const char* e=0, const char* f=0,
-                          const char* g=0, const char* h=0);
+  static bool   TestError_impl(const taBase* obj, bool test, const String& fun_name,
+                          const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                          const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                          const String& g=NULLStr, const String& h=NULLStr);
   // #CAT_Dialog if test, then report error, including object name, type, and path information if non-null; returns test -- use e.g. if(taMisc::TestError_impl(this, (condition), "fun", "msg")) return false;
-  static bool   TestWarning_impl(const taBase* obj, bool test, const char* fun_name,
-                            const char* a, const char* b=0, const char* c=0,
-                            const char* d=0, const char* e=0, const char* f=0,
-                            const char* g=0, const char* h=0);
+  static bool   TestWarning_impl(const taBase* obj, bool test, const String& fun_name,
+                            const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                            const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                            const String& g=NULLStr, const String& h=NULLStr);
   // #CAT_Dialog if test, then report warning, including object name, type, and path information if non-null; returns test -- use e.g. if(taMisc::TestWarning_impl(this, (condition), "fun", "msg")) return false;
 #endif
 
-  static void   CheckError(const char* a, const char* b=0, const char* c=0,
-                      const char* d=0, const char* e=0, const char* f=0,
-                      const char* g=0, const char* h=0, const char* i=0);
+  static void   CheckError(const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                      const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                      const String& g=NULLStr, const String& h=NULLStr, const String& i=NULLStr);
   // #CAT_Dialog called by CheckConfig routines; enables batching up of errors for display
 
-  static void   Warning(const char* a, const char* b=0, const char* c=0,
-                      const char* d=0, const char* e=0, const char* f=0,
-                      const char* g=0, const char* h=0, const char* i=0);
+  static void   Warning(const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                      const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                      const String& g=NULLStr, const String& h=NULLStr, const String& i=NULLStr);
   // #CAT_Dialog displays warning to stderr and/or other logging mechanism
 
-  static void   Info(const char* a, const char* b=0, const char* c=0,
-                      const char* d=0, const char* e=0, const char* f=0,
-                      const char* g=0, const char* h=0, const char* i=0);
+  static void   Info(const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                      const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                      const String& g=NULLStr, const String& h=NULLStr, const String& i=NULLStr);
   // #CAT_Dialog displays informative msg to stdout and/or other logging mechanism
-  static void   DebugInfo(const char* a, const char* b=0, const char* c=0,
-                          const char* d=0, const char* e=0, const char* f=0,
-                          const char* g=0, const char* h=0, const char* i=0);
+  static void   DebugInfo(const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                          const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                          const String& g=NULLStr, const String& h=NULLStr, const String& i=NULLStr);
   // #CAT_Dialog displays informative msg to stdout and/or other logging mechanism -- always save to the log, but only displays to stdout if DEBUG mode is active
-  static void   LogInfo(const char* a, const char* b=0, const char* c=0,
-                        const char* d=0, const char* e=0, const char* f=0,
-                        const char* g=0, const char* h=0, const char* i=0);
+  static void   LogInfo(const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                        const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                        const String& g=NULLStr, const String& h=NULLStr, const String& i=NULLStr);
   // #CAT_Dialog easy method for calling LogEvent with discrete args like the rest of the dialog options -- just cats the args with LOG: tag and sends resulting string to LogEvent
 
-  static int    Choice(const char* text="Choice", const char* a="Ok", const char* b=0,
-                       const char* c=0, const char* d=0, const char* e=0,
-                       const char* f=0, const char* g=0, const char* h=0,
-                       const char* i=0);
+  static int    Choice(const String& text="Choice", const String& a="Ok", const String& b=NULLStr,
+                       const String& c=NULLStr, const String& d=NULLStr, const String& e=NULLStr,
+                       const String& f=NULLStr, const String& g=NULLStr, const String& h=NULLStr,
+                       const String& i=NULLStr);
   // #CAT_Dialog allows user to choose among different options in a popup dialog window if gui_active (else stdin/out) -- option a returns 0, b = 1, etc.
 
-  static void   Confirm(const char* a, const char* b=0, const char* c=0,
-                      const char* d=0, const char* e=0, const char* f=0,
-                      const char* g=0, const char* h=0, const char* i=0);
+  static void   Confirm(const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                      const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                      const String& g=NULLStr, const String& h=NULLStr, const String& i=NULLStr);
   // #CAT_Dialog displays informative msg in a dialog -- use this instead of Choice for such confirmations
 
   static void   LogEvent(const String& log_data);
@@ -698,11 +698,11 @@ public:
   // #CAT_Args return the full string of arguments passed to the program by the user
   static bool   FullArgStringToFile(const String& fname);
   // #CAT_Args write the full string of arguments passed to the program by the user to given file name
-  static String FullArgStringName(bool exclude_flags=true, const String& exclude_names="",
+  static String FullArgStringName(bool exclude_flags=true, const String& exclude_names=NULLStr,
                                   bool shorten_names=true, int max_len=6, int seg_len=3,
                                   int rm_vowels_thr=8,
-                                  const String& nm_val_sep="_", const String& arg_sep="",
-                                  const String& space_repl="", const String& period_repl="",
+                                  const String& nm_val_sep="_", const String& arg_sep=NULLStr,
+                                  const String& space_repl=NULLStr, const String& period_repl=NULLStr,
                                   const String& slash_repl="%");
   // #CAT_Args return user-provided args as a concatenation of name_value pairs, in a form suitable for use as a file name -- exclude_flags = do not include args that didn't have a value passed (tend to be system control flags) -- exclude_names is a comma-separated list of name strings that will be exlcuded (uses contains, so can be part of a name) -- lots of options to control output, including shortening arg names (see ShortName for meaning of max_len and seg_len, and rm_vowels_thr), separators between name and value, and between args (note: for obscure reasons, the separator for an empty string is actually the pound sign), and what to replace spaces, periods and slashes (either direction) with (these are important file-system separators)
 
@@ -731,7 +731,7 @@ public:
   /////////////////////////////////////////////////
   //    Commonly used utility functions on strings/arrays/values
 
-  static void   CharToStrArray(String_PArray& sa, const char* ch);
+  static void   CharToStrArray(String_PArray& sa, const String& ch);
   // #CAT_Utility convert space-delimeted character string to a string array
   static String StrArrayToChar(const String_PArray& sa);
   // #CAT_Utility convert a string array to a space-delimeted character string
@@ -883,9 +883,9 @@ public:
 
 #endif	// NO_TA_BASE
 
-  static String FindFileOnPath(String_PArray& paths, const char* fname);
+  static String FindFileOnPath(String_PArray& paths, const String& fname);
   // #CAT_File helper function: try to find file fnm in one of the load_include paths -- returns complete path to file (or empty str if not found)
-  static String FindFileOnLoadPath(const char* fname);
+  static String FindFileOnLoadPath(const String& fname);
   // #CAT_File try to find file fnm in one of the load_include paths -- returns complete path to file  (or empty str if not found)
   static int    GetUniqueFileNumber(int st_no, const String& prefix, const String& suffix);
   // #CAT_File get a unique file number by adding numbers in between prefix and suffix until such a file does not exist
@@ -928,7 +928,7 @@ public:
   // #CAT_Script sets record_strm and record_cursor
   static void   StopRecording();
   // #CAT_Script unsets record_strm and record_cursor
-  static bool   RecordScript(const char* cmd);
+  static bool   RecordScript(const String& cmd);
   // #CAT_Script record the given script command, if the script is open (just sends cmd to stream)
 #ifndef NO_TA_BASE
   static void   ScriptRecordAssignment(taBase* tab,MemberDef* md);

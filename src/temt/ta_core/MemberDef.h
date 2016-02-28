@@ -67,8 +67,8 @@ public:
 
   void          Copy(const MemberDef& cp);
   MemberDef();
-  MemberDef(const char* nm);
-  MemberDef(TypeDef* ty, const char* nm, const char* dsc, const char* op, const char* lis,
+  MemberDef(const String& nm);
+  MemberDef(TypeDef* ty, const String& nm, const String& dsc, const String& op, const String& lis,
             ta_memb_ptr mptr, bool is_stat = false, void* maddr=NULL, bool funp = false);
   MemberDef(const MemberDef& cp);
   ~MemberDef();

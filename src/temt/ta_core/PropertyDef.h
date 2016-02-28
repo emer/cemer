@@ -56,9 +56,9 @@ public:
 
   void                  Copy(const PropertyDef& cp);
   PropertyDef();
-  PropertyDef(const char* nm);
-  PropertyDef(TypeDef* ty, const char* nm, const char* dsc, const char* op,
-    const char* lis, ta_prop_get_fun get, ta_prop_set_fun set,
+  PropertyDef(const String& nm);
+  PropertyDef(TypeDef* ty, const String& nm, const String& dsc, const String& op,
+    const String& lis, ta_prop_get_fun get, ta_prop_set_fun set,
     bool is_stat = false);
   PropertyDef(const PropertyDef& cp);
   ~PropertyDef();

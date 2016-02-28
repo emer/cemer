@@ -51,9 +51,9 @@ public:
   void          Copy(const MemberDefBase* cp); // this is a "pseudo-virtual" type guy, that will copy a like source (Member or Property)
   TypeDef*     GetOwnerType() const override;
   MemberDefBase();
-  MemberDefBase(const char* nm);
-  MemberDefBase(TypeDef* ty, const char* nm, const char* dsc, const char* op,
-    const char* lis, bool is_stat = false);
+  MemberDefBase(const String& nm);
+  MemberDefBase(TypeDef* ty, const String& nm, const String& dsc, const String& op,
+    const String& lis, bool is_stat = false);
   MemberDefBase(const MemberDefBase& cp);
   ~MemberDefBase();
 

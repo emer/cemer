@@ -1121,7 +1121,7 @@ static cssEl* cssElCFun_chsh_stub(int na, cssEl* arg[]) {
       return &cssMisc::Void;
     }
     cssTA* ta = (cssTA*)arg[1];
-    if(ta->type_def->InheritsFrom("cssProgSpace") && (ta->ptr != NULL)) {
+    if(ta->type_def->InheritsFromName("cssProgSpace") && (ta->ptr != NULL)) {
       cssProgSpace* ps = (cssProgSpace*)ta->GetVoidPtr();
       csh->PushSrcProg(ps);
     }

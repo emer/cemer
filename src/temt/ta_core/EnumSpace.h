@@ -60,7 +60,7 @@ public:
 
   // adding manages the values of the enum-values
   void                  Add(EnumDef* it);
-  virtual EnumDef*      Add(const char* nm, const char* dsc="", const char* op="",
+  virtual EnumDef*      Add(const String& nm, const String& dsc=NULLStr, const String& op=NULLStr,
                             int eno=0);
 
   virtual EnumDef*      FindNo(int eno) const;

@@ -23,14 +23,14 @@ EnumDef::EnumDef()
   Initialize();
 }
 
-EnumDef::EnumDef(const char* nm)
+EnumDef::EnumDef(const String& nm)
 :inherited()
 {
   Initialize();
   name = nm;
 }
 
-EnumDef::EnumDef(const char* nm, const char* dsc, int eno, const char* op, const char* lis)
+EnumDef::EnumDef(const String& nm, const String& dsc, int eno, const String& op, const String& lis)
 :inherited()
 {
   name = nm;

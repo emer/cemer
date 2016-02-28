@@ -20,7 +20,7 @@
 
 using namespace std;
 
-int MemberSpace::FindNameOrType(const char *nm) const { // lookup by name
+int MemberSpace::FindNameOrType(const String& nm) const { // lookup by name
   int rval = FindNameIdx(nm);
   if(rval >= 0)
     return rval;
@@ -29,7 +29,7 @@ int MemberSpace::FindNameOrType(const char *nm) const { // lookup by name
   return FindTypeName(nm);
 }
 
-int MemberSpace::FindTypeName(const char* nm) const {
+int MemberSpace::FindTypeName(const String& nm) const {
   for(int i=0; i<size; i++) {
     if(FastEl(i)->type->InheritsFrom(nm))
       return i;
@@ -37,7 +37,7 @@ int MemberSpace::FindTypeName(const char* nm) const {
   return -1;
 }
 
-MemberDef* MemberSpace::FindNameR(const char* nm) const {
+MemberDef* MemberSpace::FindNameR(const String& nm) const {
   if (MemberDef *rval = FindName(nm)) {
     return rval;
   }
@@ -52,7 +52,7 @@ MemberDef* MemberSpace::FindNameR(const char* nm) const {
   return NULL;
 }
 
-MemberDef* MemberSpace::FindNameAddr(const char* nm, void* base, void*& ptr) const {
+MemberDef* MemberSpace::FindNameAddr(const String& nm, void* base, void*& ptr) const {
   if (MemberDef *rval = FindName(nm)) {
     ptr = rval->GetOff(base);
     return rval;

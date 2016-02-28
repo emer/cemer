@@ -47,7 +47,6 @@ public:
 
   NameVar(const NameVar& cp) { name = cp.name; value = cp.value; }
   NameVar(const String& nm, const Variant& vl) { name = nm; value = vl; }
-  NameVar(const char* nm, const Variant& vl) { name = nm; value = vl; }
   NameVar()	{ };
   ~NameVar()	{ };
 };

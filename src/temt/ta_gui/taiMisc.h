@@ -518,12 +518,6 @@ protected:
 public:
   QProgressDialog*      load_dlg;       // #IGNORE load dialog
 
-/*nn  void              CreateLoadDialog(const char* caption = NULL);
-  void          SetLoadDialog(char* tpname, int totalSteps = 0); // use 0 when Step won't be called
-  void          StepLoadDialog(int stepNum); // (optionally) call with 1..totalSteps
-//  static bool IsLoadDialogCancelled(); //optional call, to check if user has cancelled
-  void          RemoveLoadDialog(); */
-
 protected slots:
   void          LoadDialogDestroyed();
 

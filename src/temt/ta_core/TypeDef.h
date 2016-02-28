@@ -248,20 +248,20 @@ public:
   TypeDef*     GetTypeDef() const override {return &TA_TypeDef;}
   void          Copy(const TypeDef& cp);
   TypeDef();
-  TypeDef(const char* nm);
+  TypeDef(const String& nm);
 #ifdef NO_TA_BASE
-  TypeDef(const char* nm, const char* dsc, const char* inop, const char* op,
-	  const char* lis,
+  TypeDef(const String& nm, const String& dsc, const String& inop, const String& op,
+	  const String& lis,
           int type_flags, uint siz, bool global_obj=false);
   // global_obj=true for global (non new'ed) typedef objs
 #else
-  TypeDef(const char* nm, const char* dsc, const char* inop, const char* op,
-	  const char* lis, const char* src_file, int src_st, int src_ed,
+  TypeDef(const String& nm, const String& dsc, const String& inop, const String& op,
+	  const String& lis, const String& src_file, int src_st, int src_ed,
           int type_flags, uint siz, void** inst, bool toks=false, bool global_obj=false);
   // global_obj=true for global (non new'ed) typedef objs
 #endif
-  TypeDef(const char* nm, int type_flags, bool global_obj = false, uint siz = 0, 
-          const char* c_nm = NULL);
+  TypeDef(const String& nm, int type_flags, bool global_obj = false, uint siz = 0, 
+          const String& c_nm = NULLStr);
   // global_obj=ture for global (non new'ed) typedef objs; c_name only needed when diff from nm
   TypeDef(const TypeDef& td);
   ~TypeDef();
@@ -345,7 +345,7 @@ public:
   bool                  HasEnumDefs() const; // true if any subtypes are enums
   bool                  HasSubTypes() const; // true if any non-enum subtypes
 
-  bool                  FindParentName(const char* nm) const {
+  bool                  FindParentName(const String& nm) const {
     if(par_cache.size) return (par_cache.FindNameIdx(nm) >= 0); // if cache active, use it exclusively
     if(parents.FindNameIdx(nm) >= 0) return true;
     for(int i=0; i < parents.size; i++)
@@ -381,7 +381,7 @@ public:
 
   TypeDef*      AddParent(TypeDef* it, int p_off=0);
   // adds parent and inherits all the stuff from it
-  TypeDef*      AddParentName(const char* nm, int p_off=0);
+  TypeDef*      AddParentName(const String& nm, int p_off=0);
   // adds parent but does NOT inherit the data items such as enum_vals, sub_vals, etc
   void          AddParentData();
   // add the data from the parent(s), recursively, inserted before my data -- this is last step of initialization routine -- checks and sets the inited flag to mark progress and avoid duplicative effort
@@ -390,9 +390,9 @@ public:
   void          AddParents(TypeDef* p1=NULL, TypeDef* p2=NULL,
                            TypeDef* p3=NULL, TypeDef* p4=NULL,
                            TypeDef* p5=NULL, TypeDef* p6=NULL);
-  void          AddParentNames(const char*p1=NULL, const char*p2=NULL,
-                               const char*p3=NULL, const char*p4=NULL,
-                               const char*p5=NULL, const char*p6=NULL);
+  void          AddParentNames(const String& p1=NULLStr, const String& p2=NULLStr,
+                               const String& p3=NULLStr, const String& p4=NULLStr,
+                               const String& p5=NULLStr, const String& p6=NULLStr);
   void          AddClassPar(TypeDef* p1=NULL, int p1_off=0, TypeDef* p2=NULL, int p2_off=0,
                             TypeDef* p3=NULL, int p3_off=0, TypeDef* p4=NULL, int p4_off=0,
                             TypeDef* p5=NULL, int p5_off=0, TypeDef* p6=NULL, int p6_off=0);
@@ -404,10 +404,10 @@ public:
   void          AddTemplPars(TypeDef* p1=NULL, TypeDef* p2=NULL,
                              TypeDef* p3=NULL, TypeDef* p4=NULL,
                              TypeDef* p5=NULL, TypeDef* p6=NULL);
-  void          AddTemplParNames(const char* p1=NULL, const char* p2=NULL,
-                                 const char* p3=NULL, const char* p4=NULL,
-                                 const char* p5=NULL, const char* p6=NULL);
-  void          AddTemplParName(const char* pn);
+  void          AddTemplParNames(const String& p1=NULLStr, const String& p2=NULLStr,
+                                 const String& p3=NULLStr, const String& p4=NULLStr,
+                                 const String& p5=NULLStr, const String& p6=NULLStr);
+  void          AddTemplParName(const String& pn);
 
   void          CacheParents();
   // populate par_cache with *all* the parents and set hash table -- call this after all types are loaded etc -- in InitializeTypes
@@ -421,14 +421,14 @@ public:
   bool          IgnoreMeth(const String& nm) const;
   // check if given method should be ignored (also checks parents, etc)
 
-  void*         GetParAddr(const char* par, void* base) const;
+  void*         GetParAddr(const String& par, void* base) const;
   void*         GetParAddr(TypeDef* par, void* base) const;
   // return the given parent's address given the base address (par must be a parent!)
   int           GetParOff(TypeDef* par, int boff=-1) const;
   // return the given parent's offset (par must be a parent!)
   bool          ReplaceParent(TypeDef* old_tp, TypeDef* new_tp);
   // replace parent of old_tp with parent of new_tp (recursive)
-  bool          FindChildName(const char* nm) const;
+  bool          FindChildName(const String& nm) const;
   bool          FindChild(TypeDef* it) const;
   // recursively tries to  find child, returns true if successful
 
@@ -444,7 +444,7 @@ public:
                                          ta_memb_ptr& net_mbr_off,
                                          const String& path, bool warn = true);
   // you must supply the initial own_td as starting type -- looks for a member or sequence of members based on static type information for members (i.e., does not walk the structural tree and cannot go into lists or other containers, but can find any static paths for object members and their members, etc) -- if warn, emits warning message for bad paths -- net offsets provide overall offset from original own_td obj
-  TypeDef*      FindTypeWithMember(const char* nm, MemberDef** md);
+  TypeDef*      FindTypeWithMember(const String& nm, MemberDef** md);
   // returns the type or child type with memberdef md
 
   TypeDef*      FindSubType(const String& sub_nm) const;
@@ -466,7 +466,7 @@ public:
 #ifndef NO_TA_BASE
   void*         GetInstance() const { return instance ? *instance : 0; }
   int           FindTokenR(void* addr, TypeDef*& ptr) const;
-  int           FindTokenR(const char* nm, TypeDef*& ptr) const;
+  int           FindTokenR(const String& nm, TypeDef*& ptr) const;
   // recursive search for token among children
   void          AddUserDataSchema(UserDataItemBase* item); // adds the item as schema
 #endif

@@ -40,16 +40,16 @@ public:
 
   void operator=(const MemberSpace& cp) { Borrow(cp); }
 
-  MemberDef*    FindCheck(const char* nm, void* base, void*& ptr) const;
+  MemberDef*    FindCheck(const String& nm, void* base, void*& ptr) const;
   // breadth-first find pass for the recursive procedures
 
-  int           FindNameOrType(const char* nm) const;
+  int           FindNameOrType(const String& nm) const;
   // checks name and type name in 2 passes
-  int           FindTypeName(const char* nm) const;
+  int           FindTypeName(const String& nm) const;
   // find by name of type
-  MemberDef*    FindNameR(const char* nm) const;
+  MemberDef*    FindNameR(const String& nm) const;
   // recursive find of name (or type name)
-  MemberDef*    FindNameAddr(const char* nm, void* base, void*& ptr) const;
+  MemberDef*    FindNameAddr(const String& nm, void* base, void*& ptr) const;
   // find of name returning address of found member
 
   MemberDef*    FindType(TypeDef* it) const;

@@ -292,13 +292,13 @@ class E_API LeabraAvgLSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         init;           // #DEF_0.4 #MIN_0 #MAX_1 initial avg_l value at start of training
-  float         max;            // #DEF_1.5 #MIN_0 maximum avg_l value -- when unit activation is greater than act_thr, then we increase avg_l in a soft-bounded way toward this max value -- higher values up to 3.0 can be used when "hog" unit problem is particularly severe -- some models without such a problem may benefit by going down to 1.5 but typically values around 2.0 with other defaults are reasonable
+  float         max;            // #DEF_1.5 #MIN_0 maximum avg_l value -- when unit activation is greater than act_thr, then we increase avg_l in a soft-bounded way toward this max value -- higher values up to 3.0 can be used when "hog" unit problem is particularly severe, but in general this does not fix the problem unfortunately -- just treating the symptoms, not the underlying cause -- the 1.5 default generally provides a beneficial nudge and works well for most models
   float         min;            // #DEF_0.2 #MIN_0 miniumum avg_l value -- when unit activation is less than act_thr, then we decrease avg_l in a soft-bounded way toward this min value -- the default 0.2 value seems to work well for most models
   float         tau;            // #DEF_10 #MIN_1 time constant for updating avg_l -- rate of approaching soft exponential bound to max / min -- longer time constants can also work fine, but the default of 10 allows for quicker reaction to beneficial weight changes
   float         lrn_max;        // #DEF_0.05 #MIN_0 maximum avg_l_lrn value -- if avg_l is at its maximum value, then avg_l_lrn will be at this maximum value -- used to increase the amount of self-organizing learning, which will then bring down average activity of units -- the default of 0.05, in combination with the err_mod flag, works well for most models
   float         lrn_min;        // #DEF_0.005 #MIN_0 miniumum avg_l_lrn -- if avg_l is at its minimum value, then avg_l_lrn will be at this minimum value -- neurons that are not overly active may not need to increase the contrast of their weights as much -- the default of 0.005 works well for most models
   
-  float         dt;                // #READ_ONLY #EXPERT rate = 1 / tau
+  float         dt;             // #READ_ONLY #EXPERT rate = 1 / tau
   float         lrn_fact;       // #READ_ONLY #EXPERT (lrn_max - lrn_min) / (max - min)
 
   inline float  GetLrn(const float avg_l) {
@@ -340,6 +340,47 @@ private:
   void        Destroy()        { };
   void        Defaults_init();
 };
+
+
+eTypeDef_Of(AdaptLeakSpec);
+
+class E_API AdaptLeakSpec : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapting leak value -- a homeostatic adaptation using the bias weight values to keep units in their sensitive range of activation -- works along with the BCM function but operates at the whole-neuron level -- uses the avg_l value that reflects the long-term running average activation -- bias weight reflects *addition* to default g_bar.l value
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // perform leak adaptation?  if so, adapts bias weight as an increment to default g_bar.l leak value as function of computed avg_l values which reflect longer-term average activation of unit
+  float         tau;           // #CONDSHOW_ON_on #DEF_100 time constant for adapting the leak as a function of avg_l value
+  float         hi_thr;        // #CONDSHOW_ON_on #DEF_1.2 high-side threshold on avg_l value -- avg_l must exceed this value before increasing bias weight offset to leak value
+  float         lo_thr;        // #CONDSHOW_ON_on #DEF_0.4 low-side threshold on avg_l value -- avg_l must be below this value before decreasing bias weight offset to leak value
+ float          min_leak_off;   // #CONDSHOW_ON_on #DEF_-0.05 minimum leak offset (i.e., bias weight) value -- don't want too decrease leak too much below default parameter in general
+
+  float         dt;            // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate =  1 / tau
+  float         mid_thr;       // #CONDSHOW_ON_on #READ_ONLY #EXPERT middle point between hi and low threshold
+
+  inline bool   AdaptLeak(float& bwt, float& dwt, const float avg_l) {
+    if(avg_l >= hi_thr || avg_l <= lo_thr) {
+      dwt = dt * (avg_l - mid_thr);
+      bwt += dwt;
+      if(bwt < min_leak_off)
+        bwt = min_leak_off;
+      return true;
+    }
+    return false;
+  }
+  // adadpt leak offset as bias weight values, given current avg_l value
+  
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(AdaptLeakSpec);
+protected:
+  SPEC_DEFAULTS;
+  void        UpdateAfterEdit_impl() override;
+private:
+  void        Initialize();
+  void        Destroy()        { };
+  void        Defaults_init();
+};
+
 
 eTypeDef_Of(LeabraChannels);
 
@@ -425,31 +466,6 @@ private:
   void        Destroy()        { };
   void        Defaults_init();
 };
-
-eTypeDef_Of(AdaptLeakSpec);
-
-class E_API AdaptLeakSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapting leak value -- a homeostatic adaptation using the bias weight values to keep units in their sensitive range of activation -- works along with the BCM function but operates at the whole-neuron level -- uses the avg_l value that reflects the long-term running average activation
-INHERITED(SpecMemberBase)
-public:
-  bool          on;             // perform leak adaptation?
-  float         tau;            // #CONDSHOW_ON_on #DEF_100 time constant for adapting the leak as a function of avg_l value
-  float         tol_pct;        // #CONDSHOW_ON_on #DEF_0.4 #MAX_0.5 #MIN_0 tolerance around the middle range of avg_l values -- no adaptation occurs when avg_l is in this middle range -- maximum value is < .5 as .5 covers the whole range
-
-  float         dt;         // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate =  1 / tau
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(AdaptLeakSpec);
-protected:
-  SPEC_DEFAULTS;
-  void        UpdateAfterEdit_impl() override;
-private:
-  void        Initialize();
-  void        Destroy()        { };
-  void        Defaults_init();
-};
-
 
 eTypeDef_Of(SynDelaySpec);
 
@@ -646,10 +662,10 @@ public:
   LeabraActAvgSpec act_avg;         // #CAT_Activation time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
   LeabraAvgLSpec   avg_l;           // #CAT_Activation parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
   LeabraAvgL2Spec  avg_l_2;         // #CAT_Activation additional parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
+  AdaptLeakSpec     adapt_leak;      // #CAT_Activation adapting leak value -- a homeostatic adaptation using the bias weight values to keep units in their sensitive range of activation -- works along with the BCM function but operates at the whole-neuron level -- based on the avg_l value as computed in specs above -- bias weight reflects *addition* to default g_bar.l value
   LeabraChannels   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   LeabraChannels   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
   ActAdaptSpec     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
-  ActAdaptSpec     adapt_leak;      // #CAT_Activation adapting leak value -- a homeostatic adaptation using the bias weight values to keep units in their sensitive range of activation -- works along with the BCM function but operates at the whole-neuron level
   ShortPlastSpec   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   RLrateSpec       r_lrate;         // #CAT_Learning receiving-unit based learning rate specs -- sets effective learning rate multiplier based on activation profile of receiving unit, to promote greater translation invariance

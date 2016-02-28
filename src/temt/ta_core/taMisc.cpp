@@ -610,8 +610,8 @@ int taMisc::CheckClearErrCnt() {
   return rval;
 }
 
-void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
-  const char* e, const char* f, const char* g, const char* h, const char* i)
+void taMisc::Warning(const String& a, const String& b, const String& c, const String& d,
+  const String& e, const String& f, const String& g, const String& h, const String& i)
 {
 #if defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0 && !taMisc::dmem_output_all) {
@@ -634,8 +634,8 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
   taMisc::ConsoleOutput(wmsg, true, false);
 }
 
-void taMisc::Info(const char* a, const char* b, const char* c, const char* d,
-  const char* e, const char* f, const char* g, const char* h, const char* i)
+void taMisc::Info(const String& a, const String& b, const String& c, const String& d,
+  const String& e, const String& f, const String& g, const String& h, const String& i)
 {
 #if defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0 && !taMisc::dmem_output_all) {
@@ -647,19 +647,20 @@ void taMisc::Info(const char* a, const char* b, const char* c, const char* d,
   taMisc::ConsoleOutput(msg, false, false); // no pager
 }
 
-String taMisc::SuperCat(const char* a, const char* b, const char* c,
-                      const char* d, const char* e, const char* f,
-                      const char* g, const char* h, const char* i)
+String taMisc::SuperCat(const String& a, const String& b, const String& c,
+                      const String& d, const String& e, const String& f,
+                      const String& g, const String& h, const String& i)
 {
   STRING_BUF(s, 250);
-  s.cat(a); if(b) s.cat(" ").cat(b);  if(c) s.cat(" ").cat(c);
-  if(d) s.cat(" ").cat(d); if(e) s.cat(" ").cat(e); if(f) s.cat(" ").cat(f);
-  if(g) s.cat(" ").cat(g); if(h) s.cat(" ").cat(h); if(i) s.cat(" ").cat(i);
+  s.cat(a); if(b.nonempty()) s.cat(" ").cat(b); if(c.nonempty()) s.cat(" ").cat(c);
+  if(d.nonempty()) s.cat(" ").cat(d); if(e.nonempty()) s.cat(" ").cat(e);
+  if(f.nonempty()) s.cat(" ").cat(f); if(g.nonempty()) s.cat(" ").cat(g);
+  if(h.nonempty()) s.cat(" ").cat(h); if(i.nonempty()) s.cat(" ").cat(i);
   return s;
 }
 
-void taMisc::CheckError(const char* a, const char* b, const char* c, const char* d,
-  const char* e, const char* f, const char* g, const char* h, const char* i)
+void taMisc::CheckError(const String& a, const String& b, const String& c, const String& d,
+  const String& e, const String& f, const String& g, const String& h, const String& i)
 {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   //  if(taMisc::dmem_proc > 0) return;
@@ -686,9 +687,9 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
 }
 
 #ifndef NO_TA_BASE
-bool taMisc::TestError_impl(const taBase* obj, bool test, const char* fun_name,
-                       const char* a, const char* b, const char* c, const char* d,
-                       const char* e, const char* f, const char* g, const char* h) {
+bool taMisc::TestError_impl(const taBase* obj, bool test, const String& fun_name,
+                       const String& a, const String& b, const String& c, const String& d,
+                       const String& e, const String& f, const String& g, const String& h) {
   static taBase* prv_obj = NULL;  // prv means previous
   static String prv_fun;
   static String prv_a;
@@ -736,9 +737,9 @@ bool taMisc::TestError_impl(const taBase* obj, bool test, const char* fun_name,
   return true;
 }
 
-bool taMisc::TestWarning_impl(const taBase* obj, bool test, const char* fun_name,
-                         const char* a, const char* b, const char* c, const char* d,
-                         const char* e, const char* f, const char* g, const char* h) {
+bool taMisc::TestWarning_impl(const taBase* obj, bool test, const String& fun_name,
+                         const String& a, const String& b, const String& c, const String& d,
+                         const String& e, const String& f, const String& g, const String& h) {
   if(!test) return false;
   if(obj) {
     String objinfo = obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name
@@ -753,8 +754,8 @@ bool taMisc::TestWarning_impl(const taBase* obj, bool test, const char* fun_name
 }
 #endif
 
-void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char* d,
-                         const char* e, const char* f, const char* g, const char* h, const char* i)
+void taMisc::Error_nogui(const String& a, const String& b, const String& c, const String& d,
+                         const String& e, const String& f, const String& g, const String& h, const String& i)
 {
   ++err_cnt;
   //  if (beep_on_error) cerr << '\a'; // BEL character
@@ -786,14 +787,14 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
 
 #ifdef TA_NO_GUI
 
-void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
-  const char* e, const char* f, const char* g, const char* h, const char* i)
+void taMisc::Error(const String& a, const String& b, const String& c, const String& d,
+  const String& e, const String& f, const String& g, const String& h, const String& i)
 {
   Error_nogui(a,b,c,d,e,f,g,h,i);
 }
 
-int taMisc::Choice(const char* text, const char* a, const char* b, const char* c,
-  const char* d, const char* e, const char* f, const char* g, const char* h, const char* i)
+int taMisc::Choice(const String& text, const String& a, const String& b, const String& c,
+  const String& d, const String& e, const String& f, const String& g, const String& h, const String& i)
 {
   int m=-1;
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
@@ -803,15 +804,15 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
     int   chn = 0;
     String chstr = text;
     chstr += "\n";
-    if (a) { chstr += String("0: ") + a + "\n"; chn++; }
-    if (b) { chstr += String("1: ") + b + "\n"; chn++; }
-    if (c) { chstr += String("2: ") + c + "\n"; chn++; }
-    if (d) { chstr += String("3: ") + d + "\n"; chn++; }
-    if (e) { chstr += String("4: ") + e + "\n"; chn++; }
-    if (f) { chstr += String("5: ") + f + "\n"; chn++; }
-    if (g) { chstr += String("6: ") + g + "\n"; chn++; }
-    if (h) { chstr += String("7: ") + h + "\n"; chn++; }
-    if (i) { chstr += String("8: ") + i + "\n"; chn++; }
+    if(a.nonempty()) { chstr += String("0: ") + a + "\n"; chn++; }
+    if(b.nonempty()) { chstr += String("1: ") + b + "\n"; chn++; }
+    if(c.nonempty()) { chstr += String("2: ") + c + "\n"; chn++; }
+    if(d.nonempty()) { chstr += String("3: ") + d + "\n"; chn++; }
+    if(e.nonempty()) { chstr += String("4: ") + e + "\n"; chn++; }
+    if(f.nonempty()) { chstr += String("5: ") + f + "\n"; chn++; }
+    if(g.nonempty()) { chstr += String("6: ") + g + "\n"; chn++; }
+    if(h.nonempty()) { chstr += String("7: ") + h + "\n"; chn++; }
+    if(i.nonempty()) { chstr += String("8: ") + i + "\n"; chn++; }
 
     int   choiceval = -1;
     while((choiceval < 0) ||  (choiceval > chn) ) {
@@ -825,9 +826,9 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
   return m;
 }
 
-void taMisc::Confirm(const char* a, const char* b, const char* c,
-  const char* d, const char* e, const char* f, const char* g,
-  const char* h, const char* i)
+void taMisc::Confirm(const String& a, const String& b, const String& c,
+  const String& d, const String& e, const String& f, const String& g,
+  const String& h, const String& i)
 {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   if (taMisc::dmem_proc > 0) return;
@@ -843,8 +844,8 @@ void taMisc::Confirm(const char* a, const char* b, const char* c,
 
 #ifndef NO_TA_BASE
 
-void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
-  const char* e, const char* f, const char* g, const char* h, const char* i)
+void taMisc::Error(const String& a, const String& b, const String& c, const String& d,
+  const String& e, const String& f, const String& g, const String& h, const String& i)
 {
   ++err_cnt;
   taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
@@ -891,8 +892,8 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
 #endif
 }
 
-int taMisc::Choice(const char* text, const char* a, const char* b, const char* c,
-  const char* d, const char* e, const char* f, const char* g, const char* h, const char* i)
+int taMisc::Choice(const String& text, const String& a, const String& b, const String& c,
+  const String& d, const String& e, const String& f, const String& g, const String& h, const String& i)
 {
   int m=-1;
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
@@ -903,15 +904,15 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
     String delimiter = iDialogChoice::delimiter;
     int   chn = 0;
     String chstr = delimiter;
-    if (a) { chstr += String(a) + delimiter; chn++; }
-    if (b) { chstr += String(b) + delimiter; chn++; }
-    if (c) { chstr += String(c) + delimiter; chn++; }
-    if (d) { chstr += String(d) + delimiter; chn++; }
-    if (e) { chstr += String(e) + delimiter; chn++; }
-    if (f) { chstr += String(f) + delimiter; chn++; }
-    if (g) { chstr += String(g) + delimiter; chn++; }
-    if (h) { chstr += String(h) + delimiter; chn++; }
-    if (i) { chstr += String(i) + delimiter; chn++; }
+    if(a.nonempty()) { chstr += String(a) + delimiter; chn++; }
+    if(b.nonempty()) { chstr += String(b) + delimiter; chn++; }
+    if(c.nonempty()) { chstr += String(c) + delimiter; chn++; }
+    if(d.nonempty()) { chstr += String(d) + delimiter; chn++; }
+    if(e.nonempty()) { chstr += String(e) + delimiter; chn++; }
+    if(f.nonempty()) { chstr += String(f) + delimiter; chn++; }
+    if(g.nonempty()) { chstr += String(g) + delimiter; chn++; }
+    if(h.nonempty()) { chstr += String(h) + delimiter; chn++; }
+    if(i.nonempty()) { chstr += String(i) + delimiter; chn++; }
     m = iDialogChoice::ChoiceDialog(NULL, text, chstr);
   } else
 #endif
@@ -919,15 +920,15 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
     int   chn = 0;
     String chstr = text;
     chstr += "\n";
-    if (a) { chstr += String("0: ") + a + "\n"; chn++; }
-    if (b) { chstr += String("1: ") + b + "\n"; chn++; }
-    if (c) { chstr += String("2: ") + c + "\n"; chn++; }
-    if (d) { chstr += String("3: ") + d + "\n"; chn++; }
-    if (e) { chstr += String("4: ") + e + "\n"; chn++; }
-    if (f) { chstr += String("5: ") + f + "\n"; chn++; }
-    if (g) { chstr += String("6: ") + g + "\n"; chn++; }
-    if (h) { chstr += String("7: ") + h + "\n"; chn++; }
-    if (i) { chstr += String("8: ") + i + "\n"; chn++; }
+    if(a.nonempty()) { chstr += String("0: ") + a + "\n"; chn++; }
+    if(b.nonempty()) { chstr += String("1: ") + b + "\n"; chn++; }
+    if(c.nonempty()) { chstr += String("2: ") + c + "\n"; chn++; }
+    if(d.nonempty()) { chstr += String("3: ") + d + "\n"; chn++; }
+    if(e.nonempty()) { chstr += String("4: ") + e + "\n"; chn++; }
+    if(f.nonempty()) { chstr += String("5: ") + f + "\n"; chn++; }
+    if(g.nonempty()) { chstr += String("6: ") + g + "\n"; chn++; }
+    if(h.nonempty()) { chstr += String("7: ") + h + "\n"; chn++; }
+    if(i.nonempty()) { chstr += String("8: ") + i + "\n"; chn++; }
 
     int   choiceval = -1;
     while((choiceval < 0) ||  (choiceval > chn) ) {
@@ -941,9 +942,9 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
   return m;
 }
 
-void taMisc::Confirm(const char* a, const char* b, const char* c,
-  const char* d, const char* e, const char* f, const char* g,
-  const char* h, const char* i)
+void taMisc::Confirm(const String& a, const String& b, const String& c,
+  const String& d, const String& e, const String& f, const String& g,
+  const String& h, const String& i)
 {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   if (taMisc::dmem_proc > 0) return;
@@ -961,8 +962,8 @@ void taMisc::Confirm(const char* a, const char* b, const char* c,
 #endif // NO_TA_BASE
 #endif // else TA_NO_GUI
 
-void taMisc::DebugInfo(const char* a, const char* b, const char* c, const char* d,
-       const char* e, const char* f, const char* g, const char* h, const char* i)
+void taMisc::DebugInfo(const String& a, const String& b, const String& c, const String& d,
+       const String& e, const String& f, const String& g, const String& h, const String& i)
 {
   String ad = String("*** DEBUG: ") + a;
 #ifdef DEBUG
@@ -973,8 +974,8 @@ void taMisc::DebugInfo(const char* a, const char* b, const char* c, const char* 
 #endif
 }
 
-void taMisc::LogInfo(const char* a, const char* b, const char* c, const char* d,
-       const char* e, const char* f, const char* g, const char* h, const char* i)
+void taMisc::LogInfo(const String& a, const String& b, const String& c, const String& d,
+       const String& e, const String& f, const String& g, const String& h, const String& i)
 {
   String ad = String("*** LOG: ") + a;
   String msg = SuperCat(ad, b, c, d, e, f, g, h, i);
@@ -2129,7 +2130,7 @@ bool taMisc::ReportUnusedArgs(bool err) {
 /////////////////////////////////////////////////
 //      Commonly used utility functions on strings/arrays/values
 
-void taMisc::CharToStrArray(String_PArray& sa, const char* ch) {
+void taMisc::CharToStrArray(String_PArray& sa, const String& ch) {
   String tmp = ch;
   while (!tmp.empty()) {
     sa.AddUnique(tmp.before(" "));
@@ -2970,7 +2971,7 @@ String taMisc::FileDiff(const String& fname_a, const String& fname_b,
 
 
 // try to find file fnm in one of the include paths -- returns complete path to file
-String taMisc::FindFileOnPath(String_PArray& paths, const char* fname) {
+String taMisc::FindFileOnPath(String_PArray& paths, const String& fname) {
   int acc = access(fname, F_OK);
   if (acc == 0) {
     return fname;
@@ -2986,7 +2987,7 @@ String taMisc::FindFileOnPath(String_PArray& paths, const char* fname) {
   return "";
 }
 
-String taMisc::FindFileOnLoadPath(const char* fname) {
+String taMisc::FindFileOnLoadPath(const String& fname) {
   return FindFileOnPath(load_paths, fname);
 }
 
@@ -3192,7 +3193,7 @@ void taMisc::StopRecording(){
     ScriptRecordingGui_Hook(false);
 }
 
-bool taMisc::RecordScript(const char* cmd) {
+bool taMisc::RecordScript(const String& cmd) {
   if(!record_on) return false;
   record_script << cmd;
   if(cmd[strlen(cmd)-1] != '\n') {

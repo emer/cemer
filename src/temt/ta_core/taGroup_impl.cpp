@@ -703,7 +703,7 @@ bool taGroup_impl::RemoveLeafIdx(int idx) {
   return false;
 }
 
-bool taGroup_impl::RemoveLeafName(const char* it) {
+bool taGroup_impl::RemoveLeafName(const String& it) {
   int i = FindLeafNameIdx(it);
   return (i < 0) ? false : RemoveLeafIdx(i);
 }

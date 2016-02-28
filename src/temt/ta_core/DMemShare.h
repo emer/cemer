@@ -85,9 +85,9 @@ public:
   static void 	InitCmdStream();	// #IGNORE initialize command stream
   static void 	CloseCmdStream(); 	// #IGNORE close command stream
 
-  static void	DebugCmd(const char* fun, const char* mpi_call);
+  static void	DebugCmd(const String& fun, const String& mpi_call);
   // #IGNORE provide debugging trace at start of mpi command call
-  static bool	ProcErr(int ercd, const char* fun, const char* mpi_call);
+  static bool	ProcErr(int ercd, const String& fun, const String& mpi_call);
   // #IGNORE process any errors from command, and provide done message if debugging
 
   virtual void 	SetLocal_Sequential();	// #IGNORE set local processor on shared objects in sequence: 0 1 2..n 0 1 2..

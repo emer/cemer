@@ -557,9 +557,9 @@ public:
   virtual int           BinaryLoad_strm(std::istream& strm);
   // #CAT_File load binary data from a stream -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
 #endif
-  virtual void          BinarySave(const String& fname="");
+  virtual void          BinarySave(const String& fname=NULLStr);
   // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_mat #FILE_DIALOG_SAVE saves data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
-  virtual void          BinaryLoad(const String& fname="");
+  virtual void          BinaryLoad(const String& fname=NULLStr);
   // #CAT_File #MENU #MENU_ON_Object #EXT_mat #FILE_DIALOG_LOAD loads data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
 
 

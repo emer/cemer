@@ -25,8 +25,6 @@
 
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(LeabraChannels);
-TA_BASEFUNS_CTORS_DEFN(LeabraUnitSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActFunSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActMiscSpec);
 TA_BASEFUNS_CTORS_DEFN(SpikeFunSpec);
@@ -35,19 +33,22 @@ TA_BASEFUNS_CTORS_DEFN(SpikeMiscSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetinSpec);
 #endif // SUGP_NETIN
 TA_BASEFUNS_CTORS_DEFN(OptThreshSpec);
-TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
-TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
-TA_BASEFUNS_CTORS_DEFN(AdaptLeakSpec);
-TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
-TA_BASEFUNS_CTORS_DEFN(RLrateSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraInitSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgLSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgL2Spec);
+TA_BASEFUNS_CTORS_DEFN(AdaptLeakSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraChannels);
+TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
+TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
+TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
+TA_BASEFUNS_CTORS_DEFN(RLrateSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
 TA_BASEFUNS_CTORS_DEFN(NoiseAdaptSpec);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraUnitSpec);
 
 SMARTREF_OF_CPP(LeabraUnitSpec);
 
@@ -270,6 +271,27 @@ void LeabraAvgL2Spec::Defaults_init() {
   lay_act_thr = 0.01f;
 }
 
+void AdaptLeakSpec::Initialize() {
+  on = false;
+  Defaults_init();
+}
+
+void AdaptLeakSpec::Defaults_init() {
+  tau = 100.0f;
+  hi_thr = 1.2f;
+  lo_thr = 0.4f;
+  min_leak_off = -0.05f;
+  
+  dt = 1.0f / tau;
+  mid_thr = 0.5f * (hi_thr + lo_thr);
+}
+
+void AdaptLeakSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  dt = 1.0f / tau;
+  mid_thr = 0.5f * (hi_thr + lo_thr);
+}
+
 void LeabraChannels::Initialize() {
   e = l = i = 0.0f;
 }
@@ -331,23 +353,6 @@ void ShortPlastSpec::UpdateAfterEdit_impl() {
   fac_dt = 1.0f / fac_tau;
   kre_dt = 1.0f / kre_tau;
   oneo_p0_norm = 1.0f / p0_norm;
-}
-
-void AdaptLeakSpec::Initialize() {
-  on = false;
-  Defaults_init();
-}
-
-void AdaptLeakSpec::Defaults_init() {
-  tau = 100.0f;
-  tol_pct = 0.4f;
-
-  dt = 1.0f / tau;
-}
-
-void AdaptLeakSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  dt = 1.0f / tau;
 }
 
 void SynDelaySpec::Initialize() {
@@ -915,6 +920,10 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int
   }
   if(lay->layer_type != Layer::HIDDEN || deep.IsTRC()) {
     u->avg_l_lrn = 0.0f;        // no self organizing in non-hidden layers!
+  }
+
+  if(adapt_leak.on) {
+    adapt_leak.AdaptLeak(u->bias_wt, u->bias_dwt, u->avg_l);
   }
 }
 
@@ -1829,6 +1838,8 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
     }
 
     float gc_l = g_bar.l;
+    if(adapt_leak.on)
+      gc_l += u->bias_wt;
     float gc_i = u->gc_i * g_bar.i;
 
     if(updt_spk_vm) {
@@ -1843,7 +1854,7 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
         + (gc_i * (E_i - v_m_eff)) - u->adapt;
       // add spike current if relevant
       if(spike_misc.ex) {
-        I_net += g_bar.l * spike_misc.exp_slope *
+        I_net += gc_l * spike_misc.exp_slope *
           taMath_float::exp_fast((v_m_eff - act.thr) / spike_misc.exp_slope);
       }
       u->v_m += dt.integ * dt.vm_dt * I_net;

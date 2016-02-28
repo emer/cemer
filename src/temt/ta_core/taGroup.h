@@ -268,7 +268,7 @@ public:
   virtual T*    NewEl(int n_els=1, TypeDef* typ=NULL) { return (T*)NewEl_(n_els, typ);}
   // #CAT_Modify Create and add n_els new element(s) of given type to the group (NULL = default type, el_typ)
   virtual taGroup<T>* NewGp(int n_gps=1, TypeDef* typ=NULL,
-    const String& name="") { return (taGroup<T>*)NewGp_(n_gps, typ, name);}
+    const String& name=NULLStr) { return (taGroup<T>*)NewGp_(n_gps, typ, name);}
   // #CAT_Modify Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
 
   T*            FindName(const String& item_nm)  const

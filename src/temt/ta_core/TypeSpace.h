@@ -54,8 +54,8 @@ public:
   void          Initialize();
 
   TypeSpace()                           { Initialize(); }
-  TypeSpace(const char* nm)             { Initialize(); name = nm; }
-  TypeSpace(const char* nm, int hash_sz) { Initialize(); name = nm; BuildHashTable(hash_sz); }
+  TypeSpace(const String& nm)             { Initialize(); name = nm; }
+  TypeSpace(const String& nm, int hash_sz) { Initialize(); name = nm; BuildHashTable(hash_sz); }
   TypeSpace(const TypeSpace& cp)        { Initialize(); Borrow(cp); }
   ~TypeSpace();
 

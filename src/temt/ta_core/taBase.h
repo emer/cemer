@@ -895,7 +895,7 @@ public:
   taFiler*              GetLoadFiler(const String& fname, String exts = _nilString,
     int compress=-1, String filetypes = _nilString, bool getset_file_name = true);
   // #IGNORE get filer with istrm opened for loading for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
-  virtual int           Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
+  virtual int           Load(const String& fname=NULLStr, taBase** loaded_obj_ptr = NULL);
   // #MENU #MENU_ON_Object #ARGC_0 #CAT_File Load object data from given file name (if empty, prompt user for a name) -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
   virtual int           Load_cvt(taFiler*& flr);
   // #IGNORE convert stream from old to new format (if needed)
@@ -903,7 +903,7 @@ public:
   taFiler*              GetSaveFiler(const String& fname, String ext = _nilString,
     int compress=-1, String filetypes=_nilString, bool getset_file_name = true, bool make_copy = false);
   // #IGNORE get filer with ostrm opened for saving for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
-  taFiler*              GetAppendFiler(const String& fname, const String& ext="",
+  taFiler*              GetAppendFiler(const String& fname, const String& ext=NULLStr,
     int compress=-1, String filetypes=_nilString, bool getset_file_name = true);
   // #IGNORE get filer with ostrm opened for appending for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   virtual int           Save();
@@ -1059,20 +1059,20 @@ protected:      // Impl
   //    Checking the configuration of objects prior to using them
 public:
 
-  virtual bool   TestError_impl(bool test, const char* fun_name,
-                   const char* a, const char* b=0, const char* c=0,
-                   const char* d=0, const char* e=0, const char* f=0,
-                   const char* g=0, const char* h=0) const;
+  virtual bool   TestError_impl(bool test, const String& fun_name,
+                   const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                   const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                   const String& g=NULLStr, const String& h=NULLStr) const;
   // #IGNORE if test, then report error, including object name, type, and path information; returns test -- use TestError macro to optimize, e.g. if(TestError((condition), "fun", "msg")) return    false;
-  virtual bool   TestWarning_impl(bool test, const char* fun_name,
-                     const char* a, const char* b=0, const char* c=0,
-                     const char* d=0, const char* e=0, const char* f=0,
-                     const char* g=0, const char* h=0) const;
+  virtual bool   TestWarning_impl(bool test, const String& fun_name,
+                     const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                     const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                     const String& g=NULLStr, const String& h=NULLStr) const;
   // #IGNORE if test, then report warning, including object name, type, and path information; returns test -- use TestWarning macro to optimize, e.g. if(TestWarning((condition), "fun", "msg")) return false;
-  virtual void  DebugInfo(const char* fun_name,
-                          const char* a, const char* b=0, const char* c=0,
-                          const char* d=0, const char* e=0, const char* f=0,
-                          const char* g=0, const char* h=0) const;
+  virtual void  DebugInfo(const String& fun_name,
+                          const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                          const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                          const String& g=NULLStr, const String& h=NULLStr) const;
   // #CAT_ObjectMgmt reports object identity in addition to the error message -- use this for any debug messages that get logged in reference to this object
 
 #ifndef __MAKETA__
@@ -1087,15 +1087,15 @@ public:
   // #MENU #MENU_ON_Object #CAT_ObjectMgmt #ARGC_0 #LABEL_CheckConfig check the configuration of this object and all its children -- failed items highlighted in red, items with failed children in yellow
   void                  ClearCheckConfig(); // #IGNORE this can be called when a CheckConfig_impl routine blindly assert ok, ex. for an object that has an "off" or "disable" state; this routine updates the gui if the state has now changed
 
-  virtual void  CheckError_msg(const char* a, const char* b=0, const char* c=0,
-                               const char* d=0, const char* e=0, const char* f=0,
-                               const char* g=0, const char* h=0) const;
+  virtual void  CheckError_msg(const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                               const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                               const String& g=NULLStr, const String& h=NULLStr) const;
   // #IGNORE generate error message
 
   inline bool   CheckError(bool test, bool quiet, bool& rval,
-                           const char* a, const char* b=0, const char* c=0,
-                           const char* d=0, const char* e=0, const char* f=0,
-                           const char* g=0, const char* h=0) const {
+                           const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                           const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                           const String& g=NULLStr, const String& h=NULLStr) const {
     if(!test) return false;
     rval = false;
     if(!quiet) CheckError_msg(a,b,c,d,e,f,g,h);
@@ -1199,7 +1199,7 @@ public:
   virtual bool          BrowserEditSet(const String& new_val_str, int move_after = 0)
   { return false; }
   // #IGNORE browser edit calls this with new value string to update value of item when editing is applied -- return true if edit is successful -- move_after is direction to move after editing  (+1 - down 1, -1 up 1) -- only needed if the edit causes something to interfere with the normal flow of the editor (e.g., a new object is created), where the object then needs to recapitulate that movement
-  virtual bool          GuiFindFromMe(const String& find_str="");
+  virtual bool          GuiFindFromMe(const String& find_str=NULLStr);
   // #CAT_Display activate the gui find dialog starting from this object, with given find string
   // #CAT_Display reshows any open edit dialogs for this object
   virtual const iColor GetEditColor(bool& ok); // #IGNORE background color for edit dialog
@@ -1302,10 +1302,10 @@ public:
   bool          InheritsFrom(TypeDef* it) const
   { return GetTypeDef()->InheritsFrom(it); }
   // #CAT_ObjectMgmt does this inherit from given type
-  bool          InheritsFromName(const char* nm) const
+  bool          InheritsFromName(const String& nm) const
   { return GetTypeDef()->InheritsFromName(nm); }
   // #CAT_ObjectMgmt does this inherit from given type name?
-  bool          DerivesFromName(const char* nm) const
+  bool          DerivesFromName(const String& nm) const
   { return GetTypeDef()->DerivesFromName(nm); }
   // #CAT_ObjectMgmt does this derive from given type name?
 
@@ -1476,7 +1476,7 @@ public:
   void                  PrintMyPath();
   // #CAT_ObjectMgmt #MENU #MENU_CONTEXT print out the path to this object to the css console -- can then be copied for use in a program or other such things
 
-  bool          HasOption(const char* op) const
+  bool          HasOption(const String& op) const
   { return GetTypeDef()->HasOption(op); }
   // #IGNORE hard-coded options for this type
   bool          CheckList(const String_PArray& lst) const

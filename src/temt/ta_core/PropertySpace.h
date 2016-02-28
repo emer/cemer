@@ -36,23 +36,23 @@ public:
 
   void operator=(const PropertySpace& cp)       { Borrow(cp); }
 
-  int                   FindNameOrType(const char* nm) const;
+  int                   FindNameOrType(const String& nm) const;
   // checks name and type name in 2 passes
-  int                   FindTypeName(const char* nm) const;
+  int                   FindTypeName(const String& nm) const;
   // find by name of type
-  MemberDefBase*                FindNameR(const char* nm) const;
+  MemberDefBase*                FindNameR(const String& nm) const;
   // recursive find of name (or type name)
 #ifdef NO_TA_BASE
-  PropertyDef*          AssertProperty(const char* nm, bool& is_new,
+  PropertyDef*          AssertProperty(const String& nm, bool& is_new,
     bool get_nset, MemberDef* mbr)
     {return AssertProperty_impl(nm, is_new, get_nset, mbr, NULL);}
   // assert property, supplying accessor
-  PropertyDef*          AssertProperty(const char* nm, bool& is_new,
+  PropertyDef*          AssertProperty(const String& nm, bool& is_new,
     bool get_nset, MethodDef* mth)
     {return AssertProperty_impl(nm, is_new, get_nset, NULL, mth);}
   // assert property, supplying accessor
 protected:
-  PropertyDef*          AssertProperty_impl(const char* nm, bool& is_new,
+  PropertyDef*          AssertProperty_impl(const String& nm, bool& is_new,
     bool get_nset, MemberDef* mbr, MethodDef* mth);
 #endif
 };

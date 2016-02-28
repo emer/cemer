@@ -213,9 +213,9 @@ protected:
   // uses type information to do a set of automatic updates of pointers (smart refs) after copy
   void         UpdatePointersAfterCopy_impl(const taBase& cp) override;
   // copies progvar references when copying expressions using vars when copying a program element and not a parent e.g. an entire program
-  void         CheckError_msg(const char* a, const char* b=0, const char* c=0,
-                                       const char* d=0, const char* e=0, const char* f=0,
-                                       const char* g=0, const char* h=0) const override;
+  void         CheckError_msg(const String& a, const String& b=NULLStr, const String& c=NULLStr,
+                           const String& d=NULLStr, const String& e=NULLStr, const String& f=NULLStr,
+                           const String& g=NULLStr, const String& h=NULLStr) const override;
   virtual bool          CheckEqualsError(String& condition, bool quiet, bool& rval);
   // check for common mistake of using = instead of == for logical equals
   virtual bool          CheckProgVarRef(ProgVarRef& pvr, bool quiet, bool& rval);

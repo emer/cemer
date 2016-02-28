@@ -107,8 +107,8 @@ BaseSpec* BaseSpec_Group::FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, t
 }
 
 
-BaseSpec* BaseSpec_Group::FindSpecName(const char* nm) {
-  BaseSpec* rval = (BaseSpec*)FindLeafName((char*)nm);
+BaseSpec* BaseSpec_Group::FindSpecName(const String& nm) {
+  BaseSpec* rval = (BaseSpec*)FindLeafName(nm);
   if(rval)
     return rval;
   FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
@@ -123,7 +123,7 @@ BaseSpec* BaseSpec_Group::FindParent() {
   return GET_MY_OWNER(BaseSpec);
 }
 
-BaseSpec* BaseSpec_Group::FindMakeSpec(const char* nm, TypeDef* tp, bool& nw_itm, const char* alt_nm) {
+BaseSpec* BaseSpec_Group::FindMakeSpec(const String& nm, TypeDef* tp, bool& nw_itm, const String& alt_nm) {
   nw_itm = false;
   BaseSpec* sp = NULL;
   if(nm) {
@@ -152,7 +152,7 @@ BaseSpec* BaseSpec_Group::FindMakeSpec(const char* nm, TypeDef* tp, bool& nw_itm
   return sp;
 }
 
-bool BaseSpec_Group::RemoveSpec(const char* nm, TypeDef* tp) {
+bool BaseSpec_Group::RemoveSpec(const String& nm, TypeDef* tp) {
   if(nm)
     return RemoveName(nm);
 

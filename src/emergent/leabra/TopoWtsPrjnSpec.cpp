@@ -61,10 +61,10 @@ void TopoWtsPrjnSpec::Defaults_init() {
   add_rnd_var = true;
 }
 
-bool TopoWtsPrjnSpec::TestWarning_impl(bool test, const char* fun_name,
-				  const char* a, const char* b, const char* c,
-				  const char* d, const char* e, const char* f,
-				  const char* g, const char* h) const {
+bool TopoWtsPrjnSpec::TestWarning_impl(bool test, const String& fun_name,
+				  const String& a, const String& b, const String& c,
+				  const String& d, const String& e, const String& f,
+				  const String& g, const String& h) const {
   if(!test) return false;
   const_cast<TopoWtsPrjnSpec*>(this)->already_warned++;
   if(already_warned > 10)

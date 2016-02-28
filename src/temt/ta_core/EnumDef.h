@@ -40,8 +40,8 @@ public:
   void          Copy(const EnumDef& cp);
 
   EnumDef();
-  EnumDef(const char* nm);
-  EnumDef(const char* nm, const char* dsc, int eno, const char* op, const char* lis);
+  EnumDef(const String& nm);
+  EnumDef(const String& nm, const String& dsc, int eno, const String& op, const String& lis);
   EnumDef(const EnumDef& cp);
   EnumDef*      Clone()         { return new EnumDef(*this); }
   EnumDef*      MakeToken()     { return new EnumDef(); }

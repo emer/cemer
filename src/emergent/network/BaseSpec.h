@@ -68,9 +68,9 @@ public:
   // #MENU #USE_RVAL #MENU_ON_Actions Find the parent spec of this one
 
   virtual void	SetUnique(int memb_no, bool on); // set inherit bit
-  virtual void	SetUnique(const char* memb_nm, bool on); // set inherit bit
+  virtual void	SetUnique(const String& memb_nm, bool on); // set inherit bit
   virtual bool	GetUnique(int memb_no);	     	// check inherit bit
-  virtual bool	GetUnique(const char* memb_nm);	// check inherit bit
+  virtual bool	GetUnique(const String& memb_nm);	// check inherit bit
 
   virtual void	UpdateMember(BaseSpec* from, int memb_no);
   // copy member from given parent
@@ -93,9 +93,9 @@ public:
   virtual void	SpecUnSet(taBase* obj);
   // #IGNORE called just after the spec was un-set from given object
 
-  virtual BaseSpec* FindMakeChild(const char* nm, TypeDef* td = NULL, bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
+  virtual BaseSpec* FindMakeChild(const String& nm, TypeDef* td = NULL, bool& nw_itm = nw_itm_def_arg, const String& alt_nm = NULLStr);
   // find a child spec of given name, and if not, make it (if nm is not found and alt_nm != NULL, it is searched for)
-  virtual bool 	    RemoveChild(const char* nm, TypeDef* td = NULL);
+  virtual bool 	    RemoveChild(const String& nm, TypeDef* td = NULL);
   // remove a child based on name or type
 
   bool            UAEProgramDefault() override { return true; }

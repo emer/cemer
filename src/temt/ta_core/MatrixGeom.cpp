@@ -321,7 +321,7 @@ int MatrixGeom::rowCount(bool pat_4d) const {
 
 }
 
-String MatrixGeom::ToString(const char* ldelim, const char* rdelim) const {
+String MatrixGeom::ToString(const String& ldelim, const String& rdelim) const {
   String rval(ldelim);
   rval += String(n_dims) + ":";
   int i;
@@ -343,7 +343,7 @@ String& MatrixGeom::Print(String& strm, int indent) const {
   return strm;
 }
 
-void MatrixGeom::FromString(const String& str_, const char* ldelim, const char* rdelim) {
+void MatrixGeom::FromString(const String& str_, const String& ldelim, const String& rdelim) {
   String str = str_.after(ldelim);
   String ds = str.before(':');
   str = str.after(':');

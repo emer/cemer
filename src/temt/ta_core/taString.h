@@ -51,10 +51,12 @@ class String_Array; //
 #include "ta_def.h"
 #ifdef __MAKETA__
 // # include <iostream.h>
+class QByteArray; //
 #else
   #include <iostream>
   #ifdef TA_USE_QT
     #include <QString>
+    #include <QByteArray>
     #include <QVariant>
   #endif
 #endif // __MAKETA__
@@ -104,6 +106,19 @@ extern TA_API taStrRep  _nilStrRep; // an empty taStrRep, for convenience and ef
 extern TA_API taStrRep* _nilStrRepPtr;
 // this points to _nilStrRep, but can't let compiler know, because it issues warning..
 #define ADDR_NIL_STR_REP _nilStrRepPtr
+
+// an empty string, use for return values or anyplace a full string is required
+// note: can't use global static, because ctor not guarenteed to run before use
+// (e.g., extern taString _nilString;)
+#define _nilString taString()
+
+// an empty string ONLY for default arg initializers!
+// NULLStr should work to activate the const char* constructor, while also being
+// useful for css parsing -- NULL does NOT work apparently -- defined as 0 and drives int
+#define NULLStr ""
+
+#define STRING_BUF(name, size)  taString name(0, size, '\0')
+
 
 // primitive ops on StrReps -- nearly all String fns go through these.
 
@@ -245,9 +260,13 @@ public:
   explicit taString(void* p); //converts to hex
 #ifdef TA_USE_QT
   taString(const QString& val);
+  taString(const QByteArray& val);
   taString&         operator = (const QString& y);
+  taString&         operator = (const QByteArray& y);
   const QString         toQString() const; // #IGNORE evil C++ necessitates this!!!
+  const QByteArray      toQByteArray() const; // #IGNORE evil C++ necessitates this!!!
   operator QString() const;  // #IGNORE
+  operator QByteArray() const;  // #IGNORE
   operator QVariant() const;  // #IGNORE
 #endif
 
@@ -568,12 +587,6 @@ private:
 #endif
 }; //
 
-//extern taString _nilString; // an empty string, for convenience
-//note: can't use global static, because ctor not guarenteed to run before use
-#define _nilString taString()
-
-#define STRING_BUF(name, size)  taString name(0, size, '\0')
-
 // this is provided for placed instances, where memory is already supplied
 // the owner of a placed versions MUST call s->~String() manually, to ensure proper destruction
 
@@ -597,8 +610,17 @@ inline taString::taString(const QString& y) {
   init(y.toLatin1(), y.length());
 }
 
+inline taString::taString(const QByteArray& y) {
+  init(y.data(), y.size());
+}
+
 inline taString::operator QString() const {
   QString result(chars());
+  return result;
+}
+
+inline taString::operator QByteArray() const {
+  QByteArray result(chars(), length());
   return result;
 }
 
@@ -613,6 +635,14 @@ inline taString& taString::operator = (const QString& y) {
 
 inline const QString taString::toQString() const {
   return QString(chars());
+}
+
+inline taString& taString::operator = (const QByteArray& y) {
+  return set(y.data(), y.size());
+}
+
+inline const QByteArray taString::toQByteArray() const {
+  return QByteArray(chars(), length());
 }
 
   // converter routines, for use when linked with Qt

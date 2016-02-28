@@ -97,7 +97,7 @@ TypeDef::TypeDef()
   Initialize();
 }
 
-TypeDef::TypeDef(const char* nm)
+TypeDef::TypeDef(const String& nm)
 :inherited()
 {
   Initialize();
@@ -105,12 +105,12 @@ TypeDef::TypeDef(const char* nm)
 }
 
 #ifdef NO_TA_BASE
-TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* op,
-		 const char* lis,
+TypeDef::TypeDef(const String& nm, const String& dsc, const String& inop, const String& op,
+		 const String& lis,
 		 int type_flags, uint siz, bool global_obj)
 #else
-TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* op,
-		 const char* lis, const char* src_file, int src_st, int src_ed,
+TypeDef::TypeDef(const String& nm, const String& dsc, const String& inop, const String& op,
+		 const String& lis, const String& src_file, int src_st, int src_ed,
 		 int type_flags, uint siz, void** inst, bool toks, bool global_obj)
 #endif
 :inherited()
@@ -137,8 +137,8 @@ TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* 
     taRefN::Ref(this);          // reference if static (non-new'ed) global object
 }
 
-TypeDef::TypeDef(const char* nm, int type_flags, bool global_obj, uint siz,
-                 const char* c_nm)
+TypeDef::TypeDef(const String& nm, int type_flags, bool global_obj, uint siz,
+                 const String& c_nm)
 :inherited()
 {
   Initialize();
@@ -819,7 +819,7 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
   return it;
 }
 
-TypeDef* TypeDef::AddParentName(const char* nm, int p_off) {
+TypeDef* TypeDef::AddParentName(const String& nm, int p_off) {
   TypeDef* par = FindGlobalTypeName(nm, false);
   if(!par) {
     par = new TypeDef(nm);
@@ -882,14 +882,14 @@ void TypeDef::AddParents(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
   if(p6 != NULL)    AddParent(p6);
 }
 
-void TypeDef::AddParentNames(const char* p1, const char* p2, const char* p3,
-                             const char* p4, const char* p5, const char* p6) {
-  if(p1 != NULL)    AddParentName(p1);
-  if(p2 != NULL)    AddParentName(p2);
-  if(p3 != NULL)    AddParentName(p3);
-  if(p4 != NULL)    AddParentName(p4);
-  if(p5 != NULL)    AddParentName(p5);
-  if(p6 != NULL)    AddParentName(p6);
+void TypeDef::AddParentNames(const String& p1, const String& p2, const String& p3,
+                             const String& p4, const String& p5, const String& p6) {
+  if(p1.nonempty())    AddParentName(p1);
+  if(p2.nonempty())    AddParentName(p2);
+  if(p3.nonempty())    AddParentName(p3);
+  if(p4.nonempty())    AddParentName(p4);
+  if(p5.nonempty())    AddParentName(p5);
+  if(p6.nonempty())    AddParentName(p6);
 }
 
 void TypeDef::AddClassPar(TypeDef* p1, int p1_off, TypeDef* p2, int p2_off,
@@ -931,17 +931,17 @@ void TypeDef::AddTemplPars(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
   if(p6 != NULL)    templ_pars.Link(p6);
 }
 
-void TypeDef::AddTemplParNames(const char* p1, const char* p2, const char* p3,
-                               const char* p4, const char* p5, const char* p6) {
-  if(p1 != NULL)    AddTemplParName(p1);
-  if(p2 != NULL)    AddTemplParName(p2);
-  if(p3 != NULL)    AddTemplParName(p3);
-  if(p4 != NULL)    AddTemplParName(p4);
-  if(p5 != NULL)    AddTemplParName(p5);
-  if(p6 != NULL)    AddTemplParName(p6);
+void TypeDef::AddTemplParNames(const String& p1, const String& p2, const String& p3,
+                               const String& p4, const String& p5, const String& p6) {
+  if(p1.nonempty())    AddTemplParName(p1);
+  if(p2.nonempty())    AddTemplParName(p2);
+  if(p3.nonempty())    AddTemplParName(p3);
+  if(p4.nonempty())    AddTemplParName(p4);
+  if(p5.nonempty())    AddTemplParName(p5);
+  if(p6.nonempty())    AddTemplParName(p6);
 }
 
-void TypeDef::AddTemplParName(const char* pn) {
+void TypeDef::AddTemplParName(const String& pn) {
   TypeDef* td = FindGlobalTypeName(pn, false);
   if(!td) {
     td = new TypeDef(pn);
@@ -1029,7 +1029,7 @@ bool TypeDef::IgnoreMeth(const String& nm) const {
   return false;
 }
 
-void* TypeDef::GetParAddr(const char* it, void* base) const {
+void* TypeDef::GetParAddr(const String& it, void* base) const {
   if (name == it) return base;   // you are it!
   int anidx = parents.FindNameIdx(it);
   if (anidx >= 0) {
@@ -1071,7 +1071,7 @@ int TypeDef::GetParOff(TypeDef* it, int boff) const {
   return -1;
 }
 
-bool TypeDef::FindChildName(const char* nm) const {
+bool TypeDef::FindChildName(const String& nm) const {
   if (children.FindName(nm))
     return true;
   for (int i = 0; i < children.size; i++) {
@@ -1213,7 +1213,7 @@ MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
   return md;
 }
 
-TypeDef*  TypeDef::FindTypeWithMember(const char* nm, MemberDef** md){
+TypeDef*  TypeDef::FindTypeWithMember(const String& nm, MemberDef** md){
   *md = members.FindName(nm);
   if (*md) return this;
 
@@ -1373,7 +1373,7 @@ int TypeDef::FindTokenR(void* addr, TypeDef*& aptr) const {
   return -1;
 }
 
-int TypeDef::FindTokenR(const char* nm, TypeDef*& aptr) const {
+int TypeDef::FindTokenR(const String& nm, TypeDef*& aptr) const {
   int rval = tokens.FindNameIdx(nm);
   if (rval >= 0) {
     aptr = const_cast<TypeDef*>(this);

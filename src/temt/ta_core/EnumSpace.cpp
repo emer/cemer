@@ -58,7 +58,7 @@ void  EnumSpace::Add(EnumDef* it) {
     it->enum_no = FastEl(it->idx - 1)->enum_no + 1;
 }
 
-EnumDef*  EnumSpace::Add(const char* nm, const char* dsc, const char* op, int eno) {
+EnumDef*  EnumSpace::Add(const String& nm, const String& dsc, const String& op, int eno) {
   EnumDef* rval = new EnumDef(nm);
   Add(rval);
   rval->desc = dsc;
