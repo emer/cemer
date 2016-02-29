@@ -32,7 +32,7 @@ INHERITED(ProjectBase)
 public:
 
   void  CopyToBackprop();
-  // #BUTTON #CONFIRM copy this project to a backprop version of the project, by replacing all the "Leabra" strings to "Bp" strings in an in-memory version of the project file, and then opening that project -- you will generally have to replace the Trial-level program with a Bp appropriate one, and things like monitors will likely need to be updated etc.
+  // #BUTTON #CONFIRM copy this project to a backprop version of the project -- IMPORTANT: usually a good idea to turn Network auto_build = NO_BUILD before proceeding -- this works by replacing all the "Leabra" strings to "Bp" strings in an in-memory version of the project file, and then opening that project -- you will generally have to replace the Trial-level program with a Bp appropriate one, and things like monitors will likely need to be updated, recurrent connections removed, etc.
   
   TA_BASEFUNS_NOCOPY(LeabraProject);
 private:

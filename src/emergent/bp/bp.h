@@ -583,7 +583,7 @@ private:
 eTypeDef_Of(ThreshLinBpUnitSpec);
 
 class E_API ThreshLinBpUnitSpec : public BpUnitSpec {
-  // thresholded linear unit in Bp
+  // thresholded linear unit in Bp -- otherwise known as a ReLu or rectified linear unit
 INHERITED(BpUnitSpec)
 public:
   float		threshold;

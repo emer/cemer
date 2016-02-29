@@ -80,8 +80,9 @@ void DataTableCell::UpdateAfterEdit_impl() {
   }
   // user may have changed view_row or value_column by editing from the property panel
   DataTable* dt = value_column->dataTable();
-  index_row = dt->GetIndexRow(view_row);
-  value = value_column->GetValAsString(view_row);
-  
+  if(view_row >= 0) {
+    index_row = dt->GetIndexRow(view_row);
+    value = value_column->GetValAsString(view_row);
+  }
   dt->NotifyControlPanel(this);
 }
