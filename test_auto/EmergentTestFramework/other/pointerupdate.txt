@@ -129,6 +129,21 @@ MoveDataTable
 
     DataTable Value Should Match        2       dog    
 
+CopyProgramGlobalTable
+    Set Suite Variable   ${program_test}         "TestDataTableValue"
+    Restart Emergent
+    Ensure Emergent Free
+    Set Emergent Var	RefsGlobalTable		set_value	"cat"
+    Run Emergent Program	.projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"][\\"RefsGlobalTable\\"]
+    DataTable Cell Value Should Match    .projects[\\"TestPointerUpdates\\"].data.gp[\\"InputData\\"][\\"data_group_DataTable\\"]	0	col_one		cat
+    Run Emergent Program   copy_refsglobaltable
+    Set Emergent Var	.projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"][\\"RefsGlobalTable\\"]		set_value	"mouse"
+    Run Emergent Program	.projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"][\\"RefsGlobalTable\\"]
+    DataTable Cell Value Should Match    .projects[\\"TestPointerUpdates\\"].data.gp[\\"InputData\\"][\\"data_group_DataTable\\"]	0	col_one		mouse    
+    Set Emergent Var	.projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_two\\"][\\"RefsGlobalTable\\"]		set_value	"bird"
+    Run Emergent Program	.projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_two\\"][\\"RefsGlobalTable\\"]
+    DataTable Cell Value Should Match    .projects[\\"TestPointerUpdates\\"].data.gp[\\"InputData\\"][\\"data_group_DataTable\\"]	0	col_one		bird
+
 CopyFunctionCodeIntoLoop
     Set Suite Variable   ${program_test}         "LoopCodeFunction"
     Ensure Emergent Free
