@@ -320,7 +320,7 @@ void iMainWindowViewer::moveEvent(QMoveEvent* e) {
 void iMainWindowViewer::resizeEvent(QResizeEvent* e) {
   inherited::resizeEvent(e);
 // #ifdef DEBUG
-  taMisc::Info("window resize event: w", (String)e->size().width(), "h:",
+  taMisc::Info("window resize event:", viewer()->name, "w", (String)e->size().width(), "h:",
                     (String)e->size().height(), "spontaneous:", (String)e->spontaneous());
 // #endif // DEBUG
   // use this to check for initializing the hacky frame_s value

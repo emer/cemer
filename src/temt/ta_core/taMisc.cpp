@@ -618,18 +618,31 @@ void taMisc::Warning(const String& a, const String& b, const String& c, const St
     return;
   }
 #endif
-  taMisc::last_warn_msg = SuperCat(a, b, c, d, e, f, g, h, i);
+  String msg = SuperCat(a, b, c, d, e, f, g, h, i);
 #ifndef NO_TA_BASE
   if(cssMisc::cur_top && cssMisc::cur_top->own_program && !taMisc::is_loading) {
-    taMisc::last_warn_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
+    msg += String("\n") + cssMisc::GetSourceLoc(NULL);
     if(cssMisc::cur_top->own_program) {
       bool running = cssMisc::cur_top->state & cssProg::State_Run;
       cssMisc::cur_top->own_program->taWarning(cssMisc::GetSourceLn(NULL), running,
-                                              taMisc::last_err_msg);
+                                              msg);
     }
   }
 #endif
-  String wmsg = "***WARNING: " + taMisc::last_warn_msg;
+  String wmsg;
+  if(msg == taMisc::last_warn_msg) {
+    wmsg = ".";
+  }
+  else {
+    wmsg = "***WARNING: " + msg;
+#ifndef NO_TA_BASE
+    if(QThread::currentThread() == QApplication::instance()->thread()) {
+      taMisc::last_warn_msg = msg; // can only save to global for same-thread guys
+    }
+#else
+    taMisc::last_warn_msg = msg; // can only save to global for same-thread guys
+#endif    
+  }
   taMisc::LogEvent(wmsg);
   taMisc::ConsoleOutput(wmsg, true, false);
 }
@@ -651,7 +664,8 @@ String taMisc::SuperCat(const String& a, const String& b, const String& c,
                       const String& d, const String& e, const String& f,
                       const String& g, const String& h, const String& i)
 {
-  STRING_BUF(s, 250);
+  // STRING_BUF(s, 250);
+  String s;
   s.cat(a); if(b.nonempty()) s.cat(" ").cat(b); if(c.nonempty()) s.cat(" ").cat(c);
   if(d.nonempty()) s.cat(" ").cat(d); if(e.nonempty()) s.cat(" ").cat(e);
   if(f.nonempty()) s.cat(" ").cat(f); if(g.nonempty()) s.cat(" ").cat(g);
@@ -988,24 +1002,30 @@ void taMisc::LogEvent(const String& log_data) {
     return;
   }
 #endif
-  time_t tmp = time(NULL);
-  String tstamp = ctime(&tmp);
-  tstamp = tstamp.before('\n');
-
-  String thread_info;
-#ifndef NO_TA_BASE
-  if(QThread::currentThread() != QApplication::instance()->thread()) {
-    thread_info = String("thread ") << (String)QThread::currentThread()->objectName() << ": ";
+  String log_full;
+  if(log_data.empty() || log_data == ".") {
+    log_full = log_data;
   }
-#endif
+  else {
+    time_t tmp = time(NULL);
+    String tstamp = ctime(&tmp);
+    tstamp = tstamp.before('\n');
 
+    String thread_info;
+#ifndef NO_TA_BASE
+    if(QThread::currentThread() != QApplication::instance()->thread()) {
+      thread_info = String("thread ") << (String)QThread::currentThread()->objectName() << ": ";
+    }
+#endif
+    log_full = tstamp + ": " + thread_info + log_data;
+  }
   if(taMisc::log_stream.bad()) {
     if(taMisc::gui_active) {
-      cout << tstamp << ": " << thread_info << log_data << endl;
+      cout << log_full << endl;
     }
   }
   else {
-    taMisc::log_stream << tstamp << ": " << thread_info << log_data << endl;
+    taMisc::log_stream << log_full << endl;
   }
 }
 
@@ -1199,10 +1219,6 @@ static bool ConsoleOutputLine(const String& oneln, bool err, bool& pager, int& p
 }
 
 bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
-  if (console_hold_on) {
-    console_hold << str;
-  }
-  
   // cannot directly output to console from a thread!
   // todo: need to figure out a better workaround?
 #ifndef NO_TA_BASE
@@ -1214,6 +1230,11 @@ bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
     return true;
   }
 #endif
+
+  // console_hold is a String, can only do this in current thread!
+  if (console_hold_on) {
+    console_hold << str;
+  }
 
   if(!taMisc::interactive) pager = false;
   int pageln = 0;

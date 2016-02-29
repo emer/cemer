@@ -286,6 +286,7 @@ bool MainWindowViewer::SetWinState() {
     QByteArray ba = QByteArray::fromBase64(QByteArray(str.chars()));
     iSplitter* spl = widget()->body;
     spl->restoreState(ba);
+    taMisc::Info("SetWinState:", name, "restoring");
   }
   else {
     if(isRoot()) {
