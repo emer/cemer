@@ -4892,7 +4892,7 @@ int DataTable::GetViewRow(int index_row) {
 }
 
 int DataTable::GetIndexRow(int view_row) {
-  return row_indexes[view_row];
+  return row_indexes.SafeEl_Flat(view_row);
 }
 
 void DataTable::RowUpdate() {
