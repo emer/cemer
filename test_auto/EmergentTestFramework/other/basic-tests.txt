@@ -10,26 +10,26 @@ ${css-option} =    --nogui -s
 No-op CSS
     [Tags]             strict
     Start Process      ${emergent}   ${css-option}    other/no-op.css
-    ${result} =        Wait For Process   timeout=5 secs  
+    ${result} =        Wait For Process   timeout=15 secs  
     Should Be Equal As Integers   ${result.rc}  0
 
 Version
     [Tags]             strict
     Start Process      ${emergent}   --version
-    ${result} =        Wait For Process   timeout=5 secs  
+    ${result} =        Wait For Process   timeout=15 secs  
     Should Be Equal As Integers   ${result.rc}  0
     Should Contain    ${result.stdout}  version: 7.8
 
 Missing CSS
     [Tags]             strict
     Start Process      ${emergent}   ${css-option}    other/missing.css
-    ${result} =        Wait For Process   timeout=5 secs  
+    ${result} =        Wait For Process   timeout=15 secs  
     Should Be Equal As Integers   ${result.rc}  0
     Should Contain    ${result.stderr}  File Not Found
 
 Bad CSS
     [Tags]             strict
     Start Process      ${emergent}   ${css-option}    other/error.css
-    ${result} =        Wait For Process   timeout=5 secs  
+    ${result} =        Wait For Process   timeout=15 secs  
     Should Be Equal As Integers   ${result.rc}  0
     Should Contain    ${result.stderr}  syntax error
