@@ -196,6 +196,7 @@ void Network::Destroy() {
 void Network::InitLinks() {
   GetSigLink(); // forces creation, so we track Updates
   proj = GET_MY_OWNER(ProjectBase);
+  taBase::Own(spec_tables, this);
   taBase::Own(specs, this);
   taBase::Own(layers, this);
   taBase::Own(weights, this);

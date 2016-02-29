@@ -319,6 +319,10 @@ void iMainWindowViewer::moveEvent(QMoveEvent* e) {
 
 void iMainWindowViewer::resizeEvent(QResizeEvent* e) {
   inherited::resizeEvent(e);
+#ifdef DEBUG
+  taMisc::DebugInfo("window resize event: w", (String)e->size().width(), "h:",
+                    (String)e->size().height());
+#endif // DEBUG
   // use this to check for initializing the hacky frame_s value
   if ((taiM->frame_s.h + taiM->frame_s.w) == 0) {
     QRect r = frameGeometry();

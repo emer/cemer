@@ -350,10 +350,10 @@ INHERITED(SpecMemberBase)
 public:
   bool          on;             // perform leak adaptation?  if so, adapts bias weight as an increment to default g_bar.l leak value as function of computed avg_l values which reflect longer-term average activation of unit -- be sure to turn learning off when using this!
   float         tau;           // #CONDSHOW_ON_on #DEF_100 time constant for adapting the leak as a function of avg_l value
-  float         hi_thr;        // #CONDSHOW_ON_on #DEF_1.2 high-side threshold on avg_l value -- avg_l must exceed this value before increasing bias weight offset to leak value
+  float         hi_thr;        // #CONDSHOW_ON_on #DEF_1:1.2 high-side threshold on avg_l value -- avg_l must exceed this value before increasing bias weight offset to leak value
   float         lo_thr;        // #CONDSHOW_ON_on #DEF_0.4 low-side threshold on avg_l value -- avg_l must be below this value before decreasing bias weight offset to leak value
   float         min_bwt;      // #CONDSHOW_ON_on #DEF_0;-0.05 minimum leak offset (i.e., bias weight or bwt) value -- don't want too decrease leak too much below default parameter in general
-  float         max_bwt;      // #CONDSHOW_ON_on #DEF_0.1 maximum leak offset (i.e., bias weight or bwt) value -- prevents excessive modification for situations where units must be active
+  float         max_bwt;      // #CONDSHOW_ON_on #DEF_0.2 maximum leak offset (i.e., bias weight or bwt) value -- prevents excessive modification for situations where units must be active
 
   float         dt;            // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate =  1 / tau
   float         mid_thr;       // #CONDSHOW_ON_on #READ_ONLY #EXPERT middle point between hi and low threshold

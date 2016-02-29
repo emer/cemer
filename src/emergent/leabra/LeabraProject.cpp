@@ -17,6 +17,10 @@
 
 #include <taMisc>
 
+#include <tabMisc>
+#include <taRootBase>
+#include <bp.h>
+
 TA_BASEFUNS_CTORS_DEFN(LeabraProject);
 
 eTypeDef_Of(LeabraNetwork);
@@ -57,3 +61,15 @@ void LeabraProject::Initialize() {
   wizards.el_typ = &TA_LeabraWizard;
 }
 
+void LeabraProject::CopyToBackprop() {
+  String proj_file;
+  Save_String(proj_file);
+  proj_file.gsub("Leabra", "Bp");
+  proj_file.gsub("BpPrjn", "Projection");
+  proj_file.gsub("BpWizard", "Wizard");
+  proj_file.gsub("BpBiasSpec", "BpConSpec");
+  proj_file.gsub("BpConGroup", "ConGroup");
+  tabMisc::root->projects.Load_String(proj_file);
+  BpProject* proj = (BpProject*)tabMisc::root->projects.Peek();
+  proj->SetName(proj->name + "_bp");
+}
