@@ -3433,13 +3433,24 @@ void Network::WriteSpecMbrNamesToTable(DataTable* spec_table, BaseSpec* spec) {
   for(int m=0; m<spec_td->members.size; m++) {
     MemberDef* spec_td_md = spec_td->members.FastEl(m);
     TypeDef* spec_member_td = spec_td_md->type;
-    for(int n=0; n<spec_member_td->members.size; n++) {
-      MemberDef* spec_member_base_md = spec_member_td->members.FastEl(n);
-      if (ShowSpecMember(spec_td_md, spec_member_base_md)) {
+    if (spec_member_td->IsBool() || spec_member_td->IsString()) {
+      //      if (!spec_member_td->IsTaBase()) {
+      if (ShowSpecMember(spec_td_md, NULL)) {
         spec_table->AddBlankRow();
-        String name = spec_td_md->name + "_" + spec_member_base_md->name;
+        String name = spec_td_md->name;
         spec_table->SetValAsVar(name, 0, index);
         index++;
+      }
+    }
+    else {
+      for(int n=0; n<spec_member_td->members.size; n++) {
+        MemberDef* spec_member_base_md = spec_member_td->members.FastEl(n);
+        if (ShowSpecMember(spec_td_md, spec_member_base_md)) {
+          spec_table->AddBlankRow();
+          String name = spec_td_md->name + "_" + spec_member_base_md->name;
+          spec_table->SetValAsVar(name, 0, index);
+          index++;
+        }
       }
     }
   }
@@ -3451,8 +3462,16 @@ bool Network::ShowSpecMember(MemberDef* spec_md, MemberDef* spec_member_md) {
   if (base_td->members.FindName(spec_md->name)) {
     return false;
   }
-  if (spec_md->HasOption("HIDDEN") || spec_md->HasOption("HIDDEN_INLINE")) {
+  if (spec_md->isReadOnly() || spec_md->HasOption("HIDDEN") ||
+      spec_md->HasOption("HIDDEN_INLINE")) {
     return false;
+  }
+  if (spec_md->name.contains("lrate_sched")) {
+    return false;
+  }
+  
+  if (spec_member_md == NULL) {
+    return true;
   }
   if (spec_member_md->isReadOnly() || spec_member_md->HasOption("HIDDEN") ||
       spec_member_md->HasOption("HIDDEN_INLINE")) {
@@ -3471,23 +3490,34 @@ void Network::WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, boo
   for(int m=0; m<spec_td->members.size; m++) {
     MemberDef* spec_td_md = spec_td->members.FastEl(m);
     TypeDef* spec_member_td = spec_td_md->type;
-    for(int n=0; n<spec_member_td->members.size; n++) {
-      MemberDef* spec_member_base_md = spec_member_td->members.FastEl(n);
-      if (ShowSpecMember(spec_td_md, spec_member_base_md)) {
-        SpecMemberBase* new_base = (SpecMemberBase*)spec_td->members.SafeEl(m)->GetOff(spec);
-        String value = spec_member_base_md->GetValStr(new_base);
-        String parent_value = spec_table->GetValAsString(1, index);
-        if (value != parent_value) {
-          if (is_child) {
-            if (spec->GetUnique(spec_td_md->name)) {
+    if (spec_member_td->IsBool() || spec_member_td->IsString()) {
+//      if (!spec_member_td->IsTaBase()) {
+      if (ShowSpecMember(spec_td_md, NULL)) {
+        String name = spec_td_md->name;
+        spec_table->SetValAsVar(name, 0, index);
+        index++;
+      }
+    }
+    else {
+      for(int n=0; n<spec_member_td->members.size; n++) {
+        MemberDef* spec_member_base_md = spec_member_td->members.FastEl(n);
+        if (ShowSpecMember(spec_td_md, spec_member_base_md)) {
+          SpecMemberBase* new_base = (SpecMemberBase*)spec_td->members.SafeEl(m)->GetOff(spec);
+          String value = spec_member_base_md->GetValStr(new_base);
+          String parent_value = spec_table->GetValAsString(1, index);
+          if (value != parent_value) {
+            if (is_child) {
+              if (spec->GetUnique(spec_td_md->name)) {
+                spec_table->SetValAsVar(value, spec->name, index);
+              }
+            }
+            else {
               spec_table->SetValAsVar(value, spec->name, index);
             }
           }
-          else {
-            spec_table->SetValAsVar(value, spec->name, index);
-          }
+          index++;
+          taMisc::DebugInfo((String)index);
         }
-        index++;
       }
     }
   }
