@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.5.0 rev9110
+// ta_Dump File v3.0 -- code v7.8.5.0 rev9220
 LeabraProject .projects["TestPointerUpdates"] { 
  Doc_Group @.docs = [0] {
  };
@@ -286,7 +286,12 @@ LeabraProject .projects["TestPointerUpdates"] {
  DataTable_Group @.data = [0] {
   DataTable_Group @.gp["InputData"] = [1] { 
    DataTable @["data_group_DataTable"] { 
-    DataTableCols @.data = [0] {
+    DataTableCols @.data = [1] {
+     String_Data @["col_one"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
@@ -303,7 +308,7 @@ LeabraProject .projects["TestPointerUpdates"] {
  };
 
  Program_TopGroup @.programs = [0] {
-  Program_Group @.gp["group_one"] = [7] { 
+  Program_Group @.gp["group_one"] = [8] { 
    Program @["HasDataTable"] { 
     ProgObjList @.objs = [1] {
      DataTable @["aDataTable"] { 
@@ -565,6 +570,36 @@ LeabraProject .projects["TestPointerUpdates"] {
       ProgVar_List @.local_vars = [0] {
       };
      };
+    };
+   };
+   Program @["RefsGlobalTable"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [2] {
+     ProgVar @["set_value"] { };
+     ProgVar @["data_group_data_table"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [3] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     MatrixAssign @[1] { };
+     PrintVar @[2] { };
     };
    };
   };
@@ -838,7 +873,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
    };
   };
-  Program_Group @.gp["TesteePrograms"] = [22] { 
+  Program_Group @.gp["TesteePrograms"] = [23] { 
    Program @["copy_callee_caller"] { 
     ProgObjList @.objs = [0] {
     };
@@ -1165,6 +1200,40 @@ LeabraProject .projects["TestPointerUpdates"] {
      MethodCall @[4] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
+      };
+     };
+    };
+   };
+   Program @["copy_refsglobaltable"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [2] {
+     ProgVar @["group_two"] { };
+     ProgVar @["refs_global_table"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [2] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     MethodCall @[1] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
       };
      };
     };
@@ -3928,8 +3997,34 @@ LeabraProject .projects["TestPointerUpdates"] {
     desc=;
     data {
      name="data";
-     el_typ=DataColT;
+     el_typ=String_Data;
      el_def=0;
+     String_Data @["col_one"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.08076923;
+	val_type_fixed=0;
+       };
+      };
+      name="col_one";
+      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=84;
+      ar {
+       name="ar";
+      [5] "dog";"b";"c";"d";"e";      };
+     };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
@@ -3937,7 +4032,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [0]     };
+    [5] 0;1;2;3;4;    };
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -4817,6 +4912,131 @@ LeabraProject .projects["TestPointerUpdates"] {
        el_typ=ProgVar;
        el_def=0;
       };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["RefsGlobalTable"] {
+    name="RefsGlobalTable";
+    short_nm="RfGlbT";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="objs";
+     el_typ=DataTable;
+     el_def=0;
+    };
+    types {
+     name="types";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="args";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="vars";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["set_value"] {
+      name="set_value";
+      var_type=T_String;
+      string_val="dog";
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["data_group_data_table"] {
+      name="data_group_data_table";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["TestPointerUpdates"].data.gp["InputData"]["data_group_DataTable"]$$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="functions";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="init_code";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="prog_code";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (0 vars)";
+      pre_compile_code_string="LocalVars (0 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     MatrixAssign @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="data_group_data_table[\"col_one\"][0] = set_value";
+      pre_compile_code_string="data_group_data_table[\"col_one\"][0] = set_value";
+      variable=.projects["TestPointerUpdates"].programs.gp["group_one"]["RefsGlobalTable"].vars["data_group_data_table"]$$;
+      data_table=1;
+      col {
+       expr="\"col_one\"";
+      };
+      dim0 {
+       expr="0";
+      };
+      dim1 {
+       expr=;
+      };
+      dim2 {
+       expr=;
+      };
+      dim3 {
+       expr=;
+      };
+      dim4 {
+       expr=;
+      };
+      dim5 {
+       expr=;
+      };
+      expr {
+       expr="set_value";
+      };
+     };
+     PrintVar @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="Print  set_value";
+      pre_compile_code_string="Print  set_value";
+      message=;
+      print_var=.projects["TestPointerUpdates"].programs.gp["group_one"]["RefsGlobalTable"].vars["set_value"]$$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      debug=0;
      };
     };
     step_prog=NULL;
@@ -7300,6 +7520,124 @@ LeabraProject .projects["TestPointerUpdates"] {
     step_prog=NULL;
     step_n=1;
    };
+   Program @["copy_refsglobaltable"] {
+    name="copy_refsglobaltable";
+    short_nm="cpyrfs";
+    tags=;
+    desc="copy a program that references a global data table - check that reference is still good";
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="objs";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="types";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="args";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="vars";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["group_two"] {
+      name="group_two";
+      var_type=T_Object;
+      object_type=Program_Group;
+      object_val=$.projects["TestPointerUpdates"].programs.gp["group_two"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["refs_global_table"] {
+      name="refs_global_table";
+      var_type=T_Object;
+      object_type=Program;
+      object_val=.projects["TestPointerUpdates"].programs.gp["group_one"]["RefsGlobalTable"]$$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="functions";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="init_code";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="prog_code";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (0 vars)";
+      pre_compile_code_string="LocalVars (0 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     MethodCall @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="group_two->CopyChildBeforeIndex(refs_global_table, -1)";
+      pre_compile_code_string="group_two->CopyChildBeforeIndex(refs_global_table, -1)";
+      result_var=NULL;
+      obj=.projects["TestPointerUpdates"].programs.gp["TesteePrograms"]["copy_refsglobaltable"].vars["group_two"]$$;
+      method=taList_impl::CopyChildBeforeIndex;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=taBase_ptr;
+	type="taBase*";
+	name="src";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="refs_global_table";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="child_pos";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="-1";
+	};
+       };
+      };
+      meth_sig="taBase_ptr CopyChildBeforeIndex(taBase* src, int child_pos)";
+      meth_desc=" implemented by container (list) objects: make a copy of the src object and insert it at the position of the child_pos object within this list -- copies the name of the object too";
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
    Program @["copy_hasdatatable"] {
     name="copy_hasdatatable";
     short_nm="cpyhsd";
@@ -9319,22 +9657,22 @@ LeabraProject .projects["TestPointerUpdates"] {
      expr=;
     };
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["expression_program"] {
@@ -9361,17 +9699,17 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -9740,22 +10078,22 @@ LeabraProject .projects["TestPointerUpdates"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=-0.002785515;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0;
+     value 8 0=0.01254276;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=1.002786;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=1;
+     value 8 0=0.8426454;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -9949,12 +10287,12 @@ LeabraProject .projects["TestPointerUpdates"] {
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 8 0=-0.002785515;
+       value 8 0=0;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.05555556;
+       value 8 0=0.03306727;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
@@ -9964,7 +10302,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.9222222;
+       value 8 0=0.7354618;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
