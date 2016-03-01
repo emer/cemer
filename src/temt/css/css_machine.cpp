@@ -196,9 +196,12 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c,
                     const char* g, const char* h, const char* i)
 {
   cssProgSpace* top = prog ? prog->top : cssMisc::cur_top;
-  cssMisc::last_err_msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
-  cssMisc::last_err_msg += "\n" + GetSourceLoc(prog); // uses cur_top if prog = NULL
-  taMisc::LogEvent("css Error: " + cssMisc::last_err_msg);
+  String msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
+  msg += "\n" + GetSourceLoc(prog); // uses cur_top if prog = NULL
+  if(taMisc::InMainThread()) {
+    cssMisc::last_err_msg = msg;
+  }
+  taMisc::LogEvent("css Error: " + msg);
 
   // this is very bad: causes crashing for anything done on cmd shell!
   // was introduced in 5386 -- comment suggests that probably more for syntax errs:
@@ -212,14 +215,14 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c,
     return;
 
   if(taMisc::dmem_proc == 0) {
-    taMisc::ConsoleOutput(cssMisc::last_err_msg, true, false);
+    taMisc::ConsoleOutput(msg, true, false);
   }
   top->run_stat = cssEl::ExecError;
   top->exec_err_msg = cssMisc::last_err_msg;
 
   if(top->own_program) {
     bool running = top->state & cssProg::State_Run;
-    top->own_program->CssError(GetSourceLn(prog), running, cssMisc::last_err_msg);
+    top->own_program->CssError(GetSourceLn(prog), running, msg);
   }
   if(!taMisc::interactive) {
     taMisc::Info("Quitting non-interactive job on error");
@@ -234,11 +237,14 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
                       const char* g, const char* h, const char* i)
 {
   cssProgSpace* top = prog ? prog->top : cssMisc::cur_top;
-  cssMisc::last_warn_msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
+  String msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
   if (prog) {
-    cssMisc::last_warn_msg += "\n" + GetSourceLoc(prog);
+    msg += "\n" + GetSourceLoc(prog);
   }
-  taMisc::LogEvent("css Warning: " + cssMisc::last_err_msg);
+  if(taMisc::InMainThread()) {
+    taMisc::last_warn_msg = msg;
+  }
+  taMisc::LogEvent("css Warning: " + msg);
 
   if(taMisc::ErrorCancelCheck()) // just done
     return;
@@ -248,7 +254,7 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
   }
   if(top->own_program) {
     bool running = top->state & cssProg::State_Run;
-    top->own_program->CssWarning(GetSourceLn(prog), running, cssMisc::last_err_msg);
+    top->own_program->CssWarning(GetSourceLn(prog), running, msg);
   }
 }
 

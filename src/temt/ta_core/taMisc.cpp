@@ -660,8 +660,7 @@ String taMisc::SuperCat(const String& a, const String& b, const String& c,
                       const String& d, const String& e, const String& f,
                       const String& g, const String& h, const String& i)
 {
-  // STRING_BUF(s, 250);
-  String s;
+  STRING_BUF(s, 250);
   s.cat(a); if(b.nonempty()) s.cat(" ").cat(b); if(c.nonempty()) s.cat(" ").cat(c);
   if(d.nonempty()) s.cat(" ").cat(d); if(e.nonempty()) s.cat(" ").cat(e);
   if(f.nonempty()) s.cat(" ").cat(f); if(g.nonempty()) s.cat(" ").cat(g);
