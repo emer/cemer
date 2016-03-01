@@ -61,6 +61,14 @@ void TiledGpRFPrjnSpec::UpdateAfterEdit_impl() {
     full_send = BY_UNIT;
   }
   
+  if(set_scale) {
+    Network* net = GET_MY_OWNER(Network);
+    if(TestWarning(net && !net->InheritsFromName("LeabraNetwork"),
+                   "Init_Weights_Prjn", "set_scale can only be used with Leabra networks -- turning off")) {
+      set_scale = false;
+    }
+  }
+
   if(taMisc::is_loading) {
     taVersion v705(7, 0, 5);
     if(taMisc::loading_version < v705) { // set send_gp_start to prev val
@@ -79,6 +87,12 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
 
+  Network* net = GET_MY_OWNER(Network);
+  if(TestWarning(set_scale && net && !net->InheritsFromName("LeabraNetwork"),
+                 "Init_Weights_Prjn", "set_scale can only be used with Leabra networks -- turning off")) {
+    set_scale = false;
+  }
+  
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
   if(reciprocal) {
@@ -239,11 +253,6 @@ bool TiledGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
 
 void TiledGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
                                           Network* net, int thr_no) {
-  if(set_scale) {
-    if(TestWarning(!cg->GetConSpec()->InheritsFrom(&TA_LeabraConSpec),
-                   "Init_Weights_Prjn", "set_scale can only apply to Leabra connections!"))
-      return;
-  }
   if(wts_type == GAUSSIAN) {
     Init_Weights_Gaussian(prjn, cg, net, thr_no);
   }

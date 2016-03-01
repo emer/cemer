@@ -619,29 +619,25 @@ void taMisc::Warning(const String& a, const String& b, const String& c, const St
   }
 #endif
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
-#ifndef NO_TA_BASE
-  if(cssMisc::cur_top && cssMisc::cur_top->own_program && !taMisc::is_loading) {
-    msg += String("\n") + cssMisc::GetSourceLoc(NULL);
-    if(cssMisc::cur_top->own_program) {
-      bool running = cssMisc::cur_top->state & cssProg::State_Run;
-      cssMisc::cur_top->own_program->taWarning(cssMisc::GetSourceLn(NULL), running,
-                                              msg);
-    }
-  }
-#endif
   String wmsg;
   if(msg == taMisc::last_warn_msg) {
     wmsg = ".";
   }
   else {
-    wmsg = "***WARNING: " + msg;
-#ifndef NO_TA_BASE
-    if(QThread::currentThread() == QApplication::instance()->thread()) {
+    if(taMisc::InMainThread()) {
       taMisc::last_warn_msg = msg; // can only save to global for same-thread guys
     }
-#else
-    taMisc::last_warn_msg = msg; // can only save to global for same-thread guys
-#endif    
+#ifndef NO_TA_BASE
+    if(cssMisc::cur_top && cssMisc::cur_top->own_program && !taMisc::is_loading) {
+      msg += String("\n") + cssMisc::GetSourceLoc(NULL);
+      if(cssMisc::cur_top->own_program) {
+        bool running = cssMisc::cur_top->state & cssProg::State_Run;
+        cssMisc::cur_top->own_program->taWarning(cssMisc::GetSourceLn(NULL), running,
+                                                 msg);
+      }
+    }
+#endif
+    wmsg = "***WARNING: " + msg;
   }
   taMisc::LogEvent(wmsg);
   taMisc::ConsoleOutput(wmsg, true, false);
@@ -773,24 +769,32 @@ void taMisc::Error_nogui(const String& a, const String& b, const String& c, cons
 {
   ++err_cnt;
   //  if (beep_on_error) cerr << '\a'; // BEL character
-  taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
-#if !defined(NO_TA_BASE)
-  if(cssMisc::cur_top) {
-    taMisc::last_err_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
+  String msg = SuperCat(a, b, c, d, e, f, g, h, i);
+  String emsg;
+  if(msg == taMisc::last_err_msg) {
+    emsg = ".";
   }
+  else {
+    if(taMisc::InMainThread()) {
+      taMisc::last_err_msg = msg; // can only save to global for same-thread guys
+    }
+#ifndef NO_TA_BASE
+    if(cssMisc::cur_top) {
+      msg += String("\n") + cssMisc::GetSourceLoc(NULL);
+    }
 #endif
-  String fmsg = "***ERROR: " + taMisc::last_err_msg;
-  taMisc::LogEvent(fmsg);
-  taMisc::ConsoleOutput(fmsg, true, false);
+    emsg = "***ERROR: " + msg;
+  }
+  taMisc::LogEvent(emsg);
+  taMisc::ConsoleOutput(emsg, true, false);
 #if !defined(NO_TA_BASE)
   if(cssMisc::cur_top) {
     if(cssMisc::cur_top->own_program) {
       bool running = cssMisc::cur_top->state & cssProg::State_Run;
-      cssMisc::cur_top->own_program->taError(cssMisc::GetSourceLn(NULL), running,
-                                              taMisc::last_err_msg);
+      cssMisc::cur_top->own_program->taError(cssMisc::GetSourceLn(NULL), running, msg);
     }
     cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
-    cssMisc::cur_top->exec_err_msg = taMisc::last_err_msg;
+    cssMisc::cur_top->exec_err_msg = msg;
   }
   if(!taMisc::interactive) {
     taMisc::Info("Quitting non-interactive job on error");
@@ -862,36 +866,39 @@ void taMisc::Error(const String& a, const String& b, const String& c, const Stri
   const String& e, const String& f, const String& g, const String& h, const String& i)
 {
   ++err_cnt;
-  taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
-  String fmsg = "***ERROR: " + taMisc::last_err_msg;
-  taMisc::LogEvent(fmsg);
-#if !defined(NO_TA_BASE)
-  if(taMisc::ErrorCancelCheck()) {
-    return;			// cancel!
+  String msg = SuperCat(a, b, c, d, e, f, g, h, i);
+  String emsg;
+  if(msg == taMisc::last_err_msg) {
+    emsg = ".";
   }
-#endif
-  // we always output to console
-  // if (beep_on_error) cerr << '\a'; // BEL character
-  
-  // john - 4/29/14 - commenting out as it doesn't provide useful info that I see at this point and
-  // in some cases just adds 'emergent' to the string - I guess I don't understand its purpose
-  // ROR: the point of this is to provide info on the program that is running when
-  // the error occurs -- it is key info!
+  else {
+    if(taMisc::InMainThread()) {
+      taMisc::last_err_msg = msg; // can only save to global for same-thread guys
+    }
 #if !defined(NO_TA_BASE) 
-  if(cssMisc::cur_top && cssMisc::cur_top->own_program && !taMisc::is_loading) {
-    fmsg += String("\n\n") + cssMisc::GetSourceLoc(NULL);
-  }
+    if(cssMisc::cur_top && cssMisc::cur_top->own_program && !taMisc::is_loading) {
+      msg += String("\n\n") + cssMisc::GetSourceLoc(NULL);
+    }
 #endif
-  taMisc::ConsoleOutput(fmsg, true, false);
+    emsg = "***ERROR: " + msg;
+  }
+  taMisc::LogEvent(emsg);
+#if !defined(NO_TA_BASE)
+  taMisc::ErrorCancelCheck();   // sets taMisc::err_cancel
+#endif
+  // if (beep_on_error) cerr << '\a'; // BEL character
+
+  if(!taMisc::err_cancel) {
+    taMisc::ConsoleOutput(emsg, true, false);
+  }
 #if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top && !taMisc::is_loading) {
     if(cssMisc::cur_top->own_program) {
       bool running = cssMisc::cur_top->state & cssProg::State_Run;
-      cssMisc::cur_top->own_program->taError(cssMisc::GetSourceLn(NULL), running,
-					      taMisc::last_err_msg);
+      cssMisc::cur_top->own_program->taError(cssMisc::GetSourceLn(NULL), running, msg);
     }
     cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
-    cssMisc::cur_top->exec_err_msg = taMisc::last_err_msg;
+    cssMisc::cur_top->exec_err_msg = msg;
   }
   if(!taMisc::interactive) {
     taMisc::Info("Quitting non-interactive job on error");
@@ -899,7 +906,7 @@ void taMisc::Error(const String& a, const String& b, const String& c, const Stri
   }
   else {
     if (taMisc::gui_active && !taMisc::is_loading) {
-      bool cancel = iDialogChoice::ErrorDialog(NULL, taMisc::last_err_msg);
+      bool cancel = iDialogChoice::ErrorDialog(NULL, msg);
       taMisc::ErrorCancelSet(cancel);
     }
   }
@@ -1012,11 +1019,9 @@ void taMisc::LogEvent(const String& log_data) {
     tstamp = tstamp.before('\n');
 
     String thread_info;
-#ifndef NO_TA_BASE
-    if(QThread::currentThread() != QApplication::instance()->thread()) {
-      thread_info = String("thread ") << (String)QThread::currentThread()->objectName() << ": ";
+    if(!taMisc::InMainThread()) {
+      thread_info = String("thread ") << taMisc::CurrentThreadName() << ": ";
     }
-#endif
     log_full = tstamp + ": " + thread_info + log_data;
   }
   if(taMisc::log_stream.bad()) {
@@ -1221,21 +1226,23 @@ static bool ConsoleOutputLine(const String& oneln, bool err, bool& pager, int& p
 bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
   // cannot directly output to console from a thread!
   // todo: need to figure out a better workaround?
-#ifndef NO_TA_BASE
-  if(QThread::currentThread() != QApplication::instance()->thread()) {
+  if(!taMisc::InMainThread()) {
     if(err)
-      cerr << "thread " << (String)QThread::currentThread()->objectName() << ": " << str << endl;
+      cerr << "thread " << taMisc::CurrentThreadName() << ": " << str << endl;
     else
-      cout << "thread " << (String)QThread::currentThread()->objectName() << ": " << str << endl;
+      cout << "thread " << taMisc::CurrentThreadName() << ": " << str << endl;
     return true;
   }
-#endif
 
   // console_hold is a String, can only do this in current thread!
   if (console_hold_on) {
     console_hold << str;
   }
 
+  if(str.empty() || str == ".") {
+    ConsoleOutputChars(str, err, pager);
+  }
+  
   if(!taMisc::interactive) pager = false;
   int pageln = 0;
   String rmdr;
@@ -1503,7 +1510,21 @@ void taMisc::Decode_Signal(int err) {
   cerr << emsg;                 // nothing better to do in this situation -- don't go to console..
 }
 
+bool taMisc::InMainThread() {
+#ifndef NO_TA_BASE
+  return (QThread::currentThread() == QApplication::instance()->thread());
+#else
+  return true;
+#endif  
+}
 
+String taMisc::CurrentThreadName() {
+#ifndef NO_TA_BASE
+  return (String)QThread::currentThread()->objectName();
+#else
+  return "MainThread";
+#endif
+}
 
 /////////////////////////////////////////////////
 //      Startup
