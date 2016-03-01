@@ -277,13 +277,15 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
   act = menu->AddItem("&Copy", taiWidgetMenu::normal, iAction::int_act,
                       this, SLOT(EditAction(int)), iClipData::EA_COPY );
   act->setShortcut(QKeySequence("Ctrl+C"));
-  if (!(ea & iClipData::EA_COPY))
+  if (!(ea & iClipData::EA_COPY)) {
     act->setEnabled(false);
+  }
   act = menu->AddItem("&Paste", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(EditAction(int)), iClipData::EA_PASTE);
   act->setShortcut(QKeySequence("Ctrl+V"));
-  if (!(ea & iClipData::EA_PASTE)) 
+  if (!(ea & iClipData::EA_PASTE)) {
     act->setEnabled(false);
+  }
   act = menu->AddItem("Clear", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(EditAction(int)), iClipData::EA_CLEAR);
   if (!(ea & iClipData::EA_CLEAR)) 
@@ -296,6 +298,9 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
 
   act = menu->AddItem("&View", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(ViewAction(int)), 1);
+  if (sel.col_fr != sel.col_to) {
+    act->setEnabled(false);
+  }
   act = menu->AddItem("&Reset Colors", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(ResetColorsAction(int)), 1);
 
