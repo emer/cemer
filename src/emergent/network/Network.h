@@ -1016,9 +1016,11 @@ public:
   // creates a table with parent spec member values and shows child values that are different - will make data table if not existing
   virtual void      AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec);
   // #IGNORE called recursively to add a column for all child specs to spec data table -- called by SpecCompare()
+  virtual bool      ShowSpecMember(MemberDef* spec_md, MemberDef* spec_member_md);
+  // #IGNORE returns true for members that are user editable and are visible in spec panel
   virtual void      WriteSpecMbrNamesToTable(DataTable* spec_table, BaseSpec* spec);
   // #IGNORE writes spec member names to a spec compare table -- See SpecCompare()
-  virtual void      WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec);
+  virtual void      WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, bool is_child);
   // #IGNORE writes spec member values to a spec compare table -- See SpecCompare()
   
   virtual Layer*    FindMakeLayer(const String& nm, TypeDef* td = NULL,

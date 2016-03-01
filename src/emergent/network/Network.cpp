@@ -3410,7 +3410,7 @@ void Network::SpecCompare(BaseSpec* parent_spec) {
   spec_table->RefreshViews();
   
   WriteSpecMbrNamesToTable(spec_table, parent_spec);
-  WriteSpecMbrValsToTable(spec_table, parent_spec);
+  WriteSpecMbrValsToTable(spec_table, parent_spec, false);
   AddChildToSpecCompareTable(spec_table, parent_spec);
   spec_table->StructUpdate(false);
   tabMisc::DelayedFunCall_gui(spec_table, "BrowserSelectMe");
@@ -3419,7 +3419,7 @@ void Network::SpecCompare(BaseSpec* parent_spec) {
 void Network::AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec) {
   FOREACH_ELEM_IN_GROUP(BaseSpec, child, spec->children) {
     spec_table->NewColString(child->name);
-    WriteSpecMbrValsToTable(spec_table, child); // rows already add by parent - pass false
+    WriteSpecMbrValsToTable(spec_table, child, true); // rows already add by parent - pass false
     if (child->children.size > 0) {
       AddChildToSpecCompareTable(spec_table, child);  // recursion
     }
@@ -3427,49 +3427,67 @@ void Network::AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec) 
 }
 
 void Network::WriteSpecMbrNamesToTable(DataTable* spec_table, BaseSpec* spec) {
-  BaseSpec* base_spec = new BaseSpec;
-  TypeDef* base_td = base_spec->GetTypeDef();
   TypeDef* spec_td = spec->GetTypeDef();
   
   int index = 0;
   for(int m=0; m<spec_td->members.size; m++) {
     MemberDef* spec_td_md = spec_td->members.FastEl(m);
     TypeDef* spec_member_td = spec_td_md->type;
-    if (spec_member_td->InheritsFrom(&TA_SpecMemberBase)) {
-      for(int n=0; n<spec_member_td->members.size; n++) {
-        MemberDef* spec_member_base_md = spec_member_td->members.FastEl(n);
-        if (!base_td->members.FindName(spec_member_base_md->name) && !spec_member_base_md->isReadOnly()) {  // if not in BaseSpec add it
-          spec_table->AddBlankRow();
-          String name = spec_td_md->name + "_" + spec_member_base_md->name;
-          spec_table->SetValAsVar(name, 0, index);
-          index++;
-        }
+    for(int n=0; n<spec_member_td->members.size; n++) {
+      MemberDef* spec_member_base_md = spec_member_td->members.FastEl(n);
+      if (ShowSpecMember(spec_td_md, spec_member_base_md)) {
+        spec_table->AddBlankRow();
+        String name = spec_td_md->name + "_" + spec_member_base_md->name;
+        spec_table->SetValAsVar(name, 0, index);
+        index++;
       }
     }
   }
 }
 
-void Network::WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec) {
+bool Network::ShowSpecMember(MemberDef* spec_md, MemberDef* spec_member_md) {
   BaseSpec* base_spec = new BaseSpec;
   TypeDef* base_td = base_spec->GetTypeDef();
+  if (base_td->members.FindName(spec_md->name)) {
+    return false;
+  }
+  if (spec_md->HasOption("HIDDEN") || spec_md->HasOption("HIDDEN_INLINE")) {
+    return false;
+  }
+  if (spec_member_md->isReadOnly() || spec_member_md->HasOption("HIDDEN") ||
+      spec_member_md->HasOption("HIDDEN_INLINE")) {
+    return false;
+  }
+  if (spec_member_md->name == "user_data_") {
+    return false;
+  }
+  return true;
+}
+
+void Network::WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, bool is_child) {
   TypeDef* spec_td = spec->GetTypeDef();
   
   int index = 0;
   for(int m=0; m<spec_td->members.size; m++) {
     MemberDef* spec_td_md = spec_td->members.FastEl(m);
     TypeDef* spec_member_td = spec_td_md->type;
-    if (spec_member_td->InheritsFrom(&TA_SpecMemberBase)) {
-      for(int n=0; n<spec_member_td->members.size; n++) {
-        MemberDef* spec_member_base_md = spec_member_td->members.FastEl(n);
-        if (!base_td->members.FindName(spec_member_base_md->name) && !spec_member_base_md->isReadOnly()) {  // if not in BaseSpec add it
-          SpecMemberBase* new_base = (SpecMemberBase*)spec_td->members.SafeEl(m)->GetOff(spec);
-          String value = spec_member_base_md->GetValStr(new_base);
-          String parent_value = spec_table->GetValAsString(1, index);
-          if (value != parent_value) {
+    for(int n=0; n<spec_member_td->members.size; n++) {
+      MemberDef* spec_member_base_md = spec_member_td->members.FastEl(n);
+      if (ShowSpecMember(spec_td_md, spec_member_base_md)) {
+        SpecMemberBase* new_base = (SpecMemberBase*)spec_td->members.SafeEl(m)->GetOff(spec);
+        String value = spec_member_base_md->GetValStr(new_base);
+        String parent_value = spec_table->GetValAsString(1, index);
+        if (value != parent_value) {
+          if (is_child) {
+            if (spec->GetUnique(spec_td_md->name)) {
+              spec_table->SetValAsVar(value, spec->name, index);
+            }
+          }
+          else {
             spec_table->SetValAsVar(value, spec->name, index);
           }
-          index++;
         }
+        index++;
       }
     }
   }
