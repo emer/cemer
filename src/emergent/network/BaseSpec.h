@@ -118,7 +118,7 @@ public:
   // #DYN1 Set parameter at given path to given value, for all the specs within this group, and all the child specs underneath these specs
 
   virtual void    CompareWithChildren();
-  // #BUTTON calls network::ComareSpecWithChildren to populate a table that compares this specs member values with its children's values
+  // #BUTTON calls network::ComareSpecWithChildren to populate a table that compares this specs member values with its children's values - this data does not update - call again if you edit spec values!
   
   taBase*         ChooseNew(taBase* origin) override;
   bool            HasChooseNew() override { return true; }

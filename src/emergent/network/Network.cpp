@@ -3505,16 +3505,26 @@ void Network::WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, boo
         if (ShowSpecMember(spec_td_md, spec_member_base_md)) {
           SpecMemberBase* new_base = (SpecMemberBase*)spec_td->members.SafeEl(m)->GetOff(spec);
           
-          // always display value for member overrides
+          // display value if member overrides
           if (!is_child || (is_child && spec->GetUnique(spec_td_md->name))) {
-            String value = spec_member_base_md->GetValStr(new_base);
-            spec_table->SetValAsVar(value, spec->name, index);
+            // but check conditional show value
+            if (ShowSpecMemberValue(spec_member_base_md, spec_member_td, new_base)) {
+              String value = spec_member_base_md->GetValStr(new_base);
+              spec_table->SetValAsVar(value, spec->name, index);
+            }
           }
           index++;
         }
       }
     }
   }
+}
+
+bool Network::ShowSpecMemberValue(MemberDef* spec_member_md, TypeDef* typ, taBase* base) {
+  if (spec_member_md->GetCondOptTest("CONDSHOW", typ, base)) {
+    return true;
+  }
+  return false;
 }
 
 Layer* Network::FindMakeLayer(const String& nm, TypeDef* td, bool& nw_itm, const String& alt_nm) {
