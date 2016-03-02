@@ -621,7 +621,7 @@ public:
   virtual bool          AppendRows(DataTable* append_from);
   // #CAT_Rows #DROP1 #MENU append rows from another data table -- this is also available in taDataProc and in the GUI as a drag-and-drop action (appends rows of dropped item onto dropped item)
   virtual void          ShowAllRows();
-  // #CAT_Rows #MENU #FROM_GROUP_data #NULL_OK show all available rows of data in the table, in their original raw order, effectively undoing any prior sort, filter, or row removal functions -- the DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions. Therefore, you can instantly regain access to the original unsorted and unfiltered rows of data by resetting these indexes to be in one-to-one correspondence with the raw data stored in the table.  Note that *all* access to the DataTable rows goes through the indexes -- it is not possible to otherwise access the raw data directly.  See also the Flatten function.
+  // #CAT_Rows #MENU #FROM_LIST_data #NULL_OK show all available rows of data in the table, in their original raw order, effectively undoing any prior sort, filter, or row removal functions -- the DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions. Therefore, you can instantly regain access to the original unsorted and unfiltered rows of data by resetting these indexes to be in one-to-one correspondence with the raw data stored in the table.  Note that *all* access to the DataTable rows goes through the indexes -- it is not possible to otherwise access the raw data directly.  See also the Flatten function.
   const Variant         GetColUserData(const String& name, const Variant& col) const;
   // #CAT_Config gets user data from the column (col can be an index or a name)
   void                  SetColUserData(const String& name, const Variant& value, const Variant& col);
@@ -806,26 +806,26 @@ public:
 
   bool          InitValsCol(DataCol* col, const Variant& init_val)
   { return col->InitVals(init_val); }
-  // #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals    #FROM_GROUP_data initialize all values in given column to given value
+  // #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals    #FROM_LIST_data initialize all values in given column to given value
 
   bool          InitValsToRowNoCol(DataCol* col)
   { return col->InitValsToRowNo(); }
-  // #CAT_Columns #MENU #MENU_ON_Columns #LABEL_InitValsToRowNo #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
+  // #CAT_Columns #MENU #MENU_ON_Columns #LABEL_InitValsToRowNo #FROM_LIST_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
 
   bool          InitValsByIncrementCol(DataCol* col, const int first_value, const int increment)
   { return col->InitValsByIncrement(first_value, increment); }
-  // #CAT_Columns #MENU #MENU_ON_Columns #LABEL_InitValsByIncrement #FROM_GROUP_data initialize all values in given column to be equal to the row number times some integer increment plus an initial starting value -- only valid for scalar (not matrix) columns
+  // #CAT_Columns #MENU #MENU_ON_Columns #LABEL_InitValsByIncrement #FROM_LIST_data initialize all values in given column to be equal to the row number times some integer increment plus an initial starting value -- only valid for scalar (not matrix) columns
 
   int           FindValCol(DataCol* col, const Variant& val, int st_row = 0) const
   { return col->FindVal(val, st_row); }
-  // #EXPERT #CAT_Access #MENU #FROM_GROUP_data #USE_RVAL find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  // #EXPERT #CAT_Access #MENU #FROM_LIST_data #USE_RVAL find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
   int           FindMultiValCol(int st_row, const Variant& val1, DataCol* col1,
                                 const Variant& val2=0, DataCol* col2=NULL,
                                 const Variant& val3=0, DataCol* col3=NULL,
                                 const Variant& val4=0, DataCol* col4=NULL,
                                 const Variant& vall5=0, DataCol* col5=NULL,
                                 const Variant& val6=0, DataCol* col6=NULL) const;
-  // #EXPERT #CAT_Access #MENU #FROM_GROUP_data #USE_RVAL find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  // #EXPERT #CAT_Access #MENU #FROM_LIST_data #USE_RVAL find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
 
   /////////////////////////////////////////////////////////
@@ -1046,7 +1046,7 @@ public:
                                 DataCol* col4 = NULL, bool ascending4 = true,
                                 DataCol* col5 = NULL, bool ascending5 = true,
                                 DataCol* col6 = NULL, bool ascending6 = true);
-  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_LIST_data #NULL_OK sort table according to selected columns of data. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first
 
   virtual void          SortUsingSpec(DataSortSpec& spec);
   // #CAT_DataProc Call when you already have a spec
@@ -1077,9 +1077,9 @@ public:
                                   DataCol* col3 = NULL,
                                   Relation::Relations operator_3 = Relation::EQUAL,
                                   const String& value_3 = "");
-  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
+  // #CAT_DataProc #MENU #FROM_LIST_data #LABEL_Filter Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          FilterByScript(const String& filter_expr);
-  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter_Custom Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible.  Refer to columns by name. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
+  // #CAT_DataProc #MENU #FROM_LIST_data #LABEL_Filter_Custom Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible.  Refer to columns by name. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          FilterBySpec(DataSelectSpec* spec);
   // #CAT_DataProc filter the table rows by specifying which rows to retain in the table (hiding the ones that do not match).  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual void          FindAllScalar(taVector2i_List* found_list, const String& search_str, bool contains);
@@ -1090,11 +1090,11 @@ public:
   virtual bool          GroupMeanSEM(DataTable* dest_data,
                                      DataCol* gp_col1, DataCol* gp_col2 = NULL,
                                      DataCol* gp_col3 = NULL, DataCol* gp_col4 = NULL);
-  // #CAT_DataProc #MENU #NULL_OK #NULL_TEXT_0_NewDataTable #FROM_GROUP_1_data #FROM_GROUP_2_data #FROM_GROUP_3_data #FROM_GROUP_4_data groups data according to given columns in hierarchical fashion (gp_col2 is subgrouped within gp_col1, etc), and compute the Mean and Standard Error of the Mean (SEM) for any other numerical columns of data -- results go in dest_data table (new table created if NULL)
+  // #CAT_DataProc #MENU #NULL_OK #NULL_TEXT_0_NewDataTable #FROM_LIST_1_data #FROM_LIST_2_data #FROM_LIST_3_data #FROM_LIST_4_data groups data according to given columns in hierarchical fashion (gp_col2 is subgrouped within gp_col1, etc), and compute the Mean and Standard Error of the Mean (SEM) for any other numerical columns of data -- results go in dest_data table (new table created if NULL)
   virtual String        ColStats(const Variant& col);
   // #CAT_DataProc compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).-- column can be specified as either integer index or a string that is then used to find the given column name
   virtual String        ColStatsCol(DataCol* col);
-  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_ColStats #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+  // #CAT_DataProc #MENU #FROM_LIST_data #LABEL_ColStats #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
   virtual String        ColStatsName(const String& col_name);
   // #EXPERT #CAT_DataProc compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
   virtual void          PermuteRows(int thr_no = -1);
@@ -1107,20 +1107,20 @@ public:
   // ##CAT_Rows is compare rows turned on or was the last call to clear compare rows
   virtual bool          MatrixColToScalarsCol(DataCol* mtx_col,
                                               const String& scalar_col_name_stub="");
-  // #EXPERT #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #FROM_GROUP_data #LABEL_MatrixColToScalars convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
+  // #EXPERT #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #FROM_LIST_data #LABEL_MatrixColToScalars convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
   virtual bool          MatrixColToScalars(const Variant& mtx_col,
                                            const String& scalar_col_name_stub="");
   // #CAT_Columns convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
 
   virtual bool          MatrixColFmScalarsCol(DataCol* mtx_col,
                                               const String& scalar_col_name_stub="");
-  // #EXPERT #CAT_Columns #MENU #FROM_GROUP_data #LABEL_MatrixColFmScalars convert a sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, all non-matrix fields with same value type as the matrix column will be used -- matrix column must already exist and be configured properly
+  // #EXPERT #CAT_Columns #MENU #FROM_LIST_data #LABEL_MatrixColFmScalars convert a sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, all non-matrix fields with same value type as the matrix column will be used -- matrix column must already exist and be configured properly
   virtual bool          MatrixColFmScalars(const Variant& mtx_col, const String& scalar_col_name_stub="");
   // #CAT_Columns convert a sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, all non-matrix numeric fields with same value type as the matrix column will be used -- matrix column must already exist and be configured properly
   virtual bool          SplitStringToColsCol(DataCol* string_col,
                                           const String& delim = "_",
                                           const String& col_name_stub="");
-  // #EXPERT #CAT_Columns #MENU #FROM_GROUP_data #LABEL_SplitStringToCols split a string column to a sequence of separate string columns, by splitting the string by given delimiter -- this can be very useful for unpacking various conditions built into a single string value, so that they can be separately Group'ed upon (see taDataProc::Group function).  The first row's string value determines how many columns are created.  If col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
+  // #EXPERT #CAT_Columns #MENU #FROM_LIST_data #LABEL_SplitStringToCols split a string column to a sequence of separate string columns, by splitting the string by given delimiter -- this can be very useful for unpacking various conditions built into a single string value, so that they can be separately Group'ed upon (see taDataProc::Group function).  The first row's string value determines how many columns are created.  If col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
   virtual bool          SplitStringToCols(const Variant& string_col,
                                           const String& delim = "_",
                                           const String& col_name_stub="");

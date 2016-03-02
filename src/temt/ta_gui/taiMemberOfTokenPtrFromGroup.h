@@ -28,8 +28,11 @@ class taList_impl; //
 taTypeDef_Of(taiMemberOfTokenPtrFromGroup);
 
 class TA_API taiMemberOfTokenPtrFromGroup : public taiMemberOfTokenPtr {
+  // for taBase pointers with FROM_GROUP_xxx or FROM_LIST_xxx
   TAI_MEMBER_SUBCLASS(taiMemberOfTokenPtrFromGroup, taiMemberOfTokenPtr);
 public:
+  String        dat_typ;
+  
   int           BidForMember(MemberDef* md, TypeDef* td) override;
   taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
@@ -37,7 +40,7 @@ public:
   void          GetMbrValue(taiWidget* dat, void* base, bool& first_diff) override;
 
 private:
-  void          Initialize() {}
+  void          Initialize() { }
   void          Destroy() {}
 };
 

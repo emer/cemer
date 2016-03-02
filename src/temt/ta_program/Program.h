@@ -183,7 +183,7 @@ public:
   // #READ_ONLY #NO_SAVE local back trace for this program -- rendered by LocalTrace function
 
   ProgramRef            step_prog;
-  // #FROM_GROUP_sub_progs_step The default program to single step for the Step function in this program
+  // #FROM_LIST_sub_progs_step The default program to single step for the Step function in this program
   int                   step_n;
   // #MIN_1 how many steps to take when stepping at this program level (i.e., when this program name is clicked on the Step button of any other program) -- also set by the step button dynamically
   ProgLine_List         script_list;
@@ -324,9 +324,9 @@ public:
   virtual void          SaveToProgLib(ProgLibs library = USER_LIB);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #CAT_ProgLib save the program to given program library -- file name = object name -- be sure to add good desc comments!!
   virtual void          UpdateFromProgLib(ProgLibEl* prog_type);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #ARG_VAL_FM_FUN #CAT_ProgLib (re)load the program from the program library element of given type
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib #ARG_VAL_FM_FUN #CAT_ProgLib (re)load the program from the program library element of given type
   taBase*               AddFromProgLib(ProgLibEl* prog_type) ;
-  // #BUTTON #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL #CAT_Program adds a program from a library of existing program types
+  // #BUTTON #MENU_CONTEXT #FROM_LIST_prog_lib #NO_SAVE_ARG_VAL #CAT_Program adds a program from a library of existing program types
   virtual void          RunLoadInitCode();
   // #CAT_Run Run the initialization code for object pointer variables and program calls -- to resolve pointers after loading
 

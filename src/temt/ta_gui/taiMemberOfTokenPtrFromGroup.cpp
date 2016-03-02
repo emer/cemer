@@ -59,14 +59,20 @@ taiWidget* taiMemberOfTokenPtrFromGroup::GetWidgetRep_impl(IWidgetHost* host_, t
   if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
     new_flags |= taiWidget::flgAutoApply; // default is to auto-apply!
 
-  if (mbr->type->DerivesFrom(&TA_taGroup_impl))
+  if (mbr->type->DerivesFrom(&TA_taGroup_impl)) {
+    dat_typ = "subgp";
     return new taiWidgetSubGroupMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall, NULL, typ, host_, par, gui_parent_, new_flags);
-  else if (is_group)
+  }
+  else if (is_group) {
+    dat_typ = "gp";
     return new taiWidgetGroupElMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall, NULL,
                 typ, host_, par, gui_parent_, (new_flags | taiWidget::flgNoInGroup));
-  else
+  }
+  else {
+    dat_typ = "list";
     return new taiWidgetListElMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall, NULL,
                 typ, host_, par, gui_parent_, new_flags);
+  }
 }
 
 void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
@@ -83,7 +89,11 @@ void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiWidget* dat, const void* bas
 
   MemberDef* from_md = NULL;
   taBase* bs = ((taBase*)base)->FindFromPath(mb_path, from_md);
-  
+  if(from_md->type->InheritsFrom(&TA_taSmartRef))
+    bs = ((taSmartRef*)bs)->ptr();
+  else if(from_md->type->IsPointer())
+    bs = *((taBase**)bs);
+
   taBase* tok_ptr = NULL; // this is the addr of the token, in the member
   switch (mode) {
   case MD_BASE:
@@ -97,11 +107,17 @@ void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiWidget* dat, const void* bas
   } break;
   }
 
-  if (mbr->type->DerivesFrom(TA_taGroup_impl)) {
+  if(dat_typ == "subgp") {
     taiWidgetSubGroupMenu* rval = (taiWidgetSubGroupMenu*)dat;
     taGroup_impl* lst = (taGroup_impl*)bs;
     rval->GetImage(lst, (taGroup_impl*)tok_ptr);
-  } else {
+  }
+  else if(dat_typ == "gp") {
+    taiWidgetGroupElMenu* rval = (taiWidgetGroupElMenu*)dat;
+    taList_impl* lst = (taList_impl*)bs;
+    rval->GetImage(lst, tok_ptr);
+  }
+  else {
     taiWidgetListElMenu* rval = (taiWidgetListElMenu*)dat;
     taList_impl* lst = (taList_impl*)bs;
     rval->GetImage(lst, tok_ptr);
@@ -111,10 +127,15 @@ void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiWidget* dat, const void* bas
 
 void taiMemberOfTokenPtrFromGroup::GetMbrValue(taiWidget* dat, void* base, bool& first_diff) {
   taBase* tabval = NULL;
-  if (mbr->type->DerivesFrom(&TA_taGroup_impl)) {
+  if (dat_typ == "subgp") {
     taiWidgetSubGroupMenu* rval = (taiWidgetSubGroupMenu*)dat;
     tabval = (taBase*)rval->GetValue();
-  } else {
+  }
+  else if(dat_typ == "gp") {
+    taiWidgetGroupElMenu* rval = (taiWidgetGroupElMenu*)dat;
+    tabval = (taBase*)rval->GetValue();
+  }
+  else {
     taiWidgetListElMenu* rval = (taiWidgetListElMenu*)dat;
     tabval = (taBase*)rval->GetValue();
   }

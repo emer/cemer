@@ -144,7 +144,7 @@ public:
 #endif // TA_QT3D
 
   virtual void          EditView(T3DataViewMain* view);
-  // #CAT_Display #BUTTON #FROM_GROUP_root_views edit given view within this panel -- can provide more detailed view control information than what is present in the middle view control panel
+  // #CAT_Display #BUTTON #FROM_LIST_root_views edit given view within this panel -- can provide more detailed view control information than what is present in the middle view control panel
 
   QPixmap               GrabImage(bool& got_image) override;
   bool                  SaveImageAs(const String& fname = "", ImageFormat img_fmt = SVG) override;

@@ -79,6 +79,7 @@
 #include <QClipboard>
 #include <iWebView>
 #include <QMenuBar>
+#include <QTimer>
 
 int iMainWindowViewer::s_next_unique_id;
 const QString iMainWindowViewer::cmd_str = "Ctrl+";
@@ -314,21 +315,6 @@ void iMainWindowViewer::raise() {
 void iMainWindowViewer::moveEvent(QMoveEvent* e) {
   QMainWindow::moveEvent(e);
   //  taProject* prj = curProject();
-  AlignCssConsole();
-}
-
-void iMainWindowViewer::resizeEvent(QResizeEvent* e) {
-  inherited::resizeEvent(e);
-#ifdef TA_OS_MAC
-  taMisc::Info("window resize event:", viewer()->name, "w", (String)e->size().width(), "h:",
-                    (String)e->size().height(), "spontaneous:", (String)e->spontaneous());
-#endif
-  // use this to check for initializing the hacky frame_s value
-  if ((taiM->frame_s.h + taiM->frame_s.w) == 0) {
-    QRect r = frameGeometry();
-    taiM->frame_s.h = r.height() - height();
-    taiM->frame_s.w = r.width() - width();
-  }
   AlignCssConsole();
 }
 
@@ -2272,6 +2258,29 @@ bool iMainWindowViewer::event(QEvent* ev) {
   return rval;
 }
 
+void iMainWindowViewer::resizeEvent(QResizeEvent* e) {
+  inherited::resizeEvent(e);
+#ifdef TA_OS_MAC
+  taMisc::Info("window resize event:", viewer()->name, "w", (String)e->size().width(), "h:",
+                    (String)e->size().height(), "spontaneous:", (String)e->spontaneous());
+  if(e->spontaneous()) {
+    cur_window_size = e->size();
+  }
+#endif
+  // use this to check for initializing the hacky frame_s value
+  if ((taiM->frame_s.h + taiM->frame_s.w) == 0) {
+    QRect r = frameGeometry();
+    taiM->frame_s.h = r.height() - height();
+    taiM->frame_s.w = r.width() - width();
+  }
+  AlignCssConsole();
+}
+
+void iMainWindowViewer::restoreWindowSize() {
+  if(cur_window_size.height() > 0)
+    resize(cur_window_size);
+}
+
 bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
   if(obj != this)
     return inherited::eventFilter(obj, event);
@@ -2289,14 +2298,16 @@ bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
 
   if(!re->spontaneous() && !allow_window_resize) {
     window_resize_last_time = QDateTime::currentDateTime();
-    allow_window_resize = false;
-    return true;                // filter!
+    allow_window_resize = true;
+    QTimer::singleShot(500, this, SLOT(restoreWindowSize()) ); // undo
+    return true;                // filter -- this is not working!  it just does it!
   }
   if(re->spontaneous() && window_resize_last_time.isValid()) {
     if(window_resize_last_time.secsTo(QDateTime::currentDateTime()) <= 5) {
       //  sometimes get a stray one in there..
-      allow_window_resize = false;
-      return true;                // filter!
+      allow_window_resize = true;
+      QTimer::singleShot(500, this, SLOT(restoreWindowSize()) ); // undo
+      return true;                // filter -- this is not working!  it just does it!
     }
   }
   allow_window_resize = false;               // always reset regardless

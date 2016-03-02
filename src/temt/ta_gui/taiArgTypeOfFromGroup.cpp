@@ -26,6 +26,8 @@ int taiArgTypeOfFromGroup::BidForArgType(int aidx, TypeDef* argt, MethodDef* md,
   if (!argt->IsPointer() || !argt->IsTaBase())
     return 0;
   String fmgp = GetOptionAfter("FROM_GROUP_", md, aidx);
+  if (fmgp.empty())
+    fmgp = GetOptionAfter("FROM_LIST_", md, aidx);
   if (fmgp.empty()) return 0;
   return taiArgTypeOfTokenPtr::BidForArgType(aidx,argt,md,td)+1;
   return 0;
@@ -85,7 +87,7 @@ void taiArgTypeOfFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
   MemberDef* from_md = GetFromMd();
   if (from_md == NULL)  return;
   taList_impl* lst = GetList(from_md, base);
-  if (typ->InheritsFrom(TA_taGroup_impl)) {
+  if (from_md->type->InheritsFrom(TA_taGroup_impl)) {
     taiWidgetGroupElChooser* els = (taiWidgetGroupElChooser*)dat;
     els->GetImage((taGroup_impl*)lst, *((taBase**)arg_base));
   }
@@ -106,6 +108,8 @@ void taiArgTypeOfFromGroup::GetValue_impl(taiWidget* dat, void*) {
 MemberDef* taiArgTypeOfFromGroup::GetFromMd() {
   MemberDef* from_md = NULL;
   String mb_nm = GetOptionAfter("FROM_GROUP_");
+  if(mb_nm.empty())
+    mb_nm = GetOptionAfter("FROM_LIST_");
   if (!mb_nm.empty()) {
     from_md = typ->members.FindName(mb_nm);
   }

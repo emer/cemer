@@ -28,7 +28,7 @@ class taList_impl; //
 taTypeDef_Of(taiArgTypeOfFromGroup);
 
 class TA_API taiArgTypeOfFromGroup : public taiArgTypeOfTokenPtr {
-  // for taBase pointers with FROM_GROUP_xxx
+  // for taBase pointers with FROM_GROUP_xxx or FROM_LIST_xxx
   TAI_ARGTYPE_SUBCLASS(taiArgTypeOfFromGroup, taiArgTypeOfTokenPtr);
 public:
   int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) override;

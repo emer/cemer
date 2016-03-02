@@ -219,7 +219,7 @@ public:
     N_NetThrLayStats,
   };
 
-  static taBrainAtlas_List* brain_atlases;  // #NO_SAVE #NO_SHOW_TREE atlases available
+  static taBrainAtlas_List* brain_atlases;  // #HIDDEN #READ_ONLY #NO_SAVE #NO_SHOW_TREE atlases available
   
   DataTable_Group spec_tables;  // #CAT_Structure Tables comparing parent and child specs
   BaseSpec_Group specs;         // #CAT_Structure Specifications for network parameters
@@ -237,7 +237,7 @@ public:
   String        auto_load_file;
   // #CONDSHOW_ON_auto_load_wts:AUTO_LOAD_FILE #FILE_DIALOG_LOAD #COMPRESS #FILETYPE_Weights #EXT_wts file name to auto-load weights file from (any path must be relative to project file)
 
-  taBrainAtlasRef brain_atlas;  // #FROM_GROUP_brain_atlases #NO_SAVE The name of the atlas to use for brain view rendering.  Labels from this atlas can be applied to layers' brain_area member.
+  taBrainAtlasRef brain_atlas;  // #FROM_LIST_brain_atlases #NO_SAVE The name of the atlas to use for brain view rendering.  Labels from this atlas can be applied to layers' brain_area member.
   String        brain_atlas_name; // #HIDDEN the name of the brain atlas that we're using -- this is what is actually saved b/c the ref is not saveable
 
   TrainMode     train_mode;     // #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
@@ -739,7 +739,7 @@ public:
   virtual void  SaveToWeights(Weights* wts);
   // #BUTTON #MENU #NULL_OK #NULL_TEXT_NewWeightsObj write weight values out to given weights object (NULL = make a new one)
   virtual bool  LoadFmWeights(Weights* wts, bool quiet = false);
-  // #MENU #FROM_GROUP_weights load weight values from given weights object
+  // #MENU #FROM_LIST_weights load weight values from given weights object
 
   virtual void  SaveToFirstWeights();
   // write weight values out to the first Weights object in the weights list -- if it does not yet exist, then create it -- useful for basic save and load of one cached set of weights, as compared to a situation where you need to manage multiple different weight sets
