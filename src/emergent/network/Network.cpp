@@ -3406,8 +3406,10 @@ void Network::SpecCompare(BaseSpec* parent_spec) {
     spec_table->StructUpdate(true);
   }
   
-  spec_table->NewColString("Member");
-  spec_table->NewColString(parent_spec->name);
+  DataCol* dc = (DataCol*)spec_table->NewColString("Member");
+  dc->SetColFlag(DataCol::READ_ONLY);
+  dc = (DataCol*)spec_table->NewColString(parent_spec->name);
+  dc->SetColFlag(DataCol::READ_ONLY);
   spec_table->SetColumnWidth("Member", 250);
   spec_table->RefreshViews();
   
@@ -3420,7 +3422,8 @@ void Network::SpecCompare(BaseSpec* parent_spec) {
 
 void Network::AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec) {
   FOREACH_ELEM_IN_GROUP(BaseSpec, child, spec->children) {
-    spec_table->NewColString(child->name);
+    DataCol* dc = (DataCol*)spec_table->NewColString(child->name);
+    dc->SetColFlag(DataCol::READ_ONLY);
     WriteSpecMbrValsToTable(spec_table, child, true); // rows already add by parent - pass false
     if (child->children.size > 0) {
       AddChildToSpecCompareTable(spec_table, child);  // recursion
