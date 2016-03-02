@@ -173,7 +173,7 @@ void taiWidgetTokenChooser::BuildChooser(iDialogItemChooser* ic, int view) {
 int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
                                           QTreeWidgetItem* top_item)
 {
-  if(!td->IsActualTaBase())
+  if(!td || !td->IsActualTaBase())
     return 0;
   int rval = 0;
   
@@ -222,6 +222,7 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
 
   for (int i = 0; i < td->children.size; ++i) {
     TypeDef* chld = td->children[i];
+    if(!chld) break;
     rval += BuildChooser_0(ic, chld, top_item); //note: we don't create subnodes
   }
   return rval;

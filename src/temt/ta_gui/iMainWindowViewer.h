@@ -26,6 +26,7 @@
 // member includes:
 #include <MainWindowViewer>
 #include <iAction_List>
+#include <QDateTime>
 
 // declare all other types mentioned but not required to include:
 class taiWidgetMenu; //
@@ -86,6 +87,8 @@ public:
   iSplitter*            body;           // #IGNORE body of the window
   int                   nav_frame_width;// hold onto size of navigator frame for resetting splitter
   bool                  tool_dock_was_visible;  // save state for flipping between views that might and might not include the programming toolbar
+  bool                  allow_window_resize;    // #IGNORE allow window to be resized, based on an internally-generated resize signal -- resizes are blocked on mac due to mysterious window resizing creep..
+  QDateTime             window_resize_last_time; // #IGNORE last time a rejected resize event occurred
   
   QSignalMapper*        signalMapperForViews;   // #IGNORE used to map several actions to one action and pass a value
   QSignalMapper*        signalMapperForDataProc;   // #IGNORE used to map several actions to one action and pass a value

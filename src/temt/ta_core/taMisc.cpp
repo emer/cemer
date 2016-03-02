@@ -169,6 +169,11 @@ const String             taMisc::build_str;
 #pragma message ("TA_VEC_SIZE: " STRINGIFY(TA_VEC_SIZE))
 #endif
 
+#ifdef DEBUG
+#pragma message ("DEBUG: ON")
+#endif
+
+
 String taMisc::compile_info;
 
 taThreadDefaults::taThreadDefaults() {

@@ -133,7 +133,7 @@ void iMainWindowViewer::Init() {
 #if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
   setAttribute(Qt::WA_AcceptTouchEvents, false); // this doesn't work like it should
 #endif
-
+  allow_window_resize = false;
   //note: only a bare init -- most stuff done in virtual Constr() called after new
   brow_hist = new iBrowseHistory(this);
   cur_main_focus = LEFT_BROWSER;
@@ -319,10 +319,10 @@ void iMainWindowViewer::moveEvent(QMoveEvent* e) {
 
 void iMainWindowViewer::resizeEvent(QResizeEvent* e) {
   inherited::resizeEvent(e);
-// #ifdef DEBUG
+#ifdef TA_OS_MAC
   taMisc::Info("window resize event:", viewer()->name, "w", (String)e->size().width(), "h:",
                     (String)e->size().height(), "spontaneous:", (String)e->spontaneous());
-// #endif // DEBUG
+#endif
   // use this to check for initializing the hacky frame_s value
   if ((taiM->frame_s.h + taiM->frame_s.w) == 0) {
     QRect r = frameGeometry();
@@ -392,7 +392,9 @@ void iMainWindowViewer::Constr_impl() {
 
   body = new iSplitter(); // def is hor
   setCentralWidget(body);
-  body->installEventFilter(this); // translate keys..
+#ifdef TA_OS_MAC  
+  installEventFilter(this);  // todo: should only be for mac
+#endif
   body->show();
 
   taiMisc::active_wins.AddUnique(this);
@@ -2271,32 +2273,49 @@ bool iMainWindowViewer::event(QEvent* ev) {
 }
 
 bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
-  if (event->type() != QEvent::KeyPress) {
-    // the following can be useful for event debugging 
-    // #if DEBUG
-    // if((event->type() != QEvent::Paint) && (event->type() != QEvent::ChildRemoved)
-    //    && (event->type() != QEvent::ChildAdded) && (event->type() != QEvent::UpdateLater)
-    //    && (event->type() != QEvent::Show) && (event->type() != QEvent::LayoutRequest)
-    //    && (event->type() != QEvent::Timer)&& (event->type() != QEvent::Move)
-    //    && (event->type() != QEvent::Resize) && (event->type() != QEvent::InputMethodQuery)
-    //    ) {
-    //   std::cerr << event->type() << std::endl;
-    //   if(event->type() == QEvent::FocusIn) {
-    //     std::cerr << "focus!" << std::endl;
-    //   }
-    // }
-    // #endif 
+  if(obj != this)
     return inherited::eventFilter(obj, event);
+  if(event->type() != QEvent::Resize)
+    return inherited::eventFilter(obj, event);
+    
+  QResizeEvent* re = (QResizeEvent*)event;
+  // String obj_info = obj->objectName() + " typ: " + obj->metaObject()->className();
+  String wh = "w: " + (String)re->size().width() +  " h: " +
+    (String)re->size().height();
+  taMisc::Info("filter win resize:",
+               viewer()->name, wh,
+               "spontaneous:",(String)re->spontaneous(), "allow:",
+               (String)allow_window_resize);
+
+  if(!re->spontaneous() && !allow_window_resize) {
+    window_resize_last_time = QDateTime::currentDateTime();
+    allow_window_resize = false;
+    return true;                // filter!
   }
-  QKeyEvent* e = static_cast<QKeyEvent *>(event);
-  // this ends up being redundant with all the relevant control-specific cases..
-  // taiMisc::UpdateUiOnCtrlPressed(this, e);
-  
-//  if(KeyEventFilterWindowNav(obj, e))
-//    return true;
-//  if(taiMisc::KeyEventFilterEmacs_Clip(obj, e))
-//    return true;
-  return inherited::eventFilter(obj, event);
+  if(re->spontaneous() && window_resize_last_time.isValid()) {
+    if(window_resize_last_time.secsTo(QDateTime::currentDateTime()) <= 5) {
+      //  sometimes get a stray one in there..
+      allow_window_resize = false;
+      return true;                // filter!
+    }
+  }
+  allow_window_resize = false;               // always reset regardless
+  return inherited::eventFilter(obj, event); // don't filter
+
+  // the following can be useful for event debugging 
+  // #if DEBUG
+  // if((event->type() != QEvent::Paint) && (event->type() != QEvent::ChildRemoved)
+  //    && (event->type() != QEvent::ChildAdded) && (event->type() != QEvent::UpdateLater)
+  //    && (event->type() != QEvent::Show) && (event->type() != QEvent::LayoutRequest)
+  //    && (event->type() != QEvent::Timer)&& (event->type() != QEvent::Move)
+  //    && (event->type() != QEvent::Resize) && (event->type() != QEvent::InputMethodQuery)
+  //    ) {
+  //   std::cerr << event->type() << std::endl;
+  //   if(event->type() == QEvent::FocusIn) {
+  //     std::cerr << "focus!" << std::endl;
+  //   }
+  // }
+  // #endif 
 }
 
 int iMainWindowViewer::GetEditActions() {
