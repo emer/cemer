@@ -28,7 +28,7 @@
 eTypeDef_Of(SigmoidSpec);
 
 class E_API SigmoidSpec : public taOBase {
-// ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
+// ##NO_TOKENS #INLINE #INLINE_DUMP ##CAT_Math Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
 INHERITED(taOBase) //
 public:
 #ifndef __MAKETA__
@@ -43,6 +43,8 @@ public:
   float         off;            // offset for .5 point
   float         gain;           // gain
 
+  bool          gain_eq_1;     // #READ_ONLY #NO_SAVE true if gain == 1 -- for optimizations
+  
   static float  Clip(float y)
   { y = MAX(y,SIGMOID_MIN_VAL); y = MIN(y,SIGMOID_MAX_VAL); return y; }
   static float  ClipNet(float x)
@@ -54,8 +56,10 @@ public:
 
   SIMPLE_COPY(SigmoidSpec);
   TA_BASEFUNS(SigmoidSpec);
+protected:
+  void	UpdateAfterEdit_impl() override;
 private:
-  void  Initialize()            { off = 0.0f; gain = 1.0f; }
+  void  Initialize()            { off = 0.0f; gain = 1.0f; gain_eq_1 = true; }
   void  Destroy()               { };
 };
 

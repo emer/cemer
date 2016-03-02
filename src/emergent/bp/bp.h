@@ -567,7 +567,7 @@ class E_API LinearBpUnitSpec : public BpUnitSpec {
   // linear unit in Bp
 INHERITED(BpUnitSpec)
 public:
-  void Compute_Act(UnitVars* u, Network* net, int thr_no) override;
+  void  Compute_Act(UnitVars* u, Network* net, int thr_no) override;
   void	Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) override;
 
   TA_BASEFUNS(LinearBpUnitSpec);
@@ -583,15 +583,33 @@ private:
 eTypeDef_Of(ThreshLinBpUnitSpec);
 
 class E_API ThreshLinBpUnitSpec : public BpUnitSpec {
-  // thresholded linear unit in Bp -- otherwise known as a ReLu or rectified linear unit
+  // thresholded linear unit in Bp -- otherwise known as a ReLu or rectified linear unit -- uses the sig.off parameter as the threshold value, and applies the sig.gain parameter as well if != 1.0f
 INHERITED(BpUnitSpec)
 public:
-  float		threshold;
-
-  void Compute_Act(UnitVars* u, Network* net, int thr_no) override;
+  void  Compute_Act(UnitVars* u, Network* net, int thr_no) override;
   void	Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(ThreshLinBpUnitSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl() override;
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
+};
+
+eTypeDef_Of(XX1BpUnitSpec);
+
+class E_API XX1BpUnitSpec : public BpUnitSpec {
+  // X / (X+1) = 1 / (1 + X^-1) = activation function -- should be much faster than sigmoidal function -- uses sig.off and sig.gain parameters as well
+INHERITED(BpUnitSpec)
+public:
+
+  void  Compute_Act(UnitVars* u, Network* net, int thr_no) override;
+  void	Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) override;
+
+  TA_SIMPLE_BASEFUNS(XX1BpUnitSpec);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl() override;

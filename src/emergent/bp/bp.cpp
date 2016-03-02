@@ -48,6 +48,7 @@ TA_BASEFUNS_CTORS_DEFN(ErrScaleBpConSpec);
 TA_BASEFUNS_CTORS_DEFN(DeltaBarDeltaBpConSpec);
 TA_BASEFUNS_CTORS_DEFN(BpContextSpec);
 TA_BASEFUNS_CTORS_DEFN(ThreshLinBpUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(XX1BpUnitSpec);
 TA_BASEFUNS_CTORS_DEFN(NoisyBpUnitSpec);
 TA_BASEFUNS_CTORS_DEFN(RBFBpUnitSpec);
 TA_BASEFUNS_CTORS_DEFN(BumpBpUnitSpec);
@@ -406,9 +407,8 @@ void LinearBpUnitSpec::Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no)
 
 void ThreshLinBpUnitSpec::Initialize() {
   SetUnique("act_range", true);
-  act_range.min = -1e20f;
-  act_range.max = 1e20f;
-  threshold = 0.0f;
+  act_range.min = 0.0f;
+  act_range.max = 1e6f;
 }
 
 void ThreshLinBpUnitSpec::UpdateAfterEdit_impl() {
@@ -421,15 +421,70 @@ void ThreshLinBpUnitSpec::UpdateAfterEdit_impl() {
 }
 
 void ThreshLinBpUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
-  if(u->ext_flag & UnitVars::EXT)
+  if(u->ext_flag & UnitVars::EXT) {
     u->act = act_range.Clip(u->ext);
-  else
-    u->act = act_range.Clip((u->net > threshold) ? (u->net - threshold) : 0.0f);
+  }
+  else {
+    float del = u->net - sig.off;
+    if(del < 0.0f) del = 0.0f;
+    if(sig.gain_eq_1) {
+      u->act = act_range.Clip(del);
+    }
+    else {
+      u->act = act_range.Clip(sig.gain * del);
+    }
+  }
 }
 
 void ThreshLinBpUnitSpec::Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) {
   // derivative is 1 in linear part, 0 elsewhere
-  u->dEdNet = (u->net > threshold) ? u->dEdA : 0.0f;
+  if(sig.gain_eq_1) {
+    u->dEdNet = (u->net > sig.off) ? u->dEdA : 0.0f;
+  }
+  else {
+    u->dEdNet = (u->net > sig.off) ? sig.gain * u->dEdA : 0.0f;
+  }
+}
+
+//////////////////////////
+//             XX1      //
+//////////////////////////
+
+void XX1BpUnitSpec::Initialize() {
+  SetUnique("act_range", true);
+  act_range.min = 0.0f;
+  act_range.max = 1.0f;
+}
+
+void XX1BpUnitSpec::UpdateAfterEdit_impl() {
+  BpUnitSpec::UpdateAfterEdit_impl();
+}
+
+void XX1BpUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
+  if(u->ext_flag & UnitVars::EXT) {
+    u->act = act_range.Clip(u->ext);
+  }
+  else {
+    float del = u->net - sig.off;
+    if(del <= 0.0f) {
+      u->act = 0.0f;
+    }
+    else {
+      del *= sig.gain;
+      u->act = act_range.Clip((del / (del + 1.0f)));
+    }
+  }
+}
+
+void XX1BpUnitSpec::Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) {
+  if(u->net <= sig.off) {
+    u->dEdNet = 0.0f;
+  }
+  else {
+    // derivative of x/x+1 = 1/(1+x)^2
+    float del_p_1 = 1.0f + sig.gain * (u->net - sig.off);
+    u->dEdNet = (sig.gain  * u->dEdA) / (del_p_1 * del_p_1);
+  }
 }
 
 

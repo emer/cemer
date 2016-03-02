@@ -21,3 +21,7 @@ const float SigmoidSpec::SIGMOID_MAX_VAL = 0.999999f;
 const float SigmoidSpec::SIGMOID_MIN_VAL = 0.000001f;
 const float SigmoidSpec::SIGMOID_MAX_NET = 13.81551f;
 
+void SigmoidSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  gain_eq_1 = (gain == 1.0f);
+}
