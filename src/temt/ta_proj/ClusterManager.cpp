@@ -1069,9 +1069,32 @@ ClusterManager::ChooseCluster(const String& prompt) {
   String vbox("mainv");
   dlg.AddWidget(widget);
   dlg.AddVBoxLayout(vbox, "", widget);
-
-  String row = "clustRow";
+  
+  String row = "repoRow";
   int space = 5;
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("repoLbl", widget, row, "label=* Repository: ;");
+  
+  QComboBox *combo2 = new QComboBox;
+  {
+    // Get the hbox for this row so we can add our combobox to it.
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);
+    if (!hboxEmer) return false;
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) return false;
+    
+    for (int idx = 0; idx < taMisc::svn_repos.size; ++idx) {
+      combo2->addItem(taMisc::svn_repos[idx].name.chars(),
+                      taMisc::svn_repos[idx].value.toQString());
+    }
+    hbox->addWidget(combo2);
+  }
+  int idx2 = combo2->findText(m_cluster_run.svn_repo.toQString());
+  if (idx2 >= 0) combo2->setCurrentIndex(idx2);
+  dlg.AddStretch(row);
+
+  row = "clustRow";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("clustLbl", widget, row, "label=* Cluster: ;");
@@ -1101,6 +1124,8 @@ ClusterManager::ChooseCluster(const String& prompt) {
   }
   
   String rval = combo1->itemText(combo1->currentIndex());
+  m_cluster_run.svn_repo = combo2->itemText(combo2->currentIndex());
+  m_cluster_run.UpdateAfterEdit();
   return rval;
 }
 
