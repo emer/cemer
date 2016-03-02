@@ -178,6 +178,8 @@ void Network::Initialize() {
   thrs_tmp_con_mem =  NULL;
 
   thrs_send_netin_tmp = NULL;
+  
+  spec_tables.save_tables = false;     // don't save -- prevents project bloat
 
 #ifdef DMEM_COMPILE
   all_dmem_sum_dwts_size = 0;
