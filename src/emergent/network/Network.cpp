@@ -3423,7 +3423,9 @@ void Network::SpecCompare(BaseSpec* parent_spec) {
 void Network::AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec) {
   FOREACH_ELEM_IN_GROUP(BaseSpec, child, spec->children) {
     DataCol* dc = (DataCol*)spec_table->NewColString(child->name);
-    dc->SetColFlag(DataCol::READ_ONLY);
+    if (dc) {
+      dc->SetColFlag(DataCol::READ_ONLY);
+    }
     WriteSpecMbrValsToTable(spec_table, child, true); // rows already add by parent - pass false
     if (child->children.size > 0) {
       AddChildToSpecCompareTable(spec_table, child);  // recursion
