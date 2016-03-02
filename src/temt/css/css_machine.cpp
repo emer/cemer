@@ -250,7 +250,7 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
     return;
 
   if(taMisc::dmem_proc == 0) {
-    taMisc::ConsoleOutput(cssMisc::last_warn_msg, true, false);
+    taMisc::ConsoleOutput(msg, true, false);
   }
   if(top->own_program) {
     bool running = top->state & cssProg::State_Run;
