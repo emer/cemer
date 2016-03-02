@@ -35,10 +35,8 @@ class TA_API DataOpEl : public taOBase {
 public:
   DataTableRef		data_table;
   // #READ_ONLY #HIDDEN #NO_SAVE data table -- gets set dynamically
-  DataTableColsRef	data_cols;
-  // #READ_ONLY #HIDDEN #NO_SAVE data table columns -- gets set dynamically -- just to lookup column
   DataCol*		col_lookup;
-  // #NULL_OK #NO_SAVE #FROM_GROUP_data_cols #NO_EDIT #NO_UPDATE_POINTER lookup column in data table to operate on -- sets col_name field (which is what is actually used) and returns to NULL after selection is applied
+  // #NULL_OK #NO_SAVE #FROM_LIST_data_table.data #NO_EDIT #NO_UPDATE_POINTER lookup column in data table to operate on -- sets col_name field (which is what is actually used) and returns to NULL after selection is applied
   String		col_name;	// name of column in data table to operate on (either enter directly or lookup from col_lookup)
   int			col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
 

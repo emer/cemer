@@ -45,14 +45,14 @@ public:
 
   bool          gain_eq_1;     // #READ_ONLY #NO_SAVE true if gain == 1 -- for optimizations
   
-  static float  Clip(float y)
+  static inline float  Clip(float y)
   { y = MAX(y,SIGMOID_MIN_VAL); y = MIN(y,SIGMOID_MAX_VAL); return y; }
-  static float  ClipNet(float x)
+  static inline float  ClipNet(float x)
   { x = MAX(x,-SIGMOID_MAX_NET); x = MIN(x,SIGMOID_MAX_NET); return x; }
-  float         Eval(float x)
+  inline float  Eval(float x)
   { return Clip(1.0f / (1.0f + expf(-ClipNet((x - off) * gain)))); }
-  float         Deriv(float x)  { x = Clip(x); return x * (1.0f - x) * gain; }
-  float         Inverse(float y)        { y=y+off; return logf(y / (1.0f - y)) / gain; }
+  inline float  Deriv(float x)          { x = Clip(x); return x * (1.0f - x) * gain; }
+  inline float  Inverse(float y)        { y=y+off; return logf(y / (1.0f - y)) / gain; }
 
   SIMPLE_COPY(SigmoidSpec);
   TA_BASEFUNS(SigmoidSpec);

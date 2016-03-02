@@ -26,14 +26,13 @@ taTypeDef_Of(taGroup_impl);
 
 int taiMemberOfTokenPtrFromGroup::BidForMember(MemberDef* md, TypeDef* td) {
   if(td->IsActualTaBase() && md->type->IsBasePointerType()
-     && md->OptionAfter("FROM_GROUP_").nonempty())
+     && (md->OptionAfter("FROM_GROUP_").nonempty() ||
+         md->OptionAfter("FROM_LIST_").nonempty()))
     return taiMemberOfTokenPtr::BidForMember(md,td)+1;
   return 0;
 }
 
 taiWidget* taiMemberOfTokenPtrFromGroup::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  MemberDef* from_md = GetFromMd();
-  if(from_md == NULL)   return NULL;
 
   // setting mode now is good for rest of life
   if(mbr->type->IsTaBase())
@@ -43,6 +42,13 @@ taiWidget* taiMemberOfTokenPtrFromGroup::GetWidgetRep_impl(IWidgetHost* host_, t
   else if (mbr->type->DerivesFrom(TA_taSmartRef))
     mode = MD_SMART_REF;
 
+  bool is_group = false;
+  String fga = mbr->OptionAfter("FROM_GROUP_");
+  if(fga.nonempty()) {
+    is_group = true;
+  }
+  // else list
+  
   int new_flags = flags_;
   if(!mbr->HasOption("NO_NULL"))
     new_flags |= taiWidget::flgNullOk;
@@ -55,7 +61,7 @@ taiWidget* taiMemberOfTokenPtrFromGroup::GetWidgetRep_impl(IWidgetHost* host_, t
 
   if (mbr->type->DerivesFrom(&TA_taGroup_impl))
     return new taiWidgetSubGroupMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall, NULL, typ, host_, par, gui_parent_, new_flags);
-  else if (from_md->type->DerivesFrom(TA_taGroup_impl))
+  else if (is_group)
     return new taiWidgetGroupElMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall, NULL,
                 typ, host_, par, gui_parent_, (new_flags | taiWidget::flgNoInGroup));
   else
@@ -64,9 +70,20 @@ taiWidget* taiMemberOfTokenPtrFromGroup::GetWidgetRep_impl(IWidgetHost* host_, t
 }
 
 void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
-  MemberDef* from_md = GetFromMd();
-  if(from_md == NULL)   return;
+  bool is_group = false;
+  String mb_path;
+  String fga = mbr->OptionAfter("FROM_GROUP_");
+  if(fga.nonempty()) {
+    mb_path = fga;
+    is_group = true;
+  }
+  else {
+    mb_path = mbr->OptionAfter("FROM_LIST_");
+  }
 
+  MemberDef* from_md = NULL;
+  taBase* bs = ((taBase*)base)->FindFromPath(mb_path, from_md);
+  
   taBase* tok_ptr = NULL; // this is the addr of the token, in the member
   switch (mode) {
   case MD_BASE:
@@ -82,11 +99,11 @@ void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiWidget* dat, const void* bas
 
   if (mbr->type->DerivesFrom(TA_taGroup_impl)) {
     taiWidgetSubGroupMenu* rval = (taiWidgetSubGroupMenu*)dat;
-    taGroup_impl* lst = (taGroup_impl*)GetList(from_md, base);
+    taGroup_impl* lst = (taGroup_impl*)bs;
     rval->GetImage(lst, (taGroup_impl*)tok_ptr);
   } else {
     taiWidgetListElMenu* rval = (taiWidgetListElMenu*)dat;
-    taList_impl* lst = GetList(from_md, base);
+    taList_impl* lst = (taList_impl*)bs;
     rval->GetImage(lst, tok_ptr);
   }
   GetOrigVal(dat, base);
@@ -121,21 +138,3 @@ void taiMemberOfTokenPtrFromGroup::GetMbrValue(taiWidget* dat, void* base, bool&
   CmpOrigVal(dat, base, first_diff);
 }
 
-MemberDef* taiMemberOfTokenPtrFromGroup::GetFromMd() {
-  String mb_nm = mbr->OptionAfter("FROM_GROUP_");
-  MemberDef* from_md = NULL;
-  if(mb_nm != "")
-    from_md = typ->members.FindName(mb_nm);
-  return from_md;
-}
-
-taList_impl* taiMemberOfTokenPtrFromGroup::GetList(MemberDef* from_md, const void* base) {
-  if (from_md == NULL)
-    return NULL;
-  if(from_md->type->InheritsFrom(&TA_taSmartRef))
-    return (taList_impl*)((taSmartRef*)from_md->GetOff(base))->ptr();
-  else if(from_md->type->IsPointer())
-    return *((taList_impl**)from_md->GetOff(base));
-  else
-    return (taList_impl*)from_md->GetOff(base);
-}

@@ -18,6 +18,7 @@ if (QT_USE_5)
   find_package(Qt5Network)
   find_package(Qt5PrintSupport)
   find_package(Qt5Multimedia)
+  find_package(Qt5Svg)
 
     #  qt5_use_modules(Emergent Widgets Network WebKit OpenGL Xml)
 #  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -28,13 +29,14 @@ if (QT_USE_5)
   include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS}
     ${Qt5OpenGL_INCLUDE_DIRS}
     ${Qt5Xml_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5PrintSupport_INCLUDE_DIRS}
-    ${Qt5Multimedia_INCLUDE_DIRS})
+    ${Qt5Multimedia_INCLUDE_DIRS} ${Qt5Svg_INCLUDE_DIRS})
   
   add_definitions(${Qt5Widgets_DEFINITIONS})
 
   set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES}
     ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES}
-    ${Qt5Network_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${Qt5Multimedia_LIBRARIES})
+    ${Qt5Network_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${Qt5Multimedia_LIBRARIES}
+    ${Qt5Svg_LIBRARIES})
 
   if (QT_USE_3D)
     find_package(Qt5WebEngineCore)

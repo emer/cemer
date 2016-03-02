@@ -34,9 +34,6 @@ void DataOpEl::UpdateAfterEdit_impl() {
     col_name = col_lookup->name;
     taBase::SetPointer((taBase**)&col_lookup, NULL); // reset as soon as used -- just a temp guy!
   }
-  if(!data_table) {
-    data_cols.set(NULL);
-  }
   UpdateName();
 }
 
@@ -101,10 +98,6 @@ void DataOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void DataOpEl::SetDataTable(DataTable* dt) {
   data_table = dt;
-  if(!dt)
-    data_cols.set(NULL);
-  else
-    data_cols.set(&dt->data);
 }
 
 void DataOpEl::GetColumns(DataTable* dt) {

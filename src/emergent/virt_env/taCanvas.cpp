@@ -15,6 +15,8 @@
 
 #include "taCanvas.h"
 
+#include <QSvgRenderer>
+
 TA_BASEFUNS_CTORS_DEFN(taCanvas);
 
 void taCanvas::Initialize() {
@@ -309,4 +311,28 @@ void taCanvas::FillColorName(const String& name) {
 void taCanvas::SetFont(const String& font_name, int point_size, int weight, bool italic) {
   if(!CheckInit()) return;
   q_painter.setFont(QFont(font_name, point_size, weight, italic));
+}
+
+bool taCanvas::DrawSvgFile(const String& file_name) {
+  if(!CheckInit()) return false;
+  QString fnam = file_name.toQString();
+  QSvgRenderer rend(fnam);
+  if(TestError(!rend.isValid(), "DrawSvgFile",
+               "svg file was not parsable", file_name)) {
+    return false;
+  }
+  rend.render(&q_painter);
+  return true;
+}
+
+bool taCanvas::DrawSvgString(const String& svg_code) {
+  if(!CheckInit()) return false;
+  QByteArray code = svg_code.toQByteArray();
+  QSvgRenderer rend(code);
+  if(TestError(!rend.isValid(), "DrawSvgString",
+               "svg code was not parsable")) {
+    return false;
+  }
+  rend.render(&q_painter);
+  return true;
 }

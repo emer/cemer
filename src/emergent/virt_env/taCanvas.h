@@ -135,6 +135,11 @@ public:
   virtual void	PenStyle(PenStyles style);
   // #CAT_Draw
 
+  virtual bool  DrawSvgFile(const String& file_name);
+  // #CAT_Draw draw an SVG (scalable vector graphics) file onto the canvas -- returns false if file not parsable
+  virtual bool  DrawSvgString(const String& svg_code);
+  // #CAT_Draw draw SVG (scalable vector graphics) code onto the canvas -- returns false if not parsable
+  
   void  ImageChanging() override;
   void  ImageChanged() override;
 

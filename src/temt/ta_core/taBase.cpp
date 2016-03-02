@@ -1255,7 +1255,14 @@ taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) 
       taBase* mbr = (taBase*)tmp_ptr;
       rval = mbr;
     }
-    if(tmp_ptr && (!md || md->type->IsActualTaBase())) { // null md = taBase
+    if (tmp_ptr && md && md->type->InheritsFrom(TA_taSmartRef)) {
+      taSmartRef* ref = (taSmartRef*)tmp_ptr;
+      rval = ref->ptr();
+      if(rval && delim_pos < length) {  // there's more to be done..
+        rval = rval->FindFromPath(effective_path, ret_md, next_pos); // start from after delim
+      }
+    }
+    else if(tmp_ptr && (!md || md->type->IsActualTaBase())) { // null md = taBase
       taBase* mbr = (taBase*)tmp_ptr;
       if(delim_pos < length) {  // there's more to be done..
         rval = mbr->FindFromPath(effective_path, ret_md, next_pos); // start from after delim

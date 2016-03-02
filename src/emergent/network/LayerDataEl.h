@@ -64,11 +64,8 @@ public:
 
   DataTableRef		data;
   // #READ_ONLY #HIDDEN #NO_SAVE the datatable to write to
-  DataTableCols*	data_cols;
-  // #READ_ONLY #HIDDEN #NO_SAVE data table columns -- gets set dynamically if data is a datatable, just for choosing column..
-
   DataCol*		col_lookup;
-  // #NO_SAVE #FROM_GROUP_data_cols #NO_EDIT #NO_UPDATE_POINTER column in data table use -- just to lookup the col_name, which is what is actually used -- this is reset to NULL after column is selected
+  // #NO_SAVE #FROM_LIST_data.data #NO_EDIT #NO_UPDATE_POINTER column in data table use -- just to lookup the col_name, which is what is actually used -- this is reset to NULL after column is selected
   String		col_name;
   // #AKA_chan_name of the column in the data to use 
 
@@ -77,10 +74,8 @@ public:
 
   NetworkRef 		network;
   // #READ_ONLY #HIDDEN #NO_SAVE the network to operate on -- managed by owner
-  Layer_Group* 		layer_group;
-  // #READ_ONLY #HIDDEN #NO_SAVE the group of layers on the network -- just for choosing the layer from a list
   LayerRef 		layer;
-  // #NO_SAVE #CONDSHOW_ON_net_target:LAYER #FROM_GROUP_layer_group #PROJ_SCOPE the Layer that will get read or written -- this is just for choosing layer_name from a list -- will be reset after selection is applied
+  // #NO_SAVE #CONDSHOW_ON_net_target:LAYER #FROM_GROUP_network.layers #PROJ_SCOPE the Layer that will get read or written -- this is just for choosing layer_name from a list -- will be reset after selection is applied
   String 		layer_name;
   // #CONDSHOW_ON_net_target:LAYER the name of the Layer that will get read or written
 

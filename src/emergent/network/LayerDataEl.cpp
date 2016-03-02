@@ -22,9 +22,7 @@ TA_BASEFUNS_CTORS_DEFN(LayerDataEl);
 
 void LayerDataEl::Initialize() {
   net_target = LAYER;
-  data_cols = NULL;
   col_lookup = NULL;
-  layer_group = NULL;
 }
 
 void LayerDataEl::Destroy() {
@@ -43,18 +41,9 @@ void LayerDataEl::UpdateAfterEdit_impl() {
       data = lw->data;
     }
   }
-  if(data && data->InheritsFrom(&TA_DataTable)) {
-    taBase::SetPointer((taBase**)&data_cols, &((DataTable*)data.ptr())->data);
-  }
-  else {
-    taBase::SetPointer((taBase**)&data_cols, NULL);
-  }
   if(layer) {
     layer_name = layer->name;
     layer = NULL;               // smart ref
-  }
-  if(!network) {
-    taBase::SetPointer((taBase**)&layer_group, NULL);
   }
   if(!col_name.empty() && layer_name.empty()) {
     layer_name = col_name;
@@ -93,15 +82,7 @@ void LayerDataEl::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void LayerDataEl::SetDataNetwork(DataTable* db, Network* net) {
   data = db;
-  if(db && db->InheritsFrom(&TA_DataTable))
-    taBase::SetPointer((taBase**)&data_cols, &((DataTable*)db)->data);
-  else
-    taBase::SetPointer((taBase**)&data_cols, NULL);
   network = net;
-  if(net)
-    taBase::SetPointer((taBase**)&layer_group, &(network->layers));
-  else
-    taBase::SetPointer((taBase**)&layer_group, NULL);
 }
 
 int LayerDataEl::GetColIdx(DataTable* db) {
