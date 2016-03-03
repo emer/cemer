@@ -123,19 +123,13 @@ public:
   // #IGNORE 
 
   inline void	C_Compute_Weights_LeabraCHL_slow
-    (float& wt, float& dwt, float& fwt, float& swt, float& scale, int tot_trials)
+    (float& wt, float& dwt, float& fwt, float& swt, float& scale)
   { 
     fwt += dwt;
     float eff_wt = slow_wts.swt_pct * swt + slow_wts.fwt_pct * fwt;
     float nwt = scale * SigFmLinWt(eff_wt);
     wt += slow_wts.wt_dt * (nwt - wt);
-    if(slow_wts.cont_swt) {
-      swt += slow_wts.slow_dt * (fwt - swt);
-    }
-    else {
-      if(tot_trials % slow_wts.slow_tau == 0)
-        swt = fwt;
-    }
+    swt += slow_wts.slow_dt * (fwt - swt);
     dwt = 0.0f;
   }
   // #IGNORE 
@@ -157,7 +151,7 @@ public:
 
     if(slow_wts.on) {
       CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL_slow
-                     (wts[i], dwts[i], fwts[i], swts[i], scales[i], net->total_trials));
+                     (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
     }
     else {
       CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL

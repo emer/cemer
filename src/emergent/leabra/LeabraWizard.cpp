@@ -2360,7 +2360,6 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   mtx_cons_go->slow_wts.on = true;
   mtx_cons_go->slow_wts.swt_pct = 0.95f;
   mtx_cons_go->slow_wts.slow_tau = 100.0f;
-  mtx_cons_go->slow_wts.cont_swt = true;
   mtx_cons_go->slow_wts.wt_tau = 1.0f;
   mtx_cons_go->slow_wts.UpdateAfterEdit();
 

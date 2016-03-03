@@ -23,6 +23,7 @@
 TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
+TA_BASEFUNS_CTORS_DEFN(AdaptWtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(SlowWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepLrateSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
@@ -83,6 +84,10 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
 }
 
 void WtSigSpec::Initialize() {
+  Defaults_init();
+}
+
+void WtSigSpec::Defaults_init() {
   gain = 6.0f;
   off = 1.0f;
   dwt_norm = false;
@@ -94,22 +99,41 @@ void WtSigSpec::UpdateAfterEdit_impl() {
   if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
 }
 
+
+void AdaptWtScaleSpec::Initialize() {
+  on = false;
+  Defaults_init();
+}
+
+void AdaptWtScaleSpec::Defaults_init() {
+  tau = 500.0f;
+  lo_thr = 0.3f;
+  hi_thr = 0.8f;
+  lo_scale = 0.01f;
+  hi_scale = 2.0f;
+  dt = 1.0f / tau;
+}
+
+void AdaptWtScaleSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  dt = 1.0f / tau;
+}
+
+
 void SlowWtsSpec::Initialize() {
   on = false;
-  swt_pct = 0.5f;
-  slow_tau = 100;
-  cont_swt = true;
   wt_tau = 1.0f;
-
-  fwt_pct = 1.0f - swt_pct;
-  slow_dt = 1.0f /(float)slow_tau;
-  wt_dt = 1.0f / wt_tau;
 
   Defaults_init();
 }
 
 void SlowWtsSpec::Defaults_init() {
+  swt_pct = 0.8f;
+  slow_tau = 100;
 
+  fwt_pct = 1.0f - swt_pct;
+  slow_dt = 1.0f /(float)slow_tau;
+  wt_dt = 1.0f / wt_tau;
 }
 
 void SlowWtsSpec::UpdateAfterEdit_impl() {
@@ -439,7 +463,7 @@ void LeabraConSpec::GraphSlowWtsFun(int trials, DataTable* graph_data) {
   for(int trl = 0; trl < trials; trl++) {
     dwt = Random::UniformMinMax(-lrate, lrate);
     float dwt_save = dwt;
-    C_Compute_Weights_CtLeabraXCAL_slow(wt, dwt, fwt, swt, scale, trl);
+    C_Compute_Weights_CtLeabraXCAL_slow(wt, dwt, fwt, swt, scale);
     graph_data->AddBlankRow();
     trialc->SetValAsInt(trl, -1);
     dwtc->SetValAsFloat(dwt_save, -1);

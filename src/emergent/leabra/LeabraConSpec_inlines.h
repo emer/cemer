@@ -364,8 +364,7 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_vec
 }
 
 inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_slow_vec
-(LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales,
- int tot_trials) {
+(LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales) {
 
   VECF zeros(0.0f);
   VECF sig_res_inv(wt_sig_fun.res_inv);
@@ -397,14 +396,7 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_slow_vec
     VECF nwt;
     nwt = scale * lookup<10002>(idx, wt_sig_fun.el);
     wt += wdt * (nwt - wt);
-
-    if(slow_wts.cont_swt) {
-      swt += sdt * (fwt - swt);
-    }
-    else {
-      if(tot_trials % slow_wts.slow_tau == 0)
-        swt = fwt;
-    }
+    swt += sdt * (fwt - swt);
 
     dwt = zeros;
 
@@ -414,8 +406,7 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_slow_vec
     swt.store(swts+i);
   }
   for(;i<sz;i++) {              // get the remainder
-    C_Compute_Weights_CtLeabraXCAL_slow(wts[i], dwts[i], fwts[i], swts[i], scales[i],
-                                        tot_trials);
+    C_Compute_Weights_CtLeabraXCAL_slow(wts[i], dwts[i], fwts[i], swts[i], scales[i]);
   }
 }
 
@@ -432,22 +423,33 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
   float* swts = cg->OwnCnVar(SWT);
   float* scales = cg->OwnCnVar(SCALE);
 
-  if(slow_wts.on) {
-#ifdef TA_VEC_USE
-    Compute_Weights_CtLeabraXCAL_slow_vec(cg, wts, dwts, fwts, swts, scales,
-                                          net->total_trials);
-#else
-    CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL_slow
-                   (wts[i], dwts[i], fwts[i], swts[i], scales[i], net->total_trials));
-#endif
+  if(adapt_scale.on) {
+    if(slow_wts.on) {
+      CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL_slow
+                     (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL
+                     (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
+    }
   }
   else {
+    if(slow_wts.on) {
 #ifdef TA_VEC_USE
-    Compute_Weights_CtLeabraXCAL_vec(cg, wts, dwts, fwts, swts, scales);
+      Compute_Weights_CtLeabraXCAL_slow_vec(cg, wts, dwts, fwts, swts, scales);
 #else
-    CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL
-                   (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
+      CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL_slow
+                     (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
 #endif
+    }
+    else {
+#ifdef TA_VEC_USE
+      Compute_Weights_CtLeabraXCAL_vec(cg, wts, dwts, fwts, swts, scales);
+#else
+      CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL
+                     (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
+#endif
+    }
   }
 }
 

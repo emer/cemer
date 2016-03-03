@@ -183,7 +183,45 @@ protected:
 private:
   void	Initialize();
   void	Destroy()	{ };
-  void	Defaults_init() { Initialize(); }
+  void	Defaults_init();
+};
+
+eTypeDef_Of(AdaptWtScaleSpec);
+
+class E_API AdaptWtScaleSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra parameters to adapt the scale multiplier on weights, as a function of weight value
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // turn on weight scale adaptation as function of weight values
+  float         tau;            // #CONDSHOW_ON_on #DEF_500 time constant as a function of weight updates (trials) that weight scale adapts on -- should be fairly slow in general
+  float         lo_thr;         // #CONDSHOW_ON_on #DEF_0.3 low threshold:  normalized contrast-enhanced effective weights (wt/scale, 0-1 range) below this value cause scale to move downward toward lo_scale value
+  float         hi_thr;         // #CONDSHOW_ON_on #DEF_0.8 high threshold: normalized contrast-enhanced effective weights (wt/scale, 0-1 range) above this value cause scale to move upward toward hi_scale value
+  float         lo_scale;       // #CONDSHOW_ON_on #MIN_0.01 #DEF_0.01 lowest value of scale
+  float         hi_scale;       // #CONDSHOW_ON_on #DEF_2 highest value of scale
+
+  float         dt;             // #READ_ONLY #EXPERT rate = 1 / tau
+  
+  inline void	AdaptWtScale(float& scale, const float wt) {
+    const float nrm_wt = wt / scale;
+    if(nrm_wt < lo_thr) {
+      scale += dt * (lo_scale - scale);
+    }
+    else if(nrm_wt > hi_thr) {
+      scale += dt * (hi_scale - scale);
+    }
+  }
+  // adapt weight scale
+
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
+
+  TA_SIMPLE_BASEFUNS(AdaptWtScaleSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl() override;
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
 };
 
 eTypeDef_Of(SlowWtsSpec);
@@ -195,7 +233,6 @@ public:
   bool          on;             // are slow weights enabled?  if not, then there is just one effective weight value at each synapse, updated using the current cur_lrate factor (based on lrate plus any learning rate schedule)  if so, then a slowly adapting swt factor is updated to track the faster weight changes
   float         swt_pct;        // #CONDSHOW_ON_on #MIN_0 #MAX_1 what proportion the slowly adapting, more stable weight value contributes to the net effective weight value used in computing activations -- biologically this reflects the proportion of AMPA receptors that are stabilized vs. those that are subject to rapid insertion / removal
   int           slow_tau;      // #CONDSHOW_ON_on #DEF_100:3000 time #MIN_1 constant for adaptation of the slow weight value to track the fast weight value, in trials (computed at Compute_Weights) -- biologically the corresponding window of tag capture, and late-LTP transition times, are roughly 90 minutes or more, so for 100 msec trials = 10 trials per second, this is 54,000 trials -- but more typical values of around the size of an epoch are more appropriate for smaller more artificial networks
-  bool          cont_swt;      // #CONDSHOW_ON_on update swt continuously on every trial using a rate constant = 1/slow_tau -- alternatively swt will be discretely updated every slow_tau trials
   float         wt_tau;        // #CONDSHOW_ON_on #DEF_1;4:60 #MIN_1 time constant for how quickly the effective weight (wt) adapts to changes in the fast weight values -- the biological rise time to maximum fast weight change is about 20 seconds, so for 100 msec trials = 10 trials per second, that is ~200 trials -- a value of 44 produces this result -- for more coarse-grained time scales, e.g., 1 trial / sec, scale proportionally, e.g., a value of 5 for 20 trials -- computationally this value is optional and 1 will negate its effects
 
   float         fwt_pct;       // #CONDSHOW_ON_on #READ_ONLY #EXPERT percent of fast contribution to effective weight = 1 - swt_pct
@@ -276,6 +313,7 @@ public:
 
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
+  AdaptWtScaleSpec adapt_scale;	// #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
   SlowWtsSpec   slow_wts;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
   DeepLrateSpec deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
 
@@ -448,12 +486,16 @@ public:
       // and is useful for visualization!
       wt = scale * SigFmLinWt(fwt);
       dwt = 0.0f;
+
+      if(adapt_scale.on) {
+        adapt_scale.AdaptWtScale(scale, wt);
+      }
     }
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts
 
   inline void	C_Compute_Weights_CtLeabraXCAL_slow
-    (float& wt, float& dwt, float& fwt, float& swt, float& scale, int tot_trials)
+    (float& wt, float& dwt, float& fwt, float& swt, float& scale)
   { 
     if(dwt > 0.0f)	dwt *= (1.0f - fwt);
     else		dwt *= fwt;
@@ -461,15 +503,12 @@ public:
     float eff_wt = slow_wts.swt_pct * swt + slow_wts.fwt_pct * fwt;
     float nwt = scale * SigFmLinWt(eff_wt);
     wt += slow_wts.wt_dt * (nwt - wt);
-    if(slow_wts.cont_swt) {
-      swt += slow_wts.slow_dt * (fwt - swt);
-    }
-    else {
-      if(tot_trials % slow_wts.slow_tau == 0)
-        swt = fwt;
-    }
-      
+    swt += slow_wts.slow_dt * (fwt - swt);
     dwt = 0.0f;
+    
+    if(adapt_scale.on) {
+      adapt_scale.AdaptWtScale(scale, wt);
+    }
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- slow wts
 
@@ -478,8 +517,7 @@ public:
     (LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales);
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts -- vectorized
   inline void	Compute_Weights_CtLeabraXCAL_slow_vec
-    (LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales,
-     int tot_trials);
+    (LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales);
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- fast wts -- vectorized
 #endif
 
