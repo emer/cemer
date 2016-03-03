@@ -629,7 +629,11 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
       // Create the directory on the repository, if not already present.
       String comment = "Creating cluster directory for user: ";
       comment += user;
-      sc->TryMakeUrlDir(uurl.chars(), comment.chars());
+      try {
+        sc->TryMakeUrlDir(uurl.chars(), comment.chars());
+      } catch (const SubversionClient::Exception &ex) {
+        taMisc::Warning("Could not create ", uurl, " in svn. Trying to see if it already exists: ", ex.what());
+      }
     }
 
     // Check out a working copy (possibly just an empty directory if we
