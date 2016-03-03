@@ -313,37 +313,39 @@ void taCanvas::SetFont(const String& font_name, int point_size, int weight, bool
   q_painter.setFont(QFont(font_name, point_size, weight, italic));
 }
 
-bool taCanvas::DrawSvgFile(const String& file_name) {
-  int cur_wd, cur_ht;
-  GetImageSize(cur_wd, cur_ht);
-  return DrawSvgFileInRect(file_name, 0, 0, cur_wd, cur_ht);
-}
-
-bool taCanvas::DrawSvgString(const String& svg_code) {
-  int cur_wd, cur_ht;
-  GetImageSize(cur_wd, cur_ht);
-  return DrawSvgStringInRect(svg_code, 0, 0, cur_wd, cur_ht);
-}
-
-bool taCanvas::DrawSvgFileInRect(const String& file_name, float l, float b, float wd, float ht) {
+bool taCanvas::DrawSvgFile(const String& file_name, float l, float b, float wd, float ht) {
   if(!CheckInit()) return false;
   QString fnam = file_name.toQString();
   QSvgRenderer rend(fnam);
-  if(TestError(!rend.isValid(), "DrawSvgFile",
-               "svg file was not parsable", file_name)) {
+  if(TestError(!rend.isValid(), "DrawSvgFile", "svg file was not parsable", file_name)) {
     return false;
+  }
+  int cur_wd, cur_ht;
+  GetImageSize(cur_wd, cur_ht);
+  if (wd == -1) {
+    wd = cur_wd;
+  }
+  if (ht == -1) {
+    ht = cur_ht;
   }
   rend.render(&q_painter, QRectF(l, b, wd, ht));
   return true;
 }
 
-bool taCanvas::DrawSvgStringInRect(const String& svg_code, float l, float b, float wd, float ht) {
+bool taCanvas::DrawSvgString(const String& svg_code, float l, float b, float wd, float ht) {
   if(!CheckInit()) return false;
   QByteArray code = svg_code.toQByteArray();
   QSvgRenderer rend(code);
-  if(TestError(!rend.isValid(), "DrawSvgString",
-               "svg code was not parsable")) {
+  if(TestError(!rend.isValid(), "DrawSvgString", "svg code was not parsable")) {
     return false;
+  }
+  int cur_wd, cur_ht;
+  GetImageSize(cur_wd, cur_ht);
+  if (wd == -1) {
+    wd = cur_wd;
+  }
+  if (ht == -1) {
+    ht = cur_ht;
   }
   rend.render(&q_painter, QRectF(l, b, wd, ht));
   return true;
