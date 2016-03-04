@@ -3404,6 +3404,7 @@ void Network::SpecCompare(BaseSpec* parent_spec) {
   else {
     spec_table = spec_tables.NewEl(1, NULL);   // add a new data table to the group
     spec_table->SetName(table_name);
+    spec_table->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these
     spec_table->StructUpdate(true);
   }
   
