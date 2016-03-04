@@ -2277,8 +2277,10 @@ void iMainWindowViewer::resizeEvent(QResizeEvent* e) {
 }
 
 void iMainWindowViewer::restoreWindowSize() {
-  if(cur_window_size.height() > 0)
+  if(cur_window_size.height() > 0) {
+    String wh = "w: " + (String)cur_window_size.width() +  " h: " + (String)cur_window_size.height();
     resize(cur_window_size);
+  }
 }
 
 bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
@@ -2289,23 +2291,28 @@ bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
     
   QResizeEvent* re = (QResizeEvent*)event;
   // String obj_info = obj->objectName() + " typ: " + obj->metaObject()->className();
-  String wh = "w: " + (String)re->size().width() +  " h: " +
-    (String)re->size().height();
+  String wh = "w: " + (String)re->size().width() +  " h: " + (String)re->size().height();
+  String owh = "ow: " + (String)re->oldSize().width() +  " oh: " + (String)re->oldSize().height();
   taMisc::Info("filter win resize:",
-               viewer()->name, wh,
+               viewer()->name, wh, owh,
                "spontaneous:",(String)re->spontaneous(), "allow:",
                (String)allow_window_resize);
 
-  if(!re->spontaneous() && !allow_window_resize) {
+  if(re->size() == re->oldSize()) { // non-resize..
+    QTimer::singleShot(500, this, SLOT(restoreWindowSize()) ); // undo
+    return true;                    // filter
+  }
+  
+  if(!re->spontaneous()) {// && !allow_window_resize) {
     window_resize_last_time = QDateTime::currentDateTime();
-    allow_window_resize = true;
+    allow_window_resize = false;
     QTimer::singleShot(500, this, SLOT(restoreWindowSize()) ); // undo
     return true;                // filter -- this is not working!  it just does it!
   }
   if(re->spontaneous() && window_resize_last_time.isValid()) {
     if(window_resize_last_time.secsTo(QDateTime::currentDateTime()) <= 5) {
       //  sometimes get a stray one in there..
-      allow_window_resize = true;
+      allow_window_resize = false;
       QTimer::singleShot(500, this, SLOT(restoreWindowSize()) ); // undo
       return true;                // filter -- this is not working!  it just does it!
     }

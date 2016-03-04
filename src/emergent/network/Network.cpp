@@ -1910,7 +1910,8 @@ void Network::Compute_NetinAct_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       uv->unit_spec->Compute_NetinAct(uv, this, thr_no);
     }
-    threads.SyncSpin(thr_no, li % 3);   // need to sync for each layer!
+    //    threads.SyncSpin(thr_no, li % 3);   // need to sync for each layer!
+    threads.SyncSpin(thr_no, 0);
   }
 }
 

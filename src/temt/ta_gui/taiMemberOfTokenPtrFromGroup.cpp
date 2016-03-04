@@ -90,14 +90,12 @@ void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiWidget* dat, const void* bas
 
   MemberDef* from_md = NULL;
   taBase* bs = ((taBase*)base)->FindFromPath(mb_path, from_md);
-  if (bs == NULL) {
-    taMisc::Error("taiMemberOfTokenPtrFromGroup::GetImage_impl is NULL -- please report");
-    return;
+  if(bs != NULL) {
+    if(from_md->type->InheritsFrom(&TA_taSmartRef))
+      bs = ((taSmartRef*)bs)->ptr();
+    else if(from_md->type->IsPointer())
+      bs = *((taBase**)bs);
   }
-  if(from_md->type->InheritsFrom(&TA_taSmartRef))
-    bs = ((taSmartRef*)bs)->ptr();
-  else if(from_md->type->IsPointer())
-    bs = *((taBase**)bs);
 
   taBase* tok_ptr = NULL; // this is the addr of the token, in the member
   switch (mode) {

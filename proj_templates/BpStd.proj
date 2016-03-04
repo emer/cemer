@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.5.0 rev9238
+// ta_Dump File v3.0 -- code v7.8.5.0 rev9244
 BpProject .projects["BpStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -173,7 +173,7 @@ BpProject .projects["BpStd"] {
    DataTableCell_List @.jobs_done.control_panel_cells = [0] {
    };
 
-   DataTableCols @.jobs_archive.data = [30] {
+   DataTableCols @.jobs_archive.data = [31] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
@@ -212,6 +212,11 @@ BpProject .projects["BpStd"] {
      };
     };
     int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
      };
@@ -3267,6 +3272,30 @@ BpProject .projects["BpStd"] {
       [0]       };
       width=0;
      };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      int_Data @["pb_batches"] {
       UserDataItem_List @*(.user_data_) {
        name=;
@@ -4416,7 +4445,7 @@ BpProject .projects["BpStd"] {
     };
     RegisterArgs @[1] {
      desc="This is KEY!!! actually processes all args, including those from ProgVarFmArg guys below";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Register Args";
      pre_compile_code_string="Register Args";
     };
@@ -4432,13 +4461,13 @@ BpProject .projects["BpStd"] {
     };
     Comment @[3] {
      desc="= Std variables in startup program itself =";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="// = Std variables in startup program itself =";
      pre_compile_code_string="// = Std variables in startup program itself =";
     };
     ProgVarFmArg @[4] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:tag in Program:BpStartup from Arg:tag";
      pre_compile_code_string="Set Var:tag in Program:BpStartup from Arg:tag";
      prog=.projects["BpStd"].programs["BpStartup"]$$;
@@ -4447,7 +4476,7 @@ BpProject .projects["BpStd"] {
     };
     ProgVarFmArg @[5] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:log_dir in Program:BpStartup from Arg:log_dir";
      pre_compile_code_string="Set Var:log_dir in Program:BpStartup from Arg:log_dir";
      prog=$.projects["BpStd"].programs["BpStartup"]$;
@@ -4456,7 +4485,7 @@ BpProject .projects["BpStd"] {
     };
     ProgVarFmArg @[6] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:max_epoch in Program:BpTrain from Arg:epochs";
      pre_compile_code_string="Set Var:max_epoch in Program:BpTrain from Arg:epochs";
      prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
@@ -4465,7 +4494,7 @@ BpProject .projects["BpStd"] {
     };
     ProgVarFmArg @[7] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:rnd_init in Program:BpTrain from Arg:rnd_init";
      pre_compile_code_string="Set Var:rnd_init in Program:BpTrain from Arg:rnd_init";
      prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
@@ -4474,7 +4503,7 @@ BpProject .projects["BpStd"] {
     };
     ProgVarFmArg @[8] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:max_batch in Program:BpBatch from Arg:batches";
      pre_compile_code_string="Set Var:max_batch in Program:BpBatch from Arg:batches";
      prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$;
@@ -4483,7 +4512,7 @@ BpProject .projects["BpStd"] {
     };
     ProgVarFmArg @[9] {
      desc="b_end is parallel-batch mode of operation (see b_start)";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:max_batch in Program:BpBatch from Arg:b_end";
      pre_compile_code_string="Set Var:max_batch in Program:BpBatch from Arg:b_end";
      prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$;
@@ -4492,7 +4521,7 @@ BpProject .projects["BpStd"] {
     };
     ProgVarFmArg @[10] {
      desc="b_start is parallel-batch mode of operation (see also b_end)";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:batch in Program:BpBatch from Arg:b_start";
      pre_compile_code_string="Set Var:batch in Program:BpBatch from Arg:b_start";
      prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$;
@@ -4501,7 +4530,7 @@ BpProject .projects["BpStd"] {
     };
     ProgVarFmArg @[11] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:save_wts_interval in Program:BpTrain from Arg:save_wts_interval";
      pre_compile_code_string="Set Var:save_wts_interval in Program:BpTrain from Arg:save_wts_interval";
      prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
@@ -4510,7 +4539,7 @@ BpProject .projects["BpStd"] {
     };
     ProgVarFmArg @[12] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:save_final_wts in Program:BpTrain from Arg:save_final_wts";
      pre_compile_code_string="Set Var:save_final_wts in Program:BpTrain from Arg:save_final_wts";
      prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
@@ -4519,20 +4548,20 @@ BpProject .projects["BpStd"] {
     };
     ControlPanelsFmArgs @[13] {
      desc="sets any arg listed in the control panel";
-     flags=NEW_EL;
+     flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      pre_compile_code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=.projects["BpStd"].programs["BpStartup"].vars["MyClusterRun"]$$;
     };
     Comment @[14] {
      desc="= Add your own variables here =";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="// = Add your own variables here =";
      pre_compile_code_string="// = Add your own variables here =";
     };
     Comment @[15] {
      desc="= Below saves log files of standard data tables =";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="// = Below saves log files of standard data tables =";
      pre_compile_code_string="// = Below saves log files of standard data tables =";
     };
@@ -4550,7 +4579,7 @@ BpProject .projects["BpStd"] {
       el_def=0;
       MethodCall @[0] {
        desc="directly set variable on batch program";
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="batch->SetVar(\"init_batch\", false)";
        pre_compile_code_string="batch->SetVar(\"init_batch\", false)";
        result_var=NULL;
@@ -4588,7 +4617,7 @@ BpProject .projects["BpStd"] {
       };
       ProgVarFmArg @[1] {
        desc="read in the arg to us too, so we can set file names based on it";
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="Set Var:batch_start in Program:BpStartup from Arg:b_start";
        pre_compile_code_string="Set Var:batch_start in Program:BpStartup from Arg:b_start";
        prog=$.projects["BpStd"].programs["BpStartup"]$;
@@ -4597,7 +4626,7 @@ BpProject .projects["BpStd"] {
       };
       MiscCall @[2] {
        desc="string version with leading zeros";
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
        pre_compile_code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
        result_var=.projects["BpStd"].programs["BpStartup"].vars["batch_str"]$$;
@@ -4655,7 +4684,7 @@ BpProject .projects["BpStd"] {
 	el_def=0;
 	MethodCall @[0] {
 	 desc="save args to file: last arg is to include dmem proc number";
-	 flags=0;
+	 flags=CAN_REVERT_TO_CODE;
 	 code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
 	 pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
 	 result_var=.projects["BpStd"].programs["BpStartup"].vars["log_file_nm"]$$;
@@ -4715,7 +4744,7 @@ BpProject .projects["BpStd"] {
 	};
 	MiscCall @[1] {
 	 desc=;
-	 flags=0;
+	 flags=CAN_REVERT_TO_CODE;
 	 code_string="taMisc::FullArgStringToFile(log_file_nm)";
 	 pre_compile_code_string="taMisc::FullArgStringToFile(log_file_nm)";
 	 result_var=NULL;
@@ -4753,7 +4782,7 @@ BpProject .projects["BpStd"] {
       el_def=0;
       MethodCall @[0] {
        desc="save args to file: last arg is to include dmem proc number";
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
        pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
        result_var=$.projects["BpStd"].programs["BpStartup"].vars["log_file_nm"]$;
@@ -4813,7 +4842,7 @@ BpProject .projects["BpStd"] {
       };
       MiscCall @[1] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="taMisc::FullArgStringToFile(log_file_nm)";
        pre_compile_code_string="taMisc::FullArgStringToFile(log_file_nm)";
        result_var=NULL;
@@ -4865,13 +4894,13 @@ BpProject .projects["BpStd"] {
     };
     Comment @[19] {
      desc="== Save epoch log -- on by default ==";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="// == Save epoch log -- on by default ==";
      pre_compile_code_string="// == Save epoch log -- on by default ==";
     };
     MethodCall @[20] {
      desc="last arg is to include dmem proc number";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".epc.dat\", tag, log_dir, false)";
      pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".epc.dat\", tag, log_dir, false)";
      result_var=$.projects["BpStd"].programs["BpStartup"].vars["log_file_nm"]$;
@@ -4931,7 +4960,7 @@ BpProject .projects["BpStd"] {
     };
     MethodCall @[21] {
      desc="last arg is to restrict log to dmem_proc = 0";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="EpochOutputData->SaveDataLog(log_file_nm, false, true)";
      pre_compile_code_string="EpochOutputData->SaveDataLog(log_file_nm, false, true)";
      result_var=NULL;
@@ -4980,7 +5009,7 @@ BpProject .projects["BpStd"] {
     };
     PrintVar @[22] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Print  \"Saving epoch log data to:\" log_file_nm";
      pre_compile_code_string="Print  \"Saving epoch log data to:\" log_file_nm";
      message="Saving epoch log data to:";
@@ -4994,13 +5023,13 @@ BpProject .projects["BpStd"] {
     };
     Comment @[23] {
      desc="== Save trial log -- OFF by default ==";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="// == Save trial log -- OFF by default ==";
      pre_compile_code_string="// == Save trial log -- OFF by default ==";
     };
     MethodCall @[24] {
      desc="last arg is to include dmem proc number";
-     flags=OFF;
+     flags=OFF|CAN_REVERT_TO_CODE;
      code_string="log_file_nm = TrialOutputData->GetFileNameFmProject(\".trl.dat\", tag, log_dir, true)";
      pre_compile_code_string="log_file_nm = TrialOutputData->GetFileNameFmProject(\".trl.dat\", tag, log_dir, true)";
      result_var=$.projects["BpStd"].programs["BpStartup"].vars["log_file_nm"]$;
@@ -5060,7 +5089,7 @@ BpProject .projects["BpStd"] {
     };
     MethodCall @[25] {
      desc="last arg is to restrict log to dmem_proc = 0";
-     flags=OFF;
+     flags=OFF|CAN_REVERT_TO_CODE;
      code_string="TrialOutputData->SaveDataLog(log_file_nm, false, false)";
      pre_compile_code_string="TrialOutputData->SaveDataLog(log_file_nm, false, false)";
      result_var=NULL;
@@ -5109,7 +5138,7 @@ BpProject .projects["BpStd"] {
     };
     PrintVar @[26] {
      desc=;
-     flags=OFF;
+     flags=OFF|CAN_REVERT_TO_CODE;
      code_string="Print  \"Saving trial log data to:\" log_file_nm";
      pre_compile_code_string="Print  \"Saving trial log data to:\" log_file_nm";
      message="Saving trial log data to:";
@@ -5123,7 +5152,7 @@ BpProject .projects["BpStd"] {
     };
     OtherProgramVar @[27] {
      desc="propagate the tag";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
      pre_compile_code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
      other_prog=.projects["BpStd"].programs.gp["BpAll_Std"]["SaveWeights"]$$;
@@ -5145,7 +5174,7 @@ BpProject .projects["BpStd"] {
     };
     ProgramCall @[29] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="BpBatch(network, input_data)";
      pre_compile_code_string="BpBatch(network, input_data)";
      prog_args {
@@ -5281,7 +5310,7 @@ BpProject .projects["BpStd"] {
      el_def=0;
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: batch";
       pre_compile_code_string="Net Counter Init: batch";
       network_var=.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"].args["network"]$$;
@@ -5308,7 +5337,7 @@ BpProject .projects["BpStd"] {
        el_def=0;
        NetCounterInit @[0] {
 	desc="initializes local batch counter and batch field on network";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Init: batch";
 	pre_compile_code_string="Net Counter Init: batch";
 	network_var=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"].args["network"]$;
@@ -5352,7 +5381,7 @@ BpProject .projects["BpStd"] {
        el_def=0;
        ProgramCall @[0] {
 	desc="run the training program -- sets the network and input_data args";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="BpTrain(network, input_data, true)";
 	pre_compile_code_string="BpTrain(network, input_data, true)";
 	prog_args {
@@ -5398,7 +5427,7 @@ BpProject .projects["BpStd"] {
        };
        NetCounterIncr @[1] {
 	desc="increment the local batch counter and copy to network";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: batch";
 	pre_compile_code_string="Net Counter Incr: batch";
 	network_var=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"].args["network"]$;
@@ -5659,7 +5688,7 @@ BpProject .projects["BpStd"] {
      ProgVar @["err_stopcrit"] {
       name="err_stopcrit";
       var_type=T_Real;
-      real_val=0.25;
+      real_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5763,7 +5792,7 @@ BpProject .projects["BpStd"] {
        el_def=0;
        LocalVars @[0] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="LocalVars (0 vars)";
 	pre_compile_code_string="LocalVars (0 vars)";
 	local_vars {
@@ -5793,7 +5822,7 @@ BpProject .projects["BpStd"] {
 	   el_def=0;
 	   MethodCall @[0] {
 	    desc="restore previous random seed (all runs produce same results) -- click on rnd_seed object to generate a new seed to use for this if you want";
-	    flags=0;
+	    flags=CAN_REVERT_TO_CODE;
 	    code_string="rnd_seed->OldSeed()";
 	    pre_compile_code_string="rnd_seed->OldSeed()";
 	    result_var=NULL;
@@ -5824,7 +5853,7 @@ BpProject .projects["BpStd"] {
 	   el_def=0;
 	   MethodCall @[0] {
 	    desc="new random numbers each time";
-	    flags=0;
+	    flags=CAN_REVERT_TO_CODE;
 	    code_string="rnd_seed->NewSeed()";
 	    pre_compile_code_string="rnd_seed->NewSeed()";
 	    result_var=NULL;
@@ -5855,7 +5884,7 @@ BpProject .projects["BpStd"] {
 	   el_def=0;
 	   MethodCall @[0] {
 	    desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
-	    flags=0;
+	    flags=CAN_REVERT_TO_CODE;
 	    code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
 	    pre_compile_code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
 	    result_var=NULL;
@@ -5907,7 +5936,7 @@ BpProject .projects["BpStd"] {
      };
      MethodCall @[1] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->CheckConfig(false)";
       pre_compile_code_string="network->CheckConfig(false)";
       result_var=NULL;
@@ -5954,7 +5983,7 @@ BpProject .projects["BpStd"] {
      };
      FunctionCall @[4] {
       desc="initialize random seed";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="GetRandomSeed()";
       pre_compile_code_string="GetRandomSeed()";
       result_var=NULL;
@@ -5979,7 +6008,7 @@ BpProject .projects["BpStd"] {
        el_def=0;
        MethodCall @[0] {
 	desc="initialize network weights: could also load pre-set weights or something else here";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Init_Weights()";
 	pre_compile_code_string="network->Init_Weights()";
 	result_var=NULL;
@@ -6032,7 +6061,7 @@ BpProject .projects["BpStd"] {
      };
      MethodCall @[1] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="train_timer->StartTimer(true)";
       pre_compile_code_string="train_timer->StartTimer(true)";
       result_var=NULL;
@@ -6081,7 +6110,7 @@ BpProject .projects["BpStd"] {
      };
      FunctionCall @[4] {
       desc="initialize random seed";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="GetRandomSeed()";
       pre_compile_code_string="GetRandomSeed()";
       result_var=NULL;
@@ -6106,7 +6135,7 @@ BpProject .projects["BpStd"] {
        el_def=0;
        MethodCall @[0] {
 	desc="initialize network weights: could also load pre-set weights or something else here";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Init_Weights()";
 	pre_compile_code_string="network->Init_Weights()";
 	result_var=NULL;
@@ -6153,7 +6182,7 @@ BpProject .projects["BpStd"] {
        el_def=0;
        ProgramCall @[0] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="BpEpoch(network, input_data)";
 	pre_compile_code_string="BpEpoch(network, input_data)";
 	prog_args {
@@ -6188,7 +6217,7 @@ BpProject .projects["BpStd"] {
        };
        NetCounterIncr @[1] {
 	desc="increment the epoch counter";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: epoch";
 	pre_compile_code_string="Net Counter Incr: epoch";
 	network_var=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"].args["network"]$;
@@ -6276,7 +6305,7 @@ BpProject .projects["BpStd"] {
 	   el_def=0;
 	   ProgramCall @[0] {
 	    desc=;
-	    flags=0;
+	    flags=CAN_REVERT_TO_CODE;
 	    code_string="SaveWeights(network)";
 	    pre_compile_code_string="SaveWeights(network)";
 	    prog_args {
@@ -6321,7 +6350,7 @@ BpProject .projects["BpStd"] {
        el_def=0;
        ProgramCall @[0] {
 	desc=;
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="SaveWeights(network)";
 	pre_compile_code_string="SaveWeights(network)";
 	prog_args {
@@ -6347,7 +6376,7 @@ BpProject .projects["BpStd"] {
      };
      MethodCall @[9] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="train_timer->EndTimer()";
       pre_compile_code_string="train_timer->EndTimer()";
       result_var=NULL;
@@ -6362,7 +6391,7 @@ BpProject .projects["BpStd"] {
       meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
     };
-    step_prog=NULL;
+    step_prog=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"]$$;
     step_n=1;
    };
    Program @["BpEpoch"] {
@@ -6462,7 +6491,7 @@ BpProject .projects["BpStd"] {
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=3;
+      int_val=5;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6481,7 +6510,7 @@ BpProject .projects["BpStd"] {
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: trial";
       pre_compile_code_string="Net Counter Init: trial";
       network_var=.projects["BpStd"].programs.gp["BpAll_Std"]["BpEpoch"].args["network"]$$;
@@ -6506,7 +6535,7 @@ BpProject .projects["BpStd"] {
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: trial";
       pre_compile_code_string="Net Counter Init: trial";
       network_var=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpEpoch"].args["network"]$;
@@ -6526,7 +6555,7 @@ BpProject .projects["BpStd"] {
      };
      MethodCall @[2] {
       desc="start the epoch timer to record computation time per epoch";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer->StartTimer(true)";
       pre_compile_code_string="epoch_timer->StartTimer(true)";
       result_var=NULL;
@@ -6553,7 +6582,7 @@ BpProject .projects["BpStd"] {
      };
      MethodCall @[3] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
       pre_compile_code_string="trial_mon_data->ResetData()";
       result_var=NULL;
@@ -6578,7 +6607,7 @@ BpProject .projects["BpStd"] {
        el_def=0;
        ProgramCall @[0] {
 	desc="run the trial program, passing network and input_data";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="BpTrial(network, input_data)";
 	pre_compile_code_string="BpTrial(network, input_data)";
 	prog_args {
@@ -6608,7 +6637,7 @@ BpProject .projects["BpStd"] {
 	  };
 	 };
 	};
-	target=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"]$$;
+	target=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"]$;
 	targ_ld_init="*BpTrial*";
        };
        If @[1] {
@@ -6625,7 +6654,7 @@ BpProject .projects["BpStd"] {
 	 el_def=0;
 	 MethodCall @[0] {
 	  desc="update the weight values based on changes computed by trial program";
-	  flags=0;
+	  flags=CAN_REVERT_TO_CODE;
 	  code_string="network->Compute_Weights()";
 	  pre_compile_code_string="network->Compute_Weights()";
 	  result_var=NULL;
@@ -6670,7 +6699,7 @@ BpProject .projects["BpStd"] {
        el_def=0;
        MethodCall @[0] {
 	desc="final update of weights based on accumulated changes";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Compute_Weights()";
 	pre_compile_code_string="network->Compute_Weights()";
 	result_var=NULL;
@@ -6688,7 +6717,7 @@ BpProject .projects["BpStd"] {
      };
      MethodCall @[6] {
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_EpochStats()";
       pre_compile_code_string="network->Compute_EpochStats()";
       result_var=NULL;
@@ -6704,7 +6733,7 @@ BpProject .projects["BpStd"] {
      };
      ProgramCall @[7] {
       desc="run program that records data from network and possibly other sources about the epoch";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="BpEpochMonitor(network)";
       pre_compile_code_string="BpEpochMonitor(network)";
       prog_args {
@@ -6728,7 +6757,7 @@ BpProject .projects["BpStd"] {
      };
      MethodCall @[8] {
       desc="done with the computation in the epoch -- record time it took";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer->EndTimer()";
       pre_compile_code_string="epoch_timer->EndTimer()";
       result_var=NULL;
@@ -6823,7 +6852,7 @@ BpProject .projects["BpStd"] {
      el_def=0;
      MethodCall @[0] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
       pre_compile_code_string="network->Init_InputData()";
       result_var=NULL;
@@ -6840,7 +6869,7 @@ BpProject .projects["BpStd"] {
      ProgramCall @[1] {
       desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="ApplyInputs(network, input_data)";
       pre_compile_code_string="ApplyInputs(network, input_data)";
       prog_args {
@@ -6875,7 +6904,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[2] {
       desc="initializes various counters at start of trial";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Run()";
       pre_compile_code_string="network->Trial_Run()";
       result_var=NULL;
@@ -6891,7 +6920,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[3] {
       desc=;
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_TrialStats()";
       pre_compile_code_string="network->Compute_TrialStats()";
       result_var=NULL;
@@ -6907,7 +6936,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      ProgramCall @[4] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="BpTrialMonitor(network)";
       pre_compile_code_string="BpTrialMonitor(network)";
       prog_args {
@@ -6931,7 +6960,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetUpdateView @[5] {
       desc="update the network view(s) (only if update_net_view is true)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
       pre_compile_code_string="Net Update View";
       network_var=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"].args["network"]$;
@@ -7057,7 +7086,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      MethodCall @[0] {
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
@@ -7095,7 +7124,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[1] {
       desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->AutoConfig()";
       pre_compile_code_string="LayerWriter_0->AutoConfig()";
       result_var=NULL;
@@ -7122,7 +7151,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[2] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->CheckConfig(false)";
       pre_compile_code_string="LayerWriter_0->CheckConfig(false)";
       result_var=NULL;
@@ -7154,7 +7183,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      MethodCall @[0] {
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
@@ -7192,7 +7221,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[1] {
       desc="apply inputs to the network!  layer writer has all the key specs";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->ApplyInputData()";
       pre_compile_code_string="LayerWriter_0->ApplyInputData()";
       result_var=NULL;
@@ -7504,7 +7533,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      MethodCall @[0] {
       desc="set the network and datatable for the NetMonitor";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       pre_compile_code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       result_var=NULL;
@@ -7542,7 +7571,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[1] {
       desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->CheckConfig(false)";
       pre_compile_code_string="trial_netmon->CheckConfig(false)";
       result_var=NULL;
@@ -7569,7 +7598,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[2] {
       desc="update the monitor items and data schema based on current settings of the NetMonitor object";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->UpdateMonitors(true)";
       pre_compile_code_string="trial_netmon->UpdateMonitors(true)";
       result_var=NULL;
@@ -7601,7 +7630,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      MethodCall @[0] {
       desc="add a new blank row to the data";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->AddBlankRow()";
       pre_compile_code_string="trial_mon_data->AddBlankRow()";
       result_var=NULL;
@@ -7617,7 +7646,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[1] {
       desc="get the new monitor data from the network and other sources -- this does the main work";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->GetMonVals()";
       pre_compile_code_string="trial_netmon->GetMonVals()";
       result_var=NULL;
@@ -7633,7 +7662,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[2] {
       desc="update views and other things after writing new data to monitor data table";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->WriteClose()";
       pre_compile_code_string="trial_mon_data->WriteClose()";
       result_var=NULL;
@@ -7649,7 +7678,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[3] {
       desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
       pre_compile_code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
       result_var=NULL;
@@ -8004,7 +8033,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[1] {
       desc="set data and network on NetMonitor object";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       pre_compile_code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       result_var=NULL;
@@ -8042,7 +8071,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[2] {
       desc="check configuration and emit errors/warnings for problems";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->CheckConfig(false)";
       pre_compile_code_string="epoch_netmon->CheckConfig(false)";
       result_var=NULL;
@@ -8069,7 +8098,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[3] {
       desc="update the monitor items and data schema based on current settings of NetMonitor";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->UpdateMonitors(true)";
       pre_compile_code_string="epoch_netmon->UpdateMonitors(true)";
       result_var=NULL;
@@ -8101,7 +8130,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      MethodCall @[0] {
       desc="add a new blank row to the data";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->AddBlankRow()";
       pre_compile_code_string="epoch_mon_data->AddBlankRow()";
       result_var=NULL;
@@ -8117,7 +8146,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[1] {
       desc="get the new monitor data and stor it into the data table -- this does the main job here";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->GetMonVals()";
       pre_compile_code_string="epoch_netmon->GetMonVals()";
       result_var=NULL;
@@ -8143,7 +8172,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[3] {
       desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
       pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
       result_var=NULL;
@@ -8203,7 +8232,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[4] {
       desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
       pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
       result_var=NULL;
@@ -8263,7 +8292,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[5] {
       desc="update after writing new data to monitor data table";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_mon_data->WriteClose()";
       pre_compile_code_string="epoch_mon_data->WriteClose()";
       result_var=NULL;
@@ -8406,7 +8435,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MiscCall @[1] {
       desc="get current batch counter for file name, with leading zeros to length 3";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="batch_str = taMisc::LeadingZeros(network.batch, 2)";
       pre_compile_code_string="batch_str = taMisc::LeadingZeros(network.batch, 2)";
       result_var=.projects["BpStd"].programs.gp["BpAll_Std"]["SaveWeights"].vars["batch_str"]$$;
@@ -8442,7 +8471,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MiscCall @[2] {
       desc="get current epoch counter with leading zeros to length 4";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_str = taMisc::LeadingZeros(network.epoch, 4)";
       pre_compile_code_string="epoch_str = taMisc::LeadingZeros(network.epoch, 4)";
       result_var=.projects["BpStd"].programs.gp["BpAll_Std"]["SaveWeights"].vars["epoch_str"]$$;
@@ -8488,7 +8517,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[4] {
       desc="get a file name based on the project's current file name, for saving the weights";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
       pre_compile_code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
       result_var=.projects["BpStd"].programs.gp["BpAll_Std"]["SaveWeights"].vars["fname"]$$;
@@ -8548,7 +8577,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      MethodCall @[5] {
       desc="save the weights to that file name";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->SaveWeights(fname, Network::NET_FMT)";
       pre_compile_code_string="network->SaveWeights(fname, Network::NET_FMT)";
       result_var=NULL;
@@ -8919,7 +8948,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=35: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["avg_sse"] {
@@ -8927,7 +8956,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.88273: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["cnt_err"] {
@@ -9039,7 +9068,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -10006,10 +10035,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_spec {type=BpConSpec: spec=$.projects["BpStd"].networks["Network_0"].specs["BpConSpec_0"]$: };
-     sse_tol=0;
+     sse_tol=0.5;
      sig {off=0: gain=1: };
-     err_tol=0;
-     err_fun=Bp_Squared_Error;
+     err_tol=0.05;
+     err_fun=Bp_CrossEnt_Error;
     };
     BpConSpec @["BpConSpec_0"] {
      name="BpConSpec_0";
