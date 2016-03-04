@@ -3427,6 +3427,7 @@ void Network::AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec) 
     if (dc) {
       dc->SetColFlag(DataCol::READ_ONLY);
     }
+    WriteSpecMbrNamesToTable(spec_table, child);  // and any members not in parent
     WriteSpecMbrValsToTable(spec_table, child, true); // rows already add by parent - pass false
     if (child->children.size > 0) {
       AddChildToSpecCompareTable(spec_table, child);  // recursion
@@ -3437,26 +3438,33 @@ void Network::AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec) 
 void Network::WriteSpecMbrNamesToTable(DataTable* spec_table, BaseSpec* spec) {
   TypeDef* spec_td = spec->GetTypeDef();
   
-  int index = 0;
+  int index = spec_table->rows; // we are appending
   for(int m=0; m<spec_td->members.size; m++) {
     MemberDef* spec_td_md = spec_td->members.FastEl(m);
     TypeDef* spec_member_td = spec_td_md->type;
-    if (spec_member_td->IsBool() || spec_member_td->IsString()) {
+    if (spec_member_td->IsBool() || spec_member_td->IsString() || spec_member_td->IsInt() ||
+        spec_member_td->IsFloat() || spec_member_td->IsVariant()) {
+      DataCol* name_column = spec_table->data.FindName("Member");
       if (ShowSpecMember(spec_td_md, NULL)) {
-        spec_table->AddBlankRow();
         String name = spec_td_md->name;
-        spec_table->SetValAsVar(name, 0, index);
-        index++;
+        if (name_column->FindVal(name) == -1) {
+          spec_table->AddBlankRow();
+          spec_table->SetValAsVar(name, 0, index);
+          index++;
+        }
       }
     }
     else {
       for(int n=0; n<spec_member_td->members.size; n++) {
         MemberDef* spec_member_base_md = spec_member_td->members.FastEl(n);
+        DataCol* name_column = spec_table->data.FindName("Member");
         if (ShowSpecMember(spec_td_md, spec_member_base_md)) {
-          spec_table->AddBlankRow();
           String name = spec_td_md->name + "_" + spec_member_base_md->name;
-          spec_table->SetValAsVar(name, 0, index);
-          index++;
+          if (name_column->FindVal(name) == -1) {
+            spec_table->AddBlankRow();
+            spec_table->SetValAsVar(name, 0, index);
+            index++;
+          }
         }
       }
     }
@@ -3493,35 +3501,38 @@ bool Network::ShowSpecMember(MemberDef* spec_md, MemberDef* spec_member_md) {
 void Network::WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, bool is_child) {
   TypeDef* spec_td = spec->GetTypeDef();
   
-  int index = 0;
   for(int m=0; m<spec_td->members.size; m++) {
     MemberDef* spec_td_md = spec_td->members.FastEl(m);
     TypeDef* spec_member_td = spec_td_md->type;
-    
-    if (spec_member_td->IsBool() || spec_member_td->IsString()) {
+    if (spec_member_td->IsBool() || spec_member_td->IsString() || spec_member_td->IsInt() ||
+        spec_member_td->IsFloat() || spec_member_td->IsVariant()) {
       if (ShowSpecMember(spec_td_md, NULL)) {
         if (!is_child || (is_child && spec->GetUnique(spec_td_md->name))) {
+          DataCol* name_column = spec_table->data.FindName("Member");
+          String name = spec_td_md->name;
+          int row = name_column->FindVal(name);
           String value = spec_td_md->GetValStr(spec);
-          spec_table->SetValAsVar(value, spec->name, index);
+          spec_table->SetValAsVar(value, spec->name, row);
+          
         }
-        index++;
-     }
+      }
     }
     else {
       for(int n=0; n<spec_member_td->members.size; n++) {
         MemberDef* spec_member_base_md = spec_member_td->members.FastEl(n);
         if (ShowSpecMember(spec_td_md, spec_member_base_md)) {
           SpecMemberBase* new_base = (SpecMemberBase*)spec_td->members.SafeEl(m)->GetOff(spec);
-          
           // display value if member overrides
           if (!is_child || (is_child && spec->GetUnique(spec_td_md->name))) {
             // but check conditional show value
             if (ShowSpecMemberValue(spec_member_base_md, spec_member_td, new_base)) {
+              DataCol* name_column = spec_table->data.FindName("Member");
+              String name = spec_td_md->name + "_" + spec_member_base_md->name;
+              int row = name_column->FindVal(name);
               String value = spec_member_base_md->GetValStr(new_base);
-              spec_table->SetValAsVar(value, spec->name, index);
+              spec_table->SetValAsVar(value, spec->name, row);
             }
           }
-          index++;
         }
       }
     }
