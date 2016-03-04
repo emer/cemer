@@ -19,6 +19,7 @@
 #include <taiWidgetListElMenu>
 #include <taiWidgetMenu>
 
+#include <taMisc>
 #include <taiMisc>
 
 taTypeDef_Of(taSmartPtr);
@@ -89,6 +90,10 @@ void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiWidget* dat, const void* bas
 
   MemberDef* from_md = NULL;
   taBase* bs = ((taBase*)base)->FindFromPath(mb_path, from_md);
+  if (bs == NULL) {
+    taMisc::Error("taiMemberOfTokenPtrFromGroup::GetImage_impl is NULL -- please report");
+    return;
+  }
   if(from_md->type->InheritsFrom(&TA_taSmartRef))
     bs = ((taSmartRef*)bs)->ptr();
   else if(from_md->type->IsPointer())
