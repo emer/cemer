@@ -115,12 +115,23 @@ void iDataTableView::ViewAction(int ea) {
     return;
   CellRange sel(selectionModel()->selectedIndexes());
   String str;
+  String col_name;
   for (int col = sel.col_fr; col <= sel.col_to; ++col) {
     DataCol* da = tab->GetColData(col, true); // quiet
     if (!da) continue;
     int cell_size = da->cell_size();
     for (int row = sel.row_fr; row <= sel.row_to; ++row) {
       for (int cell = 0; cell < cell_size; ++cell) {
+        if (sel.col_fr != sel.col_to) {
+          col_name = da->name;
+          str += col_name;
+          if (col_name.length() <= 8) {
+            str += "\t\t\t";
+          }
+          else {
+            str += "\t\t";
+          }
+        }
         str += tab->GetValAsStringM(col, row, cell);
         str += "\n";
       }
