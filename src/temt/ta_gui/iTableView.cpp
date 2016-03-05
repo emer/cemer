@@ -298,8 +298,15 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
 
   act = menu->AddItem("&View", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(ViewAction(int)), 1);
-  if (sel.col_fr != sel.col_to) {
-    act->setEnabled(false);
+  if (ca == CA_COL_HDR) {
+    if (sel.col_fr != sel.col_to) {
+      act->setEnabled(false);
+    }
+  }
+  else if (ca == CA_ROW_HDR) {
+    if (sel.row_fr != sel.row_to) {
+      act->setEnabled(false);
+    }
   }
   act = menu->AddItem("&Reset Colors", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(ResetColorsAction(int)), 1);
