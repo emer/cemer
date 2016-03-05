@@ -106,9 +106,9 @@ void AdaptWtScaleSpec::Initialize() {
 }
 
 void AdaptWtScaleSpec::Defaults_init() {
-  tau = 500.0f;
-  lo_thr = 0.3f;
-  hi_thr = 0.8f;
+  tau = 5000.0f;
+  lo_thr = 0.25f;
+  hi_thr = 0.75f;
   lo_scale = 0.01f;
   hi_scale = 2.0f;
   dt = 1.0f / tau;

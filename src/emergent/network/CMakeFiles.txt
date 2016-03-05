@@ -77,6 +77,7 @@ set(network_HEADS_MAKETA_base
   TiledGpMapConvergePrjnSpec.h
   GaussRFPrjnSpec.h
   GradientWtsPrjnSpec.h
+  ConPoolPrjnSpec.h
 
   LayerDataEl.h
   LayerDataEl_List.h
@@ -121,7 +122,6 @@ set(network_HEADS_MAKETA_base
   BrainView.h
   BrainVolumeView.h
   iViewPanelOfBrain.h
-  ConPoolPrjnSpec.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -283,6 +283,7 @@ set(network_SRCS
   TiledGpMapConvergePrjnSpec.cpp
   GaussRFPrjnSpec.cpp
   GradientWtsPrjnSpec.cpp
+  ConPoolPrjnSpec.cpp
 
   LayerDataEl.cpp
   LayerDataEl_List.cpp
@@ -357,7 +358,6 @@ set(network_SRCS
   nifti1_io.c
   NetworkVoxelMapper.cpp
   NiftiReader.cpp
-  ConPoolPrjnSpec.cpp
 )
 
 set(network_FILES ${network_HEADS} ${network_SRCS})

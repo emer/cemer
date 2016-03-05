@@ -34,7 +34,7 @@ void ConPoolPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   Layer* lay = prjn->layer;
   
   // todo: these are different for stride != pool_size
-  int recv_no = pool_size;
+  int recv_no = pool_size.Product();
   if(!self_con)
     recv_no--;
 
@@ -44,13 +44,49 @@ void ConPoolPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     lay->SendConsPreAlloc(recv_no, prjn);
   }
   else {
-    for(int i=0; i< lay->units.leaves; i+= stride) {
-      for(int j=0; j< pool_size; j++) {
-        Unit* ru = lay->units.Leaf(i + j);
-        for(int k=0; k< pool_size; k++) {
-          Unit* su = lay->units.Leaf(i + k);
-          if(self_con || (ru != su))
-            ru->ConnectFrom(su, prjn);
+    if(lay->unit_groups) {
+      for(int gpi=0; gpi < lay->gp_geom.n; gpi++) {
+        for(int yi=0; yi < lay->un_geom.y; yi += stride.y) {
+          for(int xi=0; xi < lay->un_geom.x; xi += stride.x) {
+
+            for(int ryi=0; ryi < pool_size.y; ryi++) {
+              for(int rxi=0; rxi < pool_size.x; rxi++) {
+                Unit* ru = lay->UnitAtGpIdxUnCoord(gpi, xi + rxi, yi + ryi);
+                if(!ru) continue;
+            
+                for(int syi=0; syi < pool_size.y; syi++) {
+                  for(int sxi=0; sxi < pool_size.x; sxi++) {
+                    Unit* su = lay->UnitAtGpIdxUnCoord(gpi, xi + sxi, yi + syi);
+                    if(!su) continue;
+                    if(self_con || (ru != su))
+                      ru->ConnectFrom(su, prjn);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      for(int yi=0; yi < lay->un_geom.y; yi += stride.y) {
+        for(int xi=0; xi < lay->un_geom.x; xi += stride.x) {
+
+          for(int ryi=0; ryi < pool_size.y; ryi++) {
+            for(int rxi=0; rxi < pool_size.x; rxi++) {
+              Unit* ru = lay->UnitAtCoord(xi + rxi, yi + ryi);
+              if(!ru) continue;
+            
+              for(int syi=0; syi < pool_size.y; syi++) {
+                for(int sxi=0; sxi < pool_size.x; sxi++) {
+                  Unit* su = lay->UnitAtCoord(xi + sxi, yi + syi);
+                  if(!su) continue;
+                  if(self_con || (ru != su))
+                    ru->ConnectFrom(su, prjn);
+                }
+              }
+            }
+          }
         }
       }
     }

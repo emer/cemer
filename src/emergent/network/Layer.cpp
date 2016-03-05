@@ -1817,6 +1817,13 @@ Unit* Layer::UnitAtGpCoord(int gp_x, int gp_y, int un_x, int un_y) const {
   return UnitAtUnGpIdx(unidx, gpidx);
 }
 
+Unit* Layer::UnitAtGpIdxUnCoord(int gpidx, int un_x, int un_y) const {
+  if(TestError(!unit_groups, "UnitAtGpIdxUnCoord", "Layer is not configured for unit_groups"))
+    return NULL;
+  int unidx = un_y * un_geom.x + un_x;
+  return UnitAtUnGpIdx(unidx, gpidx);
+}
+
 Unit_Group* Layer::UnitGpAtCoord(int gp_x, int gp_y) const {
   if(TestError(!unit_groups, "UnitGpAtCoord", "Layer is not configured for unit_groups"))
     return NULL;

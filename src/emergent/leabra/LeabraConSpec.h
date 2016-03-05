@@ -193,9 +193,9 @@ class E_API AdaptWtScaleSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // turn on weight scale adaptation as function of weight values
-  float         tau;            // #CONDSHOW_ON_on #DEF_500 time constant as a function of weight updates (trials) that weight scale adapts on -- should be fairly slow in general
-  float         lo_thr;         // #CONDSHOW_ON_on #DEF_0.3 low threshold:  normalized contrast-enhanced effective weights (wt/scale, 0-1 range) below this value cause scale to move downward toward lo_scale value
-  float         hi_thr;         // #CONDSHOW_ON_on #DEF_0.8 high threshold: normalized contrast-enhanced effective weights (wt/scale, 0-1 range) above this value cause scale to move upward toward hi_scale value
+  float         tau;            // #CONDSHOW_ON_on #DEF_5000 time constant as a function of weight updates (trials) that weight scale adapts on -- should be fairly slow in general
+  float         lo_thr;         // #CONDSHOW_ON_on #DEF_0.25 low threshold:  normalized contrast-enhanced effective weights (wt/scale, 0-1 range) below this value cause scale to move downward toward lo_scale value
+  float         hi_thr;         // #CONDSHOW_ON_on #DEF_0.75 high threshold: normalized contrast-enhanced effective weights (wt/scale, 0-1 range) above this value cause scale to move upward toward hi_scale value
   float         lo_scale;       // #CONDSHOW_ON_on #MIN_0.01 #DEF_0.01 lowest value of scale
   float         hi_scale;       // #CONDSHOW_ON_on #DEF_2 highest value of scale
 

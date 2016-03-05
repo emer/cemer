@@ -20,20 +20,20 @@
 #include <ProjectionSpec>
 
 // member includes:
+#include <PosVector2i>
 
 // declare all other types mentioned but not required to include:
 
 eTypeDef_Of(ConPoolPrjnSpec);
 
 class E_API ConPoolPrjnSpec : public ProjectionSpec {
-  // self-projection that interconnects pools of units with each other, in sequential index order according to the pooling size -- e.g., with pool_size = 2, every sequential pair of units is interconnected
+  // self-projection that interconnects neighboring pools of units with each other according to the pooling size in each dimension -- e.g., with pool_size = 2, every sequential pair of units is interconnected
 INHERITED(ProjectionSpec)
 public:
-  int   pool_size;              // how many units to interconnect together in a pool -- starts at offset 0 from current index and connects up to pool_size, skipping self if !self_con
-  int   stride;                 // how many units to skip over for every pool connection step -- if stride == pool_size then pools are isolated from each other, whereas stride < pool_size causes the "edges" of each pool to overlap with others
+  PosVector2i   pool_size;              // how many units to interconnect together in a pool in each dimension
+  PosVector2i   stride;                 // how many units to skip over for every pool connection step -- if stride == pool_size then pools are isolated from each other, whereas stride < pool_size causes the edges of each pool to overlap with others
 
   void Connect_impl(Projection* prjn, bool make_cons) override;
-  // Connection function for full connectivity
   
   TA_SIMPLE_BASEFUNS(ConPoolPrjnSpec);
 private:

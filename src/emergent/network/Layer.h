@@ -223,6 +223,8 @@ public:
   // #CAT_Access get unit given both unit and group coordinates -- only functional if unit_groups is on -- this uses logical 4d coordinates, relative to gp_geom and un_geom
   Unit*         UnitAtGpCoord(int gp_x, int gp_y, int un_x, int un_y) const;
   // #CAT_Access get unit given both unit and group coordinates -- only functional if unit_groups is on -- this uses logical 4d coordinates, relative to gp_geom and un_geom
+  Unit*         UnitAtGpIdxUnCoord(int gpidx, int un_x, int un_y) const;
+  // #CAT_Access get unit given group index and unit coordinates -- only functional if unit_groups is on -- this uses logical coordinates, relative un_geom
 
 
   Unit_Group*   UnitGpAtCoord(const taVector2i& coord) const

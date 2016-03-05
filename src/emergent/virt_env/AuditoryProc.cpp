@@ -221,116 +221,150 @@ void AudGaborSpec::Initialize() {
   on = true;
   gain = 2.0f;
   n_horiz = 4;
-  sz_time_msec = 12;
-  sz_freq = 12;
+  sz_time = 6;
+  sz_freq = 6;
   spacing_pct = 0.5f;
-  wvlen = 6.0f;
-  gauss_sig_len = 0.25f;
-  gauss_sig_wd = 0.15f;
+  wvlen = 0.5f;
+  gauss_sig_len = 0.4f;
+  gauss_sig_wd = 0.25f;
+  gauss_sig_horiz = 0.25f;
   phase_off = 0.0f;
   circle_edge = true;
 
   n_filters = 3 + n_horiz;
-  sz_time_steps = 12;
-  spc_time_steps = 6;
+  spc_time = (int)(spacing_pct * sz_time);
   spc_freq = (int)(spacing_pct * sz_freq);
 }
 
 void AudGaborSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   n_filters = 3 + n_horiz;
+  spc_time = (int)(spacing_pct * sz_time);
   spc_freq = (int)(spacing_pct * sz_freq);
 }
 
 void AudGaborSpec::RenderFilters(float_Matrix& fltrs) {
-  // fltrs.SetGeom(3, filter_size, filter_size, n_angles);
+  fltrs.SetGeom(3, sz_time, sz_freq, n_filters);
 
-  // float ctr = (float)(filter_size-1) / 2.0f;
-  // float ang_inc = taMath_float::pi / (float)n_angles;
+  float ctr_t = (float)(sz_time-1) / 2.0f;
+  float ctr_f = (float)(sz_freq-1) / 2.0f;
+  float ang_inc = taMath_float::pi / (float)4.0f;
 
-  // float circ_radius = (float)(filter_size) / 2.0f;
+  float radius_t = (float)(sz_time) / 2.0f;
+  float radius_f = (float)(sz_freq) / 2.0f;
 
-  // float gs_len_eff = gauss_sig_len * (float)filter_size;
-  // float gs_wd_eff = gauss_sig_wd * (float)filter_size;
+  float len_norm = 1.0f / (2.0f * gauss_sig_len * gauss_sig_len);
+  float wd_norm = 1.0f / (2.0f * gauss_sig_wd * gauss_sig_wd);
+  float horiz_norm = 1.0f / (2.0f * gauss_sig_horiz * gauss_sig_horiz);
 
-  // float len_norm = 1.0f / (2.0f * gs_len_eff * gs_len_eff);
-  // float wd_norm = 1.0f / (2.0f * gs_wd_eff * gs_wd_eff);
+  float twopinorm = (2.0f * taMath_float::pi) / wvlen;
 
-  // float twopinorm = (2.0f * taMath_float::pi) / wvlen;
+  int fli = 0;
+  for(int hi = 0; hi < n_horiz; hi++, fli++) {
 
-  // for(int ang = 0; ang < n_angles; ang++) {
-  //   float angf = -(float)ang * ang_inc;
+    float angf = -2.0f * ang_inc;
+    for(int y = 0; y < sz_freq; y++) {
+      for(int x = 0; x < sz_time; x++) {
+        float xf = (float)x - ctr_t;
+        float yf = (float)y - ctr_f;
+        float xfn = xf / radius_t;
+        float yfn = yf / radius_f;
 
-  //   float pos_sum = 0.0f;
-  //   float neg_sum = 0.0f;
-  //   for(int x = 0; x < filter_size; x++) {
-  //     for(int y = 0; y < filter_size; y++) {
-  //       float xf = (float)x - ctr;
-  //       float yf = (float)y - ctr;
+        float dist = taMath_float::hypot(xfn, yfn);
+        float val = 0.0f;
+        if(!(circle_edge && (dist > 1.0f))) {
+          float nx = xfn * cosf(angf) - yfn * sinf(angf);
+          float ny = yfn * cosf(angf) + xfn * sinf(angf);
+          float gauss = expf(-(len_norm * (nx * nx) + horiz_norm * (ny * ny)));
+          float sin_val = sinf(twopinorm * ny + phase_off);
+          val = gauss * sin_val;
+        }
+        fltrs.FastEl3d(x, y, fli) = val;
+      }
+    }
+  }
+  for(int ang = 1; ang < 4; ang++, fli++) {
+    float angf = -(float)ang * ang_inc;
 
-  //       float dist = taMath_float::hypot(xf, yf);
-  //       float val = 0.0f;
-  //       if(!(circle_edge && (dist > circ_radius))) {
-  //         float nx = xf * cosf(angf) - yf * sinf(angf);
-  //         float ny = yf * cosf(angf) + xf * sinf(angf);
-  //         float gauss = expf(-(len_norm * (nx * nx) + wd_norm * (ny * ny)));
-  //         float sin_val = sinf(twopinorm * ny + phase_off);
-  //         val = gauss * sin_val;
-  //         if(val > 0.0f)        { pos_sum += val; }
-  //         else if(val < 0.0f)   { neg_sum += val; }
-  //       }
-  //       fltrs.FastEl3d(x, y, ang) = val;
-  //     }
-  //   }
-  //   // renorm each half
-  //   float pos_norm = 1.0f / pos_sum;
-  //   float neg_norm = -1.0f / neg_sum;
-  //   for(int x = 0; x < filter_size; x++) {
-  //     for(int y = 0; y < filter_size; y++) {
-  //       float& val = fltrs.FastEl3d(x, y, ang);
-  //       if(val > 0.0f)          { val *= pos_norm; }
-  //       else if(val < 0.0f)     { val *= neg_norm; }
-  //     }
-  //   }
-  // }
+    for(int y = 0; y < sz_freq; y++) {
+      for(int x = 0; x < sz_time; x++) {
+        float xf = (float)x - ctr_t;
+        float yf = (float)y - ctr_f;
+        float xfn = xf / radius_t;
+        float yfn = yf / radius_f;
+
+        float dist = taMath_float::hypot(xfn, yfn);
+        float val = 0.0f;
+        if(!(circle_edge && (dist > 1.0f))) {
+          float nx = xfn * cosf(angf) - yfn * sinf(angf);
+          float ny = yfn * cosf(angf) + xfn * sinf(angf);
+          float gauss = expf(-(len_norm * (nx * nx) + wd_norm * (ny * ny)));
+          float sin_val = sinf(twopinorm * ny + phase_off);
+          val = gauss * sin_val;
+        }
+        fltrs.FastEl3d(x, y, fli) = val;
+      }
+    }
+  }
+  
+  // renorm each half
+  for(fli = 0; fli < n_filters; fli++) {
+    float pos_sum = 0.0f;
+    float neg_sum = 0.0f;
+    for(int y = 0; y < sz_freq; y++) {
+      for(int x = 0; x < sz_time; x++) {
+        float& val = fltrs.FastEl3d(x, y, fli);
+        if(val > 0.0f)          { pos_sum += val; }
+        else if(val < 0.0f)     { neg_sum += val; }
+      }
+    }
+    float pos_norm = 1.0f / pos_sum;
+    float neg_norm = -1.0f / neg_sum;
+    for(int y = 0; y < sz_freq; y++) {
+      for(int x = 0; x < sz_time; x++) {
+        float& val = fltrs.FastEl3d(x, y, fli);
+        if(val > 0.0f)          { val *= pos_norm; }
+        else if(val < 0.0f)     { val *= neg_norm; }
+      }
+    }
+  }
 }
 
 void AudGaborSpec::GridFilters(float_Matrix& fltrs, DataTable* graph_data, bool reset) {
-//   RenderFilters(fltrs);         // just to make sure
+  RenderFilters(fltrs);         // just to make sure
 
-//   String name;
-//   if(owner) name = owner->GetName();
+  String name;
+  if(owner) name = owner->GetName();
 
-//   taProject* proj = GetMyProj();
-//   if(!graph_data) {
-//     graph_data = proj->GetNewAnalysisDataTable(name + "_V1Gabor_GridFilters", true);
-//   }
-//   graph_data->StructUpdate(true);
-//   if(reset)
-//     graph_data->ResetData();
-//   int idx;
-//   DataCol* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
-// //   nmda->SetUserData("WIDTH", 10);
-//   DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, filter_size, filter_size);
+  taProject* proj = GetMyProj();
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_V1Gabor_GridFilters", true);
+  }
+  graph_data->StructUpdate(true);
+  if(reset)
+    graph_data->ResetData();
+  int idx;
+  DataCol* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
+//   nmda->SetUserData("WIDTH", 10);
+  DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, sz_time,
+                                               sz_freq);
 
-//   float maxv = taMath_float::vec_abs_max(&fltrs, idx);
+  float maxv = taMath_float::vec_abs_max(&fltrs, idx);
 
-//   graph_data->SetUserData("N_ROWS", 4);
-//   graph_data->SetUserData("SCALE_MIN", -maxv);
-//   graph_data->SetUserData("SCALE_MAX", maxv);
-//   graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
+  graph_data->SetUserData("N_ROWS", n_filters);
+  graph_data->SetUserData("SCALE_MIN", -maxv);
+  graph_data->SetUserData("SCALE_MAX", maxv);
+  graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
 
-//   int ang_inc = 180 / n_angles;
+  for(int i=0; i<n_filters; i++) {
+    graph_data->AddBlankRow();
+    float_MatrixPtr frm; frm = (float_Matrix*)fltrs.GetFrameSlice(i);
+    matda->SetValAsMatrix(frm, -1);
+    nmda->SetValAsString("Filter: " + String(i), -1);
+  }
 
-//   for(int ang=0; ang<n_angles; ang++) {
-//     graph_data->AddBlankRow();
-//     float_MatrixPtr frm; frm = (float_Matrix*)fltrs.GetFrameSlice(ang);
-//     matda->SetValAsMatrix(frm, -1);
-//     nmda->SetValAsString("Angle: " + String(ang * ang_inc), -1);
-//   }
-
-//   graph_data->StructUpdate(false);
-//   graph_data->FindMakeGridView();
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGridView();
 }
 
 
@@ -954,4 +988,19 @@ void AuditoryProc::PlotMelFilters(DataTable* graph_data) {
 void AuditoryProc::GridTimeGaborFilters(DataTable* graph_data) {
   if(NeedsInit()) Init();
   fbank_tgabor.GridFilters(tgabor_filters, tgabor_flt_sizes, graph_data, true);
+}
+
+void AuditoryProc::GridGaborFilters(DataTable* graph_data, int gabor_n) {
+  if(NeedsInit()) Init();
+  switch(gabor_n) {
+  case 1:
+    fbank_gabor1.GridFilters(gabor1_filters, graph_data, true);
+    break;
+  case 2:
+    fbank_gabor1.GridFilters(gabor1_filters, graph_data, true);
+    break;
+  case 3:
+    fbank_gabor1.GridFilters(gabor1_filters, graph_data, true);
+    break;
+  }
 }
