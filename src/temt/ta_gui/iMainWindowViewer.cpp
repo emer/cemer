@@ -2290,15 +2290,22 @@ bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
     return inherited::eventFilter(obj, event);
     
   QResizeEvent* re = (QResizeEvent*)event;
+  int w_diff = ABS(re->size().width() - re->oldSize().width());
+  int h_diff = ABS(re->size().height() - re->oldSize().height());
   // String obj_info = obj->objectName() + " typ: " + obj->metaObject()->className();
-  String wh = "w: " + (String)re->size().width() +  " h: " + (String)re->size().height();
-  String owh = "ow: " + (String)re->oldSize().width() +  " oh: " + (String)re->oldSize().height();
+  String wh = "w: " + (String)re->size().width() +  " ow: " + (String)re->oldSize().width()
+    + " wdiff: " + (String)w_diff +
+    + " h: " + (String)re->size().height()+  " oh: " + (String)re->oldSize().height() +
+    " hdiff: " + (String)h_diff;
   taMisc::Info("filter win resize:",
-               viewer()->name, wh, owh,
+               viewer()->name, wh, 
                "spontaneous:",(String)re->spontaneous(), "allow:",
                (String)allow_window_resize);
-
-  if(re->size() == re->oldSize()) { // non-resize..
+  
+  if(re->size() == re->oldSize() ||
+     ((w_diff == 0 || w_diff == 1) && (h_diff == 0 || h_diff == 1 || h_diff == 22 || h_diff == 16))) {
+       // non-resize..
+    allow_window_resize = false;
     QTimer::singleShot(500, this, SLOT(restoreWindowSize()) ); // undo
     return true;                    // filter
   }

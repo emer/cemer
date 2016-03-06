@@ -26,6 +26,7 @@
 #include <int_Matrix>
 #include <complex_float_Matrix>
 #include <taMath_float>
+#include <XYNGeom>
 
 // declare all other types mentioned but not required to include:
 class taSound; //
@@ -38,7 +39,7 @@ class E_API AudInputSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float         win_msec;       // #DEF_25 input window -- number of milliseconds worth of sound to filter at a time
-  float         step_msec;      // #DEF_12.5 input step -- number of milliseconds worth of sound that the input is stepped along to obtain the next window sample 
+  float         step_msec;      // #DEF_5;10;12.5 input step -- number of milliseconds worth of sound that the input is stepped along to obtain the next window sample 
   float         trial_msec;     // #DEF_100 length of a full trial's worth of input -- total number of milliseconds to accumulate into a complete trial of activations to present to a network -- must be a multiple of step_msec -- input will be trial_msec / step_msec = trial_steps wide in the X axis, and number of filters in the Y axis
   int           border_steps;   // number of steps before and after the trial window to preserve -- this is important when applying temporal filters that have greater temporal extent
   int           sample_rate;    // rate of sampling in our sound input (e.g., 16000 = 16Khz) -- can initialize this from a taSound object using InitFromSound method
@@ -97,11 +98,11 @@ class E_API MelFBankSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool          on;            // perform mel-frequency filtering of the fft input
-  float         lo_hz;         // #DEF_300 #CONDSHOW_ON_on low frequency end of mel frequency spectrum
-  float         hi_hz;         // #DEF_8000 #CONDSHOW_ON_on high frequency end of mel frequency spectrum -- must be <= sample_rate / 2 (i.e., less than the Nyquist frequency)
-  int           n_filters;     // #DEF_26 #CONDSHOW_ON_on number of Mel frequency filters to compute
-  float         log_off;       // #CONDSHOW_ON_on add this amount when taking the log of the Mel filter sums to produce the filter-bank output -- e.g., 1.0 makes everything positive -- affects the relative contrast of the outputs
-  float         log_min;       // #CONDSHOW_ON_on minimum value a log can produce -- puts a lower limit on log output
+  float         lo_hz;         // #DEF_120;300 #CONDSHOW_ON_on low frequency end of mel frequency spectrum
+  float         hi_hz;         // #DEF_10000;8000 #CONDSHOW_ON_on high frequency end of mel frequency spectrum -- must be <= sample_rate / 2 (i.e., less than the Nyquist frequency)
+  int           n_filters;     // #DEF_32;26 #CONDSHOW_ON_on number of Mel frequency filters to compute
+  float         log_off;       // #CONDSHOW_ON_#DEF_0 on add this amount when taking the log of the Mel filter sums to produce the filter-bank output -- e.g., 1.0 makes everything positive -- affects the relative contrast of the outputs
+  float         log_min;       // #CONDSHOW_ON_on #DEF_-10 minimum value a log can produce -- puts a lower limit on log output
   float         lo_mel;        // #READ_ONLY #SHOW #CONDSHOW_ON_on low end of mel scale in mel units
   float         hi_mel;        // #READ_ONLY #SHOW #CONDSHOW_ON_on high end of mel scale in mel units
 
@@ -147,6 +148,7 @@ private:
 };
 
 
+
 taTypeDef_Of(AudTimeGaborSpec);
 
 class E_API AudTimeGaborSpec : public taOBase {
@@ -158,16 +160,10 @@ public:
   int           st_half_size;  // #CONDSHOW_ON_on #DEF_1 starting half-size of filters in terms of time steps -- filters are always even sized 
   int           ed_half_size;  // #CONDSHOW_ON_on #DEF_3 ending half-size of filters in terms of time steps -- requires input.border_steps >= this number! -- filters are always even sized 
   int           inc_half_size; // #CONDSHOW_ON_on #DEF_1 increment in half-size steps to take between start and end sizes
-  bool          xx1_norm;      // #CONDSHOW_ON_on apply an x / (x+1) normalization to the deltas to keep within 0-1 range -- is relatively linear at the start then saturates 
-  float         xx1_gain;      // #CONDSHOW_ON_on&&xx1_norm gain on the xx1 normalization function
 
   int           max_size;       // #READ_ONLY maximum size = ed_half_size * 2
   int           n_filters;      // #READ_ONLY number of filters = (ed-st) / inc + 1
 
-  inline float  XX1(float delta)
-  { float gm = delta * xx1_gain; return gm / (1.0f + gm); }
-  // the X-over-X+1 normalization function
-  
   virtual void	RenderFilters(float_Matrix& fltrs, int_Matrix& flt_sizes);
   // generate filters into the given matrix, which is formatted as: [max_size][n_filters] and record the actual half-sizes of these filters in flt_sizes
 
@@ -213,17 +209,16 @@ public:
   int		n_horiz;	// #CONDSHOW_ON_on #DEF_4 number of horizontally-elongated,  pure time-domain, frequency-band specific filters to include, evenly spaced over the available frequency space for this filter set -- in addition to these, there are two diagonals (45, 135) and a vertically-elongated (wide frequency band) filter
   int		sz_time;	// #CONDSHOW_ON_on #DEF_6;8;12;16;24 size of the filter in the time (horizontal) domain, in terms of steps of the underlying DFT filtering steps
   int		sz_freq;	// #CONDSHOW_ON_on #DEF_6;8;12;16;24 size of the filter in the frequency domain, in terms of discrete frequency factors based on the FFT window and input sample rate
-  float		spacing_pct;	// #CONDSHOW_ON_on #DEF_0.5 how far apart to space the centers of the gabor filters, as a proportion of the size of the filter in each dimension -- .5 = 1/2 overlap and is typical
-  float		wvlen;		// #CONDSHOW_ON_on #DEF_0.5 wavelength of the sine waves in normalized units
-  float		gauss_sig_len;	// #CONDSHOW_ON_on #DEF_0.4 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter size in relevant dimension
-  float		gauss_sig_wd;	// #CONDSHOW_ON_on #DEF_0.25 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter size in relevant dimension
-  float		gauss_sig_horiz; // #CONDSHOW_ON_on #DEF_0.25 gaussian sigma for the horizontal dimension for special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
+  int		spc_time;	// #CONDSHOW_ON_on spacing in the time (horizontal) domain, in terms of steps
+  int		spc_freq;	// #CONDSHOW_ON_on spacing in the frequency (vertical) domain
+  float		wvlen;		// #CONDSHOW_ON_on #DEF_1.5 wavelength of the sine waves in normalized units
+  float		gauss_sig_len;	// #CONDSHOW_ON_on #DEF_0.6 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter size in relevant dimension
+  float		gauss_sig_wd;	// #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter size in relevant dimension
+  float		gauss_sig_horiz; // #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the horizontal dimension for special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
   float		phase_off;	// #CONDSHOW_ON_on #DEF_0;1.5708 offset for the sine phase -- default is an asymmetric sine wave -- can make it into a symmetric cosine gabor by using PI/2 = 1.5708
   bool		circle_edge;	// #CONDSHOW_ON_on #DEF_true cut off the filter (to zero) outside a circle of diameter filter_size -- makes the filter more radially symmetric
 
   int           n_filters;      // #CONDSHOW_ON_on #READ_ONLY #SHOW total number of filters = 3 + n_horiz
-  int		spc_time;	// #CONDSHOW_ON_on #READ_ONLY #SHOW spacing in the time (horizontal) domain, in terms of steps
-  int		spc_freq;	// #CONDSHOW_ON_on #READ_ONLY #SHOW spacing in the frequency (vertical) domain
 
   
   virtual void	RenderFilters(float_Matrix& fltrs);
@@ -273,7 +268,7 @@ public:
   AudGaborSpec  fbank_gabor2;    // #CONDSHOW_ON_mel_fbank.on full set of frequency / time gabor filters -- second size
   AudGaborSpec  fbank_gabor3;    // #CONDSHOW_ON_mel_fbank.on full set of frequency / time gabor filters -- third size
   MelCepstrumSpec mfcc;         // #CONDSHOW_ON_mel_fbank.on specifications of the mel cepstrum discrete cosine transform of the mel fbank filter features
-  V1KwtaSpec	tgabor_kwta;	// #CONDSHOW_ON_fbank_tgabor.on k-winner-take-all inhibitory dynamics for the time-gabor output
+  V1KwtaSpec	gabor_kwta;	// #CONDSHOW_ON_fbank_gabor1.on k-winner-take-all inhibitory dynamics for the time-gabor output
 
 
   ///////////////////////////////////////////////////
@@ -298,10 +293,15 @@ public:
   //////////////////////////////////////////////////////////////
   //	Outputs
 
-  float_Matrix          sound_full;  // #READ_ONLY #NO_SAVE the full sound input obtained from the sound input
   int                   input_pos;   // #READ_ONLY #NO_SAVE #SHOW current position in the sound_full input -- in terms of sample number
   int                   trial_start_pos;   // #READ_ONLY #NO_SAVE #SHOW starting position of the current trial -- in terms of sample number
   int                   trial_end_pos;   // #READ_ONLY #NO_SAVE #SHOW ending position of the current trial -- in terms of sample number
+  XYNGeom               gabor1_geom;     // #READ_ONLY #SHOW overall geometry of gabor1 output (group-level geometry -- feature / unit level geometry is n_features, 2)
+  XYNGeom               gabor2_geom;     // #READ_ONLY #SHOW overall geometry of gabor1 output (group-level geometry -- feature / unit level geometry is n_features, 2)
+  XYNGeom               gabor3_geom;     // #READ_ONLY #SHOW overall geometry of gabor1 output (group-level geometry -- feature / unit level geometry is n_features, 2)
+
+
+  float_Matrix          sound_full;  // #READ_ONLY #NO_SAVE the full sound input obtained from the sound input
   float_Matrix          window_in;  // #READ_ONLY #NO_SAVE [input.win_samples] the raw sound input, one channel at a time
   complex_float_Matrix	dft_out;   // #READ_ONLY #NO_SAVE [2, dft_size] discrete fourier transform (fft) output complex representation
   float_Matrix          dft_power_out; // #READ_ONLY #NO_SAVE [dft_use] power of the dft, up to the nyquist limit frequency (1/2 input.win_samples)
@@ -310,22 +310,20 @@ public:
   float_Matrix          dft_log_power_trial_out; // #READ_ONLY #NO_SAVE [dft_use][input.total_steps][input.channels] full trial's worth of log power of the dft, up to the nyquist limit frequency (1/2 input.win_samples)
 
   float_Matrix          mel_fbank_out; // #READ_ONLY #NO_SAVE [mel.n_filters] mel scale transformation of dft_power, using triangular filters, resulting in the mel filterbank output -- the natural log of this is typically applied
-  float_Matrix          mel_fbank_trial_out; // #READ_ONLY #NO_SAVE [mel.n_filters][input.total_steps][input.channels] full trial's worth of mel feature-bank output -- only if using time gabors
+  float_Matrix          mel_fbank_trial_out; // #READ_ONLY #NO_SAVE [mel.n_filters][input.total_steps][input.channels] full trial's worth of mel feature-bank output -- only if using gabors
 
   float_Matrix          tgabor_trial_raw; // #READ_ONLY #NO_SAVE [tgabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] raw output of time gabor -- full trial's worth of time gabor steps
   float_Matrix	        tgabor_gci;	 // #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
   float_Matrix          tgabor_trial_out; // #READ_ONLY #NO_SAVE [tgabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] post-kwta output of full trial's worth of time gabor steps
 
+  float_Matrix	        gabor_gci;	 // #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
   float_Matrix          gabor1_trial_raw; // #READ_ONLY #NO_SAVE [gabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] raw output of gabor1 -- full trial's worth of gabor steps
-  float_Matrix	        gabor1_gci;	 // #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
   float_Matrix          gabor1_trial_out; // #READ_ONLY #NO_SAVE [gabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] post-kwta output of full trial's worth of gabor steps
   
   float_Matrix          gabor2_trial_raw; // #READ_ONLY #NO_SAVE [gabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] raw output of gabor1 -- full trial's worth of gabor steps
-  float_Matrix	        gabor2_gci;	 // #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
   float_Matrix          gabor2_trial_out; // #READ_ONLY #NO_SAVE [gabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] post-kwta output of full trial's worth of gabor steps
   
   float_Matrix          gabor3_trial_raw; // #READ_ONLY #NO_SAVE [gabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] raw output of gabor1 -- full trial's worth of gabor steps
-  float_Matrix	        gabor3_gci;	 // #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
   float_Matrix          gabor3_trial_out; // #READ_ONLY #NO_SAVE [gabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] post-kwta output of full trial's worth of gabor steps
   
   float_Matrix          mfcc_dct_out; // #READ_ONLY #NO_SAVE discrete cosine transform of the log_mel_filter_out values, producing the final mel-frequency cepstral coefficients 
@@ -423,6 +421,11 @@ public:
   virtual void  CepstrumDctMel(int chan, int step);
   // apply discrete cosine transform (DCT) to get the cepstrum coefficients on the mel filterbank values
   virtual void  TimeGaborFilter(int chan);
+  // compute time gabors over entire trial's worth of data
+
+  virtual void  GaborFilter_impl
+    (int chan, const AudGaborSpec& spec, const float_Matrix& filters,
+     float_Matrix& out_raw, float_Matrix& out);
   // compute time gabors over entire trial's worth of data
   
 public:  
