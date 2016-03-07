@@ -104,7 +104,7 @@ public:
   float         lo_hz;         // #DEF_120;300 #CONDSHOW_ON_on low frequency end of mel frequency spectrum
   float         hi_hz;         // #DEF_10000;8000 #CONDSHOW_ON_on high frequency end of mel frequency spectrum -- must be <= sample_rate / 2 (i.e., less than the Nyquist frequency)
   int           n_filters;     // #DEF_32;26 #CONDSHOW_ON_on number of Mel frequency filters to compute
-  float         log_off;       // #CONDSHOW_ON_#DEF_0 on add this amount when taking the log of the Mel filter sums to produce the filter-bank output -- e.g., 1.0 makes everything positive -- affects the relative contrast of the outputs
+  float         log_off;       // #CONDSHOW_ON_on #DEF_0 on add this amount when taking the log of the Mel filter sums to produce the filter-bank output -- e.g., 1.0 makes everything positive -- affects the relative contrast of the outputs
   float         log_min;       // #CONDSHOW_ON_on #DEF_-10 minimum value a log can produce -- puts a lower limit on log output
   float         lo_mel;        // #READ_ONLY #SHOW #CONDSHOW_ON_on low end of mel scale in mel units
   float         hi_mel;        // #READ_ONLY #SHOW #CONDSHOW_ON_on high end of mel scale in mel units
@@ -151,25 +151,6 @@ private:
 };
 
 
-
-taTypeDef_Of(MelCepstrumSpec);
-
-class E_API MelCepstrumSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound mel frequency sampling parameters
-INHERITED(taOBase)
-public:
-  bool          on;            // perform cepstrum discrete cosine transform (dct) of the mel-frequency filter bank features
-  int           n_coeff;       // #CONDSHOW_ON_on #DEF_13 number of mfcc coefficients to output -- typically 1/2 of the number of filterbank features
-
-  TA_SIMPLE_BASEFUNS(MelCepstrumSpec);
-protected:
-  void 	UpdateAfterEdit_impl() override;
-private:
-  void 	Initialize();
-  void	Destroy() { };
-};
-
-
 taTypeDef_Of(AudGaborSpec);
 
 class E_API AudGaborSpec : public taOBase {
@@ -201,6 +182,25 @@ public:
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filters into data table and generate a grid view (reset any existing data first)
 
   TA_SIMPLE_BASEFUNS(AudGaborSpec);
+protected:
+  void 	UpdateAfterEdit_impl() override;
+private:
+  void 	Initialize();
+  void	Destroy() { };
+};
+
+
+
+taTypeDef_Of(MelCepstrumSpec);
+
+class E_API MelCepstrumSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound mel frequency sampling parameters
+INHERITED(taOBase)
+public:
+  bool          on;            // perform cepstrum discrete cosine transform (dct) of the mel-frequency filter bank features
+  int           n_coeff;       // #CONDSHOW_ON_on #DEF_13 number of mfcc coefficients to output -- typically 1/2 of the number of filterbank features
+
+  TA_SIMPLE_BASEFUNS(MelCepstrumSpec);
 protected:
   void 	UpdateAfterEdit_impl() override;
 private:

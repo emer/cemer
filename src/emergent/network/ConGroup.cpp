@@ -813,9 +813,20 @@ bool ConGroup::ConValuesFromMatrix(float_Matrix& mat, const String& variable) {
 void ConGroup::SaveWeights_strm(ostream& strm, Unit* un, Network* net,
                                 ConGroup::WtSaveFormat fmt) {
   if((prjn == NULL) || (!(bool)prjn->from)) {
-    strm << "<Cn 0>\n";
-    goto end_tag;               // don't do anything
+    strm << "<Cn 0>\n" << "</Cn>\n";
+    return;
   }
+
+  TypeDef* ct = prjn->con_type;
+  int n_vars = 0;
+  MemberDef* smds[10];          // no more than 10!
+  for(int i=0; i<ct->members.size; i++) {
+    MemberDef* md = ct->members[i];
+    if(md->HasOption("SAVE")) {
+      smds[n_vars++] = md;
+    }
+  }
+  
   strm << "<Cn " << size << ">\n";
   switch(fmt) {
   case ConGroup::TEXT:
@@ -825,7 +836,11 @@ void ConGroup::SaveWeights_strm(ostream& strm, Unit* un, Network* net,
         taMisc::Warning("SaveWeights_strm: can't find unit");
         lidx = 0;
       }
-      strm << lidx << " " << Cn(i,WT,net) << "\n";
+      strm << lidx;
+      for(int mi=0; mi < n_vars; mi++) {
+        strm << " " << Cn(i,smds[mi]->idx,net);
+      }
+      strm << "\n";
     }
     break;
   case ConGroup::BINARY:
@@ -836,12 +851,13 @@ void ConGroup::SaveWeights_strm(ostream& strm, Unit* un, Network* net,
         lidx = 0;
       }
       strm.write((char*)&(lidx), sizeof(lidx));
-      strm.write((char*)&(Cn(i,WT,net)), sizeof(float));
+      for(int mi=0; mi < n_vars; mi++) {
+        strm.write((char*)&(Cn(i,smds[mi]->idx,net)), sizeof(float));
+      }
     }
     strm << "\n";
     break;
   }
- end_tag:
   strm << "</Cn>\n";
 }
 
@@ -930,17 +946,50 @@ int ConGroup::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
   else {
     sz_warned_already = false;
   }
+
+
+  TypeDef* ct = prjn->con_type;
+  int n_vars = 0;
+  MemberDef* smds[10];          // no more than 10!
+  for(int i=0; i<ct->members.size; i++) {
+    MemberDef* md = ct->members[i];
+    if(md->HasOption("SAVE")) {
+      smds[n_vars++] = md;
+    }
+  }
+
+  float wtvals[10];
+  int n_wts_loaded = 0;
+
   for(int i=0; i < sz; i++) {   // using load size as key factor
     int lidx;
-    float wtval;
     if(fmt == ConGroup::TEXT) {
       taMisc::read_till_eol(strm);
-      lidx = (int)taMisc::LexBuf.before(' ');
-      wtval = (float)taMisc::LexBuf.after(' ');
+      int vidx = 0;
+      int last_ci = 0;
+      const int lbln = taMisc::LexBuf.length();
+      int ci;
+      for(ci = 1; ci < lbln; ci++) {
+        if(taMisc::LexBuf[ci] != ' ') continue;
+        if(last_ci == 0) {
+          lidx = (int)taMisc::LexBuf.before(ci);
+        }
+        else {
+          wtvals[vidx++] = (float)taMisc::LexBuf.at(last_ci, ci-last_ci-1);
+        }
+        last_ci = ci+1;
+      }
+      if(ci > last_ci) {
+        wtvals[vidx++] = (float)taMisc::LexBuf.at(last_ci, ci-last_ci);
+      }
+      n_wts_loaded = vidx;
     }
     else {                      // binary
       strm.read((char*)&(lidx), sizeof(lidx));
-      strm.read((char*)&(wtval), sizeof(wtval));
+      for(int mi=0; mi<n_vars; mi++) { // no way to check! MUST be right format..
+        strm.read((char*)&(wtvals[mi]), sizeof(float));
+      }
+      n_wts_loaded = n_vars;
     }
     Unit* su = prjn->from->units.Leaf(lidx);
     if(!su) {
@@ -989,7 +1038,11 @@ int ConGroup::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
                         "in cons group does not match the loaded unit -- weights will be off");
         warned_already = true;
       }
-      con_spec->LoadWeightVal(wtval, this, i, net);
+
+      for(int mi=1; mi<n_wts_loaded; mi++) { // set non-weight params first!
+        Cn(i,smds[mi]->idx,net) = wtvals[mi];
+      }
+      con_spec->LoadWeightVal(wtvals[0], this, i, net);
 
       // this is not viable:
       // for(int j=size-1; j >= i; j--) {
@@ -1000,7 +1053,10 @@ int ConGroup::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
     }
     else {                      // all good normal case, just set the weights!
       warned_already = false;
-      con_spec->LoadWeightVal(wtval, this, i, net);
+      for(int mi=1; mi<n_wts_loaded; mi++) { // set non-weight params first!
+        Cn(i,smds[mi]->idx,net) = wtvals[mi];
+      }
+      con_spec->LoadWeightVal(wtvals[0], this, i, net);
     }
   }
   ConGroup::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
