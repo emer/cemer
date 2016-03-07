@@ -897,6 +897,9 @@ void Program::CssBreakpoint(int src_ln_no, int bpno, int pc, const String& progn
 
 void Program::taError(int src_ln_no, bool running, const String& err_msg) {
   global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
+  if(!HasProgFlag(OBJS_UPDT_GUI)) { // undo the struct update that was done at start!
+    objs.StructUpdateEls(false);
+  }
   ProgLine* pl = script_list.SafeEl(src_ln_no);
   if(!pl) return;
   pl->SetError();

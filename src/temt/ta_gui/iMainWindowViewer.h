@@ -26,7 +26,6 @@
 // member includes:
 #include <MainWindowViewer>
 #include <iAction_List>
-#include <QDateTime>
 
 // declare all other types mentioned but not required to include:
 class taiWidgetMenu; //
@@ -87,9 +86,6 @@ public:
   iSplitter*            body;           // #IGNORE body of the window
   int                   nav_frame_width;// hold onto size of navigator frame for resetting splitter
   bool                  tool_dock_was_visible;  // save state for flipping between views that might and might not include the programming toolbar
-  bool                  allow_window_resize;    // #IGNORE allow window to be resized, based on an internally-generated resize signal -- resizes are blocked on mac due to mysterious window resizing creep..
-  QDateTime             window_resize_last_time; // #IGNORE last time a rejected resize event occurred
-  QSize                 cur_window_size;         // #IGNORE current window size -- for managing resize issues on mac
   
   QSignalMapper*        signalMapperForViews;   // #IGNORE used to map several actions to one action and pass a value
   QSignalMapper*        signalMapperForDataProc;   // #IGNORE used to map several actions to one action and pass a value
@@ -449,8 +445,6 @@ protected slots:
   virtual void          this_ToolBarSelect(iAction* me); // user has selected or unselected one of the toolbars
   virtual void          this_DockSelect(iAction* me); // user has selected or unselected one of the docks
   virtual void          this_SaveView(iAction* me); // user does/doesn't want current view saved with project
-  virtual void          restoreWindowSize();
-  // restore window size to saved cur_window_size
 
   virtual void          DataProcLauncher(QString method_name);
   virtual void          DataAnalLauncher(QString method_name);
@@ -468,13 +462,11 @@ protected:
   bool                  tools_dock_was_visible;  // holds on to the visibility of the programming dock so it can be restored when the either the tree or the panels are restored
 
   void         closeEvent(QCloseEvent* ev) override;
-//nn  void             customEvent(QEvent* ev) override;
   bool         event(QEvent* ev) override;
   void         resizeEvent(QResizeEvent* ev) override;
   void         moveEvent(QMoveEvent* ev) override;
   void         showEvent(QShowEvent* ev) override;
   void         hideEvent(QHideEvent* ev) override;
-  bool         eventFilter(QObject *obj, QEvent *event) override;
   void         changeEvent(QEvent* ev) override;
 
   virtual void          emit_EditAction(int param); // #IGNORE param is one of the iClipData editAction values; desc can trap this and implement virtually, if desired

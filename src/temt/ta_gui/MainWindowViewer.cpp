@@ -282,12 +282,10 @@ bool MainWindowViewer::SetWinState() {
   frames.SetWinState();
   docks.SetWinState();
   String str = GetUserDataAsString("view_splitter_state");
-  widget()->allow_window_resize = true; // turned off after event is received
   if (str.nonempty()) {
     QByteArray ba = QByteArray::fromBase64(QByteArray(str.chars()));
     iSplitter* spl = widget()->body;
     spl->restoreState(ba);
-    taMisc::Info("SetWinState:", name, "restoring");
   }
   else {
     if(isRoot()) {
