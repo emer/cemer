@@ -982,7 +982,7 @@ int ConGroup::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
       if(ci > last_ci) {
         wtvals[vidx++] = (float)taMisc::LexBuf.at(last_ci, ci-last_ci);
       }
-      n_wts_loaded = vidx;
+      n_wts_loaded = MIN(vidx, n_vars); // can't effectively load more than we can use!
     }
     else {                      // binary
       strm.read((char*)&(lidx), sizeof(lidx));
