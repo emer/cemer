@@ -78,13 +78,16 @@ class E_API AudDftSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound DFT (discrete fourier transform) specifications
 INHERITED(taOBase)
 public:
-  bool          log_pow;       // compute the log of the power and save that to a separate table
-  float         log_off;       // #CONDSHOW_ON_log_pow add this amount when taking the log of the dft power -- e.g., 1.0 makes everything positive -- affects the relative contrast of the outputs
-  float         log_min;       // #CONDSHOW_ON_log_pow minimum value a log can produce -- puts a lower limit on log output
+  float         prv_smooth;    // #DEF_0.1 how much of the previous step's power value to include in this one -- smooths out the power spectrum which can be artificially bumpy due to discrete window samples
+  bool          log_pow;       // #DEF_true compute the log of the power and save that to a separate table -- generaly more useful for visualization of power than raw power values
+  float         log_off;       // #CONDSHOW_ON_log_pow #DEF_0 add this amount when taking the log of the dft power -- e.g., 1.0 makes everything positive -- affects the relative contrast of the outputs
+  float         log_min;       // #CONDSHOW_ON_log_pow #DEF_-100 minimum value a log can produce -- puts a lower limit on log output
 
+  float         cur_smooth;     // #READ_ONLY #EXPERT 1 - prv_smooth -- how much of current power to include
+  
   TA_SIMPLE_BASEFUNS(AudDftSpec);
-// protected:
-//   void 	UpdateAfterEdit_impl() override;
+protected:
+  void 	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy() { };
@@ -149,37 +152,6 @@ private:
 
 
 
-taTypeDef_Of(AudTimeGaborSpec);
-
-class E_API AudTimeGaborSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound time-dimension only gabor filtering -- like a delta code but smoother -- really just a cosine filter -- uses both polarities and takes positive-only output
-INHERITED(taOBase)
-public:
-  bool          on;            // use time-dimension gabors
-  float         gain;          // #CONDSHOW_ON_on low-level gain multiplier on output of filters
-  int           st_half_size;  // #CONDSHOW_ON_on #DEF_1 starting half-size of filters in terms of time steps -- filters are always even sized 
-  int           ed_half_size;  // #CONDSHOW_ON_on #DEF_3 ending half-size of filters in terms of time steps -- requires input.border_steps >= this number! -- filters are always even sized 
-  int           inc_half_size; // #CONDSHOW_ON_on #DEF_1 increment in half-size steps to take between start and end sizes
-
-  int           max_size;       // #READ_ONLY maximum size = ed_half_size * 2
-  int           n_filters;      // #READ_ONLY number of filters = (ed-st) / inc + 1
-
-  virtual void	RenderFilters(float_Matrix& fltrs, int_Matrix& flt_sizes);
-  // generate filters into the given matrix, which is formatted as: [max_size][n_filters] and record the actual half-sizes of these filters in flt_sizes
-
-  virtual void	GridFilters(float_Matrix& fltrs, int_Matrix& flt_sizes,
-                            DataTable* disp_data, bool reset = true);
-  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filters into data table and generate a grid view (reset any existing data first)
-
-  TA_SIMPLE_BASEFUNS(AudTimeGaborSpec);
-protected:
-  void 	UpdateAfterEdit_impl() override;
-private:
-  void 	Initialize();
-  void	Destroy() { };
-};
-
-
 taTypeDef_Of(MelCepstrumSpec);
 
 class E_API MelCepstrumSpec : public taOBase {
@@ -205,16 +177,17 @@ class E_API AudGaborSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool          on;             // use this gabor filtering of the time-frequency space filtered input (time in terms of steps of the DFT transform, and discrete frequency factors based on the FFT window and input sample rate)
-  float		gain;		// #CONDSHOW_ON_on #DEF_2 overall gain multiplier applied after gabor filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
-  int		n_horiz;	// #CONDSHOW_ON_on #DEF_4 number of horizontally-elongated,  pure time-domain, frequency-band specific filters to include, evenly spaced over the available frequency space for this filter set -- in addition to these, there are two diagonals (45, 135) and a vertically-elongated (wide frequency band) filter
   int		sz_time;	// #CONDSHOW_ON_on #DEF_6;8;12;16;24 size of the filter in the time (horizontal) domain, in terms of steps of the underlying DFT filtering steps
   int		sz_freq;	// #CONDSHOW_ON_on #DEF_6;8;12;16;24 size of the filter in the frequency domain, in terms of discrete frequency factors based on the FFT window and input sample rate
   int		spc_time;	// #CONDSHOW_ON_on spacing in the time (horizontal) domain, in terms of steps
   int		spc_freq;	// #CONDSHOW_ON_on spacing in the frequency (vertical) domain
-  float		wvlen;		// #CONDSHOW_ON_on #DEF_1.5 wavelength of the sine waves in normalized units
-  float		gauss_sig_len;	// #CONDSHOW_ON_on #DEF_0.6 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter size in relevant dimension
-  float		gauss_sig_wd;	// #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter size in relevant dimension
-  float		gauss_sig_horiz; // #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the horizontal dimension for special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
+  float		wvlen;		// #CONDSHOW_ON_on #DEF_1.5;2 wavelength of the sine waves in normalized units
+  float		sig_len;	// #CONDSHOW_ON_on #DEF_0.6 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter size in relevant dimension
+  float		sig_wd;	// #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter size in relevant dimension
+  float		sig_hor_len;    // #CONDSHOW_ON_on #DEF_0.4 gaussian sigma for the length of special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
+  float		sig_hor_wd;     // #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the horizontal dimension for special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
+  float		gain;		// #CONDSHOW_ON_on #DEF_2 overall gain multiplier applied after gabor filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
+  int		n_horiz;	// #CONDSHOW_ON_on #DEF_4 number of horizontally-elongated,  pure time-domain, frequency-band specific filters to include, evenly spaced over the available frequency space for this filter set -- in addition to these, there are two diagonals (45, 135) and a vertically-elongated (wide frequency band) filter
   float		phase_off;	// #CONDSHOW_ON_on #DEF_0;1.5708 offset for the sine phase -- default is an asymmetric sine wave -- can make it into a symmetric cosine gabor by using PI/2 = 1.5708
   bool		circle_edge;	// #CONDSHOW_ON_on #DEF_true cut off the filter (to zero) outside a circle of diameter filter_size -- makes the filter more radially symmetric
 
@@ -242,13 +215,6 @@ class E_API AuditoryProc : public ImgProcThreadBase {
   // Auditory processing system -- parameters for performing various auditory processing steps on sound waveforms, resulting in activation patterns suitable as input to a network
 INHERITED(ImgProcThreadBase)
 public:
-  enum DataSave {		// #BITS how to save data to the data table (computation happens on internal table)
-    NO_SAVE 	= 0,	 	// #NO_BIT don't save data for this component
-    SAVE_DATA	= 0x0001, 	// save data to the data table, by default with all features in subgroups within one matrix (unless SEP_MATRIX is checked)
-    SEP_MATRIX	= 0x0002,	// each feature is saved in a separate 2d map, instead of a common subgroup within a single matrix
-    ONLY_GUI	= 0x0004,	// only save when the gui is active -- for data that is for debugging and visualization purposes only, not presented to a network etc
-    SAVE_DEBUG	= 0x0008,	// save extra debugging-level internal computation data relevant to this processing step
-  };
   enum SaveMode {		// how to add new data to the data table
     NONE_SAVE,			// don't save anything at all -- overrides any more specific save guys and prevents any addition or modification to the data table
     FIRST_ROW,			// always overwrite the first row -- does EnforceRows(1) if rows = 0
@@ -258,17 +224,15 @@ public:
 
   DataTableRef	data_table;	// data table for saving filter results for viewing and applying to networks etc
   SaveMode	save_mode;	// how to add new data to the data table
-  DataSave	input_save;	// how to save the input sound for each filtering step
   AudInputSpec  input;          // specifications of the raw auditory input
   AudDftSpec    dft;            // specifications for how to compute the discrete fourier transform (DFT, using FFT)
   MelFBankSpec  mel_fbank;      // specifications of the mel feature bank frequency sampling of the DFT (FFT) of the input sound
   AudRenormSpec fbank_renorm;   // #CONDSHOW_ON_mel_fbank.on renormalization parmeters for the mel_fbank values -- performed prior to further processing
-  AudTimeGaborSpec  fbank_tgabor; // #CONDSHOW_ON_mel_fbank.on time-dimension only 1d gabor-like filters for transforming the normalized mel fbank outputs
-  AudGaborSpec  fbank_gabor1;    // #CONDSHOW_ON_mel_fbank.on full set of frequency / time gabor filters -- first size
-  AudGaborSpec  fbank_gabor2;    // #CONDSHOW_ON_mel_fbank.on full set of frequency / time gabor filters -- second size
-  AudGaborSpec  fbank_gabor3;    // #CONDSHOW_ON_mel_fbank.on full set of frequency / time gabor filters -- third size
+  AudGaborSpec  gabor1;    // #CONDSHOW_ON_mel_fbank.on full set of frequency / time gabor filters -- first size
+  AudGaborSpec  gabor2;    // #CONDSHOW_ON_mel_fbank.on full set of frequency / time gabor filters -- second size
+  AudGaborSpec  gabor3;    // #CONDSHOW_ON_mel_fbank.on full set of frequency / time gabor filters -- third size
   MelCepstrumSpec mfcc;         // #CONDSHOW_ON_mel_fbank.on specifications of the mel cepstrum discrete cosine transform of the mel fbank filter features
-  V1KwtaSpec	gabor_kwta;	// #CONDSHOW_ON_fbank_gabor1.on k-winner-take-all inhibitory dynamics for the time-gabor output
+  V1KwtaSpec	gabor_kwta;	// #CONDSHOW_ON_gabor1.on k-winner-take-all inhibitory dynamics for the time-gabor output
 
 
   ///////////////////////////////////////////////////
@@ -282,8 +246,6 @@ public:
   int_Matrix            mel_pts_bin; // #READ_ONLY #NO_SAVE [mel_n_filters_eff] mel scale points in fft bins
   int                   mel_filt_max_bins; // #READ_ONLY #NO_SAVE maximum number of bins for mel filter -- number of bins in highest filter
   float_Matrix          mel_filters; // #READ_ONLY #NO_SAVE [mel_filt_max_bins][mel.n_filters] the actual filters for actual number of mel filters
-  float_Matrix          tgabor_filters; // #READ_ONLY #NO_SAVE temporal gabor filters
-  int_Matrix            tgabor_flt_sizes; // #READ_ONLY #NO_SAVE temporal gabor half-sizes of filters
 
   float_Matrix          gabor1_filters; // #READ_ONLY #NO_SAVE full gabor filters
   float_Matrix          gabor2_filters; // #READ_ONLY #NO_SAVE full gabor filters
@@ -293,12 +255,13 @@ public:
   //////////////////////////////////////////////////////////////
   //	Outputs
 
+  bool                  first_step; // #READ_ONLY #NO_SAVE #SHOW is this the first step of processing -- turns of prv smoothing of dft power
   int                   input_pos;   // #READ_ONLY #NO_SAVE #SHOW current position in the sound_full input -- in terms of sample number
   int                   trial_start_pos;   // #READ_ONLY #NO_SAVE #SHOW starting position of the current trial -- in terms of sample number
   int                   trial_end_pos;   // #READ_ONLY #NO_SAVE #SHOW ending position of the current trial -- in terms of sample number
-  XYNGeom               gabor1_geom;     // #READ_ONLY #SHOW overall geometry of gabor1 output (group-level geometry -- feature / unit level geometry is n_features, 2)
-  XYNGeom               gabor2_geom;     // #READ_ONLY #SHOW overall geometry of gabor1 output (group-level geometry -- feature / unit level geometry is n_features, 2)
-  XYNGeom               gabor3_geom;     // #READ_ONLY #SHOW overall geometry of gabor1 output (group-level geometry -- feature / unit level geometry is n_features, 2)
+  XYNGeom               gabor1_geom;     // #CONDSHOW_ON_gabor1.on #READ_ONLY #SHOW overall geometry of gabor1 output (group-level geometry -- feature / unit level geometry is n_features, 2)
+  XYNGeom               gabor2_geom;     // #CONDSHOW_ON_gabor2.on #READ_ONLY #SHOW overall geometry of gabor1 output (group-level geometry -- feature / unit level geometry is n_features, 2)
+  XYNGeom               gabor3_geom;     // #CONDSHOW_ON_gabor3.on #READ_ONLY #SHOW overall geometry of gabor1 output (group-level geometry -- feature / unit level geometry is n_features, 2)
 
 
   float_Matrix          sound_full;  // #READ_ONLY #NO_SAVE the full sound input obtained from the sound input
@@ -311,10 +274,6 @@ public:
 
   float_Matrix          mel_fbank_out; // #READ_ONLY #NO_SAVE [mel.n_filters] mel scale transformation of dft_power, using triangular filters, resulting in the mel filterbank output -- the natural log of this is typically applied
   float_Matrix          mel_fbank_trial_out; // #READ_ONLY #NO_SAVE [mel.n_filters][input.total_steps][input.channels] full trial's worth of mel feature-bank output -- only if using gabors
-
-  float_Matrix          tgabor_trial_raw; // #READ_ONLY #NO_SAVE [tgabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] raw output of time gabor -- full trial's worth of time gabor steps
-  float_Matrix	        tgabor_gci;	 // #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
-  float_Matrix          tgabor_trial_out; // #READ_ONLY #NO_SAVE [tgabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] post-kwta output of full trial's worth of time gabor steps
 
   float_Matrix	        gabor_gci;	 // #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
   float_Matrix          gabor1_trial_raw; // #READ_ONLY #NO_SAVE [gabor.n_filters*2][mel.n_filters][input.trial_steps][input.channels] raw output of gabor1 -- full trial's worth of gabor steps
@@ -385,8 +344,6 @@ public:
   
   virtual void	PlotMelFilters(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the Mel scale triangular filters
-  virtual void	GridTimeGaborFilters(DataTable* disp_data);
-  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the time gabor filters as a grid display
   virtual void	GridGaborFilters(DataTable* disp_data, int gabor_n = 1);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the full gabor filters as a grid display -- choose which set of gabors to plot (1-3)
   
@@ -420,8 +377,6 @@ public:
   // apply mel filters to power of dft
   virtual void  CepstrumDctMel(int chan, int step);
   // apply discrete cosine transform (DCT) to get the cepstrum coefficients on the mel filterbank values
-  virtual void  TimeGaborFilter(int chan);
-  // compute time gabors over entire trial's worth of data
 
   virtual void  GaborFilter_impl
     (int chan, const AudGaborSpec& spec, const float_Matrix& filters,

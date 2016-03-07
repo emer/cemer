@@ -35,7 +35,7 @@ INHERITED(taGroup<taProject>)
 friend class taProject;
 public:
 
-  static ProjTemplates  proj_templates; // #HIDDEN_TREE library of available projects
+  static ProjTemplates  proj_templates; // #HIDDEN_TREE #HIDDEN library of available projects
 
   taProject*    NewFromTemplate(ProjTemplateEl* proj_type);
   // #BUTTON #MENU_CONTEXT #FROM_LIST_proj_templates #NO_SAVE_ARG_VAL #CAT_Project create a new project from a library of existing project templates

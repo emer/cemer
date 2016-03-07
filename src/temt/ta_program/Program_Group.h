@@ -46,7 +46,7 @@ public:
   ProgramRef            step_prog;
   // #READ_ONLY #NO_SAVE #OBSOLETE this is just here for loading prior versions and is no longer used in any fashion
   
-  static ProgLib        prog_lib; // #HIDDEN_TREE library of available programs
+  static ProgLib        prog_lib; // #HIDDEN_TREE #HIDDEN library of available programs
   
   bool                  debug_mode; // ProgEls can check this to conditionally turn on/off elements
 

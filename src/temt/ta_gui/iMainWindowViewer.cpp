@@ -2305,6 +2305,7 @@ bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
   if(re->size() == re->oldSize() ||
      ((w_diff == 0 || w_diff == 1) && (h_diff == 0 || h_diff == 1 || h_diff == 22 || h_diff == 16))) {
        // non-resize..
+    window_resize_last_time = QDateTime::currentDateTime();
     allow_window_resize = false;
     QTimer::singleShot(500, this, SLOT(restoreWindowSize()) ); // undo
     return true;                    // filter
