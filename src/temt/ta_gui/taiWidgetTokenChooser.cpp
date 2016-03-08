@@ -192,9 +192,10 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
     // keeps templates out of the list of actual instances
     if (!parent)
       continue;
-    // allow root as parent if type is project
-    if ((parent->GetName() == "root") && (!btmp->InheritsFrom(&TA_taProject)))
-      continue;
+    // JAR - March 8, 2016 remove to fix bug 2542 - need a different solution
+//    // allow root as parent if type is project
+//    if ((parent->GetName() == "root") && (!btmp->InheritsFrom(&TA_taProject)))
+//      continue;
 
     // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
     taBase* owner = btmp->GetOwner();
