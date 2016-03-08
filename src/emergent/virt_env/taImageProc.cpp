@@ -1602,8 +1602,8 @@ bool taImageProc::CompositeAndCenterImage(float_Matrix& img1, float_Matrix& img2
   
   taVector2i img_1_size(img1.dim(0), img1.dim(1));
   taVector2i img_2_size(img2.dim(0), img2.dim(1));
-  int x = (img_1_size.x - img_2_size.x) / 2;
-  int y = (img_1_size.y - img_2_size.y) / 2;
+  int x = ((img_1_size.x - img_2_size.x) / 2) - .5*img_2_size.x;
+  int y = ((img_1_size.y - img_2_size.y) / 2) - .5*img_2_size.x;
   return CompositePartialImages(img1, x, y, img2);
 }
 
