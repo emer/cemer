@@ -1228,7 +1228,7 @@ void TemtClient::ParseCommandNATIVE(const String& cmd_string) {
 #if (QT_VERSION >= 0x050000)
 void TemtClient::ParseCommandJSON(const String& cmd_string) {
   QJsonParseError json_error;
-  QString q_string = QString(cmd_string.chars());
+  QString q_string = cmd_string.toQString();
   QJsonDocument json_doc = QJsonDocument::fromJson(q_string.toUtf8(), &json_error);  // converts to QByteArray
   
   if (json_error.error != QJsonParseError::NoError) {
@@ -1496,7 +1496,7 @@ void TemtClient::SendErrorNATIVE(const String& err_msg, TemtClient::ServerError 
 void TemtClient::SendErrorJSON(const String& err_msg, TemtClient::ServerError err) {
   QJsonObject root_object = QJsonObject();
   root_object.insert("status", QString("ERROR"));
-  root_object.insert("message", QString(err_msg.chars()));
+  root_object.insert("message", err_msg.toQString());
   root_object.insert("error", err);
   
   QJsonDocument json_doc(root_object);
@@ -1528,7 +1528,7 @@ void TemtClient::SendOkJSON(const String& msg) {
   QJsonObject root_object = QJsonObject();
   root_object.insert("status", QString("OK"));
   if (!msg.empty()) {
-    root_object.insert("result", QString(msg.chars()));
+    root_object.insert("result", msg.toQString());
   }
   
   QJsonDocument json_doc(root_object);
@@ -1559,13 +1559,13 @@ void TemtClient::SendReplyJSON(const String& r) {
 
 void TemtClient::Write(const String& txt) {
   if (!isConnected()) return;
-  sock->write(QByteArray(txt.chars(), txt.length()));
+  sock->write(txt.toQByteArray());
 }
 
 void TemtClient::WriteLine(const String& ln) {
   if (!isConnected()) return;
   String lnt = ln + "\n";
-  sock->write(QByteArray(lnt.chars(), lnt.length()));
+  sock->write(lnt.toQByteArray());
 }
 
 // used by json calls

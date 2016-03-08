@@ -815,7 +815,7 @@ SubversionClient::createAuthProviders(apr_hash_t *config)
 }
 
 int
-SubversionClient::Checkout(const String& url, const String& to_wc, int rev, bool recurse)
+SubversionClient::Checkout(const String& url_in, const String& to_wc, int rev, bool recurse)
 {
   m_cancelled = false;
 
@@ -827,6 +827,8 @@ SubversionClient::Checkout(const String& url, const String& to_wc, int rev, bool
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
+  String url = url_in;
+  
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   url = svn_uri_canonicalize(url, m_pool);
 #endif
@@ -909,10 +911,11 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
                        int_PArray& file_sizes,
                        int_PArray& file_revs, int_PArray& file_times,
                        int_PArray& file_kinds, String_PArray& file_authors,
-                       const String& url, int rev, bool recurse) {
+                       const String& url_in, int rev, bool recurse) {
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
+  String url = url_in;
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   url = svn_uri_canonicalize(url, m_pool);
 #endif
@@ -962,6 +965,124 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
     }
   svn_pool_destroy(m_pool);
 }
+
+class SvnGetInfoPtrs {
+public:
+  int*    rev;
+  int*    kind;
+  String* root_url;
+  int*    last_changed_rev;
+  int*    last_changed_date;
+  String* last_changed_author;
+  int64_t* size;
+};
+
+static svn_error_t* mysvn_info_callback(void *baton, const char *path,
+                                        const svn_info_t *info,
+                                        apr_pool_t *pool) {
+  if(info == NULL)
+    return NULL;
+  SvnGetInfoPtrs* fi = (SvnGetInfoPtrs*)baton;
+  *(fi->rev) = info->rev;
+  *(fi->kind) = info->kind;
+  *(fi->root_url) = info->URL;
+  *(fi->last_changed_rev) = info->last_changed_rev;
+  *(fi->last_changed_date) = info->last_changed_date / 1000000; // microseconds -> seconds
+  *(fi->last_changed_author) = info->last_changed_author;
+  *(fi->size) = info->size;
+  return NULL;
+}
+
+bool
+SubversionClient::GetInfo(const String& file_or_dir_or_url, int& rev, int& kind,
+                          String& root_url, int& last_changed_rev, int& last_changed_date,
+                          String& last_changed_author, int64_t& size) {
+  apr_pool_t* m_pool = svn_pool_create(0);
+
+  String path_in = file_or_dir_or_url;
+  bool is_url = false;
+  if(path_in.contains("http"))
+    is_url = true;
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
+  if(is_url) {
+    path_in = svn_uri_canonicalize(path_in, m_pool);
+  }
+#endif
+  
+  // We don't want to use peg revisions, so set to unspecified.
+  svn_opt_revision_t peg_revision;
+  peg_revision.kind = svn_opt_revision_unspecified;
+  // get HEAD revision.
+  svn_opt_revision_t revision;
+  if(is_url) {
+    revision.kind = svn_opt_revision_head;
+  }
+  else {
+    revision.kind = svn_opt_revision_unspecified; // just uses local info -- doesn't go out over network
+  }
+
+  // Set the depth of subdirectories to be checked out.
+  svn_depth_t depth = svn_depth_empty;
+
+  SvnGetInfoPtrs svn_fi_baton;
+  svn_fi_baton.rev = &rev;
+  svn_fi_baton.kind = &kind;
+  svn_fi_baton.root_url = &root_url;
+  svn_fi_baton.last_changed_rev = &last_changed_rev;
+  svn_fi_baton.last_changed_date = &last_changed_date;
+  svn_fi_baton.last_changed_author = &last_changed_author;
+  svn_fi_baton.size = &size;
+
+  if (svn_error_t *error = svn_client_info2
+      (path_in,
+       &peg_revision,
+       &revision,
+       mysvn_info_callback,
+       (void*)&svn_fi_baton,
+       depth,
+       NULL,
+       m_ctx,
+       m_pool))
+    {
+      svn_pool_destroy(m_pool);
+      return false;
+    }
+  svn_pool_destroy(m_pool);
+  return true;
+}
+
+
+bool
+SubversionClient::UrlExists(const String& url, int& rev) {
+  int kind, last_changed_rev, last_changed_date;
+  String root_url, last_changed_author;
+  int64_t sz;
+  rev = 0;
+  bool rval = GetInfo(url, rev, kind, root_url, last_changed_rev, last_changed_date,
+                      last_changed_author, sz);
+  if(!rval || rev <= 0) return false;
+  return true;
+}
+
+
+bool
+SubversionClient::IsWCRevSameAsHead(const String& file_or_dir, int& wc_rev, int& head_rev) {
+  wc_rev = 0;
+  head_rev = 0;
+  int kind, last_changed_rev, last_changed_date;
+  String wc_url, root_url, last_changed_author;
+  int64_t sz;
+  QFileInfo fi(file_or_dir.toQString());
+  if(!fi.exists()) {
+    return false;
+  }
+  GetInfo(file_or_dir, wc_rev, kind, wc_url, last_changed_rev, last_changed_date,
+          last_changed_author, sz);
+  GetInfo(wc_url, head_rev, kind, root_url, last_changed_rev, last_changed_date,
+          last_changed_author, sz);
+  return (wc_rev == head_rev);
+}  
+
 
 void 
 SubversionClient::GetFile(const String& from_url, String& to_str, int rev) {

@@ -118,7 +118,7 @@ bool taMediaWiki::Login(const String &wiki_name, const String &username)
   QString qUsername = username;
   QString qPassword;
   QString message = "Enter username and password for \"%1\" wiki at %2";
-  message = message.arg(QString(wiki_name.chars())).arg(QString(wikiUrl.chars()));
+  message = message.arg(wiki_name.toQString()).arg(wikiUrl.toQString());
 
   if (!getUsernamePassword(qUsername, qPassword, message)) {
     // User hit cancel on dialog.

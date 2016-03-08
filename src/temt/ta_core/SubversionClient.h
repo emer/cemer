@@ -109,6 +109,17 @@ public:
             const String& url, int rev = -1, bool recurse = false);
   // list files in the repository url at given url -- fills in the arrays with coordinated values for each file -- times are seconds since 1970 standard time, kind = svn_node_kind_t -- svn_node_file or svn_node_dir, sizes are in bytes -- rev -1 = head (current), recurse = get all the subdirectories under url too (expensive)
 
+  bool  GetInfo(const String& file_or_dir_or_url, int& rev, int& kind, String& root_url,
+                int& last_changed_rev, int& last_changed_date,
+                String& last_changed_author, int64_t& size);
+  // Get info about a file / dir / url -- times are seconds since 1970 standard time, kind = svn_node_kind_t -- svn_node_file or svn_node_dir, sizes are in bytes -- for local working copy file / dir, it does NOT access the network and is fast.. returns false for any kind of error, typically a file or path that does not exist (does not throw exceptions) -- thus can be used as a quick and easy check for url path existence
+
+  bool  UrlExists(const String& url, int& rev);
+  // does the given url exist??
+  
+  bool  IsWCRevSameAsHead(const String& file_or_dir, int& wc_rev, int& head_rev);
+  // Checks if the working copy revision of given file or directory is the same as the head revision on the repository version of that file/dir -- returns true if so, and fills in revisions in either case - this is a very fast way to determine whether to do a full update, for pull-only repositories -- if file_or_dir does not exist locally, then returns false, and both rev's = 0
+  
   void  SaveFile(const String& from_url, const String& to_path, int rev = -1);
   // copy a file from given fully-specified url to a file at given to_path, using given revision (-1 = head)
 

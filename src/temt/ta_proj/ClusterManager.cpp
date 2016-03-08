@@ -331,7 +331,7 @@ ClusterManager::GetLastChangedRevision(const String &path, bool quiet)
   // Get the last revision in which the passed path was changed, according
   // to the working copy.  Returns -1 on error.
   try {
-    return m_svn_client->GetLastChangedRevision(path.chars());
+    return m_svn_client->GetLastChangedRevision(path);
   }
   catch (const SubversionClient::Exception &ex) {
     if (!quiet) {
@@ -441,7 +441,7 @@ ClusterManager::GetUsername()
   if (m_username.empty()) {
     // Get username from cache, or prompt user.
     std::string user = m_svn_client->GetUsername(
-      GetRepoUrl().chars(),
+      GetRepoUrl(),
       SubversionClient::CHECK_CACHE_THEN_PROMPT_USER);
     m_username = user.c_str();
 
@@ -533,7 +533,7 @@ ClusterManager::SetPaths(bool updt_wc) {
 
   m_wc_path = clust_svn + '/' + svn_repo + '/' + cluster + '/' + username;
 
-  m_svn_client->SetWorkingCopyPath(m_wc_path.chars());
+  m_svn_client->SetWorkingCopyPath(m_wc_path);
   m_wc_path = m_svn_client->GetWorkingCopyPath().c_str();
 
   m_cluster_info_filename = m_wc_path + "/cluster_info.dat";
@@ -585,6 +585,10 @@ ClusterManager::UpdateWorkingCopy() {
   QFileInfo fi(GetFilename());
   String projname = fi.completeBaseName();
 
+  // note: useful for testing speed..
+  // taMisc::Info("Starting Update...");
+  // taMisc::ProcessEvents();
+  
   for(int cl = 0; cl < clusts.size; cl++) {
     String clust = clusts[cl];
     for(int us = 0; us < users.size; us++) {
@@ -608,6 +612,8 @@ ClusterManager::UpdateWorkingCopy() {
       }
     }
   }
+
+  taMisc::Info("Working copy was updated to revision", String(m_cur_svn_rev));
   return m_cur_svn_rev;
 }
 
@@ -619,7 +625,7 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
   // If the user already has a working copy, update it.  Otherwise, create
   // it on the server and check it out.
   int rev_rval = 0;
-  QFileInfo fi_wc(wc_path.chars());
+  QFileInfo fi_wc(wc_path.toQString());
   if (!fi_wc.exists()) {
     String uurl = GetRepoUrl_UserClust(user, clust);
     if(main_svn) {
@@ -630,7 +636,7 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
       String comment = "Creating cluster directory for user: ";
       comment += user;
       try {
-        sc->TryMakeUrlDir(uurl.chars(), comment.chars());
+        sc->TryMakeUrlDir(uurl, comment);
       } catch (const SubversionClient::Exception &ex) {
         taMisc::Warning("Could not create ", uurl, " in svn. Trying to see if it already exists: ", ex.what());
       }
@@ -650,23 +656,54 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
   else {
     // Update the existing wc.
     taMisc::Busy();
-    if (projname.length() > 0) {
-      //If we have a specific project, only check out a sub section of the repository to save time
-      //We also need the cluster_info.dat from the top level directory though.
-      String_PArray files;
-      files.Add(wc_path + "/cluster_info.dat");
-      try {
-	sc->UpdateFiles(files, -1);
-      } catch (const ClusterManager::Exception &ex) {
-	taMisc::Error("Could not get cluster_info", ex.what());
-      }
+    if (projname.nonempty()) {
+      // If we have a specific project, only check out a sub section of the repository to save time
+      String wcp = wc_path + "/" + projname;
       sc->SetWorkingCopyPath(wc_path + "/" + projname);
-    } 
-    rev_rval = sc->Update();
-    taMisc::DoneBusy();
-    if(main_svn) {
-      taMisc::Info("Working copy was updated to revision", String(rev_rval));
+      QFileInfo fi_wcp(wcp.toQString());
+      if(!fi_wcp.exists()) {
+        String uurl = GetRepoUrl_UserClust(user, clust);
+        uurl += "/" + projname;
+        int url_rev;
+        if(sc->UrlExists(uurl, url_rev)) {
+          taMisc::Info("Working copy doesn't exist, checking out:", wcp);
+          rev_rval = sc->Checkout(uurl, wcp);
+        }
+        else {
+          taMisc::DebugInfo("Working copy and url don't exist, skipping:", wcp);
+        }          
+      }
+      else {
+        int wc_rev, url_rev;
+        bool same_rev = sc->IsWCRevSameAsHead(wcp, wc_rev, url_rev);
+        if(same_rev) {
+          rev_rval = wc_rev;
+        }
+        else {
+          rev_rval = sc->Update();
+        }
+      }
+
+      if(main_svn) {
+        // We also need the cluster_info.dat from the top level directory -- only for us..
+        String cip = wc_path + "/cluster_info.dat";
+        int wc_rev, url_rev;
+        bool same_rev = sc->IsWCRevSameAsHead(cip, wc_rev, url_rev);
+        if(!same_rev) {
+          String_PArray files;
+          files.Add(cip);
+          try {
+            sc->UpdateFiles(files, -1);
+          } catch (const ClusterManager::Exception &ex) {
+            taMisc::Error("Could not get cluster_info", ex.what());
+          }
+        }
+      }
     }
+    else {
+      rev_rval = sc->Update();
+    }
+    taMisc::DoneBusy();
   }
 
   if(main_svn) {
@@ -750,7 +787,7 @@ bool
 ClusterManager::LoadTable(const String &filename, DataTable &table)
 {
   // Ensure the file exists.
-  if (!QFileInfo(filename.chars()).exists()) {
+  if (!QFileInfo(filename).exists()) {
     return false;
   }
 
@@ -774,7 +811,7 @@ ClusterManager::SaveSubmitTable()
   if(!SetPaths()) return;
   DeleteFile(m_submit_dat_filename);
   m_cluster_run.jobs_submit.SaveData(m_submit_dat_filename);
-  m_svn_client->Add(m_submit_dat_filename.chars());
+  m_svn_client->Add(m_submit_dat_filename);
 }
 
 void
@@ -784,7 +821,7 @@ ClusterManager::SaveDoneTable()
   if(!SetPaths()) return;
   DeleteFile(m_done_dat_filename);
   m_cluster_run.jobs_done.SaveData(m_done_dat_filename);
-  m_svn_client->Add(m_done_dat_filename.chars());
+  m_svn_client->Add(m_done_dat_filename);
 }
 
 void
@@ -792,10 +829,10 @@ ClusterManager::InitClusterInfoTable()
 {
   // Save a cluster info table to get format into server
   if(!SetPaths()) return;
-  QFileInfo fi_wc(m_cluster_info_filename.chars());
+  QFileInfo fi_wc(m_cluster_info_filename);
   if(!fi_wc.exists()) {
     m_cluster_run.cluster_info.SaveData(m_cluster_info_filename);
-    m_svn_client->Add(m_cluster_info_filename.chars());
+    m_svn_client->Add(m_cluster_info_filename);
   }
 }
 
@@ -809,7 +846,7 @@ ClusterManager::SaveCopyOfProject()
   // Delete first, since QFile::copy() won't overwrite.
   DeleteFile(m_proj_copy_filename);
   QFile::copy(m_proj->file_name, m_proj_copy_filename);
-  m_svn_client->Add(m_proj_copy_filename.chars());
+  m_svn_client->Add(m_proj_copy_filename);
 }
 
 void
@@ -825,14 +862,14 @@ ClusterManager::SaveExtraFiles()
     String wc_fnm = m_wc_models_path + "/" + fnm;
     DeleteFile(wc_fnm);
     QFile::copy(srcfn, wc_fnm);
-    m_svn_client->Add(wc_fnm.chars());
+    m_svn_client->Add(wc_fnm);
   }
 }
 
 void
 ClusterManager::AddFile(const String& file_path)
 {
-  m_svn_client->Add(file_path.chars());
+  m_svn_client->Add(file_path);
 }
 
 void
@@ -895,7 +932,7 @@ ClusterManager::ShowRepoDialog()
     if (!hbox) return false;
 
     for (int idx = 0; idx < taMisc::cluster_names.size; ++idx) {
-      combo1->addItem(taMisc::cluster_names[idx].chars());
+      combo1->addItem(taMisc::cluster_names[idx]);
     }
     hbox->addWidget(combo1);
   }
@@ -942,7 +979,7 @@ ClusterManager::ShowRepoDialog()
     if (!hbox) return false;
 
     for (int idx = 0; idx < taMisc::svn_repos.size; ++idx) {
-      combo2->addItem(taMisc::svn_repos[idx].name.chars(),
+      combo2->addItem(taMisc::svn_repos[idx].name,
                       taMisc::svn_repos[idx].value.toQString());
     }
     hbox->addWidget(combo2);
@@ -1089,7 +1126,7 @@ ClusterManager::ChooseCluster(const String& prompt) {
     if (!hbox) return false;
     
     for (int idx = 0; idx < taMisc::svn_repos.size; ++idx) {
-      combo2->addItem(taMisc::svn_repos[idx].name.chars(),
+      combo2->addItem(taMisc::svn_repos[idx].name,
                       taMisc::svn_repos[idx].value.toQString());
     }
     hbox->addWidget(combo2);
@@ -1112,7 +1149,7 @@ ClusterManager::ChooseCluster(const String& prompt) {
     if (!hbox) return false;
 
     for (int idx = 0; idx < taMisc::cluster_names.size; ++idx) {
-      combo1->addItem(taMisc::cluster_names[idx].chars());
+      combo1->addItem(taMisc::cluster_names[idx]);
     }
     hbox->addWidget(combo1);
   }

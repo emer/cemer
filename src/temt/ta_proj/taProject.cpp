@@ -601,22 +601,22 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
   bool logged_in = taMediaWiki::Login(repo_name, username);
   if (logged_in) {
     iDialogPublishDocs dialog(repo_name, this->name, true);
-    dialog.SetName(QString(this->name.chars()));
+    dialog.SetName(this->name.toQString());
     if (!this->author.empty()) {
-      dialog.SetAuthor(QString(this->author.chars()));
+      dialog.SetAuthor((this->author.toQString()));
     }
     else {
       dialog.SetAuthor(QString("Set default in preferences."));
     }
     if (!this->email.empty()) {
-      dialog.SetEmail(QString(this->email.chars()));
+      dialog.SetEmail((this->email.toQString()));
     }
     else {
       dialog.SetEmail(QString("Set default in preferences."));
     }
     dialog.SetDesc(QString("A brief description of the project. You will be able to edit later on the wiki."));
     dialog.SetTags(QString("comma separated, please"));
-    dialog.SetVersion(QString(this->version.GetString().chars()));
+    dialog.SetVersion((this->version.GetString().toQString()));
     if (dialog.exec()) {
       // User clicked OK.
       page_name = String(name); // needed for call to create the taDoc
@@ -683,8 +683,8 @@ bool taProject::UpdateProjectOnWeb(const String &repo_name) {
   
   // just project name and version for already published project
   iDialogPublishDocs dialog(repo_name, this->name, false); // false = update
-  dialog.SetName(QString(this->name.chars()));
-  dialog.SetVersion(QString(this->version.GetString().chars()));
+  dialog.SetName((this->name.toQString()));
+  dialog.SetVersion((this->version.GetString().toQString()));
   QString version;
   if (dialog.exec()) {
     version = dialog.GetVersion();
@@ -821,26 +821,26 @@ bool taProject::CleanFiles() {
   bool got_one = false;
   String fnm = file_name.before(".proj");
   String autosave = fnm + "_autosave.proj";
-  got_one |= QFile::remove(autosave.chars());
+  got_one |= QFile::remove(autosave.toQString());
   tabMisc::root->recent_files.RemoveEl(autosave);
   for(int i=0;i<100;i++) {
     String recover = fnm + "_recover" + String(i) + ".proj";
-    got_one |= QFile::remove(recover.chars());
+    got_one |= QFile::remove(recover.toQString());
     tabMisc::root->recent_files.RemoveEl(recover);
 
     String console = fnm + "_console" + String(i) + ".txt";
-    QFile::remove(console.chars());
+    QFile::remove(console.toQString());
 
     recover = fnm + "_autosave_recover" + String(i) + ".proj";
-    got_one |= QFile::remove(recover.chars());
+    got_one |= QFile::remove(recover.toQString());
     tabMisc::root->recent_files.RemoveEl(recover);
 
     recover = fnm + "_recover" + String(i) + "_autosave.proj";
-    got_one |= QFile::remove(recover.chars());
+    got_one |= QFile::remove(recover.toQString());
     tabMisc::root->recent_files.RemoveEl(recover);
 
     console = fnm + "_autosave_console" + String(i) + ".txt";
-    QFile::remove(console.chars());
+    QFile::remove(console.toQString());
   }
   if(got_one && taMisc::dmem_proc == 0) {
     tabMisc::root->Save();      // save with updated files list
