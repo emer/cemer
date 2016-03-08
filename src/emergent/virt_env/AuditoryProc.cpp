@@ -76,7 +76,7 @@ void AudInputSpec::UpdateAfterEdit_impl() {
 //              AudDftSpec
 
 void AudDftSpec::Initialize() {
-  prv_smooth = 0.1f;
+  prv_smooth = 0.0f;
   log_pow = true;
   log_off = 0.0f;
   log_min = -100.0f;
@@ -138,8 +138,8 @@ void AudGaborSpec::Initialize() {
   wvlen = 1.5f;
   sig_len = 0.6f;
   sig_wd = 0.3f;
-  sig_hor_len = 0.4f;
-  sig_hor_wd = 0.3f;
+  sig_hor_len = 0.3f;
+  sig_hor_wd = 0.1f;
   phase_off = 0.0f;
   circle_edge = true;
 

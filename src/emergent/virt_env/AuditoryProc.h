@@ -78,7 +78,7 @@ class E_API AudDftSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Sound DFT (discrete fourier transform) specifications
 INHERITED(taOBase)
 public:
-  float         prv_smooth;    // #DEF_0.1 how much of the previous step's power value to include in this one -- smooths out the power spectrum which can be artificially bumpy due to discrete window samples
+  float         prv_smooth;    // #DEF_0 how much of the previous step's power value to include in this one -- smooths out the power spectrum which can be artificially bumpy due to discrete window samples
   bool          log_pow;       // #DEF_true compute the log of the power and save that to a separate table -- generaly more useful for visualization of power than raw power values
   float         log_off;       // #CONDSHOW_ON_log_pow #DEF_0 add this amount when taking the log of the dft power -- e.g., 1.0 makes everything positive -- affects the relative contrast of the outputs
   float         log_min;       // #CONDSHOW_ON_log_pow #DEF_-100 minimum value a log can produce -- puts a lower limit on log output
@@ -165,8 +165,8 @@ public:
   float		wvlen;		// #CONDSHOW_ON_on #DEF_1.5;2 wavelength of the sine waves in normalized units
   float		sig_len;	// #CONDSHOW_ON_on #DEF_0.6 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter size in relevant dimension
   float		sig_wd;	// #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter size in relevant dimension
-  float		sig_hor_len;    // #CONDSHOW_ON_on #DEF_0.4 gaussian sigma for the length of special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
-  float		sig_hor_wd;     // #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the horizontal dimension for special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
+  float		sig_hor_len;    // #CONDSHOW_ON_on #DEF_0.3 gaussian sigma for the length of special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
+  float		sig_hor_wd;     // #CONDSHOW_ON_on #DEF_0.1 gaussian sigma for the horizontal dimension for special horizontal narrow-band filters -- normalized as a function of filter size in relevant dimension
   float		gain;		// #CONDSHOW_ON_on #DEF_2 overall gain multiplier applied after gabor filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
   int		n_horiz;	// #CONDSHOW_ON_on #DEF_4 number of horizontally-elongated,  pure time-domain, frequency-band specific filters to include, evenly spaced over the available frequency space for this filter set -- in addition to these, there are two diagonals (45, 135) and a vertically-elongated (wide frequency band) filter
   float		phase_off;	// #CONDSHOW_ON_on #DEF_0;1.5708 offset for the sine phase -- default is an asymmetric sine wave -- can make it into a symmetric cosine gabor by using PI/2 = 1.5708
