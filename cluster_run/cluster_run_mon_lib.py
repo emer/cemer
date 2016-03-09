@@ -994,7 +994,7 @@ class SubversionPoller(object):
                     oth_col_idx = job_table.get_col_idx(colnm)
                     if oth_col_idx >= 0: # column exists but was moved!
                         job_table.switch_cols(i, oth_col_idx)
-                        print "switched colname %s from idx: %s to %s in table: " % (colnm, oth_col_idx, i, table_file)
+                        print "switched colname %s from idx: %s to %s in table: %s" % (colnm, oth_col_idx, i, table_file)
                     else:
                         job_table.insert_col(colnm, self.jobs_submit.get_col_type(i), i)
                         print "added new column from jobs_submit: " + colnm + " to table: " + table_file
