@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil, random, json, urllib2, base64, ast, logging, getpass
+import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil, random, json, urllib2, base64, ast, logging, getpass, copy
 from datetime import datetime
 # requires this package, included with python 2.5 and above -- otherwise get
 # from http://effbot.org/downloads
@@ -547,8 +547,8 @@ class DataTable(object):
         self.set_col_name(col1_idx, col2_name)
         self.set_col_type(col1_idx, col2_type)
         for r in self._rows:
-            col1_val = self.get_val_idx(r, col1_idx)
-            col2_val = self.get_val_idx(r, col2_idx)
+            col1_val = copy.copy(self.get_val_idx(r, col1_idx))
+            col2_val = copy.copy(self.get_val_idx(r, col2_idx))
             self.set_val_idx(r, col2_idx, col1_val)
             self.set_val_idx(r, col1_idx, col2_val)
         return True
@@ -994,7 +994,7 @@ class SubversionPoller(object):
                     oth_col_idx = job_table.get_col_idx(colnm)
                     if oth_col_idx >= 0: # column exists but was moved!
                         job_table.switch_cols(i, oth_col_idx)
-                        print "switched colname %s from idx: %s to %s" % (colnm, i, oth_col_idx)
+                        print "switched colname %s from idx: %s to %s in table: " % (colnm, oth_col_idx, i, table_file)
                     else:
                         job_table.insert_col(colnm, self.jobs_submit.get_col_type(i), i)
                         print "added new column from jobs_submit: " + colnm + " to table: " + table_file
