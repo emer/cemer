@@ -1067,7 +1067,7 @@ void ClusterRun::RemoveJobs() {
     jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
-      SubmitRemoveDelJob(jobs_archive, row);
+      SubmitRemoveDelJob(jobs_deleted, row);
     }
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
