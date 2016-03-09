@@ -1395,15 +1395,15 @@ class SubversionPoller(object):
     # move job from deleted back to done and recover dat files
     def _undelete_job(self, filename, rev, row):
         tag = self.jobs_submit.get_val(row, "tag")
-        delrow = self.jobs_delete.find_val("tag", tag)
+        delrow = self.jobs_deleted.find_val("tag", tag)
         if delrow >= 0:
-            dat_files = self.jobs_delete.get_val(delrow, "dat_files")
-            rev = self.jobs_delete.get_val(delrow, "last_svn")
+            dat_files = self.jobs_deleted.get_val(delrow, "dat_files")
+            rev = self.jobs_deleted.get_val(delrow, "last_svn")
             self._svn_undelete_dat_files(tag, dat_files, rev)
-            self.jobs_done.append_row_from(self.jobs_delete, delrow)
-            self.jobs_delete.remove_row(delrow)
+            self.jobs_done.append_row_from(self.jobs_deleted, delrow)
+            self.jobs_deleted.remove_row(delrow)
         else:
-            print "undelete_job: tag %s not found in jobs delete" % tag
+            print "undelete_job: tag %s not found in jobs deleted" % tag
 
     # remove all files with given tag
     def _remove_tag_files(self, tag):

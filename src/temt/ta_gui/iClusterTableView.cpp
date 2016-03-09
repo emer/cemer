@@ -64,9 +64,6 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
     act = menu->AddItem("Save Job Params", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "SaveJobParams");
     act->setEnabled((tab->name == "jobs_done" || tab->name == "jobs_archive") && sel.height() > 0);
 
-    act = menu->AddItem("Archive Jobs", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "ArchiveJobs");
-    act->setEnabled((tab->name == "jobs_done") && sel.height() > 0);
-
     act = menu->AddItem("Kill Job", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "Kill");
     act->setEnabled((tab->name == "jobs_running") && sel.height() > 0);  //
 
@@ -78,6 +75,9 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
     
     act = menu->AddItem("UnDelete Jobs", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "UnDeleteJobs");
     act->setEnabled((tab->name == "jobs_deleted") && sel.height() > 0);
+
+    act = menu->AddItem("Archive Jobs", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "ArchiveJobs");
+    act->setEnabled((tab->name == "jobs_done") && sel.height() > 0);
 
     act = menu->AddItem("Clean Job Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "CleanJobFiles");
     act->setEnabled((tab->name == "jobs_done" || tab->name == "jobs_archive") && sel.height() > 0);
