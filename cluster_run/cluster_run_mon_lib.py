@@ -547,8 +547,8 @@ class DataTable(object):
         self.set_col_name(col1_idx, col2_name)
         self.set_col_type(col1_idx, col2_type)
         for i in range(len(self._rows)):
-            col1_val = self.get_val_idx(i, col1_idx))
-            col2_val = self.get_val_idx(i, col2_idx))
+            col1_val = self.get_val_idx(i, col1_idx)
+            col2_val = self.get_val_idx(i, col2_idx)
             self.set_val_idx(i, col2_idx, col1_val)
             self.set_val_idx(i, col1_idx, col2_val)
         return True
