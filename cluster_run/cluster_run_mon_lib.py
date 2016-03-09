@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil, random, json, urllib2, base64, ast, logging, getpass, copy
+import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil, random, json, urllib2, base64, ast, logging, getpass
 from datetime import datetime
 # requires this package, included with python 2.5 and above -- otherwise get
 # from http://effbot.org/downloads
@@ -538,11 +538,6 @@ class DataTable(object):
     
     # switch two columns 
     def switch_cols(self, col1_idx, col2_idx):
-        for r in self._rows:
-            col1_val = copy.deepcopy(self.get_val_idx(r, col1_idx))
-            col2_val = copy.deepcopy(self.get_val_idx(r, col2_idx))
-            self.set_val_idx(r, col2_idx, col1_val)
-            self.set_val_idx(r, col1_idx, col2_val)
         col1_name = self.get_col_name(col1_idx)
         col1_type = self.get_col_type(col1_idx)
         col2_name = self.get_col_name(col2_idx)
@@ -551,6 +546,11 @@ class DataTable(object):
         self.set_col_type(col2_idx, col1_type)
         self.set_col_name(col1_idx, col2_name)
         self.set_col_type(col1_idx, col2_type)
+        for i in range(len(self._rows)):
+            col1_val = self.get_val_idx(i, col1_idx))
+            col2_val = self.get_val_idx(i, col2_idx))
+            self.set_val_idx(i, col2_idx, col1_val)
+            self.set_val_idx(i, col1_idx, col2_val)
         return True
     
     # validates a value with regard to a column
