@@ -516,11 +516,11 @@ class DataTable(object):
         for i in range(len(self._header)):
             if self.get_col_name(i) == col_name:
                 return i
-        return False
+        return -1  # all the checks are for >= 0 here -- false is basically 0 and confusing!
 
     # adds a new column to the data table in memory
     def add_col(self, col_name, col_type):
-        if not self.get_col_idx(col_name):
+        if self.get_col_idx(col_name) < 0:
             self._header.append({'name': col_name, 'type': col_type})
             for r in self._rows:    # add an empty columns to the data rows
                 r.append('')
@@ -558,25 +558,28 @@ class DataTable(object):
     #        col_name = the column name of the value
     def validate_val(self, val, col_name):
         col_idx = self.get_col_idx(col_name)
-        col_type = self.get_col_type(col_idx)
-        if self.get_typed_val(val, col_type):
-            return True
-        else:
-            return False
+        if col_idx >= 0:
+            col_type = self.get_col_type(col_idx)
+            if self.get_typed_val(val, col_type):
+                return True
+        return False
 
     # returns the value of a single cell
     # input: row_num = the row index of the cell to update
     #        col_name = the column name of the cell to update
     def get_val(self, row_num, col_name):
         col_idx = self.get_col_idx(col_name)
-        try:
-            row = self._rows[row_num]
-            str_val = row[col_idx]
-        except:
-            logging.warning("No cell found under column '%s' at row number %s." % (col_name, row_num))
+        if col_idx >= 0:
+            try:
+                row = self._rows[row_num]
+                str_val = row[col_idx]
+            except:
+                logging.warning("No cell found under column '%s' at row number %s." % (col_name, row_num))
+                return False
+            return self.get_typed_val(str_val, self.get_col_type(col_idx))
+        else:
+            logging.warning("Col named %s doesn't exist, col_idx: %s." % (col_name, col_idx))
             return False
-        
-        return self.get_typed_val(str_val, self.get_col_type(col_idx))
         
     # sets value of a single cell
     # input: row_num = the row index of the cell to update
