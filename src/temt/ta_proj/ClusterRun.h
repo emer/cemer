@@ -53,6 +53,7 @@ public:
     PANEL_CONTROL,
     PANEL_RUNNING,
     PANEL_DONE,
+    PANEL_DELETED,
     PANEL_ARCHIVE,
     PANEL_FILES,
     PANEL_INFO,
@@ -65,11 +66,13 @@ public:
   DataTable     jobs_submitted; // #NO_SAVE #EXPERT #HIDDEN_CHOOSER jobs submitted -- just a local copy of jobs_submit
   DataTable     jobs_running;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER jobs that are currently running
   DataTable     jobs_done;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER jobs that have finished running
+  DataTable     jobs_deleted;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER jobs that have been deleted -- they can be recovered if needed..
   DataTable     jobs_archive;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER jobs that have been archived -- already analyzed but possibly still relevant to look at
   DataTable     file_list;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER list of files -- used for various operations -- transferring and deleting
   DataTable     cluster_info;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER cluster status information and list of jobs currently running, etc
   DataTable     jobs_running_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_running, for each specific directory
   DataTable     jobs_done_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
+  DataTable     jobs_deleted_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
   DataTable     jobs_archive_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
   ParamSearchAlgo_List search_algos; // #SHOW_TREE #EXPERT Possible search algorithms to run on the cluster
   bool          use_search_algo;     // use search algorithm to explore across parameters -- if false, then just the current values will be used -- must also set cur_search_algo

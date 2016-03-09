@@ -234,6 +234,13 @@ bool ClusterRun::Update() {
     jobs_archive.Sort("tag", true);  // also sort jobs done by tag
   }
   
+  if (jobs_deleted.HasBeenSorted()) {
+    jobs_deleted.SortAgain();
+  }
+  else {
+    jobs_deleted.Sort("tag", true);  // also sort jobs done by tag
+  }
+  
   if(has_sel_done && st_row_done >= 0 && end_row_done >= st_row_done) {
     SelectRows(jobs_done, st_row_done, end_row_done);
   }
@@ -247,6 +254,7 @@ bool ClusterRun::Update() {
   
   FillInRunningTime(&jobs_done);
   FillInRunningTime(&jobs_archive);
+  FillInRunningTime(&jobs_deleted);
   FillInElapsedTime(&jobs_running);
 
   SigEmitUpdated();
@@ -1103,6 +1111,7 @@ void ClusterRun::FormatTables() {
 
   jobs_running.name = "jobs_running";
   jobs_done.name = "jobs_done";
+  jobs_deleted.name = "jobs_deleted";
   jobs_archive.name = "jobs_archive";
 
   jobs_running_tmp.name = "jobs_running_tmp";
@@ -1114,10 +1123,12 @@ void ClusterRun::FormatTables() {
 
   FormatJobTable(jobs_running, true); // extra fields
   FormatJobTable(jobs_done, true);
+  FormatJobTable(jobs_deleted, true);
   FormatJobTable(jobs_archive, true);
 
   FormatJobTable(jobs_running_tmp);
   FormatJobTable(jobs_done_tmp);
+  FormatJobTable(jobs_deleted_tmp);
   FormatJobTable(jobs_archive_tmp);
 
   file_list.name = "file_list";
@@ -1152,10 +1163,15 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   dc = dt.FindMakeCol("tag", VT_STRING);
   dc->desc = "unique tag id for this job -- all files etc are named according to this tag";
   int tag_idx = dc->col_idx;
+  dc = dt.FindMakeCol("label", VT_STRING);
+  dc->desc = "label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+  int label_idx = dc->col_idx;
   dc = dt.FindMakeCol("notes", VT_STRING);
   dc->desc = "notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-  dc = dt.FindMakeCol("label", VT_STRING);
-  dc->desc = "label for the job -- a brief description that you can use to label this job's results on your graph";
+  int notes_idx = dc->col_idx;
+  if(label_idx > notes_idx) {   // move label in front of notes!
+    dt.MoveCol(label_idx, notes_idx);
+  }
   dc = dt.FindMakeCol("filename", VT_STRING);
   dc->desc = "name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
   dc = dt.FindMakeCol("params", VT_STRING);
@@ -1167,7 +1183,7 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   //   PROBE     probe to get the cluster to track this project, and update all running
   //   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
   //   GETFILES  tell cluster to check in all files listed in this other_files entry
-  //   REMOVEJOB tell cluster to remove given tags from jobs_done
+  //   REMOVEJOB tell cluster to remove given tags from jobs_done and add to jobs_deleted
   //   CLEANJOBFILES tell cluster to remove job files associated with tags
   //   REMOVEFILES tell cluster to remove specific files listed in this other_files entry
   //   ARCHIVEJOB tell cluster to move given tags from jobs_done into jobs_archive
@@ -1261,6 +1277,10 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   dc->desc = "svn revision for the original job submission";
   dc = dt.FindMakeCol("submit_job", VT_STRING);
   dc->desc = "index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+  dc = dt.FindMakeCol("done_svn", VT_STRING);
+  dc->desc = "svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+  dc = dt.FindMakeCol("last_svn", VT_STRING);
+  dc->desc = "last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
   
   for (int i=0; i<dt.data.size; i++) {
     dc = dt.data.SafeEl(i);
@@ -1862,6 +1882,7 @@ void ClusterRun::ClearAllSelections() {
   ClearSelection(jobs_running);
   ClearSelection(jobs_done);
   ClearSelection(jobs_archive);
+  ClearSelection(jobs_deleted);
   ClearSelection(file_list);
 }
 
@@ -1948,6 +1969,9 @@ DataTable* ClusterRun::GetCurDataTable() {
   }
   else if (panel_id == PANEL_DONE) {
     return &jobs_done;
+  }
+  else if (panel_id == PANEL_DELETED) {
+    return &jobs_deleted;
   }
   else if (panel_id == PANEL_ARCHIVE) {
     return &jobs_archive;

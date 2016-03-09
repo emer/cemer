@@ -119,7 +119,7 @@ job_out_bytes_total = 30000
 #   PROBE     probe to get the cluster to track this project, and update all running
 #   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
 #   GETFILES  tell cluster to check in all files listed in this other_files entry
-#   REMOVEJOB remove given tag job from the jobs done list
+#   REMOVEJOB remove given tag job from the jobs done list and add to jobs_deleted
 #   CLEANJOBFILES tell cluster to remove job files associated with tags
 #   REMOVEFILES tell cluster to remove specific files listed in this other_files entry
 #   UPDATENOTE update the notes field of a completed job
@@ -495,12 +495,27 @@ class DataTable(object):
             logging.warning("Column index %s is out of range." % idx)
             return False
     
+    # set the type of a column given its index
+    def set_col_type(self, idx, col_type):
+        try:
+            self._header[idx]['type'] = col_type
+        except:
+            logging.warning("Column index %s is out of range." % idx)
+            return False
+    
+    # set the name of a column given its index
+    def set_col_name(self, idx, col_name):
+        try:
+            self._header[idx]['name'] = col_name
+        except:
+            logging.warning("Column index %s is out of range." % idx)
+            return False
+    
     # returns the index of a column given its name  
     def get_col_idx(self, col_name):
         for i in range(len(self._header)):
             if self.get_col_name(i) == col_name:
                 return i
-        logging.warning("Column '%s' doesn't exist." % col_name)
         return False
 
     # adds a new column to the data table in memory
@@ -513,11 +528,29 @@ class DataTable(object):
         else:
             logging.warning("Column '%s' (%s) already exists." % (col_name, col_type))
             return False   
-    
+
+    # insert new column to data table in memory
     def insert_col(self, col_name, col_type, col_idx):
         self._header.insert(col_idx, {'name': col_name, 'type': col_type})
         for r in self._rows:    # add an empty columns to the data rows
             r.insert(col_idx, '')
+        return True
+    
+    # switch two columns 
+    def switch_cols(self, col1_idx, col2_idx):
+        col1_name = self.get_col_name(col1_idx)
+        col1_type = self.get_col_type(col1_idx)
+        col2_name = self.get_col_name(col2_idx)
+        col2_type = self.get_col_type(col2_idx)
+        self.set_col_name(col2_idx, col1_name)
+        self.set_col_type(col2_idx, col1_type)
+        self.set_col_name(col1_idx, col2_name)
+        self.set_col_type(col1_idx, col2_type)
+        for r in self._rows:
+            col1_val = self.get_val_idx(r, col1_idx)
+            col2_val = self.get_val_idx(r, col2_idx)
+            self.set_val_idx(r, col2_idx, col1_val)
+            self.set_val_idx(r, col1_idx, col2_val)
         return True
     
     # validates a value with regard to a column
@@ -551,6 +584,34 @@ class DataTable(object):
     #        val = the new value of the cell 
     def set_val(self, row_num, col_name, val):
         col_idx = self.get_col_idx(col_name)
+        if col_idx >= 0: #and self.get_typed_val(val, self.get_col_type(col_idx)):
+            try:
+                self._rows[row_num][col_idx] = str(val)
+                return True
+            except:
+                logging.warning("Row number %s doesn't exist, col_idx: %s." % (row_num, col_idx))
+                return False
+        else:
+            logging.warning("Col named %s doesn't exist, col_idx: %s." % (col_name, col_idx))
+            return False
+        
+    # returns the value of a single cell
+    # input: row_num = the row index of the cell to update
+    #        col_idx = the index of column
+    def get_val_idx(self, row_num, col_idx):
+        try:
+            row = self._rows[row_num]
+            str_val = row[col_idx]
+        except:
+            logging.warning("No cell found under column idx '%s' at row number %s." % (col_idx, row_num))
+            return False
+        return self.get_typed_val(str_val, self.get_col_type(col_idx))
+        
+    # sets value of a single cell
+    # input: row_num = the row index of the cell to update
+    #        col_idx = the column idx of the cell to update
+    #        val = the new value of the cell 
+    def set_val_idx(self, row_num, col_idx, val):
         if col_idx >= 0: #and self.get_typed_val(val, self.get_col_type(col_idx)):
             try:
                 self._rows[row_num][col_idx] = str(val)
@@ -661,6 +722,7 @@ class SubversionPoller(object):
         self.cur_submit_file = ""
         self.cur_running_file = ""
         self.cur_done_file = ""
+        self.cur_deleted_file = ""
         self.cur_archive_file = ""
         self.cluster_info_file = ""
         self.got_submit = False     # got a jobs_submit submission 
@@ -668,6 +730,7 @@ class SubversionPoller(object):
         self.jobs_submit = DataTable()
         self.jobs_running = DataTable()
         self.jobs_done = DataTable()
+        self.jobs_deleted = DataTable()
         self.jobs_archive = DataTable()
         self.file_list = DataTable()
         self.cluster_info = DataTable()
@@ -874,6 +937,7 @@ class SubversionPoller(object):
         self.cur_submit_file = self.cur_proj_root + '/submit/jobs_submit.dat'
         self.cur_running_file = self.cur_proj_root + '/submit/jobs_running.dat'
         self.cur_done_file = self.cur_proj_root + '/submit/jobs_done.dat'
+        self.cur_deleted_file = self.cur_proj_root + '/submit/jobs_deleted.dat'
         self.cur_archive_file = self.cur_proj_root + '/submit/jobs_archive.dat'
         self.cluster_info_file = os.path.dirname(self.cur_proj_root) + '/cluster_info.dat'
 
@@ -887,7 +951,9 @@ class SubversionPoller(object):
             self.jobs_done.load_from_file(self.cur_done_file)
         else:
             logging.error("ERROR: jobs done file should exist at this point! %s" % self.cur_done_file)
-        if os.path.exists(self.cur_archive_file):    # Load done into current
+        if os.path.exists(self.cur_deleted_file):    # Load deleted into current
+            self.jobs_deleted.load_from_file(self.cur_deleted_file)
+        if os.path.exists(self.cur_archive_file):    # Load archive into current
             self.jobs_archive.load_from_file(self.cur_archive_file)
         else:
             logging.error("ERROR: jobs archive file should exist at this point! %s" % self.cur_archive_file)
@@ -895,6 +961,7 @@ class SubversionPoller(object):
     def _save_cur_files(self):
         self.jobs_running.write(self.cur_running_file)
         self.jobs_done.write(self.cur_done_file)
+        self.jobs_deleted.write(self.cur_deleted_file)
         self.jobs_archive.write(self.cur_archive_file)
  
     def _get_commit_info(self, filename):
@@ -921,14 +988,20 @@ class SubversionPoller(object):
             for i in range(self.jobs_submit.n_cols()):
                 colnm = self.jobs_submit.get_col_name(i)
                 if colnm != job_table.get_col_name(i):
-                    job_table.insert_col(colnm, self.jobs_submit.get_col_type(i), i)
-                    print "added new column from jobs_submit: " + colnm + " to table: " + table_file
+                    oth_col_idx = job_table.get_col_idx(colnm)
+                    if oth_col_idx >= 0: # column exists but was moved!
+                        job_table.switch_cols(i, oth_col_idx)
+                        print "switched colname %s from idx: %s to %s" % (colnm, i, oth_col_idx)
+                    else:
+                        job_table.insert_col(colnm, self.jobs_submit.get_col_type(i), i)
+                        print "added new column from jobs_submit: " + colnm + " to table: " + table_file
         # todo: theoretically should check for extras and remove them -- do later..
     
     # init both files
     def _init_jobs_files(self):
         self._init_jobs_running()
         self._init_jobs_done()
+        self._init_jobs_deleted()
         self._init_jobs_archive()
 
     # initialize the jobs_running table -- either load from file or init from submit
@@ -957,7 +1030,20 @@ class SubversionPoller(object):
             self.jobs_done.write(self.cur_done_file)
             self._svn_add_cur_done()
 
-    # initialize the jobs_done table -- either load from file or init from running
+    # initialize the jobs_deleted table -- either load from file or init from running
+    def _init_jobs_deleted(self):
+        if os.path.exists(self.cur_deleted_file):
+            if debug:
+                logging.info("loading existing deleted file: %s" % self.cur_deleted_file)
+            self.jobs_deleted.load_from_file(self.cur_deleted_file)
+            self._check_job_table_format(self.jobs_deleted, self.cur_deleted_file)
+        else:
+            # create new and save and add to svn
+            self.jobs_deleted.copy_cols(self.jobs_done)
+            self.jobs_deleted.write(self.cur_deleted_file)
+            self._svn_add_cur_deleted()
+
+    # initialize the jobs_archive table -- either load from file or init from running
     def _init_jobs_archive(self):
         if os.path.exists(self.cur_archive_file):
             if debug:
@@ -979,6 +1065,12 @@ class SubversionPoller(object):
     def _svn_add_cur_done(self):
         cmd = ['svn', 'add', '--username', self.username,
                '--non-interactive', self.cur_done_file]
+        # Don't check_output, just dump it to stdout (or nohup.out).
+        subprocess.call(cmd)
+
+    def _svn_add_cur_deleted(self):
+        cmd = ['svn', 'add', '--username', self.username,
+               '--non-interactive', self.cur_deleted_file]
         # Don't check_output, just dump it to stdout (or nohup.out).
         subprocess.call(cmd)
 
@@ -1188,8 +1280,6 @@ class SubversionPoller(object):
             job_out_file = ""
             status = 'FAILED'
             job_out = "FAILED: " + str(e)
-            
-        
 
         # grab current submit info
         self.jobs_running.append_row_from(self.jobs_submit, row)
@@ -1256,6 +1346,8 @@ class SubversionPoller(object):
             self._remove_files(tag, dat_files)
             other_files = self.jobs_done.get_val(donerow, "other_files")
             self._remove_files(tag, other_files)
+            self.jobs_done.set_val(donerow, "last_svn", rev)
+            self.jobs_deleted.append_row_from(self.jobs_done, donerow)
             self.jobs_done.remove_row(donerow)
             if debug:
                 print "removed jobs_done row: %d" % (donerow)
@@ -1266,6 +1358,8 @@ class SubversionPoller(object):
                 self._remove_files(tag, dat_files)
                 other_files = self.jobs_archive.get_val(archrow, "other_files")
                 self._remove_files(tag, other_files)
+                self.jobs_archive.set_val(archrow, "last_svn", rev)
+                self.jobs_deleted.append_row_from(self.jobs_archive, archrow)
                 self.jobs_archive.remove_row(archrow)
                 if debug:
                     print "removed jobs_archive row: %d" % (archrow)
@@ -1281,6 +1375,7 @@ class SubversionPoller(object):
             job_out_file = self.jobs_done.get_val(donerow, "job_out_file")
             job_no = self.jobs_done.get_val(donerow, "job_no")
             self._remove_job_files(job_out_file, job_no, tag)
+            self.jobs_done.set_val(donerow, "last_svn", rev)
             self.jobs_archive.append_row_from(self.jobs_done, donerow)
             self.jobs_done.remove_row(donerow)
         else:

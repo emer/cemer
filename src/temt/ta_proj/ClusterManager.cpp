@@ -204,13 +204,15 @@ ClusterManager::UpdateTables()
                              m_cluster_run.jobs_running_tmp);
     bool ok2 = LoadAllTables(m_done_dat_filename, m_cluster_run.jobs_done,
                              m_cluster_run.jobs_done_tmp);
+    bool ok5 = LoadAllTables(m_deleted_dat_filename, m_cluster_run.jobs_deleted,
+                             m_cluster_run.jobs_deleted_tmp);
     bool ok3 = LoadAllTables(m_archive_dat_filename, m_cluster_run.jobs_archive,
                              m_cluster_run.jobs_archive_tmp);
     bool ok4 = LoadTable(m_cluster_info_filename, m_cluster_run.cluster_info);
 
     // Return true as long as one of the files was updated and loaded --
     // in that case, the search algo will probably want to do something.
-    return updated && (ok1 || ok2 || ok3 || ok4);
+    return updated && (ok1 || ok2 || ok3 || ok4 || ok5);
   }
   catch (const ClusterManager::Exception &ex) {
     taMisc::DoneBusy();
@@ -519,6 +521,7 @@ ClusterManager::SetPaths(bool updt_wc) {
   //             jobs_running.dat       # m_running_dat_filename
   //             jobs_done.dat          # m_done_dat_filename
   //             jobs_archive.dat       # m_archive_dat_filename
+  //             jobs_deleted.dat       # m_deleted_dat_filename
   //           models/                  # m_wc_models_path
   //             projname.proj          # m_proj_copy_filename
   //           results/                 # m_wc_results_path
@@ -555,6 +558,7 @@ ClusterManager::SetPaths(bool updt_wc) {
   m_running_dat_filename = m_wc_submit_path + "/jobs_running.dat";
   m_done_dat_filename = m_wc_submit_path + "/jobs_done.dat";
   m_archive_dat_filename = m_wc_submit_path + "/jobs_archive.dat";
+  m_deleted_dat_filename = m_wc_submit_path + "/jobs_deleted.dat";
   m_proj_copy_filename = m_wc_models_path + '/' + fi.fileName();
 
   if(updt_wc && m_wc_path != prv_path) {

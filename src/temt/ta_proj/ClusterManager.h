@@ -152,6 +152,7 @@ public:
   String m_cluster_info_filename;
   String m_done_dat_filename;
   String m_archive_dat_filename;
+  String m_deleted_dat_filename;
 };
 
 #endif // CLUSTER_MANAGER_H_
