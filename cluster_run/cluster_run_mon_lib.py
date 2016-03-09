@@ -538,6 +538,11 @@ class DataTable(object):
     
     # switch two columns 
     def switch_cols(self, col1_idx, col2_idx):
+        for r in self._rows:
+            col1_val = copy.deepcopy(self.get_val_idx(r, col1_idx))
+            col2_val = copy.deepcopy(self.get_val_idx(r, col2_idx))
+            self.set_val_idx(r, col2_idx, col1_val)
+            self.set_val_idx(r, col1_idx, col2_val)
         col1_name = self.get_col_name(col1_idx)
         col1_type = self.get_col_type(col1_idx)
         col2_name = self.get_col_name(col2_idx)
@@ -546,11 +551,6 @@ class DataTable(object):
         self.set_col_type(col2_idx, col1_type)
         self.set_col_name(col1_idx, col2_name)
         self.set_col_type(col1_idx, col2_type)
-        for r in self._rows:
-            col1_val = copy.copy(self.get_val_idx(r, col1_idx))
-            col2_val = copy.copy(self.get_val_idx(r, col2_idx))
-            self.set_val_idx(r, col2_idx, col1_val)
-            self.set_val_idx(r, col1_idx, col2_val)
         return True
     
     # validates a value with regard to a column
