@@ -124,6 +124,8 @@ job_out_bytes_total = 30000
 #   REMOVEFILES tell cluster to remove specific files listed in this other_files entry
 #   UPDATENOTE update the notes field of a completed job
 #   ARCHIVEJOB tell cluster to move given tags from jobs_done into jobs_archive
+#   UNDELETEJOB tell cluster to move given tags from jobs_delete back into jobs_done, and recover dat
+#               files associated with those jobs back into the current svn directory
 # The cluster script sets this field in the running/done tables to:
 #   SUBMITTED after job successfully submitted to a queue.
 #   QUEUED    when the job is known to be in the cluster queue.
@@ -721,6 +723,8 @@ class SubversionPoller(object):
         self.all_running_files = set()
         self.cur_proj_root = ""  # current project root directory (parent of subdirs)
         self.cur_proj_file = ""
+        self.cur_proj_dirname = ""  # just the project directory name 
+        self.cur_proj_url = ""  # full url to cur proj dir
         self.cur_tag_proj_file = ""  # project file with tag appended
         self.cur_submit_file = ""
         self.cur_running_file = ""
@@ -936,7 +940,9 @@ class SubversionPoller(object):
     def _get_cur_jobs_files(self, filename):
         self.cur_proj_root = os.path.dirname(filename)
         self.cur_proj_root = os.path.dirname(self.cur_proj_root)
-        self.cur_proj_file = self.cur_proj_root + "/models/" + os.path.basename(self.cur_proj_root) + ".proj"  # this is not accurate if .gz proj
+        self.cur_proj_dirname = os.path.basename(self.cur_proj_root)
+        self.cur_proj_url = self.repo_url + "/" + self.cur_proj_dirname
+        self.cur_proj_file = self.cur_proj_root + "/models/" + self.cur_proj_dirname + ".proj"  # this is not accurate if .gz proj
         self.cur_submit_file = self.cur_proj_root + '/submit/jobs_submit.dat'
         self.cur_running_file = self.cur_proj_root + '/submit/jobs_running.dat'
         self.cur_done_file = self.cur_proj_root + '/submit/jobs_done.dat'
@@ -1104,6 +1110,8 @@ class SubversionPoller(object):
                 self._cancel_job(filename, rev, row)
             elif status == 'ARCHIVEJOB':
                 self._move_job_to_archive(filename, rev, row)
+            elif status == 'UNDELETEJOB':
+                self._undelete_job(filename, rev, row)
             elif status == 'UPDTRUN':
                 # nop -- submit will trigger update automatically
                 if debug:
@@ -1384,6 +1392,19 @@ class SubversionPoller(object):
         else:
             print "move_job_to_archive: tag %s not found in jobs done" % tag
 
+    # move job from deleted back to done and recover dat files
+    def _undelete_job(self, filename, rev, row):
+        tag = self.jobs_submit.get_val(row, "tag")
+        delrow = self.jobs_delete.find_val("tag", tag)
+        if delrow >= 0:
+            dat_files = self.jobs_delete.get_val(delrow, "dat_files")
+            rev = self.jobs_delete.get_val(delrow, "last_svn")
+            self._svn_undelete_dat_files(tag, dat_files, rev)
+            self.jobs_done.append_row_from(self.jobs_delete, delrow)
+            self.jobs_delete.remove_row(delrow)
+        else:
+            print "undelete_job: tag %s not found in jobs delete" % tag
+
     # remove all files with given tag
     def _remove_tag_files(self, tag):
         if not tag:
@@ -1519,10 +1540,26 @@ class SubversionPoller(object):
             if debug:
                 ("Checking if dat file: %s exists to commit to SVN" % fdf)
             if os.path.exists(fdf):
-                cmd = ['svn', 'add', '--username', self.username,
+                cmd = ['svn', 'add', '-q', '--username', self.username,
                        '--non-interactive', fdf]
                 # Don't check_output, just dump it to stdout (or nohup.out).
                 subprocess.call(cmd)
+
+    def _svn_undelete_dat_files(self, tag, dat_files, rev):
+        if len(dat_files) == 0:
+            if debug:
+                print "tag: %s has no dat files (yet)" % tag
+            return
+        dats = dat_files.split()
+        resurl = self.cur_proj_url + "/results/"
+        resdir = self.cur_proj_root + "/results/"
+        for df in dats:
+            fdu = resurl + df + "@" + rev
+            fdf = resdir + df
+            cmd = ['svn', 'copy', '--username', self.username,
+                   '--non-interactive', fdu, fdf]
+            # Don't check_output, just dump it to stdout (or nohup.out).
+            subprocess.call(cmd)
 
     def _removefiles_job(self, filename, rev, row):
         other_files = self.jobs_submit.get_val(row, "other_files")

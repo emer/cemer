@@ -141,6 +141,8 @@ public:
   // #MENU_BUTTON #MENU_ON_Jobs update notes field of completed jobs -- enter a new note in the table and then do this, and it will update the table permanently -- otherwise all edits are overwritten by the version in svn which is only updated on the cluster side
   virtual void  ArchiveJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs selected in the jobs_done data table into the jobs_archive table
+  virtual void  UnDeleteJobs();
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM recover jobs selected in the jobs_deleted data table into the jobs_done table, and restore the dat_files into the svn repository as well
   virtual void  RemoveJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove jobs selected in the jobs_done or jobs_archive data tables, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this) -- for cleaning up old unneeded jobs
   virtual void  RemoveKilledJobs();
@@ -225,6 +227,8 @@ public:
   // add to jobs_submit for remove job for job at the given row of the given table
   virtual void  SubmitArchiveJob(const DataTable& table, int row);
   // add to jobs_submit for move job to archive for job at the given row of the given table
+  virtual void  SubmitUnDeleteJob(const DataTable& table, int row);
+  // add to jobs_submit for move job to done from deleted for job at the given row of the given table
   virtual void  SubmitCleanJobFiles(const DataTable& table, int row);
   // add to jobs_submit for clean job files for job at the given row of the given table
   virtual void  SubmitGetFiles(const String& files);

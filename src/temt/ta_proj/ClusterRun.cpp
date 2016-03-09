@@ -1016,6 +1016,24 @@ void ClusterRun::ArchiveJobs() {
   }
 }
 
+void ClusterRun::UnDeleteJobs() {
+  if(!InitClusterManager())
+    return;
+
+  int st_row, end_row;
+  if (SelectedRows(jobs_deleted, st_row, end_row)) {
+    jobs_submit.ResetData();
+    for (int row = end_row; row >= st_row; --row) {
+      SubmitUnDeleteJob(jobs_deleted, row);
+    }
+    m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
+  }
+  else {
+    taMisc::Warning("No rows selected -- no jobs archived");
+  }
+}
+
 void ClusterRun::RemoveJobs() {
   if(!InitClusterManager())
     return;
@@ -1187,6 +1205,8 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   //   CLEANJOBFILES tell cluster to remove job files associated with tags
   //   REMOVEFILES tell cluster to remove specific files listed in this other_files entry
   //   ARCHIVEJOB tell cluster to move given tags from jobs_done into jobs_archive
+  //   UNDELETEJOB tell cluster to move given tags from jobs_delete back into jobs_done, and
+  //            recover dat files associated with those jobs back into the current svn directory
   // The cluster script sets this field in the running/done tables to:
   //   SUBMITTED after job successfully submitted to a queue.
   //   QUEUED    when the job is known to be in the cluster queue.
@@ -1729,6 +1749,18 @@ ClusterRun::SubmitArchiveJob(const DataTable& table, int tab_row)
     return;
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("ARCHIVEJOB", "status", dst_row);
+  jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
+  jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
+}
+
+void
+ClusterRun::SubmitUnDeleteJob(const DataTable& table, int tab_row)
+{
+  if(!CheckLocalClustUser(table, tab_row))
+    return;
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("UNDELETEJOB", "status", dst_row);
   jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
   jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
