@@ -229,6 +229,8 @@ public:
   // add to jobs_submit for move job to archive for job at the given row of the given table
   virtual void  SubmitUnDeleteJob(const DataTable& table, int row);
   // add to jobs_submit for move job to done from deleted for job at the given row of the given table
+  virtual void  SubmitRemoveDelJob(const DataTable& table, int row);
+  // add to jobs_submit for remove deleted job for job at the given row of the given table
   virtual void  SubmitCleanJobFiles(const DataTable& table, int row);
   // add to jobs_submit for clean job files for job at the given row of the given table
   virtual void  SubmitGetFiles(const String& files);

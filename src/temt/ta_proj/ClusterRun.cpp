@@ -1045,13 +1045,10 @@ void ClusterRun::RemoveJobs() {
     jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
-      // SelectFiles_impl(jobs_done, row, true); // include data
       SubmitRemoveJob(jobs_done, row);
     }
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
-    // RemoveAllFilesInList();
-    // this is overwriting the last guy -- and it is unnecessary -- server side will do it
   }
   else if (SelectedRows(jobs_archive, st_row, end_row)) {
     int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_archive list?", "Ok", "Cancel");
@@ -1059,13 +1056,21 @@ void ClusterRun::RemoveJobs() {
     jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
-      // SelectFiles_impl(jobs_archive, row, true); // include data
       SubmitRemoveJob(jobs_archive, row);
     }
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
-    // RemoveAllFilesInList();
-    // this is overwriting the last guy -- and it is unnecessary -- server side will do it
+  }
+  else if (SelectedRows(jobs_deleted, st_row, end_row)) {
+    int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_deleted list?", "Ok", "Cancel");
+    if(chs == 1) return;
+    jobs_submit.ResetData();
+    file_list.ResetData();
+    for (int row = end_row; row >= st_row; --row) {
+      SubmitRemoveDelJob(jobs_archive, row);
+    }
+    m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
   }
   else {
     taMisc::Warning("No rows selected -- no jobs removed");
@@ -1080,15 +1085,12 @@ void ClusterRun::RemoveKilledJobs() {
   for (int row = jobs_done.rows-1; row >= 0; --row) {
     String status = jobs_done.GetValAsString("status", row);
     if(status != "KILLED") continue;
-    // SelectFiles_impl(jobs_done, row, true); // include data
     SubmitRemoveJob(jobs_done, row);
   }
   if(jobs_submit.rows > 0) {
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
   }
-  // RemoveAllFilesInList();
-  // this is overwriting the last guy -- and it is unnecessary -- server side will do it
 }
 
 void ClusterRun::RemoveAllFilesInList() {
@@ -1207,6 +1209,7 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   //   ARCHIVEJOB tell cluster to move given tags from jobs_done into jobs_archive
   //   UNDELETEJOB tell cluster to move given tags from jobs_delete back into jobs_done, and
   //            recover dat files associated with those jobs back into the current svn directory
+  //   REMOVEDELJOB tell cluster to fully remove job from jobs_delete
   // The cluster script sets this field in the running/done tables to:
   //   SUBMITTED after job successfully submitted to a queue.
   //   QUEUED    when the job is known to be in the cluster queue.
@@ -1737,6 +1740,18 @@ ClusterRun::SubmitRemoveJob(const DataTable& table, int tab_row)
     return;
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("REMOVEJOB", "status", dst_row);
+  jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
+  jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
+}
+
+void
+ClusterRun::SubmitRemoveDelJob(const DataTable& table, int tab_row)
+{
+  if(!CheckLocalClustUser(table, tab_row))
+    return;
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("REMOVEDELJOB", "status", dst_row);
   jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
   jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit

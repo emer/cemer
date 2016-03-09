@@ -126,6 +126,7 @@ job_out_bytes_total = 30000
 #   ARCHIVEJOB tell cluster to move given tags from jobs_done into jobs_archive
 #   UNDELETEJOB tell cluster to move given tags from jobs_delete back into jobs_done, and recover dat
 #               files associated with those jobs back into the current svn directory
+#   REMOVEDELJOB tell cluster to fully remove job from jobs_delete
 # The cluster script sets this field in the running/done tables to:
 #   SUBMITTED after job successfully submitted to a queue.
 #   QUEUED    when the job is known to be in the cluster queue.
@@ -1112,6 +1113,8 @@ class SubversionPoller(object):
                 self._move_job_to_archive(filename, rev, row)
             elif status == 'UNDELETEJOB':
                 self._undelete_job(filename, rev, row)
+            elif status == 'REMOVEDELJOB':
+                self._remove_deleted_job(filename, rev, row)
             elif status == 'UPDTRUN':
                 # nop -- submit will trigger update automatically
                 if debug:
@@ -1398,12 +1401,25 @@ class SubversionPoller(object):
         delrow = self.jobs_deleted.find_val("tag", tag)
         if delrow >= 0:
             dat_files = self.jobs_deleted.get_val(delrow, "dat_files")
+            other_files = self.jobs_deleted.get_val(delrow, "other_files")
+            undel_files = dat_files
+            if len(other_files) > 0:
+                undel_files += " " + other_files
             rev = self.jobs_deleted.get_val(delrow, "last_svn")
-            self._svn_undelete_dat_files(tag, dat_files, rev)
+            self._svn_undelete_files(tag, dat_files, rev)
             self.jobs_done.append_row_from(self.jobs_deleted, delrow)
             self.jobs_deleted.remove_row(delrow)
         else:
             print "undelete_job: tag %s not found in jobs deleted" % tag
+
+    # fully remove even from deleted jobs
+    def _remove_deleted_job(self, filename, rev, row):
+        tag = self.jobs_submit.get_val(row, "tag")
+        delrow = self.jobs_deleted.find_val("tag", tag)
+        if delrow >= 0:
+            self.jobs_deleted.remove_row(delrow)
+        else:
+            print "remove_deleted_job: tag %s not found in jobs deleted" % tag
 
     # remove all files with given tag
     def _remove_tag_files(self, tag):
@@ -1545,10 +1561,10 @@ class SubversionPoller(object):
                 # Don't check_output, just dump it to stdout (or nohup.out).
                 subprocess.call(cmd)
 
-    def _svn_undelete_dat_files(self, tag, dat_files, rev):
+    def _svn_undelete_files(self, tag, dat_files, rev):
         if len(dat_files) == 0:
             if debug:
-                print "tag: %s has no dat files (yet)" % tag
+                print "tag: %s has no files to undelete" % tag
             return
         dats = dat_files.split()
         resurl = self.cur_proj_url + "/results/"
