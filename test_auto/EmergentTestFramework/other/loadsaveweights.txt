@@ -1,0 +1,67 @@
+** Settings ***
+
+Library          Telnet
+Library          HttpLibrary.HTTP
+Library          Process
+Library          OperatingSystem
+
+Resource         Server_lib.txt
+
+Suite Setup      Initialize Emergent    ./test-projects/TestLoadSaveWeights.proj
+Suite Teardown   Shutdown Emergent
+
+*** Variables ***
+
+# use 'pybot -v debug:true server.txt' on the command line to
+#      output the transmissions to/from Emergent using warnings
+${debug} =       false
+
+*** Test Cases ***
+
+# Ideas on things to test
+#  - SetDataTableCell and Matrix Cell
+
+#
+# Initialization and general tests
+#
+
+Initialize
+    Set Suite Variable     ${verbose}       ${false}
+    Set Suite Variable     ${project}       ./test-projects/TestBrowserEdit.proj
+    Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
+
+Connection
+    Sleep                  1 sec
+    ${output} =            Read
+    Print                  ${output}
+    Should Contain         ${output}    Emergent Server v7.
+
+# TODO: Start another process and check for the "Too many connections already" error.
+
+#
+# ParserTest
+#
+
+General RunState
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             4
+
+
+
+TestSaveLoadIdentical
+    Ensure Emergent Free
+    Run Emergent Program	MasterTrain
+    Set Emergent Var		SaveWeights	iteration	0
+    Run Emergent Program	SaveWeights
+    Set Emergent Var		LoadWeights	iteration	0
+    Run Emergent Program	LoadWeights
+    Set Emergent Var		SaveWeights	iteration	1
+    Run Emergent Program	SaveWeights
+    
+    ${diff}=	Run Process		/usr/bin/diff	./test-projects/TestLoadSaveWeight_autotst_0.wts		./test-projects/TestLoadSaveWeight_autotst_1.wts
+    Should Match	"${diff.stdout}"		""
+
+
+*** Keywords ***
+
+
