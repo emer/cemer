@@ -7,7 +7,7 @@ Library          OperatingSystem
 
 Resource         Server_lib.txt
 
-Suite Setup      Initialize Emergent    ./test-projects/TestLoadSaveWeights.proj
+Suite Setup      Initialize Emergent    ./test-projects/TestLoadSaveWeight.proj
 Suite Teardown   Shutdown Emergent
 
 *** Variables ***
