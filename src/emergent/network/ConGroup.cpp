@@ -975,7 +975,7 @@ int ConGroup::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
           lidx = (int)taMisc::LexBuf.before(ci);
         }
         else {
-          wtvals[vidx++] = (float)taMisc::LexBuf.at(last_ci, ci-last_ci-1);
+          wtvals[vidx++] = (float)taMisc::LexBuf.at(last_ci, ci-last_ci);
         }
         last_ci = ci+1;
       }
