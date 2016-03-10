@@ -39,17 +39,17 @@ public:
   bool          on;             // is this filter active?
   float         wt;             // #CONDSHOW_ON_on how much relative weight does this filter have when combined with other filters (e.g., in the polarity-independent filters)
   float		gain;		// #CONDSHOW_ON_on #DEF_2 overall gain multiplier applied after gabor filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
-  int		n_angles;	// #CONDSHOW_ON_on #DEF_4 number of different angles encoded -- currently only 4 is supported
-  int		filter_size;	// #CONDSHOW_ON_on #DEF_6;8;12;16;24 size of the overall filter -- number of pixels wide and tall for a square matrix used to encode the filter -- filter is centered within this square -- computational speed advantage for it to be a multiple of 4
+  int		size;	        // #AKA_filter_size #CONDSHOW_ON_on #DEF_6;8;12;16;24;48;64 size of the overall filter -- number of pixels wide and tall for a square matrix used to encode the filter -- filter is centered within this square -- computational speed advantage for it to be a multiple of 4
   int		spacing;	// #CONDSHOW_ON_on how far apart to space the centers of the gabor filters -- 1 = every pixel, 2 = every other pixel, etc -- high-res should be 1 or 2, lower res can be increments therefrom
-  float		wvlen;		// #CONDSHOW_ON_on #DEF_6;12;18;24  wavelength of the sine waves -- number of pixels over which a full period of the wave takes place (computation adds a 2 PI factor to translate into pixels instead of radians)
-  float		gauss_sig_len;	// #CONDSHOW_ON_on #DEF_0.225;0.3 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter_size
-  float		gauss_sig_wd;	// #CONDSHOW_ON_on #DEF_0.15;0.2 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter_size
+  float		wvlen;		// #CONDSHOW_ON_on #DEF_6;12;18;24;48;64  wavelength of the sine waves -- number of pixels over which a full period of the wave takes place (computation adds a 2 PI factor to translate into pixels instead of radians)
+  float		gauss_sig_len;	// #CONDSHOW_ON_on #DEF_0.225;0.3 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of size
+  float		gauss_sig_wd;	// #CONDSHOW_ON_on #DEF_0.15;0.2 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of size
   float		phase_off;	// #CONDSHOW_ON_on #DEF_0;1.5708 offset for the sine phase -- can make it into a symmetric gabor by using PI/2 = 1.5708
-  bool		circle_edge;	// #CONDSHOW_ON_on #DEF_true cut off the filter (to zero) outside a circle of diameter filter_size -- makes the filter more radially symmetric
+  bool		circle_edge;	// #CONDSHOW_ON_on #DEF_true cut off the filter (to zero) outside a circle of diameter size -- makes the filter more radially symmetric
+  int		n_angles;	// #CONDSHOW_ON_on #DEF_4 number of different angles encoded -- currently only 4 is supported
 
   virtual void	RenderFilters(float_Matrix& fltrs);
-  // generate filters into the given matrix, which is formatted as: [filter_size][filter_size][n_angles]
+  // generate filters into the given matrix, which is formatted as: [size][size][n_angles]
 
   virtual void	GridFilters(float_Matrix& fltrs, DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filters into data table and generate a grid view (reset any existing data first)
@@ -252,9 +252,9 @@ public:
   int		n_colors;	// #READ_ONLY number of color channels to be processed (1 = monochrome, 4 = full color)
   int		n_polarities;	// #READ_ONLY #DEF_2 number of polarities per color -- always 2
   int		n_polclr;	// #READ_ONLY number of polarities * number of colors -- y dimension of simple features for example
-  float_Matrix	v1s_gabor_filters; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [filter_size][filter_size][n_angles]
-  float_Matrix	v1s_gabor_filters_2; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [filter_size][filter_size][n_angles]
-  float_Matrix	v1s_gabor_filters_3; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [filter_size][filter_size][n_angles]
+  float_Matrix	v1s_gabor_filters; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [size][size][n_angles]
+  float_Matrix	v1s_gabor_filters_2; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [size][size][n_angles]
+  float_Matrix	v1s_gabor_filters_3; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [size][size][n_angles]
   float_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each of the angles
   float_Matrix	v1s_ang_slopes_raw; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each of the angles -- non-normalized
   int_Matrix	v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]

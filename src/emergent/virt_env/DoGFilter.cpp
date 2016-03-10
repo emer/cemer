@@ -21,53 +21,66 @@
 TA_BASEFUNS_CTORS_DEFN(DoGFilter);
 
 
-
 void DoGFilter::Initialize() {
-  filter_width = 4;
-  filter_size = filter_width * 2 + 1;
+  on = true;
+  half_size = 4;
+  size = half_size * 2 + 1;
   on_sigma = 1.0f;
   off_sigma = 2.0f;
   spacing = 1;
+  gain = 2.0f;
   circle_edge = true;
-  on_filter.SetGeom(2, filter_size, filter_size);
-  off_filter.SetGeom(2, filter_size, filter_size);
-  net_filter.SetGeom(2, filter_size, filter_size);
+  on_filter.SetGeom(2, size, size);
+  off_filter.SetGeom(2, size, size);
+  net_filter.SetGeom(2, size, size);
 }
 
 void DoGFilter::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  filter_size = filter_width * 2 + 1;
+  size = half_size * 2 + 1;
   UpdateFilter();
 }
 
 void DoGFilter::RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt,
                                  float_Matrix& net_flt) {
-  on_flt.SetGeom(2, filter_size, filter_size);
-  off_flt.SetGeom(2, filter_size, filter_size);
-  net_flt.SetGeom(2, filter_size, filter_size);
+  on_flt.SetGeom(2, size, size);
+  off_flt.SetGeom(2, size, size);
+  net_flt.SetGeom(2, size, size);
   int x,y;
-  for(y=-filter_width; y<=filter_width; y++) {
-    for(x=-filter_width; x<=filter_width; x++) {
+  for(y=-half_size; y<=half_size; y++) {
+    for(x=-half_size; x<=half_size; x++) {
       float dist = taMath_float::hypot(x, y);
       float ong = 0.0f;
       float offg = 0.0f;
-      if(!circle_edge || (dist <= filter_width)) { // only set values inside of filter radius
+      if(!circle_edge || (dist <= half_size)) { // only set values inside of filter radius
         ong = taMath_float::gauss_den_sig(dist, on_sigma);
         offg = taMath_float::gauss_den_sig(dist, off_sigma);
       }
-      on_flt.Set(ong, x+filter_width, y+filter_width);
-      off_flt.Set(offg, x+filter_width, y+filter_width);
+      on_flt.Set(ong, x+half_size, y+half_size);
+      off_flt.Set(offg, x+half_size, y+half_size);
     }
   }
 
   taMath_float::vec_norm_sum(&on_flt); // make sure sums to 1.0
   taMath_float::vec_norm_sum(&off_flt); // make sure sums to 1.0
 
+  float pos_sum = 0.0f;
+  float neg_sum = 0.0f;
   for(int i=0;i<on_flt.size;i++) {
     float net = on_flt.FastEl_Flat(i) - off_flt.FastEl_Flat(i);
     net_flt.FastEl_Flat(i) = net;
+    if(net > 0.0f) pos_sum += net;
+    else           neg_sum += net;
   }
-  //  taMath_float::vec_norm_abs_max(&net_flt); // max norm = 1
+
+  // actually what matters most is balance on the NET guy!!
+  float pos_norm = 1.0f / pos_sum;
+  float neg_norm = -1.0f / neg_sum;
+  for(int i=0;i<on_flt.size;i++) {
+    float& val = net_flt.FastEl_Flat(i);
+    if(val > 0.0f)          { val *= pos_norm; }
+    else if(val < 0.0f)     { val *= neg_norm; }
+  }
 }
 
 void DoGFilter::UpdateFilter() {
@@ -92,9 +105,9 @@ void DoGFilter::GraphFilter(DataTable* graph_data) {
 
   float_Matrix* mat = &net_filter;
   int x,z;
-  for(z=-filter_width; z<=filter_width; z++) {
-    for(x=-filter_width; x<=filter_width; x++) {
-      float val = mat->FastEl2d(x+filter_width, z+filter_width);
+  for(z=-half_size; z<=half_size; z++) {
+    for(x=-half_size; x<=half_size; x++) {
+      float val = mat->FastEl2d(x+half_size, z+half_size);
       graph_data->AddBlankRow();
       xda->SetValAsFloat(x, -1);
       zda->SetValAsFloat(z, -1);
@@ -115,7 +128,7 @@ void DoGFilter::GridFilter(DataTable* graph_data, bool reset) {
     graph_data->Reset();
   int idx;
   DataCol* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
-  DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, filter_size, filter_size);
+  DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, size, size);
 
   float maxv = taMath_float::vec_max(&on_filter, idx);
 

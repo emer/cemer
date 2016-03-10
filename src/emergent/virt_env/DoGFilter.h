@@ -37,22 +37,25 @@ public:
   String	name;		// #HIDDEN_INLINE name of object
 #endif
 
-  int		filter_width;	// half-width of the filter (typically 2 * off_sigma)
-  int		filter_size;	// #READ_ONLY size of the filter: 2 * width + 1
-  float		on_sigma;	// width of the narrower central 'on' gaussian
-  float		off_sigma;	// width of the wider surround 'off' gaussian (typically 2 * on_sigma)
-  int		spacing;	// spacing between filters -- should be same as on_sigma
-  bool		circle_edge;	// #DEF_true cut off the filter (to zero) outside a circle of radius filter_width -- makes the filter more radially symmetric
+  bool          on;             // is this filter active?
+  int		half_size;	// #AKA_filter_width #CONDSHOW_ON_on half-width of the filter (typically 2 * off_sigma)
+  float		on_sigma;	// #CONDSHOW_ON_on width of the narrower central 'on' gaussian
+  float		off_sigma;	// #CONDSHOW_ON_on width of the wider surround 'off' gaussian (typically 2 * on_sigma)
+  int		spacing;	// #CONDSHOW_ON_on spacing between filters -- should be same as on_sigma
+  float		gain;		// #CONDSHOW_ON_on #DEF_2 overall gain multiplier applied after filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
+  bool		circle_edge;	// #CONDSHOW_ON_on #DEF_true cut off the filter (to zero) outside a circle of radius half_size -- makes the filter more radially symmetric
+  int		size;	        // #CONDSHOW_ON_on #READ_ONLY #SHOW size of the filter: 2 * half_size + 1
+  
   float_Matrix	on_filter;	// #READ_ONLY #NO_SAVE #NO_COPY on-gaussian 
   float_Matrix	off_filter;	// #READ_ONLY #NO_SAVE #NO_COPY off-gaussian (values are positive)
   float_Matrix	net_filter;	// #READ_ONLY #NO_SAVE #NO_COPY net overall filter -- on minus off
 
   inline float	FilterPoint(int x, int y, float img_val) {
-    return img_val * net_filter.FastEl2d(x+filter_width, y+filter_width);
+    return img_val * net_filter.FastEl2d(x+half_size, y+half_size);
   }
-  // #CAT_DoGFilter apply filter at given x,y point (-filter_width..filter_width) given image value (which can be either luminance or color contrast
+  // #CAT_DoGFilter apply filter at given x,y point (-half_size..half_size) given image value (which can be either luminance or color contrast
   float		InvertFilterPoint(int x, int y, float act) {
-    return 0.5f * act * net_filter.FastEl2d(x+filter_width, (int)(y+filter_width + 0.5f));
+    return 0.5f * act * net_filter.FastEl2d(x+half_size, (int)(y+half_size + 0.5f));
   }
   // #CAT_DoGFilter invert filter at given x,y point with net activation, returning image value -- this is probably not very accurate
 

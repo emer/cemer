@@ -25,8 +25,8 @@ void SaliencyPrjnSpec::Initialize() {
   reciprocal = false;
   feat_only = true;
   feat_gps = 2;
-  dog_wts.filter_width = 3;
-  dog_wts.filter_size = 7;
+  dog_wts.half_size = 3;
+  dog_wts.size = 7;
   dog_wts.on_sigma = 1;
   dog_wts.off_sigma = 2;
   wt_mult = 1.0f;
@@ -139,8 +139,8 @@ void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn, bool make_cons) {
   taVector2i ruu_geo = recv_lay->un_geom;
   taVector2i su_geo = send_lay->gp_geom;
 
-  int fltwd = dog_wts.filter_width; // no convergence..
-  int fltsz = dog_wts.filter_size * convergence;
+  int fltwd = dog_wts.half_size; // no convergence..
+  int fltsz = dog_wts.size * convergence;
 
   int sg_sz_tot = fltsz * fltsz;
   Unit_Group* su_gp0 = (Unit_Group*)send_lay->units.gp[0];
@@ -200,8 +200,8 @@ void SaliencyPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
 
-  int fltwd = dog_wts.filter_width; // no convergence.
-  int fltsz = dog_wts.filter_size * convergence;
+  int fltwd = dog_wts.half_size; // no convergence.
+  int fltsz = dog_wts.size * convergence;
 
   Unit_Group* su_gp0 = (Unit_Group*)send_lay->units.gp[0];
   units_per_feat_gp = su_gp0->size / feat_gps;

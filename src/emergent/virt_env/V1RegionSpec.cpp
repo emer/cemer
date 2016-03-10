@@ -33,7 +33,7 @@ void V1GaborSpec::Initialize() {
   wt = 1.0f;
   gain = 2.0f;
   n_angles = 4;
-  filter_size = 8;
+  size = 8;
   spacing = 1;
   wvlen = 6.0f;
   gauss_sig_len = 0.25f;
@@ -47,15 +47,15 @@ void V1GaborSpec::UpdateAfterEdit_impl() {
 }
 
 void V1GaborSpec::RenderFilters(float_Matrix& fltrs) {
-  fltrs.SetGeom(3, filter_size, filter_size, n_angles);
+  fltrs.SetGeom(3, size, size, n_angles);
 
-  float ctr = (float)(filter_size-1) / 2.0f;
+  float ctr = (float)(size-1) / 2.0f;
   float ang_inc = taMath_float::pi / (float)n_angles;
 
-  float circ_radius = (float)(filter_size) / 2.0f;
+  float circ_radius = (float)(size) / 2.0f;
 
-  float gs_len_eff = gauss_sig_len * (float)filter_size;
-  float gs_wd_eff = gauss_sig_wd * (float)filter_size;
+  float gs_len_eff = gauss_sig_len * (float)size;
+  float gs_wd_eff = gauss_sig_wd * (float)size;
 
   float len_norm = 1.0f / (2.0f * gs_len_eff * gs_len_eff);
   float wd_norm = 1.0f / (2.0f * gs_wd_eff * gs_wd_eff);
@@ -67,8 +67,8 @@ void V1GaborSpec::RenderFilters(float_Matrix& fltrs) {
 
     float pos_sum = 0.0f;
     float neg_sum = 0.0f;
-    for(int x = 0; x < filter_size; x++) {
-      for(int y = 0; y < filter_size; y++) {
+    for(int x = 0; x < size; x++) {
+      for(int y = 0; y < size; y++) {
         float xf = (float)x - ctr;
         float yf = (float)y - ctr;
 
@@ -89,8 +89,8 @@ void V1GaborSpec::RenderFilters(float_Matrix& fltrs) {
     // renorm each half
     float pos_norm = 1.0f / pos_sum;
     float neg_norm = -1.0f / neg_sum;
-    for(int x = 0; x < filter_size; x++) {
-      for(int y = 0; y < filter_size; y++) {
+    for(int x = 0; x < size; x++) {
+      for(int y = 0; y < size; y++) {
         float& val = fltrs.FastEl3d(x, y, ang);
         if(val > 0.0f)          { val *= pos_norm; }
         else if(val < 0.0f)     { val *= neg_norm; }
@@ -115,7 +115,7 @@ void V1GaborSpec::GridFilters(float_Matrix& fltrs, DataTable* graph_data, bool r
   int idx;
   DataCol* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
 //   nmda->SetUserData("WIDTH", 10);
-  DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, filter_size, filter_size);
+  DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, size, size);
 
   float maxv = taMath_float::vec_abs_max(&fltrs, idx);
 
@@ -1073,7 +1073,7 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int thr_no) {
   taVector2i ed;
   GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
 
-  int flt_wdf = v1s_specs.filter_size; // full-width
+  int flt_wdf = v1s_specs.size; // full-width
   int flt_wd;                          // half-width
   if(flt_wdf % 2 == 0)
     flt_wd = flt_wdf / 2;
@@ -2423,7 +2423,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
   graph_data->SetUserData("BLOCK_SPACE", 4.0f);
   //  graph_data->SetUserData("WIDTH", .5f + (float)input_size.retina_size.x / (float)input_size.retina_size.y);
 
-  taVector2i max_sz(v1s_specs.filter_size, v1s_specs.filter_size);
+  taVector2i max_sz(v1s_specs.size, v1s_specs.size);
   max_sz.Max(si_specs.spat_rf);
 
   int mot_rf_max = 5;
