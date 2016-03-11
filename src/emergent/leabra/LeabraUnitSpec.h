@@ -757,7 +757,10 @@ public:
     virtual void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #CAT_Deep state update for deep leabra -- typically at start of new alpha trial --
 
-    
+  void  Init_InputData(UnitVars* u, Network* net, int thr_no) override;
+  
+  virtual void ApplyInputData_post(LeabraUnitVars* uv);
+  // #CAT_Activation post-apply input data -- cache the ext value b/c it might get overwritten in transforms of the input data, as in ScalarValLayerSpec
   virtual void Compute_HardClamp(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Activation force units to external values provided by environment
   virtual void Compute_HardClampNoClip(LeabraUnitVars* uv, LeabraNetwork* net,

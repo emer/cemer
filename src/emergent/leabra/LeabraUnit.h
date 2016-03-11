@@ -37,6 +37,10 @@ class E_API LeabraUnit : public Unit {
   // #STEM_BASE ##CAT_Leabra Leabra unit, point-neuron approximation
 INHERITED(Unit)
 public:
+
+  void  ApplyInputData(float val, UnitVars::ExtFlags act_ext_flags,
+                       Random* ran = NULL, bool na_by_range=false) override;
+
   inline UnitVars::ExtFlags ext_flag() { return GetUnitVars()->ext_flag; }
   // #CAT_UnitVar external input flags -- determines whether the unit is receiving an external input (EXT), target (TARG), or comparison value (COMP)
   inline float& targ()  { return GetUnitVars()->targ; }
@@ -52,6 +56,15 @@ public:
   inline float& bias_dwt() { return GetUnitVars()->bias_dwt; }
   // #VIEW_HOT #CAT_UnitVar change in bias weight value as computed by a learning mechanism
 
+  inline float& bias_fwt()
+  { return ((LeabraUnitVars*)GetUnitVars())->bias_fwt; }
+  // #CAT_UnitVar bias weight: fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
+  inline float& bias_swt()
+  { return ((LeabraUnitVars*)GetUnitVars())->bias_swt; }
+  // #CAT_UnitVar bias weight: slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time  
+  inline float& ext_orig()
+  { return ((LeabraUnitVars*)GetUnitVars())->ext_orig; }
+  // #CAT_UnitVar original external input value (ext) -- need to save this in case ext gets transformed in various ways in the clamping process e.g., for ScalarValue layers
   inline float& act_eq()
   { return ((LeabraUnitVars*)GetUnitVars())->act_eq; }
   // #VIEW_HOT #CAT_UnitVar rate-code equivalent activity value (time-averaged spikes or just act for rate code equation, NXX1) -- this includes any short-term plasticity in synaptic efficacy (e.g., depression or enhancement -- see LeabraUnitSpec::stp parameters)

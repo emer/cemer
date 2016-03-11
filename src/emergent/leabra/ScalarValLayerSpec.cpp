@@ -359,7 +359,7 @@ void ScalarValLayerSpec::ClampValue_ugp
     uv->ClearExtFlag(UnitVars::EXT);
   else
     uv->SetExtFlag(UnitVars::EXT);
-  float val = uv->ext;
+  float val = uv->ext_orig;     // have to use the orig value b/c ext gets computed!
   if(scalar.clip_val)
     val = val_range.Clip(val);          // first unit has the value to clamp
   uv->act_eq = uv->misc_1 = val;        // record this val

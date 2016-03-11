@@ -584,6 +584,9 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   LeabraNetwork* net = (LeabraNetwork*)rnet;
   inherited::Init_Vars(u, net, thr_no);
 
+  u->bias_fwt = 0.0f;
+  u->bias_swt = 0.0f;
+  u->ext_orig = 0.0f;
   u->act_eq = 0.0f;
   u->act_nd = 0.0f;
   u->spike = 0.0f;
@@ -976,10 +979,12 @@ void LeabraUnitSpec::Quarter_Init_TargFlags(LeabraUnitVars* u, LeabraNetwork* ne
     //   u->targ = u->ext;
     // }
     u->ext = 0.0f;
+    u->ext_orig = u->ext;
     u->ClearExtFlag(UnitVars::EXT);
   }
   else {
     u->ext = u->targ;
+    u->ext_orig = u->ext;
     u->SetExtFlag(UnitVars::EXT);
   }
 }
@@ -1115,6 +1120,17 @@ void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net
   u->deep_raw_prv = u->deep_raw; // keep track of what we sent here, for context learning
 }
 
+void LeabraUnitSpec::Init_InputData(UnitVars* u, Network* net, int thr_no) {
+  inherited::Init_InputData(u, net, thr_no);
+  ((LeabraUnitVars*)u)->ext_orig = 0.0f;
+}
+
+void LeabraUnitSpec::ApplyInputData_post(LeabraUnitVars* u) {
+  if(!u->HasExtFlag(UnitVars::EXT))
+    return;
+  u->ext_orig = u->ext;
+}
+
 void LeabraUnitSpec::Compute_HardClamp(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!u->HasExtFlag(UnitVars::EXT))
     return;
@@ -1177,7 +1193,7 @@ void LeabraUnitSpec::ExtToComp(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
     return;
   u->ClearExtFlag(UnitVars::EXT);
   u->SetExtFlag(UnitVars::COMP);
-  u->targ = u->ext;
+  u->targ = u->ext_orig;        // orig is safer
   u->ext = 0.0f;
 }
 
@@ -1185,7 +1201,7 @@ void LeabraUnitSpec::TargExtToComp(LeabraUnitVars* u, LeabraNetwork* net, int th
   if(!u->HasExtFlag(UnitVars::TARG_EXT))
     return;
   if(u->HasExtFlag(UnitVars::EXT))
-    u->targ = u->ext;
+    u->targ = u->ext_orig;      // orig is safer
   u->ext = 0.0f;
   u->ClearExtFlag(UnitVars::TARG_EXT);
   u->SetExtFlag(UnitVars::COMP);
