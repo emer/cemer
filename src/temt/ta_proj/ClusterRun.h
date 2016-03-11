@@ -140,7 +140,7 @@ public:
   virtual void  UpdtNotes();
   // #MENU_BUTTON #MENU_ON_Jobs update notes field of completed jobs -- enter a new note in the table and then do this, and it will update the table permanently -- otherwise all edits are overwritten by the version in svn which is only updated on the cluster side
   virtual void  RemoveJobs();
-  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove jobs selected in the jobs_done or jobs_archive data tables, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this) -- for cleaning up old unneeded jobs
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs to the deleted table, including all their data that has been checked in (according to the local contents of the repository) -- jobs in the deleted table can be undeleted or permanently deleted -- (good idea to do an Update before running this) -- for cleaning up old unneeded jobs
   virtual void  RemoveKilledJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove ALL jobs in the jobs_done data table with a status of KILLED, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this)
   virtual void  UnDeleteJobs();
