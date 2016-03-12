@@ -70,9 +70,21 @@ bool taImage::LoadImageFromBase64(const QByteArray &data) {
   return rval;
 }
 
+bool taImage::LoadImageFromString(const String &image_string) {
+  bool rval = true;
+  
+  ImageChanging();
+  QByteArray by = image_string.toQByteArray();
+  if (!q_img.loadFromData(by)) {
+    rval = false;
+  }
+  ImageChanged();
+  return rval;
+}
+
 bool taImage::SaveImage(const String& fname) {
   String fnm = fname;
-  if (fname.empty()) {
+  if (fname.empty()) { 
     taFiler* flr = GetLoadFiler(fname);
     fnm = flr->FileName();
     flr->Close();
