@@ -39,11 +39,11 @@ public:
   bool          on;             // is this filter active?
   float         wt;             // #CONDSHOW_ON_on how much relative weight does this filter have when combined with other filters (e.g., in the polarity-independent filters)
   float		gain;		// #CONDSHOW_ON_on #DEF_2 overall gain multiplier applied after gabor filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
-  int		size;	        // #AKA_filter_size #CONDSHOW_ON_on #DEF_6;8;12;16;24;48;64 size of the overall filter -- number of pixels wide and tall for a square matrix used to encode the filter -- filter is centered within this square -- computational speed advantage for it to be a multiple of 4
+  int		size;	        // #CONDSHOW_ON_on #DEF_6;8;12;16;24;48;64 #AKA_filter_size size of the overall filter -- number of pixels wide and tall for a square matrix used to encode the filter -- filter is centered within this square -- computational speed advantage for it to be a multiple of 4
   int		spacing;	// #CONDSHOW_ON_on how far apart to space the centers of the gabor filters -- 1 = every pixel, 2 = every other pixel, etc -- high-res should be 1 or 2, lower res can be increments therefrom
   float		wvlen;		// #CONDSHOW_ON_on #DEF_6;12;18;24;48;64  wavelength of the sine waves -- number of pixels over which a full period of the wave takes place (computation adds a 2 PI factor to translate into pixels instead of radians)
-  float		gauss_sig_len;	// #CONDSHOW_ON_on #DEF_0.225;0.3 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of size
-  float		gauss_sig_wd;	// #CONDSHOW_ON_on #DEF_0.15;0.2 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of size
+  float		sig_len;	// #CONDSHOW_ON_on #DEF_0.225;0.3 #AKA_gauss_sig_len gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of size
+  float		sig_wd;	// #CONDSHOW_ON_on #DEF_0.15;0.2 #AKA_gauss_sig_wd gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of size
   float		phase_off;	// #CONDSHOW_ON_on #DEF_0;1.5708 offset for the sine phase -- can make it into a symmetric gabor by using PI/2 = 1.5708
   bool		circle_edge;	// #CONDSHOW_ON_on #DEF_true cut off the filter (to zero) outside a circle of diameter size -- makes the filter more radially symmetric
   int		n_angles;	// #CONDSHOW_ON_on #DEF_4 number of different angles encoded -- currently only 4 is supported
@@ -92,7 +92,7 @@ public:
   int		n_speeds;	// #DEF_1 for motion coding, number of speeds in each direction to encode separately -- only applicable if motion_frames > 1
   int		speed_inc;	// #DEF_1 how much to increase speed for each speed value -- how fast is the slowest speed basically
   int		tuning_width;	// #DEF_1 additional width of encoding around the trajectory for the target speed -- allows for some fuzziness in encoding -- effective value is multiplied by speed, so it gets fuzzier as speed gets higher
-  float		gauss_sig;	// #DEF_0.8 gaussian sigma for weighting the contribution of extra width guys -- normalized by effective tuning_width
+  float		sig;	        // #DEF_0.8 #AKA_gauss_sig gaussian sigma for weighting the contribution of extra width guys -- normalized by effective tuning_width
   float		opt_thr;	// #DEF_0.01 optimization threshold -- skip if current value is below this value
 
   int		tot_width;	// #READ_ONLY total width = 1 + 2 * tuning_width
@@ -162,7 +162,7 @@ public:
   bool          v1pi;           // #CONDSHOW_ON_on do spat integ on V1 polarity invariance, which just has angles and does a max over polarities and color contrasts -- lower dimensionality -- operates on square grouped elements if that is active
   bool          v1c;            // #CONDSHOW_ON_on do spat integ on V1 complex, which is length sum and end stop operating on top of polarity independent features -- note that this INCLUDES the v1s features if that option is selected in the v1c_specs options
   taVector2i	spat_rf;	// #CONDSHOW_ON_on integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- always uses 1/2 overlap spacing
-  float		gauss_sig;	// #CONDSHOW_ON_on #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
+  float		sig;	        // #CONDSHOW_ON_on #DEF_0.8 #AKA_gauss_sig gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
   bool		sum_rf;		// #CONDSHOW_ON_on #DEF_false sum over the receptive field instead of computing the max (actually computes the average instead of sum)
 
   taVector2i	spat_half;	// #READ_ONLY half rf

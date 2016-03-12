@@ -37,8 +37,8 @@ void V1GaborSpec::Initialize() {
   size = 8;
   spacing = 1;
   wvlen = 6.0f;
-  gauss_sig_len = 0.25f;
-  gauss_sig_wd = 0.15f;
+  sig_len = 0.3f;
+  sig_wd = 0.2f;
   phase_off = 0.0f;
   circle_edge = true;
 }
@@ -55,8 +55,8 @@ void V1GaborSpec::RenderFilters(float_Matrix& fltrs) {
 
   float circ_radius = (float)(size) / 2.0f;
 
-  float gs_len_eff = gauss_sig_len * (float)size;
-  float gs_wd_eff = gauss_sig_wd * (float)size;
+  float gs_len_eff = sig_len * (float)size;
+  float gs_wd_eff = sig_wd * (float)size;
 
   float len_norm = 1.0f / (2.0f * gs_len_eff * gs_len_eff);
   float wd_norm = 1.0f / (2.0f * gs_wd_eff * gs_wd_eff);
@@ -163,7 +163,7 @@ void V1MotionSpec::Initialize() {
   n_speeds = 1;
   speed_inc = 1;
   tuning_width = 1;
-  gauss_sig = 0.8f;
+  sig = 0.8f;
   opt_thr = 0.01f;
 
   tot_width = 1 + 2 * tuning_width;
@@ -226,7 +226,7 @@ void VisSpatIntegSpec::Initialize() {
   v1pi = false;
   v1c = true;
   spat_rf = 6;
-  gauss_sig = 0.8f;
+  sig = 0.8f;
   sum_rf = false;
 
   spat_half = spat_rf / 2;
@@ -268,19 +268,17 @@ void V1RegionSpec::Initialize() {
   opt_filters = OF_NONE;
   opt_save = SAVE_DATA;
 
-  v1s_kwta.mode = V1KwtaSpec::FFFB;
+  v1s_kwta.on = true;
   v1s_kwta.gi = 2.0f;
   v1s_kwta.lay_gi = 1.5f;
-  v1s_kwta.gp_k = 1;
-  v1s_kwta.gp_g = 0.02f;
   v1s_neigh_inhib.inhib_g = 0.6f; // FFFB
 
+  v1c_kwta.on = false;
+  
   si_renorm = NO_RENORM;
-  si_kwta.mode = V1KwtaSpec::FFFB;
+  si_kwta.on = true;
   si_kwta.gi = 1.5f;
   si_kwta.lay_gi = 1.5f;
-  si_kwta.gp_k = 2;
-  si_kwta.gp_g = 0.1f;
 
   n_colors = 1;
   n_polarities = 2;
@@ -572,7 +570,7 @@ bool V1RegionSpec::InitFilters_V1Motion() {
     int idx = 0;
     for(int x=-v1s_motion.tuning_width; x<=v1s_motion.tuning_width; x++, idx++) {
       float fx = (float)x / (float)v1s_motion.tuning_width;
-      v1m_weights.FastEl1d(idx) = taMath_float::gauss_den_sig(fx, v1s_motion.gauss_sig);
+      v1m_weights.FastEl1d(idx) = taMath_float::gauss_den_sig(fx, v1s_motion.sig);
     }
   }
   taMath_float::vec_norm_max(&v1m_weights); // max norm to 1
@@ -698,8 +696,7 @@ bool V1RegionSpec::InitFilters_V1Complex() {
 bool V1RegionSpec::InitFilters_SpatInteg() {
   if(si_specs.spat_rf.MaxVal() > 1) {
     taMath_float::vec_kern2d_gauss(&si_weights, si_specs.spat_rf.x,
-                                   si_specs.spat_rf.y, si_specs.gauss_sig,
-                                   si_specs.gauss_sig);
+                                   si_specs.spat_rf.y, si_specs.sig, si_specs.sig);
     taMath_float::vec_norm_max(&si_weights, 1.0f); // max, not sum
   }
   else {

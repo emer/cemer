@@ -29,6 +29,7 @@ void DoGFilter::Initialize() {
   off_sigma = 2.0f;
   spacing = 1;
   gain = 2.0f;
+  on_gain = 1.0f;
   circle_edge = true;
   on_filter.SetGeom(2, size, size);
   off_filter.SetGeom(2, size, size);
@@ -74,12 +75,14 @@ void DoGFilter::RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt,
   }
 
   // actually what matters most is balance on the NET guy!!
-  float pos_norm = 1.0f / pos_sum;
-  float neg_norm = -1.0f / neg_sum;
-  for(int i=0;i<on_flt.size;i++) {
-    float& val = net_flt.FastEl_Flat(i);
-    if(val > 0.0f)          { val *= pos_norm; }
-    else if(val < 0.0f)     { val *= neg_norm; }
+  if(pos_sum != 0.0f && neg_sum != 0.0f) {
+    float pos_norm = 1.0f / pos_sum;
+    float neg_norm = -1.0f / neg_sum;
+    for(int i=0;i<on_flt.size;i++) {
+      float& val = net_flt.FastEl_Flat(i);
+      if(val > 0.0f)          { val *= pos_norm; }
+      else if(val < 0.0f)     { val *= neg_norm; }
+    }
   }
 }
 

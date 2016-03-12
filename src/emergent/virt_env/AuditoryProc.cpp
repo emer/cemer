@@ -308,11 +308,9 @@ void AuditoryProc::Initialize() {
   mel_n_filters_eff = 0;
   mel_filt_max_bins = 0;
   
-  gabor_kwta.mode = V1KwtaSpec::FFFB;
+  gabor_kwta.on = true;
   gabor_kwta.gi = 2.0f;
   gabor_kwta.lay_gi = 1.5f;
-  gabor_kwta.gp_k = 1;
-  gabor_kwta.gp_g = 0.02f;
 
   gabor1.on = true;
   gabor1.sz_time = 6;

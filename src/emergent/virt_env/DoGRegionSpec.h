@@ -68,14 +68,15 @@ class E_API DoGRegionSpec : public VisRegionSpecBase {
 INHERITED(VisRegionSpecBase)
 public:
   DoGFilter	dog_specs;	// Difference of Gaussian retinal filter specification
-  RenormMode	dog_renorm;	// #DEF_LOG_RENORM how to renormalize the output of filters
-  DataSave	dog_save;	// how to save the DoG outputs for the current time step in the data table -- if SEP_MATRIX is not selected and grad is selected, an integrated output will be produced
+  bool          dog_color_only; // #CONDSHOW_ON_dog_specs.on only apply DoG's to color opponent channels -- not to monochrome channel -- only relevant for COLOR processing obviously..
+  RenormMode	dog_renorm;	// #CONDSHOW_ON_dog_specs.on #DEF_LOG_RENORM how to renormalize the output of filters
+  DataSave	dog_save;	// #CONDSHOW_ON_dog_specs.on how to save the DoG outputs for the current time step in the data table -- if SEP_MATRIX is not selected and grad is selected, an integrated output will be produced
   GradFilter	grad_specs;	// Gradient filter -- picks up on gradual changes in illumination
   RenormMode	grad_renorm;	// #DEF_LOG_RENORM how to renormalize the output of filters
   DataSave	grad_save;	// how to save the gradient outputs for the current time step in the data table -- if SEP_MATRIX is not selected and dog is selected, an integrated output will be produced
   V1KwtaSpec	kwta;	        // k-winner-take-all inhibitory dynamics for the filter output -- applied to combined feature output if they are being combined, otherwise to grad if active, otherwise to dog
   
-  XYNGeom	dog_feat_geom; 	// #CONDSHOW_ON_dog_specs.on #READ_ONLY #SHOW size of one hypercolumn of features for DoG filtering -- x axis = color channel: 0 = monochrome, 1 = red/cyan, 2 = green/magenta, 3 = blue/yellow, y axis = 2 = on/off  (2 units total for monochrome, 8 total for color)
+  XYNGeom	dog_feat_geom; 	// #CONDSHOW_ON_dog_specs.on #READ_ONLY #SHOW size of one hypercolumn of features for DoG filtering -- x axis = color channel: 0 = monochrome (not if dog_color_only true), 1 = red vs. green, 2 = blue vs. yellow, y axis = 2 = on/off  (2 units total for monochrome, 4 or 6 total for color)
   taVector2i	dog_img_geom; 	// #CONDSHOW_ON_dog_specs.on #READ_ONLY #SHOW size of dog-filtered image output -- number of hypercolumns in each axis to cover entire output -- this is completely determined by retina_size, border and spacing parameters
   XYNGeom	grad_feat_geom; // #CONDSHOW_ON_grad_specs.on #READ_ONLY #SHOW size of one hypercolumn of features for gradient filtering -- x axis = angle, y axis = 2 = polarity
   taVector2i	grad_img_geom; 	// #CONDSHOW_ON_grad_specs.on #READ_ONLY #SHOW size of grad-filtered image output -- number of hypercolumns in each axis to cover entire output -- this is completely determined by retina_size, border and spacing parameters

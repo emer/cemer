@@ -135,6 +135,8 @@ void DoGRegionSpec::Initialize() {
   dog_specs.on_sigma = 1;
   dog_specs.off_sigma = 2;
   dog_specs.circle_edge = true;
+
+  dog_color_only = true;
   dog_renorm = LOG_RENORM;
   dog_save = SAVE_DATA;
   dog_feat_geom.x = 1;
@@ -146,11 +148,9 @@ void DoGRegionSpec::Initialize() {
   grad_renorm = LOG_RENORM;
   grad_save = SAVE_DATA;
 
-  kwta.mode = V1KwtaSpec::OFF;
+  kwta.on = false;
   kwta.gi = 2.0f;
   kwta.lay_gi = 1.5f;
-  kwta.gp_k = 1;
-  kwta.gp_g = 0.02f;
 }
 
 void DoGRegionSpec::UpdateAfterEdit_impl() {
@@ -184,7 +184,10 @@ void DoGRegionSpec::UpdateGeom() {
     grad_img_geom = ((input_size.input_size - 1) / grad_specs.spacing) + 1;
   }
   if(region.color == VisRegionParams::COLOR) {
-    dog_feat_geom.SetXYN(4,2,8);
+    if(dog_color_only)
+      dog_feat_geom.SetXYN(2,2,4);
+    else
+      dog_feat_geom.SetXYN(3,2,6);
   }
   else {
     dog_feat_geom.SetXYN(1,2,2);
@@ -208,15 +211,23 @@ void DoGRegionSpec::UpdateGeom() {
 String DoGRegionSpec::GetDoGFiltName(int flt_no) {
   String nm;
   if(region.color == VisRegionParams::COLOR) {
-    switch(flt_no) {
-    case 0: nm = "on"; break;
-    case 1: nm = "rvc"; break;
-    case 2: nm = "gvm"; break;
-    case 3: nm = "bvy"; break;
-    case 4: nm = "off"; break;
-    case 5: nm = "cvr"; break;
-    case 6: nm = "mvg"; break;
-    case 7: nm = "yvb"; break;
+    if(dog_color_only) {
+      switch(flt_no) {
+      case 0: nm = "r_g"; break;
+      case 1: nm = "b_y"; break;
+      case 2: nm = "g_r"; break;
+      case 3: nm = "y_b"; break;
+      }
+    }
+    else {
+      switch(flt_no) {
+      case 0: nm = "on"; break;
+      case 1: nm = "r_g"; break;
+      case 2: nm = "b_y"; break;
+      case 3: nm = "off"; break;
+      case 4: nm = "g_r"; break;
+      case 5: nm = "y_b"; break;
+      }
     }
   }
   else {
@@ -240,8 +251,7 @@ bool DoGRegionSpec::InitOutMatrix() {
   if(dog_specs.on) {
     dog_out_r.SetGeom(4, dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y);
     if(region.ocularity == VisRegionParams::BINOCULAR)
-      dog_out_l.SetGeom(4, dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x,
-                        dog_img_geom.y);
+      dog_out_l.SetGeomN(dog_out_r.geom);
     else
       dog_out_l.SetGeom(1,1);     // free memory
   }
@@ -254,8 +264,7 @@ bool DoGRegionSpec::InitOutMatrix() {
     grad_out_r.SetGeom(4, grad_feat_geom.x, grad_feat_geom.y, grad_img_geom.x,
                        grad_img_geom.y);
     if(region.ocularity == VisRegionParams::BINOCULAR)
-      grad_out_l.SetGeom(4, grad_feat_geom.x, grad_feat_geom.y, grad_img_geom.x,
-                         grad_img_geom.y);
+      grad_out_l.SetGeomN(grad_out_r.geom);
     else
       grad_out_l.SetGeom(1,1);     // free memory
   }
@@ -268,8 +277,7 @@ bool DoGRegionSpec::InitOutMatrix() {
     cmb_out_r.SetGeom(4, cmb_feat_geom.x, cmb_feat_geom.y, grad_img_geom.x,
                        grad_img_geom.y);
     if(region.ocularity == VisRegionParams::BINOCULAR)
-      cmb_out_l.SetGeom(4, cmb_feat_geom.x, cmb_feat_geom.y, grad_img_geom.x,
-                         grad_img_geom.y);
+      cmb_out_l.SetGeomN(cmb_out_r.geom);
     else
       cmb_out_l.SetGeom(1,1);     // free memory
 
@@ -408,12 +416,11 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out) {
   wrap = (region.edge_mode == VisRegionParams::WRAP);
 
   if(rgb_img) {
-    PrecomputeColor(cur_img);   // precompute!
+    PrecomputeColor(cur_img, true);   // need rgb separate!
   }
 
   IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImage_thread);
 
-  // renormalize -- todo: could thread this perhaps, but chunk size would have to be larger probably
   if(dog_renorm != NO_RENORM) {
     RenormOutput(dog_renorm, out);
   }
@@ -426,7 +433,9 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
   taVector2i ed;
   GetThread2DGeom(thr_no, dog_img_geom, st, ed);
 
-  const float* flt = (const float*)dog_specs.net_filter.data();
+  const float* net_flt = (const float*)dog_specs.net_filter.data();
+  const float* on_flt = (const float*)dog_specs.on_filter.data();
+  const float* off_flt = (const float*)dog_specs.off_filter.data();
   int   flt_wd = dog_specs.half_size; // half-size
   int   flt_wdf = dog_specs.size;     // full-size
   int   flt_vecw = flt_wdf / 4;
@@ -449,13 +458,13 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
 
       // y = on/off, x = color channel
       for(int chan = 0; chan < dog_feat_geom.x; chan++) {
-        ColorChannel cchan = (ColorChannel)chan;
-        if(rgb_img) {
-          dog_img = GetImageForChan(cchan);
-        }
+        float cnv_sum = 0.0f;
 
-        float cnv_sum = 0.0f;               // convolution sum
-        if(chan == 0 || rgb_img) {          // only rgb images if chan > 0
+        if(chan == 0 && !(dog_color_only && rgb_img)) { // monochrome
+          ColorChannel cchan = (ColorChannel)chan;
+          if(rgb_img) {
+            dog_img = GetImageForChan(cchan);
+          }
           int fi = 0;
           for(int yf = -flt_wd; yf <= flt_wd; yf++) {
             if(ne) {
@@ -464,16 +473,16 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
               int xf;
               for(xf = 0; xf < flt_vecw; xf+= 4, fi+=4) {
                 Vec4f ivals;  ivals.load(dog_img->el + img_st + xf);
-                Vec4f fvals;  fvals.load(flt + fi);
+                Vec4f fvals;  fvals.load(net_flt + fi);
                 Vec4f prod = ivals * fvals;
                 cnv_sum += horizontal_add(prod);
               }
               for(; xf < flt_wdf; xf++, fi++) { // get the residuals
-                cnv_sum += dog_img->FastEl_Flat(img_st + xf) * flt[fi];
+                cnv_sum += dog_img->FastEl_Flat(img_st + xf) * net_flt[fi];
               }
 #else              
               for(int xf = 0; xf < flt_wdf; xf++, fi++) {
-                cnv_sum += dog_img->FastEl_Flat(img_st + xf) * flt[fi];
+                cnv_sum += dog_img->FastEl_Flat(img_st + xf) * net_flt[fi];
               }
 #endif              
             }
@@ -484,10 +493,68 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
                 if(ic.WrapClip(wrap, input_size.retina_size)) {
                   if(region.edge_mode == VisRegionParams::CLIP) continue;
                 }
-                cnv_sum += dog_img->FastEl2d(ic.x, ic.y) * flt[fi];
+                cnv_sum += dog_img->FastEl2d(ic.x, ic.y) * net_flt[fi];
               }
             }
           }
+        } // monochrome
+        else {
+          // color
+          int eff_chan = chan;
+          if(dog_color_only) eff_chan++;
+          float_Matrix* img_on;
+          float_Matrix* img_off;
+          if(eff_chan == 1) { // red vs. green
+            img_on = GetImageForChan(RED);
+            img_off = GetImageForChan(GREEN);
+          }
+          else {
+            img_on = GetImageForChan(BLUE);
+            img_off = GetImageForChan(YELLOW);
+          }
+          float on_sum = 0.0f;
+          float off_sum = 0.0f;
+          int fi = 0;
+          for(int yf = -flt_wd; yf <= flt_wd; yf++) {
+            if(ne) {
+              int img_st = img_on->FastElIndex2d(icc.x - flt_wd, icc.y + yf);
+#ifdef TA_VEC_USE
+              int xf;
+              for(xf = 0; xf < flt_vecw; xf+= 4, fi+=4) {
+                Vec4f ivals_on;  ivals_on.load(img_on->el + img_st + xf);
+                Vec4f fvals_on;  fvals_on.load(on_flt + fi);
+                Vec4f ivals_off;  ivals_off.load(img_off->el + img_st + xf);
+                Vec4f fvals_off;  fvals_off.load(off_flt + fi);
+                Vec4f prod_on = ivals_on * fvals_on;
+                Vec4f prod_off = ivals_off * fvals_off;
+                on_sum += horizontal_add(prod_on);
+                off_sum += horizontal_add(prod_off);
+              }
+              for(; xf < flt_wdf; xf++, fi++) { // get the residuals
+                on_sum += img_on->FastEl_Flat(img_st + xf) * on_flt[fi];
+                off_sum += img_off->FastEl_Flat(img_st + xf) * off_flt[fi];
+              }
+#else              
+              for(int xf = 0; xf < flt_wdf; xf++, fi++) {
+                on_sum += img_on->FastEl_Flat(img_st + xf) * on_flt[fi];
+                off_sum += img_off->FastEl_Flat(img_st + xf) * off_flt[fi];
+              }
+#endif              
+            }
+            else {
+              for(int xf = -flt_wd; xf <= flt_wd; xf++, fi++) {
+                ic.y = icc.y + yf;
+                ic.x = icc.x + xf;
+                if(ic.WrapClip(wrap, input_size.retina_size)) {
+                  if(region.edge_mode == VisRegionParams::CLIP) continue;
+                }
+                on_sum += img_on->FastEl2d(ic.x, ic.y) * on_flt[fi];
+                off_sum += img_off->FastEl2d(ic.x, ic.y) * off_flt[fi];
+              }
+            }
+          }
+          cnv_sum = dog_specs.on_gain * on_sum - off_sum;
+          // color
         }
         cnv_sum *= dog_specs.gain;
         

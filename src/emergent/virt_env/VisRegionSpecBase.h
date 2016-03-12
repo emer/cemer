@@ -113,7 +113,10 @@ public:
     LUMINANCE,			// just raw luminance (monochrome / black white)
     RED_GREEN,			// red vs. green pre-subtracted -- good for gabor / spatial double-opponent filters
     BLUE_YELLOW,                // blue vs. yellow pre-subtracted -- good for gabor / spatial double-opponent filters
-    YELLOW,                     // yellow channel only
+    RED,                        // red
+    GREEN,                      // green
+    BLUE,                       // blue 
+    YELLOW,                     // yellow
   };
   enum Eye {
     LEFT,			
@@ -160,6 +163,18 @@ public:
 			    bool motion_only = false);
   // main interface: filter input image(s) (if ocularity = BINOCULAR, must pass both images, else left eye is ignored) -- saves results in local output vectors, and data table if specified -- increments the time index if motion filtering -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence
 
+  // following are all computed by PrecomputeColor function
+  float_Matrix cur_img_grey;	// #READ_ONLY #NO_SAVE greyscale version of color image
+  float_Matrix cur_img_rd;	// #READ_ONLY #NO_SAVE RED channel
+  float_Matrix cur_img_gn;	// #READ_ONLY #NO_SAVE GREEN channel
+  float_Matrix cur_img_bl;	// #READ_ONLY #NO_SAVE BLUE channel
+  float_Matrix cur_img_yl;	// #READ_ONLY #NO_SAVE YELLOW channel = .5*(R+G)
+  float_Matrix cur_img_rg;	// #READ_ONLY #NO_SAVE RED - GREEN difference
+  float_Matrix cur_img_by;	// #READ_ONLY #NO_SAVE BLUE - YELLOW difference
+
+  float_Matrix cur_img_r_adapt; // #READ_ONLY #NO_SAVE accumulation of activation over time to drive adaptation
+  float_Matrix cur_img_l_adapt; // #READ_ONLY #NO_SAVE accumulation of activation over time to drive adaptation
+  
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(VisRegionSpecBase);
@@ -182,15 +197,6 @@ protected:
   bool		rgb_img;	// is current image rgb?
   bool		wrap;		// whether edge_mode == WRAP
   bool		cur_mot_only;	// current motion_only status
-
-  // following are all computed by PrecomputeColor function
-  float_Matrix cur_img_grey;	// greyscale version of color image
-  float_Matrix cur_img_y;	// YELLOW version of color image
-  float_Matrix cur_img_rg;	// RED - GREEN difference
-  float_Matrix cur_img_by;	// BLUE - YELLOW difference
-
-  float_Matrix cur_img_r_adapt; // accumulation of activation over time to drive adaptation
-  float_Matrix cur_img_l_adapt; // accumulation of activation over time to drive adaptation
 
 
   virtual void UpdateGeom();
@@ -216,10 +222,10 @@ protected:
   virtual void  ResetAdapt();
   // reset any current adaptation present in the system -- use this for a discontinuity in the input (simulated time passing) -- operates at all levels of adaptation, where applicable
 
-  virtual bool PrecomputeColor(float_Matrix* img);
-  // convert RGB color image to grey, yellow, and R-G and B-Y in separate images, which are what should be then used for filtering (stored in cur_img_xx float matrix's) -- get via GetImageForChan method -- also sets cur_img = img -- used by GetImageForChan
+  virtual bool PrecomputeColor(float_Matrix* img, bool need_rgb = false);
+  // convert RGB color image to grey, yellow, and R-G and B-Y in separate images, which are what should be then used for filtering (stored in cur_img_xx float matrix's) -- get via GetImageForChan method -- also sets cur_img = img -- used by GetImageForChan -- if need_rgb it saves the separate r,g,b color elements, which can then be accessed in GetImageForChan
   virtual float_Matrix* GetImageForChan(ColorChannel cchan);
-  // get the appropriate cur_img_* guy for given color channel
+  // get the appropriate cur_img_* guy for given color channel -- IMPORTANT you MUST have called PrecomputeColor with need_rgb = true IF you are acessing the RED, GREEN, or BLUE channels!  
 
   virtual bool RenormOutput(RenormMode mode, float_Matrix* out);
   // renormalize output of filters after filtering

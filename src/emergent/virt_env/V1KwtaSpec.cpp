@@ -22,13 +22,10 @@
 TA_BASEFUNS_CTORS_DEFN(V1KwtaSpec);
 
 void V1KwtaSpec::Initialize() {
-  on = -1;                      // detect old loads
-  mode = OFF;
-  gp_k = 1;
+  on = true;
+  mode = NOT_LOADED;
   gi = 2.0f;
   lay_gi = 1.5f;
-  gp_g = 0.02f;
-  kwta_pt = 0.5f;
   ff = 1.0f;
   fb = 0.5f;
   cycle = 0;
@@ -70,10 +67,12 @@ void V1KwtaSpec::Initialize() {
 void V1KwtaSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
-  if(on != -1) {
-    if(on == 0) mode = OFF;
-    else mode = KWTA;           // preserve old
-    on = -1;
+  if(mode != NOT_LOADED) {
+    if(mode != OFF)
+      on = true;
+    else
+      on = false;
+    mode = NOT_LOADED;
   }
 
   // these are all gelin defaults
@@ -139,41 +138,6 @@ void V1KwtaSpec::CreateNXX1Fun() {
   }
 
   nxx1_fun.Convolve(fun, noise_conv); // does alloc
-}
-
-void V1KwtaSpec::Compute_Kwta(float_Matrix& inputs, float_Matrix& gc_i_mat) {
-  int gxs = inputs.dim(0);
-  int gys = inputs.dim(1);
-  int ixs = inputs.dim(2);
-  int iys = inputs.dim(3);
-  gpmat.SetGeom(2, gxs, gys);
-  gc_i_mat.SetGeom(2, ixs, iys);
-  float max_gi = 0.0f;
-  for(int iy=0; iy < iys; iy++) {
-    for(int ix=0; ix < ixs; ix++) {
-      for(int gy=0; gy < gys; gy++) {
-        for(int gx=0; gx < gxs; gx++) {
-          gpmat.FastEl2d(gx, gy) = 
-            Compute_IThresh(g_bar_e * inputs.FastEl4d(gx, gy, ix, iy));
-        }
-      }
-      float top_k_avg, bot_k_avg;
-      taMath_float::vec_kwta_avg(top_k_avg, bot_k_avg, &gpmat, gp_k, true);
-      float nw_gi = bot_k_avg + kwta_pt * (top_k_avg - bot_k_avg);
-      gc_i_mat.FastEl2d(ix, iy) = nw_gi;
-      max_gi = MAX(max_gi, nw_gi);
-    }
-  }
-  if(gp_g > 0.0f) {
-    float gpg_eff = gp_g * max_gi;
-    for(int iy=0; iy < iys; iy++) {
-      for(int ix=0; ix < ixs; ix++) {
-        float gig = gc_i_mat.FastEl2d(ix, iy);
-        gig = MAX(gig, gpg_eff);
-        gc_i_mat.FastEl2d(ix, iy) = gig;
-      }
-    }
-  }
 }
 
 void V1KwtaSpec::Compute_FFFB(float_Matrix& inputs, float_Matrix& outputs, 
@@ -250,25 +214,19 @@ bool V1KwtaSpec::Compute_Inhib(float_Matrix& inputs, float_Matrix& outputs,
                "input matrix must have 4 dimensions: gp x,y, outer (image) x,y"))
     return false;
 
-  if(mode == FFFB) {
-    outputs.InitVals(0.0f);
-    cycle = 0;
-    int ixs = inputs.dim(2);
-    int iys = inputs.dim(3);
-    gc_i_mat.SetGeom(3, ixs, iys, 4); // extra copy to hold onto fb inhib for temp integ, and for the avg_netin
-    gc_i_mat.InitVals(0.0f);
-    for(int i=0; i<n_cyc; i++) {
-      Compute_FFFB(inputs, outputs, gc_i_mat);
-      Compute_Act_FFFB(inputs, outputs, gc_i_mat);
-      cycle++;
-      if(max_da < max_da_crit)
-        break;
-    }
-    //    taMisc::Info("si: max_da:", String(max_da), "cyc:", String(cycle));
-  }
-  else {
-    Compute_Kwta(inputs, gc_i_mat);
+  if(!on) return false;
+  outputs.InitVals(0.0f);
+  cycle = 0;
+  int ixs = inputs.dim(2);
+  int iys = inputs.dim(3);
+  gc_i_mat.SetGeom(3, ixs, iys, 4); // extra copy to hold onto fb inhib for temp integ, and for the avg_netin
+  gc_i_mat.InitVals(0.0f);
+  for(int i=0; i<n_cyc; i++) {
+    Compute_FFFB(inputs, outputs, gc_i_mat);
     Compute_Act(inputs, outputs, gc_i_mat);
+    cycle++;
+    if(max_da < max_da_crit)
+      break;
   }
   return true;
 }
@@ -278,79 +236,26 @@ bool V1KwtaSpec::Compute_Inhib_Extra(float_Matrix& inputs, float_Matrix& outputs
   if(TestError(inputs.dims() != 4, "Compute_Kwta",
                "input matrix must have 4 dimensions: gp x,y, outer (image) x,y"))
     return false;
-  
-  if(mode == FFFB) {
-    outputs.InitVals(0.0f);
-    cycle = 0;
-    int ixs = inputs.dim(2);
-    int iys = inputs.dim(3);
-    gc_i_mat.SetGeom(3, ixs, iys, 4);
-    gc_i_mat.InitVals(0.0f);
-    for(int i=0; i<n_cyc; i++) {
-      Compute_FFFB(inputs, outputs, gc_i_mat);
-      Compute_Act_FFFB_Extra(inputs, outputs, gc_i_mat, extra_inh);
-      cycle++;
-      if(max_da < max_da_crit)
-        break;
-    }
-    //   taMisc::Info("v1s: max_da:", String(max_da), "cyc:", String(cycle));
-  }
-  else {
-    Compute_Kwta(inputs, gc_i_mat);
+
+  if(!on) return false;
+  outputs.InitVals(0.0f);
+  cycle = 0;
+  int ixs = inputs.dim(2);
+  int iys = inputs.dim(3);
+  gc_i_mat.SetGeom(3, ixs, iys, 4);
+  gc_i_mat.InitVals(0.0f);
+  for(int i=0; i<n_cyc; i++) {
+    Compute_FFFB(inputs, outputs, gc_i_mat);
     Compute_Act_Extra(inputs, outputs, gc_i_mat, extra_inh);
+    cycle++;
+    if(max_da < max_da_crit)
+      break;
   }
   return true;
 }
 
 void V1KwtaSpec::Compute_Act(float_Matrix& inputs, float_Matrix& outputs,
-                              float_Matrix& gc_i_mat) {
-  int gxs = inputs.dim(0);
-  int gys = inputs.dim(1);
-  int ixs = inputs.dim(2);
-  int iys = inputs.dim(3);
-
-  for(int iy=0; iy < iys; iy++) {
-    for(int ix=0; ix < ixs; ix++) {
-      float gig = gc_i_mat.FastEl2d(ix, iy);
-      for(int gy=0; gy < gys; gy++) {
-        for(int gx=0; gx < gxs; gx++) {
-          float raw = inputs.FastEl4d(gx, gy, ix, iy);
-          float ge = g_bar_e * raw;
-          float act = Compute_ActFmIn(ge, gig);
-          outputs.FastEl4d(gx, gy, ix, iy) = act;
-        }
-      }
-    }
-  }
-}
-
-void V1KwtaSpec::Compute_Act_Extra(float_Matrix& inputs, float_Matrix& outputs,
-                                   float_Matrix& gc_i_mat, float_Matrix& extra_inh) {
-  int gxs = inputs.dim(0);
-  int gys = inputs.dim(1);
-  int ixs = inputs.dim(2);
-  int iys = inputs.dim(3);
-
-  for(int iy=0; iy < iys; iy++) {
-    for(int ix=0; ix < ixs; ix++) {
-      float gig = gc_i_mat.FastEl2d(ix, iy);
-      for(int gy=0; gy < gys; gy++) {
-        for(int gx=0; gx < gxs; gx++) {
-          float raw = inputs.FastEl4d(gx, gy, ix, iy);
-          float ge = g_bar_e * raw;
-          float ei =  extra_inh.FastEl4d(gx, gy, ix, iy);
-          float eig = Compute_IThresh(g_bar_e * extra_inh.FastEl4d(gx, gy, ix, iy));
-          float gi_eff = MAX(gig, eig);
-          float act = Compute_ActFmIn(ge, gi_eff);
-          outputs.FastEl4d(gx, gy, ix, iy) = act;
-        }
-      }
-    }
-  }
-}
-
-void V1KwtaSpec::Compute_Act_FFFB(float_Matrix& inputs, float_Matrix& outputs,
-                                  float_Matrix& gc_i_mat) {
+                             float_Matrix& gc_i_mat) {
   int gxs = inputs.dim(0);
   int gys = inputs.dim(1);
   int ixs = inputs.dim(2);
@@ -376,8 +281,8 @@ void V1KwtaSpec::Compute_Act_FFFB(float_Matrix& inputs, float_Matrix& outputs,
   }
 }
 
-void V1KwtaSpec::Compute_Act_FFFB_Extra(float_Matrix& inputs, float_Matrix& outputs,
-                                        float_Matrix& gc_i_mat, float_Matrix& extra_inh) {
+void V1KwtaSpec::Compute_Act_Extra(float_Matrix& inputs, float_Matrix& outputs,
+                                   float_Matrix& gc_i_mat, float_Matrix& extra_inh) {
   int gxs = inputs.dim(0);
   int gys = inputs.dim(1);
   int ixs = inputs.dim(2);

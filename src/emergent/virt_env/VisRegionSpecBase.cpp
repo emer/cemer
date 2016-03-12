@@ -283,14 +283,20 @@ void VisRegionSpecBase::InputAdapt_thread(int thr_no) {
 #endif
 }
 
-bool VisRegionSpecBase::PrecomputeColor(float_Matrix* img) {
+bool VisRegionSpecBase::PrecomputeColor(float_Matrix* img, bool need_rgb) {
   cur_img = img;
   taVector2i img_size(img->dim(0), img->dim(1));
 
   cur_img_grey.SetGeom(2, img_size.x, img_size.y);
-  cur_img_y.SetGeom(2, img_size.x, img_size.y);
+  cur_img_yl.SetGeom(2, img_size.x, img_size.y);
   cur_img_rg.SetGeom(2, img_size.x, img_size.y);
   cur_img_by.SetGeom(2, img_size.x, img_size.y);
+
+  if(need_rgb) {
+    cur_img_rd.SetGeom(2, img_size.x, img_size.y);
+    cur_img_gn.SetGeom(2, img_size.x, img_size.y);
+    cur_img_bl.SetGeom(2, img_size.x, img_size.y);
+  }
 
   for(int yi = 0; yi < img_size.y; yi++) {
     for(int xi = 0; xi < img_size.y; xi++) {
@@ -303,10 +309,17 @@ bool VisRegionSpecBase::PrecomputeColor(float_Matrix* img) {
       float r_g = r_val - g_val;
       float b_y = b_val - y_val;
 
-      cur_img_grey.FastEl2d(xi, yi) = grey;
-      cur_img_y.FastEl2d(xi, yi) = y_val;
-      cur_img_rg.FastEl2d(xi, yi) = r_g;
-      cur_img_by.FastEl2d(xi, yi) = b_y;
+      int idx = cur_img_grey.FastElIndex2d(xi, yi);
+      cur_img_grey.FastEl_Flat(idx) = grey;
+      cur_img_yl.FastEl_Flat(idx) = y_val;
+      cur_img_rg.FastEl_Flat(idx) = r_g;
+      cur_img_by.FastEl_Flat(idx) = b_y;
+
+      if(need_rgb) {
+        cur_img_rd.FastEl_Flat(idx) = r_val;
+        cur_img_gn.FastEl_Flat(idx) = g_val;
+        cur_img_bl.FastEl_Flat(idx) = b_val;
+      }
     }
   }
   return true;
@@ -320,8 +333,14 @@ float_Matrix* VisRegionSpecBase::GetImageForChan(ColorChannel cchan) {
     return &cur_img_rg;
   case BLUE_YELLOW:
     return &cur_img_by;
+  case RED:
+    return &cur_img_rd; 
+  case GREEN:
+    return &cur_img_gn;
+  case BLUE:
+    return &cur_img_bl;
   case YELLOW:
-    return &cur_img_y;
+    return &cur_img_yl;
   }
   return NULL;
 }
