@@ -283,29 +283,30 @@ void VisRegionSpecBase::InputAdapt_thread(int thr_no) {
 #endif
 }
 
-bool VisRegionSpecBase::ColorRGBtoCMYK(float_Matrix& img) {
-  taVector2i img_size(img.dim(0), img.dim(1));
+bool VisRegionSpecBase::PrecomputeColor(float_Matrix* img) {
+  cur_img = img;
+  taVector2i img_size(img->dim(0), img->dim(1));
 
   cur_img_grey.SetGeom(2, img_size.x, img_size.y);
-  cur_img_rc.SetGeom(2, img_size.x, img_size.y);
-  cur_img_gm.SetGeom(2, img_size.x, img_size.y);
+  cur_img_y.SetGeom(2, img_size.x, img_size.y);
+  cur_img_rg.SetGeom(2, img_size.x, img_size.y);
   cur_img_by.SetGeom(2, img_size.x, img_size.y);
 
   for(int yi = 0; yi < img_size.y; yi++) {
     for(int xi = 0; xi < img_size.y; xi++) {
-      float r_val = img.FastEl3d(xi, yi, 0);
-      float g_val = img.FastEl3d(xi, yi, 1);
-      float b_val = img.FastEl3d(xi, yi, 2);
+      float r_val = img->FastEl3d(xi, yi, 0);
+      float g_val = img->FastEl3d(xi, yi, 1);
+      float b_val = img->FastEl3d(xi, yi, 2);
 
       float grey = 0.33333f * (r_val + g_val + b_val);
-      float r_v_c = r_val - 0.5f * (g_val + b_val);
-      float g_v_m = g_val - 0.5f * (r_val + b_val);
-      float b_v_y = b_val - 0.5f * (r_val + g_val);
+      float y_val = 0.5f * (r_val + g_val);
+      float r_g = r_val - g_val;
+      float b_y = b_val - y_val;
 
       cur_img_grey.FastEl2d(xi, yi) = grey;
-      cur_img_rc.FastEl2d(xi, yi) = r_v_c;
-      cur_img_gm.FastEl2d(xi, yi) = g_v_m;
-      cur_img_by.FastEl2d(xi, yi) = b_v_y;
+      cur_img_y.FastEl2d(xi, yi) = y_val;
+      cur_img_rg.FastEl2d(xi, yi) = r_g;
+      cur_img_by.FastEl2d(xi, yi) = b_y;
     }
   }
   return true;
@@ -315,12 +316,12 @@ float_Matrix* VisRegionSpecBase::GetImageForChan(ColorChannel cchan) {
   switch(cchan) {
   case LUMINANCE:
     return &cur_img_grey;
-  case RED_CYAN:
-    return &cur_img_rc;
-  case GREEN_MAGENTA:
-    return &cur_img_gm;
+  case RED_GREEN:
+    return &cur_img_rg;
   case BLUE_YELLOW:
     return &cur_img_by;
+  case YELLOW:
+    return &cur_img_y;
   }
   return NULL;
 }
@@ -403,4 +404,25 @@ bool VisRegionSpecBase::ImageToTable_impl(DataTable* dtab, float_Matrix* img,
   float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
   ret_img->CopyFrom(img);
   return true;
+}
+
+
+bool VisRegionSpecBase::FourDimMatrixToTable(DataTable* dtab, float_Matrix* out,
+                                        const String& col_nm, bool fmt_only) {
+  DataCol* col;
+  int idx;
+  col = data_table->FindMakeColName
+    (name + col_nm, idx, DataTable::VT_FLOAT, 4,
+     out->dim(0), out->dim(1), out->dim(2), out->dim(3));
+  if(!fmt_only) {
+    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    dout->CopyFrom(out);
+  }
+  return true;
+}
+
+bool VisRegionSpecBase::OutSaveOk(DataSave save_flags) {
+  if(!save_flags & SAVE_DATA) return false;
+  if(!save_flags & ONLY_GUI) return true;
+  return taMisc::gui_active;
 }

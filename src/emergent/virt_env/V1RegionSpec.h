@@ -105,20 +105,39 @@ private:
   void	Destroy() { };
 };
 
+
+taTypeDef_Of(V1SquareGroup);
+
+class E_API V1SquareGroup : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for square grouping of v1s features -- simple form of spatial compression that is useful prior to doing complex operations and generally shrinking the size of the input to the network without much loss in performance
+INHERITED(taOBase)
+public:
+  bool          on;             // perform square grouping of v1s features -- simple form of spatial compression that is useful prior to doing complex operations and generally shrinking the size of the input to the network without much loss in performance
+  int		sg_rf;		// #CONDSHOW_ON_on #DEF_2;4 #MIN_2 #MAX_4 only valid values are 2,4 -- number of v1 simple cells to sub-group over prior to computing subsequent steps (length sum, end stop) -- this grouping provides more isotropic coverage of the space, reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- downside is that larger sg_n values produce more dense, overlapping activation patterns, which can ber problematic in cluttered visual scenes
+  int		sg_spc;	        // #CONDSHOW_ON_on #AKA_sg_spacing #DEF_1;2 #MIN_1 spacing between sub-group centers (see sg_rf) -- typically this works best as 1/2 of sg_rf size for half-overlap, but to stretch resolution the same value as sg_rf also does work, but typically leads to worse performance due to aliasing effects
+  bool          v1s_color;      // #CONDSHOW_ON_on if true then perform square grouping on monochrome AND color simple cell features -- this determines what is subsequently included into the v1c combined representation if v1c_specs.add_v1s is on, and also what goes into spatial integ if si_specs.v1s is on
+  int		sg_half;	// #READ_ONLY sg_rf / 2
+  int		sg_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
+
+  TA_SIMPLE_BASEFUNS(V1SquareGroup);
+protected:
+  void 	UpdateAfterEdit_impl() override;
+private:
+  void 	Initialize();
+  void	Destroy() { };
+};
+
 taTypeDef_Of(V1ComplexSpec);
 
 class E_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors
 INHERITED(taOBase)
 public:
-  int		sg_rf;		// #DEF_1;2;4 #MIN_1 #MAX_4 only valid values are 1,2,4 -- number of v1 simple cells to sub-group over prior to computing subsequent steps (length sum, end stop) -- this grouping provides more isotropic coverage of the space, reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- downside is that larger sg_n values produce more dense, overlapping activation patterns, which can ber problematic in cluttered visual scenes
-  int		sg_spc;	        // #AKA_sg_spacing #DEF_1;2 #MIN_1 spacing between sub-group centers (see sg_rf) -- typically this works best as 1/2 of sg_rf size for half-overlap, but to stretch resolution the same value as sg_rf also does work, but typically leads to worse performance due to aliasing effects
- 
-  int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
-  float		es_thr;		// #DEF_0.2 threshold for end stopping activation -- there are typically many "ghost" end stops, so this filters those out
-
-  int		sg_half;	// #READ_ONLY sg_rf / 2
-  int		sg_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
+  bool          on;             // if true, compute complex features, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors -- at least length sum MUST be computed, and end_stop is optional
+  bool          end_stop;       // #CONDSHOW_ON_on compute end stop features -- len sum minus single same orientation point after a gap -- requires len_sum!
+  bool          add_v1s;        // #CONDSHOW_ON_on include V1 simple (polarized) in the V1C output -- see the v1s_color option as well -- if using square_group'ing then this is the sg version of the v1s features (consistent with what is used for len sum and end stop)
+  int		len_sum_len;	// #CONDSHOW_ON_on #DEF_1 length beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
+  float		es_thr;		// #CONDSHOW_ON_on #DEF_0.2 threshold for end stopping activation -- there are typically many 'ghost' end stops, so this filters those out
 
   int		len_sum_width;	// #READ_ONLY 1 + 2 * len_sum_len -- computed
   float		len_sum_norm;	// #READ_ONLY 1.0 / len_sum_width -- normalize sum
@@ -137,9 +156,14 @@ class E_API VisSpatIntegSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image spatial integration parameters for visual signals -- happens as last step after all other feature detection operations -- performs a MAX or AVG over rfields
 INHERITED(taOBase)
 public:
-  taVector2i	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- always uses 1/2 overlap spacing
-  float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
-  bool		sum_rf;		// #DEF_false sum over the receptive field instead of computing the max (actually computes the average instead of sum)
+
+  bool          on;             // perform spatial integration of selected features
+  bool          v1s;            // #CONDSHOW_ON_on do spat integ on V1 simple cell, with all selected polarities and color contrasts (but not motion) -- operates on square grouped elements if that is active
+  bool          v1pi;           // #CONDSHOW_ON_on do spat integ on V1 polarity invariance, which just has angles and does a max over polarities and color contrasts -- lower dimensionality -- operates on square grouped elements if that is active
+  bool          v1c;            // #CONDSHOW_ON_on do spat integ on V1 complex, which is length sum and end stop operating on top of polarity independent features -- note that this INCLUDES the v1s features if that option is selected in the v1c_specs options
+  taVector2i	spat_rf;	// #CONDSHOW_ON_on integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- always uses 1/2 overlap spacing
+  float		gauss_sig;	// #CONDSHOW_ON_on #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
+  bool		sum_rf;		// #CONDSHOW_ON_on #DEF_false sum over the receptive field instead of computing the max (actually computes the average instead of sum)
 
   taVector2i	spat_half;	// #READ_ONLY half rf
   taVector2i	spat_spacing;	// #READ_ONLY 1/2 overlap spacing with spat_rf
@@ -159,26 +183,9 @@ class E_API V1RegionSpec : public VisRegionSpecBase {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- produces Gabor and more complex filter activation outputs directly from image bitmap input -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
 INHERITED(VisRegionSpecBase)
 public:
-  enum ComplexFilters { // #BITS flags for specifying which complex filters to include
-    CF_NONE	= 0, // #NO_BIT
-    LEN_SUM	= 0x0001, // length summing cells -- just average along oriented line
-    END_STOP	= 0x0002, // end stop cells -- len sum minus single same orientation point after a gap -- requires LEN_SUM
-    V1C_V1S     = 0x0004, // include V1 simple (polarized) in the V1C output -- this is independent of SI_V1S_SG -- use for cases where SI is not used -- if sg4 is on, then the V1S will first be integrated over sg4
-    CF_DEFAULT  = LEN_SUM | END_STOP,  // #IGNORE #NO_BIT this is the default setup
-  };
-
   enum OptionalFilters { // #BITS flags for specifying additional output filters -- misc grab bag of outputs
     OF_NONE	= 0, // #NO_BIT
     ENERGY	= 0x0001, // overall energy of V1S feature detectors -- a single unit activation per spatial location in same resolution map as V1S -- output map is just 2D, not 4D -- and is always saved to a separate output column -- suitable for basic spatial mapping etc
-  };
-
-  enum SpatIntegFilters { // #BITS flags for specifying what is subject to additional spatial integration -- multiple can be selected
-    SI_NONE	= 0, // #NO_BIT
-    SI_V1S	= 0x0001, // V1 simple cell, with all selected polarities and color contrasts (but not motion or binocular depth)
-    SI_V1PI	= 0x0002, // V1 polarity invariance, which just has angles and does a max over polarities and color contrasts -- lower dimensionality
-    SI_V1PI_SG	= 0x0004, // V1 square grouped polarity invariance -- lower resolution grouped version of polarity invariant reps
-    SI_V1S_SG	= 0x0008, // V1 square grouped raw V1S full polarity/color values -- lower resolution grouped version of V1S reps -- note that the SG version of V1S is not otherwise needed so this is what triggers its computation -- also unless SEP_MATRIX is flagged, this is output in one table with SI_V1C if those are also selected
-    SI_V1C	= 0x0010, // V1 complex, which is length sum and end stop operating on top of V1SG square grouped (if sg4 option selected)
   };
 
   enum XY {	   // x, y component of stencils etc -- for clarity in code
@@ -218,29 +225,32 @@ public:
   VisAdaptation v1s_adapt;      // how to adapt the v1 simple cell responses over time
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
   XYNGeom	v1s_img_geom; 	// #READ_ONLY #SHOW size of v1 simple filtered image output -- number of hypercolumns in each axis to cover entire output
-  XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) -- configured automatically
+  XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- x (horiz) dimension is n_angles, y (vertical) dimension is number of colors * polarities = 2 for monochrome and 6 for color
 
   /////////// Motion
   V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 specs for V1 motion filters within the simple processing layer
   RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 #DEF_NO_RENORM how to renormalize the output of v1s motion filters
   XYNGeom	v1m_feat_geom; 	// #READ_ONLY size of one 'hypercolumn' of features for V1 motion filtering -- always x = angles; y = 2 * speeds
 
-  /////////// Complex
-  ComplexFilters v1c_filters; 	// which complex cell filtering to perform -- length sum is required for end stop, so you cannot just have end stop by itself.  the order of options here is the order in which they are output to the unit group (length sum = 1st row, then end stop for 2nd & 3rd rows, then v1s for 4th and 5th)
-  V1ComplexSpec v1c_specs;	// #CONDSHOW_OFF_v1c_filters:0 specs for V1 complex filters -- comes after V1 binocular processing 
-  RenormMode	v1c_renorm;	// #CONDSHOW_OFF_v1c_filters:0 #DEF_NO_RENORM how to renormalize the output of v1c filters, prior to kwta -- currently only applies to length sum
-  DataSave	v1c_save;	// #CONDSHOW_OFF_v1c_filters:0 how to save the V1 complex outputs for the current time step in the data table
-
+  V1SquareGroup square_group;   // simple form of spatial compression that is useful prior to doing complex operations and generally shrinking the size of the input to the network without much loss in performance
+  DataSave	sg_save;	// #CONDSHOW_ON_square_group.on how to save the square grouping outputs of v1s and v1pi for the current time step in the data table -- default is not to
   XYNGeom	v1sg_img_geom; 	// #READ_ONLY size of v1 square grouping output image geometry -- input is v1s_img_geom, with either 2x2 or 4x4 spacing of square grouping operations reducing size by that amount
-  XYNGeom	v1c_img_geom; 	// #CONDSHOW_OFF_v1c_filters:0 #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is equal to v1sq_img_geom if sq_gp4 is on, or v1s_img_geom if not
-  XYNGeom	v1c_feat_geom; 	// #CONDSHOW_OFF_v1c_filters:0 #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- includes length sum and end stop in combined output -- configured automatically with x = n_angles
+  XYNGeom	v1sg_feat_geom; // #CONDSHOW_ON_square_group.on #READ_ONLY #SHOW size of one 'hypercolumn' of features for v1s sub group output -- y dimension depends on square_group.v1s_color flag and whether color is activated
 
-  SpatIntegFilters spat_integ;	// what to perform spatial integration over
-  VisSpatIntegSpec si_specs;	// #CONDSHOW_OFF_spat_integ:0 spatial integration output specs
-  RenormMode	si_renorm;	// #CONDSHOW_OFF_spat_integ:0 #DEF_NO_RENORM how to renormalize spat integ output prior to performing kwta
-  V1KwtaSpec	si_kwta;	// #CONDSHOW_OFF_spat_integ:0 k-winner-take-all inhibitory dynamics for spatial integration output -- 
-  DataSave	si_save;	// #CONDSHOW_OFF_spat_integ:0 how to save the spatial integration outputs for the current time step in the data table
-  XYNGeom	si_v1c_geom; 	// #CONDSHOW_OFF_spat_integ:0 #READ_ONLY #SHOW size of spat integ v1c image output
+  /////////// Complex
+  V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after square grouping
+  V1KwtaSpec	v1c_kwta;	// #CONDSHOW_ON_v1c_specs.on k-winner-take-all inhibitory dynamics for the v1 complex stage
+  DataSave	v1c_save;	// #CONDSHOW_ON_v1c_specs.on how to save the V1 complex outputs for the current time step in the data table
+
+  XYNGeom	v1c_img_geom; 	// #CONDSHOW_ON_v1c_specs.on #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is equal to v1sq_img_geom if square grouping is on, or v1s_img_geom if not
+  XYNGeom	v1c_feat_geom; 	// #CONDSHOW_ON_v1c_specs.on #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- includes length sum and end stop in combined output -- configured automatically with x = n_angles
+
+  VisSpatIntegSpec si_specs;	// spatial integration output specs
+  RenormMode	si_renorm;	// #CONDSHOW_ON_si_specs.on #DEF_NO_RENORM how to renormalize spat integ output prior to performing kwta
+  V1KwtaSpec	si_kwta;	// #CONDSHOW_ON_si_specs.on k-winner-take-all inhibitory dynamics for spatial integration output -- 
+  DataSave	si_save;	// #CONDSHOW_ON_si_specs.on how to save the spatial integration outputs for the current time step in the data table
+  XYNGeom	si_v1s_geom; 	// #CONDSHOW_ON_si_specs.on&&si_specs.v1s #READ_ONLY #SHOW size of spat integ v1s image output
+  XYNGeom	si_v1c_geom; 	// #CONDSHOW_ON_si_specs.on&&si_specs.v1c #READ_ONLY #SHOW size of spat integ v1c image output
 
   OptionalFilters opt_filters; 	// optional filter outputs -- always rendered to separate tables in data table
   DataSave	opt_save;	// #CONDSHOW_OFF_opt_filters:0 how to save the optional outputs for the current time step in the data table
@@ -265,26 +275,26 @@ public:
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][directions:2][angles][speeds] (6d)
   int_Matrix	v1m_still_stencils; // #READ_ONLY #NO_SAVE stencils for motion detectors -- detecting stillness, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][angles] (4d)
 
-  ///////////////////  V1C Geom/Stencils ////////////////////////
+  ///////////////////  Square Grouping Geom / Stencils ////////////////////////
   int_Matrix	v1sg4_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square 4x4 grouping -- represents center points of the lines for each angle [x,y,len][10][angles] -- there are 10 points for the 2 diagonal lines with 4 angles and 8 for horiz, vert -- only works if n_angles = 4 and line_len = 4 or 5
   int_Matrix	v1sg2_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square 2x2 grouping -- represents center points of the lines for each angle [x,y,len][4][angles] -- there are 5 points for the 2 diagonal lines with 4 angles -- only works if n_angles = 4 and line_len = 4 or 5
+
+  ///////////////////  V1C Geom/Stencils ////////////////////////
   int_Matrix	v1ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]
   int_Matrix	v1ls_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
   int_Matrix	v1es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][pts=3(only stop)][len_sum,stop=2][dirs=2][angles] -- new version
 
   ///////////////////  Spat Integ Stencils / Geom
   float_Matrix	si_weights;	// #READ_ONLY #NO_SAVE spatial integration weights for weighting across rf
-  XYNGeom	si_v1s_geom; 	// #READ_ONLY size of spat integ v1s image output
-  XYNGeom	si_v1sg_geom; 	// #READ_ONLY size of spat integ v1sg image output
 
   //////////////////////////////////////////////////////////////
   //	Outputs
 
   ///////////////////  V1S Output ////////////////////////
-  float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
-  float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
-  float_Matrix	v1s_out_r_adapt; // #READ_ONLY #NO_SAVE adaptation values for v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
-  float_Matrix	v1s_out_l_adapt; // #READ_ONLY #NO_SAVE adaptation values for v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
+  float_Matrix	v1s_raw_r;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
+  float_Matrix	v1s_raw_l;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
+  float_Matrix	v1s_adapt_r;    // #READ_ONLY #NO_SAVE adaptation values for v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
+  float_Matrix	v1s_adapt_l;     // #READ_ONLY #NO_SAVE adaptation values for v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
   float_Matrix	v1s_gci;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory conductances, for computing kwta
   float_Matrix	v1s_nimax;       // #READ_ONLY #NO_SAVE v1 simple cell neighbor inhibition values -- MAX of neighbor feature input activations
   float_Matrix	v1s_out_r;	 // #READ_ONLY #NO_SAVE v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
@@ -304,32 +314,34 @@ public:
   float_Matrix	v1m_still_r; // #READ_ONLY #NO_SAVE places with stable features across motion window (no motion), for each v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off -- luminance only]
   float_Matrix	v1m_still_l; // #READ_ONLY #NO_SAVE places with stable features across motion window (no motion), for each v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off -- luminance only]
 
+  ///////////////////  Square Group Output ////////////////////////
+  float_Matrix	v1s_sg_out_r;	 // #READ_ONLY #NO_SAVE square grouping of v1s polarized
+  float_Matrix	v1s_sg_out_l;	 // #READ_ONLY #NO_SAVE square grouping of v1s polarized
+
+  float_Matrix	v1pi_sg_out_r;	 // #READ_ONLY #NO_SAVE square grouping of polarity invariant V1 reps -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
+  float_Matrix	v1pi_sg_out_l;	 // #READ_ONLY #NO_SAVE square grouping of polarity invariant V1 reps -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
+
   ///////////////////  V1C Complex Output ////////////////////////
-  float_Matrix	v1sg_out_r;	 // #READ_ONLY #NO_SAVE square 4x4 grouping of polarity invariant V1 reps -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
-  float_Matrix	v1sg_out_l;	 // #READ_ONLY #NO_SAVE square 4x4 grouping of polarity invariant V1 reps -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
-  float_Matrix	v1ls_out_r;	 // #READ_ONLY #NO_SAVE length sum output after kwta [feat.x][1][v1c_img.x][v1c_img.y]
-  float_Matrix	v1ls_out_l;	 // #READ_ONLY #NO_SAVE length sum output after kwta [feat.x][1][v1c_img.x][v1c_img.y]
-  float_Matrix	v1ls_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
-  float_Matrix	v1es_out_r;	 // #READ_ONLY #NO_SAVE end stopping output -- operates on length sum and raw v1s/v1pi input [feat.x][2][v1c_img.x][v1c_img.y]
-  float_Matrix	v1es_out_l;	 // #READ_ONLY #NO_SAVE end stopping output -- operates on length sum and raw v1s/v1pi input [feat.x][2][v1c_img.x][v1c_img.y]
-  float_Matrix	v1es_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
-  float_Matrix	v1cs_sg_out_r;	 // #READ_ONLY #NO_SAVE square grouping of v1s polarized
-  float_Matrix	v1cs_sg_out_l;	 // #READ_ONLY #NO_SAVE square grouping of v1s polarized
+  float_Matrix	v1c_out_r;	 // #READ_ONLY #NO_SAVE v1 complex output after kwta [v1c_feat.x][v1c_feat.y][v1c_img.x][v1c_img.y]
+  float_Matrix	v1c_out_l;	 // #READ_ONLY #NO_SAVE v1 complex output after kwta [v1c_feat.x][v1c_feat.y][v1c_img.x][v1c_img.y]
+  float_Matrix	v1c_raw_r;	 // #READ_ONLY #NO_SAVE v1 complex raw output pre kwta [v1c_feat.x][v1c_feat.y][v1c_img.x][v1c_img.y]
+  float_Matrix	v1c_raw_l;	 // #READ_ONLY #NO_SAVE v1 complex raw output pre kwta [v1c_feat.x][v1c_feat.y][v1c_img.x][v1c_img.y]
+  float_Matrix	v1c_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
 
   ///////////////////  SI Spatial Integration Output ////////////////////////
   float_Matrix	si_gci;	 	// #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
-  float_Matrix	si_v1s_out;	 // #READ_ONLY #NO_SAVE spatial integration
-  float_Matrix	si_v1s_out_raw;	 // #READ_ONLY #NO_SAVE spatial integration
-  float_Matrix	si_v1pi_out;	 // #READ_ONLY #NO_SAVE spatial integration
-  float_Matrix	si_v1pi_out_raw; // #READ_ONLY #NO_SAVE spatial integration
-  float_Matrix	si_v1pi_sg_out;	 // #READ_ONLY #NO_SAVE spatial integration
-  float_Matrix	si_v1pi_sg_out_raw; // #READ_ONLY #NO_SAVE spatial integration
-  float_Matrix	si_v1s_sg_out;	 // #READ_ONLY #NO_SAVE spatial integration
-  float_Matrix	si_v1s_sg_out_raw; // #READ_ONLY #NO_SAVE spatial integration
-  float_Matrix	v1s_sg_out;	 // #READ_ONLY #NO_SAVE square grouping of v1s 
-  float_Matrix	v1s_sg_out_raw;	 // #READ_ONLY #NO_SAVE square grouping of v1s 
-  float_Matrix	si_v1c_out;	 // #READ_ONLY #NO_SAVE spatial integration
-  float_Matrix	si_v1c_out_raw;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1s_out_r;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1s_out_l;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1s_raw_r;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1s_raw_l;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1pi_out_r;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1pi_out_l;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1pi_raw_r;   // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1pi_raw_l;   // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1c_out_r;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1c_out_l;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1c_raw_r;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1c_raw_l;	 // #READ_ONLY #NO_SAVE spatial integration
 
   ///////////////////  OPT optional Output ////////////////////////
   float_Matrix	energy_out;	 // #READ_ONLY #NO_SAVE energy at each location: max activation over features for each image location -- [img.x][img.y]
@@ -365,6 +377,7 @@ protected:
 
   virtual bool	InitFilters_V1Simple();
   virtual bool	InitFilters_V1Motion();
+  virtual bool	InitFilters_SquareGroup();
   virtual bool	InitFilters_V1Complex();
   virtual bool	InitFilters_SpatInteg();
 
@@ -374,7 +387,7 @@ protected:
 
   virtual bool	V1SimpleFilter();
   // do simple filters -- main wrapper
-  virtual bool	V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_raw,
+  virtual bool	V1SimpleFilter_Static(float_Matrix* image, float_Matrix* raw,
 				      float_Matrix* out, float_Matrix* adapt);
   // do simple filters, static only on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Static_thread(int thr_no);
@@ -396,31 +409,39 @@ protected:
   virtual void 	V1SimpleFilter_Motion_Still_thread(int thr_no);
   // do simple motion filters, compute non-moving (still) background
 
+  virtual bool	DoV1SquareGroup();
+  // do square group filters
+  virtual void  V1SquareGroup_V1S_SqGp(float_Matrix* v1s_in, float_Matrix* sg_out);
+  // square group V1S signals for inclusion into V1C output
+  virtual void 	V1SquareGroup_V1S_SqGp_thread(int thr_no);
+  // square group V1S signals for inclusion into V1C output
+  virtual void 	V1SquareGroup_V1PI_SqGp(float_Matrix* pi_in, float_Matrix* sg_out);
+  // square-group V1PI (pol invar) features for subsequent processing in len sum and end stop
+  virtual void 	V1SquareGroup_V1PI_SqGp_thread(int thr_no);
+  // square-group V1PI (pol invar) features for subsequent processing in len sum and end stop
+
   virtual bool	V1ComplexFilter();
   // do complex filters -- dispatch threads
-  virtual void 	V1ComplexFilter_SqGp(float_Matrix* pi_in, float_Matrix* sg_out);
-  // square-group if selected
-  virtual void 	V1ComplexFilter_LenSum(float_Matrix* ls_in, float_Matrix* ls_out);
+  virtual void 	V1ComplexFilter_LenSum(float_Matrix* ls_in, float_Matrix* v1c_out);
   // length-sum
-  virtual void 	V1ComplexFilter_EndStop(float_Matrix* pi_in, float_Matrix* ls_in,
-                                        float_Matrix* es_out);
-  // end stop
-  virtual void  V1ComplexFilter_V1S_SqGp(float_Matrix* v1s_in, float_Matrix* sg_out);
-  // v1s sg4
-  virtual void 	V1ComplexFilter_SqGp_thread(int thr_no);
-  // square-group if selected
   virtual void 	V1ComplexFilter_LenSum_thread(int thr_no);
   // length-sum
+  virtual void 	V1ComplexFilter_EndStop(float_Matrix* pi_in, float_Matrix* v1c_out);
+  // end stop
   virtual void 	V1ComplexFilter_EndStop_thread(int thr_no);
   // end stop
+  virtual void 	V1ComplexFilter_AddV1s(float_Matrix* v1s_in, float_Matrix* v1c_out);
+  // add v1s to v1c
+  virtual void 	V1ComplexFilter_AddV1s_thread(int thr_no);
+  // add v1s to v1c
 
   virtual bool	SpatIntegFilter();
   // do spatial integration filters -- dispatch threads
+  virtual void 	SpatIntegFilter_V1S(float_Matrix* v1s_in, float_Matrix* si_out);
   virtual void 	SpatIntegFilter_V1S_thread(int thr_no);
+  virtual void 	SpatIntegFilter_V1PI(float_Matrix* v1pi_in, float_Matrix* si_out);
   virtual void 	SpatIntegFilter_V1PI_thread(int thr_no);
-  virtual void 	SpatIntegFilter_V1PI_SG_thread(int thr_no);
-  virtual void 	SpatIntegFilter_V1S_SqGp_thread(int thr_no);
-  virtual void 	SpatIntegFilter_V1S_SG_thread(int thr_no);
+  virtual void 	SpatIntegFilter_V1C(float_Matrix* v1c_in, float_Matrix* si_out);
   virtual void 	SpatIntegFilter_V1C_thread(int thr_no);
 
   virtual bool	V1OptionalFilter();
@@ -437,11 +458,11 @@ protected:
      float_Matrix* still, float_Matrix* hist, CircMatrix* circ, const String& col_sufx,
      bool fmt_only = false);
   // motion to output table impl
+  virtual bool V1SqGpOutputToTable(DataTable* dtab, bool fmt_only = false);
+  // square group to output table
   virtual bool V1COutputToTable(DataTable* dtab, bool fmt_only = false);
   // complex to output table
-  virtual bool V1COutputToTable_impl(DataTable* dtab, float_Matrix* ls_out,
-                                     float_Matrix* es_out, float_Matrix* sg_out, 
-                                     float_Matrix* v1sc_sg_out, float_Matrix* v1s_out,
+  virtual bool V1COutputToTable_impl(DataTable* dtab, float_Matrix* v1c_out,
                                      const String& col_sufx, bool fmt_only = false);
   // complex to output table
   virtual bool SIOutputToTable(DataTable* dtab, bool fmt_only = false);

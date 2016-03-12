@@ -270,13 +270,37 @@ void VEWorld::CollisionCallback(dGeomID o1, dGeomID o2) {
   // add these contact points to the simulation ...
   VEBody* b1 = (VEBody*)dGeomGetData(o1);
   VEBody* b2 = (VEBody*)dGeomGetData(o2);
+  if(!b1 || !b2) return;
+  VESurface* surf1 = NULL;
+  VESurface* surf2 = NULL;
+  ODEIntParams* soft1 = NULL;
+  ODEIntParams* soft2 = NULL;
+  if(b1->InheritsFrom(&TA_VEBody)) {
+    surf1 = &(b1->surface);
+    soft1 = &(b1->softness);
+  }
+  else if(b1->InheritsFrom(&TA_VEStatic)) {
+    VEStatic* ves = (VEStatic*)b1;
+    surf1 = &(ves->surface);
+    soft1 = &(ves->softness);
+  }    
+  if(b2->InheritsFrom(&TA_VEBody)) {
+    surf1 = &(b2->surface);
+    soft1 = &(b2->softness);
+  }
+  else if(b2->InheritsFrom(&TA_VEStatic)) {
+    VEStatic* ves = (VEStatic*)b2;
+    surf1 = &(ves->surface);
+    soft1 = &(ves->softness);
+  }
+  if(!surf1 || !surf2 || !soft1 || !soft2) return;
   dContact cont;
   cont.surface.mode = dContactBounce | dContactSoftERP | dContactSoftCFM;
-  cont.surface.mu = .5f * (b1->surface.friction + b2->surface.friction);
-  cont.surface.bounce = .5f * (b1->surface.bounce + b2->surface.bounce);
-  cont.surface.bounce_vel = .5f * (b1->surface.bounce_vel + b2->surface.bounce_vel);
-  cont.surface.soft_erp = .5f * (b1->softness.erp + b2->softness.erp);
-  cont.surface.soft_cfm = .5f * (b1->softness.cfm + b2->softness.cfm);
+  cont.surface.mu = .5f * (surf1->friction + surf2->friction);
+  cont.surface.bounce = .5f * (surf1->bounce + surf2->bounce);
+  cont.surface.bounce_vel = .5f * (surf1->bounce_vel + surf2->bounce_vel);
+  cont.surface.soft_erp = .5f * (soft1->erp + soft2->erp);
+  cont.surface.soft_cfm = .5f * (soft1->cfm + soft2->cfm);
   // todo: not seting slip1 or second directions (as in tires)
   if(num_contact > 0) {
     for(int i=0;i<num_contact;i++) {

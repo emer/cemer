@@ -50,7 +50,7 @@ public:
   };
   enum Color {			// color processing
     MONOCHROME,			// just luminance on/off
-    COLOR,			// has luminance on/off plus 4 color contrasts: R, G, B, Y vs. other two colors
+    COLOR,			// has luminance on/off and R-G, B-Y color filters
   };
   enum EdgeMode {		// how to deal with edges in the filter inputs
     CLIP,			// hard clip edges -- attempts to ensure that no clipping is necessary by making filters fit within inputs, but image input is clipped
@@ -109,11 +109,11 @@ class E_API VisRegionSpecBase : public ImgProcThreadBase {
   // #STEM_BASE ##CAT_Image base class for specifying a visual image region to be filtered according to a set of filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs
 INHERITED(ImgProcThreadBase)
 public:
-  enum ColorChannel {		// indicator of which color channel to filter on
+  enum ColorChannel {		// indicator of which color channel to filter on -- passed to GetImageForChan
     LUMINANCE,			// just raw luminance (monochrome / black white)
-    RED_CYAN,			// red vs. cyan (G + B)
-    GREEN_MAGENTA,		// green vs. magenta (R + B)
-    BLUE_YELLOW,		// blue vs. yellow (R + G)
+    RED_GREEN,			// red vs. green pre-subtracted -- good for gabor / spatial double-opponent filters
+    BLUE_YELLOW,                // blue vs. yellow pre-subtracted -- good for gabor / spatial double-opponent filters
+    YELLOW,                     // yellow channel only
   };
   enum Eye {
     LEFT,			
@@ -183,10 +183,11 @@ protected:
   bool		wrap;		// whether edge_mode == WRAP
   bool		cur_mot_only;	// current motion_only status
 
-  float_Matrix cur_img_grey;	// greyscale version of color image, if input is rg b
-  float_Matrix cur_img_rc;	// RED vs. CYAN version of color image, if input is rgb
-  float_Matrix cur_img_gm;	// GREEN vs. MAGENTA version of color image, if input is rgb
-  float_Matrix cur_img_by;	// BLUE vs. YELLOW version of color image, if input is rgb
+  // following are all computed by PrecomputeColor function
+  float_Matrix cur_img_grey;	// greyscale version of color image
+  float_Matrix cur_img_y;	// YELLOW version of color image
+  float_Matrix cur_img_rg;	// RED - GREEN difference
+  float_Matrix cur_img_by;	// BLUE - YELLOW difference
 
   float_Matrix cur_img_r_adapt; // accumulation of activation over time to drive adaptation
   float_Matrix cur_img_l_adapt; // accumulation of activation over time to drive adaptation
@@ -215,8 +216,8 @@ protected:
   virtual void  ResetAdapt();
   // reset any current adaptation present in the system -- use this for a discontinuity in the input (simulated time passing) -- operates at all levels of adaptation, where applicable
 
-  virtual bool ColorRGBtoCMYK(float_Matrix& img);
-  // convert RGB color image to Cyan vs. Red, Magenta vs Green, Yellow vs. Blue, and Grey separate images, which are what should be then used for filtering (stored in cur_img_xx float matrix's)
+  virtual bool PrecomputeColor(float_Matrix* img);
+  // convert RGB color image to grey, yellow, and R-G and B-Y in separate images, which are what should be then used for filtering (stored in cur_img_xx float matrix's) -- get via GetImageForChan method -- also sets cur_img = img -- used by GetImageForChan
   virtual float_Matrix* GetImageForChan(ColorChannel cchan);
   // get the appropriate cur_img_* guy for given color channel
 
@@ -228,6 +229,13 @@ protected:
   // send current input image(s)e step of dog output to data table for viewing
     virtual bool ImageToTable_impl(DataTable* dtab, float_Matrix* img, const String& col_sufx);
     // send current input image(s)e step of dog output to data table for viewing
+
+  virtual bool FourDimMatrixToTable(DataTable* dtab, float_Matrix* out,
+                                    const String& col_name, bool fmt_only = false);
+  // output a four-dimensional matrix to table, with given column name
+
+  virtual bool  OutSaveOk(DataSave save_flags);
+  // check if ok to save output to data table, based on save_flags -- checks for SAVE_DATA and if ONLY_GUI flag is on and whether gui is active or not -- true = save, false = don't save
 
 };
 

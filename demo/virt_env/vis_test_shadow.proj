@@ -2612,8 +2612,7 @@ LeabraProject .projects["vis_test_shadow"] {
 
    Layer_Group @.layers = [1] {
     LeabraLayer @["V2bo"] { 
-     Projection_Group @.projections = [1] {
-      LeabraPrjn @["Fm_V2bo"] { };
+     Projection_Group @.projections = [0] {
      };
 
      Unit_Group @.units = [10368] {
@@ -29871,7 +29870,7 @@ LeabraProject .projects["vis_test_shadow"] {
      keygen 4 0=0;
      row_indexes {
       name="row_indexes";
-     [1] 0;     };
+     [0]      };
      last_sort_spec {
       name="last_sort_spec";
       ops {
@@ -30159,7 +30158,7 @@ LeabraProject .projects["vis_test_shadow"] {
      keygen 4 0=0;
      row_indexes {
       name="row_indexes";
-     [1] 0;     };
+     [0]      };
      last_sort_spec {
       name="last_sort_spec";
       ops {
@@ -31704,7 +31703,7 @@ LeabraProject .projects["vis_test_shadow"] {
 	   intensity=0.2;
 	   color {r=1: g=1: b=1: a=1: };
 	  };
-	  dir_norm {x=-0.2046809: y=-0.1550914: z=0.9664639: };
+	  dir_norm {x=-0.2046809: y=-0.1550914: z=0.9664637: };
 	 };
 	 VECamera @["RightEye"] {
 	  name="RightEye";
@@ -35926,7 +35925,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.04842821;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -36046,7 +36045,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	    m_data=.projects["vis_test_shadow"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"].objs["VEVisTestWorld"].spaces["RoomSpace"]$$;
 	    m_transform=NULL;
 	    children {
-	     name="T3DataView_List_1";
+	     name="children";
 	     el_typ=T3DataView;
 	     el_def=0;
 	     VEStaticView @["Ground"] {
@@ -36061,7 +36060,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	    m_data=.projects["vis_test_shadow"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"].objs["VEVisTestWorld"].objects["Light1"]$$;
 	    m_transform=NULL;
 	    children {
-	     name="T3DataView_List_1";
+	     name="children";
 	     el_typ=T3DataView;
 	     el_def=0;
 	     VEBodyView @["LightBehindHead"] {
@@ -36076,7 +36075,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	    m_data=.projects["vis_test_shadow"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"].objs["VEVisTestWorld"].objects["Emer"]$$;
 	    m_transform=NULL;
 	    children {
-	     name="T3DataView_List_1";
+	     name="children";
 	     el_typ=T3DataView;
 	     el_def=0;
 	     VEBodyView @["Torso"] {
@@ -36141,7 +36140,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	    m_data=.projects["vis_test_shadow"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"].objs["VEVisTestWorld"].objects["Target"]$$;
 	    m_transform=NULL;
 	    children {
-	     name="T3DataView_List_1";
+	     name="children";
 	     el_typ=T3DataView;
 	     el_def=0;
 	     VEObjCarouselView @["Target1"] {
@@ -36382,7 +36381,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=10;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -36532,7 +36531,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=10;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -36682,7 +36681,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=10;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -36832,7 +36831,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=10;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -39587,7 +39586,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04350132;
+       value 8 0=0.04347826;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -39995,30 +39994,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="projections";
       el_typ=LeabraPrjn;
       el_def=0;
-      LeabraPrjn @["Fm_V2bo"] {
-       name="Fm_V2bo";
-       off=0;
-       disp=1;
-       from_type=SELF;
-       from=$.projects["vis_test_shadow"].networks["Network_0"].layers["V2bo"]$;
-       spec {type=FullPrjnSpec: spec=.projects["vis_test_shadow"].networks["Network_0"].specs["FullPrjnSpec_0"]$$: };
-       con_type=LeabraCon;
-       con_spec {type=LeabraConSpec: spec=$.projects["vis_test_shadow"].networks["Network_0"].specs["SelfCon"]$: };
-       recv_idx=0;
-       send_idx=0;
-       recv_n=1;
-       send_n=1;
-       projected=1;
-       dir_fixed=0;
-       direction=LATERAL;
-       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-      };
      };
      send_prjns {
       name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
-      Projection_Group @. = [0] = LeabraPrjn .projects["vis_test_shadow"].networks["Network_0"].layers["V2bo"].projections["Fm_V2bo"];
      };
      units {
       name="units";
@@ -40051,7 +40031,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    flags=BUILD_INIT_WTS;
    unit_vars_type=LeabraUnitVars;
    con_group_type=LeabraConGroup;
-   auto_build=AUTO_BUILD;
+   auto_build=NO_BUILD;
    auto_load_wts=NO_AUTO_LOAD;
    auto_load_file=;
    brain_atlas_name=;
@@ -40136,7 +40116,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=10369;
-   n_cons=107485056;
+   n_cons=0;
    max_prjns=1;
    max_disp_size {x=179: y=107: z=1: };
    max_disp_size2d {x=179: y=107: };

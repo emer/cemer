@@ -408,7 +408,7 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out) {
   wrap = (region.edge_mode == VisRegionParams::WRAP);
 
   if(rgb_img) {
-    ColorRGBtoCMYK(*cur_img);   // precompute!
+    PrecomputeColor(cur_img);   // precompute!
   }
 
   IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImage_thread);
@@ -511,7 +511,7 @@ bool DoGRegionSpec::GradFilterImage(float_Matrix* image, float_Matrix* out) {
   wrap = (region.edge_mode == VisRegionParams::WRAP);
 
   if(rgb_img) {
-    ColorRGBtoCMYK(*cur_img);   // precompute!
+    PrecomputeColor(cur_img);   // precompute!
   }
 
   IMG_THREAD_CALL(DoGRegionSpec::GradFilterImage_thread);
