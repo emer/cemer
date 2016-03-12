@@ -1993,6 +1993,9 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       TypeDef* td = taMisc::FindTypeName(val);
       if(td != NULL)
         *((TypeDef**)base) = td;
+      else {
+        taMisc::Error("Could not find class ", val, " for \"", memb_def->TypeItem::GetPathName(), "\"");
+      }
     }
     else if(DerivesFrom(TA_MemberDef)) {
       String fqtypnm = val.before("::", -1); // before final ::
@@ -2003,6 +2006,12 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
           MemberDef* md = td->members.FindName(mbnm);
           if(md != NULL)
             *((MemberDef**)base) = md;
+          else {
+            taMisc::Error("Could not find member  ", mbnm, " in ", fqtypnm, " for \"", memb_def->TypeItem::GetPathName(), "\"" );
+          }
+        }
+        else {
+          taMisc::Error("Could not find class ", fqtypnm, " in ", val, " for \"", memb_def->TypeItem::GetPathName(), "\"");
         }
       }
     }
@@ -2015,6 +2024,12 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
           MethodDef* md = td->methods.FindName(mthnm);
           if(md != NULL)
             *((MethodDef**)base) = md;
+          else {
+            taMisc::Error("Could not find ", memb_def->TypeItem::GetPathName(), " ", mthnm, " in ", fqtypnm);
+          }
+        }
+        else {
+          taMisc::Error("Could not find class ", fqtypnm, " in ", val, " for \"", memb_def->TypeItem::GetPathName(), "\"");
         }
       }
     }
