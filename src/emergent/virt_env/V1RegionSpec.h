@@ -259,7 +259,7 @@ public:
   //	Geometry and Stencils
 
   ///////////////////  V1S Geom/Stencils ////////////////////////
-  int		n_colors;	// #READ_ONLY number of color channels to be processed (1 = monochrome, 4 = full color)
+  int		n_colors;	// #READ_ONLY number of color channels to be processed (1 = monochrome, 3 = full color)
   int		n_polarities;	// #READ_ONLY #DEF_2 number of polarities per color -- always 2
   int		n_polclr;	// #READ_ONLY number of polarities * number of colors -- y dimension of simple features for example
   float_Matrix	v1s_gabor_filters; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [size][size][n_angles]

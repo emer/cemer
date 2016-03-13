@@ -305,7 +305,8 @@ bool VisRegionSpecBase::PrecomputeColor(float_Matrix* img, bool need_rgb) {
       float b_val = img->FastEl3d(xi, yi, 2);
 
       float grey = 0.33333f * (r_val + g_val + b_val);
-      float y_val = 0.5f * (r_val + g_val);
+      // float y_val = 0.5f * (r_val + g_val);
+      float y_val = (r_val * g_val); // wait.. what IS yellow!??
       float r_g = r_val - g_val;
       float b_y = b_val - y_val;
 
