@@ -441,7 +441,7 @@ bool VisRegionSpecBase::FourDimMatrixToTable(DataTable* dtab, float_Matrix* out,
 }
 
 bool VisRegionSpecBase::OutSaveOk(DataSave save_flags) {
-  if(!save_flags & SAVE_DATA) return false;
-  if(!save_flags & ONLY_GUI) return true;
+  if(!(save_flags & SAVE_DATA)) return false;
+  if(!(save_flags & ONLY_GUI)) return true;
   return taMisc::gui_active;
 }
