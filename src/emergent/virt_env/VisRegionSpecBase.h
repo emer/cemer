@@ -89,7 +89,7 @@ protected:
 taTypeDef_Of(VisColorSpace);
 
 class E_API VisColorSpace : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image transform RGB colors into LMS perceptual space, including color opponents, and back..
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image transform RGB colors into CIE XYZ and LMS perceptual space, including color opponents, and back -- note that we use 0-1 normalized XYZ and LMS values throughout - not the 0-100 as is sometimes standard it seems..
 INHERITED(taOBase)
 public:
 
@@ -97,25 +97,25 @@ public:
     if(srgb <= 0.04045f) return srgb / 12.92f;
     return powf((srgb + 0.055f) / 1.055f, 2.4f);
   }
-  // convert an sRGB rgb component to linear -- used in converting from sRGB to XYZ colors
+  // #CAT_ColorSpace convert an sRGB rgb component to linear -- used in converting from sRGB to XYZ colors
 
   static inline float sRGBvalFromLinear(const float lin) {
     if(lin <= 0.0031308f) return 12.92f * lin;
     return (1.055f * powf(lin, 1.0f / 2.4f) + 0.055f);
   }
-  // convert an sRGB rgb linear component to non-linear sRGB value -- used in converting from XYZ to sRGB 
+  // #CAT_ColorSpace convert an sRGB rgb linear component to non-linear sRGB value -- used in converting from XYZ to sRGB 
  
   static inline void sRGBtoLinear(float& r_lin, float& g_lin, float& b_lin,
                                   const float r_s, const float g_s, const float b_s) {
-    r_lin = sRGBvalToLinear(r_s);    g_lin = sRGBvalToLinear(g_s);    b_lin = sRGBvalToLinear(b_s);
+    r_lin = sRGBvalToLinear(r_s); g_lin = sRGBvalToLinear(g_s); b_lin = sRGBvalToLinear(b_s);
   }
-  // convert set of sRGB components to linear values (gamma correction)
+  // #CAT_ColorSpace convert set of sRGB components to linear values (gamma correction)
 
   static inline void sRGBfromLinear(float& r_s, float& g_s, float& b_s,
                                   const float r_lin, const float g_lin, const float b_lin) {
-    r_s = sRGBvalFromLinear(r_lin);    g_s = sRGBvalFromLinear(g_lin);    b_s = sRGBvalFromLinear(b_lin);
+    r_s = sRGBvalFromLinear(r_lin); g_s = sRGBvalFromLinear(g_lin); b_s = sRGBvalFromLinear(b_lin);
   }
-  // convert set of sRGB components to linear values (gamma correction)
+  // #CAT_ColorSpace convert set of sRGB components to linear values (gamma correction)
 
   static inline void sRGBlinToXYZ(float& X, float& Y, float& Z,
                                   const float r_lin, const float g_lin, const float b_lin) {
@@ -123,7 +123,7 @@ public:
     Y = 0.2126f * r_lin + 0.7152f * g_lin + 0.0722f * b_lin;
     Z = 0.0193f * r_lin + 0.1192f * g_lin + 0.9505f * b_lin;
   }
-  // convert sRGB linear into XYZ CIE standard color space
+  // #CAT_ColorSpace convert sRGB linear into XYZ CIE standard color space
 
   static inline void XYZtosRGBlin(float& r_lin, float& g_lin, float& b_lin,
                                   const float X, const float Y, const float Z) {
@@ -131,7 +131,7 @@ public:
     g_lin = -0.9689f * X + 1.8758f * Y + 0.0415f * Z;
     b_lin = 0.0557f * X + -0.2040f * Y + 1.0570f * Z;
   }
-  // convert XYZ CIE standard color space to sRGB linear
+  // #CAT_ColorSpace convert XYZ CIE standard color space to sRGB linear
 
   static inline void sRGBtoXYZ(float& X, float& Y, float& Z,
                                const float r_s, const float g_s, const float b_s) {
@@ -139,7 +139,7 @@ public:
     sRGBtoLinear(r_lin, g_lin, b_lin, r_s, g_s, b_s);
     sRGBlinToXYZ(X,Y,Z, r_lin, g_lin, b_lin);
   }
-  // convert sRGB into XYZ CIE standard color space
+  // #CAT_ColorSpace convert sRGB into XYZ CIE standard color space
 
   static inline void XYZtosRGB(float& r_s, float& g_s, float& b_s,
                                const float X, const float Y, const float Z) {
@@ -147,12 +147,12 @@ public:
     XYZtosRGBlin(r_lin, g_lin, b_lin, X,Y,Z);
     sRGBfromLinear(r_s, g_s, b_s, r_lin, g_lin, b_lin);
   }
-  // convert XYZ CIE standard color space into sRGB
+  // #CAT_ColorSpace convert XYZ CIE standard color space into sRGB
 
   static inline void XYZrenormD65(float& X, float& Y, float& Z) {
     X *= (1.0f / 0.95047f); Z *= (1.0f / 1.08883);
   }
-  // renormalize XZY values relative to the D65 outdoor white light values
+  // #CAT_ColorSpace renormalize XZY values relative to the D65 outdoor white light values
   
   static inline void XYZtoLMS_CAT02(float& L, float& M, float& S,
                                     const float X, const float Y, const float Z) {
@@ -160,7 +160,7 @@ public:
     M = -0.7036f * X + 1.6975f * Y + 0.0061f * Z;
     S = 0.0030f * X + 0.0136f * Y + 0.9834 * Z;
   }
-  // convert XYZ to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02)
+  // #CAT_ColorSpace convert XYZ to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02)
 
   static inline void sRGBlinToLMS_CAT02(float& L, float& M, float& S,
                                         const float r_lin, const float g_lin, const float b_lin) {
@@ -168,7 +168,7 @@ public:
     M = 0.0708416f * r_lin + 0.96317176f * g_lin + 0.00135775f * b_lin;
     S = 0.0491304f * r_lin + 0.21556128f * g_lin + 0.9450824f * b_lin;
   }
-  // convert sRGB linear to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) -- this is good for representing adaptation but NOT apparently good for representing appearances
+  // #CAT_ColorSpace convert sRGB linear to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) -- this is good for representing adaptation but NOT apparently good for representing appearances
   
   static inline void sRGBtoLMS_CAT02(float& L, float& M, float& S,
                                const float r_s, const float g_s, const float b_s) {
@@ -176,7 +176,7 @@ public:
     sRGBtoLinear(r_lin, g_lin, b_lin, r_s, g_s, b_s);
     sRGBlinToLMS_CAT02(L,M,S, r_lin, g_lin, b_lin);
   }
-  // convert sRGB to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02)
+  // #CAT_ColorSpace convert sRGB to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02)
 
   static inline void XYZtoLMS_HPE(float& L, float& M, float& S,
                                   const float X, const float Y, const float Z) {
@@ -184,7 +184,7 @@ public:
     M = -0.22981f * X + 1.18340f * Y + 0.04641f * Z;
     S = Z;
   }
-  // convert XYZ to Long, Medium, Short cone-based responses, using the Hunt-Pointer-Estevez transform -- this is closer to the actual response functions of the L,M,S cones apparently
+  // #CAT_ColorSpace convert XYZ to Long, Medium, Short cone-based responses, using the Hunt-Pointer-Estevez transform -- this is closer to the actual response functions of the L,M,S cones apparently
 
   static inline void sRGBlinToLMS_HPE(float& L, float& M, float& S,
                                       const float r_lin, const float g_lin, const float b_lin) {
@@ -192,7 +192,7 @@ public:
     M = 0.15771291f * r_lin + 0.7697197f * g_lin + 0.08807348f * b_lin;
     S = 0.0193f * r_lin + 0.1192f * g_lin + 0.9505f * b_lin;
   }
-  // convert sRGB linear to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) -- this is good for representing adaptation but NOT apparently good for representing appearances
+  // #CAT_ColorSpace convert sRGB linear to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) -- this is good for representing adaptation but NOT apparently good for representing appearances
   
   static inline void sRGBtoLMS_HPE(float& L, float& M, float& S,
                                const float r_s, const float g_s, const float b_s) {
@@ -200,7 +200,7 @@ public:
     sRGBtoLinear(r_lin, g_lin, b_lin, r_s, g_s, b_s);
     sRGBlinToLMS_HPE(L,M,S, r_lin, g_lin, b_lin);
   }
-  // convert sRGB to Long, Medium, Short cone-based responses, using the Hunt-Pointer-Estevez transform -- this is closer to the actual response functions of the L,M,S cones apparently
+  // #CAT_ColorSpace convert sRGB to Long, Medium, Short cone-based responses, using the Hunt-Pointer-Estevez transform -- this is closer to the actual response functions of the L,M,S cones apparently
 
   static inline void LMStoXYZ_CAT02(float& X, float& Y, float& Z,
                                     const float L, const float M, const float S) {
@@ -208,7 +208,7 @@ public:
     Y = -0.7036f * X + 1.6975f * Y + 0.0061f * Z;
     Z = 0.0030f * X + 0.0136f * Y + 0.9834 * Z;
   }
-  // convert Long, Medium, Short cone-based responses to XYZ, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02)
+  // #CAT_ColorSpace convert Long, Medium, Short cone-based responses to XYZ, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02)
 
   static inline void LMStoXYZ_HPE(float& X, float& Y, float& Z,
                                     const float L, const float M, const float S) {
@@ -216,18 +216,35 @@ public:
     Y = -0.7036f * X + 1.6975f * Y + 0.0061f * Z;
     Z = 0.0030f * X + 0.0136f * Y + 0.9834 * Z;
   }
-  // convert Long, Medium, Short cone-based responses to XYZ, using the Hunt-Pointer-Estevez transform -- this is closer to the actual response functions of the L,M,S cones apparently
-  
-  // todo: get appearances from LMS using rest of funky equations.
+  // #CAT_ColorSpace convert Long, Medium, Short cone-based responses to XYZ, using the Hunt-Pointer-Estevez transform -- this is closer to the actual response functions of the L,M,S cones apparently
 
-  
-  // static inline void LMStoRvGBvY(float& L, float& M, float& S,
-  //                              const float L, const float M, const float S) {
-  //   float r_lin, g_lin, b_lin;
-  //   sRGBtoLinear(r_lin, g_lin, b_lin, r_s, g_s, b_s);
-  //   sRGBlinToLMS(L,M,S, r_lin, g_lin, b_lin);
-  // }
-  // convert sRGB to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02)
+
+  static inline float LuminanceAdaptation(const float bg_lum = 200.0f) {
+    const float lum5 = 5.0f * bg_lum;
+    float k = 1.0f / (lum5 + 1.0f);
+    float k4 = k*k*k*k;
+    float k4m1 = 1.0f - k4;
+    float fl = .2f * k4 * lum5 + .1f * k4m1 * k4m1 * powf(lum5, 1.0f / 3.0f);
+    return fl;
+  }
+  // #CAT_ColorSpace Luminance adaptation function -- equals 1 at background luminance of 200 so we generally ignore it..
+
+  static inline float ResponseCompression(const float val) {
+    float pval = powf(val, 0.42f);
+    float rc = 0.1f + 4.0f * pval / (27.13f + pval);
+    return rc;
+  }
+  // takes a 0-1 normalized LMS value and performs hyperbolic response compression -- val must ALREADY have the luminance adaptation applied to it using the luminance adaptation function, which is 1 at a background luminance level of 200 = 2, so you can skip that step if you assume that level of background
+
+  static inline void LMStoRvGBvY(float& L_c, float& M_c, float& S_c, float& LvM, float& SvLM,
+                                 const float L, const float M, const float S) {
+    float L_rc = ResponseCompression(L); float M_rc = ResponseCompression(M); float S_rc = ResponseCompression(S);
+    const float LmM = L_rc - M_rc;  const float MmS = M_rc - S_rc;  const float SmL = S_rc - L_rc;
+    L_c = L_rc + (1.0f / 11.0f) * S_rc; 
+    M_c = (12.0f / 11.0f) * M_rc; 
+    LvM = L_c - M_c; // red-green subtracting "criterion for unique yellow"
+  }
+  // convert sRGB to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) https://en.wikipedia.org/wiki/CIECAM02
   
   
   void 	Initialize();
