@@ -54,6 +54,30 @@ void VisColorSpace::Initialize() {
   
 }
 
+void VisColorSpace::sRGBtoOpponentsImg(float_Matrix& opp_img,
+                                       const float_Matrix& srgb_img) {
+  taVector2i img_size(srgb_img.dim(0), srgb_img.dim(1));
+  opp_img.SetGeom(3, img_size.x, img_size.y, 6);
+  for(int yi = 0; yi < img_size.y; yi++) {
+    for(int xi = 0; xi < img_size.y; xi++) {
+      // assume the bitmap is in sRGB
+      float r_s = srgb_img.FastEl3d(xi, yi, 0);
+      float g_s = srgb_img.FastEl3d(xi, yi, 1);
+      float b_s = srgb_img.FastEl3d(xi, yi, 2);
+
+      float L_c, M_c, S_c, LM_c, LvM, SvLM;
+      sRGBtoOpponents(L_c, M_c, S_c, LM_c, LvM, SvLM, r_s, g_s, b_s);
+      opp_img.FastEl3d(xi, yi, 0) = L_c;
+      opp_img.FastEl3d(xi, yi, 1) = M_c;
+      opp_img.FastEl3d(xi, yi, 2) = S_c;
+      opp_img.FastEl3d(xi, yi, 3) = LM_c;
+      opp_img.FastEl3d(xi, yi, 4) = LvM;
+      opp_img.FastEl3d(xi, yi, 5) = SvLM;
+    }
+  }
+}
+
+
 void VisAdaptation::Initialize() {
   on = false;
   up_dt = 0.3f;

@@ -218,7 +218,6 @@ public:
   }
   // #CAT_ColorSpace convert Long, Medium, Short cone-based responses to XYZ, using the Hunt-Pointer-Estevez transform -- this is closer to the actual response functions of the L,M,S cones apparently
 
-
   static inline float LuminanceAdaptation(const float bg_lum = 200.0f) {
     const float lum5 = 5.0f * bg_lum;
     float k = 1.0f / (lum5 + 1.0f);
@@ -236,17 +235,33 @@ public:
   }
   // takes a 0-1 normalized LMS value and performs hyperbolic response compression -- val must ALREADY have the luminance adaptation applied to it using the luminance adaptation function, which is 1 at a background luminance level of 200 = 2, so you can skip that step if you assume that level of background
 
-  static inline void LMStoRvGBvY(float& L_c, float& M_c, float& S_c, float& LvM, float& SvLM,
-                                 const float L, const float M, const float S) {
+  static inline void LMStoOpponents(float& L_c, float& M_c, float& S_c, float& LM_c,
+                                    float& LvM, float& SvLM,
+                                    const float L, const float M, const float S) {
     float L_rc = ResponseCompression(L); float M_rc = ResponseCompression(M); float S_rc = ResponseCompression(S);
     const float LmM = L_rc - M_rc;  const float MmS = M_rc - S_rc;  const float SmL = S_rc - L_rc;
     L_c = L_rc + (1.0f / 11.0f) * S_rc; 
     M_c = (12.0f / 11.0f) * M_rc; 
     LvM = L_c - M_c; // red-green subtracting "criterion for unique yellow"
+    LM_c = (1.0f / 9.0f) * (L_rc + M_rc);
+    S_c = (2.0f / 9.0f) * S_rc;
+    SvLM = S_c - LM_c;          // blue-yellow contrast
   }
-  // convert sRGB to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) https://en.wikipedia.org/wiki/CIECAM02
+  // convert Long, Medium, Short cone-based responses to opponent components: Red - Green (LvM) and Blue - Yellow (SvLM) -- includes the separate components in these subtractions as well -- uses the CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) https://en.wikipedia.org/wiki/CIECAM02
   
+  static inline void sRGBtoOpponents(float& L_c, float& M_c, float& S_c, float& LM_c,
+                                     float& LvM, float& SvLM,
+                                     const float r_s, const float g_s, const float b_s) {
+    float L,M,S;
+    sRGBtoLMS_HPE(L,M,S, r_s, g_s, b_s);
+    LMStoOpponents(L_c, M_c, S_c, LM_c, LvM, SvLM, L, M, S);
+  }
+  // #CAT_ColorSpace convert sRGB to opponent components via LMS using the HPE cone values: Red - Green (LvM) and Blue - Yellow (SvLM) -- includes the separate components in these subtractions as well -- uses the CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) https://en.wikipedia.org/wiki/CIECAM02
   
+  static void sRGBtoOpponentsImg(float_Matrix& opp_img, const float_Matrix& srgb_img);
+  // #CAT_ColorSpace convert sRGB image to opponent components image (3d matrix of 2D images in order L_c, M_c, S_c, LM_c, LvM, SvLM -- done via LMS using the HPE cone values: Red - Green (LvM) and Blue - Yellow (SvLM) -- includes the separate components in these subtractions as well -- uses the CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) https://en.wikipedia.org/wiki/CIECAM02
+
+
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(VisColorSpace);
