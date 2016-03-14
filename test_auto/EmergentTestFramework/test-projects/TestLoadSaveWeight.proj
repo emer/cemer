@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.5.0 rev9275
+// ta_Dump File v3.0 -- code v7.8.6.0 rev9288
 LeabraProject .projects["TestLoadSaveWeight"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -553,51 +553,205 @@ LeabraProject .projects["TestLoadSaveWeight"] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
       };
      };
      int_Data @["epoch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["avg_sse"] { };
-     float_Data @["cnt_err"] { };
-     float_Data @["pct_cor"] { };
-     float_Data @["pct_err"] { };
-     float_Data @["avg_norm_err"] { };
-     float_Data @["avg_cos_err"] { };
-     float_Data @["avg_ext_rew"] { };
-     float_Data @["avg_cycles"] { };
-     float_Data @["epoch_time_tot"] { };
-     float_Data @["epoch_time_usr"] { };
-     float_Data @["Output_lay_avg_sse"] { };
-     float_Data @["Output_lay_cnt_err"] { };
-     float_Data @["Output_lay_pct_cor"] { };
-     float_Data @["Output_lay_pct_err"] { };
-     float_Data @["Output_lay_avg_norm_err"] { };
-     float_Data @["Output_lay_avg_cos_err"] { };
-     float_Data @["net_avg_cos_diff"] { };
-     float_Data @["net_avg_trial_cos_diff"] { };
-     float_Data @["net_avg_avg_act_diff"] { };
-     float_Data @["Hidden_avg_cos_diff"] { };
-     float_Data @["Output_avg_cos_diff"] { };
-     float_Data @["Hidden_avg_trial_cos_diff"] { };
-     float_Data @["Output_avg_trial_cos_diff"] { };
-     float_Data @["Hidden_avg_avg_act_diff"] { };
-     float_Data @["Output_avg_avg_act_diff"] { };
-     float_Data @["Hidden_avg_net_sd"] { };
-     float_Data @["Output_avg_net_sd"] { };
-     float_Data @["Hidden_hog_pct"] { };
-     float_Data @["Output_hog_pct"] { };
-     float_Data @["Hidden_dead_pct"] { };
-     float_Data @["Output_dead_pct"] { };
-     float_Data @["Hidden_netmax"] { };
-     float_Data @["Output_netmax"] { };
-     float_Data @["Hidden_avg_act"] { };
-     float_Data @["Output_avg_act"] { };
-     float_Data @["Hidden_Fm_Input_netrel"] { };
-     float_Data @["Hidden_Fm_Output_netrel"] { };
-     float_Data @["Output_Fm_Hidden_netrel"] { };
+     float_Data @["avg_sse"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["cnt_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["pct_cor"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["pct_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["avg_norm_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["avg_cos_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["avg_ext_rew"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["avg_cycles"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["epoch_time_tot"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["epoch_time_usr"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_avg_sse"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_cnt_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_pct_cor"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_pct_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_avg_norm_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_avg_cos_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["net_avg_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["net_avg_trial_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["net_avg_avg_act_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_avg_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_avg_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_avg_trial_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_avg_trial_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_avg_avg_act_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_avg_avg_act_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_avg_net_sd"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_avg_net_sd"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_hog_pct"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_hog_pct"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_dead_pct"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_dead_pct"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_netmax"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_netmax"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_avg_act"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_avg_act"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_Fm_Input_netrel"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_Fm_Output_netrel"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_Fm_Hidden_netrel"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
     };
 
     DataOpList @.last_sort_spec.ops = [0] {
@@ -947,8 +1101,9 @@ LeabraProject .projects["TestLoadSaveWeight"] {
 
     ProgType_List @.types = [1] {
      DynEnumTableCol @["ConfigOptions"] { 
-      DynEnumItem_List @.enums = [1] {
+      DynEnumItem_List @.enums = [2] {
        DynEnumItem @["basic_train"] { };
+       DynEnumItem @["basic_train_load"] { };
       };
      };
     };
@@ -957,13 +1112,14 @@ LeabraProject .projects["TestLoadSaveWeight"] {
      ProgVar @["network"] { };
     };
 
-    ProgVar_List @.vars = [6] {
+    ProgVar_List @.vars = [7] {
      ProgVar @["Config"] { };
      ProgVar @["cur_config"] { };
      ProgVar @["config_id"] { };
      ProgVar @["run_prog"] { };
      ProgVar @["init_prog"] { };
      ProgVar @["stop_train"] { };
+     ProgVar @["epoch_output_data"] { };
     };
 
     Function_List @.functions = [0] {
@@ -987,23 +1143,27 @@ LeabraProject .projects["TestLoadSaveWeight"] {
      };
     };
 
-    ProgEl_List @.prog_code = [6] {
+    ProgEl_List @.prog_code = [7] {
      AssignExpr @[0] { };
      AssignExpr @[1] { };
-     DataVarProg @[2] { };
-     MethodCall @[3] { 
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     DataVarProg @[3] { };
+     MethodCall @[4] { 
       ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
       };
      };
-     ProgramCallVar @[4] { 
+     ProgramCallVar @[5] { 
       ProgArg_List @.prog_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
       };
      };
-     WhileLoop @[5] { 
+     WhileLoop @[6] { 
       ProgEl_List @.loop_code = [1] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [3] {
@@ -3603,11 +3763,11 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 
 <!-- 
 NewPP limit report
-Cached time: 20160310030859
+Cached time: 20160314153815
 Cache expiry: 86400
 Dynamic content: false
-CPU time usage: 0.017 seconds
-Real time usage: 0.020 seconds
+CPU time usage: 0.023 seconds
+Real time usage: 0.026 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -3621,7 +3781,7 @@ Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 - -total
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160310030859 and revision id 11194
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160314153815 and revision id 11194
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\"					</div>
@@ -3716,7 +3876,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		</div>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
-											<li id=\"footer-info-lastmod\"> This page was last modified on 4 September 2015, at 01:19.</li>
+											<li id=\"footer-info-lastmod\"> This page was last modified on 4 September 2015, at 02:19.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -3730,7 +3890,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":159});
+mw.config.set({\"wgBackendResponseTime\":237});
 } );</script>
 	
 
@@ -7386,6 +7546,11 @@ mw.config.set({\"wgBackendResponseTime\":159});
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
       };
       name="batch";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
@@ -7409,6 +7574,11 @@ mw.config.set({\"wgBackendResponseTime\":159});
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
       };
       name="epoch";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
@@ -7423,6 +7593,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["avg_sse"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_161";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="avg_sse";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7436,6 +7616,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["cnt_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_162";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="cnt_err";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7449,6 +7639,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["pct_cor"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_163";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="pct_cor";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7462,6 +7662,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["pct_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_164";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="pct_err";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7475,6 +7685,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["avg_norm_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_165";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="avg_norm_err";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7488,6 +7708,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["avg_cos_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_166";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="avg_cos_err";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7501,6 +7731,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["avg_ext_rew"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_167";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="avg_ext_rew";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7514,6 +7754,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["avg_cycles"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_168";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="avg_cycles";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7527,6 +7777,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["epoch_time_tot"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_169";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="epoch_time_tot";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7540,6 +7800,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["epoch_time_usr"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_170";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="epoch_time_usr";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7553,6 +7823,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_lay_avg_sse"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_171";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_avg_sse";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7566,6 +7846,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_lay_cnt_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_172";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_cnt_err";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7579,6 +7869,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_lay_pct_cor"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_173";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_pct_cor";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7592,6 +7892,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_lay_pct_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_174";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_pct_err";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7605,6 +7915,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_lay_avg_norm_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_175";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_avg_norm_err";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7618,6 +7938,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_lay_avg_cos_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_176";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_avg_cos_err";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7631,6 +7961,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["net_avg_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_177";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="net_avg_cos_diff";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7644,6 +7984,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["net_avg_trial_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_178";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="net_avg_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7657,6 +8007,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["net_avg_avg_act_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_179";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="net_avg_avg_act_diff";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7670,6 +8030,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Hidden_avg_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_180";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_avg_cos_diff";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7683,6 +8053,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_avg_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_181";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_avg_cos_diff";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7696,6 +8076,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Hidden_avg_trial_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_182";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_avg_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7709,6 +8099,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_avg_trial_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_183";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_avg_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7722,6 +8122,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Hidden_avg_avg_act_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_184";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_avg_avg_act_diff";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7735,6 +8145,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_avg_avg_act_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_185";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_avg_avg_act_diff";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7748,6 +8168,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Hidden_avg_net_sd"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_186";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_avg_net_sd";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7761,6 +8191,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_avg_net_sd"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_187";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_avg_net_sd";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7774,6 +8214,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Hidden_hog_pct"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_188";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_hog_pct";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7787,6 +8237,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_hog_pct"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_189";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_hog_pct";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7800,6 +8260,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Hidden_dead_pct"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_190";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_dead_pct";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7813,6 +8283,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_dead_pct"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_191";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_dead_pct";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7826,6 +8306,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Hidden_netmax"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_192";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_netmax";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7839,6 +8329,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_netmax"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_193";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_netmax";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7852,6 +8352,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Hidden_avg_act"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_194";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_avg_act";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7865,6 +8375,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_avg_act"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_195";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_avg_act";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7878,6 +8398,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Hidden_Fm_Input_netrel"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_196";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_Fm_Input_netrel";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7891,6 +8421,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Hidden_Fm_Output_netrel"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_197";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_Fm_Output_netrel";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7904,6 +8444,16 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=0;
      };
      float_Data @["Output_Fm_Hidden_netrel"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_198";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.1510574;
+	val_type_fixed=0;
+       };
+      };
       name="Output_Fm_Hidden_netrel";
       col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -7923,8 +8473,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [10] 0;1;2;3;4;5;6;7;8;9;
-    };
+    [6] 0;1;2;3;4;5;    };
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -7965,7 +8514,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1929134;
+	value 8 0=0.1480363;
 	val_type_fixed=0;
        };
       };
@@ -7983,7 +8532,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=98;
       ar {
        name="ar";
-      [1] "basic_train";      };
+      [2] "basic_train";"basic_train_load";      };
      };
      String_Data @["config_desc"] {
       UserDataItem_List @*(.user_data_) {
@@ -7992,7 +8541,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1929134;
+	value 8 0=0.1480363;
 	val_type_fixed=0;
        };
       };
@@ -8010,7 +8559,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=98;
       ar {
        name="ar";
-      [1] "default basic training";      };
+      [2] "default basic training";"default basic training";      };
      };
      String_Data @["init_prog"] {
       UserDataItem_List @*(.user_data_) {
@@ -8019,7 +8568,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1929134;
+	value 8 0=0.1480363;
 	val_type_fixed=0;
        };
       };
@@ -8037,7 +8586,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=98;
       ar {
        name="ar";
-      [1] "BasicInit";      };
+      [2] "BasicInit";"BasicInit";      };
      };
      String_Data @["run_prog"] {
       UserDataItem_List @*(.user_data_) {
@@ -8046,7 +8595,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1929134;
+	value 8 0=0.1480363;
 	val_type_fixed=0;
        };
       };
@@ -8064,7 +8613,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=98;
       ar {
        name="ar";
-      [1] "BasicRun";      };
+      [2] "BasicRun";"BasicRun";      };
      };
      String_Data @["startup_prog"] {
       UserDataItem_List @*(.user_data_) {
@@ -8073,7 +8622,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1929134;
+	value 8 0=0.1480363;
 	val_type_fixed=0;
        };
       };
@@ -8091,7 +8640,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=98;
       ar {
        name="ar";
-      [1] "BasicStartup";      };
+      [2] "BasicStartup";"BasicStartup";      };
      };
      int_Data @["train_epochs"] {
       UserDataItem_List @*(.user_data_) {
@@ -8100,7 +8649,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1929134;
+	value 8 0=0.1480363;
 	val_type_fixed=0;
        };
       };
@@ -8118,7 +8667,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=98;
       ar {
        name="ar";
-      [1] 5;      };
+      [2] 6;6;      };
      };
      int_Data @["trials_per_epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -8127,7 +8676,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1929134;
+	value 8 0=0.1480363;
 	val_type_fixed=0;
        };
       };
@@ -8145,7 +8694,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=98;
       ar {
        name="ar";
-      [1] 50;      };
+      [2] 50;50;      };
      };
      int_Data @["save_final_wts"] {
       UserDataItem_List @*(.user_data_) {
@@ -8154,7 +8703,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1929134;
+	value 8 0=0.1480363;
 	val_type_fixed=0;
        };
       };
@@ -8172,7 +8721,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=98;
       ar {
        name="ar";
-      [1] 1;      };
+      [2] 1;0;      };
      };
      int_Data @["save_wts_interval"] {
       UserDataItem_List @*(.user_data_) {
@@ -8181,7 +8730,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1929134;
+	value 8 0=0.1480363;
 	val_type_fixed=0;
        };
       };
@@ -8199,7 +8748,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=98;
       ar {
        name="ar";
-      [1] 200;      };
+      [2] 200;200;      };
      };
      int_Data @["test_interval"] {
       UserDataItem_List @*(.user_data_) {
@@ -8208,7 +8757,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1929134;
+	value 8 0=0.1480363;
 	val_type_fixed=0;
        };
       };
@@ -8226,7 +8775,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=98;
       ar {
        name="ar";
-      [1] 1000;      };
+      [2] 1000;1000;      };
      };
      int_Data @["log_trials"] {
       UserDataItem_List @*(.user_data_) {
@@ -8235,7 +8784,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1929134;
+	value 8 0=0.1480363;
 	val_type_fixed=0;
        };
       };
@@ -8253,7 +8802,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=98;
       ar {
        name="ar";
-      [1] 0;      };
+      [2] 0;0;      };
      };
      int_Data @["load_weights"] {
       UserDataItem_List @*(.user_data_) {
@@ -8262,7 +8811,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1929134;
+	value 8 0=0.1480363;
 	val_type_fixed=0;
        };
       };
@@ -8280,7 +8829,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=98;
       ar {
        name="ar";
-      [1] 0;      };
+      [2] 0;1;      };
      };
      String_Data @["weights_file"] {
       UserDataItem_List @*(.user_data_) {
@@ -8289,7 +8838,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.2854331;
+	value 8 0=0.1268882;
 	val_type_fixed=0;
        };
       };
@@ -8304,10 +8853,10 @@ mw.config.set({\"wgBackendResponseTime\":159});
       dim_names {
        name="dim_names";
       [0]       };
-      width=145;
+      width=84;
       ar {
        name="ar";
-      [1] ;      };
+      [2] ;"TestLoadSaveWeight_autotst_1.wts";      };
      };
      int_Data @["load_st_epc"] {
       UserDataItem_List @*(.user_data_) {
@@ -8316,7 +8865,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1240157;
+	value 8 0=0.09818731;
 	val_type_fixed=0;
        };
       };
@@ -8331,10 +8880,10 @@ mw.config.set({\"wgBackendResponseTime\":159});
       dim_names {
        name="dim_names";
       [0]       };
-      width=63;
+      width=65;
       ar {
        name="ar";
-      [1] 1;      };
+      [2] 1;1;      };
      };
      int_Data @["lrs_step_epochs"] {
       UserDataItem_List @*(.user_data_) {
@@ -8348,7 +8897,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
        };
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 8 0=0.1633858;
+	value 8 0=0.1253776;
 	val_type_fixed=0;
        };
       };
@@ -8366,7 +8915,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
       width=83;
       ar {
        name="ar";
-      [1] 50;      };
+      [2] 50;50;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -8375,7 +8924,7 @@ mw.config.set({\"wgBackendResponseTime\":159});
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [1] 0;    };
+    [2] 0;1;    };
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -9738,6 +10287,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	value=0;
 	desc=;
        };
+       DynEnumItem @["basic_train_load"] {
+	name="basic_train_load";
+	value=1;
+	desc=;
+       };
       };
       bits=0;
       src_table=$.projects["TestLoadSaveWeight"].data.gp["ConfigData"]["ConfigTable"]$;
@@ -9780,7 +10334,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_DynEnum;
       dyn_enum_val {
        enum_type=.projects["TestLoadSaveWeight"].programs.gp["ConfigProgs"]["MasterTrain"].types["ConfigOptions"]$$;
-       value=0;
+       value=1;
       };
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -9791,7 +10345,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["config_id"] {
       name="config_id";
       var_type=T_String;
-      string_val="basic_train";
+      string_val="basic_train_load";
       objs_ptr=0;
       flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9826,6 +10380,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="set this var from any other program to stop training";
+      init_from=NULL;
+     };
+     ProgVar @["epoch_output_data"] {
+      name="epoch_output_data";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=$.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
       init_from=NULL;
      };
     };
@@ -9939,7 +10504,23 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        expr="cur_config";
       };
      };
-     DataVarProg @[2] {
+     MethodCall @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="epoch_output_data->ResetData()";
+      pre_compile_code_string="epoch_output_data->ResetData()";
+      result_var=NULL;
+      obj=.projects["TestLoadSaveWeight"].programs.gp["ConfigProgs"]["MasterTrain"].vars["epoch_output_data"]$$;
+      method=DataTable::ResetData;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void ResetData()";
+      meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+     };
+     DataVarProg @[3] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Data From:  table=Config  row_spec=row_val  row_var=config_id  set=from  all_matches=false  var_1=init_prog  var_2=run_prog  var_3=?  var_4=? ";
@@ -9955,7 +10536,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_3=NULL;
       var_4=NULL;
      };
-     MethodCall @[3] {
+     MethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Config->SetCellsFromRowLookup(\"config_id\", config_id)";
@@ -9993,7 +10574,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       meth_sig="void SetCellsFromRowLookup(taString column_name, taString value)";
       meth_desc=" set the values of table cells in the row with value matching the 'value' arg of column matching 'column_name' arg";
      };
-     ProgramCallVar @[4] {
+     ProgramCallVar @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Call Fm: prog_group=InitProgs prog_name_var=init_prog (network, config_id)";
@@ -10028,7 +10609,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       prog_group=.projects["TestLoadSaveWeight"].programs.gp["ConfigProgs"].gp["InitProgs"]$$;
       prog_name_var=$.projects["TestLoadSaveWeight"].programs.gp["ConfigProgs"]["MasterTrain"].vars["init_prog"]$;
      };
-     WhileLoop @[5] {
+     WhileLoop @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="while (!stop_train)";
@@ -10159,7 +10740,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["config_id"] {
       name="config_id";
       var_type=T_String;
-      string_val="basic_train";
+      string_val="basic_train_load";
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -10441,7 +11022,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgVar @["config_id"] {
        name="config_id";
        var_type=T_String;
-       string_val="basic_train";
+       string_val="basic_train_load";
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
@@ -10670,7 +11251,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgVar @["config_id"] {
        name="config_id";
        var_type=T_String;
-       string_val="basic_train";
+       string_val="basic_train_load";
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
        reference=0;
@@ -10695,7 +11276,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgVar @["train_epochs"] {
        name="train_epochs";
        var_type=T_Int;
-       int_val=5;
+       int_val=6;
        objs_ptr=0;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
@@ -10967,7 +11548,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=8040: sys=3628: tot=145763995632: }: end={usr=8041: sys=3628: tot=145763995633: }: used={usr=76: sys=6: tot=40: }: s_used=0.4: n_used=50: };
+     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=33071: sys=28299: tot=145797275660: }: end={usr=33072: sys=28299: tot=145797275660: }: used={usr=26: sys=6: tot=18: }: s_used=0.18: n_used=50: };
     };
     types {
      name="types";
@@ -11489,7 +12070,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [6] 0;5;1;2;3;4;      };
+      [6] 5;1;0;4;3;2;      };
       last_sort_spec {
        name="last_sort_spec";
        ops {
@@ -11554,7 +12135,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["cur_idx"] {
       name="cur_idx";
       var_type=T_Int;
-      int_val=3;
+      int_val=4;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11564,7 +12145,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["input_idx"] {
       name="input_idx";
       var_type=T_Int;
-      int_val=1;
+      int_val=2;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12651,7 +13232,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["config_id"] {
       name="config_id";
       var_type=T_String;
-      string_val="basic_train";
+      string_val="basic_train_load";
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -12697,7 +13278,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["train_epochs"] {
       name="train_epochs";
       var_type=T_Int;
-      int_val=5;
+      int_val=6;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
@@ -13359,7 +13940,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	meth_sig="const_taString_ref SafeEl_Flat(int idx)";
+	meth_sig="taString_ref SafeEl_Flat(int idx)";
 	meth_desc=" (safely) access the matrix as if it were a flat vector, for reading";
        };
        MemberMethodCall @[1] {
@@ -15676,7 +16257,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  };
 	 };
 	};
-	meth_sig="const_taString_ref SafeEl_Flat(int idx)";
+	meth_sig="taString_ref SafeEl_Flat(int idx)";
 	meth_desc=" (safely) access the matrix as if it were a flat vector, for reading";
        };
        MemberMethodCall @[1] {
@@ -17897,7 +18478,7 @@ also save specs.";
      ProgVar @["fname"] {
       name="fname";
       var_type=T_String;
-      string_val="/usr/local/src/svn/emergent/test_auto/EmergentTestFramework/test-projects/TestLoadSaveWeightautotst_0.wts";
+      string_val="/usr/local/src/svn/emergent/test_auto/EmergentTestFramework/test-projects/TestLoadSaveWeight_autotst_1.wts";
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -17907,7 +18488,7 @@ also save specs.";
      ProgVar @["final_tag"] {
       name="final_tag";
       var_type=T_String;
-      string_val="autotst_0";
+      string_val="_autotst_1";
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -18242,7 +18823,7 @@ also save specs.";
      };
      MethodCall @[3] {
       desc=;
-      flags=PROG_ERROR|CAN_REVERT_TO_CODE;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->LoadWeights(fname, Network::NET_FMT)";
       pre_compile_code_string="network->LoadWeights(fname, Network::NET_FMT)";
       result_var=NULL;
@@ -21536,22 +22117,22 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.02367688;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.08551881;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9937326;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7958951;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -21561,7 +22142,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAABDgAAAgAAAAIkAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAABEAAAApoAAAGRAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -21859,7 +22440,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=29: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=4: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["avg_sse"] {
@@ -21867,7 +22448,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.52558: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.78801: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["cnt_err"] {
@@ -21899,7 +22480,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["avg_norm_err"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.586: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.602: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["avg_cos_err"] {
@@ -22179,7 +22760,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=9: };
+	  view_range {min=0: max=5: };
 	  page_rows=-8017975;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -22208,7 +22789,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=4: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=5: };
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -22251,7 +22832,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.945799: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.799366: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -22272,7 +22853,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.6320001: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.604: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
@@ -22293,7 +22874,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=50: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=49: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
@@ -23096,7 +23677,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.690992;
+       value 8 0=0.8950969;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -23735,9 +24316,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1827048;
-     acts_p_avg=0.1827048;
-     acts_p_avg_eff=0.1827048;
+     acts_m_avg=0.1855863;
+     acts_p_avg=0.1855863;
+     acts_p_avg_eff=0.1855863;
      spec {type=LeabraLayerSpec: spec=.projects["TestLoadSaveWeight"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
      adapt_gi=1;
     };
@@ -23824,9 +24405,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1841704;
-     acts_p_avg=0.1845831;
-     acts_p_avg_eff=0.1845831;
+     acts_m_avg=0.1841435;
+     acts_p_avg=0.1846641;
+     acts_p_avg_eff=0.1846641;
      spec {type=LeabraLayerSpec: spec=.projects["TestLoadSaveWeight"].networks["Network_0"].specs["HiddenLayer"]$$: };
      adapt_gi=1;
     };
@@ -23895,9 +24476,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1753601;
-     acts_p_avg=0.1827048;
-     acts_p_avg_eff=0.1827048;
+     acts_m_avg=0.1766326;
+     acts_p_avg=0.1855863;
+     acts_p_avg_eff=0.1855863;
      spec {type=LeabraLayerSpec: spec=$.projects["TestLoadSaveWeight"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
      adapt_gi=1;
     };
