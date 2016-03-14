@@ -954,6 +954,10 @@ bool V1RegionSpec::FilterImage_impl(bool motion_only) {
   if(!data_table || save_mode == NONE_SAVE) // bail now
     return rval;
 
+  if(OutSaveOk(image_save)) {
+    ImageToTable(data_table, cur_img_r, cur_img_l);
+  }
+
   if(OutSaveOk(v1s_save)) {
     V1SOutputToTable(data_table);
   }

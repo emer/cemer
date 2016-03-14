@@ -1048,7 +1048,7 @@ LeabraProject .projects["vis_test_shadow"] {
      };
     };
     DataTable @["DoGFoveaRegionData"] { 
-     DataTableCols @.data = [8] {
+     DataTableCols @.data = [18] {
       float_Data @["BlobV1lF16_image_r"] { 
        UserDataItem_List @*(.user_data_) {
 	UserDataItem @["IMAGE"] { };
@@ -1071,22 +1071,72 @@ LeabraProject .projects["vis_test_shadow"] {
 	UserDataItem @["view_panel_wd"] { };
        };
       };
-      float_Data @["BlobV1lF16_grad_r"] { 
+      float_Data @["BlobV1lF16_image_rd_r"] { 
        UserDataItem_List @*(.user_data_) {
 	UserDataItem @["view_panel_wd"] { };
        };
       };
-      float_Data @["BlobV1lF16_grad_l"] { 
+      float_Data @["BlobV1lF16_image_gn_r"] { 
        UserDataItem_List @*(.user_data_) {
 	UserDataItem @["view_panel_wd"] { };
        };
       };
-      float_Data @["BlobV1lF16_cmb_r"] { 
+      float_Data @["BlobV1lF16_image_bl_r"] { 
        UserDataItem_List @*(.user_data_) {
 	UserDataItem @["view_panel_wd"] { };
        };
       };
-      float_Data @["BlobV1lF16_cmb_l"] { 
+      float_Data @["BlobV1lF16_image_yl_r"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      float_Data @["BlobV1lF16_image_grey_r"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      float_Data @["BlobV1lF16_image_r_g_r"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      float_Data @["BlobV1lF16_image_b_y_r"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      float_Data @["BlobV1lF16_image_rd_l"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      float_Data @["BlobV1lF16_image_gn_l"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      float_Data @["BlobV1lF16_image_bl_l"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      float_Data @["BlobV1lF16_image_yl_l"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      float_Data @["BlobV1lF16_image_grey_l"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      float_Data @["BlobV1lF16_image_r_g_l"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      float_Data @["BlobV1lF16_image_b_y_l"] { 
        UserDataItem_List @*(.user_data_) {
 	UserDataItem @["view_panel_wd"] { };
        };
@@ -2223,17 +2273,27 @@ LeabraProject .projects["vis_test_shadow"] {
        };
       };
       T3Panel @["DoGFoveaRegionData"] { 
-       T3DataView_List @.root_view.children = [3] {
+       T3DataView_List @.root_view.children = [4] {
 	GridTableView @["DoGFoveaRegionData_Grid"] { 
-	 T3DataView_List @.children = [8] {
+	 T3DataView_List @.children = [18] {
 	  GridColView @["BlobV1lF16_image_r"] { };
 	  GridColView @["BlobV1lF16_image_l"] { };
 	  GridColView @["BlobV1lF16_dog_r"] { };
 	  GridColView @["BlobV1lF16_dog_l"] { };
-	  GridColView @["BlobV1lF16_grad_r"] { };
-	  GridColView @["BlobV1lF16_grad_l"] { };
-	  GridColView @["BlobV1lF16_cmb_r"] { };
-	  GridColView @["BlobV1lF16_cmb_l"] { };
+	  GridColView @["BlobV1lF16_image_rd_r"] { };
+	  GridColView @["BlobV1lF16_image_gn_r"] { };
+	  GridColView @["BlobV1lF16_image_bl_r"] { };
+	  GridColView @["BlobV1lF16_image_yl_r"] { };
+	  GridColView @["BlobV1lF16_image_grey_r"] { };
+	  GridColView @["BlobV1lF16_image_r_g_r"] { };
+	  GridColView @["BlobV1lF16_image_b_y_r"] { };
+	  GridColView @["BlobV1lF16_image_rd_l"] { };
+	  GridColView @["BlobV1lF16_image_gn_l"] { };
+	  GridColView @["BlobV1lF16_image_bl_l"] { };
+	  GridColView @["BlobV1lF16_image_yl_l"] { };
+	  GridColView @["BlobV1lF16_image_grey_l"] { };
+	  GridColView @["BlobV1lF16_image_r_g_l"] { };
+	  GridColView @["BlobV1lF16_image_b_y_l"] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -2243,15 +2303,25 @@ LeabraProject .projects["vis_test_shadow"] {
 	 };
 	};
 	GridTableView @["DoGFoveaRegionData_Grid_1"] { 
-	 T3DataView_List @.children = [8] {
+	 T3DataView_List @.children = [18] {
 	  GridColView @["BlobV1lF16_image_r"] { };
 	  GridColView @["BlobV1lF16_image_l"] { };
 	  GridColView @["BlobV1lF16_dog_r"] { };
 	  GridColView @["BlobV1lF16_dog_l"] { };
-	  GridColView @["BlobV1lF16_grad_r"] { };
-	  GridColView @["BlobV1lF16_grad_l"] { };
-	  GridColView @["BlobV1lF16_cmb_r"] { };
-	  GridColView @["BlobV1lF16_cmb_l"] { };
+	  GridColView @["BlobV1lF16_image_rd_r"] { };
+	  GridColView @["BlobV1lF16_image_gn_r"] { };
+	  GridColView @["BlobV1lF16_image_bl_r"] { };
+	  GridColView @["BlobV1lF16_image_yl_r"] { };
+	  GridColView @["BlobV1lF16_image_grey_r"] { };
+	  GridColView @["BlobV1lF16_image_r_g_r"] { };
+	  GridColView @["BlobV1lF16_image_b_y_r"] { };
+	  GridColView @["BlobV1lF16_image_rd_l"] { };
+	  GridColView @["BlobV1lF16_image_gn_l"] { };
+	  GridColView @["BlobV1lF16_image_bl_l"] { };
+	  GridColView @["BlobV1lF16_image_yl_l"] { };
+	  GridColView @["BlobV1lF16_image_grey_l"] { };
+	  GridColView @["BlobV1lF16_image_r_g_l"] { };
+	  GridColView @["BlobV1lF16_image_b_y_l"] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -2261,15 +2331,53 @@ LeabraProject .projects["vis_test_shadow"] {
 	 };
 	};
 	GridTableView @["DoGFoveaRegionData_Grid_2"] { 
-	 T3DataView_List @.children = [8] {
+	 T3DataView_List @.children = [18] {
 	  GridColView @["BlobV1lF16_image_r"] { };
 	  GridColView @["BlobV1lF16_image_l"] { };
 	  GridColView @["BlobV1lF16_dog_r"] { };
 	  GridColView @["BlobV1lF16_dog_l"] { };
-	  GridColView @["BlobV1lF16_grad_r"] { };
-	  GridColView @["BlobV1lF16_grad_l"] { };
-	  GridColView @["BlobV1lF16_cmb_r"] { };
-	  GridColView @["BlobV1lF16_cmb_l"] { };
+	  GridColView @["BlobV1lF16_image_rd_r"] { };
+	  GridColView @["BlobV1lF16_image_gn_r"] { };
+	  GridColView @["BlobV1lF16_image_bl_r"] { };
+	  GridColView @["BlobV1lF16_image_yl_r"] { };
+	  GridColView @["BlobV1lF16_image_grey_r"] { };
+	  GridColView @["BlobV1lF16_image_r_g_r"] { };
+	  GridColView @["BlobV1lF16_image_b_y_r"] { };
+	  GridColView @["BlobV1lF16_image_rd_l"] { };
+	  GridColView @["BlobV1lF16_image_gn_l"] { };
+	  GridColView @["BlobV1lF16_image_bl_l"] { };
+	  GridColView @["BlobV1lF16_image_yl_l"] { };
+	  GridColView @["BlobV1lF16_image_grey_l"] { };
+	  GridColView @["BlobV1lF16_image_r_g_l"] { };
+	  GridColView @["BlobV1lF16_image_b_y_l"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+	};
+	GridTableView @["DoGFoveaRegionData_Grid_3"] { 
+	 T3DataView_List @.children = [18] {
+	  GridColView @["BlobV1lF16_image_r"] { };
+	  GridColView @["BlobV1lF16_image_l"] { };
+	  GridColView @["BlobV1lF16_dog_r"] { };
+	  GridColView @["BlobV1lF16_dog_l"] { };
+	  GridColView @["BlobV1lF16_image_rd_r"] { };
+	  GridColView @["BlobV1lF16_image_gn_r"] { };
+	  GridColView @["BlobV1lF16_image_bl_r"] { };
+	  GridColView @["BlobV1lF16_image_yl_r"] { };
+	  GridColView @["BlobV1lF16_image_grey_r"] { };
+	  GridColView @["BlobV1lF16_image_r_g_r"] { };
+	  GridColView @["BlobV1lF16_image_b_y_r"] { };
+	  GridColView @["BlobV1lF16_image_rd_l"] { };
+	  GridColView @["BlobV1lF16_image_gn_l"] { };
+	  GridColView @["BlobV1lF16_image_bl_l"] { };
+	  GridColView @["BlobV1lF16_image_yl_l"] { };
+	  GridColView @["BlobV1lF16_image_grey_l"] { };
+	  GridColView @["BlobV1lF16_image_r_g_l"] { };
+	  GridColView @["BlobV1lF16_image_b_y_l"] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -29916,7 +30024,7 @@ LeabraProject .projects["vis_test_shadow"] {
        };
        data_table=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"]$$;
        save_mode=FIRST_ROW;
-       image_save=SAVE_DATA|ONLY_GUI;
+       image_save=SAVE_DATA|SEP_MATRIX|ONLY_GUI;
        region {ocularity=BINOCULAR: region=FOVEA: res=HI_RES: color=COLOR: edge_mode=WRAP: renorm_thr=1e-5: };
        input_size {retina_size={x=256: y=256: }: border={x=32: y=32: }: input_size={x=192: y=192: }: };
        input_adapt {on=0: up_dt=0.3: dn_dt=0.1: };
@@ -29987,7 +30095,7 @@ LeabraProject .projects["vis_test_shadow"] {
 	};
 	UserDataItem @["view_panel_wd"] {
 	 name="view_panel_wd";
-	 value 8 0=0.1244168;
+	 value 8 0=0.1242236;
 	 val_type_fixed=0;
 	};
        };
@@ -30015,7 +30123,7 @@ LeabraProject .projects["vis_test_shadow"] {
 	};
 	UserDataItem @["view_panel_wd"] {
 	 name="view_panel_wd";
-	 value 8 0=0.1244168;
+	 value 8 0=0.1242236;
 	 val_type_fixed=0;
 	};
        };
@@ -30038,7 +30146,7 @@ LeabraProject .projects["vis_test_shadow"] {
 	el_def=0;
 	UserDataItem @["view_panel_wd"] {
 	 name="view_panel_wd";
-	 value 8 0=0.1244168;
+	 value 8 0=0.1242236;
 	 val_type_fixed=0;
 	};
        };
@@ -30061,7 +30169,7 @@ LeabraProject .projects["vis_test_shadow"] {
 	el_def=0;
 	UserDataItem @["view_panel_wd"] {
 	 name="view_panel_wd";
-	 value 8 0=0.1244168;
+	 value 8 0=0.1242236;
 	 val_type_fixed=0;
 	};
        };
@@ -30077,97 +30185,327 @@ LeabraProject .projects["vis_test_shadow"] {
        [4] ;;;;       };
        width=80;
       };
-      float_Data @["BlobV1lF16_grad_r"] {
+      float_Data @["BlobV1lF16_image_rd_r"] {
        UserDataItem_List @*(.user_data_) {
-	name=;
+	name="UserDataItem_List_116";
 	el_typ=UserDataItem;
 	el_def=0;
 	UserDataItem @["view_panel_wd"] {
 	 name="view_panel_wd";
-	 value 8 0=0.1648523;
+	 value 8 0=0.1645963;
 	 val_type_fixed=0;
 	};
        };
-       name="BlobV1lF16_grad_r";
+       name="BlobV1lF16_image_rd_r";
        col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
        is_matrix=1;
-       cell_geom{ 4;2;16;16;       };
+       cell_geom{ 256;256;       };
        calc_expr {
 	expr=;
        };
        dim_names {
 	name="dim_names";
-       [4] ;;;;       };
+       [2] ;;       };
        width=106;
       };
-      float_Data @["BlobV1lF16_grad_l"] {
+      float_Data @["BlobV1lF16_image_gn_r"] {
        UserDataItem_List @*(.user_data_) {
-	name=;
+	name="UserDataItem_List_117";
 	el_typ=UserDataItem;
 	el_def=0;
 	UserDataItem @["view_panel_wd"] {
 	 name="view_panel_wd";
-	 value 8 0=0.1648523;
+	 value 8 0=0.1645963;
 	 val_type_fixed=0;
 	};
        };
-       name="BlobV1lF16_grad_l";
+       name="BlobV1lF16_image_gn_r";
        col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
        is_matrix=1;
-       cell_geom{ 4;2;16;16;       };
+       cell_geom{ 256;256;       };
        calc_expr {
 	expr=;
        };
        dim_names {
 	name="dim_names";
-       [4] ;;;;       };
+       [2] ;;       };
        width=106;
       };
-      float_Data @["BlobV1lF16_cmb_r"] {
+      float_Data @["BlobV1lF16_image_bl_r"] {
        UserDataItem_List @*(.user_data_) {
-	name=;
+	name="UserDataItem_List_118";
 	el_typ=UserDataItem;
 	el_def=0;
 	UserDataItem @["view_panel_wd"] {
 	 name="view_panel_wd";
-	 value 8 0=0.1648523;
+	 value 8 0=0.1645963;
 	 val_type_fixed=0;
 	};
        };
-       name="BlobV1lF16_cmb_r";
+       name="BlobV1lF16_image_bl_r";
        col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
        is_matrix=1;
-       cell_geom{ 4;4;16;16;       };
+       cell_geom{ 256;256;       };
        calc_expr {
 	expr=;
        };
        dim_names {
 	name="dim_names";
-       [4] ;;;;       };
+       [2] ;;       };
        width=106;
       };
-      float_Data @["BlobV1lF16_cmb_l"] {
+      float_Data @["BlobV1lF16_image_yl_r"] {
        UserDataItem_List @*(.user_data_) {
-	name=;
+	name="UserDataItem_List_119";
 	el_typ=UserDataItem;
 	el_def=0;
 	UserDataItem @["view_panel_wd"] {
 	 name="view_panel_wd";
-	 value 8 0=0.1648523;
+	 value 8 0=0.1645963;
 	 val_type_fixed=0;
 	};
        };
-       name="BlobV1lF16_cmb_l";
+       name="BlobV1lF16_image_yl_r";
        col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
        is_matrix=1;
-       cell_geom{ 4;4;16;16;       };
+       cell_geom{ 256;256;       };
        calc_expr {
 	expr=;
        };
        dim_names {
 	name="dim_names";
-       [4] ;;;;       };
+       [2] ;;       };
        width=106;
+      };
+      float_Data @["BlobV1lF16_image_grey_r"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_120";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1552795;
+	 val_type_fixed=0;
+	};
+       };
+       name="BlobV1lF16_image_grey_r";
+       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 256;256;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=0;
+      };
+      float_Data @["BlobV1lF16_image_r_g_r"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_121";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1552795;
+	 val_type_fixed=0;
+	};
+       };
+       name="BlobV1lF16_image_r_g_r";
+       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 256;256;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=0;
+      };
+      float_Data @["BlobV1lF16_image_b_y_r"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_122";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1552795;
+	 val_type_fixed=0;
+	};
+       };
+       name="BlobV1lF16_image_b_y_r";
+       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 256;256;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=0;
+      };
+      float_Data @["BlobV1lF16_image_rd_l"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_123";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1552795;
+	 val_type_fixed=0;
+	};
+       };
+       name="BlobV1lF16_image_rd_l";
+       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 256;256;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=0;
+      };
+      float_Data @["BlobV1lF16_image_gn_l"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_124";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1552795;
+	 val_type_fixed=0;
+	};
+       };
+       name="BlobV1lF16_image_gn_l";
+       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 256;256;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=0;
+      };
+      float_Data @["BlobV1lF16_image_bl_l"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_125";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1552795;
+	 val_type_fixed=0;
+	};
+       };
+       name="BlobV1lF16_image_bl_l";
+       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 256;256;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=0;
+      };
+      float_Data @["BlobV1lF16_image_yl_l"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_126";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1552795;
+	 val_type_fixed=0;
+	};
+       };
+       name="BlobV1lF16_image_yl_l";
+       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 256;256;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=0;
+      };
+      float_Data @["BlobV1lF16_image_grey_l"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_127";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1552795;
+	 val_type_fixed=0;
+	};
+       };
+       name="BlobV1lF16_image_grey_l";
+       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 256;256;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=0;
+      };
+      float_Data @["BlobV1lF16_image_r_g_l"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_128";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1552795;
+	 val_type_fixed=0;
+	};
+       };
+       name="BlobV1lF16_image_r_g_l";
+       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 256;256;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=0;
+      };
+      float_Data @["BlobV1lF16_image_b_y_l"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_129";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1552795;
+	 val_type_fixed=0;
+	};
+       };
+       name="BlobV1lF16_image_b_y_l";
+       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 256;256;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [2] ;;       };
+       width=0;
       };
      };
      data_flags=AUTO_CALC;
@@ -31552,13 +31890,13 @@ LeabraProject .projects["vis_test_shadow"] {
 	  init_quat {s=1: x=0: y=0: z=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=-1.712292e-15: y=0.09999999: z=-4.997528e-13: };
+	  cur_pos {x=2.6218e-14: y=0.09999999: z=-4.304328e-10: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_euler {x=-5.522675e-14: y=1.166949e-16: z=1.822979e-15: };
-	  cur_quat {s=1: x=-2.761338e-14: y=5.834745e-17: z=9.114893e-16: };
-	  cur_quat_raw {s=1: x=-2.761338e-14: y=5.834745e-17: z=9.114893e-16: };
-	  cur_lin_vel {x=-6.061279e-13: y=2.980447e-7: z=1.392207e-10: };
-	  cur_ang_vel {x=1.348826e-11: y=9.225344e-15: z=1.921136e-13: };
+	  cur_euler {x=-4.067376e-11: y=2.570762e-16: z=2.059392e-15: };
+	  cur_quat {s=1: x=-2.033688e-11: y=1.285381e-16: z=1.029696e-15: };
+	  cur_quat_raw {s=1: x=-2.033688e-11: y=1.285381e-16: z=1.029696e-15: };
+	  cur_lin_vel {x=9.032997e-12: y=2.977673e-7: z=9.615682e-9: };
+	  cur_ang_vel {x=9.154384e-10: y=6.386514e-14: z=1.223797e-14: };
 	  shape=BOX;
 	  mass=1;
 	  radius=0.5;
@@ -31610,13 +31948,13 @@ LeabraProject .projects["vis_test_shadow"] {
 	  init_quat {s=1: x=0: y=0: z=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=-4.244546e-15: y=0.3496212: z=-0.01065283: };
-	  cur_rot {x=-1: y=-1.278075e-5: z=-1.190317e-5: rot=1.641878: };
-	  cur_euler {x=-1.641879: y=-2.549704e-5: z=1.81535e-6: };
-	  cur_quat {s=0.6815342: x=-0.7317864: y=-9.352774e-6: z=-8.710579e-6: };
-	  cur_quat_raw {s=0.9993687: x=-0.03553185: y=-1.277272e-5: z=4.541234e-7: };
-	  cur_lin_vel {x=-1.275124e-12: y=-1.069597e-5: z=-0.0001501372: };
-	  cur_ang_vel {x=-0.001004196: y=-6.455925e-6: z=4.595953e-7: };
+	  cur_pos {x=5.265619e-14: y=0.3496578: z=-0.01012692: };
+	  cur_rot {x=-1: y=-1.437348e-6: z=-1.34338e-6: rot=1.638364: };
+	  cur_euler {x=-1.638364: y=-2.868148e-6: z=1.940774e-7: };
+	  cur_quat {s=0.682819: x=-0.7305876: y=-1.050108e-6: z=-9.814568e-7: };
+	  cur_quat_raw {s=0.9994295: x=-0.03377569: y=-1.436533e-6: z=4.854655e-8: };
+	  cur_lin_vel {x=1.791496e-11: y=-1.040112e-5: z=-0.0001536346: };
+	  cur_ang_vel {x=-0.001027182: y=-5.871108e-6: z=3.972634e-7: };
 	  shape=CAPSULE;
 	  mass=1;
 	  radius=0.1;
@@ -31668,13 +32006,13 @@ LeabraProject .projects["vis_test_shadow"] {
 	  init_quat {s=1.267591e-6: x=0: y=1: z=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.03999744: y=0.3567232: z=0.08909569: };
-	  cur_rot {x=0.003639006: y=0.9922866: z=0.1239121: rot=3.083262: };
-	  cur_euler {x=2.892716: y=0.05697754: z=3.127129: };
-	  cur_quat {s=0.02916113: x=0.003637458: y=0.9918646: z=0.1238595: };
-	  cur_quat_raw {s=0.02916113: x=0.003637458: y=0.9918646: z=0.1238595: };
-	  cur_lin_vel {x=-4.982227e-7: y=8.948956e-5: z=-0.0001568421: };
-	  cur_ang_vel {x=-0.001005957: y=-6.379257e-6: z=4.567683e-7: };
+	  cur_pos {x=0.03999971: y=0.356409: z=0.08964505: };
+	  cur_rot {x=0.003692312: y=0.9920674: z=0.1256533: rot=3.083298: };
+	  cur_euler {x=2.889201: y=0.05690297: z=3.126928: };
+	  cur_quat {s=0.02914315: x=0.003690743: y=0.991646: z=0.1255999: };
+	  cur_quat_raw {s=0.02914315: x=0.003690743: y=0.991646: z=0.1255999: };
+	  cur_lin_vel {x=-5.884705e-7: y=9.209872e-5: z=-0.0001605571: };
+	  cur_ang_vel {x=-0.000914922: y=-2.628723e-5: z=-5.582962e-6: };
 	  shape=CYLINDER;
 	  mass=0.001;
 	  radius=0.01;
@@ -31721,7 +32059,7 @@ LeabraProject .projects["vis_test_shadow"] {
 	   intensity=0.2;
 	   color {r=1: g=1: b=1: a=1: };
 	  };
-	  dir_norm {x=-0.05874885: y=-0.2454914: z=0.967617: };
+	  dir_norm {x=-0.05872649: y=-0.2488862: z=0.9667508: };
 	 };
 	 VECamera @["RightEye"] {
 	  name="RightEye";
@@ -31740,13 +32078,13 @@ LeabraProject .projects["vis_test_shadow"] {
 	  init_quat {s=1.267591e-6: x=0: y=1: z=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=-0.04000256: y=0.356723: z=0.08909366: };
-	  cur_rot {x=-0.003643638: y=0.9922866: z=0.1239119: rot=3.199868: };
-	  cur_euler {x=2.892717: y=-0.05692147: z=-3.127127: };
-	  cur_quat {s=-0.02913346: x=-0.003642092: y=0.9918655: z=0.1238593: };
-	  cur_quat_raw {s=-0.02913346: x=-0.003642092: y=0.9918655: z=0.1238593: };
-	  cur_lin_vel {x=-4.982094e-7: y=9.004677e-5: z=-0.0001578054: };
-	  cur_ang_vel {x=-0.001006039: y=-6.464307e-6: z=4.866617e-7: };
+	  cur_pos {x=-0.04000029: y=0.356409: z=0.08964482: };
+	  cur_rot {x=-0.003692531: y=0.9920673: z=0.1256533: rot=3.199876: };
+	  cur_euler {x=2.889201: y=-0.0568921: z=-3.126929: };
+	  cur_quat {s=-0.0291377: x=-0.003690964: y=0.9916461: z=0.1255999: };
+	  cur_quat_raw {s=-0.0291377: x=-0.003690964: y=0.9916461: z=0.1255999: };
+	  cur_lin_vel {x=-5.883923e-7: y=9.206672e-5: z=-0.0001610267: };
+	  cur_ang_vel {x=-0.0009162089: y=1.228314e-5: z=5.799397e-6: };
 	  shape=CYLINDER;
 	  mass=0.001;
 	  radius=0.01;
@@ -31793,7 +32131,7 @@ LeabraProject .projects["vis_test_shadow"] {
 	   intensity=0.2;
 	   color {r=1: g=1: b=1: a=1: };
 	  };
-	  dir_norm {x=0.05869516: y=-0.2454914: z=0.9676204: };
+	  dir_norm {x=0.05871575: y=-0.2488862: z=0.9667513: };
 	 };
 	 VEBody @["EyeBeamL"] {
 	  name="EyeBeamL";
@@ -31812,13 +32150,13 @@ LeabraProject .projects["vis_test_shadow"] {
 	  init_quat {s=1: x=0: y=0: z=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.009449365: y=0.2290677: z=0.5922566: };
-	  cur_rot {x=0.9729945: y=-0.2290693: z=-0.02857331: rot=0.255287: };
-	  cur_euler {x=0.2488767: y=-0.05697508: z=-0.01446284: };
-	  cur_quat {s=0.9918646: x=0.1238595: y=-0.02915987: z=-0.003637302: };
-	  cur_quat_raw {s=0.9918646: x=0.1238595: y=-0.02915987: z=-0.003637302: };
-	  cur_lin_vel {x=-3.873032e-6: y=0.0005944347: z=-2.742233e-5: };
-	  cur_ang_vel {x=-0.001005951: y=-6.355445e-6: z=4.725119e-7: };
+	  cur_pos {x=0.009463252: y=0.2269882: z=0.5923555: };
+	  cur_rot {x=0.9737275: y=-0.2259258: z=-0.02861167: rot=0.2586984: };
+	  cur_euler {x=0.2523917: y=-0.05690052: z=-0.0146642: };
+	  cur_quat {s=0.9916461: x=0.1255999: y=-0.0291419: z=-0.003690585: };
+	  cur_quat_raw {s=0.9916461: x=0.1255999: y=-0.0291419: z=-0.003690585: };
+	  cur_lin_vel {x=-1.452748e-5: y=0.0005515233: z=-4.535625e-5: };
+	  cur_ang_vel {x=-0.0009146169: y=-2.637412e-5: z=-5.639158e-6: };
 	  shape=CAPSULE;
 	  mass=0.01;
 	  radius=0.005;
@@ -31870,13 +32208,13 @@ LeabraProject .projects["vis_test_shadow"] {
 	  init_quat {s=1: x=0: y=0: z=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=-0.009479764: y=0.2290676: z=0.5922562: };
-	  cur_rot {x=0.9730396: y=0.2288825: z=0.02861353: rot=0.2552749: };
-	  cur_euler {x=0.248876: y=0.05692392: z=0.01446639: };
-	  cur_quat {s=0.9918654: x=0.1238593: y=0.02913472: z=0.003642249: };
-	  cur_quat_raw {s=0.9918654: x=0.1238593: y=0.02913472: z=0.003642249: };
-	  cur_lin_vel {x=-3.763447e-6: y=0.0005953505: z=-3.037264e-5: };
-	  cur_ang_vel {x=-0.001006004: y=-6.552263e-6: z=4.746645e-7: };
+	  cur_pos {x=-0.009466778: y=0.2269882: z=0.5923556: };
+	  cur_rot {x=0.9737343: y=0.2259047: z=0.02861606: rot=0.2586965: };
+	  cur_euler {x=0.2523916: y=0.05689456: z=0.01466453: };
+	  cur_quat {s=0.9916462: x=0.1255999: y=0.02913896: z=0.003691125: };
+	  cur_quat_raw {s=0.9916462: x=0.1255999: y=0.02913896: z=0.003691125: };
+	  cur_lin_vel {x=6.442652e-6: y=0.0005527207: z=-4.401706e-5: };
+	  cur_ang_vel {x=-0.00091637: y=1.242018e-5: z=5.823174e-6: };
 	  shape=CAPSULE;
 	  mass=0.01;
 	  radius=0.005;
@@ -31945,7 +32283,7 @@ LeabraProject .projects["vis_test_shadow"] {
 	  };
 	  motor {
 	   motor_on=1;
-	   vel=-1.192093e-6;
+	   vel=-9.059906e-5;
 	   f_max=10;
 	   servo_on=1;
 	   trg_pos=-0.3195431;
@@ -31953,7 +32291,7 @@ LeabraProject .projects["vis_test_shadow"] {
 	  };
 	  motor2 {
 	   motor_on=1;
-	   vel=2.235174e-7;
+	   vel=1.661479e-5;
 	   f_max=10;
 	   servo_on=1;
 	   trg_pos=0.05875587;
@@ -31969,16 +32307,16 @@ LeabraProject .projects["vis_test_shadow"] {
 	   erp=0.2;
 	   cfm=1e-5;
 	  };
-	  pos=-0.319543;
-	  pos_norm=0.3668571;
-	  vel=1.760898e-6;
-	  pos2=0.05875586;
-	  pos2_norm=0.5244816;
-	  vel2=-7.363315e-8;
-	  cur_force1 {x=-6.23716e-8: y=1.166226e-6: z=2.488891e-6: };
-	  cur_torque1 {x=-1.063124e-6: y=-4.798953e-8: z=3.195089e-9: };
-	  cur_force2 {x=6.23716e-8: y=-1.166226e-6: z=-2.488891e-6: };
-	  cur_torque2 {x=9.644676e-7: y=-5.778124e-8: z=4.389388e-8: };
+	  pos=-0.3195385;
+	  pos_norm=0.366859;
+	  vel=-0.0001122602;
+	  pos2=0.05875504;
+	  pos2_norm=0.5244813;
+	  vel2=2.126249e-5;
+	  cur_force1 {x=-3.484035e-6: y=-9.597841e-6: z=-3.716148e-6: };
+	  cur_torque1 {x=8.0699e-6: y=-2.577015e-6: z=-5.391049e-7: };
+	  cur_force2 {x=3.484035e-6: y=9.597841e-6: z=3.716148e-6: };
+	  cur_torque2 {x=-7.13739e-6: y=2.378051e-6: z=1.78712e-7: };
 	 };
 	 VEJoint @["RightEyeJoint"] {
 	  name="RightEyeJoint";
@@ -32009,7 +32347,7 @@ LeabraProject .projects["vis_test_shadow"] {
 	  };
 	  motor {
 	   motor_on=1;
-	   vel=-1.192093e-6;
+	   vel=-9.059906e-5;
 	   f_max=10;
 	   servo_on=1;
 	   trg_pos=-0.3195431;
@@ -32017,7 +32355,7 @@ LeabraProject .projects["vis_test_shadow"] {
 	  };
 	  motor2 {
 	   motor_on=1;
-	   vel=0;
+	   vel=-1.907349e-5;
 	   f_max=10;
 	   servo_on=1;
 	   trg_pos=-0.05875587;
@@ -32033,16 +32371,16 @@ LeabraProject .projects["vis_test_shadow"] {
 	   erp=0.2;
 	   cfm=1e-5;
 	  };
-	  pos=-0.319543;
-	  pos_norm=0.3668571;
-	  vel=1.842971e-6;
-	  pos2=-0.05875587;
-	  pos2_norm=0.4755184;
-	  vel2=1.453827e-9;
-	  cur_force1 {x=9.938091e-9: y=4.964723e-7: z=1.616621e-6: };
-	  cur_torque1 {x=-5.727094e-7: y=3.203101e-8: z=3.969415e-9: };
-	  cur_force2 {x=-9.938091e-9: y=-4.964723e-7: z=-1.616621e-6: };
-	  cur_torque2 {x=5.346673e-7: y=3.362923e-8: z=-2.390014e-8: };
+	  pos=-0.3195385;
+	  pos_norm=0.366859;
+	  vel=-0.0001109733;
+	  pos2=-0.05875492;
+	  pos2_norm=0.4755188;
+	  vel2=-1.892771e-5;
+	  cur_force1 {x=4.259566e-6: y=-1.102464e-5: z=-5.268825e-7: };
+	  cur_torque1 {x=8.58151e-6: y=3.264965e-6: z=6.94236e-7: };
+	  cur_force2 {x=-4.259566e-6: y=1.102464e-5: z=5.268825e-7: };
+	  cur_torque2 {x=-7.48512e-6: y=-2.861056e-6: z=-2.820004e-7: };
 	 };
 	 VEJoint @["NeckJoint"] {
 	  name="NeckJoint";
@@ -32097,16 +32435,16 @@ LeabraProject .projects["vis_test_shadow"] {
 	   erp=0.2;
 	   cfm=1e-5;
 	  };
-	  pos=0.07107878;
-	  pos_norm=0.5296162;
-	  vel=0.001004196;
-	  pos2=2.554076e-5;
-	  pos2_norm=0.5000106;
-	  vel2=6.472265e-6;
-	  cur_force1 {x=-5.20816e-8: y=2.096536e-6: z=1.018574e-5: };
-	  cur_torque1 {x=1.018574e-6: y=9.804922e-10: z=1.898134e-8: };
-	  cur_force2 {x=5.20816e-8: y=-2.096536e-6: z=-1.018574e-5: };
-	  cur_torque2 {x=1.546335e-6: y=-4.257544e-10: z=-5.980662e-9: };
+	  pos=0.06756449;
+	  pos_norm=0.5281519;
+	  vel=0.001027183;
+	  pos2=2.807752e-6;
+	  pos2_norm=0.5000012;
+	  vel2=5.884534e-6;
+	  cur_force1 {x=7.7536e-7: y=-2.551765e-5: z=-9.181666e-5: };
+	  cur_torque1 {x=-9.181666e-6: y=5.729566e-9: z=7.149694e-9: };
+	  cur_force2 {x=-7.7536e-7: y=2.551765e-5: z=9.181666e-5: };
+	  cur_torque2 {x=-1.399946e-5: y=-1.358038e-8: z=-2.007244e-7: };
 	 };
 	 VEJoint @["EyeBeamLJoint"] {
 	  name="EyeBeamLJoint";
@@ -32341,7 +32679,7 @@ LeabraProject .projects["vis_test_shadow"] {
 	  obj_xform {scale={x=0.005: y=0.005: z=0.005: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  obj_fname="00299";
 	  set_color=1;
-	  color {r=0: g=1: b=0: a=1: };
+	  color {r=0: g=0.725: b=0: a=1: };
 	  phong_color {ambient=0.2: specular=0: shininess=150: };
 	  texture=NULL;
 	  surface {
@@ -32604,7 +32942,7 @@ LeabraProject .projects["vis_test_shadow"] {
       light_0=.projects["vis_test_shadow"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"].objs["VEVisTestWorld"].objects["Light1"].bodies["LightBehindHead"]$$;
       light_1=NULL;
      };
-     TimeUsed @["RobotTime"] {name="RobotTime": start={usr=3353: sys=1524: tot=145786191310: }: end={usr=3357: sys=1526: tot=145786191317: }: used={usr=11604: sys=1728: tot=15788: }: s_used=157.88: n_used=795: };
+     TimeUsed @["RobotTime"] {name="RobotTime": start={usr=850: sys=232: tot=145793944148: }: end={usr=881: sys=238: tot=145793944236: }: used={usr=11958: sys=1813: tot=16713: }: s_used=167.13: n_used=807: };
     };
     types {
      name="types";
@@ -36063,7 +36401,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0;
+     value 8 0=0.01614274;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -37172,45 +37510,155 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
-	   GridColView @["BlobV1lF16_grad_r"] {
-	    name="BlobV1lF16_grad_r";
-	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_grad_r"]$$;
+	   GridColView @["BlobV1lF16_image_rd_r"] {
+	    name="BlobV1lF16_image_rd_r";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_rd_r"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=4;
+	    text_width=256;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
-	   GridColView @["BlobV1lF16_grad_l"] {
-	    name="BlobV1lF16_grad_l";
-	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_grad_l"]$$;
+	   GridColView @["BlobV1lF16_image_gn_r"] {
+	    name="BlobV1lF16_image_gn_r";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_gn_r"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=4;
+	    text_width=256;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
-	   GridColView @["BlobV1lF16_cmb_r"] {
-	    name="BlobV1lF16_cmb_r";
-	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_cmb_r"]$$;
+	   GridColView @["BlobV1lF16_image_bl_r"] {
+	    name="BlobV1lF16_image_bl_r";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_bl_r"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=4;
+	    text_width=256;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
-	   GridColView @["BlobV1lF16_cmb_l"] {
-	    name="BlobV1lF16_cmb_l";
-	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_cmb_l"]$$;
+	   GridColView @["BlobV1lF16_image_yl_r"] {
+	    name="BlobV1lF16_image_yl_r";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_yl_r"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=4;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_grey_r"] {
+	    name="BlobV1lF16_image_grey_r";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_grey_r"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_r_g_r"] {
+	    name="BlobV1lF16_image_r_g_r";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_r_g_r"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_b_y_r"] {
+	    name="BlobV1lF16_image_b_y_r";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_b_y_r"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_rd_l"] {
+	    name="BlobV1lF16_image_rd_l";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_rd_l"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_gn_l"] {
+	    name="BlobV1lF16_image_gn_l";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_gn_l"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_bl_l"] {
+	    name="BlobV1lF16_image_bl_l";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_bl_l"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_yl_l"] {
+	    name="BlobV1lF16_image_yl_l";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_yl_l"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_grey_l"] {
+	    name="BlobV1lF16_image_grey_l";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_grey_l"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_r_g_l"] {
+	    name="BlobV1lF16_image_r_g_l";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_r_g_l"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_b_y_l"] {
+	    name="BlobV1lF16_image_b_y_l";
+	    m_data=.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_b_y_l"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
@@ -37235,8 +37683,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  manip_ctrl_on=1;
 	  view_cols=1;
 	  page_cols=1;
-	  col_range {min=0: max=0: };
-	  need_scale_update=1;
+	  col_range {min=1: max=1: };
+	  need_scale_update=0;
 	  width=1;
 	  grid_on=1;
 	  header_on=1;
@@ -37254,7 +37702,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   range=1;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
-	   auto_scale=0;
+	   auto_scale=1;
 	  };
 	  grid_margin=0.01;
 	  grid_line_size=0.002;
@@ -37322,45 +37770,155 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
-	   GridColView @["BlobV1lF16_grad_r"] {
-	    name="BlobV1lF16_grad_r";
-	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_grad_r"]$;
+	   GridColView @["BlobV1lF16_image_rd_r"] {
+	    name="BlobV1lF16_image_rd_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_rd_r"]$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=4;
+	    text_width=256;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
-	   GridColView @["BlobV1lF16_grad_l"] {
-	    name="BlobV1lF16_grad_l";
-	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_grad_l"]$;
+	   GridColView @["BlobV1lF16_image_gn_r"] {
+	    name="BlobV1lF16_image_gn_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_gn_r"]$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=4;
+	    text_width=256;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
-	   GridColView @["BlobV1lF16_cmb_r"] {
-	    name="BlobV1lF16_cmb_r";
-	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_cmb_r"]$;
+	   GridColView @["BlobV1lF16_image_bl_r"] {
+	    name="BlobV1lF16_image_bl_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_bl_r"]$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=4;
+	    text_width=256;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
-	   GridColView @["BlobV1lF16_cmb_l"] {
-	    name="BlobV1lF16_cmb_l";
-	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_cmb_l"]$;
+	   GridColView @["BlobV1lF16_image_yl_r"] {
+	    name="BlobV1lF16_image_yl_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_yl_r"]$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=4;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_grey_r"] {
+	    name="BlobV1lF16_image_grey_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_grey_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_r_g_r"] {
+	    name="BlobV1lF16_image_r_g_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_r_g_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_b_y_r"] {
+	    name="BlobV1lF16_image_b_y_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_b_y_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_rd_l"] {
+	    name="BlobV1lF16_image_rd_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_rd_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_gn_l"] {
+	    name="BlobV1lF16_image_gn_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_gn_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_bl_l"] {
+	    name="BlobV1lF16_image_bl_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_bl_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_yl_l"] {
+	    name="BlobV1lF16_image_yl_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_yl_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_grey_l"] {
+	    name="BlobV1lF16_image_grey_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_grey_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_r_g_l"] {
+	    name="BlobV1lF16_image_r_g_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_r_g_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_b_y_l"] {
+	    name="BlobV1lF16_image_b_y_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_b_y_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
@@ -37386,7 +37944,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  view_cols=1;
 	  page_cols=1;
 	  col_range {min=2: max=2: };
-	  need_scale_update=1;
+	  need_scale_update=0;
 	  width=1;
 	  grid_on=1;
 	  header_on=1;
@@ -37404,7 +37962,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   range=1;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
-	   auto_scale=0;
+	   auto_scale=1;
 	  };
 	  grid_margin=0.01;
 	  grid_line_size=0.002;
@@ -37472,45 +38030,155 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
-	   GridColView @["BlobV1lF16_grad_r"] {
-	    name="BlobV1lF16_grad_r";
-	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_grad_r"]$;
+	   GridColView @["BlobV1lF16_image_rd_r"] {
+	    name="BlobV1lF16_image_rd_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_rd_r"]$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=4;
+	    text_width=256;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
-	   GridColView @["BlobV1lF16_grad_l"] {
-	    name="BlobV1lF16_grad_l";
-	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_grad_l"]$;
+	   GridColView @["BlobV1lF16_image_gn_r"] {
+	    name="BlobV1lF16_image_gn_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_gn_r"]$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=4;
+	    text_width=256;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
-	   GridColView @["BlobV1lF16_cmb_r"] {
-	    name="BlobV1lF16_cmb_r";
-	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_cmb_r"]$;
+	   GridColView @["BlobV1lF16_image_bl_r"] {
+	    name="BlobV1lF16_image_bl_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_bl_r"]$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=4;
+	    text_width=256;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
-	   GridColView @["BlobV1lF16_cmb_l"] {
-	    name="BlobV1lF16_cmb_l";
-	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_cmb_l"]$;
+	   GridColView @["BlobV1lF16_image_yl_r"] {
+	    name="BlobV1lF16_image_yl_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_yl_r"]$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=4;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_grey_r"] {
+	    name="BlobV1lF16_image_grey_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_grey_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_r_g_r"] {
+	    name="BlobV1lF16_image_r_g_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_r_g_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_b_y_r"] {
+	    name="BlobV1lF16_image_b_y_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_b_y_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_rd_l"] {
+	    name="BlobV1lF16_image_rd_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_rd_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_gn_l"] {
+	    name="BlobV1lF16_image_gn_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_gn_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_bl_l"] {
+	    name="BlobV1lF16_image_bl_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_bl_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_yl_l"] {
+	    name="BlobV1lF16_image_yl_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_yl_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_grey_l"] {
+	    name="BlobV1lF16_image_grey_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_grey_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_r_g_l"] {
+	    name="BlobV1lF16_image_r_g_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_r_g_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_b_y_l"] {
+	    name="BlobV1lF16_image_b_y_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_b_y_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
@@ -37535,7 +38203,267 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  manip_ctrl_on=1;
 	  view_cols=1;
 	  page_cols=1;
-	  col_range {min=4: max=4: };
+	  col_range {min=14: max=14: };
+	  need_scale_update=1;
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="colorscale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   last_min=-1;
+	   last_max=1;
+	   range=1;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.002;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
+	  use_custom_paging=0;
+	 };
+	 GridTableView @["DoGFoveaRegionData_Grid_3"] {
+	  name="DoGFoveaRegionData_Grid_3";
+	  m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1.114788: y=1.16552: z=0: }: };
+	  children {
+	   name="children";
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @["BlobV1lF16_image_r"] {
+	    name="BlobV1lF16_image_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=1;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_l"] {
+	    name="BlobV1lF16_image_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=1;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_dog_r"] {
+	    name="BlobV1lF16_dog_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_dog_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=2;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_dog_l"] {
+	    name="BlobV1lF16_dog_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_dog_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=2;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_rd_r"] {
+	    name="BlobV1lF16_image_rd_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_rd_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_gn_r"] {
+	    name="BlobV1lF16_image_gn_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_gn_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_bl_r"] {
+	    name="BlobV1lF16_image_bl_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_bl_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_yl_r"] {
+	    name="BlobV1lF16_image_yl_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_yl_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_grey_r"] {
+	    name="BlobV1lF16_image_grey_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_grey_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_r_g_r"] {
+	    name="BlobV1lF16_image_r_g_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_r_g_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_b_y_r"] {
+	    name="BlobV1lF16_image_b_y_r";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_b_y_r"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_rd_l"] {
+	    name="BlobV1lF16_image_rd_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_rd_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_gn_l"] {
+	    name="BlobV1lF16_image_gn_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_gn_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_bl_l"] {
+	    name="BlobV1lF16_image_bl_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_bl_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_yl_l"] {
+	    name="BlobV1lF16_image_yl_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_yl_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_grey_l"] {
+	    name="BlobV1lF16_image_grey_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_grey_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_r_g_l"] {
+	    name="BlobV1lF16_image_r_g_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_r_g_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["BlobV1lF16_image_b_y_l"] {
+	    name="BlobV1lF16_image_b_y_l";
+	    m_data=$.projects["vis_test_shadow"].programs["VisTest_3D"].objs["DoGFoveaRegionData"].data["BlobV1lF16_image_b_y_l"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=256;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1.114788: y=1.16552: z=0: }: };
+	  annotations {
+	   name="annotations";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name="annote_children";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=1;
+	  view_range {min=0: max=0: };
+	  page_rows=1;
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  view_cols=1;
+	  page_cols=1;
+	  col_range {min=17: max=17: };
 	  need_scale_update=1;
 	  width=1;
 	  grid_on=1;

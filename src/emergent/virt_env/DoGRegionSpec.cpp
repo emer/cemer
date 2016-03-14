@@ -212,6 +212,9 @@ bool DoGRegionSpec::FilterImage_impl(bool motion_only) {
   if(!data_table || save_mode == NONE_SAVE) // bail now
     return rval;
 
+  if(OutSaveOk(image_save)) {
+    ImageToTable(data_table, cur_img_r, cur_img_l);
+  }
   if(dog_save & OutSaveOk(dog_save)) {
     DoGOutputToTable(data_table);
   }

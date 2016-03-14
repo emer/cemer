@@ -86,6 +86,157 @@ protected:
   void	UpdateAfterEdit_impl() override;
 };
 
+taTypeDef_Of(VisColorSpace);
+
+class E_API VisColorSpace : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image transform RGB colors into LMS perceptual space, including color opponents, and back..
+INHERITED(taOBase)
+public:
+
+  static inline float sRGBvalToLinear(const float srgb) {
+    if(srgb <= 0.04045f) return srgb / 12.92f;
+    return powf((srgb + 0.055f) / 1.055f, 2.4f);
+  }
+  // convert an sRGB rgb component to linear -- used in converting from sRGB to XYZ colors
+
+  static inline float sRGBvalFromLinear(const float lin) {
+    if(lin <= 0.0031308f) return 12.92f * lin;
+    return (1.055f * powf(lin, 1.0f / 2.4f) + 0.055f);
+  }
+  // convert an sRGB rgb linear component to non-linear sRGB value -- used in converting from XYZ to sRGB 
+ 
+  static inline void sRGBtoLinear(float& r_lin, float& g_lin, float& b_lin,
+                                  const float r_s, const float g_s, const float b_s) {
+    r_lin = sRGBvalToLinear(r_s);    g_lin = sRGBvalToLinear(g_s);    b_lin = sRGBvalToLinear(b_s);
+  }
+  // convert set of sRGB components to linear values (gamma correction)
+
+  static inline void sRGBfromLinear(float& r_s, float& g_s, float& b_s,
+                                  const float r_lin, const float g_lin, const float b_lin) {
+    r_s = sRGBvalFromLinear(r_lin);    g_s = sRGBvalFromLinear(g_lin);    b_s = sRGBvalFromLinear(b_lin);
+  }
+  // convert set of sRGB components to linear values (gamma correction)
+
+  static inline void sRGBlinToXYZ(float& X, float& Y, float& Z,
+                                  const float r_lin, const float g_lin, const float b_lin) {
+    X = 0.4124f * r_lin + 0.3576f * g_lin + 0.1805f * b_lin;
+    Y = 0.2126f * r_lin + 0.7152f * g_lin + 0.0722f * b_lin;
+    Z = 0.0193f * r_lin + 0.1192f * g_lin + 0.9505f * b_lin;
+  }
+  // convert sRGB linear into XYZ CIE standard color space
+
+  static inline void XYZtosRGBlin(float& r_lin, float& g_lin, float& b_lin,
+                                  const float X, const float Y, const float Z) {
+    r_lin = 3.2406f * X + -1.5372f * Y + -0.4986f * Z;
+    g_lin = -0.9689f * X + 1.8758f * Y + 0.0415f * Z;
+    b_lin = 0.0557f * X + -0.2040f * Y + 1.0570f * Z;
+  }
+  // convert XYZ CIE standard color space to sRGB linear
+
+  static inline void sRGBtoXYZ(float& X, float& Y, float& Z,
+                               const float r_s, const float g_s, const float b_s) {
+    float r_lin, g_lin, b_lin;
+    sRGBtoLinear(r_lin, g_lin, b_lin, r_s, g_s, b_s);
+    sRGBlinToXYZ(X,Y,Z, r_lin, g_lin, b_lin);
+  }
+  // convert sRGB into XYZ CIE standard color space
+
+  static inline void XYZtosRGB(float& r_s, float& g_s, float& b_s,
+                               const float X, const float Y, const float Z) {
+    float r_lin, g_lin, b_lin;
+    XYZtosRGBlin(r_lin, g_lin, b_lin, X,Y,Z);
+    sRGBfromLinear(r_s, g_s, b_s, r_lin, g_lin, b_lin);
+  }
+  // convert XYZ CIE standard color space into sRGB
+
+  static inline void XYZrenormD65(float& X, float& Y, float& Z) {
+    X *= (1.0f / 0.95047f); Z *= (1.0f / 1.08883);
+  }
+  // renormalize XZY values relative to the D65 outdoor white light values
+  
+  static inline void XYZtoLMS_CAT02(float& L, float& M, float& S,
+                                    const float X, const float Y, const float Z) {
+    L = 0.7328f * X + 0.4296f * Y + -0.1624f * Z;
+    M = -0.7036f * X + 1.6975f * Y + 0.0061f * Z;
+    S = 0.0030f * X + 0.0136f * Y + 0.9834 * Z;
+  }
+  // convert XYZ to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02)
+
+  static inline void sRGBlinToLMS_CAT02(float& L, float& M, float& S,
+                                        const float r_lin, const float g_lin, const float b_lin) {
+    L = 0.3904054f * r_lin + 0.54994122f * g_lin + 0.00892632f * b_lin;
+    M = 0.0708416f * r_lin + 0.96317176f * g_lin + 0.00135775f * b_lin;
+    S = 0.0491304f * r_lin + 0.21556128f * g_lin + 0.9450824f * b_lin;
+  }
+  // convert sRGB linear to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) -- this is good for representing adaptation but NOT apparently good for representing appearances
+  
+  static inline void sRGBtoLMS_CAT02(float& L, float& M, float& S,
+                               const float r_s, const float g_s, const float b_s) {
+    float r_lin, g_lin, b_lin;
+    sRGBtoLinear(r_lin, g_lin, b_lin, r_s, g_s, b_s);
+    sRGBlinToLMS_CAT02(L,M,S, r_lin, g_lin, b_lin);
+  }
+  // convert sRGB to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02)
+
+  static inline void XYZtoLMS_HPE(float& L, float& M, float& S,
+                                  const float X, const float Y, const float Z) {
+    L = 0.38971f * X + 0.68898f * Y + -0.07868f * Z;
+    M = -0.22981f * X + 1.18340f * Y + 0.04641f * Z;
+    S = Z;
+  }
+  // convert XYZ to Long, Medium, Short cone-based responses, using the Hunt-Pointer-Estevez transform -- this is closer to the actual response functions of the L,M,S cones apparently
+
+  static inline void sRGBlinToLMS_HPE(float& L, float& M, float& S,
+                                      const float r_lin, const float g_lin, const float b_lin) {
+    L = 0.30567503f * r_lin + 0.62274014f * g_lin + 0.04530167f * b_lin;
+    M = 0.15771291f * r_lin + 0.7697197f * g_lin + 0.08807348f * b_lin;
+    S = 0.0193f * r_lin + 0.1192f * g_lin + 0.9505f * b_lin;
+  }
+  // convert sRGB linear to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) -- this is good for representing adaptation but NOT apparently good for representing appearances
+  
+  static inline void sRGBtoLMS_HPE(float& L, float& M, float& S,
+                               const float r_s, const float g_s, const float b_s) {
+    float r_lin, g_lin, b_lin;
+    sRGBtoLinear(r_lin, g_lin, b_lin, r_s, g_s, b_s);
+    sRGBlinToLMS_HPE(L,M,S, r_lin, g_lin, b_lin);
+  }
+  // convert sRGB to Long, Medium, Short cone-based responses, using the Hunt-Pointer-Estevez transform -- this is closer to the actual response functions of the L,M,S cones apparently
+
+  static inline void LMStoXYZ_CAT02(float& X, float& Y, float& Z,
+                                    const float L, const float M, const float S) {
+    X = 1.096124f * L + 0.4296f * Y + -0.1624f * Z;
+    Y = -0.7036f * X + 1.6975f * Y + 0.0061f * Z;
+    Z = 0.0030f * X + 0.0136f * Y + 0.9834 * Z;
+  }
+  // convert Long, Medium, Short cone-based responses to XYZ, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02)
+
+  static inline void LMStoXYZ_HPE(float& X, float& Y, float& Z,
+                                    const float L, const float M, const float S) {
+    X = 1.096124f * L + 0.4296f * Y + -0.1624f * Z;
+    Y = -0.7036f * X + 1.6975f * Y + 0.0061f * Z;
+    Z = 0.0030f * X + 0.0136f * Y + 0.9834 * Z;
+  }
+  // convert Long, Medium, Short cone-based responses to XYZ, using the Hunt-Pointer-Estevez transform -- this is closer to the actual response functions of the L,M,S cones apparently
+  
+  // todo: get appearances from LMS using rest of funky equations.
+
+  
+  // static inline void LMStoRvGBvY(float& L, float& M, float& S,
+  //                              const float L, const float M, const float S) {
+  //   float r_lin, g_lin, b_lin;
+  //   sRGBtoLinear(r_lin, g_lin, b_lin, r_s, g_s, b_s);
+  //   sRGBlinToLMS(L,M,S, r_lin, g_lin, b_lin);
+  // }
+  // convert sRGB to Long, Medium, Short cone-based responses, using the CAT02 transform from CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02)
+  
+  
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(VisColorSpace);
+// protected:
+//   void	UpdateAfterEdit_impl() override;
+};
+
 taTypeDef_Of(VisAdaptation);
 
 class E_API VisAdaptation : public taOBase {
@@ -162,13 +313,13 @@ public:
   virtual bool	FilterImage(float_Matrix* right_eye_image, float_Matrix* left_eye_image = NULL,
 			    bool motion_only = false);
   // main interface: filter input image(s) (if ocularity = BINOCULAR, must pass both images, else left eye is ignored) -- saves results in local output vectors, and data table if specified -- increments the time index if motion filtering -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence
-
+  
   // following are all computed by PrecomputeColor function
   float_Matrix cur_img_grey;	// #READ_ONLY #NO_SAVE greyscale version of color image
-  float_Matrix cur_img_rd;	// #READ_ONLY #NO_SAVE RED channel
-  float_Matrix cur_img_gn;	// #READ_ONLY #NO_SAVE GREEN channel
-  float_Matrix cur_img_bl;	// #READ_ONLY #NO_SAVE BLUE channel
-  float_Matrix cur_img_yl;	// #READ_ONLY #NO_SAVE YELLOW channel = .5*(R+G)
+  float_Matrix cur_img_rd;	// #READ_ONLY #NO_SAVE RED = L channel
+  float_Matrix cur_img_gn;	// #READ_ONLY #NO_SAVE GREEN = M channel
+  float_Matrix cur_img_bl;	// #READ_ONLY #NO_SAVE BLUE = S channel
+  float_Matrix cur_img_yl;	// #READ_ONLY #NO_SAVE YELLOW channel 
   float_Matrix cur_img_rg;	// #READ_ONLY #NO_SAVE RED - GREEN difference
   float_Matrix cur_img_by;	// #READ_ONLY #NO_SAVE BLUE - YELLOW difference
 
@@ -231,9 +382,10 @@ protected:
   // renormalize output of filters after filtering
 
   virtual bool ImageToTable(DataTable* dtab, float_Matrix* right_eye_image,
-				     float_Matrix* left_eye_image = NULL);
+                            float_Matrix* left_eye_image = NULL, bool fmt_only = false);
   // send current input image(s)e step of dog output to data table for viewing
-    virtual bool ImageToTable_impl(DataTable* dtab, float_Matrix* img, const String& col_sufx);
+    virtual bool ImageToTable_impl(DataTable* dtab, float_Matrix* img,
+                                   const String& col_sufx, bool fmt_only = false);
     // send current input image(s)e step of dog output to data table for viewing
 
   virtual bool FourDimMatrixToTable(DataTable* dtab, float_Matrix* out,

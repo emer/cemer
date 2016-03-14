@@ -21,11 +21,9 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(VisRegionSpecBase);
-
 TA_BASEFUNS_CTORS_DEFN(VisRegionSizes);
-
+TA_BASEFUNS_CTORS_DEFN(VisColorSpace);
 TA_BASEFUNS_CTORS_DEFN(VisAdaptation);
-
 TA_BASEFUNS_CTORS_DEFN(VisRegionParams);
 
 
@@ -50,6 +48,10 @@ void VisRegionSizes::Initialize() {
 void VisRegionSizes::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   input_size = (retina_size - 2 * border);
+}
+
+void VisColorSpace::Initialize() {
+  
 }
 
 void VisAdaptation::Initialize() {
@@ -215,9 +217,6 @@ bool VisRegionSpecBase::FilterImage_impl(bool motion_only) {
     }
   }
 
-  if(image_save & SAVE_DATA && !(!taMisc::gui_active && image_save & ONLY_GUI)) {
-    ImageToTable(data_table, cur_img_r, cur_img_l);
-  }
   return true;
 }
 
@@ -300,26 +299,48 @@ bool VisRegionSpecBase::PrecomputeColor(float_Matrix* img, bool need_rgb) {
 
   for(int yi = 0; yi < img_size.y; yi++) {
     for(int xi = 0; xi < img_size.y; xi++) {
-      float r_val = img->FastEl3d(xi, yi, 0);
-      float g_val = img->FastEl3d(xi, yi, 1);
-      float b_val = img->FastEl3d(xi, yi, 2);
+      // assume the bitmap is in sRGB
+      float r_s = img->FastEl3d(xi, yi, 0);
+      float g_s = img->FastEl3d(xi, yi, 1);
+      float b_s = img->FastEl3d(xi, yi, 2);
 
-      float grey = 0.33333f * (r_val + g_val + b_val);
-      // float y_val = 0.5f * (r_val + g_val);
-      float y_val = (r_val * g_val); // wait.. what IS yellow!??
-      float r_g = r_val - g_val;
-      float b_y = b_val - y_val;
+      float L, M, S;
+      VisColorSpace::sRGBtoLMS_HPE(L, M, S, r_s, g_s, b_s);
 
+      // using the CAT02 LMS space: https://en.wikipedia.org/wiki/CIECAM02
+      // https://en.wikipedia.org/wiki/LMS_color_space
+
+      // RudermanCroninChiao98 LMS to L-alpha-beta which are color contrast channels
+      // just shows that it is a simple addition of M and S
+      const float log_off = 0.001f;
+      const float log_cor = 3.0f; // -log10 of log_off
+      const float log_norm = 1.0f / 3.0f;
+
+      float L_log = log_norm * (std::log10(L + log_off) + log_cor);
+      float M_log = log_norm * (std::log10(M + log_off) + log_cor);
+      float S_log = log_norm * (std::log10(S + log_off) + log_cor);
+           
+      //      float l_grey = 0.57735f * (L_log + M_log + S_log); // 1 / sqrt(3)
+      float grey = (L_log + M_log + S_log) / 3.0f;
+      float LM = 0.5f * (L_log + M_log);                       // yellow = L+M
+      float b_y = 0.4082483f * (2.0f * S_log - (L_log + M_log)); // 1/sqrt(6) blue - yellow
+      float r_g = 0.70710678f * (L_log - M_log); // 1/sqrt(2) red - green
+      
       int idx = cur_img_grey.FastElIndex2d(xi, yi);
       cur_img_grey.FastEl_Flat(idx) = grey;
-      cur_img_yl.FastEl_Flat(idx) = y_val;
+      cur_img_yl.FastEl_Flat(idx) = LM;
       cur_img_rg.FastEl_Flat(idx) = r_g;
       cur_img_by.FastEl_Flat(idx) = b_y;
 
+      // cur_img_grey.FastEl_Flat(idx) = X;
+      // cur_img_yl.FastEl_Flat(idx) = Y;
+      // cur_img_rg.FastEl_Flat(idx) = Z;
+      // cur_img_by.FastEl_Flat(idx) = X_lab;
+
       if(need_rgb) {
-        cur_img_rd.FastEl_Flat(idx) = r_val;
-        cur_img_gn.FastEl_Flat(idx) = g_val;
-        cur_img_bl.FastEl_Flat(idx) = b_val;
+        cur_img_rd.FastEl_Flat(idx) = L_log;
+        cur_img_gn.FastEl_Flat(idx) = M_log;
+        cur_img_bl.FastEl_Flat(idx) = S_log;
       }
     }
   }
@@ -375,54 +396,93 @@ bool VisRegionSpecBase::InitDataTable() {
     return false;
   }
   int idx;
-  if(image_save & SAVE_DATA) {
-    DataCol* col;
-    String sufx = "_r";
-
-    if(region.color == VisRegionParams::COLOR)
-      col = data_table->FindMakeColName(name + "_image" + sufx, idx, DataTable::VT_FLOAT, 3,
-                                        input_size.retina_size.x, input_size.retina_size.y, 3);
-    else
-      col = data_table->FindMakeColName(name + "_image" + sufx, idx, DataTable::VT_FLOAT, 2,
-                                        input_size.retina_size.x, input_size.retina_size.y);
-    col->SetUserData("IMAGE", true);
-
-    if(region.ocularity == VisRegionParams::BINOCULAR) {
-      sufx = "_l";
-      if(region.color == VisRegionParams::COLOR)
-        col = data_table->FindMakeColName(name + "_image" + sufx, idx, DataTable::VT_FLOAT, 3,
-                                          input_size.retina_size.x, input_size.retina_size.y, 3);
-      else
-        col = data_table->FindMakeColName(name + "_image" + sufx, idx, DataTable::VT_FLOAT, 2,
-                                          input_size.retina_size.x, input_size.retina_size.y);
-      col->SetUserData("IMAGE", true);
-    }
+  if(OutSaveOk(image_save)) {
+    ImageToTable(data_table, NULL, NULL, true); // fmt only
   }
 
   return true;
 }
 
 bool VisRegionSpecBase::ImageToTable(DataTable* dtab, float_Matrix* right_eye_image,
-                                 float_Matrix* left_eye_image) {
-  ImageToTable_impl(dtab, right_eye_image, "_r");
+                                     float_Matrix* left_eye_image, bool fmt_only) {
+  ImageToTable_impl(dtab, right_eye_image, "_r", fmt_only);
   if(region.ocularity == VisRegionParams::BINOCULAR)
-    ImageToTable_impl(dtab, left_eye_image, "_l");
+    ImageToTable_impl(dtab, left_eye_image, "_l", fmt_only);
   return true;
 }
 
 bool VisRegionSpecBase::ImageToTable_impl(DataTable* dtab, float_Matrix* img,
-                                      const String& col_sufx) {
+                                          const String& col_sufx, bool fmt_only) {
   DataCol* col;
   int idx;
-  if(region.color == VisRegionParams::COLOR)
-    col = data_table->FindMakeColName(name + "_image" + col_sufx, idx, DataTable::VT_FLOAT, 3,
-                                      input_size.retina_size.x, input_size.retina_size.y, 3);
-  else
-    col = data_table->FindMakeColName(name + "_image" + col_sufx, idx, DataTable::VT_FLOAT, 2,
-                                      input_size.retina_size.x, input_size.retina_size.y);
+  if(region.color == VisRegionParams::COLOR) {
+    col = data_table->FindMakeColName
+      (name + "_image" + col_sufx, idx, DataTable::VT_FLOAT, 3,
+       input_size.retina_size.x, input_size.retina_size.y, 3);
+  }
+  else {
+    col = data_table->FindMakeColName
+      (name + "_image" + col_sufx, idx, DataTable::VT_FLOAT, 2,
+       input_size.retina_size.x, input_size.retina_size.y);
+  }
 
-  float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
-  ret_img->CopyFrom(img);
+  if(!fmt_only) {
+    float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
+    ret_img->CopyFrom(img);
+  }
+
+  if(region.color == VisRegionParams::COLOR && (image_save & SEP_MATRIX)) {
+    col = data_table->FindMakeColName
+      (name + "_image_rd" + col_sufx, idx, DataTable::VT_FLOAT, 2,
+       input_size.retina_size.x, input_size.retina_size.y);
+    if(!fmt_only) {
+      float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
+      ret_img->CopyFrom(&cur_img_rd);
+    }
+    col = data_table->FindMakeColName
+      (name + "_image_gn" + col_sufx, idx, DataTable::VT_FLOAT, 2,
+       input_size.retina_size.x, input_size.retina_size.y);
+    if(!fmt_only) {
+      float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
+      ret_img->CopyFrom(&cur_img_gn);
+    }
+    col = data_table->FindMakeColName
+      (name + "_image_bl" + col_sufx, idx, DataTable::VT_FLOAT, 2,
+       input_size.retina_size.x, input_size.retina_size.y);
+    if(!fmt_only) {
+      float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
+      ret_img->CopyFrom(&cur_img_bl);
+    }
+    col = data_table->FindMakeColName
+      (name + "_image_yl" + col_sufx, idx, DataTable::VT_FLOAT, 2,
+       input_size.retina_size.x, input_size.retina_size.y);
+    if(!fmt_only) {
+      float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
+      ret_img->CopyFrom(&cur_img_yl);
+    }
+    col = data_table->FindMakeColName
+      (name + "_image_grey" + col_sufx, idx, DataTable::VT_FLOAT, 2,
+       input_size.retina_size.x, input_size.retina_size.y);
+    if(!fmt_only) {
+      float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
+      ret_img->CopyFrom(&cur_img_grey);
+    }
+    col = data_table->FindMakeColName
+      (name + "_image_r_g" + col_sufx, idx, DataTable::VT_FLOAT, 2,
+       input_size.retina_size.x, input_size.retina_size.y);
+    if(!fmt_only) {
+      float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
+      ret_img->CopyFrom(&cur_img_rg);
+    }
+    col = data_table->FindMakeColName
+      (name + "_image_b_y" + col_sufx, idx, DataTable::VT_FLOAT, 2,
+       input_size.retina_size.x, input_size.retina_size.y);
+    if(!fmt_only) {
+      float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
+      ret_img->CopyFrom(&cur_img_by);
+    }
+  }
+
   return true;
 }
 
