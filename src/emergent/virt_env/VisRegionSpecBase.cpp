@@ -57,22 +57,22 @@ void VisColorSpace::Initialize() {
 void VisColorSpace::sRGBtoOpponentsImg(float_Matrix& opp_img,
                                        const float_Matrix& srgb_img) {
   taVector2i img_size(srgb_img.dim(0), srgb_img.dim(1));
-  opp_img.SetGeom(3, img_size.x, img_size.y, 6);
+  opp_img.SetGeom(3, img_size.x, img_size.y, N_OP_C);
   for(int yi = 0; yi < img_size.y; yi++) {
     for(int xi = 0; xi < img_size.y; xi++) {
-      // assume the bitmap is in sRGB
       float r_s = srgb_img.FastEl3d(xi, yi, 0);
       float g_s = srgb_img.FastEl3d(xi, yi, 1);
       float b_s = srgb_img.FastEl3d(xi, yi, 2);
 
-      float L_c, M_c, S_c, LM_c, LvM, SvLM;
-      sRGBtoOpponents(L_c, M_c, S_c, LM_c, LvM, SvLM, r_s, g_s, b_s);
-      opp_img.FastEl3d(xi, yi, 0) = L_c;
-      opp_img.FastEl3d(xi, yi, 1) = M_c;
-      opp_img.FastEl3d(xi, yi, 2) = S_c;
-      opp_img.FastEl3d(xi, yi, 3) = LM_c;
-      opp_img.FastEl3d(xi, yi, 4) = LvM;
-      opp_img.FastEl3d(xi, yi, 5) = SvLM;
+      float L_c, M_c, S_c, LM_c, LvM, SvLM, grey;
+      sRGBtoOpponents(L_c, M_c, S_c, LM_c, LvM, SvLM, grey, r_s, g_s, b_s);
+      opp_img.FastEl3d(xi, yi, L_C) = L_c;
+      opp_img.FastEl3d(xi, yi, M_C) = M_c;
+      opp_img.FastEl3d(xi, yi, S_C) = S_c;
+      opp_img.FastEl3d(xi, yi, LM_C) = LM_c;
+      opp_img.FastEl3d(xi, yi, LvM_C) = LvM;
+      opp_img.FastEl3d(xi, yi, SvLM_C) = SvLM;
+      opp_img.FastEl3d(xi, yi, GREY) = grey;
     }
   }
 }
@@ -306,87 +306,39 @@ void VisRegionSpecBase::InputAdapt_thread(int thr_no) {
 #endif
 }
 
-bool VisRegionSpecBase::PrecomputeColor(float_Matrix* img, bool need_rgb) {
+bool VisRegionSpecBase::PrecomputeColor(float_Matrix* img) {
   cur_img = img;
   taVector2i img_size(img->dim(0), img->dim(1));
 
-  cur_img_grey.SetGeom(2, img_size.x, img_size.y);
-  cur_img_yl.SetGeom(2, img_size.x, img_size.y);
-  cur_img_rg.SetGeom(2, img_size.x, img_size.y);
-  cur_img_by.SetGeom(2, img_size.x, img_size.y);
+  VisColorSpace::sRGBtoOpponentsImg(cur_img_opp, *cur_img);
 
-  if(need_rgb) {
-    cur_img_rd.SetGeom(2, img_size.x, img_size.y);
-    cur_img_gn.SetGeom(2, img_size.x, img_size.y);
-    cur_img_bl.SetGeom(2, img_size.x, img_size.y);
-  }
-
-  for(int yi = 0; yi < img_size.y; yi++) {
-    for(int xi = 0; xi < img_size.y; xi++) {
-      // assume the bitmap is in sRGB
-      float r_s = img->FastEl3d(xi, yi, 0);
-      float g_s = img->FastEl3d(xi, yi, 1);
-      float b_s = img->FastEl3d(xi, yi, 2);
-
-      float L, M, S;
-      VisColorSpace::sRGBtoLMS_HPE(L, M, S, r_s, g_s, b_s);
-
-      // using the CAT02 LMS space: https://en.wikipedia.org/wiki/CIECAM02
-      // https://en.wikipedia.org/wiki/LMS_color_space
-
-      // RudermanCroninChiao98 LMS to L-alpha-beta which are color contrast channels
-      // just shows that it is a simple addition of M and S
-      const float log_off = 0.001f;
-      const float log_cor = 3.0f; // -log10 of log_off
-      const float log_norm = 1.0f / 3.0f;
-
-      float L_log = log_norm * (std::log10(L + log_off) + log_cor);
-      float M_log = log_norm * (std::log10(M + log_off) + log_cor);
-      float S_log = log_norm * (std::log10(S + log_off) + log_cor);
-           
-      //      float l_grey = 0.57735f * (L_log + M_log + S_log); // 1 / sqrt(3)
-      float grey = (L_log + M_log + S_log) / 3.0f;
-      float LM = 0.5f * (L_log + M_log);                       // yellow = L+M
-      float b_y = 0.4082483f * (2.0f * S_log - (L_log + M_log)); // 1/sqrt(6) blue - yellow
-      float r_g = 0.70710678f * (L_log - M_log); // 1/sqrt(2) red - green
-      
-      int idx = cur_img_grey.FastElIndex2d(xi, yi);
-      cur_img_grey.FastEl_Flat(idx) = grey;
-      cur_img_yl.FastEl_Flat(idx) = LM;
-      cur_img_rg.FastEl_Flat(idx) = r_g;
-      cur_img_by.FastEl_Flat(idx) = b_y;
-
-      // cur_img_grey.FastEl_Flat(idx) = X;
-      // cur_img_yl.FastEl_Flat(idx) = Y;
-      // cur_img_rg.FastEl_Flat(idx) = Z;
-      // cur_img_by.FastEl_Flat(idx) = X_lab;
-
-      if(need_rgb) {
-        cur_img_rd.FastEl_Flat(idx) = L_log;
-        cur_img_gn.FastEl_Flat(idx) = M_log;
-        cur_img_bl.FastEl_Flat(idx) = S_log;
-      }
-    }
-  }
+  cur_img_L_c = cur_img_opp.GetFrameSlice(VisColorSpace::L_C);
+  cur_img_M_c = cur_img_opp.GetFrameSlice(VisColorSpace::M_C);
+  cur_img_S_c = cur_img_opp.GetFrameSlice(VisColorSpace::S_C);
+  cur_img_LM_c = cur_img_opp.GetFrameSlice(VisColorSpace::LM_C);
+  cur_img_LvM = cur_img_opp.GetFrameSlice(VisColorSpace::LvM_C);
+  cur_img_SvLM = cur_img_opp.GetFrameSlice(VisColorSpace::SvLM_C);
+  cur_img_grey = cur_img_opp.GetFrameSlice(VisColorSpace::GREY);
+  
   return true;
 }
 
 float_Matrix* VisRegionSpecBase::GetImageForChan(ColorChannel cchan) {
   switch(cchan) {
-  case LUMINANCE:
-    return &cur_img_grey;
+  case GREY:
+    return cur_img_grey.ptr();
   case RED_GREEN:
-    return &cur_img_rg;
+    return cur_img_LvM.ptr();
   case BLUE_YELLOW:
-    return &cur_img_by;
+    return cur_img_SvLM.ptr();
   case RED:
-    return &cur_img_rd; 
+    return cur_img_L_c.ptr();
   case GREEN:
-    return &cur_img_gn;
+    return cur_img_M_c.ptr();
   case BLUE:
-    return &cur_img_bl;
+    return cur_img_S_c.ptr();
   case YELLOW:
-    return &cur_img_yl;
+    return cur_img_LM_c.ptr();
   }
   return NULL;
 }
@@ -461,49 +413,49 @@ bool VisRegionSpecBase::ImageToTable_impl(DataTable* dtab, float_Matrix* img,
        input_size.retina_size.x, input_size.retina_size.y);
     if(!fmt_only) {
       float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
-      ret_img->CopyFrom(&cur_img_rd);
+      ret_img->CopyFrom(cur_img_L_c.ptr());
     }
     col = data_table->FindMakeColName
       (name + "_image_gn" + col_sufx, idx, DataTable::VT_FLOAT, 2,
        input_size.retina_size.x, input_size.retina_size.y);
     if(!fmt_only) {
       float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
-      ret_img->CopyFrom(&cur_img_gn);
+      ret_img->CopyFrom(cur_img_M_c.ptr());
     }
     col = data_table->FindMakeColName
       (name + "_image_bl" + col_sufx, idx, DataTable::VT_FLOAT, 2,
        input_size.retina_size.x, input_size.retina_size.y);
     if(!fmt_only) {
       float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
-      ret_img->CopyFrom(&cur_img_bl);
+      ret_img->CopyFrom(cur_img_S_c.ptr());
     }
     col = data_table->FindMakeColName
       (name + "_image_yl" + col_sufx, idx, DataTable::VT_FLOAT, 2,
        input_size.retina_size.x, input_size.retina_size.y);
     if(!fmt_only) {
       float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
-      ret_img->CopyFrom(&cur_img_yl);
+      ret_img->CopyFrom(cur_img_LM_c.ptr());
     }
     col = data_table->FindMakeColName
       (name + "_image_grey" + col_sufx, idx, DataTable::VT_FLOAT, 2,
        input_size.retina_size.x, input_size.retina_size.y);
     if(!fmt_only) {
       float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
-      ret_img->CopyFrom(&cur_img_grey);
+      ret_img->CopyFrom(cur_img_grey.ptr());
     }
     col = data_table->FindMakeColName
       (name + "_image_r_g" + col_sufx, idx, DataTable::VT_FLOAT, 2,
        input_size.retina_size.x, input_size.retina_size.y);
     if(!fmt_only) {
       float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
-      ret_img->CopyFrom(&cur_img_rg);
+      ret_img->CopyFrom(cur_img_LvM.ptr());
     }
     col = data_table->FindMakeColName
       (name + "_image_b_y" + col_sufx, idx, DataTable::VT_FLOAT, 2,
        input_size.retina_size.x, input_size.retina_size.y);
     if(!fmt_only) {
       float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
-      ret_img->CopyFrom(&cur_img_by);
+      ret_img->CopyFrom(cur_img_SvLM.ptr());
     }
   }
 

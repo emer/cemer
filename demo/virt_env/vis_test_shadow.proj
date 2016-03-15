@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9263
+// ta_Dump File v3.0 -- code v7.8.6.0 rev9291
 LeabraProject .projects["vis_test_shadow"] { 
  Doc_Group @.docs = [0] {
  };
@@ -32942,7 +32942,7 @@ LeabraProject .projects["vis_test_shadow"] {
       light_0=.projects["vis_test_shadow"].programs.gp["VisTest_3D_Progs"]["VisTestRobot"].objs["VEVisTestWorld"].objects["Light1"].bodies["LightBehindHead"]$$;
       light_1=NULL;
      };
-     TimeUsed @["RobotTime"] {name="RobotTime": start={usr=850: sys=232: tot=145793944148: }: end={usr=881: sys=238: tot=145793944236: }: used={usr=11958: sys=1813: tot=16713: }: s_used=167.13: n_used=807: };
+     TimeUsed @["RobotTime"] {name="RobotTime": start={usr=887: sys=273: tot=145801605149: }: end={usr=916: sys=279: tot=145801605232: }: used={usr=11987: sys=1819: tot=16796: }: s_used=167.96: n_used=808: };
     };
     types {
      name="types";
@@ -38203,8 +38203,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  manip_ctrl_on=1;
 	  view_cols=1;
 	  page_cols=1;
-	  col_range {min=14: max=14: };
-	  need_scale_update=1;
+	  col_range {min=16: max=16: };
+	  need_scale_update=0;
 	  width=1;
 	  grid_on=1;
 	  header_on=1;
@@ -38215,14 +38215,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  colorscale {
 	   name="colorscale";
 	   chunks=133;
-	   min=-1;
-	   max=1;
+	   min=-0.01738399;
+	   max=0.01738399;
 	   last_min=-1;
 	   last_max=1;
-	   range=1;
+	   range=0.01738399;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
-	   auto_scale=0;
+	   auto_scale=1;
 	  };
 	  grid_margin=0.01;
 	  grid_line_size=0.002;
@@ -38464,7 +38464,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  view_cols=1;
 	  page_cols=1;
 	  col_range {min=17: max=17: };
-	  need_scale_update=1;
+	  need_scale_update=0;
 	  width=1;
 	  grid_on=1;
 	  header_on=1;
@@ -38475,14 +38475,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  colorscale {
 	   name="colorscale";
 	   chunks=133;
-	   min=-1;
-	   max=1;
+	   min=-0.01802289;
+	   max=0.01802289;
 	   last_min=-1;
 	   last_max=1;
-	   range=1;
+	   range=0.01802289;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
-	   auto_scale=0;
+	   auto_scale=1;
 	  };
 	  grid_margin=0.01;
 	  grid_line_size=0.002;

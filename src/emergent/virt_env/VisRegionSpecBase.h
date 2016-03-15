@@ -92,7 +92,17 @@ class E_API VisColorSpace : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image transform RGB colors into CIE XYZ and LMS perceptual space, including color opponents, and back -- note that we use 0-1 normalized XYZ and LMS values throughout - not the 0-100 as is sometimes standard it seems..
 INHERITED(taOBase)
 public:
-
+  enum  OppComp {               // opponent coding components
+    L_C,                        // Long wavelength = Red component
+    M_C,                        // Medium wavelength = Green component
+    S_C,                        // Short wavelength = Blue component
+    LM_C,                       // Long + Medium wavelength = Yellow component
+    LvM_C,                      // L - M opponent contrast
+    SvLM_C,                     // S - L+M opponent contrast
+    GREY,                       // achromatic response (grey scale lightness)
+    N_OP_C,                     // number of opponent components
+  };
+  
   static inline float sRGBvalToLinear(const float srgb) {
     if(srgb <= 0.04045f) return srgb / 12.92f;
     return powf((srgb + 0.055f) / 1.055f, 2.4f);
@@ -236,7 +246,7 @@ public:
   // takes a 0-1 normalized LMS value and performs hyperbolic response compression -- val must ALREADY have the luminance adaptation applied to it using the luminance adaptation function, which is 1 at a background luminance level of 200 = 2, so you can skip that step if you assume that level of background
 
   static inline void LMStoOpponents(float& L_c, float& M_c, float& S_c, float& LM_c,
-                                    float& LvM, float& SvLM,
+                                    float& LvM, float& SvLM, float& grey,
                                     const float L, const float M, const float S) {
     float L_rc = ResponseCompression(L); float M_rc = ResponseCompression(M); float S_rc = ResponseCompression(S);
     const float LmM = L_rc - M_rc;  const float MmS = M_rc - S_rc;  const float SmL = S_rc - L_rc;
@@ -246,20 +256,23 @@ public:
     LM_c = (1.0f / 9.0f) * (L_rc + M_rc);
     S_c = (2.0f / 9.0f) * S_rc;
     SvLM = S_c - LM_c;          // blue-yellow contrast
+    grey = 2.0f * L_rc + M_rc + .05f * S_rc - 0.305f;
+    // if(grey < 0.0f) grey = 0.0f;
+    // note: last term should be: 0.725 * (1/5)^-0.2 = grey background assumption (Yb/Yw = 1/5) = 1
   }
   // convert Long, Medium, Short cone-based responses to opponent components: Red - Green (LvM) and Blue - Yellow (SvLM) -- includes the separate components in these subtractions as well -- uses the CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) https://en.wikipedia.org/wiki/CIECAM02
   
   static inline void sRGBtoOpponents(float& L_c, float& M_c, float& S_c, float& LM_c,
-                                     float& LvM, float& SvLM,
+                                     float& LvM, float& SvLM, float& grey,
                                      const float r_s, const float g_s, const float b_s) {
     float L,M,S;
     sRGBtoLMS_HPE(L,M,S, r_s, g_s, b_s);
-    LMStoOpponents(L_c, M_c, S_c, LM_c, LvM, SvLM, L, M, S);
+    LMStoOpponents(L_c, M_c, S_c, LM_c, LvM, SvLM, grey, L, M, S);
   }
   // #CAT_ColorSpace convert sRGB to opponent components via LMS using the HPE cone values: Red - Green (LvM) and Blue - Yellow (SvLM) -- includes the separate components in these subtractions as well -- uses the CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) https://en.wikipedia.org/wiki/CIECAM02
   
   static void sRGBtoOpponentsImg(float_Matrix& opp_img, const float_Matrix& srgb_img);
-  // #CAT_ColorSpace convert sRGB image to opponent components image (3d matrix of 2D images in order L_c, M_c, S_c, LM_c, LvM, SvLM -- done via LMS using the HPE cone values: Red - Green (LvM) and Blue - Yellow (SvLM) -- includes the separate components in these subtractions as well -- uses the CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) https://en.wikipedia.org/wiki/CIECAM02
+  // #CAT_ColorSpace convert sRGB image to opponent components image (3d matrix of 2D images with outer dimension =7: L_c, M_c, S_c, LM_c, LvM, SvLM, grey -- done via LMS using the HPE cone values: Red - Green (LvM) and Blue - Yellow (SvLM) -- includes the separate components in these subtractions as well -- uses the CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) https://en.wikipedia.org/wiki/CIECAM02
 
 
   void 	Initialize();
@@ -293,7 +306,7 @@ class E_API VisRegionSpecBase : public ImgProcThreadBase {
 INHERITED(ImgProcThreadBase)
 public:
   enum ColorChannel {		// indicator of which color channel to filter on -- passed to GetImageForChan
-    LUMINANCE,			// just raw luminance (monochrome / black white)
+    GREY,			// achromatic response -- lightness or luminance (monochrome / black white)
     RED_GREEN,			// red vs. green pre-subtracted -- good for gabor / spatial double-opponent filters
     BLUE_YELLOW,                // blue vs. yellow pre-subtracted -- good for gabor / spatial double-opponent filters
     RED,                        // red
@@ -347,13 +360,14 @@ public:
   // main interface: filter input image(s) (if ocularity = BINOCULAR, must pass both images, else left eye is ignored) -- saves results in local output vectors, and data table if specified -- increments the time index if motion filtering -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence
   
   // following are all computed by PrecomputeColor function
-  float_Matrix cur_img_grey;	// #READ_ONLY #NO_SAVE greyscale version of color image
-  float_Matrix cur_img_rd;	// #READ_ONLY #NO_SAVE RED = L channel
-  float_Matrix cur_img_gn;	// #READ_ONLY #NO_SAVE GREEN = M channel
-  float_Matrix cur_img_bl;	// #READ_ONLY #NO_SAVE BLUE = S channel
-  float_Matrix cur_img_yl;	// #READ_ONLY #NO_SAVE YELLOW channel 
-  float_Matrix cur_img_rg;	// #READ_ONLY #NO_SAVE RED - GREEN difference
-  float_Matrix cur_img_by;	// #READ_ONLY #NO_SAVE BLUE - YELLOW difference
+  float_Matrix cur_img_opp;	// #READ_ONLY #NO_SAVE opponent component version of color image -- 7 diff factors in outer dim, as follows:
+  float_MatrixPtr cur_img_L_c;	// #READ_ONLY #NO_SAVE RED = L channel
+  float_MatrixPtr cur_img_M_c;	// #READ_ONLY #NO_SAVE GREEN = M channel
+  float_MatrixPtr cur_img_S_c;	// #READ_ONLY #NO_SAVE BLUE = S channel
+  float_MatrixPtr cur_img_LM_c;	// #READ_ONLY #NO_SAVE YELLOW = L+M channel 
+  float_MatrixPtr cur_img_LvM;	// #READ_ONLY #NO_SAVE RED - GREEN opponent
+  float_MatrixPtr cur_img_SvLM;	// #READ_ONLY #NO_SAVE BLUE - YELLOW opponent
+  float_MatrixPtr cur_img_grey;	// #READ_ONLY #NO_SAVE monochrome response
 
   float_Matrix cur_img_r_adapt; // #READ_ONLY #NO_SAVE accumulation of activation over time to drive adaptation
   float_Matrix cur_img_l_adapt; // #READ_ONLY #NO_SAVE accumulation of activation over time to drive adaptation
@@ -405,10 +419,10 @@ protected:
   virtual void  ResetAdapt();
   // reset any current adaptation present in the system -- use this for a discontinuity in the input (simulated time passing) -- operates at all levels of adaptation, where applicable
 
-  virtual bool PrecomputeColor(float_Matrix* img, bool need_rgb = false);
-  // convert RGB color image to grey, yellow, and R-G and B-Y in separate images, which are what should be then used for filtering (stored in cur_img_xx float matrix's) -- get via GetImageForChan method -- also sets cur_img = img -- used by GetImageForChan -- if need_rgb it saves the separate r,g,b color elements, which can then be accessed in GetImageForChan
+  virtual bool PrecomputeColor(float_Matrix* img);
+  // convert RGB color image to cone response-based opponent color values, which are what should be then used for filtering (stored in cur_img_xx float matrix's) -- get via GetImageForChan method -- also sets cur_img = img -- used by GetImageForChan
   virtual float_Matrix* GetImageForChan(ColorChannel cchan);
-  // get the appropriate cur_img_* guy for given color channel -- IMPORTANT you MUST have called PrecomputeColor with need_rgb = true IF you are acessing the RED, GREEN, or BLUE channels!  
+  // get the appropriate cur_img_* guy for given color channel -- only avail if PrecomputeColor has been called
 
   virtual bool RenormOutput(RenormMode mode, float_Matrix* out);
   // renormalize output of filters after filtering

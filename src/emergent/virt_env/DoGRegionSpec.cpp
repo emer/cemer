@@ -229,7 +229,7 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out) {
   wrap = (region.edge_mode == VisRegionParams::WRAP);
 
   if(rgb_img) {
-    PrecomputeColor(cur_img, true);   // need rgb separate!
+    PrecomputeColor(cur_img);
   }
 
   cur_dog_filter = &dog_specs;
