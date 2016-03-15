@@ -35,9 +35,9 @@ void DoGRegionSpec::Initialize() {
   dog_specs.circle_edge = true;
   dog_specs_2.on = true;
   dog_specs_3.on = true;
-  dog_specs_2.gain = 3.3333f;
+  dog_specs_2.gain = 4.1f;
   dog_specs_2.on_gain = 1.2f;
-  dog_specs_3.gain = 4.8f;
+  dog_specs_3.gain = 4.4f;
   dog_specs_3.on_gain = 0.8333f;
 
   dog_color_only = true;

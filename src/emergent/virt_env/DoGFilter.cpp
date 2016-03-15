@@ -28,7 +28,7 @@ void DoGFilter::Initialize() {
   on_sigma = 8.0f;
   off_sigma = 8.0f;
   spacing = 8.0f;
-  gain = 4.0f;
+  gain = 8.0f;
   on_gain = 1.0f;
   circle_edge = true;
   on_filter.SetGeom(2, size, size);

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9294
+// ta_Dump File v3.0 -- code v7.8.6.0 rev9301
 LeabraProject .projects["vis_color_test"] { 
  Doc_Group @.docs = [0] {
  };
@@ -3568,10 +3568,10 @@ LeabraProject .projects["vis_color_test"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
-    [3] 0;1;2;    };
+     name="row_indexes";
+    [0]     };
     last_sort_spec {
-     name="DataSortSpec_39";
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -3579,7 +3579,7 @@ LeabraProject .projects["vis_color_test"] {
      };
     };
     control_panel_cells {
-     name="DataTableCell_List_37";
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -3651,7 +3651,7 @@ LeabraProject .projects["vis_color_test"] {
 	on_sigma=8;
 	off_sigma=8;
 	spacing=16;
-	gain=3.3333;
+	gain=4.1;
 	on_gain=1.2;
 	circle_edge=1;
 	size=17;
@@ -3663,7 +3663,7 @@ LeabraProject .projects["vis_color_test"] {
 	on_sigma=8;
 	off_sigma=8;
 	spacing=16;
-	gain=4.8;
+	gain=4.4;
 	on_gain=0.8333;
 	circle_edge=1;
 	size=17;
@@ -3728,7 +3728,7 @@ LeabraProject .projects["vis_color_test"] {
        name="BlobV1lF16_dog_r";
        col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
        is_matrix=1;
-       cell_geom{ 6;2;50;38;       };
+       cell_geom{ 2;2;50;38;       };
        calc_expr {
 	expr=;
        };
@@ -4706,7 +4706,7 @@ LeabraProject .projects["vis_color_test"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.001591512;
+     value 8 0=0.001061571;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -4716,12 +4716,12 @@ LeabraProject .projects["vis_color_test"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.997878;
+     value 8 0=0.9978769;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7994902;
+     value 8 0=0.8717077;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -5550,11 +5550,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        m_data=NULL;
        visible=1;
        root_view {
-	name="T3DataViewRoot_1";
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_1";
+	 name="children";
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GridTableView @["BlobV1lF16_DoG_GridFilter_Grid"] {
@@ -5562,7 +5562,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  m_data=.projects["vis_color_test"].data.gp["AnalysisData"]["BlobV1lF16_DoG_GridFilter"]$$;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  children {
-	   name="T3DataView_List_1";
+	   name="children";
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @["Name"] {
@@ -5590,17 +5590,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
-	   name="T3Annotation_List_13";
+	   name="annotations";
 	   el_typ=T3Annotation;
 	   el_def=0;
 	  };
 	  annote_children {
-	   name="T3DataView_List_1";
+	   name="annote_children";
 	   el_typ=T3DataView;
 	   el_def=0;
 	  };
 	  view_rows=3;
-	  view_range {min=0: max=2: };
+	  view_range {min=0: max=-1: };
 	  page_rows=10;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -5616,7 +5616,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  two_d_font_scale=350;
 	  mat_val_text=0;
 	  colorscale {
-	   name="ColorScale_1";
+	   name="colorscale";
 	   chunks=133;
 	   min=-0.006422074;
 	   max=0.006422074;
@@ -5654,7 +5654,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_6";
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["Vw_0"] {
@@ -5753,12 +5753,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04350132;
+       value 8 0=0.04352441;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7357689;
+       value 8 0=0.8079864;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
