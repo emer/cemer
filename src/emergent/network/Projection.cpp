@@ -444,9 +444,7 @@ void Projection::SaveWeights(const String& fname) {
 }
 
 bool Projection::LoadWeights(const String& fname, bool quiet) {
-  String filename(fname);
-  filename.trim();
-  taFiler* flr = GetLoadFiler(filename, ".wts", true);
+  taFiler* flr = GetLoadFiler(fname, ".wts", true);
   bool rval = false;
   if(flr->istrm) {
     rval = layer->LoadWeights_strm(*flr->istrm, ConGroup::TEXT, quiet, this);

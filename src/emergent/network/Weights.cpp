@@ -64,7 +64,5 @@ bool Weights::SaveWeights(const String& fname) {
 }
 
 bool Weights::LoadWeights(const String& fname) {
-  String filename(fname);
-  filename.trim();
-  return wt_file.LoadFromFile(filename);
+  return wt_file.LoadFromFile(fname);
 }

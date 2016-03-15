@@ -186,9 +186,7 @@ void Unit_Group::SaveWeights(const String& fname, ConGroup::WtSaveFormat fmt) {
 }
 
 int Unit_Group::LoadWeights(const String& fname, ConGroup::WtSaveFormat fmt, bool quiet) {
-  String filename(fname);
-  filename.trim();
-  taFiler* flr = GetLoadFiler(filename, ".wts", true);
+  taFiler* flr = GetLoadFiler(fname, ".wts", true);
   int rval = false;
   if(flr->istrm)
     rval = LoadWeights_strm(*flr->istrm, fmt, quiet);
