@@ -3483,43 +3483,43 @@ LeabraProject .projects["vis_color_test"] {
 	on_sigma=8;
 	off_sigma=8;
 	spacing=16;
-	gain=2;
+	gain=4;
 	on_gain=1;
 	circle_edge=1;
 	size=17;
        };
        dog_specs_2 {
 	name="BlobV1lF16";
-	on=0;
-	half_size=4;
+	on=1;
+	half_size=8;
 	on_sigma=8;
 	off_sigma=8;
-	spacing=12;
-	gain=3;
-	on_gain=0.5;
+	spacing=16;
+	gain=3.3333;
+	on_gain=1.2;
 	circle_edge=1;
-	size=9;
+	size=17;
        };
        dog_specs_3 {
 	name="BlobV1lF16";
-	on=0;
-	half_size=4;
+	on=1;
+	half_size=8;
 	on_sigma=8;
 	off_sigma=8;
-	spacing=12;
-	gain=2;
-	on_gain=1;
+	spacing=16;
+	gain=4.8;
+	on_gain=0.8333;
 	circle_edge=1;
-	size=9;
+	size=17;
        };
        dog_color_only=1;
-       dog_renorm=LIN_RENORM;
+       dog_renorm=NO_RENORM;
        dog_save=SAVE_DATA;
        dog_kwta {on=0: gi=3: lay_gi=3: gain=80: nvar=0.01: g_bar_l=0.1: };
-       dog_feat_geom {x=2: y=2: n_not_xy=0: n=4: };
+       dog_feat_geom {x=6: y=2: n_not_xy=0: n=12: };
        dog_img_geom {x=50: y=38: };
        n_colors=2;
-       n_dogs=1;
+       n_dogs=3;
       };
      };
     };
@@ -3572,7 +3572,7 @@ LeabraProject .projects["vis_color_test"] {
        name="BlobV1lF16_dog_r";
        col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
        is_matrix=1;
-       cell_geom{ 2;2;50;38;       };
+       cell_geom{ 6;2;50;38;       };
        calc_expr {
 	expr=;
        };
@@ -3842,7 +3842,7 @@ LeabraProject .projects["vis_color_test"] {
      var_type=T_DynEnum;
      dyn_enum_val {
       enum_type=.projects["vis_color_test"].programs["ColorTest"].types["TestType"]$$;
-      value=0;
+      value=1;
      };
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -4565,7 +4565,7 @@ LeabraProject .projects["vis_color_test"] {
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.9396771;
+     value 8 0=0.7994902;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -5418,7 +5418,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.8759558;
+       value 8 0=0.7357689;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
