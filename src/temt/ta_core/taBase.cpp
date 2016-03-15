@@ -1544,7 +1544,9 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
   taProject* proj = GetMyProj();
 
   if(fname.nonempty()) {
-    flr->SetFileName(taMisc::ExpandFilePath(fname, proj));
+    String filename(fname);
+    filename.trim();
+    flr->SetFileName(taMisc::ExpandFilePath(filename, proj));
     flr->open_read();
   }
   else {
