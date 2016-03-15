@@ -22,12 +22,14 @@ set(virt_env_HEADS_MAKETA_NOMOC_base
   MotionGaborFilter.h
   GaborFitter.h
   taImageProc.h
+  ColorSpace.h
   VisRegionSpecBase.h
   VisRegionSpecBaseList.h
   DoGRegionSpec.h
   V1KwtaSpec.h
   V1RegionSpec.h
   RetinaProc.h
+  AuditoryProc.h
 
   VESurface.h
   VETexture.h
@@ -67,7 +69,6 @@ set(virt_env_HEADS_MAKETA_NOMOC_base
   VEStaticView.h
   VESpaceView.h
   VEWorldView.h
-  AuditoryProc.h
 )
 
 # need both maketa and moc -- relatively rare
@@ -139,12 +140,14 @@ set(virt_env_SRCS
   MotionGaborFilter.cpp
   GaborFitter.cpp
   taImageProc.cpp
+  ColorSpace.cpp
   VisRegionSpecBase.cpp
   VisRegionSpecBaseList.cpp
   DoGRegionSpec.cpp
   V1KwtaSpec.cpp
   V1RegionSpec.cpp
   RetinaProc.cpp
+  AuditoryProc.cpp
 
   VESurface.cpp
   VETexture.cpp
@@ -193,7 +196,6 @@ set(virt_env_SRCS
   T3VEJoint.cpp
   T3VESpace.cpp
   T3VEStatic.cpp
-  AuditoryProc.cpp
 )
 
 set(virt_env_FILES ${virt_env_HEADS} ${virt_env_SRCS})
