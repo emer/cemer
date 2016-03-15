@@ -432,6 +432,7 @@ class SlurmJobManager( ClusterJobManager ):
             except:
                 logging.error("JOBID NOT INT: %s" % self.job_id)
                 logging.error("STDOUTSTR: %s" % stdoutstr)
+                return False
 
         except Exception as e:
             logging.error("Submit command failed: " + str(cmd) + ": " + str(e))
