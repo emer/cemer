@@ -132,6 +132,7 @@ ClusterManager::BeginSearch(bool prompt_user)
                "\n  Notes:", m_cluster_run.notes);
 
   try {
+    m_cluster_run.AddCluster(GetClusterName()); //Add the cluster in again, just in case we haven't selected a cluster yet.
     UpdateWorkingCopy(); // creates the working copy if needed.
     RunSearchAlgo();
 
