@@ -40,7 +40,7 @@ public:
   DoGFilter	dog_specs_2;	// Difference of Gaussian retinal filter specification -- another set -- combined with any other sets selected
   DoGFilter	dog_specs_3;	// Difference of Gaussian retinal filter specification -- another set -- combined with any other sets selected
   bool          dog_color_only; // #CONDSHOW_ON_dog_specs.on only apply DoG's to color opponent channels -- not to monochrome channel -- only relevant for COLOR processing obviously..
-  RenormMode	dog_renorm;	// #DEF_LOG_RENORM how to renormalize the output of filters
+  RenormMode	dog_renorm;	// #DEF_NO_RENORM how to renormalize the output of filters
   DataSave	dog_save;	// how to save the DoG outputs for the current time step in the data table
   V1KwtaSpec	dog_kwta;	// k-winner-take-all inhibitory dynamics for the DoG filter output -- applied to combined DoG feature output if there are multiple
   

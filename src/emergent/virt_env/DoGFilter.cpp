@@ -23,12 +23,12 @@ TA_BASEFUNS_CTORS_DEFN(DoGFilter);
 
 void DoGFilter::Initialize() {
   on = true;
-  half_size = 4;
+  half_size = 8;
   size = half_size * 2 + 1;
-  on_sigma = 1.0f;
-  off_sigma = 2.0f;
-  spacing = 1;
-  gain = 2.0f;
+  on_sigma = 8.0f;
+  off_sigma = 8.0f;
+  spacing = 8.0f;
+  gain = 4.0f;
   on_gain = 1.0f;
   circle_edge = true;
   on_filter.SetGeom(2, size, size);
@@ -106,7 +106,13 @@ void DoGFilter::GraphFilter(DataTable* graph_data) {
   zda->SetUserData("Z_AXIS", true);
   valda->SetUserData("PLOT_1", true);
 
-  float_Matrix* mat = &net_filter;
+  
+  float_Matrix* mat;
+  if(on_sigma == off_sigma)
+    mat = &on_filter;
+  else
+    mat = &net_filter;
+  
   int x,z;
   for(z=-half_size; z<=half_size; z++) {
     for(x=-half_size; x<=half_size; x++) {

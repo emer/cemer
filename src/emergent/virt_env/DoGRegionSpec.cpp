@@ -29,15 +29,19 @@ typedef void (DoGRegionSpec::*DoGRegionMethod)(int, int);
 
 void DoGRegionSpec::Initialize() {
   dog_specs.on = true;
-  dog_specs.half_size = 4;
-  dog_specs.on_sigma = 1;
+  dog_specs.half_size = 8;
+  dog_specs.on_sigma = 4;
   dog_specs.off_sigma = 2;
   dog_specs.circle_edge = true;
-  dog_specs_2.on = false;
-  dog_specs_3.on = false;
+  dog_specs_2.on = true;
+  dog_specs_3.on = true;
+  dog_specs_2.gain = 3.3333f;
+  dog_specs_2.on_gain = 1.2f;
+  dog_specs_3.gain = 4.8f;
+  dog_specs_3.on_gain = 0.8333f;
 
   dog_color_only = true;
-  dog_renorm = LOG_RENORM;
+  dog_renorm = NO_RENORM;
   dog_save = SAVE_DATA;
   dog_feat_geom.x = 1;
   dog_feat_geom.y = 2;
@@ -62,6 +66,9 @@ void DoGRegionSpec::UpdateAfterEdit_impl() {
   dog_specs_3.name = name;
   dog_specs_3.UpdateAfterEdit_NoGui();
   dog_kwta.UpdateAfterEdit_NoGui();
+
+  // if(taMisc::is_loading) {      // todo: loading old version turn off specs 2,3
+  // }
 }
 
 void DoGRegionSpec::UpdateGeom() {

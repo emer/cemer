@@ -363,7 +363,34 @@ LeabraProject .projects["vis_color_test"] {
   };
   DataTable_Group @.gp["OutputData"] { 
   };
-  DataTable_Group @.gp["AnalysisData"] { 
+  DataTable_Group @.gp["AnalysisData"] = [1] { 
+   DataTable @["BlobV1lF16_DoG_GridFilter"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserDataItem @["N_ROWS"] { };
+     UserDataItem @["SCALE_MIN"] { };
+     UserDataItem @["SCALE_MAX"] { };
+     UserDataItem @["BLOCK_HEIGHT"] { };
+    };
+
+    DataTableCols @.data = [2] {
+     String_Data @["Name"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Filter"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+    };
+
+    DataOpList @.last_sort_spec.ops = [0] {
+    };
+
+    DataTableCell_List @.control_panel_cells = [0] {
+    };
+   };
   };
  };
 
@@ -602,7 +629,7 @@ LeabraProject .projects["vis_color_test"] {
       UserDataItem @["view_panel_selected"] { };
      };
 
-     T3Panel_List @.panels = [1] {
+     T3Panel_List @.panels = [2] {
       T3Panel @["DoGFoveaRegionData"] { 
        T3DataView_List @.root_view.children = [4] {
 	GridTableView @["DoGFoveaRegionData_Grid"] { 
@@ -673,6 +700,35 @@ LeabraProject .projects["vis_color_test"] {
 	  GridColView @["BlobV1lF16_image_grey_r"] { };
 	  GridColView @["BlobV1lF16_image_r_g_r"] { };
 	  GridColView @["BlobV1lF16_image_b_y_r"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+	};
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+      T3Panel @["BlobV1lF16_DoG_GridFilter"] { 
+       T3DataView_List @.root_view.children = [1] {
+	GridTableView @["BlobV1lF16_DoG_GridFilter_Grid"] { 
+	 T3DataView_List @.children = [2] {
+	  GridColView @["Name"] { };
+	  GridColView @["Filter"] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -3428,6 +3484,106 @@ LeabraProject .projects["vis_color_test"] {
    el_typ=DataTable;
    el_def=0;
    save_tables=1;
+   DataTable @["BlobV1lF16_DoG_GridFilter"] {
+    UserDataItem_List @*(.user_data_) {
+     name="UserDataItem_List_102";
+     el_typ=UserDataItem;
+     el_def=0;
+     UserDataItem @["N_ROWS"] {
+      name="N_ROWS";
+      value 2 0=3;
+      val_type_fixed=0;
+     };
+     UserDataItem @["SCALE_MIN"] {
+      name="SCALE_MIN";
+      value 8 0=-0.006422074;
+      val_type_fixed=0;
+     };
+     UserDataItem @["SCALE_MAX"] {
+      name="SCALE_MAX";
+      value 8 0=0.006422074;
+      val_type_fixed=0;
+     };
+     UserDataItem @["BLOCK_HEIGHT"] {
+      name="BLOCK_HEIGHT";
+      value 8 0=0;
+      val_type_fixed=0;
+     };
+    };
+    name="BlobV1lF16_DoG_GridFilter";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["Name"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_100";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.203252;
+	val_type_fixed=0;
+       };
+      };
+      name="Name";
+      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     float_Data @["Filter"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_101";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 8 0=0.203252;
+	val_type_fixed=0;
+       };
+      };
+      name="Filter";
+      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      is_matrix=1;
+      cell_geom{ 17;17;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [2] ;;      };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [3] 0;1;2;    };
+    last_sort_spec {
+     name="DataSortSpec_39";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="DataTableCell_List_37";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
   };
  };
  programs {
@@ -5337,6 +5493,190 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 pos {x=1.617411: y=0.479365: z=1.287961: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=1.294211;
+	};
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+      T3Panel @["BlobV1lF16_DoG_GridFilter"] {
+       name="BlobV1lF16_DoG_GridFilter";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_1";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_1";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @["BlobV1lF16_DoG_GridFilter_Grid"] {
+	  name="BlobV1lF16_DoG_GridFilter_Grid";
+	  m_data=.projects["vis_color_test"].data.gp["AnalysisData"]["BlobV1lF16_DoG_GridFilter"]$$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+	  children {
+	   name="T3DataView_List_1";
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @["Name"] {
+	    name="Name";
+	    m_data=.projects["vis_color_test"].data.gp["AnalysisData"]["BlobV1lF16_DoG_GridFilter"].data["Name"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Filter"] {
+	    name="Filter";
+	    m_data=.projects["vis_color_test"].data.gp["AnalysisData"]["BlobV1lF16_DoG_GridFilter"].data["Filter"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=17;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+	  annotations {
+	   name="T3Annotation_List_13";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name="T3DataView_List_1";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=3;
+	  view_range {min=0: max=2: };
+	  page_rows=10;
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  view_cols=5;
+	  page_cols=5;
+	  col_range {min=0: max=1: };
+	  need_scale_update=1;
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale_1";
+	   chunks=133;
+	   min=-0.006422074;
+	   max=0.006422074;
+	   last_min=-1;
+	   last_max=1;
+	   range=0.006422074;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.002;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
+	  use_custom_paging=0;
+	 };
+	};
+       };
+       bg_color {r=1: g=1: b=1: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       camera_params {
+	field_of_view=45;
+	near=0.1;
+	focal=5;
+	far=1000;
+       };
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_6";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=0.5: y=0.45: z=1.280045: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.277545;
+	};
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
 	};
 	T3SavedView @["Vw_3"] {
 	 name="Vw_3";

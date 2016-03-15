@@ -42,8 +42,8 @@ public:
   float		on_sigma;	// #CONDSHOW_ON_on width of the narrower central 'on' gaussian
   float		off_sigma;	// #CONDSHOW_ON_on width of the wider surround 'off' gaussian (typically 2 * on_sigma)
   int		spacing;	// #CONDSHOW_ON_on spacing between filters -- should be same as on_sigma
-  float		gain;		// #CONDSHOW_ON_on #DEF_2 overall gain multiplier applied after filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
-  float         on_gain;        // #CONDSHOW_ON_on differential gain for on component of filter -- only relevant for color opponent DoG's
+  float		gain;		// #CONDSHOW_ON_on #DEF_4;3.3333;4.8 overall gain multiplier applied after filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
+  float         on_gain;        // #CONDSHOW_ON_on #DEF_1;1.2;0.8333 differential gain for on component of filter -- only relevant for color opponent DoG's
   bool		circle_edge;	// #CONDSHOW_ON_on #DEF_true cut off the filter (to zero) outside a circle of radius half_size -- makes the filter more radially symmetric
   int		size;	        // #CONDSHOW_ON_on #READ_ONLY #SHOW size of the filter: 2 * half_size + 1
   
