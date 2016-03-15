@@ -1266,7 +1266,9 @@ void Layer::SaveWeights(const String& fname) {
 }
 
 bool Layer::LoadWeights(const String& fname, bool quiet) {
-  taFiler* flr = GetLoadFiler(fname, ".wts", true);
+  String filename(fname);
+  filename.trim();
+  taFiler* flr = GetLoadFiler(filename, ".wts", true);
   bool rval = false;
   if(flr->istrm) {
     rval = LoadWeights_strm(*flr->istrm, ConGroup::TEXT, quiet);
