@@ -3069,6 +3069,11 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
     if(str == "_D:") continue;
     // at this point it is safe to add a row -- load header already called
     if(!added_row) {
+      if(TestError((cols() == 0), "LoadDataRow_impl",
+                   "there are no columns in the table -- something is wrong with the header information in this file")) {
+        c = EOF;                // tell parent that we're done
+        break;
+      }
       AddBlankRow();
       added_row = true;
     }

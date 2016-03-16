@@ -903,9 +903,9 @@ void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
   } else if (nm[0] == '^') {
     nm = nm.after('^');
     vt = VT_BOOL;
-  } /*no: caller must set default else {
-    vt = VT_FLOAT;
-  }*/
+  } else {
+    vt = VT_STRING;             // string holds anything.. is default
+  }
 
   if(nm.contains('[')) {
     String mat_info = nm;
