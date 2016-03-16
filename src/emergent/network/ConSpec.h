@@ -199,6 +199,9 @@ public:
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing
 
+  virtual bool          SaveConVarToWeights(MemberDef* md);
+  // should given connection variable be saved to the weights file?  default method here just checks md->HasOption("SAVE") -- derived classes can determine based on other options
+  
   virtual void          GetPrjnName(Projection& prjn, String& nm) { };
   // add anything special for this type of connection to the projection name -- default name (FM_from) is provided as a nm value, which this function can modify in any way
 

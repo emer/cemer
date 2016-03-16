@@ -17,6 +17,7 @@
 #include <LeabraNetwork>
 #include <taProject>
 #include <DataTable>
+#include <MemberDef>
 
 #include <taMisc>
 
@@ -521,3 +522,8 @@ void LeabraConSpec::WtScaleCvt(float savg, int lay_sz, int n_cons,
   // new_abs = old_abs * (old_sc / new_sc)
 }
 
+bool LeabraConSpec::SaveConVarToWeights(MemberDef* md) {
+  if(!md->HasOption("SAVE")) return false;
+  if(md->name != "scale") return true;
+  return adapt_scale.on;      // only save if adapting!
+}

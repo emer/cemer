@@ -812,7 +812,7 @@ bool ConGroup::ConValuesFromMatrix(float_Matrix& mat, const String& variable) {
 
 void ConGroup::SaveWeights_strm(ostream& strm, Unit* un, Network* net,
                                 ConGroup::WtSaveFormat fmt) {
-  if((prjn == NULL) || (!(bool)prjn->from)) {
+  if((prjn == NULL) || (!(bool)prjn->from) || !con_spec) {
     strm << "<Cn 0>\n" << "</Cn>\n";
     return;
   }
@@ -822,7 +822,7 @@ void ConGroup::SaveWeights_strm(ostream& strm, Unit* un, Network* net,
   MemberDef* smds[10];          // no more than 10!
   for(int i=0; i<ct->members.size; i++) {
     MemberDef* md = ct->members[i];
-    if(md->HasOption("SAVE")) {
+    if(con_spec->SaveConVarToWeights(md)) {
       smds[n_vars++] = md;
     }
   }
@@ -900,7 +900,7 @@ int ConGroup::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
                                ConGroup::WtSaveFormat fmt, bool quiet) {
   static bool warned_already = false;
   static bool sz_warned_already = false;
-  if((prjn == NULL) || (!(bool)prjn->from)) {
+  if((prjn == NULL) || (!(bool)prjn->from) || !con_spec) {
     return SkipWeights_strm(strm, fmt, quiet); // bail
   }
   String tag, val;
@@ -953,7 +953,7 @@ int ConGroup::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
   MemberDef* smds[10];          // no more than 10!
   for(int i=0; i<ct->members.size; i++) {
     MemberDef* md = ct->members[i];
-    if(md->HasOption("SAVE")) {
+    if(con_spec->SaveConVarToWeights(md)) {
       smds[n_vars++] = md;
     }
   }

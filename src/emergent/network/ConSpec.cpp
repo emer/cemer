@@ -18,6 +18,7 @@
 #include <Projection>
 #include <Connection>
 #include <UnitSpec>
+#include <MemberDef>
 
 TA_BASEFUNS_CTORS_DEFN(ConSpec);
 TA_BASEFUNS_CTORS_LITE_DEFN(ConSpec_SPtr);
@@ -68,6 +69,10 @@ void ConSpec::UpdateAfterEdit_impl() {
 
 bool ConSpec::CheckConfig_RecvCons(ConGroup* cg, bool quiet) {
   return true;
+}
+
+bool ConSpec::SaveConVarToWeights(MemberDef* md) {
+  return md->HasOption("SAVE");
 }
 
 void ConSpec::Init_Weights_Net() {
