@@ -47,6 +47,7 @@ General RunState
     Status OK Match Result     ${output}             4
 
 
+
 CopyProgram
     Set Suite Variable     ${program_test}       "TestGroup"
     Ensure Emergent Free
@@ -380,6 +381,28 @@ CopyControlpanelBetweenProjects
     Json Value Should Equal    ${output}             /result   2345
 
     Prog Var Should Equal      which_group           0
+
+CopyProgramGlobalTableBetweenProjects
+    Set Suite Variable   ${program_test}         "TestDataTableValue"
+    Restart Emergent
+    Ensure Emergent Free
+
+    ${output} =                Run Command Completion          {"command": "OpenProject", "project": "TestPointerUpdates_copy_into.proj"}   300 sec
+    Status OK No Result        ${output}
+
+    Set Emergent Var	RefsGlobalTable		set_value	"cat"
+    Run Emergent Program	.projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"][\\"RefsGlobalTable\\"]
+    DataTable Cell Value Should Match    .projects[\\"TestPointerUpdates\\"].data.gp[\\"InputData\\"][\\"data_group_DataTable\\"]	0	col_one		cat
+    Run Emergent Program   copy_refsglobaltable_into_project
+    Set Emergent Var	.projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_two\\"][\\"RefsGlobalTable\\"]		set_value	"mouse"
+    Run Emergent Program	.projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_two\\"][\\"RefsGlobalTable\\"]
+    DataTable Cell Value Should Match    .projects[\\"TestPointerUpdates_copy_into\\"].data.gp[\\"InputData\\"][\\"data_group_DataTable\\"]	0	col_one		mouse    
+    DataTable Cell Value Should Match    .projects[\\"TestPointerUpdates\\"].data.gp[\\"InputData\\"][\\"data_group_DataTable\\"]	0	col_one		cat    
+    
+    Set Emergent Var	.projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"][\\"RefsGlobalTable\\"]		set_value	"bird"
+    Run Emergent Program	.projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"][\\"RefsGlobalTable\\"]
+    DataTable Cell Value Should Match    .projects[\\"TestPointerUpdates\\"].data.gp[\\"InputData\\"][\\"data_group_DataTable\\"]	0	col_one		bird
+    DataTable Cell Value Should Match    .projects[\\"TestPointerUpdates_copy_into\\"].data.gp[\\"InputData\\"][\\"data_group_DataTable\\"]	0	col_one		mouse    
     
 
 
