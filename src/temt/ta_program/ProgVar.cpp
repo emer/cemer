@@ -669,6 +669,10 @@ taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
     always_save = true;
     rval = (var_type == T_Object) ? DQR_SAVE : DQR_NO_SAVE;
   }
+  else if ((md->name == "objs_ptr")) {
+    always_save = true;
+    rval = (var_type == T_Object) ? DQR_SAVE : DQR_NO_SAVE;
+  }
   else if ((md->name == "object_val")) {
     rval = (var_type == T_Object) ? DQR_SAVE : DQR_NO_SAVE;
   }
