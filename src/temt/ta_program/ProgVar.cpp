@@ -652,24 +652,42 @@ String ProgVar::GetSchemaSig() const {
 
 taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
   DumpQueryResult rval = DQR_SAVE; // only used for membs we match below
-  if (md->name == "int_val")
+  bool always_save = false;
+  if (md->name == "int_val") {
     rval = ((var_type == T_Int) || (var_type == T_HardEnum)) ? DQR_SAVE : DQR_NO_SAVE;
-  else if (md->name == "real_val")
+  }
+  else if (md->name == "real_val") {
     rval = (var_type == T_Real) ? DQR_SAVE : DQR_NO_SAVE;
-  else if (md->name == "string_val")
+  }
+  else if (md->name == "string_val") {
     rval = (var_type == T_String) ? DQR_SAVE : DQR_NO_SAVE;
-  else if (md->name == "bool_val")
+  }
+  else if (md->name == "bool_val") {
     rval = (var_type == T_Bool) ? DQR_SAVE : DQR_NO_SAVE;
-  else if ((md->name == "object_type") || (md->name == "object_val"))
+  }
+  else if ((md->name == "object_type")) {
+    always_save = true;
     rval = (var_type == T_Object) ? DQR_SAVE : DQR_NO_SAVE;
-  else if (md->name == "hard_enum_type")
+  }
+  else if ((md->name == "object_val")) {
+    rval = (var_type == T_Object) ? DQR_SAVE : DQR_NO_SAVE;
+  }
+  else if (md->name == "hard_enum_type") {
+    always_save = true;
     rval = (var_type == T_HardEnum) ? DQR_SAVE : DQR_NO_SAVE;
-  else if (md->name == "dyn_enum_val")
+  }
+  else if (md->name == "dyn_enum_val") {
     rval = (var_type == T_DynEnum) ? DQR_SAVE : DQR_NO_SAVE;
-  else
+  }
+  else {
     return inherited::Dump_QuerySaveMember(md);
+  }
 
-  if(!HasVarFlag(LOCAL_VAR) && !HasVarFlag(SAVE_VAL)) rval = DQR_NO_SAVE; // always save LOCAL_VAR's because they are initializers
+  // override saving based on SAVE_VAL -- only if not always_save flag on, and
+  // always save LOCAL_VAR's because they are initializers
+  if(!HasVarFlag(SAVE_VAL) && !always_save && !HasVarFlag(LOCAL_VAR)) {
+    rval = DQR_NO_SAVE;
+  }
   return rval;
 }
 

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9301
+// ta_Dump File v3.0 -- code v7.8.6.0 rev9302
 LeabraProject .projects["vis_color_test"] { 
  Doc_Group @.docs = [0] {
  };
@@ -3639,7 +3639,7 @@ LeabraProject .projects["vis_color_test"] {
 	on_sigma=8;
 	off_sigma=8;
 	spacing=16;
-	gain=4;
+	gain=8;
 	on_gain=1;
 	circle_edge=1;
 	size=17;
@@ -3940,7 +3940,7 @@ LeabraProject .projects["vis_color_test"] {
      keygen 4 0=0;
      row_indexes {
       name="row_indexes";
-     [1] 0;     };
+     [0]      };
      last_sort_spec {
       name="last_sort_spec";
       ops {
@@ -4706,7 +4706,7 @@ LeabraProject .projects["vis_color_test"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.001061571;
+     value 8 0=0.001061008;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -4716,12 +4716,12 @@ LeabraProject .projects["vis_color_test"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9978769;
+     value 8 0=0.9973475;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.8717077;
+     value 8 0=0.7994902;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -4933,7 +4933,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -5094,7 +5094,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -5255,7 +5255,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -5416,7 +5416,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=1;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -5753,12 +5753,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04352441;
+       value 8 0=0.04350132;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.8079864;
+       value 8 0=0.7357689;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
