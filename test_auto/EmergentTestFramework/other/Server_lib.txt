@@ -152,6 +152,18 @@ Run Command Completion
     Print              [Received] ${output}    # this is temporary just so I can see what's happening
     [Return]           ${output}
     
+Read till non empty
+     [Arguments]	${err_message}
+     Sleep              1000ms
+     ${output} =        Read
+     :FOR      ${j}     IN RANGE		10
+     \	      ${strlen} = 	Get Length 		${output}
+     \	      Exit For Loop If		$strlen > 0
+     \	      Log  "Output from telnet was null, when it shouldn't have been"	WARN
+     \	      Sleep    1000ms
+     \	      ${output} =	Read
+     Should Not Be Empty	${output}	${err_message}
+     [Return] 		${output}     
 
 Run Emergent Program
     [Arguments]        ${program}
@@ -168,8 +180,7 @@ Run Emergent Program
     :FOR   ${i}  IN RANGE      600
     \       ${command} =   Set Variable         {"command": "GetRunState"}
     \       Write Bare         ${command}\n
-    \       Sleep              1000ms
-    \       ${output} =        Read
+    \       ${output} =        Read till non empty	Could not read run state while executing program ${program}
     \       ${runstate} =      Get Json Value   ${output}       /result
     \       Exit For Loop If                 ${runstate} <> "2"
 
