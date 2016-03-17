@@ -50,6 +50,7 @@ General RunState
 
 TestSaveLoadIdentical
     Ensure Emergent Free
+    Set Emergent Var		MasterTrain	cur_config	"basic_train"
     Run Emergent Program	MasterTrain
     Set Emergent Var		SaveWeights	iteration	0
     Run Emergent Program	SaveWeights

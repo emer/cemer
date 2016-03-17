@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9288
+// ta_Dump File v3.0 -- code v7.8.6.0 rev9308
 LeabraProject .projects["TestLoadSaveWeight"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -3625,12 +3625,16 @@ LeabraProject .projects["TestLoadSaveWeight"] {
    Weights_List @.weights = [0] {
    };
 
-   NetTiming_List NULL = [5] {
+   NetTiming_List NULL = [9] {
     LeabraNetTiming @[0] { };
     LeabraNetTiming @[1] { };
     LeabraNetTiming @[2] { };
     LeabraNetTiming @[3] { };
     LeabraNetTiming @[4] { };
+    LeabraNetTiming @[5] { };
+    LeabraNetTiming @[6] { };
+    LeabraNetTiming @[7] { };
+    LeabraNetTiming @[8] { };
    };
   };
  };
@@ -3763,11 +3767,11 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 
 <!-- 
 NewPP limit report
-Cached time: 20160314153815
+Cached time: 20160317173108
 Cache expiry: 86400
 Dynamic content: false
-CPU time usage: 0.023 seconds
-Real time usage: 0.026 seconds
+CPU time usage: 0.017 seconds
+Real time usage: 0.019 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -3781,7 +3785,7 @@ Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 - -total
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160314153815 and revision id 11194
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160317173108 and revision id 11194
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\"					</div>
@@ -3890,7 +3894,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":237});
+mw.config.set({\"wgBackendResponseTime\":181});
 } );</script>
 	
 
@@ -7509,12 +7513,7 @@ mw.config.set({\"wgBackendResponseTime\":237});
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [50] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;14;15;16;17;18;19;
-20;21;22;23;24;25;26;27;28;29;
-30;31;32;33;34;35;36;37;38;39;
-40;41;42;43;44;45;46;47;48;49;
-    };
+    [0]     };
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -8473,7 +8472,7 @@ mw.config.set({\"wgBackendResponseTime\":237});
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [6] 0;1;2;3;4;5;    };
+    [0]     };
     last_sort_spec {
      name="last_sort_spec";
      ops {
@@ -9004,7 +9003,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="tag";
      var_type=T_String;
      string_val=;
-     objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -9014,7 +9012,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="config_id";
      var_type=T_String;
      string_val=;
-     objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="selector for config to use";
@@ -9024,7 +9021,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="param_set";
      var_type=T_String;
      string_val=;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="name of saved parameter set to apply at startup";
@@ -9034,7 +9030,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="log_dir";
      var_type=T_String;
      string_val=;
-     objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="log file directory";
@@ -9044,7 +9039,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="log_file_nm";
      var_type=T_String;
      string_val=;
-     objs_ptr=0;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="name of log file";
@@ -9076,7 +9070,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="batch_str";
      var_type=T_String;
      string_val="00";
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="batch number as a string (leading zeros)";
@@ -9086,7 +9079,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="batch_start";
      var_type=T_Int;
      int_val=0;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="batch starting number";
@@ -9096,7 +9088,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="startup_prog";
      var_type=T_String;
      string_val="BasicStartup";
-     objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -9156,7 +9147,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="n_units";
        var_type=T_Int;
        int_val=0;
-       objs_ptr=0;
        flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -10017,7 +10007,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="tag";
       var_type=T_String;
       string_val=;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL;
       reference=0;
       desc=;
@@ -10105,7 +10094,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="batch";
       var_type=T_Int;
       int_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch counter";
@@ -10115,7 +10103,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="batch_start";
       var_type=T_Int;
       int_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch number to start on";
@@ -10125,7 +10112,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="n_batches";
       var_type=T_Int;
       int_val=10;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of batches to run";
@@ -10169,7 +10155,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="i";
 	var_type=T_Int;
 	int_val=0;
-	objs_ptr=0;
 	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -10334,9 +10319,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_DynEnum;
       dyn_enum_val {
        enum_type=.projects["TestLoadSaveWeight"].programs.gp["ConfigProgs"]["MasterTrain"].types["ConfigOptions"]$$;
-       value=1;
+       value=0;
       };
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -10346,7 +10330,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="config_id";
       var_type=T_String;
       string_val="basic_train_load";
-      objs_ptr=0;
       flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="configuration to use -- auto set from cur_config -- lookup in Config table";
@@ -10356,7 +10339,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="run_prog";
       var_type=T_String;
       string_val="BasicRun";
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="name of run program from the Config table";
@@ -10366,7 +10348,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="init_prog";
       var_type=T_String;
       string_val="BasicInit";
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="name of init program from the Config table";
@@ -10376,7 +10357,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="stop_train";
       var_type=T_Bool;
       bool_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="set this var from any other program to stop training";
@@ -10741,7 +10721,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="config_id";
       var_type=T_String;
       string_val="basic_train_load";
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="configuration to use -- lookup in Config table";
@@ -10751,7 +10730,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="run_prog";
       var_type=T_String;
       string_val="BasicRun";
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="name of run program from the Config table";
@@ -10780,7 +10758,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        enum_type=.projects["TestLoadSaveWeight"].programs.gp["ConfigProgs"]["MasterRun"].types["StopStepGrain"]$$;
        value=0;
       };
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -11023,7 +11000,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="config_id";
        var_type=T_String;
        string_val="basic_train_load";
-       objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
        desc="configuration to use -- lookup in Config table";
@@ -11038,7 +11014,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="lay_lesion_list";
        var_type=T_String;
        string_val=;
-       objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc="layers to lesion for this run";
@@ -11252,7 +11227,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="config_id";
        var_type=T_String;
        string_val="basic_train_load";
-       objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
        reference=0;
        desc="configuration to use -- lookup in Config table";
@@ -11267,7 +11241,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="trials_per_epoch";
        var_type=T_Int;
        int_val=50;
-       objs_ptr=0;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -11277,7 +11250,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="train_epochs";
        var_type=T_Int;
        int_val=6;
-       objs_ptr=0;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -11287,7 +11259,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="update_net_view";
        var_type=T_Bool;
        bool_val=1;
-       objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc="if true, will update network views at end of settling";
@@ -11585,7 +11556,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="if true, will update network views at end of settling";
@@ -12070,7 +12040,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [6] 5;1;0;4;3;2;      };
+      [0]       };
       last_sort_spec {
        name="last_sort_spec";
        ops {
@@ -12121,7 +12091,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="permuted";
       var_type=T_Bool;
       bool_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="present events in permuted order (otherwise use sequential order)";
@@ -12136,7 +12105,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="cur_idx";
       var_type=T_Int;
       int_val=4;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current index into permuted table ";
@@ -12146,7 +12114,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="input_idx";
       var_type=T_Int;
       int_val=2;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -12156,7 +12123,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="dmem_rows";
       var_type=T_Int;
       int_val=6;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -12830,7 +12796,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="event_idx";
       var_type=T_Int;
       int_val=2;
-      objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="event to present";
@@ -13233,7 +13198,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="config_id";
       var_type=T_String;
       string_val="basic_train_load";
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="configuration to use -- lookup in Config table";
@@ -13259,7 +13223,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="trials_per_epoch";
       var_type=T_Int;
       int_val=50;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -13269,7 +13232,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="trials_per_epoch_orig";
       var_type=T_Int;
       int_val=50;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="original specification from Config";
@@ -13279,7 +13241,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="train_epochs";
       var_type=T_Int;
       int_val=6;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc=;
@@ -13289,7 +13250,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="save_final_wts";
       var_type=T_Int;
       int_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc=;
@@ -13299,7 +13259,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="save_wts_interval";
       var_type=T_Int;
       int_val=200;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc=;
@@ -13309,7 +13268,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="test_interval";
       var_type=T_Int;
       int_val=1000;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc=;
@@ -13319,7 +13277,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="log_trials";
       var_type=T_Int;
       int_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc=;
@@ -13329,7 +13286,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="load_weights";
       var_type=T_Bool;
       bool_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc=;
@@ -13339,7 +13295,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="weights_file";
       var_type=T_String;
       string_val=;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc=;
@@ -13349,7 +13304,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="load_st_epc";
       var_type=T_Int;
       int_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc=;
@@ -13359,7 +13313,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lrs_step_epochs";
       var_type=T_Int;
       int_val=50;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc=;
@@ -13709,7 +13662,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion_layers";
       var_type=T_String;
       string_val=;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="a space delimited list of layer group names to lesion";
@@ -13735,7 +13687,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="i";
       var_type=T_Int;
       int_val=0;
-      objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -13745,7 +13696,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="laygp_nm";
       var_type=T_String;
       string_val=;
-      objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -14877,7 +14827,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        enum_type=.projects["TestLoadSaveWeight"].programs.gp["UtilProgs"]["PositionLayersFromTable"].types["ActionType"]$$;
        value=0;
       };
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
@@ -14890,7 +14839,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        enum_type=.projects["TestLoadSaveWeight"].programs.gp["UtilProgs"]["PositionLayersFromTable"].types["UseGroup"]$$;
        value=0;
       };
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
@@ -14969,7 +14917,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="leaf";
 	  var_type=T_Int;
 	  int_val=0;
-	  objs_ptr=0;
 	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -15300,7 +15247,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="row";
 	  var_type=T_Int;
 	  int_val=0;
-	  objs_ptr=0;
 	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -15321,7 +15267,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="layer_name";
 	  var_type=T_String;
 	  string_val=;
-	  objs_ptr=0;
 	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -15342,7 +15287,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="group_name";
 	  var_type=T_String;
 	  string_val=;
-	  objs_ptr=0;
 	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -15352,7 +15296,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lgrow";
 	  var_type=T_Int;
 	  int_val=0;
-	  objs_ptr=0;
 	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -15362,7 +15305,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lg_x";
 	  var_type=T_Int;
 	  int_val=0;
-	  objs_ptr=0;
 	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -15372,7 +15314,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lg_y";
 	  var_type=T_Int;
 	  int_val=0;
-	  objs_ptr=0;
 	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -15382,7 +15323,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lg_z";
 	  var_type=T_Int;
 	  int_val=0;
-	  objs_ptr=0;
 	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
@@ -16108,7 +16048,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion_layers";
       var_type=T_String;
       string_val=;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="a space delimited list of layer group names to lesion or unlesion";
@@ -16118,7 +16057,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lesion";
       var_type=T_Bool;
       bool_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="if true, lesion the layer groups, otherwise unlesion them";
@@ -16144,7 +16082,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="i";
       var_type=T_Int;
       int_val=4;
-      objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -16154,7 +16091,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="laygp_nm";
       var_type=T_String;
       string_val="Head";
-      objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -16559,7 +16495,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="weights_file";
       var_type=T_String;
       string_val=;
-      objs_ptr=0;
       flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
@@ -16569,7 +16504,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="load_weights";
       var_type=T_Bool;
       bool_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
@@ -16579,7 +16513,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="load_st_epc";
       var_type=T_Int;
       int_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
@@ -16589,7 +16522,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="lrs_step_epochs";
       var_type=T_Int;
       int_val=50;
-      objs_ptr=0;
       flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
@@ -16621,7 +16553,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="dmem_new_seed";
       var_type=T_Bool;
       bool_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="when running under dmem (MPI), generate a new random seed for each node after common initialization, to cause each node to have different random events, etc.   It is now possible to add taMisc::dmem_proc to the thr_no args to any random functions, and achieve fully reproducible results without this randomization.";
@@ -16963,7 +16894,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="save_final_wts";
       var_type=T_Bool;
       bool_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc=;
@@ -17270,7 +17200,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="save_wts_interval";
       var_type=T_Int;
       int_val=200;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc=;
@@ -17565,7 +17494,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
@@ -17657,7 +17585,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether network views will be updated on settles";
@@ -17691,7 +17618,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="qtr";
 	var_type=T_Int;
 	int_val=1;
-	objs_ptr=0;
 	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -17798,7 +17724,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether network views will be updated on settles";
@@ -17909,7 +17834,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
@@ -17943,7 +17867,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="qtr";
 	var_type=T_Int;
 	int_val=0;
-	objs_ptr=0;
 	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -18118,7 +18041,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="cycle";
       var_type=T_Int;
       int_val=100;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
@@ -18128,7 +18050,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="if true, will update network views at end of settling";
@@ -18172,7 +18093,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="cycle_max";
 	var_type=T_Int;
 	int_val=0;
-	objs_ptr=0;
 	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -18182,7 +18102,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="cyc";
 	var_type=T_Int;
 	int_val=0;
-	objs_ptr=0;
 	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
@@ -18353,7 +18272,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
@@ -18459,7 +18377,6 @@ also save specs.";
       name="tag";
       var_type=T_String;
       string_val="_gui";
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc="user defined tag (set by startup script)";
@@ -18469,7 +18386,6 @@ also save specs.";
       name="wts_subdir";
       var_type=T_String;
       string_val=;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="subdirectory to save weights in";
@@ -18479,7 +18395,6 @@ also save specs.";
       name="fname";
       var_type=T_String;
       string_val="/usr/local/src/svn/emergent/test_auto/EmergentTestFramework/test-projects/TestLoadSaveWeight_autotst_1.wts";
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -18489,7 +18404,6 @@ also save specs.";
       name="final_tag";
       var_type=T_String;
       string_val="_autotst_1";
-      objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch + epoch";
@@ -18498,7 +18412,6 @@ also save specs.";
      ProgVar @["iteration"] {
       name="iteration";
       var_type=T_Int;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -18684,7 +18597,6 @@ also save specs.";
      ProgVar @["tag"] {
       name="tag";
       var_type=T_String;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="user defined tag (set by startup script)";
@@ -18693,7 +18605,6 @@ also save specs.";
      ProgVar @["wts_subdir"] {
       name="wts_subdir";
       var_type=T_String;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="subdirectory to save weights in";
@@ -18702,7 +18613,6 @@ also save specs.";
      ProgVar @["fname"] {
       name="fname";
       var_type=T_String;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -18711,7 +18621,6 @@ also save specs.";
      ProgVar @["final_tag"] {
       name="final_tag";
       var_type=T_String;
-      objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="batch + epoch";
@@ -18721,7 +18630,6 @@ also save specs.";
       name="iteration";
       var_type=T_Int;
       int_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -18913,7 +18821,6 @@ also save specs.";
        name="tag";
        var_type=T_String;
        string_val=;
-       objs_ptr=0;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -18923,7 +18830,6 @@ also save specs.";
        name="log_trials";
        var_type=T_Bool;
        bool_val=0;
-       objs_ptr=0;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
@@ -18933,7 +18839,6 @@ also save specs.";
        name="log_dir";
        var_type=T_String;
        string_val=;
-       objs_ptr=0;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc="log file directory";
@@ -18943,7 +18848,6 @@ also save specs.";
        name="log_file_nm";
        var_type=T_String;
        string_val=;
-       objs_ptr=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc="name of log file";
@@ -20221,7 +20125,6 @@ also save specs.";
        name="run_already";
        var_type=T_Bool;
        bool_val=1;
-       objs_ptr=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -21660,7 +21563,6 @@ also save specs.";
        name="run_already";
        var_type=T_Bool;
        bool_val=1;
-       objs_ptr=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -22117,22 +22019,22 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=-0.005390835;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0;
+     value 8 0=-0.009469697;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=1;
+     value 8 0=1.010782;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=1;
+     value 8 0=0.844697;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -22149,7 +22051,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
    name="Browser3";
    m_data=.projects["TestLoadSaveWeight"]$$;
    visible=1;
-   win_name=".projects[\"TestLoadSaveWeight\"] - TestLoadSaveWeight.proj";
+   win_name=".projects[\"TestLoadSaveWeight\"] - TestLoadSaveWeight.proj [*]";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -22760,7 +22662,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=5: };
+	  view_range {min=0: max=-1: };
 	  page_rows=-8017975;
 	  display_on=1;
 	  manip_ctrl_on=1;
@@ -22789,7 +22691,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=5: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	   show_axis_label=1;
 	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -22832,7 +22734,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.799366: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
@@ -22853,7 +22755,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.604: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
@@ -22874,7 +22776,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=49: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
@@ -23662,22 +23564,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 8 0=-0.002785515;
+       value 8 0=-0.03504043;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.03078677;
+       value 8 0=0.02462121;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.05710306;
+       value 8 0=0.04528302;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.8950969;
+       value 8 0=0.7310606;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -24316,9 +24218,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1855863;
-     acts_p_avg=0.1855863;
-     acts_p_avg_eff=0.1855863;
+     acts_m_avg=0.1;
+     acts_p_avg=0.1;
+     acts_p_avg_eff=0.1;
      spec {type=LeabraLayerSpec: spec=.projects["TestLoadSaveWeight"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
      adapt_gi=1;
     };
@@ -24405,9 +24307,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1841435;
-     acts_p_avg=0.1846641;
-     acts_p_avg_eff=0.1846641;
+     acts_m_avg=0.1;
+     acts_p_avg=0.1;
+     acts_p_avg_eff=0.1;
      spec {type=LeabraLayerSpec: spec=.projects["TestLoadSaveWeight"].networks["Network_0"].specs["HiddenLayer"]$$: };
      adapt_gi=1;
     };
@@ -24476,9 +24378,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1766326;
-     acts_p_avg=0.1855863;
-     acts_p_avg_eff=0.1855863;
+     acts_m_avg=0.1;
+     acts_p_avg=0.1;
+     acts_p_avg_eff=0.1;
      spec {type=LeabraLayerSpec: spec=$.projects["TestLoadSaveWeight"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
      adapt_gi=1;
     };
@@ -24562,6 +24464,50 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
     };
     LeabraNetTiming @[4] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[5] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[6] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[7] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[8] {
      netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
      act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
      dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
