@@ -158,7 +158,7 @@ Read till non empty
      ${output} =        Read
      :FOR      ${j}     IN RANGE		10
      \	      ${strlen} = 	Get Length 		${output}
-     \	      Exit For Loop If		$strlen > 0
+     \	      Exit For Loop If		${strlen} > 0
      \	      Log  "Output from telnet was null, when it shouldn't have been"	WARN
      \	      Sleep    1000ms
      \	      ${output} =	Read
@@ -240,6 +240,12 @@ DataTable Cell Value Should Match
     ${output} =                Run Command Wait      {"command": "GetData", "table": "${table_path}", "row_from": ${row_from}, "column" : "${col}", "rows": 1}
     Status OK 		       ${output}
     Json String Should Match    ${output}             /result/columns/0/values/0   ${value}
+
+DataTable Cell Value Should Equal
+    [Arguments]         ${table_path}	${row_from}	${col} 	${value}
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "${table_path}", "row_from": ${row_from}, "column" : "${col}", "rows": 1}
+    Status OK 		       ${output}
+    Json Value Should Equal    ${output}             /result/columns/0/values/0   ${value}
 
 Restart Emergent
     Log		"Resetting emergent"	WARN
