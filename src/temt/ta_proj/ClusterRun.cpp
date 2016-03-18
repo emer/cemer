@@ -312,6 +312,10 @@ void ClusterRun::Kill() {
   // Get the (inclusive) range of rows to kill.
   int st_row, end_row;
   if (SelectedRows(jobs_running, st_row, end_row)) {
+    if (!CheckLocalClustUserRows(jobs_running, st_row, end_row)) {
+      return;
+    }
+
     // Populate the jobs_submit table with CANCEL requests for the selected jobs.
     jobs_submit.ResetData();
     for (int row = st_row; row <= end_row; ++row) {
@@ -339,6 +343,9 @@ void ClusterRun::UpdtNotes() {
   int st_row, end_row;
   if (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive) {
     if (SelectedRows(*cur_table, st_row, end_row)) {
+      if (!CheckLocalClustUserRows(*cur_table, st_row, end_row)) {
+        return;
+      }
       // Populate the jobs_submit table with UPDATENOTE requests for the selected jobs.
       for (int row = st_row; row <= end_row; ++row) {
         SubmitUpdateNote(*cur_table, row);
@@ -1004,6 +1011,9 @@ void ClusterRun::ArchiveJobs() {
 
   int st_row, end_row;
   if (SelectedRows(jobs_done, st_row, end_row)) {
+    if (!CheckLocalClustUserRows(jobs_done, st_row, end_row)) {
+      return;
+    }
     jobs_submit.ResetData();
     for (int row = end_row; row >= st_row; --row) {
       SubmitArchiveJob(jobs_done, row);
@@ -1022,6 +1032,10 @@ void ClusterRun::UnDeleteJobs() {
 
   int st_row, end_row;
   if (SelectedRows(jobs_deleted, st_row, end_row)) {
+    if (!CheckLocalClustUserRows(jobs_deleted, st_row, end_row)) {
+      return;
+    }
+
     jobs_submit.ResetData();
     for (int row = end_row; row >= st_row; --row) {
       SubmitUnDeleteJob(jobs_deleted, row);
@@ -1037,9 +1051,12 @@ void ClusterRun::UnDeleteJobs() {
 void ClusterRun::RemoveJobs() {
   if(!InitClusterManager())
     return;
-
+  
   int st_row, end_row;
   if (SelectedRows(jobs_done, st_row, end_row)) {
+    if (!CheckLocalClustUserRows(jobs_done, st_row, end_row)) {
+      return;
+    }
     int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_done list (can only be your jobs, on current cluster)?", "Ok", "Cancel");
     if(chs == 1) return;
     jobs_submit.ResetData();
@@ -1051,6 +1068,9 @@ void ClusterRun::RemoveJobs() {
     AutoUpdateMe();
   }
   else if (SelectedRows(jobs_archive, st_row, end_row)) {
+    if (!CheckLocalClustUserRows(jobs_done, st_row, end_row)) {
+      return;
+    }
     int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_archive list?", "Ok", "Cancel");
     if(chs == 1) return;
     jobs_submit.ResetData();
@@ -1062,6 +1082,9 @@ void ClusterRun::RemoveJobs() {
     AutoUpdateMe();
   }
   else if (SelectedRows(jobs_deleted, st_row, end_row)) {
+    if (!CheckLocalClustUserRows(jobs_done, st_row, end_row)) {
+      return;
+    }
     int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_deleted list?", "Ok", "Cancel");
     if(chs == 1) return;
     jobs_submit.ResetData();
@@ -1687,10 +1710,36 @@ ClusterRun::AddJobRow(const String& cmd, const String& params, int& cmd_id) {
   }
 }
 
+bool ClusterRun::CheckLocalClustUserRows(const DataTable& table, int start_row, int end_row) {
+  
+  for (int row = start_row; row <= end_row; row++) {
+    String clust = table.GetValAsString("cluster", row);
+    String user = table.GetValAsString("user", row);
+    String tag = table.GetValAsString("tag", row);
+    
+    if(clust != cluster) {
+      String message = "One or more jobs are not on the " + clust + " cluster. For these you need to select the appropriate cluster. Stop or Continue?";
+      int choice = taMisc::Choice(message, "Continue", "Stop");
+      if (choice > 0) {
+        return false;
+      }
+    }
+    if(user != m_cm->GetUsername()) {
+      String message = "One or more jobs are not owned by user " + m_cm->GetUsername() + ". You can not modify other user's data. Any you do own will be processed. Stop or Continue?";
+      int choice = taMisc::Choice(message, "Continue", "Stop");
+      if (choice > 0) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 bool ClusterRun::CheckLocalClustUser(const DataTable& table, int tab_row, bool warn) {
   String clust = table.GetValAsString("cluster", tab_row);
   String user = table.GetValAsString("user", tab_row);
   String tag = table.GetValAsString("tag", tab_row);
+  
   if(clust != cluster) {
     if(warn) {
       taMisc::Info("not processing job tag:", tag, "on cluster:", clust,

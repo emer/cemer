@@ -223,6 +223,8 @@ public:
 
   virtual bool  CheckLocalClustUser(const DataTable& table, int row, bool warn = true);
   // make sure that given row of table is for current cluster and user -- otherwise issue info message and return false -- submit functions can only operate on current user and cluster
+  virtual bool  CheckLocalClustUserRows(const DataTable& table, int start_row, int end_row);
+  // make sure that all rows selected are for current cluster and user -- otherwise ask user if they want to stop or continue -- submit functions can only operate on current user and cluster
   virtual void  SubmitRemoveJob(const DataTable& table, int row);
   // add to jobs_submit for remove job for job at the given row of the given table
   virtual void  SubmitArchiveJob(const DataTable& table, int row);
