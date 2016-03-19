@@ -225,7 +225,8 @@ public:
                                     char terminator,
                                     bool discard_terminator);
   TA_API friend int     readline_auto(std::istream& strm, taString& x);
-  bool                  Load_str(std::istream& istrm); // load contents from a stream
+  bool                  Load_str(std::istream& istrm, int alloc_size = 0);
+  // load contents from a stream -- optionally allocate string memory of given size if known in advance -- can greatly speed up loading times
   bool                  Save_str(std::ostream& ostrm); // save contents to a stream
   bool                  LoadFromFile(const String& fname);
   // load contents of given file into string

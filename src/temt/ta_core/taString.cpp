@@ -42,6 +42,7 @@ software work for purposes of copyright.
 
 #ifndef NO_TA_BASE
 #include <String_Array>
+#include <taMisc>
 #endif
 
 using namespace std;
@@ -1056,7 +1057,12 @@ bool taString::LoadFromFile(const String& fname) {
     strm.close();
     return false;
   }
+#ifndef NO_TA_BASE
+  int64_t sz = taMisc::FileSize(fname);
+  bool rval = Load_str(strm, sz);
+#else
   bool rval = Load_str(strm);
+#endif  
   strm.close();
   return rval;
 }
@@ -1073,9 +1079,12 @@ bool taString::SaveToFile(const String& fname) {
   return rval;
 }
 
-bool taString::Load_str(std::istream& istrm) {
-  truncate(0);
-  const int buf_len = 1024;
+bool taString::Load_str(std::istream& istrm, int alloc_size) {
+  if(alloc_size > 0)
+    setRep(Snew(0, alloc_size));
+  else
+    truncate(0);
+  const int buf_len = 10240;
   char buf[buf_len];
   bool done = false;
   while (!done) {

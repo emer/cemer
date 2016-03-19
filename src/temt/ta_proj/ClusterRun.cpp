@@ -564,7 +564,7 @@ void ClusterRun::ListJobFiles() {
   }
   
   ClearAllSelections();       // done
-  ViewPanelNumber(4);
+  ViewPanelNumber(5);
 }
 
 void ClusterRun::SelectFiles_impl(DataTable& table, int row, bool include_data) {
@@ -614,7 +614,7 @@ void ClusterRun::ListLocalFiles() {
       GetFileInfo(files[i].filePath(), file_list, frow, tag, m_cm->GetUsername(), cluster);
     }
   }
-  ViewPanelNumber(4);
+  ViewPanelNumber(5);
 }
 
 void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row, String& tag,
@@ -919,7 +919,7 @@ void ClusterRun::ListOtherSvn(int rev, bool recurse) {
     file_list.SetVal(String("svn_other:") + file_authors[i], "tag", row);
     file_list.SetVal(svn_other_url, "svn_file_path", row);
   }
-  ViewPanelNumber(4);
+  ViewPanelNumber(5);
 }
 
 void ClusterRun::ListOtherProjFiles(const String& proj_name) {
