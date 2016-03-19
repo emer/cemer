@@ -1,0 +1,459 @@
+// ta_Dump File v3.0 -- code v7.8.6.0 rev9310
+Program .projects[0].programs[0] { 
+ UserDataItem_List @*(.user_data_) {
+  UserDataItem @[0] { };
+ };
+
+ ProgObjList @.objs = [0] {
+ };
+
+ ProgType_List @.types = [0] {
+ };
+
+ ProgVar_List @.args = [0] {
+ };
+
+ ProgVar_List @.vars = [9] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+  ProgVar @[2] { };
+  ProgVar @[3] { };
+  ProgVar @[4] { };
+  ProgVar @[5] { };
+  ProgVar @[6] { };
+  ProgVar @[7] { };
+  ProgVar @[8] { };
+ };
+
+ Function_List @.functions = [0] {
+ };
+
+ ProgEl_List @.init_code = [0] {
+ };
+
+ ProgEl_List @.prog_code = [2] {
+  LocalVars @[0] { 
+   ProgVar_List @.local_vars = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+   };
+  };
+  ForLoop @[1] { 
+   ProgEl_List @.loop_code = [12] {
+    MathCall @[0] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MathCall @[1] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    AssignExpr @[2] { };
+    AssignExpr @[3] { };
+    PrintVar @[4] { };
+    MathCall @[5] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MathCall @[6] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    AssignExpr @[7] { };
+    AssignExpr @[8] { };
+    PrintVar @[9] { };
+    VarIncr @[10] { };
+    VarIncr @[11] { };
+   };
+  };
+ };
+};
+Program .projects[0].programs[0] {
+ UserDataItem_List @*(.user_data_) {
+  name="UserDataItem_List_91";
+  el_typ=UserDataItem;
+  el_def=0;
+  UserDataItem @[0] {
+   name="user_pinned";
+   value 1 0=1;
+   val_type_fixed=0;
+  };
+ };
+ name="PolarToCartesian";
+ short_nm="PlTCrt";
+ tags=;
+ desc=;
+ flags=NO_STOP_STEP;
+ stop_step_cond {
+  expr=;
+ };
+ objs {
+  name="objs";
+  el_typ=taNBase;
+  el_def=0;
+ };
+ types {
+  name="types";
+  el_typ=DynEnumType;
+  el_def=0;
+ };
+ args {
+  name="args";
+  el_typ=ProgVar;
+  el_def=0;
+ };
+ vars {
+  name="vars";
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="cx";
+   var_type=T_Int;
+   int_val=20;
+   flags=CTRL_PANEL|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="x value for pivot point";
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="cy";
+   var_type=T_Int;
+   int_val=20;
+   flags=CTRL_PANEL|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="x value for pivot point";
+   init_from=NULL;
+  };
+  ProgVar @[2] {
+   name="r";
+   var_type=T_Int;
+   int_val=18;
+   flags=CTRL_PANEL|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="radius";
+   init_from=NULL;
+  };
+  ProgVar @[3] {
+   name="a_start";
+   var_type=T_Real;
+   real_val=0;
+   flags=CTRL_PANEL|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="start angle";
+   init_from=NULL;
+  };
+  ProgVar @[4] {
+   name="a_end";
+   var_type=T_Real;
+   real_val=90;
+   flags=CTRL_PANEL|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="finish angle (set equal to start angle if you want single points rather than pie wedges)";
+   init_from=NULL;
+  };
+  ProgVar @[5] {
+   name="x";
+   var_type=T_Int;
+   int_val=32;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="resulting x coordinate";
+   init_from=NULL;
+  };
+  ProgVar @[6] {
+   name="y";
+   var_type=T_Int;
+   int_val=32;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="resulting y coordinate";
+   init_from=NULL;
+  };
+  ProgVar @[7] {
+   name="increment";
+   var_type=T_Int;
+   int_val=180;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="increment in degrees";
+   init_from=NULL;
+  };
+  ProgVar @[8] {
+   name="sectors";
+   var_type=T_Int;
+   int_val=1;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="times to repeat increment and calculate";
+   init_from=NULL;
+  };
+ };
+ functions {
+  name="functions";
+  el_typ=Function;
+  el_def=0;
+ };
+ init_code {
+  name="init_code";
+  el_typ=ProgCode;
+  el_def=0;
+ };
+ prog_code {
+  name="prog_code";
+  el_typ=ProgCode;
+  el_def=0;
+  LocalVars @[0] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LocalVars (3 vars)";
+   pre_compile_code_string="LocalVars (3 vars)";
+   local_vars {
+    name="local_vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="cos_x";
+     var_type=T_Real;
+     real_val=0;
+     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="sin_y";
+     var_type=T_Real;
+     real_val=0;
+     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[2] {
+     name="i";
+     var_type=T_Int;
+     int_val=0;
+     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+  };
+  ForLoop @[1] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="for (i=0; i<sectors; i++)";
+   pre_compile_code_string="for (i=0; i<sectors; i++)";
+   loop_code {
+    name="loop_code";
+    el_typ=ProgCode;
+    el_def=0;
+    MathCall @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="cos_x = taMath_float::cos_deg(a_start)";
+     pre_compile_code_string="cos_x = taMath_float::cos_deg(a_start)";
+     result_var=.projects[0].programs[0].prog_code[0].local_vars[0]$$;
+     object_type=taMath_float;
+     method=taMath_float::cos_deg;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float;
+       type="float";
+       name="angle";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="a_start";
+       };
+      };
+     };
+    };
+    MathCall @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="sin_y = taMath_float::sin_deg(a_start)";
+     pre_compile_code_string="sin_y = taMath_float::sin_deg(a_start)";
+     result_var=.projects[0].programs[0].prog_code[0].local_vars[1]$$;
+     object_type=taMath_float;
+     method=taMath_float::sin_deg;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float;
+       type="float";
+       name="angle";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="a_start";
+       };
+      };
+     };
+    };
+    AssignExpr @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="x = cx + r * cos_x";
+     pre_compile_code_string="x = cx + r * cos_x";
+     result_var=.projects[0].programs[0].vars[5]$$;
+     expr {
+      expr="cx + r * cos_x";
+     };
+    };
+    AssignExpr @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="y = cy + r * sin_y";
+     pre_compile_code_string="y = cy + r * sin_y";
+     result_var=.projects[0].programs[0].vars[6]$$;
+     expr {
+      expr="cy + r * sin_y";
+     };
+    };
+    PrintVar @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print  \"sector start\" x y";
+     pre_compile_code_string="Print  \"sector start\" x y";
+     message="sector start";
+     print_var=$.projects[0].programs[0].vars[5]$;
+     print_var2=$.projects[0].programs[0].vars[6]$;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     debug=0;
+    };
+    MathCall @[5] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="cos_x = taMath_float::cos_deg(a_end)";
+     pre_compile_code_string="cos_x = taMath_float::cos_deg(a_end)";
+     result_var=$.projects[0].programs[0].prog_code[0].local_vars[0]$;
+     object_type=taMath_float;
+     method=taMath_float::cos_deg;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float;
+       type="float";
+       name="angle";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="a_end";
+       };
+      };
+     };
+    };
+    MathCall @[6] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="sin_y = taMath_float::sin_deg(a_end)";
+     pre_compile_code_string="sin_y = taMath_float::sin_deg(a_end)";
+     result_var=$.projects[0].programs[0].prog_code[0].local_vars[1]$;
+     object_type=taMath_float;
+     method=taMath_float::sin_deg;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float;
+       type="float";
+       name="angle";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="a_end";
+       };
+      };
+     };
+    };
+    AssignExpr @[7] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="x = cx + r * cos_x";
+     pre_compile_code_string="x = cx + r * cos_x";
+     result_var=$.projects[0].programs[0].vars[5]$;
+     expr {
+      expr="cx + r * cos_x";
+     };
+    };
+    AssignExpr @[8] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="y = cy + r * sin_y";
+     pre_compile_code_string="y = cy + r * sin_y";
+     result_var=$.projects[0].programs[0].vars[6]$;
+     expr {
+      expr="cy + r * sin_y";
+     };
+    };
+    PrintVar @[9] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Print  \"sector finish\" x y";
+     pre_compile_code_string="Print  \"sector finish\" x y";
+     message="sector finish";
+     print_var=$.projects[0].programs[0].vars[5]$;
+     print_var2=$.projects[0].programs[0].vars[6]$;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     debug=0;
+    };
+    VarIncr @[10] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="a_start += increment";
+     pre_compile_code_string="a_start += increment";
+     var=.projects[0].programs[0].vars[3]$$;
+     expr {
+      expr="increment";
+     };
+    };
+    VarIncr @[11] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="a_end += increment";
+     pre_compile_code_string="a_end += increment";
+     var=.projects[0].programs[0].vars[4]$$;
+     expr {
+      expr="increment";
+     };
+    };
+   };
+   init {
+    expr="i=0";
+   };
+   test {
+    expr="i<sectors";
+   };
+   iter {
+    expr="i++";
+   };
+  };
+ };
+ step_prog=NULL;
+ step_n=1;
+};
