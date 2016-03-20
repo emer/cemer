@@ -1376,6 +1376,9 @@ void TemtClient::RunCommand(const String& cmd) {
   else if (cmd == "GetMember") {
       cmdGetMember();
   }
+  else if (cmd == "SetMember") {
+    cmdSetMember();
+  }
 #endif
   else
   {
@@ -1829,7 +1832,40 @@ void TemtClient::cmdGetMember() {
           SendErrorJSON("No member " + name_params.GetVal("member").toString() + " was found in " + name_params.GetVal("path").toString(), TemtClient::NOT_FOUND);
           return;
         }
-        SendOk(md->GetValVar(obj).toString());
+        Variant var = md->GetValVar(obj);
+        bool error = false;
+        QJsonObject json_root_obj;
+        json_root_obj.insert("status", QString("OK"));
+        switch (var.type()) {
+          case Variant::VarType::T_Bool:
+            json_root_obj.insert("result", QJsonValue(var.toBool()));
+            break;
+          case Variant::VarType::T_Int:
+            json_root_obj.insert("result", QJsonValue(var.toInt()));
+            break;
+          case Variant::VarType::T_Double:
+            json_root_obj.insert("result", QJsonValue(var.toDouble()));
+            break;
+          case Variant::VarType::T_Float:
+            json_root_obj.insert("result", QJsonValue(var.toFloat()));
+            break;
+          case Variant::VarType::T_String:
+            json_root_obj.insert("result", QJsonValue(QString(var.toString().chars())));
+            break;
+          case Variant::VarType::T_Ptr:
+            SendErrorJSON("Can't retrieve object pointers", TemtClient::RUNTIME);
+            error = true;
+            break;
+          default:
+            SendErrorJSON("Member type unknown - report as bug", TemtClient::RUNTIME);
+            error = true;
+            break;
+        }
+        if (!error) {
+          QJsonDocument json_doc(json_root_obj);
+          QByteArray theString = json_doc.toJson(json_format);
+          Write(theString.data());
+        }
         return;
       } else {
         SendOk(obj->PrintStr());
@@ -1845,5 +1881,46 @@ void TemtClient::cmdGetMember() {
     SendErrorJSON("path param not found", TemtClient::MISSING_PARAM);
   }
 }
+
+void TemtClient::cmdSetMember() {
+  if (!name_params.GetVal("path").isNull()) {
+    String pnm = name_params.GetVal("path").toString();
+    taBase * obj = NULL;
+    MemberDef* md = NULL;
+    if (pnm.startsWith(".projects")) {
+      obj = tabMisc::root->FindFromPath(pnm, md);
+    } else {
+      taProject* proj = GetCurrentProject();
+      obj = proj->FindFromPath(pnm, md);
+    }
+    
+    if(obj) {
+      if (!name_params.GetVal("member").isNull()) {
+        if (name_params.GetVal("var_value").isNull()) {
+          SendErrorJSON("var_value param not found", TemtClient::MISSING_PARAM);
+          return;
+        }
+        md = obj->GetTypeDef()->members.FindName(name_params.GetVal("member").toString());
+        if (!md) {
+          SendErrorJSON("No member " + name_params.GetVal("member").toString() + " was found in " + name_params.GetVal("path").toString(), TemtClient::NOT_FOUND);
+          return;
+        }
+        md->SetValVar(name_params.GetVal("var_value"), obj);
+        SendOk();
+        return;
+      } else {
+        SendErrorJSON("member param not found", TemtClient::MISSING_PARAM);
+      }
+    } else {
+      SendError("Path '" + pnm + "' not found", TemtClient::NOT_FOUND);
+      return;
+    }
+    SendErrorJSON("Working on the implementation", TemtClient::NOT_FOUND);
+  }
+  else {
+    SendErrorJSON("path param not found", TemtClient::MISSING_PARAM);
+  }
+}
+
 #endif
 
