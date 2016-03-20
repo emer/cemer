@@ -150,6 +150,10 @@ bool MethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
     objnm = mthobj.before('.');
   else
     objnm = mthobj.before("->");
+  objnm.trim();
+  if (objnm.contains(' ')) {
+    return false;  // too complicated an expression for this parser - fall back to a css expression
+  }
   if(objnm.nonempty() && !objnm.contains('[')) return true;
   // syntax above should be enough to rule in -- no [ ] paths either tho -- nowhere to put
   return false;
