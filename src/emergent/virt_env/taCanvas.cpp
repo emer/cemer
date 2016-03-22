@@ -331,26 +331,63 @@ bool taCanvas::DrawSvgString(const String& svg_code, float l, float b, float wd,
                              bool auto_invert, float rotate) {
   if(!CheckInit()) return false;
   QByteArray code;
+  int cur_wd, cur_ht;
+  GetImageSize(cur_wd, cur_ht);
+  if (wd == -1) {
+    if(coord_type == NORMALIZED)
+      wd = 1.0f;
+    else
+      wd = cur_wd;
+  }
+  if (ht == -1) {
+    if(coord_type == NORMALIZED)
+      ht = 1.0f;
+    else
+      ht = cur_ht;
+  }
   if(auto_invert) {
-    int svg_pos = svg_code.index("<svg\n");
+    int svg_pos = svg_code.index("<svg");
     if(TestError(svg_pos < 0, "DrawSvgString", "auto_invert cannot find <svg start tag")) {
       return false;
     }
-    svg_pos += 5;
+    svg_pos += 4;
+    if(svg_code[svg_pos] == '\n')
+      svg_pos++;
     int vb_pos = svg_code.index("viewBox", svg_pos);
-    if(TestError(vb_pos < 0, "DrawSvgString", "auto_invert cannot find viewBox")) {
-      return false;
+    float y_ht = ht;            // this is probably not right
+    if(vb_pos < 0) {            // fall back on height spec
+      int ht_pos = svg_code.index("height", svg_pos);
+      if(TestError(ht_pos < 0, "DrawSvgString",
+                   "auto_invert cannot find height attribute")) {
+        return false;
+      }
+      ht_pos = svg_code.index('\"',ht_pos); // get the 1st quote
+      ht_pos += 1;                // go past quote
+      int eht = svg_code.index('\"', ht_pos);
+      String htstr = svg_code.at(ht_pos, eht-ht_pos);
+      for(int i=0; i<htstr.length(); i++) {
+        if(!isdigit(htstr[i])) {
+          htstr = htstr.before(i);
+          break;
+        }
+      }
+      y_ht = htstr.toFloat();
     }
-    vb_pos = svg_code.index('\"',vb_pos); // get the 1st quote
-    vb_pos += 1;                // go past quote
-    int evb = svg_code.index('\"', vb_pos);
-    String vbox = svg_code.at(vb_pos, evb-vb_pos);
-    String_Array vba;
-    vba.Split(vbox, " ");
-    if(TestError(vba.size < 4, "DrawSvgString", "auto_invert cannot parse viewBox dimensions")) {
-      return false;
+    else {
+      vb_pos = svg_code.index('\"',vb_pos); // get the 1st quote
+      vb_pos += 1;                // go past quote
+      int evb = svg_code.index('\"', vb_pos);
+      String vbox = svg_code.at(vb_pos, evb-vb_pos);
+      String_Array vba;
+      vba.Split(vbox, " ");
+      if(TestError(vba.size < 4, "DrawSvgString", "auto_invert cannot parse viewBox dimensions")) {
+        return false;
+      }
+      String htstr = vba[3];
+      if(htstr.contains(','))
+        htstr.gsub(",", "");
+      y_ht = htstr.toFloat();
     }
-    float y_ht = vba[3].toFloat();
     String xfs = "   transform=\"scale(1,-1) translate(0,"+ String(-y_ht) + ")";
     if(rotate != 0) {
       xfs += " rotate(" + String(rotate) + ")";
@@ -366,20 +403,6 @@ bool taCanvas::DrawSvgString(const String& svg_code, float l, float b, float wd,
   QSvgRenderer rend(code);
   if(TestError(!rend.isValid(), "DrawSvgString", "svg code was not parsable")) {
     return false;
-  }
-  int cur_wd, cur_ht;
-  GetImageSize(cur_wd, cur_ht);
-  if (wd == -1) {
-    if(coord_type == NORMALIZED)
-      wd = 1.0f;
-    else
-      wd = cur_wd;
-  }
-  if (ht == -1) {
-    if(coord_type == NORMALIZED)
-      ht = 1.0f;
-    else
-      ht = cur_ht;
   }
   rend.render(&q_painter, QRectF(l, b, wd, ht));
   return true;
