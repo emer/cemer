@@ -135,10 +135,14 @@ public:
   virtual void	PenStyle(PenStyles style);
   // #CAT_Draw
 
-  virtual bool  DrawSvgFile(const String& file_name, float l=0, float b=0, float wd=-1, float ht=-1);
-  // #CAT_Draw draw an SVG (scalable vector graphics) file onto the canvas -- in specified rectangle -- returns false if not parsable
-  virtual bool  DrawSvgString(const String& svg_code, float l=0, float b=0, float wd=-1, float ht=-1);
-  // #CAT_Draw draw SVG (scalable vector graphics) code onto the canvas -- in specified rectangle -- returns false if not parsable
+  virtual bool  DrawSvgFile(const String& file_name, float l=0, float b=0,
+                            float wd=-1, float ht=-1, bool auto_invert = true,
+                            float rotate=0);
+  // #CAT_Draw draw an SVG (scalable vector graphics) file onto the canvas -- in specified rectangle -- -1 = use full size -- returns false if not parsable -- auto_invert = add svg code to flip the image into our rendering convention where the bottom-left is 0,0 coordinate, instead of 0,0 being upper-left, rotate = optional global rotation transform, in degrees -- only works if doing auto_invert too
+  virtual bool  DrawSvgString(const String& svg_code, float l=0, float b=0,
+                              float wd=-1, float ht=-1, bool auto_invert = true,
+                              float rotate=0);
+  // #CAT_Draw draw SVG (scalable vector graphics) code onto the canvas -- in specified rectangle -- -1 = use full size -- returns false if not parsable -- auto_invert = add svg code to flip the image into our rendering convention where the bottom-left is 0,0 coordinate, instead of 0,0 being upper-left, rotate = optional global rotation transform, in degrees -- only works if doing auto_invert too
 
   void  ImageChanging() override;
   void  ImageChanged() override;

@@ -16,6 +16,8 @@
 #include "taCanvas.h"
 
 #include <QSvgRenderer>
+#include <taMisc>
+#include <String_Array>
 
 TA_BASEFUNS_CTORS_DEFN(taCanvas);
 
@@ -313,28 +315,54 @@ void taCanvas::SetFont(const String& font_name, int point_size, int weight, bool
   q_painter.setFont(QFont(font_name, point_size, weight, italic));
 }
 
-bool taCanvas::DrawSvgFile(const String& file_name, float l, float b, float wd, float ht) {
+bool taCanvas::DrawSvgFile(const String& file_name, float l, float b, float wd, float ht,
+                           bool auto_invert, float rotate) {
   if(!CheckInit()) return false;
-  QString fnam = file_name.toQString();
-  QSvgRenderer rend(fnam);
-  if(TestError(!rend.isValid(), "DrawSvgFile", "svg file was not parsable", file_name)) {
+  if(TestError(!taMisc::FileExists(file_name), "DrawSvgFile", "svg file does not exist at:",
+               file_name)) {
     return false;
   }
-  int cur_wd, cur_ht;
-  GetImageSize(cur_wd, cur_ht);
-  if (wd == -1) {
-    wd = cur_wd;
-  }
-  if (ht == -1) {
-    ht = cur_ht;
-  }
-  rend.render(&q_painter, QRectF(l, b, wd, ht));
-  return true;
+  String svg_code;
+  svg_code.LoadFromFile(file_name);
+  return DrawSvgString(svg_code, l, b, wd, ht, auto_invert, rotate);
 }
 
-bool taCanvas::DrawSvgString(const String& svg_code, float l, float b, float wd, float ht) {
+bool taCanvas::DrawSvgString(const String& svg_code, float l, float b, float wd, float ht,
+                             bool auto_invert, float rotate) {
   if(!CheckInit()) return false;
-  QByteArray code = svg_code.toQByteArray();
+  QByteArray code;
+  if(auto_invert) {
+    int svg_pos = svg_code.index("<svg\n");
+    if(TestError(svg_pos < 0, "DrawSvgString", "auto_invert cannot find <svg start tag")) {
+      return false;
+    }
+    svg_pos += 5;
+    int vb_pos = svg_code.index("viewBox", svg_pos);
+    if(TestError(vb_pos < 0, "DrawSvgString", "auto_invert cannot find viewBox")) {
+      return false;
+    }
+    vb_pos = svg_code.index('\"',vb_pos); // get the 1st quote
+    vb_pos += 1;                // go past quote
+    int evb = svg_code.index('\"', vb_pos);
+    String vbox = svg_code.at(vb_pos, evb-vb_pos);
+    String_Array vba;
+    vba.Split(vbox, " ");
+    if(TestError(vba.size < 4, "DrawSvgString", "auto_invert cannot parse viewBox dimensions")) {
+      return false;
+    }
+    float y_ht = vba[3].toFloat();
+    String xfs = "   transform=\"scale(1,-1) translate(0,"+ String(-y_ht) + ")";
+    if(rotate != 0) {
+      xfs += " rotate(" + String(rotate) + ")";
+    }
+    xfs += "\"\n";
+    String fix_code = svg_code.at(0, svg_pos) + xfs + svg_code.from(svg_pos);
+    code = fix_code.toQByteArray();
+  }
+  else {
+    code = svg_code.toQByteArray();
+  }
+  
   QSvgRenderer rend(code);
   if(TestError(!rend.isValid(), "DrawSvgString", "svg code was not parsable")) {
     return false;
@@ -342,10 +370,16 @@ bool taCanvas::DrawSvgString(const String& svg_code, float l, float b, float wd,
   int cur_wd, cur_ht;
   GetImageSize(cur_wd, cur_ht);
   if (wd == -1) {
-    wd = cur_wd;
+    if(coord_type == NORMALIZED)
+      wd = 1.0f;
+    else
+      wd = cur_wd;
   }
   if (ht == -1) {
-    ht = cur_ht;
+    if(coord_type == NORMALIZED)
+      ht = 1.0f;
+    else
+      ht = cur_ht;
   }
   rend.render(&q_painter, QRectF(l, b, wd, ht));
   return true;
