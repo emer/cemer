@@ -310,26 +310,40 @@ bool ControlPanel::SelectMember(taBase* base, MemberDef* mbr, const String& xtra
 
 bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
   if (!base) return false;
+  
+  // for "inline" objects with multiple parameters offer option to add as individual control panel items
+  bool show_individual_option = mbr->type->members.size > 0; // if no members we don't show "add members individually"
+  bool add_individually = false;  // default is to add inline
+
   String eff_desc; // = desc -- this is our desc -- not relevant
   String full_lbl;
   base->GetControlPanelLabel(mbr, full_lbl);
   String full_lbl_copy = full_lbl;
   String sub_grp_name;
-
+  
   taGuiDialog dlg;
   dlg.Reset();
   dlg.prompt = "Enter label for control panel item -- will be converted to a valid C name automatically.\n Leave Subgroup empty to create item in main group";
   dlg.win_title = "Enter ControlPanelItem label & group";
   dlg.AddWidget("main", "", "");
   dlg.AddVBoxLayout("mainv","","main","");
+  
   String curow = "lbl";
   dlg.AddHBoxLayout(curow, "mainv","","");
   dlg.AddLabel("full_lbl_lbl", "main", curow, "label=Label: ;");
   dlg.AddStringField(&full_lbl, "full_lbl", "main", curow, "tooltip=enter label to use;");
+  
   curow = "grp";
   dlg.AddHBoxLayout(curow, "mainv","","");
   dlg.AddLabel("sub_grp_name_lbl", "main", curow, "label=Subgroup: ;");
   dlg.AddStringField(&sub_grp_name, "sub_grp_name", "main", curow, "tooltip=enter subgroup name or leave blank if item not in a subgroup;");
+  
+  if (show_individual_option) {
+    curow = "add_individual";
+    dlg.AddHBoxLayout(curow, "mainv","","");
+    dlg.AddLabel("full_lbl_lbl", "main", curow, "label=Add_Individually: ;");
+    dlg.AddBoolCheckbox(&add_individually, "add_individually", "main", curow, "tooltip=checking will cause each submember to be added as a separate control panel item that will appear on its own line. Doing this allows the item to be used in parameter searches. If checked the label will be used as a prefix for all items;");
+  }
   int drval = dlg.PostDialog(true);
   if(drval == 0) {
     return false;
@@ -338,9 +352,32 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
   if (full_lbl != full_lbl_copy) {
     custom_label = true;
   }
-
+  
+  bool rval = false;
   full_lbl = taMisc::StringCVar(full_lbl);
-  bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, sub_grp_name, custom_label);
+  if (add_individually) {
+    MemberDef* mbr_md = NULL;
+    TypeDef* mbr_td = mbr->type;
+    taBase* mbr_base = (taBase*)base->FindMembeR(mbr->name, mbr_md);
+    TypeDef* mbr_base_td = mbr_base->GetTypeDef();
+    for (int i=0; i<mbr_td->members.size; i++) {
+      mbr_base->FindMembeR(mbr_base_td->members.SafeEl(i)->name, mbr_md);
+      if (mbr_md->isReadOnly() || mbr_md->HasOption("HIDDEN") || mbr_md->HasOption("HIDDEN_INLINE")) {
+        continue;
+      }
+      if (mbr_md->name == "user_data_") {
+        continue;
+      }
+      if (!mbr_md->GetCondOptTest("CONDSHOW", mbr_td, mbr_base)) {
+        continue;
+      }
+      String complete_lbl = full_lbl + "_" + mbr_td->members.SafeEl(i)->name;
+      rval = SelectMember_impl(mbr_base, mbr_md, complete_lbl, eff_desc, sub_grp_name, custom_label);
+    }
+  }
+  else {
+    rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, sub_grp_name, custom_label);
+  }
   ReShowEdit(true); //forced
   return rval;
 }
