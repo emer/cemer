@@ -1711,27 +1711,29 @@ ClusterRun::AddJobRow(const String& cmd, const String& params, int& cmd_id) {
 }
 
 bool ClusterRun::CheckLocalClustUserRows(const DataTable& table, int start_row, int end_row) {
-  
+
+  bool has_not_owned_jobs = false;
   for (int row = start_row; row <= end_row; row++) {
     String clust = table.GetValAsString("cluster", row);
     String user = table.GetValAsString("user", row);
     String tag = table.GetValAsString("tag", row);
     
     if(clust != cluster) {
-      String message = "One or more jobs are not on the " + clust + " cluster. For these you need to select the appropriate cluster. Stop or Continue?";
-      int choice = taMisc::Choice(message, "Continue", "Stop");
-      if (choice > 0) {
-        return false;
-      }
+      has_not_owned_jobs = true;
     }
     if(user != m_cm->GetUsername()) {
-      String message = "One or more jobs are not owned by user " + m_cm->GetUsername() + ". You can not modify other user's data. Any you do own will be processed. Stop or Continue?";
-      int choice = taMisc::Choice(message, "Continue", "Stop");
-      if (choice > 0) {
-        return false;
-      }
+      has_not_owned_jobs = true;
     }
   }
+
+  if(has_not_owned_jobs) {
+    String message = "One or more jobs are not on the " + cluster + " cluster and/or are not owned by user " + m_cm->GetUsername() + ". You must select each cluster to operate on, and can only operate on your data. Stop or Continue?";
+    int choice = taMisc::Choice(message, "Continue", "Stop");
+    if (choice > 0) {
+      return false;
+    }
+  }
+
   return true;
 }
 

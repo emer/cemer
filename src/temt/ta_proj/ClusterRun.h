@@ -82,6 +82,7 @@ public:
   String        proj_name;      // #CONDSHOW_ON_set_proj_name project name to use in lieu of the actual project name, when set_proj_name is active
   int           auto_updt_interval; // (10 default) how many seconds to wait between auto-update while waiting for information back from the cluster
   int           auto_updt_timeout; // (30 default) how many seconds to wait before giving up on receiving information back from the cluster -- when it times out, then you can just hit the update button manually
+  String        cluster;        // #METHBOX_LABEL name of cluster to run job on -- see Preferences / Options settings for list of valid names -- easiest to use SelectCluster to switch between clusters, and when you Run a job you can pick from a dropdown list
   String        clusters;       // space-separated list of cluster names to include in listing jobs for this project
   String        users;          // space-separated list of user names to include in listing jobs for this project
   int           cur_svn_rev;    // #READ_ONLY #SHOW #NO_SAVE #METHBOX_LABEL the current svn revision that we've updated to (-1 if not yet updated)
@@ -91,7 +92,6 @@ public:
   String        extra_files;    // space separated list of extra files to check into the repository along with this project
   String        svn_repo;       // svn repository to use for file exchange with the cluster -- this should be the name of a svn_repo as listed in the Preferences / Options settings (when you Run a job you can pick from a dropdown list)
   String        repo_url;       // #READ_ONLY #SHOW svn repository url to use for file exchange with the cluster -- this is looked up from svn_repo name from options listed in the Preferences / Options settings
-  String        cluster;        // #METHBOX_LABEL name of cluster to run job on -- see Preferences / Options settings for list of valid names -- easiest to use SelectCluster to switch between clusters, and when you Run a job you can pick from a dropdown list
   String        queue;          // if specified, indicate a particular queue on the computing resource (optional) -- depends on cluster whether this is used
   String        run_time;       // how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate
   String        exe_cmd;        // executable command to run the project on the cluster -- defaults to taMisc::app_name (e.g., emergent) -- can be an absolute path or just an executable name that will be found on default path
