@@ -141,6 +141,7 @@ int yylex()
       if((s = cssMisc::PreProcessor.FindName((char*)cssLex::Buf)) != 0) { // pre-processor
 	cssMisc::cur_top->parsing_command = 1;
 	yylval.el = s;
+        s.El()->prog = cssMisc::cur_top->Prog();
 	return (s.El())->GetParse();
       }
       yylval.nm = cssLex::Buf;
@@ -218,6 +219,7 @@ int yylex()
 	    }
 	    if((s = clt->types->FindName((char*)cssLex::Buf)) != 0) {
 	      yylval.el = s;
+              s.El()->prog = cssMisc::cur_top->Prog();
 	      if((s.El()->GetType() != cssEl::T_Enum) && (s.El())->GetParse() != CSS_PTR)
 		return CSS_SCPTYPE;
 	    }
@@ -225,6 +227,7 @@ int yylex()
 	  else if(cssMisc::cur_scope->GetParse() == CSS_PTR) {
 	    if((s = cssMisc::cur_scope->GetScoped((char*)cssLex::Buf)) != 0) {
 	      yylval.el = s;
+              s.El()->prog = cssMisc::cur_top->Prog();
 	      cssEl* obj = s.El();
 	      if(obj->GetParse() == CSS_PTR) {
 		if(obj->GetType() == cssEl::T_TA) {
@@ -245,6 +248,7 @@ int yylex()
 	  (cssMisc::cur_top->ext_parse_user_data, (char*)cssLex::Buf, s);
 	if(rval != 0) {
 	  yylval.el = s;
+          s.El()->prog = cssMisc::cur_top->Prog();
 	  return rval;
 	}
       }
@@ -263,6 +267,7 @@ int yylex()
       }
       if((s = cssMisc::cur_top->types.FindName((char*)cssLex::Buf)) != 0) {
 	yylval.el = s;
+        s.El()->prog = cssMisc::cur_top->Prog();
 	if((s.El())->GetParse() == CSS_PTR)
 	  return CSS_PTRTYPE;
 	else
@@ -271,6 +276,7 @@ int yylex()
       if(src_prog) {
 	if((s = src_prog->types.FindName((char*)cssLex::Buf)) != 0) {
 	  yylval.el = s;
+          s.El()->prog = cssMisc::cur_top->Prog();
 	  if((s.El())->GetParse() == CSS_PTR)
 	    return CSS_PTRTYPE;
 	  else
@@ -279,6 +285,7 @@ int yylex()
       }
       if((s = cssMisc::TypesSpace.FindName((char*)cssLex::Buf)) != 0) {
 	yylval.el = s;
+        s.El()->prog = cssMisc::cur_top->Prog();
 	if((s.El())->GetParse() == CSS_PTR)
 	  return CSS_PTRTYPE;
 	else
@@ -287,6 +294,7 @@ int yylex()
       if((cssMisc::cur_class != NULL) &&
 	 ((s = cssMisc::cur_class->types->FindName((char*)cssLex::Buf)) != 0)) {
 	yylval.el = s;
+        s.El()->prog = cssMisc::cur_top->Prog();
 	if(s.El()->GetType() == cssEl::T_Enum)
 	  return CSS_VAR;
 	else if((s.El())->GetParse() == CSS_PTR)
@@ -296,6 +304,7 @@ int yylex()
       }
       if((s = cssMisc::cur_top->ParseName((char*)cssLex::Buf)) != 0) {
 	yylval.el = s;
+        s.El()->prog = cssMisc::cur_top->Prog();
       	if(s.ptr == (void*)&(cssMisc::Constants)) {
 	  cssEl::cssTypes typ = s.El()->GetType();
 	  if((typ == cssEl::T_Int) || (typ == cssEl::T_Real) ||
@@ -312,6 +321,7 @@ int yylex()
       if(src_prog) {
 	if((s = src_prog->ParseName((char*)cssLex::Buf)) != 0) {
 	  yylval.el = s;
+          s.El()->prog = src_prog->Prog();
 	  if(s.ptr == (void*)&(cssMisc::Constants)) {
 	    cssEl::cssTypes typ = s.El()->GetType();
 	    if((typ == cssEl::T_Int) || (typ == cssEl::T_Real) ||
@@ -331,6 +341,7 @@ int yylex()
 	  (cssMisc::cur_top->ext_parse_user_data, (char*)cssLex::Buf, s);
 	if(rval != 0) {
 	  yylval.el = s;
+          s.El()->prog = cssMisc::cur_top->Prog();
 	  return rval;
 	}
       }

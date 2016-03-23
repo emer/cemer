@@ -3204,6 +3204,7 @@ cssElPtr& cssProg::AddAuto(cssEl* it) {
 
 cssElPtr& cssProg::AddLiteral(cssEl* it) {
   el_retv = literals.Push(it);
+  it->prog = this;
   return el_retv;
 }
 
