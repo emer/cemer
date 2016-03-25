@@ -31,6 +31,7 @@
 #include <int_Array>
 #include <AnalysisRun>
 #include <DataSortSpec>
+#include <DataSelectSpec>
 #include <taVector2i>
 #include <taVector2i_List>
 #include <DataTableCell_List>
@@ -150,6 +151,9 @@ public:
   DataSortSpec          last_sort_spec;
   // #HIDDEN the last table sort specification
 
+  DataSelectSpec        last_select_spec;
+  // #HIDDEN #NO_SAVE the last table sort specification
+  
   DataTableCell_List    control_panel_cells;
   // #HIDDEN a list of DataTableCell objects that provide the link between data table cells and control panels -- needed because cells are not themselves object members
   
@@ -1056,7 +1060,11 @@ public:
   // #CAT_DataProc Sort using the last_sort_spec;
   virtual bool          HasBeenSorted();
   // #CAT_DataProc has the table already been sorted
-  
+  virtual bool          HasBeenFiltered();
+  // #CAT_DataProc has the table already been filtered
+  virtual void          FilterAgain();
+  // #CAT_DataProc Filter using the last_select_spec;
+
   virtual bool          RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type);
   // #CAT_stats Run an analysis of specified type on the specified column
 
@@ -1084,6 +1092,9 @@ public:
   // #CAT_DataProc #MENU #FROM_LIST_data #LABEL_Filter_Custom Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible.  Refer to columns by name. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          FilterBySpec(DataSelectSpec* spec);
   // #CAT_DataProc filter the table rows by specifying which rows to retain in the table (hiding the ones that do not match).  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
+  virtual void          UnFilter();
+  // #CAT_DataProc clears last_select_spec and executes ShowAllRows
+  
   virtual void          FindAllScalar(taVector2i_List* found_list, const String& search_str, bool contains);
   // #CAT_DataProc search for all instances of value, non-matrix columns - contains false means match full string
   virtual void          FindAll(taVector2i_List* found_list, const String& search_str, bool contains, bool case_insensitive);

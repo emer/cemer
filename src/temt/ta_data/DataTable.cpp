@@ -115,6 +115,7 @@ void DataTable::InitLinks() {
   taBase::Own(diff_row_list, this);
   taBase::Own(change_col_geom, this);
   taBase::Own(last_sort_spec, this);
+  taBase::Own(last_select_spec, this);
   taBase::Own(control_panel_cells, this);
   log_file = taFiler::New("DataTable", ".dat");
   taRefN::Ref(log_file);
@@ -125,6 +126,7 @@ void DataTable::CutLinks() {
   row_indexes.CutLinks();
   diff_row_list.CutLinks();
   last_sort_spec.CutLinks();
+  last_select_spec.CutLinks();
   if(log_file) {
     log_file->Close();
     taRefN::unRefDone(log_file);
@@ -2854,6 +2856,8 @@ void DataTable::ShowAllRows() {
   StructUpdate(true);
   ResetRowIndexes();
   ClearCompareRows();
+  last_sort_spec.ClearColumns();
+  last_select_spec.ClearColumns();
   StructUpdate(false);
   RowUpdate();
 }
@@ -4279,6 +4283,14 @@ bool DataTable::HasBeenSorted() {
   return (last_sort_spec.ops.size > 0);
 }
 
+bool DataTable::HasBeenFiltered() {
+  return (last_select_spec.ops.size > 0);
+}
+
+void DataTable::FilterAgain() {
+  FilterBySpec(&last_select_spec);
+}
+
 void DataTable::Filter(Variant& col1, Relation::Relations operator_1,
     const String& value_1, Relation::CombOp comb_op,
     Variant col2, Relation::Relations operator_2,
@@ -4399,8 +4411,14 @@ bool DataTable::FilterByScript(const String& filter_expr) {
 }
 
 bool DataTable::FilterBySpec(DataSelectSpec* spec) {
+  last_select_spec = *spec;
   return taDataProc::SelectRows(this, this, spec);
   RowUpdate();
+}
+
+void DataTable::UnFilter() {
+  last_select_spec.ClearColumns();
+  ShowAllRows();
 }
 
 void DataTable::CompareRows(int st_row, int n_rows) {

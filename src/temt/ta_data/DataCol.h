@@ -184,6 +184,8 @@ public:
   void          Filter(Relation::Relations operator_1 = Relation::EQUAL, const String& value_1 = "",
       Relation::CombOp comb_op = Relation::AND, Relation::Relations operator_2 = Relation::EQUAL, const String& value_2 = "");
    // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #LABEL_Filter #GHOST_ON_is_matrix Hide rows not matching the filter
+  void          UnFilter();
+  // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #GHOST_ON_is_matrix calls table to clear last_select_spec and show all hidden rows
 
   void          RunClusterAnalysis();
   // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE #GHOST_OFF_is_matrix

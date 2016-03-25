@@ -697,6 +697,10 @@ void DataCol::Filter(Relation::Relations operator_1, const String& value_1,
   taBase::unRefDone(select_spec);
 }
 
+void DataCol::UnFilter() {
+  dataTable()->UnFilter();
+}
+
 void DataCol::CatRelation(String& expr, Relation::Relations oper) {
   switch(oper) {
   case Relation::EQUAL:

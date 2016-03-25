@@ -212,33 +212,46 @@ bool ClusterRun::Update() {
   bool has_updates = m_cm->UpdateTables();
   cur_svn_rev = m_cm->GetCurSvnRev();
   SortClusterInfoTable();
-    
+  
+  if (jobs_done.HasBeenFiltered()) {
+    jobs_done.FilterAgain();
+  }
+  if (jobs_running.HasBeenFiltered()) {
+    jobs_running.FilterAgain();
+  }
+  if (jobs_archive.HasBeenFiltered()) {
+    jobs_archive.FilterAgain();
+  }
+  if (jobs_deleted.HasBeenFiltered()) {
+    jobs_deleted.FilterAgain();
+  }
+
   if (jobs_done.HasBeenSorted()) {
     jobs_done.SortAgain();
   }
   else {
-    jobs_done.Sort("tag", true);  // also sort jobs done by tag
+    jobs_done.Sort("tag", true);
   }
   
   if (jobs_running.HasBeenSorted()) {
     jobs_running.SortAgain();
   }
   else {
-    jobs_running.Sort("tag", true);  // also sort jobs done by tag
+    jobs_running.Sort("tag", true);
   }
   
   if (jobs_archive.HasBeenSorted()) {
     jobs_archive.SortAgain();
   }
   else {
-    jobs_archive.Sort("tag", true);  // also sort jobs done by tag
+    jobs_archive.Sort("tag", true);
   }
   
   if (jobs_deleted.HasBeenSorted()) {
     jobs_deleted.SortAgain();
   }
   else {
-    jobs_deleted.Sort("tag", true);  // also sort jobs done by tag
+    jobs_deleted.Sort("tag", true);
   }
   
   if(has_sel_done && st_row_done >= 0 && end_row_done >= st_row_done) {
