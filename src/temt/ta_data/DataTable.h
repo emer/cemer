@@ -124,6 +124,8 @@ public:
   // #CONDEDIT_OFF_data_flags:SAVE_ROWS Whether to automatically load a data file when the DataTable object is loaded.  This option is only available when SAVE_ROWS is unchecked.  Storing row-data externally reduces the project file size (especially for large data tables), but the project is no longer self contained.
   String                auto_load_file;
   // #CONDEDIT_OFF_auto_load:NO_AUTO_LOAD #FILE_DIALOG_LOAD #COMPRESS #FILETYPE_DataTable #EXT_dat,dtbl Where to store and load row-data from if AUTO_LOAD option is set.  (*.dtbl files are loaded using internal Load format, otherwise LoadData is used.)
+  bool                  last_save_rows_state;
+  // #READ_ONLY #HIDDEN #NO_SAVE track the state so we can offer option to set column SaveRows if the user changes from false to true on the table itself.
   Variant               keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
 
   int_Matrix            row_indexes;     // #EXPERT #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date
@@ -147,7 +149,7 @@ public:
   
   DataSortSpec          last_sort_spec;
   // #HIDDEN the last table sort specification
-  
+
   DataTableCell_List    control_panel_cells;
   // #HIDDEN a list of DataTableCell objects that provide the link between data table cells and control panels -- needed because cells are not themselves object members
   
@@ -1174,12 +1176,13 @@ public:
   virtual void  DMem_ShareRows(MPI_Comm comm, int n_rows = 1);
   // #CAT_DMem #IGNORE Share the given number of rows from the end of the table (-1 = all rows) across processors in given communicator -- everyone gets the data from all processors as new rows in the table
 
+  virtual void          UpdateSaveRowsState();
+  // a single place to track state so it isn't done in both ToggleSaveRows and UAE
   virtual bool          AutoLoadData();
   // #IGNORE perform auto loading of data from file when data table is loaded (called by PostLoadAutos) -- true if loaded
   bool                  AutoSaveData();
   // #IGNORE perform auto saving of data to file when project is saved
   void                  Dump_Load_post() override;
-
   int                   Dump_Load_Value(std::istream& strm, taBase* par) override;
   void                  Dump_Save_pre() override;
   String                GetTypeDecoKey() const override { return "DataTable"; }
