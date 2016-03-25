@@ -80,7 +80,7 @@ void  iTreeWidget::init() {
   // we never use this class for Qt-internal dnd semantics
   setAutoScroll(true);
   setDragDropMode(DragDrop);
-  
+
   iTreeWidgetDefaultDelegate* del = new iTreeWidgetDefaultDelegate(this);
   setItemDelegate(del);
   

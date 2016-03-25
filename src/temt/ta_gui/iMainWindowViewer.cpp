@@ -736,6 +736,14 @@ void iMainWindowViewer::Constr_ViewMenu()
   viewMenu->AddAction(viewResetViewAction);
   viewMenu->insertSeparator();
 
+  viewIncrFontSizeAction = AddAction
+    (new iAction("&Incr Font Size", QKeySequence(cmd_str + "+"), "incrFontSizeAction"));
+  viewDecrFontSizeAction = AddAction
+    (new iAction("&Decr Font Size", QKeySequence(cmd_str + "-"), "decrFontSizeAction"));
+  viewMenu->AddAction(viewIncrFontSizeAction);
+  viewMenu->AddAction(viewDecrFontSizeAction);
+
+  viewMenu->insertSeparator();
   viewSetSaveViewAction = viewMenu->AddItem("Save View State", taiWidgetMenu::toggle,
       iAction::men_act, this, SLOT(this_SaveView(iAction*)));
   if (curProject() != NULL)
@@ -764,6 +772,9 @@ void iMainWindowViewer::Constr_ViewMenu()
   connect (viewBrowseAndT3Action, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
   connect (viewPanelsAndT3Action, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
   connect (viewAllFramesAction, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
+
+  connect(viewIncrFontSizeAction, SIGNAL(Action()), this, SLOT(viewIncrFontSize()));
+  connect(viewDecrFontSizeAction, SIGNAL(Action()), this, SLOT(viewDecrFontSize()));
 
   signalMapperForViews->setMapping (viewBrowseOnlyAction, 1) ;
   signalMapperForViews->setMapping (viewPanelsOnlyAction, 2) ;
@@ -2495,6 +2506,21 @@ void iMainWindowViewer::Refresh_impl() {
 void iMainWindowViewer::ViewReset() {
   ShowHideFrames(7);
   viewer()->ResetSplitterState();
+}
+
+void iMainWindowViewer::viewIncrFontSize() {
+  taMisc::font_size += 1;
+  taiM->InitMetrics(true);
+  viewRefresh();
+  taMisc::Info("font size is now:", String(taMisc::font_size));
+}
+
+void iMainWindowViewer::viewDecrFontSize() {
+  taMisc::font_size -= 1;
+  if(taMisc::font_size < 4) taMisc::font_size = 4;
+  taiM->InitMetrics(true);
+  viewRefresh();
+  taMisc::Info("font size is now:", String(taMisc::font_size));
 }
 
 void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {

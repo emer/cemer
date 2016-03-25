@@ -39,6 +39,9 @@ iTableView::iTableView(QWidget* parent)
   ext_select_on = false;
   m_saved_scroll_pos = 0;
 
+  setFont(taiM->dialogFont(taiM->ctrl_size));
+  last_font_size = taMisc::font_size;
+
   iTableViewDefaultDelegate* del = new iTableViewDefaultDelegate(this);
   setItemDelegate(del);
 
@@ -64,6 +67,10 @@ void iTableView::selectCurCell() {
 
 bool iTableView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {
+    if(last_font_size != taMisc::font_size) {
+      setFont(taiM->dialogFont(taiM->ctrl_size));
+      last_font_size = taMisc::font_size;
+    }
     return inherited::eventFilter(obj, event);
   }
   

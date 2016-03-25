@@ -282,7 +282,7 @@ void taiMisc::HandleScreenGeomChange_Window(const QRect& old_scrn_geom, QWidget*
 void taiMisc::InitMetrics(bool reinit) {
   // everything that requires Qt to be initialized and could depend on Settings being loaded
 
-  if (!reinit) {
+  // if (!reinit) {
     // set up the initial font from (already loaded) Settings
     QFont font(taMisc::font_name, taMisc::font_size);
     //TODO: we should probably put practical lower/upper limits on font sizes
@@ -290,7 +290,7 @@ void taiMisc::InitMetrics(bool reinit) {
 
     edit_darkbg_brightness = -0.15f;
     edit_lightbg_brightness = 0.50f;
-  }
+  // }
 
   ctrl_size = sizMedium;
   vsep_c = 3;

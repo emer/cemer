@@ -231,7 +231,8 @@ bool Function::CvtFmCode(const String& code) {
   }
   if(fnm.contains(' ')) {       // type funame
     String retyp = fnm.before(' ');
-    TypeDef* td = ProgVar::GetTypeDefFromString(retyp);
+    bool ref;
+    TypeDef* td = ProgVar::GetTypeDefFromString(retyp, ref);
     if(td) {
       return_type = ProgVar::GetTypeFromTypeDef(td);
     }
@@ -251,7 +252,8 @@ bool Function::CvtFmCode(const String& code) {
   }
   if(code.contains("returns: ")) {
     String retyp = trim(code.after("returns: "));
-    TypeDef* td = ProgVar::GetTypeDefFromString(retyp);
+    bool ref;
+    TypeDef* td = ProgVar::GetTypeDefFromString(retyp, ref);
     if(td) {
       return_type = ProgVar::GetTypeFromTypeDef(td);
     }

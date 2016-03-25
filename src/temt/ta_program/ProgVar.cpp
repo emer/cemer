@@ -633,6 +633,9 @@ String ProgVar::GetDisplayName() const {
     rval = name + " = (invalid type)";
     break;
   }
+  if(HasVarFlag(FUN_ARG) && reference) {
+    rval = rval.before(')',-1) + "&)";
+  }
   if(init_from) {
     rval += "  --  init from: " + init_from->name;
   }
@@ -885,9 +888,13 @@ ProgVar::VarType ProgVar::GetTypeFromTypeDef(TypeDef* td) {
   return T_Object;              // must be..
 }
 
-TypeDef* ProgVar::GetTypeDefFromString(const String& tstr) {
+TypeDef* ProgVar::GetTypeDefFromString(const String& tstr, bool& ref) {
   String vtype = tstr;
-  if(vtype.endsWith("&")) vtype = vtype.before("&");
+  ref = false;
+  if(vtype.endsWith("&")) {
+    vtype = vtype.before("&");
+    ref = true;
+  }
   if(vtype.endsWith("*")) vtype = vtype.before("*");
   if(vtype == "String") vtype = "taString";
   if(vtype == "string") vtype = "taString";
@@ -906,7 +913,7 @@ TypeDef* ProgVar::GetTypeDefFromString(const String& tstr) {
   return td;
 }
 
-bool ProgVar::SetTypeFromTypeDef(TypeDef* td) {
+bool ProgVar::SetTypeFromTypeDef(TypeDef* td, bool ref) {
   var_type = GetTypeFromTypeDef(td);
   if(var_type == ProgVar::T_Object) {
     object_type = td;
@@ -914,14 +921,19 @@ bool ProgVar::SetTypeFromTypeDef(TypeDef* td) {
   else if(var_type == ProgVar::T_HardEnum) {
     hard_enum_type = td;
   }
+  if(HasVarFlag(FUN_ARG))
+    reference = ref;
   return true;
 }
 
 bool ProgVar::SetTypeAndName(const String& ty_nm) {
   String vtype = ty_nm.before(' ');
-  TypeDef* td = GetTypeDefFromString(vtype);
+  bool ref;
+  TypeDef* td = GetTypeDefFromString(vtype, ref);
+  bool updtd = false;
   if(td) {
-    SetTypeFromTypeDef(td);
+    SetTypeFromTypeDef(td, ref);
+    updtd = true;
   }
   else {
     Program* prg = GET_MY_OWNER(Program);
@@ -934,8 +946,13 @@ bool ProgVar::SetTypeAndName(const String& ty_nm) {
     }
   }
   String nm = trim(ty_nm.after(' '));
-  if(nm.nonempty())
+  if(nm.nonempty()) {
     SetName(nm);
+    updtd = true;
+  }
+  if(updtd) {
+    SigEmitUpdated();
+  }
   return true;
 }
 
@@ -946,9 +963,10 @@ bool ProgVar::BrowserEditSet(const String& code, int move_after) {
   if(cd.contains('(') && cd.contains(')')) {
     // our own output format
     String vtype = cd.between('(', ')');
-    TypeDef* td = GetTypeDefFromString(vtype);
+    bool ref;
+    TypeDef* td = GetTypeDefFromString(vtype, ref);
     if(td) {
-      SetTypeFromTypeDef(td);
+      SetTypeFromTypeDef(td, ref);
     }
     cd = trim(cd.before('('));
     if(cd.empty()) return true;
@@ -981,9 +999,10 @@ bool ProgVar::BrowserEditSet(const String& code, int move_after) {
       SetTypeAndName(cd);
     }
     else {
-      TypeDef* td = GetTypeDefFromString(cd); // see if it is a type?
+      bool ref;
+      TypeDef* td = GetTypeDefFromString(cd, ref); // see if it is a type?
       if(td) {
-        SetTypeFromTypeDef(td);
+        SetTypeFromTypeDef(td, ref);
       }
       else {
         SetName(cd);

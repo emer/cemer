@@ -221,6 +221,7 @@ protected:
   String                m_show_context;
   int                   in_mouse_press; // ugly hack
   int                   m_saved_scroll_pos;
+  int                   last_font_size;
 
   iTreeWidgetItem_List  expandedItemList;   // used as stack to keep track of expanded items
   iTreeWidgetItem*      possibleDropTargetItem;

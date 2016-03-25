@@ -63,6 +63,9 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   focus_prev_widget = NULL;
   main_window = NULL;
 
+  setFont(taiM->dialogFont(taiM->sizBig));
+  last_font_size = taMisc::font_size;
+
   tv_flags = tv_flags_;
   m_filters = NULL; // only created if needed
   m_def_exp_levels = 2; // works well for most contexts
@@ -892,6 +895,10 @@ void iTreeView::setTvFlags(int value) {
 }
 
 void iTreeView::Refresh_impl() {
+  if(last_font_size != taMisc::font_size) {
+    setFont(taiM->dialogFont(taiM->sizBig));
+    last_font_size = taMisc::font_size;
+  }
   SaveScrollPos();
   //note: very similar to Show_impl
   QTreeWidgetItemIterator it(this);

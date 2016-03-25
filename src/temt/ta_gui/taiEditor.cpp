@@ -243,6 +243,7 @@ void taiEditor::Constr_Widget() {
   pal.setColor(QPalette::Background, bg_color);
   widget()->setPalette(pal); 
   widget()->setFont(taiM->dialogFont(ctrl_size));
+  last_font_size = taMisc::font_size;
   vblDialog = new QVBoxLayout(widget()); //marg=2
   vblDialog->setSpacing(0); // need to manage ourself to get nicest look
   vblDialog->setMargin(2);
@@ -415,6 +416,11 @@ void taiEditor::Ok_impl() {
 }
 
 void taiEditor::Refresh() {
+  if(last_font_size != taMisc::font_size) {
+    row_height = taiM->max_control_height(ctrl_size);
+    widget()->setFont(taiM->dialogFont(ctrl_size));
+    last_font_size = taMisc::font_size;
+  }
   Refresh_impl(defer_reshow_req);
 }
 

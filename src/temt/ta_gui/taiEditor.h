@@ -184,7 +184,7 @@ protected:
   bool                  modified;
   bool                  warn_clobber; // was changed elsewhere while edited here; warn user before saving
   QWidget*              mwidget;        // outer container for all widgets
-  iDialogEditor*          dialog; // dialog, when using Edit, NULL otherwise
+  iDialogEditor*        dialog; // dialog, when using Edit, NULL otherwise
   HostType              host_type; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
   iColor                bg_color; // background color of host -- set via setBgColor
   iColor                bg_color_dark;  // background color of dialog, darkened (calculated when bg_color set)
@@ -196,6 +196,7 @@ protected:
   bool                  getimage_req;
   bool                  apply_req;
   bool                  reshow_on_apply; // default, so we rebuild on Apply for CONDSHOW etc., but no good for cssDialogs
+  int                   last_font_size;
 
   static taiEditor_List async_apply_list;
   static taiEditor_List async_reshow_list;

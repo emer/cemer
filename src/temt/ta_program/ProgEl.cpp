@@ -885,7 +885,8 @@ bool ProgEl::CvtCodeToVar(String& code) {
   tokens.Split(ckcode, " ");
   for (int i=0; i<tokens.size; i++) {
     vtype = tokens[i].chars();
-    td = ProgVar::GetTypeDefFromString(vtype);
+    bool ref;
+    td = ProgVar::GetTypeDefFromString(vtype, ref);
     if (td)
       break;
   }

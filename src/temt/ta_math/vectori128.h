@@ -3267,7 +3267,7 @@ static inline Vec4i permute4i(Vec4i const & a) {
     const int ssz = ((i0 & 0x80) ? 0 : 0xF) | ((i1 & 0x80) ? 0 : 0xF) << 4 | ((i2 & 0x80) ? 0 : 0xF) << 8 | ((i3 & 0x80) ? 0 : 0xF) << 12;
 
     // Mask indicating 0 for don't care, 0xF for non-negative value of required zeroing
-    const int md = mz | ~ ssz;
+    const uint32_t md = mz | ~ ssz;
 
     // Test if permutation needed
     const bool do_shuffle = ((m1 ^ 0x00003210) & mz) != 0;

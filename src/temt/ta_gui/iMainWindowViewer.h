@@ -175,6 +175,8 @@ public:
   iAction*            viewRefreshAction;
   iAction*            viewSetSaveViewAction;
   iAction*            viewResetViewAction;
+  iAction*            viewIncrFontSizeAction;
+  iAction*            viewDecrFontSizeAction;
 
   iAction*            viewBrowseOnlyAction;   // all possible combinations of the main frames
   iAction*            viewPanelsOnlyAction;
@@ -353,6 +355,8 @@ public slots:
   virtual void  viewRefresh() { Refresh(); UpdateUi(); } // manually rebuild/refresh the current view
   virtual void  ViewReset(); // reset frames widths to original proportions
   virtual void  viewSaveView(); // save the current view state
+  virtual void  viewIncrFontSize();
+  virtual void  viewDecrFontSize();
   
   virtual void  editCut();
   virtual void  editCopy();
