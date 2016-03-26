@@ -91,6 +91,12 @@ bool DataGroupProg::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   String dc = code;  dc.downcase();
   String tbn = GetToolbarName(); tbn.downcase();
   String tn = GetTypeDef()->name; tn.downcase();
+
+  if (!tbn.contains(' ')) {
+    if(dc.at(tbn.length(), 1) != ' ') return false;  // so vars like group_x don't get converted into a DataGroupProg
+  }
+  if(dc.at(5, 1) != ' ') return false;  // also because we accept the string "group"
+  
   if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
   if(dc.startsWith("group")) return true;
   return false;
