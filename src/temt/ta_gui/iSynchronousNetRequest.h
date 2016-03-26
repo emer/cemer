@@ -20,6 +20,10 @@
 #include "ta_def.h"
 #ifndef __MAKETA__
 #include <QObject>
+#if (QT_VERSION >= 0x040800)
+#include <QHttpPart>
+#include <QHttpMultiPart>
+#endif
 #endif
 
 // member includes:
@@ -51,6 +55,9 @@ public:
   // the reply object using getReply(), in order to check for errors.
   // If the request was cancelled, getReply() will return null.
   QNetworkReply * httpGet(const QUrl &url);
+#if (QT_VERSION >= 0x040800)
+  QNetworkReply * httpPost(const QUrl &url, QHttpMultiPart *multiPart);
+#endif
   QNetworkReply * httpPost(const QUrl &url);
   QNetworkReply * httpPost(const QUrl &url, const char *filename);
   QNetworkReply * httpPost(const QUrl &url, const char *data, int size);

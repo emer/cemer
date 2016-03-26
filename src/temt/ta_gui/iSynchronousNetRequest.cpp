@@ -20,10 +20,7 @@
 #include <iNetworkAccessManager>
 #include <Program>
 
-#if (QT_VERSION >= 0x040800)
-#include <QHttpPart>
-#include <QHttpMultiPart>
-#endif
+
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QXmlStreamReader>
@@ -165,6 +162,23 @@ QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *da
   waitForReply();
   return getReplyIfSuccess();
 }
+
+#if (QT_VERSION >= 0x040800)
+QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, QHttpMultiPart *multiPart)
+{
+  reset();
+  // Make HTTP POST request, wait for reply.
+  QNetworkRequest request(url);
+  m_reply = m_netManager->post(request, multiPart);
+  multiPart->setParent(m_reply);
+  waitForReply();
+  
+  //  QString data = (QString) m_reply->readAll();
+  //  qDebug() << data;
+  
+  return getReplyIfSuccess();
+}
+#endif
 
 QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *local_filename, const char *wiki_filename, const char *token)
 {

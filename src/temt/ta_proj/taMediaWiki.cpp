@@ -30,6 +30,10 @@
 #include <QEventLoop>
 #include <QByteArray>
 #include <QDebug>
+#if (QT_VERSION >= 0x040800)
+#include <QHttpPart>
+#include <QHttpMultiPart>
+#endif
 #if (QT_VERSION >= 0x050000)
 #include <QUrlQuery>
 #endif
@@ -64,6 +68,8 @@ void taMediaWiki::Initialize()
  */
 bool taMediaWiki::CheckResponseError(const QString &xmlResponse) {
   bool hasErrors = false;
+  //String foo(xmlResponse);
+  //taMisc::DebugInfo(xmlResponse);
   QXmlStreamReader reader(xmlResponse.toStdString().c_str());
   
   while(!reader.atEnd()) {
@@ -1054,36 +1060,55 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
   }
 
   // Get the edit token for this post request.
-  QByteArray token = QUrl::toPercentEncoding(GetEditToken(wiki_name));
+  QByteArray token = GetEditToken(wiki_name);
   if (token.isEmpty()) { return false; }
 
   // Build the request URL.
   // .../api.php?action=edit&title=<page_name>&section=new&preload=Template:Project&createonly=&text=<page_content>&format=xml&token=<token>
   QUrl url(wikiUrl);
-#if (QT_VERSION >= 0x050000)
-  QUrlQuery urq;
-  urq.addQueryItem("action", "edit");
-  urq.addQueryItem("title", page_name);
-  urq.addQueryItem("section", "new");
-  urq.addQueryItem("createonly", "");
-  urq.addQueryItem("text", page_content);
-  urq.addQueryItem("format", "xml");
-  urq.addQueryItem("token", token);
-  url.setQuery(urq);
-#else
-  url.addQueryItem("action", "edit");
-  url.addQueryItem("title", page_name);
-  url.addQueryItem("section", "new");
-  url.addQueryItem("createonly", "");
-  url.addQueryItem("text", page_content);
-  url.addQueryItem("format", "xml");
-  url.addQueryItem("token", token);
-#endif
+  
+#if (QT_VERSION >= 0x040800)
+  QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+  
+  QHttpPart actionPart;
+  actionPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"action\""));
+  actionPart.setBody("edit");
+  
+  QHttpPart titlePart;
+  titlePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"title\""));
+  titlePart.setBody(page_name);
 
+  QHttpPart sectionPart;
+  sectionPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"section\""));
+  sectionPart.setBody("new");
+
+  QHttpPart createonlyPart;
+  createonlyPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"createonly\""));
+  createonlyPart.setBody("true");
+  
+  QHttpPart tokenPart;
+  tokenPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"token\""));
+  tokenPart.setBody(token);
+  
+  QHttpPart formatPart;
+  formatPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"format\""));
+  formatPart.setBody("xml");
+  
+  QHttpPart contentPart;
+  contentPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"text\""));
+  contentPart.setBody(page_content);
+  
+  multiPart->append(actionPart);
+  multiPart->append(titlePart);
+  multiPart->append(createonlyPart);
+  multiPart->append(formatPart);
+  multiPart->append(contentPart);
+  multiPart->append(tokenPart);
+  
   // Make the network request.
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpPost(url)) {
+  if (QNetworkReply *reply = request.httpPost(url,multiPart)) {
     QString apiResponse(reply->readAll());
     if(CheckResponseError(apiResponse)) {
       taMisc::Error("Page creation failed for ", page_name, " on ", wiki_name, "wiki!");
@@ -1093,6 +1118,7 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
       return true;
     }
   }
+#endif
   taMisc::Warning("Page create request failed -- check the wiki/page names");
   return false;
 }
@@ -1113,7 +1139,7 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
   }
 
   // Get the edit token for this post request.
-  QByteArray token = QUrl::toPercentEncoding(GetEditToken(wiki_name));
+  QByteArray token = GetEditToken(wiki_name);
   if (token.isEmpty()) {
     return false;
   }
@@ -1121,34 +1147,53 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
   // Build the request URL.
   // .../api.php?action=edit&title=<page_name>&nocreate=&appendtext=<page_content>&format=xml&token=<token>
   QUrl url(wikiUrl);
-#if (QT_VERSION >= 0x050000)
-  QUrlQuery urq;
-  urq.addQueryItem("action", "edit");
-  urq.addQueryItem("title", page_name);
-  urq.addQueryItem("nocreate", "");
-  if (append)
-    urq.addQueryItem("appendtext", page_content);
-  else
-    urq.addQueryItem("prependtext", page_content);
-  urq.addQueryItem("format", "xml");
-  urq.addQueryItem("token", token);
-  url.setQuery(urq);
-#else
-  url.addQueryItem("action", "edit");
-  url.addQueryItem("title", page_name);
-  url.addQueryItem("nocreate", "");
-  if (append)
-    url.addQueryItem("appendtext", page_content);
-  else
-    url.addQueryItem("prependtext", page_content);
-  url.addQueryItem("format", "xml");
-  url.addQueryItem("token", token);
-#endif
+  
+  
+#if (QT_VERSION >= 0x040800)
+  QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+  
+  QHttpPart actionPart;
+  actionPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"action\""));
+  actionPart.setBody("edit");
+  
+  QHttpPart titlePart;
+  titlePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"title\""));
+  titlePart.setBody(page_name);
+  
+  QHttpPart nocreatePart;
+  nocreatePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"nocreate\""));
+  nocreatePart.setBody("true");
+  
+  QHttpPart tokenPart;
+  tokenPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"token\""));
+  tokenPart.setBody(token);
+  
+  
+  QHttpPart formatPart;
+  formatPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"format\""));
+  formatPart.setBody("xml");
+
+  
+  QHttpPart contentPart;
+  if (append) {
+    contentPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"appendtext\""));
+  } else {
+    contentPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"pagetext\""));
+  }
+  contentPart.setBody(page_content);
+  
+  multiPart->append(actionPart);
+  multiPart->append(formatPart);
+  multiPart->append(titlePart);
+  multiPart->append(nocreatePart);
+  multiPart->append(contentPart);
+  multiPart->append(tokenPart);
+
   
   // Make the network request.
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpPost(url)) {
+  if (QNetworkReply *reply = request.httpPost(url,multiPart)) {
     QString apiResponse(reply->readAll());
     if(CheckResponseError(apiResponse)) {
       taMisc::Error("Page edit failed for ", page_name, " on ", wiki_name, "wiki!");
@@ -1157,6 +1202,7 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
       return true;
     }
   }
+#endif
   taMisc::Warning("Page edit request failed -- check the wiki/page names");
   return false;
 }
@@ -1254,32 +1300,51 @@ bool taMediaWiki::LinkFile(const String& file_name, const String& wiki_name, con
   String proj_line_property = "[[EmerProjName::" + proj_name + "]]";
   
   // Get the edit token for this post request.
-  QByteArray token = QUrl::toPercentEncoding(GetEditToken(wiki_name));
+  QByteArray token = GetEditToken(wiki_name);
   if (token.isEmpty()) { return false; }
 
   QUrl url(wikiUrl);
-#if (QT_VERSION >= 0x050000)
-  QUrlQuery urq;
-  urq.addQueryItem("action", "edit");
-  urq.addQueryItem("title", full_file_name);
-  urq.addQueryItem("nocreate", "");
-  urq.addQueryItem("appendtext", proj_line_property);
-  urq.addQueryItem("format", "xml");
-  urq.addQueryItem("token", token);
-  url.setQuery(urq);
-#else
-  url.addQueryItem("action", "edit");
-  url.addQueryItem("title", full_file_name);
-  url.addQueryItem("nocreate", "");
-  url.addQueryItem("appendtext", proj_line_property);
-  url.addQueryItem("format", "xml");
-  url.addQueryItem("token", token);
-#endif
+  
+#if (QT_VERSION >= 0x040800)
+  QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+  
+  QHttpPart actionPart;
+  actionPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"action\""));
+  actionPart.setBody("edit");
+  
+  QHttpPart titlePart;
+  titlePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"title\""));
+  titlePart.setBody(full_file_name);
+  
+  QHttpPart nocreatePart;
+  nocreatePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"nocreate\""));
+  nocreatePart.setBody("");
+  
+  QHttpPart tokenPart;
+  tokenPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"token\""));
+  tokenPart.setBody(token);
+  
+  QHttpPart formatPart;
+  formatPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"format\""));
+  formatPart.setBody("xml");
+  
+  
+  QHttpPart contentPart;
+  contentPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"appendtext\""));
+  contentPart.setBody(proj_line_property);
+  
+  multiPart->append(actionPart);
+  multiPart->append(titlePart);
+  multiPart->append(nocreatePart);
+  multiPart->append(formatPart);
+  multiPart->append(contentPart);
+  multiPart->append(tokenPart);
+  
   
   // Make the network request.
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpPost(url)) {
+  if (QNetworkReply *reply = request.httpPost(url,multiPart)) {
     QString apiResponse(reply->readAll());
     if(CheckResponseError(apiResponse)) {
       taMisc::Error("File linking failed for ", proj_name, "to", file_name, "on", wiki_name, "wiki!");
@@ -1288,6 +1353,7 @@ bool taMediaWiki::LinkFile(const String& file_name, const String& wiki_name, con
       return true;
     }
   }
+#endif
   taMisc::Warning("File link request failed -- check the wiki/page names");
   return false;
 }
