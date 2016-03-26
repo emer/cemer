@@ -96,7 +96,6 @@ void DataTable::Initialize() {
   base_diff_row = -1;  // no base comparison row at start
   change_col = NULL;
   change_col_type = -1;
-  last_save_rows_state = true;
 }
 
 void DataTable::Destroy() {
@@ -206,10 +205,6 @@ bool DataTable::CopyCell_impl(DataCol* dar, int dest_row, const DataTable& src,
 void DataTable::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   
-  if (taMisc::is_loading) {
-    last_save_rows_state = HasDataFlag(SAVE_ROWS);
-  }
-  UpdateSaveRowsState();
   UniqueColNames();
   // the following is likely redundant:
   //  UpdateColCalcs();
@@ -2169,7 +2164,6 @@ void DataTable::RowsAdding(int n, bool begin) {
 
 void DataTable::ToggleSaveRows() {
   ToggleDataFlag(SAVE_ROWS);
-  UpdateSaveRowsState();
   SigEmitUpdated();
 }
   
@@ -4966,22 +4960,6 @@ void DataTable::NotifyControlPanel(DataTableCell* cell) {
   MemberDef* md = cell->FindMember("value");
   if (md) {
     cell->control_panel->MbrUpdated(cell, md);
-  }
-}
-
-void DataTable::UpdateSaveRowsState() {
-  if (last_save_rows_state == true && !HasDataFlag(SAVE_ROWS)) {
-    last_save_rows_state = false;
-  }
-  if (last_save_rows_state == false && HasDataFlag(SAVE_ROWS)) {
-    last_save_rows_state = true;
-    int chs = taMisc::Choice("Do you want to save rows for all columns", "Yes", "No, I'll set each one myself");
-    if(chs == 0) {
-      for (int i=0; i<data.size; i++) {
-        DataCol* column = (DataCol*)data.SafeEl_(i);
-        column->SetColFlagState(DataCol::SAVE_ROWS, true);
-      }
-    }
   }
 }
 

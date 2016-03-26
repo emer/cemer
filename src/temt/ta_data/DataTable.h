@@ -125,8 +125,6 @@ public:
   // #CONDEDIT_OFF_data_flags:SAVE_ROWS Whether to automatically load a data file when the DataTable object is loaded.  This option is only available when SAVE_ROWS is unchecked.  Storing row-data externally reduces the project file size (especially for large data tables), but the project is no longer self contained.
   String                auto_load_file;
   // #CONDEDIT_OFF_auto_load:NO_AUTO_LOAD #FILE_DIALOG_LOAD #COMPRESS #FILETYPE_DataTable #EXT_dat,dtbl Where to store and load row-data from if AUTO_LOAD option is set.  (*.dtbl files are loaded using internal Load format, otherwise LoadData is used.)
-  bool                  last_save_rows_state;
-  // #READ_ONLY #HIDDEN #NO_SAVE track the state so we can offer option to set column SaveRows if the user changes from false to true on the table itself.
   Variant               keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
 
   int_Matrix            row_indexes;     // #EXPERT #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date
@@ -238,7 +236,7 @@ public:
   // #CAT_File saves data, one line per rec, with delimiter between columns, and optionally quoting strings; if save_headers then the _H: header line is saved and data lines have _D:, else they are bare
   void                  SaveData_Gui(const String& fname="")
   {SaveData(fname, TAB, true, true);}
-  // #CAT_File #LABEL_Save_Data #BUTTON #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_dat,txt,log #FILE_DIALOG_SAVE saves data in the default Emergent file format
+  // #CAT_File #LABEL_Save_Data #BUTTON #MENU #MENU_ON_Data #MENU_SEP_BEFORE #INIT_ARGVAL_ON_file_name #EXT_dat,txt,log #FILE_DIALOG_SAVE saves data in the default Emergent file format
   virtual void          AppendData(const String& fname="", Delimiters delim = TAB,
       bool quote_str = true, bool row_mark=true);
   // #CAT_File appends all of current datatable data to given file (does not output header; file assumed to be of same data structure -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
@@ -1187,9 +1185,7 @@ public:
   virtual void  DMem_ShareRows(MPI_Comm comm, int n_rows = 1);
   // #CAT_DMem #IGNORE Share the given number of rows from the end of the table (-1 = all rows) across processors in given communicator -- everyone gets the data from all processors as new rows in the table
 
-  virtual void          UpdateSaveRowsState();
-  // a single place to track state so it isn't done in both ToggleSaveRows and UAE
-  virtual bool          AutoLoadData();
+   virtual bool         AutoLoadData();
   // #IGNORE perform auto loading of data from file when data table is loaded (called by PostLoadAutos) -- true if loaded
   bool                  AutoSaveData();
   // #IGNORE perform auto saving of data to file when project is saved

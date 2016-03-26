@@ -62,7 +62,6 @@ public:
     DC_NONE             = 0, // #NO_BIT
     MARK                = 0x0001, // #NO_SHOW used internally to mark columns prior to an operation -- columns that remain marked after all operations are unused, and may be removed -- users should not generally mess with this flag
     PIN                 = 0x0002, // #NO_SHOW protect this column from being automatically deleted according to the MARK scheme (see comment).  this is often not very easy for uers to find and use (columns to be saved should be listed explicitly in the context in which others are being used), so we are not exposing it to users, but it can be used internally for some reason
-    SAVE_ROWS           = 0x0004, // save the row data for this column in the internal format used when the entire object is saved (e.g., along with a project or whatever).  the column configuration etc is always saved, just not the rows of data if not on.
     SAVE_DATA           = 0x0008, // save this column in the 'data' export format used by the SaveData and associated functions (e.g., as recorded in 'logs' of data from running programs)
     CALC                = 0x0010, // calculate value of this column based on calc_expr expression
     READ_ONLY           = 0x0020, // this column is read-only in the gui (helps protect keys or programmatically generated data items)
@@ -391,8 +390,6 @@ public:
   // #CAT_Display low level display width, in chars, taken from options
   virtual int           maxColWidth() const {return -1;}
   // #CAT_Display aprox max number of columns, in characters, -1 if variable or unknown
-  virtual bool          saveToDumpFile() const { return HasColFlag(SAVE_ROWS); }
-  // #IGNORE whether to save col to internal dump format
   virtual bool          saveToDataFile() const { return HasColFlag(SAVE_DATA); }
   // #IGNORE whether to save col to external 'data' format
 

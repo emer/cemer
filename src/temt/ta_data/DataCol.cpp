@@ -43,7 +43,7 @@ const String DataCol::udkey_narrow("NARROW");
 const String DataCol::udkey_hidden("HIDDEN");
 
 void DataCol::Initialize() {
-  col_flags = (ColFlags)(SAVE_ROWS | SAVE_DATA | CHECKBOX);
+  col_flags = (ColFlags)(SAVE_DATA | CHECKBOX);
   col_idx = -1;
   is_matrix = false;
   // default initialize to scalar
@@ -253,7 +253,6 @@ void DataCol::SigEmit(int sls, void* op1, void* op2) {
 }
 
 int DataCol::GetSpecialState() const {
-  if(!HasColFlag(SAVE_ROWS)) return 1;
   if(!HasColFlag(SAVE_DATA)) return 2;
   if(HasColFlag(READ_ONLY)) return 4; // light red -- 3 is green
   return 0;
@@ -492,10 +491,7 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
   static DataTable* last_dt = NULL;
   if(md->name != "ar")
     return inherited::Dump_QuerySaveMember(md);
-  
-  if(!saveToDumpFile())
-    return DQR_NO_SAVE;
-  
+    
   DataTable* dt = dataTable();
   if(!dt)
     return DQR_NO_SAVE;   // should not happen
