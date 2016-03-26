@@ -58,6 +58,44 @@ void taMediaWiki::Initialize()
   // Placeholder -- taMediaWiki objects currently do not need to be initialized.
 }
 
+/**
+ * When a mediaWiki API call fails, it returns an XML document with an "error" element in it, that has the error details
+ * Parse the document and then return either true if it has an error or false if not. It prints then prints any error messages
+ */
+bool taMediaWiki::CheckResponseError(const QString &xmlResponse) {
+  bool hasErrors = false;
+  QXmlStreamReader reader(xmlResponse.toStdString().c_str());
+  
+  while(!reader.atEnd()) {
+    QXmlStreamReader::TokenType token = reader.readNext();
+    
+    ///Check if the actual XML document has an error during parsing
+    if(reader.hasError()) {
+      hasErrors = true;
+      taMisc::Error("MediaWiki Api call returned invalid XML");
+      taMisc::Warning(xmlResponse);
+      return hasErrors;
+    }
+    if (token == QXmlStreamReader::StartElement) {
+      if (reader.name() == "error") {
+        QXmlStreamAttributes attrs = reader.attributes();
+        QString err_code = attrs.value("code").toString();
+        QString err_info = attrs.value("info").toString();
+        QString err_text = reader.readElementText();
+        taMisc::Error("MediaWiki API call failed with error code: ", err_code, " (", err_info, ") ", err_text);
+        taMisc::Warning(xmlResponse);
+        hasErrors = true;
+      }
+    } else if (token == QXmlStreamReader::Invalid) {
+      hasErrors = true;
+      taMisc::Error("MediaWiki Api call returned invalid XML");
+      taMisc::Warning(xmlResponse);
+      return hasErrors;
+    }
+  }
+  return hasErrors;
+}
+
 /////////////////////////////////////////////////////
 //            ACCOUNT OPERATIONS
 
@@ -86,8 +124,13 @@ String taMediaWiki::GetLoggedInUsername(const String &wiki_name)
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpGet(url)) {
+    QString apiResponse(reply->readAll());
+    if (CheckResponseError(apiResponse)) {
+      taMisc::Error("Could not retrieve userinfo");
+      return "";
+    }
     // Find the <userinfo> tag and check for a non-zero ID.
-    QXmlStreamReader reader(reply);
+    QXmlStreamReader reader(apiResponse.toStdString().c_str());
     if (findNextElement(reader, "userinfo")) {
       QXmlStreamAttributes attrs = reader.attributes();
       if (attrs.value("id") != "0") {
@@ -153,7 +196,12 @@ bool taMediaWiki::Login(const String &wiki_name, const String &username)
   for (int stage = 0; stage < 2; ++stage) {
     if (QNetworkReply *reply = request.httpPost(url)) {
       // Find the <login> tag.
-      QXmlStreamReader reader(reply);
+      QString apiResponse(reply->readAll());
+      if (CheckResponseError(apiResponse)) {
+        taMisc::Error("Could not log in to", wiki_name, "wiki.");
+        return false;
+      }
+      QXmlStreamReader reader(apiResponse.toStdString().c_str());
       if (!findNextElement(reader, "login")) {
         taMisc::Error("Malformed response logging in to ", wiki_name, "wiki");
         return false;
@@ -254,18 +302,13 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpPost(url, local_file_name, dst_filename, token)) {
-      QXmlStreamReader reader(reply);
-//            QString data = (QString) reply->readAll();
-//            qDebug() << data;
-//
-      while (!reader.atEnd()) {
-        if (reader.readNext() == QXmlStreamReader::StartElement) {
-          QXmlStreamAttributes attrs = reader.attributes();
-          
-          // TODO: Rohrlich 2/21/15 check for warnings - for example - file previously deleted
-        }
-      }
+    QString apiResponse(reply->readAll());
+    if (CheckResponseError(apiResponse)) {
+      taMisc::Error("Failed to upload local file", local_file_name, "to", wiki_file_name, "on", wiki_name, "wiki.");
+      return false;
     }
+    
+  }
   return true;
 }
 
@@ -418,22 +461,13 @@ bool taMediaWiki::DeleteFile(const String& wiki_name, const String& file_name, c
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpPost(url)) {
-    QXmlStreamReader reader(reply);
-    while(!reader.atEnd()) {
-      if (reader.readNext() == QXmlStreamReader::StartElement) {
-        QXmlStreamAttributes attrs = reader.attributes();
-        if(reader.hasError()) {
-          QString err_code = attrs.value("code").toString();
-          QString err_info = attrs.value("info").toString();
-          taMisc::Error("File deletion failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          return false;
-        }
-        else {
-          taMisc::DebugInfo("Successfully deleted", file_name, "file on", wiki_name, "wiki!");
-          return true;
-        }
-      }
+    QString apiResponse(reply->readAll());
+    if (CheckResponseError(apiResponse)) {
+      taMisc::Error("File delete request for", file_name, "on", wiki_name, "wiki failed.");
+      return false;
     }
+    taMisc::DebugInfo("Successfully deleted", file_name, "file on", wiki_name, "wiki!");
+    return true;
   }
   taMisc::Warning("File delete request failed -- check the wiki/file names");
   return false;
@@ -515,10 +549,12 @@ bool taMediaWiki::FileExists(const String& wiki_name, const String& file_name, b
   
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpGet(url)) {
-    QXmlStreamReader reader(reply);
-    
-//            QString data = (QString) reply->readAll();
-//            qDebug() << data;
+    QString apiResponse(reply->readAll());
+    if (CheckResponseError(apiResponse)) {
+      taMisc::Error("Could not determine if file", file_name, "exists on", wiki_name, "wiki.");
+      return false;
+    }
+    QXmlStreamReader reader(apiResponse.toStdString().c_str());
     
     while (!reader.atEnd()) {
       if (reader.readNext() == QXmlStreamReader::StartElement) {
@@ -854,10 +890,12 @@ bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
     // will be changed if normalization was performed by the server.
     String normalizedName = page_name;
 
-    QXmlStreamReader reader(reply);
-    
-//    QString data = (QString) reply->readAll();
-//    qDebug() << data;
+    QString apiResponse(reply->readAll());
+    if (CheckResponseError(apiResponse)) {
+      taMisc::Error("Could not determine if page", page_name, "exists on", wiki_name, "wiki.");
+      return false;
+    }
+    QXmlStreamReader reader(apiResponse.toStdString().c_str());
 
     int pageCount = 0;
     while (!reader.atEnd()) {
@@ -974,21 +1012,13 @@ bool taMediaWiki::DeletePage(const String& wiki_name, const String& page_name, c
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpPost(url)) {
-    QXmlStreamReader reader(reply);
-    while(!reader.atEnd()) {
-      if (reader.readNext() == QXmlStreamReader::StartElement) {
-        QXmlStreamAttributes attrs = reader.attributes();
-        if(reader.hasError()) {
-          QString err_code = attrs.value("code").toString();
-          QString err_info = attrs.value("info").toString();
-          taMisc::Error("Page deletion failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          return false;
-        }
-        else {
-          taMisc::Info("Successfully deleted", page_name, "page on", wiki_name, "wiki!");
-          return true;
-        }
-      }
+    QString apiResponse(reply->readAll());
+    if (CheckResponseError(apiResponse)) {
+      taMisc::Error("Could not delete page", page_name, "on", wiki_name, "wiki.");
+      return false;
+    } else {
+      taMisc::Info("Successfully deleted", page_name, "page on", wiki_name, "wiki!");
+      return true;
     }
   }
   taMisc::Warning("Page delete request failed -- check the wiki/page names");
@@ -1054,21 +1084,13 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpPost(url)) {
-    QXmlStreamReader reader(reply);
-    while(!reader.atEnd()) {
-      if (reader.readNext() == QXmlStreamReader::StartElement) {
-        QXmlStreamAttributes attrs = reader.attributes();
-        if(reader.hasError()) {
-          QString err_code = attrs.value("code").toString();
-          QString err_info = attrs.value("info").toString();
-          taMisc::Error("Page creation failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          return false;
-        }
-        else {
-          taMisc::Info("Successfully created", page_name, "page on", wiki_name, "wiki!");
-          return true;
-        }
-      }
+    QString apiResponse(reply->readAll());
+    if(CheckResponseError(apiResponse)) {
+      taMisc::Error("Page creation failed for ", page_name, " on ", wiki_name, "wiki!");
+      return false;
+    } else {
+      taMisc::Info("Successfully created", page_name, "page on", wiki_name, "wiki!");
+      return true;
     }
   }
   taMisc::Warning("Page create request failed -- check the wiki/page names");
@@ -1127,20 +1149,12 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpPost(url)) {
-    QXmlStreamReader reader(reply);
-    while(!reader.atEnd()) {
-      if (reader.readNext() == QXmlStreamReader::StartElement) {
-        QXmlStreamAttributes attrs = reader.attributes();
-        if(reader.hasError()) {
-          QString err_code = attrs.value("code").toString();
-          QString err_info = attrs.value("info").toString();
-          taMisc::Error("Page edit failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          return false;
-        }
-        else {
-          return true;
-        }
-      }
+    QString apiResponse(reply->readAll());
+    if(CheckResponseError(apiResponse)) {
+      taMisc::Error("Page edit failed for ", page_name, " on ", wiki_name, "wiki!");
+      return false;
+    } else {
+      return true;
     }
   }
   taMisc::Warning("Page edit request failed -- check the wiki/page names");
@@ -1213,21 +1227,12 @@ bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpPost(url)) {
-    QXmlStreamReader reader(reply);
-    while(!reader.atEnd()) {
-      if (reader.readNext() == QXmlStreamReader::StartElement) {
-        if(reader.hasError()) {
-          QXmlStreamAttributes attrs = reader.attributes();
-          QString err_code = attrs.value("code").toString();
-          QString err_info = attrs.value("info").toString();
-          taMisc::Error("Add category failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          return false;
-        }
-        else {
-          taMisc::Info("Successfully added categories to", page_name, "page on", wiki_name, "wiki!");
-          return true;
-        }
-      }
+    QString apiResponse(reply->readAll());
+    if(CheckResponseError(apiResponse)) {
+      taMisc::Error("Add Category", page_category, "to", page_name,"on", wiki_name, "wiki!");
+      return false;
+    } else {
+      return true;
     }
   }
   taMisc::Warning("Add category request failed -- check the wiki/page names");
@@ -1275,21 +1280,12 @@ bool taMediaWiki::LinkFile(const String& file_name, const String& wiki_name, con
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpPost(url)) {
-    QXmlStreamReader reader(reply);
-    while(!reader.atEnd()) {
-      if (reader.readNext() == QXmlStreamReader::StartElement) {
-        if(reader.hasError()) {
-          QXmlStreamAttributes attrs = reader.attributes();
-          QString err_code = attrs.value("code").toString();
-          QString err_info = attrs.value("info").toString();
-          taMisc::Error("File link failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          return false;
-        }
-        else {
-          taMisc::Info("Successfully linked", file_name, "file to", proj_name, "page on", wiki_name, "wiki!");
-          return true;
-        }
-      }
+    QString apiResponse(reply->readAll());
+    if(CheckResponseError(apiResponse)) {
+      taMisc::Error("File linking failed for ", proj_name, "to", file_name, "on", wiki_name, "wiki!");
+      return false;
+    } else {
+      return true;
     }
   }
   taMisc::Warning("File link request failed -- check the wiki/page names");
@@ -1337,10 +1333,12 @@ String taMediaWiki::GetEditToken(const String& wiki_name) {
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpPost(url)) {
-
-    QXmlStreamReader reader(reply);
-    if(reader.hasError()) { return _nilString; }
-
+    QString apiResponse(reply->readAll());
+    if(CheckResponseError(apiResponse)) {
+      taMisc::Error("Could not retrieve edit token for", wiki_name, "wiki!");
+      return _nilString;;
+    }
+    QXmlStreamReader reader(apiResponse.toStdString().c_str());
     while(!reader.atEnd()) {
       if (reader.readNext() == QXmlStreamReader::StartElement) {
         QXmlStreamAttributes attrs = reader.attributes();

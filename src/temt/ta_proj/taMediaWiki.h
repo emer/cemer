@@ -155,6 +155,7 @@ protected:
   TA_BASEFUNS_NOCOPY(taMediaWiki);
 
 private:
+  static bool CheckResponseError(const QString &xmlRespone);
   void Initialize();
   void Destroy() {}
 };
