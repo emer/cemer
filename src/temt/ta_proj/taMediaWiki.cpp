@@ -69,7 +69,7 @@ void taMediaWiki::Initialize()
 bool taMediaWiki::CheckResponseError(const QString &xmlResponse) {
   bool hasErrors = false;
   //String foo(xmlResponse);
-  //taMisc::DebugInfo(xmlResponse);
+  taMisc::DebugInfo(xmlResponse);
   QXmlStreamReader reader(xmlResponse.toStdString().c_str());
   
   while(!reader.atEnd()) {
@@ -91,6 +91,11 @@ bool taMediaWiki::CheckResponseError(const QString &xmlResponse) {
         taMisc::Error("MediaWiki API call failed with error code: ", err_code, " (", err_info, ") ", err_text);
         taMisc::Warning(xmlResponse);
         hasErrors = true;
+      }
+      if (reader.name() == "warnings") {
+        QString err_text = reader.readElementText();
+        taMisc::Warning("MediaWiki API call contained warnings: ",  err_text);
+        taMisc::Info(xmlResponse);
       }
     } else if (token == QXmlStreamReader::Invalid) {
       hasErrors = true;
