@@ -188,10 +188,8 @@ void Switch::CasesFmEnum_dyn() {
   }
 }
 
-bool Switch::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
-  String code = code_str; code.downcase();
-  if(code.startsWith("switch")) return true;
-  return false;
+bool Switch::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  return CvtFmCodeCheckNames(code);
 }
 
 bool Switch::CvtFmCode(const String& code) {

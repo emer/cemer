@@ -159,6 +159,8 @@ public:
   // call CvtFmCode on code_string string -- for a callback
   virtual  bool         CvtCodeToVar(String& code_str);
   // attempt to convert the code to a new variable declaration -- prompts for var location -- if true, then it was interpreted as a var decl, and var decl is removed from code -- e.g., if input is "int i = 20" then remaining code will be "i = 20" -- if nothing but a decl (e.g., "int i"), then code is empty, and nothing left to do
+  virtual bool          CvtFmCodeCheckNames(const String& code) const;
+  // #IGNORE check the toolbar name and the type def name returning true if match and make sure it isn't just the start of some variable name
   bool                  BrowserEditEnable() override { return true; }
   bool                  BrowserEditSet(const String& code, int move_after = 0) override;
   virtual  String       CodeGetDesc(const String& code);
