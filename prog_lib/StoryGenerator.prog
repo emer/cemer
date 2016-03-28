@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9327
+// ta_Dump File v3.0 -- code v7.8.6.0 rev9337
 Program .projects[0].programs.gp[3][5] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -1909,7 +1909,7 @@ Program .projects[0].programs.gp[3][5] {
  };
  name="StoryGenerator";
  short_nm="StrGnr";
- tags=;
+ tags="InputData, Data, DataGen, Language";
  desc="generate stories as sequences of sentences describing events.  See https://grey.colorado.edu/emergent/index.php/StoryGenerator wiki page for full details";
  flags=NO_STOP_STEP;
  stop_step_cond {
@@ -1938,12 +1938,12 @@ Program .projects[0].programs.gp[3][5] {
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.06875;
+	value 8 0=0.06898955;
 	val_type_fixed=0;
        };
       };
       name="group";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA|CHECKBOX;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1966,12 +1966,12 @@ Program .projects[0].programs.gp[3][5] {
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.03333334;
+	value 8 0=0.03344948;
 	val_type_fixed=0;
        };
       };
       name="on";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA|CHECKBOX;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1994,13 +1994,13 @@ true;false;false;false;false;true;true;true;false;true;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.03402778;
+	value 8 0=0.03414634;
 	val_type_fixed=0;
        };
       };
       name="freq";
       desc="specify relative frequency -- will be normalized globally so you can just enter relative numbers here";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA|CHECKBOX;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2028,13 +2028,13 @@ true;false;false;false;false;true;true;true;false;true;
        };
        UserDataItem @[1] {
 	name="view_panel_wd";
-	value 8 0=0.025;
+	value 8 0=0.02508711;
 	val_type_fixed=0;
        };
       };
       name="seq";
       desc="sequencing counter -- use this to maintain order of items -- will be sorted in this order suggest using 10,20 etc to allow for future expansion";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA|CHECKBOX;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2057,13 +2057,13 @@ true;false;false;false;false;true;true;true;false;true;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.4368055;
+	value 8 0=0.4383275;
 	val_type_fixed=0;
        };
       };
       name="sentence";
       desc="enter words describing events -- use [ ] around optional elements (can be nested),  | between mutually exclusive alternatives, || between non-mutex alternatives (order independent), and |> between non-mutex alternatives (order dependent) (put space around each of these) -- use %50 (no space) e.g. to specify probability of any item (will be normalized automatically if multiple alternatives";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA|CHECKBOX;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2075,8 +2075,8 @@ true;false;false;false;false;true;true;true;false;true;
       width=629;
       ar {
        name="ar";
-      [20] "the $sizes%50 $colors%50 ball:S is rolling:V [%33 to the $dirs ] [%20 [ behind | in front of ] the block:0 ] .";"the $sizes%50 $colors%50 ball:S is rolling:V [%33 to the $dirs ] [ behind | in front of ] the cat .";"the cat:S is chasing:V after the ball:O .";"it:S is hitting:V the ball:O [%50 but missed ] .";"[?!1missed? the ball:S is rolling:V back [?:L? to the right:L?left:L? left:L?right:L? ] . ]";"the $sizes%50 $colors%50 ball:S is bouncing:V $heights%50 [%33 to the $dirs ] .";"the $sizes%50 $colors%50 ball:S is dropping:V [%50 from the [ |%80 table |%20 hand ] ] .";;;;
-"it:S is bouncing:V $heights%50 [%33 to the $dirs ] .";"[:A red | green | blue ]";"[:A small | medium-sized | large ]";"[:L left | right ]";"[:E high | medium-high | low ]";"the $sizes%50 $colors%50 ball:S is rolling:V [%33 to the $dirs ] into the block:0 .";"it:S is hitting:V the block:O .";"it:S is rolling:V back [?left:L||right:L? to the right:L?left:L? left:L?right:L? ] .";;"goto:10%50?2missed?";
+      [20] "the $sizes%50 $colors%50 ball:Ph rolls:V [%33 to the $dirs ] [%20 [ behind | in front of ] the block:Po ] .";"the $sizes%50 $colors%50 ball:Ph rolls:V [%33 to the $dirs ] [ behind | in front of ] the cat:Po .";"the cat:A chases:V after the ball:Ph .";"it:A hits:V the ball:Ph [%50 but misses ] .";"[?!1misses? the ball:Ph rolls:V back [?:L? to the right:L?left:L? left:L?right:L? ] . ]";"the $sizes%50 $colors%50 ball:Ph bounces:V $heights%50 [%33 to the $dirs ] .";"the $sizes%50 $colors%50 ball:Ph drops:V [%50 from the [ |%80 table:Li |%20 hand:Li ] ] .";;;;
+"it:Ph bounces:V $heights%50 [%33 to the $dirs ] .";"[:J red | green | blue ]";"[:J small | medium-sized | large ]";"[:L left | right ]";"[:R high | medium-high | low ]";"the $sizes%50 $colors%50 ball:Ph rolls:V to the $dirs into the block:Po .";"it:Ph hits:V the block:Po .";"it:Ph rolls:V back to the right:L?left:L? left:L?right:L?  .";;"goto:10%50?2misses?";
       };
      };
      String_Data @[5] {
@@ -2086,13 +2086,13 @@ true;false;false;false;false;true;true;true;false;true;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.2916667;
+	value 8 0=0.2926829;
 	val_type_fixed=0;
        };
       };
       name="comments";
       desc="enter words describing events -- use [ ] around optional elements (can be nested) and | between alternatives (put space around each of these) -- use %50 (no space) e.g. to specify probability of an item (will be normalized automatically)";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA|CHECKBOX;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2104,8 +2104,8 @@ true;false;false;false;false;true;true;true;false;true;
       width=420;
       ar {
        name="ar";
-      [20] ;;;"pronoun = cat";"only rolls back if cat doesn't miss!  direction contingent on orig if specified";;;;;;
-;;;;;;;;;"loop!";
+      [20] ;"this is advanced and should be off for initial runs";;"pronoun = cat";"only rolls back if cat doesn't miss!  direction contingent on orig if specified";;;;;;
+;;;;;"todo: could do \"from\" instead of to..";;;;"loop!";
       };
      };
     };
@@ -2175,12 +2175,12 @@ true;false;false;false;false;true;true;true;false;true;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.06875;
+	value 8 0=0.06898955;
 	val_type_fixed=0;
        };
       };
       name="group";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA|CHECKBOX;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2202,12 +2202,12 @@ true;false;false;false;false;true;true;true;false;true;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.03333334;
+	value 8 0=0.03344948;
 	val_type_fixed=0;
        };
       };
       name="on";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA|CHECKBOX;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2229,13 +2229,13 @@ true;false;false;false;false;true;true;true;false;true;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.03402778;
+	value 8 0=0.03414634;
 	val_type_fixed=0;
        };
       };
       name="freq";
       desc="specify relative frequency -- will be normalized globally so you can just enter relative numbers here";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA|CHECKBOX;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2262,13 +2262,13 @@ true;false;false;false;false;true;true;true;false;true;
        };
        UserDataItem @[1] {
 	name="view_panel_wd";
-	value 8 0=0.025;
+	value 8 0=0.02508711;
 	val_type_fixed=0;
        };
       };
       name="seq";
       desc="sequencing counter -- use this to maintain order of items -- will be sorted in this order suggest using 10,20 etc to allow for future expansion";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA|CHECKBOX;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2290,13 +2290,13 @@ true;false;false;false;false;true;true;true;false;true;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.4958333;
+	value 8 0=0.497561;
 	val_type_fixed=0;
        };
       };
       name="sentence";
       desc="enter words describing events -- use [ ] around optional elements (can be nested),  | between mutually exclusive alternatives, || between non-mutex alternatives (order independent), and |> between non-mutex alternatives (order dependent) (put space around each of these) -- use %50 (no space) e.g. to specify probability of any item (will be normalized automatically if multiple alternatives";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA|CHECKBOX;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2308,7 +2308,7 @@ true;false;false;false;false;true;true;true;false;true;
       width=714;
       ar {
        name="ar";
-      [10] "the $sizes%50 $colors%100?0:A? ball:S rolled:V [%50 to the [:L right | left ] ||%20 [ behind | in front of ] the block:O ] .";"the ball dropped [%50 from the [ table | hand ] ] .";"it bounced [%50 [ high | medium | low ] || to the [ right | left ] ] .";"the ball rolled [%50 to the [ right | left ] || [%20 [ behind | in front of ] the block ] .";"the ball rolled to the [ right | left ] [ behind | in front of ] the cat .";"the cat chased after the ball .";"it hit the ball [%20 but missed ] .";"the ball rolled back .";"[:A red | green | blue ]";"[:A small | medium | large ]";
+      [10] "the $sizes%50 $colors%100?0:J? ball:P rolled:V [%50 to the [:L right | left ] ||%20 [ behind | in front of ] the block:Po ] .";"the ball dropped [%50 from the [ table | hand ] ] .";"it bounced [%50 [ high | medium | low ] || to the [ right | left ] ] .";"the ball rolled [%50 to the [ right | left ] || [%20 [ behind | in front of ] the block ] .";"the ball rolled to the [ right | left ] [ behind | in front of ] the cat .";"the cat chased after the ball .";"it hit the ball [%20 but missed ] .";"the ball rolled back .";"[:J red | green | blue ]";"[:J small | medium | large ]";
       };
      };
      String_Data @[5] {
@@ -2318,13 +2318,13 @@ true;false;false;false;false;true;true;true;false;true;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.2916667;
+	value 8 0=0.2926829;
 	val_type_fixed=0;
        };
       };
       name="comments";
       desc="enter words describing events -- use [ ] around optional elements (can be nested) and | between alternatives (put space around each of these) -- use %50 (no space) e.g. to specify probability of an item (will be normalized automatically)";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA|CHECKBOX;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2406,12 +2406,12 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06898955;
        val_type_fixed=0;
       };
      };
      name="group";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2429,12 +2429,12 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.03333334;
+       value 8 0=0.03344948;
        val_type_fixed=0;
       };
      };
      name="on";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2452,13 +2452,13 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.03402778;
+       value 8 0=0.03414634;
        val_type_fixed=0;
       };
      };
      name="freq";
      desc="specify relative frequency -- will be normalized globally so you can just enter relative numbers here";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2481,13 +2481,13 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.025;
+       value 8 0=0.02508711;
        val_type_fixed=0;
       };
      };
      name="N";
      desc="sequencing counter -- use this to maintain order of items -- will be sorted in this order suggest using 10,20 etc to allow for future expansion";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2505,7 +2505,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [5] 0;1;2;3;4;   };
+   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -2539,7 +2539,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="sentence";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2557,7 +2557,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [2] 1;0;   };
+   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -2591,7 +2591,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="sentence";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2609,7 +2609,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [1] 0;   };
+   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -2648,7 +2648,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="node";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2671,7 +2671,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="word";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2695,7 +2695,7 @@ true;false;false;false;false;true;true;true;false;true;
      };
      name="self_p";
      desc="probability of self occuring";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2719,7 +2719,7 @@ true;false;false;false;false;true;true;true;false;true;
      };
      name="cond";
      desc="conditional expression, if any";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2743,7 +2743,7 @@ true;false;false;false;false;true;true;true;false;true;
      };
      name="next";
      desc="next node after this one (for switches, after option(s) have been selected)";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2767,7 +2767,7 @@ true;false;false;false;false;true;true;true;false;true;
      };
      name="n_opts";
      desc="number of options -- > 0 for switches only";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2790,7 +2790,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="mutex";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2818,7 +2818,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="opt_nodes";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=1;
      cell_geom{ 10;     };
      calc_expr {
@@ -2841,7 +2841,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="prob";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=1;
      cell_geom{ 10;     };
      calc_expr {
@@ -2859,8 +2859,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [14] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;   };
+   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -2899,7 +2898,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="node";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2922,7 +2921,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="word";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2946,7 +2945,7 @@ true;false;false;false;false;true;true;true;false;true;
      };
      name="self_p";
      desc="probability of self occuring";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2970,7 +2969,7 @@ true;false;false;false;false;true;true;true;false;true;
      };
      name="cond";
      desc="conditional expression, if any";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -2994,7 +2993,7 @@ true;false;false;false;false;true;true;true;false;true;
      };
      name="next";
      desc="next node after this one (for switches, after option(s) have been selected)";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -3018,7 +3017,7 @@ true;false;false;false;false;true;true;true;false;true;
      };
      name="n_opts";
      desc="number of options -- > 0 for switches only";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -3041,7 +3040,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="mutex";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -3069,7 +3068,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="opt_nodes";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=1;
      cell_geom{ 10;     };
      calc_expr {
@@ -3092,7 +3091,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="prob";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=1;
      cell_geom{ 10;     };
      calc_expr {
@@ -3110,8 +3109,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [19] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;14;15;16;17;18;   };
+   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -3150,7 +3148,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="node";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -3178,7 +3176,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="cur_opt";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -3201,7 +3199,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
      };
      name="cur_markup";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -3248,12 +3246,12 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06898955;
        val_type_fixed=0;
       };
      };
      name="group";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -3271,12 +3269,12 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.03333334;
+       value 8 0=0.03344948;
        val_type_fixed=0;
       };
      };
      name="on";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -3294,13 +3292,13 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.03402778;
+       value 8 0=0.03414634;
        val_type_fixed=0;
       };
      };
      name="freq";
      desc="specify relative frequency -- will be normalized globally so you can just enter relative numbers here";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -3323,13 +3321,13 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.025;
+       value 8 0=0.02508711;
        val_type_fixed=0;
       };
      };
      name="seq";
      desc="sequencing counter -- use this to maintain order of items -- will be sorted in this order suggest using 10,20 etc to allow for future expansion";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -3347,13 +3345,13 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.4368055;
+       value 8 0=0.4383275;
        val_type_fixed=0;
       };
      };
      name="sentence";
      desc="enter words describing events -- use [ ] around optional elements (can be nested),  | between mutually exclusive alternatives, || between non-mutex alternatives (order independent), and |> between non-mutex alternatives (order dependent) (put space around each of these) -- use %50 (no space) e.g. to specify probability of any item (will be normalized automatically if multiple alternatives";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -3371,13 +3369,13 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.2916667;
+       value 8 0=0.2926829;
        val_type_fixed=0;
       };
      };
      name="comments";
      desc="enter words describing events -- use [ ] around optional elements (can be nested) and | between alternatives (put space around each of these) -- use %50 (no space) e.g. to specify probability of an item (will be normalized automatically)";
-     col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+     col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
      cell_geom{ 1;     };
      calc_expr {
@@ -3395,8 +3393,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [12] 11;10;9;8;7;6;5;4;3;2;
-1;0;   };
+   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -9126,8 +9123,8 @@ true;false;false;false;false;true;true;true;false;true;
     LocalVars @[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="LocalVars (11 vars)";
-     pre_compile_code_string="LocalVars (11 vars)";
+     code_string="LocalVars (14 vars)";
+     pre_compile_code_string="LocalVars (14 vars)";
      local_vars {
       name="local_vars";
       el_typ=ProgVar;
@@ -9649,7 +9646,7 @@ true;false;false;false;false;true;true;true;false;true;
     AssignExpr @[7] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="firstc = cond[0]";
+     code_string="chr = cond[0]";
      pre_compile_code_string="chr = cond[0]";
      result_var=.projects[0].programs.gp[3][5].functions[19].fun_code[0].local_vars[5]$$;
      expr {
@@ -9659,8 +9656,8 @@ true;false;false;false;false;true;true;true;false;true;
     If @[8] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="if (firstc == \"-\")";
-     pre_compile_code_string="if (firstc == \"-\")";
+     code_string="if (chr == \"-\")";
+     pre_compile_code_string="if (chr == \"-\")";
      cond {
       expr="chr == \"-\"";
      };
@@ -9693,7 +9690,7 @@ true;false;false;false;false;true;true;true;false;true;
 	MethodCall @[0] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="s_end = chr->toInt()";
+	 code_string="s_end = chr->toInt(, )";
 	 pre_compile_code_string="s_end = chr->toInt(, )";
 	 result_var=$.projects[0].programs.gp[3][5].functions[19].fun_code[0].local_vars[12]$;
 	 obj=$.projects[0].programs.gp[3][5].functions[19].fun_code[0].local_vars[5]$;
@@ -9731,8 +9728,8 @@ true;false;false;false;false;true;true;true;false;true;
 	MethodCall @[1] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="cond = cond->at()";
-	 pre_compile_code_string="cond = cond->at()";
+	 code_string="cond = cond->at(2, cond.length()-2)";
+	 pre_compile_code_string="cond = cond->at(2, cond.length()-2)";
 	 result_var=$.projects[0].programs.gp[3][5].functions[19].args[0]$;
 	 obj=$.projects[0].programs.gp[3][5].functions[19].args[0]$;
 	 method=taString::at;
@@ -9785,7 +9782,7 @@ true;false;false;false;false;true;true;true;false;true;
       MethodCall @[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="s_start = chr->toInt()";
+       code_string="s_start = chr->toInt(, )";
        pre_compile_code_string="s_start = chr->toInt(, )";
        result_var=$.projects[0].programs.gp[3][5].functions[19].fun_code[0].local_vars[11]$;
        obj=$.projects[0].programs.gp[3][5].functions[19].fun_code[0].local_vars[5]$;
@@ -9897,7 +9894,7 @@ true;false;false;false;false;true;true;true;false;true;
 	MethodCall @[1] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="s_end = chrn->toInt()";
+	 code_string="s_end = chrn->toInt(, )";
 	 pre_compile_code_string="s_end = chrn->toInt(, )";
 	 result_var=$.projects[0].programs.gp[3][5].functions[19].fun_code[0].local_vars[12]$;
 	 obj=$.projects[0].programs.gp[3][5].functions[19].fun_code[0].local_vars[13]$;
@@ -9976,7 +9973,7 @@ true;false;false;false;false;true;true;true;false;true;
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="else";
-       pre_compile_code_string=;
+       pre_compile_code_string="else";
        else_code {
 	name="else_code";
 	el_typ=ProgCode;
@@ -11078,9 +11075,9 @@ true;false;false;false;false;true;true;true;false;true;
     el_def=0;
     LocalVars @[0] {
      desc=;
-     flags=0;
-     code_string=;
-     pre_compile_code_string=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (3 vars)";
+     pre_compile_code_string="LocalVars (3 vars)";
      local_vars {
       name="local_vars";
       el_typ=ProgVar;
@@ -11117,7 +11114,7 @@ true;false;false;false;false;true;true;true;false;true;
     MethodCall @[1] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="gostr = word->after()";
+     code_string="gostr = word->after(\"goto:\", )";
      pre_compile_code_string="gostr = word->after(\"goto:\", )";
      result_var=.projects[0].programs.gp[3][5].functions[22].fun_code[0].local_vars[0]$$;
      obj=.projects[0].programs.gp[3][5].functions[22].args[0]$$;
@@ -11155,7 +11152,7 @@ true;false;false;false;false;true;true;true;false;true;
     MethodCall @[2] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="goln = gostr->toInt()";
+     code_string="goln = gostr->toInt(, )";
      pre_compile_code_string="goln = gostr->toInt(, )";
      result_var=.projects[0].programs.gp[3][5].functions[22].fun_code[0].local_vars[1]$$;
      obj=$.projects[0].programs.gp[3][5].functions[22].fun_code[0].local_vars[0]$;
@@ -11193,7 +11190,7 @@ true;false;false;false;false;true;true;true;false;true;
     MethodCall @[3] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="goto_ln = cur_story->FindMultiVal()";
+     code_string="gorow = cur_story->FindMultiVal(0, cur_group, \"group\", goln, \"seq\", , , , , , , , )";
      pre_compile_code_string="gorow = cur_story->FindMultiVal(0, cur_group, \"group\", goln, \"seq\", , , , , , , , )";
      result_var=.projects[0].programs.gp[3][5].functions[22].fun_code[0].local_vars[2]$$;
      obj=$.projects[0].programs.gp[3][5].vars[0]$;
@@ -11352,8 +11349,8 @@ true;false;false;false;false;true;true;true;false;true;
     If @[4] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="if (goto_ln < 0)";
-     pre_compile_code_string="if (goto_ln < 0)";
+     code_string="if (gorow < 0)";
+     pre_compile_code_string="if (gorow < 0)";
      cond {
       expr="gorow < 0";
      };
@@ -11364,8 +11361,8 @@ true;false;false;false;false;true;true;true;false;true;
       MiscCall @[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="taMisc::Error()";
-       pre_compile_code_string="taMisc::Error()";
+       code_string="taMisc::Error(\"goto line:\", String(goln), \"not found in group:\", cur_group, , , , , )";
+       pre_compile_code_string="taMisc::Error(\"goto line:\", String(goln), \"not found in group:\", cur_group, , , , , )";
        result_var=NULL;
        object_type=taMisc;
        method=taMisc::Error;
@@ -11493,7 +11490,7 @@ true;false;false;false;false;true;true;true;false;true;
     AssignExpr @[6] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="cur_row = goto_ln";
+     code_string="cur_row = gorow";
      pre_compile_code_string="cur_row = gorow";
      result_var=$.projects[0].programs.gp[3][5].vars[6]$;
      expr {
