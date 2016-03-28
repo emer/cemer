@@ -1525,10 +1525,16 @@ void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
   String fname = taMisc::ExpandFilePath(fname_.toString());
   // check if already open
   taProject* proj = NULL;
+  String fname_copy = fname; // keep around because if it doesn't exist fi will clear it
   // canonicalize name, for comparison to open projects
   QFileInfo fi(fname);
   bool exists = fi.exists();
   fname = fi.canonicalFilePath(); // why is this needed if exists is false?
+  if (!exists) {
+    taMisc::Confirm("File ", fname_copy, " not found. ", "Removing from Recents List.");
+    tabMisc::root->RemoveRecentFile(fname_copy);
+    return;
+  }
   if (exists) {
     for (int i = 0; i < tabMisc::root->projects.size; ++i) {
       proj = tabMisc::root->projects.FastEl(i);

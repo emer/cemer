@@ -276,6 +276,12 @@ void taRootBase::AddRecentFile(const String& value, bool no_save) {
     Save();
 }
 
+void taRootBase::RemoveRecentFile(const String& value) {
+  if (value.empty()) return; // oops...
+  // never save for dmem>0
+  RemoveRecentFile_impl(value); // but don't remove recent path
+}
+
 bool taRootBase::AddRecentFile_impl(const String& value) {
   // first, see if already there, if so, then just move it to the top
   if (taMisc::num_recent_files <= 0) {
@@ -297,6 +303,13 @@ bool taRootBase::AddRecentFile_impl(const String& value) {
     recent_files.Insert(value, 0);
   }
   return true;
+}
+
+void taRootBase::RemoveRecentFile_impl(const String& value) {
+  int idx = recent_files.FindEl(value);
+  if (idx > -1) {
+    recent_files.RemoveIdx(idx);
+  }
 }
 
 void taRootBase::AddRecentPath(const String& value, bool no_save) {

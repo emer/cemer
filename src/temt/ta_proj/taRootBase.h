@@ -95,13 +95,12 @@ public:
   void          WindowShowHook() override;
 
   void          AddRecentFile(const String& value, bool no_save = false); // #IGNORE add this file to the recent list (also adds the path to recent paths)
-  void          ClearRecentFiles();
-  // #IGNORE
+  void          RemoveRecentFile(const String& value); // #IGNORE remove recent file that was not found
+  void          ClearRecentFiles(); // #IGNORE
   void          AddRecentPath(const String& value, bool no_save = false); // #IGNORE add this path to the recent list
 
-  taBase*       FindGlobalObject(TypeDef* base_type = &TA_taBase,
-    const String& name = _nilString);
-    // find an object deriving from base_type, with given name, or any name if blank
+  taBase*       FindGlobalObject(TypeDef* base_type = &TA_taBase, const String& name = _nilString);
+  // find an object deriving from base_type, with given name, or any name if blank
 
   virtual taDoc* FindMakeDoc(const String& doc_name, const String& wiki_nm = "",
                              const String& web_url = "");
@@ -225,6 +224,7 @@ protected:
   void         UpdateAfterEdit_impl() override;
   // #IGNORE recursively enumerate from typ
   bool                  AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
+  void                  RemoveRecentFile_impl(const String& value); // #IGNORE remove file but not path
   bool                  AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;
   virtual void          AddTemplates(); // called in InitLinks -- extend to add new templates
   virtual void          AddTemplatesOfType(TypeDef* td);
