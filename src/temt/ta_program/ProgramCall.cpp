@@ -278,6 +278,7 @@ bool ProgramCall::CvtFmCode(const String& code) {
   UpdateAfterEdit_impl();                          // update based on targ
   // now tackle the args
   String args = trim(cd.after('('));
+  args = trim(args.before(')', -1));
   prog_args.ParseArgString(args);
   UpdateAfterEdit_impl();
   return true;

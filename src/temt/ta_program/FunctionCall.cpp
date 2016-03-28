@@ -155,6 +155,7 @@ bool FunctionCall::CvtFmCode(const String& code) {
   UpdateAfterEdit_impl();                          // update based on fun
   // now tackle the args
   String args = trim(cd.after('('));
+  args = trim(args.before(')', -1));
   fun_args.ParseArgString(args);
   return true;
 }

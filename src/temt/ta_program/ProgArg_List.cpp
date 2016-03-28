@@ -22,7 +22,6 @@
 
 TA_BASEFUNS_CTORS_DEFN(ProgArg_List);
 
-
 void ProgArg_List::Initialize() {
   SetBaseType(&TA_ProgArg);
   setUseStale(true);
@@ -224,19 +223,14 @@ static int read_one_arg(String& args, String& arg) {
 
 void ProgArg_List::ParseArgString(const String& args_in) {
   String args = args_in;
-  if(args.endsWith(')')) args = trim(args.before(')',-1));
   if(args.endsWith(';')) args = trim(args.before(';',-1));
   if(args.empty()) return;
-
+  
   for(int i=0; i<size; i++) {
     ProgArg* pa = FastEl(i);
     String arg;
     read_one_arg(args, arg);
-    // rohrlich - 12/3/15 - this fix doesn't work because an arg has different rules than a var - need a different fix
-    // make sure it is a legal C var
-//    String good_arg = taMisc::StringCVar(arg);
-    //    pa->expr.SetExpr(good_arg);
-        pa->expr.SetExpr(arg);
+    pa->expr.SetExpr(arg);
     if(args.empty()) break;
   }
   TestWarning(!args.empty(), "ParseArgString",

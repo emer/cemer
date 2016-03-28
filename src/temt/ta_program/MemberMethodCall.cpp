@@ -210,6 +210,7 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
     meth_args.UpdateFromMethod(md);
   }
   String args = trim(code_copy.after('('));
+  args = trim(args.before(')', -1));
   meth_args.ParseArgString(args);
   return true;
 }
