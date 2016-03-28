@@ -121,7 +121,10 @@ public:
   // set the var type from a typedef (if a FUN_ARG, also sets reference from ref)
   virtual bool    SetTypeAndName(const String& type_name);
   // set the var type from and name from a combined 'type name' string
-
+  
+  void            ToggleSaveVal();
+  // #CAT_ObjectMgmt #MENU_CONTEXT #DYN1 toggle the value of the SAVE_VAL flag
+  
   ProgVar* operator=(const Variant& value);
 
   bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,

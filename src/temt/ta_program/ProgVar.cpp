@@ -581,6 +581,16 @@ void ProgVar::Cleanup() {
   //TODO: anything about DynEnums???
 }
 
+void ProgVar::ToggleSaveVal() {
+  if (HasVarFlag(SAVE_VAL)) {
+    ClearVarFlag(SAVE_VAL);
+  }
+  else {
+    SetVarFlag(SAVE_VAL);
+  }
+  SigEmitUpdated();
+}
+
 void ProgVar::SigEmit(int sls, void* op1, void* op2) {
   // dynenum is programmed to send us notifies, we trap those and
   // turn them into changes of us, to force gui to update (esp enum list)
