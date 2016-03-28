@@ -113,6 +113,12 @@ public:
   // set from variant value (general purpose variable setting) -- does not change type of variable, just sets from variant value
   virtual Variant GetVar();
   // get value as a variant value -- for hard-code use of the variable value
+
+  virtual void   SetValFromString(const String& str_val);
+  // set variable value from string -- does not change the type of the variable
+  virtual String GetStringVal();
+  // get value of variable as a string
+
   static TypeDef* GetTypeDefFromString(const String& tstr, bool& ref);
   // get a typedef from a type string -- also indicates if it is a reference arg
   static VarType  GetTypeFromTypeDef(TypeDef* td);

@@ -565,6 +565,15 @@ bool ProgVar::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return true;
 }
 
+void ProgVar::SetValFromString(const String& str_val) {
+  SetVar((Variant)str_val);
+}
+
+String ProgVar::GetStringVal() {
+  return GetVar().toString();
+}
+
+
 void ProgVar::Cleanup() {
   if (!((var_type == T_Int) || (var_type == T_HardEnum)))
     int_val = 0;
