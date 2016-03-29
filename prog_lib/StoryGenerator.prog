@@ -1,38 +1,38 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9337
+// ta_Dump File v3.0 -- code v7.8.6.0 rev9341
 Program .projects[0].programs.gp[3][5] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
   UserDataItem @[1] { };
  };
 
- ProgObjList @.objs = [8] {
-  DataTable_Group @[0] = [2] { 
+ ProgObjList @.objs = [10] {
+  DataTable_Group @[0] = [1] { 
    DataTable @[0] { 
-    DataTableCols @.data = [6] {
+    DataTableCols @.data = [7] {
      String_Data @[0] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @[0] { };
       };
      };
-     bool_Data @[1] { 
+     String_Data @[1] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @[0] { };
       };
      };
-     float_Data @[2] { 
+     bool_Data @[2] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @[0] { };
       };
      };
-     int_Data @[3] { 
+     float_Data @[3] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @[0] { };
+      };
+     };
+     int_Data @[4] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @[0] { };
        UserDataItem @[1] { };
-      };
-     };
-     String_Data @[4] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @[0] { };
       };
      };
      String_Data @[5] { 
@@ -40,49 +40,7 @@ Program .projects[0].programs.gp[3][5] {
        UserDataItem @[0] { };
       };
      };
-    };
-
-    DataOpList @.last_sort_spec.ops = [6] {
-     DataSortEl @[0] { };
-     DataSortEl @[1] { };
-     DataSortEl @[2] { };
-     DataSortEl @[3] { };
-     DataSortEl @[4] { };
-     DataSortEl @[5] { };
-    };
-
-    DataTableCell_List @.control_panel_cells = [0] {
-    };
-   };
-   DataTable @[1] { 
-    DataTableCols @.data = [6] {
-     String_Data @[0] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @[0] { };
-      };
-     };
-     bool_Data @[1] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @[0] { };
-      };
-     };
-     float_Data @[2] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @[0] { };
-      };
-     };
-     int_Data @[3] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @[0] { };
-       UserDataItem @[1] { };
-      };
-     };
-     String_Data @[4] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @[0] { };
-      };
-     };
-     String_Data @[5] { 
+     String_Data @[6] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @[0] { };
       };
@@ -102,42 +60,80 @@ Program .projects[0].programs.gp[3][5] {
     };
    };
   };
-  DataTable @[1] { 
-   DataTableCols @.data = [4] {
-    String_Data @[0] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
+  DataTable_Group @[1] = [1] { 
+   DataTable @[0] { 
+    DataTableCols @.data = [7] {
+     String_Data @[0] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @[0] { };
+      };
+     };
+     String_Data @[1] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @[0] { };
+      };
+     };
+     bool_Data @[2] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @[0] { };
+      };
+     };
+     float_Data @[3] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @[0] { };
+      };
+     };
+     int_Data @[4] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @[0] { };
+       UserDataItem @[1] { };
+      };
+     };
+     String_Data @[5] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @[0] { };
+      };
+     };
+     String_Data @[6] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @[0] { };
+      };
      };
     };
-    bool_Data @[1] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[2] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    int_Data @[3] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-      UserDataItem @[1] { };
-     };
-    };
-   };
 
-   DataOpList @.last_sort_spec.ops = [0] {
-   };
+    DataOpList @.last_sort_spec.ops = [0] {
+    };
 
-   DataTableCell_List @.control_panel_cells = [0] {
+    DataTableCell_List @.control_panel_cells = [0] {
+    };
    };
   };
   DataTable @[2] { 
-   DataTableCols @.data = [1] {
+   DataTableCols @.data = [5] {
     String_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
+     };
+    };
+    String_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    bool_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[3] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    int_Data @[4] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
      };
     };
    };
@@ -164,50 +160,8 @@ Program .projects[0].programs.gp[3][5] {
    };
   };
   DataTable @[4] { 
-   DataTableCols @.data = [9] {
-    int_Data @[0] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-      UserDataItem @[1] { };
-     };
-    };
-    String_Data @[1] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[2] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[3] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    int_Data @[4] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    int_Data @[5] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    bool_Data @[6] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    int_Data @[7] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-      UserDataItem @[1] { };
-     };
-    };
-    float_Data @[8] { 
+   DataTableCols @.data = [1] {
+    String_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
      };
@@ -278,6 +232,63 @@ Program .projects[0].programs.gp[3][5] {
    };
   };
   DataTable @[6] { 
+   DataTableCols @.data = [9] {
+    int_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    String_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[3] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    int_Data @[4] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    int_Data @[5] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    bool_Data @[6] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    int_Data @[7] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    float_Data @[8] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataTable @[7] { 
    DataTableCols @.data = [3] {
     int_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
@@ -304,35 +315,92 @@ Program .projects[0].programs.gp[3][5] {
    DataTableCell_List @.control_panel_cells = [0] {
    };
   };
-  DataTable @[7] { 
-   DataTableCols @.data = [6] {
+  DataTable @[8] { 
+   DataTableCols @.data = [7] {
     String_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
      };
     };
-    bool_Data @[1] { 
+    String_Data @[1] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
      };
     };
-    float_Data @[2] { 
+    bool_Data @[2] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
      };
     };
-    int_Data @[3] { 
+    float_Data @[3] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    int_Data @[4] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
       UserDataItem @[1] { };
      };
     };
-    String_Data @[4] { 
+    String_Data @[5] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
      };
     };
+    String_Data @[6] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+
+   DataOpList @.last_sort_spec.ops = [6] {
+    DataSortEl @[0] { };
+    DataSortEl @[1] { };
+    DataSortEl @[2] { };
+    DataSortEl @[3] { };
+    DataSortEl @[4] { };
+    DataSortEl @[5] { };
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataTable @[9] { 
+   DataTableCols @.data = [7] {
+    String_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    bool_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[3] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    int_Data @[4] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
     String_Data @[5] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[6] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
      };
@@ -354,7 +422,7 @@ Program .projects[0].programs.gp[3][5] {
   ProgVar @[0] { };
  };
 
- ProgVar_List @.vars = [19] {
+ ProgVar_List @.vars = [21] {
   ProgVar @[0] { };
   ProgVar @[1] { };
   ProgVar @[2] { };
@@ -374,35 +442,42 @@ Program .projects[0].programs.gp[3][5] {
   ProgVar @[16] { };
   ProgVar @[17] { };
   ProgVar @[18] { };
+  ProgVar @[19] { };
+  ProgVar @[20] { };
  };
 
  Function_List @.functions = [27] {
   Function @[0] { 
-   ProgVar_List @.args = [0] {
+   ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
    };
 
    ProgEl_List @.fun_code = [2] {
     LocalVars @[0] { 
-     ProgVar_List @.local_vars = [6] {
+     ProgVar_List @.local_vars = [7] {
       ProgVar @[0] { };
       ProgVar @[1] { };
       ProgVar @[2] { };
       ProgVar @[3] { };
       ProgVar @[4] { };
       ProgVar @[5] { };
+      ProgVar @[6] { };
      };
     };
     ForLoop @[1] { 
-     ProgEl_List @.loop_code = [5] {
-      AssignExpr @[0] { };
-      MethodCall @[1] { 
+     ProgEl_List @.loop_code = [8] {
+      MatrixAssign @[0] { };
+      AssignExpr @[1] { };
+      IfContinue @[2] { };
+      AssignExpr @[3] { };
+      MethodCall @[4] { 
        ProgArg_List @.meth_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
        };
       };
-      AssignExpr @[2] { };
-      ForLoop @[3] { 
+      AssignExpr @[5] { };
+      ForLoop @[6] { 
        ProgEl_List @.loop_code = [6] {
 	AssignExpr @[0] { };
 	If @[1] { 
@@ -468,7 +543,7 @@ Program .projects[0].programs.gp[3][5] {
 	};
        };
       };
-      If @[4] { 
+      If @[7] { 
        ProgEl_List @.true_code = [1] {
 	MiscCall @[0] { 
 	 ProgArg_List @.meth_args = [9] {
@@ -493,16 +568,51 @@ Program .projects[0].programs.gp[3][5] {
    ProgVar_List @.args = [0] {
    };
 
-   ProgEl_List @.fun_code = [6] {
+   ProgEl_List @.fun_code = [8] {
     LocalVars @[0] { 
-     ProgVar_List @.local_vars = [0] {
+     ProgVar_List @.local_vars = [2] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
      };
     };
-    FunctionCall @[1] { 
-     ProgArg_List @.fun_args = [0] {
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [0] {
      };
     };
-    MethodCall @[2] { 
+    AssignExpr @[2] { };
+    ForeachLoop @[3] { 
+     ProgEl_List @.loop_code = [3] {
+      FunctionCall @[0] { 
+       ProgArg_List @.fun_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+      If @[1] { 
+       ProgEl_List @.true_code = [2] {
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [1] {
+	  ProgArg @[0] { };
+	 };
+	};
+	MethodCall @[1] { 
+	 ProgArg_List @.meth_args = [1] {
+	  ProgArg @[0] { };
+	 };
+	};
+       };
+      };
+      Else @[2] { 
+       ProgEl_List @.else_code = [1] {
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [1] {
+	  ProgArg @[0] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[4] { 
      ProgArg_List @.meth_args = [12] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -518,20 +628,21 @@ Program .projects[0].programs.gp[3][5] {
       ProgArg @[11] { };
      };
     };
-    DataSelectRowsProg @[3] { 
+    DataSelectRowsProg @[5] { 
      DataOpList @.select_spec.ops = [1] {
       DataSelectEl @[0] { };
      };
     };
-    DataGroupProg @[4] { 
-     DataOpList @.group_spec.ops = [4] {
+    DataGroupProg @[6] { 
+     DataOpList @.group_spec.ops = [5] {
       DataGroupEl @[0] { };
       DataGroupEl @[1] { };
       DataGroupEl @[2] { };
       DataGroupEl @[3] { };
+      DataGroupEl @[4] { };
      };
     };
-    MathCall @[5] { 
+    MathCall @[7] { 
      ProgArg_List @.meth_args = [3] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -978,9 +1089,9 @@ Program .projects[0].programs.gp[3][5] {
     ProgVar @[0] { };
    };
 
-   ProgEl_List @.fun_code = [6] {
+   ProgEl_List @.fun_code = [7] {
     LocalVars @[0] { 
-     ProgVar_List @.local_vars = [9] {
+     ProgVar_List @.local_vars = [8] {
       ProgVar @[0] { };
       ProgVar @[1] { };
       ProgVar @[2] { };
@@ -989,7 +1100,6 @@ Program .projects[0].programs.gp[3][5] {
       ProgVar @[5] { };
       ProgVar @[6] { };
       ProgVar @[7] { };
-      ProgVar @[8] { };
      };
     };
     FunctionCall @[1] { 
@@ -1000,21 +1110,47 @@ Program .projects[0].programs.gp[3][5] {
      };
     };
     MethodCall @[2] { 
-     ProgArg_List @.meth_args = [4] {
+     ProgArg_List @.meth_args = [13] {
       ProgArg @[0] { };
       ProgArg @[1] { };
       ProgArg @[2] { };
       ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+      ProgArg @[9] { };
+      ProgArg @[10] { };
+      ProgArg @[11] { };
+      ProgArg @[12] { };
      };
     };
-    AssignExpr @[3] { };
-    MethodCall @[4] { 
+    If @[3] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    AssignExpr @[4] { };
+    MethodCall @[5] { 
      ProgArg_List @.meth_args = [2] {
       ProgArg @[0] { };
       ProgArg @[1] { };
      };
     };
-    ForLoop @[5] { 
+    ForLoop @[6] { 
      ProgEl_List @.loop_code = [3] {
       AssignExpr @[0] { };
       If @[1] { 
@@ -1215,7 +1351,7 @@ Program .projects[0].programs.gp[3][5] {
    ProgVar_List @.args = [0] {
    };
 
-   ProgEl_List @.fun_code = [7] {
+   ProgEl_List @.fun_code = [8] {
     LocalVars @[0] { 
      ProgVar_List @.local_vars = [1] {
       ProgVar @[0] { };
@@ -1231,24 +1367,34 @@ Program .projects[0].programs.gp[3][5] {
      };
     };
     AssignExpr @[2] { };
-    MethodCall @[3] { 
-     ProgArg_List @.meth_args = [4] {
+    AssignExpr @[3] { };
+    MethodCall @[4] { 
+     ProgArg_List @.meth_args = [13] {
       ProgArg @[0] { };
       ProgArg @[1] { };
       ProgArg @[2] { };
       ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+      ProgArg @[9] { };
+      ProgArg @[10] { };
+      ProgArg @[11] { };
+      ProgArg @[12] { };
      };
     };
-    MethodCall @[4] { 
+    MethodCall @[5] { 
      ProgArg_List @.meth_args = [1] {
       ProgArg @[0] { };
      };
     };
-    MethodCall @[5] { 
+    MethodCall @[6] { 
      ProgArg_List @.meth_args = [0] {
      };
     };
-    FunctionCall @[6] { 
+    FunctionCall @[7] { 
      ProgArg_List @.fun_args = [0] {
      };
     };
@@ -1920,7 +2066,7 @@ Program .projects[0].programs.gp[3][5] {
   el_typ=DataTable;
   el_def=0;
   DataTable_Group @[0] {
-   name="Stories";
+   name="ActiveStories";
    el_typ=DataTable;
    el_def=0;
    save_tables=1;
@@ -1938,7 +2084,35 @@ Program .projects[0].programs.gp[3][5] {
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.06898955;
+	value 8 0=0.06908584;
+	val_type_fixed=0;
+       };
+      };
+      name="story";
+      col_flags=SAVE_DATA|CHECKBOX;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=99;
+      ar {
+       name="ar";
+      [20] "BallStory";"BallStory";"BallStory";"BallStory";"BallStory";"BallStory";"BallStory";"ball";"ball";"ball";
+"BallStory";"BallStory";"BallStory";"BallStory";"BallStory";"BallStory";"BallStory";"BallStory";"ball";"BallStory";
+      };
+     };
+     String_Data @[1] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="view_panel_wd";
+	value 8 0=0.06908584;
 	val_type_fixed=0;
        };
       };
@@ -1959,14 +2133,14 @@ Program .projects[0].programs.gp[3][5] {
 "drop_bounce";"$colors";"$sizes";"$dirs";"$heights";"roll_hit";"roll_hit";"roll_hit";;"roll_cat";
       };
      };
-     bool_Data @[1] {
+     bool_Data @[2] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_248";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.03344948;
+	value 8 0=0.03349616;
 	val_type_fixed=0;
        };
       };
@@ -1987,14 +2161,14 @@ Program .projects[0].programs.gp[3][5] {
 true;false;false;false;false;true;true;true;false;true;
       };
      };
-     float_Data @[2] {
+     float_Data @[3] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_235";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.03414634;
+	value 8 0=0.034194;
 	val_type_fixed=0;
        };
       };
@@ -2016,7 +2190,7 @@ true;false;false;false;false;true;true;true;false;true;
 1;0;0;0;0;1;1;1;0;1;
       };
      };
-     int_Data @[3] {
+     int_Data @[4] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_232";
        el_typ=UserDataItem;
@@ -2028,7 +2202,7 @@ true;false;false;false;false;true;true;true;false;true;
        };
        UserDataItem @[1] {
 	name="view_panel_wd";
-	value 8 0=0.02508711;
+	value 8 0=0.02512212;
 	val_type_fixed=0;
        };
       };
@@ -2050,14 +2224,14 @@ true;false;false;false;false;true;true;true;false;true;
 10;0;0;0;0;0;10;20;0;40;
       };
      };
-     String_Data @[4] {
+     String_Data @[5] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_234";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.4383275;
+	value 8 0=0.4389393;
 	val_type_fixed=0;
        };
       };
@@ -2075,18 +2249,18 @@ true;false;false;false;false;true;true;true;false;true;
       width=629;
       ar {
        name="ar";
-      [20] "the $sizes%50 $colors%50 ball:Ph rolls:V [%33 to the $dirs ] [%20 [ behind | in front of ] the block:Po ] .";"the $sizes%50 $colors%50 ball:Ph rolls:V [%33 to the $dirs ] [ behind | in front of ] the cat:Po .";"the cat:A chases:V after the ball:Ph .";"it:A hits:V the ball:Ph [%50 but misses ] .";"[?!1misses? the ball:Ph rolls:V back [?:L? to the right:L?left:L? left:L?right:L? ] . ]";"the $sizes%50 $colors%50 ball:Ph bounces:V $heights%50 [%33 to the $dirs ] .";"the $sizes%50 $colors%50 ball:Ph drops:V [%50 from the [ |%80 table:Li |%20 hand:Li ] ] .";;;;
-"it:Ph bounces:V $heights%50 [%33 to the $dirs ] .";"[:J red | green | blue ]";"[:J small | medium-sized | large ]";"[:L left | right ]";"[:R high | medium-high | low ]";"the $sizes%50 $colors%50 ball:Ph rolls:V to the $dirs into the block:Po .";"it:Ph hits:V the block:Po .";"it:Ph rolls:V back to the right:L?left:L? left:L?right:L?  .";;"goto:10%50?2misses?";
+      [20] "<p> the $sizes%50 $colors%50 ball:Ph rolls:V to the $dirs [%20 [ behind | in front of ] the block:Po ] .";"<p> the $sizes%50 $colors%50 ball:Ph rolls:V to the $dirs [ behind | in front of ] the cat:Po .";"the cat:A chases:V after the ball:Ph .";"the cat:A hits:V the ball:Ph [%50 but misses ] .";"[?!1misses? the ball:Ph rolls:V back [?:L? to the right:L?left:L? left:L?right:L? ] . ]";"<p> the $sizes%50 $colors%50 ball:Ph bounces:V $heights to the $dirs .";"<p> the $sizes%50 $colors%50 ball:Ph drops:V [%50 from the [ |%80 table:Li |%20 hand:Li ] ] .";;;;
+"the ball:Ph bounces:V $heights%50 [%33 to the $dirs ] .";"[:J red | green | blue ]";"[:J small | medium-sized | large ]";"[:L left | right ]";"[:R high | medium-high | low ]";"<p> the $sizes%50 $colors%50 ball:Ph rolls:V to the $dirs into the block:Po .";"the ball:Ph hits:V the block:Po .";"the ball:Ph rolls:V back to the right:L?left:L? left:L?right:L?  .";;"goto:10%50?2misses?";
       };
      };
-     String_Data @[5] {
+     String_Data @[6] {
       UserDataItem_List @*(.user_data_) {
        name=;
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.2926829;
+	value 8 0=0.2930914;
 	val_type_fixed=0;
        };
       };
@@ -2161,7 +2335,13 @@ true;false;false;false;false;true;true;true;false;true;
      el_def=0;
     };
    };
-   DataTable @[1] {
+  };
+  DataTable_Group @[1] {
+   name="InactiveStories";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=1;
+   DataTable @[0] {
     name="DebugStory";
     desc=;
     data {
@@ -2170,12 +2350,38 @@ true;false;false;false;false;true;true;true;false;true;
      el_def=0;
      String_Data @[0] {
       UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_302";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="view_panel_wd";
+	value 8 0=0.06908584;
+	val_type_fixed=0;
+       };
+      };
+      name="story";
+      col_flags=SAVE_DATA|CHECKBOX;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+      ar {
+       name="ar";
+      [3] ;;;      };
+     };
+     String_Data @[1] {
+      UserDataItem_List @*(.user_data_) {
        name=;
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.06898955;
+	value 8 0=0.03349616;
 	val_type_fixed=0;
        };
       };
@@ -2192,17 +2398,16 @@ true;false;false;false;false;true;true;true;false;true;
       width=99;
       ar {
        name="ar";
-      [10] "bounce";"drop_bounce";"drop_bounce";"roll";"roll_cat";"roll_cat";"roll_cat";"roll_cat";"$colors";"$sizes";
-      };
+      [3] "$colors";"$sizes";"bounce";      };
      };
-     bool_Data @[1] {
+     bool_Data @[2] {
       UserDataItem_List @*(.user_data_) {
        name=;
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.03344948;
+	value 8 0=0.034194;
 	val_type_fixed=0;
        };
       };
@@ -2219,17 +2424,16 @@ true;false;false;false;false;true;true;true;false;true;
       width=48;
       ar {
        name="ar";
-      [10] true;true;true;true;true;true;true;true;false;false;
-      };
+      [3] false;false;true;      };
      };
-     float_Data @[2] {
+     float_Data @[3] {
       UserDataItem_List @*(.user_data_) {
        name=;
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.03414634;
+	value 8 0=0.02512212;
 	val_type_fixed=0;
        };
       };
@@ -2247,10 +2451,9 @@ true;false;false;false;false;true;true;true;false;true;
       width=49;
       ar {
        name="ar";
-      [10] 1;1;1;1;1;1;1;1;0;0;
-      };
+      [3] 0;0;1;      };
      };
-     int_Data @[3] {
+     int_Data @[4] {
       UserDataItem_List @*(.user_data_) {
        name=;
        el_typ=UserDataItem;
@@ -2262,7 +2465,7 @@ true;false;false;false;false;true;true;true;false;true;
        };
        UserDataItem @[1] {
 	name="view_panel_wd";
-	value 8 0=0.02508711;
+	value 8 0=0.4982554;
 	val_type_fixed=0;
        };
       };
@@ -2280,17 +2483,16 @@ true;false;false;false;false;true;true;true;false;true;
       width=36;
       ar {
        name="ar";
-      [10] 0;0;10;0;0;10;20;30;0;0;
-      };
+      [3] 0;0;0;      };
      };
-     String_Data @[4] {
+     String_Data @[5] {
       UserDataItem_List @*(.user_data_) {
        name=;
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.497561;
+	value 8 0=0.2930914;
 	val_type_fixed=0;
        };
       };
@@ -2308,17 +2510,16 @@ true;false;false;false;false;true;true;true;false;true;
       width=714;
       ar {
        name="ar";
-      [10] "the $sizes%50 $colors%100?0:J? ball:P rolled:V [%50 to the [:L right | left ] ||%20 [ behind | in front of ] the block:Po ] .";"the ball dropped [%50 from the [ table | hand ] ] .";"it bounced [%50 [ high | medium | low ] || to the [ right | left ] ] .";"the ball rolled [%50 to the [ right | left ] || [%20 [ behind | in front of ] the block ] .";"the ball rolled to the [ right | left ] [ behind | in front of ] the cat .";"the cat chased after the ball .";"it hit the ball [%20 but missed ] .";"the ball rolled back .";"[:J red | green | blue ]";"[:J small | medium | large ]";
-      };
+      [3] "[:J red | green | blue ]";"[:J small | medium | large ]";"the $sizes%50 $colors%100?0:J? ball:P rolled:V [%50 to the [:L right | left ] ||%20 [ behind | in front of ] the block:Po ] .";      };
      };
-     String_Data @[5] {
+     String_Data @[6] {
       UserDataItem_List @*(.user_data_) {
        name=;
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.2926829;
+	value 8 0=0.06978367;
 	val_type_fixed=0;
        };
       };
@@ -2336,8 +2537,7 @@ true;false;false;false;false;true;true;true;false;true;
       width=420;
       ar {
        name="ar";
-      [10] ;;;;;;"pronoun";"if rolled left originally, it now rolls right, etc";;;
-      };
+      [3] ;;;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -2345,55 +2545,25 @@ true;false;false;false;false;true;true;true;false;true;
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name="row_indexes";
-    [3] 8;9;0;    };
+     name=;
+    [3] 0;1;2;    };
     last_sort_spec {
-     name="last_sort_spec";
+     name=;
      ops {
       name="ops";
       el_typ=DataSortEl;
       el_def=0;
-      DataSortEl @[0] {
-       col_name="group";
-       name="group_up_0";
-       order=ASCENDING;
-      };
-      DataSortEl @[1] {
-       col_name="seq";
-       name="seq_up_1";
-       order=ASCENDING;
-      };
-      DataSortEl @[2] {
-       col_name="comments";
-       name="comments_up_2";
-       order=ASCENDING;
-      };
-      DataSortEl @[3] {
-       col_name="comments";
-       name="comments_up_3";
-       order=ASCENDING;
-      };
-      DataSortEl @[4] {
-       col_name="comments";
-       name="comments_up_4";
-       order=ASCENDING;
-      };
-      DataSortEl @[5] {
-       col_name="comments";
-       name="comments_up_5";
-       order=ASCENDING;
-      };
      };
     };
     control_panel_cells {
-     name="control_panel_cells";
+     name=;
      el_typ=DataTableCell;
      el_def=0;
     };
    };
   };
-  DataTable @[1] {
-   name="Groups";
+  DataTable @[2] {
+   name="StoryGroups";
    desc=;
    data {
     name="data";
@@ -2401,12 +2571,35 @@ true;false;false;false;false;true;true;true;false;true;
     el_def=0;
     String_Data @[0] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_273";
+      name="UserDataItem_List_299";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06898955;
+       value 8 0=0.06908584;
+       val_type_fixed=0;
+      };
+     };
+     name="story";
+     col_flags=SAVE_DATA|CHECKBOX;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=99;
+    };
+    String_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_300";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -2422,14 +2615,14 @@ true;false;false;false;false;true;true;true;false;true;
      [0]      };
      width=99;
     };
-    bool_Data @[1] {
+    bool_Data @[2] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_274";
+      name="UserDataItem_List_301";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.03344948;
+       value 8 0=0.03349616;
        val_type_fixed=0;
       };
      };
@@ -2445,14 +2638,14 @@ true;false;false;false;false;true;true;true;false;true;
      [0]      };
      width=48;
     };
-    float_Data @[2] {
+    float_Data @[3] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_275";
+      name="UserDataItem_List_302";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.03414634;
+       value 8 0=0.034194;
        val_type_fixed=0;
       };
      };
@@ -2469,9 +2662,9 @@ true;false;false;false;false;true;true;true;false;true;
      [0]      };
      width=49;
     };
-    int_Data @[3] {
+    int_Data @[4] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_276";
+      name="UserDataItem_List_303";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -2481,7 +2674,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.02508711;
+       value 8 0=0.02512212;
        val_type_fixed=0;
       };
      };
@@ -2505,7 +2698,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [0]    };
+   [5] 0;1;2;3;4;   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -2520,7 +2713,7 @@ true;false;false;false;false;true;true;true;false;true;
     el_def=0;
    };
   };
-  DataTable @[2] {
+  DataTable @[3] {
    name="SentenceHistory";
    desc=;
    data {
@@ -2557,7 +2750,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [0]    };
+   [2] 1;0;   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -2572,7 +2765,7 @@ true;false;false;false;false;true;true;true;false;true;
     el_def=0;
    };
   };
-  DataTable @[3] {
+  DataTable @[4] {
    name="PrevSentenceHistory";
    desc=;
    data {
@@ -2609,7 +2802,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [0]    };
+   [2] 0;1;   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -2624,7 +2817,7 @@ true;false;false;false;false;true;true;true;false;true;
     el_def=0;
    };
   };
-  DataTable @[4] {
+  DataTable @[5] {
    name="CurSentence";
    desc=;
    data {
@@ -2859,7 +3052,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [0]    };
+   [6] 0;1;2;3;4;5;   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -2874,7 +3067,7 @@ true;false;false;false;false;true;true;true;false;true;
     el_def=0;
    };
   };
-  DataTable @[5] {
+  DataTable @[6] {
    name="PrevSentence";
    desc=;
    data {
@@ -2893,7 +3086,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -2916,7 +3109,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -2939,7 +3132,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -2963,7 +3156,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -2987,7 +3180,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -3011,7 +3204,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -3035,7 +3228,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -3063,7 +3256,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -3086,7 +3279,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -3109,7 +3302,9 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [0]    };
+   [21] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -3124,7 +3319,7 @@ true;false;false;false;false;true;true;true;false;true;
     el_def=0;
    };
   };
-  DataTable @[6] {
+  DataTable @[7] {
    name="CurSwitchStack";
    desc="stack of switches -- current one at the end";
    data {
@@ -3143,7 +3338,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -3171,7 +3366,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.06875;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -3194,7 +3389,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06944445;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -3208,7 +3403,7 @@ true;false;false;false;false;true;true;true;false;true;
      dim_names {
       name="dim_names";
      [0]      };
-     width=0;
+     width=99;
     };
    };
    data_flags=AUTO_CALC;
@@ -3232,21 +3427,44 @@ true;false;false;false;false;true;true;true;false;true;
     el_def=0;
    };
   };
-  DataTable @[7] {
-   name="TmpFilt";
+  DataTable @[8] {
+   name="AllStories";
    desc=;
    data {
     name="data";
-    el_typ=DataColT;
+    el_typ=String_Data;
     el_def=0;
     String_Data @[0] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_271";
+      name=;
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06898955;
+       value 8 0=0.06908584;
+       val_type_fixed=0;
+      };
+     };
+     name="story";
+     col_flags=SAVE_DATA|CHECKBOX;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=99;
+    };
+    String_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -3262,14 +3480,14 @@ true;false;false;false;false;true;true;true;false;true;
      [0]      };
      width=99;
     };
-    bool_Data @[1] {
+    bool_Data @[2] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_272";
+      name=;
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.03344948;
+       value 8 0=0.03349616;
        val_type_fixed=0;
       };
      };
@@ -3285,14 +3503,14 @@ true;false;false;false;false;true;true;true;false;true;
      [0]      };
      width=48;
     };
-    float_Data @[2] {
+    float_Data @[3] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_273";
+      name=;
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.03414634;
+       value 8 0=0.034194;
        val_type_fixed=0;
       };
      };
@@ -3309,9 +3527,9 @@ true;false;false;false;false;true;true;true;false;true;
      [0]      };
      width=49;
     };
-    int_Data @[3] {
+    int_Data @[4] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_274";
+      name=;
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -3321,7 +3539,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.02508711;
+       value 8 0=0.02512212;
        val_type_fixed=0;
       };
      };
@@ -3338,14 +3556,14 @@ true;false;false;false;false;true;true;true;false;true;
      [0]      };
      width=36;
     };
-    String_Data @[4] {
+    String_Data @[5] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_275";
+      name=;
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.4383275;
+       value 8 0=0.4389393;
        val_type_fixed=0;
       };
      };
@@ -3362,14 +3580,244 @@ true;false;false;false;false;true;true;true;false;true;
      [0]      };
      width=629;
     };
-    String_Data @[5] {
+    String_Data @[6] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_276";
+      name=;
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.2926829;
+       value 8 0=0.2930914;
+       val_type_fixed=0;
+      };
+     };
+     name="comments";
+     desc="enter words describing events -- use [ ] around optional elements (can be nested) and | between alternatives (put space around each of these) -- use %50 (no space) e.g. to specify probability of an item (will be normalized automatically)";
+     col_flags=SAVE_DATA|CHECKBOX;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=420;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name=;
+   [16] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;   };
+   last_sort_spec {
+    name=;
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+     DataSortEl @[0] {
+      col_name="story";
+      name="story_up_0";
+      order=ASCENDING;
+     };
+     DataSortEl @[1] {
+      col_name="group";
+      name="group_up_1";
+      order=ASCENDING;
+     };
+     DataSortEl @[2] {
+      col_name="seq";
+      name="seq_up_2";
+      order=ASCENDING;
+     };
+     DataSortEl @[3] {
+      col_name="comments";
+      name="comments_up_3";
+      order=ASCENDING;
+     };
+     DataSortEl @[4] {
+      col_name="comments";
+      name="comments_up_4";
+      order=ASCENDING;
+     };
+     DataSortEl @[5] {
+      col_name="comments";
+      name="comments_up_5";
+      order=ASCENDING;
+     };
+    };
+   };
+   control_panel_cells {
+    name=;
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable @[9] {
+   name="AllOnStories";
+   desc=;
+   data {
+    name="data";
+    el_typ=DataColT;
+    el_def=0;
+    String_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_297";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.06908584;
+       val_type_fixed=0;
+      };
+     };
+     name="story";
+     col_flags=SAVE_DATA|CHECKBOX;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=99;
+    };
+    String_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_298";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.06908584;
+       val_type_fixed=0;
+      };
+     };
+     name="group";
+     col_flags=SAVE_DATA|CHECKBOX;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=99;
+    };
+    bool_Data @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_299";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.03349616;
+       val_type_fixed=0;
+      };
+     };
+     name="on";
+     col_flags=SAVE_DATA|CHECKBOX;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=48;
+    };
+    float_Data @[3] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_300";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.034194;
+       val_type_fixed=0;
+      };
+     };
+     name="freq";
+     desc="specify relative frequency -- will be normalized globally so you can just enter relative numbers here";
+     col_flags=SAVE_DATA|CHECKBOX;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=49;
+    };
+    int_Data @[4] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_301";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 8 0=0.02512212;
+       val_type_fixed=0;
+      };
+     };
+     name="seq";
+     desc="sequencing counter -- use this to maintain order of items -- will be sorted in this order suggest using 10,20 etc to allow for future expansion";
+     col_flags=SAVE_DATA|CHECKBOX;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=36;
+    };
+    String_Data @[5] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_302";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.4389393;
+       val_type_fixed=0;
+      };
+     };
+     name="sentence";
+     desc="enter words describing events -- use [ ] around optional elements (can be nested),  | between mutually exclusive alternatives, || between non-mutex alternatives (order independent), and |> between non-mutex alternatives (order dependent) (put space around each of these) -- use %50 (no space) e.g. to specify probability of any item (will be normalized automatically if multiple alternatives";
+     col_flags=SAVE_DATA|CHECKBOX;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=629;
+    };
+    String_Data @[6] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_303";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.2930914;
        val_type_fixed=0;
       };
      };
@@ -3393,7 +3841,8 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [0]    };
+   [12] 11;10;9;8;7;6;5;4;3;2;
+1;0;   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -3433,17 +3882,6 @@ true;false;false;false;false;true;true;true;false;true;
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
-   name="cur_story";
-   var_type=T_Object;
-   object_type=DataTable;
-   object_val=.projects[0].programs.gp[3][5].objs[0][0]$$;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-   reference=0;
-   desc=;
-   init_from=NULL;
-  };
-  ProgVar @[1] {
    name="last_switch";
    var_type=T_Int;
    flags=CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
@@ -3451,7 +3889,7 @@ true;false;false;false;false;true;true;true;false;true;
    desc=;
    init_from=NULL;
   };
-  ProgVar @[2] {
+  ProgVar @[1] {
    name="last_switch_markup";
    var_type=T_String;
    flags=CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
@@ -3459,7 +3897,7 @@ true;false;false;false;false;true;true;true;false;true;
    desc=;
    init_from=NULL;
   };
-  ProgVar @[3] {
+  ProgVar @[2] {
    name="last_eff_node";
    var_type=T_Int;
    flags=CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
@@ -3467,10 +3905,18 @@ true;false;false;false;false;true;true;true;false;true;
    desc=;
    init_from=NULL;
   };
-  ProgVar @[4] {
+  ProgVar @[3] {
    name="prev_popped_switch";
    var_type=T_Int;
    flags=CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[4] {
+   name="cur_story";
+   var_type=T_String;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
@@ -3516,10 +3962,10 @@ true;false;false;false;false;true;true;true;false;true;
    init_from=NULL;
   };
   ProgVar @[10] {
-   name="Groups";
+   name="StoryGroups";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[3][5].objs[1]$$;
+   object_val=.projects[0].programs.gp[3][5].objs[2]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -3530,7 +3976,7 @@ true;false;false;false;false;true;true;true;false;true;
    name="CurSentence";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[3][5].objs[4]$$;
+   object_val=.projects[0].programs.gp[3][5].objs[5]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -3541,17 +3987,6 @@ true;false;false;false;false;true;true;true;false;true;
    name="CurSwitchStack";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[3][5].objs[6]$$;
-   objs_ptr=1;
-   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-   reference=0;
-   desc=;
-   init_from=NULL;
-  };
-  ProgVar @[13] {
-   name="TmpFilt";
-   var_type=T_Object;
-   object_type=DataTable;
    object_val=.projects[0].programs.gp[3][5].objs[7]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3559,8 +3994,19 @@ true;false;false;false;false;true;true;true;false;true;
    desc=;
    init_from=NULL;
   };
+  ProgVar @[13] {
+   name="AllOnStories";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[3][5].objs[9]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
   ProgVar @[14] {
-   name="Stories";
+   name="ActiveStories";
    var_type=T_Object;
    object_type=DataTable_Group;
    object_val=.projects[0].programs.gp[3][5].objs[0]$$;
@@ -3583,7 +4029,7 @@ true;false;false;false;false;true;true;true;false;true;
    name="PrevSentence";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[3][5].objs[5]$$;
+   object_val=.projects[0].programs.gp[3][5].objs[6]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -3594,7 +4040,7 @@ true;false;false;false;false;true;true;true;false;true;
    name="SentenceHistory";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[3][5].objs[2]$$;
+   object_val=.projects[0].programs.gp[3][5].objs[3]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -3605,7 +4051,29 @@ true;false;false;false;false;true;true;true;false;true;
    name="PrevSentenceHistory";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[3][5].objs[3]$$;
+   object_val=.projects[0].programs.gp[3][5].objs[4]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[19] {
+   name="InactiveStories";
+   var_type=T_Object;
+   object_type=DataTable_Group;
+   object_val=.projects[0].programs.gp[3][5].objs[1]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[20] {
+   name="AllStories";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[3][5].objs[8]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -3620,15 +4088,26 @@ true;false;false;false;false;true;true;true;false;true;
   Function @[0] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="CheckAllSentences() returns: int";
-   pre_compile_code_string="CheckAllSentences() returns: int";
+   code_string="CheckAllSentences(DataTable* story) returns: bool";
+   pre_compile_code_string="CheckAllSentences(DataTable* story) returns: bool";
    name="CheckAllSentences";
-   return_type=T_Int;
+   return_type=T_Bool;
    object_type=taOBase;
    args {
     name="ProgVar_List_1";
     el_typ=ProgVar;
     el_def=0;
+    ProgVar @[0] {
+     name="story";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=NULL;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
    };
    fun_code {
     name="ProgEl_List_416";
@@ -3699,28 +4178,88 @@ true;false;false;false;false;true;true;true;false;true;
        desc=;
        init_from=NULL;
       };
+      ProgVar @[6] {
+       name="on";
+       var_type=T_Bool;
+       bool_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
      };
     };
     ForLoop @[1] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="for (row = 0; row < cur_story.rows; row++)";
-     pre_compile_code_string="for (row = 0; row < cur_story.rows; row++)";
+     code_string="for (row = 0; row < story.rows; row++)";
+     pre_compile_code_string="for (row = 0; row < story.rows; row++)";
      loop_code {
       name="loop_code";
       el_typ=ProgCode;
       el_def=0;
-      AssignExpr @[0] {
+      MatrixAssign @[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="sent = cur_story[\"sentence\"][row]";
-       pre_compile_code_string="sent = cur_story[\"sentence\"][row]";
-       result_var=.projects[0].programs.gp[3][5].functions[0].fun_code[0].local_vars[1]$$;
+       code_string="story[\"story\"][row] = story.name";
+       pre_compile_code_string="story[\"story\"][row] = story.name";
+       variable=.projects[0].programs.gp[3][5].functions[0].args[0]$$;
+       data_table=1;
+       col {
+	expr="\"story\"";
+       };
+       dim0 {
+	expr="row";
+       };
+       dim1 {
+	expr=;
+       };
+       dim2 {
+	expr=;
+       };
+       dim3 {
+	expr=;
+       };
+       dim4 {
+	expr=;
+       };
+       dim5 {
+	expr=;
+       };
        expr {
-	expr="cur_story[\"sentence\"][row]";
+	expr="story.name";
        };
       };
-      MethodCall @[1] {
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="on = story[\"on\"][row]";
+       pre_compile_code_string="on = story[\"on\"][row]";
+       result_var=.projects[0].programs.gp[3][5].functions[0].fun_code[0].local_vars[6]$$;
+       expr {
+	expr="story[\"on\"][row]";
+       };
+      };
+      IfContinue @[2] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if(!on) continue";
+       pre_compile_code_string="if(!on) continue";
+       cond {
+	expr="!on";
+       };
+      };
+      AssignExpr @[3] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="sent = story[\"sentence\"][row]";
+       pre_compile_code_string="sent = story[\"sentence\"][row]";
+       result_var=.projects[0].programs.gp[3][5].functions[0].fun_code[0].local_vars[1]$$;
+       expr {
+	expr="story[\"sentence\"][row]";
+       };
+      };
+      MethodCall @[4] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="sary->Split(sent, \" \")";
@@ -3758,7 +4297,7 @@ true;false;false;false;false;true;true;true;false;true;
        meth_sig="void Split(taString& str, taString& delim)";
        meth_desc=" Convenience method that calls FmDelimString for splitting a string into an array. Splits on every character by default.";
       };
-      AssignExpr @[2] {
+      AssignExpr @[5] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="depth = 0";
@@ -3768,7 +4307,7 @@ true;false;false;false;false;true;true;true;false;true;
 	expr="0";
        };
       };
-      ForLoop @[3] {
+      ForLoop @[6] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="for (i=0; i<sary.size; i++)";
@@ -3802,8 +4341,8 @@ true;false;false;false;false;true;true;true;false;true;
 	  MiscCall @[0] {
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
-	   code_string="taMisc::Error(\"end of switch group ] must have space in front of it, in sentence:\", sent, \"word:\", word, , , , , )";
-	   pre_compile_code_string="taMisc::Error(\"end of switch group ] must have space in front of it, in sentence:\", sent, \"word:\", word, , , , , )";
+	   code_string="taMisc::Error(\"end of switch group ] must have space in front of it, in sentence:\", sent, \"word:\", word, \"story:\", story.name, , , )";
+	   pre_compile_code_string="taMisc::Error(\"end of switch group ] must have space in front of it, in sentence:\", sent, \"word:\", word, \"story:\", story.name, , , )";
 	   result_var=NULL;
 	   object_type=taMisc;
 	   method=taMisc::Error;
@@ -3863,7 +4402,7 @@ true;false;false;false;false;true;true;true;false;true;
 	     def_val="\"\"";
 	     prev_expr=;
 	     expr {
-	      expr=;
+	      expr="\"story:\"";
 	     };
 	    };
 	    ProgArg @[5] {
@@ -3874,7 +4413,7 @@ true;false;false;false;false;true;true;true;false;true;
 	     def_val="\"\"";
 	     prev_expr=;
 	     expr {
-	      expr=;
+	      expr="story.name";
 	     };
 	    };
 	    ProgArg @[6] {
@@ -3929,8 +4468,8 @@ true;false;false;false;false;true;true;true;false;true;
 	  MiscCall @[0] {
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
-	   code_string="taMisc::Error(\"option | must have space in front of it, in sentence:\", sent, \"word:\", word, , , , , )";
-	   pre_compile_code_string="taMisc::Error(\"option | must have space in front of it, in sentence:\", sent, \"word:\", word, , , , , )";
+	   code_string="taMisc::Error(\"option | must have space in front of it, in sentence:\", sent, \"word:\", word, \"story:\", story.name, , , )";
+	   pre_compile_code_string="taMisc::Error(\"option | must have space in front of it, in sentence:\", sent, \"word:\", word, \"story:\", story.name, , , )";
 	   result_var=NULL;
 	   object_type=taMisc;
 	   method=taMisc::Error;
@@ -3990,7 +4529,7 @@ true;false;false;false;false;true;true;true;false;true;
 	     def_val="\"\"";
 	     prev_expr=;
 	     expr {
-	      expr=;
+	      expr="\"story:\"";
 	     };
 	    };
 	    ProgArg @[5] {
@@ -4001,7 +4540,7 @@ true;false;false;false;false;true;true;true;false;true;
 	     def_val="\"\"";
 	     prev_expr=;
 	     expr {
-	      expr=;
+	      expr="story.name";
 	     };
 	    };
 	    ProgArg @[6] {
@@ -4056,8 +4595,8 @@ true;false;false;false;false;true;true;true;false;true;
 	  MiscCall @[0] {
 	   desc=;
 	   flags=CAN_REVERT_TO_CODE;
-	   code_string="taMisc::Error(\"start of switch group [ must have space in front of it, in sentence:\", sent, \"word:\", word, , , , , )";
-	   pre_compile_code_string="taMisc::Error(\"start of switch group [ must have space in front of it, in sentence:\", sent, \"word:\", word, , , , , )";
+	   code_string="taMisc::Error(\"start of switch group [ must have space in front of it, in sentence:\", sent, \"word:\", word, \"story:\", story.name, , , )";
+	   pre_compile_code_string="taMisc::Error(\"start of switch group [ must have space in front of it, in sentence:\", sent, \"word:\", word, \"story:\", story.name, , , )";
 	   result_var=NULL;
 	   object_type=taMisc;
 	   method=taMisc::Error;
@@ -4117,7 +4656,7 @@ true;false;false;false;false;true;true;true;false;true;
 	     def_val="\"\"";
 	     prev_expr=;
 	     expr {
-	      expr=;
+	      expr="\"story:\"";
 	     };
 	    };
 	    ProgArg @[5] {
@@ -4128,7 +4667,7 @@ true;false;false;false;false;true;true;true;false;true;
 	     def_val="\"\"";
 	     prev_expr=;
 	     expr {
-	      expr=;
+	      expr="story.name";
 	     };
 	    };
 	    ProgArg @[6] {
@@ -4227,7 +4766,7 @@ true;false;false;false;false;true;true;true;false;true;
 	expr="i++";
        };
       };
-      If @[4] {
+      If @[7] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="if (depth != 0)";
@@ -4242,8 +4781,8 @@ true;false;false;false;false;true;true;true;false;true;
 	MiscCall @[0] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="taMisc::Error(\"depth is:\", depth, \"at end of sentence -- imbalanced switch groups, in:\", sent, , , , , )";
-	 pre_compile_code_string="taMisc::Error(\"depth is:\", depth, \"at end of sentence -- imbalanced switch groups, in:\", sent, , , , , )";
+	 code_string="taMisc::Error(\"depth is:\", depth, \"at end of sentence -- imbalanced switch groups, in:\", sent, \"story:\", story.name, , , )";
+	 pre_compile_code_string="taMisc::Error(\"depth is:\", depth, \"at end of sentence -- imbalanced switch groups, in:\", sent, \"story:\", story.name, , , )";
 	 result_var=NULL;
 	 object_type=taMisc;
 	 method=taMisc::Error;
@@ -4303,7 +4842,7 @@ true;false;false;false;false;true;true;true;false;true;
 	   def_val="\"\"";
 	   prev_expr=;
 	   expr {
-	    expr=;
+	    expr="\"story:\"";
 	   };
 	  };
 	  ProgArg @[5] {
@@ -4314,7 +4853,7 @@ true;false;false;false;false;true;true;true;false;true;
 	   def_val="\"\"";
 	   prev_expr=;
 	   expr {
-	    expr=;
+	    expr="story.name";
 	   };
 	  };
 	  ProgArg @[6] {
@@ -4359,7 +4898,7 @@ true;false;false;false;false;true;true;true;false;true;
       expr="row = 0";
      };
      test {
-      expr="row < cur_story.rows";
+      expr="row < story.rows";
      };
      iter {
       expr="row++";
@@ -4370,9 +4909,9 @@ true;false;false;false;false;true;true;true;false;true;
   Function @[1] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="InitCurStory() returns: int";
-   pre_compile_code_string="InitCurStory() returns: int";
-   name="InitCurStory";
+   code_string="InitActiveStories() returns: int";
+   pre_compile_code_string="InitActiveStories() returns: int";
+   name="InitActiveStories";
    return_type=T_Int;
    object_type=taOBase;
    args {
@@ -4393,28 +4932,206 @@ true;false;false;false;false;true;true;true;false;true;
       name="local_vars";
       el_typ=ProgVar;
       el_def=0;
+      ProgVar @[0] {
+       name="story";
+       var_type=T_Object;
+       object_type=DataTable;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="first_story";
+       var_type=T_Bool;
+       bool_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
      };
     };
-    FunctionCall @[1] {
+    MethodCall @[1] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="CheckAllSentences()";
-     pre_compile_code_string="CheckAllSentences()";
+     code_string="AllStories->Reset()";
+     pre_compile_code_string="AllStories->Reset()";
      result_var=NULL;
-     fun=.projects[0].programs.gp[3][5].functions[0]$$;
-     fun_args {
-      name="fun_args";
+     obj=.projects[0].programs.gp[3][5].vars[20]$$;
+     method=DataTable::Reset;
+     meth_args {
+      name="meth_args";
       el_typ=ProgArg;
       el_def=0;
      };
+     meth_sig="void Reset()";
+     meth_desc=" remove all columns (and data) -- this cannot be undone!";
     };
-    MethodCall @[2] {
+    AssignExpr @[2] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="cur_story->Sort(\"group\", true, \"seq\", true, , , , , , , , )";
-     pre_compile_code_string="cur_story->Sort(\"group\", true, \"seq\", true, , , , , , , , )";
+     code_string="first_story = true";
+     pre_compile_code_string="first_story = true";
+     result_var=.projects[0].programs.gp[3][5].functions[1].fun_code[0].local_vars[1]$$;
+     expr {
+      expr="true";
+     };
+    };
+    ForeachLoop @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="foreach(<el_var not set> in ActiveStories)";
+     pre_compile_code_string="foreach(story in ActiveStories)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      FunctionCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="CheckAllSentences(story)";
+       pre_compile_code_string="CheckAllSentences(story)";
+       result_var=NULL;
+       fun=.projects[0].programs.gp[3][5].functions[0]$$;
+       fun_args {
+	name="fun_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable;
+	 type="DataTable*";
+	 name="story";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="story";
+	 };
+	};
+       };
+      };
+      If @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (first_story)";
+       pre_compile_code_string="if (first_story)";
+       cond {
+	expr="first_story";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="AllStories->CopyFrom()";
+	 pre_compile_code_string="AllStories->CopyFrom(story)";
+	 result_var=NULL;
+	 obj=$.projects[0].programs.gp[3][5].vars[20]$;
+	 method=taBase::CopyFrom;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=taBase_ptr;
+	   type="taBase*";
+	   name="cpy_from";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="story";
+	   };
+	  };
+	 };
+	 meth_sig="bool CopyFrom(taBase* cpy_from)";
+	 meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+	};
+	MethodCall @[1] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="AllStories->ClearDataFlag()";
+	 pre_compile_code_string="AllStories->ClearDataFlag(DataTable::SAVE_ROWS)";
+	 result_var=NULL;
+	 obj=$.projects[0].programs.gp[3][5].vars[20]$;
+	 method=DataTable::ClearDataFlag;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=DataTable::DataFlags;
+	   type="DataTable::DataFlags";
+	   name="flg";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="DataTable::SAVE_ROWS";
+	   };
+	  };
+	 };
+	 meth_sig="void ClearDataFlag(DataTable::DataFlags flg)";
+	 meth_desc=" clear data table flag state (set off)";
+	};
+       };
+      };
+      Else @[2] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="else";
+       pre_compile_code_string=;
+       else_code {
+	name="else_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="AllStories->AppendRows()";
+	 pre_compile_code_string="AllStories->AppendRows(story)";
+	 result_var=NULL;
+	 obj=$.projects[0].programs.gp[3][5].vars[20]$;
+	 method=DataTable::AppendRows;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=DataTable_ptr;
+	   type="DataTable*";
+	   name="append_from";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="story";
+	   };
+	  };
+	 };
+	 meth_sig="bool AppendRows(DataTable* append_from)";
+	 meth_desc=" append rows from another data table -- this is also available in taDataProc and in the GUI as a drag-and-drop action (appends rows of dropped item onto dropped item)";
+	};
+       };
+      };
+     };
+     el_var=.projects[0].programs.gp[3][5].functions[1].fun_code[0].local_vars[0]$$;
+     in {
+      expr="ActiveStories";
+     };
+    };
+    MethodCall @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="AllStories->Sort(\"group\", true, \"seq\", true, , , , , , , , )";
+     pre_compile_code_string="AllStories->Sort(\"story\", true, \"group\", true, \"seq\", true, , , , , , )";
      result_var=NULL;
-     obj=.projects[0].programs.gp[3][5].vars[0]$$;
+     obj=$.projects[0].programs.gp[3][5].vars[20]$;
      method=DataTable::Sort;
      meth_args {
       name="meth_args";
@@ -4428,7 +5145,7 @@ true;false;false;false;false;true;true;true;false;true;
        def_val=;
        prev_expr=;
        expr {
-	expr="\"group\"";
+	expr="\"story\"";
        };
       };
       ProgArg @[1] {
@@ -4450,7 +5167,7 @@ true;false;false;false;false;true;true;true;false;true;
        def_val="-1";
        prev_expr=;
        expr {
-	expr="\"seq\"";
+	expr="\"group\"";
        };
       };
       ProgArg @[3] {
@@ -4472,7 +5189,7 @@ true;false;false;false;false;true;true;true;false;true;
        def_val="-1";
        prev_expr=;
        expr {
-	expr=;
+	expr="\"seq\"";
        };
       };
       ProgArg @[5] {
@@ -4483,7 +5200,7 @@ true;false;false;false;false;true;true;true;false;true;
        def_val="true";
        prev_expr=;
        expr {
-	expr=;
+	expr="true";
        };
       };
       ProgArg @[6] {
@@ -4556,12 +5273,12 @@ true;false;false;false;false;true;true;true;false;true;
      meth_sig="void Sort(Variant& col1, bool ascending1 = true, Variant col2 = -1, bool ascending2 = true, Variant col3 = -1, bool ascending3 = true, Variant col4 = -1, bool ascending4 = true, Variant col5 = -1, bool ascending5 = true, Variant col6 = -1, bool ascending6 = true)";
      meth_desc=" sort table according to selected columns of data. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first";
     };
-    DataSelectRowsProg @[3] {
+    DataSelectRowsProg @[5] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="SelectRows:  src table = cur_story  dest table = TmpFilt  comb_op = AND";
-     pre_compile_code_string="SelectRows:  src table = cur_story  dest table = TmpFilt  comb_op = AND";
-     src_data_var=$.projects[0].programs.gp[3][5].vars[0]$;
+     code_string="SelectRows:  src table = AllStories  dest table = TmpFilt  comb_op = AND";
+     pre_compile_code_string="SelectRows:  src table = AllStories  dest table = AllOnStories  comb_op = AND";
+     src_data_var=$.projects[0].programs.gp[3][5].vars[20]$;
      dest_data_var=.projects[0].programs.gp[3][5].vars[13]$$;
      select_spec {
       name="select_spec";
@@ -4583,11 +5300,11 @@ true;false;false;false;false;true;true;true;false;true;
       comb_op=AND;
      };
     };
-    DataGroupProg @[4] {
+    DataGroupProg @[6] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = TmpFilt dest table = Groups";
-     pre_compile_code_string="Group from:  src table = TmpFilt dest table = Groups";
+     pre_compile_code_string="Group from:  src table = AllOnStories dest table = StoryGroups";
      src_data_var=$.projects[0].programs.gp[3][5].vars[13]$;
      dest_data_var=.projects[0].programs.gp[3][5].vars[10]$$;
      group_spec {
@@ -4597,21 +5314,26 @@ true;false;false;false;false;true;true;true;false;true;
        el_typ=DataGroupEl;
        el_def=0;
        DataGroupEl @[0] {
+	col_name="story";
+	name="story_GROUP_0";
+	agg {name="agg": op=GROUP: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @[1] {
 	col_name="group";
 	name="group_GROUP_0";
 	agg {name="agg": op=GROUP: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
        };
-       DataGroupEl @[1] {
+       DataGroupEl @[2] {
 	col_name="on";
 	name="on_FIRST_1";
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
        };
-       DataGroupEl @[2] {
+       DataGroupEl @[3] {
 	col_name="freq";
 	name="freq_FIRST_2";
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
        };
-       DataGroupEl @[3] {
+       DataGroupEl @[4] {
 	col_name="seq";
 	name="seq_N_3";
 	agg {name="agg": op=N: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
@@ -4620,7 +5342,7 @@ true;false;false;false;false;true;true;true;false;true;
       append_agg_name=0;
      };
     };
-    MathCall @[5] {
+    MathCall @[7] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="taMath_float::vec_norm_sum(Groups.data.freq.ar, 1.0, 0.0)";
@@ -4640,7 +5362,7 @@ true;false;false;false;false;true;true;true;false;true;
        def_val=;
        prev_expr=;
        expr {
-	expr="Groups.data.freq.ar";
+	expr="StoryGroups.data.freq.ar";
        };
       };
       ProgArg @[1] {
@@ -5603,7 +6325,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="prev_popped_switch = -1";
      pre_compile_code_string="prev_popped_switch = -1";
-     result_var=.projects[0].programs.gp[3][5].vars[4]$$;
+     result_var=.projects[0].programs.gp[3][5].vars[3]$$;
      expr {
       expr="-1";
      };
@@ -5623,7 +6345,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="last_eff_node = node";
      pre_compile_code_string="last_eff_node = node";
-     result_var=.projects[0].programs.gp[3][5].vars[3]$$;
+     result_var=.projects[0].programs.gp[3][5].vars[2]$$;
      expr {
       expr="node";
      };
@@ -6023,7 +6745,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="prev_popped_switch = -1";
      pre_compile_code_string="prev_popped_switch = -1";
-     result_var=$.projects[0].programs.gp[3][5].vars[4]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[3]$;
      expr {
       expr="-1";
      };
@@ -6219,7 +6941,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="last_switch = node";
      pre_compile_code_string="last_switch = node";
-     result_var=.projects[0].programs.gp[3][5].vars[1]$$;
+     result_var=.projects[0].programs.gp[3][5].vars[0]$$;
      expr {
       expr="node";
      };
@@ -6229,7 +6951,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="last_switch_markup = markup";
      pre_compile_code_string="last_switch_markup = markup";
-     result_var=.projects[0].programs.gp[3][5].vars[2]$$;
+     result_var=.projects[0].programs.gp[3][5].vars[1]$$;
      expr {
       expr="markup";
      };
@@ -6239,7 +6961,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="last_eff_node = node";
      pre_compile_code_string="last_eff_node = node";
-     result_var=$.projects[0].programs.gp[3][5].vars[3]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[2]$;
      expr {
       expr="node";
      };
@@ -6645,7 +7367,7 @@ true;false;false;false;false;true;true;true;false;true;
        flags=CAN_REVERT_TO_CODE;
        code_string="last_switch = CurSwitchStack[\"node\"][ss_row-1]";
        pre_compile_code_string="last_switch = CurSwitchStack[\"node\"][ss_row-1]";
-       result_var=$.projects[0].programs.gp[3][5].vars[1]$;
+       result_var=$.projects[0].programs.gp[3][5].vars[0]$;
        expr {
 	expr="CurSwitchStack[\"node\"][ss_row-1]";
        };
@@ -6655,7 +7377,7 @@ true;false;false;false;false;true;true;true;false;true;
        flags=CAN_REVERT_TO_CODE;
        code_string="last_switch_markup = CurSwitchStack[\"cur_markup\"][ss_row-1]";
        pre_compile_code_string="last_switch_markup = CurSwitchStack[\"cur_markup\"][ss_row-1]";
-       result_var=$.projects[0].programs.gp[3][5].vars[2]$;
+       result_var=$.projects[0].programs.gp[3][5].vars[1]$;
        expr {
 	expr="CurSwitchStack[\"cur_markup\"][ss_row-1]";
        };
@@ -6676,7 +7398,7 @@ true;false;false;false;false;true;true;true;false;true;
        flags=CAN_REVERT_TO_CODE;
        code_string="last_switch = -1";
        pre_compile_code_string="last_switch = -1";
-       result_var=$.projects[0].programs.gp[3][5].vars[1]$;
+       result_var=$.projects[0].programs.gp[3][5].vars[0]$;
        expr {
 	expr="-1";
        };
@@ -6686,7 +7408,7 @@ true;false;false;false;false;true;true;true;false;true;
        flags=CAN_REVERT_TO_CODE;
        code_string="last_switch_markup = \"\"";
        pre_compile_code_string="last_switch_markup = \"\"";
-       result_var=$.projects[0].programs.gp[3][5].vars[2]$;
+       result_var=$.projects[0].programs.gp[3][5].vars[1]$;
        expr {
 	expr="\"\"";
        };
@@ -6700,7 +7422,7 @@ true;false;false;false;false;true;true;true;false;true;
      pre_compile_code_string="Print  \"popped switch stack:\" ss_row last_switch";
      message="popped switch stack:";
      print_var=$.projects[0].programs.gp[3][5].functions[10].fun_code[0].local_vars[0]$;
-     print_var2=$.projects[0].programs.gp[3][5].vars[1]$;
+     print_var2=$.projects[0].programs.gp[3][5].vars[0]$;
      print_var3=NULL;
      print_var4=NULL;
      print_var5=NULL;
@@ -7155,7 +7877,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="prev_popped_switch = last_switch";
      pre_compile_code_string="prev_popped_switch = last_switch";
-     result_var=$.projects[0].programs.gp[3][5].vars[4]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[3]$;
      expr {
       expr="last_switch";
      };
@@ -7165,7 +7887,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="last_eff_node = last_switch";
      pre_compile_code_string="last_eff_node = last_switch";
-     result_var=$.projects[0].programs.gp[3][5].vars[3]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[2]$;
      expr {
       expr="last_switch";
      };
@@ -7372,7 +8094,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="prev_popped_switch = -1";
      pre_compile_code_string="prev_popped_switch = -1";
-     result_var=$.projects[0].programs.gp[3][5].vars[4]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[3]$;
      expr {
       expr="-1";
      };
@@ -7737,15 +8459,6 @@ true;false;false;false;false;true;true;true;false;true;
        init_from=NULL;
       };
       ProgVar @[1] {
-       name="markup";
-       var_type=T_String;
-       string_val=;
-       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @[2] {
        name="probstr";
        var_type=T_String;
        string_val=;
@@ -7754,7 +8467,7 @@ true;false;false;false;false;true;true;true;false;true;
        desc=;
        init_from=NULL;
       };
-      ProgVar @[3] {
+      ProgVar @[2] {
        name="condstr";
        var_type=T_String;
        string_val=;
@@ -7763,7 +8476,7 @@ true;false;false;false;false;true;true;true;false;true;
        desc=;
        init_from=NULL;
       };
-      ProgVar @[4] {
+      ProgVar @[3] {
        name="prob";
        var_type=T_Real;
        real_val=0;
@@ -7772,7 +8485,7 @@ true;false;false;false;false;true;true;true;false;true;
        desc=;
        init_from=NULL;
       };
-      ProgVar @[5] {
+      ProgVar @[4] {
        name="mac_str";
        var_type=T_String;
        string_val=;
@@ -7781,7 +8494,7 @@ true;false;false;false;false;true;true;true;false;true;
        desc=;
        init_from=NULL;
       };
-      ProgVar @[6] {
+      ProgVar @[5] {
        name="msary";
        var_type=T_Object;
        object_type=String_Array;
@@ -7792,7 +8505,7 @@ true;false;false;false;false;true;true;true;false;true;
        desc=;
        init_from=NULL;
       };
-      ProgVar @[7] {
+      ProgVar @[6] {
        name="i";
        var_type=T_Int;
        int_val=0;
@@ -7801,7 +8514,7 @@ true;false;false;false;false;true;true;true;false;true;
        desc=;
        init_from=NULL;
       };
-      ProgVar @[8] {
+      ProgVar @[7] {
        name="mword";
        var_type=T_String;
        string_val=;
@@ -7817,7 +8530,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="prob = GetStripProbCond(word, probstr, condstr)";
      pre_compile_code_string="prob = GetStripProbCond(word, probstr, condstr)";
-     result_var=.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[4]$$;
+     result_var=.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[3]$$;
      fun=$.projects[0].programs.gp[3][5].functions[5]$;
      fun_args {
       name="fun_args";
@@ -7861,80 +8574,306 @@ true;false;false;false;false;true;true;true;false;true;
     MethodCall @[2] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="mac_row = cur_story->FindVal(word, \"group\", 0, true)";
-     pre_compile_code_string="mac_row = cur_story->FindVal(word, \"group\", 0, true)";
+     code_string="mac_row = AllStories->FindMultiVal(word, \"group\", 0, true, , , , , , , , , )";
+     pre_compile_code_string="mac_row = AllStories->FindMultiVal(0, cur_story, \"story\", word, \"group\", , , , , , , , )";
      result_var=.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[0]$$;
-     obj=$.projects[0].programs.gp[3][5].vars[0]$;
-     method=DataTable::FindVal;
+     obj=$.projects[0].programs.gp[3][5].vars[20]$;
+     method=DataTable::FindMultiVal;
      meth_args {
       name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
-       arg_type=const_Variant_ref;
-       type="Variant&";
-       name="val";
+       arg_type=int;
+       type="int";
+       name="st_row";
        required=1;
-       def_val=;
-       prev_expr=;
+       def_val="0";
+       prev_expr="word";
        expr {
-	expr="word";
+	expr="0";
        };
       };
       ProgArg @[1] {
        arg_type=const_Variant_ref;
        type="Variant&";
-       name="col";
+       name="val1";
        required=1;
+       def_val=;
+       prev_expr="\"group\"";
+       expr {
+	expr="cur_story";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col1";
+       required=1;
+       def_val=;
+       prev_expr="0";
+       expr {
+	expr="\"story\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="val2";
+       required=0;
+       def_val="0";
+       prev_expr="true";
+       expr {
+	expr="word";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col2";
+       required=0;
        def_val=;
        prev_expr=;
        expr {
 	expr="\"group\"";
        };
       };
-      ProgArg @[2] {
-       arg_type=int;
-       type="int";
-       name="st_row";
+      ProgArg @[5] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="val3";
        required=0;
        def_val="0";
        prev_expr=;
        expr {
-	expr="0";
+	expr=;
        };
       };
-      ProgArg @[3] {
-       arg_type=bool;
-       type="bool";
-       name="not_found_err";
+      ProgArg @[6] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col3";
        required=0;
-       def_val="false";
+       def_val=;
        prev_expr=;
        expr {
-	expr="true";
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="val4";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col4";
+       required=0;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[9] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="vall5";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[10] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col5";
+       required=0;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[11] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="val6";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[12] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col6";
+       required=0;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr=;
        };
       };
      };
-     meth_sig="int FindVal(Variant& val, Variant& col, int st_row = 0, bool not_found_err = false)";
-     meth_desc=" find row number for given value within column col of scalar type (use for Programs), starting at given starting row number. if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- column can be specified as either integer index or a string that is then used to find the given column name. returns -1 if not found, and issues error if not_found_err is true";
+     meth_sig="int FindMultiVal(int st_row, Variant& val1, Variant& col1, Variant& val2 = 0, Variant& col2, Variant& val3 = 0, Variant& col3, Variant& val4 = 0, Variant& col4, Variant& vall5 = 0, Variant& col5, Variant& val6 = 0, Variant& col6)";
+     meth_desc=" find row number for multiple values across different columns of scalar type, starting at given starting row number. if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- columns can be specified as either integer index or a string that is then used to find the given column name";
     };
-    AssignExpr @[3] {
+    If @[3] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="mac_str = cur_story[\"sentence\"][mac_row]";
-     pre_compile_code_string="mac_str = cur_story[\"sentence\"][mac_row]";
-     result_var=.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[5]$$;
-     expr {
-      expr="cur_story[\"sentence\"][mac_row]";
+     code_string="if (mac_row < 0)";
+     pre_compile_code_string="if (mac_row < 0)";
+     cond {
+      expr="mac_row < 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"AddMacro: macro named:\", word, \"in story:\", cur_story, \"not found\", , , , )";
+       pre_compile_code_string="taMisc::Error(\"AddMacro: macro named:\", word, \"in story:\", cur_story, \"not found\", , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"AddMacro: macro named:\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="word";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="\"in story:\"";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="cur_story";
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="\"not found\"";
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
      };
     };
-    MethodCall @[4] {
+    AssignExpr @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="mac_str = AllStories[\"sentence\"][mac_row]";
+     pre_compile_code_string="mac_str = AllStories[\"sentence\"][mac_row]";
+     result_var=.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[4]$$;
+     expr {
+      expr="AllStories[\"sentence\"][mac_row]";
+     };
+    };
+    MethodCall @[5] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="msary->Split(mac_str, \" \")";
      pre_compile_code_string="msary->Split(mac_str, \" \")";
      result_var=NULL;
-     obj=.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[6]$$;
+     obj=.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[5]$$;
      method=String_Array::Split;
      meth_args {
       name="meth_args";
@@ -7966,7 +8905,7 @@ true;false;false;false;false;true;true;true;false;true;
      meth_sig="void Split(taString& str, taString& delim)";
      meth_desc=" Convenience method that calls FmDelimString for splitting a string into an array. Splits on every character by default.";
     };
-    ForLoop @[5] {
+    ForLoop @[6] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="for (i=0; i<msary.size; i++)";
@@ -7980,7 +8919,7 @@ true;false;false;false;false;true;true;true;false;true;
        flags=CAN_REVERT_TO_CODE;
        code_string="mword = msary[i]";
        pre_compile_code_string="mword = msary[i]";
-       result_var=.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[8]$$;
+       result_var=.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[7]$$;
        expr {
 	expr="msary[i]";
        };
@@ -8002,7 +8941,7 @@ true;false;false;false;false;true;true;true;false;true;
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="mword += probstr";
 	 pre_compile_code_string="mword += probstr";
-	 var=$.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[8]$;
+	 var=$.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[7]$;
 	 expr {
 	  expr="probstr";
 	 };
@@ -8024,7 +8963,7 @@ true;false;false;false;false;true;true;true;false;true;
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="mword += \"?\" + condstr + \"?\"";
 	   pre_compile_code_string="mword += \"?\" + condstr + \"?\"";
-	   var=$.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[8]$;
+	   var=$.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[7]$;
 	   expr {
 	    expr="\"?\" + condstr + \"?\"";
 	   };
@@ -8390,7 +9329,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="last_switch = -1";
      pre_compile_code_string="last_switch = -1";
-     result_var=$.projects[0].programs.gp[3][5].vars[1]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[0]$;
      expr {
       expr="-1";
      };
@@ -8400,7 +9339,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="last_switch_markup = \"\"";
      pre_compile_code_string="last_switch_markup = \"\"";
-     result_var=$.projects[0].programs.gp[3][5].vars[2]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[1]$;
      expr {
       expr="\"\"";
      };
@@ -8410,7 +9349,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="last_eff_node = -1";
      pre_compile_code_string="last_eff_node = -1";
-     result_var=$.projects[0].programs.gp[3][5].vars[3]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[2]$;
      expr {
       expr="-1";
      };
@@ -8420,7 +9359,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="prev_popped_switch = -1";
      pre_compile_code_string="prev_popped_switch = -1";
-     result_var=$.projects[0].programs.gp[3][5].vars[4]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[3]$;
      expr {
       expr="-1";
      };
@@ -8565,11 +9504,11 @@ true;false;false;false;false;true;true;true;false;true;
     AssignExpr @[1] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="sent = cur_story[\"sentence\"][cur_row]";
-     pre_compile_code_string="sent = cur_story[\"sentence\"][cur_row]";
+     code_string="sent = AllStories[\"sentence\"][cur_row]";
+     pre_compile_code_string="sent = AllStories[\"sentence\"][cur_row]";
      result_var=.projects[0].programs.gp[3][5].functions[16].fun_code[0].local_vars[0]$$;
      expr {
-      expr="cur_story[\"sentence\"][cur_row]";
+      expr="AllStories[\"sentence\"][cur_row]";
      };
     };
     FunctionCall @[2] {
@@ -8627,7 +9566,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="last_switch = -1";
      pre_compile_code_string="last_switch = -1";
-     result_var=$.projects[0].programs.gp[3][5].vars[1]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[0]$;
      expr {
       expr="-1";
      };
@@ -8637,7 +9576,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="last_switch_markup = \"\"";
      pre_compile_code_string="last_switch_markup = \"\"";
-     result_var=$.projects[0].programs.gp[3][5].vars[2]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[1]$;
      expr {
       expr="\"\"";
      };
@@ -8647,7 +9586,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="last_eff_node = -1";
      pre_compile_code_string="last_eff_node = -1";
-     result_var=$.projects[0].programs.gp[3][5].vars[3]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[2]$;
      expr {
       expr="-1";
      };
@@ -8752,10 +9691,10 @@ true;false;false;false;false;true;true;true;false;true;
     If @[2] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="if (cur_row == cur_story.rows-1)";
-     pre_compile_code_string="if (cur_row == cur_story.rows-1)";
+     code_string="if (cur_row == AllStories.rows-1)";
+     pre_compile_code_string="if (cur_row == AllStories.rows-1)";
      cond {
-      expr="cur_row == cur_story.rows-1";
+      expr="cur_row == AllStories.rows-1";
      };
      true_code {
       name="true_code";
@@ -8776,10 +9715,10 @@ true;false;false;false;false;true;true;true;false;true;
     ElseIf @[3] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="else if (cur_story[\"group\"][cur_row+1] != cur_group)";
-     pre_compile_code_string="else if (cur_story[\"group\"][cur_row+1] != cur_group)";
+     code_string="else if (AllStories[\"group\"][cur_row+1] != cur_group || AllStories[\"story\"][cur_row+1] != cur_story)";
+     pre_compile_code_string="else if (AllStories[\"group\"][cur_row+1] != cur_group || AllStories[\"story\"][cur_row+1] != cur_story)";
      cond {
-      expr="cur_story[\"group\"][cur_row+1] != cur_group";
+      expr="AllStories[\"group\"][cur_row+1] != cur_group || AllStories[\"story\"][cur_row+1] != cur_story";
      };
      true_code {
       name="true_code";
@@ -8901,7 +9840,7 @@ true;false;false;false;false;true;true;true;false;true;
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="sel_row = taDataGen::ProbSelectRow(Groups, \"on\", \"false\", \"freq\", )";
-     pre_compile_code_string="sel_row = taDataGen::ProbSelectRow(Groups, \"on\", \"false\", \"freq\", )";
+     pre_compile_code_string="sel_row = taDataGen::ProbSelectRow(StoryGroups, \"on\", \"false\", \"freq\", )";
      result_var=.projects[0].programs.gp[3][5].functions[18].fun_code[0].local_vars[0]$$;
      object_type=taDataGen;
      method=taDataGen::ProbSelectRow;
@@ -8917,7 +9856,7 @@ true;false;false;false;false;true;true;true;false;true;
        def_val=;
        prev_expr=;
        expr {
-	expr="Groups";
+	expr="StoryGroups";
        };
       };
       ProgArg @[1] {
@@ -8969,74 +9908,183 @@ true;false;false;false;false;true;true;true;false;true;
     AssignExpr @[2] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="cur_group = Groups[\"group\"][sel_row]";
-     pre_compile_code_string="cur_group = Groups[\"group\"][sel_row]";
-     result_var=.projects[0].programs.gp[3][5].vars[5]$$;
+     code_string="cur_story = StoryGroups[\"story\"][sel_row]";
+     pre_compile_code_string="cur_story = StoryGroups[\"story\"][sel_row]";
+     result_var=.projects[0].programs.gp[3][5].vars[4]$$;
      expr {
-      expr="Groups[\"group\"][sel_row]";
+      expr="StoryGroups[\"story\"][sel_row]";
      };
     };
-    MethodCall @[3] {
+    AssignExpr @[3] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="cur_row = cur_story->FindVal(cur_group, \"group\", 0, true)";
-     pre_compile_code_string="cur_row = cur_story->FindVal(cur_group, \"group\", 0, true)";
+     code_string="cur_group = Groups[\"group\"][sel_row]";
+     pre_compile_code_string="cur_group = StoryGroups[\"group\"][sel_row]";
+     result_var=.projects[0].programs.gp[3][5].vars[5]$$;
+     expr {
+      expr="StoryGroups[\"group\"][sel_row]";
+     };
+    };
+    MethodCall @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="cur_row = AllStories->FindMultiVal(cur_group, \"group\", 0, true, , , , , , , , , )";
+     pre_compile_code_string="cur_row = AllStories->FindMultiVal(0, cur_story, \"story\", cur_group, \"group\", , , , , , , , )";
      result_var=$.projects[0].programs.gp[3][5].vars[6]$;
-     obj=$.projects[0].programs.gp[3][5].vars[0]$;
-     method=DataTable::FindVal;
+     obj=$.projects[0].programs.gp[3][5].vars[20]$;
+     method=DataTable::FindMultiVal;
      meth_args {
       name="meth_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
-       arg_type=const_Variant_ref;
-       type="Variant&";
-       name="val";
+       arg_type=int;
+       type="int";
+       name="st_row";
        required=1;
-       def_val=;
-       prev_expr=;
+       def_val="0";
+       prev_expr="cur_group";
        expr {
-	expr="cur_group";
+	expr="0";
        };
       };
       ProgArg @[1] {
        arg_type=const_Variant_ref;
        type="Variant&";
-       name="col";
+       name="val1";
        required=1;
+       def_val=;
+       prev_expr="\"group\"";
+       expr {
+	expr="cur_story";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col1";
+       required=1;
+       def_val=;
+       prev_expr="0";
+       expr {
+	expr="\"story\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="val2";
+       required=0;
+       def_val="0";
+       prev_expr="true";
+       expr {
+	expr="cur_group";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col2";
+       required=0;
        def_val=;
        prev_expr=;
        expr {
 	expr="\"group\"";
        };
       };
-      ProgArg @[2] {
-       arg_type=int;
-       type="int";
-       name="st_row";
+      ProgArg @[5] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="val3";
        required=0;
        def_val="0";
        prev_expr=;
        expr {
-	expr="0";
+	expr=;
        };
       };
-      ProgArg @[3] {
-       arg_type=bool;
-       type="bool";
-       name="not_found_err";
+      ProgArg @[6] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col3";
        required=0;
-       def_val="false";
+       def_val=;
        prev_expr=;
        expr {
-	expr="true";
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="val4";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col4";
+       required=0;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[9] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="vall5";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[10] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col5";
+       required=0;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[11] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="val6";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[12] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col6";
+       required=0;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr=;
        };
       };
      };
-     meth_sig="int FindVal(Variant& val, Variant& col, int st_row = 0, bool not_found_err = false)";
-     meth_desc=" find row number for given value within column col of scalar type (use for Programs), starting at given starting row number. if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- column can be specified as either integer index or a string that is then used to find the given column name. returns -1 if not found, and issues error if not_found_err is true";
+     meth_sig="int FindMultiVal(int st_row, Variant& val1, Variant& col1, Variant& val2 = 0, Variant& col2, Variant& val3 = 0, Variant& col3, Variant& val4 = 0, Variant& col4, Variant& vall5 = 0, Variant& col5, Variant& val6 = 0, Variant& col6)";
+     meth_desc=" find row number for multiple values across different columns of scalar type, starting at given starting row number. if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- columns can be specified as either integer index or a string that is then used to find the given column name";
     };
-    MethodCall @[4] {
+    MethodCall @[5] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="PrevSentenceHistory->CopyFrom(SentenceHistory)";
@@ -9063,7 +10111,7 @@ true;false;false;false;false;true;true;true;false;true;
      meth_sig="bool CopyFrom(taBase* cpy_from)";
      meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
     };
-    MethodCall @[5] {
+    MethodCall @[6] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="SentenceHistory->ResetData()";
@@ -9079,7 +10127,7 @@ true;false;false;false;false;true;true;true;false;true;
      meth_sig="void ResetData()";
      meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
     };
-    FunctionCall @[6] {
+    FunctionCall @[7] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="ParseCurRow()";
@@ -10690,7 +11738,7 @@ true;false;false;false;false;true;true;true;false;true;
      flags=CAN_REVERT_TO_CODE;
      code_string="last_switch = cur_node";
      pre_compile_code_string="last_switch = cur_node";
-     result_var=$.projects[0].programs.gp[3][5].vars[1]$;
+     result_var=$.projects[0].programs.gp[3][5].vars[0]$;
      expr {
       expr="cur_node";
      };
@@ -11190,10 +12238,10 @@ true;false;false;false;false;true;true;true;false;true;
     MethodCall @[3] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="gorow = cur_story->FindMultiVal(0, cur_group, \"group\", goln, \"seq\", , , , , , , , )";
-     pre_compile_code_string="gorow = cur_story->FindMultiVal(0, cur_group, \"group\", goln, \"seq\", , , , , , , , )";
+     code_string="gorow = AllStories->FindMultiVal(0, cur_group, \"group\", goln, \"seq\", , , , , , , , )";
+     pre_compile_code_string="gorow = AllStories->FindMultiVal(0, cur_story, \"story\", cur_group, \"group\", goln, \"seq\", , , , , , )";
      result_var=.projects[0].programs.gp[3][5].functions[22].fun_code[0].local_vars[2]$$;
-     obj=$.projects[0].programs.gp[3][5].vars[0]$;
+     obj=$.projects[0].programs.gp[3][5].vars[20]$;
      method=DataTable::FindMultiVal;
      meth_args {
       name="meth_args";
@@ -11218,7 +12266,7 @@ true;false;false;false;false;true;true;true;false;true;
        def_val=;
        prev_expr=;
        expr {
-	expr="cur_group";
+	expr="cur_story";
        };
       };
       ProgArg @[2] {
@@ -11229,7 +12277,7 @@ true;false;false;false;false;true;true;true;false;true;
        def_val=;
        prev_expr=;
        expr {
-	expr="\"group\"";
+	expr="\"story\"";
        };
       };
       ProgArg @[3] {
@@ -11240,7 +12288,7 @@ true;false;false;false;false;true;true;true;false;true;
        def_val="0";
        prev_expr=;
        expr {
-	expr="goln";
+	expr="cur_group";
        };
       };
       ProgArg @[4] {
@@ -11251,7 +12299,7 @@ true;false;false;false;false;true;true;true;false;true;
        def_val=;
        prev_expr=;
        expr {
-	expr="\"seq\"";
+	expr="\"group\"";
        };
       };
       ProgArg @[5] {
@@ -11262,7 +12310,7 @@ true;false;false;false;false;true;true;true;false;true;
        def_val="0";
        prev_expr=;
        expr {
-	expr=;
+	expr="goln";
        };
       };
       ProgArg @[6] {
@@ -11273,7 +12321,7 @@ true;false;false;false;false;true;true;true;false;true;
        def_val=;
        prev_expr=;
        expr {
-	expr=;
+	expr="\"seq\"";
        };
       };
       ProgArg @[7] {

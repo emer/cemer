@@ -561,12 +561,52 @@ bool ProgVar::SetValStr(const String& val, void* par, MemberDef* memb_def,
   if(val.contains("{")) {
     return inherited::SetValStr(val, par, memb_def, sc, force_inline);
   }
-  SetVar((Variant)val);
+  SetValFromString(val);
   return true;
 }
 
 void ProgVar::SetValFromString(const String& str_val) {
-  SetVar((Variant)str_val);
+  switch(var_type) {
+  case T_Int:
+    int_val = (int)(double)str_val; // allow conversion from float to int to work properly
+    break;
+  case T_Real:
+    real_val = (double)str_val;
+    break;
+  case T_String:
+    string_val = str_val;
+    break;
+  case T_Bool:
+    bool_val = (bool)str_val;
+    break;
+  case T_Object: {
+    if(str_val == "NULL" || str_val == "null" || str_val == "0") {
+      object_val = NULL;
+    }
+    else {
+      Variant var = (Variant)str_val;
+      object_val = var.toBase();
+    }
+    UpdateCssObjVal();		// need to update our css object!
+    break;
+  }
+  case T_HardEnum:
+    if(hard_enum_type) {
+      EnumDef* ed = hard_enum_type->FindEnum(str_val);
+      if(ed)
+        int_val = ed->enum_no;
+    }
+    else {
+      int_val = (int)str_val;
+    }
+    break;
+  case T_DynEnum:
+    dyn_enum_val.SetNameVal(str_val);
+    break;
+  case T_UnDef:
+    CheckUndefType("SetVar");
+    break;
+  }
 }
 
 String ProgVar::GetStringVal() {

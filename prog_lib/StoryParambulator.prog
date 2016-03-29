@@ -1,15 +1,15 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9337
+// ta_Dump File v3.0 -- code v7.8.6.0 rev9341
 Program .projects[0].programs.gp[3][6] { 
- ProgObjList @.objs = [6] {
+ ProgObjList @.objs = [7] {
   DataTable_Group @[0] = [1] { 
    DataTable @[0] { 
-    DataTableCols @.data = [4] {
+    DataTableCols @.data = [5] {
      int_Data @[0] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @[0] { };
       };
      };
-     String_Data @[1] { 
+     bool_Data @[1] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @[0] { };
       };
@@ -20,6 +20,11 @@ Program .projects[0].programs.gp[3][6] {
       };
      };
      String_Data @[3] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @[0] { };
+      };
+     };
+     String_Data @[4] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @[0] { };
       };
@@ -71,7 +76,17 @@ Program .projects[0].programs.gp[3][6] {
     };
    };
   };
-  DataTable @[2] { 
+  DataBlock @[2] { 
+   DataTableCols @.data = [0] {
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataTable @[3] { 
    DataTableCols @.data = [2] {
     String_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
@@ -91,7 +106,7 @@ Program .projects[0].programs.gp[3][6] {
    DataTableCell_List @.control_panel_cells = [0] {
    };
   };
-  DataTable @[3] { 
+  DataTable @[4] { 
    DataTableCols @.data = [6] {
     String_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
@@ -131,7 +146,7 @@ Program .projects[0].programs.gp[3][6] {
    DataTableCell_List @.control_panel_cells = [0] {
    };
   };
-  DataTable @[4] { 
+  DataTable @[5] { 
    DataTableCols @.data = [3] {
     int_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
@@ -162,7 +177,7 @@ Program .projects[0].programs.gp[3][6] {
    DataTableCell_List @.control_panel_cells = [0] {
    };
   };
-  DataTable @[5] { 
+  DataTable @[6] { 
    DataTableCols @.data = [4] {
     String_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
@@ -201,7 +216,7 @@ Program .projects[0].programs.gp[3][6] {
   ProgVar @[0] { };
  };
 
- ProgVar_List @.vars = [7] {
+ ProgVar_List @.vars = [8] {
   ProgVar @[0] { };
   ProgVar @[1] { };
   ProgVar @[2] { };
@@ -209,9 +224,10 @@ Program .projects[0].programs.gp[3][6] {
   ProgVar @[4] { };
   ProgVar @[5] { };
   ProgVar @[6] { };
+  ProgVar @[7] { };
  };
 
- Function_List @.functions = [9] {
+ Function_List @.functions = [11] {
   Function @[0] { 
    ProgVar_List @.args = [3] {
     ProgVar @[0] { };
@@ -1247,6 +1263,61 @@ Program .projects[0].programs.gp[3][6] {
     };
    };
   };
+  Function @[9] { 
+   ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+   };
+
+   ProgEl_List @.fun_code = [6] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [2] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    If @[2] { 
+     ProgEl_List @.true_code = [1] {
+      ReturnExpr @[0] { };
+     };
+    };
+    AssignExpr @[3] { };
+    MethodCall @[4] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    ReturnExpr @[5] { };
+   };
+  };
+  Function @[10] { 
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgEl_List @.fun_code = [2] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @[0] { };
+     };
+    };
+    ForeachLoop @[1] { 
+     ProgEl_List @.loop_code = [1] {
+      FunctionCall @[0] { 
+       ProgArg_List @.fun_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
+   };
+  };
  };
 
  ProgEl_List @.init_code = [1] {
@@ -1300,7 +1371,7 @@ Program .projects[0].programs.gp[3][6] {
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.03832753;
+	value 8 0=0.03838102;
 	val_type_fixed=0;
        };
       };
@@ -1321,14 +1392,42 @@ Program .projects[0].programs.gp[3][6] {
       [14] 20;10;10;20;10;10;30;10;0;0;
 30;0;10;1;      };
      };
-     String_Data @[1] {
+     bool_Data @[1] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_284";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="view_panel_wd";
+	value 8 0=0.0474529;
+	val_type_fixed=0;
+       };
+      };
+      name="on";
+      desc="whether to include this item";
+      col_flags=SAVE_DATA|CHECKBOX;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=68;
+      ar {
+       name="ar";
+      [14] true;false;false;true;false;false;true;false;false;false;
+false;true;true;false;      };
+     };
+     String_Data @[2] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_265";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.2041812;
+	value 8 0=0.2044661;
 	val_type_fixed=0;
        };
       };
@@ -1347,16 +1446,16 @@ Program .projects[0].programs.gp[3][6] {
       ar {
        name="ar";
       [14] "ball:$po=[Ph|Po] $sz=[small|medium-sized|large]:J";"ball:[O|S] medium-sized:A";"ball:[O|S] large:A";"ball:$po=[Ph|Po] $color=[red|green|blue]:J";"ball:[O|S] green:A";"ball:[O|S] blue:A";"ball:$po=[Ph|Po] rolls:V $dir=[left|right]:L";"ball:Ph drops:V";;;
-"ball:Ph rolls:V right:L";"ball:$po=[Ph|Po]";"ball:$po=[Ph|Po] !princess:A";"ball:Po";      };
+"ball:Ph rolls:V right:L";"<p> ball:$po=[Ph|Po]";"ball:$po=[Ph|Po] !princess:A";"ball:Po";      };
      };
-     String_Data @[2] {
+     String_Data @[3] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_267";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.4069687;
+	value 8 0=0.4075366;
 	val_type_fixed=0;
        };
       };
@@ -1377,14 +1476,14 @@ Program .projects[0].programs.gp[3][6] {
       [14] "$po[p|o]_size=$sz[0.1|0.2|0.3]&.05";"[o|s]_size=0.2";"[o|s]_size=0.3";"$po[p|o]_color=$color";"[o|s]_color=green";"[o|s]_color=blue";"$po[p|o]_start_x=$dir[0.9|0.1]&.05 $po[p|o]_start_y=[0.1:0.6] $po[p|o]_vel_x=$dir[[-0.15:-0.1]|[0.1:0.15]] $po[p|o]_vel_y=0 atrials=[3:5]";"p_start_y=0.15%.05";;;
 "p_start_x=0.1%.05 p_start_y=[0.1:0.6] p_vel_x=[0.15:0.1] p_vel_y=0 atrials=[3:5]";"atrials=3 p_size=0.2&.05 p_color=black p_start_x=0.5&.1 p_start_y=0.5&.1 p_vel_x=0 p_vel_y=0 o_size=0.1 o_color=blue o_start_x=0.2 o_start_y=0.5 o_vel_x=0 o_vel_y=0";"$po[p|o]_obj=ball";"o_obj=ball";      };
      };
-     String_Data @[3] {
+     String_Data @[4] {
       UserDataItem_List @*(.user_data_) {
        name=;
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.276655;
+	value 8 0=0.2770412;
 	val_type_fixed=0;
        };
       };
@@ -1403,7 +1502,7 @@ Program .projects[0].programs.gp[3][6] {
       ar {
        name="ar";
       [14] ;;;;;;;;;;
-;"these are all cases in which a ball is a Patient theme (Ph) or a Co-Patient (Po)";;;      };
+;"<p> = start of new story sequence -- these are all cases in which a ball is a Patient theme (Ph) or a Co-Patient (Po)";;;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1601,7 +1700,36 @@ Program .projects[0].programs.gp[3][6] {
     };
    };
   };
-  DataTable @[2] {
+  DataBlock @[2] {
+   name="TmpFilt";
+   desc=;
+   data {
+    name="data";
+    el_typ=DataColT;
+    el_def=0;
+   };
+   data_flags=SAVE_ROWS|AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name=;
+   [0]    };
+   last_sort_spec {
+    name="DataSortSpec_69";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   control_panel_cells {
+    name="DataTableCell_List_67";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable @[3] {
    name="KeyCombos";
    desc=;
    data {
@@ -1610,12 +1738,12 @@ Program .projects[0].programs.gp[3][6] {
     el_def=0;
     String_Data @[0] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_284";
+      name="UserDataItem_List_279";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06968641;
+       value 8 0=0.06978367;
        val_type_fixed=0;
       };
      };
@@ -1633,12 +1761,12 @@ Program .projects[0].programs.gp[3][6] {
     };
     String_Data @[1] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_285";
+      name="UserDataItem_List_280";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06968641;
+       value 8 0=0.06978367;
        val_type_fixed=0;
       };
      };
@@ -1676,7 +1804,7 @@ Program .projects[0].programs.gp[3][6] {
     el_def=0;
    };
   };
-  DataTable @[3] {
+  DataTable @[4] {
    name="ParamCombos";
    desc=;
    data {
@@ -1685,12 +1813,12 @@ Program .projects[0].programs.gp[3][6] {
     el_def=0;
     String_Data @[0] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_286";
+      name="UserDataItem_List_273";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06968641;
+       value 8 0=0.06978367;
        val_type_fixed=0;
       };
      };
@@ -1708,12 +1836,12 @@ Program .projects[0].programs.gp[3][6] {
     };
     String_Data @[1] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_287";
+      name="UserDataItem_List_274";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06968641;
+       value 8 0=0.06978367;
        val_type_fixed=0;
       };
      };
@@ -1731,12 +1859,12 @@ Program .projects[0].programs.gp[3][6] {
     };
     String_Data @[2] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_288";
+      name="UserDataItem_List_275";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06968641;
+       value 8 0=0.06978367;
        val_type_fixed=0;
       };
      };
@@ -1754,12 +1882,12 @@ Program .projects[0].programs.gp[3][6] {
     };
     String_Data @[3] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_289";
+      name="UserDataItem_List_276";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06968641;
+       value 8 0=0.06978367;
        val_type_fixed=0;
       };
      };
@@ -1777,12 +1905,12 @@ Program .projects[0].programs.gp[3][6] {
     };
     String_Data @[4] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_290";
+      name="UserDataItem_List_277";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06968641;
+       value 8 0=0.06978367;
        val_type_fixed=0;
       };
      };
@@ -1800,12 +1928,12 @@ Program .projects[0].programs.gp[3][6] {
     };
     String_Data @[5] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_291";
+      name="UserDataItem_List_278";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06968641;
+       value 8 0=0.06978367;
        val_type_fixed=0;
       };
      };
@@ -1843,7 +1971,7 @@ Program .projects[0].programs.gp[3][6] {
     el_def=0;
    };
   };
-  DataTable @[4] {
+  DataTable @[5] {
    name="CompiledSpecs";
    desc="fully explicit literal specs built from current specs";
    data {
@@ -1857,7 +1985,7 @@ Program .projects[0].programs.gp[3][6] {
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.03832753;
+       value 8 0=0.03838102;
        val_type_fixed=0;
       };
      };
@@ -1881,7 +2009,7 @@ Program .projects[0].programs.gp[3][6] {
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.2041812;
+       value 8 0=0.2044661;
        val_type_fixed=0;
       };
      };
@@ -1905,7 +2033,7 @@ Program .projects[0].programs.gp[3][6] {
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.6076655;
+       value 8 0=0.6085136;
        val_type_fixed=0;
       };
      };
@@ -1976,7 +2104,7 @@ Program .projects[0].programs.gp[3][6] {
     el_def=0;
    };
   };
-  DataTable @[5] {
+  DataTable @[6] {
    name="CurParams";
    desc="current scene parameters integrated from scene specs";
    data {
@@ -1990,7 +2118,7 @@ Program .projects[0].programs.gp[3][6] {
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06898955;
+       value 8 0=0.06908584;
        val_type_fixed=0;
       };
      };
@@ -2013,7 +2141,7 @@ Program .projects[0].programs.gp[3][6] {
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.09965157;
+       value 8 0=0.09979065;
        val_type_fixed=0;
       };
      };
@@ -2036,7 +2164,7 @@ Program .projects[0].programs.gp[3][6] {
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.09965157;
+       value 8 0=0.09979065;
        val_type_fixed=0;
       };
      };
@@ -2060,7 +2188,7 @@ Program .projects[0].programs.gp[3][6] {
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.1679443;
+       value 8 0=0.1681786;
        val_type_fixed=0;
       };
      };
@@ -2113,7 +2241,7 @@ Program .projects[0].programs.gp[3][6] {
   ProgVar @[0] {
    name="input_sentence";
    var_type=T_String;
-   string_val="the red:J ball:Ph rolls:V to the left:L";
+   string_val="<p> the ball:Ph rolls:V behind the cat:Po .";
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="the sentence to generate paramters from";
@@ -2125,17 +2253,6 @@ Program .projects[0].programs.gp[3][6] {
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
-   name="cur_specs";
-   var_type=T_Object;
-   object_type=DataTable;
-   object_val=.projects[0].programs.gp[3][6].objs[0][0]$$;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-   reference=0;
-   desc="current specifications to use for rendering sentences into scenes";
-   init_from=NULL;
-  };
-  ProgVar @[1] {
    name="ActiveSceneSpecs";
    var_type=T_Object;
    object_type=DataTable_Group;
@@ -2146,19 +2263,8 @@ Program .projects[0].programs.gp[3][6] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[2] {
+  ProgVar @[1] {
    name="CompiledSpecs";
-   var_type=T_Object;
-   object_type=DataTable;
-   object_val=.projects[0].programs.gp[3][6].objs[4]$$;
-   objs_ptr=1;
-   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-   reference=0;
-   desc=;
-   init_from=NULL;
-  };
-  ProgVar @[3] {
-   name="CurParams";
    var_type=T_Object;
    object_type=DataTable;
    object_val=.projects[0].programs.gp[3][6].objs[5]$$;
@@ -2168,7 +2274,18 @@ Program .projects[0].programs.gp[3][6] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[4] {
+  ProgVar @[2] {
+   name="CurParams";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[3][6].objs[6]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[3] {
    name="InactiveSceneSpecs";
    var_type=T_Object;
    object_type=DataTable_Group;
@@ -2179,11 +2296,22 @@ Program .projects[0].programs.gp[3][6] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[5] {
+  ProgVar @[4] {
    name="KeyCombos";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[3][6].objs[2]$$;
+   object_val=.projects[0].programs.gp[3][6].objs[3]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[5] {
+   name="ParamCombos";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[3][6].objs[4]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -2191,12 +2319,23 @@ Program .projects[0].programs.gp[3][6] {
    init_from=NULL;
   };
   ProgVar @[6] {
-   name="ParamCombos";
+   name="TmpFilt";
    var_type=T_Object;
-   object_type=DataTable;
-   object_val=.projects[0].programs.gp[3][6].objs[3]$$;
+   object_type=DataBlock;
+   object_val=.projects[0].programs.gp[3][6].objs[2]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[7] {
+   name="cur_params";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=$.projects[0].programs.gp[3][6].objs[6]$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
@@ -2287,7 +2426,7 @@ Program .projects[0].programs.gp[3][6] {
      code_string="CompiledSpecs->AddBlankRow()";
      pre_compile_code_string="CompiledSpecs->AddBlankRow()";
      result_var=NULL;
-     obj=.projects[0].programs.gp[3][6].vars[2]$$;
+     obj=.projects[0].programs.gp[3][6].vars[1]$$;
      method=DataTable::AddBlankRow;
      meth_args {
       name="meth_args";
@@ -2302,7 +2441,7 @@ Program .projects[0].programs.gp[3][6] {
      flags=CAN_REVERT_TO_CODE;
      code_string="CompiledSpecs[\"keywords\"][-1] = keys.trim()";
      pre_compile_code_string="CompiledSpecs[\"keywords\"][-1] = keys.trim()";
-     variable=$.projects[0].programs.gp[3][6].vars[2]$;
+     variable=$.projects[0].programs.gp[3][6].vars[1]$;
      data_table=1;
      col {
       expr="\"keywords\"";
@@ -2334,7 +2473,7 @@ Program .projects[0].programs.gp[3][6] {
      flags=CAN_REVERT_TO_CODE;
      code_string="CompiledSpecs[\"priority\"][-1] = pri";
      pre_compile_code_string="CompiledSpecs[\"priority\"][-1] = pri";
-     variable=$.projects[0].programs.gp[3][6].vars[2]$;
+     variable=$.projects[0].programs.gp[3][6].vars[1]$;
      data_table=1;
      col {
       expr="\"priority\"";
@@ -2366,7 +2505,7 @@ Program .projects[0].programs.gp[3][6] {
      flags=CAN_REVERT_TO_CODE;
      code_string="CompiledSpecs[\"params\"][-1] = params.trim()";
      pre_compile_code_string="CompiledSpecs[\"params\"][-1] = params.trim()";
-     variable=$.projects[0].programs.gp[3][6].vars[2]$;
+     variable=$.projects[0].programs.gp[3][6].vars[1]$;
      data_table=1;
      col {
       expr="\"params\"";
@@ -2827,7 +2966,7 @@ Program .projects[0].programs.gp[3][6] {
      code_string="KeyCombos->Reset()";
      pre_compile_code_string="KeyCombos->Reset()";
      result_var=NULL;
-     obj=.projects[0].programs.gp[3][6].vars[5]$$;
+     obj=.projects[0].programs.gp[3][6].vars[4]$$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -2843,7 +2982,7 @@ Program .projects[0].programs.gp[3][6] {
      code_string="ParamCombos->Reset()";
      pre_compile_code_string="ParamCombos->Reset()";
      result_var=NULL;
-     obj=.projects[0].programs.gp[3][6].vars[6]$$;
+     obj=.projects[0].programs.gp[3][6].vars[5]$$;
      method=DataTable::Reset;
      meth_args {
       name="meth_args";
@@ -3267,7 +3406,7 @@ Program .projects[0].programs.gp[3][6] {
 	 code_string="KeyCombos->NewColString(varnm)";
 	 pre_compile_code_string="KeyCombos->NewColString(varnm)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[3][6].vars[5]$;
+	 obj=$.projects[0].programs.gp[3][6].vars[4]$;
 	 method=DataTable::NewColString;
 	 meth_args {
 	  name="meth_args";
@@ -3306,7 +3445,7 @@ Program .projects[0].programs.gp[3][6] {
 	   code_string="KeyCombos->EnforceRows(vary.size)";
 	   pre_compile_code_string="KeyCombos->EnforceRows(vary.size)";
 	   result_var=NULL;
-	   obj=$.projects[0].programs.gp[3][6].vars[5]$;
+	   obj=$.projects[0].programs.gp[3][6].vars[4]$;
 	   method=DataTable::EnforceRows;
 	   meth_args {
 	    name="meth_args";
@@ -3343,7 +3482,7 @@ Program .projects[0].programs.gp[3][6] {
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="KeyCombos[varnm][i] = startkey + vary[i] + endkey";
 	   pre_compile_code_string="KeyCombos[varnm][i] = startkey + vary[i] + endkey";
-	   variable=$.projects[0].programs.gp[3][6].vars[5]$;
+	   variable=$.projects[0].programs.gp[3][6].vars[4]$;
 	   data_table=1;
 	   col {
 	    expr="varnm";
@@ -4026,7 +4165,7 @@ Program .projects[0].programs.gp[3][6] {
 	 code_string="ParamCombos->NewColString(\"p\"+(String)pcol)";
 	 pre_compile_code_string="ParamCombos->NewColString(\"p\"+(String)pcol)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[3][6].vars[6]$;
+	 obj=$.projects[0].programs.gp[3][6].vars[5]$;
 	 method=DataTable::NewColString;
 	 meth_args {
 	  name="meth_args";
@@ -4065,7 +4204,7 @@ Program .projects[0].programs.gp[3][6] {
 	   code_string="ParamCombos->EnforceRows(vary.size)";
 	   pre_compile_code_string="ParamCombos->EnforceRows(vary.size)";
 	   result_var=NULL;
-	   obj=$.projects[0].programs.gp[3][6].vars[6]$;
+	   obj=$.projects[0].programs.gp[3][6].vars[5]$;
 	   method=DataTable::EnforceRows;
 	   meth_args {
 	    name="meth_args";
@@ -4129,7 +4268,7 @@ Program .projects[0].programs.gp[3][6] {
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="ParamCombos[pcol][i] = startprm + vary[i] + endprm";
 	   pre_compile_code_string="ParamCombos[pcol][i] = startprm + vary[i] + endprm";
-	   variable=$.projects[0].programs.gp[3][6].vars[6]$;
+	   variable=$.projects[0].programs.gp[3][6].vars[5]$;
 	   data_table=1;
 	   col {
 	    expr="pcol";
@@ -4561,7 +4700,7 @@ Program .projects[0].programs.gp[3][6] {
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="vi = KeyCombos.data.FindNameIdx(varnm)";
 	   pre_compile_code_string="vi = KeyCombos.data.FindNameIdx(varnm)";
-	   obj=$.projects[0].programs.gp[3][6].vars[5]$;
+	   obj=$.projects[0].programs.gp[3][6].vars[4]$;
 	   path="data";
 	   result_var=.projects[0].programs.gp[3][6].functions[1].fun_code[0].local_vars[25]$$;
 	   method=taList_impl::FindNameIdx;
@@ -4838,7 +4977,7 @@ Program .projects[0].programs.gp[3][6] {
 	 code_string="ParamCombos->NewColString(\"p\"+(String)pcol)";
 	 pre_compile_code_string="ParamCombos->NewColString(\"p\"+(String)pcol)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[3][6].vars[6]$;
+	 obj=$.projects[0].programs.gp[3][6].vars[5]$;
 	 method=DataTable::NewColString;
 	 meth_args {
 	  name="meth_args";
@@ -4877,7 +5016,7 @@ Program .projects[0].programs.gp[3][6] {
 	   code_string="ParamCombos->EnforceRows(vary.size)";
 	   pre_compile_code_string="ParamCombos->EnforceRows(vary.size)";
 	   result_var=NULL;
-	   obj=$.projects[0].programs.gp[3][6].vars[6]$;
+	   obj=$.projects[0].programs.gp[3][6].vars[5]$;
 	   method=DataTable::EnforceRows;
 	   meth_args {
 	    name="meth_args";
@@ -4941,7 +5080,7 @@ Program .projects[0].programs.gp[3][6] {
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="ParamCombos[pcol][i] = startprm + vary[i] + endprm";
 	   pre_compile_code_string="ParamCombos[pcol][i] = startprm + vary[i] + endprm";
-	   variable=$.projects[0].programs.gp[3][6].vars[6]$;
+	   variable=$.projects[0].programs.gp[3][6].vars[5]$;
 	   data_table=1;
 	   col {
 	    expr="pcol";
@@ -5216,7 +5355,7 @@ Program .projects[0].programs.gp[3][6] {
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="vi = KeyCombos.data.FindNameIdx(prmvars[d])";
 	   pre_compile_code_string="vi = KeyCombos.data.FindNameIdx(prmvars[d])";
-	   obj=$.projects[0].programs.gp[3][6].vars[5]$;
+	   obj=$.projects[0].programs.gp[3][6].vars[4]$;
 	   path="data";
 	   result_var=$.projects[0].programs.gp[3][6].functions[1].fun_code[0].local_vars[25]$;
 	   method=taList_impl::FindNameIdx;
@@ -5432,7 +5571,7 @@ Program .projects[0].programs.gp[3][6] {
 	   flags=CAN_REVERT_TO_CODE;
 	   code_string="vi = KeyCombos.data.FindNameIdx(prmvars[d])";
 	   pre_compile_code_string="vi = KeyCombos.data.FindNameIdx(prmvars[d])";
-	   obj=$.projects[0].programs.gp[3][6].vars[5]$;
+	   obj=$.projects[0].programs.gp[3][6].vars[4]$;
 	   path="data";
 	   result_var=$.projects[0].programs.gp[3][6].functions[1].fun_code[0].local_vars[25]$;
 	   method=taList_impl::FindNameIdx;
@@ -5929,7 +6068,7 @@ Program .projects[0].programs.gp[3][6] {
      code_string="CompiledSpecs->ResetData()";
      pre_compile_code_string="CompiledSpecs->ResetData()";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[3][6].vars[2]$;
+     obj=$.projects[0].programs.gp[3][6].vars[1]$;
      method=DataTable::ResetData;
      meth_args {
       name="meth_args";
@@ -6108,8 +6247,8 @@ Program .projects[0].programs.gp[3][6] {
 	FunctionCall @[0] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="CompileSpec(spec[\"keywords\"][i], , spec[\"params\"][i])";
-	 pre_compile_code_string="CompileSpec(spec[\"keywords\"][i], , spec[\"params\"][i])";
+	 code_string="CompileSpec(spec[\"keywords\"][i], spec[\"priority\"][i], spec[\"params\"][i])";
+	 pre_compile_code_string="CompileSpec(spec[\"keywords\"][i], spec[\"priority\"][i], spec[\"params\"][i])";
 	 result_var=NULL;
 	 fun=.projects[0].programs.gp[3][6].functions[2]$$;
 	 fun_args {
@@ -6174,7 +6313,7 @@ Program .projects[0].programs.gp[3][6] {
      code_string="CompiledSpecs->Sort(\"priority\", true, \"keywords\", true, , , , , , , , )";
      pre_compile_code_string="CompiledSpecs->Sort(\"priority\", true, \"keywords\", true, , , , , , , , )";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[3][6].vars[2]$;
+     obj=$.projects[0].programs.gp[3][6].vars[1]$;
      method=DataTable::Sort;
      meth_args {
       name="meth_args";
@@ -6540,7 +6679,7 @@ Program .projects[0].programs.gp[3][6] {
        code_string="prow = CurParams->FindVal(pnm, \"name\", 0, false)";
        pre_compile_code_string="prow = CurParams->FindVal(pnm, \"name\", 0, false)";
        result_var=.projects[0].programs.gp[3][6].functions[4].fun_code[0].local_vars[4]$$;
-       obj=.projects[0].programs.gp[3][6].vars[3]$$;
+       obj=.projects[0].programs.gp[3][6].vars[2]$$;
        method=DataTable::FindVal;
        meth_args {
 	name="meth_args";
@@ -6612,7 +6751,7 @@ Program .projects[0].programs.gp[3][6] {
 	 code_string="CurParams->AddBlankRow()";
 	 pre_compile_code_string="CurParams->AddBlankRow()";
 	 result_var=NULL;
-	 obj=$.projects[0].programs.gp[3][6].vars[3]$;
+	 obj=$.projects[0].programs.gp[3][6].vars[2]$;
 	 method=DataTable::AddBlankRow;
 	 meth_args {
 	  name="meth_args";
@@ -6637,7 +6776,7 @@ Program .projects[0].programs.gp[3][6] {
 	 flags=CAN_REVERT_TO_CODE;
 	 code_string="CurParams[\"name\"][-1] = pnm";
 	 pre_compile_code_string="CurParams[\"name\"][-1] = pnm";
-	 variable=$.projects[0].programs.gp[3][6].vars[3]$;
+	 variable=$.projects[0].programs.gp[3][6].vars[2]$;
 	 data_table=1;
 	 col {
 	  expr="\"name\"";
@@ -6671,7 +6810,7 @@ Program .projects[0].programs.gp[3][6] {
        flags=CAN_REVERT_TO_CODE;
        code_string="CurParams[\"valstr\"][prow] = pval";
        pre_compile_code_string="CurParams[\"valstr\"][prow] = pval";
-       variable=$.projects[0].programs.gp[3][6].vars[3]$;
+       variable=$.projects[0].programs.gp[3][6].vars[2]$;
        data_table=1;
        col {
 	expr="\"valstr\"";
@@ -6703,7 +6842,7 @@ Program .projects[0].programs.gp[3][6] {
        flags=CAN_REVERT_TO_CODE;
        code_string="CurParams[\"matched\"][prow] = key";
        pre_compile_code_string="CurParams[\"matched\"][prow] = key";
-       variable=$.projects[0].programs.gp[3][6].vars[3]$;
+       variable=$.projects[0].programs.gp[3][6].vars[2]$;
        data_table=1;
        col {
 	expr="\"matched\"";
@@ -7235,7 +7374,7 @@ Program .projects[0].programs.gp[3][6] {
      code_string="CurParams->ResetData()";
      pre_compile_code_string="CurParams->ResetData()";
      result_var=NULL;
-     obj=$.projects[0].programs.gp[3][6].vars[3]$;
+     obj=$.projects[0].programs.gp[3][6].vars[2]$;
      method=DataTable::ResetData;
      meth_args {
       name="meth_args";
@@ -8457,7 +8596,7 @@ Program .projects[0].programs.gp[3][6] {
        flags=CAN_REVERT_TO_CODE;
        code_string="CurParams[\"value\"][i] = val";
        pre_compile_code_string="CurParams[\"value\"][i] = val";
-       variable=$.projects[0].programs.gp[3][6].vars[3]$;
+       variable=$.projects[0].programs.gp[3][6].vars[2]$;
        data_table=1;
        col {
 	expr="\"value\"";
@@ -8493,6 +8632,274 @@ Program .projects[0].programs.gp[3][6] {
      };
      iter {
       expr="i++";
+     };
+    };
+   };
+  };
+  Function @[9] {
+   desc="gets current parameter value for given variable -- returns true if a value found, false if not";
+   flags=CAN_REVERT_TO_CODE;
+   code_string="GetParamValue(ProgVar* var) returns: bool";
+   pre_compile_code_string="GetParamValue(ProgVar* var) returns: bool";
+   name="GetParamValue";
+   return_type=T_Bool;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="var";
+     var_type=T_Object;
+     object_type=ProgVar;
+     object_val=NULL;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   fun_code {
+    name="ProgEl_List_578";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (2 vars)";
+     pre_compile_code_string="LocalVars (2 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="pidx";
+       var_type=T_Int;
+       int_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="val";
+       var_type=T_String;
+       string_val=;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="pidx = cur_params->FindVal(var.name, \"name\", 0, warn_not_found)";
+     pre_compile_code_string="pidx = cur_params->FindVal(var.name, \"name\", 0, false)";
+     result_var=.projects[0].programs.gp[3][6].functions[9].fun_code[0].local_vars[0]$$;
+     obj=.projects[0].programs.gp[3][6].vars[7]$$;
+     method=DataTable::FindVal;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="val";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="var.name";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"name\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="0";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="not_found_err";
+       required=0;
+       def_val="false";
+       prev_expr=;
+       expr {
+	expr="false";
+       };
+      };
+     };
+     meth_sig="int FindVal(Variant& val, Variant& col, int st_row = 0, bool not_found_err = false)";
+     meth_desc=" find row number for given value within column col of scalar type (use for Programs), starting at given starting row number. if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- column can be specified as either integer index or a string that is then used to find the given column name. returns -1 if not found, and issues error if not_found_err is true";
+    };
+    If @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (pidx < 0)";
+     pre_compile_code_string="if (pidx < 0)";
+     cond {
+      expr="pidx < 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ReturnExpr @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="return false";
+       pre_compile_code_string="return false";
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    AssignExpr @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="val = cur_params[\"value\"][pidx]";
+     pre_compile_code_string="val = cur_params[\"value\"][pidx]";
+     result_var=.projects[0].programs.gp[3][6].functions[9].fun_code[0].local_vars[1]$$;
+     expr {
+      expr="cur_params[\"value\"][pidx]";
+     };
+    };
+    MethodCall @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="var->SetVar(val)";
+     pre_compile_code_string="var->SetVar(val)";
+     result_var=NULL;
+     obj=.projects[0].programs.gp[3][6].functions[9].args[0]$$;
+     method=ProgVar::SetVar;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="value";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="val";
+       };
+      };
+     };
+     meth_sig="void SetVar(Variant& value)";
+     meth_desc=" set from variant value (general purpose variable setting) -- does not change type of variable, just sets from variant value";
+    };
+    ReturnExpr @[5] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="return true";
+     pre_compile_code_string="return true";
+     expr {
+      expr="true";
+     };
+    };
+   };
+  };
+  Function @[10] {
+   desc="this gets all the parameter values for any variable present in the .vars section -- no err if not foun";
+   flags=CAN_REVERT_TO_CODE;
+   code_string="GetAllParams() returns: int";
+   pre_compile_code_string="GetAllParams() returns: int";
+   name="GetAllParams";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="ProgEl_List_590";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (0 vars)";
+     pre_compile_code_string="LocalVars (0 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="pvar";
+       var_type=T_Object;
+       object_type=ProgVar;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    ForeachLoop @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="foreach(<el_var not set> in this.vars)";
+     pre_compile_code_string="foreach(pvar in this.vars)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      FunctionCall @[0] {
+       desc="just try them all and see what sticks!";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="GetParamValue(pvar, false)";
+       pre_compile_code_string="GetParamValue(pvar, false)";
+       result_var=NULL;
+       fun=.projects[0].programs.gp[3][6].functions[9]$$;
+       fun_args {
+	name="fun_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=ProgVar;
+	 type="ProgVar*";
+	 name="var";
+	 required=1;
+	 def_val=;
+	 prev_expr="pvar";
+	 expr {
+	  expr="pvar";
+	 };
+	};
+       };
+      };
+     };
+     el_var=.projects[0].programs.gp[3][6].functions[10].fun_code[0].local_vars[0]$$;
+     in {
+      expr="this.vars";
      };
     };
    };
