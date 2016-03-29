@@ -88,16 +88,8 @@ Program .projects[0].programs.gp[3][6] {
   };
   DataTable @[3] { 
    DataTableCols @.data = [2] {
-    String_Data @[0] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[1] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
+    String_Data @[0] { };
+    String_Data @[1] { };
    };
 
    DataOpList @.last_sort_spec.ops = [0] {
@@ -108,36 +100,12 @@ Program .projects[0].programs.gp[3][6] {
   };
   DataTable @[4] { 
    DataTableCols @.data = [6] {
-    String_Data @[0] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[1] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[2] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[3] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[4] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[5] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
+    String_Data @[0] { };
+    String_Data @[1] { };
+    String_Data @[2] { };
+    String_Data @[3] { };
+    String_Data @[4] { };
+    String_Data @[5] { };
    };
 
    DataOpList @.last_sort_spec.ops = [0] {
@@ -1371,7 +1339,7 @@ Program .projects[0].programs.gp[3][6] {
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.03838102;
+	value 8 0=0.08064516;
 	val_type_fixed=0;
        };
       };
@@ -1399,7 +1367,7 @@ Program .projects[0].programs.gp[3][6] {
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.0474529;
+	value 8 0=0.09970675;
 	val_type_fixed=0;
        };
       };
@@ -1427,7 +1395,7 @@ false;true;true;false;      };
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.2044661;
+	value 8 0=0.4296188;
 	val_type_fixed=0;
        };
       };
@@ -1446,7 +1414,7 @@ false;true;true;false;      };
       ar {
        name="ar";
       [14] "ball:$po=[Ph|Po] $sz=[small|medium-sized|large]:J";"ball:[O|S] medium-sized:A";"ball:[O|S] large:A";"ball:$po=[Ph|Po] $color=[red|green|blue]:J";"ball:[O|S] green:A";"ball:[O|S] blue:A";"ball:$po=[Ph|Po] rolls:V $dir=[left|right]:L";"ball:Ph drops:V";;;
-"ball:Ph rolls:V right:L";"<p> ball:$po=[Ph|Po]";"ball:$po=[Ph|Po] !princess:A";"ball:Po";      };
+"ball:Ph rolls:V right:L";"<p> ball:$po=[Ph|Po]";"ball:$po=[Ph|Po]";"ball:Po";      };
      };
      String_Data @[3] {
       UserDataItem_List @*(.user_data_) {
@@ -1455,7 +1423,7 @@ false;true;true;false;      };
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.4075366;
+	value 8 0=0.856305;
 	val_type_fixed=0;
        };
       };
@@ -1473,8 +1441,8 @@ false;true;true;false;      };
       width=584;
       ar {
        name="ar";
-      [14] "$po[p|o]_size=$sz[0.1|0.2|0.3]&.05";"[o|s]_size=0.2";"[o|s]_size=0.3";"$po[p|o]_color=$color";"[o|s]_color=green";"[o|s]_color=blue";"$po[p|o]_start_x=$dir[0.9|0.1]&.05 $po[p|o]_start_y=[0.1:0.6] $po[p|o]_vel_x=$dir[[-0.15:-0.1]|[0.1:0.15]] $po[p|o]_vel_y=0 atrials=[3:5]";"p_start_y=0.15%.05";;;
-"p_start_x=0.1%.05 p_start_y=[0.1:0.6] p_vel_x=[0.15:0.1] p_vel_y=0 atrials=[3:5]";"atrials=3 p_size=0.2&.05 p_color=black p_start_x=0.5&.1 p_start_y=0.5&.1 p_vel_x=0 p_vel_y=0 o_size=0.1 o_color=blue o_start_x=0.2 o_start_y=0.5 o_vel_x=0 o_vel_y=0";"$po[p|o]_obj=ball";"o_obj=ball";      };
+      [14] "$po[p|o]_size=$sz[0.1|0.2|0.3]&.05";"[o|s]_size=0.2";"[o|s]_size=0.3";"$po[p|o]_color=$color";"[o|s]_color=green";"[o|s]_color=blue";"$po[p|o]_start_x=$dir[0.9|0.1]&.05 $po[p|o]_start_y=[0.1:0.6] $po[p|o]_vel_x=$dir[[-0.15:-0.1]|[0.1:0.15]] $po[p|o]_vel_y=0 atrials=[8:10]";"p_start_y=0.15%.05";;;
+"p_start_x=0.1%.05 p_start_y=[0.1:0.6] p_vel_x=[0.15:0.1] p_vel_y=0 atrials=[3:5]";"atrials=10 p_size=0.2&.05 p_color=black p_start_x=0.5&.1 p_start_y=0.5&.1 p_vel_x=0 p_vel_y=0 o_size=0.1 o_color=blue o_start_x=0.2 o_start_y=0.5 o_vel_x=0 o_vel_y=0";"$po[p|o]_obj=ball aud_word=ball aud_start=1";"o_obj=ball";      };
      };
      String_Data @[4] {
       UserDataItem_List @*(.user_data_) {
@@ -1483,7 +1451,7 @@ false;true;true;false;      };
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.2770412;
+	value 8 0=0.5821114;
 	val_type_fixed=0;
        };
       };
@@ -1713,10 +1681,10 @@ false;true;true;false;      };
    auto_load_file=;
    keygen 4 0=0;
    row_indexes {
-    name=;
+    name="row_indexes";
    [0]    };
    last_sort_spec {
-    name="DataSortSpec_69";
+    name="last_sort_spec";
     ops {
      name="ops";
      el_typ=DataSortEl;
@@ -1724,7 +1692,7 @@ false;true;true;false;      };
     };
    };
    control_panel_cells {
-    name="DataTableCell_List_67";
+    name="control_panel_cells";
     el_typ=DataTableCell;
     el_def=0;
    };
@@ -1737,16 +1705,6 @@ false;true;true;false;      };
     el_typ=String_Data;
     el_def=0;
     String_Data @[0] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_279";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.06978367;
-       val_type_fixed=0;
-      };
-     };
      name="po";
      col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
@@ -1760,16 +1718,6 @@ false;true;true;false;      };
      width=0;
     };
     String_Data @[1] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_280";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.06978367;
-       val_type_fixed=0;
-      };
-     };
      name="dir";
      col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
@@ -1812,16 +1760,6 @@ false;true;true;false;      };
     el_typ=String_Data;
     el_def=0;
     String_Data @[0] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_273";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.06978367;
-       val_type_fixed=0;
-      };
-     };
      name="p0";
      col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
@@ -1835,16 +1773,6 @@ false;true;true;false;      };
      width=0;
     };
     String_Data @[1] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_274";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.06978367;
-       val_type_fixed=0;
-      };
-     };
      name="p1";
      col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
@@ -1858,16 +1786,6 @@ false;true;true;false;      };
      width=0;
     };
     String_Data @[2] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_275";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.06978367;
-       val_type_fixed=0;
-      };
-     };
      name="p2";
      col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
@@ -1881,16 +1799,6 @@ false;true;true;false;      };
      width=0;
     };
     String_Data @[3] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_276";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.06978367;
-       val_type_fixed=0;
-      };
-     };
      name="p3";
      col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
@@ -1904,16 +1812,6 @@ false;true;true;false;      };
      width=0;
     };
     String_Data @[4] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_277";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.06978367;
-       val_type_fixed=0;
-      };
-     };
      name="p4";
      col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
@@ -1927,16 +1825,6 @@ false;true;true;false;      };
      width=0;
     };
     String_Data @[5] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_278";
-      el_typ=UserDataItem;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_panel_wd";
-       value 8 0=0.06978367;
-       val_type_fixed=0;
-      };
-     };
      name="p5";
      col_flags=SAVE_DATA|CHECKBOX;
      is_matrix=0;
@@ -2118,7 +2006,7 @@ false;true;true;false;      };
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.1451613;
        val_type_fixed=0;
       };
      };
@@ -2141,7 +2029,7 @@ false;true;true;false;      };
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.09979065;
+       value 8 0=0.2096774;
        val_type_fixed=0;
       };
      };
@@ -2164,7 +2052,7 @@ false;true;true;false;      };
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.09979065;
+       value 8 0=0.2096774;
        val_type_fixed=0;
       };
      };
@@ -2188,7 +2076,7 @@ false;true;true;false;      };
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.1681786;
+       value 8 0=0.3533724;
        val_type_fixed=0;
       };
      };
@@ -2212,8 +2100,7 @@ false;true;true;false;      };
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [14] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;   };
+   [3] 0;1;2;   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -2241,7 +2128,7 @@ false;true;true;false;      };
   ProgVar @[0] {
    name="input_sentence";
    var_type=T_String;
-   string_val="<p> the ball:Ph rolls:V behind the cat:Po .";
+   string_val="the ball:Ph hits:V the block:Po .";
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="the sentence to generate paramters from";
@@ -8696,7 +8583,7 @@ false;true;true;false;      };
     MethodCall @[1] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="pidx = cur_params->FindVal(var.name, \"name\", 0, warn_not_found)";
+     code_string="pidx = cur_params->FindVal(var.name, \"name\", 0, false)";
      pre_compile_code_string="pidx = cur_params->FindVal(var.name, \"name\", 0, false)";
      result_var=.projects[0].programs.gp[3][6].functions[9].fun_code[0].local_vars[0]$$;
      obj=.projects[0].programs.gp[3][6].vars[7]$$;
@@ -8844,8 +8731,8 @@ false;true;true;false;      };
     LocalVars @[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="LocalVars (0 vars)";
-     pre_compile_code_string="LocalVars (0 vars)";
+     code_string="LocalVars (1 vars)";
+     pre_compile_code_string="LocalVars (1 vars)";
      local_vars {
       name="local_vars";
       el_typ=ProgVar;
@@ -8866,7 +8753,7 @@ false;true;true;false;      };
     ForeachLoop @[1] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="foreach(<el_var not set> in this.vars)";
+     code_string="foreach(pvar in this.vars)";
      pre_compile_code_string="foreach(pvar in this.vars)";
      loop_code {
       name="loop_code";
@@ -8875,8 +8762,8 @@ false;true;true;false;      };
       FunctionCall @[0] {
        desc="just try them all and see what sticks!";
        flags=CAN_REVERT_TO_CODE;
-       code_string="GetParamValue(pvar, false)";
-       pre_compile_code_string="GetParamValue(pvar, false)";
+       code_string="GetParamValue(pvar)";
+       pre_compile_code_string="GetParamValue(pvar)";
        result_var=NULL;
        fun=.projects[0].programs.gp[3][6].functions[9]$$;
        fun_args {

@@ -350,12 +350,21 @@ public:
 
   taString&               convert(int i, const char* format = "%d");
   // #IGNORE
+  taString&               convertInt(int i, const char* format = "%d")
+  { return convert(i, format); }
+  // convert int value into string using given format (standard printf formatting)
   taString&               convert(long i, const char* format = "%ld");
   // #IGNORE
   taString&               convert(float f, const char* format = "%g");
   // #IGNORE
+  taString&               convertFloat(float i, const char* format = "%g")
+  { return convert(i, format); }
+  // convert float value into string using given format (standard printf formatting)
   taString&               convert(double f, const char* format = "%lg");
   // #IGNORE
+  taString&               convertDouble(double i, const char* format = "%lg")
+  { return convert(i, format); }
+  // convert double value into string using given format (standard printf formatting)
 
   int                   HexToInt() const { return strtol(chars(), NULL, 16); }
   // #CAT_Convert hexidecimal string to integer value

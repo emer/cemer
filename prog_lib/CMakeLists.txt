@@ -1,6 +1,6 @@
 ########### prog_lib install files ###############
 
-#comment to update
+# comment to update
 
 FILE(GLOB PROG_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.prog")
 FILE(GLOB PROG_GP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.progp")

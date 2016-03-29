@@ -2084,7 +2084,7 @@ Program .projects[0].programs.gp[3][5] {
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.06908584;
+	value 8 0=0.1451613;
 	val_type_fixed=0;
        };
       };
@@ -2112,7 +2112,7 @@ Program .projects[0].programs.gp[3][5] {
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.06908584;
+	value 8 0=0.1451613;
 	val_type_fixed=0;
        };
       };
@@ -2140,7 +2140,7 @@ Program .projects[0].programs.gp[3][5] {
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.03349616;
+	value 8 0=0.07038123;
 	val_type_fixed=0;
        };
       };
@@ -2157,8 +2157,8 @@ Program .projects[0].programs.gp[3][5] {
       width=48;
       ar {
        name="ar";
-      [20] true;true;true;true;true;true;true;false;false;false;
-true;false;false;false;false;true;true;true;false;true;
+      [20] true;false;false;false;false;false;false;false;false;false;
+false;false;false;false;false;true;true;true;false;false;
       };
      };
      float_Data @[3] {
@@ -2168,7 +2168,7 @@ true;false;false;false;false;true;true;true;false;true;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.034194;
+	value 8 0=0.07184751;
 	val_type_fixed=0;
        };
       };
@@ -2202,7 +2202,7 @@ true;false;false;false;false;true;true;true;false;true;
        };
        UserDataItem @[1] {
 	name="view_panel_wd";
-	value 8 0=0.02512212;
+	value 8 0=0.05278593;
 	val_type_fixed=0;
        };
       };
@@ -2231,7 +2231,7 @@ true;false;false;false;false;true;true;true;false;true;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.4389393;
+	value 8 0=0.9222874;
 	val_type_fixed=0;
        };
       };
@@ -2260,7 +2260,7 @@ true;false;false;false;false;true;true;true;false;true;
        el_def=0;
        UserDataItem @[0] {
 	name="view_panel_wd";
-	value 8 0=0.2930914;
+	value 8 0=0.6158358;
 	val_type_fixed=0;
        };
       };
@@ -2545,10 +2545,10 @@ true;false;false;false;false;true;true;true;false;true;
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [3] 0;1;2;    };
     last_sort_spec {
-     name=;
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -2556,7 +2556,7 @@ true;false;false;false;false;true;true;true;false;true;
      };
     };
     control_panel_cells {
-     name=;
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -2571,12 +2571,12 @@ true;false;false;false;false;true;true;true;false;true;
     el_def=0;
     String_Data @[0] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_299";
+      name="UserDataItem_List_280";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.1451613;
        val_type_fixed=0;
       };
      };
@@ -2594,12 +2594,12 @@ true;false;false;false;false;true;true;true;false;true;
     };
     String_Data @[1] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_300";
+      name="UserDataItem_List_281";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.1451613;
        val_type_fixed=0;
       };
      };
@@ -2617,12 +2617,12 @@ true;false;false;false;false;true;true;true;false;true;
     };
     bool_Data @[2] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_301";
+      name="UserDataItem_List_282";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.03349616;
+       value 8 0=0.07038123;
        val_type_fixed=0;
       };
      };
@@ -2640,12 +2640,12 @@ true;false;false;false;false;true;true;true;false;true;
     };
     float_Data @[3] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_302";
+      name="UserDataItem_List_283";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.034194;
+       value 8 0=0.07184751;
        val_type_fixed=0;
       };
      };
@@ -2664,7 +2664,7 @@ true;false;false;false;false;true;true;true;false;true;
     };
     int_Data @[4] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_303";
+      name="UserDataItem_List_284";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -2674,7 +2674,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.02512212;
+       value 8 0=0.05278593;
        val_type_fixed=0;
       };
      };
@@ -2698,7 +2698,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [5] 0;1;2;3;4;   };
+   [2] 0;1;   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -2750,7 +2750,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [2] 1;0;   };
+   [3] 2;1;0;   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -2802,7 +2802,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [2] 0;1;   };
+   [3] 0;1;2;   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -3052,7 +3052,8 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [6] 0;1;2;3;4;5;   };
+   [10] 0;1;2;3;4;5;6;7;8;9;
+   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -3086,7 +3087,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.06875;
        val_type_fixed=0;
       };
      };
@@ -3109,7 +3110,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.06875;
        val_type_fixed=0;
       };
      };
@@ -3132,7 +3133,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.06875;
        val_type_fixed=0;
       };
      };
@@ -3156,7 +3157,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.06875;
        val_type_fixed=0;
       };
      };
@@ -3180,7 +3181,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.06875;
        val_type_fixed=0;
       };
      };
@@ -3204,7 +3205,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.06875;
        val_type_fixed=0;
       };
      };
@@ -3228,7 +3229,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.06875;
        val_type_fixed=0;
       };
      };
@@ -3256,7 +3257,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.06875;
        val_type_fixed=0;
       };
      };
@@ -3279,7 +3280,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.06875;
        val_type_fixed=0;
       };
      };
@@ -3302,9 +3303,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [21] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;14;15;16;17;18;19;
-20;   };
+   [6] 0;1;2;3;4;5;   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -3441,7 +3440,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.1451613;
        val_type_fixed=0;
       };
      };
@@ -3464,7 +3463,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.1451613;
        val_type_fixed=0;
       };
      };
@@ -3487,7 +3486,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.03349616;
+       value 8 0=0.07038123;
        val_type_fixed=0;
       };
      };
@@ -3510,7 +3509,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.034194;
+       value 8 0=0.07184751;
        val_type_fixed=0;
       };
      };
@@ -3539,7 +3538,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.02512212;
+       value 8 0=0.05278593;
        val_type_fixed=0;
       };
      };
@@ -3563,7 +3562,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.4389393;
+       value 8 0=0.9222874;
        val_type_fixed=0;
       };
      };
@@ -3587,7 +3586,7 @@ true;false;false;false;false;true;true;true;false;true;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.2930914;
+       value 8 0=0.6158358;
        val_type_fixed=0;
       };
      };
@@ -3610,11 +3609,11 @@ true;false;false;false;false;true;true;true;false;true;
    auto_load_file=;
    keygen 4 0=0;
    row_indexes {
-    name=;
+    name="row_indexes";
    [16] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;   };
    last_sort_spec {
-    name=;
+    name="last_sort_spec";
     ops {
      name="ops";
      el_typ=DataSortEl;
@@ -3652,7 +3651,7 @@ true;false;false;false;false;true;true;true;false;true;
     };
    };
    control_panel_cells {
-    name=;
+    name="control_panel_cells";
     el_typ=DataTableCell;
     el_def=0;
    };
@@ -3666,12 +3665,12 @@ true;false;false;false;false;true;true;true;false;true;
     el_def=0;
     String_Data @[0] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_297";
+      name="UserDataItem_List_278";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.1451613;
        val_type_fixed=0;
       };
      };
@@ -3689,12 +3688,12 @@ true;false;false;false;false;true;true;true;false;true;
     };
     String_Data @[1] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_298";
+      name="UserDataItem_List_279";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.06908584;
+       value 8 0=0.1451613;
        val_type_fixed=0;
       };
      };
@@ -3712,12 +3711,12 @@ true;false;false;false;false;true;true;true;false;true;
     };
     bool_Data @[2] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_299";
+      name="UserDataItem_List_280";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.03349616;
+       value 8 0=0.07038123;
        val_type_fixed=0;
       };
      };
@@ -3735,12 +3734,12 @@ true;false;false;false;false;true;true;true;false;true;
     };
     float_Data @[3] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_300";
+      name="UserDataItem_List_281";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.034194;
+       value 8 0=0.07184751;
        val_type_fixed=0;
       };
      };
@@ -3759,7 +3758,7 @@ true;false;false;false;false;true;true;true;false;true;
     };
     int_Data @[4] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_301";
+      name="UserDataItem_List_282";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -3769,7 +3768,7 @@ true;false;false;false;false;true;true;true;false;true;
       };
       UserDataItem @[1] {
        name="view_panel_wd";
-       value 8 0=0.02512212;
+       value 8 0=0.05278593;
        val_type_fixed=0;
       };
      };
@@ -3788,12 +3787,12 @@ true;false;false;false;false;true;true;true;false;true;
     };
     String_Data @[5] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_302";
+      name="UserDataItem_List_283";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.4389393;
+       value 8 0=0.9222874;
        val_type_fixed=0;
       };
      };
@@ -3812,12 +3811,12 @@ true;false;false;false;false;true;true;true;false;true;
     };
     String_Data @[6] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_303";
+      name="UserDataItem_List_284";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="view_panel_wd";
-       value 8 0=0.2930914;
+       value 8 0=0.6158358;
        val_type_fixed=0;
       };
      };
@@ -3841,8 +3840,7 @@ true;false;false;false;false;true;true;true;false;true;
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [12] 11;10;9;8;7;6;5;4;3;2;
-1;0;   };
+   [4] 3;2;1;0;   };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -4116,8 +4114,8 @@ true;false;false;false;false;true;true;true;false;true;
     LocalVars @[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="LocalVars (6 vars)";
-     pre_compile_code_string="LocalVars (6 vars)";
+     code_string="LocalVars (7 vars)";
+     pre_compile_code_string="LocalVars (7 vars)";
      local_vars {
       name="local_vars";
       el_typ=ProgVar;
@@ -4926,8 +4924,8 @@ true;false;false;false;false;true;true;true;false;true;
     LocalVars @[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="LocalVars (0 vars)";
-     pre_compile_code_string="LocalVars (0 vars)";
+     code_string="LocalVars (2 vars)";
+     pre_compile_code_string="LocalVars (2 vars)";
      local_vars {
       name="local_vars";
       el_typ=ProgVar;
@@ -4983,7 +4981,7 @@ true;false;false;false;false;true;true;true;false;true;
     ForeachLoop @[3] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="foreach(<el_var not set> in ActiveStories)";
+     code_string="foreach(story in ActiveStories)";
      pre_compile_code_string="foreach(story in ActiveStories)";
      loop_code {
       name="loop_code";
@@ -5028,7 +5026,7 @@ true;false;false;false;false;true;true;true;false;true;
 	MethodCall @[0] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="AllStories->CopyFrom()";
+	 code_string="AllStories->CopyFrom(story)";
 	 pre_compile_code_string="AllStories->CopyFrom(story)";
 	 result_var=NULL;
 	 obj=$.projects[0].programs.gp[3][5].vars[20]$;
@@ -5055,7 +5053,7 @@ true;false;false;false;false;true;true;true;false;true;
 	MethodCall @[1] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="AllStories->ClearDataFlag()";
+	 code_string="AllStories->ClearDataFlag(DataTable::SAVE_ROWS)";
 	 pre_compile_code_string="AllStories->ClearDataFlag(DataTable::SAVE_ROWS)";
 	 result_var=NULL;
 	 obj=$.projects[0].programs.gp[3][5].vars[20]$;
@@ -5085,7 +5083,7 @@ true;false;false;false;false;true;true;true;false;true;
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="else";
-       pre_compile_code_string=;
+       pre_compile_code_string="else";
        else_code {
 	name="else_code";
 	el_typ=ProgCode;
@@ -5093,7 +5091,7 @@ true;false;false;false;false;true;true;true;false;true;
 	MethodCall @[0] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="AllStories->AppendRows()";
+	 code_string="AllStories->AppendRows(story)";
 	 pre_compile_code_string="AllStories->AppendRows(story)";
 	 result_var=NULL;
 	 obj=$.projects[0].programs.gp[3][5].vars[20]$;
@@ -5128,7 +5126,7 @@ true;false;false;false;false;true;true;true;false;true;
     MethodCall @[4] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="AllStories->Sort(\"group\", true, \"seq\", true, , , , , , , , )";
+     code_string="AllStories->Sort(\"story\", true, \"group\", true, \"seq\", true, , , , , , )";
      pre_compile_code_string="AllStories->Sort(\"story\", true, \"group\", true, \"seq\", true, , , , , , )";
      result_var=NULL;
      obj=$.projects[0].programs.gp[3][5].vars[20]$;
@@ -5276,7 +5274,7 @@ true;false;false;false;false;true;true;true;false;true;
     DataSelectRowsProg @[5] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="SelectRows:  src table = AllStories  dest table = TmpFilt  comb_op = AND";
+     code_string="SelectRows:  src table = AllStories  dest table = AllOnStories  comb_op = AND";
      pre_compile_code_string="SelectRows:  src table = AllStories  dest table = AllOnStories  comb_op = AND";
      src_data_var=$.projects[0].programs.gp[3][5].vars[20]$;
      dest_data_var=.projects[0].programs.gp[3][5].vars[13]$$;
@@ -5303,7 +5301,7 @@ true;false;false;false;false;true;true;true;false;true;
     DataGroupProg @[6] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Group from:  src table = TmpFilt dest table = Groups";
+     code_string="Group from:  src table = AllOnStories dest table = StoryGroups";
      pre_compile_code_string="Group from:  src table = AllOnStories dest table = StoryGroups";
      src_data_var=$.projects[0].programs.gp[3][5].vars[13]$;
      dest_data_var=.projects[0].programs.gp[3][5].vars[10]$$;
@@ -5320,22 +5318,22 @@ true;false;false;false;false;true;true;true;false;true;
        };
        DataGroupEl @[1] {
 	col_name="group";
-	name="group_GROUP_0";
+	name="group_GROUP_1";
 	agg {name="agg": op=GROUP: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
        };
        DataGroupEl @[2] {
 	col_name="on";
-	name="on_FIRST_1";
+	name="on_FIRST_2";
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
        };
        DataGroupEl @[3] {
 	col_name="freq";
-	name="freq_FIRST_2";
+	name="freq_FIRST_3";
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
        };
        DataGroupEl @[4] {
 	col_name="seq";
-	name="seq_N_3";
+	name="seq_N_4";
 	agg {name="agg": op=N: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
        };
       };
@@ -5345,8 +5343,8 @@ true;false;false;false;false;true;true;true;false;true;
     MathCall @[7] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="taMath_float::vec_norm_sum(Groups.data.freq.ar, 1.0, 0.0)";
-     pre_compile_code_string="taMath_float::vec_norm_sum(Groups.data.freq.ar, 1.0, 0.0)";
+     code_string="taMath_float::vec_norm_sum(StoryGroups.data.freq.ar, 1.0, 0.0)";
+     pre_compile_code_string="taMath_float::vec_norm_sum(StoryGroups.data.freq.ar, 1.0, 0.0)";
      result_var=NULL;
      object_type=taMath_float;
      method=taMath_float::vec_norm_sum;
@@ -8443,8 +8441,8 @@ true;false;false;false;false;true;true;true;false;true;
     LocalVars @[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="LocalVars (9 vars)";
-     pre_compile_code_string="LocalVars (9 vars)";
+     code_string="LocalVars (8 vars)";
+     pre_compile_code_string="LocalVars (8 vars)";
      local_vars {
       name="local_vars";
       el_typ=ProgVar;
@@ -8574,7 +8572,7 @@ true;false;false;false;false;true;true;true;false;true;
     MethodCall @[2] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="mac_row = AllStories->FindMultiVal(word, \"group\", 0, true, , , , , , , , , )";
+     code_string="mac_row = AllStories->FindMultiVal(0, cur_story, \"story\", word, \"group\", , , , , , , , )";
      pre_compile_code_string="mac_row = AllStories->FindMultiVal(0, cur_story, \"story\", word, \"group\", , , , , , , , )";
      result_var=.projects[0].programs.gp[3][5].functions[13].fun_code[0].local_vars[0]$$;
      obj=$.projects[0].programs.gp[3][5].vars[20]$;
@@ -9839,7 +9837,7 @@ true;false;false;false;false;true;true;true;false;true;
     DataGenCall @[1] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="sel_row = taDataGen::ProbSelectRow(Groups, \"on\", \"false\", \"freq\", )";
+     code_string="sel_row = taDataGen::ProbSelectRow(StoryGroups, \"on\", \"false\", \"freq\", )";
      pre_compile_code_string="sel_row = taDataGen::ProbSelectRow(StoryGroups, \"on\", \"false\", \"freq\", )";
      result_var=.projects[0].programs.gp[3][5].functions[18].fun_code[0].local_vars[0]$$;
      object_type=taDataGen;
@@ -9918,7 +9916,7 @@ true;false;false;false;false;true;true;true;false;true;
     AssignExpr @[3] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="cur_group = Groups[\"group\"][sel_row]";
+     code_string="cur_group = StoryGroups[\"group\"][sel_row]";
      pre_compile_code_string="cur_group = StoryGroups[\"group\"][sel_row]";
      result_var=.projects[0].programs.gp[3][5].vars[5]$$;
      expr {
@@ -9928,7 +9926,7 @@ true;false;false;false;false;true;true;true;false;true;
     MethodCall @[4] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="cur_row = AllStories->FindMultiVal(cur_group, \"group\", 0, true, , , , , , , , , )";
+     code_string="cur_row = AllStories->FindMultiVal(0, cur_story, \"story\", cur_group, \"group\", , , , , , , , )";
      pre_compile_code_string="cur_row = AllStories->FindMultiVal(0, cur_story, \"story\", cur_group, \"group\", , , , , , , , )";
      result_var=$.projects[0].programs.gp[3][5].vars[6]$;
      obj=$.projects[0].programs.gp[3][5].vars[20]$;
@@ -12238,7 +12236,7 @@ true;false;false;false;false;true;true;true;false;true;
     MethodCall @[3] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="gorow = AllStories->FindMultiVal(0, cur_group, \"group\", goln, \"seq\", , , , , , , , )";
+     code_string="gorow = AllStories->FindMultiVal(0, cur_story, \"story\", cur_group, \"group\", goln, \"seq\", , , , , , )";
      pre_compile_code_string="gorow = AllStories->FindMultiVal(0, cur_story, \"story\", cur_group, \"group\", goln, \"seq\", , , , , , )";
      result_var=.projects[0].programs.gp[3][5].functions[22].fun_code[0].local_vars[2]$$;
      obj=$.projects[0].programs.gp[3][5].vars[20]$;
@@ -13473,8 +13471,8 @@ true;false;false;false;false;true;true;true;false;true;
   FunctionCall @[1] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="InitCurStory()";
-   pre_compile_code_string="InitCurStory()";
+   code_string="InitActiveStories()";
+   pre_compile_code_string="InitActiveStories()";
    result_var=NULL;
    fun=.projects[0].programs.gp[3][5].functions[1]$$;
    fun_args {
@@ -13566,7 +13564,7 @@ true;false;false;false;false;true;true;true;false;true;
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     debug=0;
+     debug=1;
     };
    };
   };
@@ -13604,7 +13602,7 @@ true;false;false;false;false;true;true;true;false;true;
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
-     debug=0;
+     debug=1;
     };
    };
   };
