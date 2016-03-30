@@ -216,11 +216,10 @@ String ProgramCallVar::GetDisplayName() const {
 }
 
 bool ProgramCallVar::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-  String dc = code;  dc.downcase();
-  String tbn = GetToolbarName(); tbn.downcase();
-  String tn = GetTypeDef()->name; tn.downcase();
-  if(dc.startsWith(tbn) || dc.startsWith(tn))
+  if (CvtFmCodeCheckNames(code))
     return true;
+  
+  String dc = code;  dc.downcase();
   if(dc.startsWith("call fm:"))  // first part of display name -- beyond this it is dynamic
     return true;
   return false;

@@ -91,13 +91,14 @@ void ProgVarFmArg::GenRegArgs(Program* prog) {
                              + " var_name = " + var_name + "\");");
 }
 
-bool ProgVarFmArg::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
-  String code = code_str; code.downcase();
-  String tbn = GetToolbarName(); tbn.downcase();
-  String tn = GetTypeDef()->name; tn.downcase();
+bool ProgVarFmArg::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if (CvtFmCodeCheckNames(code))
+    return true;
+  
+  String dc = code; dc.downcase();
   String dn = GetDisplayName().downcase();
   dn = dn.before(':');
-  if(code.startsWith(tbn) || code.startsWith(tn) || code.startsWith(dn))
+  if(dc.startsWith(dn))
     return true;
   return false;
 }

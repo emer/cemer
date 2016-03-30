@@ -68,10 +68,10 @@ String DataVarRead::GetDisplayName() const {
 }
 
 bool DataVarRead::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if (CvtFmCodeCheckNames(code))
+    return true;
+  
   String dc = code;  dc.downcase();
-  String tbn = GetToolbarName(); tbn.downcase();
-  String tn = GetTypeDef()->name; tn.downcase();
-  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
   if(dc.startsWith("from tab") || dc.startsWith("read from")) return true;
   return false;
 }

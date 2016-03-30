@@ -122,10 +122,10 @@ void DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
 }
 
 bool DataCalcAddDestRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if (CvtFmCodeCheckNames(code))
+    return true;
+  
   String dc = code;  dc.downcase();
-  String tbn = GetToolbarName(); tbn.downcase();
-  String tn = GetTypeDef()->name; tn.downcase();
-  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
   if(dc.startsWith("add new dest row") || dc.startsWith("add dest row") ||
      dc.startsWith("+dest row"))
     return true;

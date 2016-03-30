@@ -46,13 +46,13 @@ void NetCounterInit::GenCssBody_impl(Program* prog) {
 }
 
 bool NetCounterInit::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if (CvtFmCodeCheckNames(code))
+    return true;
+  
   String dc = code;  dc = trim(dc.downcase());
-  String tbn = GetToolbarName(); tbn.downcase();
-  String tn = GetTypeDef()->name; tn.downcase();
   int pos = GetDisplayName().index(':');
   String disp = GetDisplayName().before(pos + 1); disp.downcase();
-  
-  if(dc.startsWith(tbn) || dc.startsWith(tn) || dc.startsWith(disp))
+  if(dc.startsWith(disp))
     return true;
   return false;
 }

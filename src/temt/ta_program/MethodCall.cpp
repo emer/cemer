@@ -131,12 +131,13 @@ void MethodCall::Help() {
 bool MethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   // fmt: [result = ]obj[.|->]method(args...
   // don't reject if user triggers parse with display name unedited
+  if (CvtFmCodeCheckNames(code))
+    return true;
+  
   String dc = code;  dc.downcase();
-  String tbn = GetToolbarName(); tbn.downcase();
-  String tn = GetTypeDef()->name; tn.downcase();
   String dn = GetDisplayName(); dn = trim(dn.downcase());
   dn = dn.before(15);  // enough chars to distinguish
-  if(dc.startsWith(tbn) || dc.startsWith(tn) || dc.startsWith(dn))
+  if(dc.startsWith(dn))
     return true;
 
   if(!code.contains('(')) return false;

@@ -56,8 +56,6 @@ void ProgramCallFun::GenCssBody_impl(Program* prog) {
 
 bool ProgramCallFun::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   String code_dn = code; code_dn.downcase();
-  // if(code_dn.startsWith("call ")) return true; // definitely
-  // if(code_dn.startsWith("prog ")) return true; // definitely
   if(!code.contains('(')) return false;
   String lhs = code.before('(');
   String funm = lhs;

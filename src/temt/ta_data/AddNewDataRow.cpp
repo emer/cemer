@@ -49,8 +49,6 @@ bool AddNewDataRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
     return true;
   
   String dc = code;  dc.downcase();
-  String tbn = GetToolbarName(); tbn.downcase();
-  String tn = GetTypeDef()->name; tn.downcase();
   dc.gsub(" ", "");
   if(dc.startsWith("addnew") || dc.startsWith("add_new") ||
      dc.startsWith("newrow") || dc.startsWith("new_row"))

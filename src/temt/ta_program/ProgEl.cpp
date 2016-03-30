@@ -756,10 +756,9 @@ const String ProgEl::GetToolTip(const KeyString& key) const {
 
 
 bool ProgEl::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-  String dc = code;  dc.downcase();
-  String tbn = GetToolbarName(); tbn.downcase();
-  String tn = GetTypeDef()->name; tn.downcase();
-  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if (CvtFmCodeCheckNames(code))
+    return true;
+  
   return false;
 }
 

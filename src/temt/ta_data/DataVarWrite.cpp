@@ -67,10 +67,10 @@ String DataVarWrite::GetDisplayName() const {
 }
 
 bool DataVarWrite::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if (CvtFmCodeCheckNames(code))
+    return true;
+  
   String dc = code;  dc.downcase();
-  String tbn = GetToolbarName(); tbn.downcase();
-  String tn = GetTypeDef()->name; tn.downcase();
-  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
   if(dc.startsWith("to tab") || dc.startsWith("write to")) return true;
   return false;
 }
