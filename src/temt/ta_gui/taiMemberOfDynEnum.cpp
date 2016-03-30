@@ -113,7 +113,7 @@ void taiMemberOfDynEnum::GetMbrValue_impl(taiWidget* dat, void* base) {
   DynEnum* dye = (DynEnum*)base;
   taiWidgetDeck* rval = (taiWidgetDeck*)dat;
   if(!isReadOnly(dat)) {
-    if(isBit) {
+    if(dye->enum_type && dye->enum_type->bits) {
       taiWidgetBitBox* bit_rep = dynamic_cast<taiWidgetBitBox*>(rval->widget_el.SafeEl(0));
       if(!bit_rep) return;
       bit_rep->GetValue(dye->value);
