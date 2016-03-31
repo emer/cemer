@@ -46,7 +46,7 @@ public:
   float		sig_wd;	// #CONDSHOW_ON_on #DEF_0.15;0.2 #AKA_gauss_sig_wd gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of size
   float		phase_off;	// #CONDSHOW_ON_on #DEF_0;1.5708 offset for the sine phase -- can make it into a symmetric gabor by using PI/2 = 1.5708
   bool		circle_edge;	// #CONDSHOW_ON_on #DEF_true cut off the filter (to zero) outside a circle of diameter size -- makes the filter more radially symmetric
-  int		n_angles;	// #CONDSHOW_ON_on #DEF_4 number of different angles encoded -- currently only 4 is supported
+  int		n_angles;	// #CONDSHOW_ON_on #DEF_4 number of different angles encoded
 
   virtual void	RenderFilters(float_Matrix& fltrs);
   // generate filters into the given matrix, which is formatted as: [size][size][n_angles]
@@ -84,18 +84,14 @@ private:
 
 taTypeDef_Of(V1MotionSpec);
 
-class E_API V1MotionSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells
-INHERITED(taOBase)
+class E_API V1MotionSpec : public V1GaborSpec {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells -- based on gabor spatio-temporal pattern -- motion gabor is applied along direction perpendicular to the orientation tuning -- n_angles must be even and divides +/- 90 quadrant into n_angles/2 space-time angles (speeds) -- should use odd polarity gabors, and motion_frames determines size available for input, so size here must match that!
+INHERITED(V1GaborSpec)
 public:
   bool		r_only;		// #DEF_true perform motion computation only on right eye signals -- this is the dominant eye and often all that is needed
-  int		n_speeds;	// #DEF_1 for motion coding, number of speeds in each direction to encode separately -- only applicable if motion_frames > 1
-  int		speed_inc;	// #DEF_1 how much to increase speed for each speed value -- how fast is the slowest speed basically
-  int		tuning_width;	// #DEF_1 additional width of encoding around the trajectory for the target speed -- allows for some fuzziness in encoding -- effective value is multiplied by speed, so it gets fuzzier as speed gets higher
-  float		sig;	        // #DEF_0.8 #AKA_gauss_sig gaussian sigma for weighting the contribution of extra width guys -- normalized by effective tuning_width
-  float		opt_thr;	// #DEF_0.01 optimization threshold -- skip if current value is below this value
 
-  int		tot_width;	// #READ_ONLY total width = 1 + 2 * tuning_width
+  void	RenderFilters(float_Matrix& fltrs) override;
+  // generate filters into the given matrix, which is formatted as: [size][size][n_angles]
 
   TA_SIMPLE_BASEFUNS(V1MotionSpec);
 protected:
@@ -271,9 +267,8 @@ public:
 
   ////////////////// V1M Motion Geom/Stencils
   int		v1m_in_polarities; // #READ_ONLY number of polarities used in v1 motion input processing (for history, etc) -- always set to 1 -- using polarity invariant inputs
-  float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
-  int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][directions:2][angles][speeds] (6d)
-  int_Matrix	v1m_still_stencils; // #READ_ONLY #NO_SAVE stencils for motion detectors -- detecting stillness, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][angles] (4d)
+  float_Matrix  v1m_gabor_filters; // #READ_ONLY #NO_SAVE spatiotemporal gabor filters for motion filters
+  int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for spatial location sampling offsets relative to current location of feature, in terms of v1s location offsets through time [x,y][motion_frames][or_angles]
 
   ///////////////////  Square Grouping Geom / Stencils ////////////////////////
   int_Matrix	v1sg4_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square 4x4 grouping -- represents center points of the lines for each angle [x,y,len][10][angles] -- there are 10 points for the 2 diagonal lines with 4 angles and 8 for horiz, vert -- only works if n_angles = 4 and line_len = 4 or 5
@@ -311,8 +306,6 @@ public:
   float_Matrix	v1m_hist_l;	 // #READ_ONLY #NO_SAVE history of v1 simple cell output for motion computation, left eye [feat.x][feat.y][img.x][img.y][time] -- feat.y = [0=on,1=off -- luminance only]
   CircMatrix	v1m_circ_r;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time -- attached to v1m_hist_r
   CircMatrix	v1m_circ_l;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time -- attached to v1m_hist_l
-  float_Matrix	v1m_still_r; // #READ_ONLY #NO_SAVE places with stable features across motion window (no motion), for each v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off -- luminance only]
-  float_Matrix	v1m_still_l; // #READ_ONLY #NO_SAVE places with stable features across motion window (no motion), for each v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off -- luminance only]
 
   ///////////////////  Square Group Output ////////////////////////
   float_Matrix	v1s_sg_out_r;	 // #READ_ONLY #NO_SAVE square grouping of v1s polarized
@@ -352,13 +345,14 @@ public:
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 Gabor Filters into the data table -- which_filters = 1 for basic ones, 2 = 2nd set, 3 = 3rd set
   virtual void	GridV1Stencils(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 stencils into data table and generate a grid view -- these are the effective receptive fields at each level of processing
+  virtual void	GridMotionGabors(DataTable* disp_data);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 Motion spatiotemporal Gabor Filters into the data table
   virtual void	PlotSpacing(DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #ARGC_1 plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view -- one row for each type of filter (scroll to see each in turn) -- light squares show bounding box of rf, skipping every other
 
   TA_SIMPLE_BASEFUNS(V1RegionSpec);
 protected:
   float_Matrix* cur_out_acts;	// cur output activations -- for kwta thing
-  float_Matrix* cur_still;	// cur still for motion
   float_Matrix* cur_maxout;	// cur maxout for motion
   float_Matrix* cur_hist;	// cur hist for motion
   float_Matrix* cur_v1b_in_r;	// current v1b input, r
@@ -400,14 +394,12 @@ protected:
   // polarity invariance: max polarities of v1s_out 
 
   virtual bool	V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, float_Matrix* maxout, 
-		      float_Matrix* still, float_Matrix* hist, CircMatrix* circ);
+		      float_Matrix* hist, CircMatrix* circ);
   // do simple filters, motion on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Motion_thread(int thr_no);
   // do simple filters, motion on current inputs -- do it
   virtual void 	V1SimpleFilter_Motion_CpHist_thread(int thr_no);
   // do simple motion filters, copy v1s to history
-  virtual void 	V1SimpleFilter_Motion_Still_thread(int thr_no);
-  // do simple motion filters, compute non-moving (still) background
 
   virtual bool	DoV1SquareGroup();
   // do square group filters
@@ -455,7 +447,7 @@ protected:
 				     bool fmt_only = false);
   // simple to output table impl
   virtual bool V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out, float_Matrix* maxout,
-     float_Matrix* still, float_Matrix* hist, CircMatrix* circ, const String& col_sufx,
+     float_Matrix* hist, CircMatrix* circ, const String& col_sufx,
      bool fmt_only = false);
   // motion to output table impl
   virtual bool V1SqGpOutputToTable(DataTable* dtab, bool fmt_only = false);

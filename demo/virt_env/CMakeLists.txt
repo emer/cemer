@@ -1,4 +1,4 @@
-########### demo/virt_env install files ###############
+########### demo/virt_env install files ##############
 
 FILE(GLOB PROJ_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.proj")
 FILE(GLOB IV_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.iv")

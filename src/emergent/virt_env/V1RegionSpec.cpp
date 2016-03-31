@@ -160,18 +160,68 @@ void V1sNeighInhib::UpdateAfterEdit_impl() {
 
 void V1MotionSpec::Initialize() {
   r_only = true;
-  n_speeds = 1;
-  speed_inc = 1;
-  tuning_width = 1;
-  sig = 0.8f;
-  opt_thr = 0.01f;
-
-  tot_width = 1 + 2 * tuning_width;
 }
 
 void V1MotionSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  tot_width = 1 + 2 * tuning_width;
+}
+
+void V1MotionSpec::RenderFilters(float_Matrix& fltrs) {
+  fltrs.SetGeom(3, size, size, n_angles);
+
+  float ctr = (float)(size-1) / 2.0f;
+  int half_ang = n_angles / 2;
+  float ang_inc = .5f * taMath_float::pi / (float)(half_ang + 1);
+
+  float circ_radius = (float)(size) / 2.0f;
+
+  float gs_len_eff = sig_len * (float)size;
+  float gs_wd_eff = sig_wd * (float)size;
+
+  float len_norm = 1.0f / (2.0f * gs_len_eff * gs_len_eff);
+  float wd_norm = 1.0f / (2.0f * gs_wd_eff * gs_wd_eff);
+
+  float twopinorm = (2.0f * taMath_float::pi) / wvlen;
+
+  for(int ang = 0; ang < n_angles; ang++) {
+    float angf;
+    if(ang < half_ang)
+      angf = -(float)(ang+1) * ang_inc;
+    else
+      angf = (float)((ang-half_ang)+1) * ang_inc;
+
+    float pos_sum = 0.0f;
+    float neg_sum = 0.0f;
+    for(int x = 0; x < size; x++) {
+      for(int y = 0; y < size; y++) {
+        float xf = (float)x - ctr;
+        float yf = (float)y - ctr;
+
+        float dist = taMath_float::hypot(xf, yf);
+        float val = 0.0f;
+        if(!(circle_edge && (dist > circ_radius))) {
+          float nx = xf * cosf(angf) - yf * sinf(angf);
+          float ny = yf * cosf(angf) + xf * sinf(angf);
+          float gauss = expf(-(len_norm * (nx * nx) + wd_norm * (ny * ny)));
+          float sin_val = sinf(twopinorm * ny + phase_off);
+          val = gauss * sin_val;
+          if(val > 0.0f)        { pos_sum += val; }
+          else if(val < 0.0f)   { neg_sum += val; }
+        }
+        fltrs.FastEl3d(x, y, ang) = val;
+      }
+    }
+    // renorm each half
+    float pos_norm = 1.0f / pos_sum;
+    float neg_norm = -1.0f / neg_sum;
+    for(int x = 0; x < size; x++) {
+      for(int y = 0; y < size; y++) {
+        float& val = fltrs.FastEl3d(x, y, ang);
+        if(val > 0.0f)          { val *= pos_norm; }
+        else if(val < 0.0f)     { val *= neg_norm; }
+      }
+    }
+  }
 }
 
 //////////////////////////////////////////
@@ -285,7 +335,6 @@ void V1RegionSpec::Initialize() {
   n_polclr = n_colors * n_polarities;
     
   cur_out_acts = NULL;
-  cur_still = NULL;
   cur_maxout = NULL;
   cur_hist = NULL;
   cur_v1b_in_r = NULL;
@@ -393,9 +442,14 @@ void V1RegionSpec::UpdateGeom() {
   //                    V1M Motion
 
   // all angles for each gabor
-  v1m_in_polarities = 1;        // always using polinvar inputs
+
+  if(motion_frames > 1 && (v1s_motion.size != motion_frames)) {
+    taMisc::Warning("v1s_motion.size:", String(v1s_motion.size), "should be same as motion frames:", String(motion_frames), "and both should generally be an odd number");
+  }
+  
+  v1m_in_polarities = 1;        // always using polinvar inputs // todo: add option..
   v1m_feat_geom.x = v1s_specs.n_angles;
-  v1m_feat_geom.y = 2 * v1m_in_polarities * v1s_motion.n_speeds; // 2 directions
+  v1m_feat_geom.y = v1m_in_polarities * v1s_motion.n_angles;
   v1m_feat_geom.UpdateNfmXY();
 
 
@@ -522,58 +576,30 @@ bool V1RegionSpec::InitFilters_V1Simple() {
 
   if(motion_frames <= 1) {
     v1m_stencils.SetGeom(1,1);
-    v1m_still_stencils.SetGeom(1,1);
   }
 
   return true;
 }
 
 bool V1RegionSpec::InitFilters_V1Motion() {
-  v1m_stencils.SetGeom(6, 2, v1s_motion.tot_width, motion_frames, 2,
-                       v1s_specs.n_angles, v1s_motion.n_speeds);
+  v1s_motion.RenderFilters(v1m_gabor_filters);
 
-  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-    for(int dir = 0; dir < 2; dir++) { // directions
-      float dirsign = (dir == 0) ? -1.0f : 1.0f; // direction sign for multiplying times slope values
-      float dx = dirsign * v1s_ang_slopes.FastEl3d(X, ORTHO, ang);
-      float dy = dirsign * v1s_ang_slopes.FastEl3d(Y, ORTHO, ang);
-      for(int speed = 0; speed < v1s_motion.n_speeds; speed++) { // speed
-        int spd_off = (speed+1) * v1s_motion.speed_inc;
-        for(int mot = 0; mot < motion_frames; mot++) { // time steps back in time
-          for(int ew = -v1s_motion.tuning_width; ew <= v1s_motion.tuning_width; ew++) {
-            int ox = taMath_float::rint((float)(spd_off*mot + ew) * dx);
-            int oy = taMath_float::rint((float)(spd_off*mot + ew) * dy);
-            v1m_stencils.FastEl(X, v1s_motion.tuning_width+ew, mot, dir, ang, speed) = ox;
-            v1m_stencils.FastEl(Y, v1s_motion.tuning_width+ew, mot, dir, ang, speed) = oy;
-          }
-        }
-      }
-    }
-  }
-
-  v1m_still_stencils.SetGeom(4, 2, v1s_motion.tot_width, motion_frames, v1s_specs.n_angles);
-  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-    float dx = v1s_ang_slopes.FastEl3d(X, ORTHO, ang);
-    float dy = v1s_ang_slopes.FastEl3d(Y, ORTHO, ang);
+  v1m_stencils.SetGeom(3, 2, motion_frames, v1s_specs.n_angles);
+ 
+  float ang_inc = taMath_float::pi / (float)v1s_specs.n_angles;
+  int mot_off = motion_frames / 2;                    // should be odd so e.g. -2..2
+  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // orientation angles
+    float angf = (-(float)ang * ang_inc) + 0.5f * taMath_float::pi; // perpendicular
     for(int mot = 0; mot < motion_frames; mot++) { // time steps back in time
-      for(int ew = -v1s_motion.tuning_width; ew <= v1s_motion.tuning_width; ew++) {
-        int ox = taMath_float::rint((float)ew * dx);
-        int oy = taMath_float::rint((float)ew * dy);
-        v1m_still_stencils.FastEl4d(X, v1s_motion.tuning_width+ew, mot, ang) = ox;
-        v1m_still_stencils.FastEl4d(Y, v1s_motion.tuning_width+ew, mot, ang) = oy;
-      }
+      int mpos = mot - mot_off;
+      float nx = mpos * cosf(angf);
+      float ny = mpos * sinf(angf);
+      int ox = taMath_float::rint(nx);
+      int oy = taMath_float::rint(ny);
+      v1m_stencils.FastEl3d(X, mot, ang) = ox;
+      v1m_stencils.FastEl3d(Y, mot, ang) = oy;
     }
   }
-
-  v1m_weights.SetGeom(1, v1s_motion.tot_width);
-  if(v1s_motion.tuning_width > 0) {
-    int idx = 0;
-    for(int x=-v1s_motion.tuning_width; x<=v1s_motion.tuning_width; x++, idx++) {
-      float fx = (float)x / (float)v1s_motion.tuning_width;
-      v1m_weights.FastEl1d(idx) = taMath_float::gauss_den_sig(fx, v1s_motion.sig);
-    }
-  }
-  taMath_float::vec_norm_max(&v1m_weights); // max norm to 1
   return true;
 }
 
@@ -758,7 +784,7 @@ bool V1RegionSpec::InitOutMatrix() {
     else
       v1m_maxout_l.SetGeom(1,1);        // free memory
 
-    // hist -- only saves on/off luminance
+    // hist
     v1m_hist_r.SetGeom(5, v1s_feat_geom.x, v1m_in_polarities, v1s_img_geom.x, v1s_img_geom.y,
                        motion_frames);
     if(l_motion)
@@ -766,21 +792,12 @@ bool V1RegionSpec::InitOutMatrix() {
                          motion_frames);
     else
       v1m_hist_l.SetGeom(1,1);  // free memory
-
-    // still filters on top of history
-    v1m_still_r.SetGeom(4, v1m_feat_geom.x, v1m_in_polarities, v1s_img_geom.x, v1s_img_geom.y);
-    if(l_motion)
-      v1m_still_l.SetGeom(4, v1m_feat_geom.x, v1m_in_polarities, v1s_img_geom.x, v1s_img_geom.y);
-    else
-      v1m_still_l.SetGeom(1,1); // free memory
   }
   else {
     v1m_out_r.SetGeom(1,1);
     v1m_out_l.SetGeom(1,1);
     v1m_hist_r.SetGeom(1,1);
     v1m_hist_l.SetGeom(1,1);
-    v1m_still_r.SetGeom(1,1);
-    v1m_still_l.SetGeom(1,1);
   }
   v1m_circ_r.matrix = &v1m_hist_r;
   v1m_circ_l.matrix = &v1m_hist_l;
@@ -995,10 +1012,10 @@ bool V1RegionSpec::V1SimpleFilter() {
 
   if(motion_frames > 1) {
     rval &= V1SimpleFilter_Motion(&v1pi_out_r, &v1m_out_r, &v1m_maxout_r,
-                                  &v1m_still_r, &v1m_hist_r, &v1m_circ_r);
+                                  &v1m_hist_r, &v1m_circ_r);
     if(rval && !v1s_motion.r_only && binoc) {
       rval &= V1SimpleFilter_Motion(&v1pi_out_l, &v1m_out_l, &v1m_maxout_l,
-                                    &v1m_still_l, &v1m_hist_l, &v1m_circ_l);
+                                    &v1m_hist_l, &v1m_circ_l);
     }
   }
 
@@ -1142,7 +1159,7 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int thr_no) {
               }
             }
           }
-          cnv_sum *= v1s_specs.gain;
+          cnv_sum *= v1s_specs.gain; // todo: should be per spec
           if(cnv_sum >= 0.0f) {
             if(v1s_adapt.on) {
               float cs_orig = cnv_sum;
@@ -1306,21 +1323,17 @@ void V1RegionSpec::V1SimpleFilter_PolInvar_thread(int thr_no) {
 //              Motion Filters
 
 bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, float_Matrix* maxout,
-                 float_Matrix* still, float_Matrix* hist, CircMatrix* circ) {
+                 float_Matrix* hist, CircMatrix* circ) {
   cur_in = in;
   cur_out = out;
   cur_maxout = maxout;
-  cur_still = still;
   cur_hist = hist;
   cur_circ = circ;
 
-  // todo: put all these into one _thread call!
   IMG_THREAD_CALL(V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread);
 
   if(!cur_mot_only) {
     // if motion only, then really just load the history for later processing!
-    IMG_THREAD_CALL(V1RegionSpec::V1SimpleFilter_Motion_Still_thread);
-
     IMG_THREAD_CALL(V1RegionSpec::V1SimpleFilter_Motion_thread);
 
     if(v1m_renorm != NO_RENORM) {
@@ -1350,106 +1363,79 @@ void V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread(int thr_no) {
   }
 }
 
-void V1RegionSpec::V1SimpleFilter_Motion_Still_thread(int thr_no) {
-  taVector2i st;
-  taVector2i ed;
-  GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
-
-  // todo: could optimize wrap clip out as function of v1s_motion.tuning_width
-  // also, make this more binary / strongly sigmoidal so it is a more robust signal
-  
-  int cur_mot_idx = cur_circ->CircIdx_Last();
-  int mot_len = cur_circ->length;
-
-  taVector2i mo;                 // motion offset
-  taVector2i oc;         // current coord -- output space
-  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
-    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
-
-      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-        float cur_val = cur_hist->FastEl(ang, 0, oc.x, oc.y, cur_mot_idx);
-        float min_mot = cur_val;
-        if(cur_val >= v1s_motion.opt_thr) { // save time
-          int mx_mot = mot_len-1; // don't go up to last value -- e.g., 2
-          for(int mot = 0; mot < mx_mot; mot++) { // time steps back in time -- e.g., 0, 1
-            float t_val = 0.0f;
-            for(int tw = -v1s_motion.tuning_width; tw <= v1s_motion.tuning_width; tw++) {
-              int twidx = v1s_motion.tuning_width+tw;
-              int xp = v1m_still_stencils.FastEl4d(X, twidx, mot, ang);
-              int yp = v1m_still_stencils.FastEl4d(Y, twidx, mot, ang);
-              mo.x = oc.x + xp;
-              mo.y = oc.y + yp;
-              if(mo.WrapClip(wrap, v1s_img_geom)) {
-                if(region.edge_mode == VisRegionParams::CLIP) continue; 
-              }
-              int midx = cur_circ->CircIdx(mx_mot-1 - mot); // e.g., 1-0 = 1; 1-1 = 0,
-              float val = cur_hist->FastEl(ang, 0, mo.x, mo.y, midx);
-              val *= v1m_weights.FastEl1d(twidx);
-              t_val = MAX(t_val, val);
-            }
-            min_mot = MIN(min_mot, t_val); // MIN = fast product
-          }
-        }
-        cur_still->FastEl4d(ang, 0, oc.x, oc.y) = min_mot;
-      }
-    }
-  }
-}
-
 void V1RegionSpec::V1SimpleFilter_Motion_thread(int thr_no) {
   taVector2i st;
   taVector2i ed;
   GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
 
-  // todo: could optimize wrap clip out as function of v1s_motion.tuning_width
-  // also, make this more binary / strongly sigmoidal so it is a more robust signal
-  
   int cur_mot_idx = cur_circ->CircIdx_Last();
   int mot_len = cur_circ->length;
+  int mx_mot = mot_len-1;
 
-  taVector2i mo;                 // motion offset
+  int flt_wdf = v1s_motion.size; // full-width
+  int flt_wd;                          // half-width
+  if(flt_wdf % 2 == 0)
+    flt_wd = flt_wdf / 2;
+  else
+    flt_wd = (flt_wdf-1) / 2;
+
+  int flt_vecw = flt_wdf / 4;
+  flt_vecw *= 4;
+
   taVector2i oc;         // current coord -- output space
+  taVector2i ic;         // input coord
+
+  taVector2i st_ne = flt_wd;
+  taVector2i ed_ne = v1s_img_geom - flt_wd;
+
   for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    bool y_ne = (oc.y >= st_ne.y && oc.y < ed_ne.y); // y no edge
     for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      bool ne = y_ne && (oc.x >= st_ne.x && oc.x < ed_ne.x); // no edge
 
-      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
+        const int* sten = (const int*)v1m_stencils.el +
+          v1m_stencils.FastElIndex3d(0, 0, ang);
+
         float max_out = 0.0f;
-        for(int speed = 0; speed < v1s_motion.n_speeds; speed++) { // speed
-          for(int dir = 0; dir < 2; dir++) { // directions
-            int moty = (speed * 2 + dir);
-
-            float cur_val = cur_hist->FastEl(ang, 0, oc.x, oc.y, cur_mot_idx);
-            float still_val = cur_still->FastEl4d(ang, 0, oc.x, oc.y);
-            cur_val -= still_val;   // subtract out still bg
-            cur_val = MAX(cur_val, 0.0f);
-            float min_mot = cur_val;
-            if(cur_val >= v1s_motion.opt_thr) { // save time
-              int mx_mot = mot_len-1; // don't go up to last value -- e.g., 2
-              for(int mot = 0; mot < mx_mot; mot++) { // time steps back in time -- e.g., 0, 1
-                float t_val = 0.0f;
-                for(int tw = -v1s_motion.tuning_width; tw <= v1s_motion.tuning_width; tw++) {
-                  int twidx = v1s_motion.tuning_width+tw;
-                  int xp = v1m_stencils.FastEl(X, twidx, mot, dir, ang, speed);
-                  int yp = v1m_stencils.FastEl(Y, twidx, mot, dir, ang, speed);
-
-                  mo.x = oc.x + xp;
-                  mo.y = oc.y + yp;
-                  if(mo.WrapClip(wrap, v1s_img_geom)) {
-                    if(region.edge_mode == VisRegionParams::CLIP) continue; 
-                  }
-                  int midx = cur_circ->CircIdx(mx_mot-1 - mot); // e.g., 1-0 = 1; 1-1 = 0,
-                  float val = cur_hist->FastEl(ang, 0, mo.x, mo.y, midx);
-                  float still_val = cur_still->FastEl4d(ang, 0, mo.x, mo.y);
-                  val -= still_val; // subtract out still bg
-                  val = MAX(val, 0.0f);
-                  val *= v1m_weights.FastEl1d(twidx);
-                  t_val = MAX(t_val, val);
-                }
-                min_mot = MIN(min_mot, t_val); // MIN = fast product
+        for(int mang = 0; mang < v1s_motion.n_angles; mang++) {
+          const float* flt = (const float*)v1m_gabor_filters.el +
+            v1m_gabor_filters.FastElIndex3d(0, 0, mang);
+        
+          float cnv_sum = 0.0f;               // convolution sum
+          int fi = 0;
+          if(ne) {
+            for(int yf = 0; yf < flt_wdf; yf++) { // time
+              int midx = cur_circ->CircIdx(mx_mot - yf); // e.g., 1-0 = 1; 1-1 = 0,
+              for(int xf = 0; xf < flt_wdf; xf++, fi++) { // space
+                ic.x = oc.x + sten[X + 2 * xf];
+                ic.y = oc.y + sten[Y + 2 * xf];
+                float hval = cur_hist->FastEl(ang, 0, ic.x, ic.y, midx);
+                cnv_sum += hval * flt[fi];
               }
             }
-            cur_out->FastEl4d(ang, moty, oc.x, oc.y) = min_mot;
-            max_out = MAX(max_out, min_mot);
+          }
+          else {
+            for(int yf = 0; yf < flt_wdf; yf++) { // time
+              int midx = cur_circ->CircIdx(mx_mot - yf); // e.g., 1-0 = 1; 1-1 = 0,
+              for(int xf = 0; xf < flt_wdf; xf++, fi++) { // space
+                ic.x = oc.x + sten[X + 2 * xf];
+                ic.y = oc.y + sten[Y + 2 * xf];
+                if(ic.WrapClip(wrap, input_size.retina_size)) {
+                  if(region.edge_mode == VisRegionParams::CLIP) continue;
+                }
+                float hval = cur_hist->FastEl(ang, 0, ic.x, ic.y, midx);
+                cnv_sum += hval * flt[fi];
+              }
+            }
+          }
+          if(cnv_sum >= 0.0f) {
+            cnv_sum *= v1s_motion.gain;
+            cur_out->FastEl4d(ang, mang, oc.x, oc.y) = cnv_sum; // on-polarity
+            max_out = MAX(max_out, cnv_sum);
+          }
+          else {
+            cur_out->FastEl4d(ang, mang, oc.x, oc.y) = 0.0f;
           }
         }
         cur_maxout->FastEl4d(ang, 0, oc.x, oc.y) = max_out;
@@ -1457,7 +1443,6 @@ void V1RegionSpec::V1SimpleFilter_Motion_thread(int thr_no) {
     }
   }
 }
-
 
 //////////////////////////////////////////////////////////////////////
 //              Square Grouping
@@ -2120,10 +2105,10 @@ bool V1RegionSpec::V1SOutputToTable(DataTable* dtab, bool fmt_only) {
   }
 
   if(motion_frames > 1) {
-    V1MOutputToTable_impl(dtab, &v1m_out_r, &v1m_maxout_r, &v1m_still_r, &v1m_hist_r,
+    V1MOutputToTable_impl(dtab, &v1m_out_r, &v1m_maxout_r, &v1m_hist_r,
                           &v1m_circ_r, "_r", fmt_only);
     if(!v1s_motion.r_only && binoc)
-      V1MOutputToTable_impl(dtab, &v1m_out_l, &v1m_maxout_l, &v1m_still_l,
+      V1MOutputToTable_impl(dtab, &v1m_out_l, &v1m_maxout_l, 
                             &v1m_hist_l, &v1m_circ_l, "_l", fmt_only);
   }
 
@@ -2187,7 +2172,7 @@ bool V1RegionSpec::V1SOutputToTable_impl(DataTable* dtab, float_Matrix* out,
 
 
 bool V1RegionSpec::V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out,
-     float_Matrix* maxout, float_Matrix* still, float_Matrix* hist, CircMatrix* circ,
+     float_Matrix* maxout, float_Matrix* hist, CircMatrix* circ,
      const String& col_sufx, bool fmt_only) {
   DataCol* col;
   int idx;
@@ -2211,13 +2196,6 @@ bool V1RegionSpec::V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out,
   }
 
   if(v1s_save & SAVE_DEBUG) {
-    col = data_table->FindMakeColName(name + "_v1m_still" + col_sufx, idx, DataTable::VT_FLOAT,
-      4, v1m_feat_geom.x, v1m_in_polarities, v1s_img_geom.x, v1s_img_geom.y);
-    if(!fmt_only) {
-      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-      dout->CopyFrom(still);
-    }
-
     int mmax = MIN(motion_frames, circ->length);
     for(int midx=0; midx < mmax; midx++) {
       col = data_table->FindMakeColName(name + "_v1m_hist" + col_sufx + "_m" + String(midx),
@@ -2373,6 +2351,10 @@ void V1RegionSpec::GridGaborFilters(DataTable* graph_data, int which_filter) {
     v1s_specs.GridFilters(v1s_gabor_filters, graph_data);
 }
 
+void V1RegionSpec::GridMotionGabors(DataTable* graph_data) {
+  v1s_motion.GridFilters(v1m_gabor_filters, graph_data);
+}
+
 void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
   Init();                       // need to init stencils for sure!
 
@@ -2391,10 +2373,8 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
   taVector2i max_sz(v1s_specs.size, v1s_specs.size);
   max_sz.Max(si_specs.spat_rf);
 
-  int mot_rf_max = 5;
   if(motion_frames > 1) {
-    mot_rf_max = motion_frames * (1 << v1s_motion.n_speeds) + v1s_motion.tuning_width;
-    taVector2i mot_max(motion_frames * mot_rf_max, motion_frames * mot_rf_max);
+    taVector2i mot_max(motion_frames, motion_frames);
     max_sz.Max(mot_max);
   }
 
@@ -2410,38 +2390,21 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
                                               max_sz.x, max_sz.y);
 
   if(motion_frames > 1) { // v1simple, motion
-    for(int speed = 0; speed < v1s_motion.n_speeds; speed++) { // speed
-      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-        for(int dir = 0; dir < 2; dir++) { // directions
-          float dirsign = (dir == 0) ? 1.0f : -1.0f; // direction sign for multiplying times slope values
-          graph_data->AddBlankRow();
-          nmda->SetValAsString("V1m sp:" + String(speed) + " ang:" + String(AngleDeg(ang)) +
-                               " dir:" + String(dir == 0 ? "-" : "+"), -1);
-          float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-          taVector2i ic;
-          for(int mot = 0; mot < motion_frames; mot++) { // time steps back in time
-            ic.y = half_sz.y;
-            ic.x = brd.x + mot * mot_rf_max;
+    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+      graph_data->AddBlankRow();
+      nmda->SetValAsString("V1m ang:" + String(AngleDeg(ang)), -1);
+      float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+      taVector2i ic;
+      for(int mot = 0; mot < motion_frames; mot++) { // time steps back in time
+        ic.y = half_sz.y;
+        ic.x = half_sz.x;
 
-            // offset along line to prevent overwrite
-            ic.x += taMath_float::rint(dirsign * v1s_ang_slopes.FastEl3d(X, LINE, ang));
-            ic.y += taMath_float::rint(dirsign * v1s_ang_slopes.FastEl3d(Y, LINE, ang));
-
-            if(ic.WrapHalf(max_sz)) continue;
-            mat->FastEl2d(ic.x,ic.y) = -0.5f;
-
-            for(int tw = -v1s_motion.tuning_width; tw <= v1s_motion.tuning_width; tw++) {
-              int twidx = v1s_motion.tuning_width+tw;
-              int xp = v1m_stencils.FastEl(X, twidx, mot, dir, ang, speed);
-              int yp = v1m_stencils.FastEl(Y, twidx, mot, dir, ang, speed);
-              ic.x = brd.x + xp + (motion_frames-1 -mot) * mot_rf_max;
-              ic.y = half_sz.y + yp;
-              if(ic.WrapHalf(max_sz)) continue;
-              float mot_val = 1.0f; // color coding not necc: - (float)mot * (1.0f / (float)(motion_frames+2));
-              mat->FastEl2d(ic.x,ic.y) = mot_val * v1m_weights.FastEl1d(twidx);
-            }
-          }
-        }
+        int xp = v1m_stencils.FastEl3d(X, mot, ang);
+        int yp = v1m_stencils.FastEl3d(Y, mot, ang);
+        ic.x = half_sz.x + xp;
+        ic.y = half_sz.y + yp;
+        if(ic.WrapHalf(max_sz)) continue;
+        mat->FastEl2d(ic.x,ic.y) = 1.0f;
       }
     }
   }
