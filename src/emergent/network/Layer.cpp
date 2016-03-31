@@ -293,6 +293,7 @@ void Layer::LesionIconify() {
 }
 
 void Layer::UnLesion() {
+  if (!lesioned()) return;
   StructUpdate(true);
   ClearLayerFlag(LESIONED);
   UnLesionUnits();              // all our units were lesioned when parent was
