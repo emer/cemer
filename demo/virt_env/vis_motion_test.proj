@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9341
+// ta_Dump File v3.0 -- code v7.8.6.0 rev9350
 LeabraProject .projects["vis_motion_test"] { 
  Doc_Group @.docs = [0] {
  };
@@ -416,7 +416,7 @@ LeabraProject .projects["vis_motion_test"] {
 
    ProgObjList @.objs = [4] {
     DataTable @["MotionOutput"] { 
-     DataTableCols @.data = [5] {
+     DataTableCols @.data = [15] {
       float_Data @["V1reg_image_r"] { 
        UserDataItem_List @*(.user_data_) {
 	UserDataItem @["IMAGE"] { };
@@ -443,6 +443,16 @@ LeabraProject .projects["vis_motion_test"] {
 	UserDataItem @["view_panel_wd"] { };
        };
       };
+      float_Data @["V1reg_v1m_hist_r_m0"] { };
+      float_Data @["V1reg_v1m_hist_r_m1"] { };
+      float_Data @["V1reg_v1m_hist_r_m2"] { };
+      float_Data @["V1reg_v1m_hist_r_m3"] { };
+      float_Data @["V1reg_v1m_hist_r_m4"] { };
+      float_Data @["V1reg_v1m_hist_r_m5"] { };
+      float_Data @["V1reg_v1m_hist_r_m6"] { };
+      float_Data @["V1reg_v1m_hist_r_m7"] { };
+      float_Data @["V1reg_v1m_hist_r_m8"] { };
+      float_Data @["V1reg_v1m_hist_r_m9"] { };
      };
 
      DataOpList @.last_sort_spec.ops = [0] {
@@ -698,12 +708,22 @@ LeabraProject .projects["vis_motion_test"] {
       T3Panel @["MotionOutput"] { 
        T3DataView_List @.root_view.children = [4] {
 	GridTableView @["MotionOutput_Grid"] { 
-	 T3DataView_List @.children = [5] {
+	 T3DataView_List @.children = [15] {
 	  GridColView @["V1reg_image_r"] { };
 	  GridColView @["V1reg_v1s_r"] { };
 	  GridColView @["V1reg_v1pi_r"] { };
 	  GridColView @["V1reg_v1m_r"] { };
 	  GridColView @["V1reg_v1m_max_r"] { };
+	  GridColView @["V1reg_v1m_hist_r_m0"] { };
+	  GridColView @["V1reg_v1m_hist_r_m1"] { };
+	  GridColView @["V1reg_v1m_hist_r_m2"] { };
+	  GridColView @["V1reg_v1m_hist_r_m3"] { };
+	  GridColView @["V1reg_v1m_hist_r_m4"] { };
+	  GridColView @["V1reg_v1m_hist_r_m5"] { };
+	  GridColView @["V1reg_v1m_hist_r_m6"] { };
+	  GridColView @["V1reg_v1m_hist_r_m7"] { };
+	  GridColView @["V1reg_v1m_hist_r_m8"] { };
+	  GridColView @["V1reg_v1m_hist_r_m9"] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -713,12 +733,22 @@ LeabraProject .projects["vis_motion_test"] {
 	 };
 	};
 	GridTableView @["MotionOutput_Grid_1"] { 
-	 T3DataView_List @.children = [5] {
+	 T3DataView_List @.children = [15] {
 	  GridColView @["V1reg_image_r"] { };
 	  GridColView @["V1reg_v1s_r"] { };
 	  GridColView @["V1reg_v1pi_r"] { };
 	  GridColView @["V1reg_v1m_r"] { };
 	  GridColView @["V1reg_v1m_max_r"] { };
+	  GridColView @["V1reg_v1m_hist_r_m0"] { };
+	  GridColView @["V1reg_v1m_hist_r_m1"] { };
+	  GridColView @["V1reg_v1m_hist_r_m2"] { };
+	  GridColView @["V1reg_v1m_hist_r_m3"] { };
+	  GridColView @["V1reg_v1m_hist_r_m4"] { };
+	  GridColView @["V1reg_v1m_hist_r_m5"] { };
+	  GridColView @["V1reg_v1m_hist_r_m6"] { };
+	  GridColView @["V1reg_v1m_hist_r_m7"] { };
+	  GridColView @["V1reg_v1m_hist_r_m8"] { };
+	  GridColView @["V1reg_v1m_hist_r_m9"] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -728,12 +758,22 @@ LeabraProject .projects["vis_motion_test"] {
 	 };
 	};
 	GridTableView @["MotionOutput_Grid_2"] { 
-	 T3DataView_List @.children = [5] {
+	 T3DataView_List @.children = [15] {
 	  GridColView @["V1reg_image_r"] { };
 	  GridColView @["V1reg_v1s_r"] { };
 	  GridColView @["V1reg_v1pi_r"] { };
 	  GridColView @["V1reg_v1m_r"] { };
 	  GridColView @["V1reg_v1m_max_r"] { };
+	  GridColView @["V1reg_v1m_hist_r_m0"] { };
+	  GridColView @["V1reg_v1m_hist_r_m1"] { };
+	  GridColView @["V1reg_v1m_hist_r_m2"] { };
+	  GridColView @["V1reg_v1m_hist_r_m3"] { };
+	  GridColView @["V1reg_v1m_hist_r_m4"] { };
+	  GridColView @["V1reg_v1m_hist_r_m5"] { };
+	  GridColView @["V1reg_v1m_hist_r_m6"] { };
+	  GridColView @["V1reg_v1m_hist_r_m7"] { };
+	  GridColView @["V1reg_v1m_hist_r_m8"] { };
+	  GridColView @["V1reg_v1m_hist_r_m9"] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -743,12 +783,22 @@ LeabraProject .projects["vis_motion_test"] {
 	 };
 	};
 	GridTableView @["MotionOutput_Grid_3"] { 
-	 T3DataView_List @.children = [5] {
+	 T3DataView_List @.children = [15] {
 	  GridColView @["V1reg_image_r"] { };
 	  GridColView @["V1reg_v1s_r"] { };
 	  GridColView @["V1reg_v1pi_r"] { };
 	  GridColView @["V1reg_v1m_r"] { };
 	  GridColView @["V1reg_v1m_max_r"] { };
+	  GridColView @["V1reg_v1m_hist_r_m0"] { };
+	  GridColView @["V1reg_v1m_hist_r_m1"] { };
+	  GridColView @["V1reg_v1m_hist_r_m2"] { };
+	  GridColView @["V1reg_v1m_hist_r_m3"] { };
+	  GridColView @["V1reg_v1m_hist_r_m4"] { };
+	  GridColView @["V1reg_v1m_hist_r_m5"] { };
+	  GridColView @["V1reg_v1m_hist_r_m6"] { };
+	  GridColView @["V1reg_v1m_hist_r_m7"] { };
+	  GridColView @["V1reg_v1m_hist_r_m8"] { };
+	  GridColView @["V1reg_v1m_hist_r_m9"] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -4810,6 +4860,136 @@ LeabraProject .projects["vis_motion_test"] {
        [4] ;;;;       };
        width=0;
       };
+      float_Data @["V1reg_v1m_hist_r_m0"] {
+       name="V1reg_v1m_hist_r_m0";
+       col_flags=SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 4;2;16;16;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [4] ;;;;       };
+       width=0;
+      };
+      float_Data @["V1reg_v1m_hist_r_m1"] {
+       name="V1reg_v1m_hist_r_m1";
+       col_flags=SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 4;2;16;16;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [4] ;;;;       };
+       width=0;
+      };
+      float_Data @["V1reg_v1m_hist_r_m2"] {
+       name="V1reg_v1m_hist_r_m2";
+       col_flags=SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 4;2;16;16;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [4] ;;;;       };
+       width=0;
+      };
+      float_Data @["V1reg_v1m_hist_r_m3"] {
+       name="V1reg_v1m_hist_r_m3";
+       col_flags=SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 4;2;16;16;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [4] ;;;;       };
+       width=0;
+      };
+      float_Data @["V1reg_v1m_hist_r_m4"] {
+       name="V1reg_v1m_hist_r_m4";
+       col_flags=SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 4;2;16;16;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [4] ;;;;       };
+       width=0;
+      };
+      float_Data @["V1reg_v1m_hist_r_m5"] {
+       name="V1reg_v1m_hist_r_m5";
+       col_flags=SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 4;2;16;16;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [4] ;;;;       };
+       width=0;
+      };
+      float_Data @["V1reg_v1m_hist_r_m6"] {
+       name="V1reg_v1m_hist_r_m6";
+       col_flags=SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 4;2;16;16;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [4] ;;;;       };
+       width=0;
+      };
+      float_Data @["V1reg_v1m_hist_r_m7"] {
+       name="V1reg_v1m_hist_r_m7";
+       col_flags=SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 4;2;16;16;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [4] ;;;;       };
+       width=0;
+      };
+      float_Data @["V1reg_v1m_hist_r_m8"] {
+       name="V1reg_v1m_hist_r_m8";
+       col_flags=SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 4;2;16;16;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [4] ;;;;       };
+       width=0;
+      };
+      float_Data @["V1reg_v1m_hist_r_m9"] {
+       name="V1reg_v1m_hist_r_m9";
+       col_flags=SAVE_DATA|CHECKBOX;
+       is_matrix=1;
+       cell_geom{ 4;2;16;16;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [4] ;;;;       };
+       width=0;
+      };
      };
      data_flags=AUTO_CALC;
      auto_load=NO_AUTO_LOAD;
@@ -4938,111 +5118,111 @@ LeabraProject .projects["vis_motion_test"] {
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;0.84313732;0.20392159;
+0.20392159;0.20392159;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0.65098041;0.20392159;0.20392159;0.3921569;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;0.80000007;0;0;0;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;0.56078434;0;
-0;0.24313727;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;0.80000007;0;0;0;
 1;1;1;1;1;1;1;1;1;1;
-1;1;0.56078434;0;0;0.24313727;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;0.56078434;0;0;0.24313727;
+0.80000007;0;0;0;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;0.80000007;0;0;0;1;1;
 1;1;1;1;1;1;1;1;1;1;
-0.56078434;0;0;0.24313727;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;0.80000007;0;
+0;0;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0.56078434;0;0;0.24313727;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;0.80000007;0;0;0;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;0.56078434;0;
-0;0.24313727;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;0.80000007;0;0;0;
 1;1;1;1;1;1;1;1;1;1;
-1;1;0.56078434;0;0;0.24313727;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;0.56078434;0;0;0.24313727;
+0.80000007;0;0;0;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;0.80000007;0;0;0;1;1;
 1;1;1;1;1;1;1;1;1;1;
-0.56078434;0;0;0.24313727;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;0.80000007;0;
+0;0;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0.56078434;0;0;0.24313727;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;0.80000007;0;0;0;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;0.56078434;0;
-0;0.24313727;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;0.80000007;0;0;0;
 1;1;1;1;1;1;1;1;1;1;
-1;1;0.56078434;0;0;0.24313727;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;0.56078434;0;0;0.24313727;
+0.80000007;0;0;0;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;0.80000007;0;0;0;1;1;
 1;1;1;1;1;1;1;1;1;1;
-0.56078434;0;0;0.24313727;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;0.80000007;0;
+0;0;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0.56078434;0;0;0.24313727;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;0.96078438;0.80000007;0.80000007;0.80000007;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;0.91372555;0.80000007;
-0.80000007;0.85098046;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
@@ -5348,110 +5528,111 @@ LeabraProject .projects["vis_motion_test"] {
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;0.84313732;0.20392159;0.20392159;0.20392159;1;1;
 1;1;1;1;1;1;1;1;1;1;
-0.65098041;0.20392159;0.20392159;0.3921569;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;0.80000007;0;
+0;0;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0.56078434;0;0;0.24313727;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;0.80000007;0;0;0;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;0.56078434;0;
-0;0.24313727;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;0.80000007;0;0;0;
 1;1;1;1;1;1;1;1;1;1;
-1;1;0.56078434;0;0;0.24313727;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;0.56078434;0;0;0.24313727;
+0.80000007;0;0;0;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;0.80000007;0;0;0;1;1;
 1;1;1;1;1;1;1;1;1;1;
-0.56078434;0;0;0.24313727;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;0.80000007;0;
+0;0;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0.56078434;0;0;0.24313727;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;0.80000007;0;0;0;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;0.56078434;0;
-0;0.24313727;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;0.80000007;0;0;0;
 1;1;1;1;1;1;1;1;1;1;
-1;1;0.56078434;0;0;0.24313727;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;0.56078434;0;0;0.24313727;
+0.80000007;0;0;0;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;0.80000007;0;0;0;1;1;
 1;1;1;1;1;1;1;1;1;1;
-0.56078434;0;0;0.24313727;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;0.80000007;0;
+0;0;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0.56078434;0;0;0.24313727;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;0.80000007;0;0;0;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;0.56078434;0;
-0;0.24313727;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;0.80000007;0;0;0;
 1;1;1;1;1;1;1;1;1;1;
-1;1;0.56078434;0;0;0.24313727;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;0.56078434;0;0;0.24313727;
+0.80000007;0;0;0;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;0.80000007;0;0;0;1;1;
 1;1;1;1;1;1;1;1;1;1;
-0.56078434;0;0;0.24313727;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;0.96078438;0.80000007;
+0.80000007;0.80000007;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0.91372555;0.80000007;0.80000007;0.85098046;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
@@ -5757,111 +5938,110 @@ LeabraProject .projects["vis_motion_test"] {
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+0.84313732;0.20392159;0.20392159;0.20392159;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;0.65098041;0.20392159;0.20392159;0.3921569;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;0.80000007;0;0;0;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-0.56078434;0;0;0.24313727;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;0.80000007;0;
+0;0;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0.56078434;0;0;0.24313727;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;0.80000007;0;0;0;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;0.56078434;0;
-0;0.24313727;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;0.80000007;0;0;0;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;0.56078434;0;0;0.24313727;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+0.80000007;0;0;0;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;0.56078434;0;0;0.24313727;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;0.80000007;0;0;0;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-0.56078434;0;0;0.24313727;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;0.80000007;0;
+0;0;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0.56078434;0;0;0.24313727;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;0.80000007;0;0;0;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;0.56078434;0;
-0;0.24313727;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;0.80000007;0;0;0;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;0.56078434;0;0;0.24313727;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+0.80000007;0;0;0;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;0.56078434;0;0;0.24313727;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;0.80000007;0;0;0;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-0.56078434;0;0;0.24313727;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;0.80000007;0;
+0;0;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0.56078434;0;0;0.24313727;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;0.80000007;0;0;0;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;0.56078434;0;
-0;0.24313727;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;0.80000007;0;0;0;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;0.56078434;0;0;0.24313727;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+0.80000007;0;0;0;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;0.56078434;0;0;0.24313727;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;0.96078438;0.80000007;0.80000007;0.80000007;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-0.91372555;0.80000007;0.80000007;0.85098046;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
@@ -83568,7 +83748,7 @@ LeabraProject .projects["vis_motion_test"] {
        v1s_kwta {on=1: gi=2: lay_gi=1.5: gain=80: nvar=0.01: g_bar_l=0.1: };
        v1s_neigh_inhib {on=1: inhib_d=1: inhib_g=0.6: tot_ni_len=3: };
        v1s_adapt {on=0: up_dt=0.3: dn_dt=0.1: };
-       v1s_save=SAVE_DATA|ONLY_GUI;
+       v1s_save=SAVE_DATA|ONLY_GUI|SAVE_DEBUG;
        v1s_img_geom {x=16: y=16: n_not_xy=0: n=256: };
        v1s_feat_geom {x=4: y=2: n_not_xy=0: n=8: };
        v1s_motion {on=1: wt=1: gain=2: size=10: spacing=1: wvlen=6: sig_len=0.3: sig_wd=0.2: phase_off=1.5708: circle_edge=1: n_angles=4: r_only=1: };
@@ -83594,7 +83774,7 @@ LeabraProject .projects["vis_motion_test"] {
        n_colors=1;
        n_polarities=2;
        n_polclr=2;
-       v1m_in_polarities=1;
+       v1m_out_polarities=1;
       };
      };
     };
@@ -83716,7 +83896,7 @@ LeabraProject .projects["vis_motion_test"] {
     ProgVar @["vel_x"] {
      name="vel_x";
      var_type=T_Real;
-     real_val=0.01;
+     real_val=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -83734,7 +83914,7 @@ LeabraProject .projects["vis_motion_test"] {
     ProgVar @["cur_sx"] {
      name="cur_sx";
      var_type=T_Real;
-     real_val=0.2000000000000001;
+     real_val=0.1;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -83752,7 +83932,7 @@ LeabraProject .projects["vis_motion_test"] {
     ProgVar @["cur_ex"] {
      name="cur_ex";
      var_type=T_Real;
-     real_val=0.2000000000000001;
+     real_val=0.1;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -84346,21 +84526,21 @@ LeabraProject .projects["vis_motion_test"] {
       PrintVar @[1] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="print cur_sx cur_sy cur_ex cur_ey";
-       pre_compile_code_string="Print  cur_sx cur_sy cur_ex cur_ey";
+       code_string="Print  st cur_sx cur_sy cur_ex cur_ey";
+       pre_compile_code_string="Print  st cur_sx cur_sy cur_ex cur_ey";
        message=;
-       print_var=$.projects["vis_motion_test"].programs["MotionTest"].vars["cur_sx"]$;
-       print_var2=$.projects["vis_motion_test"].programs["MotionTest"].vars["cur_sy"]$;
-       print_var3=$.projects["vis_motion_test"].programs["MotionTest"].vars["cur_ex"]$;
-       print_var4=$.projects["vis_motion_test"].programs["MotionTest"].vars["cur_ey"]$;
-       print_var5=NULL;
+       print_var=.projects["vis_motion_test"].programs["MotionTest"].prog_code[0].local_vars["st"]$$;
+       print_var2=$.projects["vis_motion_test"].programs["MotionTest"].vars["cur_sx"]$;
+       print_var3=$.projects["vis_motion_test"].programs["MotionTest"].vars["cur_sy"]$;
+       print_var4=$.projects["vis_motion_test"].programs["MotionTest"].vars["cur_ex"]$;
+       print_var5=$.projects["vis_motion_test"].programs["MotionTest"].vars["cur_ey"]$;
        print_var6=NULL;
        debug=0;
       };
       MethodCall @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Canvas->Line()";
+       code_string="Canvas->Line(cur_sx, cur_sy, cur_ex, cur_ey)";
        pre_compile_code_string="Canvas->Line(cur_sx, cur_sy, cur_ex, cur_ey)";
        result_var=NULL;
        obj=$.projects["vis_motion_test"].programs["MotionTest"].vars["Canvas"]$;
@@ -84894,6 +85074,116 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
+	   GridColView @["V1reg_v1m_hist_r_m0"] {
+	    name="V1reg_v1m_hist_r_m0";
+	    m_data=.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m0"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m1"] {
+	    name="V1reg_v1m_hist_r_m1";
+	    m_data=.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m1"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m2"] {
+	    name="V1reg_v1m_hist_r_m2";
+	    m_data=.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m2"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m3"] {
+	    name="V1reg_v1m_hist_r_m3";
+	    m_data=.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m3"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m4"] {
+	    name="V1reg_v1m_hist_r_m4";
+	    m_data=.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m4"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m5"] {
+	    name="V1reg_v1m_hist_r_m5";
+	    m_data=.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m5"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m6"] {
+	    name="V1reg_v1m_hist_r_m6";
+	    m_data=.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m6"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m7"] {
+	    name="V1reg_v1m_hist_r_m7";
+	    m_data=.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m7"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m8"] {
+	    name="V1reg_v1m_hist_r_m8";
+	    m_data=.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m8"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m9"] {
+	    name="V1reg_v1m_hist_r_m9";
+	    m_data=.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m9"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
@@ -85006,6 +85296,116 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=4;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m0"] {
+	    name="V1reg_v1m_hist_r_m0";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m0"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m1"] {
+	    name="V1reg_v1m_hist_r_m1";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m1"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m2"] {
+	    name="V1reg_v1m_hist_r_m2";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m2"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m3"] {
+	    name="V1reg_v1m_hist_r_m3";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m3"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m4"] {
+	    name="V1reg_v1m_hist_r_m4";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m4"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m5"] {
+	    name="V1reg_v1m_hist_r_m5";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m5"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m6"] {
+	    name="V1reg_v1m_hist_r_m6";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m6"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m7"] {
+	    name="V1reg_v1m_hist_r_m7";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m7"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m8"] {
+	    name="V1reg_v1m_hist_r_m8";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m8"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m9"] {
+	    name="V1reg_v1m_hist_r_m9";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m9"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
@@ -85128,6 +85528,116 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
+	   GridColView @["V1reg_v1m_hist_r_m0"] {
+	    name="V1reg_v1m_hist_r_m0";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m0"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m1"] {
+	    name="V1reg_v1m_hist_r_m1";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m1"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m2"] {
+	    name="V1reg_v1m_hist_r_m2";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m2"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m3"] {
+	    name="V1reg_v1m_hist_r_m3";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m3"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m4"] {
+	    name="V1reg_v1m_hist_r_m4";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m4"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m5"] {
+	    name="V1reg_v1m_hist_r_m5";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m5"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m6"] {
+	    name="V1reg_v1m_hist_r_m6";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m6"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m7"] {
+	    name="V1reg_v1m_hist_r_m7";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m7"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m8"] {
+	    name="V1reg_v1m_hist_r_m8";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m8"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m9"] {
+	    name="V1reg_v1m_hist_r_m9";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m9"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=1.2: z=0: }: };
 	  annotations {
@@ -85245,6 +85755,116 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
+	   GridColView @["V1reg_v1m_hist_r_m0"] {
+	    name="V1reg_v1m_hist_r_m0";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m0"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m1"] {
+	    name="V1reg_v1m_hist_r_m1";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m1"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m2"] {
+	    name="V1reg_v1m_hist_r_m2";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m2"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m3"] {
+	    name="V1reg_v1m_hist_r_m3";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m3"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m4"] {
+	    name="V1reg_v1m_hist_r_m4";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m4"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m5"] {
+	    name="V1reg_v1m_hist_r_m5";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m5"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m6"] {
+	    name="V1reg_v1m_hist_r_m6";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m6"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m7"] {
+	    name="V1reg_v1m_hist_r_m7";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m7"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m8"] {
+	    name="V1reg_v1m_hist_r_m8";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m8"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1reg_v1m_hist_r_m9"] {
+	    name="V1reg_v1m_hist_r_m9";
+	    m_data=$.projects["vis_motion_test"].programs["MotionTest"].objs["MotionOutput"].data["V1reg_v1m_hist_r_m9"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1.124414: y=1.2: z=0: }: };
 	  annotations {
@@ -85264,7 +85884,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  manip_ctrl_on=1;
 	  view_cols=1;
 	  page_cols=1;
-	  col_range {min=4: max=4: };
+	  col_range {min=14: max=14: };
 	  need_scale_update=1;
 	  width=1;
 	  grid_on=1;

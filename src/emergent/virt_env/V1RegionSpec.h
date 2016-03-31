@@ -266,7 +266,7 @@ public:
   int_Matrix	v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
 
   ////////////////// V1M Motion Geom/Stencils
-  int		v1m_in_polarities; // #READ_ONLY number of polarities used in v1 motion input processing (for history, etc) -- always set to 1 -- using polarity invariant inputs
+  int		v1m_out_polarities; // #READ_ONLY number of polarities saved from v1 output -- always collapses across polarities while using all for input
   float_Matrix  v1m_gabor_filters; // #READ_ONLY #NO_SAVE spatiotemporal gabor filters for motion filters
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for spatial location sampling offsets relative to current location of feature, in terms of v1s location offsets through time [x,y][motion_frames][or_angles]
 

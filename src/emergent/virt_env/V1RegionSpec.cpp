@@ -447,9 +447,9 @@ void V1RegionSpec::UpdateGeom() {
     taMisc::Warning("v1s_motion.size:", String(v1s_motion.size), "should be same as motion frames:", String(motion_frames), "and both should generally be an odd number");
   }
   
-  v1m_in_polarities = 1;        // always using polinvar inputs // todo: add option..
+  v1m_out_polarities = 1;        // always using polinvar inputs // todo: add option..
   v1m_feat_geom.x = v1s_specs.n_angles;
-  v1m_feat_geom.y = v1m_in_polarities * v1s_motion.n_angles;
+  v1m_feat_geom.y = v1m_out_polarities * v1s_motion.n_angles;
   v1m_feat_geom.UpdateNfmXY();
 
 
@@ -774,22 +774,23 @@ bool V1RegionSpec::InitOutMatrix() {
     bool l_motion = !v1s_motion.r_only && binoc;
     v1m_out_r.SetGeom(4, v1m_feat_geom.x, v1m_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
     if(l_motion)
-      v1m_out_l.SetGeom(4, v1m_feat_geom.x, v1m_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+      v1m_out_l.SetGeom(4, v1m_feat_geom.x, v1m_feat_geom.y, v1s_img_geom.x,
+                        v1s_img_geom.y);
     else
       v1m_out_l.SetGeom(1,1);   // free memory
 
-    v1m_maxout_r.SetGeom(4, v1m_feat_geom.x, v1m_in_polarities, v1s_img_geom.x, v1s_img_geom.y);
+    v1m_maxout_r.SetGeom(4, v1m_feat_geom.x, v1m_out_polarities, v1s_img_geom.x, v1s_img_geom.y);
     if(l_motion)
-      v1m_maxout_l.SetGeom(4, v1m_feat_geom.x, v1m_in_polarities, v1s_img_geom.x, v1s_img_geom.y);
+      v1m_maxout_l.SetGeom(4, v1m_feat_geom.x, v1m_out_polarities, v1s_img_geom.x, v1s_img_geom.y);
     else
       v1m_maxout_l.SetGeom(1,1);        // free memory
 
     // hist
-    v1m_hist_r.SetGeom(5, v1s_feat_geom.x, v1m_in_polarities, v1s_img_geom.x, v1s_img_geom.y,
+    v1m_hist_r.SetGeom(5, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y,
                        motion_frames);
     if(l_motion)
-      v1m_hist_l.SetGeom(5, v1s_feat_geom.x, v1m_in_polarities, v1s_img_geom.x, v1s_img_geom.y,
-                         motion_frames);
+      v1m_hist_l.SetGeom(5, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x,
+                         v1s_img_geom.y, motion_frames);
     else
       v1m_hist_l.SetGeom(1,1);  // free memory
   }
@@ -1011,10 +1012,10 @@ bool V1RegionSpec::V1SimpleFilter() {
   }
 
   if(motion_frames > 1) {
-    rval &= V1SimpleFilter_Motion(&v1pi_out_r, &v1m_out_r, &v1m_maxout_r,
+    rval &= V1SimpleFilter_Motion(&v1s_out_r, &v1m_out_r, &v1m_maxout_r,
                                   &v1m_hist_r, &v1m_circ_r);
     if(rval && !v1s_motion.r_only && binoc) {
-      rval &= V1SimpleFilter_Motion(&v1pi_out_l, &v1m_out_l, &v1m_maxout_l,
+      rval &= V1SimpleFilter_Motion(&v1s_out_l, &v1m_out_l, &v1m_maxout_l,
                                     &v1m_hist_l, &v1m_circ_l);
     }
   }
@@ -1322,8 +1323,9 @@ void V1RegionSpec::V1SimpleFilter_PolInvar_thread(int thr_no) {
 ////////////////////////////////////////////////////////
 //              Motion Filters
 
-bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, float_Matrix* maxout,
-                 float_Matrix* hist, CircMatrix* circ) {
+bool V1RegionSpec::V1SimpleFilter_Motion
+(float_Matrix* in, float_Matrix* out, float_Matrix* maxout,
+ float_Matrix* hist, CircMatrix* circ) {
   cur_in = in;
   cur_out = out;
   cur_maxout = maxout;
@@ -1350,14 +1352,15 @@ void V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread(int thr_no) {
   GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
 
   int cur_mot_idx = cur_circ->CircIdx_Last();
-  int mot_len = cur_circ->length;
 
   taVector2i oc;         // current coord -- output space
   for(oc.y = st.y; oc.y < ed.y; oc.y++) {
     for(oc.x = st.x; oc.x < ed.x; oc.x++) {
-      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-        float in_val = cur_in->FastEl4d(ang, 0, oc.x, oc.y);
-        cur_hist->FastEl(ang, 0, oc.x, oc.y, cur_mot_idx) = in_val;
+      for(int polclr = 0; polclr < v1s_feat_geom.y; polclr++) { // polclr features
+        for(int ang = 0; ang < v1s_feat_geom.x; ang++) { // angles
+          float in_val = cur_in->FastEl4d(ang, polclr, oc.x, oc.y);
+          cur_hist->FastEl(ang, polclr, oc.x, oc.y, cur_mot_idx) = in_val;
+        }
       }
     }
   }
@@ -1369,11 +1372,12 @@ void V1RegionSpec::V1SimpleFilter_Motion_thread(int thr_no) {
   GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
 
   int cur_mot_idx = cur_circ->CircIdx_Last();
-  int mot_len = cur_circ->length;
-  int mx_mot = mot_len-1;
+  int hist_len = cur_circ->length;
 
+  int max_t = MIN(hist_len, v1s_motion.size); // max time (y axis of gabor)
+  
   int flt_wdf = v1s_motion.size; // full-width
-  int flt_wd;                          // half-width
+  int flt_wd;                    // half-width
   if(flt_wdf % 2 == 0)
     flt_wd = flt_wdf / 2;
   else
@@ -1385,8 +1389,8 @@ void V1RegionSpec::V1SimpleFilter_Motion_thread(int thr_no) {
   taVector2i oc;         // current coord -- output space
   taVector2i ic;         // input coord
 
-  taVector2i st_ne = flt_wd;
-  taVector2i ed_ne = v1s_img_geom - flt_wd;
+  taVector2i st_ne = flt_wd + 1;
+  taVector2i ed_ne = v1s_img_geom - flt_wd - 1;
 
   for(oc.y = st.y; oc.y < ed.y; oc.y++) {
     bool y_ne = (oc.y >= st_ne.y && oc.y < ed_ne.y); // y no edge
@@ -1398,45 +1402,45 @@ void V1RegionSpec::V1SimpleFilter_Motion_thread(int thr_no) {
           v1m_stencils.FastElIndex3d(0, 0, ang);
 
         float max_out = 0.0f;
-        for(int mang = 0; mang < v1s_motion.n_angles; mang++) {
+        for(int mang = 0; mang < v1s_motion.n_angles; mang++) { // vels, dirs
           const float* flt = (const float*)v1m_gabor_filters.el +
             v1m_gabor_filters.FastElIndex3d(0, 0, mang);
-        
-          float cnv_sum = 0.0f;               // convolution sum
-          int fi = 0;
-          if(ne) {
-            for(int yf = 0; yf < flt_wdf; yf++) { // time
-              int midx = cur_circ->CircIdx(mx_mot - yf); // e.g., 1-0 = 1; 1-1 = 0,
-              for(int xf = 0; xf < flt_wdf; xf++, fi++) { // space
-                ic.x = oc.x + sten[X + 2 * xf];
-                ic.y = oc.y + sten[Y + 2 * xf];
-                float hval = cur_hist->FastEl(ang, 0, ic.x, ic.y, midx);
-                cnv_sum += hval * flt[fi];
-              }
-            }
-          }
-          else {
-            for(int yf = 0; yf < flt_wdf; yf++) { // time
-              int midx = cur_circ->CircIdx(mx_mot - yf); // e.g., 1-0 = 1; 1-1 = 0,
-              for(int xf = 0; xf < flt_wdf; xf++, fi++) { // space
-                ic.x = oc.x + sten[X + 2 * xf];
-                ic.y = oc.y + sten[Y + 2 * xf];
-                if(ic.WrapClip(wrap, input_size.retina_size)) {
-                  if(region.edge_mode == VisRegionParams::CLIP) continue;
+          float mang_max = 0.0f;
+          for(int polclr = 0; polclr < v1s_feat_geom.y; polclr++) { // polclr features
+            float cnv_sum = 0.0f;               // convolution sum
+            int fi = 0;
+            if(ne) {
+              for(int yf = 0; yf < max_t; yf++) { // time
+                int midx = cur_circ->CircIdx(yf); // 0=oldest..
+                for(int xf = 0; xf < flt_wdf; xf++, fi++) { // space
+                  ic.x = oc.x + sten[X + 2 * xf];
+                  ic.y = oc.y + sten[Y + 2 * xf];
+                  float hval = cur_hist->FastEl(ang, polclr, ic.x, ic.y, midx);
+                  cnv_sum += hval * flt[fi];
                 }
-                float hval = cur_hist->FastEl(ang, 0, ic.x, ic.y, midx);
-                cnv_sum += hval * flt[fi];
               }
             }
+            else {
+              for(int yf = 0; yf < max_t; yf++) { // time
+                int midx = cur_circ->CircIdx(yf); // 0=oldest..
+                for(int xf = 0; xf < flt_wdf; xf++, fi++) { // space
+                  ic.x = oc.x + sten[X + 2 * xf];
+                  ic.y = oc.y + sten[Y + 2 * xf];
+                  if(ic.WrapClip(wrap, input_size.retina_size)) {
+                    if(region.edge_mode == VisRegionParams::CLIP) continue;
+                  }
+                  float hval = cur_hist->FastEl(ang, polclr, ic.x, ic.y, midx);
+                  cnv_sum += hval * flt[fi];
+                }
+              }
+            }
+            if(cnv_sum >= 0.0f) {
+              mang_max = MAX(mang_max, cnv_sum); // maxing over polarity-specific signals
+            }
           }
-          if(cnv_sum >= 0.0f) {
-            cnv_sum *= v1s_motion.gain;
-            cur_out->FastEl4d(ang, mang, oc.x, oc.y) = cnv_sum; // on-polarity
-            max_out = MAX(max_out, cnv_sum);
-          }
-          else {
-            cur_out->FastEl4d(ang, mang, oc.x, oc.y) = 0.0f;
-          }
+          mang_max *= v1s_motion.gain;
+          cur_out->FastEl4d(ang, mang, oc.x, oc.y) = mang_max;
+          max_out = MAX(max_out, mang_max);
         }
         cur_maxout->FastEl4d(ang, 0, oc.x, oc.y) = max_out;
       }
@@ -1486,8 +1490,8 @@ void V1RegionSpec::V1SquareGroup_V1S_SqGp_thread(int thr_no) {
         scs += square_group.sg_border;
         scs -= square_group.sg_half; // convert to lower-left starting position, not center
 
-        for(int ang=0; ang<v1s_specs.n_angles; ang++) {
-          for(int polclr = 0; polclr < v1sg_feat_geom.y; polclr++) {
+        for(int polclr = 0; polclr < v1sg_feat_geom.y; polclr++) {
+          for(int ang=0; ang<v1s_specs.n_angles; ang++) {
             float max_rf = 0.0f;   // max over spatial rfield
             // int nctrs = v1sg2_stencils.FastEl3d(2, 0, ang);       // length stored here
             for(int ctrdx = 0; ctrdx < 4; ctrdx++) {
@@ -1515,8 +1519,8 @@ void V1RegionSpec::V1SquareGroup_V1S_SqGp_thread(int thr_no) {
         scs += square_group.sg_border;
         scs -= square_group.sg_half; // convert to lower-left starting position, not center
 
-        for(int ang=0; ang<v1s_specs.n_angles; ang++) {
-          for(int polclr = 0; polclr < v1sg_feat_geom.y; polclr++) { // polclr features
+        for(int polclr = 0; polclr < v1sg_feat_geom.y; polclr++) { // polclr features
+          for(int ang=0; ang<v1s_specs.n_angles; ang++) {
             float max_rf = 0.0f;   // max over spatial rfield
             int nctrs = v1sg4_stencils.FastEl3d(2, 0, ang);       // length stored here
             for(int ctrdx = 0; ctrdx < nctrs; ctrdx++) {
@@ -2178,8 +2182,9 @@ bool V1RegionSpec::V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out,
   int idx;
 
   {
-    col = data_table->FindMakeColName(name + "_v1m" + col_sufx, idx, DataTable::VT_FLOAT, 4,
-              v1m_feat_geom.x, v1m_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+    col = data_table->FindMakeColName
+      (name + "_v1m" + col_sufx, idx, DataTable::VT_FLOAT, 4,
+       v1m_feat_geom.x, v1m_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
     if(!fmt_only) {
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
       dout->CopyFrom(out);
@@ -2187,8 +2192,9 @@ bool V1RegionSpec::V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out,
   }
 
   {
-    col = data_table->FindMakeColName(name + "_v1m_max" + col_sufx, idx, DataTable::VT_FLOAT, 4,
-              v1m_feat_geom.x, v1m_in_polarities, v1s_img_geom.x, v1s_img_geom.y);
+    col = data_table->FindMakeColName
+      (name + "_v1m_max" + col_sufx, idx, DataTable::VT_FLOAT, 4,
+       v1m_feat_geom.x, v1m_out_polarities, v1s_img_geom.x, v1s_img_geom.y);
     if(!fmt_only) {
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
       dout->CopyFrom(maxout);
@@ -2198,12 +2204,14 @@ bool V1RegionSpec::V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out,
   if(v1s_save & SAVE_DEBUG) {
     int mmax = MIN(motion_frames, circ->length);
     for(int midx=0; midx < mmax; midx++) {
-      col = data_table->FindMakeColName(name + "_v1m_hist" + col_sufx + "_m" + String(midx),
-                        idx, DataTable::VT_FLOAT, 4,
-                        v1s_feat_geom.x, v1m_in_polarities, v1s_img_geom.x, v1s_img_geom.y);
+      col = data_table->FindMakeColName
+        (name + "_v1m_hist" + col_sufx + "_m" + String(midx),
+         idx, DataTable::VT_FLOAT, 4,
+         v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
       if(!fmt_only) {
         float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-        float_MatrixPtr lstfrm; lstfrm = (float_Matrix*)hist->GetFrameSlice(circ->CircIdx(midx));
+        float_MatrixPtr lstfrm; lstfrm =
+                                  (float_Matrix*)hist->GetFrameSlice(circ->CircIdx(midx));
         dout->CopyFrom(lstfrm);
       }
     }
@@ -2404,7 +2412,10 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
         ic.x = half_sz.x + xp;
         ic.y = half_sz.y + yp;
         if(ic.WrapHalf(max_sz)) continue;
-        mat->FastEl2d(ic.x,ic.y) = 1.0f;
+        float mot_val = 1.0f;
+        if(ic.x == ic.y == 0)
+          mot_val = -0.5f;
+        mat->FastEl2d(ic.x,ic.y) = mot_val;
       }
     }
   }
