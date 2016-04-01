@@ -61,21 +61,13 @@ bool iDataTableView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::Paint) {
     if (dataTable()) {
       QFont cur_font = QFont();
-      if (dataTable()->HasDataFlag(DataTable::USE_SAVED_FONT_SIZE)) {
-        cur_font.setPointSize(dataTable()->table_font_size);
-        taMisc::DebugInfo((String)dataTable()->table_font_size);
-        setFont(cur_font);
-      }
-      else {
-        cur_font.setPointSize(DataTable::font_size);
-        taMisc::DebugInfo((String)DataTable::font_size);
-        setFont(cur_font);
-      }
+      cur_font.setPointSize(dataTable()->font_size);
+      taMisc::DebugInfo((String)dataTable()->font_size);
+      setFont(cur_font);
     }
   }
   return inherited::eventFilter(obj, event);
 }
-
 
 void iDataTableView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
   inherited::currentChanged(current, previous);
@@ -442,12 +434,7 @@ void iDataTableView::keyPressEvent(QKeyEvent* key_event) {
       QFont cur_font(font());
       cur_font.setPointSize(cur_font.pointSize() - 1);
       setFont(cur_font);
-      if (dataTable()->HasDataFlag(DataTable::USE_SAVED_FONT_SIZE)) {
-        dataTable()->SetTableFontSize(cur_font.pointSize());
-      }
-      else {
-        DataTable::SetFontSize(cur_font.pointSize()); // sets class static
-      }
+      dataTable()->SetFontSize(cur_font.pointSize());
       key_event->accept();
       return;
     }
@@ -456,12 +443,7 @@ void iDataTableView::keyPressEvent(QKeyEvent* key_event) {
       QFont cur_font(font());
       cur_font.setPointSize(cur_font.pointSize() + 1);
       setFont(cur_font);
-      if (dataTable()->HasDataFlag(DataTable::USE_SAVED_FONT_SIZE)) {
-        dataTable()->SetTableFontSize(cur_font.pointSize());
-      }
-      else {
-        DataTable::SetFontSize(cur_font.pointSize()); // sets class static
-      }
+      dataTable()->SetFontSize(cur_font.pointSize());
       key_event->accept();
       return;
     }
@@ -473,12 +455,7 @@ void iDataTableView::keyPressEvent(QKeyEvent* key_event) {
 
 int iDataTableView::GetFontSize() {
   if (dataTable()) {
-    if (dataTable()->HasDataFlag(DataTable::USE_SAVED_FONT_SIZE)) {
-      return dataTable()->table_font_size;
-    }
-    else {
-      return DataTable::font_size;
-    }
+      return dataTable()->font_size;
   }
   return inherited::GetFontSize();
 }
