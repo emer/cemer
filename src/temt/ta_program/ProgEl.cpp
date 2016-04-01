@@ -814,7 +814,7 @@ bool ProgEl::BrowserEditSet(const String& code, int move_after) {
               "Reverting Code -- it failed to pass the CanCvtFmCode step!\n",
               code);
   tabMisc::DelayedFunCall_gui(this, "RevertToCode"); // do it later..
-  return true;
+  return false;
 }
 
 bool ProgEl::BrowserEditTest() {
