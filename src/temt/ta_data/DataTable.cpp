@@ -82,7 +82,7 @@ TA_BASEFUNS_CTORS_DEFN(DataTable);
 
 using namespace std;
 
-int DataTable::font_size = 12;
+int DataTable::font_size = taMisc::font_size;
 
 void DataTable::Initialize() {
   rows = 0;
@@ -99,7 +99,7 @@ void DataTable::Initialize() {
   base_diff_row = -1;  // no base comparison row at start
   change_col = NULL;
   change_col_type = -1;
-  table_font_size = DataTable::font_size;
+  table_font_size = taMisc::font_size;
 }
 
 void DataTable::Destroy() {

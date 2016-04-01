@@ -33,6 +33,7 @@
 #include <tabMisc>
 #include <taRootBase>
 #include <BrowseViewer>
+#include <PanelViewer>
 
 #include <QHeaderView>
 #include <QTimer>
@@ -636,7 +637,12 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         QFont cur_font(font());
         cur_font.setPointSize(cur_font.pointSize() - 1);
         setFont(cur_font);
-        imw->viewer()->GetLeftBrowser()->cur_font_size = cur_font.pointSize();
+        if (imw->cur_main_focus == iMainWindowViewer::LEFT_BROWSER) {
+          imw->viewer()->GetLeftBrowser()->cur_font_size = cur_font.pointSize();
+        }
+        else if (imw->cur_main_focus == iMainWindowViewer::MIDDLE_PANEL) {
+          imw->viewer()->GetMiddlePanel()->cur_font_size = cur_font.pointSize();
+        }
         key_event->accept();
         return;
       }
@@ -645,7 +651,12 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         QFont cur_font(font());
         cur_font.setPointSize(cur_font.pointSize() + 1);
         setFont(cur_font);
-        imw->viewer()->GetLeftBrowser()->cur_font_size = cur_font.pointSize();
+        if (imw->cur_main_focus == iMainWindowViewer::LEFT_BROWSER) {
+          imw->viewer()->GetLeftBrowser()->cur_font_size = cur_font.pointSize();
+        }
+        else if (imw->cur_main_focus == iMainWindowViewer::MIDDLE_PANEL) {
+          imw->viewer()->GetMiddlePanel()->cur_font_size = cur_font.pointSize();
+        }
         key_event->accept();
         return;
       }
@@ -983,13 +994,15 @@ void iTreeView::showEvent(QShowEvent* ev) {
     QTimer::singleShot(250, this, SLOT(ExpandDefault()) );
     tv_flags = (TreeViewFlags)(tv_flags | TV_AUTO_EXPANDED);
   }
+  
   iMainWindowViewer* imw = mainWindow();
-  if (imw) {
+  QFont cur_font = QFont();
+  if (imw && imw->cur_main_focus == iMainWindowViewer::LEFT_BROWSER) {
     int saved_font_size = imw->viewer()->GetLeftBrowser()->cur_font_size;
-    QFont cur_font = QFont();
     cur_font.setPointSize(saved_font_size);
-    setFont(cur_font);
+    taMisc::DebugInfo((String)imw->cur_sub_focus);
   }
+  imw->GetCurTreeView()->setFont(cur_font);
 }
 
 bool iTreeView::ShowNode(iTreeViewItem* item) const {

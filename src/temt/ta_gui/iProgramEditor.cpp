@@ -30,6 +30,7 @@
 #include <ControlPanel>
 #include <ParamSet>
 #include <BuiltinTypeDefs>
+#include <PanelViewer>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -231,10 +232,19 @@ void iProgramEditor::Init() {
 }
 
 bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() == QEvent::Paint) {
+    if (window()) {
+      int saved_font_size = window()->viewer()->GetMiddlePanel()->cur_font_size;
+      QFont cur_font = QFont();
+      cur_font.setPointSize(saved_font_size);
+      items->setFont(cur_font);  // items is an iTreeView
+    }
+  }
+  
   if (event->type() != QEvent::KeyPress) {
     return QWidget::eventFilter(obj, event);
   }
-
+  
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
