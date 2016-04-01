@@ -35,7 +35,7 @@ public:
 
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
-  String	GetToolbarName() const override { return "stop/step"; }
+  String	GetToolbarName() const override { return "stop_step"; }
 
   PROGEL_SIMPLE_COPY(StopStepPoint);
   void InitLinks() override;

@@ -40,7 +40,7 @@ void StopStepPoint::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, "}");
   }
   else {
-    prog->AddLine(this, "StopCheck(); // check for Stop or Step button",
+    prog->AddLine(this,"StopCheck(); // check for Stop or Step button",
                   ProgLine::MAIN_LINE);
   }
   prog->AddVerboseLine(this);
@@ -48,9 +48,9 @@ void StopStepPoint::GenCssBody_impl(Program* prog) {
 
 String StopStepPoint::GetDisplayName() const {
   if(cond.expr.empty())
-    return "Stop/Step Point";
+    return "Stop_Step Point";
   else
-    return "if(" + cond.GetFullExpr() + ") Stop/Step Point";
+    return "if(" + cond.GetFullExpr() + ") Stop_Step Point";
 }
 
 void StopStepPoint::InitLinks() {
@@ -64,3 +64,4 @@ void StopStepPoint::PreGenMe_impl(int item_id) {
   if (!prog) return; // shouldn't normally happen
   prog->SetProgFlag(Program::SELF_STEP);
 }
+
