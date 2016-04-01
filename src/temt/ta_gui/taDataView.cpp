@@ -30,6 +30,7 @@ void taDataView::Initialize() {
   m_index = -1;
   m_vis_cnt = 0;
   m_defer_refresh = 0;
+  cur_font_size = taMisc::font_size;
 }
 
 void taDataView::CutLinks() {
