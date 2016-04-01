@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9346
+// ta_Dump File v3.0 -- code v7.8.6.0 rev9349
 LeabraProject .projects["TestCvtFmCode"] { 
  Doc_Group @.docs = [0] {
  };
@@ -484,11 +484,12 @@ LeabraProject .projects["TestCvtFmCode"] {
    ProgVar_List @.args = [0] {
    };
 
-   ProgVar_List @.vars = [7] {
+   ProgVar_List @.vars = [8] {
     ProgVar @["MyProgCode"] { };
     ProgVar @["test_code_str"] { };
     ProgVar @["MyProgEl_list"] { };
-    ProgVar @["should_match"] { };
+    ProgVar @["should_match_type"] { };
+    ProgVar @["should_match_code"] { };
     ProgVar @["does_match"] { };
     ProgVar @["my_prog_code"] { };
     ProgVar @["i"] { };
@@ -528,8 +529,14 @@ LeabraProject .projects["TestCvtFmCode"] {
     };
     AssignExpr @[8] { };
     If @[9] { 
-     ProgEl_List @.true_code = [1] {
+     ProgEl_List @.true_code = [2] {
       PrintExpr @[0] { };
+      If @[1] { 
+       ProgEl_List @.true_code = [2] {
+	AssignExpr @[0] { };
+	PrintExpr @[1] { };
+       };
+      };
      };
     };
     Else @[10] { 
@@ -2385,10 +2392,10 @@ LeabraProject .projects["TestCvtFmCode"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
     last_sort_spec {
-     name=;
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -2396,7 +2403,7 @@ LeabraProject .projects["TestCvtFmCode"] {
      };
     };
     control_panel_cells {
-     name=;
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -3559,7 +3566,7 @@ LeabraProject .projects["TestCvtFmCode"] {
     };
     BlankLineEl @[10] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string=" ";
      pre_compile_code_string=" ";
     };
@@ -3761,22 +3768,22 @@ LeabraProject .projects["TestCvtFmCode"] {
     expr=;
    };
    objs {
-    name="ProgObjList_6";
+    name="objs";
     el_typ=taNBase;
     el_def=0;
    };
    types {
-    name="ProgType_List_1";
+    name="types";
     el_typ=DynEnumType;
     el_def=0;
    };
    args {
-    name="ProgVar_List_1";
+    name="args";
     el_typ=ProgVar;
     el_def=0;
    };
    vars {
-    name="ProgVar_List_1";
+    name="vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @["MyProgCode"] {
@@ -3807,8 +3814,16 @@ LeabraProject .projects["TestCvtFmCode"] {
      desc=;
      init_from=NULL;
     };
-    ProgVar @["should_match"] {
-     name="should_match";
+    ProgVar @["should_match_type"] {
+     name="should_match_type";
+     var_type=T_String;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["should_match_code"] {
+     name="should_match_code";
      var_type=T_String;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -3836,31 +3851,31 @@ LeabraProject .projects["TestCvtFmCode"] {
     ProgVar @["i"] {
      name="i";
      var_type=T_Int;
-     flags=NULL_CHECK|USED|EDIT_VAL;
+     flags=NULL_CHECK|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
     };
    };
    functions {
-    name="Function_List_6";
+    name="functions";
     el_typ=Function;
     el_def=0;
    };
    init_code {
-    name="ProgEl_List_74";
+    name="init_code";
     el_typ=ProgCode;
     el_def=0;
    };
    prog_code {
-    name="ProgEl_List_75";
+    name="prog_code";
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
      desc=;
-     flags=0;
-     code_string=;
-     pre_compile_code_string=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (0 vars)";
+     pre_compile_code_string="LocalVars (0 vars)";
      local_vars {
       name="local_vars";
       el_typ=ProgVar;
@@ -3882,8 +3897,8 @@ LeabraProject .projects["TestCvtFmCode"] {
       Comment @[0] {
        desc="Hello World";
        flags=CAN_REVERT_TO_CODE;
-       code_string="//Hello World";
-       pre_compile_code_string=;
+       code_string="// Hello World";
+       pre_compile_code_string="// Hello World";
       };
      };
     };
@@ -3979,11 +3994,11 @@ LeabraProject .projects["TestCvtFmCode"] {
     AssignExpr @[8] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="does_match = MyProgEl_list[1].DerivesFromName(should_match)";
-     pre_compile_code_string="does_match = MyProgEl_list[1].DerivesFromName(should_match)";
+     code_string="does_match = MyProgEl_list[1].DerivesFromName(should_match_type)";
+     pre_compile_code_string="does_match = MyProgEl_list[1].DerivesFromName(should_match_type)";
      result_var=.projects["TestCvtFmCode"].programs["TestConvertProgCodeStringToProgEl"].vars["does_match"]$$;
      expr {
-      expr="MyProgEl_list[1].DerivesFromName(should_match)";
+      expr="MyProgEl_list[1].DerivesFromName(should_match_type)";
      };
     };
     If @[9] {
@@ -4001,20 +4016,54 @@ LeabraProject .projects["TestCvtFmCode"] {
       PrintExpr @[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Print \"Code correctly converted to \\\"\" << should_match <<\"\\\"\"";
-       pre_compile_code_string="Print \"Code correctly converted to \\\"\" << should_match <<\"\\\"\"";
+       code_string="Print \"Code (\" << MyProgEl_list[1]->code_string << \") correctly converted to type \\\"\" << should_match_type <<\"\\\"\"";
+       pre_compile_code_string="Print \"Code (\" << MyProgEl_list[1]->code_string << \") correctly converted to type \\\"\" << should_match_type <<\"\\\"\"";
        expr {
-	expr="\"Code correctly converted to \\\"\" << should_match <<\"\\\"\"";
+	expr="\"Code (\" << MyProgEl_list[1]->code_string << \") correctly converted to type \\\"\" << should_match_type <<\"\\\"\"";
        };
        debug=0;
+      };
+      If @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if ((!should_match_code.empty()) && (should_match_code != MyProgEl_list[1]->code_string))";
+       pre_compile_code_string="if ((!should_match_code.empty()) && (should_match_code != MyProgEl_list[1]->code_string))";
+       cond {
+	expr="(!should_match_code.empty()) && (should_match_code != MyProgEl_list[1]->code_string)";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="does_match = false";
+	 pre_compile_code_string="does_match = false";
+	 result_var=$.projects["TestCvtFmCode"].programs["TestConvertProgCodeStringToProgEl"].vars["does_match"]$;
+	 expr {
+	  expr="false";
+	 };
+	};
+	PrintExpr @[1] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="Print \"Code string converted to \\\"\" << MyProgEl_list[1]->code_string << \"\\\" but should have converted to \\\"\" << should_match_code << \"\\\"\"";
+	 pre_compile_code_string="Print \"Code string converted to \\\"\" << MyProgEl_list[1]->code_string << \"\\\" but should have converted to \\\"\" << should_match_code << \"\\\"\"";
+	 expr {
+	  expr="\"Code string converted to \\\"\" << MyProgEl_list[1]->code_string << \"\\\" but should have converted to \\\"\" << should_match_code << \"\\\"\"";
+	 };
+	 debug=0;
+	};
+       };
       };
      };
     };
     Else @[10] {
      desc=;
-     flags=0;
-     code_string=;
-     pre_compile_code_string=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="else";
+     pre_compile_code_string="else";
      else_code {
       name="else_code";
       el_typ=ProgCode;
@@ -4022,10 +4071,10 @@ LeabraProject .projects["TestCvtFmCode"] {
       PrintExpr @[0] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Print \"Code: \\\"\" << MyProgEl_list[1]->code_string << \"\\\" did not match \\\"\" << should_match << \"\\\" instead is \\\"\" << MyProgEl_list[1].GetTypeDef() << \"\\\"\"";
-       pre_compile_code_string="Print \"Code: \\\"\" << MyProgEl_list[1]->code_string << \"\\\" did not match \\\"\" << should_match << \"\\\" instead is \\\"\" << MyProgEl_list[1].GetTypeDef() << \"\\\"\"";
+       code_string="Print \"Code: \\\"\" << test_code_str << \"\\\" did not convert to type \\\"\" << should_match_type << \"\\\" instead is \\\"\" << MyProgEl_list[1].GetTypeDef() << \"\\\"\"";
+       pre_compile_code_string="Print \"Code: \\\"\" << test_code_str << \"\\\" did not convert to type \\\"\" << should_match_type << \"\\\" instead is \\\"\" << MyProgEl_list[1].GetTypeDef() << \"\\\"\"";
        expr {
-	expr="\"Code: \\\"\" << MyProgEl_list[1]->code_string << \"\\\" did not match \\\"\" << should_match << \"\\\" instead is \\\"\" << MyProgEl_list[1].GetTypeDef() << \"\\\"\"";
+	expr="\"Code: \\\"\" << test_code_str << \"\\\" did not convert to type \\\"\" << should_match_type << \"\\\" instead is \\\"\" << MyProgEl_list[1].GetTypeDef() << \"\\\"\"";
        };
        debug=0;
       };
@@ -4078,7 +4127,7 @@ LeabraProject .projects["TestCvtFmCode"] {
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7994323;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -4272,22 +4321,22 @@ LeabraProject .projects["TestCvtFmCode"] {
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 8 0=-0.002087683;
+       value 8 0=-0.002785515;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.02554399;
+       value 8 0=0.03078677;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04279749;
+       value 8 0=0.05710306;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7123936;
+       value 8 0=0.8950969;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
