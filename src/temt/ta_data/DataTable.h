@@ -92,12 +92,15 @@ class TA_API DataTable : public taFBase {
   friend class DataCol;
   friend class DataTableCell_List;
 public:
+  static int             font_size;  // current font size for all data tables unless overridden by specific table
+  
   enum DataFlags { // #BITS flags for data table
     DF_NONE             = 0, // #NO_BIT
     SAVE_ROWS           = 0x0001, // Store this DataTable's row-data directly in the project file.  Uncheck for the option to store row-data externally.  Note: the DataTable's schema (column names, types, and other configuration information) is always saved directly in the project.
     HAS_CALCS           = 0x0002, // #NO_SHOW at least one of the columns has CALC flag set
     AUTO_CALC           = 0x0004, // Automatically calculate columns.
     SAVE_FILE           = 0x0008, // If an AUTO_LOAD filename is set, this option causes row-data to be saved to that file whenever the project is saved.
+    USE_SAVED_FONT_SIZE = 0x0010, // Use the font saved with this particular table
   };
 
   enum AutoLoadMode {
@@ -146,9 +149,10 @@ public:
   String                cell_view;
   // #HIDDEN #NO_SAVE contents of a given cell, for viewing purposes (View menu action)
   
+  int                   table_font_size;
+  // #READONLY this is a table specific font size applied if the flag USE_TABLE_FONT_SIZE is set
   DataSortSpec          last_sort_spec;
   // #HIDDEN the last table sort specification
-
   DataSelectSpec        last_select_spec;
   // #HIDDEN #NO_SAVE the last table sort specification
   
@@ -182,6 +186,10 @@ public:
   inline void           ToggleDataFlag(DataFlags flg)
   { SetDataFlagState(flg, !HasDataFlag(flg)); }
   // #CAT_ObjectMgmt toggle data table flag relative to its current setting
+  void                  SetTableFontSize(int font_size) { table_font_size = font_size; }
+  // #IGNORE set the table specific font size
+  static void           SetFontSize(int font_size) { DataTable::font_size = font_size; }
+  // #IGNORE set the font size for all tables not setting table specific font size
 
   /////////////////////////////////////////////////////////
   // saving/loading (file)
@@ -358,7 +366,6 @@ public:
   ////////////////////////////////////////////////////////////
   //    protected Load/Save and other implementation code
 protected:
-
   iDataTableModel*      table_model; // #IGNORE for gui view/model stuff
   static int_Array      load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
   static int_Array      load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info

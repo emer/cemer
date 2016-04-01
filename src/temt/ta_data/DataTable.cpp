@@ -62,6 +62,7 @@ taTypeDef_Of(bool_Data);
 
 #include <taMisc>
 #include <tabMisc>
+#include <taiMisc>
 
 #include <QFileInfo>
 
@@ -81,6 +82,8 @@ TA_BASEFUNS_CTORS_DEFN(DataTable);
 
 using namespace std;
 
+int DataTable::font_size = 12;
+
 void DataTable::Initialize() {
   rows = 0;
   rows_total = 0;
@@ -96,6 +99,7 @@ void DataTable::Initialize() {
   base_diff_row = -1;  // no base comparison row at start
   change_col = NULL;
   change_col_type = -1;
+  table_font_size = DataTable::font_size;
 }
 
 void DataTable::Destroy() {

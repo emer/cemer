@@ -32,6 +32,7 @@
 #include <taiMisc>
 #include <tabMisc>
 #include <taRootBase>
+#include <BrowseViewer>
 
 #include <QHeaderView>
 #include <QTimer>
@@ -64,7 +65,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   main_window = NULL;
 
   setFont(taiM->dialogFont(taiM->sizBig));
-  last_font_size = taMisc::font_size;
+//  last_font_size = taMisc::font_size;
 
   tv_flags = tv_flags_;
   m_filters = NULL; // only created if needed
@@ -88,11 +89,11 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
     QColor(0xa0, 0xa0, 0xa0),  // light grey
     QColor(0x80, 0x80, 0x80) // medium grey
   );
-
+  
   connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-    this, SLOT(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
-//  connect(this, SIGNAL(itemSelectionChanged()),
-//    this, SLOT(this_itemSelectionChanged()) );
+          this, SLOT(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
+  //  connect(this, SIGNAL(itemSelectionChanged()),
+  //    this, SLOT(this_itemSelectionChanged()) );
   //note: can't use "activate" because that is only for ex. double-clicking the item
   // can't use "pressed" because that solves problem, but then screws up drags, etc.
   connect(this, SIGNAL(clicked(const QModelIndex&)),
@@ -630,6 +631,24 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
   
   if(stru_actions_enabled) {
     switch(action) {
+      case taiMisc::TREE_DECREASE_FONTSIZE:
+      {
+        QFont cur_font(font());
+        cur_font.setPointSize(cur_font.pointSize() - 1);
+        setFont(cur_font);
+        imw->viewer()->GetLeftBrowser()->cur_font_size = cur_font.pointSize();
+        key_event->accept();
+        return;
+      }
+      case taiMisc::TREE_INCREASE_FONTSIZE:
+      {
+        QFont cur_font(font());
+        cur_font.setPointSize(cur_font.pointSize() + 1);
+        setFont(cur_font);
+        imw->viewer()->GetLeftBrowser()->cur_font_size = cur_font.pointSize();
+        key_event->accept();
+        return;
+      }
       case taiMisc::TREE_NEW_DEFAULT_ELEMENT:
       case taiMisc::TREE_NEW_DEFAULT_ELEMENT_II:
         ext_select_on = false;
@@ -895,10 +914,11 @@ void iTreeView::setTvFlags(int value) {
 }
 
 void iTreeView::Refresh_impl() {
-  if(last_font_size != taMisc::font_size) {
-    setFont(taiM->dialogFont(taiM->sizBig));
-    last_font_size = taMisc::font_size;
-  }
+//  if(last_font_size != taMisc::font_size) {
+//    setFont(taiM->dialogFont(taiM->sizBig));
+//    last_font_size = taMisc::font_size;
+//  }
+//
   SaveScrollPos();
   //note: very similar to Show_impl
   QTreeWidgetItemIterator it(this);
@@ -963,7 +983,13 @@ void iTreeView::showEvent(QShowEvent* ev) {
     QTimer::singleShot(250, this, SLOT(ExpandDefault()) );
     tv_flags = (TreeViewFlags)(tv_flags | TV_AUTO_EXPANDED);
   }
-
+  iMainWindowViewer* imw = mainWindow();
+  if (imw) {
+    int saved_font_size = imw->viewer()->GetLeftBrowser()->cur_font_size;
+    QFont cur_font = QFont();
+    cur_font.setPointSize(saved_font_size);
+    setFont(cur_font);
+  }
 }
 
 bool iTreeView::ShowNode(iTreeViewItem* item) const {

@@ -1184,8 +1184,8 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_CUT_II, QKeySequence());
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_AUTO_COMPLETE, QKeySequence(Qt::Key_Tab));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_AUTO_COMPLETE_II, QKeySequence());
-  
-  
+  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_DECREASE_FONTSIZE, QKeySequence(QKeySequence::ZoomOut));
+  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_INCREASE_FONTSIZE, QKeySequence(QKeySequence::ZoomIn));
   
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_TOGGLE_FOCUS, QKeySequence(control_key + Qt::Key_T));
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_TOGGLE_FOCUS_II, QKeySequence());
@@ -1219,11 +1219,13 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_PAGE_UP_II, QKeySequence());
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_PAGE_DOWN, QKeySequence(control_key + Qt::Key_V));
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_PAGE_DOWN_II, QKeySequence());
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_DECREASE_FONTSIZE, QKeySequence(QKeySequence::ZoomOut));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_INCREASE_FONTSIZE, QKeySequence(QKeySequence::ZoomIn));
 #ifdef TA_OS_MAC
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_FIND_NEXT, QKeySequence(meta_key + Qt::Key_G));
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_FIND_PREVIOUS, QKeySequence(meta_key + Qt::ShiftModifier + Qt::Key_G));
 #endif
-  
+
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_NEW_DEFAULT_ELEMENT, QKeySequence(Qt::Key_Enter));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_NEW_DEFAULT_ELEMENT_II, QKeySequence(Qt::Key_Return));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_NEW_DEFAULT_ELEMENT_ABOVE, QKeySequence(Qt::ShiftModifier + Qt::Key_Enter));
@@ -1236,7 +1238,7 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CUT_II, QKeySequence());
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_COPY, QKeySequence(Qt::AltModifier + Qt::Key_W));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_COPY_II, QKeySequence());
-default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE, QKeySequence(control_key + Qt::Key_Y));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE, QKeySequence(control_key + Qt::Key_Y));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE_II, QKeySequence());
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE_INTO, QKeySequence(Qt::ShiftModifier + meta_key + Qt::Key_V));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE_INTO_II, QKeySequence());
@@ -1285,6 +1287,8 @@ default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE, QKeySequence(contr
 #endif
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_II, QKeySequence());
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_REPLACE_II, QKeySequence());
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_DECREASE_FONTSIZE, QKeySequence(QKeySequence::ZoomOut));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_INCREASE_FONTSIZE, QKeySequence(QKeySequence::ZoomIn));
 
 
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_INTERACTION_MODE_OFF, QKeySequence(Qt::Key_V));
@@ -1456,7 +1460,7 @@ void taiMisc::UpdateCustomKeyBindings() {
         KeyActionPair* pair = &default_pairs->SafeEl(i);
         if (custom_pairs->FindAction(pair->action) == -1) { // if pairing not found
           custom_bindings->Add(static_cast<taiMisc::BindingContext>(ctxt), pair->action, QKeySequence(pair->key_sequence));
-//          String action_str = TA_taiMisc.GetEnumString("BoundAction", static_cast<int>(pair->action));  // for debug
+          String action_str = TA_taiMisc.GetEnumString("BoundAction", static_cast<int>(pair->action));  // for debug
         }
       }
     }

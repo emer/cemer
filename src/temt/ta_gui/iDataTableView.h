@@ -41,6 +41,7 @@ public:
   iDataTableRowHeaderView*  row_header;
 
   DataTable*                dataTable() const;
+  int                       GetFontSize() override;
 
   iDataTableView(QWidget* parent = NULL);
   
@@ -56,17 +57,19 @@ public: // cliphandler i/f
 #endif
 
 protected:
-  void          currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
+  void                  currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
 #if (QT_VERSION >= 0x050000)
-  void          dataChanged(const QModelIndex& topLeft,
+  void                  dataChanged(const QModelIndex& topLeft,
       const QModelIndex & bottomRight, const QVector<int> &roles = QVector<int>()) override;
 #else
-  void          dataChanged(const override QModelIndex& topLeft, const QModelIndex & bottomRight);
+  void                  dataChanged(const override QModelIndex& topLeft, const QModelIndex & bottomRight);
 #endif
 // refresh mat cell if in here
-  void          FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel) override;
-  void          RowColOp_impl(int op_code, const CellRange& sel) override;
-  
+  void                  FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel) override;
+  void                  RowColOp_impl(int op_code, const CellRange& sel) override;
+  void                  keyPressEvent(QKeyEvent* e) override;
+  bool                  eventFilter(QObject* obj, QEvent* event) override;
+
 public slots:
   void          doubleClicked(const QModelIndex & index);
   

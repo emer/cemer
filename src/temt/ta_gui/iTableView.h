@@ -55,7 +55,9 @@ public:
 
   virtual void          clearExtSelection();       // clear extended selection mode and also clear any existing selection
   virtual void          selectCurCell();           // call clearExtSelection and then select current index
-  virtual bool           SelectColumns(int st_col, int st_row);
+  virtual bool          SelectColumns(int st_col, int st_row);
+  virtual int           GetFontSize();             // returns default size - subclasses can do return other sizes
+  
   /////////////////////////////////////////////////////////////////
   //            ScrollArea Management
 
@@ -75,9 +77,9 @@ public:
   // map coordinate point within given child widget on panel to the coordinates of the panel scroll area
   virtual int           MapToTreeV(QWidget* widg, int pt_y);
   // map vertical coordinate value within given child widget on panel to the coordinates of the panel scroll area
-  virtual bool		SelectedRows(int& st_row, int& end_row);
+  virtual bool          SelectedRows(int& st_row, int& end_row);
   // return start and end range of selected rows in the view
-  virtual bool		SelectRows(int st_row, int end_row);
+  virtual bool          SelectRows(int st_row, int end_row);
   // select given range of rows - inclusive
   virtual void          SetCurrentAndSelect(int row, int col);
   // for selecting single cell only

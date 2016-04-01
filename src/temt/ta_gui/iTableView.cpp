@@ -19,6 +19,7 @@
 #include <CellRange>
 #include <iVec2i>
 #include <iLineEdit>
+//#include <PanelViewer>
 
 #include <taMisc>
 #include <taiMisc>
@@ -40,7 +41,7 @@ iTableView::iTableView(QWidget* parent)
   m_saved_scroll_pos = 0;
 
   setFont(taiM->dialogFont(taiM->ctrl_size));
-  last_font_size = taMisc::font_size;
+//  last_font_size = taMisc::font_size;
 
   iTableViewDefaultDelegate* del = new iTableViewDefaultDelegate(this);
   setItemDelegate(del);
@@ -66,11 +67,15 @@ void iTableView::selectCurCell() {
 }
 
 bool iTableView::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() == QEvent::Paint) {
+    QFont cur_font = QFont();
+    int size = GetFontSize();
+    cur_font.setPointSize(size);
+    setFont(cur_font);
+    return true;
+  }
+  
   if (event->type() != QEvent::KeyPress) {
-    if(last_font_size != taMisc::font_size) {
-      setFont(taiM->dialogFont(taiM->ctrl_size));
-      last_font_size = taMisc::font_size;
-    }
     return inherited::eventFilter(obj, event);
   }
   
@@ -91,7 +96,7 @@ void iTableView::keyPressEvent(QKeyEvent* key_event) {
     key_event->ignore();
     return;
   }
-
+  
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
   QPersistentModelIndex newCurrent;
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DATATABLE_CONTEXT, key_event);
@@ -499,6 +504,10 @@ void iTableView::SetCurrentAndSelect(int row, int col) {
   this->selectionModel()->select(selection, QItemSelectionModel::Select);
   this->setCurrentIndex(topLeft);
   this->setFocus();
+}
+
+int iTableView::GetFontSize() {
+  return 20;
 }
 
 

@@ -736,12 +736,12 @@ void iMainWindowViewer::Constr_ViewMenu()
   viewMenu->AddAction(viewResetViewAction);
   viewMenu->insertSeparator();
 
-  viewIncrFontSizeAction = AddAction
-    (new iAction("&Incr Font Size", QKeySequence(cmd_str + "+"), "incrFontSizeAction"));
-  viewDecrFontSizeAction = AddAction
-    (new iAction("&Decr Font Size", QKeySequence(cmd_str + "-"), "decrFontSizeAction"));
-  viewMenu->AddAction(viewIncrFontSizeAction);
-  viewMenu->AddAction(viewDecrFontSizeAction);
+//  viewIncrFontSizeAction = AddAction
+//  (new iAction("&Incr Font Size", QKeySequence(cmd_str + "+"), "incrFontSizeAction"));
+//  viewDecrFontSizeAction = AddAction
+//    (new iAction("&Decr Font Size", QKeySequence(cmd_str + "-"), "decrFontSizeAction"));
+//  viewMenu->AddAction(viewIncrFontSizeAction);
+//  viewMenu->AddAction(viewDecrFontSizeAction);
 
   viewMenu->insertSeparator();
   viewSetSaveViewAction = viewMenu->AddItem("Save View State", taiWidgetMenu::toggle,
@@ -773,8 +773,8 @@ void iMainWindowViewer::Constr_ViewMenu()
   connect (viewPanelsAndT3Action, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
   connect (viewAllFramesAction, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
 
-  connect(viewIncrFontSizeAction, SIGNAL(Action()), this, SLOT(viewIncrFontSize()));
-  connect(viewDecrFontSizeAction, SIGNAL(Action()), this, SLOT(viewDecrFontSize()));
+//  connect(viewIncrFontSizeAction, SIGNAL(Action()), this, SLOT(viewIncrFontSize()));
+//  connect(viewDecrFontSizeAction, SIGNAL(Action()), this, SLOT(viewDecrFontSize()));
 
   signalMapperForViews->setMapping (viewBrowseOnlyAction, 1) ;
   signalMapperForViews->setMapping (viewPanelsOnlyAction, 2) ;
@@ -2515,18 +2515,22 @@ void iMainWindowViewer::ViewReset() {
 }
 
 void iMainWindowViewer::viewIncrFontSize() {
-  taMisc::font_size += 1;
-  taiM->InitMetrics(true);
-  viewRefresh();
-  taMisc::Info("font size is now:", String(taMisc::font_size));
+//  taMisc::font_size += 1;
+//  taiM->InitMetrics(true);
+//  viewRefresh();
+//  IncreaseFontSize();
+//  focusWidget()->update();
+//
+//  taMisc::Info("font size is now:", String(taMisc::font_size));
 }
 
 void iMainWindowViewer::viewDecrFontSize() {
-  taMisc::font_size -= 1;
-  if(taMisc::font_size < 4) taMisc::font_size = 4;
-  taiM->InitMetrics(true);
-  viewRefresh();
-  taMisc::Info("font size is now:", String(taMisc::font_size));
+//  taMisc::font_size -= 1;
+//  if(taMisc::font_size < 4) taMisc::font_size = 4;
+//  taiM->InitMetrics(true);
+//  viewRefresh();
+//  DecreaseFontSize();
+//  taMisc::Info("font size is now:", String(taMisc::font_size));
 }
 
 void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
@@ -3087,7 +3091,7 @@ void iMainWindowViewer::ShowHideFrames(int combo) {
       tools_dock_was_visible = dv->isVisible();  // save the state for case when dock is hidden because the browse and panel frames are hidden
   }
   
-  bool show_tools_dock = true;
+  bool show_tools_dock = true;  // the programming tool bar
   switch (combo) {
     case 1:
       split_sizes_new.replace(0, total_width);
@@ -3110,6 +3114,7 @@ void iMainWindowViewer::ShowHideFrames(int combo) {
     case 6:
       split_sizes_new.replace(1, total_width/2);
       split_sizes_new.replace(2, total_width/2);
+      show_tools_dock = false;
       break;
     case 7:
       split_sizes_new.replace(0, nav_frame_width);

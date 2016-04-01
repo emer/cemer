@@ -83,6 +83,7 @@ public:
 public:
   taBase*               m_data;         // #READ_ONLY #NO_SET_POINTER data -- referent of the item (not ref'ed)
   TypeDef*              data_base;      // #READ_ONLY #NO_SAVE Minimum type for data object
+  int                   cur_font_size;  // Can be used by viewers to set/save a font size that is specific to the viewer
 
 protected:
   int                   m_dbu_cnt; // data batch update count; +ve is Structural, -ve is Parameteric only
