@@ -85,13 +85,13 @@ private:
 taTypeDef_Of(V1MotionSpec);
 
 class E_API V1MotionSpec : public V1GaborSpec {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells -- based on gabor spatio-temporal pattern -- motion gabor is applied along direction perpendicular to the orientation tuning -- n_angles must be even and divides +/- 90 quadrant into n_angles/2 space-time angles (speeds) -- should use odd polarity gabors, and motion_frames determines size available for input, so size here must match that!
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells -- based on gabor spatio-temporal pattern -- motion gabor is applied along direction perpendicular to the orientation tuning -- n_angles represents speeds and divides the 90 degree quadrant into n_angles space-time angles -- should use odd polarity gabors, and motion_frames determines size available for input, so size here must match that!
 INHERITED(V1GaborSpec)
 public:
   bool		r_only;		// #DEF_true perform motion computation only on right eye signals -- this is the dominant eye and often all that is needed
 
   void	RenderFilters(float_Matrix& fltrs) override;
-  // generate filters into the given matrix, which is formatted as: [size][size][n_angles]
+  void	GridFilters(float_Matrix& fltrs, DataTable* disp_data, bool reset = true) override;
 
   TA_SIMPLE_BASEFUNS(V1MotionSpec);
 protected:
@@ -216,7 +216,7 @@ public:
   V1GaborSpec	v1s_specs_2;	// specs for second set of V1 simple filters, computed using gabor filters directly onto the incoming image -- MUST have same n_angles, spacing as v1s_specs, and generally good to have same size
   V1GaborSpec	v1s_specs_3;	// specs for third set of V1 simple filters, computed using gabor filters directly onto the incoming image -- MUST have same n_angles, spacing as v1s_specs, and generally good to have same size
   RenormMode	v1s_renorm;	// #DEF_NO_RENORM how to renormalize the output of v1s static filters -- applied prior to kwta
-  V1KwtaSpec	v1s_kwta;	// k-winner-take-all inhibitory dynamics for the v1 simple stage -- important for cleaning up these representations for subsequent stages, especially binocluar disparity and motion processing, which require correspondence matching, and end stop detection
+  V1KwtaSpec	v1s_kwta;	// k-winner-take-all inhibitory dynamics for the v1 simple stage -- important for cleaning up these representations for subsequent stages
   V1sNeighInhib	v1s_neigh_inhib; // specs for V1 simple neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
   VisAdaptation v1s_adapt;      // how to adapt the v1 simple cell responses over time
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
@@ -225,8 +225,9 @@ public:
 
   /////////// Motion
   V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 specs for V1 motion filters within the simple processing layer
-  RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 #DEF_NO_RENORM how to renormalize the output of v1s motion filters
-  XYNGeom	v1m_feat_geom; 	// #READ_ONLY size of one 'hypercolumn' of features for V1 motion filtering -- always x = angles; y = 2 * speeds
+  RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 #DEF_THR_LIN_RENORM how to renormalize the output of v1s motion filters
+  V1KwtaSpec	v1m_kwta;	// k-winner-take-all inhibitory dynamics for the v1 motion stage
+  XYNGeom	v1m_feat_geom; 	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 #READ_ONLY size of one 'hypercolumn' of features for V1 motion filtering -- always x = angles; y = 2 * speeds
 
   V1SquareGroup square_group;   // simple form of spatial compression that is useful prior to doing complex operations and generally shrinking the size of the input to the network without much loss in performance
   DataSave	sg_save;	// #CONDSHOW_ON_square_group.on how to save the square grouping outputs of v1s and v1pi for the current time step in the data table -- default is not to
@@ -268,7 +269,7 @@ public:
   ////////////////// V1M Motion Geom/Stencils
   int		v1m_out_polarities; // #READ_ONLY number of polarities saved from v1 output -- always collapses across polarities while using all for input
   float_Matrix  v1m_gabor_filters; // #READ_ONLY #NO_SAVE spatiotemporal gabor filters for motion filters
-  int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for spatial location sampling offsets relative to current location of feature, in terms of v1s location offsets through time [x,y][motion_frames][or_angles]
+  int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for spatial location sampling offsets relative to current location of feature, in terms of v1s location offsets through time [x,y][motion_frames][dirs=2][or_angles]
 
   ///////////////////  Square Grouping Geom / Stencils ////////////////////////
   int_Matrix	v1sg4_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square 4x4 grouping -- represents center points of the lines for each angle [x,y,len][10][angles] -- there are 10 points for the 2 diagonal lines with 4 angles and 8 for horiz, vert -- only works if n_angles = 4 and line_len = 4 or 5
@@ -298,6 +299,8 @@ public:
   float_Matrix	v1pi_out_l;  	 // #READ_ONLY #NO_SAVE polarity invariance over v1 simple cell output -- max over polarities, left eye [feat.x][1][img.x][img.y]
 
   ///////////////////  V1M Motion Output ////////////////////////
+  float_Matrix	v1m_raw_r;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 motion cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = speed * dir * [0=on,1=off -- luminance only]
+  float_Matrix	v1m_raw_l;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 motion cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = speed * dir * [0=on,1=off -- luminance only] 
   float_Matrix	v1m_out_r;	 // #READ_ONLY #NO_SAVE v1 motion cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = speed * dir * [0=on,1=off -- luminance only]
   float_Matrix	v1m_out_l;	 // #READ_ONLY #NO_SAVE v1 motion cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = speed * dir * [0=on,1=off -- luminance only] 
   float_Matrix	v1m_maxout_r;	 // #READ_ONLY #NO_SAVE v1 motion cell output -- max over directions, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = v1m_in_polarities
@@ -314,6 +317,11 @@ public:
   float_Matrix	v1pi_sg_out_r;	 // #READ_ONLY #NO_SAVE square grouping of polarity invariant V1 reps -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
   float_Matrix	v1pi_sg_out_l;	 // #READ_ONLY #NO_SAVE square grouping of polarity invariant V1 reps -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
 
+  float_Matrix	v1m_sg_out_r;	 // #READ_ONLY #NO_SAVE square grouping of v1 motion cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = speed * dir * [0=on,1=off -- luminance only]
+  float_Matrix	v1m_sg_out_l;	 // #READ_ONLY #NO_SAVE square grouping of v1 motion cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = speed * dir * [0=on,1=off -- luminance only] 
+  float_Matrix	v1m_sg_maxout_r; // #READ_ONLY #NO_SAVE square grouping of v1 motion cell output -- max over directions, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = v1m_in_polarities
+  float_Matrix	v1m_sg_maxout_l; // #READ_ONLY #NO_SAVE square grouping of v1 motion cell output -- max over directions, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = v1m_in_polarities
+  
   ///////////////////  V1C Complex Output ////////////////////////
   float_Matrix	v1c_out_r;	 // #READ_ONLY #NO_SAVE v1 complex output after kwta [v1c_feat.x][v1c_feat.y][v1c_img.x][v1c_img.y]
   float_Matrix	v1c_out_l;	 // #READ_ONLY #NO_SAVE v1 complex output after kwta [v1c_feat.x][v1c_feat.y][v1c_img.x][v1c_img.y]
@@ -355,6 +363,7 @@ protected:
   float_Matrix* cur_out_acts;	// cur output activations -- for kwta thing
   float_Matrix* cur_maxout;	// cur maxout for motion
   float_Matrix* cur_hist;	// cur hist for motion
+  float_Matrix* cur_pi;         // cur pi for motion
   float_Matrix* cur_v1b_in_r;	// current v1b input, r
   float_Matrix* cur_v1b_in_l;	// current v1b input, l
   float_Matrix* cur_v1s_gabor_filter;	// currrent gabor filter
@@ -393,8 +402,9 @@ protected:
   virtual void 	V1SimpleFilter_PolInvar_thread(int thr_no);
   // polarity invariance: max polarities of v1s_out 
 
-  virtual bool	V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, float_Matrix* maxout, 
-		      float_Matrix* hist, CircMatrix* circ);
+  virtual bool	V1SimpleFilter_Motion
+    (float_Matrix* in, float_Matrix* out, float_Matrix* raw, float_Matrix* maxout, 
+     float_Matrix* hist, CircMatrix* circ, float_Matrix* pi);
   // do simple filters, motion on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Motion_thread(int thr_no);
   // do simple filters, motion on current inputs -- do it
@@ -404,13 +414,9 @@ protected:
   virtual bool	DoV1SquareGroup();
   // do square group filters
   virtual void  V1SquareGroup_V1S_SqGp(float_Matrix* v1s_in, float_Matrix* sg_out);
-  // square group V1S signals for inclusion into V1C output
+  // square group V1S geom inputs to sg outputs -- works on any feat dims (pi, v1m, etc)
   virtual void 	V1SquareGroup_V1S_SqGp_thread(int thr_no);
-  // square group V1S signals for inclusion into V1C output
-  virtual void 	V1SquareGroup_V1PI_SqGp(float_Matrix* pi_in, float_Matrix* sg_out);
-  // square-group V1PI (pol invar) features for subsequent processing in len sum and end stop
-  virtual void 	V1SquareGroup_V1PI_SqGp_thread(int thr_no);
-  // square-group V1PI (pol invar) features for subsequent processing in len sum and end stop
+  // square group V1S geom inputs to sg outputs -- works on any feat dims (pi, v1m, etc)
 
   virtual bool	V1ComplexFilter();
   // do complex filters -- dispatch threads
@@ -446,9 +452,9 @@ protected:
   virtual bool V1SOutputToTable_impl(DataTable* dtab, float_Matrix* out, const String& col_sufx,
 				     bool fmt_only = false);
   // simple to output table impl
-  virtual bool V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out, float_Matrix* maxout,
-     float_Matrix* hist, CircMatrix* circ, const String& col_sufx,
-     bool fmt_only = false);
+  virtual bool V1MOutputToTable_impl
+    (DataTable* dtab, float_Matrix* out, float_Matrix* maxout, float_Matrix* hist,
+     CircMatrix* circ, const String& col_sufx, bool fmt_only = false);
   // motion to output table impl
   virtual bool V1SqGpOutputToTable(DataTable* dtab, bool fmt_only = false);
   // square group to output table

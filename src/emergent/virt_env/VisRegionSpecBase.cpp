@@ -324,6 +324,9 @@ bool VisRegionSpecBase::RenormOutput(RenormMode mode, float_Matrix* mat) {
     if(mode == LIN_RENORM) {
       taMath_float::vec_mult_scalar(mat, 1.0f / max_val);
     }
+    else if(max_val > 1.0f && mode == THR_LIN_RENORM) {
+      taMath_float::vec_mult_scalar(mat, 1.0f / max_val);
+    }
     else if(mode == LOG_RENORM) {
       float rescale = 1.0f / logf(1.0f + max_val);
       for(int j=0;j<mat->size;j++) {

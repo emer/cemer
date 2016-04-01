@@ -3706,6 +3706,21 @@ int taMisc::find_strings(istream& istrm, String_PArray& strs) {
 }
 
 ////////////////////////////////////////////////////////////////////////
+//      String parsing
+
+String taMisc::ParseStr_CName(const String& str) {
+  int len = str.length();
+  int st_pos = 0;
+  while(st_pos < len && isspace(str[st_pos])) st_pos++;
+  int ed_pos = st_pos;
+  while(ed_pos < len && (isalnum(str[ed_pos]) || str[ed_pos] == '_')) ed_pos++;
+  if(ed_pos > st_pos) {
+    return str.at(st_pos, ed_pos - st_pos);
+  }
+  return _nilString;
+}
+
+////////////////////////////////////////////////////////////////////////
 //      HTML-style tags
 
 taMisc::ReadTagStatus taMisc::read_tag(istream& strm, String& tag, String& val) {

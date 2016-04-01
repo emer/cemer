@@ -766,32 +766,13 @@ bool ProgEl::CvtFmCodeCheckNames(const String& code) const {
   String dc = code; dc.downcase();
   String tool_bar_name = GetToolbarName(); tool_bar_name.downcase();
   String type_name = GetTypeDef()->name; type_name.downcase();
-  
-  if(dc.startsWith(tool_bar_name)) {
-    if(tool_bar_name.contains(' ')) {  // something like "new row"
-      return true;
-    }
-    else if (tool_bar_name.length() == dc.length()) {
-      return true;
-    }
-    else if(dc.at(tool_bar_name.length(), 1) == ' ') {  // so vars don't get converted into ProgEls
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-  
-  if(dc.startsWith(type_name)) {
-    if(dc.at(type_name.length(), 1) == ' ') {  // so vars don't get converted into ProgEls
-      return true;
-    }
-    else if (type_name.length() == dc.length()) {
-      return true;
-    }
-    else {
-      return false;
-    }
+
+  String first_word = taMisc::ParseStr_CName(dc);
+  if(first_word == tool_bar_name || first_word == type_name)
+    return true;
+
+  if(tool_bar_name.contains(' ') && dc.startsWith(tool_bar_name)) {
+    return true;
   }
   
   return false;

@@ -994,7 +994,13 @@ public:
   static int    find_strings(std::istream& istrm, String_PArray& strs);
   // #CAT_File find first occurrence of any of the given strings in file (reading one line at a time); returns index of string or -1 if none found
 
+  ////////////////////////////////////////////////////////////////////////
+  //    String parsing
 
+  static String ParseStr_CName(const String& str);
+  // #CAT_Parse get the first "C" name (contiguous alpha-numeric or _ chars) in given string -- skips over any white space at start and just returns the name string
+
+  
   ////////////////////////////////////////////////////////////////////////
   //    HTML-style tags
 

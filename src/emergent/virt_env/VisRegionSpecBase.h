@@ -127,6 +127,7 @@ public:
     NO_RENORM,			// do not renormalize
     LIN_RENORM,			// linear renormalization -- divide all filter output by max value
     LOG_RENORM,			// log renormalize -- take the log of all filter output with max = 1 multiplier -- this tends to work the best
+    THR_LIN_RENORM,		// threshold-linear renormalize -- only renorm if max value exceeds 1
   };
   enum DataSave {		// #BITS how to save data to the data table (computation happens on internal table)
     NO_SAVE 	= 0,	 	// #NO_BIT don't save data for this component
