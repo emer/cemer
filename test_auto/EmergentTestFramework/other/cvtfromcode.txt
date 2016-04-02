@@ -46,13 +46,13 @@ General RunState
     ${output} =                Run Command Wait      {"command": "GetRunState"}
     Status OK Match Result     ${output}             4
 
-ConvertSwitchWithBlank
-    Ensure Emergent Free
-    Code Should Convert To	"switch (i)"	Switch    "switch (i)"
+#ConvertSwitchWithBlank
+#    Ensure Emergent Free
+#    Code Should Convert To	"switch (i)"	Switch    "switch (i)"
 
-ConvertSwitchWithoutBlank
-    Ensure Emergent Free
-    Code Should Convert To	"switch(i)"	Switch    "switch(i)"
+#ConvertSwitchWithoutBlank
+#    Ensure Emergent Free
+#    Code Should Convert To	"switch(i)"	Switch    "switch(i)"
 
 LocalVars
     Ensure Emergent Free
