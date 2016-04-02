@@ -213,9 +213,9 @@ String  taMisc::t3d_font_name = "Arial";
 String  taMisc::t3d_bg_color = "white"; // was: grey80 -- white is brighter :)
 String  taMisc::t3d_text_color = "black";
 
-int     taMisc::table_view_font_size = taMisc::font_size;
-int     taMisc::nav_tree_font_size = taMisc::font_size;
-int     taMisc::editor_tree_font_size = taMisc::font_size;
+int     taMisc::table_font_size = taMisc::font_size;
+int     taMisc::navigator_font_size = taMisc::font_size;
+int     taMisc::program_font_size = taMisc::font_size;
 
 // parameters that differ between win and unix
 taMisc::ConsoleOptions taMisc::console_options = CO_PAGER;

@@ -507,7 +507,7 @@ void iTableView::SetCurrentAndSelect(int row, int col) {
 }
 
 int iTableView::GetFontSize() {
-  return taMisc::table_view_font_size;
+  return taMisc::table_font_size;
 }
 
 ////////////////////////////////////////////////

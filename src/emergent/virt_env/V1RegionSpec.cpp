@@ -511,6 +511,13 @@ void V1RegionSpec::UpdateGeom() {
   if(motion_frames > 1 && (v1s_motion.size != motion_frames)) {
     taMisc::Warning("v1s_motion.size:", String(v1s_motion.size), "should be same as motion frames:", String(motion_frames), "and both should generally be an odd number");
   }
+
+  if(motion_frames > 1) {
+    v1s_motion.on = true;
+  }
+  else {
+    v1s_motion.on = false;
+  }
   
   v1m_out_polarities = 1;        // always using polinvar inputs // todo: add option..
   v1m_feat_geom.x = v1s_specs.n_angles;

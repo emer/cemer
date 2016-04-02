@@ -246,9 +246,9 @@ public:
   static ConsoleOptions console_options; // #SAVE #CAT_GUI options for the console **REQUIRES APP RESTART
   static String         console_font_name; // #SAVE #CAT_GUI font name for the css console
   static int            console_font_size; // #SAVE #CAT_GUI font size for the css console
-  static int            table_view_font_size; // #SAVE #CAT_GUI #MIN_4 #MAX_18 default font size for data tables
-  static int            nav_tree_font_size; // #SAVE #CAT_GUI #MIN_4 #MAX_18 default font size for iTreeView in browser frame
-  static int            editor_tree_font_size; // #SAVE #CAT_GUI #MIN_4 #MAX_18 default font size iTreeView in program editor - middle frame
+  static int            table_font_size; // #SAVE #CAT_GUI #MIN_4 default font size for data tables
+  static int            navigator_font_size; // #SAVE #CAT_GUI #MIN_4 default font size for navigator browser (left browser)
+  static int            program_font_size; // #SAVE #CAT_GUI #MIN_4 default font size for the program editor
   static float          doc_text_scale; // #SAVE #CAT_GUI scale factor for text displayed in doc objects (including web pages) -- multiplies base setting from font_size parameter (above), plus any doc-specific text_size parameter -- values > 1 make the text bigger, < 1 = smaller
   static int            display_width;  // #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places
   static int            max_display_width;  // #SAVE #EXPERT #MIN_10 #CAT_GUI maximum width of console display (in chars) -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places -- may not want this to get too big

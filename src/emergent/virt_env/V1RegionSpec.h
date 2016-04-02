@@ -224,10 +224,10 @@ public:
   XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- x (horiz) dimension is n_angles, y (vertical) dimension is number of colors * polarities = 2 for monochrome and 6 for color
 
   /////////// Motion
-  V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 specs for V1 motion filters within the simple processing layer
-  RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 #DEF_THR_LIN_RENORM how to renormalize the output of v1s motion filters
-  V1KwtaSpec	v1m_kwta;	// k-winner-take-all inhibitory dynamics for the v1 motion stage
-  XYNGeom	v1m_feat_geom; 	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 #READ_ONLY size of one 'hypercolumn' of features for V1 motion filtering -- always x = angles; y = 2 * speeds
+  V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:1 specs for V1 motion filters within the simple processing layer
+  RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:1 #DEF_THR_LIN_RENORM how to renormalize the output of v1s motion filters
+  V1KwtaSpec	v1m_kwta;	// #CONDSHOW_OFF_motion_frames:1 k-winner-take-all inhibitory dynamics for the v1 motion stage
+  XYNGeom	v1m_feat_geom; 	// #CONDSHOW_OFF_motion_frames:1 #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 motion filtering -- always x = angles; y = 2 * speeds
 
   V1SquareGroup square_group;   // simple form of spatial compression that is useful prior to doing complex operations and generally shrinking the size of the input to the network without much loss in performance
   DataSave	sg_save;	// #CONDSHOW_ON_square_group.on how to save the square grouping outputs of v1s and v1pi for the current time step in the data table -- default is not to

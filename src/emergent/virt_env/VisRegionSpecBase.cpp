@@ -62,7 +62,7 @@ typedef void (VisRegionSpecBase::*VisRegionBaseMethod)(int, int);
 void VisRegionSpecBase::Initialize() {
   save_mode = FIRST_ROW;
   image_save = (DataSave)(SAVE_DATA | ONLY_GUI);
-  motion_frames = 0;
+  motion_frames = 1;
 
   cur_img_r = NULL;
   cur_img_l = NULL;
@@ -84,7 +84,7 @@ void VisRegionSpecBase::Initialize() {
 void VisRegionSpecBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   input_size.UpdateAfterEdit_NoGui();
-  motion_frames = MAX(motion_frames, 0);
+  motion_frames = MAX(motion_frames, 1); // 1 = no motion
   UpdateGeom();
 }
 

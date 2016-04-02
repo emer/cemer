@@ -97,7 +97,7 @@ void DataTable::Initialize() {
   base_diff_row = -1;  // no base comparison row at start
   change_col = NULL;
   change_col_type = -1;
-  font_size = taMisc::table_view_font_size;
+  font_size = taMisc::table_font_size;
 }
 
 void DataTable::Destroy() {

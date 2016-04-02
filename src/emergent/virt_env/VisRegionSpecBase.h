@@ -156,7 +156,7 @@ public:
   VisRegionParams region;	// basic parameters for the region
   VisRegionSizes  input_size;	// size of the visual input image, including any borders etc
   VisAdaptation input_adapt;    // how to adapt the input ("retinal") responses over time
-  int		motion_frames;	// #MIN_0 how many frames of image information are to be retained for extracting motion signals -- 0 = no motion, 3 = typical for motion
+  int		motion_frames;	// #MIN_1 how many frames of image information are to be retained for extracting motion signals -- 1 = no motion, 10 = typical for motion (10 msec per frame for 100msec alpha trial)
 
   virtual bool 	Init();
   // #BUTTON initialize everything to be ready to start filtering -- calls InitFilters, InitOutMatrix, InitDataTable
