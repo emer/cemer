@@ -142,7 +142,6 @@ bool DynEnumBase::BrowserCollapseAll() {
 String DynEnumBase::NumberToName(int val) const {
   String rval;
   if(bits) {
-    String rval;
     for(int i=0;i<enums.size;i++) {
       DynEnumItem* it = enums.FastEl(i);
       if(val & it->value) {
