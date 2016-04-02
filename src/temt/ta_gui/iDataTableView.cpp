@@ -62,7 +62,6 @@ bool iDataTableView::eventFilter(QObject* obj, QEvent* event) {
     if (dataTable()) {
       QFont cur_font = QFont();
       cur_font.setPointSize(dataTable()->font_size);
-      taMisc::DebugInfo((String)dataTable()->font_size);
       setFont(cur_font);
     }
   }
