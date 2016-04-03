@@ -736,12 +736,12 @@ void iMainWindowViewer::Constr_ViewMenu()
   viewMenu->AddAction(viewResetViewAction);
   viewMenu->insertSeparator();
 
-//  viewIncrFontSizeAction = AddAction
-//  (new iAction("&Incr Font Size", QKeySequence(cmd_str + "+"), "incrFontSizeAction"));
-//  viewDecrFontSizeAction = AddAction
-//    (new iAction("&Decr Font Size", QKeySequence(cmd_str + "-"), "decrFontSizeAction"));
-//  viewMenu->AddAction(viewIncrFontSizeAction);
-//  viewMenu->AddAction(viewDecrFontSizeAction);
+  QKeySequence ks_increase = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_INCR_FONT);
+  viewIncrFontSizeAction = AddAction(new iAction("&Incr Font Size", ks_increase, "incrFontSizeAction"));
+  QKeySequence ks_decrease = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_DECR_FONT);
+  viewDecrFontSizeAction = AddAction(new iAction("&Decr Font Size", ks_decrease, "decrFontSizeAction"));
+  viewMenu->AddAction(viewIncrFontSizeAction);
+  viewMenu->AddAction(viewDecrFontSizeAction);
 
   viewMenu->insertSeparator();
   viewSetSaveViewAction = viewMenu->AddItem("Save View State", taiWidgetMenu::toggle,
@@ -773,8 +773,8 @@ void iMainWindowViewer::Constr_ViewMenu()
   connect (viewPanelsAndT3Action, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
   connect (viewAllFramesAction, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
 
-//  connect(viewIncrFontSizeAction, SIGNAL(Action()), this, SLOT(viewIncrFontSize()));
-//  connect(viewDecrFontSizeAction, SIGNAL(Action()), this, SLOT(viewDecrFontSize()));
+  connect(viewIncrFontSizeAction, SIGNAL(Action()), this, SLOT(viewIncrFontSize()));
+  connect(viewDecrFontSizeAction, SIGNAL(Action()), this, SLOT(viewDecrFontSize()));
 
   signalMapperForViews->setMapping (viewBrowseOnlyAction, 1) ;
   signalMapperForViews->setMapping (viewPanelsOnlyAction, 2) ;
@@ -2515,22 +2515,20 @@ void iMainWindowViewer::ViewReset() {
 }
 
 void iMainWindowViewer::viewIncrFontSize() {
-//  taMisc::font_size += 1;
-//  taiM->InitMetrics(true);
-//  viewRefresh();
-//  IncreaseFontSize();
-//  focusWidget()->update();
-//
-//  taMisc::Info("font size is now:", String(taMisc::font_size));
+  tabMisc::root->global_font_incr_decr += 1;
+  taMisc::font_size += 1;
+  taiM->InitMetrics(true);
+  viewRefresh();
+  taMisc::Info("font size is now:", String(taMisc::font_size));
 }
 
 void iMainWindowViewer::viewDecrFontSize() {
-//  taMisc::font_size -= 1;
-//  if(taMisc::font_size < 4) taMisc::font_size = 4;
-//  taiM->InitMetrics(true);
-//  viewRefresh();
-//  DecreaseFontSize();
-//  taMisc::Info("font size is now:", String(taMisc::font_size));
+  tabMisc::root->global_font_incr_decr -= 1;
+  taMisc::font_size -= 1;
+  if(taMisc::font_size < 4) taMisc::font_size = 4;
+  taiM->InitMetrics(true);
+  viewRefresh();
+  taMisc::Info("font size is now:", String(taMisc::font_size));
 }
 
 void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {

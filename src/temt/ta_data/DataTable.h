@@ -146,8 +146,6 @@ public:
   String                cell_view;
   // #HIDDEN #NO_SAVE contents of a given cell, for viewing purposes (View menu action)
   
-  int                   font_size;
-  // #NO_SAVE this is a table specific font size that is sticky while the project is open. When opening a project the table will have default size set in the emergent preferences
   DataSortSpec          last_sort_spec;
   // #HIDDEN the last table sort specification
   DataSelectSpec        last_select_spec;
@@ -183,9 +181,6 @@ public:
   inline void           ToggleDataFlag(DataFlags flg)
   { SetDataFlagState(flg, !HasDataFlag(flg)); }
   // #CAT_ObjectMgmt toggle data table flag relative to its current setting
-  void                  SetFontSize(int size) { font_size = size; }
-  // #IGNORE set the table specific font size
-
   /////////////////////////////////////////////////////////
   // saving/loading (file)
 

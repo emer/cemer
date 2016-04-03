@@ -73,12 +73,12 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   QFont cur_font = QFont();
   if(dynamic_cast<iBrowseViewer*>(parent)) {
     parent_type = TYPE_BROWSEVIEWER;
-    cur_font.setPointSize(tabMisc::root->navigator_font_size);
+    cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
     setFont(cur_font);
   }
   else if(dynamic_cast<iProgramEditor*>(parent)) {
     parent_type = TYPE_PROGRAMEDITOR;
-    cur_font.setPointSize(tabMisc::root->program_font_size);
+    cur_font.setPointSize(tabMisc::root->program_font_size + tabMisc::root->global_font_incr_decr);
     setFont(cur_font);
   }
   
@@ -624,11 +624,11 @@ bool iTreeView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::Paint) {
     QFont cur_font = QFont();
     if(parent_type == TYPE_BROWSEVIEWER) {
-      cur_font.setPointSize(tabMisc::root->navigator_font_size);
+      cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
       setFont(cur_font);
     }
     else if(parent_type == TYPE_PROGRAMEDITOR) {
-      cur_font.setPointSize(tabMisc::root->program_font_size);
+      cur_font.setPointSize(tabMisc::root->program_font_size + tabMisc::root->global_font_incr_decr);
       setFont(cur_font);
     }
   }
@@ -667,16 +667,13 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         QFont cur_font(font());
         if(parent_type == TYPE_BROWSEVIEWER) {
           tabMisc::root->navigator_font_size -= 1;
-          cur_font.setPointSize(tabMisc::root->navigator_font_size);
+          cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
           setFont(cur_font);
         }
         else if(parent_type == TYPE_PROGRAMEDITOR) {
           tabMisc::root->program_font_size -= 1;
-          cur_font.setPointSize(tabMisc::root->program_font_size);
+          cur_font.setPointSize(tabMisc::root->program_font_size + tabMisc::root->global_font_incr_decr);
           setFont(cur_font);
-        }
-        if (myProject()) {
-          myProject()->RefreshAllViews();
         }
         key_event->accept();
         return;
@@ -686,12 +683,12 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         QFont cur_font(font());
         if(parent_type == TYPE_BROWSEVIEWER) {
           tabMisc::root->navigator_font_size += 1;
-          cur_font.setPointSize(tabMisc::root->navigator_font_size);
+          cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
           setFont(cur_font);
         }
         else if(parent_type == TYPE_PROGRAMEDITOR) {
           tabMisc::root->program_font_size += 1;
-          cur_font.setPointSize(tabMisc::root->program_font_size);
+          cur_font.setPointSize(tabMisc::root->program_font_size + tabMisc::root->global_font_incr_decr);
           setFont(cur_font);
         }
         if (myProject()) {
@@ -966,11 +963,16 @@ void iTreeView::setTvFlags(int value) {
 }
 
 void iTreeView::Refresh_impl() {
-//  if(last_font_size != taMisc::font_size) {
-//    setFont(taiM->dialogFont(taiM->sizBig));
-//    last_font_size = taMisc::font_size;
-//  }
-//
+  QFont cur_font = QFont();
+  if(parent_type == TYPE_BROWSEVIEWER) {
+    cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
+    setFont(cur_font);
+  }
+  else if(parent_type == TYPE_PROGRAMEDITOR) {
+    cur_font.setPointSize(tabMisc::root->program_font_size + tabMisc::root->global_font_incr_decr);
+    setFont(cur_font);
+  }
+  
   SaveScrollPos();
   //note: very similar to Show_impl
   QTreeWidgetItemIterator it(this);
@@ -1038,11 +1040,11 @@ void iTreeView::showEvent(QShowEvent* ev) {
   
   QFont cur_font = QFont();
   if(parent_type == TYPE_BROWSEVIEWER) {
-    cur_font.setPointSize(tabMisc::root->navigator_font_size);
+    cur_font.setPointSize(tabMisc::root->navigator_font_size + tabMisc::root->global_font_incr_decr);
     setFont(cur_font);
   }
   else if(parent_type == TYPE_PROGRAMEDITOR) {
-    cur_font.setPointSize(tabMisc::root->program_font_size);
+    cur_font.setPointSize(tabMisc::root->program_font_size + tabMisc::root->global_font_incr_decr);
     setFont(cur_font);
   }
 }

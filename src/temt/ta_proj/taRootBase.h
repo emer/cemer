@@ -78,8 +78,10 @@ public:
   bool                  console_locked; // #NO_SHOW should the console be locked or unlocked by default?
   char_Array            filedlg_setary; // #NO_SHOW settings for the file dialog -- persisted
   taVector2i            filedlg_size;   // #NO_SHOW size for the file dialog -- persisted
-  int            navigator_font_size; // #NO_SAVE this is the current project wide setting
-  int            program_font_size; // #NO_SAVE this is the current project wide setting
+  int                   navigator_font_size; // #NO_SAVE this is the current application wide setting
+  int                   program_font_size; // #NO_SAVE this is the current application wide setting
+  int                   table_font_size; // #NO_SAVE this is a table specific application wide font size
+  int                   global_font_incr_decr; // #NO_SAVE this the value to add or subtract to all fonts
 
   void          OpenRemoteServer(ushort port = 5360);
   // #MENU #MENU_ON_Server Open a Server for remote TCP-based control of this application

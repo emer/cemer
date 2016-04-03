@@ -1094,6 +1094,8 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND, QKeySequence(meta_key + Qt::Key_F));
 //  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT, QKeySequence(meta_key + Qt::Key_G));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_MINIMIZE, QKeySequence(meta_key + Qt::Key_M));
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_INCR_FONT, QKeySequence(Qt::ShiftModifier + meta_key + Qt::Key_I));
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_DECR_FONT, QKeySequence(Qt::ShiftModifier + meta_key + Qt::Key_D));
 #endif
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_DELETE, QKeySequence(control_key + Qt::Key_D));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_DUPLICATE, QKeySequence(control_key + Qt::Key_M));

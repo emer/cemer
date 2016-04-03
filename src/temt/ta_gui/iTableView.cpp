@@ -14,14 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "iTableView.h"
+#include <taRootBase>
 #include <iMainWindowViewer>
 #include <iClipData>
 #include <CellRange>
 #include <iVec2i>
 #include <iLineEdit>
-//#include <PanelViewer>
 
 #include <taMisc>
+#include <tabMisc>
 #include <taiMisc>
 
 #include <QHeaderView>
@@ -30,7 +31,6 @@
 #include <QScrollBar>
 #include <QKeyEvent>
 #include <QWheelEvent>
-
 
 iTableView::iTableView(QWidget* parent)
 :inherited(parent)
@@ -41,8 +41,9 @@ iTableView::iTableView(QWidget* parent)
   m_saved_scroll_pos = 0;
 
   setFont(taiM->dialogFont(taiM->ctrl_size));
-//  last_font_size = taMisc::font_size;
-
+  QFont cur_font = QFont();
+  cur_font.setPointSize(tabMisc::root->table_font_size + tabMisc::root->global_font_incr_decr);
+  
   iTableViewDefaultDelegate* del = new iTableViewDefaultDelegate(this);
   setItemDelegate(del);
 
@@ -102,6 +103,24 @@ void iTableView::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DATATABLE_CONTEXT, key_event);
   
   switch (action) {
+    case taiMisc::DATATABLE_DECREASE_FONTSIZE:
+    {
+      QFont cur_font(font());
+      tabMisc::root->table_font_size -= 1;
+      cur_font.setPointSize(tabMisc::root->table_font_size + tabMisc::root->global_font_incr_decr);
+      setFont(cur_font);
+      key_event->accept();
+      return;
+    }
+    case taiMisc::DATATABLE_INCREASE_FONTSIZE:
+    {
+      QFont cur_font(font());
+      tabMisc::root->table_font_size += 1;
+      cur_font.setPointSize(tabMisc::root->table_font_size + tabMisc::root->global_font_incr_decr);
+      setFont(cur_font);
+      key_event->accept();
+      return;
+    }
     case taiMisc::DATATABLE_DELETE:
     case taiMisc::DATATABLE_DELETE_II:
       RowColOp(OP_ROW | OP_DELETE);
@@ -507,7 +526,7 @@ void iTableView::SetCurrentAndSelect(int row, int col) {
 }
 
 int iTableView::GetFontSize() {
-  return taMisc::table_font_size;
+  return tabMisc::root->table_font_size + tabMisc::root->global_font_incr_decr;
 }
 
 ////////////////////////////////////////////////

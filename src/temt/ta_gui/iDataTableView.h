@@ -41,7 +41,6 @@ public:
   iDataTableRowHeaderView*  row_header;
 
   DataTable*                dataTable() const;
-  int                       GetFontSize() override;
 
   iDataTableView(QWidget* parent = NULL);
   

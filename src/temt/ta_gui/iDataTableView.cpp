@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iDataTableView.h"
+
 #include <DataTable>
 #include <iDataTableColHeaderView>
 #include <iDataTableRowHeaderView>
@@ -34,7 +35,6 @@
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QKeyEvent>
-#include <QFont>
 
 const int iDataTableView::default_column_width_px(150);
 
@@ -58,13 +58,6 @@ iDataTableView::iDataTableView(QWidget* parent)
 }
 
 bool iDataTableView::eventFilter(QObject* obj, QEvent* event) {
-  if (event->type() == QEvent::Paint) {
-    if (dataTable()) {
-      QFont cur_font = QFont();
-      cur_font.setPointSize(dataTable()->font_size);
-      setFont(cur_font);
-    }
-  }
   return inherited::eventFilter(obj, event);
 }
 
@@ -418,43 +411,5 @@ void iDataTableView::RemoveColumnFromControlPanel(int menu_item_position) {
 }
 
 void iDataTableView::keyPressEvent(QKeyEvent* key_event) {
-  if(state() == EditingState) {
-    key_event->ignore();
-    return;
-  }
-  
-  taiMisc::UpdateUiOnCtrlPressed(this, key_event);
-  QPersistentModelIndex newCurrent;
-  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DATATABLE_CONTEXT, key_event);
-  
-  switch (action) {
-    case taiMisc::DATATABLE_DECREASE_FONTSIZE:
-    {
-      QFont cur_font(font());
-      cur_font.setPointSize(cur_font.pointSize() - 1);
-      setFont(cur_font);
-      dataTable()->SetFontSize(cur_font.pointSize());
-      key_event->accept();
-      return;
-    }
-    case taiMisc::DATATABLE_INCREASE_FONTSIZE:
-    {
-      QFont cur_font(font());
-      cur_font.setPointSize(cur_font.pointSize() + 1);
-      setFont(cur_font);
-      dataTable()->SetFontSize(cur_font.pointSize());
-      key_event->accept();
-      return;
-    }
-    default:
-      ;  // no op - without default you get a warning about missing cases
-  }
   inherited::keyPressEvent(key_event);
-}
-
-int iDataTableView::GetFontSize() {
-  if (dataTable()) {
-      return dataTable()->font_size;
-  }
-  return inherited::GetFontSize();
 }
