@@ -71,8 +71,15 @@ public:
     TV_NO_AUTO_RESIZE   = 0x0008 // when we autoexpand etc. doesn't resize cols
   };
   enum ContextMenuPosition {
-    CM_START,           // called before filling of menu -- use to add items to start
-    CM_END              // called after filling menu -- use to add items to end
+    CM_START,                     // called before filling of menu -- use to add items to start
+    CM_END                        // called after filling menu -- use to add items to end
+  };
+
+  enum ParentType {
+    TYPE_BROWSEVIEWER,            //
+    TYPE_PROGRAMEDITOR,           //
+    TYPE_LIST,                    //
+    TYPE_NULL                     // QWidget was NULL
   };
 
   static const String   opt_treefilt; // "TREEFILT_"
@@ -90,7 +97,8 @@ public:
   QMap_qstr_qvar        colDataKeys(int col) const;
     // the map of role/key pairs, or an empty map if none
 #endif
-
+  
+  ParentType            parent_type; // the context for the tree - browse, edit, list
   bool                  useCustomExpand() const;
   bool                  doubleClickExpandsAll() const; // use at own risk...
   const KeyString       colKey(int col) const; // the key we set for data lookup
@@ -138,9 +146,9 @@ public:
   virtual void          Refresh() {Refresh_impl();} // manually refresh
   virtual bool          ShowNode(iTreeViewItem* item) const;
   // whether the node is visible in this show context
-  virtual void		EmitTreeStructToUpdate();
+  virtual void		      EmitTreeStructToUpdate();
   // emit signal that tree structure is about to be updated
-  virtual void		EmitTreeStructUpdated();
+  virtual void		      EmitTreeStructUpdated();
   // emit signal that tree structure was updated
 
   /////////////////////////////////////////////////////////////////
@@ -221,7 +229,6 @@ protected:
   String                m_show_context;
   int                   in_mouse_press; // ugly hack
   int                   m_saved_scroll_pos;
-//  int                   last_font_size;
 
   iTreeWidgetItem_List  expandedItemList;   // used as stack to keep track of expanded items
   iTreeWidgetItem*      possibleDropTargetItem;
@@ -231,12 +238,13 @@ protected:
 
   QFont&                italicFont() const; // so we don't create a new guy each node
 
-  void         focusInEvent(QFocusEvent* ev) override;
-  void         mousePressEvent(QMouseEvent* ev) override; // for exp/coll all
-  void         dragMoveEvent(QDragMoveEvent* ev) override;
-  void         dropEvent(QDropEvent* ev) override;
-  void         mouseDoubleClickEvent(QMouseEvent* ev) override; //for exp/coll all
-  void         showEvent(QShowEvent* ev) override; // for expand all
+  void                  focusInEvent(QFocusEvent* ev) override;
+  void                  mousePressEvent(QMouseEvent* ev) override; // for exp/coll all
+  void                  dragMoveEvent(QDragMoveEvent* ev) override;
+  void                  dropEvent(QDropEvent* ev) override;
+  void                  mouseDoubleClickEvent(QMouseEvent* ev) override; //for exp/coll all
+  void                  showEvent(QShowEvent* ev) override; // for expand all
+  bool                  eventFilter(QObject *obj, QEvent *event) override;
 
   virtual void          ExpandAll_impl(int max_levels, int exp_flags = 0);
   // inner code
@@ -246,8 +254,8 @@ protected:
   virtual void          GetSelectedItems(ISelectable_PtrList& lst);
   // list of the selected datanodes
 
-  void         keyPressEvent(QKeyEvent* e) override;
-  bool         focusNextPrevChild(bool next) override;
+  void                  keyPressEvent(QKeyEvent* e) override;
+  bool                  focusNextPrevChild(bool next) override;
 
 #ifndef __MAKETA__
   QMimeData*   mimeData(const QList<QTreeWidgetItem*> items) const override;

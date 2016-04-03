@@ -106,6 +106,9 @@ int taRootBase::console_options = 0;
 ContextFlag taRootBase::in_init;
 bool taRootBase::openProject = false;
 
+//int navigator_font_size = taMisc::navigator_font_size;
+//int program_font_size = taMisc::program_font_size;
+
 // note: not static class to avoid need qpointer in header
 QPointer<taRootBase_QObj> root_adapter;
 
@@ -1533,6 +1536,9 @@ bool taRootBase::Startup_InitGui() {
     Startup_InitViewColors();
     Startup_InitViewBackgrounds();
     Startup_InitKeyBindings();
+    
+    tabMisc::root->navigator_font_size = taMisc::navigator_font_size;
+    tabMisc::root->program_font_size = taMisc::program_font_size;
    }
   else
 #endif // TA_GUI

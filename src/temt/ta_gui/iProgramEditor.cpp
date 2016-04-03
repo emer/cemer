@@ -232,15 +232,6 @@ void iProgramEditor::Init() {
 }
 
 bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
-  if (event->type() == QEvent::Paint) {
-    if (window()) {
-      int saved_font_size = window()->viewer()->GetMiddlePanel()->cur_font_size;
-      QFont cur_font = QFont();
-      cur_font.setPointSize(saved_font_size);
-      items->setFont(cur_font);  // items is an iTreeView
-    }
-  }
-  
   if (event->type() != QEvent::KeyPress) {
     return QWidget::eventFilter(obj, event);
   }

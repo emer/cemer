@@ -15,6 +15,7 @@
 
 #include "iTreeView.h"
 
+#include <taRootBase>
 #include <iMainWindowViewer>
 #include <String_PArray>
 #include <iTreeViewItem>
@@ -26,6 +27,8 @@
 #include <taiObjectMimeFactory>
 #include <iBrowseHistory>
 #include <iVec2i>
+#include <iBrowseViewer>
+#include <iProgramEditor>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -64,10 +67,21 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   focus_next_widget = NULL;
   focus_prev_widget = NULL;
   main_window = NULL;
+  parent_type = TYPE_NULL;
 
   setFont(taiM->dialogFont(taiM->sizBig));
-//  last_font_size = taMisc::font_size;
-
+  QFont cur_font = QFont();
+  if(dynamic_cast<iBrowseViewer*>(parent)) {
+    parent_type = TYPE_BROWSEVIEWER;
+    cur_font.setPointSize(tabMisc::root->navigator_font_size);
+    setFont(cur_font);
+  }
+  else if(dynamic_cast<iProgramEditor*>(parent)) {
+    parent_type = TYPE_PROGRAMEDITOR;
+    cur_font.setPointSize(tabMisc::root->program_font_size);
+    setFont(cur_font);
+  }
+  
   tv_flags = tv_flags_;
   m_filters = NULL; // only created if needed
   m_def_exp_levels = 2; // works well for most contexts
@@ -606,6 +620,22 @@ QStringList iTreeView::mimeTypes () const {
   return rval;
 }
 
+bool iTreeView::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() == QEvent::Paint) {
+    QFont cur_font = QFont();
+    if(parent_type == TYPE_BROWSEVIEWER) {
+      cur_font.setPointSize(tabMisc::root->navigator_font_size);
+      setFont(cur_font);
+    }
+    else if(parent_type == TYPE_PROGRAMEDITOR) {
+      cur_font.setPointSize(tabMisc::root->program_font_size);
+      setFont(cur_font);
+    }
+  }
+
+  return QWidget::eventFilter(obj, event);
+}
+
 void iTreeView::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
   
@@ -635,13 +665,18 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
       case taiMisc::TREE_DECREASE_FONTSIZE:
       {
         QFont cur_font(font());
-        cur_font.setPointSize(cur_font.pointSize() - 1);
-        setFont(cur_font);
-        if (imw->cur_main_focus == iMainWindowViewer::LEFT_BROWSER) {
-          imw->viewer()->GetLeftBrowser()->cur_font_size = cur_font.pointSize();
+        if(parent_type == TYPE_BROWSEVIEWER) {
+          tabMisc::root->navigator_font_size -= 1;
+          cur_font.setPointSize(tabMisc::root->navigator_font_size);
+          setFont(cur_font);
         }
-        else if (imw->cur_main_focus == iMainWindowViewer::MIDDLE_PANEL) {
-          imw->viewer()->GetMiddlePanel()->cur_font_size = cur_font.pointSize();
+        else if(parent_type == TYPE_PROGRAMEDITOR) {
+          tabMisc::root->program_font_size -= 1;
+          cur_font.setPointSize(tabMisc::root->program_font_size);
+          setFont(cur_font);
+        }
+        if (myProject()) {
+          myProject()->RefreshAllViews();
         }
         key_event->accept();
         return;
@@ -649,17 +684,23 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
       case taiMisc::TREE_INCREASE_FONTSIZE:
       {
         QFont cur_font(font());
-        cur_font.setPointSize(cur_font.pointSize() + 1);
-        setFont(cur_font);
-        if (imw->cur_main_focus == iMainWindowViewer::LEFT_BROWSER) {
-          imw->viewer()->GetLeftBrowser()->cur_font_size = cur_font.pointSize();
+        if(parent_type == TYPE_BROWSEVIEWER) {
+          tabMisc::root->navigator_font_size += 1;
+          cur_font.setPointSize(tabMisc::root->navigator_font_size);
+          setFont(cur_font);
         }
-        else if (imw->cur_main_focus == iMainWindowViewer::MIDDLE_PANEL) {
-          imw->viewer()->GetMiddlePanel()->cur_font_size = cur_font.pointSize();
+        else if(parent_type == TYPE_PROGRAMEDITOR) {
+          tabMisc::root->program_font_size += 1;
+          cur_font.setPointSize(tabMisc::root->program_font_size);
+          setFont(cur_font);
+        }
+        if (myProject()) {
+          myProject()->RefreshAllViews();
         }
         key_event->accept();
         return;
       }
+        
       case taiMisc::TREE_NEW_DEFAULT_ELEMENT:
       case taiMisc::TREE_NEW_DEFAULT_ELEMENT_II:
         ext_select_on = false;
@@ -995,14 +1036,15 @@ void iTreeView::showEvent(QShowEvent* ev) {
     tv_flags = (TreeViewFlags)(tv_flags | TV_AUTO_EXPANDED);
   }
   
-  iMainWindowViewer* imw = mainWindow();
   QFont cur_font = QFont();
-  if (imw && imw->cur_main_focus == iMainWindowViewer::LEFT_BROWSER) {
-    int saved_font_size = imw->viewer()->GetLeftBrowser()->cur_font_size;
-    cur_font.setPointSize(saved_font_size);
-    taMisc::DebugInfo((String)imw->cur_sub_focus);
+  if(parent_type == TYPE_BROWSEVIEWER) {
+    cur_font.setPointSize(tabMisc::root->navigator_font_size);
+    setFont(cur_font);
   }
-  imw->GetCurTreeView()->setFont(cur_font);
+  else if(parent_type == TYPE_PROGRAMEDITOR) {
+    cur_font.setPointSize(tabMisc::root->program_font_size);
+    setFont(cur_font);
+  }
 }
 
 bool iTreeView::ShowNode(iTreeViewItem* item) const {
@@ -1015,7 +1057,7 @@ void iTreeView::FillContextMenu_pre(ISelectable_PtrList& sel_items, taiWidgetAct
 }
 
 void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos,
- int col ) {
+                                          int col ) {
   taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
   // note: we must force the sel_item to be the item, otherwise we frequently
   // are refering to the wrong item (not what user right clicked on)
@@ -1032,22 +1074,22 @@ void iTreeView::FillContextMenu_post(ISelectable_PtrList& sel_items, taiWidgetAc
   menu->AddSep();
   taiWidgetMenu* men_exp = menu->AddSubMenu("Expand/Collapse");
   men_exp->AddItem("Expand Default", taiWidgetMenu::normal, iAction::action,
-    this, SLOT(ExpandDefault()) );
+                   this, SLOT(ExpandDefault()) );
   men_exp->AddItem("Expand All", taiWidgetMenu::normal, iAction::action,
-    this, SLOT(ExpandAll()) );
+                   this, SLOT(ExpandAll()) );
   men_exp->AddItem("Collapse All", taiWidgetMenu::normal, iAction::action,
-    this, SLOT(CollapseAll()) );
+                   this, SLOT(CollapseAll()) );
   if (sel_items.size == 1) {
     ISelectable* si = sel_items.FastEl(0);
     if (si && si->GetTypeDef()->InheritsFrom(&TA_iTreeViewItem)) {
       void* nd = si->This(); // don't need to detype, because we pass as void anyway
       men_exp->AddItem("Expand All From Here", taiWidgetMenu::normal, iAction::ptr_act,
-        this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
+                       this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
       men_exp->AddItem("Collapse All From Here", taiWidgetMenu::normal, iAction::ptr_act,
-        this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
+                       this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
     }
   }
-
+  
   emit FillContextMenuHookPost(sel_items, menu);
 }
 
@@ -1055,9 +1097,9 @@ void iTreeView::FillContextMenu_post(ISelectable_PtrList& sel_items, taiWidgetAc
 // it presumably is ALSO emitted in addition to itemSelectionChanged
 void iTreeView::this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
   iTreeViewItem* it = dynamic_cast<iTreeViewItem*>(curr); //note: we want null if curr is not itvi
-//NOTE: the default QAbstractItemView guy doesn't seem to handle the statustip
-// very well == it barely gets activated, only if you click an item then drag a bit --
-// so we are doing it manually here
+  //NOTE: the default QAbstractItemView guy doesn't seem to handle the statustip
+  // very well == it barely gets activated, only if you click an item then drag a bit --
+  // so we are doing it manually here
   if (it) {
     QString statustip = it->data(0, Qt::StatusTipRole).toString();
     if (parent() && !statustip.isEmpty()) {
