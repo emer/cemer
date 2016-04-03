@@ -381,6 +381,7 @@ void DeepSpec::Defaults_init() {
   raw_thr_rel = 0.1f;
   raw_thr_abs = 0.1f;
   mod_min = 0.8f;
+  trc_p_thr = false;
   trc_p_only_m = false;
   trc_thal_gate = false;
   trc_trace = false;
@@ -1674,8 +1675,16 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
   if(deep.ApplyDeepMod()) { // apply attention directly to act
     new_act *= u->deep_mod;
   }
-  if(deep.IsTRC() && deep.trc_trace && Quarter_DeepRawNow(net->quarter)) {
-    new_act = MAX(u->act_q0, new_act);
+  if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
+    if(deep.trc_p_thr) {
+      if(u->deep_raw_net > deep.raw_thr_abs)
+        new_act = clamp_range.max;
+      else
+        new_act = clamp_range.min;
+    }
+    else if(deep.trc_trace) {
+      new_act = MAX(u->act_q0, new_act);
+    }
   }
   u->act_nd = act_range.Clip(new_act);
 
