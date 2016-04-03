@@ -382,6 +382,8 @@ void DeepSpec::Defaults_init() {
   raw_thr_abs = 0.1f;
   mod_min = 0.8f;
   trc_p_thr = false;
+  trc_p_clamp = false;
+  trc_p_max = false;
   trc_p_only_m = false;
   trc_thal_gate = false;
   trc_trace = false;
@@ -1682,6 +1684,9 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
       else
         new_act = clamp_range.min;
     }
+    else if(deep.trc_p_clamp) {
+      new_act = u->deep_raw_net;
+    }
     else if(deep.trc_trace) {
       new_act = MAX(u->act_q0, new_act);
     }
@@ -2079,6 +2084,23 @@ void LeabraUnitSpec::DeepRawNetin_Integ(LeabraUnitVars* u, LeabraNetwork* net, i
     net_delta += ndval;
   }
   u->deep_raw_net += net_delta;
+  if(deep.trc_p_max && deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
+    const int nrg = u->NRecvConGps(net, thr_no); 
+    for(int g=0; g< nrg; g++) {
+      LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+      if(recv_gp->NotActive()) continue;
+      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+      if(cs->IsDeepRawCon()) {
+        float max_act = 0.0f;
+        const int sz = recv_gp->size;
+        for(int i=0; i<sz; i++) {
+          const float su_act = recv_gp->UnVars(i,net)->act;
+          max_act = MAX(su_act, max_act);
+        }
+        u->deep_raw_net = max_act;
+      }
+    }
+  }
 }
 
 void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
