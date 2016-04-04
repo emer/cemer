@@ -528,7 +528,7 @@ public:
   float      raw_thr_abs;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 #AKA_thr_abs absolute threshold on act_raw value for deep_raw neurons to fire -- see thr_rel for relative threshold and activation value -- effective threshold is MAX of relative and absolute thresholds
   float      mod_min;     // #CONDSHOW_ON_on&&role:SUPER #MIN_0 #MAX_1 minimum deep_mod value -- provides a non-zero baseline for deep-layer modulation
   bool       trc_p_thr;    // #CONDSHOW_ON_on&&role:TRC threshold the trc plus-phase activations, using raw_thr_abs value -- turns net inputs into 0 or clamp.max activations depending on this threshold -- only appropriate for one-to-one or near one-to-one projections from deep sending layer
-  bool       trc_p_clamp;    // #CONDSHOW_ON_on&&role:TRC clamp the plus-phase trc activation to the computed netinput directly, instead of using dynamic activation value
+  bool       trc_p_clamp;    // #CONDSHOW_ON_on&&role:TRC clamp the plus-phase trc activation to the computed netinput directly, instead of using dynamic activation value -- also multiplies by clamp_range.max to scale the clamped value (scaling down a bit may help)
   bool       trc_p_max;    // #CONDSHOW_ON_on&&role:TRC plus-phase netinput for the TRC units is max over activations of units across sending projection of the SendDeepRaw projection
   bool       trc_p_only_m; // #CONDSHOW_ON_on&&role:TRC TRC plus-phase (clamping) for TRC units only occurs if the minus phase max activation for given unit group is above .1
   bool       trc_thal_gate; // #CONDSHOW_ON_on&&role:TRC apply thalamic gating to TRC activations -- multiply netin by current thal parameter

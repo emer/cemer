@@ -1685,7 +1685,7 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
         new_act = clamp_range.min;
     }
     else if(deep.trc_p_clamp) {
-      new_act = u->deep_raw_net;
+      new_act = clamp_range.max * u->deep_raw_net;
     }
     else if(deep.trc_trace) {
       new_act = MAX(u->act_q0, new_act);
