@@ -724,6 +724,15 @@ void Unit::TransformWeights(const SimpleMathSpec& trans, Projection* prjn) {
   }
 }
 
+void Unit::RenormWeights(bool mult_norm, float avg_wt, Projection* prjn) {
+  const int rsz = NRecvConGps();
+  for(int g = 0; g < rsz; g++) {
+    ConGroup* cg = RecvConGroup(g);
+    if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
+    cg->RenormWeights(mult_norm, avg_wt);
+  }
+}
+
 void Unit::RescaleWeights(const float rescale_factor, Projection* prjn) {
   const int rsz = NRecvConGps();
   for(int g = 0; g < rsz; g++) {

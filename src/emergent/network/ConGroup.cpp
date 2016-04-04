@@ -662,6 +662,13 @@ void ConGroup::TransformWeights(const SimpleMathSpec& trans) {
   }
 }
 
+void ConGroup::RenormWeights(bool mult_norm, float avg_wt) {
+  if(!prjn || !prjn->layer || !prjn->layer->own_net) return;
+  Network* net = prjn->layer->own_net;
+  ConSpec* cs = GetConSpec();
+  cs->RenormWeights(this, net, 0, mult_norm, avg_wt); // doesn't use thr_no
+}
+
 void ConGroup::RescaleWeights(const float rescale_factor) {
   if(!prjn || !prjn->layer || !prjn->layer->own_net) return;
   Network* net = prjn->layer->own_net;

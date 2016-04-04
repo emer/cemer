@@ -494,6 +494,12 @@ void Projection::TransformWeights(const SimpleMathSpec& trans) {
   }
 }
 
+void Projection::RenormWeights(bool mult_norm, float avg_wt) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
+    u->RenormWeights(mult_norm, avg_wt, this);
+  }
+}
+
 void Projection::RescaleWeights(const float rescale_factor) {
   FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
     u->RescaleWeights(rescale_factor, this);

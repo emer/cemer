@@ -139,6 +139,29 @@ void ConSpec::ApplySymmetry_s(ConGroup* cg, Network* net, int thr_no) {
   }
 }
 
+void ConSpec::RenormWeights(ConGroup* cg, Network* net, int thr_no,
+                            bool mult_norm, float avg_wt) {
+  if(cg->size < 2) return;
+  float avg = 0.0f;
+  for(int i=0; i<cg->size; i++) {
+    avg += cg->Cn(i, WT, net);
+  }
+  avg /= (float)cg->size;
+  if(mult_norm) {
+    float adj = avg_wt / avg;
+    for(int i=0; i<cg->size; i++) {
+      cg->Cn(i, WT, net) *= adj;
+    }
+  }
+  else {
+    float adj = avg_wt - avg;
+    for(int i=0; i<cg->size; i++) {
+      cg->Cn(i, WT, net) += adj;
+    }
+  }
+}
+
+
 void ConSpec::LoadWeightVal(float wtval, ConGroup* cg, int cidx, Network* net) {
   cg->Cn(cidx,WT,net) = wtval;
 }

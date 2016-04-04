@@ -1621,6 +1621,8 @@ void Network::Init_Weights() {
 
   NET_THREAD_CALL(Network::Init_Weights_Thr);
 
+  Init_Weights_renorm();
+
   if(needs_wt_sym) {
     NET_THREAD_CALL(Network::Init_Weights_sym);
   }
@@ -1676,6 +1678,19 @@ void Network::Init_Weights_Thr(int thr_no) {
   }
 }
 
+void Network::Init_Weights_renorm() {
+  NET_THREAD_CALL(Network::Init_Weights_renorm_Thr);
+}
+
+void Network::Init_Weights_renorm_Thr(int thr_no) {
+  const int nrcg = ThrNRecvConGps(thr_no);
+  for(int i=0; i<nrcg; i++) {
+    ConGroup* rcg = ThrRecvConGroup(thr_no, i);
+    if(rcg->NotActive()) continue;
+    rcg->prjn->Init_Weights_renorm(rcg, this, thr_no);
+  }
+}
+
 void Network::Init_Weights_sym(int thr_no) {
   if(RecvOwnsCons()) {
     const int nrcg = ThrNRecvConGps(thr_no);
@@ -1694,7 +1709,6 @@ void Network::Init_Weights_sym(int thr_no) {
     }
   }
 }
-
 
 void Network::Init_Weights_post() {
   NET_THREAD_CALL(Network::Init_Weights_post_Thr);

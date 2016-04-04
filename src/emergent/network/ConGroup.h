@@ -376,6 +376,8 @@ public:
 
   void  TransformWeights(const SimpleMathSpec& trans);
   // #CAT_Learning apply given transformation to weights -- must call Init_Weights_post at network level after running this, to keep other weight values synchronized
+  void  RenormWeights(bool mult_norm, float avg_wt);
+  // #CAT_Learning renormalize the weight values using either multiplicative (for positive-only weight values such as Leabra) or subtractive normalization (for pos/neg weight values, such as backprop) to hit the given average weight value -- must call Init_Weights_post at network level after running this!
   void  RescaleWeights(const float rescale_factor);
   // #CAT_Learning rescale the weight values by multiplying by rescaling factor -- must call Init_Weights_post at network level after running this, to keep other weight values synchronized
   void  AddNoiseToWeights(const Random& noise_spec);

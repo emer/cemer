@@ -33,6 +33,22 @@ class Unit; //
 class Layer; //
 class Network; //
 
+eTypeDef_Of(RenormInitWtsSpec);
+
+class E_API RenormInitWtsSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Projection parameters for renormalizing initial weight values
+INHERITED(taOBase)
+public:
+  bool          on;             // renormalize initial weight values
+  bool          mult_norm;      // #CONDSHOW_ON_on use multiplicative normalization to rescale the weight values to hit the target value, which is appropriate for all-positive weight values (e.g., Leabra) -- otherwise use addition to add/subtract a constant from all weights to hit the target value, which is approparite for pos/neg signed weight values (e.g., backprop)
+  float		avg_wt;	        // #CONDSHOW_ON_on target average weight value per connection to renormalize to -- e.g., the sum across all weights will be adjusted so that it equals n_cons * avg_wt
+
+  TA_SIMPLE_BASEFUNS(RenormInitWtsSpec);
+private:
+  void 	Initialize();
+  void	Destroy() { };
+};
+
 eTypeDef_Of(ProjectionSpec);
 
 // Projections are abrevieated prjn (as a oppesed to proj = project or proc = process)
@@ -46,6 +62,7 @@ public:
   bool          init_wts;     	   // #CAT_Structure whether this projection spec does weight init (else conspec)
   bool          set_scale;         // #CAT_Structure #CONDSHOW_ON_init_wts only for Leabra algorithm: if initializing the weights, set the connection scaling parameter in addition to intializing the weights -- this will for example set a gaussian scaling parameter on top of random initial weights, instead of just setting the initial weights to a gaussian weighted value
   bool          add_rnd_var;  	   // #AKA_add_rnd_wts #CONDSHOW_ON_init_wts if init_wts is set, use the random weight settings on the conspec to add random values to the weights set by the projection spec -- the mean of the random distribution is subtracted, so we're just adding variance, not any mean value
+  RenormInitWtsSpec renorm_wts;    // #CAT_Structure renormalize initial weight values -- this can be done even if this projection does not have init_wts set
 
   virtual void  Connect_Sizes(Projection* prjn);
   // #CAT_Structure first-pass connects the network, doing Connect_impl(false), ending up with target allocation sizes
@@ -69,6 +86,9 @@ public:
   virtual void  Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
                                   int thr_no);
   // #CAT_Weights #IGNORE when init_wts flag is set, the projection spec sets weights for the entire set of connections, from a recv perspective (always use safe access for Cn that does not depend on who owns it) -- overload in subclasses that set weights
+
+  virtual void  Init_Weights_renorm(Projection* prjn, ConGroup* cg, Network* net, int thr_no);
+  // #CAT_Weights #IGNORE renormalize weights -- done as a second pass after Init_Weights and before Init_Weights_post
 
   virtual bool  CheckConnect(Projection* prjn, bool quiet=false);
   // #CAT_ObjectMgmt check if projection is connected

@@ -16,10 +16,16 @@
 #include "ProjectionSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(RenormInitWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(ProjectionSpec);
 TA_BASEFUNS_CTORS_LITE_DEFN(ProjectionSpec_SPtr);
 SMARTREF_OF_CPP(ProjectionSpec);
 
+void RenormInitWtsSpec::Initialize() {
+  on = false;
+  mult_norm = true;
+  avg_wt = 0.5f;
+}
 
 void ProjectionSpec::Initialize() {
   min_obj_type = &TA_Projection;
@@ -85,6 +91,13 @@ void ProjectionSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
   if(!init_wts) return;         // shouldn't happen
   ConSpec* cs = prjn->GetConSpec();
   cs->Init_Weights(cg, net, thr_no);
+}
+
+void ProjectionSpec::Init_Weights_renorm(Projection* prjn, ConGroup* cg,
+                                         Network* net, int thr_no) {
+  if(!renorm_wts.on) return;
+  ConSpec* cs = prjn->GetConSpec();
+  cs->RenormWeights(cg, net, thr_no, renorm_wts.mult_norm, renorm_wts.avg_wt);
 }
 
 bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
