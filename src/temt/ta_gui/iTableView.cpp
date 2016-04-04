@@ -73,7 +73,7 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
     int size = GetFontSize();
     cur_font.setPointSize(size);
     setFont(cur_font);
-    return true;
+    return inherited::QObject::eventFilter(obj, event);
   }
   
   if (event->type() != QEvent::KeyPress) {
