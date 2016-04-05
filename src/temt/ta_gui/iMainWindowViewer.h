@@ -185,6 +185,7 @@ public:
   iAction*            viewBrowseAndT3Action;
   iAction*            viewPanelsAndT3Action;
   iAction*            viewAllFramesAction;
+  iAction*            viewConsoleFrontAction;
 
   iAction*            toolsDiffProjectsAction;
   iAction*            toolsDiffProgramsAction;
@@ -398,6 +399,7 @@ public slots:
   virtual void  helpHelp();
   virtual void  helpAbout();
   virtual void  FileBugReport();
+  virtual void  ConsoleToFront();
 
   virtual void  mnuEditAction(iAction* mel);
 

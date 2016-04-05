@@ -749,6 +749,11 @@ void iMainWindowViewer::Constr_ViewMenu()
   if (curProject() != NULL)
     viewSetSaveViewAction->setChecked(curProject()->save_view);  // reinstate setting
 
+  // don't add to menu - it is on the window menu anyway - it will be added to toolbar for easy access
+  viewConsoleFrontAction = AddAction(new iAction("Console", QKeySequence(), "viewConsoleFrontAction"));
+  viewConsoleFrontAction->setIcon(QIcon(QPixmap(":/images/console_icon.png")));
+  viewConsoleFrontAction->setToolTip(taiMisc::ToolTipPreProcess("Brings the console window to the top"));
+
   // Make connections.
   connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()));
   connect(brow_hist, SIGNAL(back_enabled(bool)), historyBackAction, SLOT(setEnabled(bool)));
@@ -773,9 +778,6 @@ void iMainWindowViewer::Constr_ViewMenu()
   connect (viewPanelsAndT3Action, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
   connect (viewAllFramesAction, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
 
-  connect(viewIncrFontSizeAction, SIGNAL(Action()), this, SLOT(viewIncrFontSize()));
-  connect(viewDecrFontSizeAction, SIGNAL(Action()), this, SLOT(viewDecrFontSize()));
-
   signalMapperForViews->setMapping (viewBrowseOnlyAction, 1) ;
   signalMapperForViews->setMapping (viewPanelsOnlyAction, 2) ;
   signalMapperForViews->setMapping (viewBrowseAndPanelsAction, 3) ;
@@ -784,7 +786,10 @@ void iMainWindowViewer::Constr_ViewMenu()
   signalMapperForViews->setMapping (viewPanelsAndT3Action, 6) ;
   signalMapperForViews->setMapping (viewAllFramesAction, 7) ;
 
-  connect (signalMapperForViews, SIGNAL(mapped(int)), this, SLOT(ShowHideFrames(int))) ;
+  connect(viewIncrFontSizeAction, SIGNAL(Action()), this, SLOT(viewIncrFontSize()));
+  connect(viewDecrFontSizeAction, SIGNAL(Action()), this, SLOT(viewDecrFontSize()));
+  connect(viewConsoleFrontAction, SIGNAL(Action()), this, SLOT(ConsoleToFront()));
+  connect(signalMapperForViews, SIGNAL(mapped(int)), this, SLOT(ShowHideFrames(int))) ;
 }
 
 void iMainWindowViewer::Constr_ShowMenu()
@@ -2486,6 +2491,12 @@ void iMainWindowViewer::helpAbout() {
 
 void iMainWindowViewer::FileBugReport() {
   QDesktopServices::openUrl(QUrl("http://grey.colorado.edu/bugzilla"));
+}
+
+void iMainWindowViewer::ConsoleToFront() {
+  if (taMisc::console_win) {
+    windowActivateByName(taMisc::console_win->windowTitle());
+  }
 }
 
 void iMainWindowViewer::mnuEditAction(iAction* mel) {

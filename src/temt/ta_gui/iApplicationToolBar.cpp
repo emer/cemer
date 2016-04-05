@@ -71,6 +71,7 @@ void iApplicationToolBar::Constr_post() {
   tb->addAction(win->ctrlStepAction);
   tb->addAction(win->ctrlRunAction);
   tb->addAction(win->progStatusAction);
+  tb->addAction(win->viewConsoleFrontAction);
 
   tb->addSeparator();
   tb->addAction(win->helpHelpAction);
