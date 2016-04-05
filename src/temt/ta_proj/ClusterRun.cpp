@@ -1081,7 +1081,7 @@ void ClusterRun::RemoveJobs() {
     AutoUpdateMe();
   }
   else if (SelectedRows(jobs_archive, st_row, end_row)) {
-    if (!CheckLocalClustUserRows(jobs_done, st_row, end_row)) {
+    if (!CheckLocalClustUserRows(jobs_archive, st_row, end_row)) {
       return;
     }
     int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_archive list?", "Ok", "Cancel");
@@ -1095,7 +1095,7 @@ void ClusterRun::RemoveJobs() {
     AutoUpdateMe();
   }
   else if (SelectedRows(jobs_deleted, st_row, end_row)) {
-    if (!CheckLocalClustUserRows(jobs_done, st_row, end_row)) {
+    if (!CheckLocalClustUserRows(jobs_deleted, st_row, end_row)) {
       return;
     }
     int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_deleted list?", "Ok", "Cancel");
