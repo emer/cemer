@@ -62,7 +62,7 @@ public:
   bool          init_wts;     	   // #CAT_Structure whether this projection spec does weight init (else conspec)
   bool          set_scale;         // #CAT_Structure #CONDSHOW_ON_init_wts only for Leabra algorithm: if initializing the weights, set the connection scaling parameter in addition to intializing the weights -- this will for example set a gaussian scaling parameter on top of random initial weights, instead of just setting the initial weights to a gaussian weighted value
   bool          add_rnd_var;  	   // #AKA_add_rnd_wts #CONDSHOW_ON_init_wts if init_wts is set, use the random weight settings on the conspec to add random values to the weights set by the projection spec -- the mean of the random distribution is subtracted, so we're just adding variance, not any mean value
-  RenormInitWtsSpec renorm_wts;    // #CAT_Structure renormalize initial weight values -- this can be done even if this projection does not have init_wts set
+  RenormInitWtsSpec renorm_wts;    // #CAT_Structure renormalize initial weight values -- this can be done even if this projection does not have init_wts set -- if set_scale is set, then the scales are renormalized instead of the weights
 
   virtual void  Connect_Sizes(Projection* prjn);
   // #CAT_Structure first-pass connects the network, doing Connect_impl(false), ending up with target allocation sizes
@@ -101,6 +101,8 @@ public:
   TA_BASEFUNS(ProjectionSpec);
 protected:
   SPEC_DEFAULTS;
+  void  UpdateAfterEdit_impl() override;
+  
 private:
   void  Initialize();
   void  Destroy()               { CutLinks(); }

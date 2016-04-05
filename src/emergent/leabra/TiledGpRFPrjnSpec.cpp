@@ -61,14 +61,6 @@ void TiledGpRFPrjnSpec::UpdateAfterEdit_impl() {
     full_send = BY_UNIT;
   }
   
-  if(set_scale) {
-    Network* net = GET_MY_OWNER(Network);
-    if(TestWarning(net && !net->InheritsFromName("LeabraNetwork"),
-                   "Init_Weights_Prjn", "set_scale can only be used with Leabra networks -- turning off")) {
-      set_scale = false;
-    }
-  }
-
   if(taMisc::is_loading) {
     taVersion v705(7, 0, 5);
     if(taMisc::loading_version < v705) { // set send_gp_start to prev val

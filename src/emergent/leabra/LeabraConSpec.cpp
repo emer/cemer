@@ -253,6 +253,28 @@ void LeabraConSpec::Compute_NetinScale(LeabraConGroup* recv_gp, LeabraLayer* fro
   recv_gp->scale_eff = wt_scale.FullScale(savg, from_sz, n_cons);
 }
 
+void LeabraConSpec::RenormScales(ConGroup* cg, Network* net, int thr_no,
+                                 bool mult_norm, float avg_wt) {
+  if(cg->size < 2) return;
+  float avg = 0.0f;
+  for(int i=0; i<cg->size; i++) {
+    avg += cg->Cn(i, SCALE, net);
+  }
+  avg /= (float)cg->size;
+  if(mult_norm) {
+    float adj = avg_wt / avg;
+    for(int i=0; i<cg->size; i++) {
+      cg->Cn(i, SCALE, net) *= adj;
+    }
+  }
+  else {
+    float adj = avg_wt - avg;
+    for(int i=0; i<cg->size; i++) {
+      cg->Cn(i, SCALE, net) += adj;
+    }
+  }
+}
+
 #ifdef SUGP_NETIN
 int LeabraConSpec::Init_SUGps(LeabraConGroup* cg, LeabraNetwork* net, int thr_no) {
   // have to do this recv-based, because that is the perspective for the netin rollup

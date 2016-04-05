@@ -376,6 +376,9 @@ public:
     cg->Cn(cidx, SCALE, net) = scale;
   }
 
+  void  RenormScales(ConGroup* cg, Network* net, int thr_no, bool mult_norm,
+                     float avg_wt) override;
+  
   ///////////////////////////////////////////////////////////////
   //	Activation: Netinput -- only NetinDelta is supported
 

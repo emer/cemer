@@ -151,6 +151,9 @@ public:
   virtual void   RenormWeights(ConGroup* cg, Network* net, int thr_no,
                                bool mult_norm, float avg_wt);
   // #CAT_Structure renormalize the weight values using either multiplicative (for positive-only weight values such as Leabra) or subtractive normalization (for pos/neg weight values, such as backprop) to hit the given average weight value -- only affects wt value -- need to call Init_Weights_post afterward at appropriate level! -- receiver based but uses generic, slow interace so can be called either way
+  virtual void   RenormScales(ConGroup* cg, Network* net, int thr_no,
+                              bool mult_norm, float avg_wt)  { };
+  // #CAT_Structure renormalize the connection scale values using either multiplicative (for positive-only weight values such as Leabra) or subtractive normalization (for pos/neg weight values, such as backprop) to hit the given average weight value -- only affects scale value -- only for algorithms that support scale (Leabra) -- need to call Init_Weights_post afterward at appropriate level! -- receiver based but uses generic, slow interace so can be called either way
 
   inline float          C_Compute_Netin(const float wt, const float su_act)
   { return wt * su_act; }

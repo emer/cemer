@@ -42,6 +42,18 @@ void ProjectionSpec::InitLinks() {
   children.el_typ = GetTypeDef(); // but make the default to be me!
 }
 
+void ProjectionSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  if(set_scale) {
+    Network* net = GET_MY_OWNER(Network);
+    if(TestWarning(net && !net->InheritsFromName("LeabraNetwork"),
+                   "Init_Weights_Prjn", "set_scale can only be used with Leabra networks -- turning off")) {
+      set_scale = false;
+    }
+  }
+}
+
 void ProjectionSpec::Connect_Sizes(Projection* prjn) {
   prjn->SetFrom();
   if(TestWarning(!(bool)prjn->from, "Connect", "from pointer is NULL -- cannot make this projection"))
@@ -98,7 +110,12 @@ void ProjectionSpec::Init_Weights_renorm(Projection* prjn, ConGroup* cg,
                                          Network* net, int thr_no) {
   if(!renorm_wts.on) return;
   ConSpec* cs = prjn->GetConSpec();
-  cs->RenormWeights(cg, net, thr_no, renorm_wts.mult_norm, renorm_wts.avg_wt);
+  if(set_scale) {
+    cs->RenormScales(cg, net, thr_no, renorm_wts.mult_norm, renorm_wts.avg_wt);
+  }
+  else {
+    cs->RenormWeights(cg, net, thr_no, renorm_wts.mult_norm, renorm_wts.avg_wt);
+  }
 }
 
 bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
