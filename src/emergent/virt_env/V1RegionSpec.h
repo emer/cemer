@@ -272,8 +272,8 @@ public:
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for spatial location sampling offsets relative to current location of feature, in terms of v1s location offsets through time [x,y][motion_frames][dirs=2][or_angles]
 
   ///////////////////  Square Grouping Geom / Stencils ////////////////////////
-  int_Matrix	v1sg4_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square 4x4 grouping -- represents center points of the lines for each angle [x,y,len][10][angles] -- there are 10 points for the 2 diagonal lines with 4 angles and 8 for horiz, vert -- only works if n_angles = 4 and line_len = 4 or 5
-  int_Matrix	v1sg2_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square 2x2 grouping -- represents center points of the lines for each angle [x,y,len][4][angles] -- there are 5 points for the 2 diagonal lines with 4 angles -- only works if n_angles = 4 and line_len = 4 or 5
+  int_Matrix	v1sg4_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square 4x4 grouping -- represents center points of the lines for each angle [x,y,len][10][angles] -- there are 10 points for the 2 diagonal lines with 4 angles and 8 for horiz, vert
+  int_Matrix	v1sg2_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square 2x2 grouping -- represents center points of the lines for each angle [x,y,len][4][angles] -- there are 5 points for the 2 diagonal lines with 4 angles
 
   ///////////////////  V1C Geom/Stencils ////////////////////////
   int_Matrix	v1ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]

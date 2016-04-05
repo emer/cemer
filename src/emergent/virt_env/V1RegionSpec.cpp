@@ -457,9 +457,16 @@ void V1RegionSpec::UpdateGeom() {
   static bool redo = false;
   inherited::UpdateGeom();
 
+
   ///////////////////////////////////////////////////////////////
   //                    V1 S
 
+
+  if(TestError(v1s_specs.n_angles % 4 != 0, "UpdateGeom",
+               "v1s_specs.n_angles must be an even multiple of 4 -- many things depend on this!  Resetting to 4 for now.")) {
+    v1s_specs.n_angles = 4;
+  }
+  
   n_polarities = 2;             // justin case
   if(v1s_specs_2.on)
     n_polarities += 2;
@@ -682,47 +689,54 @@ bool V1RegionSpec::InitFilters_V1Motion() {
 
 bool V1RegionSpec::InitFilters_SquareGroup() {
   // sg4 guys -- center points relative to lower-left corner of group
-  v1sg4_stencils.SetGeom(3, 3, 10, 4);
-  // lengths stored in position 2 of first point
-  v1sg4_stencils.FastEl3d(2,0,0) = 8;
-  v1sg4_stencils.FastEl3d(2,0,1) = 10;
-  v1sg4_stencils.FastEl3d(2,0,2) = 8;
-  v1sg4_stencils.FastEl3d(2,0,3) = 10;
-  for(int lpdx=0; lpdx < 10; lpdx++) {
-    // 0 = 0 deg
-    v1sg4_stencils.FastEl3d(X, lpdx, 0) = 1 + lpdx / 4;
-    v1sg4_stencils.FastEl3d(Y, lpdx, 0) = lpdx % 4;
-    // 1 = 45 deg
-    v1sg4_stencils.FastEl3d(X, lpdx, 1) = 2 + lpdx/5 - (lpdx % 5)/2;
-    v1sg4_stencils.FastEl3d(Y, lpdx, 1) = lpdx/5 + ((lpdx%5)+1)/2;
-    // 2 = 90 deg
-    v1sg4_stencils.FastEl3d(X, lpdx, 2) = lpdx % 4;
-    v1sg4_stencils.FastEl3d(Y, lpdx, 2) = 1 + lpdx / 4;
-    // 3 = 135 deg
-    v1sg4_stencils.FastEl3d(X, lpdx, 3) = lpdx/5 + (lpdx % 5)/2;
-    v1sg4_stencils.FastEl3d(Y, lpdx, 3) = (1 - lpdx/5) + ((lpdx%5)+1)/2;
-  }
-
+  v1sg4_stencils.SetGeom(3, 3, 10, v1s_specs.n_angles);
   // sg2 guys -- center points relative to lower-left corner of group
-  v1sg2_stencils.SetGeom(3, 3, 4, 4);
-  // lengths stored in position 2 of first point
-  v1sg2_stencils.FastEl3d(2,0,0) = 4;
-  v1sg2_stencils.FastEl3d(2,0,1) = 4;
-  v1sg2_stencils.FastEl3d(2,0,2) = 4;
-  v1sg2_stencils.FastEl3d(2,0,3) = 4;
-  for(int lpdx=0; lpdx < 4; lpdx++) {
-    // 0 = 0 deg
-    v1sg2_stencils.FastEl3d(X, lpdx, 0) = lpdx / 2;
-    v1sg2_stencils.FastEl3d(Y, lpdx, 0) = lpdx % 2;
-    // 1 = 45 deg
-    v1sg2_stencils.FastEl3d(X, lpdx, 1) = lpdx / 2;
-    v1sg2_stencils.FastEl3d(Y, lpdx, 1) = lpdx % 2;
-    // 2 = 90 deg
-    v1sg2_stencils.FastEl3d(X, lpdx, 2) = lpdx % 2;
-    v1sg2_stencils.FastEl3d(Y, lpdx, 2) = lpdx / 2;
-    // 3 = 135 deg
-    v1sg2_stencils.FastEl3d(X, lpdx, 3) = lpdx % 2;
-    v1sg2_stencils.FastEl3d(Y, lpdx, 3) = lpdx / 2;
+  v1sg2_stencils.SetGeom(3, 3, 4, v1s_specs.n_angles);
+  int ang4_mult = v1s_specs.n_angles / 4; // group in units of 4 basic angles
+  for(int ang=0; ang < v1s_specs.n_angles; ang++) {
+    int ang_gp = ang / ang4_mult;
+    // lengths stored in position 2 of first point
+    if(ang_gp % 2 == 0)
+      v1sg4_stencils.FastEl3d(2,0,ang) = 8;
+    else
+      v1sg4_stencils.FastEl3d(2,0,ang) = 10;
+    v1sg2_stencils.FastEl3d(2,0,ang) = 4;
+    for(int lpdx=0; lpdx < 10; lpdx++) {
+      switch(ang_gp) {
+      case 0: // 0 = 0 deg
+        v1sg4_stencils.FastEl3d(X, lpdx, ang) = 1 + lpdx / 4;
+        v1sg4_stencils.FastEl3d(Y, lpdx, ang) = lpdx % 4;
+        if(lpdx < 4) {
+          v1sg2_stencils.FastEl3d(X, lpdx, ang) = lpdx / 2;
+          v1sg2_stencils.FastEl3d(Y, lpdx, ang) = lpdx % 2;
+        }
+        break;
+      case 1: // 1 = 45 deg
+        v1sg4_stencils.FastEl3d(X, lpdx, ang) = 2 + lpdx/5 - (lpdx % 5)/2;
+        v1sg4_stencils.FastEl3d(Y, lpdx, ang) = lpdx/5 + ((lpdx%5)+1)/2;
+        if(lpdx < 4) {
+          v1sg2_stencils.FastEl3d(X, lpdx, ang) = lpdx / 2;
+          v1sg2_stencils.FastEl3d(Y, lpdx, ang) = lpdx % 2;
+        }
+        break;
+      case 2: // 2 = 90 deg
+        v1sg4_stencils.FastEl3d(X, lpdx, ang) = lpdx % 4;
+        v1sg4_stencils.FastEl3d(Y, lpdx, ang) = 1 + lpdx / 4;
+        if(lpdx < 4) {
+          v1sg2_stencils.FastEl3d(X, lpdx, ang) = lpdx % 2;
+          v1sg2_stencils.FastEl3d(Y, lpdx, ang) = lpdx / 2;
+        }
+        break;
+      case 3: // 3 = 135 deg
+        v1sg4_stencils.FastEl3d(X, lpdx, ang) = lpdx/5 + (lpdx % 5)/2;
+        v1sg4_stencils.FastEl3d(Y, lpdx, ang) = (1 - lpdx/5) + ((lpdx%5)+1)/2;
+        if(lpdx < 4) {
+          v1sg2_stencils.FastEl3d(X, lpdx, ang) = lpdx % 2;
+          v1sg2_stencils.FastEl3d(Y, lpdx, ang) = lpdx / 2;
+        }
+        break;
+      }
+    }
   }
   return true;
 }
@@ -731,7 +745,7 @@ bool V1RegionSpec::InitFilters_V1Complex() {
   // config: x,y coords by points, by angles
   v1ls_stencils.SetGeom(3, 2, v1c_specs.len_sum_width, v1s_specs.n_angles);
   v1es_stencils.SetGeom(5, 2, 3, 2, 2, v1s_specs.n_angles);
-
+  int ang4_mult = v1s_specs.n_angles / 4;// group in units of 4 basic angles
   for(int ang=0; ang < v1s_specs.n_angles; ang++) {
     for(int lpt=-v1c_specs.len_sum_len; lpt <= v1c_specs.len_sum_len; lpt++) {
       int lpdx = lpt + v1c_specs.len_sum_len;
@@ -740,7 +754,8 @@ bool V1RegionSpec::InitFilters_V1Complex() {
       v1ls_stencils.FastEl3d(Y, lpdx, ang) =
         taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl3d(Y, LINE, ang));
     }
-
+    int ang_gp = ang / ang4_mult;
+    int ang_eq = ang_gp * ang4_mult; // 0-1 = 0, 2-3=2, etc
     float ls_off = (float)v1c_specs.len_sum_len;
     // center of length sum guy, "left" direction
     v1es_stencils.FastEl(X, 0, ON, LEFT, ang) =
@@ -755,7 +770,7 @@ bool V1RegionSpec::InitFilters_V1Complex() {
 
     for(int orthdx=0; orthdx < 3; orthdx++) {
       int ortho = orthdx - 1;
-      if(ang % 2 == 0) {        // vert, horiz
+      if(ang_gp % 2 == 0) {        // vert, horiz
         // off guy, "left" direction
         v1es_stencils.FastEl(X, orthdx, OFF, LEFT, ang) =
           taMath_float::rint(v1s_ang_slopes.FastEl3d(X, LINE, ang)) +
@@ -776,17 +791,17 @@ bool V1RegionSpec::InitFilters_V1Complex() {
         // off guy, "left" direction
         int off = (ortho == 0 ? 0 : 1);
         if(ortho < 0) ortho = 0;
-        v1es_stencils.FastEl(X, orthdx, OFF, LEFT, ang) = (ang == 1 ? 0 : +off) +
+        v1es_stencils.FastEl(X, orthdx, OFF, LEFT, ang) = (ang_gp == 1 ? 0 : +off) +
           taMath_float::rint(v1s_ang_slopes.FastEl3d(X, LINE, ang)) +
           taMath_float::rint((float)ortho * v1s_ang_slopes.FastEl3d(X, ORTHO, ang));
-        v1es_stencils.FastEl(Y, orthdx, OFF, LEFT, ang) = (ang == 1 ? -off : 0) +
+        v1es_stencils.FastEl(Y, orthdx, OFF, LEFT, ang) = (ang_gp == 1 ? -off : 0) +
           taMath_float::rint(v1s_ang_slopes.FastEl3d(Y, LINE, ang)) +
           taMath_float::rint((float)ortho * v1s_ang_slopes.FastEl3d(Y, ORTHO, ang));
         // off guy, "right" direction
-        v1es_stencils.FastEl(X, orthdx, OFF, RIGHT, ang) = (ang == 1 ? +off : 0) +
+        v1es_stencils.FastEl(X, orthdx, OFF, RIGHT, ang) = (ang_gp == 1 ? +off : 0) +
           taMath_float::rint(-v1s_ang_slopes.FastEl3d(X, LINE, ang)) +
           taMath_float::rint((float)ortho * v1s_ang_slopes.FastEl3d(X, ORTHO, ang));
-        v1es_stencils.FastEl(Y, orthdx, OFF, RIGHT, ang) = (ang == 1 ? 0 : +off) +
+        v1es_stencils.FastEl(Y, orthdx, OFF, RIGHT, ang) = (ang_gp == 1 ? 0 : +off) +
           taMath_float::rint(-v1s_ang_slopes.FastEl3d(Y, LINE, ang)) +
           taMath_float::rint((float)ortho * v1s_ang_slopes.FastEl3d(Y, ORTHO, ang));
       }
