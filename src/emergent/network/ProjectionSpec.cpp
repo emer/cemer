@@ -38,6 +38,7 @@ void ProjectionSpec::Initialize() {
 void ProjectionSpec::InitLinks() {
   BaseSpec::InitLinks();
   children.SetBaseType(&TA_ProjectionSpec); // allow all of this general spec type to be created under here
+  taBase::Own(renorm_wts, this);
   children.el_typ = GetTypeDef(); // but make the default to be me!
 }
 
