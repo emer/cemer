@@ -542,6 +542,12 @@ void taiEditor::Apply_Async() {
 }
 
 void taiEditor::ReShow_Async(bool forced) {
+  if(last_font_size != taMisc::font_size) {
+    row_height = taiM->max_control_height(ctrl_size);
+    widget()->setFont(taiM->dialogFont(ctrl_size));
+    last_font_size = taMisc::font_size;
+  }
+
   if (reshow_req) return; // already waiting
   if ((state & STATE_MASK) >= CANCELED) return;
   reshow_req = true;
