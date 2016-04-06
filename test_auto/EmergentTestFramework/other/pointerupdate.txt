@@ -47,7 +47,6 @@ General RunState
     Status OK Match Result     ${output}             4
 
 
-
 CopyProgram
     Set Suite Variable     ${program_test}       "TestGroup"
     Ensure Emergent Free
@@ -350,6 +349,11 @@ CopyProgramCodeBetweenProjects
     Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"] 
     Prog Group Secondary Project Should Match	     1	  .projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_one\\"]
     Prog Group Secondary Project Should Match	     2	  .projects[\\"TestPointerUpdates_copy_into\\"].programs.gp[\\"group_two\\"]
+
+CopyProgEl_listWithProgramCallToOtherProgram
+    Ensure Emergent Free
+    Run Emergent Program	copy_if_expression_with_programcall_to_other_program_if_expression
+    Run Emergent Program	ProgWithIf
 
 MoveProgramBetweenProjects
     Set Suite Variable     ${program_test}       "TestGroup"
