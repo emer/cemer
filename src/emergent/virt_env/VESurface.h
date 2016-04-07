@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-taTypeDef_Of(VESurface);
+eTypeDef_Of(VESurface);
 
 class E_API VESurface : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv surface properties for collisions

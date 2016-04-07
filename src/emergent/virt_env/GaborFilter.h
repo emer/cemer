@@ -27,7 +27,7 @@
 class DataTable; // 
 
 
-taTypeDef_Of(GaborFilter);
+eTypeDef_Of(GaborFilter);
 
 class E_API GaborFilter : public taNBase {
   // #STEM_BASE ##CAT_Image defines a gabor filter (gaussian times a plane sine wave) that highlights lines/edges in an image

@@ -30,7 +30,7 @@
 class DataTable; // 
 class V1RetinaProc; // 
 
-taTypeDef_Of(V1GaborSpec);
+eTypeDef_Of(V1GaborSpec);
 
 class E_API V1GaborSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells as gabor filters: 2d Gaussian envelope times a sinusoidal plane wave -- by default produces 2 phase asymmetric edge detector filters
@@ -62,7 +62,7 @@ private:
   void	Destroy() { };
 };
 
-taTypeDef_Of(V1sNeighInhib);
+eTypeDef_Of(V1sNeighInhib);
 
 class E_API V1sNeighInhib : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image neighborhood inhibition for V1 simple layer -- inhibition spreads along orthogonal orientations to line tuning, to eliminate redundant reps of the same underlying edge
@@ -82,7 +82,7 @@ private:
   void	Destroy() { };
 };
 
-taTypeDef_Of(V1MotionSpec);
+eTypeDef_Of(V1MotionSpec);
 
 class E_API V1MotionSpec : public V1GaborSpec {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells -- based on gabor spatio-temporal pattern -- motion gabor is applied along direction perpendicular to the orientation tuning -- n_angles represents speeds and divides the 90 degree quadrant into n_angles space-time angles -- should use odd polarity gabors, and motion_frames determines size available for input, so size here must match that!
@@ -102,7 +102,7 @@ private:
 };
 
 
-taTypeDef_Of(V1SquareGroup);
+eTypeDef_Of(V1SquareGroup);
 
 class E_API V1SquareGroup : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for square grouping of v1s features -- simple form of spatial compression that is useful prior to doing complex operations and generally shrinking the size of the input to the network without much loss in performance
@@ -123,7 +123,7 @@ private:
   void	Destroy() { };
 };
 
-taTypeDef_Of(V1ComplexSpec);
+eTypeDef_Of(V1ComplexSpec);
 
 class E_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors
@@ -146,7 +146,7 @@ private:
   void	Destroy() { };
 };
 
-taTypeDef_Of(VisSpatIntegSpec);
+eTypeDef_Of(VisSpatIntegSpec);
 
 class E_API VisSpatIntegSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image spatial integration parameters for visual signals -- happens as last step after all other feature detection operations -- performs a MAX or AVG over rfields
@@ -173,7 +173,7 @@ private:
   void	Destroy() { };
 };
 
-taTypeDef_Of(V1RegionSpec);
+eTypeDef_Of(V1RegionSpec);
 
 class E_API V1RegionSpec : public VisRegionSpecBase {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- produces Gabor and more complex filter activation outputs directly from image bitmap input -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution

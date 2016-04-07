@@ -26,7 +26,7 @@
 // declare all other types mentioned but not required to include:
 
 
-taTypeDef_Of(VELightParams);
+eTypeDef_Of(VELightParams);
 
 class E_API VELightParams : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env light parameters

@@ -27,7 +27,7 @@
 // declare all other types mentioned but not required to include:
 class VEArm; //
 
-taTypeDef_Of(VEMuscle);
+eTypeDef_Of(VEMuscle);
 
 class E_API VEMuscle : public taNBase {
   // the basic stuff for all muscles

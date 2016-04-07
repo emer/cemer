@@ -138,6 +138,14 @@ public:
   void  	SetAudioBuffer(const QAudioBuffer& buf) { q_buf = buf; }
   // #CAT_Image #IGNORE set the underlying qt audio buffer
 
+
+  static float GetFloatAtIdx(const void* buf, int idx, SoundSampleType styp,
+                             int samp_size);
+  // #IGNORE low-level access routine
+  static void  WriteFloatAtIdx(const float& val, void* buf, int idx, SoundSampleType styp,
+                               int samp_size);
+  // #IGNORE low-level access routine
+  
   TA_BASEFUNS(taSound);
 protected:
   QAudioBuffer	q_buf;          // the underlying Qt audio buffer

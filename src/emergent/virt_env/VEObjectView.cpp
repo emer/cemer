@@ -24,7 +24,7 @@
 
 TA_BASEFUNS_CTORS_DEFN(VEObjectView);
 
-taTypeDef_Of(VEObjCarousel);
+eTypeDef_Of(VEObjCarousel);
 
 bool VEObjectView::isVisible() const {
   return (taMisc::use_gui );

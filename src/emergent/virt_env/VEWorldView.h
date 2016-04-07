@@ -38,7 +38,7 @@ class iViewPanelOfVEWorld; //
 class SoOffscreenRendererQt; // #IGNORE
 #endif // TA_QT3D
 
-taTypeDef_Of(VEWorldView);
+eTypeDef_Of(VEWorldView);
 
 class E_API VEWorldView : public T3DataViewMain {
   // a virtual environment world viewer

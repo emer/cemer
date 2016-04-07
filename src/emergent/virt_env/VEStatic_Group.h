@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-taTypeDef_Of(VEStatic_Group);
+eTypeDef_Of(VEStatic_Group);
 
 class E_API VEStatic_Group : public taGroup<VEStatic> {
   // ##CAT_VirtEnv a group of virtual environment static elements

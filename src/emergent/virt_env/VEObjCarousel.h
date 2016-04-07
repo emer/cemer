@@ -29,7 +29,7 @@
 class SoSwitch; // #IGNORE
 #endif // TA_QT3D
 
-taTypeDef_Of(VEObjCarousel);
+eTypeDef_Of(VEObjCarousel);
 
 class E_API VEObjCarousel : public VEBody {
   // virtual environment object carousel -- contains a number of different objects that are pre-loaded and then selectable by name or number (info is contained in a DataTable)

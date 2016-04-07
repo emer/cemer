@@ -37,7 +37,7 @@ public:
 
 #else // TA_QT3D
 
-taTypeDef_Of(T3VEObject);
+eTypeDef_Of(T3VEObject);
 
 class E_API T3VEObject : public T3NodeParent {
   // object parent for virtual environment

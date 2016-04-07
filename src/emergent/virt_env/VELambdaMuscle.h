@@ -27,7 +27,7 @@
 // declare all other types mentioned but not required to include:
 
 
-taTypeDef_Of(VELambdaMuscle);
+eTypeDef_Of(VELambdaMuscle);
 
 class E_API VELambdaMuscle : public taNBase {
   // a Lambda-model (Gribble et al, 1998) muscle, used in context of a VE arm joint -- as a fairly accurate simplification, we assume a linear relationship between joint angle and muscle length, and a constant moment arm (accurate for extensors)

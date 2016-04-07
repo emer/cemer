@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-taTypeDef_Of(VETexture_List);
+eTypeDef_Of(VETexture_List);
 
 class E_API VETexture_List : public taList<VETexture> {
   // ##CAT_VirtEnv a list of virtual environment textures

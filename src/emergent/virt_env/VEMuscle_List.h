@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 
-taTypeDef_Of(VEMuscle_List);
+eTypeDef_Of(VEMuscle_List);
 
 class E_API VEMuscle_List : public taList<VEMuscle> {
   // group of linear muscles

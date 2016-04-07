@@ -26,7 +26,7 @@
 class VEBody; // 
 
 
-taTypeDef_Of(VEObject_Group);
+eTypeDef_Of(VEObject_Group);
 
 class E_API VEObject_Group : public taGroup<VEObject> {
   // ##CAT_VirtEnv a group of virtual environment objects

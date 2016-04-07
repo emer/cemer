@@ -321,94 +321,92 @@ const void* taSound::SoundData() {
   return q_buf.constData();
 }
 
-namespace {
-  float GetFloatAtIdx(const void* buf, int idx, taSound::SoundSampleType styp,
-                      int samp_size) {
-    switch(styp) {
-    case taSound::SignedInt: {
-      if(samp_size == 32) {
-        qint16* dat = (qint16*)buf;
-        return ((float)dat[idx] / (float)0x7FFFFFFF);
-      }
-      else if(samp_size == 24) {
-        qint16* dat = (qint16*)buf;
-        return ((float)dat[idx] / (float)0x7FFFFF);
-      }
-      else if(samp_size == 16) {
-        const qint16* dat = (qint16*)buf;
-        return ((float)dat[idx] / (float)0x7FFF);
-      }
-      else if(samp_size == 8) {
-        const qint8* dat = (qint8*)buf;
-        return ((float)dat[idx] / (float)0x7F);
-      }
-      break;
+float taSound::GetFloatAtIdx(const void* buf, int idx, taSound::SoundSampleType styp,
+                             int samp_size) {
+  switch(styp) {
+  case SignedInt: {
+    if(samp_size == 32) {
+      qint16* dat = (qint16*)buf;
+      return ((float)dat[idx] / (float)0x7FFFFFFF);
     }
-    case taSound::UnSignedInt: {
-      if(samp_size == 16) {
-        const quint16* dat = (quint16*)buf;
-        return ((float)dat[idx] / (float)0xFFFF);
-      }
-      else if(samp_size == 8) {
-        const quint8* dat = (quint8*)buf;
-        return ((float)dat[idx] / (float)0xFF);
-      }
-      break;
+    else if(samp_size == 24) {
+      qint16* dat = (qint16*)buf;
+      return ((float)dat[idx] / (float)0x7FFFFF);
     }
-    case taSound::Float: {
-      const float* dat = (float*)buf;
-      return dat[idx];
-      break;
+    else if(samp_size == 16) {
+      const qint16* dat = (qint16*)buf;
+      return ((float)dat[idx] / (float)0x7FFF);
     }
-    case taSound::Unknown:
-      return 0.0f;
-      break;
+    else if(samp_size == 8) {
+      const qint8* dat = (qint8*)buf;
+      return ((float)dat[idx] / (float)0x7F);
+    }
+    break;
   }
+  case UnSignedInt: {
+    if(samp_size == 16) {
+      const quint16* dat = (quint16*)buf;
+      return ((float)dat[idx] / (float)0xFFFF);
+    }
+    else if(samp_size == 8) {
+      const quint8* dat = (quint8*)buf;
+      return ((float)dat[idx] / (float)0xFF);
+    }
+    break;
+  }
+  case Float: {
+    const float* dat = (float*)buf;
+    return dat[idx];
+    break;
+  }
+  case Unknown:
     return 0.0f;
+    break;
   }
+  return 0.0f;
+}
   
-  void WriteFloatAtIdx(const float& val, void* buf, int idx,
-                       taSound::SoundSampleType styp, int samp_size) {
-    switch(styp) {
-    case taSound::SignedInt: {
-      if(samp_size == 32) {
-        qint16* dat = (qint16*)buf;
-        dat[idx] = val * (float)0x7FFFFFFF;
-      }
-      else if(samp_size == 24) {
-        qint16* dat = (qint16*)buf;
-        dat[idx] = val * (float)0x7FFFFF;
-      }
-      else if(samp_size == 16) {
-        qint16* dat = (qint16*)buf;
-        dat[idx] = val * (float)0x7FFF;
-      }
-      else if(samp_size == 8) {
-        qint8* dat = (qint8*)buf;
-        dat[idx] = val * (float)0x7F;
-      }
-      break;
+void taSound::WriteFloatAtIdx(const float& val, void* buf, int idx, SoundSampleType styp,
+                              int samp_size) {
+  switch(styp) {
+  case SignedInt: {
+    if(samp_size == 32) {
+      qint16* dat = (qint16*)buf;
+      dat[idx] = val * (float)0x7FFFFFFF;
     }
-    case taSound::UnSignedInt: {
-      if(samp_size == 16) {
-        quint16* dat = (quint16*)buf;
-        dat[idx] = val * (float)0xFFFF;
-      }
-      else if(samp_size == 8) {
-        quint8* dat = (quint8*)buf;
-        dat[idx] = val * (float)0xFF;
-      }
-      break;
+    else if(samp_size == 24) {
+      qint16* dat = (qint16*)buf;
+      dat[idx] = val * (float)0x7FFFFF;
     }
-    case taSound::Float: {
-      float* dat = (float*)buf;
-      dat[idx] = val;
-      break;
+    else if(samp_size == 16) {
+      qint16* dat = (qint16*)buf;
+      dat[idx] = val * (float)0x7FFF;
     }
-    case taSound::Unknown:
-      break;
+    else if(samp_size == 8) {
+      qint8* dat = (qint8*)buf;
+      dat[idx] = val * (float)0x7F;
+    }
+    break;
   }
-  }    
+  case UnSignedInt: {
+    if(samp_size == 16) {
+      quint16* dat = (quint16*)buf;
+      dat[idx] = val * (float)0xFFFF;
+    }
+    else if(samp_size == 8) {
+      quint8* dat = (quint8*)buf;
+      dat[idx] = val * (float)0xFF;
+    }
+    break;
+  }
+  case Float: {
+    float* dat = (float*)buf;
+    dat[idx] = val;
+    break;
+  }
+  case Unknown:
+    break;
+  }
 }
 
 float taSound::GetSample_frame(int frame, int channel) {

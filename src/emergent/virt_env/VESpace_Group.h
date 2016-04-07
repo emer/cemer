@@ -26,7 +26,7 @@
 class VEStatic; // 
 
 
-taTypeDef_Of(VESpace_Group);
+eTypeDef_Of(VESpace_Group);
 
 class E_API VESpace_Group : public taGroup<VESpace> {
   // ##CAT_VirtEnv a group of virtual environment objects

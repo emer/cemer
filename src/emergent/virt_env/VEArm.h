@@ -29,7 +29,7 @@
 // declare all other types mentioned but not required to include:
 // class DataTable;
 
-taTypeDef_Of(VEArmLengths);
+eTypeDef_Of(VEArmLengths);
 
 class E_API VEArmLengths : public taOBase {
   // #INLINE #INLINE_DUMP lengths of arm parameters
@@ -70,7 +70,7 @@ private:
   void  Destroy() { };
 };
 
-taTypeDef_Of(VEArmAngles);
+eTypeDef_Of(VEArmAngles);
 
 class E_API VEArmAngles : public taOBase {
   // #INLINE #INLINE_DUMP lengths of arm parameters
@@ -101,7 +101,7 @@ private:
   void  Destroy() { };
 };
 
-taTypeDef_Of(VEArmDelays);
+eTypeDef_Of(VEArmDelays);
 
 class E_API VEArmDelays : public taOBase {
   // #INLINE #INLINE_DUMP delay parameters -- used to delay inputs/outputs to VEArm -- the arm starts receiving the relevant inputs/outputs at the time step specified (so a delay value of 1 = no delay)
@@ -126,7 +126,7 @@ private:
   void  Destroy() { };
 };
 
-taTypeDef_Of(VEArmGains);
+eTypeDef_Of(VEArmGains);
 
 class E_API VEArmGains : public taOBase {
   // #INLINE #INLINE_DUMP gain parameters -- used to scale forces applied to muscle insertion points in VEArm
@@ -144,7 +144,7 @@ private:
   void  Destroy() { };
 };
 
-taTypeDef_Of(VEArmPID);
+eTypeDef_Of(VEArmPID);
 
 class E_API VEArmPID : public taOBase {
   // #INLINE #INLINE_DUMP PID control parameters for proportional, integral, derivative control signal that is typically used for online control of the arm
@@ -162,7 +162,7 @@ private:
   void  Destroy() { };
 };
 
-taTypeDef_Of(VEArmIOErr);
+eTypeDef_Of(VEArmIOErr);
 
 class E_API VEArmIOErr : public taOBase {
   // #INLINE #INLINE_DUMP error parameters -- used to determine when a movement error occurs, and signal corrective action from the cerebellum
@@ -178,7 +178,7 @@ private:
   void  Destroy() { };
 };
 
-taTypeDef_Of(VEArmDamping);
+eTypeDef_Of(VEArmDamping);
 
 class E_API VEArmDamping : public taOBase {
   // #INLINE #INLINE_DUMP damping parameters -- used to reduce oscillations in arm movements
@@ -193,7 +193,7 @@ private:
   void  Destroy() { };
 };
 
-taTypeDef_Of(VEArm);
+eTypeDef_Of(VEArm);
 
 class E_API VEArm : public VEObject {
   // #STEM_BASE a virtual environment arm object, consisting of 3 bodies: humerus, ulna, hand, and 3 joints: shoulder (a ball joint), elbow (a 2Hinge joint), and wrist (a FIXED joint for now)-- all constructed via ConfigArm -- bodies and joints are accessed by index so the order must not be changed

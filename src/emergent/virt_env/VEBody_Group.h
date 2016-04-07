@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-taTypeDef_Of(VEBody_Group);
+eTypeDef_Of(VEBody_Group);
 
 class E_API VEBody_Group : public taGroup<VEBody> {
   // ##CAT_VirtEnv a group of virtual environment bodies

@@ -17,7 +17,7 @@
 
 TA_BASEFUNS_CTORS_DEFN(ImageProcCall);
 
-taTypeDef_Of(taImageProc);
+eTypeDef_Of(taImageProc);
 
 
 void ImageProcCall::Initialize() {

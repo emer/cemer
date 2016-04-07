@@ -29,7 +29,9 @@ set(virt_env_HEADS_MAKETA_NOMOC_base
   V1KwtaSpec.h
   V1RegionSpec.h
   RetinaProc.h
+
   AuditoryProc.h
+  VocalTract.h
 
   VESurface.h
   VETexture.h
@@ -74,6 +76,18 @@ set(virt_env_HEADS_MAKETA_NOMOC_base
 # need both maketa and moc -- relatively rare
 set(virt_env_HEADS_MAKETA_MOC
   iViewPanelOfVEWorld.h
+)
+
+set(virt_env_HEADS_NOMAKETA_NOMOC
+  WavetableGlottalSource.h
+  SampleRateConverter.h
+  ReflectionFilter.h
+  RadiationFilter.h
+  NoiseSource.h
+  NoiseFilter.h
+  BandpassFilter.h
+  Throat.h
+  FIRFilter.h
 )
 
 # 3D headers -- do diff things depending on QT3D vs COIN
@@ -147,7 +161,18 @@ set(virt_env_SRCS
   V1KwtaSpec.cpp
   V1RegionSpec.cpp
   RetinaProc.cpp
+
   AuditoryProc.cpp
+  VocalTract.cpp
+  WavetableGlottalSource.cpp
+  SampleRateConverter.cpp
+  ReflectionFilter.cpp
+  RadiationFilter.cpp
+  NoiseSource.cpp
+  NoiseFilter.cpp
+  BandpassFilter.cpp
+  Throat.cpp
+  FIRFilter.cpp
 
   VESurface.cpp
   VETexture.cpp

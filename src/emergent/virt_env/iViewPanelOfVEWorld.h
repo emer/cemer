@@ -31,7 +31,7 @@ class QCheckBox; //
 class QLabel; //
 
 
-taTypeDef_Of(iViewPanelOfVEWorld);
+eTypeDef_Of(iViewPanelOfVEWorld);
 
 class E_API iViewPanelOfVEWorld: public iViewPanel {
   // frame for gui interface to a VEWorldView -- usually posted by the worldview

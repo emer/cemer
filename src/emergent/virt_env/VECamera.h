@@ -44,7 +44,7 @@ class SoPerspectiveCamera; // #IGNORE
 #endif
 
 
-taTypeDef_Of(VECameraDists);
+eTypeDef_Of(VECameraDists);
 
 class E_API VECameraDists : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env camera distances
@@ -60,7 +60,7 @@ private:
   void  Destroy()       { };
 };
 
-taTypeDef_Of(VECamera);
+eTypeDef_Of(VECamera);
 
 class E_API VECamera : public VEBody {
   // virtual environment camera -- a body that contains a camera -- position and orientation are used to point the camera -- body shape always a cylinder, with LONG_Z axis, but mass/inertia etc is used if part of a non-fixed object -- camera must be selected in the VEWorld for it to actually be used to render images!

@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-taTypeDef_Of(taAudioProc);
+eTypeDef_Of(taAudioProc);
 
 class E_API taAudioProc : public taNBase {
   // #STEM_BASE ##CAT_Audio basic audio processing operations

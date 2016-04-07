@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-taTypeDef_Of(VEJoint_Group);
+eTypeDef_Of(VEJoint_Group);
 
 class E_API VEJoint_Group : public taGroup<VEJoint> {
   // ##CAT_VirtEnv a group of virtual environment joints

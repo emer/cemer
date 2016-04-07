@@ -32,7 +32,7 @@ class SoTexture2; // #IGNORE
 class SoTexture2Transform; // #IGNORE
 
 
-taTypeDef_Of(VETexture);
+eTypeDef_Of(VETexture);
 
 class E_API VETexture : public taNBase {
   // #STEM_BASE #NO_UPDATE_AFTER ##CAT_VirtEnv texture mapping of an image onto a 3d object -- defined as a shared resource in the VEWorld that individual objects can point to

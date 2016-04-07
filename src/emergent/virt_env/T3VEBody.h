@@ -44,7 +44,7 @@ public:
 class T3TransformBoxDragger; // 
 
 
-taTypeDef_Of(T3VEBody);
+eTypeDef_Of(T3VEBody);
 
 class E_API T3VEBody : public T3NodeLeaf {
   // body for virtual environment

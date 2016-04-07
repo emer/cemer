@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-taTypeDef_Of(GaborFitter);
+eTypeDef_Of(GaborFitter);
 
 class E_API GaborFitter : public GaborFilter {
   // ##CAT_Image fits a gabor filter from image data

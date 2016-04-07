@@ -78,7 +78,7 @@ class SoSwitch; //
 class SoShadowStyle; //
 class SoShadowGroup; //
 
-taTypeDef_Of(T3VEWorld);
+eTypeDef_Of(T3VEWorld);
 
 class E_API T3VEWorld : public T3NodeParent {
   // world parent for virtual environment

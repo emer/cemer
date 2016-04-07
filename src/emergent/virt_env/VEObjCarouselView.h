@@ -25,7 +25,7 @@
 class VEObjCarousel; // 
 
 
-taTypeDef_Of(VEObjCarouselView);
+eTypeDef_Of(VEObjCarouselView);
 
 class E_API VEObjCarouselView: public VEBodyView {
   // view of VEObjCarousel

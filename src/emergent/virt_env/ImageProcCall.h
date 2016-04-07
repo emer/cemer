@@ -26,7 +26,7 @@
 class ProgEl; // 
 
 
-taTypeDef_Of(ImageProcCall);
+eTypeDef_Of(ImageProcCall);
 
 class E_API ImageProcCall : public StaticMethodCall { 
   // call a taImageProc function

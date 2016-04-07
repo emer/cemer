@@ -24,12 +24,12 @@
 
 // declare all other types mentioned but not required to include:
 class VEWorldView; // 
-taTypeDef_Of(VEWorldView);
+eTypeDef_Of(VEWorldView);
 class TypeDef; // 
 class VEJoint; // 
 
 
-taTypeDef_Of(VEJointView);
+eTypeDef_Of(VEJointView);
 
 class E_API VEJointView: public T3DataView {
   // view of one joint

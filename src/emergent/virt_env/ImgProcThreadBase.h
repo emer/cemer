@@ -40,7 +40,7 @@ typedef void (ImgProcThreadBase::*ThreadImgProcMethod)(int);
 #define IMG_THREAD_CALL(meth) { ThreadImgProcCall meth_call((ThreadImgProcMethod)(&meth));\
   threads.Run(meth_call); }
 
-taTypeDef_Of(ImgProcCallTask);
+eTypeDef_Of(ImgProcCallTask);
 
 class E_API ImgProcCallTask : public taTask {
 INHERITED(taTask)
@@ -58,7 +58,7 @@ private:
 };
 
 
-taTypeDef_Of(ImgProcCallThreadMgr);
+eTypeDef_Of(ImgProcCallThreadMgr);
 
 class E_API ImgProcCallThreadMgr : public taThreadMgr {
   // #INLINE thread manager for ImgProcCall tasks -- manages threads and tasks, and coordinates threads running the tasks
@@ -78,7 +78,7 @@ private:
   void	Destroy();
 };
 
-taTypeDef_Of(ImgProcThreadBase);
+eTypeDef_Of(ImgProcThreadBase);
 
 class E_API ImgProcThreadBase : public taNBase {
   // #VIRT_BASE ##CAT_Image base class for image-processing code that uses threading -- defines a basic interface for thread calls to deploy filtering or other intensive computations

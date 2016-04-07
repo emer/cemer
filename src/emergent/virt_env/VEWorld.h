@@ -43,7 +43,7 @@ class taImage; //
 class VEWorld; //
 SMARTREF_OF(E_API, VEWorld); // VEWorldRef
 
-taTypeDef_Of(ODEWorldParams);
+eTypeDef_Of(ODEWorldParams);
 
 class E_API ODEWorldParams : public ODEIntParams {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
@@ -62,7 +62,7 @@ private:
   void  Destroy()       { };
 };
 
-taTypeDef_Of(VEShadowParams);
+eTypeDef_Of(VEShadowParams);
 
 class E_API VEShadowParams : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv shadow parameters for virtual environment
@@ -83,7 +83,7 @@ private:
   void  Destroy()       { };
 };
 
-taTypeDef_Of(VEWorld);
+eTypeDef_Of(VEWorld);
 
 class E_API VEWorld : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vewld a virtual environment world

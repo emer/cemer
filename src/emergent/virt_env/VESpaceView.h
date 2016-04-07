@@ -24,12 +24,11 @@
 
 // declare all other types mentioned but not required to include:
 class VEWorldView; // 
-taTypeDef_Of(VEWorldView);
+eTypeDef_Of(VEWorldView);
 class TypeDef; // 
 class VESpace; // 
 
-
-taTypeDef_Of(VESpaceView);
+eTypeDef_Of(VESpaceView);
 
 class E_API VESpaceView: public T3DataViewPar {
   // view of one space

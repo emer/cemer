@@ -44,7 +44,7 @@ public:
 
 class T3TransformBoxDragger; // 
 
-taTypeDef_Of(T3VEJoint);
+eTypeDef_Of(T3VEJoint);
 
 class E_API T3VEJoint : public T3NodeLeaf {
   // joint for virtual environment

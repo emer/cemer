@@ -27,7 +27,7 @@
 class DataTable; // 
 
 
-taTypeDef_Of(MotionGaborFilter);
+eTypeDef_Of(MotionGaborFilter);
 
 class E_API MotionGaborFilter : public taNBase {
   // #STEM_BASE ##CAT_Image defines a gabor filter oriented in space and time (gaussian times a plane sine wave) that moving highlights lines/edges in an image.

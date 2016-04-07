@@ -32,7 +32,7 @@ class VEWorld; //
 class VEStatic; // 
 
 
-taTypeDef_Of(VESpace);
+eTypeDef_Of(VESpace);
 
 class E_API VESpace : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj a virtual environment that represents a sub-space of objects, containing static elements only -- helps optimize the collision detection process to group proximal items into sub spaces

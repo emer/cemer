@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 
-taTypeDef_Of(V1KwtaSpec);
+eTypeDef_Of(V1KwtaSpec);
 
 class E_API V1KwtaSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image k-winners-take-all dynamics for v1 image processing stages -- based on Leabra dynamics with asymptotic activation settling, using the gelin version of the NXX1 activation function  -- see Leabra docs for more info on various parameters (LeabraUnitSpec, LeabraLayerSpec)

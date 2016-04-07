@@ -39,7 +39,7 @@ public:
 
 #else // TA_QT3D
 
-taTypeDef_Of(T3VESpace);
+eTypeDef_Of(T3VESpace);
 
 class E_API T3VESpace : public T3NodeParent {
   // space parent for virtual environment

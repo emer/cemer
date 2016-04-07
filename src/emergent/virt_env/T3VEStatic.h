@@ -43,7 +43,7 @@ public:
 
 class T3TransformBoxDragger; // 
 
-taTypeDef_Of(T3VEStatic);
+eTypeDef_Of(T3VEStatic);
 
 class E_API T3VEStatic : public T3NodeLeaf {
   // static item for virtual environment
