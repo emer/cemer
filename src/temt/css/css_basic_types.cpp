@@ -408,7 +408,7 @@ void cssBool::operator=(const cssEl& s) {
   if((s.GetType() == T_String) || (s.GetPtrType() == T_String))
     *this = s.GetStr();         // use string converter
   else
-    val = (Int)s;
+    val = (bool)s;
 }
 
 void cssBool::operator=(const String& cp) {

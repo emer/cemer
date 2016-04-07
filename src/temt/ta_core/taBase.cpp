@@ -2348,10 +2348,10 @@ taBase* taBase::ChildDuplicate(const taBase* chld) {
   return NULL;
 }
 
-bool taBase::DuplicateMe() {
+taBase* taBase::DuplicateMe() {
   taBase* own = GetOwner();
-  if (TestError((own == NULL), "DuplicateMe", "owner is null")) return false;
-  if (!own->ChildCanDuplicate(this, false)) return false;
+  if (TestError((own == NULL), "DuplicateMe", "owner is null")) return NULL;
+  if (!own->ChildCanDuplicate(this, false)) return NULL;
   return (own->ChildDuplicate(this));
 }
 

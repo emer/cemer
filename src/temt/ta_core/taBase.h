@@ -1272,7 +1272,7 @@ public:
   virtual taBase*       ChildDuplicate(const taBase* chld);
     // #IGNORE duplicate given child, returning the new one (NULL if can't do it)
 
-  bool                  DuplicateMe();
+  taBase*               DuplicateMe();
   // #CONFIRM #CAT_ObjectMgmt Make another copy of myself (done through owner)
   virtual void          UnSafeCopy(const taBase*) {} // #IGNORE custom version made for each class: if cp->Inherits(me) Copy(cp); else if me->Inherits(cp) cp.CastCopyTo(me) else CopyOther_impl(cp)
   virtual void          CastCopyTo(taBase*) const {}; // #IGNORE custom version made for every class, casts
