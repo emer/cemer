@@ -168,19 +168,19 @@ public:
   float fric_bw;
   // #MIN_500 #MAX_4500 fricative bw?  seems like a frequency -- common intermediate values are 600, 900, 2000, 2600
   float radius_2;
-  // #MIN_0.1 #MAX_2.5 radius of pharynx vocal tract segment as determined by tongue etc -- typically around 1, ranging .5 - 1.7
+  // #MIN_0.1 #MAX_3 radius of pharynx vocal tract segment as determined by tongue etc -- typically around 1, ranging .5 - 1.7
   float radius_3;
-  // #MIN_0.1 #MAX_2.5 radius of pharynx vocal tract segment as determined by tongue etc -- typically around 1, ranging .6 - 1.91
+  // #MIN_0.1 #MAX_3 radius of pharynx vocal tract segment as determined by tongue etc -- typically around 1, ranging .6 - 1.91
   float radius_4;
-  // #MIN_0.1 #MAX_2.5 radius of velum vocal tract segment as determined by tongue and jaw -- typically around 1, ranging .6 - 1.99
+  // #MIN_0.1 #MAX_3 radius of velum vocal tract segment as determined by tongue and jaw -- typically around 1, ranging .6 - 1.99
   float radius_5;
-  // #MIN_0.1 #MAX_2.5 radius of behind alveolar ridge vocal tract segment as determined by tongue and jaw -- typically around 1, ranging .1 - 2.2
+  // #MIN_0.1 #MAX_3 radius of behind alveolar ridge vocal tract segment as determined by tongue and jaw -- typically around 1, ranging .1 - 2.2
   float radius_6;
-  // #MIN_0.001 #MAX_2.5 radius of alveolar ridge vocal tract segment as determined by tongue and jaw -- typically around 1, ranging 0 - 1.93
+  // #MIN_0.001 #MAX_3 radius of alveolar ridge vocal tract segment as determined by tongue and jaw -- typically around 1, ranging 0 - 1.93
   float radius_7;
-  // #MIN_0.1 #MAX_2.5 radius of teeth to alveolar ridge vocal tract segment as determined by tongue and jaw -- typically around 1, ranging .26 - 1.97
+  // #MIN_0.1 #MAX_3 radius of teeth to alveolar ridge vocal tract segment as determined by tongue and jaw -- typically around 1, ranging .26 - 1.97
   float radius_8;
-  // #MIN_0.01 #MAX_2.5 radius of lips to teeth vocal tract segment as determined by tongue and lips -- typically around 1, ranging .01 - 2.06
+  // #MIN_0.01 #MAX_3 radius of lips to teeth vocal tract segment as determined by tongue and lips -- typically around 1, ranging .01 - 2.06
   float velum;
   // #MIN_0.1 #MAX_1.5 velum opening -- 1.5 when fully open, .1 when closed, and .25, .5 intermediates used
 
