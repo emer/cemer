@@ -323,7 +323,7 @@ bool VocalTract::LoadEnglishDict() {
 }
 
 bool VocalTract::SynthPhone(const String& phon, bool stress, bool double_stress,
-                            bool syllable) {
+                            bool syllable, bool reset) {
   if(phone_table.rows == 0)
     LoadEnglishPhones();
   String act = phon;
@@ -333,13 +333,15 @@ bool VocalTract::SynthPhone(const String& phon, bool stress, bool double_stress,
   if(idx < 0) return false;
   float duration = phone_table.GetVal("duration", idx).toFloat();
   float transition = phone_table.GetVal("transition", idx).toFloat();
-  float tot_time = (duration + transition) * 2.0f;
+  float tot_time = (duration + transition);
   int n_reps = taMath_float::ceil(tot_time / synth_dur_msec);
   n_reps = MAX(n_reps, 1);
   CtrlFromDataTable(phone_table, "phone_data", idx, false);
   // todo: syllable, double_stress, qsss other params??
-  taMisc::Info("saying:", phon, "dur:", String(tot_time), "n_reps:", String(n_reps),
-               "start pos:", String(outputData_.size()));
+  // taMisc::Info("saying:", phon, "dur:", String(tot_time), "n_reps:", String(n_reps),
+  //              "start pos:", String(outputData_.size()));
+  if(reset)
+    SynthReset();               // MUST reset *AFTER* setting the new ctrls!
   for(int i=0; i<n_reps; i++) {
     Synthesize(false);
   }
@@ -347,13 +349,12 @@ bool VocalTract::SynthPhone(const String& phon, bool stress, bool double_stress,
 }
 
 bool VocalTract::SynthPhones(const String& phones, bool reset_first, bool play) {
-  if(reset_first)
-    SynthReset();
   int len = phones.length();
   String phon;
   bool stress = false;
   bool double_stress = false;
   bool syllab = false;
+  bool first = true;
   for(int pos = 0; pos < len; pos++) {
     int c = phones[pos];
     if(c == '\'') { // stress
@@ -365,27 +366,30 @@ bool VocalTract::SynthPhones(const String& phones, bool reset_first, bool play) 
       continue;
     }
     if(c == '%') { // double stress
-      SynthPhone(phon, stress, double_stress, syllab);
+      SynthPhone(phon, stress, double_stress, syllab, reset_first && first);
       phon = "";
+      first = false;
       break;                    // done
     }
     if(c == '.') { // syllable
       syllab = true;
-      SynthPhone(phon, stress, double_stress, syllab);
+      SynthPhone(phon, stress, double_stress, syllab, reset_first && first);
       stress = false; double_stress = false; syllab = false;
       phon = "";
+      first = false;
       continue;
     }
     if(c == '_') { // reg separator
-      SynthPhone(phon, stress, double_stress, syllab);
+      SynthPhone(phon, stress, double_stress, syllab, reset_first && first);
       stress = false; double_stress = false; syllab = false;
       phon = "";
+      first = false;
       continue;
     }
     phon += (char)c;
   }
   if(phon.nonempty()) {
-    SynthPhone(phon, stress, double_stress, syllab);
+    SynthPhone(phon, stress, double_stress, syllab, reset_first && first);
   }
   
   if(play)
@@ -580,12 +584,12 @@ VocalTract::Synthesize(bool reset_first)
 
   float controlFreq = 1.0 / controlPeriod_;
 
-  currentData_.CopyFrom(&cur_ctrl);
+  currentData_.CopyFrom(&prv_ctrl); // start with previous!!! doh!
   del_ctrl.ComputeDeltas(cur_ctrl, prv_ctrl, controlFreq);
 
   for (int j = 0; j < controlPeriod_; j++) {
     Synthesize_impl();
-    // currentData_.UpdateFromDeltas(del_ctrl);
+    currentData_.UpdateFromDeltas(del_ctrl);
   }
 
   prv_ctrl.CopyFrom(&cur_ctrl); // prev is the new cur

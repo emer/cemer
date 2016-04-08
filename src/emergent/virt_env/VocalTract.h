@@ -366,7 +366,8 @@ public:
   virtual bool  LoadEnglishDict();
   // load default English pronunciation dictionary into dict_table
   virtual bool  SynthPhone(const String& phon, bool stress = false,
-                          bool double_stress = false, bool syllable = false);
+                           bool double_stress = false, bool syllable = false,
+                           bool reset_first = false);
   // #BUTTON synthesize a single phoneme with given extra factors -- standard English phones will be loaded if phone_table is empty
   virtual bool  SynthPhones(const String& phones, bool reset_first = true, bool play = false);
   // #BUTTON synthesize a sequence of phonemes, syllables are separated by . and phones are separated by _, stress marked with a preceding ' -- returns false if any phonemes not found -- if play is set then sound will be played to default output -- standard English phones will be loaded if phone_table is empty
