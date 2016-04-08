@@ -29,8 +29,8 @@ public:
   void reset();
   double process(double input);
 private:
-  Throat(const Throat&) = delete;
-  Throat& operator=(const Throat&) = delete;
+  // Throat(const Throat&) = delete;
+  // Throat& operator=(const Throat&) = delete;
 
   double tb1_;
   double ta0_;

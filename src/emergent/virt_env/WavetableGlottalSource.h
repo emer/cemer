@@ -43,8 +43,8 @@ public:
   double getSample(double frequency);
   void updateWavetable(double amplitude);
 private:
-  WavetableGlottalSource(const WavetableGlottalSource&) = delete;
-  WavetableGlottalSource& operator=(const WavetableGlottalSource&) = delete;
+  // WavetableGlottalSource(const WavetableGlottalSource&) = delete;
+  // WavetableGlottalSource& operator=(const WavetableGlottalSource&) = delete;
 
   void incrementTablePosition(double frequency);
 

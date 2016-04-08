@@ -36,8 +36,8 @@ public:
   double maximumSampleValue() const { return maximumSampleValue_; }
   long numberSamples() const { return numberSamples_; }
 private:
-  SampleRateConverter(const SampleRateConverter&) = delete;
-  SampleRateConverter& operator=(const SampleRateConverter&) = delete;
+  // SampleRateConverter(const SampleRateConverter&) = delete;
+  // SampleRateConverter& operator=(const SampleRateConverter&) = delete;
 
   void initializeConversion(int sampleRate, float outputRate);
   void initializeBuffer();

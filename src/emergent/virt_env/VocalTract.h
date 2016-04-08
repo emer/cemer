@@ -22,8 +22,12 @@
 #ifndef VocalTract_h
 #define VocalTract_h
 
+// parent includes:
 #include <taSound>
 #include "network_def.h"
+
+// member includes:
+#include <DataTable>
 
 #ifndef __MAKETA__
 #include "BandpassFilter.h"
@@ -35,6 +39,10 @@
 #include "Throat.h"
 #include "WavetableGlottalSource.h"
 #endif
+
+// declare all other types mentioned but not required to include:
+class float_Matrix; //
+
 
 eTypeDef_Of(VocalTractConfig);
 
@@ -153,6 +161,25 @@ class E_API VocalTractCtrl : public taOBase {
   // #STEM_BASE ##CAT_Audio #INLINE #INLINE_DUMP control parameters for driving a given sound from the vocal tract -- there are different such parameters for each "phoneme" etc.
   INHERITED(taOBase)
 public:
+  enum ParamIndex {         // parameter indexes for reading from matrix data
+    GLOT_PITCH = 0,
+    GLOT_VOL   = 1,
+    ASP_VOL    = 2,
+    FRIC_VOL   = 3,
+    FRIC_POS   = 4,
+    FRIC_CF    = 5,
+    FRIC_BW    = 6,
+    R2         = 7, 
+    R3         = 8, 
+    R4         = 9, 
+    R5         = 10,
+    R6         = 11,
+    R7         = 12,
+    R8         = 13,
+    VELUM      = 14,
+    N_PARAMS   = 15,
+  };
+
   float glot_pitch;
   // #MIN_-10 #MAX_0 glottal pitch value -- ranges from -10 for phoneme k to 0 for most, with some being -2 or -1 -- called microInt in gnuspeech data files
   float glot_vol;
@@ -193,6 +220,17 @@ public:
   // compute values in this set of params as deltas from (cur - prv) * ctrl_freq
   void  UpdateFromDeltas(const VocalTractCtrl& del);
   // update values in this set of params from deltas
+
+  void  SetFromFloat(float val, ParamIndex param, bool normalized);
+  // set given parameter to value
+  
+  void  SetFromFloats(const float* vals, bool normalized = true);
+  // set values from array of 15 float values -- see ParamIndex for indexes of each value -- for normalized values then 0..1 floats are expanded according to the min/max values given for each parameter, otherwise the value is used directly
+  void  SetFromMatrix(const float_Matrix& matrix, bool normalized = true);
+  // set values from a matrix of 15 float values -- see ParamIndex for indexes of each value -- for normalized values then 0..1 floats are expanded according to the min/max values
+  void  SetFromDataTable(const DataTable& table, const Variant& col, int row,
+                         bool normalized = true);
+  // set values from a matrix cell -- see ParamIndex for indexes of each value -- for normalized values then 0..1 floats are expanded according to the min/max values
   
   TA_SIMPLE_BASEFUNS(VocalTractCtrl);
 private:
@@ -226,7 +264,7 @@ public:
     N5 = 4,
     N6 = 5,
     TOTAL_NASAL_SECTIONS = 6,
-    VELUM = N1,
+    VELUM = N1, // #IGNORE
   };
 
   enum OroPharynxCoeff { //  oropharynx scattering junction coefficients (between each region)
@@ -300,13 +338,40 @@ public:
   // #READ_ONLY #SHOW previous control parameters -- automatically updated from previous cur_ctrl every time Synthesize is called
   VocalTractCtrl        del_ctrl;
   // #READ_ONLY #SHOW delta between current and previous control parameters -- automatically updated every time Synthesize is called
+  DataTable             phone_table;
+  // #SHOW_TREE #NO_SAVE #HIDDEN table of standard phonemes containing posture configurations for each phoneme
+  DataTable             dict_table;
+  // #SHOW_TREE #NO_SAVE #HIDDEN dictionary with pronunciation rules for words in terms of phones described in phone_table -- not loaded by default as it is large
 
-  void InitSynth();
-  // #BUTTON initialize the synthesizer -- call this after changing any of the basic sound / voice config parameters -- also call InitBuffers first if you want a different sample rate than the default 16000
-  void Synthesize(bool reset_first = false);
-  // #BUTTON synthesize sound using the current parameters for given duration of time, optionally starting over as a new sound if reset_first is true, or otherwise adding at the end of any existing sound present in the sound buffer -- the control parameters continue to evolve over time from previous values if you don't do reset_first
-  void SetVoice();
-  // #BUTTON set the voice to one of the default voices
+  virtual void InitSynth();
+  // #BUTTON #CAT_VocalTract initialize the synthesizer -- call this after changing any of the basic sound / voice config parameters -- also call InitBuffers first if you want a different sample rate than the default 16000
+  virtual void  CtrlFromFloats(const float* vals, bool normalized = true);
+  // #CAT_VocalTract set current control values from array of 15 float values -- see ParamIndex for indexes of each value -- for normalized values then 0..1 floats are expanded according to the min/max values given for each parameter, otherwise the value is used directly
+  virtual void  CtrlFromMatrix(const float_Matrix& matrix, bool normalized = true);
+  // #CAT_VocalTract set current control values from a matrix of 15 float values -- see ParamIndex for indexes of each value -- for normalized values then 0..1 floats are expanded according to the min/max values
+  virtual void  CtrlFromDataTable(const DataTable& table, const Variant& col, int row,
+                         bool normalized = true);
+  // #CAT_VocalTract set current control values from a matrix cell -- see ParamIndex for indexes of each value -- for normalized values then 0..1 floats are expanded according to the min/max values
+  virtual void  SynthInitBuffer();
+  // #CAT_VocalTract init the sound buffer to default params -- requires 44100 sample rate to work properly, so this is set, along with mono sound by default
+  virtual void  SynthReset(bool init_buffer = true);
+  // #CAT_VocalTract reset any existing speech that has been synthesized, so next synthesis will start at beginning -- init buffer will init the sound buffer to get rid of any  existing sound there, and start it all over
+  virtual void  Synthesize(bool reset_first = false);
+  // #BUTTON #CAT_VocalTract synthesize sound using the current parameters for given duration of time, optionally starting over as a new sound if reset_first is true, or otherwise adding at the end of any existing sound present in the sound buffer -- the control parameters continue to evolve over time from previous values if you don't do reset_first
+  virtual void  SetVoice();
+  // #BUTTON #CAT_VocalTract set the voice to one of the default voices
+
+  virtual bool  LoadEnglishPhones();
+  // load default English phones into phone_table
+  virtual bool  LoadEnglishDict();
+  // load default English pronunciation dictionary into dict_table
+  virtual bool  SynthPhone(const String& phon, bool stress = false,
+                          bool double_stress = false, bool syllable = false);
+  // #BUTTON synthesize a single phoneme with given extra factors -- standard English phones will be loaded if phone_table is empty
+  virtual bool  SynthPhones(const String& phones, bool reset_first = true, bool play = false);
+  // #BUTTON synthesize a sequence of phonemes, syllables are separated by . and phones are separated by _, stress marked with a preceding ' -- returns false if any phonemes not found -- if play is set then sound will be played to default output -- standard English phones will be loaded if phone_table is empty
+  virtual bool  SynthWord(const String& word, bool reset_first = true, bool play = false);
+  // #BUTTON synthesize a word by looking it up in the dictionary (after downcasing) and calling SynthPhones on the resulting phones -- returns false if word not found -- if play is set then sound will be played to default output -- standard English dictionary and phones will be loaded if tables are empty
   
 #ifndef __MAKETA__
   std::vector<float>& OutputData() { return outputData_; }

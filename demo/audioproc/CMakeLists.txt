@@ -1,5 +1,5 @@
 ########### demo/audioproc install files ###############
-
+# comment
 
 FILE(GLOB PROJ_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.proj")
 FILE(GLOB DTBL_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.dtbl")

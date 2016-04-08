@@ -92,10 +92,14 @@ SET_TA_PROPS(virt_env ${PROJECT_SOURCE_DIR}/src/emergent/virt_env)
 
 MAKETA_WRAP_H(emergent_virt_env_SRCS_MAKETA ${emergent_virt_env_HEADS_MAKETA} OPTIONS virt_env)
 
+ADD_PATH_TO_FILES(emergent_virt_env_QRC ${mypath}/virt_env "${virt_env_QRC}")
 
 if (QT_USE_5)
   qt5_wrap_cpp(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC})
   qt5_wrap_cpp(emergent_virt_env_SRCS_MOC ${emergent_virt_env_HEADS_MOC})
+
+  qt5_add_resources(emergent_virt_env_SRCS_QRC ${emergent_virt_env_QRC})
+  
 else (QT_USE_5)
   QT4_WRAP_CPP(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC})
   QT4_WRAP_CPP(emergent_virt_env_SRCS_MOC ${emergent_virt_env_HEADS_MOC})
@@ -121,6 +125,8 @@ set(emergentlib_SRCS
   ${emergent_actr_HEADS}
   ${emergent_leabra_CUDA_OBJS}
   ${emergent_virt_env_HEADS}
+
+  ${emergent_virt_env_SRCS_QRC}
 )
 
 EMERGENT_ADD_LIBRARY(emergentlib SHARED ${emergentlib_SRCS})

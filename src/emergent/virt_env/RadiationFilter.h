@@ -32,8 +32,8 @@ public:
   void reset();
   double filter(double input);
 private:
-  RadiationFilter(const RadiationFilter&) = delete;
-  RadiationFilter& operator=(const RadiationFilter&) = delete;
+  // RadiationFilter(const RadiationFilter&) = delete;
+  // RadiationFilter& operator=(const RadiationFilter&) = delete;
 
   double a20_;
   double a21_;

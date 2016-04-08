@@ -33,8 +33,13 @@
 
 #include "VocalTract.h"
 #include <DataTable>
+#include <float_Matrix>
+#include <MemberDef>
+#include <taMath_float>
 
 #include <taMisc>
+
+#include <QFile>
 
 TA_BASEFUNS_CTORS_DEFN(VocalTractConfig);
 TA_BASEFUNS_CTORS_DEFN(VoiceParams);
@@ -240,13 +245,164 @@ void VocalTractCtrl::UpdateFromDeltas(const VocalTractCtrl& del) {
   velum      += del.velum      ;
 }
 
+
+void VocalTractCtrl::SetFromFloat(float val, ParamIndex param, bool normalized) {
+  TypeDef* td = GetTypeDef();
+  int stidx = td->members.FindNameIdx("glot_pitch");
+  MemberDef* md = td->members[stidx + param];
+  float* par = (float*)md->GetOff(this);
+  if(normalized) {
+    float min = md->OptionAfter("MIN_").toFloat();
+    float max = md->OptionAfter("MAX_").toFloat();
+    *par = min + val * (max - min);
+  }
+  else {
+    *par = val;
+  }
+}
+
+void VocalTractCtrl::SetFromFloats(const float* vals, bool normalized) {
+  for(int i=0; i < N_PARAMS; i++) {
+    SetFromFloat(vals[i], (ParamIndex)i, normalized);
+  }
+}
+
+void VocalTractCtrl::SetFromMatrix(const float_Matrix& matrix, bool normalized) {
+  if(TestError(matrix.size < N_PARAMS, "SetFromMatrix", "need at least", String(N_PARAMS),
+               "elements in the matrix!")) {
+    return;
+  }
+  SetFromFloats(matrix.el, normalized);
+}
+
+void VocalTractCtrl::SetFromDataTable(const DataTable& table, const Variant& col, int row,
+                                      bool normalized) {
+  float_MatrixPtr mtx;
+  mtx = (float_Matrix*)table.GetValAsMatrix(col, row);
+  if(TestError(!(bool)mtx, "SetFromDataTable", "matrix column not found")) {
+    return;
+  }
+  SetFromMatrix(*(mtx.ptr()), normalized);
+}
+
 /////////////////////////////////////////////////////
 //              VocalTract
 
 
+void VocalTract::CtrlFromFloats(const float* vals, bool normalized) {
+  cur_ctrl.SetFromFloats(vals, normalized);
+}
 
-void VocalTract::Initialize()
-{
+void VocalTract::CtrlFromMatrix(const float_Matrix& matrix, bool normalized) {
+  cur_ctrl.SetFromMatrix(matrix, normalized);
+}
+
+void VocalTract::CtrlFromDataTable(const DataTable& table, const Variant& col, int row,
+                                   bool normalized) {
+  cur_ctrl.SetFromDataTable(table, col, row, normalized);
+}
+
+bool VocalTract::LoadEnglishPhones() {
+  QFile qrc_file(":/VocalTractEnglishPhones.dtbl");
+  qrc_file.open(QIODevice::ReadOnly);
+  QByteArray dat = qrc_file.readAll();
+  String str(dat);
+  phone_table.Load_String(str);
+  phone_table.ClearDataFlag(DataTable::SAVE_ROWS);
+  return true;
+}
+
+bool VocalTract::LoadEnglishDict() {
+  QFile qrc_file(":/VocalTractEnglishDict.dtbl");
+  qrc_file.open(QIODevice::ReadOnly);
+  QByteArray dat = qrc_file.readAll();
+  String str(dat);
+  dict_table.Load_String(str);
+  dict_table.ClearDataFlag(DataTable::SAVE_ROWS);
+  return true;
+}
+
+bool VocalTract::SynthPhone(const String& phon, bool stress, bool double_stress,
+                            bool syllable) {
+  if(phone_table.rows == 0)
+    LoadEnglishPhones();
+  String act = phon;
+  if(stress)
+    act = act + "'";
+  int idx = phone_table.FindVal(act, "phone", 0, true);
+  if(idx < 0) return false;
+  float duration = phone_table.GetVal("duration", idx).toFloat();
+  float transition = phone_table.GetVal("transition", idx).toFloat();
+  float tot_time = (duration + transition) * 2.0f;
+  int n_reps = taMath_float::ceil(tot_time / synth_dur_msec);
+  n_reps = MAX(n_reps, 1);
+  CtrlFromDataTable(phone_table, "phone_data", idx, false);
+  // todo: syllable, double_stress, qsss other params??
+  taMisc::Info("saying:", phon, "dur:", String(tot_time), "n_reps:", String(n_reps),
+               "start pos:", String(outputData_.size()));
+  for(int i=0; i<n_reps; i++) {
+    Synthesize(false);
+  }
+  return true;
+}
+
+bool VocalTract::SynthPhones(const String& phones, bool reset_first, bool play) {
+  if(reset_first)
+    SynthReset();
+  int len = phones.length();
+  String phon;
+  bool stress = false;
+  bool double_stress = false;
+  bool syllab = false;
+  for(int pos = 0; pos < len; pos++) {
+    int c = phones[pos];
+    if(c == '\'') { // stress
+      stress = true;
+      continue;
+    }
+    if(c == '\"') { // double stress
+      double_stress = true;
+      continue;
+    }
+    if(c == '%') { // double stress
+      SynthPhone(phon, stress, double_stress, syllab);
+      phon = "";
+      break;                    // done
+    }
+    if(c == '.') { // syllable
+      syllab = true;
+      SynthPhone(phon, stress, double_stress, syllab);
+      stress = false; double_stress = false; syllab = false;
+      phon = "";
+      continue;
+    }
+    if(c == '_') { // reg separator
+      SynthPhone(phon, stress, double_stress, syllab);
+      stress = false; double_stress = false; syllab = false;
+      phon = "";
+      continue;
+    }
+    phon += (char)c;
+  }
+  if(phon.nonempty()) {
+    SynthPhone(phon, stress, double_stress, syllab);
+  }
+  
+  if(play)
+    PlaySound();
+  return true;
+}
+
+bool VocalTract::SynthWord(const String& word, bool reset_first, bool play) {
+  if(dict_table.rows == 0)
+    LoadEnglishDict();
+  int idx = dict_table.FindVal(word, "word", 0, true);
+  if(idx < 0) return false;
+  String phones = dict_table.GetVal("phones", idx).toString();
+  return SynthPhones(phones, reset_first, play);
+}
+
+void VocalTract::Initialize() {
   reset();
   outputData_.reserve(OUTPUT_VECTOR_RESERVE);
 }
@@ -374,7 +530,7 @@ VocalTract::initializeSynthesizer()
 void
 VocalTract::InitSynth() {
   if(!IsValid()) {
-    InitBuffer(.1f * 16000, 16000); // 100msec, 16000 default sample freq
+    InitBuffer(.1f * 44100.0, 44100.0); // 100msec, default sample freq
   }
 
   float ctrl_rate = 1.0f / (synth_dur_msec / 1000.0f);
@@ -392,10 +548,23 @@ VocalTract::SetVoice() {
 }
 
 void
+VocalTract::SynthInitBuffer() {
+  InitBuffer((synth_dur_msec / 1000.0f) * 44100.0, 44100.0);
+}
+
+void
+VocalTract::SynthReset(bool init_buffer) {
+  ResetOutputData();
+  prv_ctrl.CopyFrom(&cur_ctrl); // no deltas if reset
+  if(init_buffer)
+    SynthInitBuffer();
+}
+
+void
 VocalTract::Synthesize(bool reset_first)
 {
   if(!IsValid()) {
-    InitBuffer(.1f * 16000, 16000); // 100msec, 16000 default sample freq
+    SynthInitBuffer();
   }
 
   float ctrl_rate = 1.0f / (synth_dur_msec / 1000.0f);
@@ -406,18 +575,17 @@ VocalTract::Synthesize(bool reset_first)
   }
 
   if(reset_first) {
-    ResetOutputData();
-    prv_ctrl.CopyFrom(&cur_ctrl); // no deltas if reset
+    SynthReset();
   }
 
-  double controlFreq = 1.0 / controlPeriod_;
+  float controlFreq = 1.0 / controlPeriod_;
 
   currentData_.CopyFrom(&cur_ctrl);
   del_ctrl.ComputeDeltas(cur_ctrl, prv_ctrl, controlFreq);
 
   for (int j = 0; j < controlPeriod_; j++) {
     Synthesize_impl();
-    currentData_.UpdateFromDeltas(del_ctrl);
+    // currentData_.UpdateFromDeltas(del_ctrl);
   }
 
   prv_ctrl.CopyFrom(&cur_ctrl); // prev is the new cur

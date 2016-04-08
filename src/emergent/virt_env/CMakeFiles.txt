@@ -223,4 +223,8 @@ set(virt_env_SRCS
   T3VEStatic.cpp
 )
 
+set(virt_env_QRC
+  virt_env.qrc
+)
+
 set(virt_env_FILES ${virt_env_HEADS} ${virt_env_SRCS})
