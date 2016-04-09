@@ -534,19 +534,37 @@ bool AuditoryProc::ProcessTrial() {
                "no steps worth of input sound available -- load a new sound")) {
     return false;
   }
+  
   int st_in_pos = input_pos;
-  int bord_eff = 2 * input.border_steps; // full amount to wrap
-  int tot_steps = input.total_steps;
-  trial_start_pos = input_pos - input.step_samples * input.border_steps;
-  trial_end_pos = trial_start_pos + input.trial_samples;
-  for(int chan=0; chan < input.channels; chan++) {
-    input_pos = st_in_pos;      // always start at same place per channel
-    WrapBorder(chan);
-    for(int step = bord_eff; step < tot_steps; step++) {
-      ProcessStep(chan, step);
+  if(input_pos == 0) {          // just starting out -- fill whole buffer..
+    int bord_eff = 2 * input.border_steps; // full amount to wrap
+    int tot_steps = input.total_steps;
+    trial_start_pos = input_pos;
+    trial_end_pos = trial_start_pos + input.trial_samples
+      + 2 * bord_eff * input.step_samples;
+    for(int chan=0; chan < input.channels; chan++) {
+      input_pos = st_in_pos;      // always start at same place per channel
+      for(int step = 0; step < tot_steps; step++) {
+        ProcessStep(chan, step);
+      }
+      FilterTrial(chan);
+      OutputToTable(chan);
     }
-    FilterTrial(chan);
-    OutputToTable(chan);
+  }
+  else {
+    int bord_eff = 2 * input.border_steps; // full amount to wrap
+    int tot_steps = input.total_steps;
+    trial_start_pos = input_pos - input.step_samples * input.border_steps;
+    trial_end_pos = trial_start_pos + input.trial_samples;
+    for(int chan=0; chan < input.channels; chan++) {
+      input_pos = st_in_pos;      // always start at same place per channel
+      WrapBorder(chan);
+      for(int step = bord_eff; step < tot_steps; step++) {
+        ProcessStep(chan, step);
+      }
+      FilterTrial(chan);
+      OutputToTable(chan);
+    }
   }
   return true;
 }
