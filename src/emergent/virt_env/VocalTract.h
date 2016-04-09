@@ -449,16 +449,16 @@ protected:
   float prevGlotAmplitude_;
 
   std::vector<float> outputData_;
-  std::unique_ptr<SampleRateConverter> srConv_;
-  std::unique_ptr<RadiationFilter> mouthRadiationFilter_;
-  std::unique_ptr<ReflectionFilter> mouthReflectionFilter_;
-  std::unique_ptr<RadiationFilter> nasalRadiationFilter_;
-  std::unique_ptr<ReflectionFilter> nasalReflectionFilter_;
-  std::unique_ptr<Throat> throat_;
-  std::unique_ptr<WavetableGlottalSource> glottalSource_;
-  std::unique_ptr<BandpassFilter> bandpassFilter_;
-  std::unique_ptr<NoiseFilter> noiseFilter_;
-  std::unique_ptr<NoiseSource> noiseSource_;
+  std::auto_ptr<SampleRateConverter> srConv_;
+  std::auto_ptr<RadiationFilter> mouthRadiationFilter_;
+  std::auto_ptr<ReflectionFilter> mouthReflectionFilter_;
+  std::auto_ptr<RadiationFilter> nasalRadiationFilter_;
+  std::auto_ptr<ReflectionFilter> nasalReflectionFilter_;
+  std::auto_ptr<Throat> throat_;
+  std::auto_ptr<WavetableGlottalSource> glottalSource_;
+  std::auto_ptr<BandpassFilter> bandpassFilter_;
+  std::auto_ptr<NoiseFilter> noiseFilter_;
+  std::auto_ptr<NoiseSource> noiseSource_;
 #endif
 
 private:

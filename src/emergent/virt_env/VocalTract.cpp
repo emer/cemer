@@ -484,16 +484,16 @@ VocalTract::reset()
   prevGlotAmplitude_ = -1.0;
   outputData_.resize(0);
 
-  if (srConv_) srConv_->reset();
-  if (mouthRadiationFilter_) mouthRadiationFilter_->reset();
-  if (mouthReflectionFilter_) mouthReflectionFilter_->reset();
-  if (nasalRadiationFilter_) nasalRadiationFilter_->reset();
-  if (nasalReflectionFilter_) nasalReflectionFilter_->reset();
-  if (throat_) throat_->reset();
-  if (glottalSource_) glottalSource_->reset();
-  if (bandpassFilter_) bandpassFilter_->reset();
-  if (noiseFilter_) noiseFilter_->reset();
-  if (noiseSource_) noiseSource_->reset();
+  if (srConv_.get() != NULL) srConv_->reset();
+  if (mouthRadiationFilter_.get() != NULL) mouthRadiationFilter_->reset();
+  if (mouthReflectionFilter_.get() != NULL) mouthReflectionFilter_->reset();
+  if (nasalRadiationFilter_.get() != NULL) nasalRadiationFilter_->reset();
+  if (nasalReflectionFilter_.get() != NULL) nasalReflectionFilter_->reset();
+  if (throat_.get() != NULL) throat_->reset();
+  if (glottalSource_.get() != NULL) glottalSource_->reset();
+  if (bandpassFilter_.get() != NULL) bandpassFilter_->reset();
+  if (noiseFilter_.get() != NULL) noiseFilter_->reset();
+  if (noiseSource_.get() != NULL) noiseSource_->reset();
 }
 
 /******************************************************************************
