@@ -643,10 +643,12 @@ VocalTract::Synthesize(bool reset_first)
     InitBuffer(n_frm, SampleRate(), ChannelCount(), samp_size, stype);
   }
   float scale = calculateMonoScale();
+#if (QT_VERSION >= 0x050000)
   void* buf = q_buf.data();
   for(int i=0; i < n_frm; i++) {
     WriteFloatAtIdx(outputData_[i] * scale, buf, i, stype, samp_size);
   }
+#endif
   SigEmitUpdated();
 }
 
