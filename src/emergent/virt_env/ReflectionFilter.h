@@ -25,18 +25,18 @@
 // is determined by the aperture coefficient.
 class ReflectionFilter {
 public:
-  ReflectionFilter(double apertureCoeff);
+  ReflectionFilter(float apertureCoeff);
   ~ReflectionFilter();
 
   void reset();
-  double filter(double input);
+  float filter(float input);
 private:
   // ReflectionFilter(const ReflectionFilter&) = delete;
   // ReflectionFilter& operator=(const ReflectionFilter&) = delete;
 
-  double a10_;
-  double b11_;
-  double reflectionY_;
+  float a10_;
+  float b11_;
+  float reflectionY_;
 };
 
 #endif /* TRM_REFLECTION_FILTER_H_ */

@@ -37,8 +37,8 @@
 #define FIR_CUTOFF                .00000001
 
 WavetableGlottalSource::WavetableGlottalSource(
-                                               Type type, double sampleRate,
-                                               double tp, double tnMin, double tnMax)
+                                               Type type, float sampleRate,
+                                               float tp, float tnMin, float tnMax)
 : wavetable_(TABLE_LENGTH)
 {
   // Calculates the initial glottal pulse and stores it
@@ -49,22 +49,22 @@ WavetableGlottalSource::WavetableGlottalSource(
   tableDiv2_ = static_cast<int>(rint(TABLE_LENGTH * ((tp + tnMax) / 100.0)));
   tnLength_ = tableDiv2_ - tableDiv1_;
   tnDelta_ = rint(TABLE_LENGTH * ((tnMax - tnMin) / 100.0));
-  basicIncrement_ = (double) TABLE_LENGTH / (double) sampleRate;
+  basicIncrement_ = (float) TABLE_LENGTH / (float) sampleRate;
   currentPosition_ = 0;
 
   /*  INITIALIZE THE WAVETABLE WITH EITHER A GLOTTAL PULSE OR SINE TONE  */
   if (type == TYPE_PULSE) {
     /*  CALCULATE RISE PORTION OF WAVE TABLE  */
     for (int i = 0; i < tableDiv1_; i++) {
-      double x = (double) i / (double) tableDiv1_;
-      double x2 = x * x;
-      double x3 = x2 * x;
+      float x = (float) i / (float) tableDiv1_;
+      float x2 = x * x;
+      float x3 = x2 * x;
       wavetable_[i] = (3.0 * x2) - (2.0 * x3);
     }
 
     /*  CALCULATE FALL PORTION OF WAVE TABLE  */
     for (int i = tableDiv1_, j = 0; i < tableDiv2_; i++, j++) {
-      double x = (double) j / tnLength_;
+      float x = (float) j / tnLength_;
       wavetable_[i] = 1.0 - (x * x);
     }
 
@@ -75,7 +75,7 @@ WavetableGlottalSource::WavetableGlottalSource(
   } else {
     /*  SINE WAVE  */
     for (int i = 0; i < TABLE_LENGTH; i++) {
-      wavetable_[i] = sin(((double) i / (double) TABLE_LENGTH) * 2.0 * M_PI);
+      wavetable_[i] = sin(((float) i / (float) TABLE_LENGTH) * 2.0 * M_PI);
     }
   }
 
@@ -104,14 +104,14 @@ WavetableGlottalSource::reset()
  *
  ******************************************************************************/
 void
-WavetableGlottalSource::updateWavetable(double amplitude)
+WavetableGlottalSource::updateWavetable(float amplitude)
 {
   /*  CALCULATE NEW CLOSURE POINT, BASED ON AMPLITUDE  */
-  double newDiv2 = tableDiv2_ - rint(amplitude * tnDelta_);
-  double invNewTnLength = 1.0 / (newDiv2 - tableDiv1_);
+  float newDiv2 = tableDiv2_ - rint(amplitude * tnDelta_);
+  float invNewTnLength = 1.0 / (newDiv2 - tableDiv1_);
 
   /*  RECALCULATE THE FALLING PORTION OF THE GLOTTAL PULSE  */
-  double x = 0.0;
+  float x = 0.0;
   for (int i = tableDiv1_, end = static_cast<int>(newDiv2); i < end; ++i, x += invNewTnLength) {
     wavetable_[i] = 1.0 - (x * x);
   }
@@ -131,7 +131,7 @@ WavetableGlottalSource::updateWavetable(double amplitude)
  *
  ******************************************************************************/
 void
-WavetableGlottalSource::incrementTablePosition(double frequency)
+WavetableGlottalSource::incrementTablePosition(float frequency)
 {
   currentPosition_ = mod0(currentPosition_ + (frequency * basicIncrement_));
 }
@@ -145,11 +145,11 @@ WavetableGlottalSource::incrementTablePosition(double frequency)
  *
  ******************************************************************************/
 #if OVERSAMPLING_OSCILLATOR
-double
-WavetableGlottalSource::getSample(double frequency)  /*  2X OVERSAMPLING OSCILLATOR  */
+float
+WavetableGlottalSource::getSample(float frequency)  /*  2X OVERSAMPLING OSCILLATOR  */
 {
   int lowerPosition, upperPosition;
-  double interpolatedValue, output;
+  float interpolatedValue, output;
 
   for (int i = 0; i < 2; i++) {
     /*  FIRST INCREMENT THE TABLE POSITION, DEPENDING ON FREQUENCY  */
@@ -172,8 +172,8 @@ WavetableGlottalSource::getSample(double frequency)  /*  2X OVERSAMPLING OSCILLA
   return output;
 }
 #else
-double
-WavetableGlottalSource::getSample(double frequency)  /*  PLAIN OSCILLATOR  */
+float
+WavetableGlottalSource::getSample(float frequency)  /*  PLAIN OSCILLATOR  */
 {
   int lowerPosition, upperPosition;
 
@@ -199,8 +199,8 @@ WavetableGlottalSource::getSample(double frequency)  /*  PLAIN OSCILLATOR  */
  *             range 0 -> TABLE_MODULUS.
  *
  ******************************************************************************/
-double
-WavetableGlottalSource::mod0(double value)
+float
+WavetableGlottalSource::mod0(float value)
 {
   if (value > TABLE_MODULUS) {
     value -= TABLE_LENGTH;

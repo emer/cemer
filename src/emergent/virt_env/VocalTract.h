@@ -211,16 +211,26 @@ public:
   float velum;
   // #MIN_0.1 #MAX_1.5 velum opening -- 1.5 when fully open, .1 when closed, and .25, .5 intermediates used
 
+  const float& ParamVal(int idx) const
+  { return (&glot_pitch)[idx]; }
+  // get parameter value using *zero-based* index value (e.g., ParamIndex)
+  float& ParamVal(int idx)
+  { return (&glot_pitch)[idx]; }
+  // get parameter value using *zero-based* index value (e.g., ParamIndex)
   float RadiusVal(int idx)
   { if(idx <= 0) return 0.8f; return (&radius_2)[idx-1]; }
-  // get radius value using *zero-based* index value (0 = radius_1 which is constant..)
+  // get radius value using *zero-based* index value
 
   void  ComputeDeltas(const VocalTractCtrl& cur, const VocalTractCtrl& prv,
-                      float ctrl_freq);
+                      const VocalTractCtrl& del_max, float ctrl_freq);
   // compute values in this set of params as deltas from (cur - prv) * ctrl_freq
   void  UpdateFromDeltas(const VocalTractCtrl& del);
   // update values in this set of params from deltas
+  void  DefaultMaxDeltas();
+  // set the default max delta values in this object (for del_max field in VocalTract)
 
+  void  SetFromParams(const VocalTractCtrl& oth);
+  // fast copy of parameters from other control params
   void  SetFromFloat(float val, ParamIndex param, bool normalized);
   // set given parameter to value
   
@@ -338,6 +348,8 @@ public:
   // #READ_ONLY #SHOW previous control parameters -- automatically updated from previous cur_ctrl every time Synthesize is called
   VocalTractCtrl        del_ctrl;
   // #READ_ONLY #SHOW delta between current and previous control parameters -- automatically updated every time Synthesize is called
+  VocalTractCtrl        del_max;
+  // #NO_SAVE maximum delta values for each parameter -- vocal system cannot change faster than this!
   DataTable             phone_table;
   // #SHOW_TREE #NO_SAVE #HIDDEN table of standard phonemes containing posture configurations for each phoneme
   DataTable             dict_table;
@@ -357,7 +369,10 @@ public:
   virtual void  SynthReset(bool init_buffer = true);
   // #CAT_VocalTract reset any existing speech that has been synthesized, so next synthesis will start at beginning -- init buffer will init the sound buffer to get rid of any  existing sound there, and start it all over
   virtual void  Synthesize(bool reset_first = false);
-  // #BUTTON #CAT_VocalTract synthesize sound using the current parameters for given duration of time, optionally starting over as a new sound if reset_first is true, or otherwise adding at the end of any existing sound present in the sound buffer -- the control parameters continue to evolve over time from previous values if you don't do reset_first
+  // #BUTTON #CAT_VocalTract synthesize sound using the current parameters for synth_dur_msec, optionally starting over as a new sound if reset_first is true, or otherwise adding at the end of any existing sound present in the sound buffer -- the control parameters continue to evolve over time from previous values if you don't do reset_first
+  virtual void  SynthFromDataTable(const DataTable& table, const Variant& col, int row,
+                                   bool normalized = true, bool reset_first = false);
+  // #CAT_VocalTract synthesize from data table matrix cell of phone parameters -- if cell is two-dimensional and inner dimension is 15 (number of params) then outer dimension will be iterated over, updating the control parameters at synth_dur_msec per set of inner-loop dimensions  -- for normalized values then 0..1 floats are expanded according to the min/max values
   virtual void  SetVoice();
   // #BUTTON #CAT_VocalTract set the voice to one of the default voices
 
@@ -373,6 +388,8 @@ public:
   // #BUTTON synthesize a sequence of phonemes, syllables are separated by . and phones are separated by _, stress marked with a preceding ' -- returns false if any phonemes not found -- if play is set then sound will be played to default output -- standard English phones will be loaded if phone_table is empty
   virtual bool  SynthWord(const String& word, bool reset_first = true, bool play = false);
   // #BUTTON synthesize a word by looking it up in the dictionary (after downcasing) and calling SynthPhones on the resulting phones -- returns false if word not found -- if play is set then sound will be played to default output -- standard English dictionary and phones will be loaded if tables are empty
+  virtual bool  SynthWords(const String& words, bool reset_first = true, bool play = true);
+  // #BUTTON synthesize multiple words separated by spaces -- returns false if a word not found -- if play is set then sound will be played to default output -- standard English dictionary and phones will be loaded if tables are empty
   
 #ifndef __MAKETA__
   std::vector<float>& OutputData() { return outputData_; }

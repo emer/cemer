@@ -29,12 +29,12 @@ public:
   ~NoiseFilter();
 
   void reset();
-  double filter(double input);
+  float filter(float input);
 private:
   // NoiseFilter(const NoiseFilter&) = delete;
   // NoiseFilter& operator=(const NoiseFilter&) = delete;
 
-  double noiseX_;
+  float noiseX_;
 };
 
 #endif /* TRM_NOISE_FILTER_H_ */

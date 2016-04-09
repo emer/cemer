@@ -20,7 +20,7 @@
 
 #include "Throat.h"
 
-Throat::Throat(double sampleRate, double throatCutoff, double throatGain)
+Throat::Throat(float sampleRate, float throatCutoff, float throatGain)
   : throatGain_(throatGain)
   , throatY_(0.0)
 {
@@ -52,10 +52,10 @@ Throat::reset()
  *             second term, since tb1 has reversed sign.
  *
  ******************************************************************************/
-double
-Throat::process(double input)
+float
+Throat::process(float input)
 {
-  double output = (ta0_ * input) + (tb1_ * throatY_);
+  float output = (ta0_ * input) + (tb1_ * throatY_);
   throatY_ = output;
   return output * throatGain_;
 }

@@ -34,10 +34,10 @@ NoiseFilter::reset()
   noiseX_ = 0.0;
 }
 
-double
-NoiseFilter::filter(double input)
+float
+NoiseFilter::filter(float input)
 {
-  double output = input + noiseX_;
+  float output = input + noiseX_;
   noiseX_ = input;
   return output;
 }

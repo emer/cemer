@@ -101,21 +101,21 @@ SampleRateConverter::initializeConversion(int sampleRate, float outputRate)
   initializeFilter();
 
   /*  CALCULATE SAMPLE RATE RATIO  */
-  sampleRateRatio_ = (double) outputRate / (double) sampleRate;
+  sampleRateRatio_ = (float) outputRate / (float) sampleRate;
 
   /*  CALCULATE TIME REGISTER INCREMENT  */
   timeRegisterIncrement_ =
     (int) rint(pow(2.0, FRACTION_BITS) / sampleRateRatio_);
 
   /*  CALCULATE ROUNDED SAMPLE RATE RATIO  */
-  double roundedSampleRateRatio =
-    pow(2.0, FRACTION_BITS) / (double) timeRegisterIncrement_;
+  float roundedSampleRateRatio =
+    pow(2.0, FRACTION_BITS) / (float) timeRegisterIncrement_;
 
   /*  CALCULATE PHASE OR FILTER INCREMENT  */
   if (sampleRateRatio_ >= 1.0) {
     filterIncrement_ = L_RANGE;
   } else {
-    phaseIncrement_ = (unsigned int) rint(sampleRateRatio_ * (double) FRACTION_RANGE);
+    phaseIncrement_ = (unsigned int) rint(sampleRateRatio_ * (float) FRACTION_RANGE);
   }
 
   /*  CALCULATE PAD SIZE  */
@@ -132,20 +132,20 @@ SampleRateConverter::initializeConversion(int sampleRate, float outputRate)
  *  function:  Izero
  *
  *  purpose:   Returns the value for the modified Bessel function of
- *             the first kind, order 0, as a double.
+ *             the first kind, order 0, as a float.
  *
  ******************************************************************************/
-double
-SampleRateConverter::Izero(double x)
+float
+SampleRateConverter::Izero(float x)
 {
-  double sum, u, halfx, temp;
+  float sum, u, halfx, temp;
   int n;
 
   sum = u = n = 1;
   halfx = x / 2.0;
 
   do {
-    temp = halfx / (double) n;
+    temp = halfx / (float) n;
     n += 1;
     temp *= temp;
     u *= temp;
@@ -191,16 +191,16 @@ SampleRateConverter::initializeFilter()
 {
   /*  INITIALIZE THE FILTER IMPULSE RESPONSE  */
   h_[0] = LP_CUTOFF;
-  double x = M_PI / (double) L_RANGE;
+  float x = M_PI / (float) L_RANGE;
   for (int i = 1; i < FILTER_LENGTH; i++) {
-    double y = (double) i * x;
+    float y = (float) i * x;
     h_[i] = sin(y * LP_CUTOFF) / y;
   }
 
   /*  APPLY A KAISER WINDOW TO THE IMPULSE RESPONSE  */
-  double IBeta = 1.0 / Izero(BETA);
+  float IBeta = 1.0 / Izero(BETA);
   for (int i = 0; i < FILTER_LENGTH; i++) {
-    double temp = (double) i / FILTER_LENGTH;
+    float temp = (float) i / FILTER_LENGTH;
     h_[i] *= Izero(BETA * sqrt(1.0 - (temp * temp))) * IBeta;
   }
 
@@ -221,7 +221,7 @@ SampleRateConverter::initializeFilter()
  *
  ******************************************************************************/
 void
-SampleRateConverter::dataFill(double data)
+SampleRateConverter::dataFill(float data)
 {
   /*  PUT THE DATA INTO THE RING BUFFER  */
   buffer_[fillPtr_] = data;
@@ -266,10 +266,10 @@ SampleRateConverter::dataEmpty()
   if (sampleRateRatio_ >= 1.0) {
     while (emptyPtr_ < endPtr) {
       /*  RESET ACCUMULATOR TO ZERO  */
-      double output = 0.0;
+      float output = 0.0;
 
       /*  CALCULATE INTERPOLATION VALUE (STATIC WHEN UPSAMPLING)  */
-      double interpolation = (double) mValue(timeRegister_) / (double) M_RANGE;
+      float interpolation = (float) mValue(timeRegister_) / (float) M_RANGE;
 
       /*  COMPUTE THE LEFT SIDE OF THE FILTER CONVOLUTION  */
       int index = emptyPtr_;
@@ -282,7 +282,7 @@ SampleRateConverter::dataEmpty()
 
       /*  ADJUST VALUES FOR RIGHT SIDE CALCULATION  */
       timeRegister_ = ~timeRegister_;
-      interpolation = (double) mValue(timeRegister_) / (double) M_RANGE;
+      interpolation = (float) mValue(timeRegister_) / (float) M_RANGE;
 
       /*  COMPUTE THE RIGHT SIDE OF THE FILTER CONVOLUTION  */
       index = emptyPtr_;
@@ -295,7 +295,7 @@ SampleRateConverter::dataEmpty()
       }
 
       /*  RECORD MAXIMUM SAMPLE VALUE  */
-      double absoluteSampleValue = fabs(output);
+      float absoluteSampleValue = fabs(output);
       if (absoluteSampleValue > maximumSampleValue_) {
         maximumSampleValue_ = absoluteSampleValue;
       }
@@ -329,18 +329,18 @@ SampleRateConverter::dataEmpty()
     while (emptyPtr_ < endPtr) {
 
       /*  RESET ACCUMULATOR TO ZERO  */
-      double output = 0.0;
+      float output = 0.0;
 
       /*  COMPUTE P PRIME  */
       unsigned int phaseIndex = (unsigned int) rint(
-                                                    ((double) fractionValue(timeRegister_)) * sampleRateRatio_);
+                                                    ((float) fractionValue(timeRegister_)) * sampleRateRatio_);
 
       /*  COMPUTE THE LEFT SIDE OF THE FILTER CONVOLUTION  */
       int index = emptyPtr_;
       unsigned int impulseIndex;
       while ((impulseIndex = (phaseIndex >> M_BITS)) < FILTER_LENGTH) {
-        double impulse = h_[impulseIndex] + (deltaH_[impulseIndex] *
-                                             (((double) mValue(phaseIndex)) / (double) M_RANGE));
+        float impulse = h_[impulseIndex] + (deltaH_[impulseIndex] *
+                                             (((float) mValue(phaseIndex)) / (float) M_RANGE));
         output += (buffer_[index] * impulse);
         srDecrement(&index, BUFFER_SIZE);
         phaseIndex += phaseIncrement_;
@@ -348,21 +348,21 @@ SampleRateConverter::dataEmpty()
 
       /*  COMPUTE P PRIME, ADJUSTED FOR RIGHT SIDE  */
       phaseIndex = (unsigned int) rint(
-                                       ((double) fractionValue(~timeRegister_)) * sampleRateRatio_);
+                                       ((float) fractionValue(~timeRegister_)) * sampleRateRatio_);
 
       /*  COMPUTE THE RIGHT SIDE OF THE FILTER CONVOLUTION  */
       index = emptyPtr_;
       srIncrement(&index, BUFFER_SIZE);
       while ((impulseIndex = (phaseIndex >> M_BITS)) < FILTER_LENGTH) {
-        double impulse = h_[impulseIndex] + (deltaH_[impulseIndex] *
-                                             (((double) mValue(phaseIndex)) / (double) M_RANGE));
+        float impulse = h_[impulseIndex] + (deltaH_[impulseIndex] *
+                                             (((float) mValue(phaseIndex)) / (float) M_RANGE));
         output += (buffer_[index] * impulse);
         srIncrement(&index, BUFFER_SIZE);
         phaseIndex += phaseIncrement_;
       }
 
       /*  RECORD MAXIMUM SAMPLE VALUE  */
-      double absoluteSampleValue = fabs(output);
+      float absoluteSampleValue = fabs(output);
       if (absoluteSampleValue > maximumSampleValue_) {
         maximumSampleValue_ = absoluteSampleValue;
       }

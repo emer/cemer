@@ -22,7 +22,7 @@
 
 #include <cmath>
 
-ReflectionFilter::ReflectionFilter(double apertureCoeff)
+ReflectionFilter::ReflectionFilter(float apertureCoeff)
   : reflectionY_(0.0)
 {
   b11_ = -apertureCoeff;
@@ -39,10 +39,10 @@ ReflectionFilter::reset()
   reflectionY_ = 0.0;
 }
 
-double
-ReflectionFilter::filter(double input)
+float
+ReflectionFilter::filter(float input)
 {
-  double output = (a10_ * input) - (b11_ * reflectionY_);
+  float output = (a10_ * input) - (b11_ * reflectionY_);
   reflectionY_ = output;
   return output;
 }

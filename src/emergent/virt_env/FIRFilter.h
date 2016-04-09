@@ -32,23 +32,23 @@
  ******************************************************************************/
 class FIRFilter {
 public:
-  FIRFilter(double beta, double gamma, double cutoff);
+  FIRFilter(float beta, float gamma, float cutoff);
   ~FIRFilter();
 
   void reset();
-  double filter(double input, int needOutput);
+  float filter(float input, int needOutput);
 private:
   FIRFilter(const FIRFilter&) = delete;
   FIRFilter& operator=(const FIRFilter&) = delete;
 
-  static int maximallyFlat(double beta, double gamma, int* np, double* coefficient);
-  static void trim(double cutoff, int* numberCoefficients, double* coefficient);
+  static int maximallyFlat(float beta, float gamma, int* np, float* coefficient);
+  static void trim(float cutoff, int* numberCoefficients, float* coefficient);
   static int increment(int pointer, int modulus);
   static int decrement(int pointer, int modulus);
-  static void rationalApproximation(double number, int* order, int* numerator, int* denominator);
+  static void rationalApproximation(float number, int* order, int* numerator, int* denominator);
 
-  std::vector<double> data_;
-  std::vector<double> coef_;
+  std::vector<float> data_;
+  std::vector<float> coef_;
   int ptr_;
   int numberTaps_;
 };

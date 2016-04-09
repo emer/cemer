@@ -20,7 +20,7 @@
 
 #include "RadiationFilter.h"
 
-RadiationFilter::RadiationFilter(double apertureCoeff)
+RadiationFilter::RadiationFilter(float apertureCoeff)
   : radiationX_(0.0)
   , radiationY_(0.0)
 {
@@ -39,10 +39,10 @@ RadiationFilter::reset()
   radiationY_ = 0.0;
 }
 
-double
-RadiationFilter::filter(double input)
+float
+RadiationFilter::filter(float input)
 {
-  double output = (a20_ * input) + (a21_ * radiationX_) - (b21_ * radiationY_);
+  float output = (a20_ * input) + (a21_ * radiationX_) - (b21_ * radiationY_);
   radiationX_ = input;
   radiationY_ = output;
   return output;

@@ -37,10 +37,10 @@ NoiseSource::reset()
   seed_ = INITIAL_SEED;
 }
 
-double
+float
 NoiseSource::getSample()
 {
-  double product = seed_ * FACTOR;
+  float product = seed_ * FACTOR;
   seed_ = product - static_cast<int>(product);
   return seed_ - 0.5;
 }

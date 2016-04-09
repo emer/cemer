@@ -27,12 +27,12 @@ public:
   ~NoiseSource();
 
   void reset();
-  double getSample();
+  float getSample();
 private:
   // NoiseSource(const NoiseSource&) = delete;
   // NoiseSource& operator=(const NoiseSource&) = delete;
 
-  double seed_;
+  float seed_;
 };
 
 #endif /* TRM_NOISE_SOURCE_H_ */

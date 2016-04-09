@@ -209,42 +209,51 @@ void VocalTractCtrl::Initialize() {
 }
 
 void VocalTractCtrl::ComputeDeltas(const VocalTractCtrl& cur, const VocalTractCtrl& prv,
-                                   float ctrl_freq) {
-  glot_pitch = (cur.glot_pitch - prv.glot_pitch) * ctrl_freq;
-  glot_vol   = (cur.glot_vol   - prv.glot_vol  ) * ctrl_freq;
-  asp_vol    = (cur.asp_vol    - prv.asp_vol   ) * ctrl_freq;
-  fric_vol   = (cur.fric_vol   - prv.fric_vol  ) * ctrl_freq;
-  fric_pos   = (cur.fric_pos   - prv.fric_pos  ) * ctrl_freq;
-  fric_cf    = (cur.fric_cf    - prv.fric_cf   ) * ctrl_freq;
-  fric_bw    = (cur.fric_bw    - prv.fric_bw   ) * ctrl_freq;
-  radius_2   = (cur.radius_2   - prv.radius_2  ) * ctrl_freq;
-  radius_3   = (cur.radius_3   - prv.radius_3  ) * ctrl_freq;
-  radius_4   = (cur.radius_4   - prv.radius_4  ) * ctrl_freq;
-  radius_5   = (cur.radius_5   - prv.radius_5  ) * ctrl_freq;
-  radius_6   = (cur.radius_6   - prv.radius_6  ) * ctrl_freq;
-  radius_7   = (cur.radius_7   - prv.radius_7  ) * ctrl_freq;
-  radius_8   = (cur.radius_8   - prv.radius_8  ) * ctrl_freq;
-  velum      = (cur.velum      - prv.velum     ) * ctrl_freq;
+                                   const VocalTractCtrl& del_max, float ctrl_freq) {
+  for(int i=0; i< N_PARAMS; i++) {
+    float cval = cur.ParamVal(i);
+    float pval = prv.ParamVal(i);
+    float dmax = del_max.ParamVal(i);
+    float& nval = ParamVal(i);
+    nval = (cval - pval) * ctrl_freq;
+    // if(nval > dmax) nval = dmax;
+    // else if (nval < -dmax) nval = -dmax;
+  }
 }
 
 void VocalTractCtrl::UpdateFromDeltas(const VocalTractCtrl& del) {
-  glot_pitch += del.glot_pitch ;
-  glot_vol   += del.glot_vol   ;
-  asp_vol    += del.asp_vol    ;
-  fric_vol   += del.fric_vol   ;
-  fric_pos   += del.fric_pos   ;
-  fric_cf    += del.fric_cf    ;
-  fric_bw    += del.fric_bw    ;
-  radius_2   += del.radius_2   ;
-  radius_3   += del.radius_3   ;
-  radius_4   += del.radius_4   ;
-  radius_5   += del.radius_5   ;
-  radius_6   += del.radius_6   ;
-  radius_7   += del.radius_7   ;
-  radius_8   += del.radius_8   ;
-  velum      += del.velum      ;
+  for(int i=0; i< N_PARAMS; i++) {
+    float dval = del.ParamVal(i);
+    float& nval = ParamVal(i);
+    nval += dval;
+  }
 }
 
+void VocalTractCtrl::DefaultMaxDeltas() {
+  float ctrl_freq = 1.0f / 501.0f; // default
+  // default to entire range ok here for now.. fix when glitches encountered..
+  glot_pitch = 10.0f * ctrl_freq;
+  glot_vol = 60.0f * ctrl_freq;
+  asp_vol = 10.0f * ctrl_freq;
+  fric_vol = 24.0f * ctrl_freq;
+  fric_pos = 7.0f * ctrl_freq;
+  fric_cf = 3000.0f * ctrl_freq;
+  fric_bw = 4000.0f * ctrl_freq;
+  radius_2 = 3.0f * ctrl_freq;
+  radius_3 = 3.0f * ctrl_freq;
+  radius_4 = 3.0f * ctrl_freq;
+  radius_5 = 3.0f * ctrl_freq;
+  radius_6 = 3.0f * ctrl_freq;
+  radius_7 = 3.0f * ctrl_freq;
+  radius_8 = 3.0f * ctrl_freq;
+  velum = 1.5f * ctrl_freq;
+}
+
+void VocalTractCtrl::SetFromParams(const VocalTractCtrl& oth) {
+  for(int i=0; i< N_PARAMS; i++) {
+    ParamVal(i) = oth.ParamVal(i);
+  }
+}
 
 void VocalTractCtrl::SetFromFloat(float val, ParamIndex param, bool normalized) {
   TypeDef* td = GetTypeDef();
@@ -302,6 +311,30 @@ void VocalTract::CtrlFromDataTable(const DataTable& table, const Variant& col, i
   cur_ctrl.SetFromDataTable(table, col, row, normalized);
 }
 
+void VocalTract::SynthFromDataTable(const DataTable& table, const Variant& col, int row,
+                                    bool normalized, bool reset_first) {
+  float_MatrixPtr mtx;
+  mtx = (float_Matrix*)table.GetValAsMatrix(col, row);
+  if(TestError(!(bool)mtx, "SynthFromDataTable", "matrix column not found")) {
+    return;
+  }
+  if(mtx->dims() == 2 && mtx->dim(0) == VocalTractCtrl::N_PARAMS) {
+    // multi-dim case..
+    int n_outer = mtx->dim(1);
+    for(int i=0; i< n_outer; i++) {
+      float_MatrixPtr frm;
+      frm = (float_Matrix*)mtx->GetFrameSlice(i);
+      CtrlFromMatrix(*frm, normalized);
+      Synthesize(reset_first && (i == 0));
+    }
+  }
+  else {
+    // one-shot
+    cur_ctrl.SetFromDataTable(table, col, row, normalized);
+    Synthesize(reset_first);
+  }
+}
+
 bool VocalTract::LoadEnglishPhones() {
   QFile qrc_file(":/VocalTractEnglishPhones.dtbl");
   qrc_file.open(QIODevice::ReadOnly);
@@ -333,7 +366,7 @@ bool VocalTract::SynthPhone(const String& phon, bool stress, bool double_stress,
   if(idx < 0) return false;
   float duration = phone_table.GetVal("duration", idx).toFloat();
   float transition = phone_table.GetVal("transition", idx).toFloat();
-  float tot_time = (duration + transition);
+  float tot_time = (duration + transition) * 1.5f;
   int n_reps = taMath_float::ceil(tot_time / synth_dur_msec);
   n_reps = MAX(n_reps, 1);
   CtrlFromDataTable(phone_table, "phone_data", idx, false);
@@ -406,7 +439,28 @@ bool VocalTract::SynthWord(const String& word, bool reset_first, bool play) {
   return SynthPhones(phones, reset_first, play);
 }
 
+bool VocalTract::SynthWords(const String& words, bool reset_first, bool play) {
+  String_Array sary;
+  sary.Split(words, " ");
+  bool rval = true;
+  for(int i=0; i < sary.size; i++) {
+    rval = SynthWord(sary[i], (reset_first && (i == 0)), false);
+    if(!rval) break;
+    if(i < sary.size-1) {
+      SynthPhone("#");
+    }
+  }
+  if(play)
+    PlaySound();
+  return rval;
+}
+
 void VocalTract::Initialize() {
+  volume = 60.0f;
+  balance = 0.0f;
+  synth_dur_msec = 25.0f;
+  controlRate_ = 0.0;
+  del_max.DefaultMaxDeltas();
   reset();
   outputData_.reserve(OUTPUT_VECTOR_RESERVE);
 }
@@ -414,11 +468,6 @@ void VocalTract::Initialize() {
 void
 VocalTract::reset()
 {
-  volume = 60.0f;
-  balance = 0.0f;
-  synth_dur_msec = 25.0f;
-  controlRate_ = 0.0;
-  
   controlPeriod_    = 0;
   actualTubeLength_ = 0.0;
   memset(&oropharynx_[0][0][0], 0, sizeof(float) * TOTAL_SECTIONS * 2 * 2);
@@ -533,14 +582,13 @@ VocalTract::initializeSynthesizer()
 
 void
 VocalTract::InitSynth() {
-  if(!IsValid()) {
-    InitBuffer(.1f * 44100.0, 44100.0); // 100msec, default sample freq
-  }
-
+  SynthInitBuffer();
+  reset();
   float ctrl_rate = 1.0f / (synth_dur_msec / 1000.0f);
   controlRate_ = ctrl_rate;
   initializeSynthesizer();
-  prv_ctrl.CopyFrom(&cur_ctrl); // no deltas if reset
+  prv_ctrl.SetFromParams(cur_ctrl); // no deltas if reset
+  currentData_.SetFromParams(cur_ctrl);
   SigEmitUpdated();
 }
 
@@ -558,8 +606,7 @@ VocalTract::SynthInitBuffer() {
 
 void
 VocalTract::SynthReset(bool init_buffer) {
-  ResetOutputData();
-  prv_ctrl.CopyFrom(&cur_ctrl); // no deltas if reset
+  InitSynth();
   if(init_buffer)
     SynthInitBuffer();
 }
@@ -567,32 +614,26 @@ VocalTract::SynthReset(bool init_buffer) {
 void
 VocalTract::Synthesize(bool reset_first)
 {
-  if(!IsValid()) {
-    SynthInitBuffer();
-  }
-
   float ctrl_rate = 1.0f / (synth_dur_msec / 1000.0f);
-  if(ctrl_rate != controlRate_) {
-    controlRate_ = ctrl_rate;
-    initializeSynthesizer();
-    prv_ctrl.CopyFrom(&cur_ctrl); // no deltas if reset
+  if(ctrl_rate != controlRate_ || !IsValid()) {
+    InitSynth();
+  }
+  else if(reset_first) {
+    SynthReset(true);           // init buffer
   }
 
-  if(reset_first) {
-    SynthReset();
-  }
+  float controlFreq = 1.0f / controlPeriod_;
 
-  float controlFreq = 1.0 / controlPeriod_;
-
-  currentData_.CopyFrom(&prv_ctrl); // start with previous!!! doh!
-  del_ctrl.ComputeDeltas(cur_ctrl, prv_ctrl, controlFreq);
+  // taMisc::Info("control period:", String(controlPeriod_), "freq:", String(controlFreq));
+  
+  del_ctrl.ComputeDeltas(cur_ctrl, prv_ctrl, del_max, controlFreq);
 
   for (int j = 0; j < controlPeriod_; j++) {
     Synthesize_impl();
     currentData_.UpdateFromDeltas(del_ctrl);
   }
 
-  prv_ctrl.CopyFrom(&cur_ctrl); // prev is the new cur
+  prv_ctrl.SetFromParams(currentData_); // prev is where we actually got, not where we wanted to get..
 
   int samp_size = SampleSize();
   SoundSampleType stype = SampleType();

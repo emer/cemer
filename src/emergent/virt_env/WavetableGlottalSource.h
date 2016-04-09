@@ -35,28 +35,28 @@ public:
   };
 
   WavetableGlottalSource(
-                         Type type, double sampleRate,
-                         double tp = 0.0, double tnMin = 0.0, double tnMax = 0.0);
+                         Type type, float sampleRate,
+                         float tp = 0.0, float tnMin = 0.0, float tnMax = 0.0);
   ~WavetableGlottalSource();
 
   void reset();
-  double getSample(double frequency);
-  void updateWavetable(double amplitude);
+  float getSample(float frequency);
+  void updateWavetable(float amplitude);
 private:
   // WavetableGlottalSource(const WavetableGlottalSource&) = delete;
   // WavetableGlottalSource& operator=(const WavetableGlottalSource&) = delete;
 
-  void incrementTablePosition(double frequency);
+  void incrementTablePosition(float frequency);
 
-  static double mod0(double value);
+  static float mod0(float value);
 
   int    tableDiv1_;
   int    tableDiv2_;
-  double tnLength_;
-  double tnDelta_;
-  double basicIncrement_;
-  double currentPosition_;
-  std::vector<double> wavetable_;
+  float tnLength_;
+  float tnDelta_;
+  float basicIncrement_;
+  float currentPosition_;
+  std::vector<float> wavetable_;
   std::unique_ptr<FIRFilter> firFilter_;
 };
 

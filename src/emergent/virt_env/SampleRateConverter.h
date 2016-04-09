@@ -29,11 +29,11 @@ public:
   ~SampleRateConverter();
 
   void reset();
-  void dataFill(double data);
+  void dataFill(float data);
   void dataEmpty();
   void flushBuffer();
 
-  double maximumSampleValue() const { return maximumSampleValue_; }
+  float maximumSampleValue() const { return maximumSampleValue_; }
   long numberSamples() const { return numberSamples_; }
 private:
   // SampleRateConverter(const SampleRateConverter&) = delete;
@@ -43,11 +43,11 @@ private:
   void initializeBuffer();
   void initializeFilter();
 
-  static double Izero(double x);
+  static float Izero(float x);
   static void srIncrement(int *pointer, int modulus);
   static void srDecrement(int *pointer, int modulus);
 
-  double sampleRateRatio_;
+  float sampleRateRatio_;
   int fillPtr_;
   int emptyPtr_;
   int padSize_;
@@ -58,12 +58,12 @@ private:
   unsigned int timeRegister_;
   int fillCounter_;
 
-  double maximumSampleValue_;
+  float maximumSampleValue_;
   long numberSamples_;
 
-  std::vector<double> h_;
-  std::vector<double> deltaH_;
-  std::vector<double> buffer_;
+  std::vector<float> h_;
+  std::vector<float> deltaH_;
+  std::vector<float> buffer_;
   std::vector<float>& outputData_;
 };
 

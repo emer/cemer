@@ -25,10 +25,10 @@
 #define LIMIT 200
 
 
-FIRFilter::FIRFilter(double beta, double gamma, double cutoff)
+FIRFilter::FIRFilter(float beta, float gamma, float cutoff)
 {
   int pointer, increment, numberCoefficients;
-  double coefficient[LIMIT + 1];
+  float coefficient[LIMIT + 1];
 
   /*  DETERMINE IDEAL LOW PASS FILTER COEFFICIENTS  */
   maximallyFlat(beta, gamma, &numberCoefficients, coefficient);
@@ -90,9 +90,9 @@ FIRFilter::reset()
  *
  ******************************************************************************/
 int
-FIRFilter::maximallyFlat(double beta, double gamma, int* np, double* coefficient)
+FIRFilter::maximallyFlat(float beta, float gamma, int* np, float* coefficient)
 {
-  double a[LIMIT + 1], c[LIMIT + 1], betaMinimum, ac;
+  float a[LIMIT + 1], c[LIMIT + 1], betaMinimum, ac;
   int nt, numerator, n, ll, i;
 
   /*  INITIALIZE NUMBER OF POINTS  */
@@ -136,8 +136,8 @@ FIRFilter::maximallyFlat(double beta, double gamma, int* np, double* coefficient
 
   for (i = 2; i <= *np; i++) {
     int j;
-    double x, sum = 1.0, y;
-    c[i] = cos((2.0 * M_PI) * ((double) (i - 1) / (double) n));
+    float x, sum = 1.0, y;
+    c[i] = cos((2.0 * M_PI) * ((float) (i - 1) / (float) n));
     x = (1.0 - c[i]) / 2.0;
     y = x;
 
@@ -146,11 +146,11 @@ FIRFilter::maximallyFlat(double beta, double gamma, int* np, double* coefficient
     }
 
     for (j = 1; j <= ll; j++) {
-      double z = y;
+      float z = y;
       if (numerator != 1) {
         int jj;
         for (jj = 1; jj <= (numerator - 1); jj++) {
-          z *= 1.0 + ((double) j / (double) jj);
+          z *= 1.0 + ((float) j / (float) jj);
         }
       }
       y *= x;
@@ -170,7 +170,7 @@ FIRFilter::maximallyFlat(double beta, double gamma, int* np, double* coefficient
       }
       coefficient[i] += c[m+1] * a[j];
     }
-    coefficient[i] *= 2.0 / (double) n;
+    coefficient[i] *= 2.0 / (float) n;
   }
 
   return 0;
@@ -185,7 +185,7 @@ FIRFilter::maximallyFlat(double beta, double gamma, int* np, double* coefficient
  *
  ******************************************************************************/
 void
-FIRFilter::trim(double cutoff, int* numberCoefficients, double* coefficient)
+FIRFilter::trim(float cutoff, int* numberCoefficients, float* coefficient)
 {
   for (int i = *numberCoefficients; i > 0; i--) {
     if (fabs(coefficient[i]) >= fabs(cutoff)) {
@@ -231,12 +231,12 @@ FIRFilter::decrement(int pointer, int modulus)
   }
 }
 
-double
-FIRFilter::filter(double input, int needOutput)
+float
+FIRFilter::filter(float input, int needOutput)
 {
   if (needOutput) {
     int i;
-    double output = 0.0;
+    float output = 0.0;
 
     /*  PUT INPUT SAMPLE INTO DATA BUFFER  */
     data_[ptr_] = input;
@@ -272,9 +272,9 @@ FIRFilter::filter(double input, int needOutput)
  *
  ******************************************************************************/
 void
-FIRFilter::rationalApproximation(double number, int* order, int* numerator, int* denominator)
+FIRFilter::rationalApproximation(float number, int* order, int* numerator, int* denominator)
 {
-  double fractionalPart, minimumError = 1.0;
+  float fractionalPart, minimumError = 1.0;
   int i, orderMaximum, modulus = 0;
 
   /*  RETURN IMMEDIATELY IF THE ORDER IS LESS THAN ONE  */
@@ -294,9 +294,9 @@ FIRFilter::rationalApproximation(double number, int* order, int* numerator, int*
 
   /*  FIND THE BEST DENOMINATOR VALUE  */
   for (i = (*order); i <= orderMaximum; i++) {
-    double ps = i * fractionalPart;
+    float ps = i * fractionalPart;
     int ip = (int) (ps + 0.5);
-    double error = fabs((ps - (double) ip) / (double) i);
+    float error = fabs((ps - (float) ip) / (float) i);
     if (error < minimumError) {
       minimumError = error;
       modulus = ip;

@@ -26,20 +26,20 @@
 // coefficient.
 class RadiationFilter {
 public:
-  RadiationFilter(double apertureCoeff);
+  RadiationFilter(float apertureCoeff);
   ~RadiationFilter();
 
   void reset();
-  double filter(double input);
+  float filter(float input);
 private:
   // RadiationFilter(const RadiationFilter&) = delete;
   // RadiationFilter& operator=(const RadiationFilter&) = delete;
 
-  double a20_;
-  double a21_;
-  double b21_;
-  double radiationX_;
-  double radiationY_;
+  float a20_;
+  float a21_;
+  float b21_;
+  float radiationX_;
+  float radiationY_;
 };
 
 #endif /* TRM_RADIATION_FILTER_H_ */

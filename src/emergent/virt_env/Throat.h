@@ -23,19 +23,19 @@
 
 class Throat {
 public:
-  Throat(double sampleRate, double throatCutoff, double throatGain);
+  Throat(float sampleRate, float throatCutoff, float throatGain);
   ~Throat();
 
   void reset();
-  double process(double input);
+  float process(float input);
 private:
   // Throat(const Throat&) = delete;
   // Throat& operator=(const Throat&) = delete;
 
-  double tb1_;
-  double ta0_;
-  double throatGain_;
-  double throatY_;
+  float tb1_;
+  float ta0_;
+  float throatGain_;
+  float throatY_;
 };
 
 #endif /* TRM_THROAT_H_ */
