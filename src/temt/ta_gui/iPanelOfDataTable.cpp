@@ -153,8 +153,9 @@ void iPanelOfDataTable::Render_impl() {
     dte = new iDataTableEditor(table_view, NULL);
   }
   setCentralWidget(dte);
-
   dte->setDataTable(dt());
+//  dte->tvTable->SetItemDelegates();
+  
   connect(dte->tvTable, SIGNAL(hasFocus(iTableView*)), this, SLOT(tv_hasFocus(iTableView*)) );
   connect(dte->tvCell->tv, SIGNAL(hasFocus(iTableView*)), this, SLOT(tv_hasFocus(iTableView*)) );
   connect(dte->tvTable->col_header, SIGNAL(tableViewChange()), this, SLOT(ViewChange()) );

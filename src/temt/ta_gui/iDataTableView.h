@@ -36,7 +36,8 @@ public:
   static const int          default_column_width_px; // in pixels
 
   bool                      gui_edit_op; // true if doing a gui editing operation
-
+  virtual void              SetItemDelegates();
+  
   iDataTableColHeaderView*  col_header;
   iDataTableRowHeaderView*  row_header;
 
@@ -82,5 +83,22 @@ protected slots:
   void          RemoveColumnFromControlPanel(int menu_item_position);
   // remove the control panel item for the selected table column
 };
+
+class TA_API iTableViewCheckboxDelegate: public QStyledItemDelegate {
+  // this delegate provides a simple checkbox with no text
+  INHERITED(QStyledItemDelegate)
+  Q_OBJECT
+public:
+  iTableView*   own_table_widg;
+
+  iTableViewCheckboxDelegate(iTableView* own_tw);
+  
+  QWidget*     createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+  void         setEditorData(QWidget *editor, const QModelIndex &index) const override;
+  void         setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const override;
+  void         paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
+};
+
 
 #endif // iDataTableView_h

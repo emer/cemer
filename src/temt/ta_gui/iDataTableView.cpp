@@ -35,6 +35,10 @@
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QKeyEvent>
+#include <QCheckBox>
+#include <QWidget>
+#include <QModelIndex>
+#include <QApplication>
 
 const int iDataTableView::default_column_width_px(150);
 
@@ -59,6 +63,21 @@ iDataTableView::iDataTableView(QWidget* parent)
 
 bool iDataTableView::eventFilter(QObject* obj, QEvent* event) {
   return inherited::eventFilter(obj, event);
+}
+
+void iDataTableView::SetItemDelegates() {
+  iTableViewCheckboxDelegate* checkbox_delegate = new iTableViewCheckboxDelegate(this);
+  if (dataTable()) {
+    for (int col_idx=0; col_idx<dataTable()->data.size; col_idx++) {
+      DataCol* data_col = dataTable()->GetColData(col_idx);
+      if (data_col->valType() == taBase::VT_BOOL) {
+        setItemDelegateForColumn(data_col->GetIndex(), checkbox_delegate);
+        for(int i=0; i<dataTable()->rows; i++) {
+          openPersistentEditor(dataTable()->GetTableModel()->index(i, 3) );
+        }
+      }
+    }
+  }
 }
 
 void iDataTableView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
@@ -413,3 +432,49 @@ void iDataTableView::RemoveColumnFromControlPanel(int menu_item_position) {
 void iDataTableView::keyPressEvent(QKeyEvent* key_event) {
   inherited::keyPressEvent(key_event);
 }
+
+////////////////////////////////////////////////
+//      iTableViewCheckboxDelegate
+
+
+iTableViewCheckboxDelegate::iTableViewCheckboxDelegate(iTableView* own_tw) :
+inherited(own_tw)
+{
+  own_table_widg = own_tw;
+}
+
+QWidget* iTableViewCheckboxDelegate::createEditor(QWidget *parent,
+                                                  const QStyleOptionViewItem &option,
+                                                  const QModelIndex &index) const {
+  QCheckBox* editor = new QCheckBox(parent);
+  return editor;
+}
+
+void iTableViewCheckboxDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+  QCheckBox *check_box = static_cast<QCheckBox*>(editor);
+  bool value = index.model()->data(index, Qt::EditRole).toBool();
+  check_box->setChecked(value);
+}
+
+void iTableViewCheckboxDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
+                                              const QModelIndex& index) const {
+  QCheckBox *check_box = static_cast<QCheckBox*>(editor);
+  int value = index.model()->data(index, Qt::EditRole).toBool();
+  check_box->setChecked(value);
+}
+
+void iTableViewCheckboxDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+  QStyleOptionButton BtnStyle;
+  BtnStyle.state = QStyle::State_Enabled;
+  if(index.model()->data(index, Qt::DisplayRole).toBool() == true)
+    BtnStyle.state |= QStyle::State_On;
+  else
+    BtnStyle.state |= QStyle::State_Off;
+  BtnStyle.direction = QApplication::layoutDirection();
+  BtnStyle.rect = option.rect;
+  QApplication::style()->drawControl(QStyle::CE_CheckBox,&BtnStyle,painter);
+}
+
+
