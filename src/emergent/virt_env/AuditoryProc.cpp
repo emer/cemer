@@ -476,12 +476,24 @@ bool AuditoryProc::InitOutMatrix() {
 }
 
 bool AuditoryProc::LoadSound(taSound* sound) {
-  if(NeedsInit()) Init();
-  
+  bool needs_init = false;
+  if(NeedsInit())
+    needs_init = true;
+
   if(TestError(!sound || !sound->IsValid(), "LoadSound",
                "sound object NULL or not valid")) {
     return false;
   }
+  if(TestWarning((sound->SampleRate() != input.sample_rate),
+                 "LoadSound", "sample rate does not match sound -- re-initializing with new rate of:", String(sound->SampleRate()))) {
+    input.sample_rate = sound->SampleRate();
+    needs_init = true;
+  }
+
+  if(needs_init) {
+    Init();
+  }
+  
   if(input.channels > 1) {
     sound->SoundToMatrix(sound_full, -1);
   }
