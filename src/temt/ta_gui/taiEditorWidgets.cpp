@@ -318,7 +318,10 @@ void taiEditorWidgets::ClearBody_impl() {
 
 void taiEditorWidgets::ReConstr_Body() {
   if (!isConstructed()) return;
-  if (!link()) return;
+  // the "taMisc" exception is to get hidden and expert preferences to appear
+  // because they are in a dialog and not a panel the link is NULL
+  // see bug 2581 (rohrlich 4/11/16)
+  if (!link() && typ->name != "taMisc" ) return;
   rebuild_body = true;
   ++updating;                   // prevents spurious changed flags from coming in
   Constr_Body();
