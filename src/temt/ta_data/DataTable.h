@@ -331,23 +331,23 @@ public:
       bool quote_str = true, bool headers = true);
   // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_csv,tsv,txt,log #FILE_DIALOG_SAVE exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)
 
-#if (QT_VERSION >= 0x050000)
   void                  ExportDataJSON(const String& fname="");
   // #CAT_File #MENU #MENU_ON_Data #EXT_json #FILE_DIALOG_SAVE exports data in json format
+#if (QT_VERSION >= 0x050000)
   bool                  GetDataAsJSON(QJsonObject& json_obj, const String& column_name = "", int start_row = 0, int n_rows = -1);
   // #IGNORE #EXPERT #CAT_File #EXT_json does the actual parse and save
   bool                  GetDataMatrixCellAsJSON(QJsonObject& json_obj, const String& column_name, int row, int cell);
   // #IGNORE #EXPERT #CAT_File #EXT_json does the actual parse and save
-  virtual void          ImportDataJSON(const String& fname);
-  // #CAT_File #MENU #MENU_ON_Data #FILE_DIALOG_LOAD #EXT_json load JSON format data (ONLY)
-  virtual void          ImportDataJSONString(const String& json_as_string);
-  // #CAT_File import json string into data table - api for import when you aren't using the GUI or already have the file stream open
 #endif
 
   virtual void          ImportData(const String& fname="", bool headers = true,
       LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO)
   { LoadAnyData(fname, headers, LD_AUTO, LQ_AUTO, -1, true); }
   // #CAT_File #MENU #MENU_ON_Data #EXT_csv,tsv,txt,log #FILE_DIALOG_LOAD imports externally-generated data in delimited text file format -- if headers is selected, then first row is treated as column headers -- auto defaults are typically fine (see also Load Any Data or Load Any Data Append -- same functionality with all AUTO defaults)
+  virtual void          ImportDataJSON(const String& fname);
+  // #CAT_File #MENU #MENU_ON_Data #FILE_DIALOG_LOAD #EXT_json load JSON format data (ONLY)
+  virtual void          ImportDataJSONString(const String& json_as_string);
+  // #CAT_File import json string into data table - api for import when you aren't using the GUI or already have the file stream open
   virtual bool          Flatten();
   // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Flatten permanently removes any currently invisible data rows and arranges raw memory in current order -- useful for optimizing and locking-in data table size after a series of operations.  The DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions -- *all* access to the DataTable rows goes through the indexes -- so the Flatten function will not change the appearance of the data table, but it can optimize processing in large data tables, and establish the baseline state that the ShowAllRows function will revert to.  See also the FlattenTo and ShowAllRows functions.
   virtual bool          FlattenTo(DataTable* flattened_table);

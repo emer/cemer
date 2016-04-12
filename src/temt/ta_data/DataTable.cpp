@@ -2418,8 +2418,8 @@ void DataTable::AppendJsonErrorMsg(String msg) {
   }
 }
 
-#if (QT_VERSION >= 0x050000)
 void DataTable::ExportDataJSON(const String& fname) {  // write the entire table to file
+#if (QT_VERSION >= 0x050000)
   // note: don't get file name when exporting
   taFiler* flr = GetSaveFiler(fname, ".json", false);
   if (!flr->ostrm) {
@@ -2434,8 +2434,12 @@ void DataTable::ExportDataJSON(const String& fname) {  // write the entire table
   *flr->ostrm << endl;
   flr->Close();
   taRefN::unRefDone(flr);
+#else
+  taMisc::Error("Requires Qt 5.0 or greater");
+#endif
 }
 
+#if (QT_VERSION >= 0x050000)
 bool DataTable::GetDataMatrixCellAsJSON(QJsonObject& json_obj, const String& column_name, int row, int cell) {
   if (row < 0) {
     row = rows + row;  // so for -1 you get the last row
@@ -3271,8 +3275,8 @@ DataCol::ValType DataTable::StrToValType(String valTypeStr) {
   }
 }
 
-#if (QT_VERSION >= 0x050000)
 void DataTable::ImportDataJSON(const String& fname) {
+#if (QT_VERSION >= 0x050000)
   QFile file;
   file.setFileName(fname);
   file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -3287,6 +3291,9 @@ void DataTable::ImportDataJSON(const String& fname) {
 
   QJsonObject json_obj = json_doc.object();
   SetDataFromJSON(json_obj);
+#else
+  taMisc::Error("Requires Qt 5.0 or greater");
+#endif
 }
 
 void DataTable::ImportDataJSONString(const String& json_as_string) {
@@ -3309,6 +3316,7 @@ void DataTable::ImportDataJSONString(const String& json_as_string) {
   }
 }
 
+#if (QT_VERSION >= 0x050000)
 bool DataTable::SetDataFromJSON(const QJsonObject& root_object, int start_row, int start_cell) { // // row -1 means append, anything else overwrites starting at row
   ClearJsonErrorMsg(); // reset the message
   
