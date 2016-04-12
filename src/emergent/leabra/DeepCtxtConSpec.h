@@ -30,6 +30,8 @@ class E_API DeepCtxtConSpec : public LeabraConSpec {
   // #AKA_LeabraTICtxtConSpec sends deep layer deep_raw activation values to deep_ctxt_net variable on receiving units -- typically used to integrate across the local context within a layer, providing both temporal integration (TI) learning, and the basis for normalizing attentional signals -- use for SELF projection in a layer -- wt_scale should be set to 1, 1
 INHERITED(LeabraConSpec)
 public:
+  bool  delta_dwt;              // use simple delta-dwt change rule, instead of full xcal learning rule -- key problem is that delta-dwt does NOT include hebbian component for controlling hog-unit dynamics, etc
+  
   // special!
   bool  DoesStdNetin() override { return false; }
   bool  DoesStdDwt() override { return false; }
@@ -56,24 +58,47 @@ public:
   inline float Compute_Netin(ConGroup* cg, Network* net, int thr_no) override
   { return 0.0f; }
 
-  inline void C_Compute_dWt_Delta(float& dwt, const float ru_avg_s, const float ru_avg_m,
+  inline void C_Compute_dWt_Delta(float& dwt, const float lrate_eff,
+                                  const float ru_avg_s, const float ru_avg_m,
                                   const float su_deep_prv)
-  { dwt += cur_lrate * (ru_avg_s - ru_avg_m) * su_deep_prv; }
+  { dwt += lrate_eff * (ru_avg_s - ru_avg_m) * su_deep_prv; }
   // #IGNORE
 
-  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
+  inline void Compute_dWt(ConGroup* scg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
-    LeabraConGroup* cg = (LeabraConGroup*)rcg;
+    LeabraConGroup* cg = (LeabraConGroup*)scg;
     LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
 
+    float clrate, bg_lrate, fg_lrate;
+    bool deep_on;
+    GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
+
+    const float su_avg_s = su->deep_raw_prv; // value sent on prior trial..
+    const float su_avg_m = su->deep_raw_prv;
     float* dwts = cg->OwnCnVar(DWT);
-    const float su_deep_prv = su->deep_raw_prv; // this is the value sent
 
     const int sz = cg->size;
+
     for(int i=0; i<sz; i++) {
-      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-      C_Compute_dWt_Delta(dwts[i], ru->avg_s, ru->avg_m, su_deep_prv); // using avgs..
+      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+      float lrate_eff = clrate * ru->r_lrate;
+      if(deep_on) {
+        lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
+      }
+      float l_lrn_eff;
+      if(xcal.set_l_lrn)
+        l_lrn_eff = xcal.l_lrn;
+      else
+        l_lrn_eff = ru->avg_l_lrn;
+      if(delta_dwt) {
+        C_Compute_dWt_Delta(dwts[i], lrate_eff, ru->avg_s, ru->avg_m, su_avg_s);
+      }
+      else {
+        C_Compute_dWt_CtLeabraXCAL
+          (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
+           ru->avg_l, l_lrn_eff);
+      }
     }
   }
 
