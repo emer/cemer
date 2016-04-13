@@ -19,6 +19,7 @@
 #include <MemberDef>
 #include <taBase_PtrList>
 #include <taObjDiff_List>
+#include <ProgEl_List>
 #include <taProject>
 #include <taDoc>
 #include <ControlPanel>
@@ -3649,6 +3650,7 @@ void taBase::Help() {
 
 taBase* taBase::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par, taBase* new_par) {
   String old_path = old_guy->GetPath(NULL, old_par);
+  taMisc::DebugInfo(old_path);
   MemberDef* md;
   if (!new_par) {
     return NULL;
@@ -3817,7 +3819,8 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
   bool keep_looking = true;
   while(keep_looking) {
     taBase* old_grand_par = old_par->GetOwner();
-    taBase* new_grand_par = new_par->GetOwner();
+    // types need to be the same - old could be Program and new ProgEl_list
+    taBase* new_grand_par = new_par->GetOwner(old_grand_par->GetTypeDef());
     if (!old_grand_par || !new_grand_par) {
       break;
     }
@@ -3875,6 +3878,9 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       }
     }
     else if(md->type->IsNotPtr()) {
+      if (md->name == "target") {
+        ;
+      }
       if(md->type->InheritsFrom(TA_taSmartRef)) {
         taSmartRef* ref = (taSmartRef*)md->GetOff(this);
         bool null_not_found = true;
@@ -3904,7 +3910,7 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
             if(new_par_grp_root->root_gp)
               new_par_grp_root = new_par_grp_root->root_gp; // go up to root of initial find owner
           }
-          
+
           // if not the same root group don't try to update pointers
           if (ref_ptr_grp_root == NULL || (ref_ptr_grp_root != new_par_grp_root)) {
             null_not_found = false;
