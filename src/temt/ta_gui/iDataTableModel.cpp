@@ -196,7 +196,8 @@ Qt::ItemFlags iDataTableModel::flags(const QModelIndex& index) const {
                    col->isGuiReadOnly()) )
         rval |= Qt::ItemIsEditable;
       if (col && col->isBool()) {
-        rval |= Qt::ItemIsUserCheckable;
+        rval = 0;
+        rval |= Qt::ItemIsUserCheckable | Qt::ItemIsEnabled;
       }
     }
   }
