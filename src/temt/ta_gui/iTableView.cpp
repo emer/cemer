@@ -43,17 +43,15 @@ iTableView::iTableView(QWidget* parent)
   setFont(taiM->dialogFont(taiM->ctrl_size));
   QFont cur_font = QFont();
   cur_font.setPointSize(tabMisc::root->table_font_size + tabMisc::root->global_font_incr_decr);
-  
-  iTableViewDefaultDelegate* del = new iTableViewDefaultDelegate(this);
-  setItemDelegate(del);
-
   setEditTriggers(DoubleClicked | SelectedClicked | EditKeyPressed | AnyKeyPressed);
-
   setContextMenuPolicy(Qt::CustomContextMenu);
-
   connect(this, SIGNAL(clicked(const QModelIndex&)), this, SIGNAL(UpdateUi()) );
-
   installEventFilter(this);
+}
+
+void iTableView::SetItemDelegates() {
+  iTableViewDefaultDelegate* default_delegate = new iTableViewDefaultDelegate(this);
+  setItemDelegate(default_delegate);
 }
 
 void iTableView::clearExtSelection() {
@@ -83,7 +81,7 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
   QKeyEvent* e = static_cast<QKeyEvent*>(event);
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed && e->key() == Qt::Key_Y) {
-    // go into edit mode then press paste?
+    // go into edit mode then press paste?  
     QCoreApplication* app = QCoreApplication::instance();
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space, Qt::MetaModifier));
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));

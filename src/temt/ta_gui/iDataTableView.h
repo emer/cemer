@@ -20,6 +20,7 @@
 #include <iTableView>
 
 // member includes:
+#include <QAbstractItemModel>
 
 // declare all other types mentioned but not required to include:
 class DataTable; // 
@@ -36,7 +37,7 @@ public:
   static const int          default_column_width_px; // in pixels
 
   bool                      gui_edit_op; // true if doing a gui editing operation
-  virtual void              SetItemDelegates();
+  void                      SetItemDelegates() override; // this is the place to associate column types with delegates
   
   iDataTableColHeaderView*  col_header;
   iDataTableRowHeaderView*  row_header;
@@ -71,7 +72,8 @@ protected:
   bool                  eventFilter(QObject* obj, QEvent* event) override;
 
 public slots:
-  void          doubleClicked(const QModelIndex & index);
+  void                  doubleClicked(const QModelIndex & index);
+
   
 protected slots:
   void          AddCellToControlPanel(int menu_item_position);
@@ -93,11 +95,13 @@ public:
 
   iTableViewCheckboxDelegate(iTableView* own_tw);
   
-  QWidget*     createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-  void         setEditorData(QWidget *editor, const QModelIndex &index) const override;
-  void         setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const override;
-  void         paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+  QWidget*        createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+  void            setEditorData(QWidget *editor, const QModelIndex &index) const override;
+  void            setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const override;
+  void            paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
+public slots:
+  void            CheckBoxStateChanged(int value);
 };
 
 

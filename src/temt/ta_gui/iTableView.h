@@ -53,6 +53,7 @@ public:
   QPointer<iMainWindowViewer> m_window; // used for tab processing etc
 #endif
 
+  virtual void          SetItemDelegates();        // this is the place to associate column types with delegates
   virtual void          clearExtSelection();       // clear extended selection mode and also clear any existing selection
   virtual void          selectCurCell();           // call clearExtSelection and then select current index
   virtual bool          SelectColumns(int st_col, int st_row);

@@ -66,18 +66,25 @@ bool iDataTableView::eventFilter(QObject* obj, QEvent* event) {
 }
 
 void iDataTableView::SetItemDelegates() {
-  iTableViewCheckboxDelegate* checkbox_delegate = new iTableViewCheckboxDelegate(this);
-  if (dataTable()) {
-    for (int col_idx=0; col_idx<dataTable()->data.size; col_idx++) {
-      DataCol* data_col = dataTable()->GetColData(col_idx);
-      if (data_col->valType() == taBase::VT_BOOL) {
-        setItemDelegateForColumn(data_col->GetIndex(), checkbox_delegate);
-        for(int i=0; i<dataTable()->rows; i++) {
-          openPersistentEditor(dataTable()->GetTableModel()->index(i, 3) );
-        }
-      }
-    }
-  }
+  inherited::SetItemDelegates();
+  
+//  iTableViewDefaultDelegate* default_delegate = new iTableViewDefaultDelegate(this);
+//  iTableViewCheckboxDelegate* checkbox_delegate = new iTableViewCheckboxDelegate(this);
+//
+//  if (dataTable()) {
+//    for (int col_idx=0; col_idx<dataTable()->data.size; col_idx++) {
+//      DataCol* data_col = dataTable()->GetColData(col_idx);
+//      if (data_col->valType() == taBase::VT_BOOL) {
+//        setItemDelegateForColumn(col_idx, checkbox_delegate);
+//        for(int i=0; i<dataTable()->rows; i++) {
+//          openPersistentEditor(dataTable()->GetTableModel()->index(i, col_idx) );
+//        }
+//      }
+//      else {
+//        setItemDelegateForColumn(col_idx, default_delegate);
+//      }
+//    }
+//  }
 }
 
 void iDataTableView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
@@ -436,6 +443,7 @@ void iDataTableView::keyPressEvent(QKeyEvent* key_event) {
 ////////////////////////////////////////////////
 //      iTableViewCheckboxDelegate
 
+// Not being used - rohrlich 4/11/16
 
 iTableViewCheckboxDelegate::iTableViewCheckboxDelegate(iTableView* own_tw) :
 inherited(own_tw)
@@ -447,34 +455,37 @@ QWidget* iTableViewCheckboxDelegate::createEditor(QWidget *parent,
                                                   const QStyleOptionViewItem &option,
                                                   const QModelIndex &index) const {
   QCheckBox* editor = new QCheckBox(parent);
+  connect(editor, SIGNAL(stateChanged(int)), this, SLOT(CheckBoxStateChanged(int)));
   return editor;
 }
 
 void iTableViewCheckboxDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
   QCheckBox *check_box = static_cast<QCheckBox*>(editor);
-  bool value = index.model()->data(index, Qt::EditRole).toBool();
+  bool value = index.model()->data(index, Qt::CheckStateRole).toBool();
   check_box->setChecked(value);
 }
 
 void iTableViewCheckboxDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
                                               const QModelIndex& index) const {
   QCheckBox *check_box = static_cast<QCheckBox*>(editor);
-  int value = index.model()->data(index, Qt::EditRole).toBool();
-  check_box->setChecked(value);
+  model->setData(index, check_box->isChecked(), Qt::CheckStateRole);
 }
 
 void iTableViewCheckboxDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-  QStyleOptionButton BtnStyle;
-  BtnStyle.state = QStyle::State_Enabled;
+  QStyleOptionButton button_style;
+  button_style.state = QStyle::State_Enabled;
   if(index.model()->data(index, Qt::DisplayRole).toBool() == true)
-    BtnStyle.state |= QStyle::State_On;
+    button_style.state |= QStyle::State_On;
   else
-    BtnStyle.state |= QStyle::State_Off;
-  BtnStyle.direction = QApplication::layoutDirection();
-  BtnStyle.rect = option.rect;
-  QApplication::style()->drawControl(QStyle::CE_CheckBox,&BtnStyle,painter);
+    button_style.state |= QStyle::State_Off;
+  button_style.direction = QApplication::layoutDirection();
+  button_style.rect = option.rect;
+  QApplication::style()->drawControl(QStyle::CE_CheckBox, &button_style, painter);
 }
 
-
+void iTableViewCheckboxDelegate::CheckBoxStateChanged(int value) {
+  QModelIndex current = own_table_widg->currentIndex();
+  taMisc::DebugInfo((String)current.column());
+}
