@@ -43,7 +43,7 @@ const String DataCol::udkey_narrow("NARROW");
 const String DataCol::udkey_hidden("HIDDEN");
 
 void DataCol::Initialize() {
-  col_flags = (ColFlags)(SAVE_DATA | CHECKBOX);
+  col_flags = (ColFlags)(SAVE_DATA);
   col_idx = -1;
   is_matrix = false;
   // default initialize to scalar

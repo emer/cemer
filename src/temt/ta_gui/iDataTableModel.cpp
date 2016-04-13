@@ -79,9 +79,6 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
     case Qt::EditRole: {
       if (col->is_matrix)
         return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
-      else if (col->isBool() && !(col->col_flags & DataCol::CHECKBOX)) {
-        return col->GetValAsString(index.row());
-      }
       else {
         if (col->isBool()) {
           break;
@@ -93,7 +90,7 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
           return QVariant();      // nil
       }
     }
-      // Qt::FontRole: //  QFont: font for the text
+      //Qt::FontRole: //  QFont: font for the text
       //Qt::DecorationRole
       //Qt::ToolTipRole
       //Qt::StatusTipRole
@@ -137,11 +134,11 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
         }
       }
     }
-      break;
+    break;
       
     case Qt::CheckStateRole: {
       DataCol* dc = m_dt->data.FastEl(index.column());
-      if (dc && dc->isBool() && (dc->col_flags & DataCol::CHECKBOX)) {
+      if (dc && dc->isBool()) {
         int val = dc->GetValAsInt(index.row());
         if (val == 0) {
           return Qt::Unchecked;
@@ -186,6 +183,7 @@ void iDataTableModel::emit_layoutChanged() {
 
 Qt::ItemFlags iDataTableModel::flags(const QModelIndex& index) const {
   if (!m_dt || !index.isValid()) return 0;
+  
   Qt::ItemFlags rval = 0;
   if (ValidateIndex(index)) {
     // don't enable null cells
@@ -197,7 +195,7 @@ Qt::ItemFlags iDataTableModel::flags(const QModelIndex& index) const {
         rval |= Qt::ItemIsEditable;
       if (col && col->isBool()) {
         rval = 0;
-        rval |= Qt::ItemIsUserCheckable | Qt::ItemIsEnabled;
+        rval |= Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
       }
     }
   }
