@@ -167,9 +167,20 @@ void iTableView::keyPressEvent(QKeyEvent* key_event) {
       break;
     case taiMisc::DATATABLE_DUPLICATE:
     case taiMisc::DATATABLE_DUPLICATE_II:
-      RowColOp(OP_ROW | OP_DUPLICATE);
+    {
+      QModelIndexList list = selectionModel()->selectedRows();
+      if (list.size() > 0) {
+        RowColOp(OP_ROW | OP_DUPLICATE);
+      }
+      else {
+        list = selectionModel()->selectedColumns();
+        if (list.size() > 0) {
+          RowColOp(OP_COL | OP_DUPLICATE);
+        }
+      }
       key_event->accept();
       break;
+    }
     case taiMisc::DATATABLE_EDIT_HOME:
     case taiMisc::DATATABLE_EDIT_HOME_II:
       edit_start_pos = 0;
