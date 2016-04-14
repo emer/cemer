@@ -31,7 +31,7 @@ void  DataTableCell::Initialize() {
   control_panel = NULL;
   enabled = true;
   dtc_is_column_type = false;
-  row_lookup_value = "";
+//  row_lookup_value = "";
 }
 
 void DataTableCell::GetControlPanelText(MemberDef* mbr, const String& extra_label, String& full_lbl, String& desc) const {

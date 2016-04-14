@@ -40,7 +40,7 @@ void taiMemberOfTableCellValueVal::GetImage_impl(taiWidget* dat, const void* bas
   }
   else {
     if (dtc->dtc_is_column_type) {
-      field_rep->GetImage(dtc->row_lookup_value);
+      field_rep->GetImage(dtc->value);
     }
   }
 }
@@ -54,7 +54,7 @@ void taiMemberOfTableCellValueVal::GetMbrValue_impl(taiWidget* dat, void* base) 
   }
   else {
     if (dtc->dtc_is_column_type) {
-      dtc->row_lookup_value = field_rep->GetValue();
+      dtc->value = field_rep->GetValue();
     }
   }
 }

@@ -2278,7 +2278,9 @@ void DataTable::SetCellsInRow(int row) {
   for (int i=0; i<control_panel_cells.size; i++) {
     DataTableCell* dtc = (DataTableCell*)control_panel_cells.FastEl_(i);
     if (dtc && dtc->dtc_is_column_type == true) {
-      dtc->value_column->SetValAsVar(dtc->row_lookup_value, row);
+      if (dtc->value.nonempty()) {  // if empty leave alone
+        dtc->value_column->SetValAsVar(dtc->value, row);
+      }
     }
   }
 }

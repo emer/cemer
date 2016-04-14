@@ -37,7 +37,7 @@ public:
   String              value;            // #NO_SAVE this is the current value of the data table cell, reflected in the control panel item, and can be changed by editing the control panel value and applying. If the DataTableCell is of the 'column type' the value will be changed when MasterTrain runs so you won't see the change until that time. If you are running the program using ClusterRun the table value will be changed when MasterStartup runs.
 
   DataCol*            row_lookup_col;   // the column that will be used for row lookup when dtc_is_column_type is true
-  String              row_lookup_value; // this value is used to find the row for which the user wants to set the cell value - the value will be matched against the values in the row_lookup_col
+//  String              row_lookup_value; // this value is used to find the row for which the user wants to set the cell value - the value will be matched against the values in the row_lookup_col -- looks like we don't need to save this - passed to SetCellsFromRowLookup at runtime (rohrlich 4/13/16)
   
   ControlPanel*       control_panel;    // #READ_ONLY #SHOW the control panel that includes this cell in its member list
   bool                enabled;          // #READ_ONLY if a DTC is in a row that is currently deleted or filtered and thus not visible the enabled flag is set to false so that the control panel can disable the item but keep it visible
