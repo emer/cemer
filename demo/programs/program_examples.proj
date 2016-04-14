@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9346
+// ta_Dump File v3.0 -- code v7.8.6.0 rev9399
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -3308,12 +3308,10 @@ LeabraProject .projects["program_examples"] {
    Weights_List @.weights = [0] {
    };
 
-   NetTiming_List NULL = [5] {
+   NetTiming_List NULL = [3] {
     LeabraNetTiming @[0] { };
     LeabraNetTiming @[1] { };
     LeabraNetTiming @[2] { };
-    LeabraNetTiming @[3] { };
-    LeabraNetTiming @[4] { };
    };
   };
  };
@@ -5514,7 +5512,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -5528,7 +5526,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6075,7 +6073,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6089,7 +6087,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6132,7 +6130,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6146,7 +6144,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6160,7 +6158,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6174,7 +6172,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6188,7 +6186,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6202,7 +6200,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6216,7 +6214,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6230,7 +6228,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6244,7 +6242,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6258,7 +6256,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6272,7 +6270,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6286,7 +6284,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6300,7 +6298,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6314,7 +6312,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6328,7 +6326,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6342,7 +6340,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6356,7 +6354,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6370,7 +6368,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6394,7 +6392,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6408,7 +6406,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6422,7 +6420,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6436,7 +6434,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6450,7 +6448,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6474,7 +6472,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6498,7 +6496,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6522,7 +6520,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6546,7 +6544,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6570,7 +6568,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6594,7 +6592,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6608,7 +6606,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6622,7 +6620,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6636,7 +6634,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6650,7 +6648,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6667,10 +6665,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
     last_sort_spec {
-     name=;
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -6678,7 +6676,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     control_panel_cells {
-     name=;
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -7197,7 +7195,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7211,7 +7209,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -9229,8 +9227,8 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      StopStepPoint @[3] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Stop/Step Point";
-      pre_compile_code_string="Stop/Step Point";
+      code_string="Stop_Step Point";
+      pre_compile_code_string="Stop_Step Point";
       cond {
        expr=;
       };
@@ -19845,6 +19843,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    };
    name="Browser2";
    m_data=.projects["program_examples"]$$;
+   cur_font_size=12;
    visible=1;
    win_name=".projects[\"program_examples\"] - program_examples.proj";
    m_is_root=0;
@@ -19868,6 +19867,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
      name="Application";
      m_data=NULL;
+     cur_font_size=12;
      visible=0;
      lft=0;
      top=0;
@@ -19881,6 +19881,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     BrowseViewerTaBase @["Navigator"] {
      name="Navigator";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
@@ -19889,6 +19890,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     PanelViewer @["Editor"] {
      name="Editor";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
     };
     T3PanelViewer @["Visualizer"] {
@@ -19904,6 +19906,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
      name="Visualizer";
      m_data=NULL;
+     cur_font_size=12;
      visible=0;
      panels {
       name="panels";
@@ -19912,10 +19915,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       T3Panel @["Network_0"] {
        name="Network_0";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -19924,6 +19929,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 NetView @["Network_0_View"] {
 	  name="Network_0_View";
 	  m_data=.projects["program_examples"].networks["Network_0"]$$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
@@ -20102,10 +20108,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       T3Panel @["EpochOutputData"] {
        name="EpochOutputData";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -20114,6 +20122,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 GraphTableView @["EpochOutputData_Graph"] {
 	  name="EpochOutputData_Graph";
 	  m_data=.projects["program_examples"].data.gp["OutputData"]["EpochOutputData"]$$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name="children";
@@ -20122,6 +20131,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["batch"] {
 	    name="batch";
 	    m_data=.projects["program_examples"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -20130,6 +20140,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["epoch"] {
 	    name="epoch";
 	    m_data=.projects["program_examples"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -20138,6 +20149,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["avg_sse"] {
 	    name="avg_sse";
 	    m_data=.projects["program_examples"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -20146,6 +20158,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["cnt_err"] {
 	    name="cnt_err";
 	    m_data=.projects["program_examples"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -20154,6 +20167,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["avg_ext_rew"] {
 	    name="avg_ext_rew";
 	    m_data=.projects["program_examples"].data.gp["OutputData"]["EpochOutputData"].data["avg_ext_rew"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -20162,6 +20176,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["avg_cycles"] {
 	    name="avg_cycles";
 	    m_data=.projects["program_examples"].data.gp["OutputData"]["EpochOutputData"].data["avg_cycles"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -20170,6 +20185,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["epoch_time_tot"] {
 	    name="epoch_time_tot";
 	    m_data=.projects["program_examples"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -20178,6 +20194,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["epoch_time_usr"] {
 	    name="epoch_time_usr";
 	    m_data=.projects["program_examples"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -20217,6 +20234,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  x_axis {
 	   name="x_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=1;
 	   axis=X;
@@ -20236,6 +20254,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  z_axis {
 	   name="z_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Z;
@@ -20260,6 +20279,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_1"] {
 	    name="EpochOutputData_Graph_plot_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -20281,6 +20301,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_2"] {
 	    name="EpochOutputData_Graph_plot_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -20302,6 +20323,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_3"] {
 	    name="EpochOutputData_Graph_plot_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20323,6 +20345,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_4"] {
 	    name="EpochOutputData_Graph_plot_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20344,6 +20367,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_5"] {
 	    name="EpochOutputData_Graph_plot_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20365,6 +20389,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_6"] {
 	    name="EpochOutputData_Graph_plot_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20386,6 +20411,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_7"] {
 	    name="EpochOutputData_Graph_plot_7";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20407,6 +20433,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_8"] {
 	    name="EpochOutputData_Graph_plot_8";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20428,6 +20455,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_9"] {
 	    name="EpochOutputData_Graph_plot_9";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20449,6 +20477,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_10"] {
 	    name="EpochOutputData_Graph_plot_10";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20470,6 +20499,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_11"] {
 	    name="EpochOutputData_Graph_plot_11";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20491,6 +20521,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_12"] {
 	    name="EpochOutputData_Graph_plot_12";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20512,6 +20543,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_13"] {
 	    name="EpochOutputData_Graph_plot_13";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20533,6 +20565,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_14"] {
 	    name="EpochOutputData_Graph_plot_14";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20554,6 +20587,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_15"] {
 	    name="EpochOutputData_Graph_plot_15";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20575,6 +20609,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_16"] {
 	    name="EpochOutputData_Graph_plot_16";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20601,6 +20636,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_1"] {
 	    name="EpochOutputData_Graph_err_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20622,6 +20658,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_2"] {
 	    name="EpochOutputData_Graph_err_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20643,6 +20680,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_3"] {
 	    name="EpochOutputData_Graph_err_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20664,6 +20702,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_4"] {
 	    name="EpochOutputData_Graph_err_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20685,6 +20724,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_5"] {
 	    name="EpochOutputData_Graph_err_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20706,6 +20746,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_6"] {
 	    name="EpochOutputData_Graph_err_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20727,6 +20768,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_7"] {
 	    name="EpochOutputData_Graph_err_7";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20748,6 +20790,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_8"] {
 	    name="EpochOutputData_Graph_err_8";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20769,6 +20812,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_9"] {
 	    name="EpochOutputData_Graph_err_9";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20790,6 +20834,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_10"] {
 	    name="EpochOutputData_Graph_err_10";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20811,6 +20856,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_11"] {
 	    name="EpochOutputData_Graph_err_11";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20832,6 +20878,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_12"] {
 	    name="EpochOutputData_Graph_err_12";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20853,6 +20900,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_13"] {
 	    name="EpochOutputData_Graph_err_13";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20874,6 +20922,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_14"] {
 	    name="EpochOutputData_Graph_err_14";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20895,6 +20944,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_15"] {
 	    name="EpochOutputData_Graph_err_15";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20916,6 +20966,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_16"] {
 	    name="EpochOutputData_Graph_err_16";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -20941,6 +20992,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -20972,6 +21024,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  raster_axis {
 	   name="raster_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -21129,6 +21182,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      name="Tools";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
@@ -21425,7 +21479,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       act_thr=0.2;
      };
      deep_raw_qtr=Q4;
-     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_thr=0: trc_p_clamp=0: trc_p_max=0: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -21521,6 +21575,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
    };
    layers {
@@ -21802,28 +21857,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
     };
     LeabraNetTiming @[2] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[3] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[4] {
      netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
      act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
      dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
