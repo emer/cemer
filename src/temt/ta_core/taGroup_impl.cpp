@@ -17,6 +17,7 @@
 
 #include <SigLinkSignal>
 #include <taMisc>
+#include <taiMisc>
 #include <taBase_PtrList>
 #include <taObjDiffRec>
 #include <tabMisc>
@@ -733,4 +734,8 @@ void taGroup_impl::UpdateLeafCount_(int no) {
   leaves += no;
   if(super_gp != NULL)
     super_gp->UpdateLeafCount_(no);
+}
+
+void taGroup_impl::SetDefaultExpand(int depth) {
+  taiMisc::SetGroupDefaultExpand(GetName(), depth);
 }

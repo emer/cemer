@@ -67,6 +67,25 @@ private:
   InitProcRegistrar& operator =(const InitProcRegistrar&);
 };
 
+class TA_API taExpandDefaults {
+  // #EDIT_INLINE defaults for expanding top level groups
+public:
+  int             docs;
+  int             wizards;
+  int             ctrl_panels;
+  int             param_sets;
+  int             data;
+  int             programs;
+  int             viewers;
+  int             networks;
+  int             network;
+  int             specs;
+  int             layers;
+  
+  taExpandDefaults();
+};
+
+
 #define PATH_SEP taMisc::path_sep
 
 taTypeDef_Of(taMisc);
@@ -254,7 +273,8 @@ public:
   static int            max_display_width;  // #SAVE #EXPERT #MIN_10 #CAT_GUI maximum width of console display (in chars) -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places -- may not want this to get too big
   static int            indent_spc;     // #SAVE #EXPERT #MIN_1 #MAX_8 #DEF_2 #CAT_GUI how many spaces to use per indent level
   static int            display_height;  // #SAVE #HIDDEN #CAT_GUI height of console display (in rows) -- set automatically by gui console -- used for paging
-
+  static taExpandDefaults expand_defaults; // #SAVE #Cat_GUI default depths for expanding top level groups -- 0 means don't expand
+  
   static int            undo_depth;     // #SAVE #CAT_GUI #MIN_10 how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
   static int            undo_data_max_cells; // #SAVE #CAT_GUI maximum number of cells in a data table to save an undo copy -- if above this number of cells, it won't be saved for undo (only the column structure will be retained)
   static int            auto_save_data_max_cells; // #SAVE #CAT_GUI if column of data table has more than this number of cells, it won't be saved during auto_save (column structure will be retained)

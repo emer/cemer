@@ -185,6 +185,23 @@ taThreadDefaults::taThreadDefaults() {
 taThreadDefaults taMisc::thread_defaults;
 bool    taMisc::dmem_output_all = false;
 
+taExpandDefaults::taExpandDefaults() {
+  docs = 1;
+  wizards = 1;
+  ctrl_panels = 1;
+  param_sets = 0;
+  data = 0  ;
+  programs = 1;
+  viewers = 0;
+  networks = 1;
+  network = 1;
+  specs = 1;
+  layers = 0;
+}
+
+taExpandDefaults taMisc::expand_defaults;
+
+
 ////////////////////////////////////////////////////////
 //      TA GUI parameters
 

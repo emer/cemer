@@ -392,11 +392,11 @@ void iTreeView::ExpandAll_impl(int max_levels, int exp_flags) {
 }
 
 void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
-  int max_levels, int exp_flags)
+                                int max_levels, int exp_flags)
 {
   if (!item) return;
   if (isItemHidden(item)) return;
-
+  
   // special check for guys that should not be auto-expaneded at all!  may need to do this in child below.
   taBase* tab = item->link()->taData();
   
@@ -411,37 +411,52 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     // figure out default if not otherwise saved
     if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
     if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
+    
     if(!(exp_flags & EF_CUSTOM_FILTER) && tab && (exp_flags & EF_DEFAULT)) {
       // get default info from objs
       String exp_def_str;
-      if(item->md()) {                  // memberdef takes precedence
-        exp_def_str = item->md()->OptionAfter("EXPAND_DEF_");
-      }
-      if(exp_def_str.empty()) {
-        exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
-      }
-      if(exp_def_str.nonempty()) {
-        int exp_def = (int)exp_def_str;
-        if(exp_def == 0) {
-          expand = false; // no expand
+      
+      if(!(exp_flags & EF_CUSTOM_FILTER) && tab && (exp_flags & EF_DEFAULT)) {
+        // get default info from objs
+        String exp_def_str;
+        if(item->md()) {                  // memberdef takes precedence
+          int depth = -1;
+          if (tab->InheritsFrom(&TA_taGroup_impl)) {
+            depth = taiMisc::GetGroupDefaultExpand(tab->GetName());
+          }
+          if (depth >= 0) {
+            exp_def_str = (String)depth;
+          }
+          else {
+            exp_def_str = item->md()->OptionAfter("EXPAND_DEF_");
+          }
+        }
+        if(exp_def_str.empty()) {
+          exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
+        }
+        if(exp_def_str.nonempty()) {
+          int exp_def = (int)exp_def_str;
+          if(exp_def == 0) {
+            expand = false; // no expand
+          }
+          else {
+            max_levels = exp_def-1; // remaining levels = val-1
+          }
         }
         else {
-          max_levels = exp_def-1; // remaining levels = val-1
+          expand = false;           // if no custom filter, default for all other guys is no expandre
         }
       }
-      else {
-        expand = false;           // if no custom filter, default for all other guys is no expandre
+      if (!(exp_flags & EF_EXPAND_DISABLED)) {
+        if (!item->link()->isEnabled())
+          expand = false;
+      }
+      if (expand && (exp_flags & EF_CUSTOM_FILTER)) {
+        emit CustomExpandFilter(item, level, expand);
       }
     }
-    if (!(exp_flags & EF_EXPAND_DISABLED)) {
-      if (!item->link()->isEnabled())
-        expand = false;
-    }
-    if (expand && (exp_flags & EF_CUSTOM_FILTER)) {
-      emit CustomExpandFilter(item, level, expand);
-    }
   }
-
+  
   if (expand) {
     // first expand the guy...
     if (!isItemExpanded(item)) { // ok, eligible...

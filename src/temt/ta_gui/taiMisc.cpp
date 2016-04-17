@@ -821,7 +821,6 @@ void taiMisc::Cleanup(int) {
 #endif
 }
 
-
 String taiMisc::color_to_string(const iColor& color) {
   String result = "#" + String(color.red(), "%02x")
       + String(color.green(), "%02x") + String(color.blue(), "%02x");
@@ -839,6 +838,60 @@ iColor taiMisc::ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrig
     qFactor = (int)(100.0 / (1 + ivBrightness));
     return iColor(qtColor.dark(qFactor));
   }
+}
+
+int taiMisc::GetGroupDefaultExpand(const String& group) {
+  if (group == "docs")
+    return taMisc::expand_defaults.docs;
+  else if (group == "wizards")
+    return taMisc::expand_defaults.wizards;
+  else if (group == "ctrl_panels")
+    return taMisc::expand_defaults.ctrl_panels;
+  else if (group == "param_sets")
+    return taMisc::expand_defaults.param_sets;
+  else if (group == "data")
+    return taMisc::expand_defaults.data;
+  else if (group == "programs")
+    return taMisc::expand_defaults.programs;
+  else if (group == "viewers")
+    return taMisc::expand_defaults.viewers;
+  else if (group == "networks")
+    return taMisc::expand_defaults.networks;
+  else if (group == "network")
+    return taMisc::expand_defaults.network;
+  else if (group == "specs")
+    return taMisc::expand_defaults.specs;
+  else if (group == "layers")
+    return taMisc::expand_defaults.layers;
+  else
+    return -1;  // use the default set for class
+}
+
+void taiMisc::SetGroupDefaultExpand(const String& group, int depth) {
+  if (group == "docs")
+    taMisc::expand_defaults.docs = depth;
+  else if (group == "wizards")
+    taMisc::expand_defaults.wizards = depth;
+  else if (group == "ctrl_panels")
+    taMisc::expand_defaults.ctrl_panels = depth;
+  else if (group == "param_sets")
+    taMisc::expand_defaults.param_sets = depth;
+  else if (group == "data")
+    taMisc::expand_defaults.data = depth;
+  else if (group == "programs")
+    taMisc::expand_defaults.programs = depth;
+  else if (group == "viewers")
+    taMisc::expand_defaults.viewers = depth;
+  else if (group == "networks")
+    taMisc::expand_defaults.networks = depth;
+  else if (group == "network")
+    taMisc::expand_defaults.network = depth;
+  else if (group == "specs")
+    taMisc::expand_defaults.specs = depth;
+  else if (group == "layers")
+    taMisc::expand_defaults.layers = depth;
+  else
+    taMisc::DebugInfo("SetGroupDefaultExpand - group " + group + " not found");
 }
 
 iMainWindowViewer* taiMisc::FindMainWinParent(QObject* obj) {
