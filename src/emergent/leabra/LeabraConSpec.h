@@ -186,6 +186,62 @@ private:
   void	Defaults_init();
 };
 
+eTypeDef_Of(WtBalanceSpec);
+
+class E_API WtBalanceSpec : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight balance maintenance spec: 
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // perform weight balance maintenance?  if so, ..
+  bool          sym;            // #CONDSHOW_ON_on #DEF_true apply weight increase and decrease factors symmetrically (i.e., when increase gets smaller, decrease gets bigger, and vice-versa) - otherwise, only reductions in weight change occur for hi or lo weight balance, respectively
+  float         trg;            // #CONDSHOW_ON_on #DEF_0.5 target average weight value for this projection -- should generally match rnd.mean (plus whatever scaling factors might be in place)
+  float         thr;            // #CONDSHOW_ON_on threshold around target value where weight balance factor remains zero -- specifically trg +/- thr is this zero regime, and weight balance factors increase linearly above or below this range
+  float         hi_gain;        // #CONDSHOW_ON_on #DEF_2 gain multiplier applied to balance factors that are above zero (i.e., average weight > trg) -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- a value of 2 serves to normalize the range with trg = 0.5 and thr = 0 -- adjust accordingly from there
+  float         lo_gain;        // #CONDSHOW_ON_on #DEF_0;2 gain multiplier applied to balance factors that are below zero (i.e., average weight < trg) -- higher values turn weight decreases down more rapidly as the weights become more imbalanced -- set to 0 to turn off modulation of weight decreases -- a value of 2 serves to normalize the range with trg = 0.5 and thr = 0 -- adjust accordingly from there
+  int           avg_updt;       // #CONDSHOW_ON_on #DEF_1 #MIN_1 how frequently to update the average receiver weight value, and corresponding weight balance factor, per weight update trial (1 = every trial, 2 = every other trial, etc)
+
+  float		hi_thr;	        // #HIDDEN #READ_ONLY trg + thr
+  float		lo_thr;	        // #HIDDEN #READ_ONLY trg - thr
+  
+  inline void   WtBal(float& wt_avg, float& wb_inc, float& wb_dec) {
+    if(wt_avg > hi_thr) {
+      float wbi = hi_gain * (wt_avg - hi_thr);
+      if(wbi > 1.0f) wbi = 1.0f;
+      wb_inc = 1.0f - wbi;
+      if(sym)
+        wb_dec = 1.0f + wbi;
+      else
+        wb_dec = 1.0f;
+    }
+    else if(wt_avg < lo_thr) {
+      float wbd = lo_gain * (wt_avg - lo_thr);
+      if(wbd < -1.0f) wbd = -1.0f;
+      wb_dec = 1.0f + wbd;
+      if(sym)
+        wb_inc = 1.0f - wbd;
+      else
+        wb_inc = 1.0f;
+    }
+    else {
+      wb_inc = 1.0f;
+      wb_dec = 1.0f;
+    }
+  }
+  // compute weight balance factors for increase and decrease based on average weight values on current con group
+  
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
+
+  TA_SIMPLE_BASEFUNS(WtBalanceSpec);
+protected:
+  SPEC_DEFAULTS;
+  void        UpdateAfterEdit_impl() override;
+private:
+  void        Initialize();
+  void        Destroy()        { };
+  void        Defaults_init();
+};
+
+
 eTypeDef_Of(AdaptWtScaleSpec);
 
 class E_API AdaptWtScaleSpec : public SpecMemberBase {
@@ -313,6 +369,7 @@ public:
 
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
+  WtBalanceSpec wt_bal;         // #CAT_Learning computes weight balance factor 
   AdaptWtScaleSpec adapt_scale;	// #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
   SlowWtsSpec   slow_wts;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
   DeepLrateSpec deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
@@ -479,10 +536,11 @@ public:
   inline void	Compute_dWt(ConGroup* cg, Network* net, int thr_no) override;
 
   inline void	C_Compute_Weights_CtLeabraXCAL
-    (float& wt, float& dwt, float& fwt, float& swt, float& scale)
+    (float& wt, float& dwt, float& fwt, float& swt, float& scale,
+     const float wb_inc, const float wb_dec)
   { if(dwt != 0.0f) {
-      if(dwt > 0.0f)	dwt *= (1.0f - fwt);
-      else		dwt *= fwt;
+      if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
+      else		dwt *= wb_dec * fwt;
       fwt += dwt;
       // C_ApplyLimits(fwt);       // don't need this..
       // swt = fwt;  // leave swt as pristine original weight value -- saves time
@@ -495,13 +553,14 @@ public:
       }
     }
   }
-  // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts
+  // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no slow wts
 
   inline void	C_Compute_Weights_CtLeabraXCAL_slow
-    (float& wt, float& dwt, float& fwt, float& swt, float& scale)
+    (float& wt, float& dwt, float& fwt, float& swt, float& scale,
+     const float wb_inc, const float wb_dec)
   { 
-    if(dwt > 0.0f)	dwt *= (1.0f - fwt);
-    else		dwt *= fwt;
+    if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
+    else		dwt *= wb_dec * fwt;
     fwt += dwt;
     float eff_wt = slow_wts.swt_pct * swt + slow_wts.fwt_pct * fwt;
     float nwt = scale * SigFmLinWt(eff_wt);
@@ -529,6 +588,10 @@ public:
   inline virtual void 	Compute_dWt_Norm(LeabraConGroup* cg, LeabraNetwork* net,
                                          int thr_no);
   // #IGNORE compute dwt normalization
+
+  inline virtual void 	Compute_WtBal(LeabraConGroup* cg, LeabraNetwork* net,
+                                      int thr_no);
+  // #IGNORE compute weight balance factors
 
   inline virtual void Compute_EpochWeights(LeabraConGroup* cg, LeabraNetwork* net,
                                            int thr_no) { };

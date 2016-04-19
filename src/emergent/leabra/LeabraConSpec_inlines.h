@@ -359,7 +359,7 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_vec
     // and is useful for visualization!
   }
   for(;i<sz;i++) {              // get the remainder
-    C_Compute_Weights_CtLeabraXCAL(wts[i], dwts[i], fwts[i], swts[i], scales[i]);
+    C_Compute_Weights_CtLeabraXCAL(wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f);
   }
 }
 
@@ -406,7 +406,7 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_slow_vec
     swt.store(swts+i);
   }
   for(;i<sz;i++) {              // get the remainder
-    C_Compute_Weights_CtLeabraXCAL_slow(wts[i], dwts[i], fwts[i], swts[i], scales[i]);
+    C_Compute_Weights_CtLeabraXCAL_slow(wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f);
   }
 }
 
@@ -423,34 +423,56 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
   float* swts = cg->OwnCnVar(SWT);
   float* scales = cg->OwnCnVar(SCALE);
 
-  if(adapt_scale.on) {
+  const int sz = cg->size;
+  
+  if(wt_bal.on) {
     if(slow_wts.on) {
-      CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL_slow
-                     (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
+      for(int i=0; i<sz; i++) {
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+        LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, thr_no,
+                                                                cg->other_idx);
+        C_Compute_Weights_CtLeabraXCAL_slow
+          (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
+      }
     }
     else {
-      CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL
-                     (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
+      for(int i=0; i<sz; i++) {
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+        LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, thr_no,
+                                                                cg->other_idx);
+        C_Compute_Weights_CtLeabraXCAL
+          (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
+      }
     }
   }
   else {
     if(slow_wts.on) {
-#ifdef TA_VEC_USE
-      Compute_Weights_CtLeabraXCAL_slow_vec(cg, wts, dwts, fwts, swts, scales);
-#else
       CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL_slow
-                     (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
-#endif
+                     (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f));
     }
     else {
-#ifdef TA_VEC_USE
-      Compute_Weights_CtLeabraXCAL_vec(cg, wts, dwts, fwts, swts, scales);
-#else
       CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL
-                     (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
-#endif
+                     (wts[i], dwts[i], fwts[i], swts[i], scales[i], 1.0f, 1.0f));
     }
   }
+//   else {
+//     if(slow_wts.on) {
+// #ifdef TA_VEC_USE
+//       Compute_Weights_CtLeabraXCAL_slow_vec(cg, wts, dwts, fwts, swts, scales);
+// #else
+//       CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL_slow
+//                      (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
+// #endif
+//     }
+//     else {
+// #ifdef TA_VEC_USE
+//       Compute_Weights_CtLeabraXCAL_vec(cg, wts, dwts, fwts, swts, scales);
+// #else
+//       CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL
+//                      (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
+// #endif
+//     }
+//   }
 }
 
 
@@ -469,6 +491,18 @@ inline void LeabraConSpec::Compute_dWt_Norm(LeabraConGroup* cg, LeabraNetwork* n
   for(int i=0; i<cg->size; i++) {
     cg->PtrCn(i,DWT,net) -= dwnorm;
   }
+}
+
+inline void LeabraConSpec::Compute_WtBal(LeabraConGroup* cg, LeabraNetwork* net,
+                                         int thr_no) {
+  if(!learn || !wt_bal.on || cg->size < 1) return;
+  if(net->total_trials % wt_bal.avg_updt != 0) return;
+  float sum_wt = 0.0f;
+  for(int i=0; i<cg->size; i++) {
+    sum_wt += cg->PtrCn(i,WT,net);
+  }
+  cg->wt_avg = sum_wt / (float)cg->size;
+  wt_bal.WtBal(cg->wt_avg, cg->wb_inc, cg->wb_dec);
 }
 
 inline void LeabraConSpec::Compute_CopyWeights(ConGroup* cg, ConGroup* src_cg,

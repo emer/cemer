@@ -24,6 +24,7 @@
 TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
+TA_BASEFUNS_CTORS_DEFN(WtBalanceSpec);
 TA_BASEFUNS_CTORS_DEFN(AdaptWtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(SlowWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepLrateSpec);
@@ -98,6 +99,29 @@ void WtSigSpec::Defaults_init() {
 void WtSigSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
+}
+
+void WtBalanceSpec::Initialize() {
+  on = false;
+  Defaults_init();
+}
+
+void WtBalanceSpec::Defaults_init() {
+  sym = true;
+  trg = 0.5f;
+  thr = 0.1f;
+  hi_gain = 2.0f;
+  lo_gain = 0.0f;
+  avg_updt = 1;
+
+  hi_thr = trg + thr;
+  lo_thr = trg - thr;
+}
+
+void WtBalanceSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  hi_thr = trg + thr;
+  lo_thr = trg - thr;
 }
 
 
@@ -332,6 +356,9 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
     if(wt_sig.dwt_norm) {
       net->net_misc.dwt_norm = true;
     }
+    if(wt_bal.on) {
+      net->net_misc.wt_bal = true;
+    }
     if(wt_sig.rugp_wt_sync) {
       net->net_misc.rugp_wt_sync = true;
     }
@@ -486,7 +513,7 @@ void LeabraConSpec::GraphSlowWtsFun(int trials, DataTable* graph_data) {
   for(int trl = 0; trl < trials; trl++) {
     dwt = Random::UniformMinMax(-lrate, lrate);
     float dwt_save = dwt;
-    C_Compute_Weights_CtLeabraXCAL_slow(wt, dwt, fwt, swt, scale);
+    C_Compute_Weights_CtLeabraXCAL_slow(wt, dwt, fwt, swt, scale, 1.0f, 1.0f);
     graph_data->AddBlankRow();
     trialc->SetValAsInt(trl, -1);
     dwtc->SetValAsFloat(dwt_save, -1);

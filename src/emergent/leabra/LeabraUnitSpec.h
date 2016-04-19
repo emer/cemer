@@ -382,7 +382,6 @@ private:
   void        Defaults_init();
 };
 
-
 eTypeDef_Of(LeabraChannels);
 
 class E_API LeabraChannels : public taOBase {
@@ -663,10 +662,10 @@ public:
   MinMaxRange      vm_range;        // #CAT_Activation membrane potential range (min, max, 0-2 for normalized)
   LeabraInitSpec   init;            // #CAT_Activation initial starting values for various key neural parameters
   LeabraDtSpec     dt;              // #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
-  LeabraActAvgSpec act_avg;         // #CAT_Activation time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
-  LeabraAvgLSpec   avg_l;           // #CAT_Activation parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
-  LeabraAvgL2Spec  avg_l_2;         // #CAT_Activation additional parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
-  AdaptLeakSpec     adapt_leak;      // #CAT_Activation adapting leak value -- a homeostatic adaptation using the bias weight values to keep units in their sensitive range of activation -- works along with the BCM function but operates at the whole-neuron level -- based on the avg_l value as computed in specs above -- bias weight reflects *addition* to default g_bar.l value
+  LeabraActAvgSpec act_avg;         // #CAT_Learning time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
+  LeabraAvgLSpec   avg_l;           // #CAT_Learning parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
+  LeabraAvgL2Spec  avg_l_2;         // #CAT_Learning additional parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
+  AdaptLeakSpec    adapt_leak;     // #CAT_Learning adapting leak value -- a homeostatic adaptation using the bias weight values to keep units in their sensitive range of activation -- works along with the BCM function but operates at the whole-neuron level -- based on the avg_l value as computed in specs above -- bias weight reflects *addition* to default g_bar.l value
   LeabraChannels   g_bar;           // #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   LeabraChannels   e_rev;           // #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
   ActAdaptSpec     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials

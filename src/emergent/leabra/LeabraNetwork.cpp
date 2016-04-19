@@ -84,6 +84,7 @@ void LeabraNetMisc::Initialize() {
   diff_scale_p = false;
   diff_scale_q1 = false;
   dwt_norm = false;
+  wt_bal = false;
   rugp_wt_sync = false;
   lay_gp_inhib = false;
   inhib_cons = false;
@@ -562,6 +563,7 @@ void LeabraNetwork::Trial_Init_Specs() {
   net_misc.diff_scale_p = false;
   net_misc.diff_scale_q1 = false;
   net_misc.dwt_norm = false;
+  net_misc.wt_bal = false;
   net_misc.rugp_wt_sync = false;
   net_misc.lay_gp_inhib = false;
   net_misc.lrate_updtd = false;
@@ -1949,6 +1951,15 @@ void LeabraNetwork::Compute_dWt_Norm_Thr(int thr_no) {
   }
 }
 
+void LeabraNetwork::Compute_WtBal_Thr(int thr_no) {
+  const int nrcg = ThrNRecvConGps(thr_no);
+  for(int i=0; i<nrcg; i++) {
+    LeabraConGroup* rcg = (LeabraConGroup*)ThrRecvConGroup(thr_no, i);
+    if(rcg->NotActive()) continue;
+    ((LeabraConSpec*)rcg->con_spec)->Compute_WtBal(rcg, this, thr_no);
+  }
+}
+
 void LeabraNetwork::Init_Weights_post() {
   Compute_RUgpWtSync();
   inherited::Init_Weights_post();
@@ -2067,6 +2078,10 @@ void LeabraNetwork::Compute_Weights() {
   Compute_RUgpDwtSync();
 
   NET_THREAD_CALL(LeabraNetwork::Compute_Weights_Thr);
+  
+  if(net_misc.wt_bal) {
+    NET_THREAD_CALL(LeabraNetwork::Compute_WtBal_Thr);
+  }
 }
 
 void LeabraNetwork::Compute_Weights_Thr(int thr_no) {
