@@ -170,10 +170,10 @@ void ScalarValLayerSpec::HelpConfig() {
  Uses distributed coarse-coding units to represent a single scalar value.  Each unit\
  has a preferred value arranged evenly between the min-max range, and decoding\
  simply computes an activation-weighted average based on these preferred values.  The\
- current scalar value is displayed in the act_eq variable of first unit in the layer, which can be clamped\
+ current scalar value is displayed in the misc_1 variable of first unit in the layer, which can be clamped\
  and compared, etc (i.e., set the environment patterns to have just one unit and provide\
  the actual scalar value and it will automatically establish the appropriate distributed\
- representation in the rest of the units).  Unlike previous implementations, all units including the first are part of the distributed representation -- first unit is not special except in receiving the input and displaying output as act_eq.\n\
+ representation in the rest of the units).  Unlike previous implementations, all units including the first are part of the distributed representation -- first unit is not special except in receiving the input and displaying output as misc_1.\n\
  \nScalarValLayerSpec Configuration:\n\
  - Default UnitSpec and LayerSpec params with FF_FB_INHIB, gi = 2.2 generally works well\n\
  - For 0-1 range, GAUSSIAN: 11 or 21 units works well, LOCALIST: 3 units\n\
@@ -209,17 +209,17 @@ bool ScalarValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
   }
 
-  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
-  if(us->act_misc.rec_nd) {
-    taMisc::Warning("Scalar val must have UnitSpec.act_misc.rec_nd = false, to record value in act_eq of first unit.  I changed this for you in spec:", us->name, "make sure this is appropriate for all layers that use this spec");
-    us->SetUnique("act_misc", true);
-    us->act_misc.rec_nd = false;
-  }
-  if(!us->act_misc.avg_nd) {
-    taMisc::Warning("Scalar val must have UnitSpec.act_misc.avg_nd = true, so learning is based on act_nd and NOT act_eq, which is used to record value in first unit.  I changed this for you in spec:", us->name, "make sure this is appropriate for all layers that use this spec");
-    us->SetUnique("act_misc", true);
-    us->act_misc.avg_nd = true;
-  }
+  // LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
+  // if(us->act_misc.rec_nd) {
+  //   taMisc::Warning("Scalar val must have UnitSpec.act_misc.rec_nd = false, to record value in act_eq of first unit.  I changed this for you in spec:", us->name, "make sure this is appropriate for all layers that use this spec");
+  //   us->SetUnique("act_misc", true);
+  //   us->act_misc.rec_nd = false;
+  // }
+  // if(!us->act_misc.avg_nd) {
+  //   taMisc::Warning("Scalar val must have UnitSpec.act_misc.avg_nd = true, so learning is based on act_nd and NOT act_eq, which is used to record value in first unit.  I changed this for you in spec:", us->name, "make sure this is appropriate for all layers that use this spec");
+  //   us->SetUnique("act_misc", true);
+  //   us->act_misc.avg_nd = true;
+  // }
   
   // check for conspecs with correct params
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
@@ -362,7 +362,7 @@ void ScalarValLayerSpec::ClampValue_ugp
   float val = uv->ext_orig;     // have to use the orig value b/c ext gets computed!
   if(scalar.clip_val)
     val = val_range.Clip(val);          // first unit has the value to clamp
-  uv->act_eq = uv->misc_1 = val;        // record this val
+  uv->misc_1 = val;        // record this val
   scalar.InitVal(val, nunits, unit_range.min, unit_range.range);
 
   float avg_act = 0.0f;
@@ -434,7 +434,7 @@ float ScalarValLayerSpec::ReadValue_ugp
   // set the first unit in the group to represent the value
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-  uv->act_eq = uv->misc_1 = avg;
+  uv->misc_1 = avg;
   return avg;
 }
 

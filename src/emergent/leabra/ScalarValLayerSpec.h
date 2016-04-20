@@ -126,7 +126,7 @@ private:
 eTypeDef_Of(ScalarValLayerSpec);
 
 class E_API ScalarValLayerSpec : public LeabraLayerSpec {
-  // represents a scalar value using a coarse-coded distributed code over units.  the external input to the first unit is used to generate distributed inputs to the rest of the units, but unlike in earlier versions, all the units represent the distributed representation - the first unit is not just for display anymore, though it does contain the scalar readout val in act_eq and in act_m and act_p
+  // represents a scalar value using a coarse-coded distributed code over units.  the external input to the first unit is used to generate distributed inputs to the rest of the units, but unlike in earlier versions, all the units represent the distributed representation - the first unit is not just for display anymore, though it does contain the scalar readout val in misc_1 unit variable
 INHERITED(LeabraLayerSpec)
 public:
   ScalarValSpec	 scalar;	// specifies how values are represented in terms of distributed patterns of activation across the layer
