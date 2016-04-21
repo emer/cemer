@@ -112,7 +112,7 @@ void LeabraInhibMisc::Defaults_init() {
     net_thr = 0.0f;
   }
   else {
-    net_thr = 0.1f;             // new default
+    net_thr = 0.2f;             // new default
   }
   self_dt = 1.0f / self_tau;
 }
