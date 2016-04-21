@@ -70,6 +70,9 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
     act = menu->AddItem("Remove Jobs", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "RemoveJobs");
     act->setEnabled((tab->name == "jobs_done" || tab->name == "jobs_archive" || tab->name == "jobs_deleted") && sel.height() > 0);
     
+    act = menu->AddItem("Nuke Jobs", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "NukeJobs");
+    act->setEnabled((tab->name == "jobs_done" || tab->name == "jobs_archive" || tab->name == "jobs_deleted") && sel.height() > 0);
+    
     act = menu->AddItem("Remove Killed Jobs", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "RemoveKilledJobs");
     act->setEnabled((tab->name == "jobs_done") && sel.height() >= 0);
     
