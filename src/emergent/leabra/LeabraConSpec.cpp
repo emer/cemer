@@ -107,11 +107,10 @@ void WtBalanceSpec::Initialize() {
 }
 
 void WtBalanceSpec::Defaults_init() {
-  sym = true;
-  trg = 0.5f;
+  trg = 0.3f;
   thr = 0.1f;
   hi_gain = 2.0f;
-  lo_gain = 0.0f;
+  lo_gain = 2.0f;
   avg_updt = 1;
 
   hi_thr = trg + thr;

@@ -668,6 +668,13 @@ void LeabraUnitSpec::Init_Weights(UnitVars* ru, Network* rnet, int thr_no) {
   u->misc_1 = 0.0f;
 
   Init_ActAvg(u, net, thr_no);
+
+  const int nrg = u->NRecvConGps(net, thr_no); 
+  for(int g=0; g< nrg; g++) {
+    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    cs->Init_Weights_rcgp(recv_gp, net, thr_no);
+  }
 }
 
 void LeabraUnitSpec::Init_ActAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {

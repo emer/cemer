@@ -152,6 +152,9 @@ def make_dir(dir):
 
 # Don't have subprocess.check_output in Python 2.6.  This will have to do.
 def check_output(cmd):
+    # use subprocess version if possible because it is more robust!
+    if sys.version_info >= (2, 7):
+        return subprocess.check_output(cmd)
     try:
         proc_output = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         proc_output.wait()

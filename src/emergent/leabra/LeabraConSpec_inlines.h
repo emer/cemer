@@ -23,6 +23,13 @@
 
 // declare all other types mentioned but not required to include:
 
+inline void LeabraConSpec::Init_Weights_rcgp(LeabraConGroup* cg, LeabraNetwork* net,
+                                             int thr_no) {
+  cg->wt_avg = wt_bal.trg;
+  cg->wb_inc = 1.0f;
+  cg->wb_dec = 1.0f;
+}
+
 #ifdef TA_VEC_USE
 
 inline void LeabraConSpec::Send_NetinDelta_vec(LeabraConGroup* cg, 

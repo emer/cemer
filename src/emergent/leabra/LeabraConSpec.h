@@ -193,34 +193,27 @@ class E_API WtBalanceSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // perform weight balance maintenance?  if so, ..
-  bool          sym;            // #CONDSHOW_ON_on #DEF_true apply weight increase and decrease factors symmetrically (i.e., when increase gets smaller, decrease gets bigger, and vice-versa) - otherwise, only reductions in weight change occur for hi or lo weight balance, respectively
-  float         trg;            // #CONDSHOW_ON_on #DEF_0.5 target average weight value for this projection -- should generally match rnd.mean (plus whatever scaling factors might be in place)
-  float         thr;            // #CONDSHOW_ON_on threshold around target value where weight balance factor remains zero -- specifically trg +/- thr is this zero regime, and weight balance factors increase linearly above or below this range
+  float         trg;            // #CONDSHOW_ON_on #DEF_0.3 target average weight value for this projection -- should generally match rnd.mean (plus whatever scaling factors might be in place)
+  float         thr;            // #CONDSHOW_ON_on #DEF_0.1 threshold around target value where weight balance factor remains zero -- specifically trg +/- thr is this zero regime, and weight balance factors increase linearly above or below this range
   float         hi_gain;        // #CONDSHOW_ON_on #DEF_2 gain multiplier applied to balance factors that are above zero (i.e., average weight > trg) -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- a value of 2 serves to normalize the range with trg = 0.5 and thr = 0 -- adjust accordingly from there
-  float         lo_gain;        // #CONDSHOW_ON_on #DEF_0;2 gain multiplier applied to balance factors that are below zero (i.e., average weight < trg) -- higher values turn weight decreases down more rapidly as the weights become more imbalanced -- set to 0 to turn off modulation of weight decreases -- a value of 2 serves to normalize the range with trg = 0.5 and thr = 0 -- adjust accordingly from there
+  float         lo_gain;        // #CONDSHOW_ON_on #DEF_2 gain multiplier applied to balance factors that are below zero (i.e., average weight < trg) -- higher values turn weight decreases down more rapidly as the weights become more imbalanced -- set to 0 to turn off modulation of weight decreases -- a value of 2 serves to normalize the range with trg = 0.5 and thr = 0 -- adjust accordingly from there
   int           avg_updt;       // #CONDSHOW_ON_on #DEF_1 #MIN_1 how frequently to update the average receiver weight value, and corresponding weight balance factor, per weight update trial (1 = every trial, 2 = every other trial, etc)
 
   float		hi_thr;	        // #HIDDEN #READ_ONLY trg + thr
   float		lo_thr;	        // #HIDDEN #READ_ONLY trg - thr
   
-  inline void   WtBal(float& wt_avg, float& wb_inc, float& wb_dec) {
+  inline void   WtBal(const float wt_avg, float& wb_inc, float& wb_dec) {
     if(wt_avg > hi_thr) {
       float wbi = hi_gain * (wt_avg - hi_thr);
       if(wbi > 1.0f) wbi = 1.0f;
       wb_inc = 1.0f - wbi;
-      if(sym)
-        wb_dec = 1.0f + wbi;
-      else
-        wb_dec = 1.0f;
+      wb_dec = 1.0f + wbi;
     }
     else if(wt_avg < lo_thr) {
       float wbd = lo_gain * (wt_avg - lo_thr);
       if(wbd < -1.0f) wbd = -1.0f;
       wb_dec = 1.0f + wbd;
-      if(sym)
-        wb_inc = 1.0f - wbd;
-      else
-        wb_inc = 1.0f;
+      wb_inc = 1.0f - wbd;
     }
     else {
       wb_inc = 1.0f;
@@ -410,6 +403,9 @@ public:
     }
   }
 
+  inline void Init_Weights_rcgp(LeabraConGroup* cg, LeabraNetwork* net, int thr_no);
+  // #IGNORE recv con group init weights -- for weight balance params
+  
   inline void Init_Weights_post(ConGroup* cg, Network* net, int thr_no) override {
     float* wts = cg->OwnCnVar(WT);
     float* swts = cg->OwnCnVar(SWT);
