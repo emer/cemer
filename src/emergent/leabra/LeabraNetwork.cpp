@@ -1050,6 +1050,8 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
     LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
     if(lay->hard_clamped)
       continue;
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    const float net_thr = ls->inhib_misc.net_thr;
     AvgMaxValsRaw* am_net = ThrLayAvgMax(thr_no, li, AM_NET);
     am_net->InitVals();
     AvgMaxValsRaw* am_net_raw = ThrLayAvgMax(thr_no, li, AM_NET_RAW);
@@ -1059,7 +1061,7 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
     const int ued = ThrLayUnEnd(thr_no, li);
     for(int ui = ust; ui < ued; ui++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
-      if(uv->lesioned()) continue;
+      if(uv->lesioned() || uv->net < net_thr) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_net->UpdtVals(uv->net, flat_idx); 
       am_net_raw->UpdtVals(uv->net_raw, flat_idx); 
@@ -1072,6 +1074,8 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
     LeabraLayer* lay = (LeabraLayer*)ActiveUnGpLayer(li);
     if(lay->hard_clamped)
       continue;
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    const float net_thr = ls->inhib_misc.net_thr;
     AvgMaxValsRaw* am_net = ThrUnGpAvgMax(thr_no, li, AM_NET);
     am_net->InitVals();
     AvgMaxValsRaw* am_net_raw = ThrUnGpAvgMax(thr_no, li, AM_NET_RAW);
@@ -1081,7 +1085,7 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
     const int ued = ThrUnGpUnEnd(thr_no, li);
     for(int ui = ust; ui < ued; ui++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
-      if(uv->lesioned()) continue;
+      if(uv->lesioned() || uv->net < net_thr) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_net->UpdtVals(uv->net, flat_idx); 
       am_net_raw->UpdtVals(uv->net_raw, flat_idx); 

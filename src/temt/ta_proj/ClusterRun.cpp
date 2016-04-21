@@ -1113,6 +1113,58 @@ void ClusterRun::RemoveJobs() {
   }
 }
 
+void ClusterRun::NukeJobs() {
+  if(!InitClusterManager())
+    return;
+  
+  int st_row, end_row;
+  if (SelectedRows(jobs_done, st_row, end_row)) {
+    if (!CheckLocalClustUserRows(jobs_done, st_row, end_row)) {
+      return;
+    }
+    int chs = taMisc::Choice("NukeJobs: Are you sure you want to nuke: " + String(1 + end_row - st_row) + " jobs from the jobs_done list (can only be your jobs, on current cluster)?", "Ok", "Cancel");
+    if(chs == 1) return;
+    jobs_submit.ResetData();
+    file_list.ResetData();
+    for (int row = end_row; row >= st_row; --row) {
+      SubmitNukeJob(jobs_done, row);
+    }
+    m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
+  }
+  else if (SelectedRows(jobs_archive, st_row, end_row)) {
+    if (!CheckLocalClustUserRows(jobs_archive, st_row, end_row)) {
+      return;
+    }
+    int chs = taMisc::Choice("NukeJobs: Are you sure you want to nuke: " + String(1 + end_row - st_row) + " jobs from the jobs_archive list?", "Ok", "Cancel");
+    if(chs == 1) return;
+    jobs_submit.ResetData();
+    file_list.ResetData();
+    for (int row = end_row; row >= st_row; --row) {
+      SubmitNukeJob(jobs_archive, row);
+    }
+    m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
+  }
+  else if (SelectedRows(jobs_deleted, st_row, end_row)) {
+    if (!CheckLocalClustUserRows(jobs_deleted, st_row, end_row)) {
+      return;
+    }
+    int chs = taMisc::Choice("NukeJobs: Are you sure you want to nuke: " + String(1 + end_row - st_row) + " jobs from the jobs_deleted list?", "Ok", "Cancel");
+    if(chs == 1) return;
+    jobs_submit.ResetData();
+    file_list.ResetData();
+    for (int row = end_row; row >= st_row; --row) {
+      SubmitRemoveDelJob(jobs_deleted, row);
+    }
+    m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
+  }
+  else {
+    taMisc::Warning("No rows selected -- no jobs nuked");
+  }
+}
+
 void ClusterRun::RemoveKilledJobs() {
   if(!InitClusterManager())
     return;
@@ -1804,6 +1856,18 @@ ClusterRun::SubmitRemoveJob(const DataTable& table, int tab_row)
     return;
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("REMOVEJOB", "status", dst_row);
+  jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
+  jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
+}
+
+void
+ClusterRun::SubmitNukeJob(const DataTable& table, int tab_row)
+{
+  if(!CheckLocalClustUser(table, tab_row))
+    return;
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("NUKEJOB", "status", dst_row);
   jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
   jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit

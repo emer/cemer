@@ -102,16 +102,22 @@ void WtSigSpec::UpdateAfterEdit_impl() {
 }
 
 void WtBalanceSpec::Initialize() {
-  on = false;
   Defaults_init();
 }
 
 void WtBalanceSpec::Defaults_init() {
+  taVersion v787(7, 8, 7);
+  if(taMisc::is_loading && taMisc::loading_version < v787) {
+    on = false;
+  }
+  else {
+    on = true;                  // new default
+  }
   trg = 0.3f;
   thr = 0.1f;
-  hi_gain = 2.0f;
-  lo_gain = 2.0f;
-  avg_updt = 1;
+  gain = 2.0f;
+  avg_updt = 1;                 // todo: update!
+  no_wt_sb = false;
 
   hi_thr = trg + thr;
   lo_thr = trg - thr;

@@ -189,28 +189,28 @@ private:
 eTypeDef_Of(WtBalanceSpec);
 
 class E_API WtBalanceSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight balance maintenance spec: 
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight balance maintenance spec: maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- plugs into soft bounding function
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // perform weight balance maintenance?  if so, ..
+  bool          on;             // #DEF_true perform weight balance maintenance?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- this is generally very beneficial and is on by default
   float         trg;            // #CONDSHOW_ON_on #DEF_0.3 target average weight value for this projection -- should generally match rnd.mean (plus whatever scaling factors might be in place)
   float         thr;            // #CONDSHOW_ON_on #DEF_0.1 threshold around target value where weight balance factor remains zero -- specifically trg +/- thr is this zero regime, and weight balance factors increase linearly above or below this range
-  float         hi_gain;        // #CONDSHOW_ON_on #DEF_2 gain multiplier applied to balance factors that are above zero (i.e., average weight > trg) -- higher values turn weight increases down more rapidly as the weights become more imbalanced -- a value of 2 serves to normalize the range with trg = 0.5 and thr = 0 -- adjust accordingly from there
-  float         lo_gain;        // #CONDSHOW_ON_on #DEF_2 gain multiplier applied to balance factors that are below zero (i.e., average weight < trg) -- higher values turn weight decreases down more rapidly as the weights become more imbalanced -- set to 0 to turn off modulation of weight decreases -- a value of 2 serves to normalize the range with trg = 0.5 and thr = 0 -- adjust accordingly from there
+  float         gain;           // #CONDSHOW_ON_on #DEF_2:4 gain multiplier applied to balance factors that are above zero (i.e., average weight > trg) -- higher values turn weight increases down more rapidly as the weights become more imbalanced
   int           avg_updt;       // #CONDSHOW_ON_on #DEF_1 #MIN_1 how frequently to update the average receiver weight value, and corresponding weight balance factor, per weight update trial (1 = every trial, 2 = every other trial, etc)
+  bool          no_wt_sb;       // #CONDSHOW_ON_on turn off weight-based soft-bounding and rely exclusively on wt balance function (experimental)
 
   float		hi_thr;	        // #HIDDEN #READ_ONLY trg + thr
   float		lo_thr;	        // #HIDDEN #READ_ONLY trg - thr
   
   inline void   WtBal(const float wt_avg, float& wb_inc, float& wb_dec) {
     if(wt_avg > hi_thr) {
-      float wbi = hi_gain * (wt_avg - hi_thr);
+      float wbi = gain * (wt_avg - hi_thr);
       if(wbi > 1.0f) wbi = 1.0f;
       wb_inc = 1.0f - wbi;
       wb_dec = 1.0f + wbi;
     }
     else if(wt_avg < lo_thr) {
-      float wbd = lo_gain * (wt_avg - lo_thr);
+      float wbd = gain * (wt_avg - lo_thr);
       if(wbd < -1.0f) wbd = -1.0f;
       wb_dec = 1.0f + wbd;
       wb_inc = 1.0f - wbd;
@@ -535,8 +535,14 @@ public:
     (float& wt, float& dwt, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec)
   { if(dwt != 0.0f) {
-      if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
-      else		dwt *= wb_dec * fwt;
+      if(wt_bal.no_wt_sb) {
+        if(dwt > 0.0f)	dwt *= wb_inc;
+        else		dwt *= wb_dec;
+      }
+      else {
+        if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
+        else		dwt *= wb_dec * fwt;
+      }
       fwt += dwt;
       // C_ApplyLimits(fwt);       // don't need this..
       // swt = fwt;  // leave swt as pristine original weight value -- saves time

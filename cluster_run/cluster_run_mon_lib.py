@@ -120,6 +120,7 @@ job_out_bytes_total = 30000
 #   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
 #   GETFILES  tell cluster to check in all files listed in this other_files entry
 #   REMOVEJOB remove given tag job from the jobs done list and add to jobs_deleted
+#   NUKEJOB   remove given tag job from jobs done immediately -- do not add to jobs deleted
 #   CLEANJOBFILES tell cluster to remove job files associated with tags
 #   REMOVEFILES tell cluster to remove specific files listed in this other_files entry
 #   UPDATENOTE update the notes field of a completed job
@@ -1134,6 +1135,8 @@ class SubversionPoller(object):
                 self._removefiles_job(filename, rev, row)
             elif status == 'REMOVEJOB':
                 self._remove_job(filename, rev, row)
+            elif status == 'NUKEJOB':
+                self._nuke_job(filename, rev, row)
             elif status == 'CLEANJOBFILES':
                 self._clean_job_files(filename, rev, row)
             elif status == 'UPDATENOTE':
@@ -1382,6 +1385,34 @@ class SubversionPoller(object):
                     print "removed jobs_archive row: %d" % (archrow)
             else:
                 print "remove_job: tag %s not found in jobs done or archive" % tag
+        self._remove_tag_files(tag) # extra final attempt to remove everything with a tag
+
+    def _nuke_job(self, filename, rev, row):
+        tag = self.jobs_submit.get_val(row, "tag")
+        if debug:
+            print "nuking all job files for tag: %s" % (tag)
+        self._clean_job_files(filename, rev, row) # this needs jobs_done info
+        donerow = self.jobs_done.find_val("tag", tag)
+        if donerow >= 0:
+            dat_files = self.jobs_done.get_val(donerow, "dat_files")
+            self._remove_files(tag, dat_files)
+            other_files = self.jobs_done.get_val(donerow, "other_files")
+            self._remove_files(tag, other_files)
+            self.jobs_done.remove_row(donerow)
+            if debug:
+                print "nuked jobs_done row: %d" % (donerow)
+        else:
+            archrow = self.jobs_archive.find_val("tag", tag)
+            if archrow >= 0:
+                dat_files = self.jobs_archive.get_val(archrow, "dat_files")
+                self._remove_files(tag, dat_files)
+                other_files = self.jobs_archive.get_val(archrow, "other_files")
+                self._remove_files(tag, other_files)
+                self.jobs_archive.remove_row(archrow)
+                if debug:
+                    print "nuked jobs_archive row: %d" % (archrow)
+            else:
+                print "nuke_job: tag %s not found in jobs done or archive" % tag
         self._remove_tag_files(tag) # extra final attempt to remove everything with a tag
 
     # move job from done to archive

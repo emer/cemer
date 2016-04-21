@@ -141,6 +141,8 @@ public:
   // #MENU_BUTTON #MENU_ON_Jobs update notes field of completed jobs -- enter a new note in the table and then do this, and it will update the table permanently -- otherwise all edits are overwritten by the version in svn which is only updated on the cluster side
   virtual void  RemoveJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs to the deleted table, including all their data that has been checked in (according to the local contents of the repository) -- jobs in the deleted table can be undeleted or permanently deleted -- (good idea to do an Update before running this) -- for cleaning up old unneeded jobs
+  virtual void  NukeJobs();
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM immediately delete jobs including all their data that has been checked in (according to the local contents of the repository) -- does NOT move to the deleted table for subsequent recovery (see RemoveJobs) -- for jobs that are truly useless accidents and have no lasting value
   virtual void  RemoveKilledJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove ALL jobs in the jobs_done data table with a status of KILLED, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this)
   virtual void  UnDeleteJobs();
@@ -227,6 +229,8 @@ public:
   // make sure that all rows selected are for current cluster and user -- otherwise ask user if they want to stop or continue -- submit functions can only operate on current user and cluster
   virtual void  SubmitRemoveJob(const DataTable& table, int row);
   // add to jobs_submit for remove job for job at the given row of the given table
+  virtual void  SubmitNukeJob(const DataTable& table, int row);
+  // add to jobs_submit for nuke job for job at the given row of the given table
   virtual void  SubmitArchiveJob(const DataTable& table, int row);
   // add to jobs_submit for move job to archive for job at the given row of the given table
   virtual void  SubmitUnDeleteJob(const DataTable& table, int row);

@@ -42,9 +42,7 @@ void LeabraInhibSpec::Initialize() {
 
 void LeabraInhibSpec::Defaults_init() {
   ff = 1.0f;
-  ff_max_vs_avg = 0.0f;         // todo: change default to 0.5 in loading!
   fb = 0.5f;
-  fb_max_vs_avg = 0.0f;
   fb_tau = 1.4f;
   ff0 = 0.1f;
   
@@ -109,7 +107,13 @@ void LeabraInhibMisc::Initialize() {
 }
 
 void LeabraInhibMisc::Defaults_init() {
-  self_tau = 1.4f;
+  taVersion v787(7, 8, 7);
+  if(taMisc::is_loading && taMisc::loading_version < v787) {
+    net_thr = 0.0f;
+  }
+  else {
+    net_thr = 0.1f;             // new default
+  }
   self_dt = 1.0f / self_tau;
 }
 
@@ -553,8 +557,8 @@ void LeabraLayerSpec::Compute_Inhib_FfFb
     return;
   }
 
-  float nw_ffi = ispec.FFInhib(thr->netin.avg, thr->netin.max);
-  float nw_fbi = ispec.FBInhib(thr->acts.avg, thr->acts.max);
+  float nw_ffi = ispec.FFInhib(thr->netin.avg);
+  float nw_fbi = ispec.FBInhib(thr->acts.avg);
 
   thr->i_val.ffi = nw_ffi;
 
