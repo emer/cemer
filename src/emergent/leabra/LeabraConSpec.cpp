@@ -116,8 +116,7 @@ void WtBalanceSpec::Defaults_init() {
   trg = 0.3f;
   thr = 0.1f;
   gain = 2.0f;
-  avg_updt = 1;                 // todo: update!
-  no_wt_sb = false;
+  avg_updt = 10;
 
   hi_thr = trg + thr;
   lo_thr = trg - thr;

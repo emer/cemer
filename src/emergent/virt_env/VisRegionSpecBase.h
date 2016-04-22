@@ -167,6 +167,7 @@ public:
   
   // following are all computed by PrecomputeColor function
   float_Matrix cur_img_opp;	// #READ_ONLY #NO_SAVE opponent component version of color image -- 7 diff factors in outer dim, as follows:
+  float_Matrix cur_img_grey_only; // #READ_ONLY #NO_SAVE just grey channel
   float_MatrixPtr cur_img_L_c;	// #READ_ONLY #NO_SAVE RED = L channel
   float_MatrixPtr cur_img_M_c;	// #READ_ONLY #NO_SAVE GREEN = M channel
   float_MatrixPtr cur_img_S_c;	// #READ_ONLY #NO_SAVE BLUE = S channel
@@ -225,8 +226,8 @@ protected:
   virtual void  ResetAdapt();
   // reset any current adaptation present in the system -- use this for a discontinuity in the input (simulated time passing) -- operates at all levels of adaptation, where applicable
 
-  virtual bool PrecomputeColor(float_Matrix* img);
-  // convert RGB color image to cone response-based opponent color values, which are what should be then used for filtering (stored in cur_img_xx float matrix's) -- get via GetImageForChan method -- also sets cur_img = img -- used by GetImageForChan
+  virtual bool PrecomputeColor(float_Matrix* img, bool grey_only = false);
+  // convert RGB color image to cone response-based opponent color values, which are what should be then used for filtering (stored in cur_img_xx float matrix's) -- get via GetImageForChan method -- also sets cur_img = img -- used by GetImageForChan -- if just doing monochrome from an rgb image then grey_only does that using quick-and-dirty method and cur_img_grey is only one set
   virtual float_Matrix* GetImageForChan(ColorChannel cchan);
   // get the appropriate cur_img_* guy for given color channel -- only avail if PrecomputeColor has been called
 

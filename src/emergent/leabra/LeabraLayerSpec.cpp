@@ -100,6 +100,7 @@ void LeabraAdaptInhib::UpdateAfterEdit_impl() {
 }
 
 void LeabraInhibMisc::Initialize() {
+  net_thr = 0.0f;
   self_fb = 0.0f;
   fb_up_immed = false;
 
@@ -107,13 +108,7 @@ void LeabraInhibMisc::Initialize() {
 }
 
 void LeabraInhibMisc::Defaults_init() {
-  taVersion v787(7, 8, 7);
-  if(taMisc::is_loading && taMisc::loading_version < v787) {
-    net_thr = 0.0f;
-  }
-  else {
-    net_thr = 0.2f;             // new default
-  }
+  self_tau = 1.4f;
   self_dt = 1.0f / self_tau;
 }
 

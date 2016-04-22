@@ -1163,7 +1163,7 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* image, float_Matrix* raw,
   rgb_img = (cur_img->dims() == 3);
 
   if(rgb_img) {
-    PrecomputeColor(cur_img);   // precompute!
+    PrecomputeColor(cur_img, (n_colors == 1));   // precompute -- grey only if mono
   }
 
   if(v1s_kwta.On()) {

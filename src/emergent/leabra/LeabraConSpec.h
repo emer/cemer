@@ -196,8 +196,7 @@ public:
   float         trg;            // #CONDSHOW_ON_on #DEF_0.3 target average weight value for this projection -- should generally match rnd.mean (plus whatever scaling factors might be in place)
   float         thr;            // #CONDSHOW_ON_on #DEF_0.1 threshold around target value where weight balance factor remains zero -- specifically trg +/- thr is this zero regime, and weight balance factors increase linearly above or below this range
   float         gain;           // #CONDSHOW_ON_on #DEF_2:4 gain multiplier applied to balance factors that are above zero (i.e., average weight > trg) -- higher values turn weight increases down more rapidly as the weights become more imbalanced
-  int           avg_updt;       // #CONDSHOW_ON_on #DEF_1 #MIN_1 how frequently to update the average receiver weight value, and corresponding weight balance factor, per weight update trial (1 = every trial, 2 = every other trial, etc)
-  bool          no_wt_sb;       // #CONDSHOW_ON_on turn off weight-based soft-bounding and rely exclusively on wt balance function (experimental)
+  int           avg_updt;       // #CONDSHOW_ON_on #DEF_10 #MIN_1 how frequently to update the average receiver weight value, and corresponding weight balance factor, per weight update trial (1 = every trial, 2 = every other trial, etc)
 
   float		hi_thr;	        // #HIDDEN #READ_ONLY trg + thr
   float		lo_thr;	        // #HIDDEN #READ_ONLY trg - thr
@@ -535,14 +534,8 @@ public:
     (float& wt, float& dwt, float& fwt, float& swt, float& scale,
      const float wb_inc, const float wb_dec)
   { if(dwt != 0.0f) {
-      if(wt_bal.no_wt_sb) {
-        if(dwt > 0.0f)	dwt *= wb_inc;
-        else		dwt *= wb_dec;
-      }
-      else {
-        if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
-        else		dwt *= wb_dec * fwt;
-      }
+      if(dwt > 0.0f)	dwt *= wb_inc * (1.0f - fwt);
+      else		dwt *= wb_dec * fwt;
       fwt += dwt;
       // C_ApplyLimits(fwt);       // don't need this..
       // swt = fwt;  // leave swt as pristine original weight value -- saves time

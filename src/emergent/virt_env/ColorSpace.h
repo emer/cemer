@@ -219,6 +219,9 @@ public:
   /////////////////////////////////////////////////////////
   //    Image-level functions for above conversions
   
+  static void sRGBtoGreyFastImg(float_Matrix& grey_img, const float_Matrix& srgb_img);
+  // #CAT_ColorSpaceImg convert sRGB image to greyscale monochrome image using simple fast mean of r,g,b values
+
   static void sRGBtoXYZImg(float_Matrix& xyz_img, const float_Matrix& srgb_img);
   // #CAT_ColorSpaceImg convert sRGB image to CIE XYZ color space -- xyz_img is a 3D matrix with 2D planes of X,Y,Z values, srgb_img is standard 3D color image with R,G,B planes
 

@@ -278,19 +278,25 @@ void VisRegionSpecBase::InputAdapt_thread(int thr_no) {
 #endif
 }
 
-bool VisRegionSpecBase::PrecomputeColor(float_Matrix* img) {
+bool VisRegionSpecBase::PrecomputeColor(float_Matrix* img, bool grey_only) {
   cur_img = img;
   taVector2i img_size(img->dim(0), img->dim(1));
 
-  ColorSpace::sRGBtoOpponentsImg(cur_img_opp, *cur_img);
+  if(grey_only) {
+    ColorSpace::sRGBtoGreyFastImg(cur_img_grey_only, *cur_img);
+    cur_img_grey = &cur_img_grey_only;
+  }
+  else {
+    ColorSpace::sRGBtoOpponentsImg(cur_img_opp, *cur_img);
 
-  cur_img_L_c = cur_img_opp.GetFrameSlice(ColorSpace::L_C);
-  cur_img_M_c = cur_img_opp.GetFrameSlice(ColorSpace::M_C);
-  cur_img_S_c = cur_img_opp.GetFrameSlice(ColorSpace::S_C);
-  cur_img_LM_c = cur_img_opp.GetFrameSlice(ColorSpace::LM_C);
-  cur_img_LvM = cur_img_opp.GetFrameSlice(ColorSpace::LvM_C);
-  cur_img_SvLM = cur_img_opp.GetFrameSlice(ColorSpace::SvLM_C);
-  cur_img_grey = cur_img_opp.GetFrameSlice(ColorSpace::GREY);
+    cur_img_L_c = cur_img_opp.GetFrameSlice(ColorSpace::L_C);
+    cur_img_M_c = cur_img_opp.GetFrameSlice(ColorSpace::M_C);
+    cur_img_S_c = cur_img_opp.GetFrameSlice(ColorSpace::S_C);
+    cur_img_LM_c = cur_img_opp.GetFrameSlice(ColorSpace::LM_C);
+    cur_img_LvM = cur_img_opp.GetFrameSlice(ColorSpace::LvM_C);
+    cur_img_SvLM = cur_img_opp.GetFrameSlice(ColorSpace::SvLM_C);
+    cur_img_grey = cur_img_opp.GetFrameSlice(ColorSpace::GREY);
+  }
   
   return true;
 }

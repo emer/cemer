@@ -28,6 +28,21 @@ void ColorSpace::Initialize() {
 // https://graphics.stanford.edu/~boulos/papers/orgb_sig.pdf
 
 
+void ColorSpace::sRGBtoGreyFastImg(float_Matrix& grey_img,
+                                   const float_Matrix& srgb_img) {
+  taVector2i img_size(srgb_img.dim(0), srgb_img.dim(1));
+  grey_img.SetGeom(2, img_size.x, img_size.y);
+  for(int yi = 0; yi < img_size.y; yi++) {
+    for(int xi = 0; xi < img_size.y; xi++) {
+      float r_s = srgb_img.FastEl3d(xi, yi, 0);
+      float g_s = srgb_img.FastEl3d(xi, yi, 1);
+      float b_s = srgb_img.FastEl3d(xi, yi, 2);
+      float grey = (1.0f / 3.0f) * (r_s + g_s + b_s);
+      grey_img.FastEl2d(xi, yi) = grey;
+    }
+  }
+}
+
 void ColorSpace::sRGBtoXYZImg(float_Matrix& xyz_img,
                               const float_Matrix& srgb_img) {
   taVector2i img_size(srgb_img.dim(0), srgb_img.dim(1));
