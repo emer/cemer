@@ -3299,6 +3299,7 @@ void DataTable::ImportDataJSON(const String& fname) {
 }
 
 void DataTable::ImportDataJSONString(const String& json_as_string) {
+#if (QT_VERSION >= 0x050000)
   QString q_string = QString(json_as_string.chars());
   QJsonParseError json_error;
   QJsonDocument json_doc = QJsonDocument::fromJson(q_string.toUtf8(), &json_error);
@@ -3316,6 +3317,9 @@ void DataTable::ImportDataJSONString(const String& json_as_string) {
   else {
     taMisc::Error("ImportDataJSON: ", "The json file has a format error, look for missing/extra bracket, brace or quotation");
   }
+#else
+  taMisc::Error("Requires Qt 5.0 or greater");
+#endif
 }
 
 #if (QT_VERSION >= 0x050000)
