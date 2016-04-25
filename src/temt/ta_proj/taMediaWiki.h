@@ -151,9 +151,17 @@ public:
   static bool   PubProjPagesInstalled(const String& wiki_name);
   //  #CAT_Wiki Are the pages that support the PublishProject featured installed on this wiki? Actually only checks for one crucial page!
 
+  static bool PubProgPagesInstalled(const String& wiki_name);
+  //  #CAT_Wiki Are the pages that support the PublishProgram featured installed on this wiki? Actually only checks for one crucial page!
+
 protected:
   TA_BASEFUNS_NOCOPY(taMediaWiki);
+  static bool PublishItem(taProjPubInfo* pub_info, String publish_type);
+  // Common code to publish both project and program
+  
+  static bool PublishItemOnWeb(const String publish_type, const String name, const String fname, const String &repo_name, const taProject * proj);
 
+  static bool UpdateItemOnWeb(const String publish_type, const String name, const String fname, const String &repo_name, const taProject * proj);
 private:
   static bool CheckResponseError(const QString &xmlRespone);
   void Initialize();

@@ -111,6 +111,8 @@ taTypeDef_Of(DynEnumType);
 
 #include <OtherProgramVar>
 #include <ProgramCallVar>
+#include <taMediaWiki>
+#include <iDialogPublishDocs>
 
 TA_BASEFUNS_CTORS_DEFN(Program);
 
@@ -1628,7 +1630,7 @@ String Program::GetProgLibPath(ProgLibs library) {
     }
   }
   else if(library == WEB_LIB)
-    path = taMisc::prog_lib_paths.GetVal("WebLib").toString();
+    path = QDir::tempPath();
   if(library != WEB_LIB) {
     QFileInfo qfi(path);
     if(!qfi.isDir()) {
@@ -1650,12 +1652,18 @@ void Program::SaveToProgLib(ProgLibs library) {
     if(chs == 1) return;
   }
   SaveAs(fname);
+  if (library == WEB_LIB) {
+    taMediaWiki::PublishItemOnWeb("Program", name, fname, "test" /* TODO: taMisc::web_help_wiki*/, GetMyProj());
+    QFile::remove(fname);
+  }
   Program_Group::prog_lib.FindPrograms();
+  
 }
 
 taBase* Program::AddFromProgLib(ProgLibEl* prog_type) {
   return prog_gp->AddFromProgLib(prog_type);
 }
+
 
 Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
   if(fun_name != "LoadFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);

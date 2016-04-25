@@ -35,7 +35,7 @@ class TA_API iDialogPublishDocs : public iDialog {
   Q_OBJECT
   INHERITED(iDialog)
 public:
-  iDialogPublishDocs(const char *repo_name, const char *proj_name, bool new_pub);
+  iDialogPublishDocs(const char *repo_name, const char *proj_name, bool new_pub, const char *publish_type);
   QString     GetName() const;
   QString     GetAuthor() const;
   QString     GetEmail() const;

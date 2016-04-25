@@ -52,7 +52,7 @@ namespace // anon
   }
 }
 
-iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_name, bool new_pub)
+iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_name, bool new_pub, const char *publish_type)
 : inherited()
 {
   // Size the dialog.
@@ -62,13 +62,18 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_n
   // Dialog title
   QString title;
   if (new_pub) {
-    title = "Publish project to: ";
+    title = "Publish ";
+    title.append(publish_type);
+    title.append("  to: ");
     title.append(repo_name);
   }
   else {
     String tmp(proj_name);
-    tmp = "Update published project '" + tmp + "'";
-    title.append(tmp.chars());
+    title = "Update published ";
+    title.append(publish_type);
+    title.append(" '");
+    title.append(proj_name);
+    title.append("'");
   }
   setWindowTitle(title);
   
@@ -94,11 +99,16 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_n
   nameEdit->installEventFilter(this);
   
   QHBoxLayout* project_box = newHBox(vbox);
-  addLabeledWidget(project_box, "Project &name:", nameEdit);
+  QString tmp = QString(publish_type);
+  tmp.append(" &name:");
+  addLabeledWidget(project_box, tmp, nameEdit);
   
   versionEdit = new QLineEdit;
   versionEdit->setEnabled(true);
-  versionEdit->setStatusTip("Current project version number e.g. 2.0.1");
+  tmp = QString("Current");
+  tmp.append(publish_type);
+  tmp.append(" version number e.g. 2.0.1");
+  versionEdit->setStatusTip(tmp);
   addLabeledWidget(project_box, "Version:", versionEdit);
 
   // upload project - do it now - default is true
@@ -113,7 +123,9 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_n
     authorEdit->setStatusTip("Enter name of primary author (set default in preferences)");
     authorEdit->installEventFilter(this);
     QHBoxLayout* author_box = newHBox(vbox);
-    addLabeledWidget(author_box, "Project &author:", authorEdit);
+    tmp = QString(publish_type);
+    tmp.append(" &author:");
+    addLabeledWidget(author_box, tmp, authorEdit);
     
     emailEdit = new QLineEdit;
     emailEdit->setStatusTip("Enter an email address for correspondence (set default in preferences) - typically author's email");

@@ -558,26 +558,6 @@ int taProject::SaveAs(const String& fname) {
 
 bool taProject::PublishProjectOnWeb(const String &repo_name)
 {
-  // Is pub to project supported on this wiki?
-//  if (!PageExists(jaskdfl)) {
-//    taMisc::Error("The publish project feature requires the installation of some pages on your wiki. Your wiki administrator can find the installation instructions at ......");
-//    return false;
-//  }
-  
-  // First check to make sure the page doesn't already exist.
-  String proj_filename = GetFileName();
-  proj_filename = "File:" + proj_filename.after('/', -1);
-
-  if (taMediaWiki::IsPublished(repo_name, proj_filename)) {
-    int choice = taMisc::Choice("The project " + GetFileName() + " is already published on  wiki \"" + repo_name + ".\" Would you like to upload a new version?", "Upload", "Cancel");
-    if (choice == 0) {
-      return UpdateProjectOnWeb(repo_name);
-    }
-    else {
-      return false;
-    }
-  }
-
   if (GetFileName().empty()) {
     int choice = taMisc::Choice("The project must be saved locally before it can be published", "Save", "Cancel");
     if (choice == 0) {
@@ -591,77 +571,7 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
   if (GetFileName().empty()) { // was the project really saved?
     return false;
   }
-      
-  String username = taMediaWiki::GetLoggedInUsername(repo_name);
-  
-  // TODO - if username not empty ask if they want to stay logged in under that name
-  bool was_published = false;
-  String page_name;
-  
-  bool logged_in = taMediaWiki::Login(repo_name, username);
-  if (logged_in) {
-    iDialogPublishDocs dialog(repo_name, this->name, true);
-    dialog.SetName(this->name.toQString());
-    if (!this->author.empty()) {
-      dialog.SetAuthor((this->author.toQString()));
-    }
-    else {
-      dialog.SetAuthor(QString("Set default in preferences."));
-    }
-    if (!this->email.empty()) {
-      dialog.SetEmail((this->email.toQString()));
-    }
-    else {
-      dialog.SetEmail(QString("Set default in preferences."));
-    }
-    dialog.SetDesc(QString("A brief description of the project. You will be able to edit later on the wiki."));
-    dialog.SetTags(QString("comma separated, please"));
-    dialog.SetVersion((this->version.GetString().toQString()));
-    if (dialog.exec()) {
-      // User clicked OK.
-      page_name = String(name); // needed for call to create the taDoc
-      QString author = dialog.GetAuthor();
-      if (author == "Set default in preferences.") {
-        author = "";
-      }
-      QString email = dialog.GetEmail();
-      if (email == "Set default in preferences.") {
-        email = "";
-      }
-      QString desc = dialog.GetDesc();
-      QString keywords = dialog.GetTags();
-      if (keywords == "comma separated, please") {
-        keywords = "";
-      }
-      QString version = dialog.GetVersion();
-//      bool upload = dialog.GetUploadChoice();
-      
-      taProjPubInfo* pub_info = new taProjPubInfo();
-      pub_info->wiki_name = repo_name;
-      pub_info->page_name = page_name;
-      pub_info->proj_name = this->name;
-      pub_info->proj_version = version;
-      // rohrlich - 3/11/2015 - require project file when publishing
-//      if (upload) {
-        pub_info->proj_filename = GetFileName();
-//      }
-//      else {
-//        pub_info->proj_filename = "";
-//      }
-      pub_info->proj_author = author;
-      pub_info->proj_email = email;
-      pub_info->proj_desc = desc;
-      pub_info->proj_keywords = keywords;
-      was_published = taMediaWiki::PublishProject(pub_info);
-    }
-    if (was_published) {
-      // rohrlich 2/22/15 - this info is lost if the user doesn't save
-      this->wiki_url.wiki = repo_name;
-      this->wiki_url.url = page_name;
-      docs.PubProjWikiDoc(repo_name, page_name);
-    }
-  }
-  return was_published;
+  return taMediaWiki::PublishItemOnWeb("Project", this->name, GetFileName(), repo_name, this);
 }
 
 bool taProject::UpdateProjectOnWeb(const String &repo_name) {
@@ -682,7 +592,7 @@ bool taProject::UpdateProjectOnWeb(const String &repo_name) {
   }
   
   // just project name and version for already published project
-  iDialogPublishDocs dialog(repo_name, this->name, false); // false = update
+  iDialogPublishDocs dialog(repo_name, this->name, false, "Project"); // false = update
   dialog.SetName((this->name.toQString()));
   dialog.SetVersion((this->version.GetString().toQString()));
   QString version;
