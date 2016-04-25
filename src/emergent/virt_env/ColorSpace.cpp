@@ -17,11 +17,19 @@
 
 #include <float_Matrix>
 #include <taVector2i>
+#include <taMath_float>
 
 TA_BASEFUNS_CTORS_DEFN(ColorSpace);
 
+int ColorSpace::lookup_levels = 64;
+int ColorSpace::lookup_levels_m1 = 63;
+bool ColorSpace::use_lookup = true;
+float_Matrix ColorSpace::srgb_to_oppo;
+
 void ColorSpace::Initialize() {
-  
+  use_lookup = true;
+  lookup_levels = 64;
+  lookup_levels_m1 = 63;
 }
 
 // TODO: investigate this as a faster alternative at some point:
@@ -92,7 +100,12 @@ void ColorSpace::sRGBtoOpponentsImg(float_Matrix& opp_img,
       float b_s = srgb_img.FastEl3d(xi, yi, 2);
 
       float L_c, M_c, S_c, LM_c, LvM, SvLM, grey;
-      sRGBtoOpponents(L_c, M_c, S_c, LM_c, LvM, SvLM, grey, r_s, g_s, b_s);
+      if(use_lookup) {
+        sRGBtoOpponents_lkup(L_c, M_c, S_c, LM_c, LvM, SvLM, grey, r_s, g_s, b_s);
+      }
+      else {
+        sRGBtoOpponents(L_c, M_c, S_c, LM_c, LvM, SvLM, grey, r_s, g_s, b_s);
+      }
       opp_img.FastEl3d(xi, yi, L_C) = L_c;
       opp_img.FastEl3d(xi, yi, M_C) = M_c;
       opp_img.FastEl3d(xi, yi, S_C) = S_c;
@@ -103,6 +116,91 @@ void ColorSpace::sRGBtoOpponentsImg(float_Matrix& opp_img,
     }
   }
 }
+
+namespace {
+  inline void get_interp_idx(int& li, int& hi, float& pcthi, float& pctlo, const float val) {
+    float fi = val * ColorSpace::lookup_levels_m1;
+    li = (int)taMath_float::floor(fi);
+    hi = (int)taMath_float::ceil(fi);
+    if(li == ColorSpace::lookup_levels_m1) {
+      hi = li;
+      li = li-1;
+      pcthi = 1.0f;
+      pctlo = 0.0f;
+    }
+    else if(hi == li) {
+      hi = li + 1;
+      pcthi = 0.0f;
+      pctlo = 1.0f;
+    }
+    else {
+      pcthi = (fi - (float)li);
+      pctlo = 1.0f - pcthi;
+    }
+  }
+}
+
+void ColorSpace::sRGBtoOpponents_lkup(float& L_c, float& M_c, float& S_c, float& LM_c,
+                                      float& LvM, float& SvLM, float& grey,
+                                      const float r_s, const float g_s, const float b_s) {
+  sRGBtoOpponents_GenLookup();
+  float optmp[N_OP_C];
+
+  int r0,r1,g0,g1,b0,b1;
+  float rd,gd,bd, rdc,gdc,bdc;
+  get_interp_idx(r0, r1, rd, rdc, r_s);
+  get_interp_idx(g0, g1, gd, gdc, g_s);
+  get_interp_idx(b0, b1, bd, bdc, b_s);
+
+  for(int i=0; i< N_OP_C; i++) {
+    float c00 = srgb_to_oppo.FastEl4d(i,r0,g0,b0) * rdc +
+      srgb_to_oppo.FastEl4d(i,r1,g0,b0) * rd;
+    float c01 = srgb_to_oppo.FastEl4d(i,r0,g0,b1) * rdc +
+      srgb_to_oppo.FastEl4d(i,r1,g0,b1) * rd;
+    float c10 = srgb_to_oppo.FastEl4d(i,r0,g1,b0) * rdc +
+      srgb_to_oppo.FastEl4d(i,r1,g1,b0) * rd;
+    float c11 = srgb_to_oppo.FastEl4d(i,r0,g1,b1) * rdc +
+      srgb_to_oppo.FastEl4d(i,r1,g1,b1) * rd;
+    float c0 = c00 * gdc + c10 * gd;
+    float c1 = c01 * gdc + c11 * gd;
+    float c = c0 * bdc + c1 * bd;
+    optmp[i] = c;
+  }
+  L_c = optmp[L_C];
+  M_c = optmp[M_C];
+  S_c = optmp[S_C];
+  LM_c = optmp[LM_C];
+  LvM = optmp[LvM_C];
+  SvLM = optmp[SvLM_C];
+  grey = optmp[GREY];
+}
+
+bool ColorSpace::sRGBtoOpponents_GenLookup() {
+  if(srgb_to_oppo.dims() == 4 && srgb_to_oppo.dim(1) == lookup_levels)
+    return false;
+  lookup_levels_m1 = lookup_levels - 1;
+  srgb_to_oppo.SetGeom(4, N_OP_C, lookup_levels, lookup_levels, lookup_levels);
+  float L_c, M_c, S_c, LM_c, LvM, SvLM, grey;
+  for(int bi = 0; bi < lookup_levels; bi++) {
+    float bf = (float)bi / (float)lookup_levels;
+    for(int gi = 0; gi < lookup_levels; gi++) {
+      float gf = (float)gi / (float)lookup_levels;
+      for(int ri = 0; ri < lookup_levels; ri++) {
+        float rf = (float)ri / (float)lookup_levels;
+        sRGBtoOpponents(L_c, M_c, S_c, LM_c, LvM, SvLM, grey, rf, gf, bf);
+        srgb_to_oppo.FastEl4d(L_C, ri, gi, bi) = L_c;
+        srgb_to_oppo.FastEl4d(M_C, ri, gi, bi) = M_c;
+        srgb_to_oppo.FastEl4d(S_C, ri, gi, bi) = S_c;
+        srgb_to_oppo.FastEl4d(LM_C, ri, gi, bi) = LM_c;
+        srgb_to_oppo.FastEl4d(LvM_C, ri, gi, bi) = LvM;
+        srgb_to_oppo.FastEl4d(SvLM_C, ri, gi, bi) = SvLM;
+        srgb_to_oppo.FastEl4d(GREY, ri, gi, bi) = grey;
+      }
+    }
+  }
+  return true;
+}
+
 
 void ColorSpace::RenderColorChecker_sRGB(float_Matrix& img, int width, int height) {
 

@@ -19,6 +19,7 @@
 // parent includes:
 #include <taOBase>
 #include "network_def.h"
+#include <float_Matrix>
 
 #ifndef __MAKETA__
 # include <cmath>
@@ -46,7 +47,17 @@ public:
     GREY,                       // achromatic response (grey scale lightness)
     N_OP_C,                     // number of opponent components
   };
-  
+
+ static int            lookup_levels;
+ // #DEF_64 number of levels to use for lookup tables, per dimension (e.g., R,G,B) -- cubic growth with increasing levels -- be careful!
+ static int            lookup_levels_m1;
+ // #IGNORE ll - 1
+ static bool            use_lookup;
+ // #DEF_true use the lookup function to make things faster
+ 
+ static float_Matrix   srgb_to_oppo;
+ // #HIDDEN #NO_SAVE lookup table for srgb to opponent colors, dims: [N_OP_C][R][G][B]
+
   static inline float sRGBvalToLinear(const float srgb) {
     if(srgb <= 0.04045f) return srgb / 12.92f;
     return powf((srgb + 0.055f) / 1.055f, 2.4f);
@@ -214,6 +225,14 @@ public:
     LMStoOpponents(L_c, M_c, S_c, LM_c, LvM, SvLM, grey, L, M, S);
   }
   // #CAT_ColorSpace convert sRGB to opponent components via LMS using the HPE cone values: Red - Green (LvM) and Blue - Yellow (SvLM) -- includes the separate components in these subtractions as well -- uses the CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) https://en.wikipedia.org/wiki/CIECAM02
+
+  static bool sRGBtoOpponents_GenLookup();
+  // ensure that the lookup table for srgb to opponents is built -- returns true if needed to build
+  
+  static void sRGBtoOpponents_lkup(float& L_c, float& M_c, float& S_c, float& LM_c,
+                                   float& LvM, float& SvLM, float& grey,
+                                   const float r_s, const float g_s, const float b_s);
+  // #CAT_ColorSpace Lookup table version: convert sRGB to opponent components via LMS using the HPE cone values: Red - Green (LvM) and Blue - Yellow (SvLM) -- includes the separate components in these subtractions as well -- uses the CIECAM02 color appearance model (MoroneyFairchildHuntEtAl02) https://en.wikipedia.org/wiki/CIECAM02
 
   
   /////////////////////////////////////////////////////////
