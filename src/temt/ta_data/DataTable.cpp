@@ -2797,6 +2797,7 @@ void DataTable::AppendData(const String& fname, Delimiters delim, bool quote_str
 }
 
 void DataTable::SaveDataLog(const String& fname, bool append, bool dmem_proc_0) {
+  ClearDataFlag(LOG_HEADER_OUT);
   if(!log_file) return;         // shouldn't happen
   if(log_file->IsOpen())
     log_file->Close();
@@ -2805,21 +2806,21 @@ void DataTable::SaveDataLog(const String& fname, bool append, bool dmem_proc_0) 
 #endif
   log_file->SetFileName(fname);
   if(fname.empty()) {
-    if(append)
+    if(append) {
       log_file->Append();
+      SetDataFlag(LOG_HEADER_OUT); // append = already output header
+    }
     else {
       log_file->SaveAs(false);  // no save to tmp
-      if(log_file->IsOpen())
-        SaveHeader_strm(*log_file->ostrm);
     }
   }
   else {
-    if(append)
+    if(append) {
       log_file->open_append();
+      SetDataFlag(LOG_HEADER_OUT); // append = already output header
+    }
     else {
       log_file->open_write();
-      if(log_file->IsOpen())
-        SaveHeader_strm(*log_file->ostrm);
     }
   }
 }
@@ -2827,10 +2828,15 @@ void DataTable::SaveDataLog(const String& fname, bool append, bool dmem_proc_0) 
 void DataTable::CloseDataLog() {
   if(!log_file) return;
   log_file->Close();
+  ClearDataFlag(LOG_HEADER_OUT);
 }
 
 bool DataTable::WriteDataLogRow() {
   if(IsSavingDataLog()) {
+    if(!HasDataFlag(LOG_HEADER_OUT)) {
+      SaveHeader_strm(*log_file->ostrm);
+      SetDataFlag(LOG_HEADER_OUT);
+    }
     SaveDataRow_strm(*log_file->ostrm);
     log_file->FlushOutStream(); // really flush!
     return true;
@@ -2840,7 +2846,7 @@ bool DataTable::WriteDataLogRow() {
 
 bool DataTable::SaveAllToDataLog() {
   if(IsSavingDataLog()) {
-    SaveData_strm(*log_file->ostrm);
+    SaveData_strm(*log_file->ostrm);// includes headers!
     log_file->FlushOutStream(); // really flush!
     return true;
   }

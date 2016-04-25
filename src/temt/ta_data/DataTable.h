@@ -98,6 +98,7 @@ public:
     HAS_CALCS           = 0x0002, // #NO_SHOW at least one of the columns has CALC flag set
     AUTO_CALC           = 0x0004, // Automatically calculate columns.
     SAVE_FILE           = 0x0008, // If an AUTO_LOAD filename is set, this option causes row-data to be saved to that file whenever the project is saved.
+    LOG_HEADER_OUT      = 0x0010, // #NO_BIT log file header has been output -- used to only output the header at the last possible moment when data first written to the log, to minimize possible pmismatch between data and header
   };
 
   enum AutoLoadMode {
