@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9377
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9417
 LeabraProject .projects["TestPointerUpdates"] { 
  Doc_Group @.docs = [0] {
  };
@@ -747,7 +747,39 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
    };
   };
-  Program_Group @.gp["group_two"] { 
+  Program_Group @.gp["group_two"] = [0] { 
+   Program_Group @.gp["sub_group"] = [1] { 
+    Program @["ProgramInSubgroup"] { 
+     ProgObjList @.objs = [0] {
+     };
+
+     ProgType_List @.types = [0] {
+     };
+
+     ProgVar_List @.args = [0] {
+     };
+
+     ProgVar_List @.vars = [0] {
+     };
+
+     Function_List @.functions = [0] {
+     };
+
+     ProgEl_List @.init_code = [0] {
+     };
+
+     ProgEl_List @.prog_code = [2] {
+      LocalVars @[0] { 
+       ProgVar_List @.local_vars = [0] {
+       };
+      };
+      ProgramCall @[1] { 
+       ProgArg_List @.prog_args = [0] {
+       };
+      };
+     };
+    };
+   };
   };
   Program_Group @.gp["TesterPrograms"] = [4] { 
    Program @["TestGroup"] { 
@@ -1017,7 +1049,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
    };
   };
-  Program_Group @.gp["TesteePrograms"] = [27] { 
+  Program_Group @.gp["TesteePrograms"] = [28] { 
    Program @["copy_callee_caller"] { 
     ProgObjList @.objs = [0] {
     };
@@ -2071,6 +2103,41 @@ LeabraProject .projects["TestPointerUpdates"] {
      };
     };
    };
+   Program @["move_programgroup_up_one_level"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [3] {
+     ProgVar @["sub_group"] { };
+     ProgVar @["programsgrp"] { };
+     ProgVar @["programs"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [3] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     AssignExpr @[1] { };
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+    };
+   };
   };
   Program_Group @.gp["group_three"] = [2] { 
    Program @["Callee"] { 
@@ -2816,7 +2883,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2830,7 +2897,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3377,7 +3444,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3391,7 +3458,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3434,7 +3501,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3448,7 +3515,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3462,7 +3529,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3476,7 +3543,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3490,7 +3557,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3504,7 +3571,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3518,7 +3585,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3532,7 +3599,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3546,7 +3613,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3560,7 +3627,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3574,7 +3641,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3588,7 +3655,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3602,7 +3669,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3616,7 +3683,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3630,7 +3697,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3644,7 +3711,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3658,7 +3725,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3672,7 +3739,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3696,7 +3763,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3710,7 +3777,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3724,7 +3791,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3738,7 +3805,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3752,7 +3819,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3776,7 +3843,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3800,7 +3867,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3824,7 +3891,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3848,7 +3915,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3872,7 +3939,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3896,7 +3963,7 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3910,7 +3977,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3924,7 +3991,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3938,7 +4005,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -3952,7 +4019,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4499,7 +4566,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4513,7 +4580,7 @@ LeabraProject .projects["TestPointerUpdates"] {
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4959,7 +5026,7 @@ LeabraProject .projects["TestPointerUpdates"] {
        };
       };
       name="col_one";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6188,6 +6255,85 @@ LeabraProject .projects["TestPointerUpdates"] {
    tags=;
    desc=;
    debug_mode=0;
+   Program_Group @.gp["sub_group"] {
+    name="sub_group";
+    el_typ=Program;
+    el_def=0;
+    tags=;
+    desc=;
+    debug_mode=0;
+    Program @["ProgramInSubgroup"] {
+     name="ProgramInSubgroup";
+     short_nm="PrgSbg";
+     tags=;
+     desc=;
+     flags=NO_STOP_STEP;
+     stop_step_cond {
+      expr=;
+     };
+     objs {
+      name="objs";
+      el_typ=taNBase;
+      el_def=0;
+     };
+     types {
+      name="types";
+      el_typ=DynEnumType;
+      el_def=0;
+     };
+     args {
+      name="args";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     vars {
+      name="vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     functions {
+      name="functions";
+      el_typ=Function;
+      el_def=0;
+     };
+     init_code {
+      name="init_code";
+      el_typ=ProgCode;
+      el_def=0;
+     };
+     prog_code {
+      name="prog_code";
+      el_typ=ProgCode;
+      el_def=0;
+      LocalVars @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="LocalVars (0 vars)";
+       pre_compile_code_string="LocalVars (0 vars)";
+       local_vars {
+	name="local_vars";
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+      ProgramCall @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="Callee()";
+       pre_compile_code_string="Callee()";
+       prog_args {
+	name="prog_args";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+       target=$.projects["TestPointerUpdates"].programs.gp["group_one"]["Callee"]$;
+       targ_ld_init="*Callee*";
+      };
+     };
+     step_prog=NULL;
+     step_n=1;
+    };
+   };
   };
   Program_Group @.gp["TesterPrograms"] {
    name="TesterPrograms";
@@ -11613,6 +11759,134 @@ LeabraProject .projects["TestPointerUpdates"] {
     step_prog=NULL;
     step_n=1;
    };
+   Program @["move_programgroup_up_one_level"] {
+    name="move_programgroup_up_one_level";
+    short_nm="mvprgp";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="objs";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="types";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="args";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="vars";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["sub_group"] {
+      name="sub_group";
+      var_type=T_Object;
+      object_type=Program_Group;
+      object_val=.projects["TestPointerUpdates"].programs.gp["group_two"].gp["sub_group"]$$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["programsgrp"] {
+      name="programsgrp";
+      var_type=T_Object;
+      object_type=Program_Group;
+      object_val=$.projects["TestPointerUpdates"].programs.gp["group_two"].gp["sub_group"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["programs"] {
+      name="programs";
+      var_type=T_Object;
+      object_type=Program_TopGroup;
+      object_val=.projects["TestPointerUpdates"].programs$$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="functions";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="init_code";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="prog_code";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (0 vars)";
+      pre_compile_code_string="LocalVars (0 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     AssignExpr @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="programsgrp = programs.gp";
+      pre_compile_code_string="programsgrp = programs.gp";
+      result_var=.projects["TestPointerUpdates"].programs.gp["TesteePrograms"]["move_programgroup_up_one_level"].vars["programsgrp"]$$;
+      expr {
+       expr="programs.gp";
+      };
+     };
+     MethodCall @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="programsgrp->Transfer(sub_group)";
+      pre_compile_code_string="programsgrp->Transfer(sub_group)";
+      result_var=NULL;
+      obj=$.projects["TestPointerUpdates"].programs.gp["TesteePrograms"]["move_programgroup_up_one_level"].vars["programsgrp"]$;
+      method=taList_impl::Transfer;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=taBase_ptr;
+	type="taBase*";
+	name="item";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="sub_group";
+	};
+       };
+      };
+      meth_sig="bool Transfer(taBase* item)";
+      meth_desc=;
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
   };
   Program_Group @.gp["group_three"] {
    name="group_three";
@@ -11897,7 +12171,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAABOQAABFUAAAAAAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAACDQAAAzIAAAAAAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };

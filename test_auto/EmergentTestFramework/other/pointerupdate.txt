@@ -47,6 +47,14 @@ General RunState
     Status OK Match Result     ${output}             4
 
 
+MoveProgramGroupUpOneLevel
+    Set Suite Variable     ${program_test}       "TestGroup"
+    Ensure Emergent Free
+    Run Emergent Program       move_programgroup_up_one_level
+    Run Emergent Program       ProgramInSubgroup
+    Prog Group Should Match    1                     .projects[\\"TestPointerUpdates\\"].programs.gp[\\"group_one\\"]
+        
+
 CopyProgram
     Set Suite Variable     ${program_test}       "TestGroup"
     Ensure Emergent Free
