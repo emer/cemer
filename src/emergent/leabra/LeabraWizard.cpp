@@ -1393,7 +1393,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   laysp->lay_inhib.gi = 1.0f;
   laysp->lay_inhib.ff = 1.0f;
   laysp->lay_inhib.fb = 0.0f;
-  laysp->avg_act.init = 0.25f;
+  laysp->avg_act.targ_init = 0.25f;
   laysp->avg_act.fixed = true;
   laysp->inhib_misc.self_fb = 0.3f;
   laysp->decay.trial = 0.0f;
@@ -2435,7 +2435,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_sp->lay_inhib.on = true;
   matrix_sp->lay_inhib.gi = 1.9f;
   matrix_sp->SetUnique("avg_act", true);
-  matrix_sp->avg_act.init = 0.05f;
+  matrix_sp->avg_act.targ_init = 0.05f;
   matrix_sp->avg_act.fixed = true;
   matrix_sp->SetUnique("inhib_misc", true);
   matrix_sp->inhib_misc.self_fb = 0.4f;
@@ -2452,7 +2452,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   patch_sp->unit_gp_inhib.ff = 1.0f;
   patch_sp->unit_gp_inhib.fb = 0.0f;
   patch_sp->SetUnique("avg_act", true);
-  patch_sp->avg_act.init = 0.2f;
+  patch_sp->avg_act.targ_init = 0.2f;
   patch_sp->avg_act.fixed = true;
   patch_sp->SetUnique("inhib_misc", true);
   patch_sp->inhib_misc.self_fb = 0.4f;
@@ -2466,7 +2466,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   gpi_sp->SetUnique("unit_gp_inhib", true);
   gpi_sp->unit_gp_inhib.on = false;
   gpi_sp->SetUnique("avg_act", true);
-  gpi_sp->avg_act.init = 0.2f;
+  gpi_sp->avg_act.targ_init = 0.2f;
   gpi_sp->avg_act.fixed = true;
   gpi_sp->UpdateAfterEdit();       // spread before override
 
@@ -2482,7 +2482,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfc_sp->unit_gp_inhib.ff = 1.0f;
   pfc_sp->unit_gp_inhib.fb = 0.5f;
   pfc_sp->SetUnique("avg_act", true);
-  pfc_sp->avg_act.init = 0.2f;
+  pfc_sp->avg_act.targ_init = 0.2f;
   pfc_sp->avg_act.fixed = true; // use fixed..
   pfc_sp->SetUnique("decay", true);
   pfc_sp->decay.trial = 0.0f;
@@ -3392,12 +3392,12 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   dg_laysp->SetUnique("lay_inhib", true);
   dg_laysp->lay_inhib.gi = 3.8f;
   dg_laysp->SetUnique("avg_act", true);
-  dg_laysp->avg_act.init = 0.01f;
+  dg_laysp->avg_act.targ_init = 0.01f;
 
   ca3_laysp->SetUnique("lay_inhib", true);
   ca3_laysp->lay_inhib.gi = 3.0f;
   ca3_laysp->SetUnique("avg_act", true);
-  ca3_laysp->avg_act.init = 0.02f;
+  ca3_laysp->avg_act.targ_init = 0.02f;
 
   ca1_laysp->SetUnique("lay_inhib", true);
   ca1_laysp->lay_inhib.on = false;
@@ -3405,7 +3405,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   ca1_laysp->unit_gp_inhib.on = true;
   ca1_laysp->unit_gp_inhib.gi = 2.4f;
   ca1_laysp->SetUnique("avg_act", true);
-  ca1_laysp->avg_act.init = 0.1f;
+  ca1_laysp->avg_act.targ_init = 0.1f;
 
   ecout_laysp->SetUnique("lay_inhib", true);
   ecout_laysp->lay_inhib.on = false;
@@ -3413,7 +3413,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   ecout_laysp->unit_gp_inhib.on = true;
   ecout_laysp->unit_gp_inhib.gi = 2.1f;
   ecout_laysp->SetUnique("avg_act", true);
-  ecout_laysp->avg_act.init = 0.2f;
+  ecout_laysp->avg_act.targ_init = 0.2f;
 
   // subic_laysp->lrate_mod_con_spec.SetSpec(ca3ca1_cons);
 

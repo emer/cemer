@@ -49,8 +49,10 @@ public:
   // #GUI_READ_ONLY #SHOW #CAT_Activation tells what kind of external input unit received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
   UnitSpec*     unit_spec;
   // UnitSpec that has all the methods for processing information within these variables
+  int           flat_idx;
+  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit in a flat array of units (used by parallel threading) -- 0 is special null case -- real idx's start at 1
   int           thr_un_idx;
-  // thread-based unit index where this unitvars lives
+  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE thread-based unit index where this unitvars lives
   float         targ;
   // #VIEW_HOT #CAT_Activation target value: drives learning to produce this activation value
   float         ext;
@@ -77,10 +79,10 @@ public:
   inline bool   lesioned() const { return HasExtFlag(LESIONED); }
   // check if this unit is lesioned -- must check for all processing functions (threaded calls automatically exclude lesioned units)
 
+  inline int    ThrNo(Network* net) const;
+  // #IGNORE get thread number that owns this unit -- all methods on this unitvar MUST use the correct thread number for the thread that owns it!  so if accessing things at random you must use this method to get the thr_no!
   inline Unit*  Un(Network* net, int thr_no) const;
   // #IGNORE #CAT_Structure get unit that corresponds with these unit variables
-  inline int    UnFlatIdx(Network* net, int thr_no) const;
-  // #IGNORE #CAT_Structure get unit flat index that corresponds with these unit variables
 
   inline int            NRecvConGps(Network* net, int thr_no) const;
   // #IGNORE #CAT_Structure get number of receiving connection groups (determined by number of active layer projections at time of build)

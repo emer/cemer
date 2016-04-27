@@ -641,6 +641,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->sev = 0.0f;
   u->ach = 0.0f;
   u->misc_1 = 0.0f;
+  u->misc_2 = 0.0f;
   u->spk_t = -1;
 
   u->bias_scale = 0.0f;
@@ -666,6 +667,7 @@ void LeabraUnitSpec::Init_Weights(UnitVars* ru, Network* rnet, int thr_no) {
   u->net_prv_trl = 0.0f;
   u->act_avg = act_misc.avg_init;
   u->misc_1 = 0.0f;
+  u->misc_2 = 0.0f;
 
   Init_ActAvg(u, net, thr_no);
 
@@ -1111,7 +1113,7 @@ void LeabraUnitSpec::Compute_DeepCtxt(LeabraUnitVars* u, LeabraNetwork* net, int
   if(!deep.on || !Quarter_DeepRawPrevQtr(net->quarter)) return;
   // note: this is OK to only integrate selectively b/c not using delta-based netin
 
-  int flat_idx = u->UnFlatIdx(net, thr_no);
+  int flat_idx = u->flat_idx;
   int nt = net->n_thrs_built;
 #ifdef CUDA_COMPILE
   nt = 1;                       // cuda is always 1 thread for this..
@@ -1282,7 +1284,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
 void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   // this integrates from SendDelta into net_raw and gi_syn
   int nt = net->n_thrs_built;
-  const int flat_idx = u->UnFlatIdx(net, thr_no);
+  const int flat_idx = u->flat_idx;
 #ifdef CUDA_COMPILE
   nt = 1;                       // cuda is always 1 thread for this..
 #endif
@@ -1417,7 +1419,7 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
 }
 
 void LeabraUnitSpec::DeepModNetin_Integ(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  int flat_idx = u->UnFlatIdx(net, thr_no);
+  int flat_idx = u->flat_idx;
   int nt = net->n_thrs_built;
 #ifdef CUDA_COMPILE
   nt = 1;                       // cuda is always 1 thread for this..
@@ -2080,7 +2082,7 @@ void LeabraUnitSpec::Send_DeepRawNetin(LeabraUnitVars* u, LeabraNetwork* net, in
 void LeabraUnitSpec::DeepRawNetin_Integ(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   // note: no tests here -- ALWAYS run this (network already filters on general need)
   // so that delta can always be tracked!
-  int flat_idx = u->UnFlatIdx(net, thr_no);
+  int flat_idx = u->flat_idx;
   int nt = net->n_thrs_built;
 #ifdef CUDA_COMPILE
   nt = 1;                       // cuda is always 1 thread for this..

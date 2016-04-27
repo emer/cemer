@@ -82,7 +82,8 @@ public:
   float      sev;            // #NO_SAVE #CAT_Activation serotonin value -- driven by Dorsal Raphe Nucleus (DRNUnitSpec) or other sources -- generally thought to reflect longer time-averages of overall progress or lack thereof
   float      ach;            // #NO_SAVE #CAT_Activation acetylcholine value -- driven by Tonically Active Neurons (TAN's) in the Striatum, and potentially other sources -- effects depend strongly on types of receptors present
 
-  float      misc_1;         // #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
+  float      misc_1;         // #NO_SAVE #CAT_Activation miscellaneous variable for special algorithms / subtypes that need it
+  float      misc_2;         // #NO_SAVE #CAT_Activation miscellaneous variable for special algorithms / subtypes that need it
   int        spk_t;          // #NO_SAVE #CAT_Activation time in tot_cycle units when spiking last occurred (-1 for not yet)
 
   float      bias_scale;     // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation bias weight scaling factor

@@ -91,6 +91,7 @@ void ColorSpace::XYZtosRGBImg(float_Matrix& srgb_img,
 
 void ColorSpace::sRGBtoOpponentsImg(float_Matrix& opp_img,
                                     const float_Matrix& srgb_img) {
+  sRGBtoOpponents_GenLookup();
   taVector2i img_size(srgb_img.dim(0), srgb_img.dim(1));
   opp_img.SetGeom(3, img_size.x, img_size.y, N_OP_C);
   for(int yi = 0; yi < img_size.y; yi++) {
@@ -143,7 +144,6 @@ namespace {
 void ColorSpace::sRGBtoOpponents_lkup(float& L_c, float& M_c, float& S_c, float& LM_c,
                                       float& LvM, float& SvLM, float& grey,
                                       const float r_s, const float g_s, const float b_s) {
-  sRGBtoOpponents_GenLookup();
   float optmp[N_OP_C];
 
   int r0,r1,g0,g1,b0,b1;

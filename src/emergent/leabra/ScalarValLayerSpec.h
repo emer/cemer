@@ -183,6 +183,10 @@ public:
   void  Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
+  void  Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* net) override;
+    virtual void Quarter_Final_GetMinus_ugp(LeabraLayer* lay, LeabraNetwork* net,
+                                            Layer::AccessMode acc_md, int gpidx);
+    // #IGNORE
 
   void Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) override;
 

@@ -75,7 +75,7 @@ bool GPiInvUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 
 void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   int nt = net->n_thrs_built;
-  int flat_idx = u->UnFlatIdx(net, thr_no);
+  int flat_idx = u->flat_idx;
 #ifdef CUDA_COMPILE
   nt = 1;                       // cuda is always 1 thread for this..
 #endif

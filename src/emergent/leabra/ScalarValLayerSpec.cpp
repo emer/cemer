@@ -554,6 +554,18 @@ void ScalarValLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net
   ReadValue(lay, net);          // always read out the value
 }
 
+void ScalarValLayerSpec::Quarter_Final_GetMinus_ugp
+(LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
+  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
+  LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+  uv->misc_2 = uv->misc_1;      // save minus phase in misc_2
+}
+
+void ScalarValLayerSpec::Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Quarter_Final_GetMinus(lay, net);
+  UNIT_GP_ITR(lay, Quarter_Final_GetMinus_ugp(lay, net, acc_md, gpidx); );
+}
+
 float ScalarValLayerSpec::Compute_SSE_ugp(LeabraLayer* lay, LeabraNetwork* net,
                                           Layer::AccessMode acc_md, int gpidx, int& n_vals) {
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
@@ -562,7 +574,7 @@ float ScalarValLayerSpec::Compute_SSE_ugp(LeabraLayer* lay, LeabraNetwork* net,
   // only count if target value is within range -- otherwise considered a non-target
   if(uv->HasExtFlag(UnitVars::COMP_TARG) && val_range.RangeTestEq(uv->targ)) {
     n_vals++;
-    float uerr = uv->targ - uv->act_m;
+    float uerr = uv->targ - uv->misc_2;
     if(fabsf(uerr) < us->sse_tol)
       return 0.0f;
     return uerr * uerr;
@@ -599,7 +611,7 @@ float ScalarValLayerSpec::Compute_NormErr_ugp
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   // only count if target value is within range -- otherwise considered a non-target
   if(uv->HasExtFlag(UnitVars::COMP_TARG) && val_range.RangeTestEq(uv->targ)) {
-    float uerr = uv->targ - uv->act_m;
+    float uerr = uv->targ - uv->misc_2;
     if(fabsf(uerr) < us->sse_tol)
       return 0.0f;
     return fabsf(uerr);

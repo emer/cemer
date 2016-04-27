@@ -922,6 +922,7 @@ void Network::InitUnitConGpThreadMem(int thr_no) {
     UnitVars* uv = ThrUnitVars(thr_no, i);
     uv->unit_spec = us;
     uv->thr_un_idx = i;
+    uv->flat_idx = un->flat_idx;
     if(us) {
       us->Init_Vars(uv, this, thr_no);  // initialze -- causes this thread to own mem
     }

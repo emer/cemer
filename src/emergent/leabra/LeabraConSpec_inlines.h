@@ -311,7 +311,8 @@ inline void LeabraConSpec::Compute_dWt_MaxSugp(LeabraConGroup* cg, LeabraNetwork
 
   for(int i=0; i<sz; i++) {
     LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-    LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, thr_no, cg->other_idx);
+    int ru_thr_no = ru->ThrNo(net);
+    LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no, cg->other_idx);
     if(sugps[i] != rcg->max_sugp) continue; // only learn on max!
     float lrate_eff = clrate * ru->r_lrate;
     if(deep_on) {
@@ -436,7 +437,8 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
     if(slow_wts.on) {
       for(int i=0; i<sz; i++) {
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-        LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, thr_no,
+        int ru_thr_no = ru->ThrNo(net);
+        LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
                                                                 cg->other_idx);
         C_Compute_Weights_CtLeabraXCAL_slow
           (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);
@@ -445,7 +447,8 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
     else {
       for(int i=0; i<sz; i++) {
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-        LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, thr_no,
+        int ru_thr_no = ru->ThrNo(net);
+        LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no,
                                                                 cg->other_idx);
         C_Compute_Weights_CtLeabraXCAL
           (wts[i], dwts[i], fwts[i], swts[i], scales[i], rcg->wb_inc, rcg->wb_dec);

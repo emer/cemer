@@ -100,6 +100,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   // d5b_sent = cp.d5b_sent;
 
   // misc_1 = cp.misc_1;
+  // misc_2 = cp.misc_2;
   // spk_t = cp.spk_t;
 }
 

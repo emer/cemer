@@ -68,12 +68,13 @@ inline int Unit::ThrNo() const {
 /////////////////////////
 //      UnitVars
 
-inline Unit*  UnitVars::Un(Network* net, int thr_no) const {
-  return net->ThrUnit(thr_no, thr_un_idx);
+
+inline int UnitVars::ThrNo(Network* net) const {
+  return net->UnThr(flat_idx);
 }
 
-inline int UnitVars::UnFlatIdx(Network* net, int thr_no) const {
-  return net->ThrUnitIdx(thr_no, thr_un_idx);
+inline Unit*  UnitVars::Un(Network* net, int thr_no) const {
+  return net->ThrUnit(thr_no, thr_un_idx);
 }
 
 inline int UnitVars::NRecvConGps(Network* net, int thr_no) const {
