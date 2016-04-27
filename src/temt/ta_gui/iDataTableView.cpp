@@ -487,5 +487,4 @@ void iTableViewCheckboxDelegate::paint(QPainter *painter, const QStyleOptionView
 
 void iTableViewCheckboxDelegate::CheckBoxStateChanged(int value) {
   QModelIndex current = own_table_widg->currentIndex();
-  taMisc::DebugInfo((String)current.column());
 }

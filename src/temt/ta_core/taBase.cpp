@@ -3650,7 +3650,6 @@ void taBase::Help() {
 
 taBase* taBase::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par, taBase* new_par) {
   String old_path = old_guy->GetPath(NULL, old_par);
-  taMisc::DebugInfo(old_path);
   MemberDef* md;
   if (!new_par) {
     return NULL;

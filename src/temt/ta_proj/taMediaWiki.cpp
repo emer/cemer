@@ -70,8 +70,6 @@ void taMediaWiki::Initialize()
  */
 bool taMediaWiki::CheckResponseError(const QString &xmlResponse) {
   bool hasErrors = false;
-  //String foo(xmlResponse);
-  taMisc::DebugInfo(xmlResponse);
   QXmlStreamReader reader(xmlResponse.toStdString().c_str());
   
   while(!reader.atEnd()) {
