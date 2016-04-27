@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9375
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9416
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -3501,8 +3501,8 @@ LeabraProject .projects["LeabraFlex"] {
 <title>LeabraFlex - emergent</title>
 <script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
 <script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":11194,\"wgRevisionId\":11194,\"wgArticleId\":2315,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgRelevantArticleId\":2315,\"wgUserId\":3,\"wgUserEditCount\":2414,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,
-\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgRedirectedFrom\":\"LeabraFlexProgs\",\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\",\"wgInternalRedirectTargetUrl\":\"/emergent/index.php/LeabraFlex\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"98ee8ebf941a3bc69e0a01a3dffe86a45705534a+\\\\\",\"patrolToken\":\"bd2d880745fa905dc2e465b2f4affe7a5705534a+\\\\\",\"watchToken\":\"f7fdfcd12baf8dc64a66bec77c91f3085705534a+\\\\\"});});mw.loader.load([\"mediawiki.action.view.redirect\",\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":11194,\"wgRevisionId\":11194,\"wgArticleId\":2315,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgRelevantArticleId\":2315,\"wgUserId\":3,\"wgUserEditCount\":2417,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,
+\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgRedirectedFrom\":\"LeabraFlexProgs\",\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\",\"wgInternalRedirectTargetUrl\":\"/emergent/index.php/LeabraFlex\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"50799002483df7c73007c031d9b35aba572108f1+\\\\\",\"patrolToken\":\"0f5c1d31d632b97c5adfbc523fcf7f7f572108f1+\\\\\",\"watchToken\":\"d022e668f78583158ce1a7852d8a1411572108f1+\\\\\"});});mw.loader.load([\"mediawiki.action.view.redirect\",\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
 } );</script>
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
@@ -3574,11 +3574,11 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 
 <!-- 
 NewPP limit report
-Cached time: 20160406181730
+Cached time: 20160426192720
 Cache expiry: 86400
 Dynamic content: false
-CPU time usage: 0.020 seconds
-Real time usage: 0.024 seconds
+CPU time usage: 0.026 seconds
+Real time usage: 0.029 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -3592,7 +3592,7 @@ Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 - -total
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160406181730 and revision id 11194
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160426192720 and revision id 11194
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\"					</div>
@@ -3634,7 +3634,7 @@ Transclusion expansion time report (%,ms,calls,template)
 															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\">Read</a></span></li>
 															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
 															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=d34583532007efe5821c64a02bfdc9c957055349%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=5c695a518c40c4f0aa59231ab30b4059572108f1%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 													</ul>
 					</div>
 										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
@@ -3713,7 +3713,7 @@ Transclusion expansion time report (%,ms,calls,template)
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":181});
+mw.config.set({\"wgBackendResponseTime\":157});
 } );</script>
 	
 
@@ -4435,7 +4435,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4449,7 +4449,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4996,7 +4996,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -5010,7 +5010,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -5053,7 +5053,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5067,7 +5067,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5081,7 +5081,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5095,7 +5095,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5109,7 +5109,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5123,7 +5123,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5137,7 +5137,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5151,7 +5151,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5165,7 +5165,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5179,7 +5179,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5193,7 +5193,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5207,7 +5207,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5221,7 +5221,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5235,7 +5235,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5249,7 +5249,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5263,7 +5263,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5277,7 +5277,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5291,7 +5291,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5315,7 +5315,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5329,7 +5329,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5343,7 +5343,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5357,7 +5357,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5371,7 +5371,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5395,7 +5395,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5419,7 +5419,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5443,7 +5443,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5467,7 +5467,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5491,7 +5491,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5515,7 +5515,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5529,7 +5529,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5543,7 +5543,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5557,7 +5557,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5571,7 +5571,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5588,10 +5588,10 @@ mw.config.set({\"wgBackendResponseTime\":181});
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
     last_sort_spec {
-     name=;
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -5599,7 +5599,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      };
     };
     control_panel_cells {
-     name=;
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -6118,7 +6118,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6132,7 +6132,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -10916,7 +10916,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=751: sys=222: tot=145584925742: }: end={usr=750: sys=222: tot=145584925741: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=2514: sys=987: tot=146178269031: }: end={usr=2514: sys=987: tot=146178269031: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -11437,7 +11437,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [6] 2;0;4;3;1;5;      };
+      [0]       };
       last_sort_spec {
        name="last_sort_spec";
        ops {
@@ -11510,7 +11510,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["input_idx"] {
       name="input_idx";
       var_type=T_Int;
-      int_val=4;
+      int_val=1;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -21280,7 +21280,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.003183024;
+     value 8 0=0.00212427;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -21290,12 +21290,12 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9941645;
+     value 8 0=0.9936272;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7969413;
+     value 8 0=0.7952421;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -22922,12 +22922,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04350132;
+       value 8 0=0.04354753;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.73322;
+       value 8 0=0.7315208;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -23146,14 +23146,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
-       lay_inhib {on=1: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       lay_inhib {on=1: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       unit_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-       lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
+       lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       avg_act {targ_init=0.15: fixed=0: tau=100: adjust=1: dt=0.01: };
        inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
-       inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+       inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: };
        decay {trial=1: };
        del_inhib {on=0: prv_trl=0: prv_q=0: };
@@ -23166,14 +23166,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        lay_lrate=1;
       };
      };
-     lay_inhib {on=1: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_inhib {on=1: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-     lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
+     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     avg_act {targ_init=0.15: fixed=0: tau=100: adjust=1: dt=0.01: };
      inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
-     inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
@@ -23243,7 +23243,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       dt=0.006944444;
       Ei_dt=0.02;
      };
-     stp {on=0: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
+     stp {on=0: f_r_ratio=0.02: rec_tau=200: p0=0.2: p0_norm=0.2: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=5: };
      syn_delay {
       on=0;
       delay=4;
@@ -23254,7 +23254,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       act_thr=0.2;
      };
      deep_raw_qtr=0;
-     deep {on=0: role=SUPER: raw_thr_rel=0.2: raw_thr_abs=0.2: mod_min=0.7: trc_p_thr=0: trc_p_clamp=0: trc_p_max=0: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.3: };
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_thr=0: trc_p_clamp=0: trc_p_max=0: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -23280,7 +23280,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        name="LeabraBiasSpec_0";
        is_used=1;
        desc=;
-       unique{ rnd;wt_limits;wt_scale;wt_scale_init;       };
+       unique{ rnd;wt_limits;wt_scale;wt_scale_init;learn;       };
        children {
 	name="children";
 	el_typ=LeabraBiasSpec;
@@ -23290,7 +23290,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
        inhib=0;
        wt_scale {abs=1: rel=1: };
-       learn=1;
+       learn=0;
        learn_qtr=Q4;
        lrate=0.04;
        use_lrate_sched=1;
@@ -23348,8 +23348,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: dwt_norm=0: rugp_wt_sync=0: };
+       wt_bal {
+	on=1;
+	trg=0.3;
+	thr=0.1;
+	gain=2;
+	avg_updt=10;
+	hi_thr=0.4;
+	lo_thr=0.2;
+       };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
-       slow_wts {on=0: swt_pct=0.5: slow_tau=100: wt_tau=1: fwt_pct=0.5: slow_dt=0.01: wt_dt=1: };
+       slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
        dwt_thresh=0.1;
       };
@@ -23425,8 +23434,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: dwt_norm=0: rugp_wt_sync=0: };
+       wt_bal {
+	on=1;
+	trg=0.3;
+	thr=0.1;
+	gain=2;
+	avg_updt=10;
+	hi_thr=0.4;
+	lo_thr=0.2;
+       };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
-       slow_wts {on=0: swt_pct=0.5: slow_tau=100: wt_tau=1: fwt_pct=0.5: slow_dt=0.01: wt_dt=1: };
+       slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
       };
      };
@@ -23492,8 +23510,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: dwt_norm=0: rugp_wt_sync=0: };
+     wt_bal {
+      on=1;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
-     slow_wts {on=0: swt_pct=0.5: slow_tau=100: wt_tau=1: fwt_pct=0.5: slow_dt=0.01: wt_dt=1: };
+     slow_wts {on=0: swt_pct=0.8: slow_tau=100: wt_tau=1: fwt_pct=0.2: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
@@ -23568,9 +23595,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1;
-     acts_p_avg=0.1;
-     acts_p_avg_eff=0.1;
+     acts_m_avg=0.15;
+     acts_p_avg=0.15;
+     acts_p_avg_eff=0.15;
      spec {type=LeabraLayerSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
      adapt_gi=1;
     };
@@ -23657,9 +23684,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1;
-     acts_p_avg=0.1;
-     acts_p_avg_eff=0.1;
+     acts_m_avg=0.15;
+     acts_p_avg=0.15;
+     acts_p_avg_eff=0.15;
      spec {type=LeabraLayerSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"]$$: };
      adapt_gi=1;
     };
@@ -23728,9 +23755,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1;
-     acts_p_avg=0.1;
-     acts_p_avg_eff=0.1;
+     acts_m_avg=0.15;
+     acts_p_avg=0.15;
+     acts_p_avg_eff=0.15;
      spec {type=LeabraLayerSpec: spec=$.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
      adapt_gi=1;
     };
@@ -23861,6 +23888,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     diff_scale_p=0;
     diff_scale_q1=0;
     dwt_norm=0;
+    wt_bal=1;
     rugp_wt_sync=0;
     lay_gp_inhib=0;
     inhib_cons=0;
