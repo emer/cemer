@@ -357,6 +357,7 @@ int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
       "Could not retrieve object from clipboard"))
       return iClipData::ER_ERROR;
     this->Copy(obj);
+    this->Copy(obj);  // the second copy fixes up pointers for cases where the pointed to object was not yet available - see bug #2584
     this->SetName(saved_name);  // restore the name
     if (proj) {
       proj->undo_mgr.SaveUndo(obj, "ASSIGN", NULL, false, this);
