@@ -3877,12 +3877,14 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       }
     }
     else if(md->type->IsNotPtr()) {
-      if (md->name == "target") {
-        ;
-      }
+      // uncomment for debug when trying to catch pointer updates on ProgramCall updates -
+//      if (md->name == "target") {
+//        ;
+//      }
       if(md->type->InheritsFrom(TA_taSmartRef)) {
         taSmartRef* ref = (taSmartRef*)md->GetOff(this);
-        bool null_not_found = true;
+//        bool null_not_found = true;
+        bool null_not_found = false;
 
         // get list owners
         taList_impl* ref_ptr_list = NULL;
@@ -3909,11 +3911,11 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
             if(new_par_grp_root->root_gp)
               new_par_grp_root = new_par_grp_root->root_gp; // go up to root of initial find owner
           }
-
+          
           // if not the same root group don't try to update pointers
-          if (ref_ptr_grp_root == NULL || (ref_ptr_grp_root != new_par_grp_root)) {
-            null_not_found = false;
-          }
+//          if (ref_ptr_grp_root == NULL || (ref_ptr_grp_root != new_par_grp_root)) {
+//            null_not_found = false;
+//          }
         }
         
         int chg = UpdatePointers_NewPar_Ref(*ref, old_par, new_par, null_not_found);
