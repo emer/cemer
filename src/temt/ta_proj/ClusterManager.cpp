@@ -29,6 +29,7 @@
 
 #include <QBoxLayout>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
@@ -180,7 +181,7 @@ ClusterManager::CommitJobSubmissionTable()
 }
 
 bool
-ClusterManager::UpdateTables()
+ClusterManager::UpdateTables(bool loadOnly)
 {
   if (!m_valid) return false; // Ensure proper construction.
   if (!CheckPrefs()) return false;
@@ -192,7 +193,9 @@ ClusterManager::UpdateTables()
     int old_rev_run = GetLastChangedRevision(m_running_dat_filename, quiet);
     int old_rev_done = GetLastChangedRevision(m_done_dat_filename, quiet);
 
-    UpdateWorkingCopy();
+    if (!loadOnly) {
+      UpdateWorkingCopy();
+    }
 
     // Get new revisions.
     int new_rev_run = GetLastChangedRevision(m_running_dat_filename, quiet);
@@ -1162,6 +1165,18 @@ ClusterManager::ChooseCluster(const String& prompt) {
   if (idx1 >= 0) combo1->setCurrentIndex(idx1);
   dlg.AddStretch(row);
   dlg.AddSpace(space, vbox);
+  
+  QCheckBox * checkbox1 = new QCheckBox("Update SVN repository");
+  {
+    checkbox1->setChecked(true);
+    // Get the hbox for this row so we can add our combobox to it.
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);
+    if (!hboxEmer) return false;
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) return false;
+    
+    hbox->addWidget(checkbox1);
+  }
 
   bool modal = true;
   int drval = dlg.PostDialog(modal);
@@ -1171,6 +1186,7 @@ ClusterManager::ChooseCluster(const String& prompt) {
   
   String rval = combo1->itemText(combo1->currentIndex());
   m_cluster_run.svn_repo = combo2->itemText(combo2->currentIndex());
+  m_cluster_run.loadOnly = !checkbox1->isChecked();
   m_cluster_run.UpdateAfterEdit();
   return rval;
 }
