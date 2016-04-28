@@ -17,6 +17,7 @@
 #include <iColor>
 #include <ColorScaleSpec>
 #include <ColorScaleSpec_Group>
+#include <RGBA
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
@@ -146,6 +147,13 @@ const iColor ColorScale::GetColor(float val, float& sc_val, iColor* maincolor,
   }
   return m;
 }
+
+void ColorScale::GetColorRGB(float val, RGBA& rgba) {
+  iColor color;
+  color = GetColor(GetIdx(val));
+  rgba.setColor(color);
+}
+
 
 const iColor ColorScale::Get_Background(){
   return background;

@@ -64,6 +64,7 @@ public:
   virtual const iColor  GetColor(float val, float& sc_val, iColor* maincolor=NULL,
                                  iColor* contrast=NULL);
   // #IGNORE
+  virtual void          GetColorRGB(float val, RGBA& rgba);  // use this method in emergent projects for coloring data values
   virtual const iColor  GetContrastColor(int idx, bool* ok = NULL); // #IGNORE
   int                   GetIdx(float val);
   void                  DefaultChunks();
