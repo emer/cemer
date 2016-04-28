@@ -3818,6 +3818,9 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
   bool keep_looking = true;
   while(keep_looking) {
     taBase* old_grand_par = old_par->GetOwner();
+    if (!old_grand_par) {
+      break;
+    }
     // types need to be the same - old could be Program and new ProgEl_list
     taBase* new_grand_par = new_par->GetOwner(old_grand_par->GetTypeDef());
     if (!old_grand_par || !new_grand_par) {
