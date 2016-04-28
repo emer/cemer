@@ -40,6 +40,7 @@ void WtScaleSpec::Initialize() {
 }
 
 void WtScaleSpec::Defaults_init() {
+  no_plus_net = false;
 }
 
 

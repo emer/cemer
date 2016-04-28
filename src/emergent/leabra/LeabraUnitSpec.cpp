@@ -1251,6 +1251,19 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
         if(!cs->DoesStdNetin()) continue;
         LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
         if(tol->hard_clamped)      continue;
+        if(cs->wt_scale.no_plus_net && net->quarter == 3) {
+          // netin typically reset at start of plus phase, so we need to send minus phase
+          // activation for first cycle and then stop sending after that
+          const int cyc_per_qtr = net->times.quarter;
+          int qtr_cyc = net->cycle;
+          if(net->cycle > cyc_per_qtr)             // just in case cycle being reset
+            qtr_cyc -= net->quarter * cyc_per_qtr; // quarters into this cyc
+          if(qtr_cyc > 0) continue;
+          float actm_delta = u->act_m - u->act_sent;
+          ((LeabraConSpec*)send_gp->con_spec)->Send_NetinDelta(send_gp, net, thr_no,
+                                                               actm_delta);
+          continue;
+        }
         ((LeabraConSpec*)send_gp->con_spec)->Send_NetinDelta(send_gp, net, thr_no,
                                                              act_delta);
       }
@@ -1274,6 +1287,16 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
       if(!cs->DoesStdNetin()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->hard_clamped)        continue;
+      if(cs->wt_scale.no_plus_net && net->quarter == 3) {
+        // netin typically reset at start of plus phase, so we need to send minus phase
+        // activation for first cycle and then stop sending after that
+        const int cyc_per_qtr = net->times.quarter;
+        int qtr_cyc = net->cycle;
+        if(net->cycle > cyc_per_qtr)
+          qtr_cyc -= net->quarter * cyc_per_qtr; // quarters into this cyc
+        if(qtr_cyc > 0) continue;
+        if(u->act_m > opt_thresh.send) continue; // not actually off!
+      }
       ((LeabraConSpec*)send_gp->con_spec)->Send_NetinDelta(send_gp, net, thr_no,
                                                            act_delta);
     }
