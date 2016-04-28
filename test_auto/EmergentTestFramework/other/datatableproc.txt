@@ -1,0 +1,60 @@
+** Settings ***
+
+Library          Telnet
+Library          HttpLibrary.HTTP
+Library          Process
+Library          OperatingSystem
+
+Resource         Server_lib.txt
+
+Suite Setup      Initialize Emergent    ./test-projects/TestDataTableProcs.proj
+Suite Teardown   Shutdown Emergent
+
+*** Variables ***
+
+# use 'pybot -v debug:true server.txt' on the command line to
+#      output the transmissions to/from Emergent using warnings
+${debug} =       false
+
+*** Test Cases ***
+
+# Ideas on things to test
+#  - SetDataTableCell and Matrix Cell
+
+#
+# Initialization and general tests
+#
+
+Initialize
+    Set Suite Variable     ${verbose}       ${false}
+    Set Suite Variable     ${project}       ./test-projects/TestDataTableProcs.proj
+    Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
+
+Connection
+    Sleep                  1 sec
+    ${output} =            Read
+    Print                  ${output}
+    Should Contain         ${output}    Emergent Server v7.
+
+# TODO: Start another process and check for the "Too many connections already" error.
+
+#
+# ParserTest
+#
+
+General RunState
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             4
+
+
+
+Filter
+    Ensure Emergent Free
+    Set Suite Variable     ${program_test}       "Filter"    
+    Run Emergent Program	Filter
+    Prog Var Should Equal	test_failed	0    
+
+
+*** Keywords ***
+
+

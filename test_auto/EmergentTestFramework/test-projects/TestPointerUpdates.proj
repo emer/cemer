@@ -1049,7 +1049,7 @@ LeabraProject .projects["TestPointerUpdates"] {
     };
    };
   };
-  Program_Group @.gp["TesteePrograms"] = [28] { 
+  Program_Group @.gp["TesteePrograms"] = [29] { 
    Program @["copy_callee_caller"] { 
     ProgObjList @.objs = [0] {
     };
@@ -2134,6 +2134,42 @@ LeabraProject .projects["TestPointerUpdates"] {
      MethodCall @[2] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
+      };
+     };
+    };
+   };
+   Program @["copy_programgroup_up_one_level"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [3] {
+     ProgVar @["sub_group"] { };
+     ProgVar @["programsgrp"] { };
+     ProgVar @["programs"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [3] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     AssignExpr @[1] { };
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
       };
      };
     };
@@ -11882,6 +11918,145 @@ LeabraProject .projects["TestPointerUpdates"] {
       };
       meth_sig="bool Transfer(taBase* item)";
       meth_desc=;
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["copy_programgroup_up_one_level"] {
+    name="copy_programgroup_up_one_level";
+    short_nm="cpyprg";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name=;
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name=;
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["sub_group"] {
+      name="sub_group";
+      var_type=T_Object;
+      object_type=Program_Group;
+      object_val=$.projects["TestPointerUpdates"].programs.gp["group_two"].gp["sub_group"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["programsgrp"] {
+      name="programsgrp";
+      var_type=T_Object;
+      object_type=Program_Group;
+      object_val=$.projects["TestPointerUpdates"].programs.gp["group_two"].gp["sub_group"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["programs"] {
+      name="programs";
+      var_type=T_Object;
+      object_type=Program_TopGroup;
+      object_val=$.projects["TestPointerUpdates"].programs$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (0 vars)";
+      pre_compile_code_string="LocalVars (0 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     AssignExpr @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="programsgrp = programs.gp";
+      pre_compile_code_string="programsgrp = programs.gp";
+      result_var=.projects["TestPointerUpdates"].programs.gp["TesteePrograms"]["copy_programgroup_up_one_level"].vars["programsgrp"]$$;
+      expr {
+       expr="programs.gp";
+      };
+     };
+     MethodCall @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="programsgrp->CopyChildBeforeIndex(sub_group, -1)";
+      pre_compile_code_string="programsgrp->CopyChildBeforeIndex(sub_group, -1)";
+      result_var=NULL;
+      obj=$.projects["TestPointerUpdates"].programs.gp["TesteePrograms"]["copy_programgroup_up_one_level"].vars["programsgrp"]$;
+      method=taList_impl::CopyChildBeforeIndex;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=taBase_ptr;
+	type="taBase*";
+	name="src";
+	required=1;
+	def_val=;
+	prev_expr="sub_group";
+	expr {
+	 expr="sub_group";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="child_pos";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="-1";
+	};
+       };
+      };
+      meth_sig="taBase_ptr CopyChildBeforeIndex(taBase* src, int child_pos)";
+      meth_desc=" implemented by container (list) objects: make a copy of the src object and insert it at the position of the child_pos object within this list -- copies the name of the object too";
      };
     };
     step_prog=NULL;
