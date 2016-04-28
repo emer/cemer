@@ -17,7 +17,7 @@
 #include <iColor>
 #include <ColorScaleSpec>
 #include <ColorScaleSpec_Group>
-#include <RGBA
+#include <RGBA>
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
