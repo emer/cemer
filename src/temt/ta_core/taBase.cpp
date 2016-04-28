@@ -3823,7 +3823,7 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
     }
     // types need to be the same - old could be Program and new ProgEl_list
     taBase* new_grand_par = new_par->GetOwner(old_grand_par->GetTypeDef());
-    if (!old_grand_par || !new_grand_par) {
+    if (!new_grand_par) {
       break;
     }
     old_own = ref.ptr()->GetOwner(old_grand_par->GetTypeDef());
@@ -3886,7 +3886,8 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
 //      }
       if(md->type->InheritsFrom(TA_taSmartRef)) {
         taSmartRef* ref = (taSmartRef*)md->GetOff(this);
-        bool null_not_found = true;
+//        bool null_not_found = true;
+        bool null_not_found = false;
 
         // get list owners
         taList_impl* ref_ptr_list = NULL;
