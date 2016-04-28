@@ -3883,8 +3883,7 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
 //      }
       if(md->type->InheritsFrom(TA_taSmartRef)) {
         taSmartRef* ref = (taSmartRef*)md->GetOff(this);
-//        bool null_not_found = true;
-        bool null_not_found = false;
+        bool null_not_found = true;
 
         // get list owners
         taList_impl* ref_ptr_list = NULL;
