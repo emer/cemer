@@ -63,7 +63,6 @@ public:
     TRACE               = 0x0004, // trace the running of this program by recording each line to the css console as the program runs
     STARTUP_RUN         = 0x0008, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
     OBJS_UPDT_GUI       = 0x0010, // when this flag is set, changes to the objs objects update the gui as they happen -- otherwise they are only updated after the program finishes (much faster)
-    LOCKED              = 0x0020, // this program should not be edited -- you must uncheck this flag prior to editing
   };
 
   enum ReturnVal { // system defined return values (<0 are for user defined)

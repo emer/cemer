@@ -292,10 +292,7 @@ void Program::UpdateAfterEdit_impl() {
   types.el_typ = &TA_DynEnumType;  // want to default to valid type for <Enter> to create valid type
   init_code.el_typ = &TA_ProgCode;  // make sure this is default
   prog_code.el_typ = &TA_ProgCode;  // make sure this is default
-  
-  if(HasProgFlag(LOCKED)) SetBaseFlag(BF_GUI_READ_ONLY);
-  else                    ClearBaseFlag(BF_GUI_READ_ONLY);
-  
+    
   //TODO: the following *do* affect generated script, so we should probably call
   // setDirty(true) if not running, and these changed:
   // name, (more TBD...)
@@ -1675,7 +1672,6 @@ Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
 
 int Program::GetSpecialState() const {
   if(HasProgFlag(TRACE)) return 1; // ?
-  if(HasProgFlag(LOCKED)) return 4; // red
   if(HasProgFlag(STARTUP_RUN)) return 3; // green
   if(HasProgFlag(NO_STOP_STEP)) return 2; // may not want this one -- might be too much color..
   return 0;
