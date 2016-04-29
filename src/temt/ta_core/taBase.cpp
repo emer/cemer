@@ -3886,7 +3886,8 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
 //      }
       if(md->type->InheritsFrom(TA_taSmartRef)) {
         taSmartRef* ref = (taSmartRef*)md->GetOff(this);
-//        bool null_not_found = true;
+        // Fix for bug 2594 - but changing the default to false might be too much;
+        // might need to default to true and figure the conditions for setting to false
         bool null_not_found = false;
 
         // get list owners
