@@ -125,7 +125,7 @@ public:
   AutoLoadMode          auto_load;
   // #CONDEDIT_OFF_data_flags:SAVE_ROWS Whether to automatically load a data file when the DataTable object is loaded.  This option is only available when SAVE_ROWS is unchecked.  Storing row-data externally reduces the project file size (especially for large data tables), but the project is no longer self contained.
   String                auto_load_file;
-  // #CONDEDIT_OFF_auto_load:NO_AUTO_LOAD #FILE_DIALOG_LOAD #COMPRESS #FILETYPE_DataTable #EXT_dat,dtbl Where to store and load row-data from if AUTO_LOAD option is set.  (*.dtbl files are loaded using internal Load format, otherwise LoadData is used.)
+  // #FILE_DIALOG_LOAD #COMPRESS #FILETYPE_DataTable #EXT_dat,dtbl Where to store and load row-data from if AUTO_LOAD option is set.  (*.dtbl files are loaded using internal Load format, otherwise LoadData is used.)
   Variant               keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
 
   int_Matrix            row_indexes;     // #EXPERT #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date
@@ -281,6 +281,8 @@ public:
       LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO,
       int max_rows = -1,  bool reset_first=true);
   // #CAT_File #EXT_dat,tsv,csv,txt,log load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detect works in most cases for delimiters and string quoting, reset_first = reset any existing data before loading (else append) -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers)
+  virtual void          LoadAutoSaved();
+  // #CAT_File #DYN1 loads data that was auto saved for cases where you don't want to be prompted and you don't want to auto_load
 
 #if (QT_VERSION >= 0x050000)
   virtual bool          SetDataFromJSON(const QJsonObject& n, int start_row = 0, int start_cell = 0);

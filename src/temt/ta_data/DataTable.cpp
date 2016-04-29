@@ -370,6 +370,10 @@ bool DataTable::AutoLoadData() {
   return true;
 }
 
+void DataTable::LoadAutoSaved() {
+  LoadData(auto_load_file);
+}
+
 bool DataTable::AutoSaveData() {
   if(HasDataFlag(SAVE_ROWS) || !HasDataFlag(SAVE_FILE)) return false;
 
