@@ -196,7 +196,7 @@ void ClusterRun::Run() {
   }
 }
 
-bool ClusterRun::Update(bool loadOnly) {
+bool ClusterRun::Update(bool load_only) {
   if(!InitClusterManager())
     return false;
   
@@ -209,7 +209,7 @@ bool ClusterRun::Update(bool loadOnly) {
   int st_row_archive, end_row_archive;
   bool has_sel_archive = SelectedRows(jobs_archive, st_row_archive, end_row_archive);
 
-  bool has_updates = m_cm->UpdateTables(loadOnly);
+  bool has_updates = m_cm->UpdateTables(load_only);
   cur_svn_rev = m_cm->GetCurSvnRev();
   SortClusterInfoTable();
   
@@ -542,14 +542,14 @@ void ClusterRun::SelectCluster() {
   String clust = m_cm->ChooseCluster("Select a cluster to use for this project:");
   if(clust.empty()) return;
   cluster = clust;
-  Update(m_cm->m_cluster_run.loadOnly);
+  Update(m_cm->m_cluster_run.load_only);
   
   jobs_submit.ResetData();
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("PROBE", "status", dst_row);
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
   // Commit the table.
-  if (!m_cm->m_cluster_run.loadOnly) {
+  if (!m_cm->m_cluster_run.load_only) {
     m_cm->CommitJobSubmissionTable();
   }
   // this is not worth the risks if things are not configured properly:

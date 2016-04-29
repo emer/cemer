@@ -1186,7 +1186,7 @@ ClusterManager::ChooseCluster(const String& prompt) {
   
   String rval = combo1->itemText(combo1->currentIndex());
   m_cluster_run.svn_repo = combo2->itemText(combo2->currentIndex());
-  m_cluster_run.loadOnly = !checkbox1->isChecked();
+  m_cluster_run.load_only = !checkbox1->isChecked();
   m_cluster_run.UpdateAfterEdit();
   return rval;
 }
