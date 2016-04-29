@@ -666,7 +666,7 @@ public:
 
   bool          SaveConVarToWeights(MemberDef* md) override;
   
-  bool          CheckConfig_RecvCons(ConGroup* cg, bool quiet=false) override;
+  bool          CheckConfig_RecvCons(Unit* ru, Projection* prjn, bool quiet=false) override;
   // check for for misc configuration settings required by different algorithms
 
   void          GetPrjnName(Projection& prjn, String& nm) override;

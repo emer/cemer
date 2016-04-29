@@ -67,7 +67,7 @@ void ConSpec::UpdateAfterEdit_impl() {
   }
 }
 
-bool ConSpec::CheckConfig_RecvCons(ConGroup* cg, bool quiet) {
+bool ConSpec::CheckConfig_RecvCons(Unit* ru, Projection* prjn, bool quiet) {
   return true;
 }
 

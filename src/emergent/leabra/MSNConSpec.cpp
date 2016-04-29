@@ -63,9 +63,9 @@ void MSNConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-bool MSNConSpec::CheckConfig_RecvCons(ConGroup* cg, bool quiet) {
-  bool rval = inherited::CheckConfig_RecvCons(cg, quiet);
-  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+bool MSNConSpec::CheckConfig_RecvCons(Unit* ru, Projection* prjn, bool quiet) {
+  bool rval = inherited::CheckConfig_RecvCons(ru, prjn, quiet);
+  LeabraLayer* rlay = (LeabraLayer*)prjn->layer;
   LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
   
   if(rlay->CheckError(!rus->InheritsFrom(&TA_MSNUnitSpec), quiet, rval,

@@ -1,0 +1,1809 @@
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9440
+Program .projects[0].programs.gp[5].gp[0][8] { 
+ ProgObjList @.objs = [4] {
+  DataTable @[0] { 
+   DataTableCols @.data = [0] {
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataTable @[1] { 
+   DataTableCols @.data = [0] {
+   };
+
+   DataOpList @.last_sort_spec.ops = [6] {
+    DataSortEl @[0] { };
+    DataSortEl @[1] { };
+    DataSortEl @[2] { };
+    DataSortEl @[3] { };
+    DataSortEl @[4] { };
+    DataSortEl @[5] { };
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataTable @[2] { 
+   DataTableCols @.data = [0] {
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataGroupSpec @[3] { 
+   DataOpList @.ops = [0] {
+   };
+  };
+ };
+
+ ProgType_List @.types = [0] {
+ };
+
+ ProgVar_List @.args = [0] {
+ };
+
+ ProgVar_List @.vars = [9] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+  ProgVar @[2] { };
+  ProgVar @[3] { };
+  ProgVar @[4] { };
+  ProgVar @[5] { };
+  ProgVar @[6] { };
+  ProgVar @[7] { };
+  ProgVar @[8] { };
+ };
+
+ Function_List @.functions = [4] {
+  Function @[0] { 
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgEl_List @.fun_code = [5] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [2] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+     };
+    };
+    AssignExpr @[1] { };
+    If @[2] { 
+     ProgEl_List @.true_code = [1] {
+      FunctionCall @[0] { 
+       ProgArg_List @.fun_args = [0] {
+       };
+      };
+     };
+    };
+    If @[3] { 
+     ProgEl_List @.true_code = [2] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+      MethodCall @[1] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
+    Else @[4] { 
+     ProgEl_List @.else_code = [3] {
+      AssignExpr @[0] { };
+      If @[1] { 
+       ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [2] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	 };
+	};
+       };
+      };
+      MethodCall @[2] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
+   };
+  };
+  Function @[1] { 
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgEl_List @.fun_code = [7] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @[0] { };
+     };
+    };
+    MemberMethodCall @[1] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    WhileLoop @[3] { 
+     ProgEl_List @.loop_code = [1] {
+      MemberMethodCall @[0] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
+    MemberMethodCall @[4] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MemberMethodCall @[5] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    ForeachLoop @[6] { 
+     ProgEl_List @.loop_code = [2] {
+      If @[0] { 
+       ProgEl_List @.true_code = [1] {
+	MemberAssign @[0] { };
+       };
+      };
+      Else @[1] { 
+       ProgEl_List @.else_code = [1] {
+	MemberAssign @[0] { };
+       };
+      };
+     };
+    };
+   };
+  };
+  Function @[2] { 
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgEl_List @.fun_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @[0] { };
+     };
+    };
+    DataProcCall @[1] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    FunctionCall @[2] { 
+     ProgArg_List @.fun_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+   };
+  };
+  Function @[3] { 
+   ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+   };
+
+   ProgEl_List @.fun_code = [7] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [3] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+      ProgVar @[2] { };
+     };
+    };
+    If @[1] { 
+     ProgEl_List @.true_code = [1] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [0] {
+       };
+      };
+     };
+    };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    If @[4] { 
+     ProgEl_List @.true_code = [3] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [0] {
+       };
+      };
+      MethodCall @[1] { 
+       ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+       };
+      };
+      MethodCall @[2] { 
+       ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+       };
+      };
+     };
+    };
+    ForLoop @[5] { 
+     ProgEl_List @.loop_code = [1] {
+      ForLoop @[0] { 
+       ProgEl_List @.loop_code = [3] {
+	AssignExpr @[0] { };
+	MethodCall @[1] { 
+	 ProgArg_List @.meth_args = [2] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	 };
+	};
+	If @[2] { 
+	 ProgEl_List @.true_code = [1] {
+	  MethodCall @[0] { 
+	   ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[6] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+   };
+  };
+ };
+
+ ProgEl_List @.init_code = [2] {
+  If @[0] { 
+   ProgEl_List @.true_code = [2] {
+    MethodCall @[0] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+   };
+  };
+  MethodCall @[1] { 
+   ProgArg_List @.meth_args = [1] {
+    ProgArg @[0] { };
+   };
+  };
+ };
+
+ ProgEl_List @.prog_code = [3] {
+  LocalVars @[0] { 
+   ProgVar_List @.local_vars = [0] {
+   };
+  };
+  If @[1] { 
+   ProgEl_List @.true_code = [1] {
+    FunctionCall @[0] { 
+     ProgArg_List @.fun_args = [0] {
+     };
+    };
+   };
+  };
+  If @[2] { 
+   ProgEl_List @.true_code = [1] {
+    FunctionCall @[0] { 
+     ProgArg_List @.fun_args = [0] {
+     };
+    };
+   };
+  };
+ };
+};
+Program .projects[0].programs.gp[5].gp[0][8] {
+ name="TickAnalysis";
+ short_nm="Tcknly";
+ tags="Analysis, Statistic, Monitor, Errors, Trial, Tick";
+ desc="Analyze trial-level data grouping according to ticks, which are used for organizing sequences of trials over time -- allows you to see all the results in aggregate for each tick in an epoch-level log, which is very convenient for analyzing overall network behavior as a function of time ticks.";
+ flags=NO_STOP_STEP;
+ stop_step_cond {
+  expr=;
+ };
+ objs {
+  name="objs";
+  el_typ=DataTable;
+  el_def=0;
+  DataTable @[0] {
+   name="AllTrialData";
+   desc=;
+   data {
+    name="data";
+    el_typ=int_Data;
+    el_def=0;
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name="row_indexes";
+   [0]    };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   control_panel_cells {
+    name="control_panel_cells";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable @[1] {
+   name="TickData";
+   desc=;
+   data {
+    name="data";
+    el_typ=DataColT;
+    el_def=0;
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name="row_indexes";
+   [0]    };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+     DataSortEl @[0] {
+      col_name="sse_count";
+      name="sse_count_dn_0";
+      order=DESCENDING;
+     };
+     DataSortEl @[1] {
+      col_name="trial_name_group";
+      name="trial_name_group_up_1";
+      order=ASCENDING;
+     };
+     DataSortEl @[2] {
+      col_name="sse_count";
+      name="sse_count_up_2";
+      order=ASCENDING;
+     };
+     DataSortEl @[3] {
+      col_name="sse_count";
+      name="sse_count_up_3";
+      order=ASCENDING;
+     };
+     DataSortEl @[4] {
+      col_name="sse_count";
+      name="sse_count_up_4";
+      order=ASCENDING;
+     };
+     DataSortEl @[5] {
+      col_name="sse_count";
+      name="sse_count_up_5";
+      order=ASCENDING;
+     };
+    };
+   };
+   control_panel_cells {
+    name="control_panel_cells";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable @[2] {
+   name="TickDataLog";
+   desc="log of top n error trials over epochs";
+   data {
+    name="data";
+    el_typ=int_Data;
+    el_def=0;
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name="row_indexes";
+   [0]    };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   control_panel_cells {
+    name="control_panel_cells";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataGroupSpec @[3] {
+   name="TickGroupSpec";
+   ops {
+    name="ops";
+    el_typ=DataGroupEl;
+    el_def=0;
+   };
+   append_agg_name=0;
+  };
+ };
+ types {
+  name="types";
+  el_typ=DynEnumType;
+  el_def=0;
+ };
+ args {
+  name="args";
+  el_typ=ProgVar;
+  el_def=0;
+ };
+ vars {
+  name="vars";
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="trial_output_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[1][0]$$<DataTable,TrainTrialOutputData>;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="this is the trial output data to analyze";
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="interactive_run";
+   var_type=T_Bool;
+   bool_val=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="click this to true if you want to run this program interactively on already-collected data to test out new analyses, etc";
+   init_from=NULL;
+  };
+  ProgVar @[2] {
+   name="do_analysis";
+   var_type=T_Bool;
+   bool_val=1;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="whether to run analysis or not -- sometimes you just want to collect the data.. (especially when changing the analysis stream)";
+   init_from=NULL;
+  };
+  ProgVar @[3] {
+   name="n_trials";
+   var_type=T_Int;
+   int_val=100;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="number of trials of data to analyze -- aggregates this amount over epochs as needed -- if trial data has more than this, all of trial data is used (no point in throwing data away!)";
+   init_from=NULL;
+  };
+  ProgVar @[4] {
+   name="trials_per_obj";
+   var_type=T_Int;
+   int_val=5;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+   reference=0;
+   desc="number of trial types to aggregate into the top analysis";
+   init_from=.projects[0].programs.gp[5][0]$$<Program,StdGlobalsInit>;
+  };
+  ProgVar @[5] {
+   name="AllTrialData";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[5].gp[0][8].objs[0]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[6] {
+   name="TickData";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[5].gp[0][8].objs[1]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[7] {
+   name="TickDataLog";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[5].gp[0][8].objs[2]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[8] {
+   name="TickGroupSpec";
+   var_type=T_Object;
+   object_type=DataGroupSpec;
+   object_val=.projects[0].programs.gp[5].gp[0][8].objs[3]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ functions {
+  name="functions";
+  el_typ=Function;
+  el_def=0;
+  Function @[0] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="GetNewData() returns: int";
+   pre_compile_code_string="GetNewData() returns: int";
+   name="GetNewData";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="ProgEl_List_168";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (2 vars)";
+     pre_compile_code_string="LocalVars (2 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="trl_rows";
+       var_type=T_Int;
+       int_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="old_rows";
+       var_type=T_Int;
+       int_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="trl_rows = trial_output_data.rows";
+     pre_compile_code_string="trl_rows = trial_output_data.rows";
+     result_var=.projects[0].programs.gp[5].gp[0][8].functions[0].fun_code[0].local_vars[0]$$;
+     expr {
+      expr="trial_output_data.rows";
+     };
+    };
+    If @[2] {
+     desc="first integration, do some init";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (AllTrialData.rows == 0)";
+     pre_compile_code_string="if (AllTrialData.rows == 0)";
+     cond {
+      expr="AllTrialData.rows == 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      FunctionCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="ConfigGroupSpec()";
+       pre_compile_code_string="ConfigGroupSpec()";
+       result_var=NULL;
+       fun=.projects[0].programs.gp[5].gp[0][8].functions[1]$$;
+       fun_args {
+	name="fun_args";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+     };
+    };
+    If @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (trl_rows > n_trials || AllTrialData.rows == 0)";
+     pre_compile_code_string="if (trl_rows > n_trials || AllTrialData.rows == 0)";
+     cond {
+      expr="trl_rows > n_trials || AllTrialData.rows == 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc="just get it all";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="AllTrialData->CopyFrom(trial_output_data)";
+       pre_compile_code_string="AllTrialData->CopyFrom(trial_output_data)";
+       result_var=NULL;
+       obj=.projects[0].programs.gp[5].gp[0][8].vars[5]$$;
+       method=taBase::CopyFrom;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=taBase_ptr;
+	 type="taBase*";
+	 name="cpy_from";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="trial_output_data";
+	 };
+	};
+       };
+       meth_sig="bool CopyFrom(taBase* cpy_from)";
+       meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+      };
+      MethodCall @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="AllTrialData->ClearDataFlag(DataTable::SAVE_ROWS)";
+       pre_compile_code_string="AllTrialData->ClearDataFlag(DataTable::SAVE_ROWS)";
+       result_var=NULL;
+       obj=$.projects[0].programs.gp[5].gp[0][8].vars[5]$;
+       method=DataTable::ClearDataFlag;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable::DataFlags;
+	 type="DataTable::DataFlags";
+	 name="flg";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="DataTable::SAVE_ROWS";
+	 };
+	};
+       };
+       meth_sig="void ClearDataFlag(DataTable::DataFlags flg)";
+       meth_desc=" clear data table flag state (set off)";
+      };
+     };
+    };
+    Else @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="else";
+     pre_compile_code_string="else";
+     else_code {
+      name="else_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="old_rows = n_trials - trl_rows";
+       pre_compile_code_string="old_rows = n_trials - trl_rows";
+       result_var=.projects[0].programs.gp[5].gp[0][8].functions[0].fun_code[0].local_vars[1]$$;
+       expr {
+	expr="n_trials - trl_rows";
+       };
+      };
+      If @[1] {
+       desc="make room for new data";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (AllTrialData.rows > old_rows)";
+       pre_compile_code_string="if (AllTrialData.rows > old_rows)";
+       cond {
+	expr="AllTrialData.rows > old_rows";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="AllTrialData->RemoveRows(0, AllTrialData.rows - old_rows)";
+	 pre_compile_code_string="AllTrialData->RemoveRows(0, AllTrialData.rows - old_rows)";
+	 result_var=NULL;
+	 obj=$.projects[0].programs.gp[5].gp[0][8].vars[5]$;
+	 method=DataTable::RemoveRows;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="st_row";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="0";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=int;
+	   type="int";
+	   name="n_rows";
+	   required=0;
+	   def_val="1";
+	   prev_expr=;
+	   expr {
+	    expr="AllTrialData.rows - old_rows";
+	   };
+	  };
+	 };
+	 meth_sig="bool RemoveRows(int st_row, int n_rows = 1)";
+	 meth_desc=" Remove n rows of data, starting at st_row. st_row = -1 means last row, and n_rows = -1 means remove from starting row to end";
+	};
+       };
+      };
+      MethodCall @[2] {
+       desc="get the new data";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="AllTrialData->AppendRows(trial_output_data)";
+       pre_compile_code_string="AllTrialData->AppendRows(trial_output_data)";
+       result_var=NULL;
+       obj=$.projects[0].programs.gp[5].gp[0][8].vars[5]$;
+       method=DataTable::AppendRows;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable_ptr;
+	 type="DataTable*";
+	 name="append_from";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="trial_output_data";
+	 };
+	};
+       };
+       meth_sig="bool AppendRows(DataTable* append_from)";
+       meth_desc=" append rows from another data table -- this is also available in taDataProc and in the GUI as a drag-and-drop action (appends rows of dropped item onto dropped item)";
+      };
+     };
+    };
+   };
+  };
+  Function @[1] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="ConfigGroupSpec() returns: int";
+   pre_compile_code_string="ConfigGroupSpec() returns: int";
+   name="ConfigGroupSpec";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="ProgEl_List_1108";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (1 vars)";
+     pre_compile_code_string="LocalVars (1 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="op";
+       var_type=T_Object;
+       object_type=DataGroupEl;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MemberMethodCall @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="TickGroupSpec.ops.Reset()";
+     pre_compile_code_string="TickGroupSpec.ops.Reset()";
+     obj=.projects[0].programs.gp[5].gp[0][8].vars[8]$$;
+     path="ops";
+     result_var=NULL;
+     method=taList_impl::Reset;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void Reset()";
+     meth_desc=" reset the list (remove all elements)";
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="TickGroupSpec->AddAllColumns(trial_output_data)";
+     pre_compile_code_string="TickGroupSpec->AddAllColumns(trial_output_data)";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[5].gp[0][8].vars[8]$;
+     method=DataOpBaseSpec::AddAllColumns;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dt";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="trial_output_data";
+       };
+      };
+     };
+     meth_sig="void AddAllColumns(DataTable* dt)";
+     meth_desc=" add all columns from given data table";
+    };
+    WhileLoop @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="while (TickGroupSpec.ops[0].col_name != \"tick\")";
+     pre_compile_code_string="while (TickGroupSpec.ops[0].col_name != \"tick\")";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MemberMethodCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="TickGroupSpec.ops.RemoveIdx(0)";
+       pre_compile_code_string="TickGroupSpec.ops.RemoveIdx(0)";
+       obj=$.projects[0].programs.gp[5].gp[0][8].vars[8]$;
+       path="ops";
+       result_var=NULL;
+       method=taList_impl::RemoveIdx;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=int;
+	 type="int";
+	 name="idx";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="0";
+	 };
+	};
+       };
+       meth_sig="bool RemoveIdx(int idx)";
+       meth_desc=" remove (and delete) element from list at index";
+      };
+     };
+     test {
+      expr="TickGroupSpec.ops[0].col_name != \"tick\"";
+     };
+    };
+    MemberMethodCall @[4] {
+     desc="trial_name";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="TickGroupSpec.ops.RemoveIdx(1)";
+     pre_compile_code_string="TickGroupSpec.ops.RemoveIdx(1)";
+     obj=$.projects[0].programs.gp[5].gp[0][8].vars[8]$;
+     path="ops";
+     result_var=NULL;
+     method=taList_impl::RemoveIdx;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="idx";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="1";
+       };
+      };
+     };
+     meth_sig="bool RemoveIdx(int idx)";
+     meth_desc=" remove (and delete) element from list at index";
+    };
+    MemberMethodCall @[5] {
+     desc="output_name";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="TickGroupSpec.ops.RemoveIdx(1)";
+     pre_compile_code_string="TickGroupSpec.ops.RemoveIdx(1)";
+     obj=$.projects[0].programs.gp[5].gp[0][8].vars[8]$;
+     path="ops";
+     result_var=NULL;
+     method=taList_impl::RemoveIdx;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="idx";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="1";
+       };
+      };
+     };
+     meth_sig="bool RemoveIdx(int idx)";
+     meth_desc=" remove (and delete) element from list at index";
+    };
+    ForeachLoop @[6] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="foreach(op in TickGroupSpec.ops)";
+     pre_compile_code_string="foreach(op in TickGroupSpec.ops)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      If @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (op.col_name == \"tick\")";
+       pre_compile_code_string="if (op.col_name == \"tick\")";
+       cond {
+	expr="op.col_name == \"tick\"";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MemberAssign @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="op.agg.op = Aggregate::GROUP";
+	 pre_compile_code_string="op.agg.op = Aggregate::GROUP";
+	 obj=.projects[0].programs.gp[5].gp[0][8].functions[1].fun_code[0].local_vars[0]$$;
+	 path="agg.op";
+	 expr {
+	  expr="Aggregate::GROUP";
+	 };
+	 update_after=0;
+	};
+       };
+      };
+      Else @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="else";
+       pre_compile_code_string="else";
+       else_code {
+	name="else_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MemberAssign @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="op.agg.op = Aggregate::MEAN";
+	 pre_compile_code_string="op.agg.op = Aggregate::MEAN";
+	 obj=$.projects[0].programs.gp[5].gp[0][8].functions[1].fun_code[0].local_vars[0]$;
+	 path="agg.op";
+	 expr {
+	  expr="Aggregate::MEAN";
+	 };
+	 update_after=0;
+	};
+       };
+      };
+     };
+     el_var=$.projects[0].programs.gp[5].gp[0][8].functions[1].fun_code[0].local_vars[0]$;
+     in {
+      expr="TickGroupSpec.ops";
+     };
+    };
+   };
+  };
+  Function @[2] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="AnalyzeTicks() returns: int";
+   pre_compile_code_string="AnalyzeTicks() returns: int";
+   name="AnalyzeTicks";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="ProgEl_List_174";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (1 vars)";
+     pre_compile_code_string="LocalVars (1 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="extra_rows";
+       var_type=T_Int;
+       int_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    DataProcCall @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="taDataProc::Group(TickData, AllTrialData, TickGroupSpec)";
+     pre_compile_code_string="taDataProc::Group(TickData, AllTrialData, TickGroupSpec)";
+     result_var=NULL;
+     object_type=taDataProc;
+     method=taDataProc::Group;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dest";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="TickData";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="AllTrialData";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=DataGroupSpec_ptr;
+       type="DataGroupSpec*";
+       name="spec";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="TickGroupSpec";
+       };
+      };
+     };
+    };
+    FunctionCall @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LogTickData(false)";
+     pre_compile_code_string="LogTickData(false)";
+     result_var=NULL;
+     fun=.projects[0].programs.gp[5].gp[0][8].functions[3]$$;
+     fun_args {
+      name="fun_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=bool;
+       type="bool";
+       name="init_only";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+   };
+  };
+  Function @[3] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LogTickData(bool init_only) returns: int";
+   pre_compile_code_string="LogTickData(bool init_only) returns: int";
+   name="LogTickData";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="init_only";
+     var_type=T_Bool;
+     bool_val=0;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   fun_code {
+    name="ProgEl_List_177";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (3 vars)";
+     pre_compile_code_string="LocalVars (3 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="i";
+       var_type=T_Int;
+       int_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="trnm";
+       var_type=T_String;
+       string_val=;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[2] {
+       name="j";
+       var_type=T_Int;
+       int_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    If @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (init_only)";
+     pre_compile_code_string="if (init_only)";
+     cond {
+      expr="init_only";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="TickDataLog->ResetData()";
+       pre_compile_code_string="TickDataLog->ResetData()";
+       result_var=NULL;
+       obj=.projects[0].programs.gp[5].gp[0][8].vars[7]$$;
+       method=DataTable::ResetData;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+       meth_sig="void ResetData()";
+       meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+      };
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="TickDataLog->FindMakeCol(\"batch\", taBase::VT_INT)";
+     pre_compile_code_string="TickDataLog->FindMakeCol(\"batch\", taBase::VT_INT)";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+     method=DataTable::FindMakeCol;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"batch\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=taBase::ValType;
+       type="taBase::ValType";
+       name="val_type";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="taBase::VT_INT";
+       };
+      };
+     };
+     meth_sig="DataCol_ptr FindMakeCol(taString& col_nm, taBase::ValType val_type)";
+     meth_desc=" insures that a scalar column of the given name and val type exists, and return that col.";
+    };
+    MethodCall @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="TickDataLog->FindMakeCol(\"epoch\", taBase::VT_INT)";
+     pre_compile_code_string="TickDataLog->FindMakeCol(\"epoch\", taBase::VT_INT)";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+     method=DataTable::FindMakeCol;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"epoch\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=taBase::ValType;
+       type="taBase::ValType";
+       name="val_type";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="taBase::VT_INT";
+       };
+      };
+     };
+     meth_sig="DataCol_ptr FindMakeCol(taString& col_nm, taBase::ValType val_type)";
+     meth_desc=" insures that a scalar column of the given name and val type exists, and return that col.";
+    };
+    If @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (!init_only)";
+     pre_compile_code_string="if (!init_only)";
+     cond {
+      expr="!init_only";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="TickDataLog->AddBlankRow()";
+       pre_compile_code_string="TickDataLog->AddBlankRow()";
+       result_var=NULL;
+       obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+       method=DataTable::AddBlankRow;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+       meth_sig="int AddBlankRow()";
+       meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
+      };
+      MethodCall @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="TickDataLog->SetVal(AllTrialData.GetVal(\"batch\", -1), \"batch\", -1)";
+       pre_compile_code_string="TickDataLog->SetVal(AllTrialData.GetVal(\"batch\", -1), \"batch\", -1)";
+       result_var=NULL;
+       obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+       method=DataTable::SetVal;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="val";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="AllTrialData.GetVal(\"batch\", -1)";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"batch\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="-1";
+	 };
+	};
+       };
+       meth_sig="bool SetVal(Variant& val, Variant& col, int row)";
+       meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
+      };
+      MethodCall @[2] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="TickDataLog->SetVal(AllTrialData.GetVal(\"epoch\", -1), \"epoch\", -1)";
+       pre_compile_code_string="TickDataLog->SetVal(AllTrialData.GetVal(\"epoch\", -1), \"epoch\", -1)";
+       result_var=NULL;
+       obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+       method=DataTable::SetVal;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="val";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="AllTrialData.GetVal(\"epoch\", -1)";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"epoch\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="-1";
+	 };
+	};
+       };
+       meth_sig="bool SetVal(Variant& val, Variant& col, int row)";
+       meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
+      };
+     };
+    };
+    ForLoop @[5] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (j = 1; j < TickData.data.size; j++)";
+     pre_compile_code_string="for (j = 1; j < TickData.data.size; j++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ForLoop @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="for (i=0; i<trials_per_obj; i++)";
+       pre_compile_code_string="for (i=0; i<trials_per_obj; i++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="trnm = TickData.data[j].name + \"_\" + i";
+	 pre_compile_code_string="trnm = TickData.data[j].name + \"_\" + i";
+	 result_var=.projects[0].programs.gp[5].gp[0][8].functions[3].fun_code[0].local_vars[1]$$;
+	 expr {
+	  expr="TickData.data[j].name + \"_\" + i";
+	 };
+	};
+	MethodCall @[1] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="TickDataLog->FindMakeCol(trnm, taBase::VT_FLOAT)";
+	 pre_compile_code_string="TickDataLog->FindMakeCol(trnm, taBase::VT_FLOAT)";
+	 result_var=NULL;
+	 obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+	 method=DataTable::FindMakeCol;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="col_nm";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="trnm";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=taBase::ValType;
+	   type="taBase::ValType";
+	   name="val_type";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="taBase::VT_FLOAT";
+	   };
+	  };
+	 };
+	 meth_sig="DataCol_ptr FindMakeCol(taString& col_nm, taBase::ValType val_type)";
+	 meth_desc=" insures that a scalar column of the given name and val type exists, and return that col.";
+	};
+	If @[2] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="if (!init_only)";
+	 pre_compile_code_string="if (!init_only)";
+	 cond {
+	  expr="!init_only";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MethodCall @[0] {
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   code_string="TickDataLog->SetVal(TickData.GetVal(j, i), trnm, -1)";
+	   pre_compile_code_string="TickDataLog->SetVal(TickData.GetVal(j, i), trnm, -1)";
+	   result_var=NULL;
+	   obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+	   method=DataTable::SetVal;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_Variant_ref;
+	     type="Variant&";
+	     name="val";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="TickData.GetVal(j, i)";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_Variant_ref;
+	     type="Variant&";
+	     name="col";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="trnm";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	   meth_sig="bool SetVal(Variant& val, Variant& col, int row)";
+	   meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
+	  };
+	 };
+	};
+       };
+       init {
+	expr="i=0";
+       };
+       test {
+	expr="i<trials_per_obj";
+       };
+       iter {
+	expr="i++";
+       };
+      };
+     };
+     init {
+      expr="j = 1";
+     };
+     test {
+      expr="j < TickData.data.size";
+     };
+     iter {
+      expr="j++";
+     };
+    };
+    MethodCall @[6] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="TickDataLog->WriteClose()";
+     pre_compile_code_string="TickDataLog->WriteClose()";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+     method=DataTable::WriteClose;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void WriteClose()";
+     meth_desc=" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc";
+    };
+   };
+  };
+ };
+ init_code {
+  name="init_code";
+  el_typ=ProgCode;
+  el_def=0;
+  If @[0] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="if (!interactive_run)";
+   pre_compile_code_string="if (!interactive_run)";
+   cond {
+    expr="!interactive_run";
+   };
+   true_code {
+    name="true_code";
+    el_typ=ProgCode;
+    el_def=0;
+    MethodCall @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="AllTrialData->ResetData()";
+     pre_compile_code_string="AllTrialData->ResetData()";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[5].gp[0][8].vars[5]$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void ResetData()";
+     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="TickDataLog->Reset()";
+     pre_compile_code_string="TickDataLog->Reset()";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
+     method=DataTable::Reset;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void Reset()";
+     meth_desc=" remove all columns (and data) -- this cannot be undone!";
+    };
+   };
+  };
+  MethodCall @[1] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="AllTrialData->ClearDataFlag(DataTable::SAVE_ROWS)";
+   pre_compile_code_string="AllTrialData->ClearDataFlag(DataTable::SAVE_ROWS)";
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[5].gp[0][8].vars[5]$;
+   method=DataTable::ClearDataFlag;
+   meth_args {
+    name="meth_args";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataTable::DataFlags;
+     type="DataTable::DataFlags";
+     name="flg";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="DataTable::SAVE_ROWS";
+     };
+    };
+   };
+   meth_sig="void ClearDataFlag(DataTable::DataFlags flg)";
+   meth_desc=" clear data table flag state (set off)";
+  };
+ };
+ prog_code {
+  name="prog_code";
+  el_typ=ProgCode;
+  el_def=0;
+  LocalVars @[0] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LocalVars (0 vars)";
+   pre_compile_code_string="LocalVars (0 vars)";
+   local_vars {
+    name="local_vars";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+  };
+  If @[1] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="if (!interactive_run)";
+   pre_compile_code_string="if (!interactive_run)";
+   cond {
+    expr="!interactive_run";
+   };
+   true_code {
+    name="true_code";
+    el_typ=ProgCode;
+    el_def=0;
+    FunctionCall @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="GetNewData()";
+     pre_compile_code_string="GetNewData()";
+     result_var=NULL;
+     fun=.projects[0].programs.gp[5].gp[0][8].functions[0]$$;
+     fun_args {
+      name="fun_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+  };
+  If @[2] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="if (do_analysis)";
+   pre_compile_code_string="if (do_analysis)";
+   cond {
+    expr="do_analysis";
+   };
+   true_code {
+    name="true_code";
+    el_typ=ProgCode;
+    el_def=0;
+    FunctionCall @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="AnalyzeTicks()";
+     pre_compile_code_string="AnalyzeTicks()";
+     result_var=NULL;
+     fun=.projects[0].programs.gp[5].gp[0][8].functions[2]$$;
+     fun_args {
+      name="fun_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+  };
+ };
+ step_prog=NULL;
+ step_n=1;
+};

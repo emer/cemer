@@ -41,8 +41,8 @@ public:
   // starts a run and pulls up the dialog to fill in parameters based on ClustRun obj
   bool CommitJobSubmissionTable();
   // commit the jobs_submit.dat file with latest changes
-  bool UpdateTables(bool loadOnly);
-  // update the jobs_running and jobs_done data tables from repo. If loadOnly, then just load them from disk without connecting to remote SVN repository 
+  bool UpdateTables(bool do_svn_update);
+  // update the jobs_running and jobs_done data tables from repo -- optionally doing an svn update to get latest
   bool RemoveFiles(String_PArray& files, bool force = true, bool keep_local = false);
   // remove given files from repository, with given options -- does the commit too
   bool GetProjectAtRev(String cluster, String username, String orig_filename, int rev);

@@ -102,6 +102,8 @@ public:
     }
   }
 
+  bool  CheckConfig_RecvCons(Unit* ru, Projection* prjn, bool quiet=false) override;
+
   void  GetPrjnName(Projection& prjn, String& nm) override;
 
   TA_SIMPLE_BASEFUNS(DeepCtxtConSpec);

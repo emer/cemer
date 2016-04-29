@@ -181,7 +181,7 @@ ClusterManager::CommitJobSubmissionTable()
 }
 
 bool
-ClusterManager::UpdateTables(bool loadOnly)
+ClusterManager::UpdateTables(bool do_svn_update)
 {
   if (!m_valid) return false; // Ensure proper construction.
   if (!CheckPrefs()) return false;
@@ -193,7 +193,7 @@ ClusterManager::UpdateTables(bool loadOnly)
     int old_rev_run = GetLastChangedRevision(m_running_dat_filename, quiet);
     int old_rev_done = GetLastChangedRevision(m_done_dat_filename, quiet);
 
-    if (!loadOnly) {
+    if (do_svn_update) {
       UpdateWorkingCopy();
     }
 
@@ -1166,18 +1166,6 @@ ClusterManager::ChooseCluster(const String& prompt) {
   dlg.AddStretch(row);
   dlg.AddSpace(space, vbox);
   
-  QCheckBox * checkbox1 = new QCheckBox("Update SVN repository");
-  {
-    checkbox1->setChecked(true);
-    // Get the hbox for this row so we can add our combobox to it.
-    taGuiLayout *hboxEmer = dlg.FindLayout(row);
-    if (!hboxEmer) return false;
-    QBoxLayout *hbox = hboxEmer->layout;
-    if (!hbox) return false;
-    
-    hbox->addWidget(checkbox1);
-  }
-
   bool modal = true;
   int drval = dlg.PostDialog(modal);
   if (drval == 0) {
@@ -1186,7 +1174,6 @@ ClusterManager::ChooseCluster(const String& prompt) {
   
   String rval = combo1->itemText(combo1->currentIndex());
   m_cluster_run.svn_repo = combo2->itemText(combo2->currentIndex());
-  m_cluster_run.load_only = !checkbox1->isChecked();
   m_cluster_run.UpdateAfterEdit();
   return rval;
 }

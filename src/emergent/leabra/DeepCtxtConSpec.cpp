@@ -31,3 +31,22 @@ void DeepCtxtConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   inherited::Trial_Init_Specs(net);
   net->deep.ctxt = true;
 }
+
+bool DeepCtxtConSpec::CheckConfig_RecvCons(Unit* ru, Projection* prjn, bool quiet) {
+  bool rval = inherited::CheckConfig_RecvCons(ru, prjn, quiet);
+  LeabraLayer* rlay = (LeabraLayer*)prjn->layer;
+  LeabraLayerSpec* rls = (LeabraLayerSpec*)rlay->GetLayerSpec();
+  
+  if(rlay->CheckError(rls->decay.trial == 1.0f, quiet, rval,
+                      "cannot have layer decay.trial = 1 when using temporal integration deep context learning -- set to 0 -- you can use .99f if you really want to"))
+    return false;
+
+  LeabraLayer* slay = (LeabraLayer*)prjn->from.ptr();
+  LeabraLayerSpec* sls = (LeabraLayerSpec*)slay->GetLayerSpec();
+  if(slay->CheckError(sls->decay.trial == 1.0f, quiet, rval,
+                      "cannot have layer decay.trial = 1 when using temporal integration deep context learning -- set to 0 -- you can use .99f if you really want to"))
+    return false;
+
+  return rval;
+}
+

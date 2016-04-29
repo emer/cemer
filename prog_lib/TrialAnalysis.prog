@@ -1,5 +1,5 @@
 // ta_Dump File v3.0 -- code v7.8.7.0 rev9435
-Program .projects[0].programs[4] { 
+Program .projects[1].programs[4] { 
  ProgObjList @.objs = [4] {
   DataTable @[0] { 
    DataTableCols @.data = [18] {
@@ -516,10 +516,10 @@ Program .projects[0].programs[4] {
   };
  };
 };
-Program .projects[0].programs[4] {
+Program .projects[1].programs[4] {
  name="TrialAnalysis";
  short_nm="Trlnly";
- tags="trial, analyze, statistics, monitor, errors";
+ tags="Analysis, Statistic, Monitor, Errors, Trial";
  desc="Analyze trial-level data in multiple ways, integrating over arbitrary number of trials, and reporting which items are causing the most error -- can be extended to report many other kinds of statistics";
  flags=NO_STOP_STEP;
  stop_step_cond {
@@ -972,7 +972,7 @@ Program .projects[0].programs[4] {
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [8] 0;1;2;3;4;5;6;7;   };
+   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -1070,7 +1070,7 @@ Program .projects[0].programs[4] {
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [8] 0;1;3;4;5;6;2;7;   };
+   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -1226,7 +1226,7 @@ Program .projects[0].programs[4] {
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [5] 0;1;2;3;4;   };
+   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -1541,7 +1541,7 @@ Program .projects[0].programs[4] {
    keygen 4 0=0;
    row_indexes {
     name="row_indexes";
-   [1] 0;   };
+   [0]    };
    last_sort_spec {
     name="last_sort_spec";
     ops {
@@ -1575,7 +1575,7 @@ Program .projects[0].programs[4] {
    name="trial_output_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[1][0]$$<DataTable,TrialOutputData>;
+   object_val=.projects[1].data.gp[1][0]$$<DataTable,TrialOutputData>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -1622,7 +1622,7 @@ Program .projects[0].programs[4] {
    name="AllTrialData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs[4].objs[0]$$;
+   object_val=.projects[1].programs[4].objs[0]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -1633,7 +1633,7 @@ Program .projects[0].programs[4] {
    name="TrialTypeErrors";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs[4].objs[1]$$;
+   object_val=.projects[1].programs[4].objs[1]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -1644,7 +1644,7 @@ Program .projects[0].programs[4] {
    name="TopNErrors";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs[4].objs[2]$$;
+   object_val=.projects[1].programs[4].objs[2]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -1655,7 +1655,7 @@ Program .projects[0].programs[4] {
    name="TopNErrorsLog";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs[4].objs[3]$$;
+   object_val=.projects[1].programs[4].objs[3]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -1718,7 +1718,7 @@ Program .projects[0].programs[4] {
      flags=CAN_REVERT_TO_CODE;
      code_string="trl_rows = trial_output_data.rows";
      pre_compile_code_string="trl_rows = trial_output_data.rows";
-     result_var=.projects[0].programs[4].functions[0].fun_code[0].local_vars[0]$$;
+     result_var=.projects[1].programs[4].functions[0].fun_code[0].local_vars[0]$$;
      expr {
       expr="trial_output_data.rows";
      };
@@ -1741,7 +1741,7 @@ Program .projects[0].programs[4] {
        code_string="AllTrialData->CopyFrom(trial_output_data)";
        pre_compile_code_string="AllTrialData->CopyFrom(trial_output_data)";
        result_var=NULL;
-       obj=.projects[0].programs[4].vars[5]$$;
+       obj=.projects[1].programs[4].vars[5]$$;
        method=taBase::CopyFrom;
        meth_args {
 	name="meth_args";
@@ -1765,10 +1765,10 @@ Program .projects[0].programs[4] {
       MethodCall @[1] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="AllTrialData->ClearDataFlag()";
+       code_string="AllTrialData->ClearDataFlag(DataTable::SAVE_ROWS)";
        pre_compile_code_string="AllTrialData->ClearDataFlag(DataTable::SAVE_ROWS)";
        result_var=NULL;
-       obj=$.projects[0].programs[4].vars[5]$;
+       obj=$.projects[1].programs[4].vars[5]$;
        method=DataTable::ClearDataFlag;
        meth_args {
 	name="meth_args";
@@ -1805,7 +1805,7 @@ Program .projects[0].programs[4] {
        flags=CAN_REVERT_TO_CODE;
        code_string="old_rows = n_trials - trl_rows";
        pre_compile_code_string="old_rows = n_trials - trl_rows";
-       result_var=.projects[0].programs[4].functions[0].fun_code[0].local_vars[1]$$;
+       result_var=.projects[1].programs[4].functions[0].fun_code[0].local_vars[1]$$;
        expr {
 	expr="n_trials - trl_rows";
        };
@@ -1828,7 +1828,7 @@ Program .projects[0].programs[4] {
 	 code_string="AllTrialData->RemoveRows(0, AllTrialData.rows - old_rows)";
 	 pre_compile_code_string="AllTrialData->RemoveRows(0, AllTrialData.rows - old_rows)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs[4].vars[5]$;
+	 obj=$.projects[1].programs[4].vars[5]$;
 	 method=DataTable::RemoveRows;
 	 meth_args {
 	  name="meth_args";
@@ -1868,7 +1868,7 @@ Program .projects[0].programs[4] {
        code_string="AllTrialData->AppendRows(trial_output_data)";
        pre_compile_code_string="AllTrialData->AppendRows(trial_output_data)";
        result_var=NULL;
-       obj=$.projects[0].programs[4].vars[5]$;
+       obj=$.projects[1].programs[4].vars[5]$;
        method=DataTable::AppendRows;
        meth_args {
 	name="meth_args";
@@ -1935,8 +1935,8 @@ Program .projects[0].programs[4] {
      flags=CAN_REVERT_TO_CODE;
      code_string="Group from:  src table = AllTrialData dest table = TrialTypeErrors";
      pre_compile_code_string="Group from:  src table = AllTrialData dest table = TrialTypeErrors";
-     src_data_var=$.projects[0].programs[4].vars[5]$;
-     dest_data_var=.projects[0].programs[4].vars[6]$$;
+     src_data_var=$.projects[1].programs[4].vars[5]$;
+     dest_data_var=.projects[1].programs[4].vars[6]$$;
      group_spec {
       name="group_spec";
       ops {
@@ -1968,7 +1968,7 @@ Program .projects[0].programs[4] {
      code_string="TrialTypeErrors->Sort(\"sse_count\", false, \"trial_name_group\", true, , , , , , , , )";
      pre_compile_code_string="TrialTypeErrors->Sort(\"sse_count\", false, \"trial_name_group\", true, , , , , , , , )";
      result_var=NULL;
-     obj=$.projects[0].programs[4].vars[6]$;
+     obj=$.projects[1].programs[4].vars[6]$;
      method=DataTable::Sort;
      meth_args {
       name="meth_args";
@@ -2116,7 +2116,7 @@ Program .projects[0].programs[4] {
      code_string="TopNErrors->CopyFrom(TrialTypeErrors)";
      pre_compile_code_string="TopNErrors->CopyFrom(TrialTypeErrors)";
      result_var=NULL;
-     obj=.projects[0].programs[4].vars[7]$$;
+     obj=.projects[1].programs[4].vars[7]$$;
      method=taBase::CopyFrom;
      meth_args {
       name="meth_args";
@@ -2154,7 +2154,7 @@ Program .projects[0].programs[4] {
        flags=CAN_REVERT_TO_CODE;
        code_string="extra_rows = TopNErrors.rows - top_n_trials";
        pre_compile_code_string="extra_rows = TopNErrors.rows - top_n_trials";
-       result_var=.projects[0].programs[4].functions[1].fun_code[0].local_vars[0]$$;
+       result_var=.projects[1].programs[4].functions[1].fun_code[0].local_vars[0]$$;
        expr {
 	expr="TopNErrors.rows - top_n_trials";
        };
@@ -2165,7 +2165,7 @@ Program .projects[0].programs[4] {
        code_string="TopNErrors->RemoveRows(TopNErrors.rows - extra_rows, extra_rows)";
        pre_compile_code_string="TopNErrors->RemoveRows(TopNErrors.rows - extra_rows, extra_rows)";
        result_var=NULL;
-       obj=$.projects[0].programs[4].vars[7]$;
+       obj=$.projects[1].programs[4].vars[7]$;
        method=DataTable::RemoveRows;
        meth_args {
 	name="meth_args";
@@ -2205,7 +2205,7 @@ Program .projects[0].programs[4] {
      code_string="TopNErrors->NewColInt(\"rank\")";
      pre_compile_code_string="TopNErrors->NewColInt(\"rank\")";
      result_var=NULL;
-     obj=$.projects[0].programs[4].vars[7]$;
+     obj=$.projects[1].programs[4].vars[7]$;
      method=DataTable::NewColInt;
      meth_args {
       name="meth_args";
@@ -2232,7 +2232,7 @@ Program .projects[0].programs[4] {
      code_string="TopNErrors->InitValsToRowNo(\"rank\")";
      pre_compile_code_string="TopNErrors->InitValsToRowNo(\"rank\")";
      result_var=NULL;
-     obj=$.projects[0].programs[4].vars[7]$;
+     obj=$.projects[1].programs[4].vars[7]$;
      method=DataTable::InitValsToRowNo;
      meth_args {
       name="meth_args";
@@ -2256,10 +2256,10 @@ Program .projects[0].programs[4] {
     FunctionCall @[7] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="TopNErrorsLog()";
-     pre_compile_code_string="TopNErrorsLog()";
+     code_string="LogTopNErrors(false)";
+     pre_compile_code_string="LogTopNErrors(false)";
      result_var=NULL;
-     fun=.projects[0].programs[4].functions[2]$$;
+     fun=.projects[1].programs[4].functions[2]$$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -2361,7 +2361,7 @@ Program .projects[0].programs[4] {
        code_string="TopNErrorsLog->ResetData()";
        pre_compile_code_string="TopNErrorsLog->ResetData()";
        result_var=NULL;
-       obj=.projects[0].programs[4].vars[8]$$;
+       obj=.projects[1].programs[4].vars[8]$$;
        method=DataTable::ResetData;
        meth_args {
 	name="meth_args";
@@ -2379,7 +2379,7 @@ Program .projects[0].programs[4] {
      code_string="TopNErrorsLog->FindMakeCol(\"batch\", taBase::VT_INT)";
      pre_compile_code_string="TopNErrorsLog->FindMakeCol(\"batch\", taBase::VT_INT)";
      result_var=NULL;
-     obj=$.projects[0].programs[4].vars[8]$;
+     obj=$.projects[1].programs[4].vars[8]$;
      method=DataTable::FindMakeCol;
      meth_args {
       name="meth_args";
@@ -2417,7 +2417,7 @@ Program .projects[0].programs[4] {
      code_string="TopNErrorsLog->FindMakeCol(\"epoch\", taBase::VT_INT)";
      pre_compile_code_string="TopNErrorsLog->FindMakeCol(\"epoch\", taBase::VT_INT)";
      result_var=NULL;
-     obj=$.projects[0].programs[4].vars[8]$;
+     obj=$.projects[1].programs[4].vars[8]$;
      method=DataTable::FindMakeCol;
      meth_args {
       name="meth_args";
@@ -2467,7 +2467,7 @@ Program .projects[0].programs[4] {
        code_string="TopNErrorsLog->AddBlankRow()";
        pre_compile_code_string="TopNErrorsLog->AddBlankRow()";
        result_var=NULL;
-       obj=$.projects[0].programs[4].vars[8]$;
+       obj=$.projects[1].programs[4].vars[8]$;
        method=DataTable::AddBlankRow;
        meth_args {
 	name="meth_args";
@@ -2480,10 +2480,10 @@ Program .projects[0].programs[4] {
       MethodCall @[1] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="TopNErrorsLog->SetVal()";
+       code_string="TopNErrorsLog->SetVal(AllTrialData.GetVal(\"batch\", -1), \"batch\", -1)";
        pre_compile_code_string="TopNErrorsLog->SetVal(AllTrialData.GetVal(\"batch\", -1), \"batch\", -1)";
        result_var=NULL;
-       obj=$.projects[0].programs[4].vars[8]$;
+       obj=$.projects[1].programs[4].vars[8]$;
        method=DataTable::SetVal;
        meth_args {
 	name="meth_args";
@@ -2529,10 +2529,10 @@ Program .projects[0].programs[4] {
       MethodCall @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="TopNErrorsLog->SetVal()";
+       code_string="TopNErrorsLog->SetVal(AllTrialData.GetVal(\"epoch\", -1), \"epoch\", -1)";
        pre_compile_code_string="TopNErrorsLog->SetVal(AllTrialData.GetVal(\"epoch\", -1), \"epoch\", -1)";
        result_var=NULL;
-       obj=$.projects[0].programs[4].vars[8]$;
+       obj=$.projects[1].programs[4].vars[8]$;
        method=DataTable::SetVal;
        meth_args {
 	name="meth_args";
@@ -2591,7 +2591,7 @@ Program .projects[0].programs[4] {
        flags=CAN_REVERT_TO_CODE;
        code_string="trnm = \"trl_err_nm_\" + i";
        pre_compile_code_string="trnm = \"trl_err_nm_\" + i";
-       result_var=.projects[0].programs[4].functions[2].fun_code[0].local_vars[1]$$;
+       result_var=.projects[1].programs[4].functions[2].fun_code[0].local_vars[1]$$;
        expr {
 	expr="\"trl_err_nm_\" + i";
        };
@@ -2601,7 +2601,7 @@ Program .projects[0].programs[4] {
        flags=CAN_REVERT_TO_CODE;
        code_string="errnm = \"trl_err_val_\" + i";
        pre_compile_code_string="errnm = \"trl_err_val_\" + i";
-       result_var=.projects[0].programs[4].functions[2].fun_code[0].local_vars[2]$$;
+       result_var=.projects[1].programs[4].functions[2].fun_code[0].local_vars[2]$$;
        expr {
 	expr="\"trl_err_val_\" + i";
        };
@@ -2612,7 +2612,7 @@ Program .projects[0].programs[4] {
        code_string="TopNErrorsLog->FindMakeCol(trnm, taBase::VT_STRING)";
        pre_compile_code_string="TopNErrorsLog->FindMakeCol(trnm, taBase::VT_STRING)";
        result_var=NULL;
-       obj=$.projects[0].programs[4].vars[8]$;
+       obj=$.projects[1].programs[4].vars[8]$;
        method=DataTable::FindMakeCol;
        meth_args {
 	name="meth_args";
@@ -2650,7 +2650,7 @@ Program .projects[0].programs[4] {
        code_string="TopNErrorsLog->FindMakeCol(errnm, taBase::VT_FLOAT)";
        pre_compile_code_string="TopNErrorsLog->FindMakeCol(errnm, taBase::VT_FLOAT)";
        result_var=NULL;
-       obj=$.projects[0].programs[4].vars[8]$;
+       obj=$.projects[1].programs[4].vars[8]$;
        method=DataTable::FindMakeCol;
        meth_args {
 	name="meth_args";
@@ -2697,10 +2697,10 @@ Program .projects[0].programs[4] {
 	MethodCall @[0] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="TopNErrorsLog->SetVal()";
+	 code_string="TopNErrorsLog->SetVal(TopNErrors.GetVal(\"trial_name_group\", i), trnm, -1)";
 	 pre_compile_code_string="TopNErrorsLog->SetVal(TopNErrors.GetVal(\"trial_name_group\", i), trnm, -1)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs[4].vars[8]$;
+	 obj=$.projects[1].programs[4].vars[8]$;
 	 method=DataTable::SetVal;
 	 meth_args {
 	  name="meth_args";
@@ -2746,10 +2746,10 @@ Program .projects[0].programs[4] {
 	MethodCall @[1] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="TopNErrorsLog->SetVal()";
+	 code_string="TopNErrorsLog->SetVal(TopNErrors.GetVal(\"sse_mean\", i), errnm, -1)";
 	 pre_compile_code_string="TopNErrorsLog->SetVal(TopNErrors.GetVal(\"sse_mean\", i), errnm, -1)";
 	 result_var=NULL;
-	 obj=$.projects[0].programs[4].vars[8]$;
+	 obj=$.projects[1].programs[4].vars[8]$;
 	 method=DataTable::SetVal;
 	 meth_args {
 	  name="meth_args";
@@ -2811,7 +2811,7 @@ Program .projects[0].programs[4] {
      code_string="TopNErrorsLog->WriteClose()";
      pre_compile_code_string="TopNErrorsLog->WriteClose()";
      result_var=NULL;
-     obj=$.projects[0].programs[4].vars[8]$;
+     obj=$.projects[1].programs[4].vars[8]$;
      method=DataTable::WriteClose;
      meth_args {
       name="meth_args";
@@ -2846,7 +2846,7 @@ Program .projects[0].programs[4] {
      code_string="AllTrialData->ResetData()";
      pre_compile_code_string="AllTrialData->ResetData()";
      result_var=NULL;
-     obj=$.projects[0].programs[4].vars[5]$;
+     obj=$.projects[1].programs[4].vars[5]$;
      method=DataTable::ResetData;
      meth_args {
       name="meth_args";
@@ -2864,7 +2864,7 @@ Program .projects[0].programs[4] {
    code_string="AllTrialData->ClearDataFlag(DataTable::SAVE_ROWS)";
    pre_compile_code_string="AllTrialData->ClearDataFlag(DataTable::SAVE_ROWS)";
    result_var=NULL;
-   obj=$.projects[0].programs[4].vars[5]$;
+   obj=$.projects[1].programs[4].vars[5]$;
    method=DataTable::ClearDataFlag;
    meth_args {
     name="meth_args";
@@ -2888,10 +2888,10 @@ Program .projects[0].programs[4] {
   FunctionCall @[2] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="TopNErrorsLog(true)";
-   pre_compile_code_string="TopNErrorsLog(true)";
+   code_string="LogTopNErrors(true)";
+   pre_compile_code_string="LogTopNErrors(true)";
    result_var=NULL;
-   fun=$.projects[0].programs[4].functions[2]$;
+   fun=$.projects[1].programs[4].functions[2]$;
    fun_args {
     name="fun_args";
     el_typ=ProgArg;
@@ -2943,7 +2943,7 @@ Program .projects[0].programs[4] {
      code_string="GetNewData()";
      pre_compile_code_string="GetNewData()";
      result_var=NULL;
-     fun=.projects[0].programs[4].functions[0]$$;
+     fun=.projects[1].programs[4].functions[0]$$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;
@@ -2970,7 +2970,7 @@ Program .projects[0].programs[4] {
      code_string="AnalyzeTrialTypes()";
      pre_compile_code_string="AnalyzeTrialTypes()";
      result_var=NULL;
-     fun=.projects[0].programs[4].functions[1]$$;
+     fun=.projects[1].programs[4].functions[1]$$;
      fun_args {
       name="fun_args";
       el_typ=ProgArg;

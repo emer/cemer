@@ -138,7 +138,7 @@ public:
   String                short_nm;
   // short name for this program -- as brief as possible -- used for Step display info
   String                tags;
-  // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this program -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the program library
+  // #EDIT_DIALOG list of comma separated tags, initial letter capitalized, that indicate the basic function of this program -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the program library -- use Add From Prog Lib to see existing tags in use -- best to re-use where possible
   String                desc;
   // #EDIT_DIALOG #HIDDEN_INLINE description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)
   ProgFlags             flags;
