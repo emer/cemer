@@ -912,7 +912,7 @@ bool taDataProc::TransposeRowsToCols(DataTable* dest, DataTable* src, int st_row
     return false;
   }
   dest->StructUpdate(true);
-  dest->RemoveAllCols();
+  dest->Reset();
   if(n_rows < 0)
     n_rows = src->rows - st_row;
   for(int i=0; i<n_rows; i++) {
@@ -922,7 +922,6 @@ bool taDataProc::TransposeRowsToCols(DataTable* dest, DataTable* src, int st_row
   dest->EnforceRows(src->cols());
   for(int i = 0; i < n_rows; i++) {
     DataCol* dcol = dest->GetColData(i);
-    dest->AddBlankRow();
     for(int ci=0; ci<src->cols(); ci++) {
       DataCol* scol = src->GetColData(ci);
       dcol->CopyFromRow_Robust(ci, *scol, i);
