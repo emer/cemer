@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.6.0 rev9308
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9438
 LeabraProject .projects["TestLoadSaveWeight"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -3625,16 +3625,10 @@ LeabraProject .projects["TestLoadSaveWeight"] {
    Weights_List @.weights = [0] {
    };
 
-   NetTiming_List NULL = [9] {
+   NetTiming_List NULL = [3] {
     LeabraNetTiming @[0] { };
     LeabraNetTiming @[1] { };
     LeabraNetTiming @[2] { };
-    LeabraNetTiming @[3] { };
-    LeabraNetTiming @[4] { };
-    LeabraNetTiming @[5] { };
-    LeabraNetTiming @[6] { };
-    LeabraNetTiming @[7] { };
-    LeabraNetTiming @[8] { };
    };
   };
  };
@@ -3767,10 +3761,10 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 
 <!-- 
 NewPP limit report
-Cached time: 20160317173108
+Cached time: 20160429042222
 Cache expiry: 86400
 Dynamic content: false
-CPU time usage: 0.017 seconds
+CPU time usage: 0.016 seconds
 Real time usage: 0.019 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
@@ -3785,7 +3779,7 @@ Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 - -total
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160317173108 and revision id 11194
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160429042222 and revision id 11194
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\"					</div>
@@ -3894,7 +3888,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":181});
+mw.config.set({\"wgBackendResponseTime\":150});
 } );</script>
 	
 
@@ -4112,7 +4106,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4126,7 +4120,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4140,7 +4134,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4154,7 +4148,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4168,7 +4162,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4182,7 +4176,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4196,7 +4190,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4210,7 +4204,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4224,7 +4218,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4238,7 +4232,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4252,7 +4246,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4266,7 +4260,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4280,7 +4274,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4294,7 +4288,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4308,7 +4302,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4322,7 +4316,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4336,7 +4330,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4350,7 +4344,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4374,7 +4368,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4388,7 +4382,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4402,7 +4396,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4416,7 +4410,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4430,7 +4424,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4454,7 +4448,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4478,7 +4472,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4502,7 +4496,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4526,7 +4520,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4550,7 +4544,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4574,7 +4568,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4588,7 +4582,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4602,7 +4596,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4616,7 +4610,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4630,7 +4624,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4673,7 +4667,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4687,7 +4681,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4701,7 +4695,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4715,7 +4709,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4729,7 +4723,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4743,7 +4737,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4757,7 +4751,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4771,7 +4765,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4785,7 +4779,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4799,7 +4793,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4813,7 +4807,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4827,7 +4821,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4841,7 +4835,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4855,7 +4849,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4869,7 +4863,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4883,7 +4877,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4897,7 +4891,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4911,7 +4905,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4935,7 +4929,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4949,7 +4943,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4963,7 +4957,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4977,7 +4971,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -4991,7 +4985,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5015,7 +5009,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5039,7 +5033,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5063,7 +5057,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5087,7 +5081,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5111,7 +5105,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5135,7 +5129,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5149,7 +5143,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5163,7 +5157,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5177,7 +5171,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -5191,7 +5185,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -5234,7 +5228,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5248,7 +5242,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5262,7 +5256,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5276,7 +5270,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5290,7 +5284,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5304,7 +5298,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5318,7 +5312,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5332,7 +5326,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5346,7 +5340,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5360,7 +5354,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5374,7 +5368,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5388,7 +5382,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5402,7 +5396,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5416,7 +5410,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5430,7 +5424,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5444,7 +5438,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5458,7 +5452,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5472,7 +5466,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5496,7 +5490,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5510,7 +5504,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5524,7 +5518,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5538,7 +5532,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5552,7 +5546,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5576,7 +5570,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5600,7 +5594,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5624,7 +5618,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5648,7 +5642,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5672,7 +5666,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5696,7 +5690,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5710,7 +5704,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5724,7 +5718,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5738,7 +5732,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5752,7 +5746,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5795,7 +5789,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5809,7 +5803,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5823,7 +5817,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5837,7 +5831,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5851,7 +5845,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5865,7 +5859,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5879,7 +5873,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5893,7 +5887,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5907,7 +5901,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5921,7 +5915,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5935,7 +5929,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5949,7 +5943,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5963,7 +5957,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5977,7 +5971,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -5991,7 +5985,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6005,7 +5999,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6019,7 +6013,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6033,7 +6027,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6057,7 +6051,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6071,7 +6065,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6085,7 +6079,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6099,7 +6093,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6113,7 +6107,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6137,7 +6131,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6161,7 +6155,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6185,7 +6179,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="mpi_nodes";
       desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6209,7 +6203,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6233,7 +6227,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6257,7 +6251,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="pb_nodes";
       desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6271,7 +6265,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6285,7 +6279,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6299,7 +6293,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["done_svn"] {
       name="done_svn";
       desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6313,7 +6307,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["last_svn"] {
       name="last_svn";
       desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6356,7 +6350,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["cluster"] {
       name="cluster";
       desc="cluster where this job was submitted / run";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6370,7 +6364,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6384,7 +6378,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["file_name"] {
       name="file_name";
       desc="name of file -- does not include any path information";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6398,7 +6392,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["tag"] {
       name="tag";
       desc="job tag associated with this file";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6412,7 +6406,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["size"] {
       name="size";
       desc="size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6426,7 +6420,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["kind"] {
       name="kind";
       desc="type of file";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6440,7 +6434,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["date_modified"] {
       name="date_modified";
       desc="timestamp for when the file was last modified";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6454,7 +6448,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["date_created"] {
       name="date_created";
       desc="timestamp for when the file was first created";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6468,7 +6462,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["svn_file_path"] {
       name="svn_file_path";
       desc="path to file in SVN repository, relative to root of svn_repo repository";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6482,7 +6476,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["proj_file_path"] {
       name="proj_file_path";
       desc="path to file relative to the parent project directory -- e.g., results/filename.dat";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6496,7 +6490,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["file_path"] {
       name="file_path";
       desc="full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6539,7 +6533,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["queue"] {
       name="queue";
       desc="queue that this info relates to";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6553,7 +6547,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["job_no"] {
       name="job_no";
       desc="job number or total number of actve jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6567,7 +6561,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["user"] {
       name="user";
       desc="user name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6581,7 +6575,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["state"] {
       name="state";
       desc="current scheduler state -- or description of global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6595,7 +6589,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["procs"] {
       name="procs";
       desc="number of processors for this job or for global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6609,7 +6603,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      String_Data @["start_time"] {
       name="start_time";
       desc="timestamp for when the job was submitted or started running";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6653,6 +6647,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
    proj_name=;
    auto_updt_interval=10;
    auto_updt_timeout=30;
+   cluster=;
    clusters=;
    users=;
    last_submit_time=;
@@ -6660,8 +6655,8 @@ mw.config.set({\"wgBackendResponseTime\":181});
    label=;
    extra_files=;
    svn_repo=;
+   load_only=1;
    repo_url=;
-   cluster=;
    queue=;
    run_time=;
    exe_cmd="emergent";
@@ -6703,7 +6698,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      el_def=0;
      String_Data @["Name"] {
       name="Name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -6719,7 +6714,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      };
      float_Data @["Output"] {
       name="Output";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=1;
       cell_geom{ 5;5;      };
       calc_expr {
@@ -6750,7 +6745,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
      };
      float_Data @["Input"] {
       name="Input";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=1;
       cell_geom{ 5;5;      };
       calc_expr {
@@ -6831,7 +6826,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="batch";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6859,7 +6854,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="epoch";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6882,7 +6877,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="train_mode";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6910,7 +6905,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="group";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6938,7 +6933,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="trial";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6966,7 +6961,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="tick";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -6989,7 +6984,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="time";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7012,7 +7007,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="trial_name";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7035,7 +7030,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="group_name";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7058,7 +7053,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="output_name";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7081,7 +7076,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="rt_cycles";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7104,7 +7099,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="sse";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7127,7 +7122,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="norm_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7150,7 +7145,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="cos_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7173,7 +7168,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="ext_rew";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7196,7 +7191,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_lay_sse";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7219,7 +7214,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_lay_norm_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7242,7 +7237,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_lay_cos_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7265,7 +7260,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_lay_net_sd";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7288,7 +7283,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_lay_net_sd";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7311,7 +7306,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="net_cos_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7334,7 +7329,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="net_trial_cos_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7357,7 +7352,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="net_avg_act_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7380,7 +7375,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_cos_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7403,7 +7398,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_cos_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7426,7 +7421,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_trial_cos_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7449,7 +7444,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_trial_cos_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7472,7 +7467,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_avg_act_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7495,7 +7490,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_avg_act_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7552,7 +7547,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="batch";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7580,7 +7575,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="epoch";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7603,7 +7598,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="avg_sse";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7626,7 +7621,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="cnt_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7649,7 +7644,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="pct_cor";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7672,7 +7667,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="pct_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7695,7 +7690,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="avg_norm_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7718,7 +7713,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="avg_cos_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7741,7 +7736,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="avg_ext_rew";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7764,7 +7759,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="avg_cycles";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7787,7 +7782,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="epoch_time_tot";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7810,7 +7805,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="epoch_time_usr";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7833,7 +7828,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_lay_avg_sse";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7856,7 +7851,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_lay_cnt_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7879,7 +7874,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_lay_pct_cor";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7902,7 +7897,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_lay_pct_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7925,7 +7920,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_lay_avg_norm_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7948,7 +7943,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_lay_avg_cos_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7971,7 +7966,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="net_avg_cos_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -7994,7 +7989,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="net_avg_trial_cos_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8017,7 +8012,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="net_avg_avg_act_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8040,7 +8035,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_avg_cos_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8063,7 +8058,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_avg_cos_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8086,7 +8081,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_avg_trial_cos_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8109,7 +8104,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_avg_trial_cos_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8132,7 +8127,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_avg_avg_act_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8155,7 +8150,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_avg_avg_act_diff";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8178,7 +8173,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_avg_net_sd";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8201,7 +8196,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_avg_net_sd";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8224,7 +8219,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_hog_pct";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8247,7 +8242,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_hog_pct";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8270,7 +8265,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_dead_pct";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8293,7 +8288,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_dead_pct";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8316,7 +8311,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_netmax";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8339,7 +8334,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_netmax";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8362,7 +8357,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_avg_act";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8385,7 +8380,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_avg_act";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8408,7 +8403,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_Fm_Input_netrel";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8431,7 +8426,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Hidden_Fm_Output_netrel";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8454,7 +8449,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
        };
       };
       name="Output_Fm_Hidden_netrel";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8519,7 +8514,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="config_id";
       desc="identifier for this type of configuration";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8546,7 +8541,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="config_desc";
       desc="description of this configuration";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8573,7 +8568,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="init_prog";
       desc="program to run to initialize at start of training";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8600,7 +8595,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="run_prog";
       desc="program controlling each step of running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8627,7 +8622,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="startup_prog";
       desc="program for handling startup args specific to this environment";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8654,7 +8649,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="train_epochs";
       desc="number of total epochs to train for";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8666,7 +8661,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       width=98;
       ar {
        name="ar";
-      [2] 6;6;      };
+      [2] 8;6;      };
      };
      int_Data @["trials_per_epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -8681,7 +8676,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="trials_per_epoch";
       desc="number of individual trials per epoch";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8708,7 +8703,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="save_final_wts";
       desc="save final weights after training (1 = yes, 0 = no)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8735,7 +8730,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="save_wts_interval";
       desc="how frequently to save weights during training (in epochs)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8762,7 +8757,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="test_interval";
       desc="how frequently to test performance without training -- only applicable to training cases";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8789,7 +8784,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="log_trials";
       desc="whether to log trial-level data or not (1 = yes, 0 = no)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8816,7 +8811,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="load_weights";
       desc="whether to load weights at start";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8843,7 +8838,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="weights_file";
       desc="full relative path (from project) to a weights file to load at start of training";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8870,7 +8865,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="load_st_epc";
       desc="if loading weights, what epoch does it start at?";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -8902,7 +8897,7 @@ mw.config.set({\"wgBackendResponseTime\":181});
       };
       name="lrs_step_epochs";
       desc="how many epochs per given step in the lrate schedule: each step drops the lrate roughly in half (log scale)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -11803,8 +11798,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      StopStepPoint @[9] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="Stop/Step Point";
-      pre_compile_code_string="Stop/Step Point";
+      code_string="Stop_Step Point";
+      pre_compile_code_string="Stop_Step Point";
       cond {
        expr=;
       };
@@ -12022,7 +12017,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="Index";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14198,7 +14193,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="LayerName";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14224,7 +14219,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="LayerGroup";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14250,7 +14245,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="LayoutGroup";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14281,7 +14276,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="X_Abs";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14312,7 +14307,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="Y_Abs";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14343,7 +14338,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="Z_Abs";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14374,7 +14369,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="X_Rel";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14405,7 +14400,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="Y_Rel";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14431,7 +14426,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="Z_Rel";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14496,7 +14491,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="LayerName";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14522,7 +14517,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="LayerGroup";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14548,7 +14543,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="LayoutGroup";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14579,7 +14574,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="X_Abs";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14610,7 +14605,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="Y_Abs";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14641,7 +14636,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="Z_Abs";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14672,7 +14667,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="X_Rel";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14703,7 +14698,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="Y_Rel";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -14729,7 +14724,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	};
 	name="Z_Rel";
-	col_flags=SAVE_ROWS|SAVE_DATA;
+	col_flags=SAVE_DATA;
 	is_matrix=0;
 	cell_geom{ 1;	};
 	calc_expr {
@@ -22019,22 +22014,22 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=-0.005390835;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=-0.009469697;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=1.010782;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.844697;
+     value 8 0=0.7993159;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -22050,8 +22045,9 @@ and the testing data is updated.  The first epoch monitor should have all the it
    };
    name="Browser3";
    m_data=.projects["TestLoadSaveWeight"]$$;
+   cur_font_size=12;
    visible=1;
-   win_name=".projects[\"TestLoadSaveWeight\"] - TestLoadSaveWeight.proj [*]";
+   win_name=".projects[\"TestLoadSaveWeight\"] - TestLoadSaveWeight.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -22073,6 +22069,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      };
      name="Application";
      m_data=NULL;
+     cur_font_size=12;
      visible=0;
      lft=0;
      top=0;
@@ -22086,6 +22083,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     BrowseViewerTaBase @["Navigator"] {
      name="Navigator";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
@@ -22094,6 +22092,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     PanelViewer @["Editor"] {
      name="Editor";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
     };
     T3PanelViewer @["Visualizer"] {
@@ -22114,6 +22113,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      };
      name="Visualizer";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      panels {
       name="panels";
@@ -22122,10 +22122,12 @@ and the testing data is updated.  The first epoch monitor should have all the it
       T3Panel @["Network_0"] {
        name="Network_0";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -22134,6 +22136,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 NetView @["Network_0_View"] {
 	  name="Network_0_View";
 	  m_data=$.projects["TestLoadSaveWeight"].networks["Network_0"]$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
@@ -22312,10 +22315,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       T3Panel @["EpochOutputData"] {
        name="EpochOutputData";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -22324,6 +22329,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 GraphTableView @["EpochOutputData_Graph"] {
 	  name="EpochOutputData_Graph";
 	  m_data=$.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"]$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name="children";
@@ -22332,6 +22338,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["batch"] {
 	    name="batch";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22340,6 +22347,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["epoch"] {
 	    name="epoch";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=4: };
@@ -22348,6 +22356,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["avg_sse"] {
 	    name="avg_sse";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.78801: };
@@ -22356,6 +22365,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["cnt_err"] {
 	    name="cnt_err";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=50: };
@@ -22364,6 +22374,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["pct_cor"] {
 	    name="pct_cor";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["pct_cor"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22372,6 +22383,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["pct_err"] {
 	    name="pct_err";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["pct_err"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22380,6 +22392,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["avg_norm_err"] {
 	    name="avg_norm_err";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["avg_norm_err"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.602: };
@@ -22388,6 +22401,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["avg_cos_err"] {
 	    name="avg_cos_err";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["avg_cos_err"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22396,6 +22410,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["avg_ext_rew"] {
 	    name="avg_ext_rew";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["avg_ext_rew"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22404,6 +22419,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["avg_cycles"] {
 	    name="avg_cycles";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["avg_cycles"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22412,6 +22428,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["epoch_time_tot"] {
 	    name="epoch_time_tot";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22420,6 +22437,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["epoch_time_usr"] {
 	    name="epoch_time_usr";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22428,6 +22446,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_lay_avg_sse"] {
 	    name="Output_lay_avg_sse";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_lay_avg_sse"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22436,6 +22455,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_lay_cnt_err"] {
 	    name="Output_lay_cnt_err";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_lay_cnt_err"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22444,6 +22464,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_lay_pct_cor"] {
 	    name="Output_lay_pct_cor";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_lay_pct_cor"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22452,6 +22473,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_lay_pct_err"] {
 	    name="Output_lay_pct_err";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_lay_pct_err"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22460,6 +22482,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_lay_avg_norm_err"] {
 	    name="Output_lay_avg_norm_err";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_lay_avg_norm_err"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22468,6 +22491,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_lay_avg_cos_err"] {
 	    name="Output_lay_avg_cos_err";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_lay_avg_cos_err"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22476,6 +22500,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["net_avg_cos_diff"] {
 	    name="net_avg_cos_diff";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["net_avg_cos_diff"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22484,6 +22509,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["net_avg_trial_cos_diff"] {
 	    name="net_avg_trial_cos_diff";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["net_avg_trial_cos_diff"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22492,6 +22518,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["net_avg_avg_act_diff"] {
 	    name="net_avg_avg_act_diff";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["net_avg_avg_act_diff"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22500,6 +22527,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Hidden_avg_cos_diff"] {
 	    name="Hidden_avg_cos_diff";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_cos_diff"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.962046: fix_max=0: max=0.999009: };
@@ -22508,6 +22536,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_avg_cos_diff"] {
 	    name="Output_avg_cos_diff";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_cos_diff"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22516,6 +22545,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Hidden_avg_trial_cos_diff"] {
 	    name="Hidden_avg_trial_cos_diff";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_trial_cos_diff"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22524,6 +22554,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_avg_trial_cos_diff"] {
 	    name="Output_avg_trial_cos_diff";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_trial_cos_diff"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22532,6 +22563,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Hidden_avg_avg_act_diff"] {
 	    name="Hidden_avg_avg_act_diff";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_avg_act_diff"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22540,6 +22572,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_avg_avg_act_diff"] {
 	    name="Output_avg_avg_act_diff";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_avg_act_diff"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22548,6 +22581,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Hidden_avg_net_sd"] {
 	    name="Hidden_avg_net_sd";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_net_sd"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.281181: fix_max=0: max=0.466438: };
@@ -22556,6 +22590,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_avg_net_sd"] {
 	    name="Output_avg_net_sd";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_net_sd"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22564,6 +22599,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Hidden_hog_pct"] {
 	    name="Hidden_hog_pct";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_hog_pct"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22572,6 +22608,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_hog_pct"] {
 	    name="Output_hog_pct";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_hog_pct"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22580,6 +22617,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Hidden_dead_pct"] {
 	    name="Hidden_dead_pct";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_dead_pct"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22588,6 +22626,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_dead_pct"] {
 	    name="Output_dead_pct";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_dead_pct"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22596,6 +22635,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Hidden_netmax"] {
 	    name="Hidden_netmax";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_netmax"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22604,6 +22644,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_netmax"] {
 	    name="Output_netmax";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_netmax"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22612,6 +22653,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Hidden_avg_act"] {
 	    name="Hidden_avg_act";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_act"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22620,6 +22662,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_avg_act"] {
 	    name="Output_avg_act";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_act"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22628,6 +22671,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Hidden_Fm_Input_netrel"] {
 	    name="Hidden_Fm_Input_netrel";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_Fm_Input_netrel"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22636,6 +22680,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Hidden_Fm_Output_netrel"] {
 	    name="Hidden_Fm_Output_netrel";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_Fm_Output_netrel"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22644,6 +22689,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_Fm_Hidden_netrel"] {
 	    name="Output_Fm_Hidden_netrel";
 	    m_data=.projects["TestLoadSaveWeight"].data.gp["OutputData"]["EpochOutputData"].data["Output_Fm_Hidden_netrel"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -22683,6 +22729,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  x_axis {
 	   name="x_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=1;
 	   axis=X;
@@ -22702,6 +22749,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  z_axis {
 	   name="z_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Z;
@@ -22726,6 +22774,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_1"] {
 	    name="EpochOutputData_Graph_plot_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -22747,6 +22796,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_2"] {
 	    name="EpochOutputData_Graph_plot_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -22768,6 +22818,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_3"] {
 	    name="EpochOutputData_Graph_plot_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -22789,6 +22840,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_4"] {
 	    name="EpochOutputData_Graph_plot_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -22810,6 +22862,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_5"] {
 	    name="EpochOutputData_Graph_plot_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -22831,6 +22884,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_6"] {
 	    name="EpochOutputData_Graph_plot_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -22852,6 +22906,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_7"] {
 	    name="EpochOutputData_Graph_plot_7";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -22873,6 +22928,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_8"] {
 	    name="EpochOutputData_Graph_plot_8";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -22894,6 +22950,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_9"] {
 	    name="EpochOutputData_Graph_plot_9";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -22915,6 +22972,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_10"] {
 	    name="EpochOutputData_Graph_plot_10";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -22936,6 +22994,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_11"] {
 	    name="EpochOutputData_Graph_plot_11";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -22957,6 +23016,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_12"] {
 	    name="EpochOutputData_Graph_plot_12";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -22978,6 +23038,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_13"] {
 	    name="EpochOutputData_Graph_plot_13";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -22999,6 +23060,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_14"] {
 	    name="EpochOutputData_Graph_plot_14";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23020,6 +23082,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_15"] {
 	    name="EpochOutputData_Graph_plot_15";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23041,6 +23104,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_16"] {
 	    name="EpochOutputData_Graph_plot_16";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23067,6 +23131,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_1"] {
 	    name="EpochOutputData_Graph_err_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23088,6 +23153,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_2"] {
 	    name="EpochOutputData_Graph_err_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23109,6 +23175,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_3"] {
 	    name="EpochOutputData_Graph_err_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23130,6 +23197,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_4"] {
 	    name="EpochOutputData_Graph_err_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23151,6 +23219,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_5"] {
 	    name="EpochOutputData_Graph_err_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23172,6 +23241,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_6"] {
 	    name="EpochOutputData_Graph_err_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23193,6 +23263,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_7"] {
 	    name="EpochOutputData_Graph_err_7";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23214,6 +23285,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_8"] {
 	    name="EpochOutputData_Graph_err_8";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23235,6 +23307,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_9"] {
 	    name="EpochOutputData_Graph_err_9";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23256,6 +23329,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_10"] {
 	    name="EpochOutputData_Graph_err_10";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23277,6 +23351,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_11"] {
 	    name="EpochOutputData_Graph_err_11";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23298,6 +23373,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_12"] {
 	    name="EpochOutputData_Graph_err_12";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23319,6 +23395,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_13"] {
 	    name="EpochOutputData_Graph_err_13";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23340,6 +23417,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_14"] {
 	    name="EpochOutputData_Graph_err_14";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23361,6 +23439,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_15"] {
 	    name="EpochOutputData_Graph_err_15";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23382,6 +23461,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_16"] {
 	    name="EpochOutputData_Graph_err_16";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -23407,6 +23487,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -23438,6 +23519,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  raster_axis {
 	   name="raster_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -23564,22 +23646,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 8 0=-0.03504043;
+       value 8 0=-0.002785515;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.02462121;
+       value 8 0=0.03078677;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04528302;
+       value 8 0=0.05710306;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7310606;
+       value 8 0=0.6944128;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -23595,6 +23677,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      name="Tools";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
@@ -23797,14 +23880,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
-       lay_inhib {on=1: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-       lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
+       lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       avg_act {targ_init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
        inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
-       inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+       inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: };
        decay {trial=1: };
        del_inhib {on=0: prv_trl=0: prv_q=0: };
@@ -23817,14 +23900,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        lay_lrate=1;
       };
      };
-     lay_inhib {on=1: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-     lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: ff_max_vs_avg=0: fb_max_vs_avg=0: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
+     lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     avg_act {targ_init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
      inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
-     inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
@@ -23905,7 +23988,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       act_thr=0.2;
      };
      deep_raw_qtr=0;
-     deep {on=0: role=SUPER: raw_thr_rel=0.2: raw_thr_abs=0.2: mod_min=0.7: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.3: };
+     deep {on=0: role=SUPER: raw_thr_rel=0.2: raw_thr_abs=0.2: mod_min=0.7: trc_p_thr=0: trc_p_clamp=0: trc_p_max=0: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.3: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -23940,7 +24023,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
        wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
        inhib=0;
-       wt_scale {abs=1: rel=1: };
+       wt_scale {abs=1: rel=1: no_plus_net=0: };
        learn=1;
        learn_qtr=Q4;
        lrate=0.04;
@@ -23999,6 +24082,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: dwt_norm=0: rugp_wt_sync=0: };
+       wt_bal {
+	on=0;
+	trg=0.3;
+	thr=0.1;
+	gain=2;
+	avg_updt=10;
+	hi_thr=0.4;
+	lo_thr=0.2;
+       };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.5: slow_tau=100: wt_tau=1: fwt_pct=0.5: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -24017,7 +24109,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
        wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
        inhib=0;
-       wt_scale {abs=1: rel=0.2: };
+       wt_scale {abs=1: rel=0.2: no_plus_net=0: };
        learn=1;
        learn_qtr=Q4;
        lrate=0.04;
@@ -24076,6 +24168,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: dwt_norm=0: rugp_wt_sync=0: };
+       wt_bal {
+	on=0;
+	trg=0.3;
+	thr=0.1;
+	gain=2;
+	avg_updt=10;
+	hi_thr=0.4;
+	lo_thr=0.2;
+       };
        adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
        slow_wts {on=0: swt_pct=0.5: slow_tau=100: wt_tau=1: fwt_pct=0.5: slow_dt=0.01: wt_dt=1: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -24084,7 +24185,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=1: };
      learn=1;
      learn_qtr=Q4;
      lrate=0.04;
@@ -24143,6 +24244,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: dwt_norm=0: rugp_wt_sync=0: };
+     wt_bal {
+      on=0;
+      trg=0.3;
+      thr=0.1;
+      gain=2;
+      avg_updt=10;
+      hi_thr=0.4;
+      lo_thr=0.2;
+     };
      adapt_scale {on=0: tau=5000: lo_thr=0.25: hi_thr=0.75: lo_scale=0.01: hi_scale=2: dt=0.0002: };
      slow_wts {on=0: swt_pct=0.5: slow_tau=100: wt_tau=1: fwt_pct=0.5: slow_dt=0.01: wt_dt=1: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -24161,6 +24271,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
    };
    layers {
@@ -24452,72 +24563,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
      cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
     };
-    LeabraNetTiming @[3] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[4] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[5] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[6] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[7] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[8] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
    };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
@@ -24555,6 +24600,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     diff_scale_p=0;
     diff_scale_q1=0;
     dwt_norm=0;
+    wt_bal=0;
     rugp_wt_sync=0;
     lay_gp_inhib=0;
     inhib_cons=0;

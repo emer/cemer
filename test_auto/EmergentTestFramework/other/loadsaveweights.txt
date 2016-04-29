@@ -71,10 +71,10 @@ TestSaveLoadLearnable
     Status OK 		       ${output}
     ${cnt_err} = 	       Get Json Value    ${output}             /result/columns/0/values/0
     Should Be True	       ${cnt_err} > 10	 "Model should make errors on the first epoch before learning"
-    ${output} =                Run Command Wait      {"command": "GetData", "table": "EpochOutputData", "row_from": 5, "column" : "cnt_err", "rows": 1}
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "EpochOutputData", "row_from": 7, "column" : "cnt_err", "rows": 1}
     Status OK 		       ${output}
     ${cnt_err} = 	       Get Json Value    ${output}             /result/columns/0/values/0
-    Should Be True	       ${cnt_err} == 0	 "Model should not make errors after learning"
+    Should Be True	       ${cnt_err} == 0	 "Model should not make errors after learning, but was ${cnt_err}"
 
 
     Set Emergent Var		MasterTrain	cur_config	"basic_train_load"
@@ -84,7 +84,7 @@ TestSaveLoadLearnable
     ${output} =                Run Command Wait      {"command": "GetData", "table": "EpochOutputData", "row_from": 0, "column" : "cnt_err", "rows": 1}
     Status OK 		       ${output}
     ${cnt_err} = 	       Get Json Value    ${output}             /result/columns/0/values/0
-    Should Be True	       ${cnt_err} == 0	 "Model should not make errors in first epoch after loading trained weights"
+    Should Be True	       ${cnt_err} == 0	 "Model should not make errors in first epoch after loading trained weights, but was ${cnt_err}"
 
 *** Keywords ***
 
