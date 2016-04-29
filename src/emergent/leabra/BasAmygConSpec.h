@@ -138,7 +138,7 @@ public:
     }
   }
 
-  bool  CheckConfig_RecvCons(Unit* ru, Projection* prjn, bool quiet=false) override;
+  bool  CheckConfig_RecvCons(Projection* prjn, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(BasAmygConSpec);
 protected:

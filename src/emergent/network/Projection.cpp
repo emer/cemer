@@ -474,7 +474,15 @@ int Projection::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) 
 void Projection::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
 
+  if(!IsActive()) return;
+  
   CheckSpecs();                 // just check!
+
+  ConSpec* cs = GetConSpec();
+  if(cs) {
+    bool chk = cs->CheckConfig_RecvCons(this, quiet);
+    if(!chk) rval = false;
+  }
 }
 
 void Projection::Copy_Weights(const Projection* src) {

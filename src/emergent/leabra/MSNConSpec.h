@@ -431,7 +431,7 @@ public:
   // compute trace at time of gating -- IMPORTANT: receiver based!!
 
   
-  bool  CheckConfig_RecvCons(Unit* ru, Projection* prjn, bool quiet=false) override;
+  bool  CheckConfig_RecvCons(Projection* prjn, bool quiet=false) override;
   
   TA_SIMPLE_BASEFUNS(MSNConSpec);
 protected:

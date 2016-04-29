@@ -39,8 +39,8 @@ void BasAmygConSpec::Defaults_init() {
   wt_sig.gain = 1.0f;
 }
 
-bool BasAmygConSpec::CheckConfig_RecvCons(Unit* ru, Projection* prjn, bool quiet) {
-  bool rval = inherited::CheckConfig_RecvCons(ru, prjn, quiet);
+bool BasAmygConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
+  bool rval = inherited::CheckConfig_RecvCons(prjn, quiet);
   LeabraLayer* rlay = (LeabraLayer*)prjn->layer;
   LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
   

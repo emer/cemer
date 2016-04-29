@@ -269,8 +269,8 @@ void LeabraConSpec::GetPrjnName(Projection& prjn, String& nm) {
     return inherited::GetPrjnName(prjn, nm);
 }
 
-bool LeabraConSpec::CheckConfig_RecvCons(Unit* ru, Projection* prjn, bool quiet) {
-  bool rval = inherited::CheckConfig_RecvCons(ru, prjn, quiet);
+bool LeabraConSpec::CheckConfig_RecvCons(Projection* prjn, bool quiet) {
+  bool rval = inherited::CheckConfig_RecvCons(prjn, quiet);
   return rval;
 }
 

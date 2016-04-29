@@ -112,7 +112,7 @@ public:
   virtual void  Copy_Weights(const Projection* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_Weights copies weights from other projection
 
-  virtual void  CheckSpecs();
+ virtual void  CheckSpecs();
   // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
 
   // convenience functions for those defined in the spec

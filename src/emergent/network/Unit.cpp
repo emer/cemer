@@ -218,14 +218,7 @@ void Unit::ApplyInputData(float val, UnitVars::ExtFlags act_ext_flags, Random* r
 
 void Unit::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
-
-  Layer* lay = own_lay();
-  if(!lay) return;
-  FOREACH_ELEM_IN_GROUP(Projection, prjn, lay->projections) {
-    if(prjn->NotActive()) continue;
-    ConSpec* cs = prjn->GetConSpec();
-    cs->CheckConfig_RecvCons(this, prjn, quiet);
-  }
+  // recv cons are now checked at the projection level, not unit level
 }
 
 void Unit::CheckThisConfig_impl(bool quiet, bool& rval) {

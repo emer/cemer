@@ -212,7 +212,7 @@ public:
   virtual void          GetPrjnName(Projection& prjn, String& nm) { };
   // add anything special for this type of connection to the projection name -- default name (FM_from) is provided as a nm value, which this function can modify in any way
 
-  virtual bool          CheckConfig_RecvCons(Unit* ru, Projection* prjn, bool quiet=false);
+  virtual bool          CheckConfig_RecvCons(Projection* prjn, bool quiet=false);
   // check for for misc configuration settings required by different algorithms
 
   virtual  void         Init_Weights_Net();
