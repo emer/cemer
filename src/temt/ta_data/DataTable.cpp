@@ -206,6 +206,13 @@ bool DataTable::CopyCell_impl(DataCol* dar, int dest_row, const DataTable& src,
 void DataTable::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   
+  // if true - user likely just checked the save file flag - provide default name
+  if(HasDataFlag(SAVE_FILE) && auto_load_file.empty()) {
+    taProject* proj = GetMyProj();
+    String full_path = GetProjDir() + "/" + GetName() + ".dat";
+    auto_load_file = full_path;
+  }
+
   UniqueColNames();
   // the following is likely redundant:
   //  UpdateColCalcs();
@@ -345,7 +352,7 @@ bool DataTable::AutoLoadData() {
     int chs = taMisc::Choice("Load data file: " + auto_load_file + " into data table: " + name, "Yes", "No");
     if(chs == 1) return false;
   }
-
+  
   if(TestError(auto_load_file.empty(), "AutoLoadData", "auto_load_file is empty!"))
     return false;
   QFileInfo qfi(auto_load_file);
@@ -371,12 +378,12 @@ bool DataTable::AutoLoadData() {
 }
 
 void DataTable::LoadAutoSaved() {
-  LoadData(auto_load_file);
+  LoadAnyData(auto_load_file);
 }
 
 bool DataTable::AutoSaveData() {
   if(HasDataFlag(SAVE_ROWS) || !HasDataFlag(SAVE_FILE)) return false;
-
+  
   if(TestError(auto_load_file.empty(), "AutoSaveData", "auto_load_file is empty!"))
     return false;
   // can't save to .dtbl type because that would recurse us -- TODO: could workaround somehow
