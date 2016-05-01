@@ -1604,12 +1604,12 @@ bool TemtClient::CalcRowParams(String operation, DataTable* table, int& row_from
     return false;  // false because we won't actually execute the remove code
   }
   
-  if (row_from_set && (row_from < 0 || row_from >= row_count)) {
+  if (row_from_set && (row_from >= row_count-1)) {
     SendError("row out of range", TemtClient::RUNTIME);
     return false;
   }
   
-  if (row_to_set && (row_to < 0 || row_to >= row_count)) {
+  if (row_to_set && (row_to >= row_count-1)) {
     SendError("row out of range", TemtClient::RUNTIME);
     return false;
   }
