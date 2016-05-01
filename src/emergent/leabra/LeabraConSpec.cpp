@@ -37,6 +37,7 @@ eTypeDef_Of(ExtRewLayerSpec);
 void WtScaleSpec::Initialize() {
   rel = 1.0f;
   abs = 1.0f;
+  Defaults_init();
 }
 
 void WtScaleSpec::Defaults_init() {
