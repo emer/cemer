@@ -384,6 +384,10 @@ void DataTable::LoadAutoSaved() {
 bool DataTable::AutoSaveData() {
   if(HasDataFlag(SAVE_ROWS) || !HasDataFlag(SAVE_FILE)) return false;
   
+  if (rows == 0) {  // if the data wasn't loaded don't save - sort of - should be good enough
+    return false;
+  }
+  
   if(TestError(auto_load_file.empty(), "AutoSaveData", "auto_load_file is empty!"))
     return false;
   // can't save to .dtbl type because that would recurse us -- TODO: could workaround somehow
