@@ -54,6 +54,12 @@ Filter
     Run Emergent Program	Filter
     Prog Var Should Equal	test_failed	0    
 
+Sort
+    Ensure Emergent Free
+    Set Suite Variable     ${program_test}       "Sort"    
+    Run Emergent Program	Sort
+    Prog Var Should Equal	test_failed	0    
+
 
 *** Keywords ***
 

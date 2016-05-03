@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9432
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9447
 LeabraProject .projects["TestDataTableProcs"] { 
  Doc_Group @.docs = [0] {
  };
@@ -367,7 +367,7 @@ LeabraProject .projects["TestDataTableProcs"] {
   };
  };
 
- Program_TopGroup @.programs = [1] {
+ Program_TopGroup @.programs = [2] {
   Program @["Filter"] { 
    ProgObjList @.objs = [2] {
     DataTable @["DataTable1"] { 
@@ -711,6 +711,627 @@ LeabraProject .projects["TestDataTableProcs"] {
      };
     };
     BlankLineEl @[22] { };
+   };
+  };
+  Program @["Sort"] { 
+   ProgObjList @.objs = [2] {
+    DataTable @["DataTable1"] { 
+     DataTableCols @.data = [3] {
+      String_Data @["Name"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      int_Data @["epoch"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NARROW"] { };
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      String_Data @["batch"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
+     };
+    };
+    DataTable @["DataTable1_copy"] { 
+     DataTableCols @.data = [3] {
+      String_Data @["Name"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      int_Data @["epoch"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NARROW"] { };
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      String_Data @["batch"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+     };
+
+     DataOpList @.last_sort_spec.ops = [6] {
+      DataSortEl @["batch_up_0"] { };
+      DataSortEl @["epoch_dn_1"] { };
+      DataSortEl @["batch_up_2"] { };
+      DataSortEl @["batch_up_3"] { };
+      DataSortEl @["batch_up_4"] { };
+      DataSortEl @["batch_up_5"] { };
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
+     };
+    };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [3] {
+    ProgVar @["DataTable1"] { };
+    ProgVar @["DataTable1_copy"] { };
+    ProgVar @["test_failed"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [39] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [0] {
+     };
+    };
+    Comment @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    If @[3] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    If @[4] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    MethodCall @[5] { 
+     ProgArg_List @.meth_args = [12] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+      ProgArg @[9] { };
+      ProgArg @[10] { };
+      ProgArg @[11] { };
+     };
+    };
+    If @[6] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[7] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[8] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[9] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[10] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    BlankLineEl @[11] { };
+    Comment @[12] { };
+    MethodCall @[13] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    If @[14] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    If @[15] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    MethodCall @[16] { 
+     ProgArg_List @.meth_args = [12] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+      ProgArg @[9] { };
+      ProgArg @[10] { };
+      ProgArg @[11] { };
+     };
+    };
+    If @[17] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[18] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[19] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[20] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[21] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    BlankLineEl @[22] { };
+    Comment @[23] { };
+    MethodCall @[24] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    If @[25] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    If @[26] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    MethodCall @[27] { 
+     ProgArg_List @.meth_args = [12] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+      ProgArg @[6] { };
+      ProgArg @[7] { };
+      ProgArg @[8] { };
+      ProgArg @[9] { };
+      ProgArg @[10] { };
+      ProgArg @[11] { };
+     };
+    };
+    If @[28] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[29] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[30] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[31] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[32] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[33] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[34] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[35] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[36] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[37] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    BlankLineEl @[38] { };
    };
   };
  };
@@ -3447,7 +4068,6 @@ LeabraProject .projects["TestDataTableProcs"] {
    label=;
    extra_files=;
    svn_repo=;
-   loadOnly=1;
    repo_url=;
    queue=;
    run_time=;
@@ -5865,6 +6485,4449 @@ LeabraProject .projects["TestDataTableProcs"] {
    step_prog=NULL;
    step_n=1;
   };
+  Program @["Sort"] {
+   name="Sort";
+   short_nm="rt";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   stop_step_cond {
+    expr=;
+   };
+   objs {
+    name=;
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @["DataTable1"] {
+     name="DataTable1";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["Name"] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.2634069;
+	 val_type_fixed=0;
+	};
+       };
+       name="Name";
+       col_flags=SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=167;
+       ar {
+	name="ar";
+       [10] "Hello";"Hello World";"Hello World again";"More Hellos";"Some name";"More names";"Even more names";"Another name";"Yest another name";"World";
+       };
+      };
+      int_Data @["epoch"] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1577287;
+	 val_type_fixed=0;
+	};
+       };
+       name="epoch";
+       col_flags=SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       ar {
+	name="ar";
+       [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+      };
+      String_Data @["batch"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_98";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1577287;
+	 val_type_fixed=0;
+	};
+       };
+       name="batch";
+       col_flags=SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       ar {
+	name="ar";
+       [10] "2";"2";"2";"1";"1";"1";"3";"3";"3";"3";
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [10] 0;1;2;3;4;5;6;7;8;9;
+     };
+     last_sort_spec {
+      name=;
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     control_panel_cells {
+      name=;
+      el_typ=DataTableCell;
+      el_def=0;
+     };
+    };
+    DataTable @["DataTable1_copy"] {
+     name="DataTable1_copy";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["Name"] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.2634069;
+	 val_type_fixed=0;
+	};
+       };
+       name="Name";
+       col_flags=SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=167;
+       ar {
+	name="ar";
+       [10] "Hello";"Hello World";"Hello World again";"More Hellos";"Some name";"More names";"Even more names";"Another name";"Yest another name";"World";
+       };
+      };
+      int_Data @["epoch"] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1577287;
+	 val_type_fixed=0;
+	};
+       };
+       name="epoch";
+       col_flags=SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       ar {
+	name="ar";
+       [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+      };
+      String_Data @["batch"] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1577287;
+	 val_type_fixed=0;
+	};
+       };
+       name="batch";
+       col_flags=SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       ar {
+	name="ar";
+       [10] "2";"2";"2";"1";"1";"1";"3";"3";"3";"3";
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [10] 5;4;3;2;1;0;9;8;7;6;
+     };
+     last_sort_spec {
+      name=;
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+       DataSortEl @["batch_up_0"] {
+	col_name="batch";
+	name="batch_up_0";
+	order=ASCENDING;
+       };
+       DataSortEl @["epoch_dn_1"] {
+	col_name="epoch";
+	name="epoch_dn_1";
+	order=DESCENDING;
+       };
+       DataSortEl @["batch_up_2"] {
+	col_name="batch";
+	name="batch_up_2";
+	order=ASCENDING;
+       };
+       DataSortEl @["batch_up_3"] {
+	col_name="batch";
+	name="batch_up_3";
+	order=ASCENDING;
+       };
+       DataSortEl @["batch_up_4"] {
+	col_name="batch";
+	name="batch_up_4";
+	order=ASCENDING;
+       };
+       DataSortEl @["batch_up_5"] {
+	col_name="batch";
+	name="batch_up_5";
+	order=ASCENDING;
+       };
+      };
+     };
+     control_panel_cells {
+      name=;
+      el_typ=DataTableCell;
+      el_def=0;
+     };
+    };
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["DataTable1"] {
+     name="DataTable1";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["TestDataTableProcs"].programs["Sort"].objs["DataTable1"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["DataTable1_copy"] {
+     name="DataTable1_copy";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["TestDataTableProcs"].programs["Sort"].objs["DataTable1_copy"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["test_failed"] {
+     name="test_failed";
+     var_type=T_Int;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (0 vars)";
+     pre_compile_code_string="LocalVars (0 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    Comment @[1] {
+     desc="Test sort integer descending";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="// Test Greaterthan";
+     pre_compile_code_string="// Test Greaterthan";
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="DataTable1_copy->CopyFrom(DataTable1)";
+     pre_compile_code_string="DataTable1_copy->CopyFrom(DataTable1)";
+     result_var=NULL;
+     obj=.projects["TestDataTableProcs"].programs["Sort"].vars["DataTable1_copy"]$$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="DataTable1";
+       };
+      };
+     };
+     meth_sig="bool CopyFrom(taBase* cpy_from)";
+     meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+    };
+    If @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy->rows != 10)";
+     pre_compile_code_string="if (DataTable1_copy->rows != 10)";
+     cond {
+      expr="DataTable1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"The Copy data did not have 10 rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    If @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"epoch\"][0] != 0)";
+     pre_compile_code_string="if (DataTable1_copy[\"epoch\"][0] != 0)";
+     cond {
+      expr="DataTable1_copy[\"epoch\"][0] != 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort integer descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    MethodCall @[5] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="DataTable1_copy->Sort(\"epoch\", false, , , , , , , , , , )";
+     pre_compile_code_string="DataTable1_copy->Sort(\"epoch\", false, , , , , , , , , , )";
+     result_var=NULL;
+     obj=$.projects["TestDataTableProcs"].programs["Sort"].vars["DataTable1_copy"]$;
+     method=DataTable::Sort;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col1";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"epoch\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="ascending1";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=Variant;
+       type="Variant";
+       name="col2";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="ascending2";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[4] {
+       arg_type=Variant;
+       type="Variant";
+       name="col3";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=bool;
+       type="bool";
+       name="ascending3";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=Variant;
+       type="Variant";
+       name="col4";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=bool;
+       type="bool";
+       name="ascending4";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=Variant;
+       type="Variant";
+       name="col5";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[9] {
+       arg_type=bool;
+       type="bool";
+       name="ascending5";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[10] {
+       arg_type=Variant;
+       type="Variant";
+       name="col6";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[11] {
+       arg_type=bool;
+       type="bool";
+       name="ascending6";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+     };
+     meth_sig="void Sort(Variant& col1, bool ascending1 = true, Variant col2 = -1, bool ascending2 = true, Variant col3 = -1, bool ascending3 = true, Variant col4 = -1, bool ascending4 = true, Variant col5 = -1, bool ascending5 = true, Variant col6 = -1, bool ascending6 = true)";
+     meth_desc=" sort table according to selected columns of data. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first";
+    };
+    If @[6] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy->rows != 10)";
+     pre_compile_code_string="if (DataTable1_copy->rows != 10)";
+     cond {
+      expr="DataTable1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort integer descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[7] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"epoch\"][0] != 9)";
+     pre_compile_code_string="if (DataTable1_copy[\"epoch\"][0] != 9)";
+     cond {
+      expr="DataTable1_copy[\"epoch\"][0] != 9";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort integer descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[8] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"Name\"][0] != \"World\")";
+     pre_compile_code_string="if (DataTable1_copy[\"Name\"][0] != \"World\")";
+     cond {
+      expr="DataTable1_copy[\"Name\"][0] != \"World\"";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort integer descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[9] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"epoch\"][9] != 0)";
+     pre_compile_code_string="if (DataTable1_copy[\"epoch\"][9] != 0)";
+     cond {
+      expr="DataTable1_copy[\"epoch\"][9] != 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort integer descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[10] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"Name\"][9] != \"Hello\")";
+     pre_compile_code_string="if (DataTable1_copy[\"Name\"][9] != \"Hello\")";
+     cond {
+      expr="DataTable1_copy[\"Name\"][9] != \"Hello\"";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort integer descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    BlankLineEl @[11] {
+     desc=;
+     flags=0;
+     code_string=;
+     pre_compile_code_string=;
+    };
+    Comment @[12] {
+     desc="Test sort string descending";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="// Test sort integer descending";
+     pre_compile_code_string="// Test sort integer descending";
+    };
+    MethodCall @[13] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="DataTable1_copy->CopyFrom(DataTable1)";
+     pre_compile_code_string="DataTable1_copy->CopyFrom(DataTable1)";
+     result_var=NULL;
+     obj=$.projects["TestDataTableProcs"].programs["Sort"].vars["DataTable1_copy"]$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="DataTable1";
+       };
+      };
+     };
+     meth_sig="bool CopyFrom(taBase* cpy_from)";
+     meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+    };
+    If @[14] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy->rows != 10)";
+     pre_compile_code_string="if (DataTable1_copy->rows != 10)";
+     cond {
+      expr="DataTable1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"The Copy data did not have 10 rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    If @[15] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"epoch\"][0] != 0)";
+     pre_compile_code_string="if (DataTable1_copy[\"epoch\"][0] != 0)";
+     cond {
+      expr="DataTable1_copy[\"epoch\"][0] != 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort integer descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    MethodCall @[16] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="DataTable1_copy->Sort(\"Name\", false, , , , , , , , , , )";
+     pre_compile_code_string="DataTable1_copy->Sort(\"Name\", false, , , , , , , , , , )";
+     result_var=NULL;
+     obj=$.projects["TestDataTableProcs"].programs["Sort"].vars["DataTable1_copy"]$;
+     method=DataTable::Sort;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col1";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"Name\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="ascending1";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=Variant;
+       type="Variant";
+       name="col2";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="ascending2";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[4] {
+       arg_type=Variant;
+       type="Variant";
+       name="col3";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=bool;
+       type="bool";
+       name="ascending3";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=Variant;
+       type="Variant";
+       name="col4";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=bool;
+       type="bool";
+       name="ascending4";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=Variant;
+       type="Variant";
+       name="col5";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[9] {
+       arg_type=bool;
+       type="bool";
+       name="ascending5";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[10] {
+       arg_type=Variant;
+       type="Variant";
+       name="col6";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[11] {
+       arg_type=bool;
+       type="bool";
+       name="ascending6";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+     };
+     meth_sig="void Sort(Variant& col1, bool ascending1 = true, Variant col2 = -1, bool ascending2 = true, Variant col3 = -1, bool ascending3 = true, Variant col4 = -1, bool ascending4 = true, Variant col5 = -1, bool ascending5 = true, Variant col6 = -1, bool ascending6 = true)";
+     meth_desc=" sort table according to selected columns of data. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first";
+    };
+    If @[17] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy->rows != 10)";
+     pre_compile_code_string="if (DataTable1_copy->rows != 10)";
+     cond {
+      expr="DataTable1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort integer descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[18] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"epoch\"][0] != 8)";
+     pre_compile_code_string="if (DataTable1_copy[\"epoch\"][0] != 8)";
+     cond {
+      expr="DataTable1_copy[\"epoch\"][0] != 8";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort string descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort string descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort string descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[19] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"Name\"][0] != \"Yest another name\")";
+     pre_compile_code_string="if (DataTable1_copy[\"Name\"][0] != \"Yest another name\")";
+     cond {
+      expr="DataTable1_copy[\"Name\"][0] != \"Yest another name\"";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort string descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort string descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort string descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[20] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"epoch\"][9] != 7)";
+     pre_compile_code_string="if (DataTable1_copy[\"epoch\"][9] != 7)";
+     cond {
+      expr="DataTable1_copy[\"epoch\"][9] != 7";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort string descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort string descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort string descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[21] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"Name\"][9] != \"Another name\")";
+     pre_compile_code_string="if (DataTable1_copy[\"Name\"][9] != \"Another name\")";
+     cond {
+      expr="DataTable1_copy[\"Name\"][9] != \"Another name\"";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort string descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort string descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort string descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    BlankLineEl @[22] {
+     desc=;
+     flags=0;
+     code_string=;
+     pre_compile_code_string=;
+    };
+    Comment @[23] {
+     desc="Test int, int descending";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="// Test sort string descending";
+     pre_compile_code_string="// Test sort string descending";
+    };
+    MethodCall @[24] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="DataTable1_copy->CopyFrom(DataTable1)";
+     pre_compile_code_string="DataTable1_copy->CopyFrom(DataTable1)";
+     result_var=NULL;
+     obj=$.projects["TestDataTableProcs"].programs["Sort"].vars["DataTable1_copy"]$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="DataTable1";
+       };
+      };
+     };
+     meth_sig="bool CopyFrom(taBase* cpy_from)";
+     meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+    };
+    If @[25] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy->rows != 10)";
+     pre_compile_code_string="if (DataTable1_copy->rows != 10)";
+     cond {
+      expr="DataTable1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"The Copy data did not have 10 rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    If @[26] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"epoch\"][0] != 0)";
+     pre_compile_code_string="if (DataTable1_copy[\"epoch\"][0] != 0)";
+     cond {
+      expr="DataTable1_copy[\"epoch\"][0] != 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort integer descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    MethodCall @[27] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="DataTable1_copy->Sort(\"batch\", true, \"epoch\", false, , , , , , , , )";
+     pre_compile_code_string="DataTable1_copy->Sort(\"batch\", true, \"epoch\", false, , , , , , , , )";
+     result_var=NULL;
+     obj=$.projects["TestDataTableProcs"].programs["Sort"].vars["DataTable1_copy"]$;
+     method=DataTable::Sort;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col1";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"batch\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="ascending1";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=Variant;
+       type="Variant";
+       name="col2";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="\"epoch\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="ascending2";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=Variant;
+       type="Variant";
+       name="col3";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=bool;
+       type="bool";
+       name="ascending3";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=Variant;
+       type="Variant";
+       name="col4";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=bool;
+       type="bool";
+       name="ascending4";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[8] {
+       arg_type=Variant;
+       type="Variant";
+       name="col5";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[9] {
+       arg_type=bool;
+       type="bool";
+       name="ascending5";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[10] {
+       arg_type=Variant;
+       type="Variant";
+       name="col6";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[11] {
+       arg_type=bool;
+       type="bool";
+       name="ascending6";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr=;
+       };
+      };
+     };
+     meth_sig="void Sort(Variant& col1, bool ascending1 = true, Variant col2 = -1, bool ascending2 = true, Variant col3 = -1, bool ascending3 = true, Variant col4 = -1, bool ascending4 = true, Variant col5 = -1, bool ascending5 = true, Variant col6 = -1, bool ascending6 = true)";
+     meth_desc=" sort table according to selected columns of data. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first";
+    };
+    If @[28] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy->rows != 10)";
+     pre_compile_code_string="if (DataTable1_copy->rows != 10)";
+     cond {
+      expr="DataTable1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort integer descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort integer descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[29] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"batch\"][0] != 1)";
+     pre_compile_code_string="if (DataTable1_copy[\"batch\"][0] != 1)";
+     cond {
+      expr="DataTable1_copy[\"batch\"][0] != 1";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort int, int descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort int, int descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort int, int descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[30] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"epoch\"][0] != 5)";
+     pre_compile_code_string="if (DataTable1_copy[\"epoch\"][0] != 5)";
+     cond {
+      expr="DataTable1_copy[\"epoch\"][0] != 5";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort int, int descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort int, int descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort int, int descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[31] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"Name\"][0] != \"More names\")";
+     pre_compile_code_string="if (DataTable1_copy[\"Name\"][0] != \"More names\")";
+     cond {
+      expr="DataTable1_copy[\"Name\"][0] != \"More names\"";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort int,int descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[32] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"batch\"][9] != 3)";
+     pre_compile_code_string="if (DataTable1_copy[\"batch\"][9] != 3)";
+     cond {
+      expr="DataTable1_copy[\"batch\"][9] != 3";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort int,int descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[33] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"epoch\"][9] != 6)";
+     pre_compile_code_string="if (DataTable1_copy[\"epoch\"][9] != 6)";
+     cond {
+      expr="DataTable1_copy[\"epoch\"][9] != 6";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort int,int descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[34] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"Name\"][9] != \"Even more names\")";
+     pre_compile_code_string="if (DataTable1_copy[\"Name\"][9] != \"Even more names\")";
+     cond {
+      expr="DataTable1_copy[\"Name\"][9] != \"Even more names\"";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort int,int descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[35] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"batch\"][7] != 3)";
+     pre_compile_code_string="if (DataTable1_copy[\"batch\"][7] != 3)";
+     cond {
+      expr="DataTable1_copy[\"batch\"][7] != 3";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort int,int descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[36] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"epoch\"][7] != 8)";
+     pre_compile_code_string="if (DataTable1_copy[\"epoch\"][7] != 8)";
+     cond {
+      expr="DataTable1_copy[\"epoch\"][7] != 8";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort int,int descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[37] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy[\"Name\"][7] != \"Yest another name\")";
+     pre_compile_code_string="if (DataTable1_copy[\"Name\"][7] != \"Yest another name\")";
+     cond {
+      expr="DataTable1_copy[\"Name\"][7] != \"Yest another name\"";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Sort int,int descending\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Sort int,int descending\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Sort"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    BlankLineEl @[38] {
+     desc=;
+     flags=0;
+     code_string=;
+     pre_compile_code_string=;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
  };
  viewers {
   name="viewers";
@@ -5877,7 +10940,7 @@ LeabraProject .projects["TestDataTableProcs"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=-0.002785515;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -5887,12 +10950,12 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=1;
+     value 8 0=1.002786;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7993159;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -6098,7 +11161,7 @@ LeabraProject .projects["TestDataTableProcs"] {
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.03078677;
+       value 8 0=0.05555556;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
@@ -6108,7 +11171,7 @@ LeabraProject .projects["TestDataTableProcs"] {
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.6944128;
+       value 8 0=0.9222222;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
