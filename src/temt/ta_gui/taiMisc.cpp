@@ -868,30 +868,33 @@ int taiMisc::GetGroupDefaultExpand(const String& group) {
 }
 
 void taiMisc::SetGroupDefaultExpand(const String& group, int depth) {
+  taMisc* inst = (taMisc*)TA_taMisc.GetInstance();
   if (group == "docs")
-    taMisc::expand_defaults.docs = depth;
+    inst->expand_defaults.docs = depth;
   else if (group == "wizards")
-    taMisc::expand_defaults.wizards = depth;
+    inst->expand_defaults.wizards = depth;
   else if (group == "ctrl_panels")
-    taMisc::expand_defaults.ctrl_panels = depth;
+    inst->expand_defaults.ctrl_panels = depth;
   else if (group == "param_sets")
-    taMisc::expand_defaults.param_sets = depth;
+    inst->expand_defaults.param_sets = depth;
   else if (group == "data")
-    taMisc::expand_defaults.data = depth;
+    inst->expand_defaults.data = depth;
   else if (group == "programs")
-    taMisc::expand_defaults.programs = depth;
+    inst->expand_defaults.programs = depth;
   else if (group == "viewers")
-    taMisc::expand_defaults.viewers = depth;
+    inst->expand_defaults.viewers = depth;
   else if (group == "networks")
-    taMisc::expand_defaults.networks = depth;
+    inst->expand_defaults.networks = depth;
   else if (group == "network")
-    taMisc::expand_defaults.network = depth;
+    inst->expand_defaults.network = depth;
   else if (group == "specs")
-    taMisc::expand_defaults.specs = depth;
+    inst->expand_defaults.specs = depth;
   else if (group == "layers")
-    taMisc::expand_defaults.layers = depth;
+    inst->expand_defaults.layers = depth;
   else
     taMisc::DebugInfo("SetGroupDefaultExpand - group " + group + " not found");
+
+  inst->SaveConfig();
 }
 
 iMainWindowViewer* taiMisc::FindMainWinParent(QObject* obj) {
