@@ -324,6 +324,7 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->avg_netin_sum.max = 0.0f;
   lay->avg_netin_n = 0;
 
+  lay->bin_err = 0.0f;
   lay->norm_err = 0.0f;
   lay->avg_norm_err.ResetAvg();
   lay->cos_err = 0.0f;
@@ -735,7 +736,11 @@ void LeabraLayerSpec::LayerAvgAct(DataTable* report_table) {
 float LeabraLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork* net,
                                    int& n_vals, bool unit_avg, bool sqrt) {
   // use default, but allow subclasses to override in layerspec
-  return lay->Layer::Compute_SSE(net, n_vals, unit_avg, sqrt);
+  float rval = lay->Layer::Compute_SSE(net, n_vals, unit_avg, sqrt);
+  lay->bin_err = 0.0f;
+  if(!lay->HasExtFlag(UnitVars::COMP_TARG)) return rval;
+  lay->bin_err = (lay->sse > net->stats.cnt_err_tol) ? 1.0f : 0.0f;
+  return rval;
 }
 
 float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
