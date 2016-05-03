@@ -46,6 +46,8 @@ Native Test
 # RunState and RunProgram tests
 #
 
+
+
 General RunState
     ${output} =                Run Command Wait      {"command": "GetRunState"}
     Status OK Match Result     ${output}             4
@@ -275,6 +277,73 @@ GetData Row
     Json Value Should Not Exist  ${output}           /result/columns/0/values/2
     Json Value Should Not Exist  ${output}           /result/columns/1/values/2
     Json Value Should Not Exist  ${output}           /result/columns/2/values/2
+
+    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -2, "rows": 2}
+    Status OK Has Result         ${output}
+    Json String Should Match     ${output}           /result/columns/0/name      Name
+    Json String Should Match     ${output}           /result/columns/1/name    Input
+    Json String Should Match     ${output}           /result/columns/2/name    Output
+    Json String Should Match     ${output}           /result/columns/0/type    String
+    Json String Should Match     ${output}           /result/columns/1/type    float
+    Json String Should Match     ${output}           /result/columns/2/type    float
+    Json Value Should Equal      ${output}           /result/columns/0/matrix  false
+    Json Value Should Equal      ${output}           /result/columns/1/matrix  true
+    Json Value Should Equal      ${output}           /result/columns/2/matrix  true
+    Json String Should Match     ${output}           /result/columns/0/values/1  random
+    Json String Should Match     ${output}           /result/columns/0/values/0  ldiag
+    Json Value Should Equal      ${output}           /result/columns/1/values/0/2/2  1
+    Json Value Should Equal      ${output}           /result/columns/1/values/0/1/0  0
+    Json Value Should Not Exist  ${output}           /result/columns/0/values/2
+    Json Value Should Not Exist  ${output}           /result/columns/1/values/2
+    Json Value Should Not Exist  ${output}           /result/columns/2/values/2
+
+#    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -7, "rows": 2}
+#    Status Error Match         ${output}     7	     GetData: row out of range
+
+#    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -1, "rows": 2}
+#    Status OK Has Result         ${output}
+#    Json String Should Match     ${output}           /result/columns/0/name      Name
+#    Json String Should Match     ${output}           /result/columns/1/name    Input
+#    Json String Should Match     ${output}           /result/columns/2/name    Output
+#    Json String Should Match     ${output}           /result/columns/0/type    String
+#    Json String Should Match     ${output}           /result/columns/1/type    float
+#    Json String Should Match     ${output}           /result/columns/2/type    float
+#    Json Value Should Equal      ${output}           /result/columns/0/matrix  false
+#    Json Value Should Equal      ${output}           /result/columns/1/matrix  true
+#    Json Value Should Equal      ${output}           /result/columns/2/matrix  true
+#    Json String Should Match     ${output}           /result/columns/0/values/0  random
+#    Json Value Should Equal      ${output}           /result/columns/1/values/0/2/2  0
+#    Json Value Should Equal      ${output}           /result/columns/1/values/0/3/0  1
+#    Json Value Should Not Exist  ${output}           /result/columns/0/values/1
+#    Json Value Should Not Exist  ${output}           /result/columns/1/values/1
+#    Json Value Should Not Exist  ${output}           /result/columns/2/values/1
+
+#    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": 7, "rows": 2}
+#    Status Error Match         ${output}     7     row out of range
+
+#    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": 6, "rows": 2}
+#    Status Error Match         ${output}     7	     row out of range
+
+#    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -2, "rows": -2}
+#    Status OK Has Result         ${output}
+#    Json String Should Match     ${output}           /result/columns/0/name      Name
+#    Json String Should Match     ${output}           /result/columns/1/name    Input
+#    Json String Should Match     ${output}           /result/columns/2/name    Output
+#    Json String Should Match     ${output}           /result/columns/0/type    String
+#    Json String Should Match     ${output}           /result/columns/1/type    float
+#    Json String Should Match     ${output}           /result/columns/2/type    float
+#    Json Value Should Equal      ${output}           /result/columns/0/matrix  false
+#    Json Value Should Equal      ${output}           /result/columns/1/matrix  true
+#    Json Value Should Equal      ${output}           /result/columns/2/matrix  true
+#    Json String Should Match     ${output}           /result/columns/0/values/1  random
+#    Json String Should Match     ${output}           /result/columns/0/values/0  ldiag
+#    Json Value Should Equal      ${output}           /result/columns/1/values/0/2/2  1
+#    Json Value Should Equal      ${output}           /result/columns/1/values/0/1/0  0
+#    Json Value Should Not Exist  ${output}           /result/columns/0/values/2
+#    Json Value Should Not Exist  ${output}           /result/columns/1/values/2
+#    Json Value Should Not Exist  ${output}           /result/columns/2/values/2
+
+
 
 GetData Cell
     Ensure Emergent Free
