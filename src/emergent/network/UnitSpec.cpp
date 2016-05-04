@@ -135,6 +135,10 @@ void UnitSpec::Init_Weights_post(UnitVars* u, Network* net, int thr_no) {
   }
 }
 
+void UnitSpec::LoadBiasWtVal(float bwt, UnitVars* u, Network* net) {
+  u->bias_wt = bwt;
+}
+
 void UnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
   float new_net = 0.0f;
   const int nrcg = net->ThrUnNRecvConGps(thr_no, u->thr_un_idx);

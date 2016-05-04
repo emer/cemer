@@ -634,7 +634,15 @@ int Unit::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet
     strm.get();         // get the /n
     break;
   }
-  bias_wt() = bwt;
+  
+  UnitVars* uv = GetUnitVars();
+  UnitSpec* us = GetUnitSpec();
+  if(us) {
+    us->LoadBiasWtVal(bwt, uv, net);
+  }
+  else {
+    uv->bias_wt = bwt;
+  }
 
   while(true) {
     stat = taMisc::read_tag(strm, tag, val);

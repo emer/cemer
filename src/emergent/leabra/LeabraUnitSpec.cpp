@@ -679,6 +679,13 @@ void LeabraUnitSpec::Init_Weights(UnitVars* ru, Network* rnet, int thr_no) {
   }
 }
 
+void LeabraUnitSpec::LoadBiasWtVal(float bwt, UnitVars* uv, Network* net) {
+  LeabraUnitVars* u = (LeabraUnitVars*)uv;
+  u->bias_wt = bwt;
+  u->bias_fwt = bwt;
+  u->bias_swt = bwt;
+}
+
 void LeabraUnitSpec::Init_ActAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   u->act_avg = act_misc.avg_init;
   u->avg_l = act_misc.avg_init;

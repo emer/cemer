@@ -64,6 +64,9 @@ public:
     virtual void  Init_Weights_post(UnitVars* u, Network* net, int thr_no);
     // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc) -- threaded for speed
 
+  virtual void  LoadBiasWtVal(float bwt, UnitVars* u, Network* net);
+  // #CAT_Structure load bias weight value into bias weights of given unit -- handles any post-loading updates directly
+    
   virtual void  Compute_Netin(UnitVars* u, Network* net, int thr_no);
   // #CAT_Activation compute net input: activations times weights (receiver based)
   virtual void  Compute_SentNetin(UnitVars* u, Network* net, float sent_netin);

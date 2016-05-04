@@ -71,7 +71,7 @@ void LeabraNetStats::Initialize() {
   trg_max_act_crit = 0.5f;
   off_errs = true;
   on_errs = true;
-  cos_err_lrn_thr = -1.0f;
+  agg_unlearnable = false;
 }
 
 void LeabraNetMisc::Initialize() {
@@ -1921,10 +1921,6 @@ void LeabraNetwork::Compute_dWt_VecVars_Thr(int thr_no) {
 
 
 void LeabraNetwork::Compute_dWt() {
-  if(lstats.cos_err_lrn_thr > -1.0f) {		  // note: requires computing err before calling this!
-    if(cos_err < lstats.cos_err_lrn_thr) return; // didn't make threshold
-  }
-
   Compute_dWt_Layer_pre();
 
 #ifdef CUDA_COMPILE
@@ -2186,6 +2182,11 @@ void LeabraNetwork::Compute_ExtRew() {
   }
 }
 
+bool LeabraNetwork::AggPerfStats() {
+  if(!unlearnable_trial) return true;
+  return lstats.agg_unlearnable;
+}
+
 void LeabraNetwork::Compute_NormErr() {
   NET_THREAD_CALL(LeabraNetwork::Compute_NormErr_Thr);
   Compute_NormErr_Agg();
@@ -2229,11 +2230,8 @@ void LeabraNetwork::Compute_NormErr_Agg() {
   }
   if(nerr_avail > 0.0f) {
     norm_err = nerr_sum / nerr_avail; // normalize contribution across layers
-
-    if(lstats.cos_err_lrn_thr > -1.0f) {
-      if(cos_err < lstats.cos_err_lrn_thr) return; // didn't make threshold - don't add to global
-    }
-    avg_norm_err.Increment(norm_err);
+    if(AggPerfStats())
+      avg_norm_err.Increment(norm_err);
   }
   else {
     norm_err = 0.0f;
@@ -2300,16 +2298,19 @@ float LeabraNetwork::Compute_CosErr_Agg() {
   if(n_lays > 0) {
     cosv /= (float)n_lays;
     cos_err = cosv;
-    avg_cos_err.Increment(cos_err);
+    if(AggPerfStats())
+      avg_cos_err.Increment(cos_err);
 
     if(net_misc.deep) {
       cosvp /= (float)n_lays;
       cos_err_prv = cosvp;
-      avg_cos_err_prv.Increment(cos_err_prv);
+      if(AggPerfStats())
+        avg_cos_err_prv.Increment(cos_err_prv);
 
       cosvsp /= (float)n_lays;
       cos_err_vs_prv = cosvsp;
-      avg_cos_err_vs_prv.Increment(cos_err_vs_prv);
+      if(AggPerfStats())
+        avg_cos_err_vs_prv.Increment(cos_err_vs_prv);
     }
   }
   else {
@@ -2632,18 +2633,9 @@ void LeabraNetwork::Compute_PlusStats_Agg() {
 }
 
 void LeabraNetwork::Compute_PlusStats() {
-  if(unlearnable_trial) {
-    sse = 0.0f;                 // ignore errors..
-    norm_err = 0.0f;
-    cos_err = 0.0f;
-    cos_err_prv = 0.0f;
-    cos_err_vs_prv = 0.0f;
-  }
-  else {
-    NET_THREAD_CALL(LeabraNetwork::Compute_PlusStats_Thr); // do all threading at once
-    Compute_PlusStats_Agg();
-    Compute_ExtRew();
-  }
+  NET_THREAD_CALL(LeabraNetwork::Compute_PlusStats_Thr); // do all threading at once
+  Compute_PlusStats_Agg();
+  Compute_ExtRew();
 }
 
 void LeabraNetwork::Compute_AbsRelNetin() {

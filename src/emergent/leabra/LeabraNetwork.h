@@ -110,7 +110,7 @@ public:
   float		trg_max_act_crit; // #CAT_Statistic criterion for target-layer maximum activation (trg_max_act) -- rt_cycles is recorded when trg_max_act first exceeds this criterion
   bool		off_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly off (should have been on but were actually off) -- either 1 or both of off_errs and on_errs must be set
   bool		on_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
-  float		cos_err_lrn_thr; // #CAT_Learning learning threshold for cos_err -- if cos err is below this value, then no learning occurs -- prevents learning when things are too far away from expectations -- esp useful for leabra ti (see also unlearnable_trial flag)
+  bool          agg_unlearnable; // #DEF_false #CAT_Statistic should unlearnable trials be aggregated into epoch-level summary stats?  default is not to (i.e., false)
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
@@ -640,6 +640,9 @@ public:
                             LeabraLayerSpec* lay_spec = NULL);
   // #BUTTON #ARGC_1 #NULL_OK #NULL_TEXT_NewReportData create a data table with the current layer average activations (acts_m_avg) and the values specified in the layerspec avg_act.init -- this is useful for setting the .init values accurately based on actual levels 
 
+  virtual bool  AggPerfStats();
+  // #CAT_Statistic test for whether to aggregate (into the epoch level averages) performance evaluating statistics on this trial -- returns false for unlearnable trials if lstats.agg_unlearnable is false, otherwise always true (pending further development)
+  
   virtual void	Set_ExtRew(bool avail, float ext_rew_val);
   // #CAT_Statistic set ext_rew_avail and ext_rew value -- for script access to these values
   virtual void	Compute_ExtRew();

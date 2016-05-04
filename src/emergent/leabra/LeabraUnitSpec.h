@@ -692,6 +692,7 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //        General Init functions
 
+  void         LoadBiasWtVal(float bwt, UnitVars* u, Network* net) override;
   void         Init_Vars(UnitVars* uv, Network* net, int thr_no) override;
   void         Init_Weights(UnitVars* uv, Network* net, int thr_no) override;
   void         Init_Acts(UnitVars* uv, Network* net, int thr_no) override;
