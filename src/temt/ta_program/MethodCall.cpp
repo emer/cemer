@@ -187,18 +187,19 @@ bool MethodCall::CvtFmCode(const String& code) {
   obj = pv;
   if(rval.nonempty())
     result_var = FindVarNameInScope(rval, true); // true = give option to make one
-  UpdateAfterEdit_impl();                          // update based on obj
+  if(obj)
+    obj_type = obj->act_object_type();
+  else {
+    obj_type = &TA_taBase; // placeholder
+  }
   MethodDef* md = obj_type->methods.FindName(methnm);
   if(md) {
     method = md;
-    UpdateAfterEdit_impl();                        // update based on obj
-  }
-  // now tackle the args
-  // if none of the args have been set we need to get them added to the args list before parsing
-  if (md) {
-    if (meth_args.size == 0) {
-      meth_args.UpdateFromMethod(md);
-    }
+    meth_sig = method->prototype();
+    meth_desc = method->desc;
+    meth_args.UpdateFromMethod(method);
+    // now tackle the args
+    // if none of the args have been set we need to get them added to the args list before parsing
     String args = trim(code_copy.after('('));
     args = trim(args.before(')', -1));
     meth_args.ParseArgString(args);
