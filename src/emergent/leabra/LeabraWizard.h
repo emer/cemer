@@ -48,6 +48,10 @@ public:
   virtual bool	DeepLeabra(LeabraNetwork* net, const String& lay_name_contains = "");
   // #MENU_BUTTON configure DeepLeabra specs and layers, for hidden layers in the network (all or optionally those that contain given string) -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers
 
+  virtual bool	DeepLeabraCopy(LeabraNetwork* net, const String& lay_name_contains,
+                               LeabraLayer* source_deep_layer);
+  // #MENU_BUTTON #PROJ_SCOPE_2 configure DeepLeabra layer(s) with name containing given string, copying specs from given source deep layer which is already configured -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers
+  
   virtual bool	SRNContext(LeabraNetwork* net);
   // #MENU_BUTTON configure a simple-recurrent-network context layer in the network
 

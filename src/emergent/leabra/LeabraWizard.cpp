@@ -97,6 +97,7 @@ String LeabraWizard::RenderWizDoc_network() {
   rval += String("\
 * [[<this>.LeabraTI()|LeabraTI]] -- configure specs and layers for LeabraTI -- temporal integration of information over time, based on deep neocortical layer biology -- functionally similar to an SRN but auto-encoding and predictive\n\
 * [[<this>.DeepLeabra()|DeepLeabra]] -- configure DeepLeabra specs and layers, for hidden layers in the network (all or optionally those that contain given string) -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers\n\
+:* [[<this>.DeepLeabraCopy()|DeepLeabraCopy]] -- configure DeepLeabra layer(s) with name containing given string, copying specs from given source deep layer which is already configured -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers\n\
 * [[<this>.SRNContext()|SRN Context]] -- configure a network with a simple-recurrent-network (SRN) context layer\n\
 * [[<this>.UnitInhib()|Unit Inhib]] -- configure unit-based inhibition for all layers in selected network (as compared with standard kWTA inhibition) ('''NOTE: parameters are out of date''').\n\
 * [[<this>.Hippo()|Hippo]] -- configure a Hippocampus using theta-phase specs -- high functioning hippocampal episodic memory system.\n\
@@ -547,6 +548,7 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, const String& lay_name_contain
   net->Build();
   // build first so we can use directional information from existing connections
 
+  net->StructUpdate(true);
   for(int li=net->layers.leaves-1; li >= 0; li--) {
     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
     if(lay->layer_type != Layer::HIDDEN) continue;
@@ -608,9 +610,185 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, const String& lay_name_contain
     }
   }
   
+  net->StructUpdate(false);
   net->Build();
 
   String msg = "DeepLeabra Configuration complete!";
+  taMisc::Confirm(msg);
+  
+  return true;
+}
+
+bool LeabraWizard::DeepLeabraCopy(LeabraNetwork* net, const String& lay_name_contains,
+                                  LeabraLayer* src_d_lay) {
+  if(TestError(!net, "DeepLeabraCopy", "must have basic constructed network first")) {
+    return false;
+  }
+  if(TestError(!src_d_lay, "DeepLeabraCopy", "must specify a source_deep_layer")) {
+    return false;
+  }
+  if(TestError(lay_name_contains.empty(), "DeepLeabraCopy",
+               "must specify lay_name_contains")) {
+    return false;
+  }
+
+  LeabraLayer* src_s_lay = NULL;
+  LeabraLayer* src_trc_lay = NULL;
+  
+  LeabraUnitSpec* s_uns = NULL;
+  LeabraUnitSpec* d_uns = NULL;
+  LeabraUnitSpec* trc_uns = NULL;
+
+  LeabraLayerSpec* s_ls = NULL;
+  LeabraLayerSpec* d_ls = NULL;
+  LeabraLayerSpec* trc_ls = NULL;
+  
+  DeepCtxtConSpec* ti_ctxt = NULL;
+  LeabraConSpec* d_fm_trc = NULL;
+  LeabraConSpec* s_fm_trc = NULL;
+  LeabraConSpec* to_trc = NULL;
+  LeabraConSpec* deep_td = NULL;
+  SendDeepRawConSpec* d_to_trc = NULL;
+  SendDeepModConSpec* dmod = NULL;
+  ProjectionSpec* deep_to_trc_prjn = NULL;
+  ProjectionSpec* ctxt_prjn = NULL;
+  ProjectionSpec* to_trc_prjn = NULL;
+  ProjectionSpec* d_fm_trc_prjn = NULL;
+  ProjectionSpec* s_fm_trc_prjn = NULL;
+  ProjectionSpec* s_fm_d_prjn = NULL;
+
+  d_uns = (LeabraUnitSpec*)src_d_lay->GetUnitSpec();
+  d_ls = (LeabraLayerSpec*)src_d_lay->GetLayerSpec();
+  
+  Projection* prjn;
+  for(int ip=0; ip<src_d_lay->projections.size; ip++) {
+    prjn = src_d_lay->projections[ip];
+    if(prjn->off) continue;
+    LeabraLayer* fm = (LeabraLayer*)prjn->from.ptr();
+    ProjectionSpec* ps = prjn->GetPrjnSpec();
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->GetConSpec();
+    if(!ti_ctxt && cs->InheritsFrom(&TA_DeepCtxtConSpec)) {
+      ti_ctxt = (DeepCtxtConSpec*)cs;
+      if(!src_s_lay)
+        src_s_lay = fm;
+    }
+    if(!src_trc_lay && fm->name.endsWith("trc")) {
+      src_trc_lay = fm;
+      d_fm_trc = cs;
+      d_fm_trc_prjn = ps;
+    }
+  }
+
+  if(TestError(!src_s_lay, "DeepLeabraCopy",
+               "could not find source superficial layer from source deep layer -- looked for DeepCtxtConSpec projection into deep layer"))
+    return false;
+  if(TestError(!src_trc_lay, "DeepLeabraCopy",
+               "could not find source TRC layer from source deep layer -- looked for recv prjn from layer ending with trc"))
+    return false;
+
+  s_uns = (LeabraUnitSpec*)src_s_lay->GetUnitSpec();
+  s_ls = (LeabraLayerSpec*)src_s_lay->GetLayerSpec();
+  
+  trc_uns = (LeabraUnitSpec*)src_trc_lay->GetUnitSpec();
+  trc_ls = (LeabraLayerSpec*)src_trc_lay->GetLayerSpec();
+  
+  for(int ip=0; ip<src_s_lay->projections.size; ip++) {
+    prjn = src_s_lay->projections[ip];
+    if(prjn->off) continue;
+    LeabraLayer* fm = (LeabraLayer*)prjn->from.ptr();
+    ProjectionSpec* ps = prjn->GetPrjnSpec();
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->GetConSpec();
+    if(!s_fm_trc && fm->name.endsWith("trc")) {
+      s_fm_trc = cs;
+      s_fm_trc_prjn = ps;
+    }
+    if(fm == src_d_lay && cs->InheritsFrom(&TA_SendDeepModConSpec)) {
+      dmod = (SendDeepModConSpec*)cs;
+      s_fm_d_prjn = ps;
+    }
+  }
+
+  for(int ip=0; ip<src_trc_lay->projections.size; ip++) {
+    prjn = src_trc_lay->projections[ip];
+    if(prjn->off) continue;
+    LeabraLayer* fm = (LeabraLayer*)prjn->from.ptr();
+    ProjectionSpec* ps = prjn->GetPrjnSpec();
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->GetConSpec();
+    if(fm == src_d_lay) {
+      to_trc = cs;
+      to_trc_prjn = ps;
+    }
+    else if(!d_to_trc && cs->InheritsFrom(&TA_SendDeepRawConSpec)) {
+      d_to_trc = (SendDeepRawConSpec*)cs;
+      deep_to_trc_prjn = ps;
+    }
+  }
+
+  net->specs.UpdateAllSpecs();
+
+  net->Build();
+  // build first so we can use directional information from existing connections
+
+  net->StructUpdate(true);
+  
+  for(int li=net->layers.leaves-1; li >= 0; li--) {
+    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
+    if(lay->layer_type != Layer::HIDDEN) continue;
+    if(lay->name.endsWith("trc")) continue;
+    if(lay->name.endsWith("d")) continue;
+    if(!lay->name.contains(lay_name_contains)) continue;
+
+    lay->SetUnitSpec(s_uns);
+    lay->SetLayerSpec(s_ls);
+      
+    LeabraLayer* deep = (LeabraLayer*)net->FindMakeLayer(lay->name + "_d");
+    deep->un_geom = lay->un_geom;
+    deep->unit_groups = lay->unit_groups;
+    deep->gp_geom = lay->gp_geom;
+    net->layers.MoveAfter(lay, deep);
+    deep->PositionBehind(lay, 2);
+    deep->SetUnitSpec(d_uns);
+    deep->SetLayerSpec(d_ls);
+
+    LeabraLayer* trc = (LeabraLayer*)net->FindMakeLayer(lay->name + "_trc");
+    trc->un_geom = 4;
+    trc->unit_groups = lay->unit_groups;
+    trc->gp_geom = lay->gp_geom;
+    net->layers.MoveAfter(deep, trc);
+    trc->PositionBehind(deep, 2);
+    trc->SetUnitSpec(trc_uns);
+    trc->SetLayerSpec(trc_ls);
+
+    Layer* fm_in = NULL;
+    Layer* fm_out = NULL;
+    for(int pi = 0; pi < lay->projections.size; pi++) {
+      Projection* prjn = lay->projections[pi];
+      if(!fm_in && prjn->direction == Projection::FM_INPUT)
+        fm_in = prjn->from.ptr();
+      if(!fm_out && prjn->direction == Projection::FM_OUTPUT)
+        fm_out = prjn->from.ptr();
+    }
+
+    //	  	 	   to		 from		prjn_spec	con_spec
+    net->FindMakePrjn(lay, trc, s_fm_trc_prjn,  s_fm_trc);
+    net->FindMakePrjn(lay, deep, s_fm_d_prjn,  dmod);
+    
+    net->FindMakePrjn(deep, lay, ctxt_prjn,  ti_ctxt);
+    net->FindMakePrjn(deep, trc, d_fm_trc_prjn,  d_fm_trc);
+
+    net->FindMakePrjn(trc, deep, to_trc_prjn,  to_trc);
+    if(fm_in) {
+      net->FindMakePrjn(trc, fm_in, deep_to_trc_prjn, d_to_trc);
+    }
+    // if(fm_out) {
+    //   net->FindMakePrjn(deep, fm_out, gp_one_to_one,  deep_td);
+    // }
+  }
+  
+  net->StructUpdate(false);
+  net->Build();
+
+  String msg = "DeepLeabraCopy Configuration complete!";
   taMisc::Confirm(msg);
   
   return true;
