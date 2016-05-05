@@ -96,7 +96,7 @@ String LeabraWizard::RenderWizDoc_network() {
   String rval = inherited::RenderWizDoc_network();
   rval += String("\
 * [[<this>.LeabraTI()|LeabraTI]] -- configure specs and layers for LeabraTI -- temporal integration of information over time, based on deep neocortical layer biology -- functionally similar to an SRN but auto-encoding and predictive\n\
-* [[<this>.DeepLeabra()|DeepLeabra]] -- configure DeepLeabra specs and layers, for all hidden layers in the network -- creates corresponding deep and trc layers for predictive auto-encoder learning from deep layer driver projections coming from lower layers\n\
+* [[<this>.DeepLeabra()|DeepLeabra]] -- configure DeepLeabra specs and layers, for hidden layers in the network (all or optionally those that contain given string) -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers\n\
 * [[<this>.SRNContext()|SRN Context]] -- configure a network with a simple-recurrent-network (SRN) context layer\n\
 * [[<this>.UnitInhib()|Unit Inhib]] -- configure unit-based inhibition for all layers in selected network (as compared with standard kWTA inhibition) ('''NOTE: parameters are out of date''').\n\
 * [[<this>.Hippo()|Hippo]] -- configure a Hippocampus using theta-phase specs -- high functioning hippocampal episodic memory system.\n\
@@ -427,7 +427,7 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
   return true;
 }
 
-bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
+bool LeabraWizard::DeepLeabra(LeabraNetwork* net, const String& lay_name_contains) {
   if(TestError(!net, "DeepLeabra", "must have basic constructed network first")) {
     return false;
   }
@@ -452,18 +452,33 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
   stduns->deep.on = true;
   
   s_uns->SetUnique("deep", true);
+  s_uns->deep.on = true;
   s_uns->deep.role = DeepSpec::SUPER;
   d_uns->SetUnique("deep", true);
+  d_uns->deep.on = true;
   d_uns->deep.role = DeepSpec::DEEP;
   trc_uns->SetUnique("deep", true);
+  trc_uns->deep.on = true;
   trc_uns->deep.role = DeepSpec::TRC;
+  trc_uns->SetUnique("avg_l", true);
+  trc_uns->avg_l.init = 0.3f;
+  trc_uns->avg_l.max = 1.2f;
+  trc_uns->avg_l.min = 0.2f;
   
   fm_trc->SetUnique("wt_scale", true);
   fm_trc->wt_scale.rel = 0.1f;
   d_to_trc->SetUnique("learn", true);
-  d_to_trc->learn = false;
+  d_to_trc->learn = true;
   d_to_trc->SetUnique("rnd", true);
   d_to_trc->rnd.var = 0.0f;
+  d_to_trc->SetUnique("wt_scale", true);
+  d_to_trc->wt_scale.rel = 1.0f;
+  d_to_trc->SetUnique("lrate", true);
+  d_to_trc->lrate = 0.02f;
+  d_to_trc->SetUnique("xcal", true);
+  d_to_trc->xcal.m_lrn = 0.0f;
+  d_to_trc->xcal.set_l_lrn = true;
+  d_to_trc->xcal.l_lrn = 1.0f;
 
   deep_td->SetUnique("wt_scale", true);
   deep_td->wt_scale.rel = 0.2f;
@@ -478,6 +493,7 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
   deep_prjn->send_gp_start = 0;
   deep_prjn->wrap = true;
   deep_prjn->init_wts = true;
+  deep_prjn->set_scale = true;
   deep_prjn->wts_type = TiledGpRFPrjnSpec::GAUSSIAN;
   deep_prjn->full_gauss.on = true;
   deep_prjn->full_gauss.sigma = 1.2f;
@@ -487,8 +503,8 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
   deep_prjn->gp_gauss.sigma = 1.2f;
   deep_prjn->gp_gauss.ctr_mv = 0.8f;
   deep_prjn->gp_gauss.wrap_wts = false;
-  deep_prjn->wt_range.min = 0.3f;
-  deep_prjn->wt_range.max = 0.7f;
+  deep_prjn->wt_range.min = 0.6f;
+  deep_prjn->wt_range.max = 1.0f;
 
   trc_prjn->send_gp_size = 3;
   trc_prjn->send_gp_skip = 1;
@@ -534,12 +550,13 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
   for(int li=net->layers.leaves-1; li >= 0; li--) {
     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
     if(lay->layer_type != Layer::HIDDEN) continue;
-    if(lay->name.contains("trc")) continue;
+    if(lay->name.endsWith("trc")) continue;
     if(lay->name.endsWith("d")) continue;
+    if(lay_name_contains.nonempty() && !lay->name.contains(lay_name_contains)) continue;
 
     lay->SetUnitSpec(s_uns);
       
-    LeabraLayer* deep = (LeabraLayer*)net->FindMakeLayer(lay->name + "d");
+    LeabraLayer* deep = (LeabraLayer*)net->FindMakeLayer(lay->name + "_d");
     deep->un_geom = lay->un_geom;
     deep->unit_groups = lay->unit_groups;
     deep->gp_geom = lay->gp_geom;
@@ -547,7 +564,7 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
     deep->PositionBehind(lay, 2);
     deep->SetUnitSpec(d_uns);
 
-    LeabraLayer* trc = (LeabraLayer*)net->FindMakeLayer(lay->name + "trc");
+    LeabraLayer* trc = (LeabraLayer*)net->FindMakeLayer(lay->name + "_trc");
     trc->un_geom = 4;
     trc->unit_groups = lay->unit_groups;
     trc->gp_geom = lay->gp_geom;
@@ -570,9 +587,8 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
       net->FindMakePrjn(lay, trc, trc_prjn,  fm_trc);
       net->FindMakePrjn(lay, deep, gp_one_to_one,  dmod);
       net->FindMakePrjn(trc, deep, trc_prjn,  to_trc);
-      net->FindMakePrjn(deep, trc, trc_prjn,  fm_trc);
-      net->FindMakePrjn(deep, deep, ctxt_prjn,  ti_ctxt);
       net->FindMakePrjn(deep, lay, ctxt_prjn,  ti_ctxt);
+      net->FindMakePrjn(deep, trc, trc_prjn,  fm_trc);
       if(fm_out) {
         net->FindMakePrjn(deep, fm_out, gp_one_to_one,  deep_td);
       }
@@ -581,9 +597,8 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net) {
       net->FindMakePrjn(lay, trc, full_prjn,  fm_trc);
       net->FindMakePrjn(lay, deep, one_to_one,  dmod);
       net->FindMakePrjn(trc, deep, full_prjn,  to_trc);
-      net->FindMakePrjn(deep, trc, full_prjn,  fm_trc);
-      net->FindMakePrjn(deep, deep, full_prjn,  ti_ctxt);
       net->FindMakePrjn(deep, lay, full_prjn,  ti_ctxt);
+      net->FindMakePrjn(deep, trc, full_prjn,  fm_trc);
       if(fm_out) {
         net->FindMakePrjn(deep, fm_out, full_prjn,  deep_td);
       }

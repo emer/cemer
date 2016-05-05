@@ -49,7 +49,7 @@ public:
 public:
   float         El_GetFloat_(const void* it) const override { return (float)*((bool*)it); } // #IGNORE
   const String  El_GetStr_(const void* it) const override { return (String)*((bool*)it); } // #IGNORE note: implicit conversion avoids problems on some compilers
-  void          El_SetFmStr_(void* it, const String& str) override {*((bool*)it) = (bool)str;}  // #IGNORE
+  void          El_SetFmStr_(void* it, const String& str) override {*((bool*)it) = str.toBool();}  // #IGNORE
   const Variant El_GetVar_(const void* it) const override {return Variant(*((bool*)it));} // #IGNORE
   void          El_SetFmVar_(void* it, const Variant& var) override {*((bool*)it) = var.toBool(); };  // #IGNORE
   int           El_Compare_(const void* a, const void* b) const override

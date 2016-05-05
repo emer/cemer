@@ -1421,6 +1421,7 @@ void NetView::Render_net_text() {
 
 void NetView::Render_wt_lines() {
   T3NetNode* node_so = this->node_so(); //cache
+  if(!node_so) return;
 
   bool do_lines = (bool)unit_src && wt_line_disp;
   Layer* src_lay = NULL;

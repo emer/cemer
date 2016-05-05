@@ -45,8 +45,8 @@ public:
   virtual bool	LeabraTI(LeabraNetwork* net);
   // #MENU_BUTTON configure temporal integration (LeabraTI) specs and connections, for all hidden layers in the network -- creates new conspec and unit spec under the basic LeabraConSpec_0 and LeabraUnitSpec_0 specs, and new SELF projections with this conspec set -- requires unitspec deep.on = true and deep_qtr = Q4
 
-  virtual bool	DeepLeabra(LeabraNetwork* net);
-  // #MENU_BUTTON configure DeepLeabra specs and layers, for all hidden layers in the network -- creates corresponding trc layers for predictive auto-encoder learning from deep layer driver projections coming from lower layers
+  virtual bool	DeepLeabra(LeabraNetwork* net, const String& lay_name_contains = "");
+  // #MENU_BUTTON configure DeepLeabra specs and layers, for hidden layers in the network (all or optionally those that contain given string) -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers
 
   virtual bool	SRNContext(LeabraNetwork* net);
   // #MENU_BUTTON configure a simple-recurrent-network context layer in the network

@@ -577,7 +577,7 @@ void ProgVar::SetValFromString(const String& str_val) {
     string_val = str_val;
     break;
   case T_Bool:
-    bool_val = (bool)str_val;
+    bool_val = str_val.toBool();
     break;
   case T_Object: {
     if(str_val == "NULL" || str_val == "null" || str_val == "0") {

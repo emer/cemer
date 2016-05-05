@@ -138,8 +138,9 @@ void BaseSpec::CompareWithChildren() {
 
 void BaseSpec::SetUnique(const String& memb_nm, bool on) {
   MemberDef* md = FindMember(memb_nm);
-  if(md)
+  if(md) {
     SetUnique(md->idx, on);
+  }
   else {
     TestError(GetTypeDef()->members.size > 0, "SetUnique",
               "Member named:", memb_nm, "not found");

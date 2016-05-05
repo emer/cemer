@@ -821,7 +821,7 @@ SubversionClient::Checkout(const String& url_in, const String& to_wc, int rev, b
 
   // Working copy doesn't exist yet, so create it by checking out the URL.
 
-  if(to_wc) {
+  if(to_wc.nonempty()) {
     SetWorkingCopyPath(to_wc);
   }
 

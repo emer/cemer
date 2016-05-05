@@ -321,7 +321,8 @@ public:
   operator double() const { return atof(chars()); }
   operator char*() { return (char*)chars_ptr(); }
   operator const char*() const {return mrep->s;}
-  operator bool() const { return toBool(); }
+  //  operator bool() const { return nonempty(); }
+  // actual C++ use of string bool is typically about whether it is empty or not -- not converting from a bool string rep -- use explict toBool to get that
 
   bool                  isInt() const;
   // #CAT_Convert true if the string contains a value that can be interpreted as an integer [+-]dd*

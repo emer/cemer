@@ -148,7 +148,7 @@ TypeDef::TypeDef(const String& nm, int type_flags, bool global_obj, uint siz,
   if(IsAnyPtr()) {
     size = sizeof(void*);
   }
-  if (c_nm) c_name = c_nm;
+  if (c_nm.nonempty()) c_name = c_nm;
   if(global_obj)
     taRefN::Ref(this);          // reference if static (non-new'ed) global object
 }

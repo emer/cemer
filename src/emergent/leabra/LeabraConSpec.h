@@ -362,7 +362,7 @@ public:
 
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
-  WtBalanceSpec wt_bal;         // #CAT_Learning computes weight balance factor 
+  WtBalanceSpec wt_bal;         // #CAT_Learning #CONDSHOW_ON_learn computes weight balance factor 
   AdaptWtScaleSpec adapt_scale;	// #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
   SlowWtsSpec   slow_wts;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
   DeepLrateSpec deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without

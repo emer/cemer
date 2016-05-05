@@ -126,11 +126,13 @@ BaseSpec* BaseSpec_Group::FindParent() {
 BaseSpec* BaseSpec_Group::FindMakeSpec(const String& nm, TypeDef* tp, bool& nw_itm, const String& alt_nm) {
   nw_itm = false;
   BaseSpec* sp = NULL;
-  if(nm) {
+  if(nm.nonempty()) {
     sp = (BaseSpec*)FindName(nm);
-    if((sp == NULL) && (alt_nm)) {
+    if((sp == NULL) && alt_nm.nonempty()) {
       sp = (BaseSpec*)FindName(alt_nm);
-      if(sp) sp->name = nm;
+      if(sp) {
+        sp->SetName(nm);
+      }
     }
   }
   else {
@@ -138,23 +140,26 @@ BaseSpec* BaseSpec_Group::FindMakeSpec(const String& nm, TypeDef* tp, bool& nw_i
   }
   if(sp == NULL) {
     sp = (BaseSpec*)NewEl(1, tp);
-    if(nm)
+    if(nm.nonempty()) {
       sp->name = nm;
+    }
     nw_itm = true;
   }
   else if(!sp->InheritsFrom(tp)) {
     RemoveEl(sp);
     sp = (BaseSpec*)NewEl(1, tp);
-    if(nm)
+    if(nm.nonempty()) {
       sp->name = nm;
+    }
     nw_itm = true;
   }
   return sp;
 }
 
 bool BaseSpec_Group::RemoveSpec(const String& nm, TypeDef* tp) {
-  if(nm)
+  if(nm.nonempty()) {
     return RemoveName(nm);
+  }
 
   int idx = FindTypeIdx(tp);
   if(idx >= 0)
