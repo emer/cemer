@@ -27,7 +27,7 @@ ${debug} =       false
 
 Initialize
     Set Suite Variable     ${verbose}       ${false}
-    Set Suite Variable     ${project}       ./test-projects/TestCvtFmCode.proj
+    Set Suite Variable     ${project}       ./test-projects/TestWizard.proj
     Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
 
 Connection
@@ -47,7 +47,16 @@ General RunState
     Status OK Match Result     ${output}             4
 
 
+
+
+DeepLeabra
+    Ensure Emergent Free
+    Run Emergent Program	TestDeepLeabra
+    Run Emergent Program	MasterTrain
+    DataTable Cell Value Should Equal    EpochOutputData	0	epoch		0
+
 LeabraTI
+    Restart Emergent
     Ensure Emergent Free
     Run Emergent Program	TestLeabraTI
     Run Emergent Program	MasterTrain
