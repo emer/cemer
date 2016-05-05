@@ -67,22 +67,36 @@ private:
   InitProcRegistrar& operator =(const InitProcRegistrar&);
 };
 
-class TA_API taExpandDefaults {
+class TA_API taExpandDefaultsProject {
   // #EDIT_INLINE defaults for expanding top level groups
 public:
-  int             docs;
-  int             wizards;
-  int             ctrl_panels;
-  int             param_sets;
-  int             data;
-  int             programs;
-  int             viewers;
-  int             networks;
-  int             network;
-  int             specs;
-  int             layers;
+  int             docs;  // #MIN_0
+  int             wizards;  // #MIN_0
+  int             ctrl_panels;  // #MIN_0
+  int             param_sets;  // #MIN_0
+  int             data;  // #MIN_0
+  int             programs;  // #MIN_0
+  int             viewers;  // #MIN_0
+  int             networks;  // #MIN_0
+  int             network;  // #MIN_0
+  int             specs;  // #MIN_0
+  int             layers;  // #MIN_0
   
-  taExpandDefaults();
+  taExpandDefaultsProject();
+};
+
+class TA_API taExpandDefaultsProgram {
+  // #EDIT_INLINE defaults for expanding program groups in program editor
+public:
+  int             objs;  // #MIN_0
+  int             types;  // #MIN_0
+  int             args;  // #MIN_0 #MAX_1
+  int             vars;  // #MIN_0 #MAX_1
+  int             functions;  // #MIN_0
+  int             init_code;  // #MIN_0
+  int             prog_code;  // #MIN_0
+  
+  taExpandDefaultsProgram();
 };
 
 
@@ -273,8 +287,8 @@ public:
   static int            max_display_width;  // #SAVE #EXPERT #MIN_10 #CAT_GUI maximum width of console display (in chars) -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places -- may not want this to get too big
   static int            indent_spc;     // #SAVE #EXPERT #MIN_1 #MAX_8 #DEF_2 #CAT_GUI how many spaces to use per indent level
   static int            display_height;  // #SAVE #HIDDEN #CAT_GUI height of console display (in rows) -- set automatically by gui console -- used for paging
-  static taExpandDefaults expand_defaults; // #SAVE #CAT_GUI default depths for expanding top level groups -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all Programs will be shown within all program groups and subgroups), 2+ = expand to second and beyond level (only applicable for specs, where it expands further children of specs at higher levels)
-  
+  static taExpandDefaultsProject expand_defaults_project; // #SAVE #CAT_GUI default depths for expanding top level groups -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all Programs will be shown within all program groups and subgroups), 2+ = expand to second and beyond level (only applicable for specs, where it expands further children of specs at higher levels)
+  static taExpandDefaultsProgram expand_defaults_program; // #SAVE #CAT_GUI default depths for expanding program editor sections -- 0 = don't expand, 1 = expand to first level
   static int            undo_depth;     // #SAVE #CAT_GUI #MIN_10 how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
   static int            undo_data_max_cells; // #SAVE #CAT_GUI maximum number of cells in a data table to save an undo copy -- if above this number of cells, it won't be saved for undo (only the column structure will be retained)
   static int            auto_save_data_max_cells; // #SAVE #CAT_GUI if column of data table has more than this number of cells, it won't be saved during auto_save (column structure will be retained)

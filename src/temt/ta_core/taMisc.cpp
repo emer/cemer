@@ -185,12 +185,12 @@ taThreadDefaults::taThreadDefaults() {
 taThreadDefaults taMisc::thread_defaults;
 bool    taMisc::dmem_output_all = false;
 
-taExpandDefaults::taExpandDefaults() {
+taExpandDefaultsProject::taExpandDefaultsProject() {
   docs = 1;
   wizards = 1;
   ctrl_panels = 1;
   param_sets = 0;
-  data = 0  ;
+  data = 1;
   programs = 1;
   viewers = 0;
   networks = 1;
@@ -198,9 +198,18 @@ taExpandDefaults::taExpandDefaults() {
   specs = 1;
   layers = 0;
 }
+taExpandDefaultsProject taMisc::expand_defaults_project;
 
-taExpandDefaults taMisc::expand_defaults;
-
+taExpandDefaultsProgram::taExpandDefaultsProgram() {
+  objs = 1;
+  types = 1;
+  args = 1;
+  vars = 1;
+  functions = 7;
+  init_code = 7;
+  prog_code = 7;
+}
+taExpandDefaultsProgram taMisc::expand_defaults_program;
 
 ////////////////////////////////////////////////////////
 //      TA GUI parameters

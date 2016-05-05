@@ -842,27 +842,27 @@ iColor taiMisc::ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrig
 
 int taiMisc::GetGroupDefaultExpand(const String& group) {
   if (group == "docs")
-    return taMisc::expand_defaults.docs;
+    return taMisc::expand_defaults_project.docs;
   else if (group == "wizards")
-    return taMisc::expand_defaults.wizards;
+    return taMisc::expand_defaults_project.wizards;
   else if (group == "ctrl_panels")
-    return taMisc::expand_defaults.ctrl_panels;
+    return taMisc::expand_defaults_project.ctrl_panels;
   else if (group == "param_sets")
-    return taMisc::expand_defaults.param_sets;
+    return taMisc::expand_defaults_project.param_sets;
   else if (group == "data")
-    return taMisc::expand_defaults.data;
+    return taMisc::expand_defaults_project.data;
   else if (group == "programs")
-    return taMisc::expand_defaults.programs;
+    return taMisc::expand_defaults_project.programs;
   else if (group == "viewers")
-    return taMisc::expand_defaults.viewers;
+    return taMisc::expand_defaults_project.viewers;
   else if (group == "networks")
-    return taMisc::expand_defaults.networks;
+    return taMisc::expand_defaults_project.networks;
   else if (group == "network")
-    return taMisc::expand_defaults.network;
+    return taMisc::expand_defaults_project.network;
   else if (group == "specs")
-    return taMisc::expand_defaults.specs;
+    return taMisc::expand_defaults_project.specs;
   else if (group == "layers")
-    return taMisc::expand_defaults.layers;
+    return taMisc::expand_defaults_project.layers;
   else
     return -1;  // use the default set for class
 }
@@ -870,32 +870,52 @@ int taiMisc::GetGroupDefaultExpand(const String& group) {
 void taiMisc::SetGroupDefaultExpand(const String& group, int depth) {
   taMisc* inst = (taMisc*)TA_taMisc.GetInstance();
   if (group == "docs")
-    inst->expand_defaults.docs = depth;
+    inst->expand_defaults_project.docs = depth;
   else if (group == "wizards")
-    inst->expand_defaults.wizards = depth;
+    inst->expand_defaults_project.wizards = depth;
   else if (group == "ctrl_panels")
-    inst->expand_defaults.ctrl_panels = depth;
+    inst->expand_defaults_project.ctrl_panels = depth;
   else if (group == "param_sets")
-    inst->expand_defaults.param_sets = depth;
+    inst->expand_defaults_project.param_sets = depth;
   else if (group == "data")
-    inst->expand_defaults.data = depth;
+    inst->expand_defaults_project.data = depth;
   else if (group == "programs")
-    inst->expand_defaults.programs = depth;
+    inst->expand_defaults_project.programs = depth;
   else if (group == "viewers")
-    inst->expand_defaults.viewers = depth;
+    inst->expand_defaults_project.viewers = depth;
   else if (group == "networks")
-    inst->expand_defaults.networks = depth;
+    inst->expand_defaults_project.networks = depth;
   else if (group == "network")
-    inst->expand_defaults.network = depth;
+    inst->expand_defaults_project.network = depth;
   else if (group == "specs")
-    inst->expand_defaults.specs = depth;
+    inst->expand_defaults_project.specs = depth;
   else if (group == "layers")
-    inst->expand_defaults.layers = depth;
+    inst->expand_defaults_project.layers = depth;
   else
     taMisc::DebugInfo("SetGroupDefaultExpand - group " + group + " not found");
 
   inst->SaveConfig();
 }
+
+int taiMisc::GetProgramDefaultExpand(const String& group) {
+  if (group == "objs")
+    return taMisc::expand_defaults_program.objs;
+  else if (group == "types")
+    return taMisc::expand_defaults_program.types;
+  else if (group == "args")
+    return taMisc::expand_defaults_program.args;
+  else if (group == "vars")
+    return taMisc::expand_defaults_program.vars;
+  else if (group == "functions")
+    return taMisc::expand_defaults_program.functions;
+  else if (group == "init_code")
+    return taMisc::expand_defaults_program.init_code;
+  else if (group == "prog_code")
+    return taMisc::expand_defaults_program.prog_code;
+  else
+    return -1;  // use the default set for class
+}
+
 
 iMainWindowViewer* taiMisc::FindMainWinParent(QObject* obj) {
   QObject* tobj = obj;

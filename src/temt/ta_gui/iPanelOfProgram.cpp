@@ -16,6 +16,9 @@
 #include "iPanelOfProgram.h"
 #include <Program>
 #include <ProgCode>
+#include <Function>
+#include <taMisc>
+#include <taiMisc>
 
 #include <iMainWindowViewer>
 #include <ProgramToolBar>
@@ -38,35 +41,35 @@ iPanelOfProgram::iPanelOfProgram(taiSigLink* dl_)
   pe->items->setDecorateEnabled(true); //TODO: maybe make this an app option
   connect(pe->items, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
     this, SLOT(items_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
+  
+  cur_expand_depth = -1;
 }
 
-void iPanelOfProgram::items_CustomExpandFilter(iTreeViewItem* item,
-  int level, bool& expand)
+void iPanelOfProgram::items_CustomExpandFilter(iTreeViewItem* item, int level, bool& expand)
 {
-  if (level < 1) return; // always expand root level
-  // by default, expand code guys throughout, plus top-level args, vars and objs
+  if (level < 1) {
+    return; // always expand root level
+  }
+  
   taiSigLink* dl = item->link();
-  TypeDef* typ = dl->GetDataTypeDef();
-  if((level <= 1) && (typ->InheritsFrom(&TA_ProgVar_List) ||
-                      typ->InheritsFrom(&TA_ProgType_List))) return; // only top guys: args, vars
-  if(typ->DerivesFrom(&TA_ProgEl_List) || typ->DerivesFrom(&TA_ProgObjList)
-     || typ->DerivesFrom(&TA_Function_List))
-    return;                     // expand
-  if(typ->InheritsFrom(&TA_ProgEl)) {
-    String mbr = typ->OptionAfter("DEF_CHILD_");
-    if(!mbr.empty()) {
-      MemberDef* md = typ->members.FindName(mbr);
-      if(md) {
-        if(md->type->InheritsFrom(&TA_ProgEl_List)) return; // expand
-      }
-      expand = false;           // don't expand any non-progel def childs
+  int depth = taiMisc::GetProgramDefaultExpand(dl->GetName());  // get user's preference for top level proogram groups
+  if (depth > -1) {  // must be one of the program groups (objs, types, vars, etc)
+    cur_expand_depth = depth;
+    if (depth == 0) {
+      expand = false;
+      return;
     }
-    else {
-      return;                   // ok to expand
+    else if (depth >= 1) {
+      return; 
     }
   }
-  // otherwise, nada
-  expand = false;
+  else if (level <= cur_expand_depth) {
+    return;
+  }
+  else {
+    expand = false;
+    return;
+  }
 }
 
 void iPanelOfProgram::OnWindowBind_impl(iPanelViewer* itv) {
