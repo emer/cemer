@@ -43,7 +43,7 @@ void RGBA::UpdateAfterEdit_impl(){
     }
     else {
       if(!(iColor::find((char*)name,r,g,b))){
-	taMisc::Error("Color: " , name , " not found for this display");
+	taMisc::Warning("RGBA Color: " , name , " not found for this display");
       }
     }
   }

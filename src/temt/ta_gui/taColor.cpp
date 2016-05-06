@@ -31,7 +31,7 @@ void taColor::setColor(const iColor& cp) {
 
 void taColor::setColorName(const String& nm) {
   if(!(iColor::find((const char*)nm,r,g,b))){
-    taMisc::Error("Color: " , nm , " not found for this display");
+    taMisc::Error("taColor: " , nm , " not found for this display");
   }
 }
 
