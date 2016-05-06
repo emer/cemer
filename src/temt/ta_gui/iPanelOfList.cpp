@@ -45,6 +45,8 @@ iPanelOfList::iPanelOfList(taiSigLink* dl_, const String& custom_name_)
   // set default sort order to ASC -- don't know why def is DESC!
   list->sortItems(0, Qt::AscendingOrder);
   FillList();
+  list->resizeColumnToContents(1);  // the second column is the key column - resize the first time - then user has control
+
 }
 
 iPanelOfList::~iPanelOfList() {
