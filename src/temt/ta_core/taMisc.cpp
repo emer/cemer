@@ -203,7 +203,7 @@ taExpandDefaultsProject taMisc::expand_defaults_project;
 taExpandDefaultsProgram::taExpandDefaultsProgram() {
   objs = 1;
   types = 1;
-  args = 0;
+  args = 1;
   vars = 1;
   functions = 7;
   init_code = 7;
