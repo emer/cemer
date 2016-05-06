@@ -82,12 +82,14 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos,
       goto show_menu;
     host_->helperObj()->DropEditAction(ea & iClipData::EA_DROP_MOVE2); // is only one or the other
     goto exit;
-  } else if (key_mods == Qt::ControlModifier) { // Copy
+  }
+  else if (key_mods == Qt::ControlModifier) { // Copy
     if ((ea & iClipData::EA_DROP_COPY2) == iClipData::EA_DROP_COPY2)
       goto show_menu;
     host_->helperObj()->DropEditAction(ea & iClipData::EA_DROP_COPY2); // is only one or the other
     goto exit;
-  } else if (key_mods == Qt::AltModifier) { // Link
+  }
+  else if (key_mods == Qt::AltModifier) { // Link
     if ((ea & iClipData::EA_DROP_LINK2) == iClipData::EA_DROP_LINK2)
       goto show_menu;
     host_->helperObj()->DropEditAction(ea & iClipData::EA_DROP_LINK2); // is only one or the other
@@ -120,15 +122,18 @@ show_menu:
         host_->helperObj(),  SLOT(DropEditAction(int)),
         iClipData::EA_DROP_MOVE_INTO, QKeySequence());
     }
-  } else {
-    if (ea & iClipData::EA_DROP_MOVE)
+  }
+  else {
+    if (ea & iClipData::EA_DROP_MOVE) {
       act = menu->AddItem("&Move Here", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         iClipData::EA_DROP_MOVE, QKeySequence("Shift+"));
-    else if (ea & iClipData::EA_DROP_MOVE_INTO)
+    }
+    else if (ea & iClipData::EA_DROP_MOVE_INTO) {
       act = menu->AddItem("&Move "+IntoOrHere, iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         iClipData::EA_DROP_MOVE_INTO, QKeySequence("Shift+"));
+    }
   }
 
   act = NULL;
@@ -141,30 +146,40 @@ show_menu:
         host_->helperObj(),  SLOT(DropEditAction(int)),
         iClipData::EA_DROP_COPY_INTO, QKeySequence());
     }
-  } else {
-    if (ea & iClipData::EA_DROP_COPY)
+  }
+  else {
+    if (ea & iClipData::EA_DROP_COPY) {
       act = menu->AddItem("&Copy Here", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         iClipData::EA_DROP_COPY, QKeySequence("Ctrl+"));
-    else if (ea & iClipData::EA_DROP_COPY_INTO)
+    }
+    else if (ea & iClipData::EA_DROP_COPY_INTO) {
       act = menu->AddItem("&Copy "+IntoOrHere, iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         iClipData::EA_DROP_COPY_INTO, QKeySequence("Ctrl+"));
+    }
   }
 
-  if (ea & iClipData::EA_PASTE_APPEND)
+  if (ea & iClipData::EA_PASTE_APPEND) {
     act = menu->AddItem("Append to", iAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
       iClipData::EA_PASTE_APPEND, QKeySequence());
+  }
 
-  act = NULL;
-  // Assign only applicable for "On" drops
+  act = NULL;  
   if ((where == iTreeWidgetItem::WI_ON) &&
      (ea & iClipData::EA_DROP_ASSIGN))
-  {
+  { // Assign only applicable for "On" drops
     act = menu->AddItem("Assign To", iAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
       iClipData::EA_DROP_ASSIGN, QKeySequence());
+  }
+  if ((where == iTreeWidgetItem::WI_ON) &&
+     (ea & iClipData::EA_DROP_COMPARE))
+  { // Assign only applicable for "On" drops
+    act = menu->AddItem("Compare To", iAction::int_act,
+      host_->helperObj(),  SLOT(DropEditAction(int)),
+      iClipData::EA_DROP_COMPARE, QKeySequence());
   }
 
   act = NULL;
@@ -274,6 +289,7 @@ void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
   if (ea & iClipData::EA_PASTE_INTO) ++paste_cnt;
   if (ea & iClipData::EA_PASTE_ASSIGN) ++paste_cnt;
   if (ea & iClipData::EA_PASTE_APPEND) ++paste_cnt;
+  if (ea & iClipData::EA_PASTE_COMPARE) ++paste_cnt;
   String txt;
   if (ea & iClipData::EA_PASTE) {
     if (paste_cnt > 1) txt = "Paste"; else txt = "&Paste";
@@ -301,6 +317,13 @@ void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
     mel = menu->AddItem(txt, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = iClipData::EA_PASTE_APPEND;
+    mel->setData(sh_typ);
+  }
+  if (ea & iClipData::EA_PASTE_COMPARE) {
+    if (paste_cnt > 1) txt = "Paste Compare"; else txt = "&Paste Compare";
+    mel = menu->AddItem(txt, taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel->usr_data = iClipData::EA_PASTE_COMPARE;
     mel->setData(sh_typ);
   }
 

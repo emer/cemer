@@ -245,11 +245,12 @@ void taBase::QueryEditActions(taiMimeSource* ms,
   //DST
   // ASSIGN not allowed for multi srcs
   if (ms->isMulti())
-    forbidden |= (iClipData::EA_PASTE_ASSIGN | iClipData::EA_DROP_ASSIGN);
+    forbidden |= (iClipData::EA_PASTE_ASSIGN | iClipData::EA_DROP_ASSIGN |
+                  iClipData::EA_DROP_COMPARE | iClipData::EA_PASTE_COMPARE);
   // not allowed on ro
   if (isGuiReadOnly()) {
     forbidden |= (iClipData::EA_PASTE_ASSIGN | 
-      iClipData::EA_DROP_ASSIGN);
+                  iClipData::EA_DROP_ASSIGN);
   }  
   // note: single is just the degenerate case here
   // for multi, a bit more complicated, since we need to not allow something
@@ -287,6 +288,8 @@ void taBase::QueryEditActionsD_impl(taiMimeSource* ms, int& allowed, int& forbid
     // Assign (copy)
     // note: validation checks for the parent/child scenario
     taBase* obj = ms->tabObject();
+    if(obj)
+      allowed |= (iClipData::EA_PASTE_COMPARE | iClipData::EA_DROP_COMPARE);
     if (CanCopy(obj))
       allowed |= (iClipData::EA_PASTE_ASSIGN | iClipData::EA_DROP_ASSIGN);
     if (CanAppend(obj))
@@ -343,7 +346,6 @@ int taBase::EditActionS_impl(int ea) {
 }
 
 int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
-  //TODO: decode AssignTo
   if (ea & (iClipData::EA_PASTE_ASSIGN | iClipData::EA_DROP_ASSIGN)) {
     // don't show var choice dialogs during assign
     taProject* proj = (taProject*)GetThisOrOwner(&TA_taProject);
@@ -376,6 +378,14 @@ int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
     UpdateAfterEdit();
   }
 
+  if (ea & (iClipData::EA_PASTE_COMPARE | iClipData::EA_DROP_COMPARE)) {
+    taBase* obj = ms->tabObject();
+    bool ok; // dummy
+    if (CheckError((!obj), false, ok,
+      "Could not retrieve object from clipboard"))
+      return iClipData::ER_ERROR;
+    this->DiffCompare(obj);
+  }
   return 0;
 }
 

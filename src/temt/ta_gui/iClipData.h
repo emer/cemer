@@ -138,7 +138,7 @@ public:
     EA_CLEAR		= 0x00002000, // ex. for grid cells
     EA_PASTE_ASSIGN	= 0x00004000, // set sel object from obj on clipboard
     EA_DUPE		= 0x00008000, // duplicate at point of selection
-    EA_PASTE_COMPARE	= 0x000F0000, // compare sel object from obj on clipboard
+    EA_PASTE_COMPARE	= 0x00010000, // compare sel object from obj on clipboard
     EA_CLIP_OP_MASK	= 0x000FFFF0, // masks the clipboard op codes
 
     EA_DRAG		= 0x00100000, // initiation of a drag -- note that src can't distinguish move/copy/link ops
@@ -149,7 +149,7 @@ public:
     EA_DROP_COPY_INTO	= 0x02000000,
     EA_DROP_LINK_INTO	= 0x04000000,
     EA_DROP_MOVE_INTO	= 0x08000000,
-    EA_DROP_COMPARE	= 0xF0000000,
+    EA_DROP_COMPARE	= 0x10000000,
     EA_DRAG_OP_MASK	= 0xFFF00000, // masks the drag/drop op codes
 #ifndef __MAKETA__
     EA_PASTE2		= EA_PASTE | EA_PASTE_INTO, // these guys combine both, to reduce clutter
