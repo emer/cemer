@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9416
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9461
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -485,11 +485,7 @@ LeabraProject .projects["LeabraFlex"] {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["Hidden_lay_net_sd"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
+     float_Data @["Hidden_lay_net_sd"] { };
      float_Data @["Output_lay_net_sd"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
@@ -510,31 +506,19 @@ LeabraProject .projects["LeabraFlex"] {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["Hidden_cos_diff"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
+     float_Data @["Hidden_cos_diff"] { };
      float_Data @["Output_cos_diff"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["Hidden_trial_cos_diff"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
+     float_Data @["Hidden_trial_cos_diff"] { };
      float_Data @["Output_trial_cos_diff"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["Hidden_avg_act_diff"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
+     float_Data @["Hidden_avg_act_diff"] { };
      float_Data @["Output_avg_act_diff"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
@@ -1105,8 +1089,11 @@ LeabraProject .projects["LeabraFlex"] {
       ProgVar @["config_id"] { };
      };
 
-     ProgVar_List @.vars = [1] {
-      ProgVar @["lay_lesion_list"] { };
+     ProgVar_List @.vars = [4] {
+      ProgVar @["layer_group_lesion_list"] { };
+      ProgVar @["layer_lesion_list"] { };
+      ProgVar @["prjn_lesion_list"] { };
+      ProgVar @["prjn_unlesion_list"] { };
      };
 
      Function_List @.functions = [0] {
@@ -1123,9 +1110,12 @@ LeabraProject .projects["LeabraFlex"] {
        };
       };
       ProgramCall @[1] { 
-       ProgArg_List @.prog_args = [2] {
+       ProgArg_List @.prog_args = [5] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
        };
       };
       ProgramCall @[2] { 
@@ -1708,106 +1698,355 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["ConfigNetwork"] { 
-    ProgObjList @.objs = [1] {
-     String_Matrix @["les_lay_mat"] { };
+    ProgObjList @.objs = [0] {
     };
 
     ProgType_List @.types = [0] {
     };
 
-    ProgVar_List @.args = [2] {
+    ProgVar_List @.args = [5] {
      ProgVar @["network"] { };
+     ProgVar @["lesion_layer_groups"] { };
      ProgVar @["lesion_layers"] { };
+     ProgVar @["lesion_prjns"] { };
+     ProgVar @["un_lesion_prjns"] { };
     };
 
-    ProgVar_List @.vars = [4] {
-     ProgVar @["les_lay_mat"] { };
-     ProgVar @["i"] { };
-     ProgVar @["laygp_nm"] { };
-     ProgVar @["laygp"] { };
+    ProgVar_List @.vars = [0] {
     };
 
-    Function_List @.functions = [0] {
+    Function_List @.functions = [4] {
+     Function @["UnlesionAll"] { 
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgEl_List @.fun_code = [3] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [2] {
+	 ProgVar @["laygp"] { };
+	 ProgVar @["lay"] { };
+	};
+       };
+       ForeachLoop @[1] { 
+	ProgEl_List @.loop_code = [2] {
+	 MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	 };
+	 MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	 };
+	};
+       };
+       ForeachLoop @[2] { 
+	ProgEl_List @.loop_code = [2] {
+	 MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	 };
+	 MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	 };
+	};
+       };
+      };
+     };
+     Function @["LayerGpsOnOff"] { 
+      ProgVar_List @.args = [2] {
+       ProgVar @["laygps"] { };
+       ProgVar @["lesion"] { };
+      };
+
+      ProgEl_List @.fun_code = [3] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [3] {
+	 ProgVar @["les_laygp_mat"] { };
+	 ProgVar @["laygp"] { };
+	 ProgVar @["laygp_nm"] { };
+	};
+       };
+       MethodCall @[1] { 
+	ProgArg_List @.meth_args = [2] {
+	 ProgArg @[0] { };
+	 ProgArg @[1] { };
+	};
+       };
+       ForeachLoop @[2] { 
+	ProgEl_List @.loop_code = [4] {
+	 MemberMethodCall @[0] { 
+	  ProgArg_List @.meth_args = [1] {
+	   ProgArg @[0] { };
+	  };
+	 };
+	 If @[1] { 
+	  ProgEl_List @.true_code = [2] {
+	   MiscCall @[0] { 
+	    ProgArg_List @.meth_args = [9] {
+	     ProgArg @[0] { };
+	     ProgArg @[1] { };
+	     ProgArg @[2] { };
+	     ProgArg @[3] { };
+	     ProgArg @[4] { };
+	     ProgArg @[5] { };
+	     ProgArg @[6] { };
+	     ProgArg @[7] { };
+	     ProgArg @[8] { };
+	    };
+	   };
+	   IfContinue @[1] { };
+	  };
+	 };
+	 If @[2] { 
+	  ProgEl_List @.true_code = [2] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	   MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	  };
+	 };
+	 Else @[3] { 
+	  ProgEl_List @.else_code = [2] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	   MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     Function @["LayersOnOff"] { 
+      ProgVar_List @.args = [2] {
+       ProgVar @["lays"] { };
+       ProgVar @["lesion"] { };
+      };
+
+      ProgEl_List @.fun_code = [3] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [3] {
+	 ProgVar @["les_lays_mat"] { };
+	 ProgVar @["lay"] { };
+	 ProgVar @["lay_nm"] { };
+	};
+       };
+       MethodCall @[1] { 
+	ProgArg_List @.meth_args = [2] {
+	 ProgArg @[0] { };
+	 ProgArg @[1] { };
+	};
+       };
+       ForeachLoop @[2] { 
+	ProgEl_List @.loop_code = [4] {
+	 MemberMethodCall @[0] { 
+	  ProgArg_List @.meth_args = [1] {
+	   ProgArg @[0] { };
+	  };
+	 };
+	 If @[1] { 
+	  ProgEl_List @.true_code = [2] {
+	   MiscCall @[0] { 
+	    ProgArg_List @.meth_args = [9] {
+	     ProgArg @[0] { };
+	     ProgArg @[1] { };
+	     ProgArg @[2] { };
+	     ProgArg @[3] { };
+	     ProgArg @[4] { };
+	     ProgArg @[5] { };
+	     ProgArg @[6] { };
+	     ProgArg @[7] { };
+	     ProgArg @[8] { };
+	    };
+	   };
+	   IfContinue @[1] { };
+	  };
+	 };
+	 If @[2] { 
+	  ProgEl_List @.true_code = [2] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	   MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	  };
+	 };
+	 Else @[3] { 
+	  ProgEl_List @.else_code = [2] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	   MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     Function @["ProjectionsOnOff"] { 
+      ProgVar_List @.args = [2] {
+       ProgVar @["prjns"] { };
+       ProgVar @["lesion"] { };
+      };
+
+      ProgEl_List @.fun_code = [3] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [5] {
+	 ProgVar @["les_prjns_mat"] { };
+	 ProgVar @["prjn"] { };
+	 ProgVar @["prjn_nm"] { };
+	 ProgVar @["lay_nm"] { };
+	 ProgVar @["lay"] { };
+	};
+       };
+       MethodCall @[1] { 
+	ProgArg_List @.meth_args = [2] {
+	 ProgArg @[0] { };
+	 ProgArg @[1] { };
+	};
+       };
+       ForeachLoop @[2] { 
+	ProgEl_List @.loop_code = [8] {
+	 If @[0] { 
+	  ProgEl_List @.true_code = [2] {
+	   MiscCall @[0] { 
+	    ProgArg_List @.meth_args = [9] {
+	     ProgArg @[0] { };
+	     ProgArg @[1] { };
+	     ProgArg @[2] { };
+	     ProgArg @[3] { };
+	     ProgArg @[4] { };
+	     ProgArg @[5] { };
+	     ProgArg @[6] { };
+	     ProgArg @[7] { };
+	     ProgArg @[8] { };
+	    };
+	   };
+	   IfContinue @[1] { };
+	  };
+	 };
+	 MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [2] {
+	   ProgArg @[0] { };
+	   ProgArg @[1] { };
+	  };
+	 };
+	 MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [2] {
+	   ProgArg @[0] { };
+	   ProgArg @[1] { };
+	  };
+	 };
+	 MemberMethodCall @[3] { 
+	  ProgArg_List @.meth_args = [1] {
+	   ProgArg @[0] { };
+	  };
+	 };
+	 If @[4] { 
+	  ProgEl_List @.true_code = [2] {
+	   MiscCall @[0] { 
+	    ProgArg_List @.meth_args = [9] {
+	     ProgArg @[0] { };
+	     ProgArg @[1] { };
+	     ProgArg @[2] { };
+	     ProgArg @[3] { };
+	     ProgArg @[4] { };
+	     ProgArg @[5] { };
+	     ProgArg @[6] { };
+	     ProgArg @[7] { };
+	     ProgArg @[8] { };
+	    };
+	   };
+	   IfContinue @[1] { };
+	  };
+	 };
+	 AssignExpr @[5] { };
+	 If @[6] { 
+	  ProgEl_List @.true_code = [2] {
+	   MiscCall @[0] { 
+	    ProgArg_List @.meth_args = [9] {
+	     ProgArg @[0] { };
+	     ProgArg @[1] { };
+	     ProgArg @[2] { };
+	     ProgArg @[3] { };
+	     ProgArg @[4] { };
+	     ProgArg @[5] { };
+	     ProgArg @[6] { };
+	     ProgArg @[7] { };
+	     ProgArg @[8] { };
+	    };
+	   };
+	   IfContinue @[1] { };
+	  };
+	 };
+	 MemberAssign @[7] { };
+	};
+       };
+      };
+     };
     };
 
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [8] {
-     Comment @[0] { };
-     ForLoop @[1] { 
-      ProgEl_List @.loop_code = [3] {
-       MemberMethodCall @[0] { 
-	ProgArg_List @.meth_args = [1] {
-	 ProgArg @[0] { };
-	};
-       };
-       MethodCall @[1] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
-       MethodCall @[2] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
+    ProgEl_List @.prog_code = [9] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
       };
      };
-     Comment @[2] { };
-     MethodCall @[3] { 
-      ProgArg_List @.meth_args = [2] {
+     FunctionCall @[1] { 
+      ProgArg_List @.fun_args = [0] {
+      };
+     };
+     FunctionCall @[2] { 
+      ProgArg_List @.fun_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
       };
      };
-     ForLoop @[4] { 
-      ProgEl_List @.loop_code = [5] {
-       MethodCall @[0] { 
-	ProgArg_List @.meth_args = [1] {
-	 ProgArg @[0] { };
-	};
-       };
-       MemberMethodCall @[1] { 
-	ProgArg_List @.meth_args = [1] {
-	 ProgArg @[0] { };
-	};
-       };
-       If @[2] { 
-	ProgEl_List @.true_code = [2] {
-	 MiscCall @[0] { 
-	  ProgArg_List @.meth_args = [9] {
-	   ProgArg @[0] { };
-	   ProgArg @[1] { };
-	   ProgArg @[2] { };
-	   ProgArg @[3] { };
-	   ProgArg @[4] { };
-	   ProgArg @[5] { };
-	   ProgArg @[6] { };
-	   ProgArg @[7] { };
-	   ProgArg @[8] { };
-	  };
-	 };
-	 IfContinue @[1] { };
-	};
-       };
-       MethodCall @[3] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
-       MethodCall @[4] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
+     FunctionCall @[3] { 
+      ProgArg_List @.fun_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
       };
      };
-     MethodCall @[5] { 
-      ProgArg_List @.meth_args = [0] {
+     FunctionCall @[4] { 
+      ProgArg_List @.fun_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     FunctionCall @[5] { 
+      ProgArg_List @.fun_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
       };
      };
      MethodCall @[6] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     PrintExpr @[7] { };
+     MethodCall @[7] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     PrintExpr @[8] { };
     };
    };
    Program @["PositionLayersFromTable"] { 
@@ -3502,7 +3741,7 @@ LeabraProject .projects["LeabraFlex"] {
 <script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
 <script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":11194,\"wgRevisionId\":11194,\"wgArticleId\":2315,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgRelevantArticleId\":2315,\"wgUserId\":3,\"wgUserEditCount\":2417,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,
-\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgRedirectedFrom\":\"LeabraFlexProgs\",\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\",\"wgInternalRedirectTargetUrl\":\"/emergent/index.php/LeabraFlex\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"50799002483df7c73007c031d9b35aba572108f1+\\\\\",\"patrolToken\":\"0f5c1d31d632b97c5adfbc523fcf7f7f572108f1+\\\\\",\"watchToken\":\"d022e668f78583158ce1a7852d8a1411572108f1+\\\\\"});});mw.loader.load([\"mediawiki.action.view.redirect\",\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgRedirectedFrom\":\"LeabraFlexProgs\",\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\",\"wgInternalRedirectTargetUrl\":\"/emergent/index.php/LeabraFlex\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"284a915310c93c017c7109abadb235fd572ce23d+\\\\\",\"patrolToken\":\"d893ff6e65f68a44daaddca59edb5734572ce23d+\\\\\",\"watchToken\":\"90cb306172e3d74016c86bc8100aebd6572ce23d+\\\\\"});});mw.loader.load([\"mediawiki.action.view.redirect\",\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
 } );</script>
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
@@ -3574,11 +3813,11 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 
 <!-- 
 NewPP limit report
-Cached time: 20160426192720
+Cached time: 20160505192431
 Cache expiry: 86400
 Dynamic content: false
-CPU time usage: 0.026 seconds
-Real time usage: 0.029 seconds
+CPU time usage: 0.023 seconds
+Real time usage: 0.027 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -3592,7 +3831,7 @@ Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 - -total
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160426192720 and revision id 11194
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160505192431 and revision id 11194
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\"					</div>
@@ -3634,7 +3873,7 @@ Transclusion expansion time report (%,ms,calls,template)
 															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\">Read</a></span></li>
 															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
 															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=5c695a518c40c4f0aa59231ab30b4059572108f1%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=2b3db715da35cd309aac194ae2463d01572ce23d%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 													</ul>
 					</div>
 										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
@@ -3713,7 +3952,7 @@ Transclusion expansion time report (%,ms,calls,template)
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":157});
+mw.config.set({\"wgBackendResponseTime\":177});
 } );</script>
 	
 
@@ -7073,16 +7312,6 @@ mw.config.set({\"wgBackendResponseTime\":157});
       width=0;
      };
      float_Data @["Hidden_lay_net_sd"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_113";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 8 0=0.1328021;
-	val_type_fixed=0;
-       };
-      };
       name="Hidden_lay_net_sd";
       col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
@@ -7188,16 +7417,6 @@ mw.config.set({\"wgBackendResponseTime\":157});
       width=0;
      };
      float_Data @["Hidden_cos_diff"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_118";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 8 0=0.1328021;
-	val_type_fixed=0;
-       };
-      };
       name="Hidden_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
@@ -7234,16 +7453,6 @@ mw.config.set({\"wgBackendResponseTime\":157});
       width=0;
      };
      float_Data @["Hidden_trial_cos_diff"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_120";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 8 0=0.1328021;
-	val_type_fixed=0;
-       };
-      };
       name="Hidden_trial_cos_diff";
       col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
@@ -7280,16 +7489,6 @@ mw.config.set({\"wgBackendResponseTime\":157});
       width=0;
      };
      float_Data @["Hidden_avg_act_diff"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_122";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 8 0=0.1328021;
-	val_type_fixed=0;
-       };
-      };
       name="Hidden_avg_act_diff";
       col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
@@ -10407,13 +10606,40 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="vars";
       el_typ=ProgVar;
       el_def=0;
-      ProgVar @["lay_lesion_list"] {
-       name="lay_lesion_list";
+      ProgVar @["layer_group_lesion_list"] {
+       name="layer_group_lesion_list";
        var_type=T_String;
        string_val=;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
-       desc="layers to lesion for this run";
+       desc="space-separated list of layer groups to lesion for this run -- all layers unlesioned at the start";
+       init_from=NULL;
+      };
+      ProgVar @["layer_lesion_list"] {
+       name="layer_lesion_list";
+       var_type=T_String;
+       string_val=;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc="space-separated list of layers outside of groups to lesion for this run";
+       init_from=NULL;
+      };
+      ProgVar @["prjn_lesion_list"] {
+       name="prjn_lesion_list";
+       var_type=T_String;
+       string_val=;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc="space-separated list of projections to lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that need these on should list them in their unlesion list";
+       init_from=NULL;
+      };
+      ProgVar @["prjn_unlesion_list"] {
+       name="prjn_unlesion_list";
+       var_type=T_String;
+       string_val=;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc="space-separated list of projections to UN-lesion for this run (recvlayer.Fm_sendlayer) -- prjns are NOT all unlesioned at the start, so other cases that don't need these on should list them in their lesion list";
        init_from=NULL;
       };
      };
@@ -10469,8 +10695,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgramCall @[1] {
        desc="get rid of all non-essential layers";
        flags=CAN_REVERT_TO_CODE;
-       code_string="ConfigNetwork(network, lay_lesion_list)";
-       pre_compile_code_string="ConfigNetwork(network, lay_lesion_list)";
+       code_string="ConfigNetwork(network, layer_group_lesion_list, layer_group_lesion_list, , )";
+       pre_compile_code_string="ConfigNetwork(network, layer_group_lesion_list, layer_group_lesion_list, , )";
        prog_args {
 	name=;
 	el_typ=ProgArg;
@@ -10481,7 +10707,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="network";
 	 required=1;
 	 def_val=;
-	 prev_expr=;
+	 prev_expr="network";
 	 expr {
 	  expr="network";
 	 };
@@ -10489,12 +10715,45 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	ProgArg @[1] {
 	 arg_type=taString;
 	 type="String";
+	 name="lesion_layer_groups";
+	 required=1;
+	 def_val=;
+	 prev_expr="layer_group_lesion_list";
+	 expr {
+	  expr="layer_group_lesion_list";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=taString;
+	 type="String";
 	 name="lesion_layers";
 	 required=1;
 	 def_val=;
 	 prev_expr=;
 	 expr {
-	  expr="lay_lesion_list";
+	  expr="layer_lesion_list";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=taString;
+	 type="String";
+	 name="lesion_prjns";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="prjn_lesion_list";
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=taString;
+	 type="String";
+	 name="un_lesion_prjns";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="prjn_unlesion_list";
 	 };
 	};
        };
@@ -10916,7 +11175,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=2514: sys=987: tot=146178269031: }: end={usr=2514: sys=987: tot=146178269031: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=276950: sys=307233: tot=146256150755: }: end={usr=276949: sys=307233: tot=146256150753: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -11437,7 +11696,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [0]       };
+      [6] 5;1;3;0;4;2;      };
       last_sort_spec {
        name="last_sort_spec";
        ops {
@@ -11501,7 +11760,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["cur_idx"] {
       name="cur_idx";
       var_type=T_Int;
-      int_val=0;
+      int_val=1;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current index into permuted table ";
@@ -11510,7 +11769,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["input_idx"] {
       name="input_idx";
       var_type=T_Int;
-      int_val=1;
+      int_val=5;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -13021,7 +13280,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    Program @["ConfigNetwork"] {
     name="ConfigNetwork";
     short_nm="CfgNet";
-    tags=;
+    tags="Network, Configure";
     desc="configure the network -- basically selectively lesion different parts that are not needed for a given task";
     flags=NO_STOP_STEP;
     stop_step_cond {
@@ -13031,9 +13290,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=String_Matrix;
      el_def=0;
-     String_Matrix @["les_lay_mat"] {
-      name="les_lay_mat";
-     [0]      };
     };
     types {
      name="types";
@@ -13055,8 +13311,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="required for the batch counter";
       init_from=NULL;
      };
-     ProgVar @["lesion_layers"] {
-      name="lesion_layers";
+     ProgVar @["lesion_layer_groups"] {
+      name="lesion_layer_groups";
       var_type=T_String;
       string_val=;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -13064,56 +13320,1645 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="a space delimited list of layer group names to lesion";
       init_from=NULL;
      };
+     ProgVar @["lesion_layers"] {
+      name="lesion_layers";
+      var_type=T_String;
+      string_val=;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      reference=0;
+      desc="a space delimited list of layer names to lesion";
+      init_from=NULL;
+     };
+     ProgVar @["lesion_prjns"] {
+      name="lesion_prjns";
+      var_type=T_String;
+      string_val=;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      reference=0;
+      desc="a space delimited list of projections to lesion: synatx is recvlayer.Fm_sendlayer";
+      init_from=NULL;
+     };
+     ProgVar @["un_lesion_prjns"] {
+      name="un_lesion_prjns";
+      var_type=T_String;
+      string_val=;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      reference=0;
+      desc="a space delimited list of projections to un-lesion: synatx is recvlayer.Fm_sendlayer";
+      init_from=NULL;
+     };
     };
     vars {
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @["les_lay_mat"] {
-      name="les_lay_mat";
-      var_type=T_Object;
-      object_type=String_Matrix;
-      object_val=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].objs["les_lay_mat"]$$;
-      objs_ptr=1;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["i"] {
-      name="i";
-      var_type=T_Int;
-      int_val=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["laygp_nm"] {
-      name="laygp_nm";
-      var_type=T_String;
-      string_val=;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["laygp"] {
-      name="laygp";
-      var_type=T_Object;
-      object_type=Layer_Group;
-      object_val=NULL;
-      objs_ptr=0;
-      flags=SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
     };
     functions {
      name="functions";
      el_typ=Function;
      el_def=0;
+     Function @["UnlesionAll"] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="UnlesionAll() returns: int";
+      pre_compile_code_string="UnlesionAll() returns: int";
+      name="UnlesionAll";
+      return_type=T_Int;
+      object_type=taOBase;
+      args {
+       name="ProgVar_List_1";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+      fun_code {
+       name="ProgEl_List_1759";
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="LocalVars (2 vars)";
+	pre_compile_code_string="LocalVars (2 vars)";
+	local_vars {
+	 name="local_vars";
+	 el_typ=ProgVar;
+	 el_def=0;
+	 ProgVar @["laygp"] {
+	  name="laygp";
+	  var_type=T_Object;
+	  object_type=Layer_Group;
+	  object_val=NULL;
+	  objs_ptr=0;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	 ProgVar @["lay"] {
+	  name="lay";
+	  var_type=T_Object;
+	  object_type=Layer;
+	  object_val=NULL;
+	  objs_ptr=0;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	};
+       };
+       ForeachLoop @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="foreach(laygp in network.layers.gp)";
+	pre_compile_code_string="foreach(laygp in network.layers.gp)";
+	loop_code {
+	 name="loop_code";
+	 el_typ=ProgCode;
+	 el_def=0;
+	 MethodCall @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="laygp->UnLesionLayers()";
+	  pre_compile_code_string="laygp->UnLesionLayers()";
+	  result_var=NULL;
+	  obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["UnlesionAll"].fun_code[0].local_vars["laygp"]$$;
+	  method=Layer_Group::UnLesionLayers;
+	  meth_args {
+	   name="meth_args";
+	   el_typ=ProgArg;
+	   el_def=0;
+	  };
+	  meth_sig="void UnLesionLayers()";
+	  meth_desc=" un-set the lesion flag on all the layers within this group -- restores them to engage in normal processing";
+	 };
+	 MethodCall @[1] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="laygp->DeIconifyLayers()";
+	  pre_compile_code_string="laygp->DeIconifyLayers()";
+	  result_var=NULL;
+	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["UnlesionAll"].fun_code[0].local_vars["laygp"]$;
+	  method=Layer_Group::DeIconifyLayers;
+	  meth_args {
+	   name="meth_args";
+	   el_typ=ProgArg;
+	   el_def=0;
+	  };
+	  meth_sig="void DeIconifyLayers()";
+	  meth_desc=" un-set the lesion flag on all the layers within this group";
+	 };
+	};
+	el_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["UnlesionAll"].fun_code[0].local_vars["laygp"]$;
+	in {
+	 expr="network.layers.gp";
+	};
+       };
+       ForeachLoop @[2] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="foreach(<el_var not set> in network.layers)";
+	pre_compile_code_string="foreach(lay in network.layers)";
+	loop_code {
+	 name="loop_code";
+	 el_typ=ProgCode;
+	 el_def=0;
+	 MethodCall @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="lay->UnLesion()";
+	  pre_compile_code_string="lay->UnLesion()";
+	  result_var=NULL;
+	  obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["UnlesionAll"].fun_code[0].local_vars["lay"]$$;
+	  method=Layer::UnLesion;
+	  meth_args {
+	   name="meth_args";
+	   el_typ=ProgArg;
+	   el_def=0;
+	  };
+	  meth_sig="void UnLesion()";
+	  meth_desc=" un-set the lesion flag on layer -- restores it to engage in normal processing";
+	 };
+	 MethodCall @[1] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="lay->DeIconify()";
+	  pre_compile_code_string="lay->DeIconify()";
+	  result_var=NULL;
+	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["UnlesionAll"].fun_code[0].local_vars["lay"]$;
+	  method=Layer::DeIconify;
+	  meth_args {
+	   name="meth_args";
+	   el_typ=ProgArg;
+	   el_def=0;
+	  };
+	  meth_sig="void DeIconify()";
+	  meth_desc=" de-iconify this layer in the network display (make full size)";
+	 };
+	};
+	el_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["UnlesionAll"].fun_code[0].local_vars["lay"]$;
+	in {
+	 expr="network.layers";
+	};
+       };
+      };
+     };
+     Function @["LayerGpsOnOff"] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LayerGpsOnOff(String laygps) returns: int";
+      pre_compile_code_string="LayerGpsOnOff(String laygps) returns: int";
+      name="LayerGpsOnOff";
+      return_type=T_Int;
+      object_type=taOBase;
+      args {
+       name="ProgVar_List_1";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["laygps"] {
+	name="laygps";
+	var_type=T_String;
+	string_val=;
+	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["lesion"] {
+	name="lesion";
+	var_type=T_Bool;
+	bool_val=0;
+	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+      fun_code {
+       name="ProgEl_List_1760";
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="LocalVars (4 vars)";
+	pre_compile_code_string="LocalVars (4 vars)";
+	local_vars {
+	 name="local_vars";
+	 el_typ=ProgVar;
+	 el_def=0;
+	 ProgVar @["les_laygp_mat"] {
+	  name="les_laygp_mat";
+	  var_type=T_Object;
+	  object_type=String_Matrix;
+	  object_val=NULL;
+	  objs_ptr=0;
+	  flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	 ProgVar @["laygp"] {
+	  name="laygp";
+	  var_type=T_Object;
+	  object_type=Layer_Group;
+	  object_val=NULL;
+	  objs_ptr=0;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	 ProgVar @["laygp_nm"] {
+	  name="laygp_nm";
+	  var_type=T_String;
+	  string_val=;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	};
+       };
+       MethodCall @[1] {
+	desc="get into easier to use matrix format";
+	flags=CAN_REVERT_TO_CODE;
+	code_string="les_laygp_mat->FmDelimString(laygps, \" \")";
+	pre_compile_code_string="les_laygp_mat->FmDelimString(laygps, \" \")";
+	result_var=NULL;
+	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["les_laygp_mat"]$$;
+	method=String_Matrix::FmDelimString;
+	meth_args {
+	 name="meth_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=const_taString_ref;
+	  type="taString&";
+	  name="str";
+	  required=1;
+	  def_val=;
+	  prev_expr=;
+	  expr {
+	   expr="laygps";
+	  };
+	 };
+	 ProgArg @[1] {
+	  arg_type=const_taString_ref;
+	  type="taString&";
+	  name="delim";
+	  required=0;
+	  def_val="\"\"";
+	  prev_expr=;
+	  expr {
+	   expr="\" \"";
+	  };
+	 };
+	};
+	meth_sig="void FmDelimString(taString& str, taString& delim)";
+	meth_desc=" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything";
+       };
+       ForeachLoop @[2] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="foreach(laygp_nm in les_laygp_mat)";
+	pre_compile_code_string="foreach(laygp_nm in les_laygp_mat)";
+	loop_code {
+	 name="loop_code";
+	 el_typ=ProgCode;
+	 el_def=0;
+	 MemberMethodCall @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="laygp = network.layers.gp.FindName(laygp_nm)";
+	  pre_compile_code_string="laygp = network.layers.gp.FindName(laygp_nm)";
+	  obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$$;
+	  path="layers.gp";
+	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["laygp"]$$;
+	  method=taGroup_Layer_::FindName;
+	  meth_args {
+	   name="meth_args";
+	   el_typ=ProgArg;
+	   el_def=0;
+	   ProgArg @[0] {
+	    arg_type=const_taString_ref;
+	    type="taString&";
+	    name="item_nm";
+	    required=1;
+	    def_val=;
+	    prev_expr=;
+	    expr {
+	     expr="laygp_nm";
+	    };
+	   };
+	  };
+	  meth_sig="Layer_ptr FindName(taString& item_nm)";
+	  meth_desc=" Find element in top-level list with given name (nm) (NULL = not here)";
+	 };
+	 If @[1] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="if (!laygp)";
+	  pre_compile_code_string="if (!laygp)";
+	  cond {
+	   expr="!laygp";
+	  };
+	  true_code {
+	   name="true_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MiscCall @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="taMisc::Error(\"layer group named:\", laygp_nm, \"not found in network:\", network.name, , , , , )";
+	    pre_compile_code_string="taMisc::Error(\"layer group named:\", laygp_nm, \"not found in network:\", network.name, , , , , )";
+	    result_var=NULL;
+	    object_type=taMisc;
+	    method=taMisc::Error;
+	    meth_args {
+	     name=;
+	     el_typ=ProgArg;
+	     el_def=0;
+	     ProgArg @[0] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="a";
+	      required=1;
+	      def_val=;
+	      prev_expr=;
+	      expr {
+	       expr="\"layer group named:\"";
+	      };
+	     };
+	     ProgArg @[1] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="b";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr="laygp_nm";
+	      };
+	     };
+	     ProgArg @[2] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="c";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr="\"not found in network:\"";
+	      };
+	     };
+	     ProgArg @[3] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="d";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr="network.name";
+	      };
+	     };
+	     ProgArg @[4] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="e";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[5] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="f";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[6] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="g";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[7] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="h";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[8] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="i";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	    };
+	   };
+	   IfContinue @[1] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="continue";
+	    pre_compile_code_string="continue";
+	    cond {
+	     expr=;
+	    };
+	   };
+	  };
+	 };
+	 If @[2] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="if (lesion)";
+	  pre_compile_code_string="if (lesion)";
+	  cond {
+	   expr="lesion";
+	  };
+	  true_code {
+	   name="true_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="laygp->LesionLayers()";
+	    pre_compile_code_string="laygp->LesionLayers()";
+	    result_var=NULL;
+	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["laygp"]$;
+	    method=Layer_Group::LesionLayers;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	    meth_sig="void LesionLayers()";
+	    meth_desc=" set the lesion flag on all the layers within this group -- removes them from all processing operations";
+	   };
+	   MethodCall @[1] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="laygp->IconifyLayers()";
+	    pre_compile_code_string="laygp->IconifyLayers()";
+	    result_var=NULL;
+	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["laygp"]$;
+	    method=Layer_Group::IconifyLayers;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	    meth_sig="void IconifyLayers()";
+	    meth_desc=" iconi";
+	   };
+	  };
+	 };
+	 Else @[3] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="else";
+	  pre_compile_code_string=;
+	  else_code {
+	   name="else_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="laygp->UnLesionLayers()";
+	    pre_compile_code_string="laygp->UnLesionLayers()";
+	    result_var=NULL;
+	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["laygp"]$;
+	    method=Layer_Group::UnLesionLayers;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	    meth_sig="void UnLesionLayers()";
+	    meth_desc=" un-set the lesion flag on all the layers within this group -- restores them to engage in normal processing";
+	   };
+	   MethodCall @[1] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="laygp->DeIconifyLayers()";
+	    pre_compile_code_string="laygp->DeIconifyLayers()";
+	    result_var=NULL;
+	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["laygp"]$;
+	    method=Layer_Group::DeIconifyLayers;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	    meth_sig="void DeIconifyLayers()";
+	    meth_desc=" un-set the lesion flag on all the layers within this group";
+	   };
+	  };
+	 };
+	};
+	el_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"].fun_code[0].local_vars["laygp_nm"]$$;
+	in {
+	 expr="les_laygp_mat";
+	};
+       };
+      };
+     };
+     Function @["LayersOnOff"] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LayersOnOff(String lays) returns: int";
+      pre_compile_code_string="LayersOnOff(String lays) returns: int";
+      name="LayersOnOff";
+      return_type=T_Int;
+      object_type=taOBase;
+      args {
+       name=;
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["lays"] {
+	name="lays";
+	var_type=T_String;
+	string_val=;
+	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["lesion"] {
+	name="lesion";
+	var_type=T_Bool;
+	bool_val=0;
+	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+      fun_code {
+       name=;
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="LocalVars (4 vars)";
+	pre_compile_code_string="LocalVars (4 vars)";
+	local_vars {
+	 name="local_vars";
+	 el_typ=ProgVar;
+	 el_def=0;
+	 ProgVar @["les_lays_mat"] {
+	  name="les_lays_mat";
+	  var_type=T_Object;
+	  object_type=String_Matrix;
+	  object_val=NULL;
+	  objs_ptr=0;
+	  flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	 ProgVar @["lay"] {
+	  name="lay";
+	  var_type=T_Object;
+	  object_type=Layer;
+	  object_val=NULL;
+	  objs_ptr=0;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	 ProgVar @["lay_nm"] {
+	  name="lay_nm";
+	  var_type=T_String;
+	  string_val=;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	};
+       };
+       MethodCall @[1] {
+	desc="get into easier to use matrix format";
+	flags=CAN_REVERT_TO_CODE;
+	code_string="les_lays_mat->FmDelimString(lays, \" \")";
+	pre_compile_code_string="les_lays_mat->FmDelimString(lays, \" \")";
+	result_var=NULL;
+	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["les_lays_mat"]$$;
+	method=String_Matrix::FmDelimString;
+	meth_args {
+	 name="meth_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=const_taString_ref;
+	  type="taString&";
+	  name="str";
+	  required=1;
+	  def_val=;
+	  prev_expr=;
+	  expr {
+	   expr="lays";
+	  };
+	 };
+	 ProgArg @[1] {
+	  arg_type=const_taString_ref;
+	  type="taString&";
+	  name="delim";
+	  required=0;
+	  def_val="\"\"";
+	  prev_expr=;
+	  expr {
+	   expr="\" \"";
+	  };
+	 };
+	};
+	meth_sig="void FmDelimString(taString& str, taString& delim)";
+	meth_desc=" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything";
+       };
+       ForeachLoop @[2] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="foreach(lay_nm in les_lays_mat)";
+	pre_compile_code_string="foreach(lay_nm in les_lays_mat)";
+	loop_code {
+	 name="loop_code";
+	 el_typ=ProgCode;
+	 el_def=0;
+	 MemberMethodCall @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="lay = network.layers.FindLeafName(lay_nm)";
+	  pre_compile_code_string="lay = network.layers.FindLeafName(lay_nm)";
+	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$;
+	  path="layers";
+	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["lay"]$$;
+	  method=taGroup_Layer_::FindLeafName;
+	  meth_args {
+	   name="meth_args";
+	   el_typ=ProgArg;
+	   el_def=0;
+	   ProgArg @[0] {
+	    arg_type=const_taString_ref;
+	    type="taString&";
+	    name="item_nm";
+	    required=1;
+	    def_val=;
+	    prev_expr=;
+	    expr {
+	     expr="lay_nm";
+	    };
+	   };
+	  };
+	  meth_sig="Layer_ptr FindLeafName(taString& item_nm)";
+	  meth_desc=" Find element anywhere in full group and subgroups with given name (item_nm)";
+	 };
+	 If @[1] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="if (!laygp)";
+	  pre_compile_code_string="if (!laygp)";
+	  cond {
+	   expr="!lay";
+	  };
+	  true_code {
+	   name="true_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MiscCall @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
+	    pre_compile_code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
+	    result_var=NULL;
+	    object_type=taMisc;
+	    method=taMisc::Error;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	     ProgArg @[0] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="a";
+	      required=1;
+	      def_val=;
+	      prev_expr=;
+	      expr {
+	       expr="\"layer named:\"";
+	      };
+	     };
+	     ProgArg @[1] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="b";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr="lay_nm";
+	      };
+	     };
+	     ProgArg @[2] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="c";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr="\"not found in network:\"";
+	      };
+	     };
+	     ProgArg @[3] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="d";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr="network.name";
+	      };
+	     };
+	     ProgArg @[4] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="e";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[5] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="f";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[6] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="g";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[7] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="h";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[8] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="i";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	    };
+	   };
+	   IfContinue @[1] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="continue";
+	    pre_compile_code_string="continue";
+	    cond {
+	     expr=;
+	    };
+	   };
+	  };
+	 };
+	 If @[2] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="if (lesion)";
+	  pre_compile_code_string="if (lesion)";
+	  cond {
+	   expr="lesion";
+	  };
+	  true_code {
+	   name="true_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="lay->Lesion()";
+	    pre_compile_code_string="lay->Lesion()";
+	    result_var=NULL;
+	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["lay"]$;
+	    method=Layer::Lesion;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	    meth_sig="void Lesion()";
+	    meth_desc=" set the lesion flag on layer -- removes it from all processing operations";
+	   };
+	   MethodCall @[1] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="lay->Iconify()";
+	    pre_compile_code_string="lay->Iconify()";
+	    result_var=NULL;
+	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["lay"]$;
+	    method=Layer::Iconify;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	    meth_sig="void Iconify()";
+	    meth_desc=" iconify this layer in the network display (shrink to size of 1 unit, and make them invisible if lesioned)";
+	   };
+	  };
+	 };
+	 Else @[3] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="else";
+	  pre_compile_code_string=;
+	  else_code {
+	   name="else_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="lay->UnLesion()";
+	    pre_compile_code_string="lay->UnLesion()";
+	    result_var=NULL;
+	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["lay"]$;
+	    method=Layer::UnLesion;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	    meth_sig="void UnLesion()";
+	    meth_desc=" un-set the lesion flag on layer -- restores it to engage in normal processing";
+	   };
+	   MethodCall @[1] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="lay->DeIconify()";
+	    pre_compile_code_string="lay->DeIconify()";
+	    result_var=NULL;
+	    obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["lay"]$;
+	    method=Layer::DeIconify;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	    meth_sig="void DeIconify()";
+	    meth_desc=" de-iconify this layer in the network display (make full size)";
+	   };
+	  };
+	 };
+	};
+	el_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"].fun_code[0].local_vars["lay_nm"]$$;
+	in {
+	 expr="les_lays_mat";
+	};
+       };
+      };
+     };
+     Function @["ProjectionsOnOff"] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="ProjectionsOnOff(String prjns, bool lesion) returns: int";
+      pre_compile_code_string="ProjectionsOnOff(String prjns, bool lesion) returns: int";
+      name="ProjectionsOnOff";
+      return_type=T_Int;
+      object_type=taOBase;
+      args {
+       name=;
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["prjns"] {
+	name="prjns";
+	var_type=T_String;
+	string_val=;
+	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["lesion"] {
+	name="lesion";
+	var_type=T_Bool;
+	bool_val=0;
+	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+      fun_code {
+       name=;
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="LocalVars (4 vars)";
+	pre_compile_code_string="LocalVars (4 vars)";
+	local_vars {
+	 name="local_vars";
+	 el_typ=ProgVar;
+	 el_def=0;
+	 ProgVar @["les_prjns_mat"] {
+	  name="les_prjns_mat";
+	  var_type=T_Object;
+	  object_type=String_Matrix;
+	  object_val=NULL;
+	  objs_ptr=0;
+	  flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	 ProgVar @["prjn"] {
+	  name="prjn";
+	  var_type=T_Object;
+	  object_type=Projection;
+	  object_val=NULL;
+	  objs_ptr=0;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	 ProgVar @["prjn_nm"] {
+	  name="prjn_nm";
+	  var_type=T_String;
+	  string_val=;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	 ProgVar @["lay_nm"] {
+	  name="lay_nm";
+	  var_type=T_String;
+	  string_val=;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	 ProgVar @["lay"] {
+	  name="lay";
+	  var_type=T_Object;
+	  object_type=Layer;
+	  object_val=NULL;
+	  objs_ptr=0;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	};
+       };
+       MethodCall @[1] {
+	desc="get into easier to use matrix format";
+	flags=CAN_REVERT_TO_CODE;
+	code_string="les_prjns_mat->FmDelimString(prjns, \" \")";
+	pre_compile_code_string="les_prjns_mat->FmDelimString(prjns, \" \")";
+	result_var=NULL;
+	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["les_prjns_mat"]$$;
+	method=String_Matrix::FmDelimString;
+	meth_args {
+	 name="meth_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=const_taString_ref;
+	  type="taString&";
+	  name="str";
+	  required=1;
+	  def_val=;
+	  prev_expr=;
+	  expr {
+	   expr="prjns";
+	  };
+	 };
+	 ProgArg @[1] {
+	  arg_type=const_taString_ref;
+	  type="taString&";
+	  name="delim";
+	  required=0;
+	  def_val="\"\"";
+	  prev_expr=;
+	  expr {
+	   expr="\" \"";
+	  };
+	 };
+	};
+	meth_sig="void FmDelimString(taString& str, taString& delim)";
+	meth_desc=" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything";
+       };
+       ForeachLoop @[2] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="foreach(prjn_nm in les_prjns_mat)";
+	pre_compile_code_string="foreach(prjn_nm in les_prjns_mat)";
+	loop_code {
+	 name="loop_code";
+	 el_typ=ProgCode;
+	 el_def=0;
+	 If @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="if (!prjn_nm.contains(\".\"))";
+	  pre_compile_code_string="if (!prjn_nm.contains(\".\"))";
+	  cond {
+	   expr="!prjn_nm.contains(\".\")";
+	  };
+	  true_code {
+	   name="true_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MiscCall @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="taMisc::Error()";
+	    pre_compile_code_string="taMisc::Error()";
+	    result_var=NULL;
+	    object_type=taMisc;
+	    method=taMisc::Error;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	     ProgArg @[0] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="a";
+	      required=1;
+	      def_val=;
+	      prev_expr=;
+	      expr {
+	       expr="\"projection name must include a . between name of layer and name of projection as Fm_sendlayer\"";
+	      };
+	     };
+	     ProgArg @[1] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="b";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[2] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="c";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[3] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="d";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[4] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="e";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[5] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="f";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[6] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="g";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[7] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="h";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[8] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="i";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	    };
+	   };
+	   IfContinue @[1] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="continue";
+	    pre_compile_code_string="continue";
+	    cond {
+	     expr=;
+	    };
+	   };
+	  };
+	 };
+	 MethodCall @[1] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="lay_nm = prjn_nm.before(\".\")";
+	  pre_compile_code_string="lay_nm = prjn_nm->before(\".\", )";
+	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["lay_nm"]$$;
+	  obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn_nm"]$$;
+	  method=taString::before;
+	  meth_args {
+	   name="meth_args";
+	   el_typ=ProgArg;
+	   el_def=0;
+	   ProgArg @[0] {
+	    arg_type=const_taString_ref;
+	    type="taString&";
+	    name="x";
+	    required=1;
+	    def_val=;
+	    prev_expr=;
+	    expr {
+	     expr="\".\"";
+	    };
+	   };
+	   ProgArg @[1] {
+	    arg_type=int;
+	    type="int";
+	    name="startpos";
+	    required=0;
+	    def_val="0";
+	    prev_expr=;
+	    expr {
+	     expr=;
+	    };
+	   };
+	  };
+	  meth_sig="taString before(taString& x, int startpos = 0)";
+	  meth_desc=" get substring before (not including) target string. startpos = starting position (- = search from end forward)";
+	 };
+	 MethodCall @[2] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="prjn_nm = prjn_nm.after(\".\")";
+	  pre_compile_code_string="prjn_nm = prjn_nm->after(\".\", )";
+	  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn_nm"]$;
+	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn_nm"]$;
+	  method=taString::after;
+	  meth_args {
+	   name="meth_args";
+	   el_typ=ProgArg;
+	   el_def=0;
+	   ProgArg @[0] {
+	    arg_type=const_taString_ref;
+	    type="taString&";
+	    name="x";
+	    required=1;
+	    def_val=;
+	    prev_expr=;
+	    expr {
+	     expr="\".\"";
+	    };
+	   };
+	   ProgArg @[1] {
+	    arg_type=int;
+	    type="int";
+	    name="startpos";
+	    required=0;
+	    def_val="0";
+	    prev_expr=;
+	    expr {
+	     expr=;
+	    };
+	   };
+	  };
+	  meth_sig="taString after(taString& x, int startpos = 0)";
+	  meth_desc=" get substring after (not including) target string. startpos = starting position (- = search from end forward)";
+	 };
+	 MemberMethodCall @[3] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="lay = network.layers.FindLeafName()";
+	  pre_compile_code_string="lay = network.layers.FindLeafName(lay_nm)";
+	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$;
+	  path="layers";
+	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["lay"]$$;
+	  method=taGroup_Layer_::FindLeafName;
+	  meth_args {
+	   name="meth_args";
+	   el_typ=ProgArg;
+	   el_def=0;
+	   ProgArg @[0] {
+	    arg_type=const_taString_ref;
+	    type="taString&";
+	    name="item_nm";
+	    required=1;
+	    def_val=;
+	    prev_expr=;
+	    expr {
+	     expr="lay_nm";
+	    };
+	   };
+	  };
+	  meth_sig="Layer_ptr FindLeafName(taString& item_nm)";
+	  meth_desc=" Find element anywhere in full group and subgroups with given name (item_nm)";
+	 };
+	 If @[4] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="if (!lay)";
+	  pre_compile_code_string="if (!lay)";
+	  cond {
+	   expr="!lay";
+	  };
+	  true_code {
+	   name="true_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MiscCall @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
+	    pre_compile_code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
+	    result_var=NULL;
+	    object_type=taMisc;
+	    method=taMisc::Error;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	     ProgArg @[0] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="a";
+	      required=1;
+	      def_val=;
+	      prev_expr=;
+	      expr {
+	       expr="\"layer named:\"";
+	      };
+	     };
+	     ProgArg @[1] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="b";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr="lay_nm";
+	      };
+	     };
+	     ProgArg @[2] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="c";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr="\"not found in network:\"";
+	      };
+	     };
+	     ProgArg @[3] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="d";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr="network.name";
+	      };
+	     };
+	     ProgArg @[4] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="e";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[5] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="f";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[6] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="g";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[7] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="h";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[8] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="i";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	    };
+	   };
+	   IfContinue @[1] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="continue";
+	    pre_compile_code_string="continue";
+	    cond {
+	     expr=;
+	    };
+	   };
+	  };
+	 };
+	 AssignExpr @[5] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="prjn = lay.projections.FindName(prjn_nm)";
+	  pre_compile_code_string="prjn = lay.projections.FindName(prjn_nm)";
+	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn"]$$;
+	  expr {
+	   expr="lay.projections.FindName(prjn_nm)";
+	  };
+	 };
+	 If @[6] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="if (!laygp)";
+	  pre_compile_code_string="if (!laygp)";
+	  cond {
+	   expr="!prjn";
+	  };
+	  true_code {
+	   name="true_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MiscCall @[0] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
+	    pre_compile_code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
+	    result_var=NULL;
+	    object_type=taMisc;
+	    method=taMisc::Error;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	     ProgArg @[0] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="a";
+	      required=1;
+	      def_val=;
+	      prev_expr=;
+	      expr {
+	       expr="\"projection named:\"";
+	      };
+	     };
+	     ProgArg @[1] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="b";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr="prjn_nm";
+	      };
+	     };
+	     ProgArg @[2] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="c";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr="\"not found in layer:\"";
+	      };
+	     };
+	     ProgArg @[3] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="d";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr="lay.name";
+	      };
+	     };
+	     ProgArg @[4] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="e";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[5] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="f";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[6] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="g";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[7] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="h";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	     ProgArg @[8] {
+	      arg_type=const_taString_ref;
+	      type="taString&";
+	      name="i";
+	      required=0;
+	      def_val="\"\"";
+	      prev_expr=;
+	      expr {
+	       expr=;
+	      };
+	     };
+	    };
+	   };
+	   IfContinue @[1] {
+	    desc=;
+	    flags=CAN_REVERT_TO_CODE;
+	    code_string="continue";
+	    pre_compile_code_string="continue";
+	    cond {
+	     expr=;
+	    };
+	   };
+	  };
+	 };
+	 MemberAssign @[7] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  code_string="prjn.off = lesion";
+	  pre_compile_code_string="prjn.off = lesion";
+	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn"]$;
+	  path="off";
+	  expr {
+	   expr="lesion";
+	  };
+	  update_after=0;
+	 };
+	};
+	el_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn_nm"]$;
+	in {
+	 expr="les_prjns_mat";
+	};
+       };
+      };
+     };
     };
     init_code {
      name="init_code";
@@ -13124,380 +14969,171 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     Comment @[0] {
-      desc="== first unlesion everything ==";
-      flags=CAN_REVERT_TO_CODE;
-      code_string="// == first unlesion everything ==";
-      pre_compile_code_string="// == first unlesion everything ==";
-     };
-     ForLoop @[1] {
+     LocalVars @[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="for (i = 0; i < network.layers.gp.size; i++)";
-      pre_compile_code_string="for (i = 0; i < network.layers.gp.size; i++)";
-      loop_code {
-       name=;
-       el_typ=ProgCode;
+      code_string="LocalVars (0 vars)";
+      pre_compile_code_string="LocalVars (0 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
        el_def=0;
-       MemberMethodCall @[0] {
-	desc=;
-	flags=CAN_REVERT_TO_CODE;
-	code_string="laygp = network.layers.gp.SafeEl(i)";
-	pre_compile_code_string="laygp = network.layers.gp.SafeEl(i)";
-	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$$;
-	path="layers.gp";
-	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp"]$$;
-	method=taGroup_Layer_::SafeEl;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	 ProgArg @[0] {
-	  arg_type=int;
-	  type="int";
-	  name="idx";
-	  required=1;
-	  def_val=;
-	  prev_expr=;
-	  expr {
-	   expr="i";
-	  };
-	 };
-	};
-	meth_sig="Layer_ptr SafeEl(int idx)";
-	meth_desc=" get element at index";
-       };
-       MethodCall @[1] {
-	desc=;
-	flags=CAN_REVERT_TO_CODE;
-	code_string="laygp->UnLesionLayers()";
-	pre_compile_code_string="laygp->UnLesionLayers()";
-	result_var=NULL;
-	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp"]$;
-	method=Layer_Group::UnLesionLayers;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	};
-	meth_sig="void UnLesionLayers()";
-	meth_desc=" un-set the lesion flag on all the layers within this group -- restores them to engage in normal processing";
-       };
-       MethodCall @[2] {
-	desc=;
-	flags=CAN_REVERT_TO_CODE;
-	code_string="laygp->DeIconifyLayers()";
-	pre_compile_code_string="laygp->DeIconifyLayers()";
-	result_var=NULL;
-	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp"]$;
-	method=Layer_Group::DeIconifyLayers;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	};
-	meth_sig="void DeIconifyLayers()";
-	meth_desc=" un-set the lesion flag on all the layers within this group";
-       };
-      };
-      init {
-       expr="i = 0";
-      };
-      test {
-       expr="i < network.layers.gp.size";
-      };
-      iter {
-       expr="i++";
       };
      };
-     Comment @[2] {
-      desc="== then lesion named ones ==";
+     FunctionCall @[1] {
+      desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="// == then lesion named ones ==";
-      pre_compile_code_string="// == then lesion named ones ==";
-     };
-     MethodCall @[3] {
-      desc="get into easier to use matrix format";
-      flags=CAN_REVERT_TO_CODE;
-      code_string="les_lay_mat->FmDelimString(lesion_layers, \" \")";
-      pre_compile_code_string="les_lay_mat->FmDelimString(lesion_layers, \" \")";
+      code_string="UnlesionAll()";
+      pre_compile_code_string="UnlesionAll()";
       result_var=NULL;
-      obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["les_lay_mat"]$$;
-      method=String_Matrix::FmDelimString;
-      meth_args {
-       name=;
+      fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["UnlesionAll"]$$;
+      fun_args {
+       name="fun_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     FunctionCall @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LayerGpsOnOff(lesion_layer_groups, )";
+      pre_compile_code_string="LayerGpsOnOff(lesion_layer_groups, )";
+      result_var=NULL;
+      fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"]$$;
+      fun_args {
+       name="fun_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
-	arg_type=const_taString_ref;
-	type="taString&";
-	name="str";
+	arg_type=taString;
+	type="String";
+	name="laygps";
+	required=1;
+	def_val=;
+	prev_expr="lesion_layer_groups";
+	expr {
+	 expr="lesion_layer_groups";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=bool;
+	type="bool";
+	name="lesion";
 	required=1;
 	def_val=;
 	prev_expr=;
+	expr {
+	 expr="true";
+	};
+       };
+      };
+     };
+     FunctionCall @[3] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LayersOnOff(lesion_layer_groups, true)";
+      pre_compile_code_string="LayersOnOff(lesion_layer_groups, true)";
+      result_var=NULL;
+      fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"]$$;
+      fun_args {
+       name="fun_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=taString;
+	type="String";
+	name="lays";
+	required=1;
+	def_val=;
+	prev_expr="lesion_layer_groups";
 	expr {
 	 expr="lesion_layers";
 	};
        };
        ProgArg @[1] {
-	arg_type=const_taString_ref;
-	type="taString&";
-	name="delim";
-	required=0;
-	def_val="\"\"";
-	prev_expr=;
+	arg_type=bool;
+	type="bool";
+	name="lesion";
+	required=1;
+	def_val=;
+	prev_expr="true";
 	expr {
-	 expr="\" \"";
+	 expr="true";
 	};
        };
       };
-      meth_sig="void FmDelimString(taString& str, taString& delim)";
-      meth_desc=" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything";
      };
-     ForLoop @[4] {
+     FunctionCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="for (i = 0; i < les_lay_mat.size; i++)";
-      pre_compile_code_string="for (i = 0; i < les_lay_mat.size; i++)";
-      loop_code {
-       name=;
-       el_typ=ProgCode;
+      code_string="ProjectionsOnOff(, true)";
+      pre_compile_code_string="ProjectionsOnOff(, true)";
+      result_var=NULL;
+      fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"]$$;
+      fun_args {
+       name="fun_args";
+       el_typ=ProgArg;
        el_def=0;
-       MethodCall @[0] {
-	desc=;
-	flags=CAN_REVERT_TO_CODE;
-	code_string="laygp_nm = les_lay_mat->SafeEl_Flat(i)";
-	pre_compile_code_string="laygp_nm = les_lay_mat->SafeEl_Flat(i)";
-	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp_nm"]$$;
-	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["les_lay_mat"]$;
-	method=taMatrixT_taString_::SafeEl_Flat;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	 ProgArg @[0] {
-	  arg_type=int;
-	  type="int";
-	  name="idx";
-	  required=1;
-	  def_val=;
-	  prev_expr=;
-	  expr {
-	   expr="i";
-	  };
-	 };
-	};
-	meth_sig="taString_ref SafeEl_Flat(int idx)";
-	meth_desc=" (safely) access the matrix as if it were a flat vector, for reading";
-       };
-       MemberMethodCall @[1] {
-	desc=;
-	flags=CAN_REVERT_TO_CODE;
-	code_string="laygp = network.layers.gp.FindName(laygp_nm)";
-	pre_compile_code_string="laygp = network.layers.gp.FindName(laygp_nm)";
-	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$;
-	path="layers.gp";
-	result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp"]$;
-	method=taGroup_Layer_::FindName;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	 ProgArg @[0] {
-	  arg_type=const_taString_ref;
-	  type="taString&";
-	  name="item_nm";
-	  required=1;
-	  def_val=;
-	  prev_expr=;
-	  expr {
-	   expr="laygp_nm";
-	  };
-	 };
-	};
-	meth_sig="Layer_ptr FindName(taString& item_nm)";
-	meth_desc=" Find element in top-level list with given name (nm) (NULL = not here)";
-       };
-       If @[2] {
-	desc=;
-	flags=CAN_REVERT_TO_CODE;
-	code_string="if (!laygp)";
-	pre_compile_code_string="if (!laygp)";
-	cond {
-	 expr="!laygp";
-	};
-	true_code {
-	 name=;
-	 el_typ=ProgCode;
-	 el_def=0;
-	 MiscCall @[0] {
-	  desc=;
-	  flags=CAN_REVERT_TO_CODE;
-	  code_string="taMisc::Error(\"layer group named:\", laygp_nm, \"not found in network:\", network.name, , , , , )";
-	  pre_compile_code_string="taMisc::Error(\"layer group named:\", laygp_nm, \"not found in network:\", network.name, , , , , )";
-	  result_var=NULL;
-	  object_type=taMisc;
-	  method=taMisc::Error;
-	  meth_args {
-	   name=;
-	   el_typ=ProgArg;
-	   el_def=0;
-	   ProgArg @[0] {
-	    arg_type=const_taString_ref;
-	    type="taString&";
-	    name="a";
-	    required=1;
-	    def_val=;
-	    prev_expr=;
-	    expr {
-	     expr="\"layer group named:\"";
-	    };
-	   };
-	   ProgArg @[1] {
-	    arg_type=const_taString_ref;
-	    type="taString&";
-	    name="b";
-	    required=0;
-	    def_val="\"\"";
-	    prev_expr=;
-	    expr {
-	     expr="laygp_nm";
-	    };
-	   };
-	   ProgArg @[2] {
-	    arg_type=const_taString_ref;
-	    type="taString&";
-	    name="c";
-	    required=0;
-	    def_val="\"\"";
-	    prev_expr=;
-	    expr {
-	     expr="\"not found in network:\"";
-	    };
-	   };
-	   ProgArg @[3] {
-	    arg_type=const_taString_ref;
-	    type="taString&";
-	    name="d";
-	    required=0;
-	    def_val="\"\"";
-	    prev_expr=;
-	    expr {
-	     expr="network.name";
-	    };
-	   };
-	   ProgArg @[4] {
-	    arg_type=const_taString_ref;
-	    type="taString&";
-	    name="e";
-	    required=0;
-	    def_val="\"\"";
-	    prev_expr=;
-	    expr {
-	     expr=;
-	    };
-	   };
-	   ProgArg @[5] {
-	    arg_type=const_taString_ref;
-	    type="taString&";
-	    name="f";
-	    required=0;
-	    def_val="\"\"";
-	    prev_expr=;
-	    expr {
-	     expr=;
-	    };
-	   };
-	   ProgArg @[6] {
-	    arg_type=const_taString_ref;
-	    type="taString&";
-	    name="g";
-	    required=0;
-	    def_val="\"\"";
-	    prev_expr=;
-	    expr {
-	     expr=;
-	    };
-	   };
-	   ProgArg @[7] {
-	    arg_type=const_taString_ref;
-	    type="taString&";
-	    name="h";
-	    required=0;
-	    def_val="\"\"";
-	    prev_expr=;
-	    expr {
-	     expr=;
-	    };
-	   };
-	   ProgArg @[8] {
-	    arg_type=const_taString_ref;
-	    type="taString&";
-	    name="i";
-	    required=0;
-	    def_val="\"\"";
-	    prev_expr=;
-	    expr {
-	     expr=;
-	    };
-	   };
-	  };
-	 };
-	 IfContinue @[1] {
-	  desc=;
-	  flags=CAN_REVERT_TO_CODE;
-	  code_string="continue";
-	  pre_compile_code_string="continue";
-	  cond {
-	   expr=;
-	  };
-	 };
+       ProgArg @[0] {
+	arg_type=taString;
+	type="String";
+	name="prjns";
+	required=1;
+	def_val=;
+	prev_expr="lesion_layers";
+	expr {
+	 expr="lesion_prjns";
 	};
        };
-       MethodCall @[3] {
-	desc=;
-	flags=CAN_REVERT_TO_CODE;
-	code_string="laygp->LesionLayers()";
-	pre_compile_code_string="laygp->LesionLayers()";
-	result_var=NULL;
-	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp"]$;
-	method=Layer_Group::LesionLayers;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
+       ProgArg @[1] {
+	arg_type=bool;
+	type="bool";
+	name="lesion";
+	required=1;
+	def_val=;
+	prev_expr="true";
+	expr {
+	 expr="true";
 	};
-	meth_sig="void LesionLayers()";
-	meth_desc=" set the lesion flag on all the layers within this group -- removes them from all processing operations";
        };
-       MethodCall @[4] {
-	desc=;
-	flags=CAN_REVERT_TO_CODE;
-	code_string="laygp->IconifyLayers()";
-	pre_compile_code_string="laygp->IconifyLayers()";
-	result_var=NULL;
-	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp"]$;
-	method=Layer_Group::IconifyLayers;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	};
-	meth_sig="void IconifyLayers()";
-	meth_desc=" iconi";
-       };
-      };
-      init {
-       expr="i = 0";
-      };
-      test {
-       expr="i < les_lay_mat.size";
-      };
-      iter {
-       expr="i++";
       };
      };
-     MethodCall @[5] {
+     FunctionCall @[5] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="ProjectionsOnOff(, true)";
+      pre_compile_code_string="ProjectionsOnOff(, true)";
+      result_var=NULL;
+      fun=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"]$;
+      fun_args {
+       name="fun_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=taString;
+	type="String";
+	name="prjns";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="un_lesion_prjns";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=bool;
+	type="bool";
+	name="lesion";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="false";
+	};
+       };
+      };
+     };
+     MethodCall @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Build()";
@@ -13513,7 +15149,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       meth_sig="void Build()";
       meth_desc=" Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)";
      };
-     MethodCall @[6] {
+     MethodCall @[7] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="network->UpdtAfterNetMod()";
@@ -13529,7 +15165,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       meth_sig="void UpdtAfterNetMod()";
       meth_desc=" update network after any network modification (calls appropriate functions)";
      };
-     PrintExpr @[7] {
+     PrintExpr @[8] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="Print \"Cons: \" << network.n_cons << \" Units: \" << network.n_units";
@@ -17437,7 +19073,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["cycle"] {
       name="cycle";
       var_type=T_Int;
-      int_val=0;
+      int_val=25;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
@@ -19385,7 +21021,7 @@ also save specs.";
       ProgVar @["run_already"] {
        name="run_already";
        var_type=T_Bool;
-       bool_val=0;
+       bool_val=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -21280,7 +22916,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.00212427;
+     value 8 0=0.002123142;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -21290,12 +22926,12 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9936272;
+     value 8 0=0.9930999;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7952421;
+     value 8 0=0.7943925;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -21796,7 +23432,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0.962046: fix_max=0: max=0.999009: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["Output_avg_cos_diff"] {
@@ -21850,7 +23486,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0.281181: fix_max=0: max=0.466438: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["Output_avg_net_sd"] {
@@ -22922,12 +24558,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04354753;
+       value 8 0=0.04352442;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7315208;
+       value 8 0=0.7306712;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -23289,7 +24925,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
        wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
        inhib=0;
-       wt_scale {abs=1: rel=1: };
+       wt_scale {abs=1: rel=1: no_plus_net=0: };
        learn=0;
        learn_qtr=Q4;
        lrate=0.04;
@@ -23375,7 +25011,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
        wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
        inhib=0;
-       wt_scale {abs=1: rel=0.2: };
+       wt_scale {abs=1: rel=0.2: no_plus_net=0: };
        learn=1;
        learn_qtr=Q4;
        lrate=0.04;
@@ -23451,7 +25087,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
      lrate=0.04;
@@ -23878,17 +25514,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     trg_max_act_crit=0.5;
     off_errs=1;
     on_errs=1;
-    cos_err_lrn_thr=-1;
+    agg_unlearnable=0;
    };
    net_misc {
     spike=0;
     deep=0;
-    bias_learn=1;
+    bias_learn=0;
     trial_decay=1;
     diff_scale_p=0;
     diff_scale_q1=0;
     dwt_norm=0;
-    wt_bal=1;
+    wt_bal=0;
     rugp_wt_sync=0;
     lay_gp_inhib=0;
     inhib_cons=0;
