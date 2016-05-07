@@ -743,7 +743,7 @@ void ClusterRun::GetFiles() {
           svn_other->SaveFile(svnp, local_fl);
         }
         catch (const SubversionClient::Exception &ex) {
-          taMisc::Error("Error doing SafeFile in other SubversionClient.\n", ex.what());
+          taMisc::Error("Error getting file.\n\nPossible reason - If file belongs to another user and it is not one automatically checked into the svn repository the 'get' will fail if the other user has not already retrieved the file themself - but no harm in trying\n\n", ex.what());
           taMisc::RemoveFile(local_fl); // don't leave bad one lying around
           taMisc::DoneBusy();
           return;
