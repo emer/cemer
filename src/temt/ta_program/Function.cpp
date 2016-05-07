@@ -92,6 +92,7 @@ void Function::UpdateAfterEdit_impl() {
     SetName("My" + name);
   }
   fun_code.el_typ = &TA_ProgCode;  // make sure this is default
+  UpdateCallers();
 }
 
 void Function::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -167,20 +168,11 @@ ProgVar* Function::FindVarName(const String& var_nm) const {
   return fun_code.FindVarName(var_nm);
 }
 
-void Function::ListCallers() {
+void Function::GetCallers(taBase_PtrList& callers) {
   Program* prog = program();
-  if(!prog)
-    return;
+  if(!prog) return;
   
- prog->GuiFindFromMe("\"" + name + "(\"");    // find all refs to me
-}
-void Function::UpdateCallerArgs() {
-  Program* prog = program();
-  if(!prog)
-    return;
-
-  taBase_PtrList fc_items;
-  prog->Search("FunctionCall", fc_items, NULL,
+  prog->Search("FunctionCall", callers, NULL,
                false,  // text_only
                false,  // contains
                true,   // case_sensitive
@@ -190,15 +182,37 @@ void Function::UpdateCallerArgs() {
                false,  // obj_val
                false,  // mbr_name
                false); // type_desc
+}
 
-  for(int i=0;i<fc_items.size; i++) {
-    taBase* it = fc_items[i];
+void Function::ListCallers() {
+  Program* prog = program();
+  if(!prog)
+    return;
+  
+ prog->GuiFindFromMe("\"" + name + "(\"");    // find all refs to me
+}
+
+void Function::UpdateCallers() {
+  Program* prog = program();
+  if(!prog)
+    return;
+  
+  taBase_PtrList callers;
+  GetCallers(callers);
+  
+  for(int i=0;i<callers.size; i++) {
+    taBase* it = callers[i];
     if(!it || !it->InheritsFrom(&TA_FunctionCall)) continue;
     FunctionCall* fc = (FunctionCall*)it;
     if(fc->fun.ptr() == this) {
       fc->UpdateArgs();
+      fc->UpdateAfterEdit();
     }
   }
+}
+
+void Function::UpdateCallerArgs() {
+  UpdateCallers();
   ListCallers();
 }
 

@@ -44,9 +44,13 @@ public:
   // The arguments to the function
   ProgEl_List           fun_code;
   // the function code (list of program elements)
-
+  
   int             ProgElChildrenCount() const override { return fun_code.size; }
 
+  virtual void    GetCallers(taBase_PtrList& callers);
+  // find all CallFunction elements -- TODO - also find ProgramCallFun
+  virtual void    UpdateCallers();
+  // no-gui update of callers
   virtual void    UpdateCallerArgs();
   // #BUTTON #CAT_Code run UpdateArgs on all the function calls to me, and also display all these calls in the Find dialog (searching on this function's name) so you can make sure the args are correct for each call
   virtual void    ListCallers();
