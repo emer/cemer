@@ -21,12 +21,15 @@
 #include <taiWidgetFieldIncr>
 #include <taiWidgetField>
 #include <taiWidgetListElChooser>
+#include <taiWidgetMenu>
 #include <taiWidgetPoly>
 #include <iCheckBox>
+#include <iLabel>
 #include <BuiltinTypeDefs>
 #include <iLineEdit>
 #include <iStripeWidget>
 #include <iFormLayout>
+#include <taGuiDialog>
 
 #include <taMisc>
 #include <taiMisc>
@@ -35,6 +38,8 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include <QSignalMapper>
+#include <QContextMenuEvent>
+
 
 const int iViewPanelOfGraphTable::axis_chooser_width = 160;
 const int iViewPanelOfGraphTable::axis_label_width = 25;
@@ -458,11 +463,15 @@ bool iViewPanelOfGraphTable::BuildPlots() {
     layYAxis[i]->addStrut(row_height); // make it full height, so controls center
 
     String lbl = "Y" + String(i+1) + ":";
-    lblYAxis[i] = taiM->NewLabel(lbl, widg, font_spec);
+    String desc;
+    const int ctrl_size = taiM->ctrl_size;
+    lblYAxis[i] = taiEditorWidgetsMain::MakeInitEditLabel(lbl, this, ctrl_size,  desc, NULL,
+                                                          this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), i);
     lblYAxis[i]->setFixedWidth(axis_label_width);
     lblYAxis[i]->setToolTip(taiMisc::ToolTipPreProcess("Column of data to plot (optional)"));
     lblYAxis[i]->setFixedHeight(row_height);
     layYAxis[i]->addWidget(lblYAxis[i]);
+    
     // fix the button width so all of the checkboxes and other control align
     String start_text = "";
     lelYAxis[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags, start_text, axis_chooser_width));
@@ -744,4 +753,68 @@ void iViewPanelOfGraphTable::butSetLineStyleZAxis() {
   }
 }
 
+void iViewPanelOfGraphTable::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e) {
+  taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
+  Q_CHECK_PTR(menu);
+  
+  iAction* act = NULL;
+  act = menu->AddItem("Insert Before", taiWidgetMenu::normal, iAction::int_act, this, SLOT(InsertPlotBefore(int)), sender->index());
+  act = menu->AddItem("Insert After", taiWidgetMenu::normal, iAction::int_act, this, SLOT(InsertPlotAfter(int)), sender->index());
+  act = menu->AddItem("Delete", taiWidgetMenu::normal, iAction::int_act, this, SLOT(DeletePlot(int)), sender->index());
+  act = menu->AddItem("Move Before", taiWidgetMenu::normal, iAction::int_act, this, SLOT(MovePlotBefore(int)), sender->index());
+  menu->exec(sender->mapToGlobal(e->pos()));
+  delete menu;
+}
 
+// NOTE - the Y plot labels start with 1 but the list index starts at 0 of course
+void iViewPanelOfGraphTable::InsertPlotBefore(int plot_index) {
+  GraphTableView* glv = this->glv();
+  glv->AddPlot(1);
+  glv->plots.MoveBeforeIdx(glv->tot_plots-1, plot_index);
+  glv->UpdateAfterEdit();
+  glv->UpdateDisplay();
+}
+
+void iViewPanelOfGraphTable::InsertPlotAfter(int plot_index) {
+  GraphTableView* glv = this->glv();
+  glv->AddPlot(1);
+  glv->plots.MoveBeforeIdx(glv->tot_plots-1, plot_index+1);
+  glv->UpdateAfterEdit();
+  glv->UpdateDisplay();
+}
+
+void iViewPanelOfGraphTable::DeletePlot(int plot_index) {
+  GraphTableView* glv = this->glv();
+  glv->DeletePlot(plot_index);
+  glv->UpdateAfterEdit();
+  glv->UpdateDisplay();
+}
+
+void iViewPanelOfGraphTable::MovePlotBefore(int old_index) {
+  int new_index = 1;
+  
+  taGuiDialog dlg;
+  dlg.win_title = "Move Plot";
+  String prompt = "Move Y" + String(old_index) +  " before Y?";
+  dlg.prompt = prompt;
+  dlg.width = 200;
+  dlg.height = 150;
+  
+  String widget("main");
+  String vbox("mainv");
+  dlg.AddWidget(widget);
+  dlg.AddVBoxLayout(vbox, "", widget);
+  
+  String tt;
+  String row = "one_row";
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddIntField(&new_index, "", widget, row, tt);
+
+  int drval = dlg.PostDialog(true);
+  if(drval != 0) {
+    GraphTableView* glv = this->glv();
+    glv->plots.MoveBeforeIdx(old_index, new_index-1);  // user visible numbers start at 1 not zero
+    glv->UpdateAfterEdit();
+    glv->UpdateDisplay();
+  }
+}

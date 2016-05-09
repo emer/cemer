@@ -273,6 +273,7 @@ protected slots:
   void                  this_itemSelectionChanged();
   virtual void          ExpandAllUnderInt(void* item);
   virtual void          CollapseAllUnderInt(void* item);
+  virtual void          ExpandDefaultUnderInt(void* item);
 private:
   mutable QFont*        italic_font;
 };
