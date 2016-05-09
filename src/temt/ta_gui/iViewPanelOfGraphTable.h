@@ -36,7 +36,6 @@ class QPushButton; //
 class QLabel; //
 class iStripeWidget; //
 class iFormLayout; //
-class iLabel; //
 
 
 taTypeDef_Of(iViewPanelOfGraphTable);
@@ -111,7 +110,7 @@ public:
 
   QHBoxLayout*            layYAxis[max_plots];
   iCheckBox*                oncYAxis[max_plots];
-  iLabel*                   lblYAxis[max_plots];
+  QLabel*                   lblYAxis[max_plots];
   taiWidgetListElChooser*   lelYAxis[max_plots]; // list element chooser
   taiWidgetPoly*            pdtYAxis[max_plots]; // fixed_range polydata (inline)
   QCheckBox*                chkYAltY[max_plots];
@@ -176,11 +175,7 @@ protected slots:
   void              butSetLineStyle(int plot_num);
   void              butSetLineStyleXAxis();
   void              butSetLineStyleZAxis();
-  void              label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e); // note, it MUST have this name
-  void              InsertPlotBefore(int plot_index);
-  void              InsertPlotAfter(int plot_index);
-  void              DeletePlot(int plot_index);
-  void              MovePlotBefore(int old_index);
+
 };
 
 #endif // iViewPanelOfGraphTable_h
