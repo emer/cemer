@@ -120,15 +120,16 @@ public:
   String                last_sel_col_nm; // #READ_ONLY #SHOW #NO_SAVE column name of the last selected point in graph to view values (if empty, then none)
   taVector3f            last_sel_pt;    // #READ_ONLY #SHOW #NO_SAVE values of last selected point
 
-  bool          scrolling_;     // #IGNORE currently scrolling (in scroll callback)
+  bool                  scrolling_;     // #IGNORE currently scrolling (in scroll callback)
 
   void InitDisplay(bool init_panel = true) override;
   void UpdateDisplay(bool update_panel = true) override;
 
-  void          SetColorSpec(ColorScaleSpec* color_spec);
+  void                   SetColorSpec(ColorScaleSpec* color_spec);
   // #BUTTON #VIEWMENU #INIT_ARGVAL_ON_colorscale.spec set the color scale spec to determine the palette of colors representing values
-
-  virtual void  SetScrollBars();   // set scroll bar values
+  virtual void           AddPlot(int count); // Add one or more Y plot
+  virtual void           DeletePlot(int plot_index); // Remove a single Y plot
+  virtual void           SetScrollBars();   // set scroll bar values
 
   ///////////////////////////////////////////////////
   // misc housekeeping

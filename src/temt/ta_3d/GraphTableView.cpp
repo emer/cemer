@@ -309,6 +309,17 @@ void GraphTableView::CopyFromView(GraphTableView* cp) {
   T3DataViewMain::CopyFromViewFrame(cp);
 }
 
+void GraphTableView::AddPlot(int count) {
+  tot_plots += count;
+  AllocPlotData();
+}
+
+void GraphTableView::DeletePlot(int plot_number) {
+  plots.RemoveIdx(plot_number);
+  tot_plots -= 1;
+  AllocPlotData();
+}
+
 void GraphTableView::AllocPlotData() {
   if(plots.size != tot_plots) {
     errbars.SetSize(tot_plots);     // always keep sync'd
