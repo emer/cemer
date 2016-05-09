@@ -294,6 +294,8 @@ void BaseSpec::SpecUnSet(taBase* obj) {
 }
 
 String BaseSpec::WhereUsed(bool child) {
+  UpdtIsUsed();
+  SigEmitUpdated();
   String rval;
   taSigLink* dl = sig_link();
   if(!dl) return rval;
