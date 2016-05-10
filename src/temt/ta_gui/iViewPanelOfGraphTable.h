@@ -168,7 +168,7 @@ protected:
 public: // ISigLinkClient interface
   void*             This() override {return (void*)this;}
   TypeDef*          GetTypeDef() const override {return &TA_iViewPanelOfGraphTable;}
-  
+
   protected slots:
   void              butRefresh_pressed();
   void              butClear_pressed();
@@ -176,11 +176,14 @@ public: // ISigLinkClient interface
   void              butSetLineStyle(int plot_num);
   void              butSetLineStyleXAxis();
   void              butSetLineStyleZAxis();
-  void              label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e); // note, it MUST have this name
   void              InsertPlotBefore(int plot_index);
   void              InsertPlotAfter(int plot_index);
   void              DeletePlot(int plot_index);
   void              MovePlotBefore(int old_index);
+  
+#ifndef __MAKETA__
+  void              label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e); // note, it MUST have this name
+#endif
 };
 
 #endif // iViewPanelOfGraphTable_h
