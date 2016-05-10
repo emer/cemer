@@ -253,9 +253,9 @@ void iTreeView::CollapseAllUnderInt(void* item) {
   CollapseAllUnder((iTreeViewItem*)item);
 }
 
-void iTreeView::ExpandDefaultUnderInt(void* item) {
-  ExpandDefaultUnder((iTreeViewItem*)item);
-}
+//void iTreeView::ExpandDefaultUnderInt(void* item) {
+//  ExpandDefaultUnder((iTreeViewItem*)item);
+//}
 
 void iTreeView::InsertEl(bool after) {
   ISelectable* si = curItem();
@@ -404,11 +404,11 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   // special check for guys that should not be auto-expaneded at all!  may need to do this in child below.
   taBase* tab = item->link()->taData();
   
-  String cur_name = tab->GetName();
-  
-  if (cur_name == "test") {
-    ;
-  }
+//  String cur_name = tab->GetName();
+//  
+//  if (cur_name == "test") {
+//    ;
+//  }
   
   bool expand_saved = false;
   if(exp_flags & (EF_DEFAULT | EF_CUSTOM_FILTER) && tab &&
@@ -523,7 +523,8 @@ void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
 }
 
 void iTreeView::ExpandAllUnderInt(void* item) {
-  ExpandDefaultUnder((iTreeViewItem*)item);
+//  ExpandDefaultUnder((iTreeViewItem*)item);
+    ExpandAllUnder((iTreeViewItem*)item);
 }
 
 void iTreeView::ExpandDefault() {
@@ -1109,8 +1110,8 @@ void iTreeView::FillContextMenu_post(ISelectable_PtrList& sel_items, taiWidgetAc
                        this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
       men_exp->AddItem("Collapse All From Here", taiWidgetMenu::normal, iAction::ptr_act,
                        this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
-      men_exp->AddItem("Expand Default Under", taiWidgetMenu::normal, iAction::ptr_act,
-                       this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
+//      men_exp->AddItem("Expand Default Under", taiWidgetMenu::normal, iAction::ptr_act,
+//                       this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
     }
   }
   
