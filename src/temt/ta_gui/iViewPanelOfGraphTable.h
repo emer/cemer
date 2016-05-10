@@ -30,19 +30,20 @@ class taiWidgetPoly; //
 class iCheckBox; //
 class taiWidgetComboBox; //
 class GraphTableView; //
-class QHBoxLayout; // 
+class QHBoxLayout; //
 class QCheckBox; //
 class QPushButton; //
 class QLabel; //
 class iStripeWidget; //
 class iFormLayout; //
+class iLabel; //
 
 
 taTypeDef_Of(iViewPanelOfGraphTable);
 
 class TA_API iViewPanelOfGraphTable: public iViewPanelOfDataTable {
   Q_OBJECT
-INHERITED(iViewPanelOfDataTable)
+  INHERITED(iViewPanelOfDataTable)
 public:
   static const int          max_plots = 64; // maximum number of y axis data plots that can be displayed in the control panel
   static const int          axis_chooser_width;
@@ -60,7 +61,7 @@ public:
   QCheckBox*                chkNegDraw;
   QCheckBox*                chkNegDrawZ;
   QPushButton*              butRefresh;
-
+  
   QHBoxLayout*            layVals;
   QLabel*                   lblRows;
   taiWidgetFieldIncr*       fldRows; // number of rows to display
@@ -76,14 +77,14 @@ public:
   taiWidgetField*           fldDepth; // depth of the display (height is always 1.0)
   QLabel*                   lblNPlots;
   taiWidgetField*           fldNPlots;
-
+  
   QHBoxLayout*            layAxisLabelChks;
   QLabel*                   lblAxisLabelChks;
   QCheckBox*                chkXAxisLabel; // show or hide X axis label
   QCheckBox*                chkYAxisLabel; // show or hide Y axis label
   QCheckBox*                chkAltYAxisLabel; // show or hide Y alt axis label
   QCheckBox*                chkZAxisLabel; // show or hide Z axis label
-
+  
   QHBoxLayout*            layXAxis;
   QLabel*                   lblXAxis;
   taiWidgetListElChooser*   lelXAxis; // list element chooser
@@ -92,7 +93,7 @@ public:
   QLabel*                   lblcellXAxis;
   taiWidgetFieldIncr*       cellXAxis; // matrix cell
   QPushButton*              butLinePropsXAxis;
-
+  
   QHBoxLayout*            layZAxis;
   iCheckBox*                oncZAxis; // on checkbox
   QLabel*                   lblZAxis;
@@ -102,15 +103,15 @@ public:
   QLabel*                   lblcellZAxis;
   taiWidgetFieldIncr*       cellZAxis; // matrix cell
   QPushButton*              butLinePropsZAxis;
-
+  
   iStripeWidget*            plotsWidg; // plot holding widget
   iFormLayout*              layPlots; // all the plots
   int                       cur_built_plots; // number of plots that are currently built
   int                       row_height;
-
+  
   QHBoxLayout*            layYAxis[max_plots];
   iCheckBox*                oncYAxis[max_plots];
-  QLabel*                   lblYAxis[max_plots];
+  iLabel*                   lblYAxis[max_plots];
   taiWidgetListElChooser*   lelYAxis[max_plots]; // list element chooser
   taiWidgetPoly*            pdtYAxis[max_plots]; // fixed_range polydata (inline)
   QCheckBox*                chkYAltY[max_plots];
@@ -119,9 +120,9 @@ public:
   taiWidgetListElChooser*   lelErr[max_plots];
   iCheckBox*                oncErr[max_plots]; // on checkbox
   QPushButton*              butLineProps[max_plots];
-
+  
   //  QLabel*                   lblErr[max_plots];
-
+  
   QHBoxLayout*            layCAxis;
   QLabel*                   lblColorMode;
   taiWidgetComboBox*        cmbColorMode;
@@ -137,7 +138,7 @@ public:
   taiWidgetField*           fldPointSz;
   QLabel*                   lblAxisSz;
   taiWidgetField*           fldAxisSz;
-
+  
   QHBoxLayout*            layRAxis;
   QLabel*                   lblRAxis;
   taiWidgetListElChooser*   lelRAxis; // list element chooser
@@ -146,36 +147,40 @@ public:
   taiWidgetField*           fldBarSpace;
   QLabel*                   lblBarDepth;
   taiWidgetField*           fldBarDepth;
-
+  
   QHBoxLayout*            layColorScale;
   iColorScaleBar*           cbar;             // colorbar
   QPushButton*              butSetColor;
-
+  
   String       panel_type() const override; // this string is on the subpanel button for this panel
   GraphTableView*       glv() {return (GraphTableView*)m_dv;}
-
+  
   iViewPanelOfGraphTable(GraphTableView* glv);
   ~iViewPanelOfGraphTable();
-
+  
 protected:
   void              InitPanel_impl() override; // called on structural changes
   void              UpdatePanel_impl() override; // called on structural changes
   void              GetValue_impl() override;
   void              CopyFrom_impl() override;
   virtual bool      BuildPlots();
-
+  
 public: // ISigLinkClient interface
   void*             This() override {return (void*)this;}
   TypeDef*          GetTypeDef() const override {return &TA_iViewPanelOfGraphTable;}
-
-protected slots:
+  
+  protected slots:
   void              butRefresh_pressed();
   void              butClear_pressed();
   void              butSetColor_pressed();
   void              butSetLineStyle(int plot_num);
   void              butSetLineStyleXAxis();
   void              butSetLineStyleZAxis();
-
+  void              label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e); // note, it MUST have this name
+  void              InsertPlotBefore(int plot_index);
+  void              InsertPlotAfter(int plot_index);
+  void              DeletePlot(int plot_index);
+  void              MovePlotBefore(int old_index);
 };
 
 #endif // iViewPanelOfGraphTable_h
