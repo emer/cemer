@@ -211,6 +211,8 @@ taExpandDefaultsProgram::taExpandDefaultsProgram() {
 }
 taExpandDefaultsProgram taMisc::expand_defaults_program;
 
+bool    taMisc::expand_default_method_calls = false;
+
 ////////////////////////////////////////////////////////
 //      TA GUI parameters
 

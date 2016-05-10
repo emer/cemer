@@ -95,7 +95,6 @@ public:
   int             functions;  // #MIN_0
   int             init_code;  // #MIN_0
   int             prog_code;  // #MIN_0
-  
   taExpandDefaultsProgram();
 };
 
@@ -287,8 +286,12 @@ public:
   static int            max_display_width;  // #SAVE #EXPERT #MIN_10 #CAT_GUI maximum width of console display (in chars) -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places -- may not want this to get too big
   static int            indent_spc;     // #SAVE #EXPERT #MIN_1 #MAX_8 #DEF_2 #CAT_GUI how many spaces to use per indent level
   static int            display_height;  // #SAVE #HIDDEN #CAT_GUI height of console display (in rows) -- set automatically by gui console -- used for paging
-  static taExpandDefaultsProject expand_defaults_project; // #SAVE #CAT_GUI default depths for expanding top level groups -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all Programs will be shown within all program groups and subgroups), 2+ = expand to second and beyond level (only applicable for specs, where it expands further children of specs at higher levels)
-  static taExpandDefaultsProgram expand_defaults_program; // #SAVE #CAT_GUI default depths for expanding program editor sections -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all types, args, vars, functions). For init_code and prog_code 2+ will reveal nested code.
+  static taExpandDefaultsProject expand_defaults_project;
+  // #SAVE #CAT_GUI default depths for expanding top level groups -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all Programs will be shown within all program groups and subgroups), 2+ = expand to second and beyond level (only applicable for specs, where it expands further children of specs at higher levels)
+  static taExpandDefaultsProgram expand_defaults_program;
+  // #SAVE #CAT_GUI default depths for expanding program editor sections -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all types, args, vars, functions). For init_code and prog_code 2+ will reveal nested code.
+  static bool           expand_default_method_calls;
+  // #SAVE #CAT_GUI should method_calls be expanded by default to show arguments
   static int            undo_depth;     // #SAVE #CAT_GUI #MIN_10 how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
   static int            undo_data_max_cells; // #SAVE #CAT_GUI maximum number of cells in a data table to save an undo copy -- if above this number of cells, it won't be saved for undo (only the column structure will be retained)
   static int            auto_save_data_max_cells; // #SAVE #CAT_GUI if column of data table has more than this number of cells, it won't be saved during auto_save (column structure will be retained)

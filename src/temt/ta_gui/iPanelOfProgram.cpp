@@ -17,6 +17,10 @@
 #include <Program>
 #include <ProgCode>
 #include <Function>
+#include <MethodCall>
+#include <StaticMethodCall>
+#include <ProgramCall>
+#include <FunctionCall>
 #include <taMisc>
 #include <taiMisc>
 
@@ -60,11 +64,20 @@ void iPanelOfProgram::items_CustomExpandFilter(iTreeViewItem* item, int level, b
       return;
     }
     else if (depth >= 1) {
-      return; 
+      return;
     }
   }
   else if (level <= cur_expand_depth) {
-    return;
+    if (!taiMisc::GetMethodCallDefaultExpand()) {
+      if (dl->taData()->GetTypeDef()->DerivesFrom(&TA_MethodCall) || dl->taData()->GetTypeDef()->DerivesFrom(&TA_StaticMethodCall) ||
+          dl->taData()->GetTypeDef()->DerivesFrom(&TA_FunctionCall) || dl->taData()->GetTypeDef()->DerivesFrom(&TA_ProgramCall)) {
+        expand = false;
+        return;
+      }
+    }
+    else {
+      return;
+    }
   }
   else {
     expand = false;
