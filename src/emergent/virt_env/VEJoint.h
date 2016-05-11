@@ -206,7 +206,7 @@ public:
   bool  IsCurType()  { return (joint_type == cur_type); }
   // #CAT_ODE is the ODE guy actually configured for the current joint type or not?
 
-  SIMPLE_COPY_UPDT_PTR_PAR(VEJoint, VEWorld);
+  SIMPLE_COPY(VEJoint);
   SIMPLE_INITLINKS(VEJoint);
   void CutLinks() override;
   TA_BASEFUNS(VEJoint);

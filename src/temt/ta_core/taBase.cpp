@@ -2295,6 +2295,7 @@ void taBase::CopyToCustom(taBase* src) const {
   src->SetBaseFlag(COPYING); // note: this is always outer guy, so do it here
     CopyToCustom_impl(src);
   src->ClearBaseFlag(COPYING); // note: this is always outer guy, so do it here
+  src->UpdatePointersAfterCopy_(*this);
   src->StructUpdate(false);
 }
 
@@ -2303,12 +2304,17 @@ void taBase::CopyFromCustom(const taBase* cp_fm) {
   SetBaseFlag(COPYING); // note: this is always outer guy, so do it here
     CopyFromCustom_impl(cp_fm);
   ClearBaseFlag(COPYING); // note: this is always outer guy, so do it here
+  UpdatePointersAfterCopy_(*cp_fm);
   StructUpdate(false);
 }
 
 void taBase::Copy_impl(const taBase& cp) { // note: not a virtual method
   // just the flags
   base_flags = (BaseFlags)((base_flags & ~COPY_MASK) | (cp.base_flags & COPY_MASK));
+}
+
+void taBase::Copy_assign(const taBase& cp) { // note: not a virtual method
+  // no updating etc at this level -- nothing copied!
 }
 
 bool taBase::CanAppend(const taBase* appendee) const {
@@ -3857,6 +3863,7 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
 }
 
 int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
+  // taMisc::Info("uptr_npar:", GetPathNames());
   TypeDef* td = GetTypeDef();
   int nchg = 0;                 // total number changed
   int mychg = 0;                // my actual guys changed

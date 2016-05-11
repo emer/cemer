@@ -164,7 +164,7 @@ void Layer::CutLinks() {
 void Layer::Copy_(const Layer& cp) {
   if(own_net && !own_net->HasBaseFlag(COPYING)) {
     // if we're the only guy copying, then all connections are invalid now -- just nuke
-    own_net->RemoveCons();
+    own_net->UnBuild();
   }
 
   desc = cp.desc;
@@ -202,10 +202,6 @@ void Layer::Copy_(const Layer& cp) {
 
   brain_area = cp.brain_area;
   voxel_fill_pct = cp.voxel_fill_pct;
-
-  // this will update all pointers under us to new network if we are copied from other guy
-  // only if the network is not otherwise already copying too!!
-  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Network);
 
   // not copied
   //  send_prjns.BorrowUnique(cp.send_prjns); // link group

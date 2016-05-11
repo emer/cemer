@@ -208,10 +208,10 @@ taExpandDefaultsProgram::taExpandDefaultsProgram() {
   functions = 7;
   init_code = 7;
   prog_code = 7;
+  call_args = 0;
 }
 taExpandDefaultsProgram taMisc::expand_defaults_program;
 
-bool    taMisc::expand_default_calls = false;
 
 ////////////////////////////////////////////////////////
 //      TA GUI parameters

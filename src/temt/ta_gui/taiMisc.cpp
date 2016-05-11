@@ -917,7 +917,7 @@ int taiMisc::GetProgramDefaultExpand(const String& group) {
 }
 
 bool taiMisc::GetCallDefaultExpand() {
-  return taMisc::expand_default_calls;
+  return (bool)taMisc::expand_defaults_program.call_args;
 }
 
 iMainWindowViewer* taiMisc::FindMainWinParent(QObject* obj) {

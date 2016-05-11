@@ -315,13 +315,15 @@ void Network::Copy_(const Network& cp) {
 
   max_disp_size = cp.max_disp_size;
   max_disp_size2d = cp.max_disp_size2d;
+}
 
-  UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers
+void Network::UpdatePointersAfterCopy_impl(const taBase& cp) {
+  inherited::UpdatePointersAfterCopy_impl(cp);
   SyncSendPrjns();
   UpdatePrjnIdxs();             // fix the recv_idx and send_idx (not copied!)
   UpdateAllSpecs();
-  Build();
 }
+
 
 void Network::UpdateAfterEdit_impl(){
   inherited::UpdateAfterEdit_impl();

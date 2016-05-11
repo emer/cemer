@@ -120,11 +120,6 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   net_sd = cp.net_sd;
   hog_pct = cp.hog_pct;
   dead_pct = cp.dead_pct;
-
-  // this will update spec pointer to new network if we are copied from other guy
-  // only if the network is not otherwise already copying too!!
-  // (other pointers are already dealt with in Layer)
-  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Network);
 }
 
 void LeabraLayer::CheckSpecs() {

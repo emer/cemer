@@ -113,10 +113,6 @@ void Projection::Copy_(const Projection& cp) {
   direction = cp.direction;
 
   m_prv_con_spec = cp.m_prv_con_spec;
-
-  // this will update all pointers under us to new network if we are copied from other guy
-  // only if the network is not otherwise already copying too!!
-  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Network);
 }
 
 void Projection::UpdateAfterMove_impl(taBase* old_owner) {

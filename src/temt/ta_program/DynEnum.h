@@ -69,7 +69,7 @@ public:
   String        GetDisplayName() const override;
   void          GetControlPanelLabel(MemberDef* mbr, String& label) const override; // #IGNORE get label only
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DynEnum, Program);
+  TA_SIMPLE_BASEFUNS(DynEnum);
 protected:
   void CheckThisConfig_impl(bool quiet, bool& rval) override;
 

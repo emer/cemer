@@ -65,19 +65,22 @@ class taProject; //
 // copy constructor             calls Copy__ to just copy stuff for this type
 // void Copy_impl(const type& cp) non-virtual protected method defined in BASEFUNS
 //                              that calls parent copy_impl, and then this copy -- this
-//                              is the master copy function for assignment =
-// void Copy(const type& cp)    public interface to call Copy_impl for a given guy
+//                              is the core inner copy function for assignment =
+// void Copy_assign(const type& cp) non-virtual protected method defined in BASEFUNS
+//                              that embeds copy_impl within proper outer-loop update
+//                              methods: StructUpdate, and UpdatePointersAfterCopy_
+// void Copy(const type& cp)    public interface to call Copy_assign for a given guy
 //
 // then there is, confusingly, an entirely separate set of copy mechanisms that
 // use the TA system to do more flexible copying using generic taBase* objects
 // these all take pointer args * instead of reference args
 //
 // void UnSafeCopy(const taBase* cp) virtual protected defined in BASEFUNS,
-//                              calls Copy_impl if source inherits from us, and
+//                              calls Copy_assign if source inherits from us, and
 //                              CastCopyTo if we inherit from source, so we get
 //                              common elements of subclass copied
 // void CastCopyTo(taBase* cp)  virtual protected defined in BASEFUNS,
-//                              casts source to our type, and calls Copy_impl on
+//                              casts source to our type, and calls Copy_assign on
 //                              that guy from us
 // bool Copy(const taBase* cp)  virtual public function that is master interface
 //                              to this generic interface
@@ -101,6 +104,7 @@ private: \
   void Copy__(const y& cp); \
 protected: \
   void Copy_impl(const y& cp); \
+  void Copy_assign(const y& cp); \
   void UnSafeCopy(const taBase* cp) override;\
   void CastCopyTo(taBase* cp) const override; \
 public: \
@@ -114,18 +118,20 @@ public: \
   void y::Copy__(const y& cp) {  \
     SetBaseFlag(COPYING); \
       Copy_(cp); \
-      UpdatePointersAfterCopy_(cp); \
     ClearBaseFlag(COPYING);} \
   void y::Copy_impl(const y& cp) { \
+    inherited::Copy_impl(cp); \
+    Copy__(cp);} \
+  void y::Copy_assign(const y& cp) { \
     StructUpdate(true); \
-      inherited::Copy_impl(cp); \
-      Copy__(cp); \
+    Copy_impl(cp); \
+    UpdatePointersAfterCopy_(cp); \
     StructUpdate(false);} \
   void y::UnSafeCopy(const taBase* cp) { \
-    if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y*)cp)); \
+    if(cp->InheritsFrom(&TA_##y)) Copy_assign(*((y*)cp)); \
     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this);} \
-  void y::CastCopyTo(taBase* cp) const { y& rf = *((y*)cp); rf.Copy_impl(*this); } \
-  void y::Copy(const y& cp) { Copy_impl(cp);} \
+  void y::CastCopyTo(taBase* cp) const { y& rf = *((y*)cp); rf.Copy_assign(*this); } \
+  void y::Copy(const y& cp) { Copy_assign(cp);} \
   bool y::Copy(const taBase* cp) {return taBase::Copy(cp);} \
   y& y::operator=(const y& cp) { Copy(cp); return *this;}
 
@@ -137,17 +143,22 @@ private: \
     ClearBaseFlag(COPYING);} \
 protected: \
   void Copy_impl(const y<T>& cp) { \
+    inherited::Copy_impl(cp); \
+    Copy__(cp);} \
+  void Copy_assign(const y<T>& cp) { \
     StructUpdate(true); \
-      inherited::Copy_impl(cp); \
-      Copy__(cp); \
+    Copy_impl(cp); \
+    UpdatePointersAfterCopy_(cp); \
     StructUpdate(false);} \
-  void  UnSafeCopy(const taBase* cp) override { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y<T>*)cp)); \
+  void  UnSafeCopy(const taBase* cp) override { \
+    if(cp->InheritsFrom(&TA_##y)) Copy_assign(*((y<T>*)cp)); \
     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
-  void  CastCopyTo(taBase* cp) const override { y<T>& rf = *((y<T>*)cp); rf.Copy_impl(*this); } \
+  void  CastCopyTo(taBase* cp) const override { \
+    y<T>& rf = *((y<T>*)cp); rf.Copy_assign(*this); }   \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const override { return &TA_##y; } \
-  void Copy(const y<T>& cp) { Copy_impl(cp);} \
+  void Copy(const y<T>& cp) { Copy_assign(cp);} \
   inline bool Copy(const taBase* cp) override {return taBase::Copy(cp);} \
   y<T>& operator=(const y<T>& cp) { Copy(cp); return *this; }
 
@@ -328,12 +339,6 @@ public: \
 // for when you need to give it a diff name
 #define SIMPLE_COPY_EX(T,NAME) \
   void NAME(const T& cp) {T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); }
-
-// this calls UpdatePointers_NewPar based on a major scoping owning parent, only if that
-// parent is not already copying, and the parent is different than the copy parent
-#define SIMPLE_COPY_UPDT_PTR_PAR(T,P) \
-  void Copy_(const T& cp) {T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); \
-    UpdatePointers_NewPar_IfParNotCp(&cp, &TA_##P); }
 
 // automated Init/Cut links guys -- esp good for code in Plugins
 #define SIMPLE_INITLINKS(T) \
@@ -1281,13 +1286,14 @@ public:
 
 protected: // impl
   void                  Copy_impl(const taBase& cp);
+  void                  Copy_assign(const taBase& cp);
   virtual bool          CanDoCopy_impl(const taBase* cp, bool quiet, bool copy);
     // intertwines the checks and copy, so it can be used for checking, or copying
   virtual void          CanCopy_impl(const taBase* cpy_from, bool quiet,
     bool& ok, bool virt) const;
     // basic query interface impl, only passed frm >= our class; may get called repeatedly, so subs are allowed to add an empty stub
-  virtual void          CopyFromCustom_impl(const taBase* cp) {} // this is the generic copy, that enables common subclass or disparate class copying; follow pattern of Copy_impl, except we are always called in a Struct bracket
-  virtual void          CopyToCustom_impl(taBase* targ) const {} // this is a fairly rarely used one for the case where the src actually does the copy; follow pattern of Copy_impl, except we are always called in a Struct bracket
+  virtual void          CopyFromCustom_impl(const taBase* cp) {} // this is the generic copy, that enables common subclass or disparate class copying; follow pattern of Copy_assign, except we are always called in a Struct bracket
+  virtual void          CopyToCustom_impl(taBase* targ) const {} // this is a fairly rarely used one for the case where the src actually does the copy; follow pattern of Copy_assign, except we are always called in a Struct bracket
 
   virtual void          CanCopyCustom_impl(bool to, const taBase* cp,
     bool quiet, bool& allowed, bool& forbidden) const {}

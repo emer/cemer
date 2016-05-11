@@ -1101,6 +1101,7 @@ protected:
   void UpdateAfterEdit_impl() override;
   void CheckThisConfig_impl(bool quiet, bool& rval) override;
   void CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void UpdatePointersAfterCopy_impl(const taBase& cp) override;
 
 private:
   void  Initialize();
