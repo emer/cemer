@@ -916,8 +916,8 @@ int taiMisc::GetProgramDefaultExpand(const String& group) {
     return -1;  // use the default set for class
 }
 
-bool taiMisc::GetMethodCallDefaultExpand() {
-  return taMisc::expand_default_method_calls;
+bool taiMisc::GetCallDefaultExpand() {
+  return taMisc::expand_default_calls;
 }
 
 iMainWindowViewer* taiMisc::FindMainWinParent(QObject* obj) {

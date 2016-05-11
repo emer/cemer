@@ -586,8 +586,8 @@ public:
   // set the expansion depth for this group - 0 means don't expand, 1 is one level deep, and so on
   static int    GetProgramDefaultExpand(const String& group);
   // get default expansion for program sections -- objs, types, vars, etc.
-  static bool   GetMethodCallDefaultExpand();
-  // get default expansion for MethodCalls
+  static bool   GetCallDefaultExpand();
+  // get default expansion for all program elements with arguments -- MethodCall, StaticMethodCall, ProgramCall, etc
   
   taiMisc(QObject* parent = NULL);
   ~taiMisc();

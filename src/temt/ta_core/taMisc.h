@@ -290,8 +290,8 @@ public:
   // #SAVE #CAT_GUI default depths for expanding top level groups -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all Programs will be shown within all program groups and subgroups), 2+ = expand to second and beyond level (only applicable for specs, where it expands further children of specs at higher levels)
   static taExpandDefaultsProgram expand_defaults_program;
   // #SAVE #CAT_GUI default depths for expanding program editor sections -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all types, args, vars, functions). For init_code and prog_code 2+ will reveal nested code.
-  static bool           expand_default_method_calls;
-  // #SAVE #CAT_GUI should method_calls be expanded by default to show arguments
+  static bool           expand_default_calls;
+  // #SAVE #CAT_GUI should MethodCalls, FunctionCalls, etc be expanded by default to show arguments
   static int            undo_depth;     // #SAVE #CAT_GUI #MIN_10 how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
   static int            undo_data_max_cells; // #SAVE #CAT_GUI maximum number of cells in a data table to save an undo copy -- if above this number of cells, it won't be saved for undo (only the column structure will be retained)
   static int            auto_save_data_max_cells; // #SAVE #CAT_GUI if column of data table has more than this number of cells, it won't be saved during auto_save (column structure will be retained)

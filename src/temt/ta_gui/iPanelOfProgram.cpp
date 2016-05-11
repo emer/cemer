@@ -68,7 +68,7 @@ void iPanelOfProgram::items_CustomExpandFilter(iTreeViewItem* item, int level, b
     }
   }
   else if (level <= cur_expand_depth) {
-    if (!taiMisc::GetMethodCallDefaultExpand()) {
+    if (!taiMisc::GetCallDefaultExpand()) {
       if (dl->taData()->GetTypeDef()->DerivesFrom(&TA_MethodCall) || dl->taData()->GetTypeDef()->DerivesFrom(&TA_StaticMethodCall) ||
           dl->taData()->GetTypeDef()->DerivesFrom(&TA_FunctionCall) || dl->taData()->GetTypeDef()->DerivesFrom(&TA_ProgramCall)) {
         expand = false;
