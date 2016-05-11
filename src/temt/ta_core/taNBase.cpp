@@ -22,7 +22,9 @@
 TA_BASEFUNS_CTORS_DEFN(taNBase);
 
 void taNBase::Copy_(const taNBase& cp) {
-  SetCopyName(cp);
+  if (!SetCopyName(cp)) {
+    name = cp.name;
+  }
 }
 
 void taNBase::SetDefaultName() {
