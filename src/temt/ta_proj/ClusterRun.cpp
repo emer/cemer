@@ -536,7 +536,8 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
       continue;
     }
     if(vl.empty()) {
-      taMisc::Warning("AddParamsToTable: value empty in param element:", pv, "from list:", params);
+      // don't really need a warning here
+      // taMisc::Warning("AddParamsToTable: value empty in param element:", pv, "from list:", params);
       continue;
     }
     // todo: we need to figure out what type of data these guys really are..
