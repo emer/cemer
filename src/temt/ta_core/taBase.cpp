@@ -3644,8 +3644,8 @@ bool taBase::CloseLater_Child(taBase*) {
 }
 
 void taBase::Help() {
-  TypeDef* mytd = GetTypeDef();
 #ifdef TA_GUI
+  TypeDef* mytd = GetTypeDef();
   iHelpBrowser::StatLoadType(mytd);
 #endif
 }

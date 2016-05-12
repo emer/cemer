@@ -403,6 +403,8 @@ public: // XxxGui versions provide feedback to the user
   // #CAT_Display select the edit/middle panel view of this object to be for the program css script view, and optionally scroll to source code line if passed
   virtual bool          ViewProperties();
   // #CAT_Display select the edit/middle panel view of this object to be for the program properties
+  virtual bool          ViewDoc();
+  // #CAT_Display select the edit/middle panel view of this object to be for the doc documentation associated with this program
 
   ////////////////////////////////////////////////////
   //    program script gen interface
@@ -446,6 +448,7 @@ public: // XxxGui versions provide feedback to the user
   Variant               GetGuiArgVal(const String& fun_name, int arg_idx) override;
   void                  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   String                GetToolbarName() const override { return "program"; }
+  void                  Help() override;
 
   void  InitLinks() override;
   void  CutLinks() override;

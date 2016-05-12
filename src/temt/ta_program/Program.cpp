@@ -2051,6 +2051,13 @@ bool Program::ViewProperties() {
   return true;
 }
 
+bool Program::ViewDoc() {
+  iPanelSet* dps = FindMyPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(4);
+  return true;
+}
+
 bool Program::ViewScriptEl(taBase* pel) {
   iPanelSet* dps = FindMyPanelSet();
   if(!dps) return false;
@@ -2228,3 +2235,11 @@ bool Program::BrowserEditTest() {
   return rval && rv2;
 }
 
+void Program::Help() {
+  if(doc.web_doc) {
+    ViewDoc();
+  }
+  else {
+    inherited::Help();
+  }
+}
