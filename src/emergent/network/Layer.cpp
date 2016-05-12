@@ -162,11 +162,11 @@ void Layer::CutLinks() {
 
 
 void Layer::Copy_(const Layer& cp) {
-  if(own_net && !own_net->HasBaseFlag(COPYING)) {
-    // if we're the only guy copying, then all connections are invalid now -- just nuke
-    own_net->UnBuild();
-  }
-
+  // if(own_net && !own_net->HasBaseFlag(COPYING)) {
+  //  // if we're the only guy copying, then all connections are invalid now -- just nuke
+  //  own_net->UnBuild();
+  //  note: this causes crashing!!  update at network level interferes with gui tree
+  // }
   desc = cp.desc;
   flags = cp.flags;
   layer_type = cp.layer_type;
