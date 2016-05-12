@@ -49,9 +49,7 @@ void DataTableCols::CopyFromRow(int dest_row, const DataTableCols& src, int src_
 
 taBase* DataTableCols::ChildDuplicate(const taBase* child) {
   if(owner) {
-    taBase* new_column =  ((DataTable*)owner)->ChildDuplicate(child);
-    new_column->MakeNameUnique();  // going to be a pita to call SetCopyName so just ensure name is unique
-    return new_column;
+    return ((DataTable*)owner)->ChildDuplicate(child);
   }
   else {
     return inherited::ChildDuplicate(child);

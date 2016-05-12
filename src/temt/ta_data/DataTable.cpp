@@ -444,7 +444,9 @@ taBase* DataTable::ChildDuplicate(const taBase* child) {
   if(!oldDC) return NULL;
   oldDC->UnSetMatrixViewMode();  // we want to copy all rows hidden and visible
   newChild = inherited::ChildDuplicate(child);
+  newChild->SetCopyName(*child);  // comment in taPtrList_impl says don't change name so doing it here
   oldDC->SetMatrixViewMode();
+  this->SigEmitUpdated();  // make sure the tree gets redrawn
   return newChild;
 }
 
