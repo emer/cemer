@@ -143,8 +143,7 @@ bool VisRegionSpecBase::InitOutMatrix() {
 bool VisRegionSpecBase::FilterImage(float_Matrix* right_eye_image, float_Matrix* left_eye_image,
                                     bool motion_only) {
   // this is not typically overwritten -- just all the checks -- see _impl
-  if(TestWarning(NeedsInit(),
-                 "FilterImage", "not properly initialized to current geom -- running Init now")) {
+  if(NeedsInit()) {
     Init();
   }
 

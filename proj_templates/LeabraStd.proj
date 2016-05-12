@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9416
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9480
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -1070,6 +1070,10 @@ LeabraProject .projects["LeabraStd"] {
 
  Program_TopGroup @.programs = [1] {
   Program @["LeabraStartup"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [0] {
    };
 
@@ -1224,6 +1228,10 @@ LeabraProject .projects["LeabraStd"] {
   };
   Program_Group @.gp["LeabraAll_Std"] = [10] { 
    Program @["LeabraBatch"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1271,6 +1279,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraTrain"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [2] {
      RndSeed_List @["rnd_seeds"] { 
       taList @.seeds = [25] {
@@ -1481,6 +1493,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraEpoch"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1560,6 +1576,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraTrial"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1633,6 +1653,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraQuarter"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1704,6 +1728,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraCycle"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1733,6 +1761,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["ApplyInputs"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      LayerWriter @["LayerWriter_0"] { 
       LayerDataEl_List @.layer_data = [3] {
@@ -1791,6 +1823,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraTrialMonitor"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["trial_netmon"] { 
       NetMonItem_List @.items = [25] {
@@ -1879,6 +1915,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraEpochMonitor"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["epoch_netmon"] { 
       NetMonItem_List @.items = [30] {
@@ -1986,6 +2026,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["SaveWeights"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2045,6 +2089,10 @@ LeabraProject .projects["LeabraStd"] {
   };
   Program_Group @.gp["LeabraAll_Test"] = [7] { 
    Program @["LeabraEpochTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2120,6 +2168,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraTrialTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2193,6 +2245,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraQuarterTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2264,6 +2320,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraCycleTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2293,6 +2353,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["ApplyInputsTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      LayerWriter @["LayerWriter_0"] { 
       LayerDataEl_List @.layer_data = [3] {
@@ -2351,6 +2415,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraTrialMonitorTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["trial_netmon"] { 
       NetMonItem_List @.items = [19] {
@@ -2433,6 +2501,10 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
    Program @["LeabraEpochMonitorTest"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["epoch_netmon"] { 
       NetMonItem_List @.items = [19] {
@@ -5297,10 +5369,10 @@ LeabraProject .projects["LeabraStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
     last_sort_spec {
-     name=;
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -5308,7 +5380,7 @@ LeabraProject .projects["LeabraStd"] {
      };
     };
     control_panel_cells {
-     name=;
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -9061,6 +9133,15 @@ LeabraProject .projects["LeabraStd"] {
   desc=;
   debug_mode=0;
   Program @["LeabraStartup"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["LeabraStd"].programs["LeabraStartup"].doc$$;
+    };
+   };
    name="LeabraStartup";
    short_nm="Startup";
    tags="Leabra, Startup, Parallel Batch";
@@ -10015,6 +10096,17 @@ LeabraProject .projects["LeabraStd"] {
    };
    step_prog=NULL;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
   Program_Group @.gp["LeabraAll_Std"] {
    name="LeabraAll_Std";
@@ -10024,6 +10116,15 @@ LeabraProject .projects["LeabraStd"] {
    desc="The full set of programs for training a standard Leabra network";
    debug_mode=0;
    Program @["LeabraBatch"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].doc$$;
+     };
+    };
     name="LeabraBatch";
     short_nm="Batch";
     tags="Leabra, Std";
@@ -10246,8 +10347,28 @@ LeabraProject .projects["LeabraStd"] {
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["LeabraTrain"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].doc$$;
+     };
+    };
     name="LeabraTrain";
     short_nm="Train";
     tags="Leabra, Train, RndSeedList";
@@ -11202,8 +11323,215 @@ LeabraProject .projects["LeabraStd"] {
     };
     step_prog=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraQuarter"]$$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrain";
+     full_url="http://grey.colorado.edu/emergent/index.php/LeabraTrain";
+     text_size=1;
+     text=;
+     html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
+<meta charset=\"UTF-8\">
+<title>LeabraTrain - emergent</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
+<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraTrain\",\"wgTitle\":\"LeabraTrain\",\"wgCurRevisionId\":11266,\"wgRevisionId\":11266,\"wgArticleId\":2767,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraTrain\",\"wgRelevantArticleId\":2767,\"wgUserId\":3,\"wgUserEditCount\":2418,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,
+\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"3b26cf5f182fe7fb29af6a6ca01dd6cb57342b95+\\\\\",\"patrolToken\":\"6f879f5a78cf8bf62c088b26f37a826a57342b95+\\\\\",\"watchToken\":\"0f5971aae38fcb23ba50cc900260a01757342b95+\\\\\"});});mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+} );</script>
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
+<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
+<meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector\">
+<style>a{text-decoration:none}</style>
+<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script>
+<meta name=\"generator\" content=\"MediaWiki 1.26.2\">
+<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"LeabraTrain\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraTrain&amp;xmlmime=rdf\">
+<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraTrain&amp;action=edit\">
+<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraTrain&amp;action=edit\">
+<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
+<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
+<link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
+<link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/Vector/csshover.min.htc\")}</style><![endif]-->
+<script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=EaPOpX%2FG\"></script></head>
+<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraTrain skin-vector action-view\">
+		<div id=\"mw-page-base\" class=\"noprint\"></div>
+		<div id=\"mw-head-base\" class=\"noprint\"></div>
+		<div id=\"content\" class=\"mw-body\" role=\"main\">
+			<a id=\"top\"></a>
+
+						<div class=\"mw-indicators\">
+</div>
+			<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\">LeabraTrain</h1>
+									<div id=\"bodyContent\" class=\"mw-body-content\">
+									<div id=\"siteSub\">From emergent</div>
+								<div id=\"contentSub\"></div>
+												<div id=\"jump-to-nav\" class=\"mw-jump\">
+					Jump to:					<a href=\"#mw-head\">navigation</a>, 					<a href=\"#p-search\">search</a>
+				</div>
+				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><p>LeabraTrain is the standard <a href=\"/emergent/index.php/Program\" title=\"Program\">Program</a> for training <a href=\"/emergent/index.php/Leabra\" title=\"Leabra\">Leabra</a> networks.  It iterates over <a href=\"/emergent/index.php?title=LeabraEpoch&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"LeabraEpoch (page does not exist)\">LeabraEpoch</a> epochs, optionally until a training criterion has been met, or for a specified maximum number of epochs.
+</p><p>You can easily customize this program to do different things at different points in the training process, for example by examining the network.epoch value (or the local copy of that value, epoch).
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20160512070701
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.011 seconds
+Real time usage: 0.014 seconds
+Preprocessor visited node count: 1/1000000
+Preprocessor generated node count: 4/1000000
+Post?expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 1/40
+Expensive parser function count: 0/100
+-->
+
+<!-- 
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 - -total
+-->
+
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2767-0!*!0!*!*!*!* and timestamp 20160512070701 and revision id 11266
+ -->
+</div>					<div class=\"printfooter\">
+						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraTrain&amp;oldid=11266\">https://grey.colorado.edu/emergent/index.php?title=LeabraTrain&amp;oldid=11266</a>\"					</div>
+				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<div class=\"visualClear\"></div>
+							</div>
+		</div>
+		<div id=\"mw-navigation\">
+			<h2>Navigation menu</h2>
+
+			<div id=\"mw-head\">
+									<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
+						<h3 id=\"p-personal-label\">Personal tools</h3>
+						<ul>
+							<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" dir=\"auto\" title=\"Your user page [.]\" accesskey=\".\">Oreilly</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=LeabraTrain\" title=\"Log out\">Log out</a></li>						</ul>
+					</div>
+									<div id=\"left-navigation\">
+										<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
+						<h3 id=\"p-namespaces-label\">Namespaces</h3>
+						<ul>
+															<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraTrain\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
+															<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraTrain&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\" rel=\"discussion\">Discussion</a></span></li>
+													</ul>
+					</div>
+										<div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
+												<h3 id=\"p-variants-label\">
+							<span>Variants</span><a href=\"#\"></a>
+						</h3>
+
+						<div class=\"menu\">
+							<ul>
+															</ul>
+						</div>
+					</div>
+									</div>
+				<div id=\"right-navigation\">
+										<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
+						<h3 id=\"p-views-label\">Views</h3>
+						<ul>
+															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraTrain\">Read</a></span></li>
+															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=LeabraTrain&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
+															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraTrain&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraTrain&amp;action=unwatch&amp;token=c6d7363e22d4c0d44ac7ca2a8c59165157342b95%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+													</ul>
+					</div>
+										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
+						<h3 id=\"p-cactions-label\"><span>More</span><a href=\"#\"></a></h3>
+
+						<div class=\"menu\">
+							<ul>
+																	<li id=\"ca-delete\">
+										<a href=\"/emergent/index.php?title=LeabraTrain&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a>
+									</li>
+																	<li id=\"ca-move\">
+										<a href=\"/emergent/index.php/Special:MovePage/LeabraTrain\" title=\"Move this page [m]\" accesskey=\"m\">Move</a>
+									</li>
+																	<li id=\"ca-protect\">
+										<a href=\"/emergent/index.php?title=LeabraTrain&amp;action=protect\" title=\"Protect this page [=]\" accesskey=\"=\">Protect</a>
+									</li>
+																	<li id=\"ca-purge\">
+										<a href=\"/emergent/index.php?title=LeabraTrain&amp;action=purge\">Refresh</a>
+									</li>
+															</ul>
+						</div>
+					</div>
+										<div id=\"p-search\" role=\"search\">
+						<h3>
+							<label for=\"searchInput\">Search</label>
+						</h3>
+
+						<form action=\"/emergent/index.php\" id=\"searchform\">
+							<div id=\"simpleSearch\">
+							<input type=\"search\" name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\"><input type=\"hidden\" value=\"Special:Search\" name=\"title\"><input type=\"submit\" name=\"fulltext\" value=\"Search\" title=\"Search the pages for this text\" id=\"mw-searchButton\" class=\"searchButton mw-fallbackSearchButton\"><input type=\"submit\" name=\"go\" value=\"Go\" title=\"Go to a page with this exact name if it exists\" id=\"searchButton\" class=\"searchButton\">							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id=\"mw-panel\">
+				<div id=\"p-logo\" role=\"banner\"><a class=\"mw-wiki-logo\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
+						<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+			<h3 id=\"p-navigation-label\">Navigation</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li><li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li><li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li><li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li><li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li><li id=\"n-Mailing-list\"><a href=\"//grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\" rel=\"nofollow\">Mailing list</a></li>					</ul>
+							</div>
+		</div>
+			<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+			<h3 id=\"p-tb-label\">Tools</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraTrain\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li><li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraTrain\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li><li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li><li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li><li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraTrain&amp;oldid=11266\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraTrain&amp;action=info\" title=\"More information about this page\">Page information</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraTrain\" rel=\"smw-browse\">Browse properties</a></li>					</ul>
+							</div>
+		</div>
+			<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+			<h3 id=\"p-coll-print_export-label\">Print/export</h3>
+
+			<div class=\"body\">
+									<ul>
+						<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraTrain\">Create a book</a></li><li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraTrain&amp;oldid=11266&amp;writer=rl\">Download as PDF</a></li><li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraTrain&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>					</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+		<div id=\"footer\" role=\"contentinfo\">
+							<ul id=\"footer-info\">
+											<li id=\"footer-info-lastmod\"> This page was last modified on 12 May 2016, at 01:07.</li>
+									</ul>
+							<ul id=\"footer-places\">
+											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
+									</ul>
+										<ul id=\"footer-icons\" class=\"noprint\">
+											<li id=\"footer-poweredbyico\">
+							<a href=\"//www.mediawiki.org/\"><img src=\"/emergent/resources/assets/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" srcset=\"/emergent/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /emergent/resources/assets/poweredby_mediawiki_176x62.png 2x\" width=\"88\" height=\"31\"></a><a href=\"https://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/resources/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>						</li>
+									</ul>
+						<div style=\"clear:both\"></div>
+		</div>
+		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
+} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({\"wgBackendResponseTime\":155});
+} );</script>
+	
+
+</body></html>";
+    };
    };
    Program @["LeabraEpoch"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].doc$$;
+     };
+    };
     name="LeabraEpoch";
     short_nm="Epoch";
     tags="Leabra, Std";
@@ -11582,8 +11910,28 @@ LeabraProject .projects["LeabraStd"] {
     };
     step_prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["LeabraTrial"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].doc$$;
+     };
+    };
     name="LeabraTrial";
     short_nm="Trial";
     tags="Leabra, Std";
@@ -11887,8 +12235,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraCycle"]$$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["LeabraQuarter"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraQuarter"].doc$$;
+     };
+    };
     name="LeabraQuarter";
     short_nm="Quarter";
     tags="Leabra, Std";
@@ -12197,8 +12565,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["LeabraCycle"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraCycle"].doc$$;
+     };
+    };
     name="LeabraCycle";
     short_nm="Cycle";
     tags="Leabra, Std";
@@ -12288,8 +12676,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["ApplyInputs"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["ApplyInputs"].doc$$;
+     };
+    };
     name="ApplyInputs";
     short_nm="Inputs";
     tags="Network, InputData, Apply";
@@ -12557,8 +12965,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["LeabraTrialMonitor"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].doc$$;
+     };
+    };
     name="LeabraTrialMonitor";
     short_nm="TrialMon";
     tags="Leabra, Std, Monitor";
@@ -13701,8 +14129,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text="<html><head></head><body></body></html>";
+    };
    };
    Program @["LeabraEpochMonitor"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].doc$$;
+     };
+    };
     name="LeabraEpochMonitor";
     short_nm="EpcMon";
     tags="Leabra, Std, Monitor";
@@ -15172,8 +15620,28 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     step_prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["SaveWeights"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["SaveWeights"].doc$$;
+     };
+    };
     name="SaveWeights";
     short_nm="SavWts";
     tags="Network, Weights";
@@ -15473,6 +15941,17 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
   };
   Program_Group @.gp["LeabraAll_Test"] {
@@ -15483,6 +15962,15 @@ and the testing data is updated.  The first epoch monitor should have all the it
    desc="The full set of programs for testing a standard Leabra network (starting with Epoch)";
    debug_mode=0;
    Program @["LeabraEpochTest"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochTest"].doc$$;
+     };
+    };
     name="LeabraEpochTest";
     short_nm="EpcTest";
     tags="Leabra, Std, Test";
@@ -15853,8 +16341,28 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     step_prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialTest"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["LeabraTrialTest"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialTest"].doc$$;
+     };
+    };
     name="LeabraTrialTest";
     short_nm="TrlTst";
     tags="Leabra, Std";
@@ -16158,8 +16666,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraCycleTest"]$$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["LeabraQuarterTest"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraQuarterTest"].doc$$;
+     };
+    };
     name="LeabraQuarterTest";
     short_nm="QrtTst";
     tags="Leabra, Std";
@@ -16468,8 +16996,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["LeabraCycleTest"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraCycleTest"].doc$$;
+     };
+    };
     name="LeabraCycleTest";
     short_nm="CycTest";
     tags="Leabra, Std";
@@ -16559,8 +17107,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["ApplyInputsTest"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["ApplyInputsTest"].doc$$;
+     };
+    };
     name="ApplyInputsTest";
     short_nm="InTest";
     tags="Network, InputData, Apply";
@@ -16828,8 +17396,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["LeabraTrialMonitorTest"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialMonitorTest"].doc$$;
+     };
+    };
     name="LeabraTrialMonitorTest";
     short_nm="TrlMonTst";
     tags="Leabra, Std, Monitor";
@@ -17762,8 +18350,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["LeabraEpochMonitorTest"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraEpochMonitorTest"].doc$$;
+     };
+    };
     name="LeabraEpochMonitorTest";
     short_nm="EpcMonTst";
     tags="Leabra, Std, Monitor";
@@ -18809,6 +19417,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
   };
  };
@@ -18833,7 +19452,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9962825;
+     value 8 0=0.9957537;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -20931,7 +21550,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04354753;
+       value 8 0=0.04352441;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -21284,7 +21903,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
        wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
        inhib=0;
-       wt_scale {abs=1: rel=1: };
+       wt_scale {abs=1: rel=1: no_plus_net=0: };
        learn=0;
        learn_qtr=Q4;
        lrate=0.04;
@@ -21328,7 +21947,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
        wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
        inhib=0;
-       wt_scale {abs=1: rel=0.2: };
+       wt_scale {abs=1: rel=0.2: no_plus_net=0: };
        learn=1;
        learn_qtr=Q4;
        lrate=0.04;
@@ -21362,7 +21981,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: no_plus_net=0: };
      learn=1;
      learn_qtr=Q4;
      lrate=0.04;
@@ -21747,7 +22366,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     trg_max_act_crit=0.5;
     off_errs=1;
     on_errs=1;
-    cos_err_lrn_thr=-1;
+    agg_unlearnable=0;
    };
    net_misc {
     spike=0;

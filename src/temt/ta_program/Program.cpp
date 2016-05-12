@@ -192,8 +192,7 @@ void Program::InitLinks() {
   taBase::Own(sub_progs_step, this);
   taBase::Own(step_prog, this);
   taBase::Own(script_list, this);
-  
-  taBase::Own(load_code, this); // todo: obsolete, remove
+  taBase::Own(doc, this);
   
   if(!taMisc::is_loading) {
     if(prog_code.size == 0) {
@@ -205,6 +204,8 @@ void Program::InitLinks() {
   prog_code.el_typ = &TA_ProgCode;  // make sure this is default
   
   prog_gp = GET_MY_OWNER(Program_Group);
+
+  AutoNameMyMembers();          // not clear when this is happening otherwise??
 }
 
 void Program::CutLinks() {
@@ -266,6 +267,8 @@ void Program::Copy_(const Program& cp) {
   init_code = cp.init_code;
   prog_code = cp.prog_code;
   step_prog = cp.step_prog;
+  doc = cp.doc;
+  
   ret_val = 0; // redo
   m_stale = true; // require rebuild/refetch
   m_scriptCache = "";
@@ -317,6 +320,10 @@ void Program::UpdateAfterEdit_impl() {
   }
 
   last_name = name;
+
+  if(!GetDocLink()) {
+    SetDocLink(&doc);
+  }
 }
 
 bool Program::CheckConfig_impl(bool quiet) {
