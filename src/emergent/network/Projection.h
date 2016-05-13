@@ -75,7 +75,7 @@ public:
   bool                  projected;       // #HIDDEN #CAT_Structure t/f if connected
 
   bool                  dir_fixed;      // fix the direction setting to specific value shown below (cannot fix DIR_UNKNOWN) -- otherwise it is automatically computed based on the layer_type settings
-  PrjnDirection         direction;      // #CAT_Structure which direction does this projection go (in terms of distance from input and output layers) -- auto computed by Compute_PrjnDirection when network is built, or you can manually set, but be sure to set dir_fixed to keep that setting; optionally used by only some algorithms
+  PrjnDirection         direction;      // #CAT_Structure #CONDEDIT_ON_dir_fixed which direction does this projection go (in terms of distance from input and output layers) -- auto computed by Compute_PrjnDirection when network is built, or you can manually set, but be sure to set dir_fixed to keep that setting; optionally used by only some algorithms
   taColor               prjn_clr;       // #CAT_Structure Default color for the projection line and arrow (subservient to the Type-defined color, if applicable)
 
   inline ConSpec*       GetConSpec()    { return con_spec.spec.ptr(); }

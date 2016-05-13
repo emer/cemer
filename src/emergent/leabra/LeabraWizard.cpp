@@ -738,8 +738,9 @@ bool LeabraWizard::DeepLeabraCopy(LeabraNetwork* net, const String& lay_name_con
     if(lay->name.endsWith("d")) continue;
     if(!lay->name.contains(lay_name_contains)) continue;
 
-    lay->SetUnitSpec(s_uns);
-    lay->SetLayerSpec(s_ls);
+    // don't change super!!!
+    // lay->SetUnitSpec(s_uns);
+    // lay->SetLayerSpec(s_ls);
       
     LeabraLayer* deep = (LeabraLayer*)net->FindMakeLayer(lay->name + "_d");
     deep->un_geom = lay->un_geom;
@@ -748,7 +749,7 @@ bool LeabraWizard::DeepLeabraCopy(LeabraNetwork* net, const String& lay_name_con
     net->layers.MoveAfter(lay, deep);
     deep->PositionBehind(lay, 2);
     deep->SetUnitSpec(d_uns);
-    deep->SetLayerSpec(d_ls);
+    deep->SetLayerSpec(lay->GetLayerSpec()); // deep gets same as super by default
 
     LeabraLayer* trc = (LeabraLayer*)net->FindMakeLayer(lay->name + "_trc");
     trc->un_geom = 4;

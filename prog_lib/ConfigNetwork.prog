@@ -1,5 +1,9 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9461
-Program .projects[2].programs.gp[4][2] { 
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9480
+Program .projects[1].programs.gp[4][2] { 
+ UserDataItem_List @*(.user_data_) {
+  UserData_DocLink @[0] { };
+ };
+
  ProgObjList @.objs = [0] {
  };
 
@@ -351,7 +355,16 @@ Program .projects[2].programs.gp[4][2] {
   PrintExpr @[8] { };
  };
 };
-Program .projects[2].programs.gp[4][2] {
+Program .projects[1].programs.gp[4][2] {
+ UserDataItem_List @*(.user_data_) {
+  name=;
+  el_typ=UserData_DocLink;
+  el_def=0;
+  UserData_DocLink @[0] {
+   name="DocLink";
+   doc=.projects[1].programs.gp[4][2].doc$$;
+  };
+ };
  name="ConfigNetwork";
  short_nm="CfgNet";
  tags="Network, Configure";
@@ -378,7 +391,7 @@ Program .projects[2].programs.gp[4][2] {
    name="network";
    var_type=T_Object;
    object_type=LeabraNetwork;
-   object_val=.projects[2].networks[0]$$<LeabraNetwork,Network_0>;
+   object_val=.projects[1].networks[0]$$<LeabraNetwork,Network_0>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -496,7 +509,7 @@ Program .projects[2].programs.gp[4][2] {
        code_string="laygp->UnLesionLayers()";
        pre_compile_code_string="laygp->UnLesionLayers()";
        result_var=NULL;
-       obj=.projects[2].programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$$;
+       obj=.projects[1].programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$$;
        method=Layer_Group::UnLesionLayers;
        meth_args {
 	name="meth_args";
@@ -512,7 +525,7 @@ Program .projects[2].programs.gp[4][2] {
        code_string="laygp->DeIconifyLayers()";
        pre_compile_code_string="laygp->DeIconifyLayers()";
        result_var=NULL;
-       obj=$.projects[2].programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$;
+       obj=$.projects[1].programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$;
        method=Layer_Group::DeIconifyLayers;
        meth_args {
 	name="meth_args";
@@ -523,7 +536,7 @@ Program .projects[2].programs.gp[4][2] {
        meth_desc=" un-set the lesion flag on all the layers within this group";
       };
      };
-     el_var=$.projects[2].programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$;
+     el_var=$.projects[1].programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$;
      in {
       expr="network.layers.gp";
      };
@@ -531,7 +544,7 @@ Program .projects[2].programs.gp[4][2] {
     ForeachLoop @[2] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="foreach(<el_var not set> in network.layers)";
+     code_string="foreach(lay in network.layers)";
      pre_compile_code_string="foreach(lay in network.layers)";
      loop_code {
       name="loop_code";
@@ -543,7 +556,7 @@ Program .projects[2].programs.gp[4][2] {
        code_string="lay->UnLesion()";
        pre_compile_code_string="lay->UnLesion()";
        result_var=NULL;
-       obj=.projects[2].programs.gp[4][2].functions[0].fun_code[0].local_vars[1]$$;
+       obj=.projects[1].programs.gp[4][2].functions[0].fun_code[0].local_vars[1]$$;
        method=Layer::UnLesion;
        meth_args {
 	name="meth_args";
@@ -559,7 +572,7 @@ Program .projects[2].programs.gp[4][2] {
        code_string="lay->DeIconify()";
        pre_compile_code_string="lay->DeIconify()";
        result_var=NULL;
-       obj=$.projects[2].programs.gp[4][2].functions[0].fun_code[0].local_vars[1]$;
+       obj=$.projects[1].programs.gp[4][2].functions[0].fun_code[0].local_vars[1]$;
        method=Layer::DeIconify;
        meth_args {
 	name="meth_args";
@@ -570,7 +583,7 @@ Program .projects[2].programs.gp[4][2] {
        meth_desc=" de-iconify this layer in the network display (make full size)";
       };
      };
-     el_var=$.projects[2].programs.gp[4][2].functions[0].fun_code[0].local_vars[1]$;
+     el_var=$.projects[1].programs.gp[4][2].functions[0].fun_code[0].local_vars[1]$;
      in {
       expr="network.layers";
      };
@@ -578,10 +591,10 @@ Program .projects[2].programs.gp[4][2] {
    };
   };
   Function @[1] {
-   desc=;
+   desc="turn layer groups on or off (lesion when lay_gp_on=false)";
    flags=CAN_REVERT_TO_CODE;
-   code_string="LayerGpsOnOff(String laygps) returns: int";
-   pre_compile_code_string="LayerGpsOnOff(String laygps) returns: int";
+   code_string="LayerGpsOnOff(String laygps, bool lay_gp_on) returns: int";
+   pre_compile_code_string="LayerGpsOnOff(String laygps, bool lay_gp_on) returns: int";
    name="LayerGpsOnOff";
    return_type=T_Int;
    object_type=taOBase;
@@ -599,7 +612,7 @@ Program .projects[2].programs.gp[4][2] {
      init_from=NULL;
     };
     ProgVar @[1] {
-     name="lesion";
+     name="lay_gp_on";
      var_type=T_Bool;
      bool_val=0;
      flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
@@ -615,8 +628,8 @@ Program .projects[2].programs.gp[4][2] {
     LocalVars @[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="LocalVars (4 vars)";
-     pre_compile_code_string="LocalVars (4 vars)";
+     code_string="LocalVars (3 vars)";
+     pre_compile_code_string="LocalVars (3 vars)";
      local_vars {
       name="local_vars";
       el_typ=ProgVar;
@@ -660,7 +673,7 @@ Program .projects[2].programs.gp[4][2] {
      code_string="les_laygp_mat->FmDelimString(laygps, \" \")";
      pre_compile_code_string="les_laygp_mat->FmDelimString(laygps, \" \")";
      result_var=NULL;
-     obj=.projects[2].programs.gp[4][2].functions[1].fun_code[0].local_vars[0]$$;
+     obj=.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[0]$$;
      method=String_Matrix::FmDelimString;
      meth_args {
       name="meth_args";
@@ -706,9 +719,9 @@ Program .projects[2].programs.gp[4][2] {
        flags=CAN_REVERT_TO_CODE;
        code_string="laygp = network.layers.gp.FindName(laygp_nm)";
        pre_compile_code_string="laygp = network.layers.gp.FindName(laygp_nm)";
-       obj=.projects[2].programs.gp[4][2].args[0]$$;
+       obj=.projects[1].programs.gp[4][2].args[0]$$;
        path="layers.gp";
-       result_var=.projects[2].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$$;
+       result_var=.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$$;
        method=taGroup_Layer_::FindName;
        meth_args {
 	name="meth_args";
@@ -868,10 +881,10 @@ Program .projects[2].programs.gp[4][2] {
       If @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="if (lesion)";
-       pre_compile_code_string="if (lesion)";
+       code_string="if (!lay_gp_on)";
+       pre_compile_code_string="if (!lay_gp_on)";
        cond {
-	expr="lesion";
+	expr="!lay_gp_on";
        };
        true_code {
 	name="true_code";
@@ -883,7 +896,7 @@ Program .projects[2].programs.gp[4][2] {
 	 code_string="laygp->LesionLayers()";
 	 pre_compile_code_string="laygp->LesionLayers()";
 	 result_var=NULL;
-	 obj=$.projects[2].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
+	 obj=$.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
 	 method=Layer_Group::LesionLayers;
 	 meth_args {
 	  name="meth_args";
@@ -899,7 +912,7 @@ Program .projects[2].programs.gp[4][2] {
 	 code_string="laygp->IconifyLayers()";
 	 pre_compile_code_string="laygp->IconifyLayers()";
 	 result_var=NULL;
-	 obj=$.projects[2].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
+	 obj=$.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
 	 method=Layer_Group::IconifyLayers;
 	 meth_args {
 	  name="meth_args";
@@ -915,7 +928,7 @@ Program .projects[2].programs.gp[4][2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="else";
-       pre_compile_code_string=;
+       pre_compile_code_string="else";
        else_code {
 	name="else_code";
 	el_typ=ProgCode;
@@ -926,7 +939,7 @@ Program .projects[2].programs.gp[4][2] {
 	 code_string="laygp->UnLesionLayers()";
 	 pre_compile_code_string="laygp->UnLesionLayers()";
 	 result_var=NULL;
-	 obj=$.projects[2].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
+	 obj=$.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
 	 method=Layer_Group::UnLesionLayers;
 	 meth_args {
 	  name="meth_args";
@@ -942,7 +955,7 @@ Program .projects[2].programs.gp[4][2] {
 	 code_string="laygp->DeIconifyLayers()";
 	 pre_compile_code_string="laygp->DeIconifyLayers()";
 	 result_var=NULL;
-	 obj=$.projects[2].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
+	 obj=$.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$;
 	 method=Layer_Group::DeIconifyLayers;
 	 meth_args {
 	  name="meth_args";
@@ -955,7 +968,7 @@ Program .projects[2].programs.gp[4][2] {
        };
       };
      };
-     el_var=.projects[2].programs.gp[4][2].functions[1].fun_code[0].local_vars[2]$$;
+     el_var=.projects[1].programs.gp[4][2].functions[1].fun_code[0].local_vars[2]$$;
      in {
       expr="les_laygp_mat";
      };
@@ -963,10 +976,10 @@ Program .projects[2].programs.gp[4][2] {
    };
   };
   Function @[2] {
-   desc=;
+   desc="turn layers on or off (lesion when lay_on=false)";
    flags=CAN_REVERT_TO_CODE;
-   code_string="LayersOnOff(String lays) returns: int";
-   pre_compile_code_string="LayersOnOff(String lays) returns: int";
+   code_string="LayersOnOff(String lays, bool lay_on) returns: int";
+   pre_compile_code_string="LayersOnOff(String lays, bool lay_on) returns: int";
    name="LayersOnOff";
    return_type=T_Int;
    object_type=taOBase;
@@ -984,7 +997,7 @@ Program .projects[2].programs.gp[4][2] {
      init_from=NULL;
     };
     ProgVar @[1] {
-     name="lesion";
+     name="lay_on";
      var_type=T_Bool;
      bool_val=0;
      flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
@@ -1000,8 +1013,8 @@ Program .projects[2].programs.gp[4][2] {
     LocalVars @[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="LocalVars (4 vars)";
-     pre_compile_code_string="LocalVars (4 vars)";
+     code_string="LocalVars (3 vars)";
+     pre_compile_code_string="LocalVars (3 vars)";
      local_vars {
       name="local_vars";
       el_typ=ProgVar;
@@ -1045,7 +1058,7 @@ Program .projects[2].programs.gp[4][2] {
      code_string="les_lays_mat->FmDelimString(lays, \" \")";
      pre_compile_code_string="les_lays_mat->FmDelimString(lays, \" \")";
      result_var=NULL;
-     obj=.projects[2].programs.gp[4][2].functions[2].fun_code[0].local_vars[0]$$;
+     obj=.projects[1].programs.gp[4][2].functions[2].fun_code[0].local_vars[0]$$;
      method=String_Matrix::FmDelimString;
      meth_args {
       name="meth_args";
@@ -1091,9 +1104,9 @@ Program .projects[2].programs.gp[4][2] {
        flags=CAN_REVERT_TO_CODE;
        code_string="lay = network.layers.FindLeafName(lay_nm)";
        pre_compile_code_string="lay = network.layers.FindLeafName(lay_nm)";
-       obj=$.projects[2].programs.gp[4][2].args[0]$;
+       obj=$.projects[1].programs.gp[4][2].args[0]$;
        path="layers";
-       result_var=.projects[2].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$$;
+       result_var=.projects[1].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$$;
        method=taGroup_Layer_::FindLeafName;
        meth_args {
 	name="meth_args";
@@ -1117,8 +1130,8 @@ Program .projects[2].programs.gp[4][2] {
       If @[1] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="if (!laygp)";
-       pre_compile_code_string="if (!laygp)";
+       code_string="if (!lay)";
+       pre_compile_code_string="if (!lay)";
        cond {
 	expr="!lay";
        };
@@ -1253,10 +1266,10 @@ Program .projects[2].programs.gp[4][2] {
       If @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="if (lesion)";
-       pre_compile_code_string="if (lesion)";
+       code_string="if (!lay_on)";
+       pre_compile_code_string="if (!lay_on)";
        cond {
-	expr="lesion";
+	expr="!lay_on";
        };
        true_code {
 	name="true_code";
@@ -1268,7 +1281,7 @@ Program .projects[2].programs.gp[4][2] {
 	 code_string="lay->Lesion()";
 	 pre_compile_code_string="lay->Lesion()";
 	 result_var=NULL;
-	 obj=$.projects[2].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
+	 obj=$.projects[1].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
 	 method=Layer::Lesion;
 	 meth_args {
 	  name="meth_args";
@@ -1284,7 +1297,7 @@ Program .projects[2].programs.gp[4][2] {
 	 code_string="lay->Iconify()";
 	 pre_compile_code_string="lay->Iconify()";
 	 result_var=NULL;
-	 obj=$.projects[2].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
+	 obj=$.projects[1].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
 	 method=Layer::Iconify;
 	 meth_args {
 	  name="meth_args";
@@ -1300,7 +1313,7 @@ Program .projects[2].programs.gp[4][2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        code_string="else";
-       pre_compile_code_string=;
+       pre_compile_code_string="else";
        else_code {
 	name="else_code";
 	el_typ=ProgCode;
@@ -1311,7 +1324,7 @@ Program .projects[2].programs.gp[4][2] {
 	 code_string="lay->UnLesion()";
 	 pre_compile_code_string="lay->UnLesion()";
 	 result_var=NULL;
-	 obj=$.projects[2].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
+	 obj=$.projects[1].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
 	 method=Layer::UnLesion;
 	 meth_args {
 	  name="meth_args";
@@ -1327,7 +1340,7 @@ Program .projects[2].programs.gp[4][2] {
 	 code_string="lay->DeIconify()";
 	 pre_compile_code_string="lay->DeIconify()";
 	 result_var=NULL;
-	 obj=$.projects[2].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
+	 obj=$.projects[1].programs.gp[4][2].functions[2].fun_code[0].local_vars[1]$;
 	 method=Layer::DeIconify;
 	 meth_args {
 	  name="meth_args";
@@ -1340,7 +1353,7 @@ Program .projects[2].programs.gp[4][2] {
        };
       };
      };
-     el_var=.projects[2].programs.gp[4][2].functions[2].fun_code[0].local_vars[2]$$;
+     el_var=.projects[1].programs.gp[4][2].functions[2].fun_code[0].local_vars[2]$$;
      in {
       expr="les_lays_mat";
      };
@@ -1348,10 +1361,10 @@ Program .projects[2].programs.gp[4][2] {
    };
   };
   Function @[3] {
-   desc=;
+   desc="turn projections on or off";
    flags=CAN_REVERT_TO_CODE;
-   code_string="ProjectionsOnOff(String prjns, bool lesion) returns: int";
-   pre_compile_code_string="ProjectionsOnOff(String prjns, bool lesion) returns: int";
+   code_string="ProjectionsOnOff(String prjns, bool prjn_on) returns: int";
+   pre_compile_code_string="ProjectionsOnOff(String prjns, bool prjn_on) returns: int";
    name="ProjectionsOnOff";
    return_type=T_Int;
    object_type=taOBase;
@@ -1369,7 +1382,7 @@ Program .projects[2].programs.gp[4][2] {
      init_from=NULL;
     };
     ProgVar @[1] {
-     name="lesion";
+     name="prjn_on";
      var_type=T_Bool;
      bool_val=0;
      flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
@@ -1385,8 +1398,8 @@ Program .projects[2].programs.gp[4][2] {
     LocalVars @[0] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="LocalVars (4 vars)";
-     pre_compile_code_string="LocalVars (4 vars)";
+     code_string="LocalVars (5 vars)";
+     pre_compile_code_string="LocalVars (5 vars)";
      local_vars {
       name="local_vars";
       el_typ=ProgVar;
@@ -1450,7 +1463,7 @@ Program .projects[2].programs.gp[4][2] {
      code_string="les_prjns_mat->FmDelimString(prjns, \" \")";
      pre_compile_code_string="les_prjns_mat->FmDelimString(prjns, \" \")";
      result_var=NULL;
-     obj=.projects[2].programs.gp[4][2].functions[3].fun_code[0].local_vars[0]$$;
+     obj=.projects[1].programs.gp[4][2].functions[3].fun_code[0].local_vars[0]$$;
      method=String_Matrix::FmDelimString;
      meth_args {
       name="meth_args";
@@ -1506,8 +1519,8 @@ Program .projects[2].programs.gp[4][2] {
 	MiscCall @[0] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="taMisc::Error()";
-	 pre_compile_code_string="taMisc::Error()";
+	 code_string="taMisc::Error(\"projection name must include a . between name of layer and name of projection as Fm_sendlayer\", , , , , , , , )";
+	 pre_compile_code_string="taMisc::Error(\"projection name must include a . between name of layer and name of projection as Fm_sendlayer\", , , , , , , , )";
 	 result_var=NULL;
 	 object_type=taMisc;
 	 method=taMisc::Error;
@@ -1630,10 +1643,10 @@ Program .projects[2].programs.gp[4][2] {
       MethodCall @[1] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="lay_nm = prjn_nm.before(\".\")";
+       code_string="lay_nm = prjn_nm->before(\".\", )";
        pre_compile_code_string="lay_nm = prjn_nm->before(\".\", )";
-       result_var=.projects[2].programs.gp[4][2].functions[3].fun_code[0].local_vars[3]$$;
-       obj=.projects[2].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$$;
+       result_var=.projects[1].programs.gp[4][2].functions[3].fun_code[0].local_vars[3]$$;
+       obj=.projects[1].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$$;
        method=taString::before;
        meth_args {
 	name="meth_args";
@@ -1668,10 +1681,10 @@ Program .projects[2].programs.gp[4][2] {
       MethodCall @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="prjn_nm = prjn_nm.after(\".\")";
+       code_string="prjn_nm = prjn_nm->after(\".\", )";
        pre_compile_code_string="prjn_nm = prjn_nm->after(\".\", )";
-       result_var=$.projects[2].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
-       obj=$.projects[2].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
+       result_var=$.projects[1].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
+       obj=$.projects[1].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
        method=taString::after;
        meth_args {
 	name="meth_args";
@@ -1706,11 +1719,11 @@ Program .projects[2].programs.gp[4][2] {
       MemberMethodCall @[3] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="lay = network.layers.FindLeafName()";
+       code_string="lay = network.layers.FindLeafName(lay_nm)";
        pre_compile_code_string="lay = network.layers.FindLeafName(lay_nm)";
-       obj=$.projects[2].programs.gp[4][2].args[0]$;
+       obj=$.projects[1].programs.gp[4][2].args[0]$;
        path="layers";
-       result_var=.projects[2].programs.gp[4][2].functions[3].fun_code[0].local_vars[4]$$;
+       result_var=.projects[1].programs.gp[4][2].functions[3].fun_code[0].local_vars[4]$$;
        method=taGroup_Layer_::FindLeafName;
        meth_args {
 	name="meth_args";
@@ -1872,7 +1885,7 @@ Program .projects[2].programs.gp[4][2] {
        flags=CAN_REVERT_TO_CODE;
        code_string="prjn = lay.projections.FindName(prjn_nm)";
        pre_compile_code_string="prjn = lay.projections.FindName(prjn_nm)";
-       result_var=.projects[2].programs.gp[4][2].functions[3].fun_code[0].local_vars[1]$$;
+       result_var=.projects[1].programs.gp[4][2].functions[3].fun_code[0].local_vars[1]$$;
        expr {
 	expr="lay.projections.FindName(prjn_nm)";
        };
@@ -1880,8 +1893,8 @@ Program .projects[2].programs.gp[4][2] {
       If @[6] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="if (!laygp)";
-       pre_compile_code_string="if (!laygp)";
+       code_string="if (!prjn)";
+       pre_compile_code_string="if (!prjn)";
        cond {
 	expr="!prjn";
        };
@@ -1892,8 +1905,8 @@ Program .projects[2].programs.gp[4][2] {
 	MiscCall @[0] {
 	 desc=;
 	 flags=CAN_REVERT_TO_CODE;
-	 code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
-	 pre_compile_code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
+	 code_string="taMisc::Error(\"projection named:\", prjn_nm, \"not found in layer:\", lay.name, , , , , )";
+	 pre_compile_code_string="taMisc::Error(\"projection named:\", prjn_nm, \"not found in layer:\", lay.name, , , , , )";
 	 result_var=NULL;
 	 object_type=taMisc;
 	 method=taMisc::Error;
@@ -2016,17 +2029,17 @@ Program .projects[2].programs.gp[4][2] {
       MemberAssign @[7] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="prjn.off = lesion";
-       pre_compile_code_string="prjn.off = lesion";
-       obj=$.projects[2].programs.gp[4][2].functions[3].fun_code[0].local_vars[1]$;
+       code_string="prjn.off = !prjn_on";
+       pre_compile_code_string="prjn.off = !prjn_on";
+       obj=$.projects[1].programs.gp[4][2].functions[3].fun_code[0].local_vars[1]$;
        path="off";
        expr {
-	expr="lesion";
+	expr="!prjn_on";
        };
        update_after=0;
       };
      };
-     el_var=$.projects[2].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
+     el_var=$.projects[1].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
      in {
       expr="les_prjns_mat";
      };
@@ -2060,7 +2073,7 @@ Program .projects[2].programs.gp[4][2] {
    code_string="UnlesionAll()";
    pre_compile_code_string="UnlesionAll()";
    result_var=NULL;
-   fun=.projects[2].programs.gp[4][2].functions[0]$$;
+   fun=.projects[1].programs.gp[4][2].functions[0]$$;
    fun_args {
     name="fun_args";
     el_typ=ProgArg;
@@ -2073,7 +2086,7 @@ Program .projects[2].programs.gp[4][2] {
    code_string="LayerGpsOnOff(lesion_layer_groups, )";
    pre_compile_code_string="LayerGpsOnOff(lesion_layer_groups, )";
    result_var=NULL;
-   fun=.projects[2].programs.gp[4][2].functions[1]$$;
+   fun=.projects[1].programs.gp[4][2].functions[1]$$;
    fun_args {
     name="fun_args";
     el_typ=ProgArg;
@@ -2092,12 +2105,12 @@ Program .projects[2].programs.gp[4][2] {
     ProgArg @[1] {
      arg_type=bool;
      type="bool";
-     name="lesion";
+     name="lay_gp_on";
      required=1;
      def_val=;
-     prev_expr=;
+     prev_expr="true";
      expr {
-      expr="true";
+      expr="false";
      };
     };
    };
@@ -2105,10 +2118,10 @@ Program .projects[2].programs.gp[4][2] {
   FunctionCall @[3] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="LayersOnOff(lesion_layer_groups, true)";
-   pre_compile_code_string="LayersOnOff(lesion_layer_groups, true)";
+   code_string="LayersOnOff(lesion_layers, )";
+   pre_compile_code_string="LayersOnOff(lesion_layers, )";
    result_var=NULL;
-   fun=.projects[2].programs.gp[4][2].functions[2]$$;
+   fun=.projects[1].programs.gp[4][2].functions[2]$$;
    fun_args {
     name="fun_args";
     el_typ=ProgArg;
@@ -2119,7 +2132,7 @@ Program .projects[2].programs.gp[4][2] {
      name="lays";
      required=1;
      def_val=;
-     prev_expr="lesion_layer_groups";
+     prev_expr="lesion_layers";
      expr {
       expr="lesion_layers";
      };
@@ -2127,12 +2140,12 @@ Program .projects[2].programs.gp[4][2] {
     ProgArg @[1] {
      arg_type=bool;
      type="bool";
-     name="lesion";
+     name="lay_on";
      required=1;
      def_val=;
      prev_expr="true";
      expr {
-      expr="true";
+      expr="false";
      };
     };
    };
@@ -2140,10 +2153,10 @@ Program .projects[2].programs.gp[4][2] {
   FunctionCall @[4] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="ProjectionsOnOff(, true)";
-   pre_compile_code_string="ProjectionsOnOff(, true)";
+   code_string="ProjectionsOnOff(lesion_prjns, )";
+   pre_compile_code_string="ProjectionsOnOff(lesion_prjns, )";
    result_var=NULL;
-   fun=.projects[2].programs.gp[4][2].functions[3]$$;
+   fun=.projects[1].programs.gp[4][2].functions[3]$$;
    fun_args {
     name="fun_args";
     el_typ=ProgArg;
@@ -2154,7 +2167,7 @@ Program .projects[2].programs.gp[4][2] {
      name="prjns";
      required=1;
      def_val=;
-     prev_expr="lesion_layers";
+     prev_expr="lesion_prjns";
      expr {
       expr="lesion_prjns";
      };
@@ -2162,12 +2175,12 @@ Program .projects[2].programs.gp[4][2] {
     ProgArg @[1] {
      arg_type=bool;
      type="bool";
-     name="lesion";
+     name="prjn_on";
      required=1;
      def_val=;
      prev_expr="true";
      expr {
-      expr="true";
+      expr="false";
      };
     };
    };
@@ -2175,10 +2188,10 @@ Program .projects[2].programs.gp[4][2] {
   FunctionCall @[5] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="ProjectionsOnOff(, true)";
-   pre_compile_code_string="ProjectionsOnOff(, true)";
+   code_string="ProjectionsOnOff(un_lesion_prjns, )";
+   pre_compile_code_string="ProjectionsOnOff(un_lesion_prjns, )";
    result_var=NULL;
-   fun=$.projects[2].programs.gp[4][2].functions[3]$;
+   fun=$.projects[1].programs.gp[4][2].functions[3]$;
    fun_args {
     name="fun_args";
     el_typ=ProgArg;
@@ -2189,7 +2202,7 @@ Program .projects[2].programs.gp[4][2] {
      name="prjns";
      required=1;
      def_val=;
-     prev_expr=;
+     prev_expr="un_lesion_prjns";
      expr {
       expr="un_lesion_prjns";
      };
@@ -2197,12 +2210,12 @@ Program .projects[2].programs.gp[4][2] {
     ProgArg @[1] {
      arg_type=bool;
      type="bool";
-     name="lesion";
+     name="prjn_on";
      required=1;
      def_val=;
-     prev_expr=;
+     prev_expr="false";
      expr {
-      expr="false";
+      expr="true";
      };
     };
    };
@@ -2213,7 +2226,7 @@ Program .projects[2].programs.gp[4][2] {
    code_string="network->Build()";
    pre_compile_code_string="network->Build()";
    result_var=NULL;
-   obj=$.projects[2].programs.gp[4][2].args[0]$;
+   obj=$.projects[1].programs.gp[4][2].args[0]$;
    method=Network::Build;
    meth_args {
     name=;
@@ -2229,7 +2242,7 @@ Program .projects[2].programs.gp[4][2] {
    code_string="network->UpdtAfterNetMod()";
    pre_compile_code_string="network->UpdtAfterNetMod()";
    result_var=NULL;
-   obj=$.projects[2].programs.gp[4][2].args[0]$;
+   obj=$.projects[1].programs.gp[4][2].args[0]$;
    method=Network::UpdtAfterNetMod;
    meth_args {
     name=;
@@ -2252,4 +2265,15 @@ Program .projects[2].programs.gp[4][2] {
  };
  step_prog=NULL;
  step_n=1;
+ doc {
+  name="doc";
+  desc=;
+  web_doc=0;
+  wiki=;
+  url="local";
+  full_url="local";
+  text_size=1;
+  text=;
+  html_text=;
+ };
 };

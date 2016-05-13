@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9461
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9480
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -685,6 +685,10 @@ LeabraProject .projects["LeabraFlex"] {
 
  Program_TopGroup @.programs = [1] {
   Program @["MasterStartup"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [0] {
    };
 
@@ -854,6 +858,10 @@ LeabraProject .projects["LeabraFlex"] {
   };
   Program_Group @.gp["StartupProgs"] = [1] { 
    Program @["BasicStartup"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -882,6 +890,10 @@ LeabraProject .projects["LeabraFlex"] {
   };
   Program_Group @.gp["ConfigProgs"] = [3] { 
    Program @["MasterBatch"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -926,6 +938,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["MasterTrain"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1001,6 +1017,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["MasterRun"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1078,6 +1098,10 @@ LeabraProject .projects["LeabraFlex"] {
    };
    Program_Group @.gp["InitProgs"] = [1] { 
     Program @["BasicInit"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserData_DocLink @["DocLink"] { };
+     };
+
      ProgObjList @.objs = [0] {
      };
 
@@ -1138,6 +1162,10 @@ LeabraProject .projects["LeabraFlex"] {
    };
    Program_Group @.gp["RunProgs"] = [1] { 
     Program @["BasicRun"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserData_DocLink @["DocLink"] { };
+     };
+
      ProgObjList @.objs = [0] {
      };
 
@@ -1205,6 +1233,10 @@ LeabraProject .projects["LeabraFlex"] {
   };
   Program_Group @.gp["TaskProgs"] = [1] { 
    Program @["BasicTrain"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      TimeUsed @["BasicTrainTime"] { };
     };
@@ -1309,6 +1341,10 @@ LeabraProject .projects["LeabraFlex"] {
   };
   Program_Group @.gp["EnviroProgs"] = [3] { 
    Program @["ChooseNextEvent"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      DataTable @["PermIdxTable"] { 
       DataTableCols @.data = [1] {
@@ -1496,6 +1532,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["ChooseRandomEvent"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1531,6 +1571,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["ApplyInputs"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      LayerWriter @["LayerWriter_0"] { 
       LayerDataEl_List @.layer_data = [3] {
@@ -1591,6 +1635,10 @@ LeabraProject .projects["LeabraFlex"] {
   };
   Program_Group @.gp["UtilProgs"] = [17] { 
    Program @["StdGlobalsInit"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1640,6 +1688,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["BatchRndSeed"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      RndSeed_List @["rnd_seeds"] { 
       taList @.seeds = [25] {
@@ -1698,6 +1750,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["ConfigNetwork"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1756,7 +1812,7 @@ LeabraProject .projects["LeabraFlex"] {
      Function @["LayerGpsOnOff"] { 
       ProgVar_List @.args = [2] {
        ProgVar @["laygps"] { };
-       ProgVar @["lesion"] { };
+       ProgVar @["lay_gp_on"] { };
       };
 
       ProgEl_List @.fun_code = [3] {
@@ -1829,7 +1885,7 @@ LeabraProject .projects["LeabraFlex"] {
      Function @["LayersOnOff"] { 
       ProgVar_List @.args = [2] {
        ProgVar @["lays"] { };
-       ProgVar @["lesion"] { };
+       ProgVar @["lay_on"] { };
       };
 
       ProgEl_List @.fun_code = [3] {
@@ -1902,7 +1958,7 @@ LeabraProject .projects["LeabraFlex"] {
      Function @["ProjectionsOnOff"] { 
       ProgVar_List @.args = [2] {
        ProgVar @["prjns"] { };
-       ProgVar @["lesion"] { };
+       ProgVar @["prjn_on"] { };
       };
 
       ProgEl_List @.fun_code = [3] {
@@ -2052,6 +2108,7 @@ LeabraProject .projects["LeabraFlex"] {
    Program @["PositionLayersFromTable"] { 
     UserDataItem_List @*(.user_data_) {
      UserDataItem @["user_pinned"] { };
+     UserData_DocLink @["DocLink"] { };
     };
 
     ProgObjList @.objs = [2] {
@@ -2419,6 +2476,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["NetworkToggleLesion"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      String_Matrix @["les_lay_mat"] { };
     };
@@ -2507,6 +2568,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["TrainStart"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      RndSeed @["dmem_rnd_seed"] { };
     };
@@ -2592,6 +2657,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["TrainEnd"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2632,6 +2701,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["EpochStart"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2671,6 +2744,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["EpochEnd"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2717,6 +2794,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["TrialStart"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2757,6 +2838,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["TrialEnd"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2786,6 +2871,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["SettleMinus"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2825,6 +2914,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["SettlePlus"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2859,6 +2952,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["Trial"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2915,6 +3012,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["Quarter"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2971,6 +3072,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["Cycle"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -3001,6 +3106,10 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    Program @["SaveWeights"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -3059,6 +3168,10 @@ LeabraProject .projects["LeabraFlex"] {
    };
    Program_Group @.gp["Monitors"] = [3] { 
     Program @["SaveLogFiles"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserData_DocLink @["DocLink"] { };
+     };
+
      ProgObjList @.objs = [0] {
      };
 
@@ -3129,6 +3242,10 @@ LeabraProject .projects["LeabraFlex"] {
      };
     };
     Program @["LeabraTrialMonitor"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserData_DocLink @["DocLink"] { };
+     };
+
      ProgObjList @.objs = [1] {
       NetMonitor @["trial_netmon"] { 
        NetMonItem_List @.items = [25] {
@@ -3235,6 +3352,10 @@ LeabraProject .projects["LeabraFlex"] {
      };
     };
     Program @["LeabraEpochMonitor"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserData_DocLink @["DocLink"] { };
+     };
+
      ProgObjList @.objs = [1] {
       NetMonitor @["epoch_netmon"] { 
        NetMonItem_List @.items = [30] {
@@ -3740,8 +3861,8 @@ LeabraProject .projects["LeabraFlex"] {
 <title>LeabraFlex - emergent</title>
 <script>document.documentElement.className = document.documentElement.className.replace( /(^|\\s)client-nojs(\\s|$)/, \"$1client-js$2\" );</script>
 <script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":11194,\"wgRevisionId\":11194,\"wgArticleId\":2315,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgRelevantArticleId\":2315,\"wgUserId\":3,\"wgUserEditCount\":2417,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,
-\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgRedirectedFrom\":\"LeabraFlexProgs\",\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\",\"wgInternalRedirectTargetUrl\":\"/emergent/index.php/LeabraFlex\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"284a915310c93c017c7109abadb235fd572ce23d+\\\\\",\"patrolToken\":\"d893ff6e65f68a44daaddca59edb5734572ce23d+\\\\\",\"watchToken\":\"90cb306172e3d74016c86bc8100aebd6572ce23d+\\\\\"});});mw.loader.load([\"mediawiki.action.view.redirect\",\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":11194,\"wgRevisionId\":11194,\"wgArticleId\":2315,\"wgIsArticle\":!0,\"wgIsRedirect\":!1,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":!1,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgRelevantArticleId\":2315,\"wgUserId\":3,\"wgUserEditCount\":2418,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":!0,
+\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgRedirectedFrom\":\"LeabraFlexProgs\",\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":!1,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgHeaderTabsTabIndexes\":[],\"wgWikiEditorEnabledModules\":{\"toolbar\":!0,\"dialogs\":!0,\"preview\":!0,\"publish\":!1},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\",\"wgInternalRedirectTargetUrl\":\"/emergent/index.php/LeabraFlex\"});mw.loader.implement(\"user.options\",function($,jQuery){mw.user.options.set({\"ccmeonemails\":\"1\",\"enotifminoredits\":\"1\",\"imagesize\":\"0\",\"previewontop\":\"\",\"rows\":\"30\",\"thumbsize\":\"0\",\"underline\":\"0\",\"watchmoves\":\"1\",\"editsection\":\"1\",\"rememberpassword\":\"1\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});});mw.loader.implement(\"user.tokens\",function($,jQuery){mw.user.tokens.set({\"editToken\":\"0a88836d7a7345a895c33b77c32d4c75573565c5+\\\\\",\"patrolToken\":\"23ddb841cfc4d5ea0a31b9b98522b291573565c5+\\\\\",\"watchToken\":\"e09a6a8fb5e56280ca057cc6e9e63054573565c5+\\\\\"});});mw.loader.load([\"mediawiki.action.view.redirect\",\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"skins.vector.js\"]);
 } );</script>
 <link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins/ext.headertabs.large.css\">
@@ -3813,11 +3934,11 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":!1,\
 
 <!-- 
 NewPP limit report
-Cached time: 20160505192431
+Cached time: 20160512214138
 Cache expiry: 86400
 Dynamic content: false
-CPU time usage: 0.023 seconds
-Real time usage: 0.027 seconds
+CPU time usage: 0.024 seconds
+Real time usage: 0.026 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -3831,7 +3952,7 @@ Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 - -total
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160505192431 and revision id 11194
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20160512214138 and revision id 11194
  -->
 </div>					<div class=\"printfooter\">
 						Retrieved from \"<a dir=\"ltr\" href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11194</a>\"					</div>
@@ -3873,7 +3994,7 @@ Transclusion expansion time report (%,ms,calls,template)
 															<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\">Read</a></span></li>
 															<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\" title=\"Edit this page [e]\" accesskey=\"e\">Edit</a></span></li>
 															<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=2b3db715da35cd309aac194ae2463d01572ce23d%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+															<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=unwatch&amp;token=f494f878fd49b9bc4a42d7984fd67370573565c5%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 													</ul>
 					</div>
 										<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
@@ -3952,7 +4073,7 @@ Transclusion expansion time report (%,ms,calls,template)
 		<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
 mw.loader.state({\"user\":\"ready\",\"user.groups\":\"ready\"});mw.loader.load([\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\"]);
 } );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
-mw.config.set({\"wgBackendResponseTime\":177});
+mw.config.set({\"wgBackendResponseTime\":192});
 } );</script>
 	
 
@@ -8576,6 +8697,15 @@ mw.config.set({\"wgBackendResponseTime\":177});
   desc=;
   debug_mode=0;
   Program @["MasterStartup"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["LeabraFlex"].programs["MasterStartup"].doc$$;
+    };
+   };
    name="MasterStartup";
    short_nm="Startup";
    tags="Leabra, Startup";
@@ -9584,6 +9714,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    };
    step_prog=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$$;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
   Program_Group @.gp["StartupProgs"] {
    name="StartupProgs";
@@ -9593,6 +9734,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    desc=;
    debug_mode=0;
    Program @["BasicStartup"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["StartupProgs"]["BasicStartup"].doc$$;
+     };
+    };
     name="BasicStartup";
     short_nm="BsStrt";
     tags="Leabra, Startup";
@@ -9670,6 +9820,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
   };
   Program_Group @.gp["ConfigProgs"] {
@@ -9680,6 +9841,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    desc=;
    debug_mode=0;
    Program @["MasterBatch"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].doc$$;
+     };
+    };
     name="MasterBatch";
     short_nm="MstBtc";
     tags="Leabra, Std";
@@ -9869,8 +10039,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["MasterTrain"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].doc$$;
+     };
+    };
     name="MasterTrain";
     short_nm="MstTrn";
     tags=;
@@ -10248,8 +10438,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["MasterRun"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].doc$$;
+     };
+    };
     name="MasterRun";
     short_nm="MstrRn";
     tags=;
@@ -10550,6 +10760,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program_Group @.gp["InitProgs"] {
     name="InitProgs";
@@ -10559,6 +10780,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     desc="contains specific Init programs called at start of running by RobotInit";
     debug_mode=0;
     Program @["BasicInit"] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserData_DocLink;
+      el_def=0;
+      UserData_DocLink @["DocLink"] {
+       name="DocLink";
+       doc=.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["InitProgs"]["BasicInit"].doc$$;
+      };
+     };
      name="BasicInit";
      short_nm="BaseInit";
      tags=;
@@ -10695,8 +10925,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgramCall @[1] {
        desc="get rid of all non-essential layers";
        flags=CAN_REVERT_TO_CODE;
-       code_string="ConfigNetwork(network, layer_group_lesion_list, layer_group_lesion_list, , )";
-       pre_compile_code_string="ConfigNetwork(network, layer_group_lesion_list, layer_group_lesion_list, , )";
+       code_string="ConfigNetwork(network, layer_group_lesion_list, layer_lesion_list, prjn_lesion_list, prjn_unlesion_list)";
+       pre_compile_code_string="ConfigNetwork(network, layer_group_lesion_list, layer_lesion_list, prjn_lesion_list, prjn_unlesion_list)";
        prog_args {
 	name=;
 	el_typ=ProgArg;
@@ -10836,6 +11066,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
      step_prog=NULL;
      step_n=1;
+     doc {
+      name="doc";
+      desc=;
+      web_doc=0;
+      wiki=;
+      url="local";
+      full_url="local";
+      text_size=1;
+      text=;
+      html_text=;
+     };
     };
    };
    Program_Group @.gp["RunProgs"] {
@@ -10846,6 +11087,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     desc=;
     debug_mode=0;
     Program @["BasicRun"] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserData_DocLink;
+      el_def=0;
+      UserData_DocLink @["DocLink"] {
+       name="DocLink";
+       doc=.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["RunProgs"]["BasicRun"].doc$$;
+      };
+     };
      name="BasicRun";
      short_nm="BaseRun";
      tags=;
@@ -11152,6 +11402,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
      step_prog=NULL;
      step_n=1;
+     doc {
+      name="doc";
+      desc=;
+      web_doc=0;
+      wiki=;
+      url="local";
+      full_url="local";
+      text_size=1;
+      text=;
+      html_text=;
+     };
     };
    };
   };
@@ -11163,6 +11424,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    desc=;
    debug_mode=0;
    Program @["BasicTrain"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].doc$$;
+     };
+    };
     name="BasicTrain";
     short_nm="BscTrn";
     tags=;
@@ -11637,6 +11907,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
   };
   Program_Group @.gp["EnviroProgs"] {
@@ -11647,6 +11928,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    desc=;
    debug_mode=0;
    Program @["ChooseNextEvent"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].doc$$;
+     };
+    };
     name="ChooseNextEvent";
     short_nm="ChNxEvt";
     tags="InputData, Permuted, FlexProgs, ApplyInput";
@@ -11696,7 +11986,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [6] 5;1;3;0;4;2;      };
+      [0]       };
       last_sort_spec {
        name="last_sort_spec";
        ops {
@@ -12408,8 +12698,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["ChooseRandomEvent"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseRandomEvent"].doc$$;
+     };
+    };
     name="ChooseRandomEvent";
     short_nm="ChRndm";
     tags=;
@@ -12538,8 +12848,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["ApplyInputs"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"].doc$$;
+     };
+    };
     name="ApplyInputs";
     short_nm="Inputs";
     tags="Network, InputData, Apply";
@@ -12807,6 +13137,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
   };
   Program_Group @.gp["UtilProgs"] {
@@ -12817,6 +13158,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    desc=;
    debug_mode=0;
    Program @["StdGlobalsInit"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].doc$$;
+     };
+    };
     name="StdGlobalsInit";
     short_nm="GlobInit";
     tags=;
@@ -13072,8 +13422,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["BatchRndSeed"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["BatchRndSeed"].doc$$;
+     };
+    };
     name="BatchRndSeed";
     short_nm="BatchSeed";
     tags=;
@@ -13276,8 +13646,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["ConfigNetwork"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].doc$$;
+     };
+    };
     name="ConfigNetwork";
     short_nm="CfgNet";
     tags="Network, Configure";
@@ -13457,7 +13847,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        ForeachLoop @[2] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
-	code_string="foreach(<el_var not set> in network.layers)";
+	code_string="foreach(lay in network.layers)";
 	pre_compile_code_string="foreach(lay in network.layers)";
 	loop_code {
 	 name="loop_code";
@@ -13504,10 +13894,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
      Function @["LayerGpsOnOff"] {
-      desc=;
+      desc="turn layer groups on or off (lesion when lay_gp_on=false)";
       flags=CAN_REVERT_TO_CODE;
-      code_string="LayerGpsOnOff(String laygps) returns: int";
-      pre_compile_code_string="LayerGpsOnOff(String laygps) returns: int";
+      code_string="LayerGpsOnOff(String laygps, bool lay_gp_on) returns: int";
+      pre_compile_code_string="LayerGpsOnOff(String laygps, bool lay_gp_on) returns: int";
       name="LayerGpsOnOff";
       return_type=T_Int;
       object_type=taOBase;
@@ -13524,8 +13914,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	init_from=NULL;
        };
-       ProgVar @["lesion"] {
-	name="lesion";
+       ProgVar @["lay_gp_on"] {
+	name="lay_gp_on";
 	var_type=T_Bool;
 	bool_val=0;
 	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
@@ -13541,8 +13931,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        LocalVars @[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
-	code_string="LocalVars (4 vars)";
-	pre_compile_code_string="LocalVars (4 vars)";
+	code_string="LocalVars (3 vars)";
+	pre_compile_code_string="LocalVars (3 vars)";
 	local_vars {
 	 name="local_vars";
 	 el_typ=ProgVar;
@@ -13794,10 +14184,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 If @[2] {
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="if (lesion)";
-	  pre_compile_code_string="if (lesion)";
+	  code_string="if (!lay_gp_on)";
+	  pre_compile_code_string="if (!lay_gp_on)";
 	  cond {
-	   expr="lesion";
+	   expr="!lay_gp_on";
 	  };
 	  true_code {
 	   name="true_code";
@@ -13841,7 +14231,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="else";
-	  pre_compile_code_string=;
+	  pre_compile_code_string="else";
 	  else_code {
 	   name="else_code";
 	   el_typ=ProgCode;
@@ -13889,10 +14279,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
      Function @["LayersOnOff"] {
-      desc=;
+      desc="turn layers on or off (lesion when lay_on=false)";
       flags=CAN_REVERT_TO_CODE;
-      code_string="LayersOnOff(String lays) returns: int";
-      pre_compile_code_string="LayersOnOff(String lays) returns: int";
+      code_string="LayersOnOff(String lays, bool lay_on) returns: int";
+      pre_compile_code_string="LayersOnOff(String lays, bool lay_on) returns: int";
       name="LayersOnOff";
       return_type=T_Int;
       object_type=taOBase;
@@ -13909,8 +14299,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	init_from=NULL;
        };
-       ProgVar @["lesion"] {
-	name="lesion";
+       ProgVar @["lay_on"] {
+	name="lay_on";
 	var_type=T_Bool;
 	bool_val=0;
 	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
@@ -13926,8 +14316,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        LocalVars @[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
-	code_string="LocalVars (4 vars)";
-	pre_compile_code_string="LocalVars (4 vars)";
+	code_string="LocalVars (3 vars)";
+	pre_compile_code_string="LocalVars (3 vars)";
 	local_vars {
 	 name="local_vars";
 	 el_typ=ProgVar;
@@ -14043,8 +14433,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 If @[1] {
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="if (!laygp)";
-	  pre_compile_code_string="if (!laygp)";
+	  code_string="if (!lay)";
+	  pre_compile_code_string="if (!lay)";
 	  cond {
 	   expr="!lay";
 	  };
@@ -14179,10 +14569,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 If @[2] {
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="if (lesion)";
-	  pre_compile_code_string="if (lesion)";
+	  code_string="if (!lay_on)";
+	  pre_compile_code_string="if (!lay_on)";
 	  cond {
-	   expr="lesion";
+	   expr="!lay_on";
 	  };
 	  true_code {
 	   name="true_code";
@@ -14226,7 +14616,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="else";
-	  pre_compile_code_string=;
+	  pre_compile_code_string="else";
 	  else_code {
 	   name="else_code";
 	   el_typ=ProgCode;
@@ -14274,10 +14664,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
      Function @["ProjectionsOnOff"] {
-      desc=;
+      desc="turn projections on or off";
       flags=CAN_REVERT_TO_CODE;
-      code_string="ProjectionsOnOff(String prjns, bool lesion) returns: int";
-      pre_compile_code_string="ProjectionsOnOff(String prjns, bool lesion) returns: int";
+      code_string="ProjectionsOnOff(String prjns, bool prjn_on) returns: int";
+      pre_compile_code_string="ProjectionsOnOff(String prjns, bool prjn_on) returns: int";
       name="ProjectionsOnOff";
       return_type=T_Int;
       object_type=taOBase;
@@ -14294,8 +14684,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	desc=;
 	init_from=NULL;
        };
-       ProgVar @["lesion"] {
-	name="lesion";
+       ProgVar @["prjn_on"] {
+	name="prjn_on";
 	var_type=T_Bool;
 	bool_val=0;
 	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
@@ -14311,8 +14701,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        LocalVars @[0] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
-	code_string="LocalVars (4 vars)";
-	pre_compile_code_string="LocalVars (4 vars)";
+	code_string="LocalVars (5 vars)";
+	pre_compile_code_string="LocalVars (5 vars)";
 	local_vars {
 	 name="local_vars";
 	 el_typ=ProgVar;
@@ -14432,8 +14822,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   MiscCall @[0] {
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
-	    code_string="taMisc::Error()";
-	    pre_compile_code_string="taMisc::Error()";
+	    code_string="taMisc::Error(\"projection name must include a . between name of layer and name of projection as Fm_sendlayer\", , , , , , , , )";
+	    pre_compile_code_string="taMisc::Error(\"projection name must include a . between name of layer and name of projection as Fm_sendlayer\", , , , , , , , )";
 	    result_var=NULL;
 	    object_type=taMisc;
 	    method=taMisc::Error;
@@ -14556,7 +14946,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 MethodCall @[1] {
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="lay_nm = prjn_nm.before(\".\")";
+	  code_string="lay_nm = prjn_nm->before(\".\", )";
 	  pre_compile_code_string="lay_nm = prjn_nm->before(\".\", )";
 	  result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["lay_nm"]$$;
 	  obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn_nm"]$$;
@@ -14594,7 +14984,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 MethodCall @[2] {
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="prjn_nm = prjn_nm.after(\".\")";
+	  code_string="prjn_nm = prjn_nm->after(\".\", )";
 	  pre_compile_code_string="prjn_nm = prjn_nm->after(\".\", )";
 	  result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn_nm"]$;
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn_nm"]$;
@@ -14632,7 +15022,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 MemberMethodCall @[3] {
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="lay = network.layers.FindLeafName()";
+	  code_string="lay = network.layers.FindLeafName(lay_nm)";
 	  pre_compile_code_string="lay = network.layers.FindLeafName(lay_nm)";
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$;
 	  path="layers";
@@ -14806,8 +15196,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 If @[6] {
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="if (!laygp)";
-	  pre_compile_code_string="if (!laygp)";
+	  code_string="if (!prjn)";
+	  pre_compile_code_string="if (!prjn)";
 	  cond {
 	   expr="!prjn";
 	  };
@@ -14818,8 +15208,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   MiscCall @[0] {
 	    desc=;
 	    flags=CAN_REVERT_TO_CODE;
-	    code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
-	    pre_compile_code_string="taMisc::Error(\"layer named:\", lay_nm, \"not found in network:\", network.name, , , , , )";
+	    code_string="taMisc::Error(\"projection named:\", prjn_nm, \"not found in layer:\", lay.name, , , , , )";
+	    pre_compile_code_string="taMisc::Error(\"projection named:\", prjn_nm, \"not found in layer:\", lay.name, , , , , )";
 	    result_var=NULL;
 	    object_type=taMisc;
 	    method=taMisc::Error;
@@ -14942,12 +15332,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 MemberAssign @[7] {
 	  desc=;
 	  flags=CAN_REVERT_TO_CODE;
-	  code_string="prjn.off = lesion";
-	  pre_compile_code_string="prjn.off = lesion";
+	  code_string="prjn.off = !prjn_on";
+	  pre_compile_code_string="prjn.off = !prjn_on";
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"].fun_code[0].local_vars["prjn"]$;
 	  path="off";
 	  expr {
-	   expr="lesion";
+	   expr="!prjn_on";
 	  };
 	  update_after=0;
 	 };
@@ -15018,12 +15408,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        ProgArg @[1] {
 	arg_type=bool;
 	type="bool";
-	name="lesion";
+	name="lay_gp_on";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="true";
 	expr {
-	 expr="true";
+	 expr="false";
 	};
        };
       };
@@ -15031,8 +15421,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      FunctionCall @[3] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="LayersOnOff(lesion_layer_groups, true)";
-      pre_compile_code_string="LayersOnOff(lesion_layer_groups, true)";
+      code_string="LayersOnOff(lesion_layers, )";
+      pre_compile_code_string="LayersOnOff(lesion_layers, )";
       result_var=NULL;
       fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"]$$;
       fun_args {
@@ -15045,7 +15435,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="lays";
 	required=1;
 	def_val=;
-	prev_expr="lesion_layer_groups";
+	prev_expr="lesion_layers";
 	expr {
 	 expr="lesion_layers";
 	};
@@ -15053,12 +15443,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        ProgArg @[1] {
 	arg_type=bool;
 	type="bool";
-	name="lesion";
+	name="lay_on";
 	required=1;
 	def_val=;
 	prev_expr="true";
 	expr {
-	 expr="true";
+	 expr="false";
 	};
        };
       };
@@ -15066,8 +15456,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      FunctionCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="ProjectionsOnOff(, true)";
-      pre_compile_code_string="ProjectionsOnOff(, true)";
+      code_string="ProjectionsOnOff(lesion_prjns, )";
+      pre_compile_code_string="ProjectionsOnOff(lesion_prjns, )";
       result_var=NULL;
       fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"]$$;
       fun_args {
@@ -15080,7 +15470,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="prjns";
 	required=1;
 	def_val=;
-	prev_expr="lesion_layers";
+	prev_expr="lesion_prjns";
 	expr {
 	 expr="lesion_prjns";
 	};
@@ -15088,12 +15478,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        ProgArg @[1] {
 	arg_type=bool;
 	type="bool";
-	name="lesion";
+	name="prjn_on";
 	required=1;
 	def_val=;
 	prev_expr="true";
 	expr {
-	 expr="true";
+	 expr="false";
 	};
        };
       };
@@ -15101,8 +15491,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      FunctionCall @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="ProjectionsOnOff(, true)";
-      pre_compile_code_string="ProjectionsOnOff(, true)";
+      code_string="ProjectionsOnOff(un_lesion_prjns, )";
+      pre_compile_code_string="ProjectionsOnOff(un_lesion_prjns, )";
       result_var=NULL;
       fun=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"]$;
       fun_args {
@@ -15115,7 +15505,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="prjns";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="un_lesion_prjns";
 	expr {
 	 expr="un_lesion_prjns";
 	};
@@ -15123,12 +15513,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        ProgArg @[1] {
 	arg_type=bool;
 	type="bool";
-	name="lesion";
+	name="prjn_on";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="false";
 	expr {
-	 expr="false";
+	 expr="true";
 	};
        };
       };
@@ -15178,6 +15568,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["PositionLayersFromTable"] {
     UserDataItem_List @*(.user_data_) {
@@ -15188,6 +15589,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="user_pinned";
       value 1 0=1;
       val_type_fixed=0;
+     };
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].doc$$;
      };
     };
     name="PositionLayersFromTable";
@@ -17039,8 +17444,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["NetworkToggleLesion"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].doc$$;
+     };
+    };
     name="NetworkToggleLesion";
     short_nm="NtwTgg";
     tags=;
@@ -17480,8 +17905,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["TrainStart"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].doc$$;
+     };
+    };
     name="TrainStart";
     short_nm="TrnStart";
     tags=;
@@ -17883,8 +18328,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["TrainEnd"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainEnd"].doc$$;
+     };
+    };
     name="TrainEnd";
     short_nm="TrnEnd";
     tags=;
@@ -18037,8 +18502,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["EpochStart"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochStart"].doc$$;
+     };
+    };
     name="EpochStart";
     short_nm="EpcStart";
     tags=;
@@ -18189,8 +18674,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["EpochEnd"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].doc$$;
+     };
+    };
     name="EpochEnd";
     short_nm="EpcEnd";
     tags=;
@@ -18351,8 +18856,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["TrialStart"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialStart"].doc$$;
+     };
+    };
     name="TrialStart";
     short_nm="TrStrt";
     tags=;
@@ -18483,8 +19008,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["TrialEnd"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"].doc$$;
+     };
+    };
     name="TrialEnd";
     short_nm="TrlEnd";
     tags=;
@@ -18574,8 +19119,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["SettleMinus"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"].doc$$;
+     };
+    };
     name="SettleMinus";
     short_nm="SetlMin";
     tags=;
@@ -18713,8 +19278,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["SettlePlus"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettlePlus"].doc$$;
+     };
+    };
     name="SettlePlus";
     short_nm="SttPls";
     tags=;
@@ -18823,8 +19408,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["Trial"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].doc$$;
+     };
+    };
     name="Trial";
     short_nm="Trial";
     tags="Leabra, Std";
@@ -19030,8 +19635,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["Quarter"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].doc$$;
+     };
+    };
     name="Quarter";
     short_nm="Quarter";
     tags="Leabra, Std";
@@ -19261,8 +19886,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["Cycle"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].doc$$;
+     };
+    };
     name="Cycle";
     short_nm="Cycle";
     tags="Leabra, Std";
@@ -19364,8 +20009,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["SaveWeights"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeights"].doc$$;
+     };
+    };
     name="SaveWeights";
     short_nm="SWghts";
     tags="Weights, Specs";
@@ -19667,6 +20332,17 @@ also save specs.";
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program_Group @.gp["Monitors"] {
     name="Monitors";
@@ -19676,6 +20352,15 @@ also save specs.";
     desc=;
     debug_mode=0;
     Program @["SaveLogFiles"] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserData_DocLink;
+      el_def=0;
+      UserData_DocLink @["DocLink"] {
+       name="DocLink";
+       doc=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].doc$$;
+      };
+     };
      name="SaveLogFiles";
      short_nm="SLFls";
      tags="Leabra, Startup";
@@ -20070,8 +20755,28 @@ also save specs.";
      };
      step_prog=NULL;
      step_n=1;
+     doc {
+      name="doc";
+      desc=;
+      web_doc=0;
+      wiki=;
+      url="local";
+      full_url="local";
+      text_size=1;
+      text=;
+      html_text=;
+     };
     };
     Program @["LeabraTrialMonitor"] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserData_DocLink;
+      el_def=0;
+      UserData_DocLink @["DocLink"] {
+       name="DocLink";
+       doc=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].doc$$;
+      };
+     };
      name="LeabraTrialMonitor";
      short_nm="TrialMon";
      tags="Leabra, Std, Monitor";
@@ -21322,8 +22027,28 @@ also save specs.";
      };
      step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"]$;
      step_n=1;
+     doc {
+      name="doc";
+      desc=;
+      web_doc=0;
+      wiki=;
+      url="local";
+      full_url="local";
+      text_size=1;
+      text=;
+      html_text=;
+     };
     };
     Program @["LeabraEpochMonitor"] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserData_DocLink;
+      el_def=0;
+      UserData_DocLink @["DocLink"] {
+       name="DocLink";
+       doc=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].doc$$;
+      };
+     };
      name="LeabraEpochMonitor";
      short_nm="EpcMon";
      tags="Leabra, Std, Monitor";
@@ -22901,6 +23626,17 @@ and the testing data is updated.  The first epoch monitor should have all the it
      };
      step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"]$;
      step_n=1;
+     doc {
+      name="doc";
+      desc=;
+      web_doc=0;
+      wiki=;
+      url="local";
+      full_url="local";
+      text_size=1;
+      text=;
+      html_text=;
+     };
     };
    };
   };
@@ -22916,7 +23652,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.002123142;
+     value 8 0=0.001592357;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
