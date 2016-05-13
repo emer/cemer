@@ -54,7 +54,7 @@ class ProgBrkPt_List; //
 taTypeDef_Of(Program);
 
 class TA_API Program: public taNBase, public AbstractScriptBase {
-  // #STEM_BASE ##TOKENS ##INSTANCE ##EXT_prog ##FILETYPE_Program ##CAT_Program ##UNDO_BARRIER
+  // #STEM_BASE ##TOKENS ##INSTANCE ##EXT_prog ##FILETYPE_Program ##EXPAND_DEF_PREFS ##CAT_Program ##UNDO_BARRIER
 INHERITED(taNBase)
 public:
   enum ProgFlags { // #BITS program flags

@@ -581,6 +581,8 @@ public:
   String        color_to_string(const iColor& color);
   // returns a string value (appropriate for setting in a style) for the color
   
+  static int    GetDefaultExpand(taBase* tab);
+  // calls all specific Get...DefaultExpand looking for a match - if you add a specific one add to this method
   static int    GetGroupDefaultExpand(const String& group);
   static void   SetGroupDefaultExpand(const String& group, int depth);
   // set the expansion depth for this group - 0 means don't expand, 1 is one level deep, and so on

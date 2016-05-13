@@ -42,7 +42,7 @@ class DataTable; //
 taTypeDef_Of(ControlPanel);
 
 class TA_API ControlPanel: public taNBase, public virtual IRefListClient {
-  // #AKA_SelectEdit #STEM_BASE ##EXT_edit ##CAT_Display A user-customizable panel of parameters and functions from anywhere in the project, that are most important for controlling the simulation
+  // #AKA_SelectEdit #STEM_BASE ##EXT_edit ##EXPAND_USER_DEF_1 ##CAT_Display A user-customizable panel of parameters and functions from anywhere in the project, that are most important for controlling the simulation
   INHERITED(taNBase)
 public:
   static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);

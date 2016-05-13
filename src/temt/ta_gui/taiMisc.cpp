@@ -920,6 +920,16 @@ bool taiMisc::GetCallDefaultExpand() {
   return (bool)taMisc::expand_defaults_program.call_args;
 }
 
+int taiMisc::GetDefaultExpand(taBase* tab) {
+  int depth = -1;
+  depth = taiMisc::GetGroupDefaultExpand(tab->GetName());
+  if (depth != -1) {
+    return depth;
+  }
+  depth = taiMisc::GetProgramDefaultExpand(tab->GetName());
+  return depth;  // they all return -1 if name not found
+}
+
 iMainWindowViewer* taiMisc::FindMainWinParent(QObject* obj) {
   QObject* tobj = obj;
   while(tobj) {

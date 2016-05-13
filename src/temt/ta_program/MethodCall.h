@@ -31,7 +31,7 @@ class MethodDef; //
 taTypeDef_Of(MethodCall);
 
 class TA_API MethodCall: public ProgEl { 
-  // ##DEF_CHILD_meth_args call a method (member function) on an object
+  // ##DEF_CHILD_meth_args ##HAS_CALL_ARGS call a method (member function) on an object
 INHERITED(ProgEl)
 public:
   ProgVarRef      result_var;

@@ -29,7 +29,7 @@ class ProgEl; //
 taTypeDef_Of(ProgramCall);
 
 class TA_API ProgramCall: public ProgramCallBase {
-  // call (run) another program, setting any arguments before hand
+  // ##HAS_CALL_ARGS call (run) another program, setting any arguments before hand
 INHERITED(ProgramCallBase)
 public:
   ProgramRef            target; // the program to be called

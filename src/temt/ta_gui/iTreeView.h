@@ -219,7 +219,8 @@ protected:
   enum ExpandFlags {
     EF_CUSTOM_FILTER            = 0x01,
     EF_DEFAULT                  = 0x02, // we are in the DefaultExpand context
-    EF_EXPAND_DISABLED          = 0x04 // either Expand on that guy, or set in flags
+    EF_EXPAND_DISABLED          = 0x04, // either Expand on that guy, or set in flags
+    EF_DEFAULT_BY_USER          = 0x08 // the user has initiated the expansion vs default expand when opening project
   };
   int                   tv_flags;
   String_PArray*        m_filters; // only created if any added
@@ -273,7 +274,7 @@ protected slots:
   void                  this_itemSelectionChanged();
   virtual void          ExpandAllUnderInt(void* item);
   virtual void          CollapseAllUnderInt(void* item);
-//  virtual void          ExpandDefaultUnderInt(void* item);
+  virtual void          ExpandDefaultUnderInt(void* item);
 private:
   mutable QFont*        italic_font;
 };

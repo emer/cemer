@@ -153,7 +153,7 @@ private:
 eTypeDef_Of(Network);
 
 class E_API Network : public taFBase {
-  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##DEF_NAME_ROOT_Network ##EXPAND_DEF_2 A network, containing layers, units, etc..
+  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##DEF_NAME_ROOT_Network ##EXPAND_DEF_2 ##EXPAND_USER_DEF_2 A network, containing layers, units, etc..
 INHERITED(taFBase)
 public:
   static bool nw_itm_def_arg;   // #IGNORE default arg val for FindMake..
@@ -246,7 +246,7 @@ public:
   int           small_batch_n_eff; // #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
   NetStatsSpecs stats;          // #CAT_Statistic parameters controling the computation of statistics
   NetworkThreadMgr threads;    // #CAT_Threads parallel threading of network computation
-  NetTiming_List net_timing; // #CAT_Statistic timing for different network-level functions -- per thread, plus one summary item at the end
+  NetTiming_List net_timing; // #CAT_Statistic #NO_EXPAND_ALL timing for different network-level functions -- per thread, plus one summary item at the end
 
   int           batch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
   int           epoch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)

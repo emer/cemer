@@ -23,6 +23,7 @@
 #include <taiSigLink>
 #include <taiWidgetTypeDefChooser>
 #include <taProject>
+#include <Program>
 #include <iClipData>
 #include <taiObjectMimeFactory>
 #include <iBrowseHistory>
@@ -404,12 +405,6 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   // special check for guys that should not be auto-expaneded at all!  may need to do this in child below.
   taBase* tab = item->link()->taData();
   
-//  String cur_name = tab->GetName();
-//  
-//  if (cur_name == "test") {
-//    ;
-//  }
-  
   bool expand_saved = false;
   if(exp_flags & (EF_DEFAULT | EF_CUSTOM_FILTER) && tab &&
      tab->HasBaseFlag(taBase::TREE_EXPANDED)) {
@@ -422,7 +417,8 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
     if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
     
-    if(!(exp_flags & EF_CUSTOM_FILTER) && tab && (exp_flags & EF_DEFAULT)) {
+    // not a user initiated expand to default -- i.e. !EF_DEFAULT_BY_USER
+    if(!(exp_flags & EF_CUSTOM_FILTER) && tab && (exp_flags & EF_DEFAULT) && !(exp_flags & EF_DEFAULT_BY_USER)) { 
       // get default info from objs
       String exp_def_str;
       if(item->md()) {                  // memberdef takes precedence
@@ -437,6 +433,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
           exp_def_str = item->md()->OptionAfter("EXPAND_DEF_");
         }
       }
+      
       if(exp_def_str.empty()) {
         exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
       }
@@ -453,6 +450,41 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
         expand = false;           // if no custom filter, default for all other guys is no expandre
       }
     }
+    
+    // here we handle "expand to default" when initiated by user - by double click or menu
+    if(!(exp_flags & EF_CUSTOM_FILTER) && tab && (exp_flags & EF_DEFAULT_BY_USER)) {
+      int depth = -1;
+      if(tab->GetTypeDef()->HasOption("EXPAND_DEF_PREFS")) {
+        // this gets group/list open - then we check the inner items based on user preferences
+        max_levels = 1;
+      }
+      else {
+        depth = taiMisc::GetDefaultExpand(tab);
+        if (depth == -1) { // no pref found for this object -- check for object type default
+          String exp_def_str;
+          // check for type level default
+          exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_USER_DEF_");
+          if(exp_def_str.nonempty()) {
+            depth = (int)exp_def_str;
+          }
+          if (!taiMisc::GetCallDefaultExpand() && tab->GetTypeDef()->HasOption("HAS_CALL_ARGS"))
+            depth = 0;
+        }
+        if (depth == -1) {  // we didn't find preference
+          max_levels -= 1;
+        }
+        else if (depth == 0) {  // either pref was to not expand or we are fully expanded based on pref
+          expand = false;
+        }
+        else {
+          max_levels = depth;  // more to expand
+        }
+      }
+      if (max_levels < 0) {
+        expand = false;
+      }
+    }
+    
     if (!(exp_flags & EF_EXPAND_DISABLED)) {
       if (!item->link()->isEnabled())
         expand = false;
@@ -461,7 +493,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       emit CustomExpandFilter(item, level, expand);
     }
   }
-  
+
   if (expand) {
     // first expand the guy...
     if (!isItemExpanded(item)) { // ok, eligible...
@@ -510,9 +542,13 @@ void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) {
   taMisc::Busy(false);
 }
 
+void iTreeView::ExpandAllUnderInt(void* item) {
+  ExpandAllUnder((iTreeViewItem*)item);
+}
+
 void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   if (!item) return;
-  int exp_flags = EF_DEFAULT;
+  int exp_flags = EF_DEFAULT_BY_USER;
   if (useCustomExpand()) exp_flags |= EF_CUSTOM_FILTER;
   taMisc::Busy(true);
   ExpandItem_impl(item, 0, m_def_exp_levels, exp_flags);
@@ -522,9 +558,8 @@ void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   taMisc::Busy(false);
 }
 
-void iTreeView::ExpandAllUnderInt(void* item) {
-//  ExpandDefaultUnder((iTreeViewItem*)item);
-    ExpandAllUnder((iTreeViewItem*)item);
+void iTreeView::ExpandDefaultUnderInt(void* item) {
+  ExpandDefaultUnder((iTreeViewItem*)item);
 }
 
 void iTreeView::ExpandDefault() {
@@ -901,7 +936,8 @@ void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
   if (item->isExpanded())
     CollapseAllUnder(item);
   else
-    ExpandAllUnder(item);
+    ExpandDefaultUnder(item);
+//  ExpandAllUnder(item);
 
   emit itemDoubleClicked(item_, index.column()); // still need to emit the signal for other consumers!
   // i.e., the iPanelOfList
@@ -1096,25 +1132,19 @@ void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & 
 void iTreeView::FillContextMenu_post(ISelectable_PtrList& sel_items, taiWidgetActions* menu) {
   menu->AddSep();
   taiWidgetMenu* men_exp = menu->AddSubMenu("Expand/Collapse");
-  men_exp->AddItem("Expand Default", taiWidgetMenu::normal, iAction::action,
-                   this, SLOT(ExpandDefault()) );
-  men_exp->AddItem("Expand All", taiWidgetMenu::normal, iAction::action,
-                   this, SLOT(ExpandAll()) );
-  men_exp->AddItem("Collapse All", taiWidgetMenu::normal, iAction::action,
-                   this, SLOT(CollapseAll()) );
+
   if (sel_items.size == 1) {
     ISelectable* si = sel_items.FastEl(0);
     if (si && si->GetTypeDef()->InheritsFrom(&TA_iTreeViewItem)) {
       void* nd = si->This(); // don't need to detype, because we pass as void anyway
-      men_exp->AddItem("Expand All From Here", taiWidgetMenu::normal, iAction::ptr_act,
+      men_exp->AddItem("Expand Default", taiWidgetMenu::normal, iAction::ptr_act,
+                       this, SLOT(ExpandDefaultUnderInt(void*)), (void*)nd );
+      men_exp->AddItem("Expand Fully", taiWidgetMenu::normal, iAction::ptr_act,
                        this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
-      men_exp->AddItem("Collapse All From Here", taiWidgetMenu::normal, iAction::ptr_act,
+      men_exp->AddItem("Collapse", taiWidgetMenu::normal, iAction::ptr_act,
                        this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
-//      men_exp->AddItem("Expand Default Under", taiWidgetMenu::normal, iAction::ptr_act,
-//                       this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
     }
-  }
-  
+  }  
   emit FillContextMenuHookPost(sel_items, menu);
 }
 

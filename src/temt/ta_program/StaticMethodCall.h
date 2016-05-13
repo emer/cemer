@@ -31,7 +31,7 @@ class MethodDef; //
 taTypeDef_Of(StaticMethodCall);
 
 class TA_API StaticMethodCall: public ProgEl {
-  // ##DEF_CHILD_meth_args call a static method (member function) on a type
+  // ##DEF_CHILD_meth_args ##HAS_CALL_ARGS call a static method (member function) on a type
 INHERITED(ProgEl)
 public:
   ProgVarRef            result_var; // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser result variable (optional -- can be NULL)

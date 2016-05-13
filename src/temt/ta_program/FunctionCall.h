@@ -30,7 +30,7 @@
 taTypeDef_Of(FunctionCall);
 
 class TA_API FunctionCall: public ProgEl {
-  // ##DEF_CHILD_fun_args call a function
+  // ##DEF_CHILD_fun_args ##HAS_CALL_ARGS call a function
 INHERITED(ProgEl)
 public:
   ProgVarRef            result_var;
