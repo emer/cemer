@@ -29,7 +29,7 @@ taTypeDef_Of(DataTable);
 taTypeDef_Of(DataTable_Group);
 
 class TA_API DataTable_Group : public taGroup<DataTable> {
-  // ##CAT_Data ##EXPAND_DEF_1 ##EXPAND_USER_DEF_1 group of data objects
+  // ##CAT_Data ##EXPAND_DEF_1 ##EXPAND_UNDER_DEF_1 group of data objects
 INHERITED(taGroup<DataTable>)
 public:
   bool          save_tables;    // #DEF_true save the data tables in this group -- turn this off for groups of data tables that are all temporary and should not be saved -- saves space for headers etc in dump file

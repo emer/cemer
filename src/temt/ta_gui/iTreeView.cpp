@@ -453,38 +453,41 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     
     // here we handle "expand to default" when initiated by user - by double click or menu
     if(!(exp_flags & EF_CUSTOM_FILTER) && tab && (exp_flags & EF_DEFAULT_BY_USER)) {
-      int depth = -1;
-      if(tab->GetTypeDef()->HasOption("EXPAND_DEF_PREFS")) {
-        // this gets group/list open - then we check the inner items based on user preferences
-        max_levels = 1;
+      int depth_from_prefs = -1;
+      int depth_from_type = -1;
+      // check for preferences default
+      depth_from_prefs = taiMisc::GetDefaultExpand(tab);
+      
+      // check for type level default -- maybe we should allow on members as well
+      String exp_def_str;
+      exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_UNDER_DEF_");
+      if(exp_def_str.nonempty()) {
+        depth_from_type = (int)exp_def_str;
+      }
+      // for user expands choose the greater expansion
+      int depth = depth_from_prefs;
+      if (depth_from_type > depth_from_prefs) {
+        depth = depth_from_type;
+      }
+      
+      if (depth == -1) {  // we didn't find preference or type default
+        max_levels -= 1;
+      }
+      else if (depth == 0) {  // either pref was to not expand or we are fully expanded based on pref
+        expand = false;
       }
       else {
-        depth = taiMisc::GetDefaultExpand(tab);
-        if (depth == -1) { // no pref found for this object -- check for object type default
-          String exp_def_str;
-          // check for type level default
-          exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_USER_DEF_");
-          if(exp_def_str.nonempty()) {
-            depth = (int)exp_def_str;
-          }
-          if (!taiMisc::GetCallDefaultExpand() && tab->GetTypeDef()->HasOption("HAS_CALL_ARGS"))
-            depth = 0;
-        }
-        if (depth == -1) {  // we didn't find preference
-          max_levels -= 1;
-        }
-        else if (depth == 0) {  // either pref was to not expand or we are fully expanded based on pref
-          expand = false;
-        }
-        else {
-          max_levels = depth;  // more to expand
-        }
+        max_levels = depth;  // more to expand
       }
       if (max_levels < 0) {
         expand = false;
       }
     }
     
+    if (!taiMisc::GetCallDefaultExpand() && tab->GetTypeDef()->HasOption("HAS_CALL_ARGS")) {
+      expand = false;
+    }
+
     if (!(exp_flags & EF_EXPAND_DISABLED)) {
       if (!item->link()->isEnabled())
         expand = false;
@@ -519,7 +522,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   else {
     // note: following test not needed for 1st time, but is
     // needed for subsequent ExpandDefault
-    if(!exp_flags & (EF_DEFAULT | EF_CUSTOM_FILTER)) {
+    if(!exp_flags & (EF_DEFAULT | EF_DEFAULT_BY_USER | EF_CUSTOM_FILTER)) {
       // for auto-expand, do NOT collapse expanded items!
       if (isItemExpanded(item)) {
         setItemExpanded(item, false);

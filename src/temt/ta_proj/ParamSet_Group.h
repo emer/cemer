@@ -28,7 +28,7 @@ taTypeDef_Of(ParamSet);
 taTypeDef_Of(ParamSet_Group);
 
 class TA_API ParamSet_Group : public taGroup<ParamSet> {
-  // ##CAT_Display ##EXPAND_DEF_1 a group of param sets
+  // ##CAT_Display ##EXPAND_DEF_1 ##EXPAND_UNDER_DEF_2 a group of param sets
   INHERITED(taGroup<ParamSet>)
 public:
   virtual void  RestorePanels();
