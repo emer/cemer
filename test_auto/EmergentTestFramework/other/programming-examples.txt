@@ -142,7 +142,8 @@ Test ProgramWithValue
     ${output} =                Run Command           {"command": "RunProgram", "program": "ProgramWithValue"}   5 sec
     Status OK No Result        ${output}
 
-
+Test CallingProgramFunction
+     ${console}=		Run Emergent Program       CallingProgramFunction
 
 
 

@@ -181,6 +181,11 @@ TestRandomInteger
     Ensure Emergent Free
     Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Math\\"][\\"RandomInteger\\"]
 
+TestRandomInteger
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"Math\\"][\\"RandomInteger\\"]
+
 #TestMiscMath
 #    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
 #    Ensure Emergent Free
@@ -195,6 +200,12 @@ TestProgramSeekingValue
     Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
     Ensure Emergent Free
     Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"ProgramsAndFunctions\\"].gp[\\"AccessVariablesInAnotherProgram\\"][\\"ProgramSeekingValue\\"]
+
+TestProgramCallFunction
+    Set Suite Variable     ${program_test}       "TestProgramBrowserEdit"
+    Ensure Emergent Free
+    Test Program Browser Edit	.projects[\\"program_examples\\"].programs.gp[\\"ProgramsAndFunctions\\"].gp[\\"CallAnotherProgram\\"][\\"CallingProgramFunction\\"]
+
 
 
 *** Keywords ***
