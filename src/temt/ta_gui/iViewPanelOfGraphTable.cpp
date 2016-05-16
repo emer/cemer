@@ -456,6 +456,8 @@ bool iViewPanelOfGraphTable::BuildPlots() {
   // create a signal mapper to pass the plot number as a parameter to butSetLineStyle()
   QSignalMapper* sig_map_for_prop_buttons = new QSignalMapper(this);
   connect(sig_map_for_prop_buttons, SIGNAL(mapped(int)), this, SLOT(butSetLineStyle(int)));
+  QSignalMapper* sig_map_for_chooser_buttons = new QSignalMapper(this);
+  connect(sig_map_for_chooser_buttons, SIGNAL(mapped(int)), this, SLOT(ChooseVarPressed(int)));
   
   for(int i=0;i<pltsz; i++) {
     layYAxis[i] = new QHBoxLayout;
@@ -475,6 +477,8 @@ bool iViewPanelOfGraphTable::BuildPlots() {
     // fix the button width so all of the checkboxes and other control align
     String start_text = "";
     lelYAxis[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags, start_text, axis_chooser_width));
+    connect(lelYAxis[i]->rep(), SIGNAL(pressed()), sig_map_for_chooser_buttons, SLOT(map()));
+    sig_map_for_chooser_buttons->setMapping(lelYAxis[i]->rep(), i);
     QWidget* lw = lelYAxis[i]->GetRep();
     lw->setFixedHeight(row_height);
     layYAxis[i]->addWidget(lw);
@@ -818,3 +822,27 @@ void iViewPanelOfGraphTable::MovePlotBefore(int old_index) {
     glv->UpdateDisplay();
   }
 }
+
+void* iViewPanelOfGraphTable::GetAlternateSelection() {
+  // if the plot var was NULL when pressed check the plot choice above and possibly the one below
+  //  to use as alternate starting variable for initializing the chooser
+  int good_index = last_plot_index;
+  if (glv()->plots[last_plot_index]->GetColPtr() == NULL) {
+    if (last_plot_index > 0) {
+      if (glv()->plots[last_plot_index - 1]->GetColPtr() != NULL) {
+        good_index -= 1;
+      }
+    }
+    if ((good_index == last_plot_index) && (last_plot_index < glv()->plots.size - 1)) {
+      if (glv()->plots[last_plot_index + 1]->GetColPtr() != NULL) {
+        good_index = last_plot_index + 1;
+      }
+    }
+  }
+  return glv()->plots[good_index]->GetColPtr();
+}
+
+void iViewPanelOfGraphTable::ChooseVarPressed(int index) {
+  last_plot_index = index;
+}
+

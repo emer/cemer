@@ -197,8 +197,12 @@ bool taiWidgetItemChooser::ShowItemFilter(void* base, void* item, const String& 
 }
 
 void taiWidgetItemChooser::UpdateImage(void* cur_sel) {
-  // note: don't optimize this if same msel, since we use it to set label
   m_sel = cur_sel;
+  if (cur_sel == NULL && host != NULL) {
+    alt_sel = host->GetAlternateSelection();  // set an alternate - might be asked for
+  }
+  
+  // note: don't optimize this if same msel, since we use it to set label
   if(hasNoItems()) {
     rep()->setEnabled(false);   // if no options
     rep()->setText("No Items Available to Choose!");

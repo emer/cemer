@@ -50,6 +50,7 @@ public:
   inline const String   nullText() { return null_text; }
   inline QAbstractButton* rep() {return m_but;}
   inline void*          sel() const {return m_sel;}
+  inline void*          GetAltSel() const { return alt_sel; }  // return the smart alternate selection if host provides one
   virtual bool          isValid() const {return (targ_typ);} // if all required params have been set
   virtual int           catCount() const;
   // number of categories, where supported; 0=nocat, 1+=cats
@@ -94,6 +95,7 @@ public slots:
 
 protected:
   void*                 m_sel; // current value
+  void*                 alt_sel; // the chooser can provide this so that some sensible item is selected rather than NULL when the chooser list appears
   QAbstractButton*      m_but;
   QToolButton*          btnEdit; // only for tokens
   QToolButton*          btnHelp; // typically for non-tokens, ex Type, Method, etc.

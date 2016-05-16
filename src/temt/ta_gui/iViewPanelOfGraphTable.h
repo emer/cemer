@@ -152,8 +152,12 @@ public:
   iColorScaleBar*           cbar;             // colorbar
   QPushButton*              butSetColor;
   
-  String       panel_type() const override; // this string is on the subpanel button for this panel
-  GraphTableView*       glv() {return (GraphTableView*)m_dv;}
+  String                  panel_type() const override; // this string is on the subpanel button for this panel
+  GraphTableView*         glv() {return (GraphTableView*)m_dv;}
+  
+  int                     last_plot_index; // this is the plot index of the most recent plot variable selected
+  void*                   GetAlternateSelection() override;
+
   
   iViewPanelOfGraphTable(GraphTableView* glv);
   ~iViewPanelOfGraphTable();
@@ -180,6 +184,7 @@ public: // ISigLinkClient interface
   void              InsertPlotAfter(int plot_index);
   void              DeletePlot(int plot_index);
   void              MovePlotBefore(int old_index);
+  void              ChooseVarPressed(int index);
   
 #ifndef __MAKETA__
   void              label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e); // note, it MUST have this name

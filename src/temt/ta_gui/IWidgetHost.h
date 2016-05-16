@@ -47,6 +47,7 @@ public:
   virtual void          Changed() {} // called by embedded item to indicate contents have changed
   virtual void          SetItemAsHandler(taiWidget* item, bool set_it = true); // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset); in ta_qtviewer.cpp
   virtual void          Apply_Async() = 0; // provided for the APPLY_IMMED functionality
+  virtual void*         GetAlternateSelection() { return NULL; }
 
   IWidgetHost() {}
   virtual ~IWidgetHost() {} //

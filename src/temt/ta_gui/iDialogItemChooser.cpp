@@ -240,8 +240,13 @@ void iDialogItemChooser::Activate(taiWidgetItemChooser* client_) {
     init_filter = String("^") + client_->filter_start_txt;
   else
     init_filter = "^";
-  SetInitView(m_client->sel(), client_->filter_start_txt);
-  setSelObj(m_client->sel());
+  
+  void* selection = m_client->sel();
+  if (selection == NULL) {
+    selection = m_client->GetAltSel();
+  }
+  SetInitView(selection, client_->filter_start_txt);
+  setSelObj(selection);
   is_dialog = false;            // if we only get this far, then it is not a dialog
 }
 
