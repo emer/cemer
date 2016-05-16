@@ -4323,7 +4323,7 @@ void DataTable::FilterAgain() {
   FilterBySpec(&last_select_spec);
 }
 
-void DataTable::Filter(Variant& col1, Relation::Relations operator_1,
+void DataTable::Filter(const Variant& col1, Relation::Relations operator_1,
     const String& value_1, Relation::CombOp comb_op,
     Variant col2, Relation::Relations operator_2,
     const String& value_2,
@@ -4440,6 +4440,44 @@ bool DataTable::FilterByScript(const String& filter_expr) {
   calc_script->Run();
   RowUpdate();
   return true;
+}
+
+void DataTable::FilterContainsList(const Variant& col, const String& contains_list,
+                                   bool include_matches, const String& delim) {
+  DataCol* cda = GetColData(col);
+  if(!cda) return;
+  FilterContainsListCol(cda, contains_list, include_matches, delim);
+}
+
+void DataTable::FilterContainsListCol(DataCol* cda, const String& contains_list,
+                                      bool include_matches, const String& delim) {
+  String_Array sary;
+  sary.Split(contains_list, delim);
+  if(TestError(sary.size == 0, "FilterContainsList",
+               "contains_list does not contain any items!", contains_list)) {
+    return;
+  }
+  StructUpdate(true);
+  for(int rw = rows-1; rw >= 0; rw--) {
+    String sval = cda->GetValAsString(rw);
+    bool got_one = false;
+    for(int j=0; j<sary.size; j++) {
+      String cv = sary[j];
+      if(cv.nonempty() && sval.contains(cv)) {
+        got_one = true;
+        break;
+      }
+    }
+    if(include_matches) {
+      if(got_one) continue;
+      RemoveRows(rw,1);
+    }
+    else {
+      if(!got_one) continue;
+      RemoveRows(rw,1);
+    }
+  }
+  StructUpdate(false);
 }
 
 bool DataTable::FilterBySpec(DataSelectSpec* spec) {

@@ -1,5 +1,9 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9440
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9487
 Program .projects[0].programs.gp[5].gp[0][8] { 
+ UserDataItem_List @*(.user_data_) {
+  UserData_DocLink @[0] { };
+ };
+
  ProgObjList @.objs = [4] {
   DataTable @[0] { 
    DataTableCols @.data = [0] {
@@ -75,9 +79,13 @@ Program .projects[0].programs.gp[5].gp[0][8] {
     };
     AssignExpr @[1] { };
     If @[2] { 
-     ProgEl_List @.true_code = [1] {
+     ProgEl_List @.true_code = [2] {
       FunctionCall @[0] { 
        ProgArg_List @.fun_args = [0] {
+       };
+      };
+      MethodCall @[1] { 
+       ProgArg_List @.meth_args = [0] {
        };
       };
      };
@@ -287,12 +295,8 @@ Program .projects[0].programs.gp[5].gp[0][8] {
 
  ProgEl_List @.init_code = [2] {
   If @[0] { 
-   ProgEl_List @.true_code = [2] {
+   ProgEl_List @.true_code = [1] {
     MethodCall @[0] { 
-     ProgArg_List @.meth_args = [0] {
-     };
-    };
-    MethodCall @[1] { 
      ProgArg_List @.meth_args = [0] {
      };
     };
@@ -329,6 +333,15 @@ Program .projects[0].programs.gp[5].gp[0][8] {
  };
 };
 Program .projects[0].programs.gp[5].gp[0][8] {
+ UserDataItem_List @*(.user_data_) {
+  name=;
+  el_typ=UserData_DocLink;
+  el_def=0;
+  UserData_DocLink @[0] {
+   name="DocLink";
+   doc=.projects[0].programs.gp[5].gp[0][8].doc$$;
+  };
+ };
  name="TickAnalysis";
  short_nm="Tcknly";
  tags="Analysis, Statistic, Monitor, Errors, Trial, Tick";
@@ -658,6 +671,22 @@ Program .projects[0].programs.gp[5].gp[0][8] {
 	el_typ=ProgArg;
 	el_def=0;
        };
+      };
+      MethodCall @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="TickDataLog->Reset()";
+       pre_compile_code_string="TickDataLog->Reset()";
+       result_var=NULL;
+       obj=.projects[0].programs.gp[5].gp[0][8].vars[7]$$;
+       method=DataTable::Reset;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+       meth_sig="void Reset()";
+       meth_desc=" remove all columns (and data) -- this cannot be undone!";
       };
      };
     };
@@ -1270,7 +1299,7 @@ Program .projects[0].programs.gp[5].gp[0][8] {
        code_string="TickDataLog->ResetData()";
        pre_compile_code_string="TickDataLog->ResetData()";
        result_var=NULL;
-       obj=.projects[0].programs.gp[5].gp[0][8].vars[7]$$;
+       obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
        method=DataTable::ResetData;
        meth_args {
 	name="meth_args";
@@ -1688,22 +1717,6 @@ Program .projects[0].programs.gp[5].gp[0][8] {
      meth_sig="void ResetData()";
      meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
     };
-    MethodCall @[1] {
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="TickDataLog->Reset()";
-     pre_compile_code_string="TickDataLog->Reset()";
-     result_var=NULL;
-     obj=$.projects[0].programs.gp[5].gp[0][8].vars[7]$;
-     method=DataTable::Reset;
-     meth_args {
-      name="meth_args";
-      el_typ=ProgArg;
-      el_def=0;
-     };
-     meth_sig="void Reset()";
-     meth_desc=" remove all columns (and data) -- this cannot be undone!";
-    };
    };
   };
   MethodCall @[1] {
@@ -1806,4 +1819,15 @@ Program .projects[0].programs.gp[5].gp[0][8] {
  };
  step_prog=NULL;
  step_n=1;
+ doc {
+  name="doc";
+  desc=;
+  web_doc=0;
+  wiki=;
+  url="local";
+  full_url="local";
+  text_size=1;
+  text=;
+  html_text=;
+ };
 };

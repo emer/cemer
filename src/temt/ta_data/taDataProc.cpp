@@ -1195,7 +1195,9 @@ bool taDataProc::SplitRowsNPermuted
       }
       rest_idx = i;
     }
-    n_tot += nary[i];
+    else {
+      n_tot += nary[i];
+    }
     n_split++;
   }
 
@@ -1236,6 +1238,125 @@ bool taDataProc::SplitRowsNPermuted
         row--;                  // negate this row
       }
     }
+  }
+  for(int i=0;i<6;i++) {
+    if(!dary[i]) break;
+    dary[i]->StructUpdate(false);
+  }
+  return true;
+}
+
+bool taDataProc::SplitRowsNByColGroupPermuted
+(DataTable* src, const String& col_nm, DataTable* dest_1, float n1,
+ DataTable* dest_2, float n2, DataTable* dest_3, float n3, DataTable* dest_4, float n4,
+ DataTable* dest_5, float n5, DataTable* dest_6, float n6, int thr_no) {
+  if(!src) { taMisc::Error("taDataProc::SplitRowsNByColGroupPermuted: src is NULL"); return false; }
+
+  src->Sort(col_nm, true);      // must sort by col name already..
+  DataTable gp_table;
+  DataGroupSpec gp_spec;
+  gp_spec.append_agg_name = false;
+  DataGroupEl* gpel = (DataGroupEl*)gp_spec.AddColumn(col_nm, src);
+  gpel->agg.op = Aggregate::GROUP;
+  DataGroupEl* nel = (DataGroupEl*)gp_spec.AddColumn(col_nm, src);
+  nel->agg.op = Aggregate::N;
+  taDataProc::Group(&gp_table, src, &gp_spec);
+  
+  float nary[6] = {n1, n2, n3, n4, n5, n6};
+  int nary_i[6];
+  DataTable* dary[6] = {dest_1, dest_2, dest_3, dest_4, dest_5, dest_6};
+  int n_split = 0;
+  int rest_idx = -1;
+  float n_tot = 0;
+  for(int i=0;i<6;i++) {
+    if(!dary[i]) break;
+    bool in_place_req = false;
+    GetDest(dary[i], src, "SplitByN_" + String(i), in_place_req);
+    if(in_place_req) {
+      taMisc::Error("taDataProc::SplitRowsNByColGroupPermuted -- src cannot be same as dest for this operation!");
+      delete dary[i];
+      return false;
+    }
+    dary[i]->StructUpdate(true);
+    dary[i]->Copy_NoData(*src);
+    if(nary[i] < 0) {
+      if(rest_idx >= 0) {
+        taMisc::Error("SplitRowsN: cannot have multiple n = -1 = remainder cases");
+        break;
+      }
+      rest_idx = i;
+    }
+    else {
+      n_tot += nary[i];
+    }
+    nary_i[i] = (int)nary[i];
+    n_split++;
+  }
+
+  bool n_pct = false;
+  if(n_tot <= 1.0f)
+    n_pct = true;
+  
+  int src_row = 0;
+  int_Array idxs;
+  for(int gi=0; gi < gp_table.rows; gi++) {
+    String val = gp_table.GetVal(0, gi).toString();
+    int gp_n = gp_table.GetVal(1, gi).toInt();
+    int n_tot_i = n_tot;
+    if(n_pct) {
+      n_tot = 0;
+      for(int i =0; i < n_split; i++) {
+        if(i != rest_idx) {
+          nary_i[i] = (int)taMath_float::round(nary[i] * gp_n);
+          n_tot_i += nary_i[i];
+        }
+      }
+      n_tot_i = MIN(gp_n, n_tot_i);
+    }
+
+    if(!n_pct && n_tot > gp_n) {
+      taMisc::Warning("SplitRowsNByColGroup: total N:", String(n_tot),
+                      "is > number of source rows:", String(gp_n),
+                      "for group:", val,
+                      " -- will be underfilled");
+    }
+
+    
+    idxs.SetSize(gp_n);
+    idxs.FillSeq();
+    idxs.Permute(thr_no);
+    
+    if(rest_idx >=0) {
+      int n_rest = gp_n - n_tot_i;
+      n_rest = MAX(n_rest, 0);
+      nary_i[rest_idx] = n_rest;
+    }
+
+    int st_n = 0;
+    int end_n = nary_i[0];
+    int ni = 0;
+    for(int row=0; row < gp_n; row++) {
+      if(row < end_n) {
+        dary[ni]->AddBlankRow();
+        dary[ni]->CopyFromRow(-1, *src, src_row + idxs[row]);
+      }
+      else {
+        ni++;
+        if(!dary[ni]) break;
+        st_n = row;
+        end_n = st_n + nary_i[ni];
+
+        if(nary_i[ni] > 0) {
+          dary[ni]->AddBlankRow();
+          dary[ni]->CopyFromRow(-1, *src, src_row + idxs[row]);
+        }
+        else {
+          row--;                  // negate this row
+        }
+      }
+    }
+
+    src_row += gp_n;
   }
   for(int i=0;i<6;i++) {
     if(!dary[i]) break;

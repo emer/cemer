@@ -779,30 +779,31 @@ public:
   /////////////////////////////
   // column and row name versions:
 
-  const Variant         GetValColRowName(const String& col_name, const String& row_col_name,
-                                         const Variant& row_value, bool quiet = false) const;
+  const Variant         GetValColRowName
+    (const String& col_name, const String& row_col_name,
+     const Variant& row_value, bool quiet = false) const;
   // #EXPERT #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name -- quiet = fail quietly
-  bool                  SetValColRowName(const Variant& val, const String& col_name,
-                                         const String& row_col_name, const Variant& row_value,
-                                         bool quiet = false);
+  bool                  SetValColRowName
+    (const Variant& val, const String& col_name, const String& row_col_name,
+     const Variant& row_value, bool quiet = false);
   // #EXPERT #CAT_Modify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name; returns 'true' if valid access and set is successful -- quiet = fail quietly
 
-  const Variant         GetMatrixValColRowName(const String& col_name,
-                                               const String& row_col_name, const Variant& row_value,
-                                               int d0, int d1=0, int d2=0, int d3=0, bool quiet = false) const;
+  const Variant         GetMatrixValColRowName
+    (const String& col_name, const String& row_col_name, const Variant& row_value,
+     int d0, int d1=0, int d2=0, int d3=0, bool quiet = false) const;
   // #EXPERT #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies -- quiet = fail quietly
-  bool                  SetMatrixValColRowName(const Variant& val, const String& col_name,
-                                               const String& row_col_name, const Variant& row_value,
-                                               int d0, int d1=0, int d2=0, int d3=0, bool quiet = false);
+  bool                  SetMatrixValColRowName
+    (const Variant& val, const String& col_name, const String& row_col_name,
+     const Variant& row_value, int d0, int d1=0, int d2=0, int d3=0, bool quiet = false);
   // #EXPERT #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful -- quiet = fail quietly
 
-  const Variant         GetMatrixFlatValColRowName(const String& col_name,
-                                                   const String& row_col_name, const Variant& row_value,
-                                                   int cell, bool quiet = false) const;
+  const Variant         GetMatrixFlatValColRowName
+    (const String& col_name, const String& row_col_name, const Variant& row_value,
+     int cell, bool quiet = false) const;
   // #EXPERT #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix cell index (flat index into matrix cells) -- quiet = fail quietly
-  bool                  SetMatrixFlatValColRowName(const Variant& val, const String& col_name,
-                                                   const String& row_col_name, const Variant& row_value,
-                                                   int cell, bool quiet = false);
+  bool                  SetMatrixFlatValColRowName
+    (const Variant& val, const String& col_name, const String& row_col_name,
+     const Variant& row_value, int cell, bool quiet = false);
   // #EXPERT #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix cell index (flat index into matrix cells); returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   /////////////////////////////
@@ -958,41 +959,43 @@ public:
   ///////////////////////////////////////
   // sub-matrix reading and writing functions
 
-  virtual void  WriteFmSubMatrix(const Variant& col, int row,
-                                 const taMatrix* submat_src, taMatrix::RenderOp render_op = taMatrix::COPY,
-                                 int off0=0, int off1=0, int off2=0,
-                                 int off3=0, int off4=0, int off5=0, int off6=0);
+  virtual void  WriteFmSubMatrix
+    (const Variant& col, int row, const taMatrix* submat_src,
+     taMatrix::RenderOp render_op = taMatrix::COPY,
+     int off0=0, int off1=0, int off2=0, int off3=0, int off4=0, int off5=0, int off6=0);
   // #EXPERT #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: write to matrix cell in this table at given col, row from source sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
-  virtual void  ReadToSubMatrix(const Variant& col, int row,
-                                taMatrix* submat_dest, taMatrix::RenderOp render_op = taMatrix::COPY,
-                                int off0=0, int off1=0, int off2=0,
-                                int off3=0, int off4=0, int off5=0, int off6=0);
+  virtual void  ReadToSubMatrix
+    (const Variant& col, int row, taMatrix* submat_dest,
+     taMatrix::RenderOp render_op = taMatrix::COPY,
+     int off0=0, int off1=0, int off2=0, int off3=0, int off4=0, int off5=0, int off6=0);
   // #EXPERT #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: read from matrix cell in this table at given col, row to dest sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
 
-  virtual void  WriteFmSubMatrixTable(const Variant& col, int row,
-                                      const DataTable* submat_src, const Variant& submat_src_col, int submat_src_row,
-                                      taMatrix::RenderOp render_op = taMatrix::COPY,
-                                      int off0=0, int off1=0, int off2=0,
-                                      int off3=0, int off4=0, int off5=0, int off6=0);
+  virtual void  WriteFmSubMatrixTable
+    (const Variant& col, int row, const DataTable* submat_src,
+     const Variant& submat_src_col, int submat_src_row,
+     taMatrix::RenderOp render_op = taMatrix::COPY,
+     int off0=0, int off1=0, int off2=0, int off3=0, int off4=0, int off5=0, int off6=0);
   // #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: write to matrix cell in this table at given col, row, from source sub-matrix cell (typically of smaller size) in submat_src table at given submat_src_col, submat_src_row, using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
-  virtual void  ReadToSubMatrixTable(const Variant& col, int row,
-                                     const DataTable* submat_dest, const Variant& submat_dest_col, int submat_dest_row,
-                                     taMatrix::RenderOp render_op = taMatrix::COPY,
-                                     int off0=0, int off1=0, int off2=0,
-                                     int off3=0, int off4=0, int off5=0, int off6=0);
+  virtual void  ReadToSubMatrixTable
+    (const Variant& col, int row, const DataTable* submat_dest,
+     const Variant& submat_dest_col, int submat_dest_row,
+     taMatrix::RenderOp render_op = taMatrix::COPY,
+     int off0=0, int off1=0, int off2=0, int off3=0, int off4=0, int off5=0, int off6=0);
   // #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: read from matrix cell in this table at given col, row, to dest sub-matrix cell (typically of smaller size) in submat_dest table at submat_dest_col, submat_dest_row, using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
 
-  virtual void  WriteFmSubMatrixTableLookup(const Variant& col, int row,
-                                            const DataTable* submat_src, const Variant& submat_src_col,
-                                            Variant submat_lookup_val, const Variant& submat_lookup_col,
-                                            taMatrix::RenderOp render_op, const DataTable* offset_lookup,
-                                            Variant offset_col, const Variant& offset_lookup_val, const Variant& offset_lookup_col);
+  virtual void  WriteFmSubMatrixTableLookup
+    (const Variant& col, int row, const DataTable* submat_src,
+     const Variant& submat_src_col, Variant submat_lookup_val,
+     const Variant& submat_lookup_col, taMatrix::RenderOp render_op,
+     const DataTable* offset_lookup, Variant offset_col,
+     const Variant& offset_lookup_val, const Variant& offset_lookup_col);
   // #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: write to matrix cell in this table at given col, row, from source sub-matrix cell (typically of smaller size) in submat_src table at given submat_src_col, at row given by looking up submat_loop_val in submat_lookup_col, using given render operation to combine source and destination values, starting at offsets found in a matrix cell in offset_lookup table, searching in lookup_col for value lookup_val to select the row, and getting the offsets from column offset_col
-  virtual void  ReadToSubMatrixTableLookup(const Variant& col, int row,
-                                           const DataTable* submat_dest, const Variant& submat_dest_col,
-                                           Variant submat_lookup_val, const Variant& submat_lookup_col,
-                                           taMatrix::RenderOp render_op, const DataTable* offset_lookup,
-                                           Variant offset_col, const Variant& offset_lookup_val, const Variant& offset_lookup_col);
+  virtual void  ReadToSubMatrixTableLookup
+    (const Variant& col, int row, const DataTable* submat_dest,
+     const Variant& submat_dest_col, Variant submat_lookup_val,
+     const Variant& submat_lookup_col, taMatrix::RenderOp render_op,
+     const DataTable* offset_lookup, Variant offset_col,
+     const Variant& offset_lookup_val, const Variant& offset_lookup_col);
   // #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: read from matrix cell in this table at given col, row, to dest sub-matrix cell (typically of smaller size) in submat_dest table at submat_dest_col, at row given by looking up submat_loop_val in submat_lookup_col, using given render operation to combine source and destination values, starting at offsets found in a matrix cell in offset_lookup table, searching in lookup_col for value lookup_val to select the row, and getting the offsets from column offset_col
 
   //////////////////////////////
@@ -1066,28 +1069,28 @@ public:
   virtual bool          RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type);
   // #CAT_stats Run an analysis of specified type on the specified column
 
-  virtual void          Filter(Variant& col1, Relation::Relations operator_1,
-                               const String& value_1,
-                               Relation::CombOp comb_op = Relation::AND,
-                               Variant col2 = -1,
-                               Relation::Relations operator_2 = Relation::EQUAL,
-                               const String& value_2 = "",
-                               Variant col3 = -1,
-                               Relation::Relations operator_3 = Relation::EQUAL,
-                               const String& value_3 = "");
+  virtual void          Filter
+    (const Variant& col1, Relation::Relations operator_1, const String& value_1,
+     Relation::CombOp comb_op = Relation::AND, Variant col2 = -1,
+     Relation::Relations operator_2 = Relation::EQUAL, const String& value_2 = "",
+     Variant col3 = -1, Relation::Relations operator_3 = Relation::EQUAL,
+     const String& value_3 = "");
   // #CAT_DataProc Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
-  virtual void          FilterCol(DataCol* col1, Relation::Relations operator_1,
-                                  const String& value_1,
-                                  Relation::CombOp comb_op = Relation::AND,
-                                  DataCol* col2 = NULL,
-                                  Relation::Relations operator_2 = Relation::EQUAL,
-                                  const String& value_2 = "",
-                                  DataCol* col3 = NULL,
-                                  Relation::Relations operator_3 = Relation::EQUAL,
-                                  const String& value_3 = "");
+  virtual void          FilterCol
+    (DataCol* col1, Relation::Relations operator_1, const String& value_1,
+     Relation::CombOp comb_op = Relation::AND, DataCol* col2 = NULL,
+     Relation::Relations operator_2 = Relation::EQUAL, const String& value_2 = "",
+     DataCol* col3 = NULL, Relation::Relations operator_3 = Relation::EQUAL,
+     const String& value_3 = "");
   // #CAT_DataProc #MENU #FROM_LIST_data #LABEL_Filter Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          FilterByScript(const String& filter_expr);
   // #CAT_DataProc #MENU #FROM_LIST_data #LABEL_Filter_Custom Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible.  Refer to columns by name. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
+  virtual void          FilterContainsList(const Variant& col, const String& contains_list,
+                              bool include_matches = true, const String& delim = " ");
+  // #CAT_DataProc Select table rows based on whether given column value contains any of the items on contains_list (space or other delim separated list of strings) -- if include_matches then those with any of the matching items on the list are included, otherwise they are excluded.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
+  virtual void          FilterContainsListCol(DataCol* col, const String& contains_list,
+                              bool include_matches = true, const String& delim = " ");
+  // #CAT_DataProc #MENU #FROM_LIST_data #LABEL_FilterContainsList Select table rows based on whether given column value contains any of the items on contains_list (space or other delim separated list of strings) -- if include_matches then those with any of the matching items on the list are included, otherwise they are excluded.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          FilterBySpec(DataSelectSpec* spec);
   // #CAT_DataProc filter the table rows by specifying which rows to retain in the table (hiding the ones that do not match).  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual void          UnFilter();

@@ -121,14 +121,24 @@ public:
         DataSelectSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Select #MENU_BUTTON splits the source datatable rows into two sets, those that match the selection specifications go into dest_a, else dest_b (if dest are NULL, new ones are created in proj.data.AnalysisData)
 
-  static bool  SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
-       DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
-       DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0);
+  static bool  SplitRowsN
+    (DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
+     DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
+     DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Select #MENU_BUTTON splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (sequentially) in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL)
-  static bool  SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
-       DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
-       DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0, int thr_no = -1);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Select #MENU_BUTTON splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (order permuted efficiently via an index list) in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL).  this is good for creating random training/testing subsets -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+
+  static bool  SplitRowsNPermuted
+    (DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
+     DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
+     DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0, int thr_no = -1);
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Select #MENU_BUTTON splits the source datatable rows into distinct non-overlapping sets, with specific number of elements in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL).  this is good for creating random training/testing subsets -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+  static bool  SplitRowsNByColGroupPermuted
+    (DataTable* src, const String& col, DataTable* dest_1, float n1,
+     DataTable* dest_2, float n2=-1, DataTable* dest_3=NULL, float n3=0,
+     DataTable* dest_4=NULL, float n4=0, DataTable* dest_5=NULL, float n5=0,
+     DataTable* dest_6=NULL, float n6=0, int thr_no = -1);
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Select #MENU_BUTTON splits the source datatable rows into distinct non-overlapping sets, with specific number (or proportion if n > 0 and < 1) of elements per each group of values in column col of source table in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL).  this is good for creating random training/testing subsets for items organized into groups / categories -- source table is sorted by given col -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)
+
 
   ///////////////////////////////////////////////////////////////////
   // column-wise functions: selecting, joining
