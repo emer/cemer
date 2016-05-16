@@ -88,10 +88,11 @@ bool ProgramCallFun::CvtFmCode(const String& code) {
   target = prg;
   UpdateAfterEdit_impl();                          // update based on targ
   // now tackle the args
-  String args = trim(cd.after('('));
+  String args = trim(cd.after('('));               // whatever is beyond ProgramName(
   args = args.before("()",-1);
-  function = trim(args.after(" ", -1));
-  args = trim(args.before(" ", -1));
+  function = trim(args.after(")", -1));
+  function = function.triml();
+  args = trim(args.before(")", -1));
   prog_args.ParseArgString(args);
   UpdateAfterEdit_impl();
   return true;
