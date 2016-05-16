@@ -824,6 +824,14 @@ void iViewPanelOfGraphTable::MovePlotBefore(int old_index) {
 }
 
 void* iViewPanelOfGraphTable::GetAlternateSelection() {
+  if (!glv()){
+    return NULL;
+  }
+  // has the list of plots been created?
+  if (last_plot_index < 0 || last_plot_index > glv()->plots.size) {
+    return NULL;
+  }
+  
   // if the plot var was NULL when pressed check the plot choice above and possibly the one below
   //  to use as alternate starting variable for initializing the chooser
   int good_index = last_plot_index;
