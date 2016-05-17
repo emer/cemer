@@ -1,0 +1,5158 @@
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9493
+Program .projects[0].programs.gp[4][2] { 
+ UserDataItem_List @*(.user_data_) {
+  UserData_DocLink @[0] { };
+  UserDataItem @[1] { };
+ };
+
+ ProgObjList @.objs = [7] {
+  DataTable @[0] { 
+   DataTableCols @.data = [3] {
+    String_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataTable @[1] { 
+   DataTableCols @.data = [2] {
+    String_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataTable_Group @[2] = [3] { 
+  };
+  DataTable @[3] { 
+   DataTableCols @.data = [3] {
+    String_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataTable @[4] { 
+   DataTableCols @.data = [3] {
+    String_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataTable @[5] { 
+   DataTableCols @.data = [6] {
+    String_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[3] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[4] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[5] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+  DataTable @[6] { 
+   DataTableCols @.data = [3] {
+    String_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+
+   DataOpList @.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.control_panel_cells = [0] {
+   };
+  };
+ };
+
+ ProgType_List @.types = [0] {
+ };
+
+ ProgVar_List @.args = [0] {
+ };
+
+ ProgVar_List @.vars = [16] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+  ProgVar @[2] { };
+  ProgVar @[3] { };
+  ProgVar @[4] { };
+  ProgVar @[5] { };
+  ProgVar @[6] { };
+  ProgVar @[7] { };
+  ProgVar @[8] { };
+  ProgVar @[9] { };
+  ProgVar @[10] { };
+  ProgVar @[11] { };
+  ProgVar @[12] { };
+  ProgVar @[13] { };
+  ProgVar @[14] { };
+  ProgVar @[15] { };
+ };
+
+ Function_List @.functions = [8] {
+  Function @[0] { 
+   ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+   };
+
+   ProgEl_List @.fun_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @[0] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [5] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+     };
+    };
+    ReturnExpr @[2] { };
+   };
+  };
+  Function @[1] { 
+   ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+   };
+
+   ProgEl_List @.fun_code = [4] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [4] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+      ProgVar @[2] { };
+      ProgVar @[3] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    ForeachLoop @[3] { 
+     ProgEl_List @.loop_code = [7] {
+      FunctionCall @[0] { 
+       ProgArg_List @.fun_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+      MethodCall @[1] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+      MemberAssign @[2] { };
+      DataGenCall @[3] { 
+       ProgArg_List @.meth_args = [7] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+       };
+      };
+      If @[4] { 
+       ProgEl_List @.true_code = [1] {
+	MiscCall @[0] { 
+	 ProgArg_List @.meth_args = [9] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
+	  ProgArg @[3] { };
+	  ProgArg @[4] { };
+	  ProgArg @[5] { };
+	  ProgArg @[6] { };
+	  ProgArg @[7] { };
+	  ProgArg @[8] { };
+	 };
+	};
+       };
+      };
+      MethodCall @[5] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+      MethodCall @[6] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+     };
+    };
+   };
+  };
+  Function @[2] { 
+   ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+   };
+
+   ProgEl_List @.fun_code = [7] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @[0] { };
+     };
+    };
+    If @[1] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[4] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    ForeachLoop @[5] { 
+     ProgEl_List @.loop_code = [1] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
+    MethodCall @[6] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+   };
+  };
+  Function @[3] { 
+   ProgVar_List @.args = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+   };
+
+   ProgEl_List @.fun_code = [22] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [16] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+      ProgVar @[2] { };
+      ProgVar @[3] { };
+      ProgVar @[4] { };
+      ProgVar @[5] { };
+      ProgVar @[6] { };
+      ProgVar @[7] { };
+      ProgVar @[8] { };
+      ProgVar @[9] { };
+      ProgVar @[10] { };
+      ProgVar @[11] { };
+      ProgVar @[12] { };
+      ProgVar @[13] { };
+      ProgVar @[14] { };
+      ProgVar @[15] { };
+     };
+    };
+    If @[1] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    If @[2] { 
+     ProgEl_List @.true_code = [1] {
+      ReturnExpr @[0] { };
+     };
+    };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    If @[4] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    MethodCall @[5] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[6] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    MethodCall @[7] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    AssignExpr @[8] { };
+    AssignExpr @[9] { };
+    AssignExpr @[10] { };
+    MethodCall @[11] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    AssignExpr @[12] { };
+    ForeachLoop @[13] { 
+     ProgEl_List @.loop_code = [9] {
+      AssignExpr @[0] { };
+      VarIncr @[1] { };
+      AssignExpr @[2] { };
+      If @[3] { 
+       ProgEl_List @.true_code = [2] {
+	VarIncr @[0] { };
+	IfContinue @[1] { };
+       };
+      };
+      VarIncr @[4] { };
+      MatrixAssign @[5] { };
+      MatrixAssign @[6] { };
+      MatrixAssign @[7] { };
+      VarIncr @[8] { };
+     };
+    };
+    If @[14] { 
+     ProgEl_List @.true_code = [3] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      MethodCall @[1] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+      ReturnExpr @[2] { };
+     };
+    };
+    AssignExpr @[15] { };
+    AssignExpr @[16] { };
+    ForLoop @[17] { 
+     ProgEl_List @.loop_code = [10] {
+      AssignExpr @[0] { };
+      AssignExpr @[1] { };
+      AssignExpr @[2] { };
+      AssignExpr @[3] { };
+      AssignExpr @[4] { };
+      MatrixAssign @[5] { };
+      MatrixAssign @[6] { };
+      MatrixAssign @[7] { };
+      If @[8] { 
+       ProgEl_List @.true_code = [1] {
+	AssignExpr @[0] { };
+       };
+      };
+      Else @[9] { 
+       ProgEl_List @.else_code = [1] {
+	AssignExpr @[0] { };
+       };
+      };
+     };
+    };
+    AssignExpr @[18] { };
+    If @[19] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    ForLoop @[20] { 
+     ProgEl_List @.loop_code = [9] {
+      AssignExpr @[0] { };
+      AssignExpr @[1] { };
+      AssignExpr @[2] { };
+      MathCall @[3] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+      AssignExpr @[4] { };
+      MatrixAssign @[5] { };
+      AssignExpr @[6] { };
+      DataProcCall @[7] { 
+       ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+       };
+      };
+      MethodCall @[8] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
+    MethodCall @[21] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+   };
+  };
+  Function @[4] { 
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgEl_List @.fun_code = [8] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [2] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    AssignExpr @[2] { };
+    AssignExpr @[3] { };
+    FunctionCall @[4] { 
+     ProgArg_List @.fun_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    If @[5] { 
+     ProgEl_List @.true_code = [1] {
+      FunctionCall @[0] { 
+       ProgArg_List @.fun_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
+    Else @[6] { 
+     ProgEl_List @.else_code = [1] {
+      FunctionCall @[0] { 
+       ProgArg_List @.fun_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+     };
+    };
+    FunctionCall @[7] { 
+     ProgArg_List @.fun_args = [0] {
+     };
+    };
+   };
+  };
+  Function @[5] { 
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgEl_List @.fun_code = [4] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [0] {
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    If @[2] { 
+     ProgEl_List @.true_code = [1] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
+    AssignExpr @[3] { };
+   };
+  };
+  Function @[6] { 
+   ProgVar_List @.args = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+   };
+
+   ProgEl_List @.fun_code = [8] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [0] {
+     };
+    };
+    If @[1] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    If @[2] { 
+     ProgEl_List @.true_code = [2] {
+      AssignExpr @[0] { };
+      If @[1] { 
+       ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [1] {
+	  ProgArg @[0] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[4] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[5] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[6] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    VarIncr @[7] { };
+   };
+  };
+  Function @[7] { 
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgEl_List @.fun_code = [2] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [0] {
+     };
+    };
+    FunctionCall @[1] { 
+     ProgArg_List @.fun_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+   };
+  };
+ };
+
+ ProgEl_List @.init_code = [1] {
+  AssignExpr @[0] { };
+ };
+
+ ProgEl_List @.prog_code = [3] {
+  LocalVars @[0] { 
+   ProgVar_List @.local_vars = [0] {
+   };
+  };
+  If @[1] { 
+   ProgEl_List @.true_code = [1] {
+    FunctionCall @[0] { 
+     ProgArg_List @.fun_args = [0] {
+     };
+    };
+   };
+  };
+  FunctionCall @[2] { 
+   ProgArg_List @.fun_args = [0] {
+   };
+  };
+ };
+};
+Program .projects[0].programs.gp[4][2] {
+ UserDataItem_List @*(.user_data_) {
+  name="UserDataItem_List_4125";
+  el_typ=UserData_DocLink;
+  el_def=0;
+  UserData_DocLink @[0] {
+   name="DocLink";
+   doc=.projects[0].programs.gp[4][2].doc$$;
+  };
+  UserDataItem @[1] {
+   name="user_pinned";
+   value 1 0=1;
+   val_type_fixed=0;
+  };
+ };
+ name="FileListEnv";
+ short_nm="FLstnv";
+ tags="Environment, Files";
+ desc="environment that presents lists of images -- each call gets the next image in the list -- lists can be drawn from multiple different directories (with a configurable list of such) and presented with specified overall probabilities (regardless of number of items in the different directories)";
+ flags=NO_STOP_STEP;
+ stop_step_cond {
+  expr=;
+ };
+ objs {
+  name="objs";
+  el_typ=DataTable;
+  el_def=0;
+  DataTable @[0] {
+   name="FileListConfig";
+   desc="lookup table for directories";
+   data {
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_4128";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.3826531;
+       val_type_fixed=0;
+      };
+     };
+     name="flist_config_id";
+     desc="name of file list configuration";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=225;
+     ar {
+      name="ar";
+     [6] "bg_line_geom_photo_even";"bg_line_geom_texture_photo_even";"bg_line_easy";"bg_geom";"bg_texture";"bg_photo";     };
+    };
+    String_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_4129";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.3979592;
+       val_type_fixed=0;
+      };
+     };
+     name="dirs";
+     desc="space-separated list of short names of directories to include files from";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=234;
+     ar {
+      name="ar";
+     [6] "line_easy geom1 photo";"line_easy geom1 texture1 photo";"line_easy";"geom1";"texture1";"photo";     };
+    };
+    String_Data @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_4130";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.1615646;
+       val_type_fixed=0;
+      };
+     };
+     name="probs";
+     desc="space-separated list of probabilities corresponding to dirs for including the files from the different directories (can be empty)";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=95;
+     ar {
+      name="ar";
+     [6] ".33 .33 .34";".25 .25 .25 .25";;;;;     };
+    };
+   };
+   data_flags=SAVE_ROWS|AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name="row_indexes";
+   [6] 2;3;4;5;0;1;   };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   control_panel_cells {
+    name="control_panel_cells";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable @[1] {
+   name="DirNames";
+   desc="lookup table for directories";
+   data {
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_4126";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.1615646;
+       val_type_fixed=0;
+      };
+     };
+     name="dir_name";
+     desc="short name of directory";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=95;
+     ar {
+      name="ar";
+     [10] "line_easy";"line_orig";"geom";"texture";"geom1";"geom2";"line_all";"texture1";"texture2";"photo";
+     };
+    };
+    String_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_4127";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.5884354;
+       val_type_fixed=0;
+      };
+     };
+     name="dir_path";
+     desc="full path to directory";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=346;
+     ar {
+      name="ar";
+     [10] "./images/bgimages_line_art_easy";"./images/bgimages_lines";"./images/bgimages_geometric";"./images/bgimages_natural_textures";"./images/bgimages_geometric_1";"./images/bgimages_geometric_2";"./images/bgimages_line_art";"./images/bgimages_natural_textures_1";"./images/bgimages_natural_textures_2";"./images/backgrounds";
+     };
+    };
+   };
+   data_flags=SAVE_ROWS|AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name="row_indexes";
+   [10] 0;6;1;2;4;5;3;7;8;9;
+   };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   control_panel_cells {
+    name="control_panel_cells";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable_Group @[2] {
+   name="DirFiles";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=0;
+  };
+  DataTable @[3] {
+   name="FileListAll";
+   desc=;
+   data {
+    name="data";
+    el_typ=DataColT;
+    el_def=0;
+    String_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1985";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.3010204;
+       val_type_fixed=0;
+      };
+     };
+     name="file_name";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    String_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1986";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.6105442;
+       val_type_fixed=0;
+      };
+     };
+     name="file_path";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    String_Data @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1987";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.1156463;
+       val_type_fixed=0;
+      };
+     };
+     name="source_dir";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name="row_indexes";
+   [267] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;36;37;38;39;
+40;41;42;43;44;45;46;47;48;49;
+50;51;52;53;54;55;56;57;58;59;
+60;61;62;63;64;65;66;67;68;69;
+70;71;72;73;74;75;76;77;78;79;
+80;81;82;83;84;85;86;87;88;89;
+90;91;92;93;94;95;96;97;98;99;
+100;101;102;103;104;105;106;107;108;109;
+110;111;112;113;114;115;116;117;118;119;
+120;121;122;123;124;125;126;127;128;129;
+130;131;132;133;134;135;136;137;138;139;
+140;141;142;143;144;145;146;147;148;149;
+150;151;152;153;154;155;156;157;158;159;
+160;161;162;163;164;165;166;167;168;169;
+170;171;172;173;174;175;176;177;178;179;
+180;181;182;183;184;185;186;187;188;189;
+190;191;192;193;194;195;196;197;198;199;
+200;201;202;203;204;205;206;207;208;209;
+210;211;212;213;214;215;216;217;218;219;
+220;221;222;223;224;225;226;227;228;229;
+230;231;232;233;234;235;236;237;238;239;
+240;241;242;243;244;245;246;247;248;249;
+250;251;252;253;254;255;256;257;258;259;
+260;261;262;263;264;265;266;   };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   control_panel_cells {
+    name="control_panel_cells";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable @[4] {
+   name="FileListCur";
+   desc=;
+   data {
+    name="data";
+    el_typ=DataColT;
+    el_def=0;
+    String_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1988";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.3010204;
+       val_type_fixed=0;
+      };
+     };
+     name="file_name";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    String_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1989";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.6105442;
+       val_type_fixed=0;
+      };
+     };
+     name="file_path";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    String_Data @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1990";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.1156463;
+       val_type_fixed=0;
+      };
+     };
+     name="source_dir";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name="row_indexes";
+   [267] 221;87;89;96;88;250;103;147;20;206;
+187;236;131;210;112;31;59;101;223;97;
+34;48;260;1;173;215;37;185;49;68;
+12;186;254;117;125;179;151;135;111;91;
+63;0;113;55;92;128;256;257;50;156;
+56;248;146;230;53;6;196;216;2;144;
+28;122;242;109;140;158;24;5;139;107;
+238;35;209;66;47;227;142;174;45;200;
+138;36;17;60;98;77;46;217;167;169;
+193;4;27;191;118;203;10;69;21;171;
+197;228;75;22;30;220;246;239;262;222;
+184;110;106;67;65;120;225;102;194;219;
+41;145;253;244;178;182;234;231;240;3;
+32;83;241;212;40;170;188;8;57;108;
+181;263;86;39;232;243;165;264;143;202;
+237;116;265;255;132;164;42;133;189;115;
+13;157;61;11;261;62;136;72;78;245;
+16;100;51;130;80;95;19;79;127;252;
+213;129;93;141;149;105;26;71;259;7;
+74;134;52;23;251;73;29;214;85;162;
+177;33;201;76;195;226;205;159;114;148;
+190;104;58;44;208;207;154;163;124;70;
+38;166;25;119;175;160;161;9;211;235;
+14;249;64;155;123;43;218;192;99;15;
+168;176;152;204;84;82;18;224;150;54;
+233;90;258;126;121;94;229;81;183;137;
+266;172;153;199;198;180;247;   };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   control_panel_cells {
+    name="control_panel_cells";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable @[5] {
+   name="ProbCalc";
+   desc=;
+   data {
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1987";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.170068;
+       val_type_fixed=0;
+      };
+     };
+     name="dir";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    float_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1988";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.170068;
+       val_type_fixed=0;
+      };
+     };
+     name="prob";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    float_Data @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1989";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.170068;
+       val_type_fixed=0;
+      };
+     };
+     name="n_files";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    float_Data @[3] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1990";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.170068;
+       val_type_fixed=0;
+      };
+     };
+     name="pct_of_tot";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    float_Data @[4] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1990";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.170068;
+       val_type_fixed=0;
+      };
+     };
+     name="prob_ratio";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    float_Data @[5] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1990";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.170068;
+       val_type_fixed=0;
+      };
+     };
+     name="mult_factor";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name="row_indexes";
+   [3] 0;1;2;   };
+   last_sort_spec {
+    name="last_sort_spec";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   control_panel_cells {
+    name="control_panel_cells";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+  DataTable @[6] {
+   name="TmpFiles1";
+   desc=;
+   data {
+    name="data";
+    el_typ=DataColT;
+    el_def=0;
+    String_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1991";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.170068;
+       val_type_fixed=0;
+      };
+     };
+     name="file_name";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    String_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1992";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.170068;
+       val_type_fixed=0;
+      };
+     };
+     name="file_path";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    String_Data @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_1993";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 8 0=0.170068;
+       val_type_fixed=0;
+      };
+     };
+     name="source_dir";
+     col_flags=SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name=;
+   [83] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;36;37;38;39;
+40;41;42;43;44;45;46;47;48;49;
+50;51;52;53;54;55;56;57;58;59;
+60;61;62;63;64;65;66;67;68;69;
+70;71;72;73;74;75;76;77;78;79;
+80;81;82;   };
+   last_sort_spec {
+    name="DataSortSpec_135";
+    ops {
+     name="ops";
+     el_typ=DataSortEl;
+     el_def=0;
+    };
+   };
+   control_panel_cells {
+    name="DataTableCell_List_132";
+    el_typ=DataTableCell;
+    el_def=0;
+   };
+  };
+ };
+ types {
+  name="types";
+  el_typ=DynEnumType;
+  el_def=0;
+ };
+ args {
+  name="args";
+  el_typ=ProgVar;
+  el_def=0;
+ };
+ vars {
+  name="vars";
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="flist_config_id";
+   var_type=T_String;
+   string_val="bg_line_geom_photo_even";
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="name of configuration to use in generatling list of files";
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="file_filter";
+   var_type=T_String;
+   string_val=".jpg";
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="files must contain this string";
+   init_from=NULL;
+  };
+  ProgVar @[2] {
+   name="recursive";
+   var_type=T_Bool;
+   bool_val=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="search recursively within subdirectories for files";
+   init_from=NULL;
+  };
+  ProgVar @[3] {
+   name="permute_order";
+   var_type=T_Bool;
+   bool_val=1;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="present items in permuted order (otherwise sequentially)";
+   init_from=NULL;
+  };
+  ProgVar @[4] {
+   name="flist_config_row";
+   var_type=T_Int;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[5] {
+   name="cur_file_name";
+   var_type=T_String;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc="current file name -- set by GetNextItem -- other programs can read this value by setting init_from to point to this program";
+   init_from=NULL;
+  };
+  ProgVar @[6] {
+   name="cur_file_path";
+   var_type=T_String;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc="current file path -- set by GetNextItem -- other programs can read this value by setting init_from to point to this program";
+   init_from=NULL;
+  };
+  ProgVar @[7] {
+   name="cur_file_source";
+   var_type=T_String;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc="current file source directory short name -- set by GetNextItem -- other programs can read this value by setting init_from to point to this program";
+   init_from=NULL;
+  };
+  ProgVar @[8] {
+   name="next_index";
+   var_type=T_Int;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[9] {
+   name="DirFiles";
+   var_type=T_Object;
+   object_type=DataTable_Group;
+   object_val=.projects[0].programs.gp[4][2].objs[2]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[10] {
+   name="DirNames";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[4][2].objs[1]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[11] {
+   name="FileListConfig";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[4][2].objs[0]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[12] {
+   name="FileListAll";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[4][2].objs[3]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[13] {
+   name="FileListCur";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[4][2].objs[4]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[14] {
+   name="ProbCalc";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[4][2].objs[5]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[15] {
+   name="TmpFiles1";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[4][2].objs[6]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ functions {
+  name="functions";
+  el_typ=Function;
+  el_def=0;
+  Function @[0] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="GetDirPath(String dir_name) returns: String";
+   pre_compile_code_string="GetDirPath(String dir_name) returns: String";
+   name="GetDirPath";
+   return_type=T_String;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="dir_name";
+     var_type=T_String;
+     string_val=;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   fun_code {
+    name="ProgEl_List_967";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (1 vars)";
+     pre_compile_code_string="LocalVars (1 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="dir_path";
+       var_type=T_String;
+       string_val=;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="dir_path = DirNames->LookupVal(dir, \"dir_name\", \"dir_path\", 0, true)";
+     pre_compile_code_string="dir_path = DirNames->LookupVal(dir_name, \"dir_name\", \"dir_path\", 0, true)";
+     result_var=.projects[0].programs.gp[4][2].functions[0].fun_code[0].local_vars[0]$$;
+     obj=.projects[0].programs.gp[4][2].vars[10]$$;
+     method=DataTable::LookupVal;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="find_val";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="dir_name";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="find_in_col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"dir_name\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="value_col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"dir_path\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="0";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=bool;
+       type="bool";
+       name="not_found_err";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr="true";
+       };
+      };
+     };
+     meth_sig="Variant LookupVal(Variant& find_val, Variant& find_in_col, Variant& value_col, int st_row = 0, bool not_found_err = true)";
+     meth_desc=" lookup value in a given row of table by finding value in another column -- uses row number from finding find_val in find_in_col column to access value in value_col, which is returned as a variant (must be a scalar). starts at given starting row number. if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- column can be specified as either integer index or a string that is then used to find the given column name. returns null (invalid) variant if find_val not found, and issues error if not_found_err is true";
+    };
+    ReturnExpr @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="return dir_path";
+     pre_compile_code_string="return dir_path";
+     expr {
+      expr="dir_path";
+     };
+    };
+   };
+  };
+  Function @[1] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="FindFiles(String dir_names, DataTable* all_list) returns: int";
+   pre_compile_code_string="FindFiles(String dir_names, DataTable* all_list) returns: int";
+   name="FindFiles";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="dir_names";
+     var_type=T_String;
+     string_val=;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   fun_code {
+    name="ProgEl_List_965";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (4 vars)";
+     pre_compile_code_string="LocalVars (4 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="sary";
+       var_type=T_Object;
+       object_type=String_Array;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="dir";
+       var_type=T_String;
+       string_val=;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[2] {
+       name="dir_path";
+       var_type=T_String;
+       string_val=;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[3] {
+       name="dt";
+       var_type=T_Object;
+       object_type=DataTable;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="sary->Split(dir_names, \" \")";
+     pre_compile_code_string="sary->Split(dir_names, \" \")";
+     result_var=NULL;
+     obj=.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[0]$$;
+     method=String_Array::Split;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="str";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="dir_names";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="delim";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\" \"";
+       };
+      };
+     };
+     meth_sig="void Split(taString& str, taString& delim)";
+     meth_desc=" Convenience method that calls FmDelimString for splitting a string into an array. Splits on every character by default.";
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="DirFiles->Reset()";
+     pre_compile_code_string="DirFiles->Reset()";
+     result_var=NULL;
+     obj=.projects[0].programs.gp[4][2].vars[9]$$;
+     method=taList_impl::Reset;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void Reset()";
+     meth_desc=" reset the list (remove all elements)";
+    };
+    ForeachLoop @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="foreach(dir in sary)";
+     pre_compile_code_string="foreach(dir in sary)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      FunctionCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="dir_path = GetDirPath(dir)";
+       pre_compile_code_string="dir_path = GetDirPath(dir)";
+       result_var=.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[2]$$;
+       fun=.projects[0].programs.gp[4][2].functions[0]$$;
+       fun_args {
+	name="fun_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=taString;
+	 type="String";
+	 name="dir_name";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="dir";
+	 };
+	};
+       };
+      };
+      MethodCall @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="dt = DirFiles->NewEl(1, DataTable)";
+       pre_compile_code_string="dt = DirFiles->NewEl(1, DataTable)";
+       result_var=.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[3]$$;
+       obj=$.projects[0].programs.gp[4][2].vars[9]$;
+       method=taGroup_DataTable_::NewEl;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=int;
+	 type="int";
+	 name="n_els";
+	 required=0;
+	 def_val="1";
+	 prev_expr=;
+	 expr {
+	  expr="1";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=TypeDef_ptr;
+	 type="TypeDef*";
+	 name="typ";
+	 required=0;
+	 def_val="__null";
+	 prev_expr=;
+	 expr {
+	  expr="DataTable";
+	 };
+	};
+       };
+       meth_sig="DataTable_ptr NewEl(int n_els = 1, TypeDef* typ = __null)";
+       meth_desc=" Create and add n_els new element(s) of given type to the group (NULL = default type, el_typ)";
+      };
+      MemberAssign @[2] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="dt.name = dir";
+       pre_compile_code_string="dt.name = dir";
+       obj=$.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[3]$;
+       path="name";
+       expr {
+	expr="dir";
+       };
+       update_after=0;
+      };
+      DataGenCall @[3] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taDataGen::GetDirFiles(dt, dir_path, file_filter, recursive, , , )";
+       pre_compile_code_string="taDataGen::GetDirFiles(dt, dir_path, file_filter, recursive, , , )";
+       result_var=NULL;
+       object_type=taDataGen;
+       method=taDataGen::GetDirFiles;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable_ptr;
+	 type="DataTable*";
+	 name="dest";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="dt";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="dir_path";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="dir_path";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="filter";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="file_filter";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=bool;
+	 type="bool";
+	 name="recursive";
+	 required=0;
+	 def_val="false";
+	 prev_expr=;
+	 expr {
+	  expr="recursive";
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="fname_col_nm";
+	 required=0;
+	 def_val="FileName";
+	 prev_expr=;
+	 expr {
+	  expr="\"file_name\"";
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="path_col_nm";
+	 required=0;
+	 def_val="FilePath";
+	 prev_expr=;
+	 expr {
+	  expr="\"file_path\"";
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=bool;
+	 type="bool";
+	 name="reset_first";
+	 required=0;
+	 def_val="true";
+	 prev_expr=;
+	 expr {
+	  expr="true";
+	 };
+	};
+       };
+      };
+      If @[4] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (dt.rows == 0)";
+       pre_compile_code_string="if (dt.rows == 0)";
+       cond {
+	expr="dt.rows == 0";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MiscCall @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="taMisc::Error()";
+	 pre_compile_code_string="taMisc::Error()";
+	 result_var=NULL;
+	 object_type=taMisc;
+	 method=taMisc::Error;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="a";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="\"no files found in directory:\"";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="b";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr="dir_path";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="c";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr="\"with filter:\"";
+	   };
+	  };
+	  ProgArg @[3] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="d";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr="file_filter";
+	   };
+	  };
+	  ProgArg @[4] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="e";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr="\"for dir name:\"";
+	   };
+	  };
+	  ProgArg @[5] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="f";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr="dir";
+	   };
+	  };
+	  ProgArg @[6] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="g";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[7] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="h";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	  ProgArg @[8] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="i";
+	   required=0;
+	   def_val="\"\"";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      MethodCall @[5] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="dt->FindMakeCol(\"source_dir\", taBase::VT_STRING)";
+       pre_compile_code_string="dt->FindMakeCol(\"source_dir\", taBase::VT_STRING)";
+       result_var=NULL;
+       obj=$.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[3]$;
+       method=DataTable::FindMakeCol;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="col_nm";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"source_dir\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=taBase::ValType;
+	 type="taBase::ValType";
+	 name="val_type";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="taBase::VT_STRING";
+	 };
+	};
+       };
+       meth_sig="DataCol_ptr FindMakeCol(taString& col_nm, taBase::ValType val_type)";
+       meth_desc=" insures that a scalar column of the given name and val type exists, and return that col.";
+      };
+      MethodCall @[6] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="dt->InitVals(dir, \"source_dir\")";
+       pre_compile_code_string="dt->InitVals(dir, \"source_dir\")";
+       result_var=NULL;
+       obj=$.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[3]$;
+       method=DataTable::InitVals;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="init_val";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="dir";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"source_dir\"";
+	 };
+	};
+       };
+       meth_sig="bool InitVals(Variant& init_val, Variant& col)";
+       meth_desc=" initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name";
+      };
+     };
+     el_var=.projects[0].programs.gp[4][2].functions[1].fun_code[0].local_vars[1]$$;
+     in {
+      expr="sary";
+     };
+    };
+   };
+  };
+  Function @[2] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="AllFilesToList_NoProb(DataTable* all_list) returns: int";
+   pre_compile_code_string="AllFilesToList_NoProb(DataTable* all_list) returns: int";
+   name="AllFilesToList_NoProb";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="all_list";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=NULL;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   fun_code {
+    name="ProgEl_List_968";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (1 vars)";
+     pre_compile_code_string="LocalVars (1 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="tab";
+       var_type=T_Object;
+       object_type=DataTable;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    If @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DirFiles.size == 0)";
+     pre_compile_code_string="if (DirFiles.size == 0)";
+     cond {
+      expr="DirFiles.size == 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"no tables of files in DirFiles collection\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"no tables of files in DirFiles collection\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"no tables of files in DirFiles collection\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="all_list->StructUpdate(true)";
+     pre_compile_code_string="all_list->StructUpdate(true)";
+     result_var=NULL;
+     obj=.projects[0].programs.gp[4][2].functions[2].args[0]$$;
+     method=taBase::StructUpdate;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=bool;
+       type="bool";
+       name="begin";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="true";
+       };
+      };
+     };
+     meth_sig="void StructUpdate(bool begin)";
+     meth_desc=" bracket structural changes with (nestable) true/false calls;";
+    };
+    MethodCall @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="all_list->ResetData()";
+     pre_compile_code_string="all_list->ResetData()";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[4][2].functions[2].args[0]$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void ResetData()";
+     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+    };
+    MethodCall @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="all_list->Copy_NoData(DirFiles[0])";
+     pre_compile_code_string="all_list->Copy_NoData(DirFiles[0])";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[4][2].functions[2].args[0]$;
+     method=DataTable::Copy_NoData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_DataTable_ref;
+       type="DataTable&";
+       name="cp";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="DirFiles[0]";
+       };
+      };
+     };
+     meth_sig="void Copy_NoData(DataTable& cp)";
+     meth_desc=" copy only the column structure, but no data, from other data table";
+    };
+    ForeachLoop @[5] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="foreach(tab in DirFiles)";
+     pre_compile_code_string="foreach(tab in DirFiles)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="all_list->AppendRows(tab)";
+       pre_compile_code_string="all_list->AppendRows(tab)";
+       result_var=NULL;
+       obj=$.projects[0].programs.gp[4][2].functions[2].args[0]$;
+       method=DataTable::AppendRows;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable_ptr;
+	 type="DataTable*";
+	 name="append_from";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="tab";
+	 };
+	};
+       };
+       meth_sig="bool AppendRows(DataTable* append_from)";
+       meth_desc=" append rows from another data table -- this is also available in taDataProc and in the GUI as a drag-and-drop action (appends rows of dropped item onto dropped item)";
+      };
+     };
+     el_var=.projects[0].programs.gp[4][2].functions[2].fun_code[0].local_vars[0]$$;
+     in {
+      expr="DirFiles";
+     };
+    };
+    MethodCall @[6] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="all_list->StructUpdate(false)";
+     pre_compile_code_string="all_list->StructUpdate(false)";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[4][2].functions[2].args[0]$;
+     method=taBase::StructUpdate;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=bool;
+       type="bool";
+       name="begin";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="false";
+       };
+      };
+     };
+     meth_sig="void StructUpdate(bool begin)";
+     meth_desc=" bracket structural changes with (nestable) true/false calls;";
+    };
+   };
+  };
+  Function @[3] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="AllFilesToList_Probs(DataTable* all_list, String probs) returns: int";
+   pre_compile_code_string="AllFilesToList_Probs(DataTable* all_list, String probs) returns: int";
+   name="AllFilesToList_Probs";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="all_list";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=NULL;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="probs";
+     var_type=T_String;
+     string_val=;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   fun_code {
+    name="ProgEl_List_968";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (2 vars)";
+     pre_compile_code_string="LocalVars (2 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="tab";
+       var_type=T_Object;
+       object_type=DataTable;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="sary";
+       var_type=T_Object;
+       object_type=String_Array;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[2] {
+       name="tot_n_files";
+       var_type=T_Real;
+       real_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[3] {
+       name="n_files";
+       var_type=T_Real;
+       real_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[4] {
+       name="tot_prob";
+       var_type=T_Real;
+       real_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[5] {
+       name="idx";
+       var_type=T_Int;
+       int_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[6] {
+       name="prob";
+       var_type=T_Real;
+       real_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[7] {
+       name="n_dirs";
+       var_type=T_Int;
+       int_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[8] {
+       name="i";
+       var_type=T_Int;
+       int_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[9] {
+       name="pct_of_tot";
+       var_type=T_Real;
+       real_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[10] {
+       name="prob_ratio";
+       var_type=T_Real;
+       real_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[11] {
+       name="max_prob_ratio";
+       var_type=T_Real;
+       real_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[12] {
+       name="min_prob_ratio";
+       var_type=T_Real;
+       real_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[13] {
+       name="multiplier";
+       var_type=T_Real;
+       real_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[14] {
+       name="mult_factor";
+       var_type=T_Real;
+       real_val=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[15] {
+       name="dir";
+       var_type=T_String;
+       string_val=;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    If @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DirFiles.size == 0)";
+     pre_compile_code_string="if (DirFiles.size == 0)";
+     cond {
+      expr="DirFiles.size == 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"no tables of files in DirFiles collection\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"no tables of files in DirFiles collection\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"no tables of files in DirFiles collection\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    If @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (probs.empty())";
+     pre_compile_code_string="if (probs.empty())";
+     cond {
+      expr="probs.empty()";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      ReturnExpr @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="return AllFilesToList_NoProb(all_list)";
+       pre_compile_code_string="return AllFilesToList_NoProb(all_list)";
+       expr {
+	expr="AllFilesToList_NoProb(all_list)";
+       };
+      };
+     };
+    };
+    MethodCall @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="sary->Split(probs, \" \")";
+     pre_compile_code_string="sary->Split(probs, \" \")";
+     result_var=NULL;
+     obj=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[1]$$;
+     method=String_Array::Split;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="str";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="probs";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="delim";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\" \"";
+       };
+      };
+     };
+     meth_sig="void Split(taString& str, taString& delim)";
+     meth_desc=" Convenience method that calls FmDelimString for splitting a string into an array. Splits on every character by default.";
+    };
+    If @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (sary.size != DirFiles.size)";
+     pre_compile_code_string="if (sary.size != DirFiles.size)";
+     cond {
+      expr="sary.size != DirFiles.size";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"number of probs:\", sary.size, \"not equal to number of dirs:\", DirFiles.size, , , , , )";
+       pre_compile_code_string="taMisc::Error(\"number of probs:\", sary.size, \"not equal to number of dirs:\", DirFiles.size, , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"number of probs:\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="sary.size";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="\"not equal to number of dirs:\"";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="DirFiles.size";
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[5] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="all_list->StructUpdate(true)";
+     pre_compile_code_string="all_list->StructUpdate(true)";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[4][2].functions[2].args[0]$;
+     method=taBase::StructUpdate;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=bool;
+       type="bool";
+       name="begin";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="true";
+       };
+      };
+     };
+     meth_sig="void StructUpdate(bool begin)";
+     meth_desc=" bracket structural changes with (nestable) true/false calls;";
+    };
+    MethodCall @[6] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="all_list->ResetData()";
+     pre_compile_code_string="all_list->ResetData()";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[4][2].functions[2].args[0]$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void ResetData()";
+     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+    };
+    MethodCall @[7] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="all_list->Copy_NoData(DirFiles[0])";
+     pre_compile_code_string="all_list->Copy_NoData(DirFiles[0])";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[4][2].functions[2].args[0]$;
+     method=DataTable::Copy_NoData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_DataTable_ref;
+       type="DataTable&";
+       name="cp";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="DirFiles[0]";
+       };
+      };
+     };
+     meth_sig="void Copy_NoData(DataTable& cp)";
+     meth_desc=" copy only the column structure, but no data, from other data table";
+    };
+    AssignExpr @[8] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="n_dirs = DirFiles.size";
+     pre_compile_code_string="n_dirs = DirFiles.size";
+     result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[7]$$;
+     expr {
+      expr="DirFiles.size";
+     };
+    };
+    AssignExpr @[9] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="tot_n_files = 0";
+     pre_compile_code_string="tot_n_files = 0";
+     result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$$;
+     expr {
+      expr="0";
+     };
+    };
+    AssignExpr @[10] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="tot_prob = 0";
+     pre_compile_code_string="tot_prob = 0";
+     result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[4]$$;
+     expr {
+      expr="0";
+     };
+    };
+    MethodCall @[11] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="ProbCalc->EnforceRows(sary.size)";
+     pre_compile_code_string="ProbCalc->EnforceRows(sary.size)";
+     result_var=NULL;
+     obj=.projects[0].programs.gp[4][2].vars[14]$$;
+     method=DataTable::EnforceRows;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="sary.size";
+       };
+      };
+     };
+     meth_sig="void EnforceRows(int n_rows)";
+     meth_desc=" ensure that there are exactly n_rows in the table, removing or adding as needed";
+    };
+    AssignExpr @[12] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="idx = 0";
+     pre_compile_code_string="idx = 0";
+     result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[5]$$;
+     expr {
+      expr="0";
+     };
+    };
+    ForeachLoop @[13] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="foreach(tab in DirFiles)";
+     pre_compile_code_string="foreach(tab in DirFiles)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="n_files = tab.rows";
+       pre_compile_code_string="n_files = tab.rows";
+       result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[3]$$;
+       expr {
+	expr="tab.rows";
+       };
+      };
+      VarIncr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="tot_n_files += n_files";
+       pre_compile_code_string="tot_n_files += n_files";
+       var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[2]$;
+       expr {
+	expr="n_files";
+       };
+      };
+      AssignExpr @[2] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="prob = sary[idx]";
+       pre_compile_code_string="prob = sary[idx]";
+       result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[6]$$;
+       expr {
+	expr="sary[idx]";
+       };
+      };
+      If @[3] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (prob == 0.0)";
+       pre_compile_code_string="if (prob == 0.0)";
+       cond {
+	expr="prob == 0.0";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	VarIncr @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="n_dirs += -1";
+	 pre_compile_code_string="n_dirs += -1";
+	 var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[7]$;
+	 expr {
+	  expr="-1";
+	 };
+	};
+	IfContinue @[1] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="continue";
+	 pre_compile_code_string="continue";
+	 cond {
+	  expr=;
+	 };
+	};
+       };
+      };
+      VarIncr @[4] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="tot_prob += prob";
+       pre_compile_code_string="tot_prob += prob";
+       var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[4]$;
+       expr {
+	expr="prob";
+       };
+      };
+      MatrixAssign @[5] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="ProbCalc[\"dir\"][idx] = tab.name";
+       pre_compile_code_string="ProbCalc[\"dir\"][idx] = tab.name";
+       variable=$.projects[0].programs.gp[4][2].vars[14]$;
+       data_table=1;
+       col {
+	expr="\"dir\"";
+       };
+       dim0 {
+	expr="idx";
+       };
+       dim1 {
+	expr=;
+       };
+       dim2 {
+	expr=;
+       };
+       dim3 {
+	expr=;
+       };
+       dim4 {
+	expr=;
+       };
+       dim5 {
+	expr=;
+       };
+       expr {
+	expr="tab.name";
+       };
+      };
+      MatrixAssign @[6] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="ProbCalc[\"prob\"][idx] = prob";
+       pre_compile_code_string="ProbCalc[\"prob\"][idx] = prob";
+       variable=$.projects[0].programs.gp[4][2].vars[14]$;
+       data_table=1;
+       col {
+	expr="\"prob\"";
+       };
+       dim0 {
+	expr="idx";
+       };
+       dim1 {
+	expr=;
+       };
+       dim2 {
+	expr=;
+       };
+       dim3 {
+	expr=;
+       };
+       dim4 {
+	expr=;
+       };
+       dim5 {
+	expr=;
+       };
+       expr {
+	expr="prob";
+       };
+      };
+      MatrixAssign @[7] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="ProbCalc[\"n_files\"][idx] = n_files";
+       pre_compile_code_string="ProbCalc[\"n_files\"][idx] = n_files";
+       variable=$.projects[0].programs.gp[4][2].vars[14]$;
+       data_table=1;
+       col {
+	expr="\"n_files\"";
+       };
+       dim0 {
+	expr="idx";
+       };
+       dim1 {
+	expr=;
+       };
+       dim2 {
+	expr=;
+       };
+       dim3 {
+	expr=;
+       };
+       dim4 {
+	expr=;
+       };
+       dim5 {
+	expr=;
+       };
+       expr {
+	expr="n_files";
+       };
+      };
+      VarIncr @[8] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="idx += 1";
+       pre_compile_code_string="idx += 1";
+       var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[5]$;
+       expr {
+	expr="1";
+       };
+      };
+     };
+     el_var=$.projects[0].programs.gp[4][2].functions[2].fun_code[0].local_vars[0]$;
+     in {
+      expr="DirFiles";
+     };
+    };
+    If @[14] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (tot_prob == 0.0)";
+     pre_compile_code_string="if (tot_prob == 0.0)";
+     cond {
+      expr="tot_prob == 0.0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error()";
+       pre_compile_code_string="taMisc::Error()";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"total probability was 0 -- will fall back to no-prob case\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      MethodCall @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="all_list.StructUpdate(false)";
+       pre_compile_code_string=;
+       result_var=NULL;
+       obj=.projects[0].programs.gp[4][2].functions[3].args[0]$$;
+       method=taBase::StructUpdate;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=bool;
+	 type="bool";
+	 name="begin";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="false";
+	 };
+	};
+       };
+       meth_sig="void StructUpdate(bool begin)";
+       meth_desc=" bracket structural changes with (nestable) true/false calls;";
+      };
+      ReturnExpr @[2] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="return AllFilesToList_NoProb(all_list)";
+       pre_compile_code_string="return AllFilesToList_NoProb(all_list)";
+       expr {
+	expr="AllFilesToList_NoProb(all_list)";
+       };
+      };
+     };
+    };
+    AssignExpr @[15] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="max_prob_ratio = 0";
+     pre_compile_code_string="max_prob_ratio = 0";
+     result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[11]$$;
+     expr {
+      expr="0";
+     };
+    };
+    AssignExpr @[16] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="min_prob_ratio = 0";
+     pre_compile_code_string="min_prob_ratio = 0";
+     result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[12]$$;
+     expr {
+      expr="0";
+     };
+    };
+    ForLoop @[17] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i=0; i<n_dirs; i++)";
+     pre_compile_code_string="for (i=0; i<n_dirs; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="n_files = ProbCalc[\"n_files\"][i]";
+       pre_compile_code_string="n_files = ProbCalc[\"n_files\"][i]";
+       result_var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[3]$;
+       expr {
+	expr="ProbCalc[\"n_files\"][i]";
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="prob = ProbCalc[\"prob\"][i]";
+       pre_compile_code_string="prob = ProbCalc[\"prob\"][i]";
+       result_var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[6]$;
+       expr {
+	expr="ProbCalc[\"prob\"][i]";
+       };
+      };
+      AssignExpr @[2] {
+       desc="renormalize";
+       flags=CAN_REVERT_TO_CODE;
+       code_string="prob = prob / tot_prob";
+       pre_compile_code_string="prob = prob / tot_prob";
+       result_var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[6]$;
+       expr {
+	expr="prob / tot_prob";
+       };
+      };
+      AssignExpr @[3] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="pct_of_tot = n_files / tot_n_files";
+       pre_compile_code_string="pct_of_tot = n_files / tot_n_files";
+       result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[9]$$;
+       expr {
+	expr="n_files / tot_n_files";
+       };
+      };
+      AssignExpr @[4] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="prob_ratio = prob / pct_of_tot";
+       pre_compile_code_string="prob_ratio = prob / pct_of_tot";
+       result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[10]$$;
+       expr {
+	expr="prob / pct_of_tot";
+       };
+      };
+      MatrixAssign @[5] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="ProbCalc[\"pct_of_tot\"][i] = pct_of_tot";
+       pre_compile_code_string="ProbCalc[\"pct_of_tot\"][i] = pct_of_tot";
+       variable=$.projects[0].programs.gp[4][2].vars[14]$;
+       data_table=1;
+       col {
+	expr="\"pct_of_tot\"";
+       };
+       dim0 {
+	expr="i";
+       };
+       dim1 {
+	expr=;
+       };
+       dim2 {
+	expr=;
+       };
+       dim3 {
+	expr=;
+       };
+       dim4 {
+	expr=;
+       };
+       dim5 {
+	expr=;
+       };
+       expr {
+	expr="pct_of_tot";
+       };
+      };
+      MatrixAssign @[6] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="ProbCalc[\"prob_ratio\"][i] = prob_ratio";
+       pre_compile_code_string="ProbCalc[\"prob_ratio\"][i] = prob_ratio";
+       variable=$.projects[0].programs.gp[4][2].vars[14]$;
+       data_table=1;
+       col {
+	expr="\"prob_ratio\"";
+       };
+       dim0 {
+	expr="i";
+       };
+       dim1 {
+	expr=;
+       };
+       dim2 {
+	expr=;
+       };
+       dim3 {
+	expr=;
+       };
+       dim4 {
+	expr=;
+       };
+       dim5 {
+	expr=;
+       };
+       expr {
+	expr="prob_ratio";
+       };
+      };
+      MatrixAssign @[7] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="ProbCalc[\"prob\"][i] = prob";
+       pre_compile_code_string="ProbCalc[\"prob\"][i] = prob";
+       variable=$.projects[0].programs.gp[4][2].vars[14]$;
+       data_table=1;
+       col {
+	expr="\"prob\"";
+       };
+       dim0 {
+	expr="i";
+       };
+       dim1 {
+	expr=;
+       };
+       dim2 {
+	expr=;
+       };
+       dim3 {
+	expr=;
+       };
+       dim4 {
+	expr=;
+       };
+       dim5 {
+	expr=;
+       };
+       expr {
+	expr="prob";
+       };
+      };
+      If @[8] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (i == 0)";
+       pre_compile_code_string="if (i == 0)";
+       cond {
+	expr="i == 0";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="min_prob_ratio = prob_ratio";
+	 pre_compile_code_string="min_prob_ratio = prob_ratio";
+	 result_var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[12]$;
+	 expr {
+	  expr="prob_ratio";
+	 };
+	};
+       };
+      };
+      Else @[9] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="else";
+       pre_compile_code_string=;
+       else_code {
+	name="else_code";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="min_prob_ratio = MIN(prob_ratio, min_prob_ratio)";
+	 pre_compile_code_string="min_prob_ratio = MIN(prob_ratio, min_prob_ratio)";
+	 result_var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[12]$;
+	 expr {
+	  expr="MIN(prob_ratio, min_prob_ratio)";
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i=0";
+     };
+     test {
+      expr="i<n_dirs";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    AssignExpr @[18] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="multiplier = 1.0 / min_prob_ratio";
+     pre_compile_code_string="multiplier = 1.0 / min_prob_ratio";
+     result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[13]$$;
+     expr {
+      expr="1.0 / min_prob_ratio";
+     };
+    };
+    If @[19] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (min_prob_ratio < .01)";
+     pre_compile_code_string="if (min_prob_ratio < .01)";
+     cond {
+      expr="min_prob_ratio < .01";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Warning(\"minimum probability ratio is < .01:\", String(min_prob_ratio, , , , , , ,, , , , , , , )";
+       pre_compile_code_string="taMisc::Warning(\"minimum probability ratio is < .01:\", String(min_prob_ratio, , , , , , ,, , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Warning;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"minimum probability ratio is < .01:\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="String(min_prob_ratio)";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="\"fixing multiplier at 100 -- will result in inaccuracy\"";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="multiplier = 100";
+       pre_compile_code_string="multiplier = 100";
+       result_var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[13]$;
+       expr {
+	expr="100";
+       };
+      };
+     };
+    };
+    ForLoop @[20] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="for (i=0; i<n_dirs; i++)";
+     pre_compile_code_string="for (i=0; i<n_dirs; i++)";
+     loop_code {
+      name="loop_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="prob_ratio = ProbCalc[\"prob_ratio\"][i]";
+       pre_compile_code_string="prob_ratio = ProbCalc[\"prob_ratio\"][i]";
+       result_var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[10]$;
+       expr {
+	expr="ProbCalc[\"prob_ratio\"][i]";
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="dir = ProbCalc[\"dir\"][i]";
+       pre_compile_code_string="dir = ProbCalc[\"dir\"][i]";
+       result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[15]$$;
+       expr {
+	expr="ProbCalc[\"dir\"][i]";
+       };
+      };
+      AssignExpr @[2] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="mult_factor = prob_ratio * multiplier";
+       pre_compile_code_string="mult_factor = prob_ratio * multiplier";
+       result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[14]$$;
+       expr {
+	expr="prob_ratio * multiplier";
+       };
+      };
+      MathCall @[3] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="mult_factor = taMath_float::ceil()";
+       pre_compile_code_string="mult_factor = taMath_float::ceil(mult_factor)";
+       result_var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[14]$;
+       object_type=taMath_float;
+       method=taMath_float::ceil;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=float;
+	 type="float";
+	 name="x";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="mult_factor";
+	 };
+	};
+       };
+      };
+      AssignExpr @[4] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="mult_factor = MAX(1, mult_factor)";
+       pre_compile_code_string="mult_factor = MAX(1, mult_factor)";
+       result_var=$.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[14]$;
+       expr {
+	expr="MAX(1, mult_factor)";
+       };
+      };
+      MatrixAssign @[5] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="ProbCalc[\"mult_factor\"][i] = mult_factor";
+       pre_compile_code_string="ProbCalc[\"mult_factor\"][i] = mult_factor";
+       variable=$.projects[0].programs.gp[4][2].vars[14]$;
+       data_table=1;
+       col {
+	expr="\"mult_factor\"";
+       };
+       dim0 {
+	expr="i";
+       };
+       dim1 {
+	expr=;
+       };
+       dim2 {
+	expr=;
+       };
+       dim3 {
+	expr=;
+       };
+       dim4 {
+	expr=;
+       };
+       dim5 {
+	expr=;
+       };
+       expr {
+	expr="mult_factor";
+       };
+      };
+      AssignExpr @[6] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="tab = DirFiles[dir]";
+       pre_compile_code_string="tab = DirFiles[dir]";
+       result_var=.projects[0].programs.gp[4][2].functions[3].fun_code[0].local_vars[0]$$;
+       expr {
+	expr="DirFiles[dir]";
+       };
+      };
+      DataProcCall @[7] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taDataProc::ReplicateRows()";
+       pre_compile_code_string="taDataProc::ReplicateRows()";
+       result_var=NULL;
+       object_type=taDataProc;
+       method=taDataProc::ReplicateRows;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable_ptr;
+	 type="DataTable*";
+	 name="dest";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="TmpFiles1";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=DataTable_ptr;
+	 type="DataTable*";
+	 name="src";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="tab";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="n_repl";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="mult_factor";
+	 };
+	};
+       };
+      };
+      MethodCall @[8] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="all_list->AppendRows(TmpFiles1)";
+       pre_compile_code_string=;
+       result_var=NULL;
+       obj=$.projects[0].programs.gp[4][2].functions[3].args[0]$;
+       method=DataTable::AppendRows;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable_ptr;
+	 type="DataTable*";
+	 name="append_from";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="TmpFiles1";
+	 };
+	};
+       };
+       meth_sig="bool AppendRows(DataTable* append_from)";
+       meth_desc=" append rows from another data table -- this is also available in taDataProc and in the GUI as a drag-and-drop action (appends rows of dropped item onto dropped item)";
+      };
+     };
+     init {
+      expr="i=0";
+     };
+     test {
+      expr="i<n_dirs";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    MethodCall @[21] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="all_list->StructUpdate(false)";
+     pre_compile_code_string="all_list->StructUpdate(false)";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[4][2].functions[2].args[0]$;
+     method=taBase::StructUpdate;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=bool;
+       type="bool";
+       name="begin";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="false";
+       };
+      };
+     };
+     meth_sig="void StructUpdate(bool begin)";
+     meth_desc=" bracket structural changes with (nestable) true/false calls;";
+    };
+   };
+  };
+  Function @[4] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="GetAllFiles() returns: int";
+   pre_compile_code_string="GetAllFiles() returns: int";
+   name="GetAllFiles";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="ProgEl_List_991";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     code_string=;
+     pre_compile_code_string=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="dirs";
+       var_type=T_String;
+       string_val=;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="probs";
+       var_type=T_String;
+       string_val=;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="flist_config_row = FileListConfig.FindVal()";
+     pre_compile_code_string="flist_config_row = FileListConfig->FindVal(flist_config_id, \"flist_config_id\", 0, true)";
+     result_var=.projects[0].programs.gp[4][2].vars[4]$$;
+     obj=.projects[0].programs.gp[4][2].vars[11]$$;
+     method=DataTable::FindVal;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="val";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="flist_config_id";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"flist_config_id\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="st_row";
+       required=0;
+       def_val="0";
+       prev_expr=;
+       expr {
+	expr="0";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="not_found_err";
+       required=0;
+       def_val="false";
+       prev_expr=;
+       expr {
+	expr="true";
+       };
+      };
+     };
+     meth_sig="int FindVal(Variant& val, Variant& col, int st_row = 0, bool not_found_err = false)";
+     meth_desc=" find row number for given value within column col of scalar type (use for Programs), starting at given starting row number. if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- column can be specified as either integer index or a string that is then used to find the given column name. returns -1 if not found, and issues error if not_found_err is true";
+    };
+    AssignExpr @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="dirs = FileListConfig[\"dirs\"][flist_config_row]";
+     pre_compile_code_string="dirs = FileListConfig[\"dirs\"][flist_config_row]";
+     result_var=.projects[0].programs.gp[4][2].functions[4].fun_code[0].local_vars[0]$$;
+     expr {
+      expr="FileListConfig[\"dirs\"][flist_config_row]";
+     };
+    };
+    AssignExpr @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="probs = FileListConfig[\"probs\"][flist_config_row]";
+     pre_compile_code_string="probs = FileListConfig[\"probs\"][flist_config_row]";
+     result_var=.projects[0].programs.gp[4][2].functions[4].fun_code[0].local_vars[1]$$;
+     expr {
+      expr="FileListConfig[\"probs\"][flist_config_row]";
+     };
+    };
+    FunctionCall @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="FindFiles()";
+     pre_compile_code_string="FindFiles()";
+     result_var=NULL;
+     fun=.projects[0].programs.gp[4][2].functions[1]$$;
+     fun_args {
+      name="fun_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=taString;
+       type="String";
+       name="dir_names";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="dirs";
+       };
+      };
+     };
+    };
+    If @[5] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (probs.empty())";
+     pre_compile_code_string="if (probs.empty())";
+     cond {
+      expr="probs.empty()";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      FunctionCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="AllFilesToList_NoProb()";
+       pre_compile_code_string="AllFilesToList_NoProb()";
+       result_var=NULL;
+       fun=.projects[0].programs.gp[4][2].functions[2]$$;
+       fun_args {
+	name="fun_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable;
+	 type="DataTable*";
+	 name="all_list";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="FileListAll";
+	 };
+	};
+       };
+      };
+     };
+    };
+    Else @[6] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="else";
+     pre_compile_code_string=;
+     else_code {
+      name="else_code";
+      el_typ=ProgCode;
+      el_def=0;
+      FunctionCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="AllFilesToList_Probs()";
+       pre_compile_code_string="AllFilesToList_Probs()";
+       result_var=NULL;
+       fun=.projects[0].programs.gp[4][2].functions[3]$$;
+       fun_args {
+	name="fun_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable;
+	 type="DataTable*";
+	 name="all_list";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="FileListAll";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=taString;
+	 type="String";
+	 name="probs";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="probs";
+	 };
+	};
+       };
+      };
+     };
+    };
+    FunctionCall @[7] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="InitCurList()";
+     pre_compile_code_string="InitCurList()";
+     result_var=NULL;
+     fun=.projects[0].programs.gp[4][2].functions[5]$$;
+     fun_args {
+      name="fun_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+  };
+  Function @[5] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="InitCurList() returns: int";
+   pre_compile_code_string="InitCurList() returns: int";
+   name="InitCurList";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="ProgEl_List_995";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     code_string=;
+     pre_compile_code_string=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="FileListCur.CopyFrom(FileListAll)";
+     pre_compile_code_string="FileListCur->CopyFrom(FileListAll)";
+     result_var=NULL;
+     obj=.projects[0].programs.gp[4][2].vars[13]$$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="FileListAll";
+       };
+      };
+     };
+     meth_sig="bool CopyFrom(taBase* cpy_from)";
+     meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+    };
+    If @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (permute_order)";
+     pre_compile_code_string="if (permute_order)";
+     cond {
+      expr="permute_order";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="FileListCur.PermuteRows()";
+       pre_compile_code_string="FileListCur->PermuteRows()";
+       result_var=NULL;
+       obj=$.projects[0].programs.gp[4][2].vars[13]$;
+       method=DataTable::PermuteRows;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=int;
+	 type="int";
+	 name="thr_no";
+	 required=0;
+	 def_val="-1";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+       meth_sig="void PermuteRows(int thr_no = -1)";
+       meth_desc=" permute the order of rows in the data table -- randomly shuffles the rows -- this is very efficiently implemented by shuffling the row_indexes lookup table, not the actual rows in memory. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Permute you would need to run Flatten first -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)";
+      };
+     };
+    };
+    AssignExpr @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="next_index = 0";
+     pre_compile_code_string="next_index = 0";
+     result_var=.projects[0].programs.gp[4][2].vars[8]$$;
+     expr {
+      expr="0";
+     };
+    };
+   };
+  };
+  Function @[6] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="GetNextItem_impl(DataTable* file_list, int& next_idx, bool permuted) returns: int";
+   pre_compile_code_string="GetNextItem_impl(DataTable* file_list, int& next_idx, bool permuted) returns: int";
+   name="GetNextItem_impl";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="file_list";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=NULL;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="next_idx";
+     var_type=T_Int;
+     int_val=0;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=1;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[2] {
+     name="permuted";
+     var_type=T_Bool;
+     bool_val=0;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   fun_code {
+    name="ProgEl_List_998";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     code_string=;
+     pre_compile_code_string=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    If @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (file_list.rows == 0)";
+     pre_compile_code_string="if (file_list.rows == 0)";
+     cond {
+      expr="file_list.rows == 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error()";
+       pre_compile_code_string="taMisc::Error()";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"No rows in file list:\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="file_list.name";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    If @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (next_idx >= file_list.rows)";
+     pre_compile_code_string="if (next_idx >= file_list.rows)";
+     cond {
+      expr="next_idx >= file_list.rows";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="next_idx = 0";
+       pre_compile_code_string="next_idx = 0";
+       result_var=.projects[0].programs.gp[4][2].functions[6].args[1]$$;
+       expr {
+	expr="0";
+       };
+      };
+      If @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="if (permuted)";
+       pre_compile_code_string="if (permuted)";
+       cond {
+	expr="permuted";
+       };
+       true_code {
+	name="true_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 code_string="file_list.PermuteRows()";
+	 pre_compile_code_string=;
+	 result_var=NULL;
+	 obj=.projects[0].programs.gp[4][2].functions[6].args[0]$$;
+	 method=DataTable::PermuteRows;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="thr_no";
+	   required=0;
+	   def_val="-1";
+	   prev_expr=;
+	   expr {
+	    expr=;
+	   };
+	  };
+	 };
+	 meth_sig="void PermuteRows(int thr_no = -1)";
+	 meth_desc=" permute the order of rows in the data table -- randomly shuffles the rows -- this is very efficiently implemented by shuffling the row_indexes lookup table, not the actual rows in memory. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Permute you would need to run Flatten first -- (0 <= thr_no < 100) specifies thread or dmem proc number for parallel safe random sequences (-1 = taMisc::dmem_proc for auto-safe dmem)";
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="file_list.ReadItem(next_idx)";
+     pre_compile_code_string=;
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[4][2].functions[6].args[0]$;
+     method=DataTable::ReadItem;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="idx";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="next_idx";
+       };
+      };
+     };
+     meth_sig="bool ReadItem(int idx)";
+     meth_desc=" goes directly (random access) to row idx (- = count back from last row available, otherwise must be in range 0 <= idx < rows) so that it is now available for GetData routines (which use read_idx for their row number), returns true if row exists and was read";
+    };
+    MethodCall @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="cur_file_name = file_list->GetData(\"file_name\")";
+     pre_compile_code_string="cur_file_name = file_list->GetData(\"file_name\")";
+     result_var=.projects[0].programs.gp[4][2].vars[5]$$;
+     obj=$.projects[0].programs.gp[4][2].functions[6].args[0]$;
+     method=DataTable::GetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"file_name\"";
+       };
+      };
+     };
+     meth_sig="const_Variant GetData(Variant& col)";
+     meth_desc=" get data from given column number or name at current read_idx row number -- see ReadItem, ReadNext for updating the read_idx index";
+    };
+    MethodCall @[5] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="cur_file_path = file_list->GetData(\"file_path\")";
+     pre_compile_code_string="cur_file_path = file_list->GetData(\"file_path\")";
+     result_var=.projects[0].programs.gp[4][2].vars[6]$$;
+     obj=$.projects[0].programs.gp[4][2].functions[6].args[0]$;
+     method=DataTable::GetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"file_path\"";
+       };
+      };
+     };
+     meth_sig="const_Variant GetData(Variant& col)";
+     meth_desc=" get data from given column number or name at current read_idx row number -- see ReadItem, ReadNext for updating the read_idx index";
+    };
+    MethodCall @[6] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="cur_file_source = file_list->GetData(\"source_dir\")";
+     pre_compile_code_string="cur_file_source = file_list->GetData(\"source_dir\")";
+     result_var=.projects[0].programs.gp[4][2].vars[7]$$;
+     obj=$.projects[0].programs.gp[4][2].functions[6].args[0]$;
+     method=DataTable::GetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="Variant&";
+       name="col";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"source_dir\"";
+       };
+      };
+     };
+     meth_sig="const_Variant GetData(Variant& col)";
+     meth_desc=" get data from given column number or name at current read_idx row number -- see ReadItem, ReadNext for updating the read_idx index";
+    };
+    VarIncr @[7] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="next_idx += 1";
+     pre_compile_code_string="next_idx += 1";
+     var=$.projects[0].programs.gp[4][2].functions[6].args[1]$;
+     expr {
+      expr="1";
+     };
+    };
+   };
+  };
+  Function @[7] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="GetNextItem() returns: int";
+   pre_compile_code_string="GetNextItem() returns: int";
+   name="GetNextItem";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="ProgEl_List_1005";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     code_string=;
+     pre_compile_code_string=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    FunctionCall @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="GetNextItem_impl()";
+     pre_compile_code_string="GetNextItem_impl()";
+     result_var=NULL;
+     fun=.projects[0].programs.gp[4][2].functions[6]$$;
+     fun_args {
+      name="fun_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable;
+       type="DataTable*";
+       name="file_list";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="FileListCur";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="next_idx";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="next_index";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=bool;
+       type="bool";
+       name="permuted";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="permute_order";
+       };
+      };
+     };
+    };
+   };
+  };
+ };
+ init_code {
+  name="init_code";
+  el_typ=ProgCode;
+  el_def=0;
+  AssignExpr @[0] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="next_index = -1";
+   pre_compile_code_string="next_index = -1";
+   result_var=$.projects[0].programs.gp[4][2].vars[8]$;
+   expr {
+    expr="-1";
+   };
+  };
+ };
+ prog_code {
+  name="prog_code";
+  el_typ=ProgCode;
+  el_def=0;
+  LocalVars @[0] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LocalVars (0 vars)";
+   pre_compile_code_string="LocalVars (0 vars)";
+   local_vars {
+    name="local_vars";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+  };
+  If @[1] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="if (next_index < 0)";
+   pre_compile_code_string="if (next_index < 0)";
+   cond {
+    expr="next_index < 0";
+   };
+   true_code {
+    name="true_code";
+    el_typ=ProgCode;
+    el_def=0;
+    FunctionCall @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="GetAllFiles()";
+     pre_compile_code_string="GetAllFiles()";
+     result_var=NULL;
+     fun=.projects[0].programs.gp[4][2].functions[4]$$;
+     fun_args {
+      name="fun_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+  };
+  FunctionCall @[2] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="GetNextItem()";
+   pre_compile_code_string="GetNextItem()";
+   result_var=NULL;
+   fun=.projects[0].programs.gp[4][2].functions[7]$$;
+   fun_args {
+    name="fun_args";
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+ };
+ step_prog=NULL;
+ step_n=1;
+ doc {
+  name="doc";
+  desc=;
+  web_doc=0;
+  wiki=;
+  url="local";
+  full_url="local";
+  text_size=1;
+  text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+  html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
+ };
+};

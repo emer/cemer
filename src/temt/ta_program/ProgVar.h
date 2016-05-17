@@ -165,12 +165,12 @@ public:
   inline void   NoCtrlReadOnly() { ClearVarFlag(CTRL_PANEL); ClearVarFlag(CTRL_READ_ONLY); }
 
   // these are for the program control panel not a project level control panel
-  inline void   AddToProgramControlPanelEditable()   { CtrlPanel(); }
-  // #MENU #DYN1 #CAT_Display put this variable in the control panel - make editable
-  inline void   AddToProgramControlPanelReadonly()   { CtrlReadOnly(); }
-  // #MENU #DYN1 #CAT_Display #GHOST_ON_flags:CTRL_READ_ONLY put this variable in the control panel - make readonly
-  inline void   RemoveFromProgramControlPanel()      { NoCtrlPanel(); }
-  // #MENU #DYN1 #CAT_Display #GHOST_OFF_flags:CTRL_PANEL,CTRL_READ_ONLY remove this variable from program the control panel
+  inline void   ShowInCtrlPanelEditable()   { CtrlPanel(); }
+  // #MENU #DYN1 #CAT_Display show this variable in the program control panel - make editable
+  inline void   ShowInCtrlPanelReadOnly()   { CtrlReadOnly(); }
+  // #MENU #DYN1 #CAT_Display #GHOST_ON_flags:CTRL_READ_ONLY show variable in the program control panel - make readonly
+  inline void   HideInCtrlPanel()      { NoCtrlPanel(); }
+  // #MENU #DYN1 #CAT_Display #GHOST_OFF_flags:CTRL_PANEL,CTRL_READ_ONLY do not show this variable in the program the control panel
 
   bool          AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel) override;
   // Leave member as NULL for default
