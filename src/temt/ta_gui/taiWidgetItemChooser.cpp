@@ -167,7 +167,9 @@ bool taiWidgetItemChooser::OpenChooser() {
   BuildCategories(); // for subtypes that use categories
   String chs_title = titleText();
   iDialogItemChooser* ic = iDialogItemChooser::New(chs_title, this);
-  alt_sel = host->GetAlternateSelection();
+  if (host) {
+    alt_sel = host->GetAlternateSelection();
+  }
   if (ic->Choose(this)) {
     rval = true;                // hit ok
     // always update even if it says the item was the same, because we could have set a
