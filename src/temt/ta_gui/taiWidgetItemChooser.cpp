@@ -167,6 +167,7 @@ bool taiWidgetItemChooser::OpenChooser() {
   BuildCategories(); // for subtypes that use categories
   String chs_title = titleText();
   iDialogItemChooser* ic = iDialogItemChooser::New(chs_title, this);
+  alt_sel = host->GetAlternateSelection();
   if (ic->Choose(this)) {
     rval = true;                // hit ok
     // always update even if it says the item was the same, because we could have set a
@@ -199,9 +200,6 @@ bool taiWidgetItemChooser::ShowItemFilter(void* base, void* item, const String& 
 
 void taiWidgetItemChooser::UpdateImage(void* cur_sel) {
   m_sel = cur_sel;
-  if (cur_sel == NULL && host != NULL) {
-    alt_sel = host->GetAlternateSelection();  // set an alternate - might be asked for
-  }
   
   // note: don't optimize this if same msel, since we use it to set label
   if(hasNoItems()) {
