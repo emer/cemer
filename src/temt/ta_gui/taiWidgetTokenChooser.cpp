@@ -83,6 +83,7 @@ bool taiWidgetTokenChooser::countTokensToN(int& cnt, TypeDef* td, int n, void*& 
   // not gonna happen if it hasn't already
   for (int i = 0; i < td->tokens.size; ++i) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
+    if(!btmp) continue;
     if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
     if (!ShowToken(btmp))
