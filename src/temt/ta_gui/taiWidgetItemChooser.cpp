@@ -35,6 +35,7 @@ taiWidgetItemChooser::taiWidgetItemChooser(TypeDef* typ_,
   filter_start_txt = flt_start_txt;
   targ_typ = NULL; // gets set later
   m_sel = NULL;
+  alt_sel = NULL;
   cats = NULL;
   null_text = " NULL";
   new1_par = NULL;
