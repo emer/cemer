@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9491
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9497
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -20261,8 +20261,8 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       ProgramCall @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
-       code_string="Program_B()";
-       pre_compile_code_string="Program_B()";
+       code_string="Program_B(1)";
+       pre_compile_code_string="Program_B(1)";
        prog_args {
 	name="ProgArg_List_0";
 	el_typ=ProgArg;
@@ -20275,7 +20275,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 def_val=;
 	 prev_expr=;
 	 expr {
-	  expr=;
+	  expr="1";
 	 };
 	};
        };
@@ -20450,8 +20450,8 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       ProgVar @["int_arg"] {
        name="int_arg";
        var_type=T_Int;
-       int_val=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+       int_val=1;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
        reference=0;
        desc=;
        init_from=NULL;
@@ -20485,7 +20485,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	el_def=0;
 	LocalVars @[0] {
 	 desc=;
-	 flags=0;
+	 flags=CAN_REVERT_TO_CODE;
 	 code_string="LocalVars (0 vars)";
 	 pre_compile_code_string="LocalVars (0 vars)";
 	 local_vars {
@@ -20810,7 +20810,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=-0.002785515;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -20820,12 +20820,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=1.002786;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=1;
+     value 8 0=0.7993159;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -22154,7 +22154,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.05555556;
+       value 8 0=0.03078677;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
@@ -22164,7 +22164,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.9222222;
+       value 8 0=0.6944128;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
