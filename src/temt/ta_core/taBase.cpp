@@ -1944,6 +1944,10 @@ int taBase::ReplaceValStr(const String& srch, const String& repl, const String& 
                           void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc, bool replace_deep) {
   TypeDef* td = GetTypeDef();
   int rval = td->ReplaceValStr_class(srch, repl, mbr_filt, this, par, par_typ, memb_def, sc, replace_deep);
+  if (InheritsFrom(&TA_ProgEl)) {
+    ProgEl* prog_el = (ProgEl*)this;
+    prog_el->CvtFmCode(prog_el->code_string);
+  }
   if(rval > 0)
     UpdateAfterEdit();
   return rval;
