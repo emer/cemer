@@ -194,7 +194,7 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
     pathnm = pathnm.before("->", -1);
   }
   path = pathnm;
-  UpdateAfterEdit_impl();                          // update based on obj and path
+  GetTypeFromPath();
   if(!obj_type) return false;
   MethodDef* md = obj_type->methods.FindName(methnm);
   
@@ -202,7 +202,7 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
   
   if(md) {
     method = md;
-    UpdateAfterEdit_impl();                        // update based on obj
+    //UpdateAfterEdit_impl();                        // update based on obj
   }
   // now tackle the args
   // if none of the args have been set we need to get them added to the args list before parsing
