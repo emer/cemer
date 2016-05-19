@@ -131,8 +131,8 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   undo_time_used.EndTimer();
   undo_time_used.IncrAvg();
   if(taMisc::undo_debug) {
-    taMisc::Info("undo save took:", String(undo_time_used.s_used / 1.0e6),
-                 "microsec.  running average:", String(undo_time_used.avg_used.GetAvg() / 1.0e6f));
+    taMisc::Info("undo save took:", String(undo_time_used.s_used * 1.0e3),
+                 "msec.  running average:", String(undo_time_used.avg_used.GetAvg() * 1.0e3f));
   }
   
   return true;                  // todo: need to check result of Save_String presumably
