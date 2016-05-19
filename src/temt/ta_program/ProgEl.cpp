@@ -256,6 +256,10 @@ void ProgEl::UpdatePointersAfterCopy_impl(const taBase& cp) {
       ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);
       UpdateProgVarRef_NewOwner(*pvr);
     }
+    else if (md->type->InheritsFrom(&TA_ProgArg_List)) {
+      ProgArg_List* prog_arg_list = (ProgArg_List*)md->GetOff((void*)this);
+      prog_arg_list->UpdateProgExpr_NewOwner();
+    }
   }
 }
 
