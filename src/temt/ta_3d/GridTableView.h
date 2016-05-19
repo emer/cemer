@@ -133,7 +133,7 @@ public:
 
 
   void          CopyFromView(GridTableView* cp);
-  // #BUTTON special copy function that just copies user view options in a robust manner
+  // #BUTTON #NO_SCOPE special copy function that just copies user view options in a robust manner
 
   void          SaveImageSVG(const String& svg_fname) override;
 

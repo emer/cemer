@@ -51,6 +51,9 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   // only do the undo guy for first call when nested
   if ((nest_count > 0) && (loop_count++ > 0)) return false;
   if(!owner || !mod_obj) return false;
+
+  undo_time_used.StartTimer(true);
+  
   if(!save_top) {
     if(force_proj_save)
       save_top = owner;
@@ -125,13 +128,13 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 
   PurgeUnusedSrcs();            // get rid of unused source data
 
-  // tell project to refresh ui, because otherwise the undo action does not get enabled
-  // properly
-//  taProject* proj = GetMyProj();
-//  if(proj) {
-//    tabMisc::DelayedFunCall_gui(proj,"UpdateUi");
-//  }
-
+  undo_time_used.EndTimer();
+  undo_time_used.IncrAvg();
+  if(taMisc::undo_debug) {
+    taMisc::Info("undo save took:", String(undo_time_used.s_used / 1.0e6),
+                 "microsec.  running average:", String(undo_time_used.avg_used.GetAvg() / 1.0e6f));
+  }
+  
   return true;                  // todo: need to check result of Save_String presumably
 }
 

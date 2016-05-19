@@ -532,11 +532,11 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
   if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
     // no need to save b/c unaffected by changes elsewhere..
     if(taMisc::undo_debug && last_dt != dt) {
-      taMisc::Info("not undo saving datatable -- should be unaffected:",
-                   dt->GetPathNames());
-      if(tabMisc::cur_undo_save_owner) {
-        taMisc::Info("undo save owner:", tabMisc::cur_undo_save_owner->GetPathNames());
-      }
+      // taMisc::Info("not undo saving datatable -- should be unaffected:",
+      //              dt->GetPathNames());
+      // if(tabMisc::cur_undo_save_owner) {
+      //   taMisc::Info("undo save owner:", tabMisc::cur_undo_save_owner->GetPathNames());
+      // }
       last_dt = dt;
     }
     return DQR_NO_SAVE;
@@ -561,8 +561,8 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
   }
   
   if(taMisc::undo_debug && last_dt != dt) {
-    taMisc::Info("not undo saving datatable -- affected but no save at data table level:",
-                 dt->GetPathNames(), "cells:", String(dt->Cells()));
+    // taMisc::Info("not undo saving datatable -- affected but no save at data table level:",
+    //              dt->GetPathNames(), "cells:", String(dt->Cells()));
     last_dt = dt;
   }
   return DQR_NO_SAVE;

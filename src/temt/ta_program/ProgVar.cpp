@@ -695,6 +695,9 @@ String ProgVar::GetDisplayName() const {
   if(HasVarFlag(FUN_ARG) && reference) {
     rval = rval.before(')',-1) + "&)";
   }
+  if(object_type && HasVarFlag(NEW_OBJ)) {
+    rval += " -- new";
+  }
   if(init_from) {
     rval += "  --  init from: " + init_from->name;
   }
