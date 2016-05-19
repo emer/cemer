@@ -1746,7 +1746,8 @@ int taBase::SaveAs(const String& fname) {
 int taBase::Save_String(String& save_str, taBase* par, int indent) {
   ostringstream oss;
   int rval = Save_strm(oss, par,indent);
-  save_str = oss.str().c_str();
+  string str = oss.str();
+  save_str.set(str.c_str(), str.length());
   return rval;
 }
 

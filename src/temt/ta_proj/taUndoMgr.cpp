@@ -88,6 +88,13 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
                     "at path:", urec->mod_obj_path, "saving at:", urec->save_top_path);
   }
 
+  // if(save_top == owner && undo_srcs.length > 0) {
+  //   taUndoDiffSrc* cur_src = undo_srcs.CircPeek();
+  //   int prev_len = cur_src->save_data.length();
+  //   int new_len = (int)(1.1f * prev_len); // 10% more just to be safe
+  //   urec->save_data.setRep(Snew(0, new_len)); // pre-allocate!
+  // }
+  
   tabMisc::cur_undo_save_top = save_top; // let others know who we're saving for..
   tabMisc::cur_undo_mod_obj = mod_obj; // let others know who we're saving for..
   tabMisc::cur_undo_save_owner = undo_save_owner;
@@ -103,6 +110,13 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
     taUndoDiffSrc* cur_src = NULL;
     if(undo_srcs.length > 0)
       cur_src = undo_srcs.CircPeek(); // always grab the last guy
+    if(taMisc::undo_debug) {
+      String last_pct;
+      if(cur_src)
+        last_pct = " last pct: " + String(cur_src->last_diff_pct);
+      taMisc::Info("undo save size:", String(urec->save_data.length() / 1.0e6), "MB",
+                   last_pct);
+    }
     if(!cur_src || cur_src->last_diff_pct > new_src_thr) {
       if(cur_src && taMisc::undo_debug) {
         taMisc::Info("SaveUndo diff pct on last save:", String(cur_src->last_diff_pct),
