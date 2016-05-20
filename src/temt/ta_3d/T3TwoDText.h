@@ -42,15 +42,13 @@ public:
   virtual void  renderLabel(T3TwoDText& txt);
   // render the label to the image
   
-  Qt3DRender::QTextureDataFunctorPtr dataFunctor() const override;
-
   explicit T3TwoDTexture(Qt3DNode* parent = 0);
   ~T3TwoDTexture();
 
 protected:
-  void copy(const Qt3DNode *ref) override;
+  void copy(const Qt3DNode *ref);
 private:
-  QT3D_CLONEABLE(T3TwoDTexture)
+  Qt3DRender::QTextureImageDataGeneratorPtr dataGenerator() const override;
 };
 
 enum T3AlignText {              // for abstracting over Qt3D and SoAsciiText

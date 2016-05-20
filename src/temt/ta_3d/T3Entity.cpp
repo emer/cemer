@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "T3Entity.h"
-#include <Qt3DInput/QMouseController>
+#include <Qt3DInput/QMouseDevice>
 
 #include <taiMisc>
 
@@ -37,10 +37,10 @@ T3Entity::~T3Entity() {
   // todo: call cleanup here or not??
 }
 
-void T3Entity::addMouseInput(QMouseController* mouse_ctrl) {
+void T3Entity::addMouseInput(QMouseDevice* mouse_dev) {
   if(mouse) return;
   mouse = new QMouseInput();
-  mouse->setController(mouse_ctrl);
+  mouse->setSourceDevice(mouse_dev);
   addComponent(mouse);
   // todo: clicked actually not implemented yet!
   // connect(mouse, SIGNAL(clicked(QMouseEvent*)), this,

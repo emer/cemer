@@ -29,7 +29,7 @@ class QToolButton; // #IGNORE
 
 #ifdef TA_QT3D
 #ifndef __MAKETA__
-#include <Qt3DCore/QCamera>
+#include <Qt3DRender/QCamera>
 #endif
 #else // TA_QT3D
 class SoCamera; // #IGNORE
@@ -54,9 +54,9 @@ public:
 
 #ifdef TA_QT3D
 #ifndef __MAKETA__
-  void          getCameraParams(Qt3DCore::QCamera* cam);
+  void          getCameraParams(Qt3DRender::QCamera* cam);
   // #IGNORE get the camera parameters into our saved values
-  bool          setCameraParams(Qt3DCore::QCamera* cam);
+  bool          setCameraParams(Qt3DRender::QCamera* cam);
   // #IGNORE set the camera parmeters from our saved values (returns false if no view saved)
 #endif
 #else // TA_QT3D

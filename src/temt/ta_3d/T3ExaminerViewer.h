@@ -45,23 +45,25 @@ class SbViewportRegion; //
 #ifndef __MAKETA__
 #ifdef TA_QT3D
 
-namespace Qt3D {
+namespace Qt3DCore {
   class QAspectEngine;
+  class QEntity;
+}
+
+namespace Qt3DRender {
   class QRenderAspect;
-  class QInputAspect;
-  class QEntity;
   class QCamera;
-  class QFrameGraph;
-  class QEntity;
+  class QFrameGraphNode;
   class QViewport;
-  class QMouseController;
+}
+
+namespace Qt3DInput {
+  class QInputAspect;
+  class QMouseDevice;
 }
 
 class T3CameraParams; //
 
-#include <Qt3DCore>
-#include <Qt3DRender>
-#include <Qt3DInput>
 #include <QWindow>
 
 class T3RenderView : public QWindow {
@@ -122,11 +124,11 @@ public:
   Qt3DRender::QRenderAspect* render;       // controls rendering
   Qt3DInput::QInputAspect*  input;        // controls input 
   Qt3DCore::QEntity*       root_entity;  // root of entire scenegraph, containing camera, then scene
-  Qt3DCore::QCamera*       camera;       // camera
-  Qt3DRender::QFrameGraph*   framegraph;   // framegraph for rendering
+  Qt3DRender::QCamera*       camera;       // camera
+  Qt3DRender::QFrameGraphNode* framegraph;   // framegraph for rendering
   Qt3DRender::QViewport*     viewport;     // viewport for rendering
   Qt3DCore::QEntity*       scene;        // root of the actual objects being viewed -- below camera
-  Qt3DInput::QMouseController* mouse_ctrl; // overall mouse controller for scene -- lives in root_entity
+  Qt3DInput::QMouseDevice* mouse_dev; // overall mouse device for scene -- lives in root_entity
   QColor               bg_color;     // background color
 #endif
 #else
@@ -194,7 +196,7 @@ public:
   //   Functions that actually do stuff
 
 #ifdef TA_QT3D
-  Qt3DCore::QCamera*        getViewerCamera() const  { return camera; }
+  Qt3DRender::QCamera*  getViewerCamera() const  { return camera; }
   void                  setSceneGraph(Qt3DCore::QEntity* root);
   // set scene graph to given new root -- added under root_entity
   Qt3DCore::QEntity*        getSceneGraph() const  { return scene; }

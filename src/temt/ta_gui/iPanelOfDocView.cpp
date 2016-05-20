@@ -152,7 +152,7 @@ iPanelOfDocView::iPanelOfDocView()
   connect(webview, SIGNAL(sigCreateWindow(QWebEnginePage::WebWindowType,
                                           iWebView*&)), this, SLOT(doc_createWindow(QWebEnginePage::WebWindowType,
                                                                                     iWebView*&)) );
-  QWebEngineProfile* profile = webview->page()->prof
+  // QWebEngineProfile* profile = webview->page()->prof
 #else // USE_QT_WEBENGINE
   webview->page()->setNetworkAccessManager(taiMisc::net_access_mgr);
   webview->page()->setForwardUnsupportedContent(true);

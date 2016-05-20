@@ -1218,7 +1218,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           sogr->block_height = mat_block_height;
           sogr->trans_max = mat_trans;
           sogr->user_data = dc; // needed for point picking
-          sogr->addMouseInput(vw->mouse_ctrl);
+          sogr->addMouseInput(vw->mouse_dev);
           
 #else // TA_QT3D
           SoSeparator* grsep = new SoSeparator;

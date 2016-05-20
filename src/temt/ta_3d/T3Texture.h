@@ -18,17 +18,17 @@
 
 // parent includes:
 #include <T3Entity>
-#include <Qt3DRender/QDiffuseMapMaterial>
+#include <Qt3DExtras/QDiffuseMapMaterial>
 
 // member includes:
 #include <Qt3DRender/QTextureImage>
 
 // declare all other types mentioned but not required to include:
 
-class TA_API T3Texture : public Qt3DRender::QDiffuseMapMaterial {
+class TA_API T3Texture : public Qt3DExtras::QDiffuseMapMaterial {
   // a texture material
   Q_OBJECT
-  INHERITED(Qt3DRender::QDiffuseMapMaterial)
+  INHERITED(Qt3DExtras::QDiffuseMapMaterial)
 public:
   QUrl          source;         // path to texture image
   float         specular;       // how bright is the specular (shiny reflection) component (always white)

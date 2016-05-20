@@ -43,30 +43,29 @@
 
 #include <T3CameraParams>
 
-#include <Qt3DCore/QCamera>
-#include <Qt3DCore/QCameraLens>
 #include <Qt3DCore/QTransform>
 #include <Qt3DCore/QAspectEngine>
 
 #include <Qt3DInput/QInputAspect>
-#include <Qt3DInput/QMouseController>
+#include <Qt3DInput/QMouseDevice>
 
 #include <Qt3DRender/QRenderAspect>
-#include <Qt3DRender/QFrameGraph>
-#include <Qt3DRender/QPhongMaterial>
+#include <Qt3DRender/QFrameGraphNode>
 
+#include <Qt3DRender/QCamera>
+#include <Qt3DRender/QCameraLens>
 #include <Qt3DRender/QViewport>
 #include <Qt3DRender/QCameraSelector>
-#include <Qt3DRender/QClearBuffer>
+#include <Qt3DRender/QClearBuffers>
 #include <Qt3DRender/QTechniqueFilter>
 #include <Qt3DRender/QRenderPassFilter>
-#include <Qt3DRender/QAnnotation>
 
 #include <QKeyEvent>
 #include <QOpenGLContext>
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
+using namespace Qt3DInput;
 
 
 T3RenderView::T3RenderView(QScreen *screen)
@@ -213,13 +212,13 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
   input->setCamera(camera);
 
-  framegraph = new QFrameGraph();
+  framegraph = new QFrameGraphNode();
 
   viewport = new QViewport; // head node -- common stuff
   viewport->setRect(QRectF(0.0f, 0.0f, 1.0f, 1.0f));
   viewport->setClearColor(bg_color);
-  QClearBuffer* cb = new QClearBuffer(viewport);
-  cb->setBuffers(QClearBuffer::ColorDepthBuffer);
+  QClearBuffers* cb = new QClearBuffers(viewport);
+  cb->setBuffers(QClearBuffers::ColorDepthBuffer);
 
   // QRenderPassFilter* trans_rend = new QRenderPassFilter(cb);
   // QAnnotation* transAnno = new QAnnotation(trans_rend);
@@ -239,7 +238,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
   framegraph->setActiveFrameGraph(viewport);
 
-  mouse_ctrl = new Qt3DInput::QMouseController(root_entity);
+  mouse_dev = new Qt3DInput::QMouseDevice(root_entity);
   
   root_entity->addComponent(framegraph);
   engine->setRootEntity(root_entity);

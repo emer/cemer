@@ -20,6 +20,7 @@
 #include <taMisc>
 
 using namespace Qt3DCore;
+using namespace Qt3DRender;
 
 #else // TA_QT3D
 

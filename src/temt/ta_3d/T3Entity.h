@@ -39,7 +39,7 @@ class Qt3DNode; // #IGNORE
 #include <Qt3DCore/QTransform>
 #include <Qt3DRender/QGeometryRenderer>
 #include <Qt3DRender/QMaterial>
-#include <Qt3DInput/QMouseInput>
+#include <Qt3DInput/QMouseHandler>
 #include <QColor>
 
 namespace Qt3DRender {
@@ -67,7 +67,7 @@ public:
   Qt3DCore::QTransform*          transform; // overall transform applied to this node -- contains each of the following items:
   Qt3DRender::QGeometryRenderer*   mesh;      // mesh component for this node
   Qt3DRender::QMaterial*           material;  // material for this node
-  Qt3DInput::QMouseInput*         mouse;     // mouse input object if created
+  Qt3DInput::QMouseHandler*        mouse;     // mouse input object if created
   QVector3D                  size;      // overall size of the object (if known) -- 0 if not
   
   void  addMesh(Qt3DRender::QGeometryRenderer* msh)
@@ -82,8 +82,8 @@ public:
   { removeComponent(mat); if(material == mat) material = NULL; }
   // remove material component
 
-  void  addMouseInput(Qt3DInput::QMouseController* mouse_ctrl);
-  // add a QMouseInput component and send its clicked, double-clicked signals to this object's mouse* slots -- needs the mouse_ctrl from the T3ExaminerViewer
+  void  addMouseInput(Qt3DInput::QMouseDevice* mouse_dev);
+  // add a QMouseHandler component and send its clicked, double-clicked signals to this object's mouse* slots -- needs the mouse_dev from the T3ExaminerViewer
   
   inline void   Translate(const QVector3D& pos)
   { transform->setTranslation(pos); }

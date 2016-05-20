@@ -172,8 +172,8 @@ public:
   QT3D_FUNCTOR(T3TwoDTextureDataFunctor)
 };
 
-QTextureDataFunctorPtr T3TwoDTexture::dataFunctor() const {
-  return QTextureDataFunctorPtr(new T3TwoDTextureDataFunctor(image));
+QTextureImageDataGeneratorPtr T3TwoDTexture::dataGenerator() const {
+  return QTextureImageDataGeneratorPtr(new T3TwoDTextureDataFunctor(image));
 }
 
 void T3TwoDTexture::copy(const Qt3DNode *ref) {

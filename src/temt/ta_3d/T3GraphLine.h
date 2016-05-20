@@ -94,7 +94,7 @@ public:
   void 			setLineStyle(LineStyle value, float line_width = 0.0f);
   void			setMarkerSize(float sz);
 
-  void			clear(); //
+  void			clear() override; //
 
   // text api
   void			textAt(const iVec3f& pt, const char* str);

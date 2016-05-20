@@ -52,7 +52,7 @@ public:
   T3Entity*             labels;
   T3LineStrip*          lines;
   
-  void			clear();
+  void			clear() override;
   void			addLabel(const char* text, const iVec3f& at);
   // add the label text, justified per axis (used for tick labels)
   void			addLabel(const char* text, const iVec3f& at, int just);
