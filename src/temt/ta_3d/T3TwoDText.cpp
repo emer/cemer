@@ -16,7 +16,7 @@
 #include "T3TwoDText.h"
 
 #include <T3DiffuseTransMapMaterial>
-#include <Qt3DRender/QPlaneMesh>
+#include <Qt3DExtras/QPlaneMesh>
 #include <QPalette>
 #include <QPainter>
 
@@ -25,6 +25,7 @@
 using namespace Qt3DCore;
 using namespace Qt3DRender;
 using namespace Qt3DInput;
+using namespace Qt3DExtras;
 
 T3TwoDText::T3TwoDText(Qt3DNode* parent)
   : T3Entity(parent)

@@ -24,9 +24,10 @@
 #include <Qt3DRender/QGraphicsApiFilter> 
 #include <Qt3DRender/QCullFace>
 #include <Qt3DRender/QDepthTest>
-#include <Qt3DRender/QDepthMask>
-#include <Qt3DRender/QBlendState>
+// #include <Qt3DRender/QDepthMask>
+// #include <Qt3DRender/QBlendState>
 #include <Qt3DRender/QBlendEquation>
+#include <Qt3DRender/QBlendEquationArguments>
 #include <Qt3DRender/QTexture>
 #include <QUrl>
 #include <QVector3D>
@@ -61,8 +62,8 @@ T3DiffuseTransMapMaterial::T3DiffuseTransMapMaterial(QNode *parent)
   QObject::connect(m_shininessParameter, SIGNAL(valueChanged()), this, SIGNAL(shininessChanged()));
   QObject::connect(m_textureScaleParameter, SIGNAL(valueChanged()), this, SIGNAL(textureScaleChanged()));
 
-  m_diffuseTexture->setMagnificationFilter(QAbstractTextureProvider::Linear);
-  m_diffuseTexture->setMinificationFilter(QAbstractTextureProvider::LinearMipMapLinear);
+  m_diffuseTexture->setMagnificationFilter(QAbstractTexture::Linear);
+  m_diffuseTexture->setMinificationFilter(QAbstractTexture::LinearMipMapLinear);
   m_diffuseTexture->setWrapMode(QTextureWrapMode(QTextureWrapMode::Repeat));
   m_diffuseTexture->setGenerateMipMaps(true);
   m_diffuseTexture->setMaximumAnisotropy(16.0f);
@@ -94,9 +95,9 @@ QColor T3DiffuseTransMapMaterial::ambient() const
 
   Holds the diffuse color.
 */
-QAbstractTextureProvider* T3DiffuseTransMapMaterial::diffuse() const
+QAbstractTexture* T3DiffuseTransMapMaterial::diffuse() const
 {
-  return m_diffuseParameter->value().value<QAbstractTextureProvider *>();
+  return m_diffuseParameter->value().value<QAbstractTexture *>();
 }
 
 /*!
@@ -139,7 +140,7 @@ void T3DiffuseTransMapMaterial::setShininess(float shininess)
   m_shininessParameter->setValue(shininess);
 }
 
-void T3DiffuseTransMapMaterial::setDiffuse(QAbstractTextureProvider *diffuseMap)
+void T3DiffuseTransMapMaterial::setDiffuse(QAbstractTexture *diffuseMap)
 {
   m_diffuseParameter->setValue(QVariant::fromValue(diffuseMap));
 }
@@ -166,30 +167,39 @@ void T3DiffuseTransMapMaterial::setTextureScale(float textureScale)
 
 void T3DiffuseTransMapMaterial::init_render_pass(QRenderPass* pass) {
   // this is how we separate these out
-  QAnnotation* techannote = new QAnnotation;
-  techannote->setName("renderingStyle");
-  techannote->setValue("transparent");
-  pass->addAnnotation(techannote);
+  // QAnnotation* techannote = new QAnnotation;
+  // techannote->setName("renderingStyle");
+  // techannote->setValue("transparent");
+  // pass->addAnnotation(techannote);
   
   QCullFace* cf = new QCullFace;
   cf->setMode(QCullFace::Back);
   pass->addRenderState(cf);
 
   QDepthTest* dt = new QDepthTest;
-  dt->setFunc(QDepthTest::Less);
+  dt->setDepthFunction(QDepthTest::Less);
   pass->addRenderState(dt);
 
-  QDepthMask* dm = new QDepthMask;
-  dm->setMask(false);
-  pass->addRenderState(dm);
+  // QDepthMask* dm = new QDepthMask;
+  // dm->setMask(false);
+  // pass->addRenderState(dm);
   
-  QBlendState* bs = new QBlendState;
-  bs->setSrcRGB(QBlendState::SrcAlpha);
-  bs->setDstRGB(QBlendState::OneMinusSrcAlpha);
-  pass->addRenderState(bs);
+  // QBlendState* bs = new QBlendState;
+  // bs->setSrcRGB(QBlendState::SrcAlpha);
+  // bs->setDstRGB(QBlendState::OneMinusSrcAlpha);
+  // pass->addRenderState(bs);
+
+  // QBlendEquation* be = new QBlendEquation;
+  // be->setMode(QBlendEquation::FuncAdd);
+  // pass->addRenderState(be);
+  
+  QBlendEquationArguments* bea = new QBlendEquationArguments;
+  bea->setSourceRgb(QBlendEquationArguments::SourceAlpha);
+  bea->setDestinationRgb(QBlendEquationArguments::OneMinusSourceAlpha);
+  pass->addRenderState(bea);
 
   QBlendEquation* be = new QBlendEquation;
-  be->setMode(QBlendEquation::FuncAdd);
+  be->setBlendFunction(QBlendEquation::Add);
   pass->addRenderState(be);
   
 }
@@ -224,9 +234,9 @@ void T3DiffuseTransMapMaterial::init() {
   init_render_pass(m_transGL2RenderPass);
   init_render_pass(m_transES2RenderPass);
   
-  m_transGL3Technique->addPass(m_transGL3RenderPass);
-  m_transGL2Technique->addPass(m_transGL2RenderPass);
-  m_transES2Technique->addPass(m_transES2RenderPass);
+  m_transGL3Technique->addRenderPass(m_transGL3RenderPass);
+  m_transGL2Technique->addRenderPass(m_transGL2RenderPass);
+  m_transES2Technique->addRenderPass(m_transES2RenderPass);
 
   m_transEffect->addTechnique(m_transGL3Technique);
   m_transEffect->addTechnique(m_transGL2Technique);

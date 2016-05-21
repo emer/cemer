@@ -24,9 +24,11 @@
 #include <Qt3DRender/QGraphicsApiFilter>
 #include <Qt3DRender/QCullFace>
 #include <Qt3DRender/QDepthTest>
-#include <Qt3DRender/QDepthMask>
-#include <Qt3DRender/QBlendState>
+// #include <Qt3DRender/QDepthMask>
+// #include <Qt3DRender/QBlendState>
+#include <Qt3DRender/QRenderStateSet>
 #include <Qt3DRender/QBlendEquation>
+#include <Qt3DRender/QBlendEquationArguments>
 #include <QUrl>
 #include <QVector3D>
 #include <QVector4D>
@@ -108,30 +110,38 @@ void T3PerVertexTransMaterial::setShininess(float shininess)
 
 void T3PerVertexTransMaterial::init_render_pass(QRenderPass* pass) {
   // this is how we separate these out
-  QAnnotation* techannote = new QAnnotation;
-  techannote->setName("renderingStyle");
-  techannote->setValue("transparent");
-  pass->addAnnotation(techannote);
+  // QAnnotation* techannote = new QAnnotation;
+  // techannote->setName("renderingStyle");
+  // techannote->setValue("transparent");
+  // pass->addAnnotation(techannote);
   
   QCullFace* cf = new QCullFace;
   cf->setMode(QCullFace::Back);
   pass->addRenderState(cf);
 
   QDepthTest* dt = new QDepthTest;
-  dt->setFunc(QDepthTest::Less);
+  dt->setDepthFunction(QDepthTest::Less);
   pass->addRenderState(dt);
 
-  QDepthMask* dm = new QDepthMask;
-  dm->setMask(false);
-  pass->addRenderState(dm);
+  // QDepthMask* dm = new QDepthMask;
+  // dm->setMask(false);
+  // pass->addRenderState(dm);
+
+  // QRenderStateSet* rss = new QRenderStateSet;
+  // QRenderState
   
-  QBlendState* bs = new QBlendState;
-  bs->setSrcRGB(QBlendState::SrcAlpha);
-  bs->setDstRGB(QBlendState::OneMinusSrcAlpha);
-  pass->addRenderState(bs);
+  // QBlendState* bs = new QBlendState;
+  // bs->setSrcRGB(QBlendState::SrcAlpha);
+  // bs->setDstRGB(QBlendState::OneMinusSrcAlpha);
+  // pass->addRenderState(bs);
+
+  QBlendEquationArguments* bea = new QBlendEquationArguments;
+  bea->setSourceRgb(QBlendEquationArguments::SourceAlpha);
+  bea->setDestinationRgb(QBlendEquationArguments::OneMinusSourceAlpha);
+  pass->addRenderState(bea);
 
   QBlendEquation* be = new QBlendEquation;
-  be->setMode(QBlendEquation::FuncAdd);
+  be->setBlendFunction(QBlendEquation::Add);
   pass->addRenderState(be);
   
 }
@@ -166,9 +176,9 @@ void T3PerVertexTransMaterial::init() {
   init_render_pass(m_transGL2RenderPass);
   init_render_pass(m_transES2RenderPass);
   
-  m_transGL3Technique->addPass(m_transGL3RenderPass);
-  m_transGL2Technique->addPass(m_transGL2RenderPass);
-  m_transES2Technique->addPass(m_transES2RenderPass);
+  m_transGL3Technique->addRenderPass(m_transGL3RenderPass);
+  m_transGL2Technique->addRenderPass(m_transGL2RenderPass);
+  m_transES2Technique->addRenderPass(m_transES2RenderPass);
 
   m_transEffect->addTechnique(m_transGL3Technique);
   m_transEffect->addTechnique(m_transGL2Technique);

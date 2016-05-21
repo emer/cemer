@@ -14,14 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "T3ColorEntity.h"
-#include <Qt3DRender/QPhongMaterial>
-#include <Qt3DRender/QPerVertexColorMaterial>
-#include <T3TransparentMaterial>
+#include <Qt3DExtras/QPhongMaterial>
+#include <Qt3DExtras/QPerVertexColorMaterial>
+#include <Qt3DExtras/QPhongAlphaMaterial>
 #include <T3PerVertexTransMaterial>
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
 using namespace Qt3DInput;
+using namespace Qt3DExtras;
 
 T3ColorEntity::T3ColorEntity(Qt3DNode* parent)
   : inherited(parent)
@@ -128,7 +129,7 @@ void T3ColorEntity::updateColor() {
     removeAllBut(TRANS);
     bool add = false;
     if(!trans) {
-      trans = new T3TransparentMaterial();
+      trans = new QPhongAlphaMaterial();
       add = true;
     }
     trans->setDiffuse(color);

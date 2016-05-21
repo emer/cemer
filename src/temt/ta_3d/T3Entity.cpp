@@ -39,7 +39,7 @@ T3Entity::~T3Entity() {
 
 void T3Entity::addMouseInput(QMouseDevice* mouse_dev) {
   if(mouse) return;
-  mouse = new QMouseInput();
+  mouse = new QMouseHandler();
   mouse->setSourceDevice(mouse_dev);
   addComponent(mouse);
   // todo: clicked actually not implemented yet!

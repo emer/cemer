@@ -60,30 +60,21 @@
 #include <Qt3DRender/QTechniqueFilter>
 #include <Qt3DRender/QRenderPassFilter>
 
+#include <Qt3DExtras/QOrbitCameraController>
+#include <Qt3DExtras/QForwardRenderer>
+
 #include <QKeyEvent>
 #include <QOpenGLContext>
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
 using namespace Qt3DInput;
+using namespace Qt3DExtras;
 
 
 T3RenderView::T3RenderView(QScreen *screen)
-: QWindow(screen)
+: Qt3DWindow(screen)
 {
-  setSurfaceType(QSurface::OpenGLSurface);
-
-  // resize(1024, 768);
-
-  QSurfaceFormat format;
-  if (QOpenGLContext::openGLModuleType() == QOpenGLContext::LibGL) {
-    format.setVersion(4, 3);
-    format.setProfile(QSurfaceFormat::CoreProfile);
-  }
-  format.setDepthBufferSize( 24 );
-  format.setSamples( 4 );
-  setFormat(format);
-  create();
 }
 
 T3RenderView::~T3RenderView() {
@@ -182,17 +173,12 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   view3d = new T3RenderView(scr);
   QWidget* container = QWidget::createWindowContainer(view3d);
   main_hbox->addWidget(container, 1);
-  engine = new QAspectEngine;
-  render = new QRenderAspect();
-  engine->registerAspect(render);
-  input = new Qt3DInput::QInputAspect;
-  engine->registerAspect(input);
   // engine->initialize();
-  QVariantMap data;
-  data.insert(QStringLiteral("surface"),
-              QVariant::fromValue(static_cast<QSurface *>(view3d)));
-  data.insert(QStringLiteral("eventSource"), QVariant::fromValue(view3d));
-  engine->setData(data);
+  // QVariantMap data;
+  // data.insert(QStringLiteral("surface"),
+  //             QVariant::fromValue(static_cast<QSurface *>(view3d)));
+  // data.insert(QStringLiteral("eventSource"), QVariant::fromValue(view3d));
+  // engine->setData(data);
 
   root_entity = new QEntity();
   camera = new QCamera(root_entity);
@@ -210,23 +196,26 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   camera->setPosition(QVector3D(0.0f, 0.0f, 2.0f));
   camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
   camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
-  input->setCamera(camera);
 
-  framegraph = new QFrameGraphNode();
+  camera_ctrl = new QOrbitCameraController(root_entity);
+    // camController->setLinearSpeed( 50.0f );
+    // camController->setLookSpeed( 180.0f );
+  camera_ctrl->setCamera(camera);
 
   viewport = new QViewport; // head node -- common stuff
-  viewport->setRect(QRectF(0.0f, 0.0f, 1.0f, 1.0f));
-  viewport->setClearColor(bg_color);
-  QClearBuffers* cb = new QClearBuffers(viewport);
-  cb->setBuffers(QClearBuffers::ColorDepthBuffer);
+  viewport->setNormalizedRect(QRectF(0.0f, 0.0f, 1.0f, 1.0f));
+  // viewport->setClearColor(bg_color);
+  // QClearBuffers* cb = new QClearBuffers(viewport);
+  // cb->setBuffers(QClearBuffers::ColorDepthBuffer);
 
   // QRenderPassFilter* trans_rend = new QRenderPassFilter(cb);
   // QAnnotation* transAnno = new QAnnotation(trans_rend);
   // transAnno->setName(QStringLiteral("renderingStyle"));
   // transAnno->setValue(QStringLiteral("transparent"));
   // trans_rend->addInclude(transAnno);
-  QCameraSelector* cam = new QCameraSelector(cb);
-  cam->setCamera(camera);
+
+  // QCameraSelector* cam = new QCameraSelector(cb);
+  // cam->setCamera(camera);
   
   // QRenderPassFilter* opaque_rend = new QRenderPassFilter(cb);
   // QAnnotation* opaqueAnno = new QAnnotation(opaque_rend);
@@ -236,12 +225,11 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   // QCameraSelector* cam2 = new QCameraSelector(opaque_rend);
   // cam2->setCamera(camera);
 
-  framegraph->setActiveFrameGraph(viewport);
+  // framegraph->setActiveFrameGraph(viewport);
 
   mouse_dev = new Qt3DInput::QMouseDevice(root_entity);
   
-  root_entity->addComponent(framegraph);
-  engine->setRootEntity(root_entity);
+  view3d->setRootEntity(root_entity);
 
 #else
   // note: we're setting our format right at construction, instead of doing
@@ -979,7 +967,7 @@ void T3ExaminerViewer::setSceneGraph(QEntity* root) {
 
 void T3ExaminerViewer::setBackgroundColor(const QColor & color) {
   bg_color = color;
-  viewport->setClearColor(bg_color);
+  view3d->defaultFramegraph()->setClearColor(bg_color);
 }
 
 void T3ExaminerViewer::setCameraParams(const T3CameraParams& cps) {

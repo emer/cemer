@@ -44,7 +44,7 @@ public:
   Q_PROPERTY(QColor ambient READ ambient WRITE setAmbient NOTIFY ambientChanged)
   Q_PROPERTY(QColor specular READ specular WRITE setSpecular NOTIFY specularChanged)
   Q_PROPERTY(float shininess READ shininess WRITE setShininess NOTIFY shininessChanged)
-  Q_PROPERTY(Qt3DRender::QAbstractTextureProvider *diffuse READ diffuse WRITE setDiffuse NOTIFY diffuseChanged)
+  Q_PROPERTY(Qt3DRender::QAbstractTexture *diffuse READ diffuse WRITE setDiffuse NOTIFY diffuseChanged)
   Q_PROPERTY(float textureScale READ textureScale WRITE setTextureScale NOTIFY textureScaleChanged)
 
   explicit T3DiffuseTransMapMaterial(Qt3DCore::QNode *parent = 0);
@@ -54,13 +54,14 @@ public:
   QColor ambient() const;
   QColor specular() const;
   float shininess() const;
-  Qt3DRender::QAbstractTextureProvider *diffuse() const;
+  Qt3DRender::QAbstractTexture *diffuse() const;
   float textureScale() const;
 
+public slots:
   void setAmbient(const QColor &ambient);
   void setSpecular(const QColor &specular);
   void setShininess(float shininess);
-  void setDiffuse(Qt3DRender::QAbstractTextureProvider *diffuse);
+  void setDiffuse(Qt3DRender::QAbstractTexture *diffuse);
   void setTextureScale(float textureScale);
 
  signals:
@@ -72,7 +73,7 @@ public:
 
  protected:
   Qt3DRender::QEffect *m_transEffect;
-  Qt3DRender::QAbstractTextureProvider *m_diffuseTexture;
+  Qt3DRender::QAbstractTexture *m_diffuseTexture;
   Qt3DRender::QParameter *m_ambientParameter;
   Qt3DRender::QParameter *m_diffuseParameter;
   Qt3DRender::QParameter *m_specularParameter;

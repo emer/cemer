@@ -26,7 +26,9 @@
 class T3TransparentMaterial;
 class T3PerVertexTransMaterial;
 
-namespace Qt3DRender {
+namespace Qt3DExtras {
+  class QPhongMaterial;
+  class QPhongAlphaMaterial;
   class QPerVertexColorMaterial;
 }
 
@@ -68,10 +70,10 @@ public slots:
 protected:
 
   void removeAllBut(ColorType typ);
-  Qt3DRender::QPhongMaterial* phong;  // phong material -- null if using texture mode
-  T3TransparentMaterial* trans;
+  Qt3DExtras::QPhongMaterial* phong;  // phong material -- null if using texture mode
+  Qt3DExtras::QPhongAlphaMaterial* trans;
   T3Texture*    texture;        // texture -- null if using phong mode
-  Qt3DRender::QPerVertexColorMaterial* per_vertex;
+  Qt3DExtras::QPerVertexColorMaterial* per_vertex;
   T3PerVertexTransMaterial* per_vertex_trans;
 };
 

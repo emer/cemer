@@ -62,11 +62,15 @@ namespace Qt3DInput {
   class QMouseDevice;
 }
 
+namespace Qt3DExtras {
+  class QOrbitCameraController;
+}
+
+#include <Qt3DExtras/Qt3DWindow>
+
 class T3CameraParams; //
 
-#include <QWindow>
-
-class T3RenderView : public QWindow {
+class T3RenderView : public Qt3DExtras::Qt3DWindow {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS rendering surface for Qt3D rendering
   Q_OBJECT
 public:
@@ -120,14 +124,11 @@ public:
 #ifdef TA_QT3D
 #ifndef __MAKETA__
   T3RenderView*        view3d;       // surface that we render onto
-  Qt3DCore::QAspectEngine* engine;       // overall master engine that does stuff
-  Qt3DRender::QRenderAspect* render;       // controls rendering
-  Qt3DInput::QInputAspect*  input;        // controls input 
-  Qt3DCore::QEntity*       root_entity;  // root of entire scenegraph, containing camera, then scene
-  Qt3DRender::QCamera*       camera;       // camera
-  Qt3DRender::QFrameGraphNode* framegraph;   // framegraph for rendering
-  Qt3DRender::QViewport*     viewport;     // viewport for rendering
-  Qt3DCore::QEntity*       scene;        // root of the actual objects being viewed -- below camera
+  Qt3DCore::QEntity*   root_entity;  // root of entire scenegraph, containing camera, then scene
+  Qt3DRender::QCamera* camera;       // camera
+  Qt3DExtras::QOrbitCameraController*  camera_ctrl;        // controls camera
+  Qt3DCore::QEntity*   scene;        // root of the actual objects being viewed -- below camera
+  Qt3DRender::QViewport*   viewport;     // viewport for rendering
   Qt3DInput::QMouseDevice* mouse_dev; // overall mouse device for scene -- lives in root_entity
   QColor               bg_color;     // background color
 #endif

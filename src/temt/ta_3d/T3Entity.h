@@ -42,7 +42,7 @@ class Qt3DNode; // #IGNORE
 #include <Qt3DInput/QMouseHandler>
 #include <QColor>
 
-namespace Qt3DRender {
+namespace Qt3DExtras {
   class QPhongMaterial;
 }
 
