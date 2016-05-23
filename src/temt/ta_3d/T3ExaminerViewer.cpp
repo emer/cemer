@@ -63,6 +63,10 @@
 #include <Qt3DExtras/QOrbitCameraController>
 #include <Qt3DExtras/QForwardRenderer>
 
+// for testing:
+#include <Qt3DExtras/QSphereMesh>
+#include <Qt3DExtras/QPhongMaterial>
+
 #include <QKeyEvent>
 #include <QOpenGLContext>
 
@@ -181,7 +185,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   // engine->setData(data);
 
   root_entity = new QEntity();
-  camera = new QCamera(root_entity);
+  camera = view3d->camera(); //new QCamera(root_entity);
 
   QSize sz = container->size();
   float aspect_ratio = (float)sz.width() / (float)sz.height();
@@ -197,13 +201,14 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
   camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
 
+  
   camera_ctrl = new QOrbitCameraController(root_entity);
     // camController->setLinearSpeed( 50.0f );
     // camController->setLookSpeed( 180.0f );
   camera_ctrl->setCamera(camera);
 
-  viewport = new QViewport; // head node -- common stuff
-  viewport->setNormalizedRect(QRectF(0.0f, 0.0f, 1.0f, 1.0f));
+  // viewport = new QViewport; // head node -- common stuff
+  // viewport->setNormalizedRect(QRectF(0.0f, 0.0f, 1.0f, 1.0f));
   // viewport->setClearColor(bg_color);
   // QClearBuffers* cb = new QClearBuffers(viewport);
   // cb->setBuffers(QClearBuffers::ColorDepthBuffer);
@@ -228,6 +233,13 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   // framegraph->setActiveFrameGraph(viewport);
 
   mouse_dev = new Qt3DInput::QMouseDevice(root_entity);
+
+  // Qt3DRender::QMaterial *material = new Qt3DExtras::QPhongMaterial(root_entity);
+  // Qt3DCore::QEntity *sphereEntity = new Qt3DCore::QEntity(root_entity);
+  // Qt3DExtras::QSphereMesh *sphereMesh = new Qt3DExtras::QSphereMesh;
+  // sphereMesh->setRadius(.3);
+  // sphereEntity->addComponent(sphereMesh);
+  // sphereEntity->addComponent(material);
   
   view3d->setRootEntity(root_entity);
 
@@ -958,7 +970,9 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
 
 void T3ExaminerViewer::setSceneGraph(QEntity* root) {
   if(scene) {
-    scene->setParent((Qt3DNode*)NULL);
+    // return;
+    delete scene;
+    // scene->setParent((Qt3DNode*)NULL);
   }
   scene = root;
   scene->setParent(root_entity);

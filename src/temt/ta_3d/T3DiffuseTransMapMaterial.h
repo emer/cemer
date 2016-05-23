@@ -26,14 +26,18 @@
 
 // declare all other types mentioned but not required to include:
 namespace Qt3DRender {
-
-class QEffect;
-class QTechnique;
-class QParameter;
-class QShaderProgram;
-class QRenderPass;
-class QParameterMapping;
-class QAbstractTextureProvider;
+  class QEffect;
+  class QTechnique;
+  class QParameter;
+  class QShaderProgram;
+  class QRenderPass;
+  class QParameterMapping;
+  class QAbstractTextureProvider;
+  class QCullFace;
+  class QDepthTest;
+  class QNoDepthMask;
+  class QBlendEquationArguments;
+  class QBlendEquation;
 }
 
 class TA_API T3DiffuseTransMapMaterial : public Qt3DRender::QMaterial {
@@ -89,6 +93,11 @@ public slots:
   Qt3DRender::QRenderPass *m_transES2RenderPass;
   Qt3DRender::QShaderProgram *m_transGL3Shader;
   Qt3DRender::QShaderProgram *m_transGL2ES2Shader;
+  Qt3DRender::QCullFace *m_cullFace;
+  Qt3DRender::QDepthTest *m_depthTest;
+  Qt3DRender::QNoDepthMask *m_noDepthMask;
+  Qt3DRender::QBlendEquationArguments *m_blendEqArgs;
+  Qt3DRender::QBlendEquation *m_blendEq;
 
   void init();
   void init_render_pass(Qt3DRender::QRenderPass* pass);

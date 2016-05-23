@@ -16,6 +16,7 @@
 #include "T3TwoDText.h"
 
 #include <T3DiffuseTransMapMaterial>
+#include <Qt3DExtras/QDiffuseMapMaterial>
 #include <Qt3DExtras/QPlaneMesh>
 #include <QPalette>
 #include <QPainter>
@@ -32,19 +33,22 @@ T3TwoDText::T3TwoDText(Qt3DNode* parent)
   , align(T3_ALIGN_CENTER)
   , v_pos(T3_VPOS_CENTER)
 {
-  // bg_color = Qt::white;
-  bg_color = Qt::transparent;
+  bg_color = Qt::white;
+  // bg_color = Qt::transparent;
   QFont fnt("Arial", 24);       // 24 gives decent resolution for rendering
   label.setFont(fnt);
   texture = new T3TwoDTexture();
   plane = new T3Entity(this);
   plane->addMesh(new QPlaneMesh());
-  T3DiffuseTransMapMaterial* mat = new T3DiffuseTransMapMaterial;
+  // T3DiffuseTransMapMaterial* mat = new T3DiffuseTransMapMaterial;
+  QDiffuseMapMaterial* mat = new QDiffuseMapMaterial;
   mat->setSpecular(QColor::fromRgbF(0.2f, 0.2f, 0.2f, 1.0f));
   mat->setShininess(10000.0f);
-  mat->diffuse()->addTextureImage(texture);
   plane->addMaterial(mat);
-  plane->RotateRad(1.0f, 0.0f, 0.0f, 1.5f); // flip up by default
+  plane->RotateDeg(1.0f, 0.0f, 0.0f, 90.0f); // flip up by default
+  //  plane->transform->setRotationX(90.0f);
+  setText("null");
+  mat->diffuse()->addTextureImage(texture);
 }
 
 T3TwoDText::~T3TwoDText() {
@@ -143,7 +147,7 @@ void T3TwoDTexture::renderLabel(T3TwoDText& txt) {
   image->fill(txt.bg_color); 
   QPainter painter(image);
   txt.label.render(&painter, QPoint(), QRegion(), QWidget::DrawChildren);
-  // update();
+  notifyDataGeneratorChanged();
 }
 
 class T3TwoDTextureDataGenerator : public QTextureImageDataGenerator {
@@ -151,9 +155,10 @@ public:
   QImage image;
   
   T3TwoDTextureDataGenerator(QImage* img)
-    : QTextureImageDataGenerator()
-    , image(*img)
-  {}
+    : QTextureImageDataGenerator()   
+  {
+    if(img) image = *img;
+  }
 
   // Will be executed from within a QAspectJob
   QTextureImageDataPtr operator ()() final {

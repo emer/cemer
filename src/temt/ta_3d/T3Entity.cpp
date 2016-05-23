@@ -119,7 +119,8 @@ void T3Entity::removeAllChildren() {
   for(int i = ol.count()-1; i >= 0; i--) {
     QNode* nd = dynamic_cast<QNode*>(ol.at(i));
     if(nd) {
-      nd->setParent((QNode*)NULL);
+      delete nd;
+      // nd->setParent((QNode*)NULL);
       // nd->deleteLater(); // no deleting -- causes crashes -- threads still have these guys hanging around -- not sure what to do about the orphans though?  surely we'll be getting leaks?
     }
   }
@@ -131,7 +132,8 @@ void T3Entity::removeChildrenFrom(int idx) {
   for(int i = ol.count()-1; i >= idx; i--) {
     QNode* nd = dynamic_cast<QNode*>(ol.at(i));
     if(nd) {
-      nd->setParent((QNode*)NULL);
+      delete nd;
+      // nd->setParent((QNode*)NULL);
       // nd->deleteLater(); // no deleting -- causes crashes -- threads still have these guys hanging around -- not sure what to do about the orphans though?  surely we'll be getting leaks?
     }
   }

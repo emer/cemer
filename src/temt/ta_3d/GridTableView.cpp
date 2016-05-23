@@ -423,7 +423,7 @@ void GridTableView::Render_impl() {
   CalcViewMetrics();
   GetScaleRange();
   SetScrollBars();
-  RenderGrid();
+  // RenderGrid();
   RenderHeader();
   RenderLines();
 }
@@ -938,7 +938,8 @@ void GridTableView::RenderHeader() {
   // margin and baseline adj
   float base_adj = (head_height * T3Misc::char_base_fract);
 #ifdef TA_QT3D
-  hdr->TranslateLLFSz1To(QVector3D(0.0f, (head_height - base_adj), -gr_mg_sz), width, 0.0f);
+  // hdr->TranslateLLFSz1To(QVector3D(0.0f, (head_height - base_adj), -gr_mg_sz), width, 0.0f);
+  hdr->TranslateLLFSz1To(QVector3D(-.5f, (head_height - base_adj), -gr_mg_sz), width, 0.0f);
 #else // TA_QT3D
   SoTranslation* tr = new SoTranslation();
   hdr->addChild(tr);
@@ -1008,7 +1009,7 @@ void GridTableView::RenderHeader() {
     txt->setText(cnm);
     txt->setTextColor(txtcolr);
     txt->Scale(font_scale);
-    txt->Translate(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -gr_mg_sz);
+    txt->Translate(-0.5f + col_pos + 0.5f * col_wd_lst, -0.5f + 1.0f - row_pos, -gr_mg_sz);
 #else // TA_QT3D
     T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
     SoSeparator* colsep = colnd->topSeparator();
@@ -1041,8 +1042,10 @@ void GridTableView::RenderHeader() {
 #ifdef TA_QT3D
     T3Cube* rect = new T3Cube(hdr);
     rect->setSize(col_wd_lst - gr_mg_sz2, head_height, gr_mg_sz);
-    rect->Translate(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -2.0 * gr_mg_sz);
+    //    rect->Translate(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -2.0 * gr_mg_sz);
+    rect->Translate(-0.5f + col_pos + 0.5f * col_wd_lst, -0.5f + 1.0f - row_pos, -2.0 * gr_mg_sz);
     rect->setColor(QColor::fromRgbF(0.0f, 1.0f, 1.0f, 0.4f));
+    // rect->setColor(QColor::fromRgbF(0.0f, 1.0f, 1.0f, 1.0f));
 #else // TA_QT3D
     SoTranslation* rectr = new SoTranslation();
     colnd->addChild(rectr);
@@ -1124,7 +1127,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     txt->setText(el);
     txt->setTextColor(txtcolr);
     txt->Scale(font_scale);
-    txt->Translate(col_pos + 0.5f * col_wd_lst, 0.5f * text_ht, 0.0f);
+    txt->Translate(-0.5f + col_pos + 0.5f * col_wd_lst, -0.5f + 0.5f * text_ht, 0.0f);
 #else // TA_QT3D
     SoSeparator* row_sep = new SoSeparator;
     tr = new SoTranslation;
@@ -1208,17 +1211,17 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
         taMatrix* cell_mat =  dc->AR();
         if(cell_mat) {
 #ifdef TA_QT3D
-          T3MatrixGrid* sogr = new T3MatrixGrid
-            (ln, cell_mat, act_idx, cvs->mat_odd_vert, &colorscale, 
-             (T3MatrixGrid::MatrixLayout)cvs->mat_layout, mat_val_text);
-          sogr->Translate(col_pos + gr_mg_sz, -0.5f * row_height + 2.0f * gr_mg_sz, 0.0f);
-          sogr->Scale3D(col_wd, mat_ht, 1.0f);
-          sogr->RotateDeg(1.0f, 0.0f, 0.0f, mat_rot);
-          sogr->spacing = mat_block_spc;
-          sogr->block_height = mat_block_height;
-          sogr->trans_max = mat_trans;
-          sogr->user_data = dc; // needed for point picking
-          sogr->addMouseInput(vw->mouse_dev);
+          // T3MatrixGrid* sogr = new T3MatrixGrid
+          //   (ln, cell_mat, act_idx, cvs->mat_odd_vert, &colorscale, 
+          //    (T3MatrixGrid::MatrixLayout)cvs->mat_layout, mat_val_text);
+          // sogr->Translate(col_pos + gr_mg_sz, -0.5f * row_height + 2.0f * gr_mg_sz, 0.0f);
+          // sogr->Scale3D(col_wd, mat_ht, 1.0f);
+          // sogr->RotateDeg(1.0f, 0.0f, 0.0f, mat_rot);
+          // sogr->spacing = mat_block_spc;
+          // sogr->block_height = mat_block_height;
+          // sogr->trans_max = mat_trans;
+          // sogr->user_data = dc; // needed for point picking
+          // sogr->addMouseInput(vw->mouse_dev);
           
 #else // TA_QT3D
           SoSeparator* grsep = new SoSeparator;
@@ -1239,16 +1242,16 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           sogr->user_data = dc; // needed for point picking
 #endif // TA_QT3D
 
-          if(render_svg) {
-            sogr->render_svg = true;
-            sogr->svg_str = &svg_str;
-            sogr->svg_off.x = col_pos + gr_mg_sz;
-            sogr->svg_off.y = row_pos + gr_mg_sz;
-            sogr->svg_sz.x = col_wd;
-            sogr->svg_sz.y = mat_ht;
-          }
+          // if(render_svg) {
+          //   sogr->render_svg = true;
+          //   sogr->svg_str = &svg_str;
+          //   sogr->svg_off.x = col_pos + gr_mg_sz;
+          //   sogr->svg_off.y = row_pos + gr_mg_sz;
+          //   sogr->svg_sz.x = col_wd;
+          //   sogr->svg_sz.y = mat_ht;
+          // }
 
-          sogr->render();
+          // sogr->render();
         }
       }
     }
@@ -1270,7 +1273,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       txt->setText(el);
       txt->setTextColor(txtcolr);
       txt->Scale(font_scale);
-      txt->Translate(col_pos + x_offs, 0.5f * text_ht, 0.0f);
+      txt->Translate(-0.5f + col_pos + x_offs, -0.5f + 0.5f * text_ht, 0.0f);
 #else // TA_QT3D
       SoSeparator* txt_sep = new SoSeparator;
       ln->addChild(txt_sep);

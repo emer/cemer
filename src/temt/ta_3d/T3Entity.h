@@ -97,10 +97,10 @@ public:
   { transform->setScale3D(QVector3D(sx, sy, sz)); }
   inline void   RotateDeg(const QVector3D& axis, float ang_deg)
   { transform->setRotation(Qt3DCore::QTransform::fromAxisAndAngle
-                           (axis, taMath_float::deg_to_rad(ang_deg))); }
+                           (axis, ang_deg)); }
   inline void   RotateRad(const QVector3D& axis, float ang_rad)
   { transform->setRotation(Qt3DCore::QTransform::fromAxisAndAngle
-                           (axis, ang_rad)); }
+                           (axis, taMath_float::rad_to_deg(ang_rad))); }
   inline void   RotateDeg(float ax, float ay, float az, float ang_deg)
   { RotateDeg(QVector3D(ax, ay, az), ang_deg); }
   inline void   RotateRad(float ax, float ay, float az, float ang_rad)
