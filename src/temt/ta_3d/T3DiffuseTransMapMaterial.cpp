@@ -27,6 +27,7 @@
 #include <Qt3DRender/QNoDepthMask>
 #include <Qt3DRender/QBlendEquationArguments>
 #include <Qt3DRender/QBlendEquation>
+#include <Qt3DRender/QFilterKey>
 #include <Qt3DRender/QTexture>
 #include <QUrl>
 #include <QVector3D>
@@ -59,6 +60,7 @@ T3DiffuseTransMapMaterial::T3DiffuseTransMapMaterial(QNode *parent)
   , m_noDepthMask(new QNoDepthMask())
   , m_blendEqArgs(new QBlendEquationArguments())
   , m_blendEq(new QBlendEquation())
+  , m_filterKey(new QFilterKey())
 {
   QObject::connect(m_ambientParameter, SIGNAL(valueChanged()), this, SIGNAL(ambientChanged()));
   QObject::connect(m_diffuseParameter, SIGNAL(valueChanged()), this, SIGNAL(diffuseChanged()));
@@ -204,6 +206,10 @@ void T3DiffuseTransMapMaterial::init() {
   m_transES2Technique->graphicsApiFilter()->setMajorVersion(2);
   m_transES2Technique->graphicsApiFilter()->setMinorVersion(0);
   m_transES2Technique->graphicsApiFilter()->setProfile(QGraphicsApiFilter::NoProfile);
+
+  m_filterKey->setParent(this);
+  m_filterKey->setName(QStringLiteral("renderingStyle"));
+  m_filterKey->setValue(QStringLiteral("forward"));
 
   m_transGL3RenderPass->setShaderProgram(m_transGL3Shader);
   m_transGL2RenderPass->setShaderProgram(m_transGL2ES2Shader);

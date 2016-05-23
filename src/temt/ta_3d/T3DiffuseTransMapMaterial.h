@@ -38,6 +38,7 @@ namespace Qt3DRender {
   class QNoDepthMask;
   class QBlendEquationArguments;
   class QBlendEquation;
+  class QFilterKey;
 }
 
 class TA_API T3DiffuseTransMapMaterial : public Qt3DRender::QMaterial {
@@ -98,6 +99,7 @@ public slots:
   Qt3DRender::QNoDepthMask *m_noDepthMask;
   Qt3DRender::QBlendEquationArguments *m_blendEqArgs;
   Qt3DRender::QBlendEquation *m_blendEq;
+  Qt3DRender::QFilterKey *m_filterKey;
 
   void init();
   void init_render_pass(Qt3DRender::QRenderPass* pass);

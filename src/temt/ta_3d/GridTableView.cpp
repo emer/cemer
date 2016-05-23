@@ -423,7 +423,7 @@ void GridTableView::Render_impl() {
   CalcViewMetrics();
   GetScaleRange();
   SetScrollBars();
-  // RenderGrid();
+  RenderGrid();
   RenderHeader();
   RenderLines();
 }
@@ -939,6 +939,7 @@ void GridTableView::RenderHeader() {
   float base_adj = (head_height * T3Misc::char_base_fract);
 #ifdef TA_QT3D
   // hdr->TranslateLLFSz1To(QVector3D(0.0f, (head_height - base_adj), -gr_mg_sz), width, 0.0f);
+  // makes jno dif -- somehow it is not using relativity here in transforms anymore
   hdr->TranslateLLFSz1To(QVector3D(-.5f, (head_height - base_adj), -gr_mg_sz), width, 0.0f);
 #else // TA_QT3D
   SoTranslation* tr = new SoTranslation();
@@ -1211,17 +1212,17 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
         taMatrix* cell_mat =  dc->AR();
         if(cell_mat) {
 #ifdef TA_QT3D
-          // T3MatrixGrid* sogr = new T3MatrixGrid
-          //   (ln, cell_mat, act_idx, cvs->mat_odd_vert, &colorscale, 
-          //    (T3MatrixGrid::MatrixLayout)cvs->mat_layout, mat_val_text);
-          // sogr->Translate(col_pos + gr_mg_sz, -0.5f * row_height + 2.0f * gr_mg_sz, 0.0f);
-          // sogr->Scale3D(col_wd, mat_ht, 1.0f);
-          // sogr->RotateDeg(1.0f, 0.0f, 0.0f, mat_rot);
-          // sogr->spacing = mat_block_spc;
-          // sogr->block_height = mat_block_height;
-          // sogr->trans_max = mat_trans;
-          // sogr->user_data = dc; // needed for point picking
-          // sogr->addMouseInput(vw->mouse_dev);
+          T3MatrixGrid* sogr = new T3MatrixGrid
+            (ln, cell_mat, act_idx, cvs->mat_odd_vert, &colorscale, 
+             (T3MatrixGrid::MatrixLayout)cvs->mat_layout, mat_val_text);
+          sogr->Translate(-0.5f + col_pos + gr_mg_sz, -0.5f + -0.5f * row_height + 2.0f * gr_mg_sz, 0.0f);
+          sogr->Scale3D(col_wd, mat_ht, 1.0f);
+          sogr->RotateDeg(1.0f, 0.0f, 0.0f, mat_rot);
+          sogr->spacing = mat_block_spc;
+          sogr->block_height = mat_block_height;
+          sogr->trans_max = mat_trans;
+          sogr->user_data = dc; // needed for point picking
+          sogr->addMouseInput(vw->mouse_dev);
           
 #else // TA_QT3D
           SoSeparator* grsep = new SoSeparator;
@@ -1242,16 +1243,16 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           sogr->user_data = dc; // needed for point picking
 #endif // TA_QT3D
 
-          // if(render_svg) {
-          //   sogr->render_svg = true;
-          //   sogr->svg_str = &svg_str;
-          //   sogr->svg_off.x = col_pos + gr_mg_sz;
-          //   sogr->svg_off.y = row_pos + gr_mg_sz;
-          //   sogr->svg_sz.x = col_wd;
-          //   sogr->svg_sz.y = mat_ht;
-          // }
+          if(render_svg) {
+            sogr->render_svg = true;
+            sogr->svg_str = &svg_str;
+            sogr->svg_off.x = col_pos + gr_mg_sz;
+            sogr->svg_off.y = row_pos + gr_mg_sz;
+            sogr->svg_sz.x = col_wd;
+            sogr->svg_sz.y = mat_ht;
+          }
 
-          // sogr->render();
+          sogr->render();
         }
       }
     }

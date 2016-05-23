@@ -41,14 +41,14 @@ T3TwoDText::T3TwoDText(Qt3DNode* parent)
   plane = new T3Entity(this);
   plane->addMesh(new QPlaneMesh());
   // T3DiffuseTransMapMaterial* mat = new T3DiffuseTransMapMaterial;
-  QDiffuseMapMaterial* mat = new QDiffuseMapMaterial;
-  mat->setSpecular(QColor::fromRgbF(0.2f, 0.2f, 0.2f, 1.0f));
-  mat->setShininess(10000.0f);
-  plane->addMaterial(mat);
+  // QDiffuseMapMaterial* mat = new QDiffuseMapMaterial;
+  // mat->setSpecular(QColor::fromRgbF(0.2f, 0.2f, 0.2f, 1.0f));
+  // mat->setShininess(10000.0f);
+  // plane->addMaterial(mat);
   plane->RotateDeg(1.0f, 0.0f, 0.0f, 90.0f); // flip up by default
   //  plane->transform->setRotationX(90.0f);
-  setText("null");
-  mat->diffuse()->addTextureImage(texture);
+  // setText("null");
+  // mat->diffuse()->addTextureImage(texture);
 }
 
 T3TwoDText::~T3TwoDText() {
@@ -112,6 +112,7 @@ void T3TwoDText::updateRender() {
     break;
   }
   plane->Translate(xoff, yoff, 0.0f);
+  return;
   texture->renderLabel(*this);
 }
 

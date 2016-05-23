@@ -55,6 +55,7 @@ namespace Qt3DRender {
   class QCamera;
   class QFrameGraphNode;
   class QViewport;
+  class QDirectionalLight;
 }
 
 namespace Qt3DInput {
@@ -127,6 +128,10 @@ public:
   Qt3DCore::QEntity*   root_entity;  // root of entire scenegraph, containing camera, then scene
   Qt3DRender::QCamera* camera;       // camera
   Qt3DExtras::QOrbitCameraController*  camera_ctrl;        // controls camera
+  Qt3DCore::QEntity*   camera_light_ent;  // camera's light entity
+  Qt3DCore::QEntity*   sun_light_ent;     // sun light entity
+  Qt3DRender::QDirectionalLight*   sun_light;     // sun light
+  Qt3DRender::QDirectionalLight*   camera_light;  // camera light
   Qt3DCore::QEntity*   scene;        // root of the actual objects being viewed -- below camera
   Qt3DRender::QViewport*   viewport;     // viewport for rendering
   Qt3DInput::QMouseDevice* mouse_dev; // overall mouse device for scene -- lives in root_entity

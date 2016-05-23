@@ -36,6 +36,7 @@ namespace Qt3DRender {
   class QNoDepthMask;
   class QBlendEquationArguments;
   class QBlendEquation;
+  class QFilterKey;
 }
 
 class TA_API T3PerVertexTransMaterial : public Qt3DRender::QMaterial {
@@ -68,8 +69,6 @@ protected:
   Qt3DRender::QParameter *m_ambientParameter;
   Qt3DRender::QParameter *m_specularParameter;
   Qt3DRender::QParameter *m_shininessParameter;
-  Qt3DRender::QParameter *m_lightPositionParameter;
-  Qt3DRender::QParameter *m_lightIntensityParameter;
   Qt3DRender::QTechnique *m_transGL3Technique;
   Qt3DRender::QTechnique *m_transGL2Technique;
   Qt3DRender::QTechnique *m_transES2Technique;
@@ -83,6 +82,7 @@ protected:
   Qt3DRender::QNoDepthMask *m_noDepthMask;
   Qt3DRender::QBlendEquationArguments *m_blendEqArgs;
   Qt3DRender::QBlendEquation *m_blendEq;
+  Qt3DRender::QFilterKey *m_filterKey;
   
   void init();
   void init_render_pass(Qt3DRender::QRenderPass* pass);

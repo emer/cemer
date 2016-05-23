@@ -59,6 +59,7 @@
 #include <Qt3DRender/QClearBuffers>
 #include <Qt3DRender/QTechniqueFilter>
 #include <Qt3DRender/QRenderPassFilter>
+#include <Qt3DRender/QDirectionalLight>
 
 #include <Qt3DExtras/QOrbitCameraController>
 #include <Qt3DExtras/QForwardRenderer>
@@ -207,6 +208,18 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
     // camController->setLookSpeed( 180.0f );
   camera_ctrl->setCamera(camera);
 
+  sun_light_ent = new QEntity(root_entity);
+  sun_light = new QDirectionalLight();
+  sun_light->setWorldDirection(QVector3D(0.0f, -1.0f, 0.0f));
+  sun_light->setColor(QColor::fromRgbF(0.8f, 0.8f, 0.8f, 1.0f));
+  sun_light_ent->addComponent(sun_light);
+
+  camera_light_ent = new QEntity(root_entity);
+  camera_light = new QDirectionalLight();
+  camera_light->setWorldDirection(QVector3D(0.0f, -0.5f, -1.0f));
+  camera_light->setColor(QColor::fromRgbF(1.0f, 1.0f, 1.0f, 1.0f));
+  camera_light_ent->addComponent(camera_light);
+  
   // viewport = new QViewport; // head node -- common stuff
   // viewport->setNormalizedRect(QRectF(0.0f, 0.0f, 1.0f, 1.0f));
   // viewport->setClearColor(bg_color);
@@ -240,6 +253,9 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   // sphereMesh->setRadius(.3);
   // sphereEntity->addComponent(sphereMesh);
   // sphereEntity->addComponent(material);
+
+
+  
   
   view3d->setRootEntity(root_entity);
 
