@@ -15,11 +15,12 @@
 
 #include "T3Cube.h"
 
-#include <Qt3DRender/QCuboidMesh>
+#include <Qt3DExtras/QCuboidMesh>
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
 using namespace Qt3DInput;
+using namespace Qt3DExtras;
 
 T3Cube::T3Cube(Qt3DNode* parent)
   : inherited(parent)

@@ -16,14 +16,15 @@
 #include "T3Frame.h"
 
 #include <Qt3DRender/QBuffer>
-#include <Qt3DRender/QBufferFunctor>
+#include <Qt3DRender/QBufferDataGenerator>
 #include <Qt3DRender/QAttribute>
-#include <Qt3DRender/QPerVertexColorMaterial>
-#include <Qt3DRender/QPhongMaterial>
+#include <Qt3DExtras/QPerVertexColorMaterial>
+#include <Qt3DExtras/QPhongMaterial>
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
 using namespace Qt3DInput;
+using namespace Qt3DExtras;
 
 ///////////////////////////////////////////////
 //      render
@@ -333,14 +334,14 @@ QByteArray createFrameVertexData(float w, float h, float d, float fw) {
   return vertexBytes;
 }
 
-class FrameVertexBufferFunctor : public QBufferFunctor {
+class FrameVertexBufferDataGenerator : public QBufferDataGenerator {
 public:
   float		width;          // overall x dimension
   float		height;         // y dimension
   float		depth;          // z dimension
   float		frame_width;    // width of the frame -- goes in this amount from overall
   
-  FrameVertexBufferFunctor(const T3FrameMesh& mesh)
+  FrameVertexBufferDataGenerator(const T3FrameMesh& mesh)
     : width(mesh.m_width)
     , height(mesh.m_height)
     , depth(mesh.m_depth)
@@ -348,13 +349,13 @@ public:
   {
   }
 
-  QByteArray operator ()() override {
+  QByteArray operator ()() final {
     return createFrameVertexData(width, height, depth, frame_width);
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
-    const FrameVertexBufferFunctor *otherFunctor =
-      dynamic_cast<const FrameVertexBufferFunctor *>(&other);
+  bool operator ==(const QBufferDataGenerator &other) const final {
+    const FrameVertexBufferDataGenerator *otherFunctor =
+      dynamic_cast<const FrameVertexBufferDataGenerator *>(&other);
     if (otherFunctor != Q_NULLPTR)      return ((otherFunctor->width == width) &&
               (otherFunctor->height == height) &&
               (otherFunctor->depth == depth) &&
@@ -362,7 +363,7 @@ public:
     return false;
   }
 
-  QT3D_FUNCTOR(FrameVertexBufferFunctor)
+  QT3D_FUNCTOR(FrameVertexBufferDataGenerator)
 };
 
 
@@ -420,25 +421,25 @@ QByteArray createFrameIndexData() {
   return indexBytes;
 }
 
-class FrameIndexBufferFunctor : public QBufferFunctor {
+class FrameIndexBufferDataGenerator : public QBufferDataGenerator {
 public:
   
-  FrameIndexBufferFunctor(const T3FrameMesh& mesh) {
+  FrameIndexBufferDataGenerator(const T3FrameMesh& mesh) {
   }
 
-  QByteArray operator ()() override {
+  QByteArray operator ()() final {
     return createFrameIndexData();
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
-    const FrameIndexBufferFunctor *otherFunctor =
-      dynamic_cast<const FrameIndexBufferFunctor *>(&other);
+  bool operator ==(const QBufferDataGenerator &other) const final {
+    const FrameIndexBufferDataGenerator *otherFunctor =
+      dynamic_cast<const FrameIndexBufferDataGenerator *>(&other);
     if (otherFunctor != Q_NULLPTR)
       return true;
     return false;
   }
 
-  QT3D_FUNCTOR(FrameIndexBufferFunctor)
+  QT3D_FUNCTOR(FrameIndexBufferDataGenerator)
 };
 
 
@@ -503,10 +504,10 @@ FrameGeometry::FrameGeometry(QNode *parent)
   m_indexAttribute->setBuffer(m_indexBuffer);
   m_indexAttribute->setCount(indexCount);
 
-  m_vertexBuffer->setBufferFunctor
-    (QBufferFunctorPtr(new FrameVertexBufferFunctor(*m_mesh)));
-  m_indexBuffer->setBufferFunctor
-    (QBufferFunctorPtr(new FrameIndexBufferFunctor(*m_mesh)));
+  m_vertexBuffer->setDataGenerator
+    (QBufferDataGeneratorPtr(new FrameVertexBufferDataGenerator(*m_mesh)));
+  m_indexBuffer->setDataGenerator
+    (QBufferDataGeneratorPtr(new FrameIndexBufferDataGenerator(*m_mesh)));
 
   addAttribute(m_positionAttribute);
   addAttribute(m_texCoordAttribute);
@@ -516,12 +517,12 @@ FrameGeometry::FrameGeometry(QNode *parent)
 }
 
 FrameGeometry::~FrameGeometry() {
-  QGeometry::cleanup();
+  // QGeometry::cleanup();
 }
 
 void FrameGeometry::updateGeometry() {
-  m_vertexBuffer->setBufferFunctor
-    (QBufferFunctorPtr(new FrameVertexBufferFunctor(*m_mesh)));
+  m_vertexBuffer->setDataGenerator
+    (QBufferDataGeneratorPtr(new FrameVertexBufferDataGenerator(*m_mesh)));
 }
 
 
@@ -545,7 +546,7 @@ T3FrameMesh::T3FrameMesh(Qt3DNode* parent)
 }
 
 T3FrameMesh::~T3FrameMesh() {
-  QNode::cleanup();
+  // QNode::cleanup();
 }
 
 void T3FrameMesh::updateGeometry() {

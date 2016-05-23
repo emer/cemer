@@ -121,7 +121,7 @@ T3TwoDTexture::T3TwoDTexture(Qt3DNode* parent)
 }
 
 T3TwoDTexture::~T3TwoDTexture() {
-  QNode::cleanup();
+  // QNode::cleanup();
   // no!
   // if(image)
   //   delete image;
@@ -143,38 +143,36 @@ void T3TwoDTexture::renderLabel(T3TwoDText& txt) {
   image->fill(txt.bg_color); 
   QPainter painter(image);
   txt.label.render(&painter, QPoint(), QRegion(), QWidget::DrawChildren);
-  update();
+  // update();
 }
 
-class T3TwoDTextureDataFunctor : public QTextureDataFunctor {
+class T3TwoDTextureDataGenerator : public QTextureImageDataGenerator {
 public:
   QImage image;
   
-  T3TwoDTextureDataFunctor(QImage* img)
-    : QTextureDataFunctor()
+  T3TwoDTextureDataGenerator(QImage* img)
+    : QTextureImageDataGenerator()
     , image(*img)
   {}
 
   // Will be executed from within a QAspectJob
-  QTexImageDataPtr operator ()() Q_DECL_FINAL
-  {
-    QTexImageDataPtr dataPtr;
-    dataPtr.reset(new QTexImageData());
+  QTextureImageDataPtr operator ()() final {
+    QTextureImageDataPtr dataPtr;
+    dataPtr.reset(new QTextureImageData());
     dataPtr->setImage(image);
     return dataPtr;
   }
 
-  bool operator ==(const QTextureDataFunctor &other) const Q_DECL_FINAL
-  {
-    const T3TwoDTextureDataFunctor *otherFunctor = dynamic_cast<const T3TwoDTextureDataFunctor*>(&other);
-    return (otherFunctor != Q_NULLPTR && otherFunctor->image == image);
+  bool operator ==(const QTextureImageDataGenerator &other) const final {
+    const T3TwoDTextureDataGenerator *otherGenerator = dynamic_cast<const T3TwoDTextureDataGenerator*>(&other);
+    return (otherGenerator != Q_NULLPTR && otherGenerator->image == image);
   }
 
-  QT3D_FUNCTOR(T3TwoDTextureDataFunctor)
+  QT3D_FUNCTOR(T3TwoDTextureDataGenerator)
 };
 
 QTextureImageDataGeneratorPtr T3TwoDTexture::dataGenerator() const {
-  return QTextureImageDataGeneratorPtr(new T3TwoDTextureDataFunctor(image));
+  return QTextureImageDataGeneratorPtr(new T3TwoDTextureDataGenerator(image));
 }
 
 void T3TwoDTexture::copy(const Qt3DNode *ref) {

@@ -19,14 +19,16 @@
 #include <T3ExaminerViewer>
 #include <VEWorldView>
 #include <T3VEWorld>
-#include <T3TransformBoxDragger>
 
 #include <taMisc>
-
 #include <QFileInfo>
 
-#include <SoCapsule>
+#ifdef TA_QT3D
 
+#else // TA_QT3D
+
+#include <T3TransformBoxDragger>
+#include <SoCapsule>
 #include <Inventor/nodes/SoSwitch.h>
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoFont.h>
@@ -38,6 +40,9 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
+
+#endif // TA_QT3D
+
 
 TA_BASEFUNS_CTORS_DEFN(VEObjCarouselView);
 

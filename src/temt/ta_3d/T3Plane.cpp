@@ -15,12 +15,13 @@
 
 #include "T3Plane.h"
 
-#include <Qt3DRender/QPlaneMesh>
-#include <Qt3DRender/QPhongMaterial>
+#include <Qt3DExtras/QPlaneMesh>
+#include <Qt3DExtras/QPhongMaterial>
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
 using namespace Qt3DInput;
+using namespace Qt3DExtras;
 
 
 T3Plane::T3Plane(Qt3DNode* parent)

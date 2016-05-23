@@ -46,15 +46,18 @@ if (QT_USE_5)
     find_package(Qt53DCore)
     find_package(Qt53DRender)
     find_package(Qt53DInput)
+    find_package(Qt53DExtras)
 
     add_definitions(-DTA_QT3D -DUSE_QT_WEBENGINE)
 
     include_directories(${Qt53DCore_INCLUDE_DIRS} ${Qt53DRenderer_INCLUDE_DIRS}
-      ${Qt53DInput_INCLUDE_DIRS} ${Qt5WebEngineCore_INCLUDE_DIRS}
+      ${Qt53DInput_INCLUDE_DIRS} ${Qt53DExtras_INCLUDE_DIRS}
+      ${Qt5WebEngineCore_INCLUDE_DIRS}
       ${Qt5WebEngine_INCLUDE_DIRS} ${Qt5WebEngineWidgets_INCLUDE_DIRS})
 
     set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt53DCore_LIBRARIES} ${Qt53DRenderer_LIBRARIES}
-      ${Qt53DInput_LIBRARIES} ${Qt5WebEngineCore_LIBRARIES} ${Qt5WebEngine_LIBRARIES}
+      ${Qt53DInput_LIBRARIES} ${Qt53DExtras_LIBRARIES}
+      ${Qt5WebEngineCore_LIBRARIES} ${Qt5WebEngine_LIBRARIES}
       ${Qt5WebEngineWidgets_LIBRARIES})
   else (QT_USE_3D)
 

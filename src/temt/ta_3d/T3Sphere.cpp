@@ -15,11 +15,12 @@
 
 #include "T3Sphere.h"
 
-#include <Qt3DRender/QSphereMesh>
+#include <Qt3DExtras/QSphereMesh>
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
 using namespace Qt3DInput;
+using namespace Qt3DExtras;
 
 T3Sphere::T3Sphere(Qt3DNode* parent)
   : inherited(parent)

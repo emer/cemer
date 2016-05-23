@@ -16,10 +16,10 @@
 #include "T3TriangleStrip.h"
 
 #include <Qt3DRender/QBuffer>
-#include <Qt3DRender/QBufferFunctor>
+#include <Qt3DRender/QBufferDataGenerator>
 #include <Qt3DRender/QAttribute>
-#include <Qt3DRender/QPerVertexColorMaterial>
-#include <Qt3DRender/QPhongMaterial>
+#include <Qt3DExtras/QPerVertexColorMaterial>
+#include <Qt3DExtras/QPhongMaterial>
 
 #include <T3PerVertexTransMaterial>
 #include <T3Misc>
@@ -28,6 +28,7 @@
 using namespace Qt3DCore;
 using namespace Qt3DRender;
 using namespace Qt3DInput;
+using namespace Qt3DExtras;
 
 QByteArray createTriangleStripVertexData(int n_vndata, const float* vndata) {
   // Populate a buffer with the interleaved per-vertex data with
@@ -38,12 +39,12 @@ QByteArray createTriangleStripVertexData(int n_vndata, const float* vndata) {
   return vertexBytes;
 }  
 
-class TriangleStripVertexBufferFunctor : public QBufferFunctor {
+class TriangleStripVertexBufferDataGenerator : public QBufferDataGenerator {
 public:
   int     n_vndata;
   const float*  vndata;
   
-  TriangleStripVertexBufferFunctor(const T3TriangleStripMesh& mesh)
+  TriangleStripVertexBufferDataGenerator(const T3TriangleStripMesh& mesh)
     : vndata(mesh.vndata.el)
   {
     // if(mesh.node_updating) {
@@ -54,21 +55,21 @@ public:
     // }
   }
 
-  QByteArray operator ()() override {
+  QByteArray operator ()() final {
     return createTriangleStripVertexData(n_vndata, vndata);
   }
 
-  bool operator ==(const QBufferFunctor &other) const override {
+  bool operator ==(const QBufferDataGenerator &other) const final {
     return false;               // always update!!
-    const TriangleStripVertexBufferFunctor *otherFunctor =
-      dynamic_cast<const TriangleStripVertexBufferFunctor *>(&other);
+    const TriangleStripVertexBufferDataGenerator *otherFunctor =
+      dynamic_cast<const TriangleStripVertexBufferDataGenerator *>(&other);
     if (otherFunctor != Q_NULLPTR)
       return ((otherFunctor->n_vndata == n_vndata) &&
               (otherFunctor->vndata == vndata));
     return false;
   }
 
-  QT3D_FUNCTOR(TriangleStripVertexBufferFunctor)
+  QT3D_FUNCTOR(TriangleStripVertexBufferDataGenerator)
 };
 
 
@@ -78,12 +79,12 @@ QByteArray createTriangleStripIndexData(int n_indexes, const int* indexes) {
   return indexBytes;
 }
 
-class TriangleStripIndexBufferFunctor : public QBufferFunctor {
+class TriangleStripIndexBufferDataGenerator : public QBufferDataGenerator {
 public:
   int     n_indexes;
   const int*    indexes;
   
-  TriangleStripIndexBufferFunctor(const T3TriangleStripMesh& mesh)
+  TriangleStripIndexBufferDataGenerator(const T3TriangleStripMesh& mesh)
     : indexes(mesh.indexes.el)
   {
     // if(mesh.node_updating) {
@@ -94,20 +95,20 @@ public:
     // }
   }
 
-  QByteArray operator ()() override {
+  QByteArray operator ()() final {
     return createTriangleStripIndexData(n_indexes, indexes);
   }
 
-  bool operator ==(const QBufferFunctor &other) const override {
-    const TriangleStripIndexBufferFunctor *otherFunctor =
-      dynamic_cast<const TriangleStripIndexBufferFunctor *>(&other);
+  bool operator ==(const QBufferDataGenerator &other) const final {
+    const TriangleStripIndexBufferDataGenerator *otherFunctor =
+      dynamic_cast<const TriangleStripIndexBufferDataGenerator *>(&other);
     if (otherFunctor != Q_NULLPTR)
       return ((otherFunctor->n_indexes == n_indexes) &&
               (otherFunctor->indexes == indexes));
     return false;
   }
 
-  QT3D_FUNCTOR(TriangleStripIndexBufferFunctor)
+  QT3D_FUNCTOR(TriangleStripIndexBufferDataGenerator)
 };
 
 QByteArray createTriangleStripColorData(int n_colors, const float* colors) {
@@ -116,12 +117,12 @@ QByteArray createTriangleStripColorData(int n_colors, const float* colors) {
   return colorBytes;
 }
 
-class TriangleStripColorBufferFunctor : public QBufferFunctor {
+class TriangleStripColorBufferDataGenerator : public QBufferDataGenerator {
 public:
   int     n_colors;
   const float*    colors;
   
-  TriangleStripColorBufferFunctor(const T3TriangleStripMesh& mesh)
+  TriangleStripColorBufferDataGenerator(const T3TriangleStripMesh& mesh)
     : colors(mesh.colors.el)
   {
     // if(mesh.node_updating) {
@@ -133,21 +134,21 @@ public:
     // }
   }
 
-  QByteArray operator ()() override {
+  QByteArray operator ()() final {
     return createTriangleStripColorData(n_colors, colors);
   }
 
-  bool operator ==(const QBufferFunctor &other) const override {
+  bool operator ==(const QBufferDataGenerator &other) const final {
     // return false;               // always update!!
-    const TriangleStripColorBufferFunctor *otherFunctor =
-      dynamic_cast<const TriangleStripColorBufferFunctor *>(&other);
+    const TriangleStripColorBufferDataGenerator *otherFunctor =
+      dynamic_cast<const TriangleStripColorBufferDataGenerator *>(&other);
     if (otherFunctor != Q_NULLPTR)
       return ((otherFunctor->n_colors == n_colors) &&
               (otherFunctor->colors == colors));
     return false;
   }
 
-  QT3D_FUNCTOR(TriangleStripColorBufferFunctor)
+  QT3D_FUNCTOR(TriangleStripColorBufferDataGenerator)
 };
 
 
@@ -195,12 +196,12 @@ TriangleStripGeometry::TriangleStripGeometry(QNode *parent)
   m_colorAttribute->setByteStride(4 * sizeof(float));
   m_colorAttribute->setCount(m_mesh->colorCount());
 
-  m_vertexBuffer->setBufferFunctor
-    (QBufferFunctorPtr(new TriangleStripVertexBufferFunctor(*m_mesh)));
-  m_indexBuffer->setBufferFunctor
-    (QBufferFunctorPtr(new TriangleStripIndexBufferFunctor(*m_mesh)));
-  m_colorBuffer->setBufferFunctor
-    (QBufferFunctorPtr(new TriangleStripColorBufferFunctor(*m_mesh)));
+  m_vertexBuffer->setDataGenerator
+    (QBufferDataGeneratorPtr(new TriangleStripVertexBufferDataGenerator(*m_mesh)));
+  m_indexBuffer->setDataGenerator
+    (QBufferDataGeneratorPtr(new TriangleStripIndexBufferDataGenerator(*m_mesh)));
+  m_colorBuffer->setDataGenerator
+    (QBufferDataGeneratorPtr(new TriangleStripColorBufferDataGenerator(*m_mesh)));
 
   addAttribute(m_positionAttribute);
   addAttribute(m_normalAttribute);
@@ -209,26 +210,26 @@ TriangleStripGeometry::TriangleStripGeometry(QNode *parent)
 }
 
 TriangleStripGeometry::~TriangleStripGeometry() {
-  QGeometry::cleanup();
+  // QGeometry::cleanup();
 }
 
 void TriangleStripGeometry::updateIndices() {
   m_indexAttribute->setCount(m_mesh->indexCount());
-  m_indexBuffer->setBufferFunctor
-    (QBufferFunctorPtr(new TriangleStripIndexBufferFunctor(*m_mesh)));
+  m_indexBuffer->setDataGenerator
+    (QBufferDataGeneratorPtr(new TriangleStripIndexBufferDataGenerator(*m_mesh)));
 }
 
 void TriangleStripGeometry::updateVertices() {
   m_positionAttribute->setCount(m_mesh->vertexCount());
   m_normalAttribute->setCount(m_mesh->vertexCount());
-  m_vertexBuffer->setBufferFunctor
-    (QBufferFunctorPtr(new TriangleStripVertexBufferFunctor(*m_mesh)));
+  m_vertexBuffer->setDataGenerator
+    (QBufferDataGeneratorPtr(new TriangleStripVertexBufferDataGenerator(*m_mesh)));
 }
   
 void TriangleStripGeometry::updateColors() {
   m_colorAttribute->setCount(m_mesh->colorCount());
-  m_colorBuffer->setBufferFunctor
-    (QBufferFunctorPtr(new TriangleStripColorBufferFunctor(*m_mesh)));
+  m_colorBuffer->setDataGenerator
+    (QBufferDataGeneratorPtr(new TriangleStripColorBufferDataGenerator(*m_mesh)));
 }
 
 void TriangleStripGeometry::updateAll() {
@@ -248,15 +249,15 @@ T3TriangleStripMesh::T3TriangleStripMesh(Qt3DNode* parent)
   colors.SetGeom(2,4,0);
 
   setPrimitiveType(TriangleStrip);
-  setPrimitiveRestart(true);
-  setRestartIndex(0xFFFFFFFF);
+  setPrimitiveRestartEnabled(true);
+  setRestartIndexValue(0xFFFFFFFF);
   
   TriangleStripGeometry* geometry = new TriangleStripGeometry(this);
   inherited::setGeometry(geometry);
 }
 
 T3TriangleStripMesh::~T3TriangleStripMesh() {
-  QNode::cleanup();
+  // QNode::cleanup();
 }
 
 void T3TriangleStripMesh::setNodeUpdating(bool updating) {

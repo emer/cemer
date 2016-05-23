@@ -15,12 +15,13 @@
 
 #include "T3Cylinder.h"
 
-#include <Qt3DRender/QCylinderMesh>
-#include <Qt3DRender/QPhongMaterial>
+#include <Qt3DExtras/QCylinderMesh>
+#include <Qt3DExtras/QPhongMaterial>
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
 using namespace Qt3DInput;
+using namespace Qt3DExtras;
 
 T3Cylinder::T3Cylinder(Qt3DNode* parent)
   : inherited(parent)

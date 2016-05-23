@@ -16,15 +16,16 @@
 #include "T3LineBox.h"
 
 #include <Qt3DRender/QBuffer>
-#include <Qt3DRender/QBufferFunctor>
+#include <Qt3DRender/QBufferDataGenerator>
 #include <Qt3DRender/QAttribute>
-#include <Qt3DRender/QPhongMaterial>
+#include <Qt3DExtras/QPhongMaterial>
 
 #include <T3Misc>
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
 using namespace Qt3DInput;
+using namespace Qt3DExtras;
 
 
 T3LineBox::T3LineBox(Qt3DNode* parent)
@@ -93,28 +94,28 @@ QByteArray createLineBoxVertexData(const QVector3D& size) {
   return vertexBytes;
 }
   
-class LineBoxVertexBufferFunctor : public QBufferFunctor {
+class LineBoxVertexBufferDataGenerator : public QBufferDataGenerator {
 public:
   QVector3D size;
   
-  LineBoxVertexBufferFunctor(const T3LineBoxMesh& mesh)
+  LineBoxVertexBufferDataGenerator(const T3LineBoxMesh& mesh)
     : size(mesh.size)
   {
   }
 
-  QByteArray operator ()() override {
+  QByteArray operator ()() final {
     return createLineBoxVertexData(size);
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
-    const LineBoxVertexBufferFunctor *otherFunctor =
-      dynamic_cast<const LineBoxVertexBufferFunctor *>(&other);
+  bool operator ==(const QBufferDataGenerator &other) const final {
+    const LineBoxVertexBufferDataGenerator *otherFunctor =
+      dynamic_cast<const LineBoxVertexBufferDataGenerator *>(&other);
     if (otherFunctor != Q_NULLPTR)
       return (otherFunctor->size == size);
     return false;
   }
 
-  QT3D_FUNCTOR(LineBoxVertexBufferFunctor)
+  QT3D_FUNCTOR(LineBoxVertexBufferDataGenerator)
 };
 
 
@@ -146,28 +147,28 @@ QByteArray createLineBoxIndexData(const QVector3D& size) {
   return indexBytes;
 }
 
-class LineBoxIndexBufferFunctor : public QBufferFunctor {
+class LineBoxIndexBufferDataGenerator : public QBufferDataGenerator {
 public:
   QVector3D size;
   
-  LineBoxIndexBufferFunctor(const T3LineBoxMesh& mesh)
+  LineBoxIndexBufferDataGenerator(const T3LineBoxMesh& mesh)
     : size(mesh.size)
   {
   }
 
-  QByteArray operator ()() override {
+  QByteArray operator ()() final {
     return createLineBoxIndexData(size);
   }
 
-  bool operator ==(const QBufferFunctor &other) const {
-    const LineBoxIndexBufferFunctor *otherFunctor =
-      dynamic_cast<const LineBoxIndexBufferFunctor *>(&other);
+  bool operator ==(const QBufferDataGenerator &other) const final {
+    const LineBoxIndexBufferDataGenerator *otherFunctor =
+      dynamic_cast<const LineBoxIndexBufferDataGenerator *>(&other);
     if (otherFunctor != Q_NULLPTR)
       return (otherFunctor->size == size);
     return false;
   }
 
-  QT3D_FUNCTOR(LineBoxIndexBufferFunctor)
+  QT3D_FUNCTOR(LineBoxIndexBufferDataGenerator)
 };
 
 ////////////////////////////////////////////////////
@@ -194,22 +195,22 @@ LineBoxGeometry::LineBoxGeometry(QNode *parent)
   m_indexAttribute->setBuffer(m_indexBuffer);
   m_indexAttribute->setCount(24);
 
-  m_vertexBuffer->setBufferFunctor
-    (QBufferFunctorPtr(new LineBoxVertexBufferFunctor(*m_mesh)));
-  m_indexBuffer->setBufferFunctor
-    (QBufferFunctorPtr(new LineBoxIndexBufferFunctor(*m_mesh)));
+  m_vertexBuffer->setDataGenerator
+    (QBufferDataGeneratorPtr(new LineBoxVertexBufferDataGenerator(*m_mesh)));
+  m_indexBuffer->setDataGenerator
+    (QBufferDataGeneratorPtr(new LineBoxIndexBufferDataGenerator(*m_mesh)));
 
   addAttribute(m_positionAttribute);
   addAttribute(m_indexAttribute);
 }
 
 LineBoxGeometry::~LineBoxGeometry() {
-  QGeometry::cleanup();
+  // QGeometry::cleanup();
 }
 
 void LineBoxGeometry::updateSize() {
-  m_vertexBuffer->setBufferFunctor
-    (QBufferFunctorPtr(new LineBoxVertexBufferFunctor(*m_mesh)));
+  m_vertexBuffer->setDataGenerator
+    (QBufferDataGeneratorPtr(new LineBoxVertexBufferDataGenerator(*m_mesh)));
 }
 
 ///////////////////////////////////
@@ -223,15 +224,15 @@ T3LineBoxMesh::T3LineBoxMesh(Qt3DNode* parent, const QVector3D* sz)
   }
 
   setPrimitiveType(LineStrip);
-  setPrimitiveRestart(true);
-  setRestartIndex(0xFFFF);
+  setPrimitiveRestartEnabled(true);
+  setRestartIndexValue(0xFFFF);
   
   LineBoxGeometry* geometry = new LineBoxGeometry(this);
   inherited::setGeometry(geometry);
 }
 
 T3LineBoxMesh::~T3LineBoxMesh() {
-  QNode::cleanup();
+  // QNode::cleanup();
 }
 
 void T3LineBoxMesh::setSize(const QVector3D& sz) {
