@@ -38,8 +38,9 @@ T3TwoDText::T3TwoDText(Qt3DNode* parent)
   QFont fnt("Arial", 24);       // 24 gives decent resolution for rendering
   label.setFont(fnt);
   texture = new T3TwoDTexture();
-  plane = new T3Entity(this);
+  plane = new T3ColorEntity(this);
   plane->addMesh(new QPlaneMesh());
+  plane->setColor(QColor::fromRgbF(1.0f, 0.5f, 0.5f, 1.0f));
   // T3DiffuseTransMapMaterial* mat = new T3DiffuseTransMapMaterial;
   // QDiffuseMapMaterial* mat = new QDiffuseMapMaterial;
   // mat->setSpecular(QColor::fromRgbF(0.2f, 0.2f, 0.2f, 1.0f));

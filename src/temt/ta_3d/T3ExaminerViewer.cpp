@@ -253,9 +253,6 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   // sphereMesh->setRadius(.3);
   // sphereEntity->addComponent(sphereMesh);
   // sphereEntity->addComponent(material);
-
-
-  
   
   view3d->setRootEntity(root_entity);
 

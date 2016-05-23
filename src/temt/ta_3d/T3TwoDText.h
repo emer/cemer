@@ -17,7 +17,7 @@
 #define T3TwoDText_h 1
 
 // parent includes:
-#include <T3Entity>
+#include <T3ColorEntity>
 
 // member includes:
 
@@ -72,7 +72,7 @@ public:
   QColor         bg_color;       // background color of the text -- defaults to white, but Qt::Transparent is useful if the rendering pass supports it..
   T3AlignText    align;          // how to align the text horizontally -- does an extra translation of the plane based on setting e.g., LEFT will cause text to start at current translation position, while RIGHT causes it to end there.
   T3VPosition    v_pos;          // how to position the text relative to current overall translation
-  T3Entity*      plane;          // text plane object
+  T3ColorEntity*      plane;          // text plane object
   T3TwoDTexture* texture;        // texture for rendering
 
   virtual void  setText(const QString& txt);
