@@ -65,12 +65,12 @@ void ForLoop::UpdateOnInsert_impl() {
   if (is_local) return; // locals don't clash with above
   bool clashes = ParentForLoopVarClashes(loop_var);
   if (!clashes) return;
-  String new_loop_var;
+  String new_loop_var = loop_var;
   while (clashes) {
-    MorphVar(loop_var);
-    clashes = ParentForLoopVarClashes(loop_var);
+    MorphVar(new_loop_var);
+    clashes = ParentForLoopVarClashes(new_loop_var);
   }
-  ChangeLoopVar(loop_var);
+  ChangeLoopVar(new_loop_var);
 }
 
 void ForLoop::MorphVar(String& cur_loop_var) {
@@ -103,7 +103,16 @@ bool ForLoop::ParentForLoopVarClashes(const String& loop_var) {
 String ForLoop::GetLoopVar(bool& is_local) const {
   // note: this heuristic is going to work 99.9% of the time
   // get trimmed part before first =
-  String loop_var = trim(init.expr.before("="));
+  String loop_var;
+  String expr_start = code_string.before("=");
+  if (expr_start.contains("(int ")) {
+    loop_var = expr_start.after("(int ");
+  }
+  else {
+    loop_var = expr_start.after("(");
+  }
+  loop_var = trim(loop_var);
+
   // there will only be any embedded spaces if there is a type declaration
   is_local = loop_var.contains(" ");
   if (is_local) {
@@ -175,9 +184,8 @@ void ForLoop::ChangeLoopVar(const String& to_var) {
   bool is_local;
   String fm_var = GetLoopVar(is_local);
   if (fm_var.empty()) return; // TODO: mebe should complain?
-  init.expr.gsub(fm_var, to_var);
-  test.expr.gsub(fm_var, to_var);
-  iter.expr.gsub(fm_var, to_var);
+  code_string.gsub(fm_var, to_var);
+  CvtFmCode(code_string);  // this will reset the parts init, test and iter
   MakeIndexVar(to_var);      // have to make the new var *before* parsing!!
   // this is possibly redundant with make index var but not always..
   init.ParseExpr();
