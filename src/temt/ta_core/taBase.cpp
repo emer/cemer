@@ -1254,6 +1254,9 @@ taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) 
     void* tmp_ptr = FindMembeR(el_path, md);
     ret_md = md;                // default
     if (tmp_ptr && md && md->type->IsPointer()) {
+      if (md->type->IsTaBase() || md->type->IsClass()) {
+        return NULL;
+      }
       taBase* mbr = (taBase*)tmp_ptr;
       rval = mbr;
     }
