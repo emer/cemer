@@ -43,8 +43,12 @@ public:
     NRM,                        // normal data
   };
     
+  Q_PROPERTY(bool node_updating READ nodeUpdating WRITE setNodeUpdating NOTIFY nodeUpdatingChanged)
+  // use this property to control notifcation of updates to a node -- calls blockNotifications(true) if setNodeUpdating(true) is called, and when the corresponding false call is made, then it also calls nodeUpdatingChanged signal, which then triggers an actual node update -- blockNotifications(false) should do this but it doesn't!
+
   bool  node_updating;          // is the node currently updating its structure, and thus rendering should be blocked, or not?
   virtual void setNodeUpdating(bool updating);
+  bool  nodeUpdating()  { return node_updating; }
 
   float_Matrix  vndata; // verticies and normal data -- geom is 3 x 2 x n (3d coords, vertex and normal, then outer is the "frame" dimension of points which can be increased dynamically)
   float_Matrix  colors; // optional per-vertex colors in 1-to-1 correspondence with the vertex data -- these are 4 full floating-point colors RGBA per point -- packed RGBA not supported in shaders it seems..
@@ -79,6 +83,9 @@ public:
 
 public slots:
   virtual void  updateMesh(); // update the rendered mesh
+  
+signals:
+  void  nodeUpdatingChanged();
 };
 
 

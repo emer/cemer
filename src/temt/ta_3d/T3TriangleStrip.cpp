@@ -274,6 +274,7 @@ void T3TriangleStripMesh::setNodeUpdating(bool updating) {
     }
 #endif
     updateMesh();
+    emit nodeUpdatingChanged();
   }
 }
 

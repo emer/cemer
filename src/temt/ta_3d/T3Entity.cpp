@@ -48,8 +48,8 @@ void T3Entity::addMouseInput(QMouseDevice* mouse_dev) {
   // connect(mouse, SIGNAL(doubleClicked(QMouseEvent*)), this,
   //         SLOT(mouseDoubleClicked(QMouseEvent*)));
   // others not needed so frequently -- add manually if wanted
-  connect(mouse, SIGNAL(released(QMouseEvent*)), this,
-          SLOT(mouseClicked(QMouseEvent*)));
+  connect(mouse, SIGNAL(released(Qt3DInput::QMouseEvent*)), this,
+          SLOT(mouseClicked(Qt3DInput::QMouseEvent*)));
 }
 
 void T3Entity::setNodeUpdating(bool updating) {

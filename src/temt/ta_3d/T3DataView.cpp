@@ -46,7 +46,9 @@ void T3DataView::AddRemoveChildNode_impl(T3Node* node, bool adding) {
     node->setParent(node_so());
   }
   else {
-    node->setParent((Qt3DNode*)NULL);
+    // todo: revisit!!!!
+    // node->setParent((Qt3DNode*)NULL);
+    delete node;
   }
 }
 
@@ -232,6 +234,8 @@ void T3DataView::Clear_impl() { // note: no absolute guarantee par will be T3Dat
   // also, don't need to report to parent if we don't have any impl ourselves
   if (!node_so()) return;
 
+  taMisc::DebugInfo("clearing view:", GetName());
+  
   // we remove top-most item first, which results in only one update to the scene graph
   if (hasParent()) {
     parent()->ChildClearing(this); // parent clears us

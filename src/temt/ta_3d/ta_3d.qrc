@@ -6,5 +6,6 @@
         <file>pervertextrans.frag</file>
         <file>diffusetransmap.vert</file>
         <file>diffusetransmap.frag</file>
+        <file>light.inc.frag</file>
     </qresource>
 </RCC>

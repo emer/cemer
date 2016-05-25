@@ -1005,12 +1005,13 @@ void GridTableView::RenderHeader() {
     String cnm = cvs->GetDisplayName().elidedTo(max_chars);
 
 #ifdef TA_QT3D
-    T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
-    T3TwoDText* txt = new T3TwoDText(hdr);
-    txt->setText(cnm);
-    txt->setTextColor(txtcolr);
-    txt->Scale(font_scale);
-    txt->Translate(-0.5f + col_pos + 0.5f * col_wd_lst, -0.5f + 1.0f - row_pos, -gr_mg_sz);
+    // this is totally not used!
+    // T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
+    // T3TwoDText* txt = new T3TwoDText(hdr);
+    // txt->setText(cnm);
+    // txt->setTextColor(txtcolr);
+    // txt->Scale(font_scale);
+    // txt->Translate(-0.5f + col_pos + 0.5f * col_wd_lst, -0.5f + 1.0f - row_pos, -gr_mg_sz);
 #else // TA_QT3D
     T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
     SoSeparator* colsep = colnd->topSeparator();

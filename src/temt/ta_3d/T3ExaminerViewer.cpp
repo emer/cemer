@@ -189,6 +189,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   camera = view3d->camera(); //new QCamera(root_entity);
 
   QSize sz = container->size();
+  // QSize sz = view3d->size();
   float aspect_ratio = (float)sz.width() / (float)sz.height();
   // if(sz.width() < 10 || sz.height() < 10) {
     // taMisc::Info("size: ", String(sz.width()), ",", String(sz.height()));
@@ -255,6 +256,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   // sphereEntity->addComponent(material);
   
   view3d->setRootEntity(root_entity);
+  //  view3d->show();
 
 #else
   // note: we're setting our format right at construction, instead of doing
