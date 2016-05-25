@@ -166,7 +166,7 @@ show_menu:
       iClipData::EA_PASTE_APPEND, QKeySequence());
   }
 
-  act = NULL;  
+  act = NULL;
   if ((where == iTreeWidgetItem::WI_ON) &&
      (ea & iClipData::EA_DROP_ASSIGN))
   { // Assign only applicable for "On" drops
@@ -174,14 +174,17 @@ show_menu:
       host_->helperObj(),  SLOT(DropEditAction(int)),
       iClipData::EA_DROP_ASSIGN, QKeySequence());
   }
+    
+    act = NULL;
   if ((where == iTreeWidgetItem::WI_ON) &&
-     (ea & iClipData::EA_DROP_COMPARE))
-  { // Assign only applicable for "On" drops
-    act = menu->AddItem("Compare To", iAction::int_act,
-      host_->helperObj(),  SLOT(DropEditAction(int)),
-      iClipData::EA_DROP_COMPARE, QKeySequence());
+    (ea & iClipData::EA_DROP_COMPARE) &&
+    (obj->GetStemBase() == link()->taData()->GetStemBase()))
+  { // Compare only applicable for "On" drops
+      act = menu->AddItem("Compare To", iAction::int_act,
+        host_->helperObj(),  SLOT(DropEditAction(int)),
+        iClipData::EA_DROP_COMPARE, QKeySequence());;
   }
-
+  
   act = NULL;
   if ((ea & iClipData::EA_DROP_LINK2) == iClipData::EA_DROP_LINK2) {
     act = menu->AddItem("Link Here", iAction::int_act,

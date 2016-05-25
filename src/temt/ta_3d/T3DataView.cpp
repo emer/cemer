@@ -234,7 +234,7 @@ void T3DataView::Clear_impl() { // note: no absolute guarantee par will be T3Dat
   // also, don't need to report to parent if we don't have any impl ourselves
   if (!node_so()) return;
 
-  taMisc::DebugInfo("clearing view:", GetName());
+//  taMisc::DebugInfo("clearing view:", GetName());
   
   // we remove top-most item first, which results in only one update to the scene graph
   if (hasParent()) {
