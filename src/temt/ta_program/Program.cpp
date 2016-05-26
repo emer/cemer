@@ -515,7 +515,7 @@ bool Program::PreCompileScript_impl() {
 
   if(!AbstractScriptBase::PreCompileScript_impl()) return false;
   script_list.ClearAllErrors(); // start fresh
-  objs.GetVarsForObjs(NULL);  // NULL - no object is being moved
+  objs.GetVarsForObjs(false);  // false - not moving object
   UpdateProgVars();
   return true;
 }

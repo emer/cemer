@@ -32,7 +32,7 @@ DataTable* ProgObjList::NewDataTable(int n_tables) {
   return (DataTable*)New_gui(n_tables, &TA_DataTable); // this is a gui op
 }
 
-void ProgObjList::GetVarsForObjs(taNBase* moved_obj) {
+void ProgObjList::GetVarsForObjs(bool is_move) {
   Program* prog = GET_MY_OWNER(Program);
   if(!prog) return;
   for(int i = 0; i < size; ++i) {
@@ -83,8 +83,7 @@ void ProgObjList::GetVarsForObjs(taNBase* moved_obj) {
     if(!var->objs_ptr) continue;
     taBase* obj = FindName(var->name);
     if(obj == NULL) {
-      if (moved_obj) {
-        var->SetObject(moved_obj);
+      if (is_move) {
         var->objs_ptr = false;
       }
       else {
@@ -100,9 +99,8 @@ void ProgObjList::SigEmit(int sls, void* op1, void* op2) {
   Program* prog = GET_MY_OWNER(Program);
   // don't do if copying - vars get copied anyway as part of parent copy
   if(prog && !prog->HasBaseFlag(COPYING) && !taMisc::is_loading && !taMisc::is_duplicating && !isDestroying()) {
-    // pass on the object as it may be a program object that was moved out and the var needs to get updated
-    taNBase* obj = (taNBase*)op1;
-    GetVarsForObjs(obj);
+    // must be a move - pass true
+    GetVarsForObjs(true);
   }
 }
 
