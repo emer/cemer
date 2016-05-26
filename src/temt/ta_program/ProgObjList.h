@@ -41,8 +41,8 @@ public:
   // #EXPERT goofy callback for ChooseNew callback
 
   void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
-  virtual void  GetVarsForObjs();
-  // automatically create variables for objects in parent program
+  virtual void  GetVarsForObjs(taNBase* moved_obj);
+  // automatically create variables for objects in parent program -- if called because an object was moved out of our objlist the ProgVar pointing to the object is updated
 
   virtual void  StructUpdateEls(bool begin);
   // runs StructUpdate(begin) on all the elements in the list
