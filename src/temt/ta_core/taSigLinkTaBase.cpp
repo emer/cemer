@@ -257,6 +257,9 @@ String taSigLinkTaBase::GetDisplayName() const {
     return md->name;
   }
   else if(data()) {
+    if (ownLink() && ownLink()->taData() && ownLink()->taData()->DisplayDescription()) {
+      return data()->GetDisplayNameCatDesc();
+    }
     return data()->GetDisplayName();
   }
   return String();

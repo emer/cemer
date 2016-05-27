@@ -48,6 +48,8 @@ public:
   // runs StructUpdate(begin) on all the elements in the list
 
   String       GetTypeDecoKey() const override { return "ProgVar"; }
+  bool         DisplayDescription() const override { return true; }
+  // #IGNORE for program objects we want to see the object description
 
   TA_BASEFUNS_NOCOPY(ProgObjList);
 protected:

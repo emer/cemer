@@ -464,8 +464,15 @@ String taBase::GetDisplayName() const {
   }
   // last resort: (TypeName@HexAddr)
   rval = "(" + GetTypeDef()->name + "@"
-      + String(QString::number((intptr_t)this, 16)) + ")";
+    + String(QString::number((intptr_t)this, 16)) + ")";
   return rval;
+}
+
+String taBase::GetDisplayNameCatDesc() const {
+  if (GetDesc().nonempty()) {
+    return GetDisplayName() + "  //  " + GetDesc();
+  }
+  return GetDisplayName();
 }
 
 void taBase::MakeNameUnique() {
@@ -478,7 +485,7 @@ taBase* taBase::GetOwner(TypeDef* td) const {
     return NULL;
   if(own->InheritsFrom(td))
     return own;
-
+  
   return own->GetOwner(td);
 }
 
