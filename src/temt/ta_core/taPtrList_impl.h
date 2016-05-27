@@ -117,6 +117,7 @@ public:
   int           alloc_size;     // #READ_ONLY #NO_SAVE #CAT_taList allocation size
   taHashTable*  hash_table;     // #READ_ONLY #NO_SAVE #HIDDEN #CAT_taList a hash table (NULL if not used)
   int           size;           // #READ_ONLY #NO_SAVE #SHOW #CAT_taList number of elements in the list
+  bool          is_transfer;    // #READ_ONLY #NO_SAVE #HIDDEN #CAT_taList set to true at start of transfer, false when done - allows list to differentiate delete from transfer to another list
   
   taPtrList_impl()                      { InitList_(); }
   taPtrList_impl(const taPtrList_impl& cp)      { InitList_(); Duplicate(cp); }

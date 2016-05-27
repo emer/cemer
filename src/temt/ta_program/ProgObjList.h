@@ -41,7 +41,7 @@ public:
   // #EXPERT goofy callback for ChooseNew callback
 
   void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
-  virtual void  GetVarsForObjs(bool is_move);
+  virtual void  GetVarsForObjs();
   // automatically create variables for objects in parent program --  if move set objs_ptr member to false
 
   virtual void  StructUpdateEls(bool begin);

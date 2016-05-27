@@ -32,6 +32,7 @@ void taPtrList_impl::InitList_() {
   alloc_size = 0;
   el = NULL;
   size = 0;
+  is_transfer = false;
   SigEmit(SLS_LIST_INIT);
 }
 
@@ -435,8 +436,11 @@ bool taPtrList_impl::Transfer_(void* it) {
     return false;
   El_Ref_(it);                  // extra ref so no delete on remove
   El_SetOwner_(it);             // change owner to us so it doesn't call CutLinks with Remove..
-  if (old_own)
+  if (old_own) {
+    old_own->is_transfer = true;  // let list know this is a transfer to another list vs pure delete
     old_own->RemoveEl_(it);
+    old_own->is_transfer = false;
+  }
   Add_(it);
   El_unRef_(it);
   return true;
