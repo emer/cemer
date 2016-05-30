@@ -30,7 +30,7 @@ taTypeDef_Of(taProject);
 taTypeDef_Of(Project_Group);
 
 class TA_API Project_Group : public taGroup<taProject> {
-  //  ##CAT_Project group of projects
+  //  ##CAT_Project group of projects ##EXPAND_DEF_1
 INHERITED(taGroup<taProject>)
 friend class taProject;
 public:

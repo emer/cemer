@@ -28,7 +28,7 @@
 taTypeDef_Of(ColorScaleSpec_Group);
 
 class TA_API ColorScaleSpec_Group : public taGroup<ColorScaleSpec> {
-  // ##CAT_Display group of color scale specs
+  // ##CAT_Display ##EXPAND_DEF_0 group of color scale specs
 INHERITED(taGroup<ColorScaleSpec>)
 public:
   virtual void          NewDefaults();  // create a set of default colors

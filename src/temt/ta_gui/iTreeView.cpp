@@ -424,7 +424,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     if (!(exp_flags & EF_CUSTOM_FILTER) && tab) {
       // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
       // those being treated like top level are specific networks (i.e. network -- not an actual group but has spec and layer groups
-      if (tab->InheritsFrom(&TA_taGroup_impl) || tab->GetTypeDef()->HasOption("TOP_LEVEL_GROUP")) {
+      if (tab->InheritsFrom(&TA_taGroup_impl) || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
         int depth = taiMisc::GetGroupDefaultExpand(tab->GetName());
         if (depth >= 0) {
           is_subgroup = true;
@@ -441,7 +441,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
           else {
             max_levels = 1;
           }
-          if (level < max_levels) {
+          if (level <= max_levels) {
             expand = true;
           }
           else {
