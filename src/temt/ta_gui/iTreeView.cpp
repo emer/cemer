@@ -937,11 +937,22 @@ void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
   QTreeWidgetItem* item_ = itemFromIndex(index);
   iTreeViewItem* item = dynamic_cast<iTreeViewItem*>(item_);
   if (!item) return;
-  if (item->isExpanded())
-    CollapseAllUnder(item);
-  else
-    ExpandDefaultUnder(item);
-
+  if (item->isExpanded()) {
+    if(QApplication::keyboardModifiers() & Qt::ControlModifier) {  // command key on mac
+      ExpandAllUnder(item);
+    }
+    else {
+      CollapseAllUnder(item);
+    }
+  }
+  else {
+    if(QApplication::keyboardModifiers() & Qt::ControlModifier) {  // command key on mac
+      ExpandAllUnder(item);
+    }
+    else {
+      ExpandDefaultUnder(item);
+    }
+  }
   emit itemDoubleClicked(item_, index.column()); // still need to emit the signal for other consumers!
   // i.e., the iPanelOfList
 }
@@ -949,7 +960,7 @@ void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
 void iTreeView::mousePressEvent(QMouseEvent* event) {
   ++in_mouse_press;
   inherited::mousePressEvent(event);
- --in_mouse_press;
+  --in_mouse_press;
 }
 
 bool iTreeView::useCustomExpand() const {
