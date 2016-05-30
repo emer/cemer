@@ -28,7 +28,7 @@
 eTypeDef_Of(Network_Group);
 
 class E_API Network_Group : public taGroup<Network> {
-  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##EXPAND_DEF_2 ##EXPAND_UNDER_DEF_2 a group of networks
+  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##EXPAND_DEF_2 a group of networks
 INHERITED(taGroup<Network>)
 public:
   static taBrainAtlas_List  brain_atlases;  // #IGNORE Brain atlases available to select for network voxel mapping

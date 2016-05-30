@@ -250,8 +250,8 @@ protected:
   virtual void          ExpandAll_impl(int max_levels, int exp_flags = 0);
   // inner code
   virtual void          ExpandItem_impl(iTreeViewItem* item, int level, int max_levels,
-                                        int exp_flags = 0);
-  // inner code; level=-1 when not known
+                                        int exp_flags = 0, bool is_subgroup = false);
+  // inner code; level=-1 when not known, is_subgroup true if the initial expansion node is a top level group
   virtual void          GetSelectedItems(ISelectable_PtrList& lst);
   // list of the selected datanodes
 

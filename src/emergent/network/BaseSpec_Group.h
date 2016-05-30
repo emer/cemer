@@ -28,7 +28,7 @@ class BaseSpec; //
 eTypeDef_Of(BaseSpec_Group);
 
 class E_API BaseSpec_Group: public taGroup<BaseSpec> {
-  // ##EXT_spec ##CAT_Spec ##SCOPE_Network ##EXPAND_DEF_1 ##EXPAND_UNDER_DEF_2 group of specs
+  // ##EXT_spec ##CAT_Spec ##SCOPE_Network ##EXPAND_DEF_1 group of specs
 INHERITED(taGroup<BaseSpec>)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..

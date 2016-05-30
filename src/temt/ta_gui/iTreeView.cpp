@@ -254,10 +254,6 @@ void iTreeView::CollapseAllUnderInt(void* item) {
   CollapseAllUnder((iTreeViewItem*)item);
 }
 
-//void iTreeView::ExpandDefaultUnderInt(void* item) {
-//  ExpandDefaultUnder((iTreeViewItem*)item);
-//}
-
 void iTreeView::InsertEl(bool after) {
   ISelectable* si = curItem();
   if(!si || !si->link()) return;                // nothing selected
@@ -376,7 +372,8 @@ const KeyString iTreeView::colKey(int col) const {
 }
 
 bool iTreeView::doubleClickExpandsAll() const {
-  return (taMisc::viewer_options & taMisc::VO_DOUBLE_CLICK_EXP_ALL);
+  return false;
+//  return (taMisc::viewer_options & taMisc::VO_DOUBLE_CLICK_EXP_ALL);
 }
 
 void iTreeView::ExpandAll(int max_levels) {
@@ -389,7 +386,11 @@ void iTreeView::ExpandAll_impl(int max_levels, int exp_flags) {
   for (int i = 0; i < topLevelItemCount(); ++i) {
     iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
     if (!node) continue;
-    ExpandItem_impl(node, 0, max_levels, exp_flags);
+    taBase* tab = node->link()->taData();
+    if (tab) {
+      tab->ClearBaseFlag(taBase::TREE_EXPANDED);
+    }
+    ExpandItem_impl(node, 0, max_levels, exp_flags); // false - this is the root node for this expansion
   }
   if (header()->isVisible() && (header()->count() > 1)) {
     resizeColumnsToContents();
@@ -397,12 +398,11 @@ void iTreeView::ExpandAll_impl(int max_levels, int exp_flags) {
 }
 
 void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
-                                int max_levels, int exp_flags)
+                                int max_levels, int exp_flags, bool is_subgroup)
 {
   if (!item) return;
   if (isItemHidden(item)) return;
-  
-  // special check for guys that should not be auto-expaneded at all!  may need to do this in child below.
+
   taBase* tab = item->link()->taData();
   
   bool expand_saved = false;
@@ -411,92 +411,82 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     expand_saved = true;
   }
   
-  bool expand = true;
+  bool expand = false;
+  if (tab->InheritsFrom(&TA_taProject)) { // always expand project
+    expand = true;
+  }
+  
   if(!expand_saved) {
     // figure out default if not otherwise saved
     if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
     if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
     
-    // not a user initiated expand to default -- i.e. !EF_DEFAULT_BY_USER
-    if(!(exp_flags & EF_CUSTOM_FILTER) && tab && (exp_flags & EF_DEFAULT) && !(exp_flags & EF_DEFAULT_BY_USER)) { 
-      // get default info from objs
-      String exp_def_str;
-      if(item->md()) {                  // memberdef takes precedence
-        int depth = -1;
-        if (tab->InheritsFrom(&TA_taGroup_impl)) {
-          depth = taiMisc::GetGroupDefaultExpand(tab->GetName());
-        }
+    if (!(exp_flags & EF_CUSTOM_FILTER) && tab) {
+      // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
+      // those being treated like top level are specific networks (i.e. network -- not an actual group but has spec and layer groups
+      if (tab->InheritsFrom(&TA_taGroup_impl) || tab->GetTypeDef()->HasOption("TOP_LEVEL_GROUP")) {
+        int depth = taiMisc::GetGroupDefaultExpand(tab->GetName());
         if (depth >= 0) {
-          exp_def_str = (String)depth;
+          is_subgroup = true;
+          max_levels = depth;
+          if (max_levels > 0) {
+            expand = true;
+          }
+        }
+        else if (!is_subgroup) {  // expand INITIATED on this non top-level group -- thus not being expanded as a subgroup
+          String exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
+          if (exp_def_str.nonempty()) {
+            max_levels = (int)exp_def_str;
+          }
+          else {
+            max_levels = 1;
+          }
+          if (level < max_levels) {
+            expand = true;
+          }
+          else {
+            expand = false;
+          }
+        }
+        else if (level <= max_levels) {  // expand initiated by ancestor group -- just check level
+          expand = true;
         }
         else {
-          exp_def_str = item->md()->OptionAfter("EXPAND_DEF_");
+          expand = false;  // this level is > max_levels
         }
       }
-      
-      if(exp_def_str.empty()) {
-        exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
-      }
-      if(exp_def_str.nonempty()) {
-        int exp_def = (int)exp_def_str;
-        if(exp_def == 0) {
-          expand = false; // no expand
+      else {  // not a top-level group - get class default -- if none set max_levels to 1
+        String exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
+        if (exp_def_str.nonempty()) {
+          max_levels = (int)exp_def_str;
         }
         else {
-          max_levels = exp_def-1; // remaining levels = val-1
+          max_levels = 1;
         }
-      }
-      else {
-        expand = false;           // if no custom filter, default for all other guys is no expandre
+        if (level < max_levels) {
+          expand = true;
+        }
+        else {
+          expand = false;
+        }
       }
     }
     
-    // here we handle "expand to default" when initiated by user - by double click or menu
-    if(!(exp_flags & EF_CUSTOM_FILTER) && tab && (exp_flags & EF_DEFAULT_BY_USER)) {
-      int depth_from_prefs = -1;
-      int depth_from_type = -1;
-      // check for preferences default
-      depth_from_prefs = taiMisc::GetDefaultExpand(tab);
-      
-      // check for type level default -- maybe we should allow on members as well
-      String exp_def_str;
-      exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_UNDER_DEF_");
-      if(exp_def_str.nonempty()) {
-        depth_from_type = (int)exp_def_str;
-      }
-      // for user expands choose the greater expansion
-      int depth = depth_from_prefs;
-      if (depth_from_type > depth_from_prefs) {
-        depth = depth_from_type;
-      }
-      
-      if (depth == -1) {  // we didn't find preference or type default
-        max_levels -= 1;
-      }
-      else if (depth == 0) {  // either pref was to not expand or we are fully expanded based on pref
-        expand = false;
-      }
-      else {
-        max_levels = depth;  // more to expand
-      }
-      if (max_levels < 0) {
-        expand = false;
-      }
-    }
-    
+    // does user prefer to see call arguments?
     if (!taiMisc::GetCallDefaultExpand() && tab->GetTypeDef()->HasOption("HAS_CALL_ARGS")) {
       expand = false;
     }
-
     if (!(exp_flags & EF_EXPAND_DISABLED)) {
       if (!item->link()->isEnabled())
         expand = false;
     }
-    if (expand && (exp_flags & EF_CUSTOM_FILTER)) {
+    if ((exp_flags & EF_CUSTOM_FILTER)) {
+      max_levels = 1;  // this gets it open, then custom will take over
+      expand = true;
       emit CustomExpandFilter(item, level, expand);
     }
   }
-
+  
   if (expand) {
     // first expand the guy...
     if (!isItemExpanded(item)) { // ok, eligible...
@@ -510,19 +500,25 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     // check if we've expanded deeply enough
     // (works for finite (>=1) and infinite (<0) cases)
     if (max_levels == 0) return;
-
+    
     if (level >= 0) ++level;
     // and expand item's children -- lazy children should be created by now
     for (int i = 0; i < item->childCount(); ++i) {
       iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(item->child(i));
-      if (child)
-        ExpandItem_impl(child, level, max_levels - 1, exp_flags);
+      if (child) {
+        // make sure the TREE_EXPANDED flag is cleared
+        taBase* child_tab = child->link()->taData();
+        if (child_tab) {
+          child_tab->ClearBaseFlag(taBase::TREE_EXPANDED);
+        }
+        ExpandItem_impl(child, level, max_levels, exp_flags, is_subgroup);
+      }
     }
   }
   else {
     // note: following test not needed for 1st time, but is
     // needed for subsequent ExpandDefault
-    if(!exp_flags & (EF_DEFAULT | EF_DEFAULT_BY_USER | EF_CUSTOM_FILTER)) {
+    if(!exp_flags & (EF_DEFAULT | EF_CUSTOM_FILTER)) {
       // for auto-expand, do NOT collapse expanded items!
       if (isItemExpanded(item)) {
         setItemExpanded(item, false);
@@ -551,9 +547,14 @@ void iTreeView::ExpandAllUnderInt(void* item) {
 
 void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   if (!item) return;
+  taBase* tab = item->link()->taData();
+  if (tab) {
+    tab->ClearBaseFlag(taBase::TREE_EXPANDED);
+  }
   int exp_flags = EF_DEFAULT_BY_USER;
   if (useCustomExpand()) exp_flags |= EF_CUSTOM_FILTER;
   taMisc::Busy(true);
+//  if (item->parent())
   ExpandItem_impl(item, 0, m_def_exp_levels, exp_flags);
   if (header()->isVisible() && (header()->count() > 1)) {
     resizeColumnsToContents();
@@ -562,6 +563,7 @@ void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
 }
 
 void iTreeView::ExpandDefaultUnderInt(void* item) {
+  CollapseAllUnderInt(item);
   ExpandDefaultUnder((iTreeViewItem*)item);
 }
 
@@ -922,11 +924,10 @@ void iTreeView::mnuReplaceFromHere(iAction* mel) {
 }
 
 void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
-  if (!doubleClickExpandsAll()) {
-    // just does default stuff, which includes single level exp/collapse
-    inherited::mouseDoubleClickEvent(event);
-    return;
-  }
+//  if (!doubleClickExpandsAll()) {
+//    inherited::mouseDoubleClickEvent(event);
+//    return;
+//  }
   // NOTE: we replace all the default behavior with our custom exp/coll all shtick
   QModelIndex index = indexAt(event->pos());
   if (!index.isValid()) {
@@ -940,7 +941,6 @@ void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
     CollapseAllUnder(item);
   else
     ExpandDefaultUnder(item);
-//  ExpandAllUnder(item);
 
   emit itemDoubleClicked(item_, index.column()); // still need to emit the signal for other consumers!
   // i.e., the iPanelOfList

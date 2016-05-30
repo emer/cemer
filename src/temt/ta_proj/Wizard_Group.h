@@ -28,7 +28,7 @@ taTypeDef_Of(taWizard);
 taTypeDef_Of(Wizard_Group);
 
 class TA_API Wizard_Group : public taGroup<taWizard> {
-  // ##CAT_Wizard ##EXPAND_DEF_1 ##EXPAND_UNDER_DEF_1 group of wizard objects
+  // ##CAT_Wizard ##EXPAND_DEF_1 group of wizard objects
 INHERITED(taGroup<taWizard>)
 public:
   virtual void          AutoEdit();

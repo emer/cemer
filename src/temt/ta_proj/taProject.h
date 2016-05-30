@@ -52,7 +52,7 @@ class taDoc; //
 taTypeDef_Of(taProject);
 
 class TA_API taProject : public taFBase {
-  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##DUMP_LOAD_POST ##DEF_NAME_ROOT_Project ##CAT_Project ##UNDO_BARRIER ##EXPAND_DEF_2 ##EXPAND_UNDER_DEF_2 Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
+  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##DUMP_LOAD_POST ##DEF_NAME_ROOT_Project ##CAT_Project ##UNDO_BARRIER ##EXPAND_DEF_2 Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
 INHERITED(taFBase)
 public:
   enum  StdLicense {

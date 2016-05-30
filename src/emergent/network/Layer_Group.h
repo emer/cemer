@@ -32,7 +32,7 @@ class Network; //
 eTypeDef_Of(Layer_Group);
 
 class E_API Layer_Group : public taGroup<Layer> {
-  // ##CAT_Network ##SCOPE_Network ##EXPAND_DEF_1 ##EXPAND_UNDER_DEF_2 group of layers -- this should be used in larger networks to organize subnetworks (e.g., in brain models, different brain areas)
+  // ##CAT_Network ##SCOPE_Network ##EXPAND_DEF_1 group of layers -- this should be used in larger networks to organize subnetworks (e.g., in brain models, different brain areas)
 INHERITED(taGroup<Layer>)
 public:
   static bool nw_itm_def_arg;   // #IGNORE default arg val for FindMake..
