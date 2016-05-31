@@ -200,7 +200,7 @@ taExpandDefaultsProject::taExpandDefaultsProject() {
 }
 taExpandDefaultsProject taMisc::expand_defaults_project;
 
-taExpandDefaultsProgram::taExpandDefaultsProgram() {
+taExpandDefaultsEditor::taExpandDefaultsEditor() {
   objs = 1;
   types = 1;
   args = 1;
@@ -210,7 +210,19 @@ taExpandDefaultsProgram::taExpandDefaultsProgram() {
   prog_code = 7;
   call_args = 0;
 }
-taExpandDefaultsProgram taMisc::expand_defaults_program;
+taExpandDefaultsEditor taMisc::expand_defaults_editor;
+
+taExpandDefaultsNavigator::taExpandDefaultsNavigator() {
+  objs = 1;
+  types = 0;
+  args = 0;
+  vars = 0;
+  functions = 1;
+  init_code = 0;
+  prog_code = 0;
+  call_args = 0;
+}
+taExpandDefaultsNavigator taMisc::expand_defaults_navigator;
 
 
 ////////////////////////////////////////////////////////

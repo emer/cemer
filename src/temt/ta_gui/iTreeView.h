@@ -99,7 +99,8 @@ public:
 #endif
   
   ParentType            parent_type; // the context for the tree - browse, edit, list
-  bool                  useCustomExpand() const;
+  bool                  useEditorCustomExpand() const;
+  bool                  useNavigatorCustomExpand() const;
   bool                  doubleClickExpandsAll() const; // use at own risk...
   const KeyString       colKey(int col) const; // the key we set for data lookup
   void                  setColKey(int col, const KeyString& key);
@@ -169,7 +170,9 @@ public:
 #ifndef __MAKETA__
 signals:
   void                  CustomExpandFilter(iTreeViewItem* item, int level, bool& expand);
-    // invoked when we want our mummy to do custom filtering, expand=true by default
+  // invoked when we want our mummy to do custom filtering, expand=true by default
+  void                  CustomExpandNavigatorFilter(iTreeViewItem* item, int level, bool& expand);
+  // invoked when we want our mummy to do custom filtering, expand=true by default
   void                  FillContextMenuHookPre(ISelectable_PtrList& sel_items,
      taiWidgetActions* menu);
     // hook to allow client to add items to start of context menu before it shows
@@ -220,7 +223,7 @@ protected:
     EF_CUSTOM_FILTER            = 0x01,
     EF_DEFAULT                  = 0x02, // we are in the DefaultExpand context
     EF_EXPAND_DISABLED          = 0x04, // either Expand on that guy, or set in flags
-    EF_DEFAULT_BY_USER          = 0x08 // the user has initiated the expansion vs default expand when opening project
+    EF_NAVIGATOR_FILTER         = 0x08  // custom expand when doing in navigator tree
   };
   int                   tv_flags;
   String_PArray*        m_filters; // only created if any added

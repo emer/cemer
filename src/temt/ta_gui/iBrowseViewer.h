@@ -25,6 +25,7 @@
 
 // declare all other types mentioned but not required to include:
 class iTreeView; //
+class iTreeViewItem; //
 class iTreeSearch; //
 class ISelectable_PtrList; //
 class taiWidgetActions; //
@@ -56,8 +57,9 @@ public slots:
     // called from within the node->dropped event
 
 protected slots:
-  virtual void          lvwDataTree_FillContextMenuHookPost(
-    ISelectable_PtrList& sel_items, taiWidgetActions* menu);
+  virtual void          lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList& sel_items, taiWidgetActions* menu);
+  void                  items_CustomExpandNavigator(iTreeViewItem* item, int level, bool& expand);
+
 
 protected: // IViewerWidget i/f
   void         Refresh_impl() override;
@@ -65,6 +67,8 @@ protected: // IViewerWidget i/f
 protected:
   int                   mnuBrowseNodeDrop_param;
     // param from the mnuBrowseDrop slot -- called by a node, only valid for its call
+  int                   cur_expand_depth; // holds expand level for each group as we iterate through sub items of objs, types, etc
+
 private:
   void                  Init();
 };

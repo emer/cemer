@@ -463,6 +463,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
         else {
           max_levels = 1;
         }
+        
         if (level < max_levels) {
           expand = true;
         }
@@ -472,18 +473,19 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       }
     }
     
-    // does user prefer to see call arguments?
-    if (!taiMisc::GetCallDefaultExpand() && tab->GetTypeDef()->HasOption("HAS_CALL_ARGS")) {
-      expand = false;
-    }
     if (!(exp_flags & EF_EXPAND_DISABLED)) {
       if (!item->link()->isEnabled())
         expand = false;
     }
-    if ((exp_flags & EF_CUSTOM_FILTER)) {
+    if (exp_flags & EF_CUSTOM_FILTER) {
       max_levels = 1;  // this gets it open, then custom will take over
       expand = true;
       emit CustomExpandFilter(item, level, expand);
+    }
+    if (exp_flags & EF_NAVIGATOR_FILTER) {
+      max_levels = 1;  // this gets it open, then custom will take over
+      expand = true;
+      emit CustomExpandNavigatorFilter(item, level, expand);
     }
   }
   
@@ -551,10 +553,19 @@ void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   if (tab) {
     tab->ClearBaseFlag(taBase::TREE_EXPANDED);
   }
-  int exp_flags = EF_DEFAULT_BY_USER;
-  if (useCustomExpand()) exp_flags |= EF_CUSTOM_FILTER;
+  int exp_flags = 0;
+  
+  if (parent_type == iTreeView::TYPE_BROWSEVIEWER && tab->GetTypeDef() == &TA_Program && useNavigatorCustomExpand()) {
+    exp_flags |= EF_NAVIGATOR_FILTER;
+  }
+  else if (parent_type == iTreeView::TYPE_BROWSEVIEWER && tab->GetOwner(&TA_Program) && useNavigatorCustomExpand()) {
+    exp_flags |= EF_NAVIGATOR_FILTER;
+  }
+  else if (parent_type == iTreeView::TYPE_PROGRAMEDITOR && useEditorCustomExpand()) {
+    exp_flags |= EF_CUSTOM_FILTER;
+  }
+  
   taMisc::Busy(true);
-//  if (item->parent())
   ExpandItem_impl(item, 0, m_def_exp_levels, exp_flags);
   if (header()->isVisible() && (header()->count() > 1)) {
     resizeColumnsToContents();
@@ -569,7 +580,11 @@ void iTreeView::ExpandDefaultUnderInt(void* item) {
 
 void iTreeView::ExpandDefault() {
   int exp_flags = EF_DEFAULT;
-  if (useCustomExpand()) exp_flags |= EF_CUSTOM_FILTER;
+  
+  if (parent_type == iTreeView::TYPE_PROGRAMEDITOR && useEditorCustomExpand()) {
+    exp_flags |= EF_CUSTOM_FILTER;
+  }
+  
   if (tv_flags & TV_EXPAND_DISABLED) exp_flags |= EF_EXPAND_DISABLED;
   ExpandAll_impl(m_def_exp_levels, exp_flags);
   if(topLevelItemCount() > 0) {
@@ -924,10 +939,6 @@ void iTreeView::mnuReplaceFromHere(iAction* mel) {
 }
 
 void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
-//  if (!doubleClickExpandsAll()) {
-//    inherited::mouseDoubleClickEvent(event);
-//    return;
-//  }
   // NOTE: we replace all the default behavior with our custom exp/coll all shtick
   QModelIndex index = indexAt(event->pos());
   if (!index.isValid()) {
@@ -963,9 +974,14 @@ void iTreeView::mousePressEvent(QMouseEvent* event) {
   --in_mouse_press;
 }
 
-bool iTreeView::useCustomExpand() const {
+bool iTreeView::useEditorCustomExpand() const {
   return (receivers(SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&))) > 0);
 }
+
+bool iTreeView::useNavigatorCustomExpand() const {
+  return (receivers(SIGNAL(CustomExpandNavigatorFilter(iTreeViewItem*, int, bool&))) > 0);
+}
+
 
 void iTreeView::setColKey(int col, const KeyString& key) {
   if ((col < 0) || (col >= columnCount())) return;

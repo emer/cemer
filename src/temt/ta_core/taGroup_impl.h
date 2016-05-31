@@ -177,8 +177,6 @@ public:
   taGroup_impl*          NewGp_gui(int n_gps=1, TypeDef* typ=NULL,
                                    const String& name=NULLStr);
   // #BUTTON #MENU #MENU_ON_Object #MENU_CONTEXT #TYPE_ON_gp.el_base #NULL_OK_typ #NULL_TEXT_SameType #LABEL_NewGroup #NO_SAVE_ARG_VAL #CAT_Modify Create and add n_gps new sub group(s) of given type (typ=NULL: same type as this group)
-  virtual void           SetDefaultExpand(int depth);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #NO_SAVE_ARG_VAL #CAT_Gui Set the default expansion depth for this group -- 0 means don't expand, 1 is one level deep, and so on
 
   virtual taBase* FindLeafName_(const String& it) const;        // #IGNORE
   virtual taBase* FindLeafNameContains_(const String& it) const;        // #IGNORE

@@ -897,37 +897,46 @@ void taiMisc::SetGroupDefaultExpand(const String& group, int depth) {
   inst->SaveConfig();
 }
 
-int taiMisc::GetProgramDefaultExpand(const String& group) {
+int taiMisc::GetEditorDefaultExpand(const String& group) {
   if (group == "objs")
-    return taMisc::expand_defaults_program.objs;
+    return taMisc::expand_defaults_editor.objs;
   else if (group == "types")
-    return taMisc::expand_defaults_program.types;
+    return taMisc::expand_defaults_editor.types;
   else if (group == "args")
-    return taMisc::expand_defaults_program.args;
+    return taMisc::expand_defaults_editor.args;
   else if (group == "vars")
-    return taMisc::expand_defaults_program.vars;
+    return taMisc::expand_defaults_editor.vars;
   else if (group == "functions")
-    return taMisc::expand_defaults_program.functions;
+    return taMisc::expand_defaults_editor.functions;
   else if (group == "init_code")
-    return taMisc::expand_defaults_program.init_code;
+    return taMisc::expand_defaults_editor.init_code;
   else if (group == "prog_code")
-    return taMisc::expand_defaults_program.prog_code;
+    return taMisc::expand_defaults_editor.prog_code;
+  else if (group == "call_args")  // not a group -- any program element that takes arguments, method, function, etc.
+    return taMisc::expand_defaults_editor.call_args;
   else
     return -1;  // use the default set for class
 }
 
-bool taiMisc::GetCallDefaultExpand() {
-  return (bool)taMisc::expand_defaults_program.call_args;
-}
-
-int taiMisc::GetDefaultExpand(taBase* tab) {
-  int depth = -1;
-  depth = taiMisc::GetGroupDefaultExpand(tab->GetName());
-  if (depth != -1) {
-    return depth;
-  }
-  depth = taiMisc::GetProgramDefaultExpand(tab->GetName());
-  return depth;  // they all return -1 if name not found
+int taiMisc::GetNavigatorDefaultExpand(const String& group) {
+  if (group == "objs")
+    return taMisc::expand_defaults_navigator.objs;
+  else if (group == "types")
+    return taMisc::expand_defaults_navigator.types;
+  else if (group == "args")
+    return taMisc::expand_defaults_navigator.args;
+  else if (group == "vars")
+    return taMisc::expand_defaults_navigator.vars;
+  else if (group == "functions")
+    return taMisc::expand_defaults_navigator.functions;
+  else if (group == "init_code")
+    return taMisc::expand_defaults_navigator.init_code;
+  else if (group == "prog_code")
+    return taMisc::expand_defaults_navigator.prog_code;
+  else if (group == "call_args")  // not a group -- any program element that takes arguments, method, function, etc.
+    return taMisc::expand_defaults_navigator.call_args;
+  else
+    return -1;  // use the default set for class
 }
 
 iMainWindowViewer* taiMisc::FindMainWinParent(QObject* obj) {
@@ -940,7 +949,6 @@ iMainWindowViewer* taiMisc::FindMainWinParent(QObject* obj) {
   }
   return NULL;
 }
-
 
 bool taiMisc::UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e) {
   iMainWindowViewer* imwv = FindMainWinParent(obj);

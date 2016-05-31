@@ -56,7 +56,7 @@ void iPanelOfProgram::items_CustomExpandFilter(iTreeViewItem* item, int level, b
   }
   
   taiSigLink* dl = item->link();
-  int depth = taiMisc::GetProgramDefaultExpand(dl->GetName());  // get user's preference for top level proogram groups
+  int depth = taiMisc::GetEditorDefaultExpand(dl->GetName());  // get user's preference for top level proogram groups
   if (depth > -1) {  // must be one of the program groups (objs, types, vars, etc)
     cur_expand_depth = depth;
     if (depth == 0) {
@@ -68,12 +68,10 @@ void iPanelOfProgram::items_CustomExpandFilter(iTreeViewItem* item, int level, b
     }
   }
   else if (level <= cur_expand_depth) {
-    if (!taiMisc::GetCallDefaultExpand()) {
-      if (dl->taData()->GetTypeDef()->DerivesFrom(&TA_MethodCall) || dl->taData()->GetTypeDef()->DerivesFrom(&TA_StaticMethodCall) ||
-          dl->taData()->GetTypeDef()->DerivesFrom(&TA_FunctionCall) || dl->taData()->GetTypeDef()->DerivesFrom(&TA_ProgramCall)) {
-        expand = false;
-        return;
-      }
+    taBase* tab = item->link()->taData();
+    if (tab->GetTypeDef()->HasOption("HAS_CALL_ARGS") && !taiMisc::GetEditorDefaultExpand("call_args"))   {
+      expand = false;
+      return;
     }
     else {
       return;

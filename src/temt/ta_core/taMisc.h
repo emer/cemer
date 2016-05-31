@@ -85,7 +85,7 @@ public:
   taExpandDefaultsProject();
 };
 
-class TA_API taExpandDefaultsProgram {
+class TA_API taExpandDefaultsEditor {
   // #EDIT_INLINE defaults for expanding program groups in program editor
 public:
   int  objs;  // #MIN_0
@@ -97,8 +97,23 @@ public:
   int  prog_code;  // #MIN_0
   int  call_args; // #MIN_0 #MAX_1 function, method, program call arguments
   
-  taExpandDefaultsProgram();
+  taExpandDefaultsEditor();
 };
+class TA_API taExpandDefaultsNavigator {
+  // #EDIT_INLINE defaults for expanding program groups in the navigator panel
+public:
+  int  objs;  // #MIN_0
+  int  types;  // #MIN_0
+  int  args;  // #MIN_0 #MAX_1
+  int  vars;  // #MIN_0 #MAX_1
+  int  functions;  // #MIN_0
+  int  init_code;  // #MIN_0
+  int  prog_code;  // #MIN_0
+  int  call_args; // #MIN_0 #MAX_1 function, method, program call arguments
+  
+  taExpandDefaultsNavigator();
+};
+
 
 
 #define PATH_SEP taMisc::path_sep
@@ -290,8 +305,10 @@ public:
   static int            display_height;  // #SAVE #HIDDEN #CAT_GUI height of console display (in rows) -- set automatically by gui console -- used for paging
   static taExpandDefaultsProject expand_defaults_project;
   // #SAVE #CAT_GUI default depths for expanding top level groups -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all Programs will be shown within all program groups and subgroups), 2+ = expand to second and beyond level (only applicable for specs, where it expands further children of specs at higher levels)
-  static taExpandDefaultsProgram expand_defaults_program;
+  static taExpandDefaultsEditor expand_defaults_editor;
   // #SAVE #CAT_GUI default depths for expanding program editor sections -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all types, args, vars, functions). For init_code and prog_code 2+ will reveal nested code.
+  static taExpandDefaultsNavigator expand_defaults_navigator;
+  // #SAVE #CAT_GUI default depths for expanding program sections in the navigator panel -- 0 = don't expand, 1 = expand to first level (all major elements at that level, e.g., all types, args, vars, functions). For init_code and prog_code 2+ will reveal nested code.
   static int            undo_depth;     // #SAVE #CAT_GUI #MIN_10 how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
   static int            undo_data_max_cells; // #SAVE #CAT_GUI maximum number of cells in a data table to save an undo copy -- if above this number of cells, it won't be saved for undo (only the column structure will be retained)
   static int            auto_save_data_max_cells; // #SAVE #CAT_GUI if column of data table has more than this number of cells, it won't be saved during auto_save (column structure will be retained)
