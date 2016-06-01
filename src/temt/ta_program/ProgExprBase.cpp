@@ -628,7 +628,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       base_path = triml(base_path);
       int shift = length - base_path.length(); // shift to compensate for trim
       expr_start += shift;
-      prepend_txt = txt.before(txt[delim_pos[1]]);
+      prepend_txt = txt.before(delim_pos[1]);
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = ProgExprBase::PROGRAM_FUNCTION;
       delims_used = 2;
@@ -639,7 +639,7 @@ ProgExprBase::LookUpType ProgExprBase::ParseForLookup(const String& cur_txt, int
       base_path = triml(base_path);
       int shift = length - base_path.length(); // shift to compensate for trim
       expr_start += shift;
-      prepend_txt = txt.through(txt[delim_pos[0]]);
+      prepend_txt = txt.through(delim_pos[0]);
       lookup_seed = txt.after(delim_pos[0]);
       
       if (txt[delim_pos[0]] == '(') {
