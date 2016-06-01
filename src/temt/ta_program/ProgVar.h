@@ -49,7 +49,7 @@ public:
     CTRL_PANEL          = 0x0001, // #CONDSHOW_OFF_flags:LOCAL_VAR show this variable in the control panel
     CTRL_READ_ONLY      = 0x0002, // #CONDSHOW_ON_flags:CTRL_PANEL variable is read only (display but not edit) in the control panel
     NULL_CHECK          = 0x0004, // #CONDSHOW_ON_var_type:T_Object complain if object variable is null during checkconfig (e.g., will get assigned during run)
-    SAVE_VAL            = 0x0008, // #CONDSHOW_OFF_flags:LOCAL_VAR save the value of the variable in the project -- good idea to turn off saving for variables that don't require persistence across saving and loading (and that change for each run and thus might affect merging of project files)
+    SAVE_VAL            = 0x0008, // #CONDSHOW_OFF_var_type:T_Object||flags:LOCAL_VAR save the value of the variable in the project -- good idea to turn off saving for variables that don't require persistence across saving and loading (and that change for each run and thus might affect merging of project files)
     NEW_OBJ             = 0x0010, // #CONDSHOW_ON_var_type:T_Object&&flags:LOCAL_VAR automatically create a new object of given type when local variable is first initialized -- object will be automatically destroyed when this variable goes out of scope -- do not use if you are assigning this variable from a function return value -- only when you need a new temporary object of this type
     QUIET               = 0x0020, // turn off warning messages if they are not relevant (e.g., regarding global matrix vars)
     LOCAL_VAR           = 0x0040, // #NO_SHOW this is a local variable which does not set or update values!

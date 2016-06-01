@@ -739,6 +739,7 @@ taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
     rval = (var_type == T_Object) ? DQR_SAVE : DQR_NO_SAVE;
   }
   else if ((md->name == "object_val")) {
+    always_save = true;
     rval = (var_type == T_Object) ? DQR_SAVE : DQR_NO_SAVE;
   }
   else if (md->name == "hard_enum_type") {
