@@ -425,7 +425,15 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
       // those being treated like top level are specific networks (i.e. network -- not an actual group but has spec and layer groups
       if (tab->InheritsFrom(&TA_taGroup_impl) || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
-        int depth = taiMisc::GetGroupDefaultExpand(tab->GetName());
+        String name;
+        if (tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
+          name = tab->GetTypeDef()->OptionAfter("FILETYPE_");  // I didn't want to add another directive for this single case
+          name.downcase();
+        }
+        else {
+          name = tab->GetName();
+        }
+        int depth = taiMisc::GetGroupDefaultExpand(name);
         if (depth >= 0) {
           is_subgroup = true;
           max_levels = depth;
