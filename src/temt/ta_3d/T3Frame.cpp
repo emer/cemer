@@ -187,17 +187,14 @@ void generatePlaneIndexData(PlaneNormal normal, quint16*& indices, quint16& base
       const int rowStartIndex = j * 2 + baseVertex;
       const int nextRowStartIndex = (j + 1) * 2 + baseVertex;
 
-      // Iterate over x
-      for (int i = 0; i < 2 - 1; ++i) {
-        // Split quad into two triangles
-        *indices++ = rowStartIndex + i;
-        *indices++ = rowStartIndex + i + 1;
-        *indices++ = nextRowStartIndex + i;
+      // Split quad into two triangles
+      *indices++ = rowStartIndex;
+      *indices++ = rowStartIndex + 1;
+      *indices++ = nextRowStartIndex;
 
-        *indices++ = nextRowStartIndex + i;
-        *indices++ = rowStartIndex + i + 1;
-        *indices++ = nextRowStartIndex + i + 1;
-      }
+      *indices++ = nextRowStartIndex;
+      *indices++ = rowStartIndex + 1;
+      *indices++ = nextRowStartIndex + 1;
     }
   }
   else {
@@ -205,17 +202,14 @@ void generatePlaneIndexData(PlaneNormal normal, quint16*& indices, quint16& base
       const int rowStartIndex = j * 2 + baseVertex;
       const int nextRowStartIndex = (j + 1) * 2 + baseVertex;
 
-      // Iterate over x
-      for (int i = 0; i < 1; ++i) {
-        // Split quad into two triangles
-        *indices++ = rowStartIndex + i;
-        *indices++ = nextRowStartIndex + i;
-        *indices++ = rowStartIndex + i + 1;
+      // Split quad into two triangles
+      *indices++ = rowStartIndex;
+      *indices++ = nextRowStartIndex;
+      *indices++ = rowStartIndex + 1;
 
-        *indices++ = nextRowStartIndex + i;
-        *indices++ = nextRowStartIndex + i + 1;
-        *indices++ = rowStartIndex + i + 1;
-      }
+      *indices++ = nextRowStartIndex;
+      *indices++ = nextRowStartIndex + 1;
+      *indices++ = rowStartIndex + 1;
     }
   }
   baseVertex += 4;
@@ -280,23 +274,6 @@ QByteArray createFrameVertexData(float w, float h, float d, float fw) {
                           u0, v0, u1, v0, uf0,vf0, uf1, vf0,
                           NegativeZ, z0, vertices);
 
-  // left edge
-  generatePlaneVertexData(y0 , z0, y1, z0, y0,z1, y1, z1,
-                          u0, v0, u1, v0, u0,v1, u1, v1,
-                          NegativeX, x0, vertices);
-  // top edge
-  generatePlaneVertexData(x0, z0, x1, z0, x0,z1, x1, z1,
-                          u0, v0, u1, v0, u0,v1, u1, v1,
-                          PositiveY, y1, vertices);
-  // right edge
-  generatePlaneVertexData(y0, z0, y1, z0, y0,z1, y1, z1,
-                          u0, v0, u1, v0, u0,v1, u1, v1,
-                          PositiveX, x1, vertices);
-  // bottom edge
-  generatePlaneVertexData(x0, z0, x1, z0, x0,z1, x1, z1,
-                          u0, v0, u1, v0, u0,v1, u1, v1,
-                          NegativeY, y0, vertices);
-
   // left inside edge
   generatePlaneVertexData(yf0, z0, yf1, z0, yf0,z1, yf1, z1,
                           u0, v0, u1, v0, u0,v1, u1, v1,
@@ -313,6 +290,23 @@ QByteArray createFrameVertexData(float w, float h, float d, float fw) {
   generatePlaneVertexData(xf0, z0, xf1, z0, xf0,z1, xf1, z1,
                           u0, v0, u1, v0, u0,v1, u1, v1,
                           PositiveY, yf0, vertices);
+
+  // left edge
+  generatePlaneVertexData(y0 , z0, y1, z0, y0,z1, y1, z1,
+                          u0, v0, u1, v0, u0,v1, u1, v1,
+                          NegativeX, x0, vertices);
+  // top edge
+  generatePlaneVertexData(x0, z0, x1, z0, x0,z1, x1, z1,
+                          u0, v0, u1, v0, u0,v1, u1, v1,
+                          PositiveY, y1, vertices);
+  // right edge
+  generatePlaneVertexData(y0, z0, y1, z0, y0,z1, y1, z1,
+                          u0, v0, u1, v0, u0,v1, u1, v1,
+                          PositiveX, x1, vertices);
+  // bottom edge
+  generatePlaneVertexData(x0, z0, x1, z0, x0,z1, x1, z1,
+                          u0, v0, u1, v0, u0,v1, u1, v1,
+                          NegativeY, y0, vertices);
 
   // front, left
   generatePlaneVertexData(x0, y0, xf0, yf0, x0,y1, xf0, yf1,
@@ -391,15 +385,6 @@ QByteArray createFrameIndexData() {
   // back, bottom
   generatePlaneIndexData(NegativeZ, indices, baseVertex);
 
-  // left edge
-  generatePlaneIndexData(NegativeX, indices, baseVertex);
-  // top edge
-  generatePlaneIndexData(PositiveY, indices, baseVertex);
-  // right edge
-  generatePlaneIndexData(PositiveX, indices, baseVertex);
-  // bottom edge
-  generatePlaneIndexData(NegativeY, indices, baseVertex);
-
   // left inside edge
   generatePlaneIndexData(PositiveX,  indices, baseVertex);
   // top inside edge
@@ -408,6 +393,15 @@ QByteArray createFrameIndexData() {
   generatePlaneIndexData(NegativeX,  indices, baseVertex);
   // bottom inside edge
   generatePlaneIndexData(PositiveY,  indices, baseVertex);
+
+  // left edge
+  generatePlaneIndexData(NegativeX, indices, baseVertex);
+  // top edge
+  generatePlaneIndexData(PositiveY, indices, baseVertex);
+  // right edge
+  generatePlaneIndexData(PositiveX, indices, baseVertex);
+  // bottom edge
+  generatePlaneIndexData(NegativeY, indices, baseVertex);
 
   // front, left
   generatePlaneIndexData(PositiveZ, indices, baseVertex);

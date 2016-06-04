@@ -1411,7 +1411,9 @@ void NetView::Render_net_text() {
     }
     el += val;
 #ifdef TA_QT3D
-    txt->setText(el);
+    if(txt) {
+      txt->setText(el);
+    }
 #else // TA_QT3D
     txt->string.setValue(el.chars());
 #endif // TA_QT3D

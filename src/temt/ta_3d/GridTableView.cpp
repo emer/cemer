@@ -650,12 +650,12 @@ void GridTableView_RowScrollCB(SoScrollBar* sb, int val, void* user_data) {
 
 void GridTableView::SetScrollBars() {
   if(scrolling_) return;                     // do't redo if currently doing!
-  T3GridViewNode* node_so = this->node_so(); // cache
-  if(!node_so) return;
+  T3GridViewNode* node = this->node_so(); // cache
+  if(!node) return;
 
 #ifdef TA_QT3D
 #else // TA_QT3D
-  SoScrollBar* csb = node_so->ColScrollBar();
+  SoScrollBar* csb = node->ColScrollBar();
 //   csb->setMinimum(0);
 //   csb->setSingleStep(1);
   int eff_col_n = MIN(view_cols, vis_cols.size);
@@ -664,7 +664,7 @@ void GridTableView::SetScrollBars() {
   csb->setValue(col_range.min);
   csb->setValueChangedCB(GridTableView_ColScrollCB, this);
 
-  SoScrollBar* rsb = node_so->RowScrollBar();
+  SoScrollBar* rsb = node->RowScrollBar();
 //   rsb->setMinimum(0);
 //   rsb->setSingleStep(1);
   int mx = MAX((rows() - view_rows), 0);
@@ -697,34 +697,34 @@ void GridTableView::OnWindowBind_impl(iT3Panel* vw) {
 }
 
 void GridTableView::RemoveGrid() {
-  T3GridViewNode* node_so = this->node_so();
-  if (node_so) {
+  T3GridViewNode* node = this->node_so();
+  if (node) {
 #ifdef TA_QT3D
-    node_so->grid->restart();
+    node->grid->restart();
 #else // TA_QT3D
-    node_so->grid()->removeAllChildren();
+    node->grid()->removeAllChildren();
 #endif // TA_QT3D
   }
 }
 
 void GridTableView::RemoveHeader() {
-  T3GridViewNode* node_so = this->node_so();
-  if (node_so) {
+  T3GridViewNode* node = this->node_so();
+  if (node) {
 #ifdef TA_QT3D
-    node_so->header->removeAllChildren();
+    node->header->removeAllChildren();
 #else // TA_QT3D
-    node_so->header()->removeAllChildren();
+    node->header()->removeAllChildren();
 #endif // TA_QT3D
   }
 }
 
 void GridTableView::RemoveLines(){
-  T3GridViewNode* node_so = this->node_so();
-  if (!node_so) return;
+  T3GridViewNode* node = this->node_so();
+  if (!node) return;
 #ifdef TA_QT3D
-  node_so->body->removeAllChildren();
+  node->body->removeAllChildren();
 #else // TA_QT3D
-  node_so->body()->removeAllChildren();
+  node->body()->removeAllChildren();
 #endif // TA_QT3D
 }
 
@@ -745,15 +745,15 @@ void GridTableView::SaveImageSVG(const String& svg_fname) {
 }
 
 void GridTableView::RenderGrid() {
-  T3GridViewNode* node_so = this->node_so();
-  if (!node_so) return;
+  T3GridViewNode* node = this->node_so();
+  if (!node) return;
 
 #ifdef TA_QT3D
-  T3LineStrip* grid = node_so->grid;
+  T3LineStrip* grid = node->grid;
   grid->setNodeUpdating(true);
   grid->TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.0f), width, 0.0f);
 #else // TA_QT3D
-  SoGroup* grid = node_so->grid();
+  SoGroup* grid = node->grid();
   grid->removeAllChildren(); // should have been done
 #endif // TA_QT3D
   if (!grid_on) return;
@@ -891,15 +891,15 @@ void GridTableView::RenderGrid() {
 }
 
 void GridTableView::RenderHeader() {
-  T3GridViewNode* node_so = this->node_so();
-  if (!node_so) return;
+  T3GridViewNode* node = this->node_so();
+  if (!node) return;
 
 #ifdef TA_QT3D
-  T3Entity* hdr = node_so->header;
+  T3Entity* hdr = node->header;
 #else // TA_QT3D
   // safely/correctly clear all the column headers
   // we remove first manually from us...
-  SoSeparator* hdr = node_so->header();
+  SoSeparator* hdr = node->header();
 #endif // TA_QT3D
 
   hdr->removeAllChildren();
@@ -938,9 +938,7 @@ void GridTableView::RenderHeader() {
   // margin and baseline adj
   float base_adj = (head_height * T3Misc::char_base_fract);
 #ifdef TA_QT3D
-  // hdr->TranslateLLFSz1To(QVector3D(0.0f, (head_height - base_adj), -gr_mg_sz), width, 0.0f);
-  // makes jno dif -- somehow it is not using relativity here in transforms anymore
-  hdr->TranslateLLFSz1To(QVector3D(-.5f, (head_height - base_adj), -gr_mg_sz), width, 0.0f);
+  hdr->TranslateLLFSz1To(QVector3D(0.0f, (head_height - base_adj), -gr_mg_sz), width, 0.0f);
 #else // TA_QT3D
   SoTranslation* tr = new SoTranslation();
   hdr->addChild(tr);
@@ -1005,13 +1003,12 @@ void GridTableView::RenderHeader() {
     String cnm = cvs->GetDisplayName().elidedTo(max_chars);
 
 #ifdef TA_QT3D
-    // this is totally not used!
     // T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
-    // T3TwoDText* txt = new T3TwoDText(hdr);
-    // txt->setText(cnm);
-    // txt->setTextColor(txtcolr);
-    // txt->Scale(font_scale);
-    // txt->Translate(-0.5f + col_pos + 0.5f * col_wd_lst, -0.5f + 1.0f - row_pos, -gr_mg_sz);
+    T3TwoDText* txt = new T3TwoDText(hdr);
+    txt->setText(cnm);
+    txt->setTextColor(txtcolr);
+    txt->Scale(font_scale);
+    txt->Translate(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -gr_mg_sz);
 #else // TA_QT3D
     T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
     SoSeparator* colsep = colnd->topSeparator();
@@ -1044,8 +1041,7 @@ void GridTableView::RenderHeader() {
 #ifdef TA_QT3D
     T3Cube* rect = new T3Cube(hdr);
     rect->setSize(col_wd_lst - gr_mg_sz2, head_height, gr_mg_sz);
-    //    rect->Translate(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -2.0 * gr_mg_sz);
-    rect->Translate(-0.5f + col_pos + 0.5f * col_wd_lst, -0.5f + 1.0f - row_pos, -2.0 * gr_mg_sz);
+    rect->Translate(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -2.10 * gr_mg_sz);
     rect->setColor(QColor::fromRgbF(0.0f, 1.0f, 1.0f, 0.4f));
     // rect->setColor(QColor::fromRgbF(0.0f, 1.0f, 1.0f, 1.0f));
 #else // TA_QT3D
@@ -1075,8 +1071,8 @@ void GridTableView::RenderHeader() {
 // todo: support renderValues() for matrixgrid??
 
 void GridTableView::RenderLine(int view_idx, int data_row) {
-  T3GridViewNode* node_so = this->node_so();
-  if (!node_so) return;
+  T3GridViewNode* node = this->node_so();
+  if (!node) return;
   float gr_mg_sz = grid_margin;
   float gr_mg_sz2 = 2.0f * gr_mg_sz;
   // origin is top-left of body area
@@ -1095,7 +1091,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 
 #ifdef TA_QT3D
   T3ExaminerViewer* vw = GetViewer();
-  T3Entity* body = node_so->body;
+  T3Entity* body = node->body;
   T3Entity* ln = new T3Entity(body);
   ln->Translate(0.0f, 1.0f - (row_pos + y_offs), 0.0f);
 #else // TA_QT3D
@@ -1129,7 +1125,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     txt->setText(el);
     txt->setTextColor(txtcolr);
     txt->Scale(font_scale);
-    txt->Translate(-0.5f + col_pos + 0.5f * col_wd_lst, -0.5f + 0.5f * text_ht, 0.0f);
+    txt->Translate(col_pos + 0.5f * col_wd_lst, 0.5f * text_ht, 0.0f);
 #else // TA_QT3D
     SoSeparator* row_sep = new SoSeparator;
     tr = new SoTranslation;
@@ -1216,7 +1212,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           T3MatrixGrid* sogr = new T3MatrixGrid
             (ln, cell_mat, act_idx, cvs->mat_odd_vert, &colorscale, 
              (T3MatrixGrid::MatrixLayout)cvs->mat_layout, mat_val_text);
-          sogr->Translate(-0.5f + col_pos + gr_mg_sz, -0.5f + -0.5f * row_height + 2.0f * gr_mg_sz, 0.0f);
+          sogr->Translate(col_pos + gr_mg_sz, -0.5f * row_height + 2.0f * gr_mg_sz, 0.0f);
           sogr->Scale3D(col_wd, mat_ht, 1.0f);
           sogr->RotateDeg(1.0f, 0.0f, 0.0f, mat_rot);
           sogr->spacing = mat_block_spc;
@@ -1275,7 +1271,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       txt->setText(el);
       txt->setTextColor(txtcolr);
       txt->Scale(font_scale);
-      txt->Translate(-0.5f + col_pos + x_offs, -0.5f + 0.5f * text_ht, 0.0f);
+      txt->Translate(col_pos + x_offs, 0.5f * text_ht, 0.0f);
 #else // TA_QT3D
       SoSeparator* txt_sep = new SoSeparator;
       ln->addChild(txt_sep);
@@ -1318,7 +1314,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   }
 #ifdef TA_QT3D
 #else // TA_QT3D
-  node_so->body()->addChild(ln);
+  node->body()->addChild(ln);
 #endif // TA_QT3D
 
   if(render_svg) {
@@ -1328,15 +1324,15 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 
 void GridTableView::RenderLines(){
   // this updates the data area
-  T3GridViewNode* node_so = this->node_so();
-  if (!node_so) return;
+  T3GridViewNode* node = this->node_so();
+  if (!node) return;
 
 #ifdef TA_QT3D
-  T3Entity* body = node_so->body;
+  T3Entity* body = node->body;
   float hh = 0.0f;
   body->TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.0f), width, 0.0f);
 #else // TA_QT3D
-  SoSeparator* body = node_so->body(); // cache
+  SoSeparator* body = node->body(); // cache
 #endif // TA_QT3D
   
   body->removeAllChildren(); //should already have been done
@@ -1389,9 +1385,9 @@ void GridTableView::ShowAllCols() {
 
 void GridTableView::setWidth(float wdth) {
   width = wdth;
-  T3GridViewNode* node_so = this->node_so();
-  if (!node_so) return;
-  node_so->setWidth(wdth);
+  T3GridViewNode* node = this->node_so();
+  if (!node) return;
+  node->setWidth(wdth);
 //  UpdateDisplay(true);
 }
 

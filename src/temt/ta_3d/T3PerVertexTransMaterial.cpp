@@ -151,6 +151,10 @@ void T3PerVertexTransMaterial::init() {
   m_filterKey->setName(QStringLiteral("renderingStyle"));
   m_filterKey->setValue(QStringLiteral("forward"));
 
+  // m_transGL3Technique->addFilterKey(m_filterKey);
+  // m_transGL2Technique->addFilterKey(m_filterKey);
+  // m_transES2Technique->addFilterKey(m_filterKey);
+
   m_transGL3RenderPass->setShaderProgram(m_transGL3Shader);
   m_transGL2RenderPass->setShaderProgram(m_transGL2ES2Shader);
   m_transES2RenderPass->setShaderProgram(m_transGL2ES2Shader);
@@ -161,9 +165,9 @@ void T3PerVertexTransMaterial::init() {
   m_blendEqArgs->setDestinationRgb(QBlendEquationArguments::OneMinusSourceAlpha);
   m_blendEq->setBlendFunction(QBlendEquation::Add);
 
-  init_render_pass(m_transGL3RenderPass);
-  init_render_pass(m_transGL2RenderPass);
-  init_render_pass(m_transES2RenderPass);
+  // init_render_pass(m_transGL3RenderPass);
+  // init_render_pass(m_transGL2RenderPass);
+  // init_render_pass(m_transES2RenderPass);
   
   m_transGL3Technique->addRenderPass(m_transGL3RenderPass);
   m_transGL2Technique->addRenderPass(m_transGL2RenderPass);

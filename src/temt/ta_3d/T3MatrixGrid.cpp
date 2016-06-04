@@ -23,7 +23,7 @@
 #include <taSvg>
 
 #include <T3Misc>
-#include <T3TriangleStrip>
+#include <T3Triangles>
 #include <T3TwoDText>
 
 #include <taMisc>
@@ -36,7 +36,7 @@ T3MatrixGrid::T3MatrixGrid(Qt3DNode* par, taMatrix* mat, int slice, bool oddy,
                            ColorScale* sc, MatrixLayout layout, bool val_txt)
   : inherited(par)
 {
-  tris = new T3TriangleStrip(this);
+  tris = new T3Triangles(this);
   cell_text = new T3Entity(this);
   matrix = mat;
   slice_idx = slice;
@@ -365,12 +365,18 @@ void T3MatrixGrid::renderBlock(const taVector2i& pos) {
 
   for(int i=0;i<20;i++) {        
     tris->addColor((uint32_t)0); // place holder..
-    tris->addIndex(st_idx++);    // indexes are 1-to-1..
-    if((i+1) % 4 == 0) {
-      tris->addBreak();         // all we really are using them for is the break..
-    }
   }
 
+  for(int i=0;i<5;i++) {        // replicate the triangle strip order, which is 0,1,2, 2,1,3
+    for(int j=0;j<3;j++) {
+      tris->addIndex(st_idx + j);
+    }
+    tris->addIndex(st_idx + 2);
+    tris->addIndex(st_idx + 1);
+    tris->addIndex(st_idx + 3);
+    st_idx += 4;
+  }
+  
   if(val_text) {
     renderText(xp0, xp1, yp0, yp1, zp1);
   }
@@ -397,6 +403,7 @@ void T3MatrixGrid::renderValue(taMatrix* matptr, float val, int& c_idx, iColor& 
   float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
   clr.setAlpha(alpha);
   for(int i=0;i<20;i++) {
+    // clr.setRgba((float)i / 20.0f, 0.0f, 0.0f, 1.0f);
     tris->setPointColor(c_idx + i, clr);
   }
 
@@ -416,7 +423,9 @@ void T3MatrixGrid::renderValue(taMatrix* matptr, float val, int& c_idx, iColor& 
       ValToDispText(val, val_str);
     }
     T3TwoDText* txt = dynamic_cast<T3TwoDText*>(cell_text->children().at(t_idx++));
-    txt->setText(val_str);
+    if(txt) {
+      txt->setText(val_str);
+    }
   }
 }
 

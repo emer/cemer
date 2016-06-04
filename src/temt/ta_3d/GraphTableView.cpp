@@ -688,15 +688,15 @@ void GraphTableView::Render_pre() {
 
 void GraphTableView::Render_impl() {
   inherited::Render_impl();
-  T3GraphViewNode* node_so = this->node_so(); // cache
-  if(!node_so || !dataTable())
+  T3GraphViewNode* node = this->node_so(); // cache
+  if(!node || !dataTable())
     return;
   
 #if (QT_VERSION >= 0x050000)
   dev_pix_ratio = ((QGuiApplication*)QGuiApplication::instance())->devicePixelRatio();
 #endif
   
-  node_so->setWidth(width);     // does a render too -- ensure always up to date on width
+  node->setWidth(width);     // does a render too -- ensure always up to date on width
   int orig_rows;
   CheckRowsChanged(orig_rows);  // don't do anything with this here, but just make sure m_rows is up to date
   MakeViewRangeValid();
@@ -853,13 +853,13 @@ void GraphTableView_RowScrollCB(SoScrollBar* sb, int val, void* user_data) {
 
 void GraphTableView::SetScrollBars() {
   if(scrolling_) return;                     // don't redo if currently doing!
-  T3GraphViewNode* node_so = this->node_so(); // cache
-  if(!node_so) return;
+  T3GraphViewNode* node = this->node_so(); // cache
+  if(!node) return;
   
 #ifdef TA_QT3D
 
 #else // TA_QT3D
-  SoScrollBar* rsb = node_so->RowScrollBar();
+  SoScrollBar* rsb = node->RowScrollBar();
   //  rsb->setMinimum(0);
   //  rsb->setSingleStep(1);
   int mx = MAX((rows() - view_rows), 0);
@@ -885,14 +885,14 @@ void GraphTableView::OnWindowBind_impl(iT3Panel* vw) {
 }
 
 void GraphTableView::RemoveGraph(){
-  T3GraphViewNode* node_so = this->node_so();
-  if (!node_so) return;
+  T3GraphViewNode* node = this->node_so();
+  if (!node) return;
 #ifdef TA_QT3D
-  node_so->graphs->removeAllChildren();
-  node_so->y_axes->removeAllChildren();
+  node->graphs->removeAllChildren();
+  node->y_axes->removeAllChildren();
 #else // TA_QT3D
-  node_so->graphs()->removeAllChildren();
-  node_so->y_axes()->removeAllChildren();
+  node->graphs()->removeAllChildren();
+  node->y_axes()->removeAllChildren();
 #endif // TA_QT3D
 }
 
@@ -1168,8 +1168,8 @@ void GraphTableView::RenderGraph() {
 
 
 void GraphTableView::RenderAxes() {
-  T3GraphViewNode* node_so = this->node_so();
-  if (!node_so) return;
+  T3GraphViewNode* node = this->node_so();
+  if (!node) return;
   
   GraphPlotView* mainy = MainY();
   GraphPlotView* alty = AltY();
@@ -1183,11 +1183,11 @@ void GraphTableView::RenderAxes() {
   }
   
 #ifdef TA_QT3D
-  T3Entity* xax = node_so->x_axis;
+  T3Entity* xax = node->x_axis;
   xax->setNodeUpdating(true);
-  T3Entity* zax = node_so->z_axis;
+  T3Entity* zax = node->z_axis;
   zax->setNodeUpdating(true);
-  T3Entity* yax = node_so->y_axes;
+  T3Entity* yax = node->y_axes;
   yax->setNodeUpdating(true);
 
   t3_x_axis = xax->findChild<T3Axis*>("x_bot");
@@ -1203,11 +1203,11 @@ void GraphTableView::RenderAxes() {
   }
   
 #else // TA_QT3D
-  SoSeparator* xax = node_so->x_axis();
+  SoSeparator* xax = node->x_axis();
   xax->removeAllChildren();
-  SoSeparator* zax = node_so->z_axis();
+  SoSeparator* zax = node->z_axis();
   zax->removeAllChildren();
-  SoSeparator* yax = node_so->y_axes();
+  SoSeparator* yax = node->y_axes();
   yax->removeAllChildren();
   SoTranslation* tr;
 
@@ -1495,8 +1495,8 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
 }
 
 void GraphTableView::RenderLegend() {
-  T3GraphViewNode* node_so = this->node_so();
-  if (!node_so)
+  T3GraphViewNode* node = this->node_so();
+  if (!node)
     return;
   
   float ylen = plots[0]->axis_length;
@@ -1530,14 +1530,14 @@ void GraphTableView::RenderLegend() {
     n_down++;
   
 #ifdef TA_QT3D
-  T3Entity* leg = node_so->legend;
+  T3Entity* leg = node->legend;
   const QObjectList& leg_ol = leg->children();
   int leg_n = 0;
   leg->Translate
     (QVector3D(-0.5f * width, 0.5f * ylen + (0.3f + (float)n_down * 1.1f) * label_font_size,
                0.0f));
 #else // TA_QT3D
-  SoSeparator* leg = node_so->legend();
+  SoSeparator* leg = node->legend();
   leg->removeAllChildren();
   // move to top
   SoTranslation* tr;
@@ -1685,8 +1685,8 @@ void GraphTableView::RenderLegend() {
 }
 
 void GraphTableView::RenderGraph_XY() {
-  T3GraphViewNode* node_so = this->node_so();
-  if (!node_so) return;
+  T3GraphViewNode* node = this->node_so();
+  if (!node) return;
   
   GraphPlotView* mainy = MainY();
   GraphPlotView* alty = AltY();
@@ -1701,13 +1701,13 @@ void GraphTableView::RenderGraph_XY() {
     boxd = depth;
   
 #ifdef TA_QT3D
-  const QObjectList& gr_ol = node_so->graphs->children();
+  const QObjectList& gr_ol = node->graphs->children();
   T3Entity* gr1 = NULL;
   if(graphs_n < gr_ol.count()) {
     gr1 = dynamic_cast<T3Entity*>(gr_ol.at(graphs_n++));
   }
   if(!gr1) {
-    gr1 = new T3Entity(node_so->graphs);
+    gr1 = new T3Entity(node->graphs);
   }
   const QObjectList& gr1_ol = gr1->children();
   T3LineBox* lbox = NULL;
@@ -1721,7 +1721,7 @@ void GraphTableView::RenderGraph_XY() {
     lbox->TranslateZFrontTo(QVector3D(0,0,0));
   }
 #else // TA_QT3D
-  SoSeparator* graphs = node_so->graphs();
+  SoSeparator* graphs = node->graphs();
   graphs->removeAllChildren();	// this is the "nuclear option" that ensures full redraw
   
   SoSeparator* gr1 = new SoSeparator;
@@ -1794,8 +1794,8 @@ void GraphTableView::RenderGraph_XY() {
 }
 
 void GraphTableView::RenderGraph_Bar() {
-  T3GraphViewNode* node_so = this->node_so();
-  if (!node_so) return;
+  T3GraphViewNode* node = this->node_so();
+  if (!node) return;
   
   GraphPlotView* mainy = MainY();
   GraphPlotView* alty = AltY();
@@ -1810,14 +1810,14 @@ void GraphTableView::RenderGraph_Bar() {
     boxd = depth;
   
 #ifdef TA_QT3D
-  node_so->graphs->removeAllChildren(); // todo: try to re-use instead of destroy!
-  T3Entity* gr1 = new T3Entity(node_so->graphs);
+  node->graphs->removeAllChildren(); // todo: try to re-use instead of destroy!
+  T3Entity* gr1 = new T3Entity(node->graphs);
   T3LineBox* lbox = new T3LineBox(gr1, QVector3D(width, 1.0f, boxd));
   if(z_axis.on) {
     lbox->TranslateZFrontTo(QVector3D(0,0,0));
   }
 #else // TA_QT3D
-  SoSeparator* graphs = node_so->graphs();
+  SoSeparator* graphs = node->graphs();
   graphs->removeAllChildren();
   
   SoSeparator* gr1 = new SoSeparator;
@@ -1905,8 +1905,8 @@ void GraphTableView::RenderGraph_Bar() {
 }
 
 void GraphTableView::RenderGraph_Matrix_Zi() {
-  T3GraphViewNode* node_so = this->node_so();
-  if (!node_so) return;
+  T3GraphViewNode* node = this->node_so();
+  if (!node) return;
   
   GraphPlotView* mainy = MainY();
   GraphPlotView* alty = AltY();
@@ -1916,12 +1916,12 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
   if(!da_1) return;
   
 #ifdef TA_QT3D
-  node_so->graphs->removeAllChildren(); // todo: try to re-use instead of destroy!
-  T3Entity* gr1 = new T3Entity(node_so->graphs);
+  node->graphs->removeAllChildren(); // todo: try to re-use instead of destroy!
+  T3Entity* gr1 = new T3Entity(node->graphs);
   T3LineBox* lbox = new T3LineBox(gr1, QVector3D(width, 1.0f, depth));
   lbox->TranslateZFrontTo(QVector3D(0,0,0));
 #else // TA_QT3D
-  SoSeparator* graphs = node_so->graphs();
+  SoSeparator* graphs = node->graphs();
   graphs->removeAllChildren();
   
   SoSeparator* gr1 = new SoSeparator;
@@ -1945,8 +1945,8 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
 }
 
 void GraphTableView::RenderGraph_Matrix_Sep() {
-  T3GraphViewNode* node_so = this->node_so();
-  if (!node_so) return;
+  T3GraphViewNode* node = this->node_so();
+  if (!node) return;
   
   GraphPlotView* mainy = MainY();
   GraphPlotView* alty = AltY();
@@ -1970,10 +1970,10 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
   float max_xy = MAX(cl_x, cl_y);
   
 #ifdef TA_QT3D
-  node_so->graphs->removeAllChildren(); // todo: try to re-use instead of destroy!
-  T3Entity* gr1 = new T3Entity(node_so->graphs);
+  node->graphs->removeAllChildren(); // todo: try to re-use instead of destroy!
+  T3Entity* gr1 = new T3Entity(node->graphs);
 #else // TA_QT3D
-  SoSeparator* graphs = node_so->graphs();
+  SoSeparator* graphs = node->graphs();
   graphs->removeAllChildren();
 #endif // TA_QT3D
   
@@ -2774,9 +2774,9 @@ void GraphTableView::SetColorSpec(ColorScaleSpec* color_spec) {
 
 void GraphTableView::setWidth(float wdth) {
   width = wdth;
-  T3GraphViewNode* node_so = this->node_so();
-  if (!node_so) return;
-  node_so->setWidth(width);
+  T3GraphViewNode* node = this->node_so();
+  if (!node) return;
+  node->setWidth(width);
   UpdateDisplay(true);
 }
 

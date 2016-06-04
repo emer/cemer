@@ -33,23 +33,20 @@ T3TwoDText::T3TwoDText(Qt3DNode* parent)
   , align(T3_ALIGN_CENTER)
   , v_pos(T3_VPOS_CENTER)
 {
-  bg_color = Qt::white;
-  // bg_color = Qt::transparent;
   QFont fnt("Arial", 24);       // 24 gives decent resolution for rendering
   label.setFont(fnt);
   texture = new T3TwoDTexture();
   plane = new T3ColorEntity(this);
   plane->addMesh(new QPlaneMesh());
-  plane->setColor(QColor::fromRgbF(1.0f, 0.5f, 0.5f, 1.0f));
-  // T3DiffuseTransMapMaterial* mat = new T3DiffuseTransMapMaterial;
-  // QDiffuseMapMaterial* mat = new QDiffuseMapMaterial;
-  // mat->setSpecular(QColor::fromRgbF(0.2f, 0.2f, 0.2f, 1.0f));
-  // mat->setShininess(10000.0f);
-  // plane->addMaterial(mat);
+  bg_color = Qt::white;         // must use white for non-transparent case
+  // bg_color = Qt::transparent;
+  //  T3DiffuseTransMapMaterial* mat = new T3DiffuseTransMapMaterial; // trans not working
+  QDiffuseMapMaterial* mat = new QDiffuseMapMaterial;
+  mat->setSpecular(QColor::fromRgbF(0.2f, 0.2f, 0.2f, 1.0f));
+  mat->setShininess(10000.0f);
+  plane->addMaterial(mat);
   plane->RotateDeg(1.0f, 0.0f, 0.0f, 90.0f); // flip up by default
-  //  plane->transform->setRotationX(90.0f);
-  // setText("null");
-  // mat->diffuse()->addTextureImage(texture);
+  mat->diffuse()->addTextureImage(texture);
 }
 
 T3TwoDText::~T3TwoDText() {
@@ -113,7 +110,6 @@ void T3TwoDText::updateRender() {
     break;
   }
   plane->Translate(xoff, yoff, 0.0f);
-  return;
   texture->renderLabel(*this);
 }
 
@@ -149,6 +145,7 @@ void T3TwoDTexture::renderLabel(T3TwoDText& txt) {
   image->fill(txt.bg_color); 
   QPainter painter(image);
   txt.label.render(&painter, QPoint(), QRegion(), QWidget::DrawChildren);
+  // image->save("/Users/oreilly/renimg.jpg");
   notifyDataGeneratorChanged();
 }
 
@@ -167,6 +164,7 @@ public:
     QTextureImageDataPtr dataPtr;
     dataPtr.reset(new QTextureImageData());
     dataPtr->setImage(image);
+    // image.save("/Users/oreilly/genimg.jpg");
     return dataPtr;
   }
 

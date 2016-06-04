@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 class ColorScale;
-class T3TriangleStrip;
+class T3Triangles;
 
 class TA_API T3MatrixGrid : public T3Entity {
   Q_OBJECT
@@ -62,8 +62,8 @@ public:
   float         ufontsz;        // computed font sz
   float		blk_ht;		// computed block height
 
-  T3TriangleStrip*      tris;
-  T3Entity*             cell_text;
+  T3Triangles*  tris;
+  T3Entity*     cell_text;
 
   QVector3D norm_bk;
   QVector3D norm_rt;

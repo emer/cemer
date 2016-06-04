@@ -112,6 +112,7 @@ set(ta_3d_HEADS_QT3D_MOC
   T3Plane.h
   T3Frame.h
   T3TriangleStrip.h
+  T3Triangles.h
   T3SceneLoader.h
   T3Image.h
 )
@@ -286,6 +287,7 @@ set(ta_3d_SRCS_QT3D
   T3Plane.cpp
   T3Frame.cpp
   T3TriangleStrip.cpp
+  T3Triangles.cpp
   T3SceneLoader.cpp
   T3Image.cpp
 )

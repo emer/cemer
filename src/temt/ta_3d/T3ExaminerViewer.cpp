@@ -398,7 +398,10 @@ T3ExaminerViewer::~T3ExaminerViewer() {
 #ifdef TA_QT3D
   // engine->shutdown();  // this causes crash at exit!
   // delete engine;
-  // delete view3d;
+  //  delete root_entity;
+  // getting a crash on internal listener when deleting the qwindow.
+  view3d->hide();
+  delete view3d;
 #else
   quarter->setInteractionModeOn(false); // turn off interaction mode. before we die..
   // otherwise we can crash..
