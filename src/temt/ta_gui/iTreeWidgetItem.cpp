@@ -101,6 +101,7 @@ bool iTreeWidgetItem::isExpandedLeaf() const {
 }
 
 void iTreeWidgetItem::itemExpanded(bool expanded) {
+  ((iTreeWidget*)treeWidget())->SetTreeStateDirty();  // any change makes it dirty
   if (!expanded) return; //  || !lazy_children) return;
   if(!children_created) {
     CreateChildren();

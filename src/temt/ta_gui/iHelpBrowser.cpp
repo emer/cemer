@@ -442,7 +442,7 @@ void iHelpBrowser::ApplyFiltering() {
   while ((item = *it)) {
     // TODO (maybe): don't hide NULL item
     bool show = ShowItem(item);
-    tv->setItemHidden(item, !show);
+    item->setHidden(!show);
     if(show) {
       n_items++;
     }
@@ -494,7 +494,7 @@ void iHelpBrowser::ClearFilter() {
   QTreeWidgetItemIterator it(tv, QTreeWidgetItemIterator::Hidden);
   QTreeWidgetItem* item;
   while ((item = *it)) {
-    tv->setItemHidden(item, false);
+    item->setHidden(false);
     ++it;
   }
   taMisc::DoneBusy();

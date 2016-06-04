@@ -648,7 +648,7 @@ void iProgramEditor::ExpandAll() {
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::HasChildren);
   QTreeWidgetItem* item;
   while ((item = *it)) {
-    items->setItemExpanded(item, true);
+    ((iTreeWidgetItem*)item)->setExpanded(true);
     ++it;
   }
   // size first N-1 cols

@@ -27,7 +27,6 @@
 #include <iSubversionBrowser>
 #include <iSvnFileListModel>
 #include <iDialogChoice>
-
 #include <ctime>
 
 taTypeDef_Of(taDataProc);
@@ -268,6 +267,7 @@ void taProject::Dump_Load_post() {
     return; // none of this.
   OpenProjectLog();
   DoView();
+  
   setDirty(false);              // nobody should start off dirty!
   if(!taMisc::interactive) {
     bool startup_run = programs.RunStartupProgs();      // run startups now..
@@ -278,24 +278,37 @@ void taProject::Dump_Load_post() {
 
 void taProject::DoView() {
   if (!taMisc::gui_active || taMisc::is_undo_loading) return;
-  MainWindowViewer* vwr = AssertDefaultProjectBrowser(true);
-  if(!vwr) return;
+  MainWindowViewer* main_window_viewer = AssertDefaultProjectBrowser(true);
+  if(!main_window_viewer) return;
+  
   // allow to process new window before asserting default items
   // debug mode still doesn't work here tho.. 
   taMisc::ProcessEvents();
-  // note: we want a doc to be the default item, if possible
-  if(vwr->widget()) {
-    vwr->widget()->GetMainTreeView()->ExpandDefault();
+  
+  // restore tree state if saved - otherwise use defaults
+  if(main_window_viewer->widget()) {
+    iTreeView* nav_tree_view = main_window_viewer->widget()->GetMainTreeView();
+    if (nav_tree_view) {
+      nav_tree_view->SetTreeStateClean();  // ignore the expand/collapse that occurs opening the views
+      if (tree_state.size != 0) {
+        nav_tree_view->RestoreTreeState(tree_state);
+      }
+      else {
+        nav_tree_view->ExpandDefault();
+      }
+    }
   }
+
   docs.RestorePanels();
   wizards.RestorePanels();
   ctrl_panels.RestorePanels();
   data.RestorePanels();
   programs.RestorePanels();
+  
   // this is very hacky... select the 2nd tab, which will
   // be the first auto guy if there were any
   taiMiscCore::ProcessEvents();
-  vwr->SelectPanelTabNo(1);
+  main_window_viewer->SelectPanelTabNo(1);
 }
 
 MainWindowViewer* taProject::AssertDefaultProjectBrowser(bool auto_open) {

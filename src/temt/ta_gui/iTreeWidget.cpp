@@ -78,6 +78,8 @@ void  iTreeWidget::init() {
   m_highlightRows = false;
   m_highlightColors = NULL; // created if highlighting enabled
   // we never use this class for Qt-internal dnd semantics
+  tree_dirty = false;
+  
   setAutoScroll(true);
   setDragDropMode(DragDrop);
 

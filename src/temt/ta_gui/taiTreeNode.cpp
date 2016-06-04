@@ -67,8 +67,9 @@ void taiTreeNode::CreateChildren_impl() {
       String tree_nm = md->GetLabel();
       last_child_node = dl->CreateTreeDataNode(md, this, last_child_node, tree_nm,
         (iTreeViewItem::DNF_IS_MEMBER));
-      if (!tree->ShowNode(last_child_node))
-        tree->setItemHidden(last_child_node, true);
+      if (!tree->ShowNode(last_child_node)) {
+        last_child_node->setHidden(true);
+      }
     }
   }
   last_member_node = last_child_node; //note: will be NULL if no members issued

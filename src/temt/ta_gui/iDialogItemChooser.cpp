@@ -210,7 +210,7 @@ int iDialogItemChooser::ApplyFiltering() {
   while ((item = *it)) {
     bool show = ShowItem(item);
     if(!show) item->setSelected(false); // maybe help with selection problems
-    items->setItemHidden(item, !show);
+    item->setHidden(!show);
     if(show) {
       if(n_items == 0)
         first_item = item;
@@ -264,7 +264,7 @@ void iDialogItemChooser::ClearFilter() {
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::Hidden);
   QTreeWidgetItem* item;
   while ((item = *it)) {
-    items->setItemHidden(item, false);
+    item->setHidden(false);
     ++it;
   }
   taMisc::DoneBusy();

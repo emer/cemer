@@ -32,12 +32,13 @@
 #endif
 #include <TypeItem>
 
-
 // declare all other types mentioned but not required to include:
 class iMainWindowViewer; //
 class String_PArray; //
 class iTreeViewItem; //
 class iLineEdit; //
+class bool_Array; //
+
 
 #ifndef __MAKETA__
 typedef QMap<QString, QVariant> QMap_qstr_qvar; // the QMap type that QVariant supports
@@ -163,6 +164,10 @@ public:
   // scroll vertically to given position -- directly controls vertical scroll bar
   virtual bool          PosInView(int scr_pos);
   // is given position within the main scroll area (in coordinates relative to central widget) within view?
+  virtual void          GetTreeState(bool_Array& tree_state);
+  // get the current expand state of the tree nodes
+  virtual void          RestoreTreeState(bool_Array& tree_state);
+  // expand/collapse tree state to saved state
 
   iTreeView(QWidget* parent = 0, int tv_flags = 0);
   ~iTreeView();
@@ -225,6 +230,7 @@ protected:
     EF_EXPAND_DISABLED          = 0x04, // either Expand on that guy, or set in flags
     EF_NAVIGATOR_FILTER         = 0x08  // custom expand when doing in navigator tree
   };
+
   int                   tv_flags;
   String_PArray*        m_filters; // only created if any added
   short                 m_def_exp_levels; // level of default expand, typically 2
@@ -260,6 +266,9 @@ protected:
 
   void                  keyPressEvent(QKeyEvent* e) override;
   bool                  focusNextPrevChild(bool next) override;
+  
+  virtual void          GetTreeState_impl(iTreeViewItem* node, bool_Array& tree_state);
+  virtual void          RestoreTreeState_impl(iTreeViewItem* node, bool_Array& tree_state, int& counter);
 
 #ifndef __MAKETA__
   QMimeData*   mimeData(const QList<QTreeWidgetItem*> items) const override;
@@ -278,6 +287,7 @@ protected slots:
   virtual void          ExpandAllUnderInt(void* item);
   virtual void          CollapseAllUnderInt(void* item);
   virtual void          ExpandDefaultUnderInt(void* item);
+
 private:
   mutable QFont*        italic_font;
 };

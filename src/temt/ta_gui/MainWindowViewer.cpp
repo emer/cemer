@@ -25,6 +25,7 @@
 #include <T3PanelViewer>
 #include <iTabView>
 #include <iT3PanelViewer>
+#include <iTreeView>
 
 #include <taMisc>
 #include <taiMisc>
@@ -262,8 +263,13 @@ bool MainWindowViewer::GetWinState() {
   docks.GetWinState();
   // relative sizes of panels
   iSplitter* spl = widget()->body;
-  SetUserData("view_splitter_state",
-              String(spl->saveState().toBase64().constData()));
+  SetUserData("view_splitter_state", String(spl->saveState().toBase64().constData()));
+  
+  BrowseViewer* viewer = GetNavigator();
+  iTreeView* nav_tree_view = widget()->GetMainTreeView();
+  if (GetMyProj() && nav_tree_view) {
+    nav_tree_view->GetTreeState(GetMyProj()->tree_state);
+  }
   return true;
 }
 

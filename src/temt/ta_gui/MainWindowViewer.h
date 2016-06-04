@@ -129,8 +129,10 @@ public:
   // get the BrowseViewer (left browser panel)
   PanelViewer*          GetMiddlePanel();
   // get the PanelViewer (middle edit panel)
-  T3PanelViewer*         GetRightViewer();
+  T3PanelViewer*        GetRightViewer();
   // get the T3PanelViewer (right viewer panel)
+  
+  BrowseViewer*         GetNavigator() { return GetLeftBrowser(); }
 
   void         FrameSizeToSize(iSize& sz) override;
   bool         GetWinState() override;

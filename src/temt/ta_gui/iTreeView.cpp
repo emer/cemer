@@ -92,6 +92,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   in_mouse_press = 0;
   m_saved_scroll_pos = 0;
   setIndentation(taMisc::tree_indent);
+  
   // set default 'invalid' highlight colors, but don't enable highlighting by default
   setHighlightColor(1,
     QColor(0xFF, 0x99, 0x99),  // pale dull red
@@ -246,13 +247,14 @@ void iTreeView::CollapseAllUnder(iTreeViewItem* item) {
       CollapseAllUnder(node);
   }
   // then ourself
-  setItemExpanded(item, false);
+  item->setExpanded(false);
   taMisc::Busy(false);
 }
 
 void iTreeView::CollapseAllUnderInt(void* item) {
   CollapseAllUnder((iTreeViewItem*)item);
 }
+
 
 void iTreeView::InsertEl(bool after) {
   ISelectable* si = curItem();
@@ -500,7 +502,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   if (expand) {
     // first expand the guy...
     if (!isItemExpanded(item)) { // ok, eligible...
-      setItemExpanded(item, true); // should trigger CreateChildren for lazy
+      item->setExpanded(true);  // should trigger CreateChildren for lazy
       if(tab)
         tab->SetBaseFlag(taBase::TREE_EXPANDED);
       // if(tab) {
@@ -531,7 +533,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     if(!exp_flags & (EF_DEFAULT | EF_CUSTOM_FILTER)) {
       // for auto-expand, do NOT collapse expanded items!
       if (isItemExpanded(item)) {
-        setItemExpanded(item, false);
+        item->setExpanded(false);
         tab->ClearBaseFlag(taBase::TREE_EXPANDED);
         // if(tab) {
         //   taMisc::DebugInfo("collapsed:", tab->GetDisplayName(), tab->GetPathNames());
@@ -558,7 +560,7 @@ void iTreeView::ExpandAllUnderInt(void* item) {
 void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   if (!item) return;
   taBase* tab = item->link()->taData();
-  if (tab) {
+  if (tab && tab->HasBaseFlag(taBase::TREE_EXPANDED)) {
     tab->ClearBaseFlag(taBase::TREE_EXPANDED);
   }
   int exp_flags = 0;
@@ -600,6 +602,62 @@ void iTreeView::ExpandDefault() {
     if(node)
       scrollTo(node);
   }
+}
+
+void iTreeView::GetTreeState_impl(iTreeViewItem* node, bool_Array& tree_state) {
+  if (!myProject()) return;
+
+  tree_state.Add(node->isExpanded());
+  for (int i = 0; i < node->childCount(); ++i) {
+    iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(node->child(i));
+    if (child) {
+      GetTreeState_impl(child, tree_state);
+    }
+  }
+}
+
+void iTreeView::RestoreTreeState_impl(iTreeViewItem* node, bool_Array& tree_state, int& counter) {
+  if (!myProject()) return;
+  if (tree_state.size == 0) return;
+  
+  if (node) {
+    if (tree_state.SafeEl(counter) == true) {
+      if (!node->isExpanded()) {
+        node->setExpanded(true);
+      }
+    }
+    else {
+      if (node->isExpanded()) {
+        node->setExpanded(false);
+      }
+    }
+    counter++;
+
+    for (int i = 0; i < node->childCount(); ++i) {
+      iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(node->child(i));
+      RestoreTreeState_impl(child, tree_state, counter);
+    }
+  }
+}
+
+void iTreeView::GetTreeState(bool_Array& tree_state) {
+  if (!myProject()) return;
+  
+  tree_state.Reset();
+  // we only restore the entire tree so start with the root item
+  iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(0));
+  GetTreeState_impl(node, tree_state);
+}
+
+void iTreeView::RestoreTreeState(bool_Array& tree_state) {
+  if (IsTreeDirty()) {
+    taMisc::Info("The tree has been expanded or collapsed since the project was opened - can't be restored");
+    return;
+  }
+  // we only restore the entire tree - so start with the root item
+  iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(0));
+  int counter = 0;
+  RestoreTreeState_impl(node, tree_state, counter);
 }
 
 void iTreeView::focusInEvent(QFocusEvent* ev) {
@@ -1078,7 +1136,7 @@ void iTreeView::Refresh_impl() {
       bool hide_it = !ShowNode(item);
       bool is_hid = isItemHidden(item);
       if (hide_it != is_hid) {
-        setItemHidden(item, hide_it);
+        item->setHidden(hide_it);
       }
       // always refresh visible guys
       if (!hide_it) {
@@ -1103,7 +1161,7 @@ void iTreeView::Show_impl() {
       bool hide_it = !ShowNode(item);
       bool is_hid = isItemHidden(item);
       if (hide_it != is_hid) {
-        setItemHidden(item, hide_it);
+        item->setHidden(hide_it);
         // if we are making shown a hidden item, we also refresh it for safety
         if (!hide_it) {
           // simulate update notification
@@ -1111,7 +1169,7 @@ void iTreeView::Show_impl() {
         }
       }
     } else {
-      setItemHidden(item_, false);
+      item_->setHidden(false);
     }
     ++it;
   }
@@ -1181,6 +1239,10 @@ void iTreeView::FillContextMenu_post(ISelectable_PtrList& sel_items, taiWidgetAc
                        this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
       men_exp->AddItem("Collapse", taiWidgetMenu::normal, iAction::ptr_act,
                        this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
+      men_exp->AddItem("Save", taiWidgetMenu::normal, iAction::ptr_act,
+                       this, SLOT(SaveExpandState(void*)), (void*)nd );
+      men_exp->AddItem("Restore", taiWidgetMenu::normal, iAction::ptr_act,
+                       this, SLOT(Restore(void*)), (void*)nd );
     }
   }  
   emit FillContextMenuHookPost(sel_items, menu);
