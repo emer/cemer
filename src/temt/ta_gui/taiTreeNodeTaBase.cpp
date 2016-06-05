@@ -58,19 +58,6 @@ void taiTreeNodeTaBase::SigEmit_impl(int sls, void* op1_, void* op2_) {
         do_updt = true;
     }
   }
-  if(do_updt || sls == SLS_STRUCT_UPDATE_ALL) { // special case for post-loading update
-    takeChildren();
-    CreateChildren();
-    iTreeView* itv = treeView();
-    if(!itv) return;
-    if(itv->itemCount() > 0) {
-      if(itv->item(0) == this)
-        itv->ExpandDefault();
-      else if(do_updt) {
-        itv->ExpandDefaultUnder(this);
-      }
-    }
-  }
 }
 
 void taiTreeNodeTaBase::itemEdited(int column, int move_after) {
