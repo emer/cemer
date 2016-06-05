@@ -35,7 +35,7 @@ T3ColorEntity::T3ColorEntity(Qt3DNode* parent)
   color_type = NO_COLOR;               // don't start with anything
   color = Qt::green;
   ambient = 0.2f;
-  specular = 0.95f;
+  specular = 0.1f;
   shininess = 150.0f;
 
   updateColor();

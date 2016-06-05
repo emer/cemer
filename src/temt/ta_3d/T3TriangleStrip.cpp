@@ -362,8 +362,8 @@ T3TriangleStrip::T3TriangleStrip(Qt3DNode* parent)
   addMesh(tris);
 
   // not too big of a spot..
-  shininess = 10000.0f;
-  specular = 0.5f;
+  shininess = 150.0f;
+  specular = 0.1f;
   
   //  color_type = PER_VERTEX_TRANS; // default
   //  color_type = PHONG;

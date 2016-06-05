@@ -19,7 +19,7 @@
 
 #ifdef TA_QT3D
 
-#include <T3TriangleStrip>
+#include <T3Triangles>
 #include <T3LineStrip>
 
 float T3UnitGroupNode::height = 0.0f;
@@ -29,7 +29,7 @@ T3UnitGroupNode::T3UnitGroupNode(Qt3DNode* parent, T3DataView* dataView_, bool n
   : inherited(parent, dataView_)
   , no_units(noun)
   , mode_2d(md2)
-  , tris(new T3TriangleStrip(this))
+  , tris(new T3Triangles(this))
   , snap_bord(new T3LineStrip(this))
   , unit_text(new T3Entity(this))
 {

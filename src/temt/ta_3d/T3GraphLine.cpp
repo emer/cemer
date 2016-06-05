@@ -287,6 +287,7 @@ void T3GraphLine::setDefaultColor(const QColor& c) {
 }
 
 void T3GraphLine::setLineStyle(LineStyle value, float line_width) {
+  lines->line_width = line_width;
   // unsigned short pattern;
   // switch (value) {
   // case SOLID:

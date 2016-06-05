@@ -164,6 +164,7 @@ void T3MatrixGrid::render() {
     }
   }
 
+  // tris->setNodeUpdating(false);
   renderValues();		// hand off to next guy..
 }
 
@@ -371,6 +372,10 @@ void T3MatrixGrid::renderBlock(const taVector2i& pos) {
     for(int j=0;j<3;j++) {
       tris->addIndex(st_idx + j);
     }
+    // tris->addIndex(st_idx + 2);
+    // tris->addIndex(st_idx + 1);
+    // tris->addIndex(st_idx + 0);
+    
     tris->addIndex(st_idx + 2);
     tris->addIndex(st_idx + 1);
     tris->addIndex(st_idx + 3);
@@ -403,7 +408,6 @@ void T3MatrixGrid::renderValue(taMatrix* matptr, float val, int& c_idx, iColor& 
   float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
   clr.setAlpha(alpha);
   for(int i=0;i<20;i++) {
-    // clr.setRgba((float)i / 20.0f, 0.0f, 0.0f, 1.0f);
     tris->setPointColor(c_idx + i, clr);
   }
 

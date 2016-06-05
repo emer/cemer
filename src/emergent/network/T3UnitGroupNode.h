@@ -28,7 +28,7 @@
 
 #ifdef TA_QT3D
 
-class T3TriangleStrip;
+class T3Triangles;
 class T3LineStrip;
 
 class E_API T3UnitGroupNode: public T3NodeParent {
@@ -45,7 +45,7 @@ public:
   bool			no_units; // summary mode: no unit objects exist
   bool                  mode_2d;
 
-  T3TriangleStrip*      tris;
+  T3Triangles*          tris;
   T3LineStrip*          snap_bord;
   T3Entity*             unit_text;
   

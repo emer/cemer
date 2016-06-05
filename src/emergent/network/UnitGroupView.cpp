@@ -31,7 +31,7 @@
 
 #ifdef TA_QT3D
 
-#include <T3TriangleStrip>
+#include <T3Triangles>
 #include <T3LineStrip>
 #include <T3TwoDText>
 
@@ -628,7 +628,7 @@ void UnitGroupView::Render_impl_blocks() {
   unit_text->removeAllChildren();
   bool build_text = (nv->unit_text_disp != NetView::UTD_NONE);
 
-  T3TriangleStrip* tris = node_so->tris;
+  T3Triangles* tris = node_so->tris;
   tris->setNodeUpdating(true);
   tris->restart();
 
@@ -695,11 +695,18 @@ void UnitGroupView::Render_impl_blocks() {
 
       for(int i=0;i<20;i++) {        
         tris->addColor(blnkc); // place holder..
-        tris->addIndex(st_idx++);    // indexes are 1-to-1..
-        if((i+1) % 4 == 0) {
-          tris->addBreak();         // all we really are using them for is the break..
-        }
       }
+      
+      for(int i=0;i<5;i++) {        // replicate triangle strip order, which is 0,1,2, 2,1,3
+        for(int j=0;j<3;j++) {
+          tris->addIndex(st_idx + j);
+        }
+        tris->addIndex(st_idx + 2);
+        tris->addIndex(st_idx + 1);
+        tris->addIndex(st_idx + 3);
+        st_idx += 4;
+      }
+
       if(build_text) {
         float xfp = .5f * (xp0 + xp1);
         T3TwoDText* txt = new T3TwoDText(unit_text);
@@ -1123,7 +1130,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   int zverts[n_zverts] = {1,3,5,7,10,11,14,15,16,17,18,19};
 
   T3Entity* unit_text = node_so->unit_text;
-  T3TriangleStrip* tris = node_so->tris;
+  T3Triangles* tris = node_so->tris;
   tris->setNodeUpdating(true);
   
   for(pos.y=lay->flat_geom.y-1; pos.y>=0; pos.y--) { // go back to front
@@ -1400,7 +1407,7 @@ void UnitGroupView::Render_impl_snap_bord() {
 #ifdef TA_QT3D
 
   T3LineStrip* sb = node_so->snap_bord;
-  sb->setPerVertexColor(true);
+  // sb->setPerVertexColor(true);
   sb->restart();
 
   if(!do_lines)

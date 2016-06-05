@@ -752,6 +752,7 @@ void GridTableView::RenderGrid() {
   T3LineStrip* grid = node->grid;
   grid->setNodeUpdating(true);
   grid->TranslateLLFSz1To(QVector3D(0.0f, 0.0f, 0.0f), width, 0.0f);
+  grid->line_width = grid_line_size;
 #else // TA_QT3D
   SoGroup* grid = node->grid();
   grid->removeAllChildren(); // should have been done
@@ -1008,7 +1009,7 @@ void GridTableView::RenderHeader() {
     txt->setText(cnm);
     txt->setTextColor(txtcolr);
     txt->Scale(font_scale);
-    txt->Translate(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -gr_mg_sz);
+    txt->Translate(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, 0.0f);
 #else // TA_QT3D
     T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
     SoSeparator* colsep = colnd->topSeparator();
@@ -1041,8 +1042,8 @@ void GridTableView::RenderHeader() {
 #ifdef TA_QT3D
     T3Cube* rect = new T3Cube(hdr);
     rect->setSize(col_wd_lst - gr_mg_sz2, head_height, gr_mg_sz);
-    rect->Translate(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -2.10 * gr_mg_sz);
-    rect->setColor(QColor::fromRgbF(0.0f, 1.0f, 1.0f, 0.4f));
+    rect->Translate(col_pos + 0.5f * col_wd_lst, 1.0f - row_pos, -1.05f * gr_mg_sz);
+    rect->setColor(QColor::fromRgbF(0.0f, 1.0f, 1.0f, 0.4f), 0.5f, 150.0f);
     // rect->setColor(QColor::fromRgbF(0.0f, 1.0f, 1.0f, 1.0f));
 #else // TA_QT3D
     SoTranslation* rectr = new SoTranslation();

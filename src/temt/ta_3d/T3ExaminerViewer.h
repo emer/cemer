@@ -75,7 +75,7 @@ class T3RenderView : public Qt3DExtras::Qt3DWindow {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS rendering surface for Qt3D rendering
   Q_OBJECT
 public:
-  explicit T3RenderView(QScreen *screen = 0);
+  explicit T3RenderView();
   ~T3RenderView();
 
 protected:

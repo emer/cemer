@@ -54,27 +54,27 @@ public:
   float_Matrix  colors; // optional per-vertex colors in 1-to-1 correspondence with the vertex data -- these are 4 full floating-point colors RGBA per point -- packed RGBA not supported in shaders it seems..
   int_Array     indexes; // triangles defined by sequential indexes into vndata -- use 0xFFFFFFFF to stop one triangle strip and then start another
     
-  void  restart();
+  virtual void  restart();
   // set sizes back to 0
 
   int  vertexCount() const { return vndata.Frames(); } // number of vertexes
   int  colorCount() const { return colors.Frames(); } // number of colors
   int  indexCount() const { return indexes.size; } // number of indexes
   
-  int  addVertex(const QVector3D& pos, const QVector3D& norm);
+  virtual int  addVertex(const QVector3D& pos, const QVector3D& norm);
   // add given vertex, normal at that vertex, return index to that point
-  int  addVertex(const taVector3f& pos, const taVector3f& norm);
+  virtual int  addVertex(const taVector3f& pos, const taVector3f& norm);
   // add given vertex, normal at that vertex, return index to that point
 
-  int  addColor(const QColor& clr);
+  virtual int  addColor(const QColor& clr);
   // add given color, return index to that point -- must keep in sync with adding points!
 
-  void  addTriangle(int v0, int v1, int v2);
+  virtual void  addTriangle(int v0, int v1, int v2);
   // add triangle composed of the given indexes into the vertex / normal data
-  void addIndex(int v0);
+  virtual void addIndex(int v0);
   // add a single index 
     
-  void  setPointColor(int idx, const QColor& clr);
+  virtual void  setPointColor(int idx, const QColor& clr);
   
   explicit T3TrianglesMesh(Qt3DNode* parent = 0);
   ~T3TrianglesMesh(); 

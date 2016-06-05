@@ -29,7 +29,7 @@ public:
     void setTime(float time)
     {
       m_time = time;
-      if((int)m_time % 60 == 0) {
+      if((int)(m_time+1) % 100 == 0) {
         drawUpdate();
         emit timeChanged();
       }

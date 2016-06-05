@@ -77,8 +77,8 @@ using namespace Qt3DInput;
 using namespace Qt3DExtras;
 
 
-T3RenderView::T3RenderView(QScreen *screen)
-: Qt3DWindow(screen)
+T3RenderView::T3RenderView()
+: Qt3DWindow()
 {
 }
 
@@ -173,11 +173,17 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   scene = NULL;
   bg_color = QColor::fromRgbF(0.0, 0.5, 1.0, 1.0);
 
-  QScreen* scr = QApplication::screens().at(0); // first screen
+  // QScreen* scr = QApplication::screens().at(0); // first screen
+
+  bool sep_win = false;          // open in a separate window!
   
-  view3d = new T3RenderView(scr);
-  QWidget* container = QWidget::createWindowContainer(view3d);
-  main_hbox->addWidget(container, 1);
+  view3d = new T3RenderView();
+
+  QWidget* container = NULL;
+  if(!sep_win) {
+    container = QWidget::createWindowContainer(view3d);
+    main_hbox->addWidget(container, 1);
+  }
   // engine->initialize();
   // QVariantMap data;
   // data.insert(QStringLiteral("surface"),
@@ -187,9 +193,13 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
   root_entity = new QEntity();
   camera = view3d->camera(); //new QCamera(root_entity);
-
-  QSize sz = container->size();
-  // QSize sz = view3d->size();
+  QSize sz;
+  if(sep_win) {
+    sz = view3d->size();
+  }
+  else {
+    sz = container->size();
+  }
   float aspect_ratio = (float)sz.width() / (float)sz.height();
   // if(sz.width() < 10 || sz.height() < 10) {
     // taMisc::Info("size: ", String(sz.width()), ",", String(sz.height()));
@@ -256,7 +266,10 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   // sphereEntity->addComponent(material);
   
   view3d->setRootEntity(root_entity);
-  //  view3d->show();
+
+  if(sep_win) {
+    view3d->show();
+  }
 
 #else
   // note: we're setting our format right at construction, instead of doing
