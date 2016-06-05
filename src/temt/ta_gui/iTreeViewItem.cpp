@@ -318,17 +318,17 @@ iClipData* iTreeViewItem::GetClipDataMulti(const ISelectable_PtrList& sel_items,
 void iTreeViewItem::itemExpanded(bool value) {
   inherited::itemExpanded(value); // creates children
   DecorateDataNode();
-  taBase* tab = link()->taData();
-  if(tab) {
-    if(value) {
-      if(tab)
-        tab->SetBaseFlag(taBase::TREE_EXPANDED);
-    }
-    else {
-      if(tab)
-        tab->ClearBaseFlag(taBase::TREE_EXPANDED);
-    }
-  }
+//  taBase* tab = link()->taData();
+//  if(tab) {
+//    if(value) {
+//      if(tab)
+//        tab->SetBaseFlag(taBase::TREE_EXPANDED);
+//    }
+//    else {
+//      if(tab)
+//        tab->ClearBaseFlag(taBase::TREE_EXPANDED);
+//    }
+//  }
 }
 
 void* iTreeViewItem::linkData() const {

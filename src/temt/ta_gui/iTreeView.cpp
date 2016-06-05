@@ -389,9 +389,9 @@ void iTreeView::ExpandAll_impl(int max_levels, int exp_flags) {
     iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
     if (!node) continue;
     taBase* tab = node->link()->taData();
-    if (tab) {
-      tab->ClearBaseFlag(taBase::TREE_EXPANDED);
-    }
+//    if (tab) {
+//      tab->ClearBaseFlag(taBase::TREE_EXPANDED);
+//    }
     ExpandItem_impl(node, 0, max_levels, exp_flags); // false - this is the root node for this expansion
   }
   if (header()->isVisible() && (header()->count() > 1)) {
@@ -407,18 +407,18 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
 
   taBase* tab = item->link()->taData();
   
-  bool expand_saved = false;
-  if(exp_flags & (EF_DEFAULT | EF_CUSTOM_FILTER) && tab &&
-     tab->HasBaseFlag(taBase::TREE_EXPANDED)) {
-    expand_saved = true;
-  }
+//  bool expand_saved = false;
+//  if(exp_flags & (EF_DEFAULT | EF_CUSTOM_FILTER) && tab &&
+//     tab->HasBaseFlag(taBase::TREE_EXPANDED)) {
+//    expand_saved = true;
+//  }
   
   bool expand = false;
   if (tab->InheritsFrom(&TA_taProject)) { // always expand project
     expand = true;
   }
   
-  if(!expand_saved) {
+//  if(!expand_saved) {
     // figure out default if not otherwise saved
     if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
     if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
@@ -497,14 +497,14 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       expand = true;
       emit CustomExpandNavigatorFilter(item, level, expand);
     }
-  }
+//  }
   
   if (expand) {
     // first expand the guy...
     if (!isItemExpanded(item)) { // ok, eligible...
       item->setExpanded(true);  // should trigger CreateChildren for lazy
-      if(tab)
-        tab->SetBaseFlag(taBase::TREE_EXPANDED);
+//      if(tab)
+//        tab->SetBaseFlag(taBase::TREE_EXPANDED);
       // if(tab) {
       //   taMisc::DebugInfo("expanded:", tab->GetDisplayName(), tab->GetPathNames());
       // }
@@ -520,9 +520,9 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       if (child) {
         // make sure the TREE_EXPANDED flag is cleared
         taBase* child_tab = child->link()->taData();
-        if (child_tab) {
-          child_tab->ClearBaseFlag(taBase::TREE_EXPANDED);
-        }
+//        if (child_tab) {
+//          child_tab->ClearBaseFlag(taBase::TREE_EXPANDED);
+//        }
         ExpandItem_impl(child, level, max_levels, exp_flags, is_subgroup);
       }
     }
@@ -534,7 +534,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       // for auto-expand, do NOT collapse expanded items!
       if (isItemExpanded(item)) {
         item->setExpanded(false);
-        tab->ClearBaseFlag(taBase::TREE_EXPANDED);
+//        tab->ClearBaseFlag(taBase::TREE_EXPANDED);
         // if(tab) {
         //   taMisc::DebugInfo("collapsed:", tab->GetDisplayName(), tab->GetPathNames());
         // }
@@ -560,9 +560,9 @@ void iTreeView::ExpandAllUnderInt(void* item) {
 void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   if (!item) return;
   taBase* tab = item->link()->taData();
-  if (tab && tab->HasBaseFlag(taBase::TREE_EXPANDED)) {
-    tab->ClearBaseFlag(taBase::TREE_EXPANDED);
-  }
+//  if (tab && tab->HasBaseFlag(taBase::TREE_EXPANDED)) {
+//    tab->ClearBaseFlag(taBase::TREE_EXPANDED);
+//  }
   int exp_flags = 0;
   
   if (parent_type == iTreeView::TYPE_BROWSEVIEWER && tab->GetTypeDef() == &TA_Program && useNavigatorCustomExpand()) {
