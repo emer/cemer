@@ -21,6 +21,50 @@
 #include <Qt3DRender/QMaterial>
 #include <QColor>
 
+namespace Qt3DRender {
+  class QEffect;
+  class QTechnique;
+  class QParameter;
+  class QShaderProgram;
+  class QRenderPass;
+  class QParameterMapping;
+  class QCullFace;
+  class QDepthTest;
+  class QNoDepthMask;
+  class QBlendEquationArguments;
+  class QBlendEquation;
+  class QFilterKey;
+}
+
+class TA_API T3PerVertexTransMaterial : public Qt3DRender::QMaterial {
+  Q_OBJECT
+protected:
+  void init();
+  void init_render_pass(Qt3DRender::QRenderPass* pass);
+
+  Qt3DRender::QEffect *m_vertexEffect;
+  Qt3DRender::QTechnique *m_vertexGL3Technique;
+  Qt3DRender::QTechnique *m_vertexGL2Technique;
+  Qt3DRender::QTechnique *m_vertexES2Technique;
+  Qt3DRender::QRenderPass *m_vertexGL3RenderPass;
+  Qt3DRender::QRenderPass *m_vertexGL2RenderPass;
+  Qt3DRender::QRenderPass *m_vertexES2RenderPass;
+  Qt3DRender::QShaderProgram *m_vertexGL3Shader;
+  Qt3DRender::QShaderProgram *m_vertexGL2ES2Shader;
+  Qt3DRender::QNoDepthMask *m_noDepthMask;
+  Qt3DRender::QBlendEquationArguments *m_blendEqArgs;
+  Qt3DRender::QBlendEquation *m_blendEq;
+  Qt3DRender::QFilterKey *m_filterKey;
+
+public:
+  explicit T3PerVertexTransMaterial(Qt3DCore::QNode *parent = nullptr);
+  ~T3PerVertexTransMaterial();
+};
+
+
+
+#if 0 // my original code
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
@@ -87,5 +131,7 @@ protected:
   void init();
   void init_render_pass(Qt3DRender::QRenderPass* pass);
 };
+
+#endif // 0
 
 #endif // T3PerVertexTransMaterial_h

@@ -133,16 +133,20 @@ QByteArray createLineBoxIndexData(const QVector3D& size) {
   quint16* idxPtr = reinterpret_cast<quint16*>(indexBytes.data());
 
   // depends on having set 0xFFFF as glPrimitiveResetIndex in opengl context
-  // faces = 6 * 2 = 12
+  // faces = 8 * 2 = 16
   // front face
-  *idxPtr++ = 0; *idxPtr++ = 1; *idxPtr++ = 3;  *idxPtr++ = 2;  *idxPtr++ = 0;
-  *idxPtr++ = 0xFFFF; 
+  *idxPtr++ = 0; *idxPtr++ = 1;
+  *idxPtr++ = 1; *idxPtr++ = 3;
+  *idxPtr++ = 3; *idxPtr++ = 2;
+  *idxPtr++ = 2; *idxPtr++ = 0;
   // back face
-  *idxPtr++ = 4; *idxPtr++ = 5; *idxPtr++ = 7;  *idxPtr++ = 6;  *idxPtr++ = 4;
-  *idxPtr++ = 0xFFFF;
-  // front-back connectors -- 4 x 3 = 12
+  *idxPtr++ = 4; *idxPtr++ = 5;
+  *idxPtr++ = 5; *idxPtr++ = 7;
+  *idxPtr++ = 7; *idxPtr++ = 6;
+  *idxPtr++ = 6; *idxPtr++ = 4;
+  // front-back connectors -- 4 x 2 = 8
   for(int i=0; i<4; i++) {      
-     *idxPtr++ = i; *idxPtr++ = 4 + i; *idxPtr++ = 0xFFFF;
+     *idxPtr++ = i; *idxPtr++ = 4 + i;
   }
   return indexBytes;
 }
@@ -223,9 +227,9 @@ T3LineBoxMesh::T3LineBoxMesh(Qt3DNode* parent, const QVector3D* sz)
     size = *sz;
   }
 
-  setPrimitiveType(LineStrip);
-  setPrimitiveRestartEnabled(true);
-  setRestartIndexValue(0xFFFF);
+  setPrimitiveType(Lines);
+  // setPrimitiveRestartEnabled(true);
+  // setRestartIndexValue(0xFFFF);
   
   LineBoxGeometry* geometry = new LineBoxGeometry(this);
   inherited::setGeometry(geometry);

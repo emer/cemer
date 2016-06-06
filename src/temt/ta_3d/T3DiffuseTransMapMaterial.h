@@ -70,13 +70,20 @@ public slots:
   void setTextureScale(float textureScale);
 
  signals:
-  void ambientChanged();
-  void diffuseChanged();
-  void specularChanged();
-  void shininessChanged();
-  void textureScaleChanged();
+  void ambientChanged(const QColor &ambient);
+  void diffuseChanged(Qt3DRender::QAbstractTexture *diffuse);
+  void specularChanged(const QColor &specular);
+  void shininessChanged(float shininess);
+  void textureScaleChanged(float textureScale);
 
  protected:
+
+  void handleAmbientChanged(const QVariant &var);
+  void handleDiffuseChanged(const QVariant &var);
+  void handleSpecularChanged(const QVariant &var);
+  void handleShininessChanged(const QVariant &var);
+  void handleTextureScaleChanged(const QVariant &var);
+  
   Qt3DRender::QEffect *m_transEffect;
   Qt3DRender::QAbstractTexture *m_diffuseTexture;
   Qt3DRender::QParameter *m_ambientParameter;
@@ -84,8 +91,6 @@ public slots:
   Qt3DRender::QParameter *m_specularParameter;
   Qt3DRender::QParameter *m_shininessParameter;
   Qt3DRender::QParameter *m_textureScaleParameter;
-  Qt3DRender::QParameter *m_lightPositionParameter;
-  Qt3DRender::QParameter *m_lightIntensityParameter;
   Qt3DRender::QTechnique *m_transGL3Technique;
   Qt3DRender::QTechnique *m_transGL2Technique;
   Qt3DRender::QTechnique *m_transES2Technique;

@@ -413,8 +413,8 @@ T3ExaminerViewer::~T3ExaminerViewer() {
   // delete engine;
   //  delete root_entity;
   // getting a crash on internal listener when deleting the qwindow.
-  view3d->hide();
-  delete view3d;
+  // view3d->hide();
+  // delete view3d;
 #else
   quarter->setInteractionModeOn(false); // turn off interaction mode. before we die..
   // otherwise we can crash..
@@ -1002,8 +1002,9 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
 void T3ExaminerViewer::setSceneGraph(QEntity* root) {
   if(scene) {
     // return;
-    delete scene;
-    // scene->setParent((Qt3DNode*)NULL);
+    // delete scene;
+    scene->setParent((Qt3DNode*)NULL);
+    scene->deleteLater();
   }
   scene = root;
   scene->setParent(root_entity);

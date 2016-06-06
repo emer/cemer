@@ -359,9 +359,9 @@ T3Triangles::T3Triangles(Qt3DNode* parent)
   shininess = 150.0f;
   specular = 0.1f;
   
-  //  color_type = PER_VERTEX_TRANS; // default
+  color_type = PER_VERTEX_TRANS; // default
  //  color_type = PHONG;
-  color_type = PER_VERTEX;
+  //  color_type = PER_VERTEX;
   updateColor();
 }
 

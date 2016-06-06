@@ -18,6 +18,7 @@
 #include <Qt3DExtras/QPerVertexColorMaterial>
 #include <Qt3DExtras/QPhongAlphaMaterial>
 #include <T3PerVertexTransMaterial>
+#include <T3AmbientNoCullMaterial>
 
 using namespace Qt3DCore;
 using namespace Qt3DRender;
@@ -26,13 +27,9 @@ using namespace Qt3DExtras;
 
 T3ColorEntity::T3ColorEntity(Qt3DNode* parent)
   : inherited(parent)
-  , phong(NULL)
-  , trans(NULL)
-  , texture(NULL)
-  , per_vertex(NULL)
-  , per_vertex_trans(NULL)
 {
   color_type = NO_COLOR;               // don't start with anything
+  cur_color_type = NO_COLOR;
   color = Qt::green;
   ambient = 0.2f;
   specular = 0.1f;
@@ -46,20 +43,10 @@ T3ColorEntity::~T3ColorEntity() {
 
 void T3ColorEntity::setColor(const QColor& clr, float amb,
                              float spec, float shin) {
-  if(clr.alpha() < 255) {
-    color_type = TRANS;
-    color = clr;
-    ambient = MAX(amb, 0.0f);
-    specular = spec;
-    shininess = shin;
-  }
-  else {
-    color_type = PHONG;
-    color = clr;
-    ambient = MAX(amb, 0.0f);
-    specular = spec;
-    shininess = shin;
-  }
+  color = clr;
+  ambient = MAX(amb, 0.0f);
+  specular = spec;
+  shininess = shin;
   updateColor();
 }
 
@@ -76,26 +63,14 @@ void T3ColorEntity::setTexture(const QString& source) {
 }
 
 void T3ColorEntity::removeAllBut(ColorType typ) {
-  if(typ != TEXTURE && texture) {
-    removeMaterial(texture);
-    delete texture;
+  if(cur_color_type == typ || cur_color_type == NO_COLOR) {
+    cur_color_type = typ;
+    return;
   }
-  if(typ != TRANS && trans) {
-    removeMaterial(trans);
-    delete trans;
-  }
-  if(typ != PHONG && phong) {
-    removeMaterial(phong);
-    delete phong;
-  }
-  if(typ != PER_VERTEX && per_vertex) {
-    removeMaterial(per_vertex);
-    delete per_vertex;
-  }
-  if(typ != PER_VERTEX_TRANS && per_vertex_trans) {
-    removeMaterial(per_vertex_trans);
-    delete per_vertex_trans;
-  }
+  QMaterial* mat = material;
+  removeMaterial(mat);
+  delete mat;                   // todo: not sure about whether we need to do this or not!
+  cur_color_type = typ;
 }
 
 void T3ColorEntity::updateColor() {
@@ -107,6 +82,10 @@ void T3ColorEntity::updateColor() {
   case PHONG: {
     removeAllBut(PHONG);
     bool add = false;
+    QPhongMaterial* phong = NULL;
+    if(material) {
+      phong = dynamic_cast<QPhongMaterial*>(material);
+    }
     if(!phong) {
       phong = new QPhongMaterial();
       add = true;
@@ -128,6 +107,10 @@ void T3ColorEntity::updateColor() {
   case TRANS: {
     removeAllBut(TRANS);
     bool add = false;
+    QPhongAlphaMaterial* trans = NULL;
+    if(material) {
+      trans = dynamic_cast<QPhongAlphaMaterial*>(material);
+    }
     if(!trans) {
       trans = new QPhongAlphaMaterial();
       add = true;
@@ -150,8 +133,12 @@ void T3ColorEntity::updateColor() {
   case TEXTURE: {
     removeAllBut(TEXTURE);
     bool add = false;
+    T3Texture* texture = NULL;
+    if(material) {
+      texture = dynamic_cast<T3Texture*>(material);
+    }
     if(!texture) {
-      texture = new T3Texture;
+      texture = new T3Texture();
       add = true;
     }
     texture->specular = specular;
@@ -164,6 +151,10 @@ void T3ColorEntity::updateColor() {
   }
   case PER_VERTEX: {
     removeAllBut(PER_VERTEX);
+    QPerVertexColorMaterial* per_vertex = NULL;
+    if(material) {
+      per_vertex = dynamic_cast<QPerVertexColorMaterial*>(material);
+    }
     if(!per_vertex) {
       per_vertex = new QPerVertexColorMaterial;
       addMaterial(per_vertex);
@@ -173,16 +164,37 @@ void T3ColorEntity::updateColor() {
   case PER_VERTEX_TRANS: {
     removeAllBut(PER_VERTEX_TRANS);
     bool add = false;
+    T3PerVertexTransMaterial* per_vertex_trans = NULL;
+    if(material) {
+      per_vertex_trans = dynamic_cast<T3PerVertexTransMaterial*>(material);
+    }
     if(!per_vertex_trans) {
       per_vertex_trans = new T3PerVertexTransMaterial;
       add = true;
     }
-    per_vertex_trans->setSpecular
-      (QColor::fromRgbF(specular, specular, specular, color.alphaF()));
-    per_vertex_trans->setAmbient(ambient);
-    per_vertex_trans->setShininess(shininess);
+    // per_vertex_trans->setSpecular
+    //   (QColor::fromRgbF(specular, specular, specular, color.alphaF()));
+    // per_vertex_trans->setAmbient(ambient);
+    // per_vertex_trans->setShininess(shininess);
     if(add) {
       addMaterial(per_vertex_trans);
+    }
+    break;
+  }
+  case AMBIENT_NO_CULL: {
+    removeAllBut(AMBIENT_NO_CULL);
+    bool add = false;
+    T3AmbientNoCullMaterial* amb_no_cull = NULL;
+    if(material) {
+      amb_no_cull = dynamic_cast<T3AmbientNoCullMaterial*>(material);
+    }
+    if(!amb_no_cull) {
+      amb_no_cull = new T3AmbientNoCullMaterial;
+      add = true;
+    }
+    amb_no_cull->setAmbient(color);
+    if(add) {
+      addMaterial(amb_no_cull);
     }
     break;
   }

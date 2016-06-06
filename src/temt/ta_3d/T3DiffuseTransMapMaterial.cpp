@@ -42,11 +42,9 @@ T3DiffuseTransMapMaterial::T3DiffuseTransMapMaterial(QNode *parent)
   , m_diffuseTexture(new QTexture2D())
   , m_ambientParameter(new QParameter(QStringLiteral("ka"), QColor::fromRgbF(0.05f, 0.05f, 0.05f, 1.0f)))
   , m_diffuseParameter(new QParameter(QStringLiteral("diffuseTexture"), m_diffuseTexture))
-  , m_specularParameter(new QParameter(QStringLiteral("ks"), QColor::fromRgbF(0.95f, 0.95f, 0.95f, 1.0f)))
+  , m_specularParameter(new QParameter(QStringLiteral("ks"), QColor::fromRgbF(0.01f, 0.01f, 0.01f, 1.0f)))
   , m_shininessParameter(new QParameter(QStringLiteral("shininess"), 150.0f))
   , m_textureScaleParameter(new QParameter(QStringLiteral("texCoordScale"), 1.0f))
-  , m_lightPositionParameter(new QParameter(QStringLiteral("lightPosition"), QVector4D(1.0f, 1.0f, 0.0f, 1.0f)))
-  , m_lightIntensityParameter(new QParameter(QStringLiteral("lightIntensity"), QVector3D(1.0f, 1.0f, 1.0f)))
   , m_transGL3Technique(new QTechnique())
   , m_transGL2Technique(new QTechnique())
   , m_transES2Technique(new QTechnique())
@@ -62,11 +60,11 @@ T3DiffuseTransMapMaterial::T3DiffuseTransMapMaterial(QNode *parent)
   , m_blendEq(new QBlendEquation())
   , m_filterKey(new QFilterKey())
 {
-  QObject::connect(m_ambientParameter, SIGNAL(valueChanged()), this, SIGNAL(ambientChanged()));
-  QObject::connect(m_diffuseParameter, SIGNAL(valueChanged()), this, SIGNAL(diffuseChanged()));
-  QObject::connect(m_specularParameter, SIGNAL(valueChanged()), this, SIGNAL(specularChanged()));
-  QObject::connect(m_shininessParameter, SIGNAL(valueChanged()), this, SIGNAL(shininessChanged()));
-  QObject::connect(m_textureScaleParameter, SIGNAL(valueChanged()), this, SIGNAL(textureScaleChanged()));
+  QObject::connect(m_ambientParameter, &Qt3DRender::QParameter::valueChanged, this, &T3DiffuseTransMapMaterial::handleAmbientChanged);
+  QObject::connect(m_diffuseParameter, &Qt3DRender::QParameter::valueChanged, this,     &T3DiffuseTransMapMaterial::handleDiffuseChanged);
+  QObject::connect(m_specularParameter, &Qt3DRender::QParameter::valueChanged, this, &T3DiffuseTransMapMaterial::handleSpecularChanged);
+  QObject::connect(m_shininessParameter, &Qt3DRender::QParameter::valueChanged, this, &T3DiffuseTransMapMaterial::handleShininessChanged);
+  QObject::connect(m_textureScaleParameter, &Qt3DRender::QParameter::valueChanged, this, &T3DiffuseTransMapMaterial::handleTextureScaleChanged);
 
   m_diffuseTexture->setMagnificationFilter(QAbstractTexture::Linear);
   m_diffuseTexture->setMinificationFilter(QAbstractTexture::LinearMipMapLinear);
@@ -156,6 +154,30 @@ void T3DiffuseTransMapMaterial::setTextureScale(float textureScale)
   m_textureScaleParameter->setValue(textureScale);
 }
 
+void T3DiffuseTransMapMaterial::handleAmbientChanged(const QVariant &var)
+{
+  emit ambientChanged(var.value<QColor>());
+}
+
+void T3DiffuseTransMapMaterial::handleDiffuseChanged(const QVariant &var)
+{
+  emit diffuseChanged(var.value<QAbstractTexture *>());
+}
+
+void T3DiffuseTransMapMaterial::handleSpecularChanged(const QVariant &var)
+{
+  emit specularChanged(var.value<QColor>());
+}
+
+void T3DiffuseTransMapMaterial::handleShininessChanged(const QVariant &var)
+{
+  emit shininessChanged(var.toFloat());
+}
+
+void T3DiffuseTransMapMaterial::handleTextureScaleChanged(const QVariant &var)
+{
+  emit textureScaleChanged(var.toFloat());
+}
 
 // renderPasses: RenderPass {
 //  renderStates: [
@@ -172,25 +194,23 @@ void T3DiffuseTransMapMaterial::setTextureScale(float textureScale)
 
 
 void T3DiffuseTransMapMaterial::init_render_pass(QRenderPass* pass) {
-  // this is how we separate these out
-  // QAnnotation* techannote = new QAnnotation;
-  // techannote->setName("renderingStyle");
-  // techannote->setValue("transparent");
-  // pass->addAnnotation(techannote);
-  
-  pass->addRenderState(m_cullFace);
-  pass->addRenderState(m_depthTest);
-  pass->addRenderState(m_noDepthMask);
-  pass->addRenderState(m_blendEqArgs);
-  pass->addRenderState(m_blendEq);
+  // pass->addRenderState(m_cullFace);
+  // pass->addRenderState(m_depthTest);
+  // pass->addRenderState(m_noDepthMask);
+  // pass->addRenderState(m_blendEqArgs);
+  // pass->addRenderState(m_blendEq);
 }
 
-// TODO: Define how lights are properties are set in the shaders. Ideally using a QShaderData
 void T3DiffuseTransMapMaterial::init() {
-  m_transGL3Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap.vert"))));
-  m_transGL3Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap.frag"))));
-  // m_transGL2ES2Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/phongalpha.vert"))));
-  // m_transGL2ES2Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/phongalpha.frag"))));
+  // m_transGL3Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/diffusemap.vert"))));
+  //   m_transGL3Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/diffusemap.frag"))));
+
+m_transGL3Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap.vert"))));
+
+m_transGL3Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap.frag"))));
+
+m_transGL2ES2Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/diffusemap.vert"))));
+    m_transGL2ES2Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/diffusemap.frag"))));
 
   m_transGL3Technique->graphicsApiFilter()->setApi(QGraphicsApiFilter::OpenGL);
   m_transGL3Technique->graphicsApiFilter()->setMajorVersion(3);
@@ -210,6 +230,10 @@ void T3DiffuseTransMapMaterial::init() {
   m_filterKey->setParent(this);
   m_filterKey->setName(QStringLiteral("renderingStyle"));
   m_filterKey->setValue(QStringLiteral("forward"));
+
+  m_transGL3Technique->addFilterKey(m_filterKey);
+  m_transGL2Technique->addFilterKey(m_filterKey);
+  m_transES2Technique->addFilterKey(m_filterKey);
 
   m_transGL3RenderPass->setShaderProgram(m_transGL3Shader);
   m_transGL2RenderPass->setShaderProgram(m_transGL2ES2Shader);
@@ -238,8 +262,6 @@ void T3DiffuseTransMapMaterial::init() {
   m_transEffect->addParameter(m_specularParameter);
   m_transEffect->addParameter(m_shininessParameter);
   m_transEffect->addParameter(m_textureScaleParameter);
-  m_transEffect->addParameter(m_lightPositionParameter);
-  m_transEffect->addParameter(m_lightIntensityParameter);
 
   setEffect(m_transEffect);
 }

@@ -208,7 +208,7 @@ T3LineStrip::T3LineStrip(Qt3DNode* parent)
   ambient = 1.0f;               // lines are all ambient..
   specular = 0.0f;
   per_vertex_color = false;
-  color_type = PHONG;
+  color_type = AMBIENT_NO_CULL;
   color = Qt::black;
   updateColor();
   lines = new T3LineStripMesh();
@@ -238,10 +238,9 @@ void T3LineStrip::setPerVertexColor(bool per_vtx) {
   per_vertex_color = per_vtx;
   if(per_vertex_color) {
     color_type = PER_VERTEX;
-    updateColor();
   }
   else {
-    color_type = PHONG;
-    updateColor();
+    color_type = AMBIENT_NO_CULL;
   }
+  updateColor();
 }

@@ -27,9 +27,6 @@ class T3TransparentMaterial;
 class T3PerVertexTransMaterial;
 
 namespace Qt3DExtras {
-  class QPhongMaterial;
-  class QPhongAlphaMaterial;
-  class QPerVertexColorMaterial;
 }
 
 class TA_API T3ColorEntity : public T3Entity {
@@ -44,6 +41,7 @@ public:
     TEXTURE,                    // texture
     PER_VERTEX,                 // color specified per vertex
     PER_VERTEX_TRANS,           // color specified per vertex, transparency supported
+    AMBIENT_NO_CULL,            // ambient (emissive) color only, no culling of faces -- good for lines and other such graphic elements
   };
 
   ColorType     color_type;     // where does the color come from?
@@ -55,7 +53,7 @@ public:
   
   virtual void  setColor(const QColor& color, float ambient = 0.2f,
                          float specular = 0.1f, float shininess = 150.0f);
-  // set the color parameters and update display -- selects color_type = PHONG
+  // set the color parameters and update display -- user's responsibiliity to select appropriate color_type in advance
 
   virtual void  setTexture(const QUrl& source);
   // set texture and update display -- selects color_type = TEXTURE
@@ -68,13 +66,9 @@ public:
 public slots:
   virtual void  updateColor(); // update to new color
 protected:
-
-  void removeAllBut(ColorType typ);
-  Qt3DExtras::QPhongMaterial* phong;  // phong material -- null if using texture mode
-  Qt3DExtras::QPhongAlphaMaterial* trans;
-  T3Texture*    texture;        // texture -- null if using phong mode
-  Qt3DExtras::QPerVertexColorMaterial* per_vertex;
-  T3PerVertexTransMaterial* per_vertex_trans;
+  ColorType     cur_color_type;      // current color type
+  void          removeAllBut(ColorType typ);
+  // remove all but given color type, sets cur_color_type to typ
 };
 
 #endif // T3ColorEntity_h

@@ -46,8 +46,6 @@ void T3Plane::init() {
   QPlaneMesh* cb = new QPlaneMesh();
   sub->addMesh(cb);
 
-  sub->addMaterial(phong);
-  
   updateSize();
   updateAxis();
 }

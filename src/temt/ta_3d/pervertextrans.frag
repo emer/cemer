@@ -11,6 +11,6 @@ out vec4 fragColor;
 void main()
 {
     vec3 diffuseColor;
-    adsModel(worldPosition, worldNormal, diffuseColor);
+    adModel(worldPosition, worldNormal, diffuseColor);
     fragColor = vec4( color.rgb + color.rgb * diffuseColor, color.a );
 }

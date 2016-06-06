@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>phongalpha.vert</file>
-        <file>phongalpha.frag</file>
+        <file>ambientnocull.frag</file>
         <file>pervertextrans.vert</file>
         <file>pervertextrans.frag</file>
         <file>diffusetransmap.vert</file>
