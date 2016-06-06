@@ -74,6 +74,7 @@ void T3ColorEntity::removeAllBut(ColorType typ) {
 }
 
 void T3ColorEntity::updateColor() {
+  bool add = false;
   switch(color_type) {
   case NO_COLOR: {
     removeAllBut(NO_COLOR);
@@ -81,7 +82,6 @@ void T3ColorEntity::updateColor() {
   }
   case PHONG: {
     removeAllBut(PHONG);
-    bool add = false;
     QPhongMaterial* phong = NULL;
     if(material) {
       phong = dynamic_cast<QPhongMaterial*>(material);
@@ -106,7 +106,6 @@ void T3ColorEntity::updateColor() {
   }
   case TRANS: {
     removeAllBut(TRANS);
-    bool add = false;
     QPhongAlphaMaterial* trans = NULL;
     if(material) {
       trans = dynamic_cast<QPhongAlphaMaterial*>(material);
@@ -132,7 +131,6 @@ void T3ColorEntity::updateColor() {
   }
   case TEXTURE: {
     removeAllBut(TEXTURE);
-    bool add = false;
     T3Texture* texture = NULL;
     if(material) {
       texture = dynamic_cast<T3Texture*>(material);
@@ -163,7 +161,6 @@ void T3ColorEntity::updateColor() {
   }
   case PER_VERTEX_TRANS: {
     removeAllBut(PER_VERTEX_TRANS);
-    bool add = false;
     T3PerVertexTransMaterial* per_vertex_trans = NULL;
     if(material) {
       per_vertex_trans = dynamic_cast<T3PerVertexTransMaterial*>(material);
@@ -172,10 +169,9 @@ void T3ColorEntity::updateColor() {
       per_vertex_trans = new T3PerVertexTransMaterial;
       add = true;
     }
-    // per_vertex_trans->setSpecular
-    //   (QColor::fromRgbF(specular, specular, specular, color.alphaF()));
-    // per_vertex_trans->setAmbient(ambient);
-    // per_vertex_trans->setShininess(shininess);
+    per_vertex_trans->setSpecular
+      (QColor::fromRgbF(specular, specular, specular, color.alphaF()));
+    per_vertex_trans->setShininess(shininess);
     if(add) {
       addMaterial(per_vertex_trans);
     }
@@ -183,7 +179,6 @@ void T3ColorEntity::updateColor() {
   }
   case AMBIENT_NO_CULL: {
     removeAllBut(AMBIENT_NO_CULL);
-    bool add = false;
     T3AmbientNoCullMaterial* amb_no_cull = NULL;
     if(material) {
       amb_no_cull = dynamic_cast<T3AmbientNoCullMaterial*>(material);

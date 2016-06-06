@@ -58,9 +58,9 @@ void T3AmbientNoCullMaterial::init()
   connect(m_ambientParameter, &Qt3DRender::QParameter::valueChanged,
           this, &T3AmbientNoCullMaterial::handleAmbientChanged);
   m_ambNoCullGL3Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/phong.vert"))));
-  m_ambNoCullGL3Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/ambientnocull.frag"))));
+  m_ambNoCullGL3Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/ambientnocull_gl3.frag"))));
   m_ambNoCullGL2ES2Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/phong.vert"))));
-  m_ambNoCullGL2ES2Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/phongalpha.frag"))));
+  m_ambNoCullGL2ES2Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/ambientnocull_es2.frag"))));
 
   m_ambNoCullGL3Technique->graphicsApiFilter()->setApi(QGraphicsApiFilter::OpenGL);
   m_ambNoCullGL3Technique->graphicsApiFilter()->setMajorVersion(3);

@@ -42,8 +42,8 @@ T3TwoDText::T3TwoDText(Qt3DNode* parent)
   // bg_color = Qt::transparent;
   T3DiffuseTransMapMaterial* mat = new T3DiffuseTransMapMaterial; // trans not working
   // QDiffuseMapMaterial* mat = new QDiffuseMapMaterial;
-  mat->setSpecular(QColor::fromRgbF(0.2f, 0.2f, 0.2f, 1.0f));
-  mat->setShininess(10000.0f);
+  mat->setSpecular(QColor::fromRgbF(0.0f, 0.0f, 0.0f, 1.0f));
+  mat->setShininess(150.0f);
   plane->addMaterial(mat);
   plane->RotateDeg(1.0f, 0.0f, 0.0f, 90.0f); // flip up by default
   mat->diffuse()->addTextureImage(texture);
