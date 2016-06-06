@@ -18,6 +18,9 @@
 
 #include <QFileInfo>
 #include <QDir>
+#include "taFiler"
+#include "taMediaWiki"
+#include "taMisc"
 
 TA_BASEFUNS_CTORS_DEFN(Project_Group);
 
@@ -44,6 +47,26 @@ int Project_Group::Load(const String& fname, taBase** loaded_obj_ptr) {
 int Project_Group::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr) {
   int rval = inherited::Load_strm(strm, par, loaded_obj_ptr);
   // note: used to do Dump_Load_post here but now it is done where it should be..
+  return rval;
+}
+
+int Project_Group::LoadFromWiki(const String wiki, const String project_name) {
+  int rval = 0;
+  String path = QDir::tempPath() + "/" + project_name + ".proj";
+  QFileInfo fi(path);
+  if (!taMediaWiki::DownloadFile(wiki, project_name, path)) {
+    taMisc::Error("Failed to download project " + project_name + " from wiki " + wiki);
+    return rval;
+  };
+  if (!fi.exists()) {
+    taMisc::Error("Failed to download project " + project_name + " from wiki " + wiki);
+    return rval;
+  }
+  taFiler* flr = GetLoadFiler(path, _nilString, -1, _nilString);
+  taBase* el = NULL;
+  rval = Load_strm(*flr->istrm, el);
+  QDir qdir;
+  qdir.remove(path);
   return rval;
 }
 
