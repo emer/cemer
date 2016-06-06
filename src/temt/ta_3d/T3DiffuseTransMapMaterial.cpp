@@ -203,12 +203,17 @@ void T3DiffuseTransMapMaterial::init_render_pass(QRenderPass* pass) {
 
 void T3DiffuseTransMapMaterial::init() {
 
-m_transGL3Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap_gl3.vert"))));
+  m_transGL3Shader->setVertexShaderCode
+    (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/diffusetransmap.vert"))));
 
-m_transGL3Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap_gl3.frag"))));
+  m_transGL3Shader->setFragmentShaderCode
+    (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/diffusetransmap.frag"))));
 
-m_transGL2ES2Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap_es2.vert"))));
-    m_transGL2ES2Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/diffusetransmap_es2.frag"))));
+  m_transGL2ES2Shader->setVertexShaderCode
+    (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/diffusetransmap.vert"))));
+  
+  m_transGL2ES2Shader->setFragmentShaderCode
+    (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/diffusetransmap.frag"))));
 
   m_transGL3Technique->graphicsApiFilter()->setApi(QGraphicsApiFilter::OpenGL);
   m_transGL3Technique->graphicsApiFilter()->setMajorVersion(3);

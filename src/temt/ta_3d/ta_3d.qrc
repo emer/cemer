@@ -1,16 +1,14 @@
 <RCC>
     <qresource prefix="/">
-        <file>ambientnocull_gl3.frag</file>
-        <file>ambientnocull_es2.frag</file>
-        <file>pervertextrans_gl3.vert</file>
-        <file>pervertextrans_gl3.frag</file>
-        <file>pervertextrans_es2.vert</file>
-        <file>pervertextrans_es2.frag</file>
-        <file>diffusetransmap_gl3.vert</file>
-        <file>diffusetransmap_gl3.frag</file>
-        <file>diffusetransmap_es2.vert</file>
-        <file>diffusetransmap_es2.frag</file>
-        <file>light.inc_gl3.frag</file>
-        <file>light.inc_es2.frag</file>
+        <file>shaders/gl3/ambient.frag</file>
+        <file>shaders/es2/ambient.frag</file>
+        <file>shaders/gl3/pervertextrans.vert</file>
+        <file>shaders/gl3/pervertextrans.frag</file>
+        <file>shaders/es2/pervertextrans.vert</file>
+        <file>shaders/es2/pervertextrans.frag</file>
+        <file>shaders/gl3/diffusetransmap.vert</file>
+        <file>shaders/gl3/diffusetransmap.frag</file>
+        <file>shaders/es2/diffusetransmap.vert</file>
+        <file>shaders/es2/diffusetransmap.frag</file>
     </qresource>
 </RCC>

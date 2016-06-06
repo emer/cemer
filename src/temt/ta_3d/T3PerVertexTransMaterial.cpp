@@ -125,18 +125,25 @@ void T3PerVertexTransMaterial::init_render_pass(QRenderPass* pass) {
 
 // TODO: Define how lights are properties are set in the shaders. Ideally using a QShaderData
 void T3PerVertexTransMaterial::init() {
-  // m_transGL3Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/pervertextrans_gl3.vert"))));
-//   m_transGL3Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/pervertextrans_gl3.frag"))));
 
-// m_transGL2ES2Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/pervertextrans_es2.vert"))));
+#if 1
+  m_transGL3Shader->setVertexShaderCode
+    (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/pervertextrans.vert"))));
+  m_transGL3Shader->setFragmentShaderCode
+    (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/pervertextrans.frag"))));
+  m_transGL2ES2Shader->setVertexShaderCode
+    (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/pervertextrans.vert"))));
+  m_transGL2ES2Shader->setFragmentShaderCode
+    (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/pervertextrans.frag"))));
 
-// m_transGL2ES2Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/pervertextrans_es2.frag"))));
-
- 
+#else 
+  
 m_transGL3Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/pervertexcolor.vert"))));
     m_transGL3Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/pervertexcolor.frag"))));
     m_transGL2ES2Shader->setVertexShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/pervertexcolor.vert"))));
     m_transGL2ES2Shader->setFragmentShaderCode(QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/pervertexcolor.frag"))));
+
+#endif
 
   m_transGL3Technique->graphicsApiFilter()->setApi(QGraphicsApiFilter::OpenGL);
   m_transGL3Technique->graphicsApiFilter()->setMajorVersion(3);
