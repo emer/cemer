@@ -85,12 +85,12 @@ static const unsigned char emergent_bitmap_bits[] = {
 //////////////////////////
 
 int EmergentMisc::Main(int& argc, const char *argv[]) {
-  taMisc::web_home = "http://grey.colorado.edu/emergent/index.php/Main_Page"; 
+  taMisc::web_home = "https://grey.colorado.edu/emergent/index.php/Main_Page";
   taMisc::web_help_wiki = "emergent";
-  taMisc::web_help_general = "http://grey.colorado.edu/emergent/index.php/User_hub";
+  taMisc::web_help_general = "https://grey.colorado.edu/emergent/index.php/User_hub";
 
-  taMisc::wiki1_url = NamedURL("emergent", "http://grey.colorado.edu/emergent");
-  taMisc::wiki2_url = NamedURL("CCN", "http://grey.colorado.edu/CompCogNeuro");
+  taMisc::wiki1_url = NamedURL("emergent", "https://grey.colorado.edu/emergent");
+  taMisc::wiki2_url = NamedURL("CCN", "https://grey.colorado.edu/CompCogNeuro");
 
   if(!taRootBase::Startup_Main(argc, argv, &TA_EmergentRoot)) return 1;
 #ifdef TA_GUI

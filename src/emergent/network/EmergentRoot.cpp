@@ -187,7 +187,7 @@ void EmergentRoot::About() {
   info += "This is the Emergent software package, version: ";
   info += version;
   info += " (" + taMisc::svn_rev + ")\n";
-  info += "http://grey.colorado.edu/emergent\n";
+  info += "https://grey.colorado.edu/emergent\n";
   info += "\n";
   info +=
     "Copyright (c) 1995-2011, Regents of the University of Colorado, "

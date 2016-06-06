@@ -2490,7 +2490,7 @@ void iMainWindowViewer::helpAbout() {
 }
 
 void iMainWindowViewer::FileBugReport() {
-  QDesktopServices::openUrl(QUrl("http://grey.colorado.edu/bugzilla"));
+  QDesktopServices::openUrl(QUrl("https://grey.colorado.edu/bugzilla"));
 }
 
 void iMainWindowViewer::ConsoleToFront() {
@@ -2873,7 +2873,7 @@ void iMainWindowViewer::toolsHelpBrowser() {
 }
 
 void iMainWindowViewer::toolsSvnBrowserEmergent() {
-  iSubversionBrowser::OpenBrowser("http://grey.colorado.edu/svn/emergent/emergent/trunk",
+  iSubversionBrowser::OpenBrowser("https://grey.colorado.edu/svn/emergent/emergent/trunk",
       "~/emergent");
 }
 
