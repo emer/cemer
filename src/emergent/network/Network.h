@@ -245,8 +245,8 @@ public:
   int           small_batch_n;  // #CONDSHOW_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
   int           small_batch_n_eff; // #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
   NetStatsSpecs stats;          // #CAT_Statistic parameters controling the computation of statistics
-  NetworkThreadMgr threads;    // #CAT_Threads parallel threading of network computation
-  NetTiming_List net_timing; // #CAT_Statistic #NO_EXPAND_ALL timing for different network-level functions -- per thread, plus one summary item at the end
+  NetworkThreadMgr threads;     // #CAT_Threads parallel threading of network computation
+  NetTiming_List net_timing;    // #CAT_Statistic #EXPERT #NO_SAVE #NO_EXPAND_ALL timing for different network-level functions -- per thread, plus one summary item at the end
 
   int           batch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
   int           epoch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
