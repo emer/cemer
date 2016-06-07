@@ -6,7 +6,8 @@ in vec3 vertexColor;
 
 out vec3 worldPosition;
 out vec3 worldNormal;
-out vec4 color;
+// out vec4 color;
+out vec3 color;
 
 uniform mat4 modelMatrix;
 uniform mat3 modelNormalMatrix;

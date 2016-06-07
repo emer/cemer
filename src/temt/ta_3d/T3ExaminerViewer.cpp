@@ -177,21 +177,16 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
   bool sep_win = false;          // open in a separate window!
   
+  root_entity = new QEntity();
   view3d = new T3RenderView();
+  view3d->setRootEntity(root_entity);
 
   QWidget* container = NULL;
   if(!sep_win) {
     container = QWidget::createWindowContainer(view3d);
     main_hbox->addWidget(container, 1);
   }
-  // engine->initialize();
-  // QVariantMap data;
-  // data.insert(QStringLiteral("surface"),
-  //             QVariant::fromValue(static_cast<QSurface *>(view3d)));
-  // data.insert(QStringLiteral("eventSource"), QVariant::fromValue(view3d));
-  // engine->setData(data);
 
-  root_entity = new QEntity();
   camera = view3d->camera(); //new QCamera(root_entity);
   QSize sz;
   if(sep_win) {
@@ -213,7 +208,6 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
   camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
 
-  
   camera_ctrl = new QOrbitCameraController(root_entity);
     // camController->setLinearSpeed( 50.0f );
     // camController->setLookSpeed( 180.0f );
@@ -237,36 +231,17 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   // QClearBuffers* cb = new QClearBuffers(viewport);
   // cb->setBuffers(QClearBuffers::ColorDepthBuffer);
 
-  // QRenderPassFilter* trans_rend = new QRenderPassFilter(cb);
-  // QAnnotation* transAnno = new QAnnotation(trans_rend);
-  // transAnno->setName(QStringLiteral("renderingStyle"));
-  // transAnno->setValue(QStringLiteral("transparent"));
-  // trans_rend->addInclude(transAnno);
-
-  // QCameraSelector* cam = new QCameraSelector(cb);
-  // cam->setCamera(camera);
-  
-  // QRenderPassFilter* opaque_rend = new QRenderPassFilter(cb);
-  // QAnnotation* opaqueAnno = new QAnnotation(opaque_rend);
-  // opaqueAnno->setName(QStringLiteral("renderingStyle"));
-  // opaqueAnno->setValue(QStringLiteral("opaque"));
-  // opaque_rend->addInclude(opaqueAnno);
-  // QCameraSelector* cam2 = new QCameraSelector(opaque_rend);
-  // cam2->setCamera(camera);
-
-  // framegraph->setActiveFrameGraph(viewport);
-
   mouse_dev = new Qt3DInput::QMouseDevice(root_entity);
 
-  // Qt3DRender::QMaterial *material = new Qt3DExtras::QPhongMaterial(root_entity);
-  // Qt3DCore::QEntity *sphereEntity = new Qt3DCore::QEntity(root_entity);
-  // Qt3DExtras::QSphereMesh *sphereMesh = new Qt3DExtras::QSphereMesh;
-  // sphereMesh->setRadius(.3);
-  // sphereEntity->addComponent(sphereMesh);
-  // sphereEntity->addComponent(material);
+  // fill with an initial default object!
+  Qt3DRender::QMaterial *material = new Qt3DExtras::QPhongMaterial(root_entity);
+  Qt3DCore::QEntity *sphereEntity = new Qt3DCore::QEntity(root_entity);
+  Qt3DExtras::QSphereMesh *sphereMesh = new Qt3DExtras::QSphereMesh;
+  sphereMesh->setRadius(.3);
+  sphereEntity->addComponent(sphereMesh);
+  sphereEntity->addComponent(material);
+  scene = sphereEntity;
   
-  view3d->setRootEntity(root_entity);
-
   if(sep_win) {
     view3d->show();
   }
@@ -1000,14 +975,18 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
 #ifdef TA_QT3D
 
 void T3ExaminerViewer::setSceneGraph(QEntity* root) {
+  bool no_scene_yet = true;
   if(scene) {
     // return;
     // delete scene;
     scene->setParent((Qt3DNode*)NULL);
     scene->deleteLater();
+    no_scene_yet = false;
   }
   scene = root;
   scene->setParent(root_entity);
+  // if(no_scene_yet)
+  //   view3d->setRootEntity(root_entity);
   updateAspectRatio();
 }
 

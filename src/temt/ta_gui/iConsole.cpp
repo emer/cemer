@@ -371,6 +371,7 @@ bool iConsole::stdDisplay(QTextStream* s) {
       if(taMisc::verbose_load > taMisc::QUIET) {
         append(line);
       }
+      taMisc::LogEvent(line);
       if(logfile.isOpen()) {
         logfile.write(line.toLocal8Bit());
         logfile.write("\n", strlen("\n"));
@@ -391,6 +392,7 @@ bool iConsole::stdDisplay(QTextStream* s) {
         if(taMisc::verbose_load > taMisc::QUIET) {
           append(line);
         }
+        taMisc::LogEvent(line);
         if(logfile.isOpen()) {
           logfile.write(line.toLocal8Bit());
           logfile.write("\n", strlen("\n"));
