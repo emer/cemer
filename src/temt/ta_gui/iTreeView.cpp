@@ -1239,10 +1239,6 @@ void iTreeView::FillContextMenu_post(ISelectable_PtrList& sel_items, taiWidgetAc
                        this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
       men_exp->AddItem("Collapse", taiWidgetMenu::normal, iAction::ptr_act,
                        this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
-      men_exp->AddItem("Save", taiWidgetMenu::normal, iAction::ptr_act,
-                       this, SLOT(SaveExpandState(void*)), (void*)nd );
-      men_exp->AddItem("Restore", taiWidgetMenu::normal, iAction::ptr_act,
-                       this, SLOT(Restore(void*)), (void*)nd );
     }
   }  
   emit FillContextMenuHookPost(sel_items, menu);
