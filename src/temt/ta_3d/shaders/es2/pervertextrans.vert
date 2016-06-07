@@ -1,6 +1,6 @@
 attribute vec3 vertexPosition;
 attribute vec3 vertexNormal;
-attribute vec3 vertexColor;
+attribute vec4 vertexColor;
 
 varying vec3 worldPosition;
 varying vec3 worldNormal;

@@ -7,8 +7,7 @@ uniform vec3 eyePosition;
 
 in vec3 worldPosition;
 in vec3 worldNormal;
-//in vec4 color;
-in vec3 color;
+in vec4 color;
 
 out vec4 fragColor;
 
@@ -18,6 +17,5 @@ void main()
 {
     vec3 diffuseColor, specularColor;
     adsModel(worldPosition, worldNormal, eyePosition, shininess, diffuseColor, specularColor);
-    fragColor = vec4( color + color * diffuseColor + ks * specularColor, 1.0 );
-//    fragColor = vec4( color.rgb + color.rgb * diffuseColor + ks * specularColor, color.a );
+    fragColor = vec4( color.rgb + color.rgb * diffuseColor + ks * specularColor, color.a );
 }
