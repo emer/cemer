@@ -102,7 +102,6 @@ void LeabraAdaptInhib::UpdateAfterEdit_impl() {
 void LeabraInhibMisc::Initialize() {
   net_thr = 0.0f;
   thr_rel = true;
-  thr_act = false;
   self_fb = 0.0f;
   fb_up_immed = false;
 
