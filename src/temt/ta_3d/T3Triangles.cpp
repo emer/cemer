@@ -205,8 +205,8 @@ TrianglesGeometry::TrianglesGeometry(QNode *parent)
 
   addAttribute(m_positionAttribute);
   addAttribute(m_normalAttribute);
-  addAttribute(m_indexAttribute);
   addAttribute(m_colorAttribute);
+  addAttribute(m_indexAttribute);
 }
 
 TrianglesGeometry::~TrianglesGeometry() {
@@ -234,8 +234,8 @@ void TrianglesGeometry::updateColors() {
 
 void TrianglesGeometry::updateAll() {
   updateIndices();
-  updateVertices();
   updateColors();
+  updateVertices();
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -262,7 +262,6 @@ void T3TrianglesMesh::setNodeUpdating(bool updating) {
   bool should_render = false;
   if(!updating && node_updating) should_render = true;
   node_updating = updating;
-  blockNotifications(node_updating); // block if updating
   if(should_render) {
 #ifdef DEBUG
     // taMisc::Info("Triangles mesh update");
@@ -271,15 +270,17 @@ void T3TrianglesMesh::setNodeUpdating(bool updating) {
       //                 String(colors.Frames()), " vs. verticies:", String(vndata.Frames()));
     // }
 #endif
+    blockNotifications(false);
     updateMesh();
     emit nodeUpdatingChanged();
     // taMisc::DebugInfo("tris updating:", String(updating),
     //                   "render:", String(should_render));
   }
-  // else {
-  //   taMisc::DebugInfo("tris updating:", String(updating),
-  //                     "render:", String(should_render));
-  // }
+  else {
+    blockNotifications(node_updating); // block if updating
+    // taMisc::DebugInfo("tris updating:", String(updating),
+    //                   "render:", String(should_render));
+  }
 }
 
 void T3TrianglesMesh::restart() {
@@ -357,11 +358,9 @@ T3Triangles::T3Triangles(Qt3DNode* parent)
 
   // not too big of a spot..
   shininess = 150.0f;
-  specular = 0.1f;
+  specular = 0.001f;
   
   color_type = PER_VERTEX_TRANS; // default
- //  color_type = PHONG;
-  //  color_type = PER_VERTEX;
   updateColor();
 }
 

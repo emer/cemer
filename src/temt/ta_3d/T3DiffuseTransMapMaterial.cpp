@@ -195,10 +195,10 @@ void T3DiffuseTransMapMaterial::handleTextureScaleChanged(const QVariant &var)
 
 void T3DiffuseTransMapMaterial::init_render_pass(QRenderPass* pass) {
   // pass->addRenderState(m_cullFace);
-  // pass->addRenderState(m_depthTest);
-  // pass->addRenderState(m_noDepthMask);
-  // pass->addRenderState(m_blendEqArgs);
-  // pass->addRenderState(m_blendEq);
+  pass->addRenderState(m_depthTest);
+  pass->addRenderState(m_noDepthMask);
+  pass->addRenderState(m_blendEqArgs);
+  pass->addRenderState(m_blendEq);
 }
 
 void T3DiffuseTransMapMaterial::init() {

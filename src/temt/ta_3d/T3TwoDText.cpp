@@ -38,8 +38,8 @@ T3TwoDText::T3TwoDText(Qt3DNode* parent)
   texture = new T3TwoDTexture();
   plane = new T3ColorEntity(this);
   plane->addMesh(new QPlaneMesh());
-  bg_color = Qt::white;         // must use white for non-transparent case
-  // bg_color = Qt::transparent;
+  //  bg_color = Qt::white;         // must use white for non-transparent case
+  bg_color = Qt::transparent;
   T3DiffuseTransMapMaterial* mat = new T3DiffuseTransMapMaterial; // trans not working
   // QDiffuseMapMaterial* mat = new QDiffuseMapMaterial;
   mat->setSpecular(QColor::fromRgbF(0.0f, 0.0f, 0.0f, 1.0f));

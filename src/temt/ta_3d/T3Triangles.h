@@ -52,7 +52,7 @@ public:
 
   float_Matrix  vndata; // verticies and normal data -- geom is 3 x 2 x n (3d coords, vertex and normal, then outer is the "frame" dimension of points which can be increased dynamically)
   float_Matrix  colors; // optional per-vertex colors in 1-to-1 correspondence with the vertex data -- these are 4 full floating-point colors RGBA per point -- packed RGBA not supported in shaders it seems..
-  int_Array     indexes; // triangles defined by sequential indexes into vndata -- use 0xFFFFFFFF to stop one triangle strip and then start another
+  int_Array     indexes; // triangles defined by sequential indexes into vndata
     
   virtual void  restart();
   // set sizes back to 0
@@ -71,7 +71,7 @@ public:
 
   virtual void  addTriangle(int v0, int v1, int v2);
   // add triangle composed of the given indexes into the vertex / normal data
-  virtual void addIndex(int v0);
+  virtual void  addIndex(int v0);
   // add a single index 
     
   virtual void  setPointColor(int idx, const QColor& clr);

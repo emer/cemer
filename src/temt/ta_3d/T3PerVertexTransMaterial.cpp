@@ -38,7 +38,7 @@ using namespace Qt3DRender;
 T3PerVertexTransMaterial::T3PerVertexTransMaterial(QNode *parent)
   : inherited(parent)
   , m_transEffect(new QEffect())
-  , m_specularParameter(new QParameter(QStringLiteral("ks"), QColor::fromRgbF(0.5f, 0.5f, 0.5f, 1.0f)))
+  , m_specularParameter(new QParameter(QStringLiteral("ks"), QColor::fromRgbF(0.1f, 0.1f, 0.1f)))
   , m_shininessParameter(new QParameter(QStringLiteral("shininess"), 150.0f))
   , m_transGL3Technique(new QTechnique())
   , m_transGL2Technique(new QTechnique())
@@ -110,23 +110,15 @@ void T3PerVertexTransMaterial::handleShininessChanged(const QVariant &var)
 
 
 void T3PerVertexTransMaterial::init_render_pass(QRenderPass* pass) {
-  // this is how we separate these out
-  // QAnnotation* techannote = new QAnnotation;
-  // techannote->setName("renderingStyle");
-  // techannote->setValue("transparent");
-  // pass->addAnnotation(techannote);
-  
   // pass->addRenderState(m_cullFace);
-  // pass->addRenderState(m_depthTest);
+  pass->addRenderState(m_depthTest);
   pass->addRenderState(m_noDepthMask);
   pass->addRenderState(m_blendEqArgs);
   pass->addRenderState(m_blendEq);
 }
 
-// TODO: Define how lights are properties are set in the shaders. Ideally using a QShaderData
 void T3PerVertexTransMaterial::init() {
 
-#if 1
   m_transGL3Shader->setVertexShaderCode
     (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/pervertextrans.vert"))));
   m_transGL2ES2Shader->setVertexShaderCode
@@ -136,20 +128,6 @@ void T3PerVertexTransMaterial::init() {
     (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/pervertextrans.frag"))));
   m_transGL2ES2Shader->setFragmentShaderCode
     (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/pervertextrans.frag"))));
-
-#else 
-  
-  m_transGL3Shader->setVertexShaderCode
-    (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/pervertexcolor.vert"))));
-  m_transGL2ES2Shader->setVertexShaderCode
-    (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/pervertexcolor.vert"))));
-
-  m_transGL3Shader->setFragmentShaderCode
-    (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/gl3/pervertexcolor.frag"))));
-  m_transGL2ES2Shader->setFragmentShaderCode
-    (QShaderProgram::loadSource(QUrl(QStringLiteral("qrc:/shaders/es2/pervertexcolor.frag"))));
-
-#endif
 
   m_transGL3Technique->graphicsApiFilter()->setApi(QGraphicsApiFilter::OpenGL);
   m_transGL3Technique->graphicsApiFilter()->setMajorVersion(3);
@@ -179,7 +157,7 @@ void T3PerVertexTransMaterial::init() {
   m_transES2RenderPass->setShaderProgram(m_transGL2ES2Shader);
 
   // m_cullFace->setMode(QCullFace::Back);
-  // m_depthTest->setDepthFunction(QDepthTest::Less);
+  m_depthTest->setDepthFunction(QDepthTest::Less);
   m_blendEqArgs->setSourceRgb(QBlendEquationArguments::SourceAlpha);
   m_blendEqArgs->setDestinationRgb(QBlendEquationArguments::OneMinusSourceAlpha);
   m_blendEq->setBlendFunction(QBlendEquation::Add);

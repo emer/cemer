@@ -532,8 +532,6 @@ T3FrameMesh::T3FrameMesh(Qt3DNode* parent)
   m_frame_width = 0.1f;
 
   setPrimitiveType(Triangles);
-  // setPrimitiveRestart(true);
-  // setRestartIndex(0xFFFF);
   
   FrameGeometry* geometry = new FrameGeometry(this);
   inherited::setGeometry(geometry);

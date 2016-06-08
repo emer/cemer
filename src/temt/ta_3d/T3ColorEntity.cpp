@@ -20,6 +20,8 @@
 #include <T3PerVertexTransMaterial>
 #include <T3AmbientNoCullMaterial>
 
+#include <taMisc>
+
 using namespace Qt3DCore;
 using namespace Qt3DRender;
 using namespace Qt3DInput;
@@ -43,6 +45,12 @@ T3ColorEntity::~T3ColorEntity() {
 
 void T3ColorEntity::setColor(const QColor& clr, float amb,
                              float spec, float shin) {
+  if(color_type == NO_COLOR) {
+    if(clr.alpha() < 255)
+      color_type = TRANS;
+    else
+      color_type = PHONG;
+  }
   color = clr;
   ambient = MAX(amb, 0.0f);
   specular = spec;
@@ -171,6 +179,7 @@ void T3ColorEntity::updateColor() {
     }
     per_vertex_trans->setSpecular
       (QColor::fromRgbF(specular, specular, specular, color.alphaF()));
+    taMisc::Info("trans spec:", String(specular));
     per_vertex_trans->setShininess(shininess);
     if(add) {
       addMaterial(per_vertex_trans);

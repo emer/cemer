@@ -52,7 +52,7 @@ public:
   QUrl          texture_src;    // location of texture
   
   virtual void  setColor(const QColor& color, float ambient = 0.2f,
-                         float specular = 0.1f, float shininess = 150.0f);
+                         float specular = 0.02f, float shininess = 150.0f);
   // set the color parameters and update display -- user's responsibiliity to select appropriate color_type in advance
 
   virtual void  setTexture(const QUrl& source);

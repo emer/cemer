@@ -128,6 +128,7 @@ void LayerView::DoHighlightColor(bool apply) {
 #ifdef TA_QT3D
   float trans =  nv->view_params.lay_trans;
   Layer* lay = layer();
+  nd->frame->color_type = T3ColorEntity::TRANS;
   if((lay && lay->lesioned()) || !lay)
     nd->frame->setColor(QColor::fromRgbF(0.5f, 0.5f, 0.5f, trans)); // grey
   else if(lay->layer_type == Layer::INPUT)

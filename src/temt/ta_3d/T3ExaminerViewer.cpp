@@ -78,7 +78,7 @@ using namespace Qt3DExtras;
 
 
 T3RenderView::T3RenderView()
-: Qt3DWindow()
+  : Qt3DWindow(nullptr, false) // not synchronous
 {
 }
 
@@ -384,12 +384,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
 T3ExaminerViewer::~T3ExaminerViewer() {
 #ifdef TA_QT3D
-  // engine->shutdown();  // this causes crash at exit!
-  // delete engine;
-  //  delete root_entity;
-  // getting a crash on internal listener when deleting the qwindow.
-  // view3d->hide();
-  // delete view3d;
+
 #else
   quarter->setInteractionModeOn(false); // turn off interaction mode. before we die..
   // otherwise we can crash..
@@ -714,7 +709,9 @@ void T3ExaminerViewer::viewallbuttonClicked() {
 }
 
 void T3ExaminerViewer::seekbuttonClicked() {
-#ifndef TA_QT3D
+#ifdef TA_QT3D
+  view3d->renderSynchronous();
+#else
   quarter->seek();
 #endif
 }
@@ -975,18 +972,14 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
 #ifdef TA_QT3D
 
 void T3ExaminerViewer::setSceneGraph(QEntity* root) {
-  bool no_scene_yet = true;
   if(scene) {
     // return;
-    // delete scene;
-    scene->setParent((Qt3DNode*)NULL);
-    scene->deleteLater();
-    no_scene_yet = false;
+    delete scene;
+    // scene->setParent((Qt3DNode*)NULL);
+    // scene->deleteLater();
   }
   scene = root;
   scene->setParent(root_entity);
-  // if(no_scene_yet)
-  //   view3d->setRootEntity(root_entity);
   updateAspectRatio();
 }
 

@@ -29,6 +29,7 @@ T3UnitNode_Cylinder::T3UnitNode_Cylinder(Qt3DNode* parent, T3DataView* dataView_
 {
   float max_xy = MAX(max_x, max_y);
   float rad = disp_scale * ((.5f - spacing) / max_xy);
+  cylinder->color_type = T3ColorEntity::TRANS;
   cylinder->setGeom(T3Cylinder::LONG_Y, rad, 0.01f);
 }
 
@@ -39,7 +40,7 @@ void T3UnitNode_Cylinder::setAppearance_impl(NetView* nv, float act, const iColo
                                              float max_z, bool act_invalid) 
 {
   float ht = (base_height + ((max_height - base_height) * fabs(act))) / max_z;
-  cylinder->setColor(clr, .2f, 0.95f, 150.0f);
+  cylinder->setColor(clr, .2f, 0.02f, 150.0f);
   cylinder->setLength(ht);
 
   QVector3D trans = transform->translation();
