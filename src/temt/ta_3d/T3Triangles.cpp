@@ -125,13 +125,12 @@ public:
   TrianglesColorBufferDataGenerator(const T3TrianglesMesh& mesh)
     : colors(mesh.colors.el)
   {
-    // if(mesh.node_updating) {
-    //   n_vndata = 0;
-    //   n_indexes = 0;
-    // }
-    // else {
-    n_colors = mesh.colorCount();
-    // }
+    if(mesh.node_updating) {
+      n_colors = 0;
+    }
+    else {
+      n_colors = mesh.colorCount();
+    }
   }
 
   QByteArray operator ()() final {
@@ -139,7 +138,7 @@ public:
   }
 
   bool operator ==(const QBufferDataGenerator &other) const final {
-    // return false;               // always update!!
+    return false;               // always update!!
     const TrianglesColorBufferDataGenerator *otherFunctor =
       dynamic_cast<const TrianglesColorBufferDataGenerator *>(&other);
     if (otherFunctor != Q_NULLPTR)
