@@ -2061,17 +2061,29 @@ bool DataTable::InsertRowsAfter(int st_row, int n_rows) {
 }
 
 bool DataTable::RemoveRows(int st_row, int n_rows) {
-  if(st_row < 0)
-    st_row = rows-1;       // end
-
   if(TestError(!RowInRangeNormalize(st_row), "RemoveRows",
       "start row not in range:",String(st_row)))
     return false;
-  if(n_rows < 0) n_rows = rows - st_row;
-  int end_row = st_row + n_rows-1;
-  if(TestError(!RowInRangeNormalize(end_row), "RemoveRows",
-      "end row not in range:",String(end_row)))
+  
+  int end_row;
+  if(n_rows < 0) {
+    if(TestError(!RowInRangeNormalize(n_rows), "RemoveRows",
+                 "n_rows ...",String(n_rows)))
+      return false;
+    end_row = n_rows;
+    n_rows = end_row - st_row + 1;
+  }
+  else {
+    end_row = st_row + n_rows-1;
+      if(TestError(!RowInRangeNormalize(end_row), "RemoveRows",
+                   "end row not in range:",String(end_row)))
+        return false;
+  }
+  // either case could result in st > end
+  if(TestError(st_row > end_row, "RemoveRows",
+               "start row greater than end row:", "start ", String(st_row), ", end ", String(end_row)))
     return false;
+
   DataUpdate(true);
   
   // Remove the DataTableCell objects and the corresponding control panel items from all the rows

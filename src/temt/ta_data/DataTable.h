@@ -611,7 +611,7 @@ public:
   virtual bool          InsertRowsAfter(int st_row, int n_rows=1);
   // #CAT_Rows insert N rows after st_row + n_rows, returns true if successfully inserted
   virtual bool          RemoveRows(int st_row, int n_rows=1);
-  // #MENU #MENU_ON_Rows #CAT_Rows Remove n rows of data, starting at st_row.  st_row = -1 means last row, and n_rows = -1 means remove from starting row to end
+  // #MENU #MENU_ON_Rows #CAT_Rows Remove n rows of data, starting at st_row.  st_row = -1 means last row, and n_rows = -1 means remove from starting row to end, n_rows = -2 means remove upto and including the next to last row, etc.
   virtual void          RemoveAllRows() { ResetData(); }
   // #MENU #CAT_Rows #CONFIRM remove all of the rows of data, but keep the column structure
   virtual void          EnforceRows(int n_rows);
