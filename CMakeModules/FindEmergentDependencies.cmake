@@ -20,6 +20,11 @@ if (QT_USE_5)
   find_package(Qt5Multimedia)
   find_package(Qt5Svg)
 
+  # subvers
+  string(SUBSTRING "${Qt5Gui_VERSION}" 2 1 QT5_MINOR_VERS)
+  string(COMPARE GREATER "${QT5_MINOR_VERS}" "5" QT_USE_WEBENGINE)
+  message(STATUS "Qt5 version: ${Qt5Gui_VERSION} minor version is ${QT5_MINOR_VERS}, using WebEngine?: ${QT_USE_WEBENGINE}")
+
     #  qt5_use_modules(Emergent Widgets Network WebKit OpenGL Xml)
 #  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -38,44 +43,47 @@ if (QT_USE_5)
     ${Qt5Network_LIBRARIES} ${Qt5PrintSupport_LIBRARIES} ${Qt5Multimedia_LIBRARIES}
     ${Qt5Svg_LIBRARIES})
 
-  if (QT_USE_3D)
+  if (QT_USE_WEBENGINE)
     find_package(Qt5WebEngineCore)
     find_package(Qt5WebEngine)
     find_package(Qt5WebEngineWidgets)
-    
+
+    add_definitions(-DUSE_QT_WEBENGINE)
+
+    include_directories(${Qt5WebEngineCore_INCLUDE_DIRS}
+      ${Qt5WebEngine_INCLUDE_DIRS} ${Qt5WebEngineWidgets_INCLUDE_DIRS})
+
+    set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5WebEngineCore_LIBRARIES} ${Qt5WebEngine_LIBRARIES}
+      ${Qt5WebEngineWidgets_LIBRARIES})
+  else (QT_USE_WEBENGINE)
+
+    find_package(Qt5WebKit)
+    find_package(Qt5WebKitWidgets)
+     
+    include_directories(${Qt5WebKit_INCLUDE_DIRS} ${Qt5WebKitWidgets_INCLUDE_DIRS})
+    set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5WebKit_LIBRARIES} ${Qt5WebKitWidgets_LIBRARIES})
+
+  endif (QT_USE_WEBENGINE)
+
+  if (QT_USE_3D)
     find_package(Qt53DCore)
     find_package(Qt53DRender)
     find_package(Qt53DInput)
     find_package(Qt53DExtras)
 
-    add_definitions(-DTA_QT3D -DUSE_QT_WEBENGINE)
+    add_definitions(-DTA_QT3D)
 
     include_directories(${Qt53DCore_INCLUDE_DIRS} ${Qt53DRenderer_INCLUDE_DIRS}
-      ${Qt53DInput_INCLUDE_DIRS} ${Qt53DExtras_INCLUDE_DIRS}
-      ${Qt5WebEngineCore_INCLUDE_DIRS}
-      ${Qt5WebEngine_INCLUDE_DIRS} ${Qt5WebEngineWidgets_INCLUDE_DIRS})
+      ${Qt53DInput_INCLUDE_DIRS} ${Qt53DExtras_INCLUDE_DIRS})
 
     set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt53DCore_LIBRARIES} ${Qt53DRenderer_LIBRARIES}
-      ${Qt53DInput_LIBRARIES} ${Qt53DExtras_LIBRARIES}
-      ${Qt5WebEngineCore_LIBRARIES} ${Qt5WebEngine_LIBRARIES}
-      ${Qt5WebEngineWidgets_LIBRARIES})
+      ${Qt53DInput_LIBRARIES} ${Qt53DExtras_LIBRARIES})
   else (QT_USE_3D)
-
-    find_package(Qt5WebKit)
-    find_package(Qt5WebKitWidgets)
-     
     find_package(Coin REQUIRED)
     find_package(Quarter REQUIRED)
     find_package(OpenGL REQUIRED)
 
-    include_directories(${Qt5WebKit_INCLUDE_DIRS} ${Qt5WebKitWidgets_INCLUDE_DIRS})
-    set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5WebKit_LIBRARIES} ${Qt5WebKitWidgets_LIBRARIES})
-
   endif (QT_USE_3D)
-
-  # find_package(Coin REQUIRED)
-  # find_package(Quarter REQUIRED)
-  # find_package(OpenGL REQUIRED)
 
   # from http://cebmtpchat.googlecode.com/svn/trunk/CMakeModules/QtSupport.cmake
   SET(QT_BINARY_DIR "${_qt5Core_install_prefix}/bin")
