@@ -698,6 +698,64 @@ void Program::Step(Program* step_prg) {
   SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
+void Program::RunFunction(Function* fun) {
+  if(TestError(fun == NULL, "RunFunction",
+               "function is NULL -- must pass afunction!")) {
+    return;
+  }
+  if(TestError(fun->args.size > 0, "RunFunction",
+               "function has one or more args -- can only directly run functions not taking any args")) {
+    return;
+  }
+  if(run_state == NOT_INIT) {
+    Init();                     // auto-press Init button!
+  }
+  if(run_state == STOP && stop_reason == SR_ERROR) {
+    Init();                     // auto-reinit after errors!
+  }
+  if(TestError(run_state != DONE && run_state != STOP, "RunFunction",
+               "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
+    return;
+  }
+  ProjDirToCurrent();
+  ClearStopReq();
+  last_run_prog = this;
+  SetAllBreakpoints();          // reinstate all active breakpoints
+  step_mode = false;
+  cur_step_prog = NULL;
+  last_step_prog = NULL;
+  taMisc::Busy();
+  SetRunState(RUN);
+  UpdateUi();
+  SigEmit(SLS_ITEM_UPDATED_ND); // update button state
+  bool did_struct_updt = false;
+  if(!HasProgFlag(OBJS_UPDT_GUI)) {
+    objs.StructUpdateEls(true);
+    did_struct_updt = true;
+  }
+  cssEl* cssrval = script->RunFun(fun->name);
+  // note: shared var state likely changed, so update gui
+  script_compiled = true; // override any run-generated changes!!
+  if(did_struct_updt)
+    objs.StructUpdateEls(false);
+  taMisc::DoneBusy();
+  if (ret_val != RV_OK) ShowRunError();
+  // unless we were stopped, we are done
+  if(stop_req) {
+    SetRunState(STOP);
+    if((stop_reason == SR_ERROR) && (ret_val == RV_OK)) {
+      ret_val = RV_RUNTIME_ERR;
+    }
+  }
+  else {
+    script->Restart();
+    SetRunState(DONE);
+  }
+  UpdateUi();
+  stop_req = false;  // this does not do full clear, so that information can be queried
+  SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
+}
+
 void Program::ToggleTrace() {
   ToggleProgFlag(TRACE);
   SigEmitUpdated();

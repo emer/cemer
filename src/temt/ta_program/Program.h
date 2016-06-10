@@ -247,6 +247,8 @@ public:
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F12 stop the current program immediately, regardless of where it is
   virtual void  StepCss();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run one step of underlying css script code, from current point of execution
+  virtual void  RunFunction(Function* fun);
+  // #BUTTON Directly run given function -- function must not take any args! -- will compile / init program if not already done yet
 
   virtual bool  StopCheck();
   // #CAT_Run calls event loop, then checks for STOP state, true if so
