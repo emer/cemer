@@ -604,10 +604,13 @@ void iTreeView::ExpandDefault() {
   }
 }
 
-void iTreeView::GetTreeState_impl(iTreeViewItem* node, bool_Array& tree_state) {
+void iTreeView::GetTreeState_impl(iTreeViewItem* node, String_Array& tree_state) {
   if (!myProject()) return;
-
-  tree_state.Add(node->isExpanded());
+  
+  if (node->isExpanded()) {
+    taBase* tab = node->link()->taData();
+    tree_state.Add(tab->GetPath());
+  }
   for (int i = 0; i < node->childCount(); ++i) {
     iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(node->child(i));
     if (child) {
@@ -616,12 +619,21 @@ void iTreeView::GetTreeState_impl(iTreeViewItem* node, bool_Array& tree_state) {
   }
 }
 
-void iTreeView::RestoreTreeState_impl(iTreeViewItem* node, bool_Array& tree_state, int& counter) {
+void iTreeView::RestoreTreeState_impl(iTreeViewItem* node, String_Array& tree_state) {
   if (!myProject()) return;
   if (tree_state.size == 0) return;
   
+  bool expand = false;
   if (node) {
-    if (tree_state.SafeEl(counter) == true) {
+    taBase* tab = node->link()->taData();
+    for (int i=0; i<tree_state.size; i++) {
+      if (tab->GetPath() == tree_state.SafeEl(i)) {
+        expand = true;
+        tree_state.RemoveIdx(i);
+        break;
+      }
+    }
+    if (expand) {
       if (!node->isExpanded()) {
         node->setExpanded(true);
       }
@@ -631,16 +643,15 @@ void iTreeView::RestoreTreeState_impl(iTreeViewItem* node, bool_Array& tree_stat
         node->setExpanded(false);
       }
     }
-    counter++;
-
+    
     for (int i = 0; i < node->childCount(); ++i) {
       iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(node->child(i));
-      RestoreTreeState_impl(child, tree_state, counter);
+      RestoreTreeState_impl(child, tree_state);
     }
   }
 }
 
-void iTreeView::GetTreeState(bool_Array& tree_state) {
+void iTreeView::GetTreeState(String_Array& tree_state) {
   if (!myProject()) return;
   
   tree_state.Reset();
@@ -649,7 +660,7 @@ void iTreeView::GetTreeState(bool_Array& tree_state) {
   GetTreeState_impl(node, tree_state);
 }
 
-void iTreeView::RestoreTreeState(bool_Array& tree_state) {
+void iTreeView::RestoreTreeState(String_Array& tree_state) {
   if (IsTreeDirty()) {
     taMisc::Info("The tree has been expanded or collapsed since the project was opened - can't be restored");
     return;
@@ -657,7 +668,7 @@ void iTreeView::RestoreTreeState(bool_Array& tree_state) {
   // we only restore the entire tree - so start with the root item
   iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(0));
   int counter = 0;
-  RestoreTreeState_impl(node, tree_state, counter);
+  RestoreTreeState_impl(node, tree_state);
 }
 
 void iTreeView::focusInEvent(QFocusEvent* ev) {

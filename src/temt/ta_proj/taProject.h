@@ -40,7 +40,7 @@
 #include <taViewer_List>
 #include <taUndoMgr>
 #include <TimeUsed>
-#include <bool_Array>
+#include <String_Array>
 
 // declare all other types mentioned but not required to include:
 class MainWindowViewer; // 
@@ -105,7 +105,7 @@ public:
   String                last_change_desc; // #EXPERT description of the last change made to the project -- used for change log
   String                view_plog;
   // #READ_ONLY #NO_SAVE current view of project log data
-  bool_Array            tree_state;  // #HIDDEN #READ_ONLY save!! this is the expand/collapse state of the navigator tree nodes
+  String_Array          tree_state;  // #HIDDEN #READ_ONLY save!! this is the expand/collapse state of the navigator tree nodes
 
   bool                  isDirty() const override {return m_dirty;}
   void                  setDirty(bool value) override;  //

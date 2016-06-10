@@ -164,9 +164,9 @@ public:
   // scroll vertically to given position -- directly controls vertical scroll bar
   virtual bool          PosInView(int scr_pos);
   // is given position within the main scroll area (in coordinates relative to central widget) within view?
-  virtual void          GetTreeState(bool_Array& tree_state);
+  virtual void          GetTreeState(String_Array& tree_state);
   // get the current expand state of the tree nodes
-  virtual void          RestoreTreeState(bool_Array& tree_state);
+  virtual void          RestoreTreeState(String_Array& tree_state);
   // expand/collapse tree state to saved state
 
   iTreeView(QWidget* parent = 0, int tv_flags = 0);
@@ -267,8 +267,8 @@ protected:
   void                  keyPressEvent(QKeyEvent* e) override;
   bool                  focusNextPrevChild(bool next) override;
   
-  virtual void          GetTreeState_impl(iTreeViewItem* node, bool_Array& tree_state);
-  virtual void          RestoreTreeState_impl(iTreeViewItem* node, bool_Array& tree_state, int& counter);
+  virtual void          GetTreeState_impl(iTreeViewItem* node, String_Array& tree_state);
+  virtual void          RestoreTreeState_impl(iTreeViewItem* node, String_Array& tree_state);
 
 #ifndef __MAKETA__
   QMimeData*   mimeData(const QList<QTreeWidgetItem*> items) const override;
