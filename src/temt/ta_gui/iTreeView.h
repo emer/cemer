@@ -228,7 +228,8 @@ protected:
     EF_CUSTOM_FILTER            = 0x01,
     EF_DEFAULT                  = 0x02, // we are in the DefaultExpand context
     EF_EXPAND_DISABLED          = 0x04, // either Expand on that guy, or set in flags
-    EF_NAVIGATOR_FILTER         = 0x08  // custom expand when doing in navigator tree
+    EF_NAVIGATOR_FILTER         = 0x08, // custom expand when doing in navigator tree
+    EF_EXPAND_FULLY             = 0x10  // expand - ignore default
   };
 
   int                   tv_flags;

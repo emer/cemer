@@ -418,12 +418,16 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     expand = true;
   }
   
+  if (exp_flags & EF_EXPAND_FULLY) {
+    expand = true;
+  }
+  
 //  if(!expand_saved) {
     // figure out default if not otherwise saved
     if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
     if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
     
-    if (!(exp_flags & EF_CUSTOM_FILTER) && tab) {
+    if (!(exp_flags & EF_CUSTOM_FILTER) && tab && (!(exp_flags & EF_EXPAND_FULLY))) {
       // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
       // those being treated like top level are specific networks (i.e. network -- not an actual group but has spec and layer groups
       if (tab->InheritsFrom(&TA_taGroup_impl) || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
@@ -546,7 +550,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
 void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) {
   if (!item) return;
   taMisc::Busy(true);
-  ExpandItem_impl(item, -1, max_levels, EF_EXPAND_DISABLED);
+  ExpandItem_impl(item, -1, max_levels, EF_EXPAND_FULLY);
   if (header()->isVisible() && (header()->count() > 1)) {
     resizeColumnsToContents();
   }
