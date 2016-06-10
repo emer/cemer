@@ -381,9 +381,6 @@ void DeepSpec::Defaults_init() {
   raw_thr_rel = 0.1f;
   raw_thr_abs = 0.1f;
   mod_min = 0.8f;
-  trc_p_thr = false;
-  trc_p_clamp = false;
-  trc_p_max = false;
   trc_p_only_m = false;
   trc_thal_gate = false;
   trc_trace = false;
@@ -1480,15 +1477,23 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   float net_ex = 0.0f;
   if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
-    LeabraUnGpData* ugd = lay->UnGpDataUn(un);
-    if(deep.trc_p_only_m) {
-      if(ugd->acts_prvq.max > 0.1f && ugd->am_deep_raw_net.max > 0.1f) {
-        // only activate if we got prior and current activation
+    if(lay->am_deep_raw_net.max > 0.1f) { // have to get some input to clamp
+      if(deep.trc_p_only_m) {
+        LeabraUnGpData* ugd = lay->UnGpDataUn(un);
+        if(ugd->acts_prvq.max > 0.1f) {
+          // only activate if we got prior and current activation
+          net_syn = u->deep_raw_net; // only gets from deep!  and no extras!
+        }
+        else {
+          net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
+        }
+      }
+      else {                       // always do it
         net_syn = u->deep_raw_net; // only gets from deep!  and no extras!
       }
     }
-    else {                       // always do it
-      net_syn = u->deep_raw_net; // only gets from deep!  and no extras!
+    else {
+      net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
     }
   }
   else {
@@ -1717,16 +1722,7 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     new_act *= u->deep_mod;
   }
   if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
-    if(deep.trc_p_thr) {
-      if(u->deep_raw_net > deep.raw_thr_abs)
-        new_act = clamp_range.max;
-      else
-        new_act = clamp_range.min;
-    }
-    else if(deep.trc_p_clamp) {
-      new_act = clamp_range.max * u->deep_raw_net;
-    }
-    else if(deep.trc_trace) {
+    if(deep.trc_trace) {
       new_act = MAX(u->act_q0, new_act);
     }
   }
@@ -2123,23 +2119,6 @@ void LeabraUnitSpec::DeepRawNetin_Integ(LeabraUnitVars* u, LeabraNetwork* net, i
     net_delta += ndval;
   }
   u->deep_raw_net += net_delta;
-  if(deep.trc_p_max && deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
-    const int nrg = u->NRecvConGps(net, thr_no); 
-    for(int g=0; g< nrg; g++) {
-      LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
-      if(recv_gp->NotActive()) continue;
-      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-      if(cs->IsDeepRawCon()) {
-        float max_act = 0.0f;
-        const int sz = recv_gp->size;
-        for(int i=0; i<sz; i++) {
-          const float su_act = recv_gp->UnVars(i,net)->act;
-          max_act = MAX(su_act, max_act);
-        }
-        u->deep_raw_net = max_act;
-      }
-    }
-  }
 }
 
 void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
