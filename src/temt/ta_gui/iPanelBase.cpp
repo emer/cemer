@@ -209,7 +209,7 @@ String iPanelBase::TabText() const {
     }
   }
   if(link()) {
-    return link()->GetDisplayName();
+    return link()->GetDisplayName(false);  // don't concatenate the description onto the name for panel tabs
   }
   else {
     return _nilString;

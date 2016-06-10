@@ -251,13 +251,13 @@ String taSigLinkTaBase::GetName() const {
   return data()->GetName();
 }
 
-String taSigLinkTaBase::GetDisplayName() const {
+String taSigLinkTaBase::GetDisplayName(bool desc_ok) const {
   MemberDef* md = GetDataMemberDef();
   if (md) {
     return md->name;
   }
   else if(data()) {
-    if (ownLink() && ownLink()->taData() && ownLink()->taData()->DisplayDescription()) {
+    if (desc_ok && ownLink() && ownLink()->taData() && ownLink()->taData()->DisplayDescription()) {
       return data()->GetDisplayNameCatDesc();
     }
     return data()->GetDisplayName();

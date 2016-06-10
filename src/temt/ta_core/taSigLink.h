@@ -79,7 +79,8 @@ public:
   virtual TypeDef*      GetDataTypeDef() const {return NULL;} // TypeDef of the data
   virtual MemberDef*    GetDataMemberDef() const {return NULL;} // if a member in a class, then the MemberDef
   virtual String        GetName() const {return _nilString;}
-  virtual String        GetDisplayName() const; // default return Member name if has MemberDef, else GetName
+  virtual String        GetDisplayName(bool desc_ok = true) const;
+  // default return Member name if has MemberDef, else GetName  -- if desc is true ok to concatenate the description
   void                  SigDestroying(); // called by host when destroying, but it is still responsible for deleting us
   virtual void          SigLinkEmit(int sls, void* op1 = NULL, void* op2 = NULL);
   // this is how we emit the signal to the receivers

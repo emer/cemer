@@ -35,7 +35,7 @@ public:
 
   bool         HasChildItems() override;
   String       GetName() const override;
-  String       GetDisplayName() const override;
+  String       GetDisplayName(bool desc_ok = true) const override;
   using inherited::ShowMember;
   virtual bool ShowMember(MemberDef* md); // asks this type if we should show the md member
 

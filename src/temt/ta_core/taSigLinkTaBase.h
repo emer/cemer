@@ -48,7 +48,7 @@ public:
   String       GetTypeDecoKey() const override;
   String       GetStateDecoKey() const override;
   String       GetName() const override;
-  String       GetDisplayName() const override;
+  String       GetDisplayName(bool desc_ok = true) const override;
   void         Search(iDialogSearch* dlg) override;
   bool         ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const override; // asks this type if we should show the md member
   String       GetColText(const KeyString& key, int itm_idx = -1) const override; // #IGNORE

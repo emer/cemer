@@ -55,7 +55,7 @@ String taSigLinkTypeItem::GetName() const {
   return data()->name;
 }
 
-String taSigLinkTypeItem::GetDisplayName() const {
+String taSigLinkTypeItem::GetDisplayName(bool desc_ok) const {
   return data()->name;
 }
 
