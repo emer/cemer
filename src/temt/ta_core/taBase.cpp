@@ -468,13 +468,6 @@ String taBase::GetDisplayName() const {
   return rval;
 }
 
-String taBase::GetDisplayNameCatDesc() const {
-  if (GetDesc().nonempty()) {
-    return GetDisplayName() + "  //  " + GetDesc();
-  }
-  return GetDisplayName();
-}
-
 void taBase::MakeNameUnique() {
   // nop for base -- only defined for taNBase
 }
@@ -2976,7 +2969,17 @@ String taBase::GetColText(const KeyString& key, int itm_idx) const {
   else if (key == key_type_desc) return GetTypeDef()->desc;
 // note: some classes override desc with dynamic desc's
   else if (key == key_desc) return GetDesc();
-  else if (key == key_disp_name) return GetDisplayName();
+  else if (key == key_disp_name) {
+    if (GetOwner() && GetOwner()->DisplayDescription()) {
+      String rval = GetDisplayName();
+      if(GetDesc().nonempty())
+        rval +=  " // " + GetDesc();
+      return rval;
+    }
+    else {
+      return GetDisplayName();
+    }
+  }
   else return _nilString;
 }
 

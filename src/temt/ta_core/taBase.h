@@ -745,9 +745,7 @@ public:
   // #CAT_ObjectMgmt #GET_name Get the name of the object
   virtual String        GetDisplayName() const;
   // #IGNORE can be overridden to provide a more elaborate or cleaned-up user-visible name for display purposes (default is just GetName())
-  virtual String        GetDisplayNameCatDesc() const;
-  // #IGNORE return the display name concatenated with the description
- virtual bool           DisplayDescription() const { return false; }
+  virtual bool          DisplayDescription() const { return false; }
   // #IGNORE sometimes we want the objects description but usually not
   virtual void          MakeNameUnique();
   // #CAT_ObjectMgmt make sure my name is unique relative to names of objects associated with my owner (e.g., if it is a list object), typically because my name has changed, and owner needs to ensure that all names are unique
