@@ -86,7 +86,7 @@ public:
   void Trial_Init_Specs(LeabraNetwork* net) override;
   void Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
-  bool CheckConfig_Unit(Unit* un, bool quiet=false) override;
+  bool CheckConfig_Unit(Layer* lay, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(CA1UnitSpec);
 protected:

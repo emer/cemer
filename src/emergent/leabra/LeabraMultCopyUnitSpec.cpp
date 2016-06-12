@@ -24,24 +24,26 @@ void LeabraMultCopyUnitSpec::Initialize() {
   mult_gain = 1.0f;
 }
 
-bool LeabraMultCopyUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  if(!inherited::CheckConfig_Unit(un, quiet)) return false;
-  LeabraUnit* u = (LeabraUnit*)un;
+bool LeabraMultCopyUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
+  if(!inherited::CheckConfig_Unit(lay, quiet)) return false;
   bool rval = true;
   
-  const int nrg = u->NRecvConGps();
-  if(u->CheckError(nrg != 2, quiet, rval,
+  if(lay->units.leaves == 0) return rval;
+  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
+  
+  const int nrg = un->NRecvConGps();
+  if(lay->CheckError(nrg != 2, quiet, rval,
                 "leabra mult copy must have exactly 2 recv prjns, first = act to copy, second = act to multiply")) {
     return false;               // fatal
   }
 
-  LeabraConGroup* copy_gp = (LeabraConGroup*)u->RecvConGroup(0);
-  if(u->CheckError(copy_gp->size != 1, quiet, rval,
+  LeabraConGroup* copy_gp = (LeabraConGroup*)un->RecvConGroup(0);
+  if(lay->CheckError(copy_gp->size != 1, quiet, rval,
                 "leabra mult copy first prjn (copy act source) must have exactly 1 connection to copy from")) {
     return false;               // fatal
   }
-  LeabraConGroup* mult_gp = (LeabraConGroup*)u->RecvConGroup(1);
-  if(u->CheckError(mult_gp->size != 1, quiet, rval,
+  LeabraConGroup* mult_gp = (LeabraConGroup*)un->RecvConGroup(1);
+  if(lay->CheckError(mult_gp->size != 1, quiet, rval,
                 "leabra mult copy second prjn (mult act source) must have exactly 1 connection to get mult act from")) {
     return false;               // fatal
   }

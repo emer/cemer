@@ -876,6 +876,13 @@ void Layer::CheckThisConfig_impl(bool quiet, bool& rval) {
 
   if (!CheckBuild(quiet)) {rval = false; return;}
   if (!CheckConnect(quiet)) {rval = false; return;}
+
+  UnitSpec* us = GetUnitSpec();
+  if(us) {
+    bool chk = us->CheckConfig_Unit(this, quiet);
+    if(!chk) rval = false;
+  }
+  
   inherited::CheckThisConfig_impl(quiet, rval);
 }
 
@@ -1580,6 +1587,20 @@ bool Layer::UpdateConSpecs(bool force) {
       rval = false;
   }
   return rval;
+}
+
+
+bool Layer::ApplySpecToMe(BaseSpec* spec) {
+  if(spec == NULL) return false;
+  if(spec->InheritsFrom(&TA_UnitSpec)) {
+    SetUnitSpec((UnitSpec*)spec);
+    return true;
+  }
+  else if(spec->InheritsFrom(&TA_LayerSpec)) {
+    SetLayerSpec((LayerSpec*)spec);
+    return true;
+  }
+  return false;
 }
 
 bool Layer::SetUnitSpec(UnitSpec* sp) {

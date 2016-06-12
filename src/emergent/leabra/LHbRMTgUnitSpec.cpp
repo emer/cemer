@@ -78,14 +78,16 @@ void LHbRMTgUnitSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* u, bool quiet) {
-  LeabraUnit* un = (LeabraUnit*)u;
-  if(!inherited::CheckConfig_Unit(un, quiet)) return false;
+bool LHbRMTgUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
+  if(!inherited::CheckConfig_Unit(lay, quiet)) return false;
 
-  LeabraNetwork* net = (LeabraNetwork*)un->own_net();
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   net->SetNetFlag(Network::NETIN_PER_PRJN); // this is required for this computation!
 
   bool rval = true;
+  
+  if(lay->units.leaves == 0) return rval;
+  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
   
   LeabraLayer* pv_pos_lay = NULL;
   LeabraLayer* vspatch_pos_D1_lay = NULL;
@@ -102,31 +104,31 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* u, bool quiet) {
   GetRecvLayers(un, pv_pos_lay, vspatch_pos_D1_lay, vspatch_pos_D2_lay, vsmatrix_pos_D1_lay, vsmatrix_pos_D2_lay, pv_neg_lay, vspatch_neg_D1_lay, vspatch_neg_D2_lay,
                 vsmatrix_neg_D1_lay, vsmatrix_neg_D2_lay);
 
-  if(u->CheckError(!vspatch_pos_D1_lay, quiet, rval,
+  if(lay->CheckError(!vspatch_pos_D1_lay, quiet, rval,
                    "did not find VS Patch D1R recv projection -- searches for MSNUnitSpec::PATCH, D1R")) {
     rval = false;
   }
-  if(u->CheckError(!vspatch_pos_D2_lay, quiet, rval,
+  if(lay->CheckError(!vspatch_pos_D2_lay, quiet, rval,
                    "did not find VS Patch D2R recv projection -- searches for MSNUnitSpec::PATCH, D2R")) {
     rval = false;
   }
   // TODO: all the AVERSIVE guys optional?
   
   // matrix is optional
-  // if(u->CheckError(!matrix_dir_lay, quiet, rval,
+  // if(lay->CheckError(!matrix_dir_lay, quiet, rval,
   //                  "did not find VS Matrix Direct recv projection -- searches for Matrix and *not* Ind or NoGo in layer name")) {
   //   rval = false;
   // }
-  // if(u->CheckError(!matrix_ind_lay, quiet, rval,
+  // if(lay->CheckError(!matrix_ind_lay, quiet, rval,
   //                  "did not find VS Matrix Indirect recv projection -- searches for Matrix and Ind or NoGo in layer name")) {
   //   rval = false;
   // }
   
-  if(u->CheckError(!pv_pos_lay, quiet, rval,
+  if(lay->CheckError(!pv_pos_lay, quiet, rval,
                    "did not find PV Positive recv projection -- searches for PosPV in layer name")) {
     rval = false;
   }
-  if(u->CheckError(!pv_neg_lay, quiet, rval,
+  if(lay->CheckError(!pv_neg_lay, quiet, rval,
                    "did not find PV Negative recv projection -- searches for NegPV in layer name")) {
     rval = false;
   }

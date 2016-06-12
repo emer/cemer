@@ -35,6 +35,7 @@ void WeightLimits::Initialize() {
 
 void ConSpec::Initialize() {
   min_obj_type = &TA_Connection;
+  min_user_type = &TA_Projection;
   rnd.type = Random::UNIFORM;
   rnd.mean = 0.0f;
   rnd.var = .5f;

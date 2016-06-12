@@ -25,6 +25,7 @@
 #include <String_Array>
 
 // declare all other types mentioned but not required to include:
+class SpecUser; //
 
 // this should be included in all specs to allow user to restore default params
 // put class specific Initialize code into Defaults_impl and have Initialize call that
@@ -51,10 +52,13 @@ public:
   static bool       nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
   bool              is_used;    // #READ_ONLY #HIDDEN #NO_INHERIT is this spec used anywhere?
+  bool              is_new;     // #READ_ONLY #HIDDEN #NO_INHERIT #NO_SAVE is this spec newly created?  if so, prompt user to apply it to some objects..
   String            desc;	// #EDIT_DIALOG #NO_INHERIT Description of what this variable is for
   String_Array      unique; // #HIDDEN string list of unique members
   TypeDef*          min_obj_type;
-  // #READ_ONLY #HIDDEN #NO_SAVE #TYPE_taBase mimimal object type required for spec
+  // #READ_ONLY #HIDDEN #NO_SAVE #TYPE_taBase mimimal object type required for spec -- for object that the spec actually operates on
+  TypeDef*          min_user_type;
+  // #READ_ONLY #HIDDEN #NO_SAVE #TYPE_taBase mimimal object type required for spec -- for object that manages the spec and the user applies it to
   BaseSpec_Group    children;
   // #NO_INHERIT #IN_GPMENU #DIFF_LAST sub-specs descending from this one and inheriting values
   
@@ -102,6 +106,10 @@ public:
   void            MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) override;
   String          GetDesc() const override { return desc; }
 
+  virtual void    ApplyTo(SpecUser* obj1, SpecUser* obj2=NULL, SpecUser* obj3=NULL,
+                          SpecUser* obj4=NULL);
+  // #BUTTON #NULL_OK #TYPE_ON_min_user_type apply this spec to given object(s) (leave NULL any that are not needed)
+  
   virtual void	  Defaults();
   // #BUTTON #CONFIRM #CAT_ObjectMgmt restore specs to their default original parameter values, for parameters that have a strong default value -- WARNING: you will lose any unique parameters for anything that has a strong default value
   // note: typically do NOT redefine basic Defaults function -- see SPEC_DEFAULTS comment above
@@ -128,7 +136,8 @@ public:
   TA_BASEFUNS(BaseSpec);
 protected:
   void	UpdateAfterEdit_impl() override;
-  void CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void  CheckThisConfig_impl(bool quiet, bool& ok) override;
+  void  CheckChildConfig_impl(bool quiet, bool& rval) override;
   virtual bool  CheckType_impl(TypeDef* td);
   // #IGNORE actually does the check
   virtual bool	CheckObjectType_impl(taBase* obj);

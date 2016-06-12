@@ -26,19 +26,21 @@ void InvertUnitSpec::Initialize() {
 void InvertUnitSpec::Defaults_init() {
 }
 
-bool InvertUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  LeabraUnit* u = (LeabraUnit*)un;
-  bool rval = inherited::CheckConfig_Unit(un, quiet);
+bool InvertUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
+  bool rval = inherited::CheckConfig_Unit(lay, quiet);
 
-  LeabraNetwork* net = (LeabraNetwork*)un->own_net();
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
-  LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroupSafe(0);
-  if(u->CheckError(!cg, quiet, rval,
+  if(lay->units.leaves == 0) return rval;
+  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
+  
+  LeabraConGroup* cg = (LeabraConGroup*)un->RecvConGroupSafe(0);
+  if(lay->CheckError(!cg, quiet, rval,
                    "Requires one recv projection!")) {
     return false;
   }
   LeabraUnit* su = (LeabraUnit*)cg->SafeUn(0);
-  if(u->CheckError(!su, quiet, rval, 
+  if(lay->CheckError(!su, quiet, rval, 
                    "Requires one unit in recv projection!")) {
     return false;
   }

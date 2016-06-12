@@ -90,13 +90,14 @@ void VTAUnitSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  if(!inherited::CheckConfig_Unit(un, quiet)) return false;
-  LeabraUnit* u = (LeabraUnit*)un;
-
+bool VTAUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
+  if(!inherited::CheckConfig_Unit(lay, quiet)) return false;
   bool rval = true;
 
-  if(un->CheckError((act_range.max != 2.0f) || (act_range.min != -2.0f), quiet, rval,
+  if(lay->units.leaves == 0) return rval;
+  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
+  
+  if(lay->CheckError((act_range.max != 2.0f) || (act_range.min != -2.0f), quiet, rval,
                 "requires UnitSpec act_range.max = 2, min = -2, I just set it for you in spec:",
                 name,"(make sure this is appropriate for all layers that use this spec!)")) {
     SetUnique("act_range", true);
@@ -104,7 +105,7 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     act_range.min = -2.0f;
     act_range.UpdateAfterEdit();
   }
-  if(un->CheckError((clamp_range.max != 2.0f) || (clamp_range.min != -2.0f), quiet, rval,
+  if(lay->CheckError((clamp_range.max != 2.0f) || (clamp_range.min != -2.0f), quiet, rval,
                 "requires UnitSpec clamp_range.max = 2, min = -2, I just set it for you in spec:",
                 name,"(make sure this is appropriate for all layers that use this spec!)")) {
     SetUnique("clamp_range", true);
@@ -123,26 +124,26 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     LeabraLayer* vspatch_lay = NULL;
     LeabraLayer* vspatch_d2_lay = NULL;
   
-    GetRecvLayers_P(u, pospv_lay, pptg_lay_p, lhb_lay, vspatch_lay, vspatch_d2_lay);
+    GetRecvLayers_P(un, pospv_lay, pptg_lay_p, lhb_lay, vspatch_lay, vspatch_d2_lay);
   
-    if(u->CheckError(!pptg_lay_p, quiet, rval,
+    if(lay->CheckError(!pptg_lay_p, quiet, rval,
                      "did not find PPTg layer to get DA bursts from (looks for PPTgUnitSpec)")) {
       rval = false;
     }
-    if(u->CheckError(!lhb_lay, quiet, rval,
+    if(lay->CheckError(!lhb_lay, quiet, rval,
                      "did not find LHbRMTg layer to get DA dips from (looks for LHbRMTgUnitSpec)")) {
       rval = false;
     }
-    if(u->CheckError(!pospv_lay, quiet, rval,
+    if(lay->CheckError(!pospv_lay, quiet, rval,
                      "did not find PosPV layer to get positive PV from -- looks for PV and Pos in layer name")) {
       rval = false;
     }
-    if(u->CheckError(!vspatch_lay, quiet, rval,
+    if(lay->CheckError(!vspatch_lay, quiet, rval,
                      "did not find VS Patch Direct layer to get pos PV shunting (cancelling) signal from (looks for layer with Patch in name)")) {
       rval = false;
     }
     if(gains.subtract_d2r) {
-      if(u->CheckError(!vspatch_d2_lay, quiet, rval,
+      if(lay->CheckError(!vspatch_d2_lay, quiet, rval,
                        "did not find VS Patch indirect layer to subtract from direct pos PV shunting (cancelling) signal from (not clear what should look for here)")) {
         rval = false;
       }
@@ -156,25 +157,25 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     LeabraLayer* vspatch_lay_n = NULL;
     LeabraLayer* vspatch_d1_lay_n = NULL;
     
-    GetRecvLayers_N(u, negpv_lay, pptg_lay_n, lhb_lay_n, vspatch_lay_n, vspatch_d1_lay_n);
+    GetRecvLayers_N(un, negpv_lay, pptg_lay_n, lhb_lay_n, vspatch_lay_n, vspatch_d1_lay_n);
 
-    if(u->CheckError(!negpv_lay, quiet, rval,
+    if(lay->CheckError(!negpv_lay, quiet, rval,
                      "did not find NegPV layer to get negative PV from -- looks for PV and Neg in layer name")) {
       rval = false;
     }
-    if(u->CheckError(!pptg_lay_n, quiet, rval,
+    if(lay->CheckError(!pptg_lay_n, quiet, rval,
                      "did not find PPTg_n layer to get DA bursts from (looks for PPTgUnitSpec)")) {
       rval = false;
     }
-    if(u->CheckError(!lhb_lay_n, quiet, rval,
+    if(lay->CheckError(!lhb_lay_n, quiet, rval,
                      "did not find LHbRMTg layer projection (looks for LHbRMTgUnitSpec)")) {
       rval = false;
     }
-    if(u->CheckError(!vspatch_lay_n, quiet, rval,
+    if(lay->CheckError(!vspatch_lay_n, quiet, rval,
                      "did not find VSPatch D2 layer projection (looks for MSNUnitSpec and D2")) {
       rval = false;
     }
-    if(u->CheckError(!vspatch_d1_lay_n, quiet, rval,
+    if(lay->CheckError(!vspatch_d1_lay_n, quiet, rval,
                      "did not find VSPatch D1 layer projection (looks for MSNUnitSpec and D1)")) {
       rval = false;
     }

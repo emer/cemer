@@ -13,23 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "LayerSpec.h"
+#include "SpecUser.h"
 
-#include <Layer>
-
-TA_BASEFUNS_CTORS_DEFN(LayerSpec);
-
-void LayerSpec::Initialize() {
-  min_user_type = &TA_Layer;
-}
-
-void LayerSpec::InitLinks() {
-  BaseSpec::InitLinks();
-  children.SetBaseType(&TA_LayerSpec); // allow all of this general spec type to be created under here
-  children.el_typ = GetTypeDef(); // but make the default to be me!
-}
-
-void LayerSpec::CutLinks() {
-  BaseSpec::CutLinks();
-}
+TA_BASEFUNS_CTORS_DEFN(SpecUser);
 

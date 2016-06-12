@@ -31,6 +31,7 @@ bool BaseSpec::nw_itm_def_arg = false;
 void BaseSpec::Initialize() {
   min_obj_type = &TA_taBase;
   is_used = false;
+  is_new = false;
 }
 
 void BaseSpec::Copy_(const BaseSpec& cp) {
@@ -51,6 +52,8 @@ void BaseSpec::InitLinks() {
   children.SetBaseType(GetTypeDef());
   // put in a struct bracket so thing does a full refresh when getting subspec'ed or root spec'ed
   if(!taMisc::is_loading) {
+    if(taMisc::gui_active)      // only set as new if gui active
+      is_new = true;
     StructUpdate(true);
     UpdateSpec();
     StructUpdate(false);
@@ -87,6 +90,23 @@ void BaseSpec::MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog) {
   SetUnique(md->name.chars(), true);	// always set to unique if it is being set somewhere
 }
 
+void BaseSpec::ApplyTo(SpecUser* obj1, SpecUser* obj2, SpecUser* obj3, SpecUser* obj4) {
+  if(obj1 != NULL) {
+    obj1->ApplySpecToMe(this);
+  }
+  if(obj2 != NULL) {
+    obj2->ApplySpecToMe(this);
+  }
+  if(obj3 != NULL) {
+    obj3->ApplySpecToMe(this);
+  }
+  if(obj4 != NULL) {
+    obj4->ApplySpecToMe(this);
+  }
+  UpdtIsUsed();
+  SigEmitUpdated();
+}
+
 void BaseSpec::Defaults() {
   DefaultsMembers();    // members has to come first, so they can be overridden by master!
   Defaults_impl();
@@ -102,6 +122,21 @@ void BaseSpec::DefaultsMembers() {
     }
     if(md->type->InheritsFrom(&TA_SpecMemberBase)) {
       ((SpecMemberBase*)md->GetOff((void*)this))->Defaults();
+    }
+  }
+}
+
+void BaseSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+
+  UpdtIsUsed();
+  
+  if(is_new) {
+    is_new = false;             // turn off!
+    if(!is_used) {
+      if(taMisc::Choice("A newly-created spec: " + name + " is not being used: do you want to apply it to some objects?", "Yes", "No") == 0) {
+        CallFun("ApplyTo");
+      }
     }
   }
 }

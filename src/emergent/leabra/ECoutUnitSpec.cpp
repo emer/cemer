@@ -26,11 +26,14 @@ void ECoutUnitSpec::Defaults_init() {
 
 }
 
-bool ECoutUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  if(!inherited::CheckConfig_Unit(un, quiet)) return false;
+bool ECoutUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
+  if(!inherited::CheckConfig_Unit(lay, quiet)) return false;
 
   bool rval = true;
 
+  if(lay->units.leaves == 0) return rval;
+  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
+  
   bool got_ec_in = false;
   const int nrg = un->NRecvConGps(); 
   for(int g=0; g< nrg; g++) {
@@ -42,7 +45,7 @@ bool ECoutUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     }
   }
 
-  if(un->CheckError(!got_ec_in, quiet, rval,
+  if(lay->CheckError(!got_ec_in, quiet, rval,
                 "no projection from ECin Layer found: must recv a MarkerConSpec prjn from it, with at least one unit")) {
     return false;
   }

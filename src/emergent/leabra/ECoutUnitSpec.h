@@ -37,7 +37,7 @@ public:
 
   float Compute_SSE(UnitVars* uv, Network* net, int thr_no, bool& has_targ) override;
 
-  bool CheckConfig_Unit(Unit* un, bool quiet=false) override; 
+  bool CheckConfig_Unit(Layer* lay, bool quiet=false) override; 
 
   TA_SIMPLE_BASEFUNS(ECoutUnitSpec);
 protected:

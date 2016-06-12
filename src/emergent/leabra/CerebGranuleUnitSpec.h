@@ -86,7 +86,7 @@ public:
   void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
-  bool CheckConfig_Unit(Unit* un, bool quiet) override;
+  bool CheckConfig_Unit(Layer* lay, bool quiet) override;
 
   TA_SIMPLE_BASEFUNS(CerebGranuleUnitSpec);
 private:

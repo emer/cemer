@@ -24,6 +24,7 @@ SMARTREF_OF_CPP(UnitSpec);
 
 void UnitSpec::Initialize() {
   min_obj_type = &TA_Unit;
+  min_user_type = &TA_Layer;
   act_range.max = 1.0f; act_range.min = 0.0f;
   act_range.range = 1.0f; act_range.scale = 1.0f;
   sse_tol = 0.0f;
@@ -55,7 +56,7 @@ void UnitSpec::Copy_(const UnitSpec& cp) {
   sse_tol = cp.sse_tol;
 }
 
-bool UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
+bool UnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
   return true;
 }
 

@@ -360,9 +360,6 @@ enum CustomEventType {
 #define SIGNAL_PROC_FUN_TYPE void (*)(int)
 #define SIGNAL_PROC_FUN_ARG(x) void (*x)(int)
 
-// required for ODE -- we use single precision only
-#define dSINGLE
-
 // Some global forward declarations
 
 class QObject; //

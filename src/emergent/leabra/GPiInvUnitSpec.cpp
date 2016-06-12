@@ -61,11 +61,10 @@ void GPiInvUnitSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool GPiInvUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  LeabraUnit* u = (LeabraUnit*)un;
-  if(!inherited::CheckConfig_Unit(un, quiet)) return false;
+bool GPiInvUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
+  if(!inherited::CheckConfig_Unit(lay, quiet)) return false;
 
-  LeabraNetwork* net = (LeabraNetwork*)un->own_net();
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   net->SetNetFlag(Network::NETIN_PER_PRJN); // this is required for this computation!
 
   bool rval = true;

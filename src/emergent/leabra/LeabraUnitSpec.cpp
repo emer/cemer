@@ -518,10 +518,9 @@ void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  if(!inherited::CheckConfig_Unit(un, quiet)) return false;
+bool LeabraUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
+  if(!inherited::CheckConfig_Unit(lay, quiet)) return false;
 
-  //  Network* net = GET_MY_OWNER(Network);
   bool rval = true;
 
   return rval;

@@ -32,12 +32,12 @@ void CerebGranuleSpecs::Initialize() {
 void CerebGranuleSpecs::Defaults_init() {
 }
 
-bool CerebGranuleUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  if(!inherited::CheckConfig_Unit(un, quiet)) return false;
+bool CerebGranuleUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
+  if(!inherited::CheckConfig_Unit(lay, quiet)) return false;
 
   bool rval = true;
 
-  if(un->CheckError(stp.on, quiet, rval,
+  if(lay->CheckError(stp.on, quiet, rval,
                      "Cannot have stp activated for Granule neurons -- using the stp parameters for special variables in granule cells -- I just turned it back off.")) {
     stp.on = false;
   }

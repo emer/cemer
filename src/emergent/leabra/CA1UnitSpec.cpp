@@ -34,11 +34,14 @@ void ThetaPhaseSpecs::Defaults_init() {
 void CA1UnitSpec::Initialize() {
 }
 
-bool CA1UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  if(!inherited::CheckConfig_Unit(un, quiet)) return false;
+bool CA1UnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
+  if(!inherited::CheckConfig_Unit(lay, quiet)) return false;
 
   bool rval = true;
 
+  if(lay->units.leaves == 0) return rval;
+  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
+  
   bool got_ec_in = false;
   bool got_ec_out = false;
   bool got_ca3 = false;
@@ -62,16 +65,16 @@ bool CA1UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     }
   }
 
-  if(un->CheckError(!got_ca3, quiet, rval,
+  if(lay->CheckError(!got_ca3, quiet, rval,
                      "no projection from CA3 Layer found: must recv from layer with a name that contains the string 'CA3'")) {
     return false;
   }
   // it may be OK to not include ECout as that pathway is a bit more suspect?
-  // if(un->CheckError(!got_ec_out, quiet, rval,
+  // if(lay->CheckError(!got_ec_out, quiet, rval,
   //               "no projection from ECout Layer found: must recv from layer with a name that contains 'EC' and 'out'")) {
   //   return false;
   // }
-  if(un->CheckError(!got_ec_in, quiet, rval,
+  if(lay->CheckError(!got_ec_in, quiet, rval,
                 "no projection from ECin Layer found: must recv from layer with a name that contains 'EC' and 'in'")) {
     return false;
   }

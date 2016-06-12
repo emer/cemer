@@ -27,24 +27,23 @@ void PoolInputsUnitSpec::Initialize() {
 void PoolInputsUnitSpec::Defaults_init() {
 }
 
-bool PoolInputsUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  LeabraUnit* u = (LeabraUnit*)un;
-  bool rval = inherited::CheckConfig_Unit(un, quiet);
+bool PoolInputsUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
+  bool rval = inherited::CheckConfig_Unit(lay, quiet);
 
-  LeabraNetwork* net = (LeabraNetwork*)un->own_net();
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
-  LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroupSafe(0);
-  if(u->CheckError(!cg, quiet, rval,
+  if(lay->units.leaves == 0) return rval;
+  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0); // take first one
+  
+  LeabraConGroup* cg = (LeabraConGroup*)un->RecvConGroupSafe(0);
+  if(lay->CheckError(!cg, quiet, rval,
                    "Requires one recv projection!")) {
     return false;
   }
-  LeabraLayer* lay = (LeabraLayer*)cg->prjn->layer;
-  if(!lay->lesioned()) {        // probably we're not called if lesioned, but just in case
-    LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
-    if(u->CheckError(fmlay->lesioned(), quiet, rval,
-                     "Sending layer is lesioned -- we should be lesioned too!")) {
-      return false;
-    }
+  LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
+  if(lay->CheckError(fmlay->lesioned(), quiet, rval,
+                   "Sending layer is lesioned -- we should be lesioned too!")) {
+    return false;
   }
 
   return rval;

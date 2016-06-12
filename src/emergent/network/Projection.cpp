@@ -400,6 +400,19 @@ bool Projection::UpdateConSpecs(bool force) {
   return true;
 }
 
+bool Projection::ApplySpecToMe(BaseSpec* spec) {
+  if(spec == NULL) return false;
+  if(spec->InheritsFrom(&TA_ProjectionSpec)) {
+    SetPrjnSpec((ProjectionSpec*)spec);
+    return true;
+  }
+  else if(spec->InheritsFrom(&TA_ConSpec)) {
+    SetConSpec((ConSpec*)spec);
+    return true;
+  }
+  return false;
+}
+
 bool Projection::SetPrjnSpec(ProjectionSpec* sp) {
   if(sp == NULL)        return false;
   spec.SetSpec(sp);

@@ -17,7 +17,7 @@
 #define Projection_h 1
 
 // parent includes:
-#include <taBase>
+#include <SpecUser>
 
 // member includes:
 #include <ConSpec>
@@ -35,9 +35,9 @@ class NetMonitor; //
 
 eTypeDef_Of(Projection);
 
-class E_API Projection: public taNBase {
+class E_API Projection: public SpecUser {
   // #STEM_BASE ##CAT_Network ##SCOPE_Network Projection describes connectivity between layers (from receivers perspective)
-INHERITED(taNBase)
+INHERITED(SpecUser)
 public:
   enum PrjnSource {
     NEXT,               // Recv from the next layer in network
@@ -149,6 +149,8 @@ public:
   virtual bool  UpdateConSpecs(bool force = false);
   // #CAT_Structure update con specs for all connection groups for this projection in the network to use con_spec (only if changed from last update -- force = do regardless); returns true if changed and all cons can use given spec
 
+  bool  ApplySpecToMe(BaseSpec* spec) override;
+  
   virtual bool  SetPrjnSpec(ProjectionSpec* sp);
   // #BUTTON #DROP1 #DYN1 #CAT_Structure #INIT_ARGVAL_ON_spec.spec set the projection spec (connectivity pattern) for this projection
   virtual bool  SetConSpec(ConSpec* sp);

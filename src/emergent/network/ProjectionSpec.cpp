@@ -29,6 +29,7 @@ void RenormInitWtsSpec::Initialize() {
 
 void ProjectionSpec::Initialize() {
   min_obj_type = &TA_Projection;
+  min_user_type = &TA_Projection;
   self_con = false;
   init_wts = false;
   set_scale = false;

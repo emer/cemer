@@ -70,7 +70,7 @@ public:
   void	Compute_dWt_Norm(UnitVars* u, Network* net, int thr_no) { };
   void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
 
-  bool  CheckConfig_Unit(Unit* un, bool quiet=false) override;
+  bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
 
   TA_SIMPLE_BASEFUNS(GPiInvUnitSpec);

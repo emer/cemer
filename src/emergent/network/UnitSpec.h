@@ -28,6 +28,7 @@
 class ConGroup; //
 class Unit; //
 class UnitVars; //
+class Layer; //
 class Network; //
 
 eTypeDef_Of(UnitSpec);
@@ -91,7 +92,7 @@ public:
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing
 
-  virtual bool  CheckConfig_Unit(Unit* un, bool quiet=false);
+  virtual bool  CheckConfig_Unit(Layer* lay, bool quiet=false);
   // #CAT_ObjectMgmt check for for misc configuration settings required by different algorithms
 
   String        GetTypeDecoKey() const override { return "UnitSpec"; }

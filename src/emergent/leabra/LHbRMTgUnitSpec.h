@@ -113,7 +113,7 @@ public:
   void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void	Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
-  bool  CheckConfig_Unit(Unit* un, bool quiet=false) override;
+  bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
 
   TA_SIMPLE_BASEFUNS(LHbRMTgUnitSpec);

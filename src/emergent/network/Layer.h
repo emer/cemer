@@ -17,7 +17,7 @@
 #define Layer_h 1
 
 // parent includes:
-#include <taNBase>
+#include <SpecUser>
 
 // member includes:
 #include <LayerRef>
@@ -79,9 +79,9 @@ private:
 
 eTypeDef_Of(Layer);
 
-class E_API Layer : public taNBase {
+class E_API Layer : public SpecUser {
   // ##EXT_lay ##COMPRESS ##CAT_Network ##SCOPE_Network ##HAS_CONDTREE layer containing units
-INHERITED(taNBase)
+INHERITED(SpecUser)
 public:
   enum LayerType {      // type of layer, used to determine various default settings
     HIDDEN,             // layer does not receive external input of any form
@@ -518,6 +518,8 @@ public:
   virtual void  SetLayerUnitGpGeom(int x, int y, bool n_not_xy = false, int n = 0);
   // set layer unit group geometry (convenience function for programs)
 
+  bool ApplySpecToMe(BaseSpec* spec) override;
+  
   virtual bool  UpdateUnitSpecs(bool force = false);
   // #CAT_Structure update unit specs for all units in the layer to use unit_spec (only if changed from last update -- force = do regardless); returns true if changed and all units can use given spec
   virtual bool  UpdateConSpecs(bool force = false);

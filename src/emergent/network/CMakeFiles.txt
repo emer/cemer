@@ -14,6 +14,7 @@ set(network_HEADS_MAKETA_base
   BaseSubSpec.h
   SpecPtr.h
   taiSpecMember.h
+  SpecUser.h
 
   SigmoidSpec.h
   Schedule.h
@@ -221,6 +222,7 @@ set(network_SRCS
   BaseSubSpec.cpp
   SpecPtr.cpp
   taiSpecMember.cpp
+  SpecUser.cpp
 
   SigmoidSpec.cpp
   Schedule.cpp
