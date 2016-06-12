@@ -102,7 +102,6 @@ public:
   ParentType            parent_type; // the context for the tree - browse, edit, list
   bool                  useEditorCustomExpand() const;
   bool                  useNavigatorCustomExpand() const;
-  bool                  doubleClickExpandsAll() const; // use at own risk...
   const KeyString       colKey(int col) const; // the key we set for data lookup
   void                  setColKey(int col, const KeyString& key);
     // sets in ColKeyRole -- you can do it yourself if you want
@@ -229,7 +228,8 @@ protected:
     EF_DEFAULT                  = 0x02, // we are in the DefaultExpand context
     EF_EXPAND_DISABLED          = 0x04, // either Expand on that guy, or set in flags
     EF_NAVIGATOR_FILTER         = 0x08, // custom expand when doing in navigator tree
-    EF_EXPAND_FULLY             = 0x10  // expand - ignore default
+    EF_EXPAND_FULLY             = 0x10, // expand - ignore default
+    EF_DEFAULT_UNDER            = 0x20  // expand default action called for by user by menu item or double click
   };
 
   int                   tv_flags;

@@ -373,11 +373,6 @@ const KeyString iTreeView::colKey(int col) const {
   return rval;
 }
 
-bool iTreeView::doubleClickExpandsAll() const {
-  return false;
-//  return (taMisc::viewer_options & taMisc::VO_DOUBLE_CLICK_EXP_ALL);
-}
-
 void iTreeView::ExpandAll(int max_levels) {
   ExpandAll_impl(max_levels);
 }
@@ -389,9 +384,6 @@ void iTreeView::ExpandAll_impl(int max_levels, int exp_flags) {
     iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
     if (!node) continue;
     taBase* tab = node->link()->taData();
-//    if (tab) {
-//      tab->ClearBaseFlag(taBase::TREE_EXPANDED);
-//    }
     ExpandItem_impl(node, 0, max_levels, exp_flags); // false - this is the root node for this expansion
   }
   if (header()->isVisible() && (header()->count() > 1)) {
@@ -407,12 +399,6 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
 
   taBase* tab = item->link()->taData();
   
-//  bool expand_saved = false;
-//  if(exp_flags & (EF_DEFAULT | EF_CUSTOM_FILTER) && tab &&
-//     tab->HasBaseFlag(taBase::TREE_EXPANDED)) {
-//    expand_saved = true;
-//  }
-  
   bool expand = false;
   if (tab->InheritsFrom(&TA_taProject)) { // always expand project
     expand = true;
@@ -422,7 +408,6 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     expand = true;
   }
   
-//  if(!expand_saved) {
     // figure out default if not otherwise saved
     if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
     if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
@@ -440,6 +425,10 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
           name = tab->GetName();
         }
         int depth = taiMisc::GetGroupDefaultExpand(name);
+        
+        if (depth == 0 && exp_flags & EF_DEFAULT_UNDER) {
+          depth = 1;  // if user asked for expansion expand 1 level even when default is zero
+        }
         if (depth >= 0) {
           is_subgroup = true;
           max_levels = depth;
@@ -501,17 +490,11 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       expand = true;
       emit CustomExpandNavigatorFilter(item, level, expand);
     }
-//  }
   
   if (expand) {
     // first expand the guy...
     if (!isItemExpanded(item)) { // ok, eligible...
       item->setExpanded(true);  // should trigger CreateChildren for lazy
-//      if(tab)
-//        tab->SetBaseFlag(taBase::TREE_EXPANDED);
-      // if(tab) {
-      //   taMisc::DebugInfo("expanded:", tab->GetDisplayName(), tab->GetPathNames());
-      // }
     }
     // check if we've expanded deeply enough
     // (works for finite (>=1) and infinite (<0) cases)
@@ -524,9 +507,6 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       if (child) {
         // make sure the TREE_EXPANDED flag is cleared
         taBase* child_tab = child->link()->taData();
-//        if (child_tab) {
-//          child_tab->ClearBaseFlag(taBase::TREE_EXPANDED);
-//        }
         ExpandItem_impl(child, level, max_levels, exp_flags, is_subgroup);
       }
     }
@@ -538,10 +518,6 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       // for auto-expand, do NOT collapse expanded items!
       if (isItemExpanded(item)) {
         item->setExpanded(false);
-//        tab->ClearBaseFlag(taBase::TREE_EXPANDED);
-        // if(tab) {
-        //   taMisc::DebugInfo("collapsed:", tab->GetDisplayName(), tab->GetPathNames());
-        // }
       }
     }
   }
@@ -564,9 +540,6 @@ void iTreeView::ExpandAllUnderInt(void* item) {
 void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   if (!item) return;
   taBase* tab = item->link()->taData();
-//  if (tab && tab->HasBaseFlag(taBase::TREE_EXPANDED)) {
-//    tab->ClearBaseFlag(taBase::TREE_EXPANDED);
-//  }
   int exp_flags = 0;
   
   if (parent_type == iTreeView::TYPE_BROWSEVIEWER && tab->GetTypeDef() == &TA_Program && useNavigatorCustomExpand()) {
@@ -578,6 +551,8 @@ void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   else if (parent_type == iTreeView::TYPE_PROGRAMEDITOR && useEditorCustomExpand()) {
     exp_flags |= EF_CUSTOM_FILTER;
   }
+  
+  exp_flags |= EF_DEFAULT_UNDER;
   
   taMisc::Busy(true);
   ExpandItem_impl(item, 0, m_def_exp_levels, exp_flags);
