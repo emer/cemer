@@ -119,6 +119,8 @@ void taSound_QObj::PlayStateChanged(QAudio::State newState) {
   switch (newState) {
   case QAudio::IdleState:
     // Finished playing (no more data)
+    if(output->processedUSecs() < sound->q_buf.duration())
+      return;
     output->stop();
     out_buff->close();
     delete output;
