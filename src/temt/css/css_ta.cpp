@@ -199,7 +199,9 @@ cssTA::operator void*() const {
 void* cssTA::GetVoidPtrOfType(TypeDef* td) const {
   void* bptr = GetVoidPtr();
   if(!bptr) {
-    cssMisc::Error(prog, "Null pointer for conversion to:",td->name,"from:",GetTypeName());
+    // not sure we need this error message, and it causes problems with
+    // perfectly-valid NULL args in gui CallFun calling..
+    // cssMisc::Error(prog, "Null pointer for conversion to:",td->name,"from:",GetTypeName());
     return NULL;
   }
   void* rval = type_def->GetParAddr(td, bptr);
