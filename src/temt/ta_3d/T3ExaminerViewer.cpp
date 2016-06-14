@@ -15,7 +15,6 @@
 
 #include "T3ExaminerViewer.h"
 #include <iT3ViewspaceWidget>
-#include <T3QuarterWidget>
 #include <iT3Panel>
 #include <T3Panel>
 #include <T3DataViewMain>
@@ -96,11 +95,19 @@ void T3RenderView::keyPressEvent( QKeyEvent* e ) {
   // }
 }
 
-#else
+#else // TA_QT3D
+
 #include <Inventor/SoEventManager.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoOrthographicCamera.h>
-#endif
+
+#include <T3QuarterWidget>
+
+#ifdef QT_OPEN_GL_WIDGET  
+#include <QSurfaceFormat>
+#endif // QT_OPEN_GL_WIDGET
+
+#endif // TA_QT3D
 
 #include "pick.xpm"
 #include "view.xpm"
@@ -249,6 +256,20 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 #else
   // note: we're setting our format right at construction, instead of doing
   // it later in iT3ViewSpaceWidget, which we used to do..
+
+#ifdef QT_OPEN_GL_WIDGET
+
+  quarter = new T3QuarterWidget(this);
+
+  QSurfaceFormat fmt;
+  if(taMisc::antialiasing_level > 1) {
+    fmt.setSamples(taMisc::antialiasing_level);
+  }
+  fmt.setProfile(QSurfaceFormat::CompatibilityProfile);
+  quarter->setFormat(fmt);
+  
+#else // QT_OPEN_GL_WIDGET
+  
   QGLFormat fmt;
 #if (QT_VERSION >= 0x040700)
   // this is critical for Coin3d, which depends on legacy 1.x OpenGL functionality
@@ -259,7 +280,9 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
     fmt.setSamples(taMisc::antialiasing_level);
   }
   quarter = new T3QuarterWidget(fmt, this);
-  
+
+#endif // QT_OPEN_GL_WIDGET
+
   quarter->setUpdatesEnabled(false);
   // set any initial configs for quarter widget here (or somewhere else if you please)
   quarter->setInteractionModeEnabled(true);
@@ -270,6 +293,9 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   SoEventManager* emgr = quarter->getSoEventManager();
   emgr->setNavigationState(SoEventManager::JUST_NAVIGATION);
   main_hbox->addWidget(quarter, 1);
+
+
+  
 #endif
   
   rhs_vbox = new QVBoxLayout;
@@ -1386,7 +1412,11 @@ QImage  T3ExaminerViewer::grabImage() {
 #ifdef TA_QT3D
   return QImage();
 #else
+#ifdef QT_OPEN_GL_WIDGET
+  return QImage();
+#else
   return quarter->grabFrameBuffer(true); // true = get alpha
+#endif // QT_OPEN_GL_WIDGET
 #endif
 }
 

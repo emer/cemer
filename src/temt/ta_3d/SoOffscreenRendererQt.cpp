@@ -31,7 +31,7 @@
 #define PUBLIC(p) p
 
 void SoOffscreenRendererQt::Constr(const SbViewportRegion & vpr,
-				   SoGLRenderAction * glrenderaction, QGLWidget* glwidg) {
+				   SoGLRenderAction * glrenderaction, QT_GL_WIDGET* glwidg) {
   this->backgroundcolor.setValue(0,0,0);
 	
   if (glrenderaction) {
@@ -61,7 +61,7 @@ void SoOffscreenRendererQt::Constr(const SbViewportRegion & vpr,
   rendering. An internal SoGLRenderAction will be constructed.
 */
 SoOffscreenRendererQt::SoOffscreenRendererQt(const SbViewportRegion & viewportregion,
-                                             QGLWidget* glwidg)
+                                             QT_GL_WIDGET* glwidg)
 {
   Constr(viewportregion, NULL, glwidg);
 }
@@ -71,7 +71,7 @@ SoOffscreenRendererQt::SoOffscreenRendererQt(const SbViewportRegion & viewportre
   scene graph when rendering the scene. Information about the
   viewport is extracted from the \a action.
 */
-SoOffscreenRendererQt::SoOffscreenRendererQt(SoGLRenderAction * action, QGLWidget* glwidg)
+SoOffscreenRendererQt::SoOffscreenRendererQt(SoGLRenderAction * action, QT_GL_WIDGET* glwidg)
 {
   Constr(action->getViewportRegion(), action, glwidg);
 }
@@ -168,6 +168,10 @@ void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFormat& f
   viewport.setWindowSize(width, height);
   cache_context = SoGLCacheContextElement::getUniqueCacheContext();
 #if (QT_VERSION >= 0x050000)
+#ifdef QT_OPEN_GL_WIDGET  
+  if(gl_widg)
+    gl_widg->makeCurrent();
+#else // QT_OPEN_GL_WIDGET
   if(gl_widg) {
     gl_ctxt = gl_widg->context();
   }
@@ -177,12 +181,14 @@ void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFormat& f
       QGLFormat glf;
       glf.setSampleBuffers((fmt.samples() > 0));
       glf.setSamples(fmt.samples());
-      own_gl_widg = new QGLWidget(glf);
+      own_gl_widg = new QT_GL_WIDGET(glf);
       own_gl_widg->show();      // have to show it for it to work -- makes current
     }
     gl_ctxt = own_gl_widg->context();
   }
   gl_ctxt->makeCurrent();       // always reinstate our original context
+#endif // QT_OPEN_GL_WIDGET
+
   pbuff = new QOpenGLFramebufferObject(width, height, fmt);
 #else
   pbuff = new QGLPixelBuffer(width, height, fmt);
@@ -234,7 +240,12 @@ SoOffscreenRendererQt::renderFromBase(SoBase * base)
   this->renderaction->setCacheContext(cache_context);
 
 #if (QT_VERSION >= 0x050000)
+#ifdef QT_OPEN_GL_WIDGET
+  if(gl_widg)
+    gl_widg->makeCurrent();
+#else // QT_OPEN_GL_WIDGET
   gl_ctxt->makeCurrent();       // always reinstate our original context
+#endif // QT_OPEN_GL_WIDGET
   pbuff->bind();
 
   bool bad = false;

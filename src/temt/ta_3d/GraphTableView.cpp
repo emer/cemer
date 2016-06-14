@@ -34,6 +34,7 @@
 
 #if (QT_VERSION >= 0x050000)
 #include <QGuiApplication>
+#include <QWindow>
 #endif
 
 #ifdef TA_QT3D
@@ -693,7 +694,16 @@ void GraphTableView::Render_impl() {
     return;
   
 #if (QT_VERSION >= 0x050000)
-  dev_pix_ratio = ((QGuiApplication*)QGuiApplication::instance())->devicePixelRatio();
+  T3ExaminerViewer* vw = GetViewer();
+  if(vw) {
+    QWindow* win = vw->windowHandle();
+    if(win) {
+      dev_pix_ratio = win->devicePixelRatio();
+    }
+  }
+  else {
+    dev_pix_ratio = ((QGuiApplication*)QGuiApplication::instance())->devicePixelRatio();
+  }
 #endif
   
   node->setWidth(width);     // does a render too -- ensure always up to date on width

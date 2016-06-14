@@ -20,9 +20,10 @@
 
 #include <Inventor/SbColor.h>
 #include <Inventor/actions/SoGLRenderAction.h>
+#include <Quarter/Quarter.h>
+#include <Quarter/QuarterWidget.h>
 
 #include <QImage>         // need to define QT_VERSION in first place..
-#include <QGLWidget>
 #include <QPointer>
 #if (QT_VERSION >= 0x050000)
 #include <QGLContext>
@@ -37,8 +38,8 @@ class SoCamera; // #IGNORE
 class TA_API SoOffscreenRendererQt {
   // ##NO_CSS ##NO_INSTANCE ##NO_TOKENS offscreen renderer that uses a Qt OpenGl frame buffer as the underlying offscreen render buffer -- this then provides direct support for multisampling antialiasing, which is enabled by default
 public:
-  SoOffscreenRendererQt(const SbViewportRegion & viewportregion, QGLWidget* glwidg = NULL);
-  SoOffscreenRendererQt(SoGLRenderAction * action, QGLWidget* glwidg = NULL);
+  SoOffscreenRendererQt(const SbViewportRegion & viewportregion, QT_GL_WIDGET* glwidg = NULL);
+  SoOffscreenRendererQt(SoGLRenderAction * action, QT_GL_WIDGET* glwidg = NULL);
   virtual ~SoOffscreenRendererQt();
 
   virtual void setViewportRegion(const SbViewportRegion & region);
@@ -75,19 +76,19 @@ protected:
   // NOTE: just putting all the pimpl stuff right here for simplicity, since its not much
 
   virtual void	Constr(const SbViewportRegion & vpr,
-                       SoGLRenderAction * glrenderaction = NULL, QGLWidget* glwidg = NULL);
+                       SoGLRenderAction * glrenderaction = NULL, QT_GL_WIDGET* glwidg = NULL);
   virtual SbBool renderFromBase(SoBase * base);
 
 #if (QT_VERSION >= 0x050000)
   QOpenGLFramebufferObject* pbuff;
   QGLContext*               gl_ctxt; // this is the gl context active when pbuff was made -- always set this to be active again when using pbuff
-  QGLWidget*                own_gl_widg; // our own gl widget if we don't have gl_widg or gl_ctxt
+  QT_GL_WIDGET*                own_gl_widg; // our own gl widget if we don't have gl_widg or gl_ctxt
 #else
   QGLPixelBuffer*	pbuff;
 #endif
   // the offscreen rendering supported by qt
   uint32_t		cache_context; // our unique context id
-  QPointer<QGLWidget>   gl_widg; // the gl widget that was passed to us, to attach to and get context from
+  QPointer<QT_GL_WIDGET>   gl_widg; // the gl widget that was passed to us, to attach to and get context from
   
 
   SbViewportRegion viewport;

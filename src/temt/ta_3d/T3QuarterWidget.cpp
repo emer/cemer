@@ -23,21 +23,22 @@
 #include <iT3PanelViewer>
 
 
-
-T3QuarterWidget::T3QuarterWidget(const QGLFormat & format, QWidget * parent, const QGLWidget * sharewidget, Qt::WindowFlags f)
-  : inherited(format, parent, sharewidget, f)
-{
-}
-
-T3QuarterWidget::T3QuarterWidget(QWidget * parent, const QGLWidget * sharewidget, Qt::WindowFlags f)
+T3QuarterWidget::T3QuarterWidget(QWidget * parent, const QT_GL_WIDGET * sharewidget, Qt::WindowFlags f)
   : inherited(parent, sharewidget, f)
 {
 }
 
-T3QuarterWidget::T3QuarterWidget(QGLContext * context, QWidget * parent, const QGLWidget * sharewidget, Qt::WindowFlags f)
+#ifndef QT_OPEN_GL_WIDGET  
+T3QuarterWidget::T3QuarterWidget(const QGLFormat & format, QWidget * parent, const QT_GL_WIDGET * sharewidget, Qt::WindowFlags f)
+  : inherited(format, parent, sharewidget, f)
+{
+}
+
+T3QuarterWidget::T3QuarterWidget(QGLContext * context, QWidget * parent, const QT_GL_WIDGET * sharewidget, Qt::WindowFlags f)
   : inherited(context, parent, sharewidget, f)
 {
 }
+#endif
 
 T3QuarterWidget::~T3QuarterWidget() {
 }

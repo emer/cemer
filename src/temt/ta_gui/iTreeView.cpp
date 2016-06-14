@@ -605,11 +605,14 @@ void iTreeView::RestoreTreeState_impl(iTreeViewItem* node, String_Array& tree_st
   bool expand = false;
   if (node) {
     taBase* tab = node->link()->taData();
-    for (int i=0; i<tree_state.size; i++) {
-      if (tab->GetPath() == tree_state.SafeEl(i)) {
-        expand = true;
-        tree_state.RemoveIdx(i);
-        break;
+    if(tab) {
+      String path = tab->GetPath(); // this is a bit expensive to compute, cache..
+      for (int i=0; i<tree_state.size; i++) {
+        if (path == tree_state.SafeEl(i)) {
+          expand = true;
+          tree_state.RemoveIdx(i);
+          break;
+        }
       }
     }
     if (expand) {

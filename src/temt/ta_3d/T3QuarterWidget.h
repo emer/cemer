@@ -26,7 +26,9 @@ using SIM::Coin3D::Quarter::QuarterWidget;
 
 // member includes:
 #ifndef __MAKETA__
+#ifndef QT_OPEN_GL_WIDGET  
 class QGLContext;
+#endif
 #endif
 
 // declare all other types mentioned but not required to include:
@@ -39,11 +41,15 @@ class TA_API T3QuarterWidget : public QuarterWidget {
 public:
 
 #ifndef __MAKETA__
-  explicit T3QuarterWidget(QWidget * parent = 0, const QGLWidget * sharewidget = 0, Qt::WindowFlags f = 0);
-  explicit T3QuarterWidget(QGLContext * context, QWidget * parent = 0, const QGLWidget * sharewidget = 0, Qt::WindowFlags f = 0);
-  explicit T3QuarterWidget(const QGLFormat & format, QWidget * parent = 0, const QGLWidget * shareWidget = 0, Qt::WindowFlags f = 0);
-  ~T3QuarterWidget();
+  explicit T3QuarterWidget(QWidget * parent = 0, const QT_GL_WIDGET * sharewidget = 0, Qt::WindowFlags f = 0);
+
+#ifndef QT_OPEN_GL_WIDGET  
+  explicit T3QuarterWidget(QGLContext * context, QWidget * parent = 0, const QT_GL_WIDGET * sharewidget = 0, Qt::WindowFlags f = 0);
+  explicit T3QuarterWidget(const QGLFormat & format, QWidget * parent = 0, const QT_GL_WIDGET * shareWidget = 0, Qt::WindowFlags f = 0);
 #endif
+#endif
+  
+  ~T3QuarterWidget();
 
 protected:
   void paintEvent ( QPaintEvent * event ) override;

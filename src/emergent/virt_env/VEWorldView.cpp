@@ -475,7 +475,7 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 
   if(!cam_renderer) {
     taMisc::Info("GetCameraImage", String(cam_no), "cam_renderer building");
-    QGLWidget* qglwidg = NULL;
+    QT_GL_WIDGET* qglwidg = NULL;
     T3ExaminerViewer* exvw = GetViewer();
     if(exvw) {
       qglwidg = exvw->quarter;
