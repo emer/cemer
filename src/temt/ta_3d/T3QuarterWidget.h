@@ -24,6 +24,10 @@
 using SIM::Coin3D::Quarter::QuarterWidget;
 #endif
 
+#ifndef QT_GL_WIDGET
+#define QT_GL_WIDGET QGLWidget
+#endif
+
 // member includes:
 #ifndef __MAKETA__
 #ifndef QT_OPEN_GL_WIDGET  

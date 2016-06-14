@@ -86,6 +86,13 @@ protected:
 #include <Quarter/Quarter.h>
 #include <Quarter/QuarterWidget.h>
 using SIM::Coin3D::Quarter::QuarterWidget;
+
+#endif // TA_QT3D
+#endif // __MAKETA__
+
+#ifndef TA_QT3D
+#ifndef QT_GL_WIDGET
+#define QT_GL_WIDGET QGLWidget
 #endif
 #endif
 

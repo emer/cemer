@@ -23,6 +23,10 @@
 #include <Quarter/Quarter.h>
 #include <Quarter/QuarterWidget.h>
 
+#ifndef QT_GL_WIDGET
+#define QT_GL_WIDGET QGLWidget
+#endif
+
 #include <QImage>         // need to define QT_VERSION in first place..
 #include <QPointer>
 #if (QT_VERSION >= 0x050000)
