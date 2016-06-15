@@ -238,7 +238,8 @@ void taiMiscCore::PostUpdateAfter() {
 void taiMiscCore::Quit_impl(CancelOp cancel_op) {
   // only for nogui
   QCoreApplication::instance()->quit();
-  delete QCoreApplication::instance(); // kill it!
+  // doesn't fix problem with web engine quit, and may cause Jenkins issues?
+  // delete QCoreApplication::instance(); // kill it!
 }
 
 void taiMiscCore::timer_timeout() {
