@@ -36,6 +36,7 @@
 #else // TA_QT3D
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/annex/HardCopy/SoVectorizePSAction.h>
+#include <Inventor/nodes/SoDirectionalLight.h>
 #endif // TA_QT3D
 
 TA_BASEFUNS_CTORS_DEFN(T3Panel);
@@ -46,6 +47,7 @@ void T3Panel::Initialize() {
   bg_color.setColorName(taMisc::t3d_bg_color);
   text_color.setColorName(taMisc::t3d_text_color);
   headlight_on = true;
+  headlight_intensity = 1.0f;
   stereo_view = STEREO_NONE;
   root_views = &root_view.children;
 }
@@ -217,6 +219,7 @@ void T3Panel::Render_impl() {
       viewer->quarter->setStereoMode((QuarterWidget::StereoMode)stereo_view);
     if(viewer->quarter->headlightEnabled() != headlight_on)
       viewer->quarter->setHeadlightEnabled(headlight_on);
+    viewer->quarter->getHeadlight()->intensity.setValue(headlight_intensity);
 #endif
     viewer->syncViewerMode();   // keep it in sync
   }
