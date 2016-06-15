@@ -153,6 +153,7 @@ void LayerView::DoHighlightColor(bool apply) {
       mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // aqua
     else 
       mat->diffuseColor.setValue(0.8f, 0.2f, 0.2f); // red for output / target
+    // mat->ambientColor.setValue(0.0f, 0.0f, 0.0f);
     mat->transparency.setValue(nv->view_params.lay_trans);
   }
 #endif // TA_QT3D

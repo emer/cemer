@@ -39,6 +39,7 @@ class SoSeparator; //
 class SoNode; //
 class iSoSelectionEvent; //
 class SoPath; //
+class SoEnvironment; //
 #endif
 
 class TA_API iT3ViewspaceWidget: public QWidget, public ISelectableHost { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS widget that encapsulates an Inventor viewer; adds context menu handling, and optional scroll bars
@@ -62,18 +63,19 @@ public:
   void                  deleteScene(); // deletes the scene -- usually only called internally, not by clients of this component
 
 #ifdef TA_QT3D
-  Qt3DCore::QEntity*        sel_so;
-  Qt3DCore::QEntity*        root_so() { return m_root_so; }
+  Qt3DCore::QEntity*    sel_so;
+  Qt3DCore::QEntity*    root_so() { return m_root_so; }
   void                  setSceneGraph(Qt3DCore::QEntity* sg);
 #else
   SoSelectionPtr        sel_so; //#IGNORE
   SoSeparator*          root_so() {return m_root_so.ptr();} // always valid -- you can add your own lights, camera, etc.
+  SoEnvironment*        root_env() { return m_env_so; }
   void                  setSceneGraph(SoNode* sg);
 #endif
 
   void                  ContextMenuRequested(const QPoint& pos); // #IGNORE called from render area
 
-  inline iT3Panel* i_data_frame() const {return m_i_data_frame;}
+  inline iT3Panel* ipanel() const {return m_ipanel;}
 
   iT3ViewspaceWidget(iT3Panel* parent);
   iT3ViewspaceWidget(QWidget* parent = NULL);
@@ -87,14 +89,15 @@ public: // ISelectableHost i/f
 protected:
   T3ExaminerViewer*     m_t3viewer;
   SelectionMode         m_selMode; // #IGNORE true adds a SoSelection node, and selection call back
-  iT3Panel*             m_i_data_frame; // #IGNORE our parent object
+  iT3Panel*             m_ipanel; // #IGNORE our parent object
   taDataViewRef         m_top_view; // #IGNORE topmost view obj, for show/hide ctrl
   signed char           m_last_vis; // #IGNORE keeps track of last hide/show state, to avoid spurious calls when several in a row: -1=hide, 0=init, 1=show
 #ifdef TA_QT3D
-  Qt3DCore::QEntity*        m_root_so;
-  Qt3DCore::QEntity*        m_scene;
+  Qt3DCore::QEntity*    m_root_so;
+  Qt3DCore::QEntity*    m_scene;
 #else
   SoSeparatorPtr        m_root_so; //
+  SoEnvironment*        m_env_so; // environment under m_root_so
   SoNode*               m_scene; // actual top item set by user
 
   void                  SoSelectionEvent(iSoSelectionEvent* ev); // #IGNORE

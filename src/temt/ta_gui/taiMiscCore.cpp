@@ -238,6 +238,7 @@ void taiMiscCore::PostUpdateAfter() {
 void taiMiscCore::Quit_impl(CancelOp cancel_op) {
   // only for nogui
   QCoreApplication::instance()->quit();
+  delete QCoreApplication::instance(); // kill it!
 }
 
 void taiMiscCore::timer_timeout() {

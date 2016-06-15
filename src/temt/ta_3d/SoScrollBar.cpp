@@ -83,7 +83,7 @@ SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float w
 
   slide_mat_ = new SoMaterial;
   slide_mat_->diffuseColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
-  slide_mat_->emissiveColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
+  // slide_mat_->emissiveColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
   slide_mat_->transparency.setValue(T3Misc::drag_inact_clr_tr);
   switch_->addChild(slide_mat_);
 

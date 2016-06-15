@@ -75,6 +75,7 @@ public:
   taColor               text_color; // color to use for text in the panel -- may need to change this from default of black depending on the bg_color
   bool                  headlight_on; // turn the camera headlight on for illuminating the scene -- turn off only if there is another source of light within the scenegraph -- otherwise it will be dark!
   float                 headlight_intensity; // #MIN_0 #MAX_1 #DEF_1 #CONDSHOW_ON_headlight_on the intensity of the headlight -- 1 is maximum, 0 is miniumum
+  float                 ambient_light;       // #MIN_0 #MAX_1 #DEF_0 how much ambient default light is there in the absence of any other light sources
   T3CameraParams        camera_params; // parameters affecting how the camera works
   StereoView            stereo_view;  // what type of stereo display to render, if any
   T3SavedView_List      saved_views;  // saved camera position views from viewer -- this is the persitent version copied from camera

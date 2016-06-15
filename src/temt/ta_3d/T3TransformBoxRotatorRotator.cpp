@@ -38,7 +38,7 @@ T3TransformBoxRotatorRotator::T3TransformBoxRotatorRotator(bool active, float ha
   }
   else {
     mat->diffuseColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
-    mat->emissiveColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
+    // mat->emissiveColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
     mat->transparency.setValue(T3Misc::drag_inact_clr_tr);
   }
   addChild(mat);

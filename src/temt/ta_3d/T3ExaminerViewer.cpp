@@ -419,7 +419,7 @@ T3ExaminerViewer::~T3ExaminerViewer() {
 
 T3Panel* T3ExaminerViewer::GetPanel() {
   if(!t3vw) return NULL;
-  iT3Panel* ipanl = t3vw->i_data_frame();
+  iT3Panel* ipanl = t3vw->ipanel();
   if(!ipanl) return NULL;
   T3Panel* panl = ipanl->viewer();
   return panl;

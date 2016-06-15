@@ -39,7 +39,7 @@ T3ScaleUniformScaler::T3ScaleUniformScaler(bool active, float half_size, float c
   }
   else {
     mat->diffuseColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
-    mat->emissiveColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
+    // mat->emissiveColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
     mat->transparency.setValue(T3Misc::drag_inact_clr_tr);
   }
   addChild(mat);

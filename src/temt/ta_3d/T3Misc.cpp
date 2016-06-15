@@ -26,7 +26,7 @@ const float T3Misc::drag_inact_clr_b = .5f;
 const float T3Misc::drag_inact_clr_tr = 0.5f; // transparency
 
 // official defined colors for T3Misc::dragger controls: active = yellow
-// (set but diffuse and emissive)
+// (set both diffuse and emissive)
 const float T3Misc::drag_activ_clr_r = .5f;
 const float T3Misc::drag_activ_clr_g = .5f;
 const float T3Misc::drag_activ_clr_b = .0f;

@@ -17,6 +17,7 @@
 #include <iSoSelectionEvent>
 #include <T3ExaminerViewer>
 #include <iT3Panel>
+#include <T3Panel>
 #include <iVec2i>
 #include <T3DataView>
 #include <taiSigLink>
@@ -37,25 +38,21 @@ using namespace Qt3DCore;
 
 #else
 #include <Inventor/nodes/SoSelection.h>
+#include <Inventor/nodes/SoEnvironment.h>
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
-#endif
-
-// from: http://doc.trolltech.com/4.3/opengl-samplebuffers-glwidget-cpp.html
-#ifndef GL_MULTISAMPLE
-# define GL_MULTISAMPLE  0x809D
 #endif
 
 iT3ViewspaceWidget::iT3ViewspaceWidget(iT3Panel* parent)
 :QWidget(parent)
 {
-  m_i_data_frame = parent;
+  m_ipanel = parent;
   init();
 }
 
 iT3ViewspaceWidget::iT3ViewspaceWidget(QWidget* parent)
 :QWidget(parent)
 {
-  m_i_data_frame = NULL;
+  m_ipanel = NULL;
   init();
 }
 
@@ -64,7 +61,7 @@ iT3ViewspaceWidget::~iT3ViewspaceWidget() {
   m_scene = NULL;
   m_root_so = NULL; // unref's/deletes
   setT3viewer(NULL);
-  m_i_data_frame = NULL;
+  m_ipanel = NULL;
 }
 
 void iT3ViewspaceWidget::init() {
@@ -79,6 +76,13 @@ void iT3ViewspaceWidget::init() {
   m_scene = NULL;
 #else
   m_root_so = new SoSeparator(); // refs
+  m_env_so = new SoEnvironment();
+  if(m_ipanel) {
+    T3Panel* pan = m_ipanel->viewer();
+    m_env_so->ambientIntensity.setValue(pan->ambient_light);
+    // m_env_so->fogType.setValue(SoEnvironment::HAZE); // works!
+  }
+  m_root_so->addChild(m_env_so);
   m_scene = NULL;
 #endif
 }

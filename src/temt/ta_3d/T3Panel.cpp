@@ -48,6 +48,7 @@ void T3Panel::Initialize() {
   text_color.setColorName(taMisc::t3d_text_color);
   headlight_on = true;
   headlight_intensity = 1.0f;
+  ambient_light = 0.0f;
   stereo_view = STEREO_NONE;
   root_views = &root_view.children;
 }

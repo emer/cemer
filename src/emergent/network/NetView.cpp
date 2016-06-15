@@ -905,7 +905,7 @@ void NetView::GetUnitDisplayVals
   if(unit_disp_md && unit_md_flags != MD_UNKNOWN)
     val = ugrv->GetUnitDisplayVal(co, base);
   if(!base) {
-    col.setRgb(.8f, .8f, .8f); // lt gray
+    col.setRgb(.7f, .7f, .7f); // lt gray
     return;
   }
   GetUnitColor(val, col, sc_val);
