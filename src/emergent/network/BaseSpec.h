@@ -123,7 +123,7 @@ public:
   String          GetStateDecoKey() const override { return (is_used ? "" : "NotEnabled"); }
  
   virtual void    SetParam(const String& param_path, const String& value);
-  // #DYN1 Set parameter at given path to given value, for all the specs within this group, and all the child specs underneath these specs
+  // #DYN1 Set parameter at given path to given value, for all the specs within this group, and all the child specs underneath these specs. Path is member.variable, e.g. lay_inhib.gi, replace any space with '_'
 
   virtual void    CompareWithChildren();
   // #BUTTON calls network::ComareSpecWithChildren to populate a table that compares this specs member values with its children's values - this data does not update - call again if you edit spec values!
