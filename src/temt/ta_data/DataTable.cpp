@@ -2033,9 +2033,14 @@ void DataTable::RemoveOrphanCols() {
 }
 
 bool DataTable::InsertRows(int st_row, int n_rows) {
-  if(st_row < 0) st_row = rows; // end
-  if(TestError((st_row < 0 || st_row > rows), "InsertRows",
-      "row not in range:",String(st_row))) return false;
+  if(TestError((n_rows < 0), "InsertRows",
+               "n_rows must be a positive integer value:",String(n_rows)))
+    return false;
+  
+  if(TestError(!RowInRangeNormalize(st_row), "InsertRows",
+               "start row not in range:",String(st_row)))
+    return false;
+
   bool rval = true;
   DataUpdate(true);
   for(int i=0;i<data.size;i++) {
@@ -2128,6 +2133,13 @@ bool DataTable::DuplicateRow(int row_no, int n_copies) {
 // duplicates multiple rows and inserts them after the selected rows
 bool DataTable::DuplicateRows(int st_row, int n_rows) {
   DataUpdate(true);   // only data, no change in column structure
+
+  taMisc::DebugInfo((String)st_row);
+  if(TestError(!RowInRangeNormalize(st_row), "RemoveRows",
+               "start row not in range:",String(st_row)))
+    return false;
+  taMisc::DebugInfo((String)st_row);
+
   bool rval = InsertRows(st_row + n_rows, n_rows);
   if (rval) {
     for (int i = 0; i < n_rows; i++) {

@@ -619,9 +619,9 @@ public:
   virtual bool          DuplicateRow(int row_no, int n_copies=1);
   // #MENU #CAT_Rows duplicate given row number, making given number of copies of it (adds new rows at the end)
   bool                  DuplicateRows(int st_row, int n_rows=1);
-  // #CAT_Rows copy the n_rows starting from st_row and insert them immediately after selected rows
+  // #MENU #CAT_Rows copy the n_rows starting from st_row and insert them immediately after selected rows
   virtual void          MoveRow(int old_index, int new_index);
-  // #CAT_Rows should only be called internally
+  // #CAT_Rows should only be called internally - does not handle negative index values!
   virtual bool          AppendRows(DataTable* append_from);
   // #CAT_Rows #DROP1 #MENU append rows from another data table -- this is also available in taDataProc and in the GUI as a drag-and-drop action (appends rows of dropped item onto dropped item)
   virtual void          ShowAllRows();
