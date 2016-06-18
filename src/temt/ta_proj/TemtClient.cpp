@@ -1615,7 +1615,7 @@ bool TemtClient::CalcRowParams(String operation, DataTable* table, int& row_from
         return false;
       }
       if (rows > table->rows - row_from) {
-        SendError("parameter 'rows' is greater than the number of rows or the number of rows minus 'row_from' if specified. To get all rows or all rows beyond 'row_from' don't specify 'rows'", TemtClient::RUNTIME);
+        SendError("the number of rows requested is greater than total rows or the number of rows minus 'row_from' if specified. To get all rows or all rows beyond 'row_from' don't specify 'rows'", TemtClient::RUNTIME);
         return false;
       }
     }
