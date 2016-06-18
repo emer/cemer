@@ -1570,63 +1570,68 @@ void TemtClient::WriteLine(const String& ln) {
 
 // used by json calls
 bool TemtClient::CalcRowParams(String operation, DataTable* table, int& row_from, int& rows, int row_to) {
-  bool row_from_set = false;
-  bool row_to_set = false;
+  bool row_from_set = false;  // did user pass the parameter
+  bool row_to_set = false;    // did user pass the parameter
   
-  int row_count = table->rows;  // actual count of rows
-  
+  row_from = 0;  // default to first row
   if (!name_params.GetVal("row_from").isNull()) {
     row_from = name_params.GetVal("row_from").toInt();
     row_from_set = true;
-  }
-  else {
-    row_from = 0;
+    bool in_range = table->RowInRangeNormalize(row_from);
+    if (!in_range) {
+      SendError("the parameter 'row_from' is out of range", TemtClient::RUNTIME);
+      return false;
+    }
   }
   
+  row_to = table->rows; // default to last row
   if (!name_params.GetVal("row_to").isNull()) {
     row_to = name_params.GetVal("row_to").toInt();
     row_to_set = true;
+    bool in_range = table->RowInRangeNormalize(row_to);
+    if (!in_range) {
+      SendError("the parameter 'row to' is out of range", TemtClient::RUNTIME);
+      return false;
+    }
+    rows = row_to - row_from + 1;
   }
   
-  if (!name_params.GetVal("rows").isNull()) {
-    rows = name_params.GetVal("rows").toInt();
+  if (row_to <= row_from) {
+    SendError("the parameter 'row_to' is less than or equal to 'row_from'", TemtClient::RUNTIME);
+    return false;
+  }
+
+  if (row_to_set) {
+    if (!name_params.GetVal("rows").isNull()) {
+      SendError("the parameter 'row_to' is already set - can't also set the parameter 'rows' -- use one or the other", TemtClient::RUNTIME);
+      return false;
+    }
   }
   else {
-    rows = -1;
+    if (!name_params.GetVal("rows").isNull()) {
+      rows = name_params.GetVal("rows").toInt();
+      if (rows <0) {
+        SendError("the parameter 'rows' must be a positive integer value", TemtClient::RUNTIME);
+        return false;
+      }
+      if (rows > table->rows - row_from) {
+        SendError("parameter 'rows' is greater than the number of rows or the number of rows minus 'row_from' if specified. To get all rows or all rows beyond 'row_from' don't specify 'rows'", TemtClient::RUNTIME);
+        return false;
+      }
+    }
+    else {
+      rows = table->rows - row_from;  // default is row_from to the end
+    }
   }
+  
   
   // this is the only row oriented call and does not go through json api
   // so it requires a bit of upfront checking - The json data table code
   // returns error messages but the old row based data table calls do not
   // (jtr 3/31/14)
-  if (operation == "remove" && row_count == 0) {
+  if (operation == "remove" && table->rows == 0) {
     SendOk();
     return false;  // false because we won't actually execute the remove code
-  }
-  
-  if (row_from_set && (row_from > row_count-1)) {
-    SendError("row out of range", TemtClient::RUNTIME);
-    return false;
-  }
-  
-  if (row_to_set && (row_to > row_count-1)) {
-    SendError("row out of range", TemtClient::RUNTIME);
-    return false;
-  }
-  
-  // if row_from and row_to are both set calc the rows
-  if (row_from_set && row_to_set) {
-    rows = row_to - row_from + 1;
-  }
-  else if (row_to_set) {  // not allowed
-    SendError("Missing parameter - 'row_from' : 'row_to' not allowed without 'row_from'.", TemtClient::MISSING_PARAM);
-    return false;
-  }
-  else if (!name_params.GetVal("rows").isNull()) {
-    rows = name_params.GetVal("rows").toInt();
-  }
-  else {
-    rows = -1;  // all rows= 0
   }
   return true;
 }
