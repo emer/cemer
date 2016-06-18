@@ -206,6 +206,17 @@ bool DataTable::CopyCell_impl(DataCol* dar, int dest_row, const DataTable& src,
 void DataTable::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   
+  if(HasDataFlag(SAVE_FILE) && HasDataFlag(SAVE_ROWS)) {
+    int chs = taMisc::Choice("You can either save the data to the project file (Save Rows) or save the data and table structure to a file for later loading (Save File). In both cases the table structure (column info) will be saved to the project file.",
+                             "Save File", "Save Rows");
+    if(chs == 1) {
+      ClearDataFlag(SAVE_FILE);
+    }
+    else {
+      ClearDataFlag(SAVE_ROWS);
+    }
+  }
+
   // if true - user likely just checked the save file flag - provide default name
   if(HasDataFlag(SAVE_FILE) && auto_load_file.empty()) {
     taProject* proj = GetMyProj();
