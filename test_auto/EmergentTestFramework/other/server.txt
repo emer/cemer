@@ -72,6 +72,24 @@ OpenNonExistentProj
     ${output} =                Run Command Completion          {"command": "OpenProject", "project": "../proj_templates/LeabraaaaStd.proj"}   300 sec
     Status Error Match         ${output}   0		       file \\\"../proj_templates/LeabraaaaStd.proj\\\" not found   
     
+GetData All Rows of Empty Table
+    Ensure Emergent Free
+    ${output} =                  Run Command Wait    {"command": "GetData", "table": "EpochOutputData"}
+    Status OK Has Result         ${output}
+    Json String Should Match     ${output}           /result/columns/0/name      batch
+    Json String Should Match     ${output}           /result/columns/1/name    epoch
+    Json String Should Match     ${output}           /result/columns/2/name    avg_sse
+    Json String Should Match     ${output}           /result/columns/0/type    int
+    Json String Should Match     ${output}           /result/columns/1/type    int
+    Json String Should Match     ${output}           /result/columns/2/type    float
+    Json Value Should Equal      ${output}           /result/columns/0/matrix  false
+    Json Value Should Equal      ${output}           /result/columns/1/matrix  false
+    Json Value Should Equal      ${output}           /result/columns/2/matrix  false
+    Json Value Should Not Exist  ${output}           /result/columns/0/values/0
+    Json Value Should Not Exist  ${output}           /result/columns/1/values/0
+    Json Value Should Not Exist  ${output}           /result/columns/2/values/0
+
+
 RunProgram
     ${output} =                Run Command Completion          {"command": "RunProgram", "program": "LeabraTrain"}   300 sec
     Status OK No Result        ${output}
@@ -297,52 +315,61 @@ GetData Row
     Json Value Should Not Exist  ${output}           /result/columns/1/values/2
     Json Value Should Not Exist  ${output}           /result/columns/2/values/2
 
-#    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -7, "rows": 2}
-#    Status Error Match         ${output}     7	     GetData: row out of range
+    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -2, "row_to": -1}
+    Status OK Has Result         ${output}
+    Json String Should Match     ${output}           /result/columns/0/name      Name
+    Json String Should Match     ${output}           /result/columns/1/name    Input
+    Json String Should Match     ${output}           /result/columns/2/name    Output
+    Json String Should Match     ${output}           /result/columns/0/type    String
+    Json String Should Match     ${output}           /result/columns/1/type    float
+    Json String Should Match     ${output}           /result/columns/2/type    float
+    Json Value Should Equal      ${output}           /result/columns/0/matrix  false
+    Json Value Should Equal      ${output}           /result/columns/1/matrix  true
+    Json Value Should Equal      ${output}           /result/columns/2/matrix  true
+    Json String Should Match     ${output}           /result/columns/0/values/1  random
+    Json String Should Match     ${output}           /result/columns/0/values/0  ldiag
+    Json Value Should Equal      ${output}           /result/columns/1/values/0/2/2  1
+    Json Value Should Equal      ${output}           /result/columns/1/values/0/1/0  0
+    Json Value Should Not Exist  ${output}           /result/columns/0/values/2
+    Json Value Should Not Exist  ${output}           /result/columns/1/values/2
+    Json Value Should Not Exist  ${output}           /result/columns/2/values/2
 
-#    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -1, "rows": 2}
-#    Status OK Has Result         ${output}
-#    Json String Should Match     ${output}           /result/columns/0/name      Name
-#    Json String Should Match     ${output}           /result/columns/1/name    Input
-#    Json String Should Match     ${output}           /result/columns/2/name    Output
-#    Json String Should Match     ${output}           /result/columns/0/type    String
-#    Json String Should Match     ${output}           /result/columns/1/type    float
-#    Json String Should Match     ${output}           /result/columns/2/type    float
-#    Json Value Should Equal      ${output}           /result/columns/0/matrix  false
-#    Json Value Should Equal      ${output}           /result/columns/1/matrix  true
-#    Json Value Should Equal      ${output}           /result/columns/2/matrix  true
-#    Json String Should Match     ${output}           /result/columns/0/values/0  random
-#    Json Value Should Equal      ${output}           /result/columns/1/values/0/2/2  0
-#    Json Value Should Equal      ${output}           /result/columns/1/values/0/3/0  1
-#    Json Value Should Not Exist  ${output}           /result/columns/0/values/1
-#    Json Value Should Not Exist  ${output}           /result/columns/1/values/1
-#    Json Value Should Not Exist  ${output}           /result/columns/2/values/1
+    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -2, "row_to": -2}
+    Status OK Has Result         ${output}
+    Json String Should Match     ${output}           /result/columns/0/name      Name
+    Json String Should Match     ${output}           /result/columns/1/name    Input
+    Json String Should Match     ${output}           /result/columns/2/name    Output
+    Json String Should Match     ${output}           /result/columns/0/type    String
+    Json String Should Match     ${output}           /result/columns/1/type    float
+    Json String Should Match     ${output}           /result/columns/2/type    float
+    Json Value Should Equal      ${output}           /result/columns/0/matrix  false
+    Json Value Should Equal      ${output}           /result/columns/1/matrix  true
+    Json Value Should Equal      ${output}           /result/columns/2/matrix  true
+    Json String Should Match     ${output}           /result/columns/0/values/0  ldiag
+    Json Value Should Equal      ${output}           /result/columns/1/values/0/2/2  1
+    Json Value Should Equal      ${output}           /result/columns/1/values/0/1/0  0
+    Json Value Should Not Exist  ${output}           /result/columns/0/values/1
+    Json Value Should Not Exist  ${output}           /result/columns/1/values/1
+    Json Value Should Not Exist  ${output}           /result/columns/2/values/1
 
-#    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": 7, "rows": 2}
-#    Status Error Match         ${output}     7     row out of range
 
-#    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": 6, "rows": 2}
-#    Status Error Match         ${output}     7	     row out of range
+    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -7, "rows": 2}
+    Status Error Match         ${output}     7	     the parameter 'row_from' is out of range
 
-#    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -2, "rows": -2}
-#    Status OK Has Result         ${output}
-#    Json String Should Match     ${output}           /result/columns/0/name      Name
-#    Json String Should Match     ${output}           /result/columns/1/name    Input
-#    Json String Should Match     ${output}           /result/columns/2/name    Output
-#    Json String Should Match     ${output}           /result/columns/0/type    String
-#    Json String Should Match     ${output}           /result/columns/1/type    float
-#    Json String Should Match     ${output}           /result/columns/2/type    float
-#    Json Value Should Equal      ${output}           /result/columns/0/matrix  false
-#    Json Value Should Equal      ${output}           /result/columns/1/matrix  true
-#    Json Value Should Equal      ${output}           /result/columns/2/matrix  true
-#    Json String Should Match     ${output}           /result/columns/0/values/1  random
-#    Json String Should Match     ${output}           /result/columns/0/values/0  ldiag
-#    Json Value Should Equal      ${output}           /result/columns/1/values/0/2/2  1
-#    Json Value Should Equal      ${output}           /result/columns/1/values/0/1/0  0
-#    Json Value Should Not Exist  ${output}           /result/columns/0/values/2
-#    Json Value Should Not Exist  ${output}           /result/columns/1/values/2
-#    Json Value Should Not Exist  ${output}           /result/columns/2/values/2
+    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -2, "row_to": -3}
+    Status Error Match         ${output}     7	     the parameter 'row_to' is less than or equal to 'row_from'
 
+    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -1, "rows": 2}
+    Status Error Match         ${output}     7	     the number of rows requested is greater than total rows or the number of rows minus 'row_from' if specified. To get all rows or all rows beyond 'row_from' don't specify 'rows'
+
+    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": 7, "rows": 2}
+    Status Error Match         ${output}     7     the parameter 'row_from' is out of range
+
+    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": 5, "rows": 2}
+    Status Error Match         ${output}     7	     the number of rows requested is greater than total rows or the number of rows minus 'row_from' if specified. To get all rows or all rows beyond 'row_from' don't specify 'rows'
+
+    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -2, "rows": -2}
+    Status Error Match         ${output}     7	     the parameter 'rows' must be a positive integer value
 
 
 GetData Cell
@@ -362,17 +389,17 @@ GetDataMatrixCell
 # Modifying data tables - normal operation tests
 #   Note, these tests must be done in order, and require that the Program operations above be run
 
-#SetData Row Specified
-#    Ensure Emergent Free
-#    ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "row_from": 3, "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
-#    Status OK No Result          ${output}
-#    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "row_from": 3, "rows": 1}
-#    Status OK Has Result         ${output}
-#    Column Value Should Match    ${output}      0      batch    8
-#    Column Value Should Match    ${output}      0      trial    3
-#    Column Value Should Match    ${output}      0      epoch    6
-#    Column Value Should Match    ${output}      0      trial_name       letrial
-#    Column Float Value Should Match    ${output}      0      sse              4.4
+SetData Row Specified
+    Ensure Emergent Free
+    ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "row_from": 3, "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
+    Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "row_from": 3, "rows": 1}
+    Status OK Has Result         ${output}
+    Column Value Should Match    ${output}      0      batch    8
+    Column Value Should Match    ${output}      0      trial    3
+    Column Value Should Match    ${output}      0      epoch    6
+    Column Value Should Match    ${output}      0      trial_name       letrial
+    Column Float Value Should Match    ${output}      0      sse              4.4
 
 RemoveData First Two Rows
     Ensure Emergent Free
@@ -384,22 +411,38 @@ RemoveData First Two Rows
     Column Value Should Match    ${output}      1      trial    3
     Column Value Should Match    ${output}      2      trial    4
 
-#SetData No Row Specified
-#    Ensure Emergent Free
-#    ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
-#    Status OK No Result          ${output}
-#    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "rows": 1}
-#    Status OK Has Result         ${output}
-#    Column Value Should Match    ${output}      0       batch   8
-#    Column Value Should Match    ${output}      0       epoch   6
-#    Column Value Should Match    ${output}      0       trial   2
-#    Column Value Should Match    ${output}      0       trial_name      letrial
-#    Column Float Value Should Match    ${output}      0       sse             4.4
+SetData No Row Specified
+    Ensure Emergent Free
+    ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
+    Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "rows": 1}
+    Status OK Has Result         ${output}
+    Column Value Should Match    ${output}      0       batch   8
+    Column Value Should Match    ${output}      0       epoch   6
+    Column Value Should Match    ${output}      0       trial   2
+    Column Value Should Match    ${output}      0       trial_name      letrial
+    Column Float Value Should Match    ${output}      0       sse             4.4
 
 RemoveData All Rows                    
     Ensure Emergent Free
+    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+    Status OK Has Result         ${output}
+    Column Value Should Match    ${output}      0       batch   8
     ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
     Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+    Status OK Has Result         ${output}
+    Json Value Should Not Exist  ${output}             /result/columns/0/result/0
+
+RemoveData All Rows Empty Table
+    Ensure Emergent Free
+    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+    Status OK Has Result         ${output}
+    Json Value Should Not Exist  ${output}             /result/columns/0/result/0
+
+    ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
+    Status OK No Result          ${output}
+
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
     Status OK Has Result         ${output}
     Json Value Should Not Exist  ${output}             /result/columns/0/result/0
