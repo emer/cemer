@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9447
+// ta_Dump File v3.0 -- code v7.8.7.0 rev9574
 LeabraProject .projects["TestDataTableProcs"] { 
  Doc_Group @.docs = [0] {
  };
@@ -367,8 +367,12 @@ LeabraProject .projects["TestDataTableProcs"] {
   };
  };
 
- Program_TopGroup @.programs = [2] {
+ Program_TopGroup @.programs = [3] {
   Program @["Filter"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [2] {
     DataTable @["DataTable1"] { 
      DataTableCols @.data = [2] {
@@ -713,7 +717,256 @@ LeabraProject .projects["TestDataTableProcs"] {
     BlankLineEl @[22] { };
    };
   };
+  Program @["Select"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
+   ProgObjList @.objs = [3] {
+    DataTable @["DataTable1"] { 
+     DataTableCols @.data = [2] {
+      String_Data @["Name"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      int_Data @["epoch"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NARROW"] { };
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
+     };
+    };
+    DataTable @["DestDataTable1"] { 
+     DataTableCols @.data = [2] {
+      String_Data @["Name"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      int_Data @["epoch"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NARROW"] { };
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
+     };
+    };
+    DataTable @["DataTable1_copy"] { 
+     DataTableCols @.data = [2] {
+      String_Data @["Name"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      int_Data @["epoch"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NARROW"] { };
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+     };
+
+     DataOpList @.last_sort_spec.ops = [0] {
+     };
+
+     DataTableCell_List @.control_panel_cells = [0] {
+     };
+    };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [4] {
+    ProgVar @["DataTable1"] { };
+    ProgVar @["DataTable1_copy"] { };
+    ProgVar @["test_failed"] { };
+    ProgVar @["DestDataTable1"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [16] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [0] {
+     };
+    };
+    Comment @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    If @[4] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    If @[5] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    DataSelectRowsProg @[6] { 
+     DataOpList @.select_spec.ops = [1] {
+      DataSelectEl @["epoch_EQUAL__0"] { };
+     };
+    };
+    If @[7] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[8] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    If @[9] { 
+     ProgEl_List @.true_code = [2] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+      AssignExpr @[1] { };
+     };
+    };
+    Comment @[10] { };
+    MethodCall @[11] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[12] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    If @[13] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    If @[14] { 
+     ProgEl_List @.true_code = [1] {
+      MiscCall @[0] { 
+       ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+       };
+      };
+     };
+    };
+    BlankLineEl @[15] { };
+   };
+  };
   Program @["Sort"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [2] {
     DataTable @["DataTable1"] { 
      DataTableCols @.data = [3] {
@@ -4123,6 +4376,15 @@ LeabraProject .projects["TestDataTableProcs"] {
   desc=;
   debug_mode=0;
   Program @["Filter"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["TestDataTableProcs"].programs["Filter"].doc$$;
+    };
+   };
    name="Filter";
    short_nm="Filter";
    tags=;
@@ -4557,7 +4819,7 @@ LeabraProject .projects["TestDataTableProcs"] {
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
-       arg_type=Variant_ref;
+       arg_type=const_Variant_ref;
        type="Variant&";
        name="col1";
        required=1;
@@ -5254,7 +5516,7 @@ LeabraProject .projects["TestDataTableProcs"] {
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
-       arg_type=Variant_ref;
+       arg_type=const_Variant_ref;
        type="Variant&";
        name="col1";
        required=1;
@@ -5951,7 +6213,7 @@ LeabraProject .projects["TestDataTableProcs"] {
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
-       arg_type=Variant_ref;
+       arg_type=const_Variant_ref;
        type="Variant&";
        name="col1";
        required=1;
@@ -6484,8 +6746,1464 @@ LeabraProject .projects["TestDataTableProcs"] {
    };
    step_prog=NULL;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
+  };
+  Program @["Select"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=$.projects["TestDataTableProcs"].programs["Filter"].doc$;
+    };
+   };
+   name="Select";
+   short_nm="Select";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   stop_step_cond {
+    expr=;
+   };
+   objs {
+    name="objs";
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @["DataTable1"] {
+     name="DataTable1";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["Name"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_94";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.2634069;
+	 val_type_fixed=0;
+	};
+       };
+       name="Name";
+       col_flags=SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=167;
+       ar {
+	name="ar";
+       [10] "Hello";"Hello World";"Hello World again";"More Hellos";"Some name";"More names";"Even more names";"Another name";"Yest another name";"World";
+       };
+      };
+      int_Data @["epoch"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_92";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1577287;
+	 val_type_fixed=0;
+	};
+       };
+       name="epoch";
+       col_flags=SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       ar {
+	name="ar";
+       [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+     row_indexes {
+      name="row_indexes";
+     [10] 0;1;2;3;4;5;6;7;8;9;
+     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     control_panel_cells {
+      name="control_panel_cells";
+      el_typ=DataTableCell;
+      el_def=0;
+     };
+    };
+    DataTable @["DestDataTable1"] {
+     name="DestDataTable1";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["Name"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_94";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.2634069;
+	 val_type_fixed=0;
+	};
+       };
+       name="Name";
+       col_flags=SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=167;
+       ar {
+	name="ar";
+       [10] "Hello";"Hello World";"Hello World again";"More Hellos";"Some name";"More names";"Even more names";"Another name";"Yest another name";"World";
+       };
+      };
+      int_Data @["epoch"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_92";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1577287;
+	 val_type_fixed=0;
+	};
+       };
+       name="epoch";
+       col_flags=SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=0;
+       ar {
+	name="ar";
+       [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+     row_indexes {
+      name="row_indexes";
+     [10] 0;1;2;3;4;5;6;7;8;9;
+     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     control_panel_cells {
+      name="control_panel_cells";
+      el_typ=DataTableCell;
+      el_def=0;
+     };
+    };
+    DataTable @["DataTable1_copy"] {
+     name="DataTable1_copy";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["Name"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_95";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.2864494;
+	 val_type_fixed=0;
+	};
+       };
+       name="Name";
+       col_flags=SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=167;
+       ar {
+	name="ar";
+       [10] "Hello";"Hello World";"Hello World again";"More Hellos";"Some name";"More names";"Even more names";"Another name";"Yest another name";"World";
+       };
+      };
+      int_Data @["epoch"] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 8 0=0.1560892;
+	 val_type_fixed=0;
+	};
+       };
+       name="epoch";
+       col_flags=SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name="dim_names";
+       [0]        };
+       width=91;
+       ar {
+	name="ar";
+       [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+     row_indexes {
+      name="row_indexes";
+     [10] 0;1;2;3;4;5;6;7;8;9;
+     };
+     last_sort_spec {
+      name="last_sort_spec";
+      ops {
+       name="ops";
+       el_typ=DataSortEl;
+       el_def=0;
+      };
+     };
+     control_panel_cells {
+      name="control_panel_cells";
+      el_typ=DataTableCell;
+      el_def=0;
+     };
+    };
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["DataTable1"] {
+     name="DataTable1";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["TestDataTableProcs"].programs["Select"].objs["DataTable1"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["DataTable1_copy"] {
+     name="DataTable1_copy";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["TestDataTableProcs"].programs["Select"].objs["DataTable1_copy"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["test_failed"] {
+     name="test_failed";
+     var_type=T_Int;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["DestDataTable1"] {
+     name="DestDataTable1";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["TestDataTableProcs"].programs["Select"].objs["DestDataTable1"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LocalVars (0 vars)";
+     pre_compile_code_string="LocalVars (0 vars)";
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    Comment @[1] {
+     desc="Test Equals with one entry";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="// Test Equals with one entry";
+     pre_compile_code_string="// Test Equals with one entry";
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="DataTable1_copy->CopyFrom(DataTable1)";
+     pre_compile_code_string="DataTable1_copy->CopyFrom(DataTable1)";
+     result_var=NULL;
+     obj=.projects["TestDataTableProcs"].programs["Select"].vars["DataTable1_copy"]$$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="DataTable1";
+       };
+      };
+     };
+     meth_sig="bool CopyFrom(taBase* cpy_from)";
+     meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+    };
+    MethodCall @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="DestDataTable1->ResetData()";
+     pre_compile_code_string="DestDataTable1->ResetData()";
+     result_var=NULL;
+     obj=.projects["TestDataTableProcs"].programs["Select"].vars["DestDataTable1"]$$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void ResetData()";
+     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+    };
+    If @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DestDataTable1->rows != 0)";
+     pre_compile_code_string="if (DestDataTable1->rows != 0)";
+     cond {
+      expr="DestDataTable1->rows != 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"The Destination data did not have 0 rows before select\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"The Destination data did not have 0 rows before select\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"The Destination data did not have 0 rows before select\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    If @[5] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy->rows != 10)";
+     pre_compile_code_string="if (DataTable1_copy->rows != 10)";
+     cond {
+      expr="DataTable1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"The Copy data did not have 10 rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    DataSelectRowsProg @[6] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="SelectRows:  src table = DataTable1_copy  dest table = DestDataTable1  comb_op = AND";
+     pre_compile_code_string="SelectRows:  src table = DataTable1_copy  dest table = DestDataTable1  comb_op = AND";
+     src_data_var=$.projects["TestDataTableProcs"].programs["Select"].vars["DataTable1_copy"]$;
+     dest_data_var=$.projects["TestDataTableProcs"].programs["Select"].vars["DestDataTable1"]$;
+     select_spec {
+      name="select_spec";
+      ops {
+       name="ops";
+       el_typ=DataSelectEl;
+       el_def=0;
+       DataSelectEl @["epoch_EQUAL__0"] {
+	col_name="epoch";
+	name="epoch_EQUAL__0";
+	on=1;
+	rel=EQUAL;
+	use_var=0;
+	cmp 2 0=0;
+	var=NULL;
+	enable_var=NULL;
+       };
+      };
+      comb_op=AND;
+     };
+    };
+    If @[7] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy->rows != 10)";
+     pre_compile_code_string="if (DataTable1_copy->rows != 10)";
+     cond {
+      expr="DataTable1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Filter greater than did not produces the correct number of rows\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Filter greater than did not produces the correct number of rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Filter greater than did not produces the correct number of rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=.projects["TestDataTableProcs"].programs["Select"].vars["test_failed"]$$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[8] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DestDataTable1->rows != 1)";
+     pre_compile_code_string="if (DestDataTable1->rows != 1)";
+     cond {
+      expr="DestDataTable1->rows != 1";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Select rows equals with one entry did not produces the correct number of rows in destination tabel\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Select rows equals with one entry did not produces the correct number of rows in destination tabel\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Select rows equals with one entry did not produces the correct number of rows in destination tabel\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Select"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    If @[9] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DestDataTable1[\"epoch\"][0] != 0)";
+     pre_compile_code_string="if (DestDataTable1[\"epoch\"][0] != 0)";
+     cond {
+      expr="DestDataTable1[\"epoch\"][0] != 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"Select rows equals with on entry did not produces the correct set of rows\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"Select rows equals with on entry did not produces the correct set of rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"Select rows equals with on entry did not produces the correct set of rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="test_failed = test_failed | (1 << 0)";
+       pre_compile_code_string="test_failed = test_failed | (1 << 0)";
+       result_var=$.projects["TestDataTableProcs"].programs["Select"].vars["test_failed"]$;
+       expr {
+	expr="test_failed | (1 << 0)";
+       };
+      };
+     };
+    };
+    Comment @[10] {
+     desc="Test Smallerthan";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="// Test Smallerthan";
+     pre_compile_code_string="// Test Smallerthan";
+    };
+    MethodCall @[11] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="DataTable1_copy->CopyFrom(DataTable1)";
+     pre_compile_code_string="DataTable1_copy->CopyFrom(DataTable1)";
+     result_var=NULL;
+     obj=$.projects["TestDataTableProcs"].programs["Select"].vars["DataTable1_copy"]$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="DataTable1";
+       };
+      };
+     };
+     meth_sig="bool CopyFrom(taBase* cpy_from)";
+     meth_desc=" Copy from given object into this object (this is a safe interface to UnSafeCopy)";
+    };
+    MethodCall @[12] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="DestDataTable1->ResetData()";
+     pre_compile_code_string="DestDataTable1->ResetData()";
+     result_var=NULL;
+     obj=$.projects["TestDataTableProcs"].programs["Select"].vars["DestDataTable1"]$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     meth_sig="void ResetData()";
+     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
+    };
+    If @[13] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DataTable1_copy->rows != 10)";
+     pre_compile_code_string="if (DataTable1_copy->rows != 10)";
+     cond {
+      expr="DataTable1_copy->rows != 10";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"The Copy data did not have 10 rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    If @[14] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (DestDataTable1->rows != 0)";
+     pre_compile_code_string="if (DestDataTable1->rows != 0)";
+     cond {
+      expr="DestDataTable1->rows != 0";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MiscCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       pre_compile_code_string="taMisc::Error(\"The Copy data did not have 10 rows\", , , , , , , , )";
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::Error;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="a";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"The Copy data did not have 10 rows\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="b";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="c";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="d";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="e";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="f";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="g";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="h";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="i";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+     };
+    };
+    BlankLineEl @[15] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string=" ";
+     pre_compile_code_string=" ";
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
   Program @["Sort"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["TestDataTableProcs"].programs["Sort"].doc$$;
+    };
+   };
    name="Sort";
    short_nm="rt";
    tags=;
@@ -6495,7 +8213,7 @@ LeabraProject .projects["TestDataTableProcs"] {
     expr=;
    };
    objs {
-    name=;
+    name="objs";
     el_typ=DataTable;
     el_def=0;
     DataTable @["DataTable1"] {
@@ -6597,11 +8315,11 @@ LeabraProject .projects["TestDataTableProcs"] {
      auto_load_file=;
      keygen 4 0=0;
      row_indexes {
-      name=;
+      name="row_indexes";
      [10] 0;1;2;3;4;5;6;7;8;9;
      };
      last_sort_spec {
-      name=;
+      name="last_sort_spec";
       ops {
        name="ops";
        el_typ=DataSortEl;
@@ -6609,7 +8327,7 @@ LeabraProject .projects["TestDataTableProcs"] {
       };
      };
      control_panel_cells {
-      name=;
+      name="control_panel_cells";
       el_typ=DataTableCell;
       el_def=0;
      };
@@ -6713,11 +8431,11 @@ LeabraProject .projects["TestDataTableProcs"] {
      auto_load_file=;
      keygen 4 0=0;
      row_indexes {
-      name=;
+      name="row_indexes";
      [10] 5;4;3;2;1;0;9;8;7;6;
      };
      last_sort_spec {
-      name=;
+      name="last_sort_spec";
       ops {
        name="ops";
        el_typ=DataSortEl;
@@ -6755,24 +8473,24 @@ LeabraProject .projects["TestDataTableProcs"] {
       };
      };
      control_panel_cells {
-      name=;
+      name="control_panel_cells";
       el_typ=DataTableCell;
       el_def=0;
      };
     };
    };
    types {
-    name=;
+    name="types";
     el_typ=DynEnumType;
     el_def=0;
    };
    args {
-    name=;
+    name="args";
     el_typ=ProgVar;
     el_def=0;
    };
    vars {
-    name=;
+    name="vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @["DataTable1"] {
@@ -6807,17 +8525,17 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
    };
    functions {
-    name=;
+    name="functions";
     el_typ=Function;
     el_def=0;
    };
    init_code {
-    name=;
+    name="init_code";
     el_typ=ProgCode;
     el_def=0;
    };
    prog_code {
-    name=;
+    name="prog_code";
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
@@ -6834,8 +8552,8 @@ LeabraProject .projects["TestDataTableProcs"] {
     Comment @[1] {
      desc="Test sort integer descending";
      flags=CAN_REVERT_TO_CODE;
-     code_string="// Test Greaterthan";
-     pre_compile_code_string="// Test Greaterthan";
+     code_string="// Test sort integer descending";
+     pre_compile_code_string="// Test sort integer descending";
     };
     MethodCall @[2] {
      desc=;
@@ -7963,15 +9681,15 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     BlankLineEl @[11] {
      desc=;
-     flags=0;
-     code_string=;
-     pre_compile_code_string=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string=" ";
+     pre_compile_code_string=" ";
     };
     Comment @[12] {
      desc="Test sort string descending";
      flags=CAN_REVERT_TO_CODE;
-     code_string="// Test sort integer descending";
-     pre_compile_code_string="// Test sort integer descending";
+     code_string="// Test sort string descending";
+     pre_compile_code_string="// Test sort string descending";
     };
     MethodCall @[13] {
      desc=;
@@ -9099,15 +10817,15 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     BlankLineEl @[22] {
      desc=;
-     flags=0;
-     code_string=;
-     pre_compile_code_string=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string=" ";
+     pre_compile_code_string=" ";
     };
     Comment @[23] {
      desc="Test int, int descending";
      flags=CAN_REVERT_TO_CODE;
-     code_string="// Test sort string descending";
-     pre_compile_code_string="// Test sort string descending";
+     code_string="// Test int, int descending";
+     pre_compile_code_string="// Test int, int descending";
     };
     MethodCall @[24] {
      desc=;
@@ -10920,13 +12638,24 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     BlankLineEl @[38] {
      desc=;
-     flags=0;
-     code_string=;
-     pre_compile_code_string=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string=" ";
+     pre_compile_code_string=" ";
     };
    };
    step_prog=NULL;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
  };
  viewers {
@@ -10940,7 +12669,7 @@ LeabraProject .projects["TestDataTableProcs"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=-0.002785515;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -10950,7 +12679,7 @@ LeabraProject .projects["TestDataTableProcs"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=1.002786;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -11059,6 +12788,8 @@ LeabraProject .projects["TestDataTableProcs"] {
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
 	near=0.1;
@@ -11161,7 +12892,7 @@ LeabraProject .projects["TestDataTableProcs"] {
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.05555556;
+       value 8 0=0.03078677;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
@@ -11171,7 +12902,7 @@ LeabraProject .projects["TestDataTableProcs"] {
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.9222222;
+       value 8 0=0.8950969;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -11200,6 +12931,7 @@ LeabraProject .projects["TestDataTableProcs"] {
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
+ tree_state{ .projects[0];.projects[0].ctrl_panels;.projects[0].data;.projects[0].programs;.projects[0].programs[1];.projects[0].programs[1].objs;.projects[0].networks; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
