@@ -1570,6 +1570,8 @@ bool taRootBase::Startup_InitViewColors() {
 
   taMisc::view_colors->FindMakeViewColor("NotEnabled", "State: !isEnabled",
                                          false, _nilString, true, "grey86");
+  taMisc::view_colors->FindMakeViewColor("NotCalled", "State: function has no callers",
+                                         false, _nilString, true, "grey86");
   taMisc::view_colors->FindMakeViewColor("debug_mode", "State: all programs in group are in debug_mode",
                                          false, _nilString, true, "LightSalmon");
   taMisc::view_colors->FindMakeViewColor("ThisInvalid", "State: item not valid according to CheckConfig",

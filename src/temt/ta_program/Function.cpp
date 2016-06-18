@@ -275,3 +275,21 @@ bool Function::CvtFmCode(const String& code) {
   return true;
 }
 
+String Function::GetStateDecoKey() const {
+  String rval = inherited::GetStateDecoKey();
+  
+  if (!HasCallers()) {
+    rval = "NotCalled";
+  }
+  return rval;
+}
+
+bool Function::HasCallers() const {
+  taBase_PtrList callers;
+  (const_cast<Function*>(this))->GetCallers(callers);
+  
+  if (callers.size == 0) {
+    return false;
+  }
+  return true;
+}

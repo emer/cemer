@@ -24,6 +24,12 @@ TA_BASEFUNS_CTORS_DEFN(FunctionCall);
 void FunctionCall::Initialize() {
 }
 
+void FunctionCall::Destroy() {
+  if (fun.ptr()) {
+    fun->UpdateAfterEdit();
+  }
+}
+
 void FunctionCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateArgs();         // always do this.. nondestructive and sometimes stuff changes anyway
@@ -157,6 +163,9 @@ bool FunctionCall::CvtFmCode(const String& code) {
   String args = trim(cd.after('('));
   args = trim(args.before(')', -1));
   fun_args.ParseArgString(args);
+  
+  // need to get the function to update ui when a FunctionCall is created
+  fun->UpdateAfterEdit();
   return true;
 }
 

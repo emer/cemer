@@ -62,7 +62,7 @@ protected:
   void         GenCssBody_impl(Program* prog) override;
 private:
   void  Initialize();
-  void  Destroy()       {}
+  void  Destroy();
 };
 
 #endif // FunctionCall_h

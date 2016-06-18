@@ -44,11 +44,12 @@ public:
   // The arguments to the function
   ProgEl_List           fun_code;
   // the function code (list of program elements)
-  
+
   int             ProgElChildrenCount() const override { return fun_code.size; }
 
   virtual void    GetCallers(taBase_PtrList& callers);
   // find all CallFunction elements -- TODO - also find ProgramCallFun
+  virtual bool    HasCallers() const;
   virtual void    UpdateCallers();
   // no-gui update of callers
   virtual void    UpdateCallerArgs();
@@ -65,6 +66,7 @@ public:
   String       GetDisplayName() const override;
   String       GetTypeDecoKey() const override { return "Function"; }
   String       GetToolbarName() const override { return "function"; }
+  String       GetStateDecoKey() const override;
 
   // below from taNBase for name:
   bool	       HasName() const override { return true; }
