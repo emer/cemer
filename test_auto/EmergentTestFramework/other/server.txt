@@ -357,7 +357,7 @@ GetData Row
     Status Error Match         ${output}     7	     the parameter 'row_from' is out of range
 
     ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -2, "row_to": -3}
-    Status Error Match         ${output}     7	     the parameter 'row_to' is less than or equal to 'row_from'
+    Status Error Match         ${output}     7	     the parameter 'row_to' is less than 'row_from'
 
     ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": -1, "rows": 2}
     Status Error Match         ${output}     7	     the number of rows requested is greater than total rows or the number of rows minus 'row_from' if specified. To get all rows or all rows beyond 'row_from' don't specify 'rows'
