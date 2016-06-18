@@ -474,22 +474,22 @@ RemoveData Table Not Found Error
 GetDataTable Invalid Row Error
     Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 1024, "rows": 1}
-    Status Error Match         ${output}             7                  row out of range
+    Status Error Match         ${output}             7                  the parameter 'row_from' is out of range
 
 GetDataTableCell Invalid Row Error
     Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 1024, "rows": 1, "column": "Name"}
-    Status Error Match         ${output}             7                  row out of range
+    Status Error Match         ${output}             7                  the parameter 'row_from' is out of range
 
 RemoveData Invalid Row Error
     Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "RemoveData", "table": "StdInputData", "row_from": 1024, "rows": 1}
-    Status Error Match         ${output}             7                  row out of range
+    Status Error Match         ${output}             7                  the parameter 'row_from' is out of range
 
 SetData Invalid Row Error
     Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1024, "rows": 1}
-    Status Error Match         ${output}             7                  row out of range
+    Status Error Match         ${output}             7                  the parameter 'row_from' is out of range
 
 # Currently fails in emergent. So comment it out until it is fixed there.
 # This is covered by https://grey.colorado.edu/bugzilla/show_bug.cgi?id=2000
