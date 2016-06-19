@@ -400,7 +400,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   taBase* tab = item->link()->taData();
   
   bool expand = false;
-  if (tab->InheritsFrom(&TA_taProject)) { // always expand project
+  if (tab && tab->InheritsFrom(&TA_taProject)) { // always expand project
     expand = true;
   }
   
@@ -415,7 +415,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     if (!(exp_flags & EF_CUSTOM_FILTER) && tab && (!(exp_flags & EF_EXPAND_FULLY))) {
       // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
       // those being treated like top level are specific networks (i.e. network -- not an actual group but has spec and layer groups
-      if (tab->InheritsFrom(&TA_taGroup_impl) || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
+      if (tab && tab->InheritsFrom(&TA_taGroup_impl) || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
         String name;
         if (tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
           name = tab->GetTypeDef()->OptionAfter("FILETYPE_");  // I didn't want to add another directive for this single case
@@ -505,8 +505,6 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     for (int i = 0; i < item->childCount(); ++i) {
       iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(item->child(i));
       if (child) {
-        // make sure the TREE_EXPANDED flag is cleared
-        taBase* child_tab = child->link()->taData();
         ExpandItem_impl(child, level, max_levels, exp_flags, is_subgroup);
       }
     }
@@ -542,14 +540,16 @@ void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   taBase* tab = item->link()->taData();
   int exp_flags = 0;
   
-  if (parent_type == iTreeView::TYPE_BROWSEVIEWER && tab->GetTypeDef() == &TA_Program && useNavigatorCustomExpand()) {
-    exp_flags |= EF_NAVIGATOR_FILTER;
-  }
-  else if (parent_type == iTreeView::TYPE_BROWSEVIEWER && tab->GetOwner(&TA_Program) && useNavigatorCustomExpand()) {
-    exp_flags |= EF_NAVIGATOR_FILTER;
-  }
-  else if (parent_type == iTreeView::TYPE_PROGRAMEDITOR && useEditorCustomExpand()) {
-    exp_flags |= EF_CUSTOM_FILTER;
+  if (tab) {
+    if (parent_type == iTreeView::TYPE_BROWSEVIEWER && tab->GetTypeDef() == &TA_Program && useNavigatorCustomExpand()) {
+      exp_flags |= EF_NAVIGATOR_FILTER;
+    }
+    else if (parent_type == iTreeView::TYPE_BROWSEVIEWER && tab->GetOwner(&TA_Program) && useNavigatorCustomExpand()) {
+      exp_flags |= EF_NAVIGATOR_FILTER;
+    }
+    else if (parent_type == iTreeView::TYPE_PROGRAMEDITOR && useEditorCustomExpand()) {
+      exp_flags |= EF_CUSTOM_FILTER;
+    }
   }
   
   exp_flags |= EF_DEFAULT_UNDER;
