@@ -2048,11 +2048,9 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
                "n_rows must be a positive integer value:",String(n_rows)))
     return false;
   
-  RowInRangeNormalize(st_row);
-  
-//  if(TestError(!RowInRangeNormalize(st_row), "InsertRows",
-//               "start row not in range:",String(st_row)))
-//    return false;
+  if(TestError(!RowInRangeNormalize(st_row), "InsertRows",
+               "start row not in range:",String(st_row)))
+    return false;
 
   bool rval = true;
   DataUpdate(true);

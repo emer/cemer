@@ -1001,7 +1001,12 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
     }
     // continuing now..
     if (!in_place_req) {
-      dest->InsertRows(0,1);
+      if (dest->rows == 0) {
+        dest->AddBlankRow();
+      }
+      else {
+        dest->InsertRows(0,1);
+      }
       dest->CopyFromRow(0, *src, row);
     }
   }
