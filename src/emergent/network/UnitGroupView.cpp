@@ -132,7 +132,7 @@ float UnitGroupView::GetUnitDisplayVal(const taVector2i& co, void*& base) {
   Layer* lay = this->layer(); //cache
   if(!lay) return 0.0f;
   Network* net = lay->own_net;
-  if(!net->HasNetFlag(Network::BUILT_INTACT)) return 0.0f; 
+  if(!net->IsBuiltIntact()) return 0.0f; 
 
   NetView* nv = getNetView();
   float val = nv->scale.zero;
@@ -198,7 +198,7 @@ void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
   if(!lay) return;
   Network* net = lay->own_net;
 
-  if(!net->HasNetFlag(Network::BUILT_INTACT)) return; 
+  if(!net->IsBuiltIntact()) return; 
   
   NetView* nv = getNetView();
   AllocUnitViewData();

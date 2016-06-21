@@ -16,7 +16,8 @@
 #include "DynEnum.h"
 #include <ProgEl>
 #include <ProgVar>
-  
+#include <MemberDef>
+
 TA_BASEFUNS_CTORS_DEFN(DynEnum);
 
 void DynEnum::Initialize() {
@@ -85,4 +86,16 @@ void  DynEnum::GetControlPanelLabel(MemberDef* mbr, String& label) const {
   if (prog_var) {
     prog_var->GetControlPanelLabel(mbr, label);
   }
+}
+
+taBase::DumpQueryResult DynEnum::Dump_QuerySaveMember(MemberDef* md) {
+  DumpQueryResult rval = DQR_SAVE; // only used for membs we match below
+  if(md->name == "value") {
+    if(owner && owner->InheritsFrom(&TA_ProgVar)) {
+      ProgVar* own = (ProgVar*)owner;
+      if(!own->HasVarFlag(ProgVar::SAVE_VAL))
+        rval = DQR_NO_SAVE;
+    }
+  }
+  return rval;
 }

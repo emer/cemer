@@ -49,7 +49,7 @@ public:
     CTRL_PANEL          = 0x0001, // #CONDSHOW_OFF_flags:LOCAL_VAR show this variable in the control panel
     CTRL_READ_ONLY      = 0x0002, // #CONDSHOW_ON_flags:CTRL_PANEL variable is read only (display but not edit) in the control panel
     NULL_CHECK          = 0x0004, // #CONDSHOW_ON_var_type:T_Object complain if object variable is null during checkconfig (e.g., will get assigned during run)
-    SAVE_VAL            = 0x0008, // #CONDSHOW_OFF_var_type:T_Object||flags:LOCAL_VAR save the value of the variable in the project -- good idea to turn off saving for variables that don't require persistence across saving and loading (and that change for each run and thus might affect merging of project files)
+    SAVE_VAL            = 0x0008, // #CONDSHOW_OFF_flags:LOCAL_VAR save the value of the variable in the project -- good idea to turn off saving for variables that don't require persistence across saving and loading (and that change for each run and thus might affect merging of project files)
     NEW_OBJ             = 0x0010, // #CONDSHOW_ON_var_type:T_Object&&flags:LOCAL_VAR automatically create a new object of given type when local variable is first initialized -- object will be automatically destroyed when this variable goes out of scope -- do not use if you are assigning this variable from a function return value -- only when you need a new temporary object of this type
     QUIET               = 0x0020, // turn off warning messages if they are not relevant (e.g., regarding global matrix vars)
     LOCAL_VAR           = 0x0040, // #NO_SHOW this is a local variable which does not set or update values!
@@ -68,7 +68,7 @@ public:
   taBaseRef     object_val;     // #CONDSHOW_ON_var_type:T_Object #CONDEDIT_ON_flags:EDIT_VAL #TYPE_ON_object_type #SCOPE_taProject object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
   TypeDef*      hard_enum_type; // #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase #LABEL_enum_type type information for hard enum (value goes in int_val)
   DynEnum       dyn_enum_val;   // #CONDSHOW_ON_var_type:T_DynEnum #LABEL_enum_val dynamic enum value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
-  bool          objs_ptr;       // #HIDDEN this is a pointer to a variable in the objs list of a program
+  bool          objs_ptr;       // #HIDDEN this is a pointer to a variable in the objs list of a program -- this flag is set by the ProgObjList object automatically
   VarFlags      flags;          // flags controlling various things about how the variable appears and is used
   bool          reference;      // #CONDSHOW_ON_flags:FUN_ARG make this a reference variable (only for function arguments) which allows the function to modify the argument value, making it in effect a return value from the function when you need multiple return values
   String        desc;           // #EDIT_DIALOG Description of what this variable is for

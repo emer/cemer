@@ -112,6 +112,8 @@ void Layer::InitLinks() {
   AutoNameMyMembers();
 
   own_net = GET_MY_OWNER(Network);
+  if(own_net)
+    own_net->ClearIntact();
   UpdtAbsPosFlag();
   if(pos == 0)
     SetDefaultPos();
@@ -128,6 +130,8 @@ void Layer::InitLinks() {
 
 void Layer::CutLinks() {
   if(!owner) return; // already replacing or already dead
+  if(own_net)
+    own_net->ClearIntact();
   DisConnect();
   pos.CutLinks();
   pos_abs.CutLinks();
@@ -157,6 +161,7 @@ void Layer::CutLinks() {
   
   m_prv_unit_spec = NULL;
   m_prv_layer_flags = LF_NONE;
+  own_net = NULL;
   inherited::CutLinks();
 }
 

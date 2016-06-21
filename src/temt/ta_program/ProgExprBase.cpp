@@ -76,26 +76,27 @@ void ProgExprBase::Copy_(const ProgExprBase& cp) {
   var_names = cp.var_names;
   bad_vars = cp.bad_vars;
 
-  //  vars = cp.vars;
-  // the above copy does not set the owner!
-  vars.Reset();
-  for(int i=0;i<cp.vars.size;i++) {
-    ProgVarRef* pvr = new ProgVarRef;
-    vars.Add(pvr);
-    pvr->Init(this);
-    pvr->set(cp.vars[i]->ptr());
-  }
+  ReParseExpr();                // get all new vars for our new location!
 }
 
 void ProgExprBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  ReParseExpr();
+}
+
+void ProgExprBase::UpdateAfterMove_impl(taBase* old_owner) {
+  inherited::UpdateAfterMove_impl(old_owner);
+  ReParseExpr();
+}
+
+void ProgExprBase::ReParseExpr() {
   if(HasExprFlag(NO_PARSE)) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying()) return;
   ProgEl* pel = GET_MY_OWNER(ProgEl);
   if(pel && (pel->GetEnabled() == 0)) return;
   ParseExpr();
-  if(!HasExprFlag(NO_VAR_ERRS)) {
+  if(!HasExprFlag(NO_VAR_ERRS)) { // todo: not 100% sure this should be here or only in UAE
     ProgEl* pel = GET_MY_OWNER(ProgEl);
     if (pel) {
       if(!taMisc::is_loading && bad_vars.size > 0) {

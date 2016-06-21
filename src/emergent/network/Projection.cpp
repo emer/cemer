@@ -79,6 +79,7 @@ void Projection::InitLinks() {
   taBase::Own(prjn_clr, this);
   Network* mynet = GET_MY_OWNER(Network);
   if(mynet) {
+    mynet->ClearIntact();
     mynet->SetProjectionDefaultTypes(this);
   }
 
@@ -367,7 +368,7 @@ void Projection::CheckSpecs() {
 bool Projection::UpdateConSpecs(bool force) {
   if((!(bool)layer) || (!(bool)from)) return false;
   Network* mynet = GET_MY_OWNER(Network);
-  if(!mynet || !mynet->HasNetFlag(Network::BUILT_INTACT)) return false;
+  if(!mynet || !mynet->IsBuiltIntact()) return false;
   ConSpec* sp = con_spec.SPtr();
   if(sp) {
     if(TestWarning(!con_type->InheritsFrom(sp->min_obj_type), "UpdateConSpec",

@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 
-// NOTE: prior to 12/11 the value for a non-bits enum was encoded as the index into
+// NOTE: prior to 12/2011 the value for a non-bits enum was encoded as the index into
 // the list of enums.  this is typically the same as the actual int value, but
 // not always.  it has now been changed to the more conventional storage of the
 // actual numerical value in all cases..
@@ -68,6 +68,8 @@ public:
 
   String        GetDisplayName() const override;
   void          GetControlPanelLabel(MemberDef* mbr, String& label) const override; // #IGNORE get label only
+
+  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override;
 
   TA_SIMPLE_BASEFUNS(DynEnum);
 protected:

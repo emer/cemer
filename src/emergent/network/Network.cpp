@@ -228,7 +228,7 @@ void Network::InitLinks() {
   brain_atlas = brain_atlases->FindNameContains("Talairach"); // default
 
   ClearNetFlag(BUILT);
-  ClearNetFlag(INTACT);
+  ClearIntact();
   
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_trl_comm, this);
@@ -344,7 +344,7 @@ void Network::UpdateAfterEdit_impl(){
       SetNetFlag(BUILD_INIT_WTS);
     }
     ClearNetFlag(BUILT);
-    ClearNetFlag(INTACT);
+    ClearIntact();
   }
   else {
     if(brain_atlas)
@@ -369,7 +369,7 @@ void Network::UpdtAfterNetMod() {
     (unit_vars_size != unit_vars_built->size);
 
   if(units_diff)
-    ClearNetFlag(INTACT);
+    ClearIntact();
 
   // make sure active flags are updated on all connections, e.g., from lesions
   small_batch_n_eff = small_batch_n;
@@ -1491,7 +1491,7 @@ Layer* Network::NewLayer() {
 
 void Network::RemoveUnits() {
   ClearNetFlag(BUILT);
-  ClearNetFlag(INTACT);
+  ClearIntact();
   RemoveCons();
   taMisc::Busy();
   StructUpdate(true);
@@ -1508,7 +1508,7 @@ void Network::RemoveUnits() {
 
 void Network::RemoveCons() {
   ClearNetFlag(BUILT);
-  ClearNetFlag(INTACT);
+  ClearIntact();
   if(!thrs_n_recv_cgps) return; // cgps already gone
   taMisc::Busy();
   StructUpdate(true);
@@ -3724,7 +3724,7 @@ taBase* Network::ChooseNew(taBase* origin) {
 
 void Network::BgRunKilled() {
   if(!HasNetFlag(SAVE_KILLED_WTS)) return;
-  if(!HasNetFlag(BUILT_INTACT) || epoch < 1) return;
+  if(!IsBuiltIntact() || epoch < 1) return;
   String fname;
   if(file_name.nonempty()) {
     fname = file_name;

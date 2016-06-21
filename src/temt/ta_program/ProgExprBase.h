@@ -88,6 +88,8 @@ public:
 
   virtual bool  ParseExpr();
   // parse the current expr for variables and update vars and var_expr accordingly (returns false if there are some bad_vars)
+  virtual void  ReParseExpr();
+  // calls ParseExpr if appropriate
   virtual String GetFullExpr() const;
   // get full expression with variable names substituted appropriately
 
@@ -146,6 +148,7 @@ protected:
   // skip over a path expression
 
   void UpdateAfterEdit_impl() override;
+  void UpdateAfterMove_impl(taBase* old_owner) override;
   void CheckThisConfig_impl(bool quiet, bool& rval) override;
   void SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) override;
   void SmartRef_SigEmit(taSmartRef* ref, taBase* obj,

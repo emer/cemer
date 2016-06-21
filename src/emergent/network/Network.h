@@ -378,6 +378,13 @@ public:
   { if(on) SetNetFlag(flg); else ClearNetFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
+  inline void           ClearIntact()  { ClearNetFlag(INTACT); }
+  // call this when any element in the network is updated such that the current built status is no longer valid 
+  inline bool           IsIntact()  { return HasNetFlag(INTACT); }
+  // is this network currently intact?
+  inline bool           IsBuiltIntact()  { return HasNetFlag(BUILT) && HasNetFlag(INTACT); }
+  // is this network currently built and intact?
+
   inline bool   ThrInRange(int thr_no, bool err_msg = true) const
   { if(thr_no >= 0 && thr_no < n_thrs_built) return true;
     TestError(err_msg, "ThrInRange", "thread number:", String(thr_no), "out of range");

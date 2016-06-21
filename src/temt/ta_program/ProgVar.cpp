@@ -84,19 +84,28 @@ void ProgVar::SetFlagsByOwnership() {
     ClearVarFlag(LOCAL_VAR);
     ClearVarFlag(FUN_ARG);
     ClearVarFlag(PGRM_ARG);
-    if(!objs_ptr && var_type == T_Object && object_type && object_type->InheritsFrom(&TA_taMatrix)) {
-      if(!HasVarFlag(QUIET)) {
-        TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
-                    "Matrix pointers should be located in LocalVars within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
+    Program* myprg = (Program*)GetOwner(&TA_Program);
+    if(this->owner == &(myprg->args)) {
+      SetVarFlag(PGRM_ARG);
+    }
+    if(var_type == T_Object) {
+      if(objs_ptr) {
+        SetVarFlag(SAVE_VAL);   // all objs_ptr vars MUST save
+      }
+      else { // !objs_ptr
+        if(object_type && object_type->InheritsFrom(&TA_taMatrix)) {
+          if(!HasVarFlag(QUIET)) {
+            TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
+                        "Matrix pointers should be located in LocalVars within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
+          }
+        }
       }
     }
-    Program* myprg = (Program*)GetOwner(&TA_Program);
-    if(myprg->args.FindName(this->GetName()))
-      SetVarFlag(PGRM_ARG);
   }
   else {
     objs_ptr = false;           // this is incompatible with being local
     SetVarFlag(LOCAL_VAR);
+    ClearVarFlag(SAVE_VAL);
     ClearVarFlag(PGRM_ARG);
     ClearVarFlag(CTRL_PANEL);
     ClearVarFlag(CTRL_READ_ONLY);
@@ -166,9 +175,9 @@ void ProgVar::Copy_(const ProgVar& cp) {
   desc = cp.desc;
   init_from = cp.init_from;
   
-  SetFlagsByOwnership();
   objs_ptr = false; // only the original var can have special relationship with object
   object_val.set(cp.object_val.ptr());
+  SetFlagsByOwnership();
 }
 
 bool ProgVar::CheckUndefType(const String& function_context, bool quiet) const {
@@ -739,7 +748,6 @@ taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
     rval = (var_type == T_Object) ? DQR_SAVE : DQR_NO_SAVE;
   }
   else if ((md->name == "object_val")) {
-    always_save = true;
     rval = (var_type == T_Object) ? DQR_SAVE : DQR_NO_SAVE;
   }
   else if (md->name == "hard_enum_type") {
@@ -747,6 +755,7 @@ taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
     rval = (var_type == T_HardEnum) ? DQR_SAVE : DQR_NO_SAVE;
   }
   else if (md->name == "dyn_enum_val") {
+    always_save = true;         // yes -- dyn enum type is in there and must be saved
     rval = (var_type == T_DynEnum) ? DQR_SAVE : DQR_NO_SAVE;
   }
   else {
