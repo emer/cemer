@@ -2074,6 +2074,20 @@ void taBase::setStale() {
   }
 }
 
+void taBase::SetMember(const String& member, const String& value) {
+  TypeDef* td = GetTypeDef();
+
+  ta_memb_ptr mbr_off = 0;
+  int base_off = 0;
+  MemberDef* mbr_def = TypeDef::FindMemberPathStatic(td, base_off, mbr_off,
+                                                 member, false); // no warn
+  if(mbr_def && !mbr_def->HasOption("READ_ONLY") && !mbr_def->HasOption("GUI_READ_ONLY")) {
+    void* address = MemberDef::GetOff_static(this, base_off, mbr_off);
+    mbr_def->type->SetValStr(value, address, NULL, mbr_def);
+    UpdateAfterEdit();
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////
 //      Data Links -- notify other guys when you change
 

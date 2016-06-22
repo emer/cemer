@@ -1032,6 +1032,9 @@ public:
   // #IGNORE implemented by few, esp. Program and Network -- Stale indicates the need to "rebuild" an object with such semantics (ex regen script, rebuild a net, etc.)
   virtual void          setStale();
   // #CAT_ObjectMgmt set the stale flag indicating a change in object values; gets forwarded up ("true" is implied, only the impl obj defines when it is cleared)
+  
+  virtual void          SetMember(const String& member, const String& value);
+  // #DYN1 Set member to value for each of the selected objects. Member will be the member name or will be object_name.member_name, e.g. input_size.retina_size.x, replace any space with '_'
 
 protected:  // Impl
   virtual void          UpdateAfterEdit_impl() { };
