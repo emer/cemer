@@ -588,16 +588,26 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& ori
 }
 
 bool taImageProc::CropImage_float(float_Matrix& crop_img, float_Matrix& orig_img,
-                                  int crop_width, int crop_height, EdgeMode edge) {
+                                  int crop_width, int crop_height, EdgeMode edge, bool random_origin) {
   taVector2i img_size(orig_img.dim(0), orig_img.dim(1));
   taVector2i crop_size(crop_width, crop_height);
   if(crop_size.x < 0) crop_size.x = img_size.x;
   if(crop_size.y < 0) crop_size.y = img_size.y;
 
-  taVector2i img_ctr = img_size / 2;
-  taVector2i crop_ctr = crop_size / 2;
-  taVector2i img_off = img_ctr - crop_ctr; // offset for 0,0 pixel of cropped image, in orig_img
-
+  taVector2i img_ctr;
+  taVector2i crop_ctr;
+  taVector2i img_off; // offset for 0,0 pixel of cropped image, in orig_img
+  
+  if (random_origin) {
+    img_off.x = Random::IntZeroN(img_size.x - crop_size.x);
+    img_off.y = Random::IntZeroN(img_size.y - crop_size.y);
+  }
+  else { // crop from center
+    img_ctr = img_size / 2;
+    crop_ctr = crop_size / 2;
+    img_off = img_ctr - crop_ctr; // offset for 0,0 pixel of cropped image, in orig_img
+  }
+  
   int nclrs = 1;
   if(orig_img.dims() == 3) { // rgb
     nclrs = orig_img.dim(2);
