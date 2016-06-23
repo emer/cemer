@@ -1457,6 +1457,9 @@ void iMainWindowViewer::editRedo() {
 }
 
 void iMainWindowViewer::editFind() {
+  if (!this->isActiveWindow()) {
+    return;
+  }
   // assume root of this window's browser
   taiSigLink* root = NULL;
 
