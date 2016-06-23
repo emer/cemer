@@ -356,20 +356,24 @@ public:
 
   static bool           tree_spring_loaded; // #SAVE #CAT_GUI do the tree view folders expand during drag and drop
   static short          spring_loaded_delay; // #SAVE #DEF_1000 #MIN_500 #MAX_2000 delay in milliseconds for expanding
-  static bool           project_log;  // #SAVE save a project-level log file (.plog), which contains a record of all the css console messages, and other debugging and event logging information, which can be useful for reporting bugs when the software crashes unexpectedly -- e.g., if you attach the .plog file to a bug report, it can be helpful in diagonsing what is causing the problem.
+
+  ////////////////////////////////////////////////////////
+  //    Logging settings
+
+  static bool           project_log;  // #SAVE save a project-level log file (.plog), which contains a record of all the css console messages, and other debugging and event logging information, which can be useful for reporting bugs when the software crashes unexpectedly -- e.g., if you attach the .plog file to a bug report, it can be helpful in diagonsing what is causing the problem.  if this is NOT selected, a generic log file is still saved in the user's library directory (~/lib/emergent/log on linux, ~/Library/Emergent/log on mac) as default_project_log.plog
+  static bool           ext_messages; // #SAVE #EXPERT display to the console the stdout and stderr messages from external libraries outside of the emergent system -- these can be useful for diagnosing problems -- even if not selected for display to console here, these messages will be saved in the project_log (see project_log option for details)
+  static LoadVerbosity  verbose_load;   // #SAVE #CAT_File #DEF_QUIET #EXPERT report the names of things during loading -- for debugging the loading process
   
- ////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////
   //    File/Paths Info
 
   static int            strm_ver;       // #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
   static bool           save_compress;  // #SAVE #DEF_false #CAT_File compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
 #ifndef NO_TA_BASE
-  static taLicense::StdLicense license_def;       // #SAVE #CAT_File default license to use for new projects that are created -- can change for specific projects -- see license field on projects
+  static taLicense::StdLicense license_def; // #SAVE #CAT_File default license to use for new projects that are created -- can change for specific projects -- see license field on projects
 #endif
   static String         license_owner;     // #SAVE #CAT_File default legal owner of new projects that are created by this user (e.g., Regents of University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects
   static String         license_org;       // #SAVE #CAT_File default organization that actually created the project for new projects that are created by this user (e.g., MyLab at University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects -- defaults to license_owner if left blank
-
-  static LoadVerbosity  verbose_load;   // #SAVE #CAT_File #EXPERT report the names of things during loading -- for debugging
 
   static String         app_dir;
   // #SHOW #READ_ONLY #CAT_File base of installed app directory -- override with "-a <path>" command line switch

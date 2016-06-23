@@ -311,8 +311,16 @@ short                   taMisc::num_browse_history = 20;
 
 bool                    taMisc::tree_spring_loaded = true;
 short                   taMisc::spring_loaded_delay = 1000;  // milliseconds
-bool                    taMisc::project_log = false;
 taMisc::KeyBindingSet   taMisc::current_key_bindings = taMisc::KEY_BINDINGS_CUSTOM;
+
+
+////////////////////////////////////////////////////////
+//    Logging settings
+
+bool                    taMisc::project_log = false;
+bool                    taMisc::ext_messages = false;
+taMisc::LoadVerbosity   taMisc::verbose_load = taMisc::QUIET;
+
 
 ////////////////////////////////////////////////////////
 //      File/Path/Arg Info
@@ -325,7 +333,6 @@ taLicense::StdLicense taMisc::license_def = taLicense::NO_LIC;
 String          taMisc::license_owner;
 String          taMisc::license_org;
 taMisc::SaveFormat      taMisc::save_format = taMisc::PRETTY;
-taMisc::LoadVerbosity   taMisc::verbose_load = taMisc::QUIET;
 
 String  taMisc::app_dir; // set early in startup, algorithmically to find app dir
 String  taMisc::app_plugin_dir;
