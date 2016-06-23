@@ -384,20 +384,12 @@ bool BaseSpec::UpdtIsUsed() {
   return is_used;
 }
 
-void BaseSpec::SetParam(const String& param_path, const String& value) {
-  TypeDef* td = GetTypeDef();
-  ta_memb_ptr net_mbr_off = 0;
-  int net_base_off = 0;
-  MemberDef* smd = TypeDef::FindMemberPathStatic(td, net_base_off, net_mbr_off,
-                                                 param_path, false); // no warn
-  if (smd) {
-    void* sbaddr = MemberDef::GetOff_static(this, net_base_off, net_mbr_off);
-    
-    smd->type->SetValStr(value, sbaddr, NULL, smd);
-    UpdateAfterEdit();
-    
-    children.SetParam(&TA_BaseSpec, param_path, value); // use base spec here to not restrict type any further in children
-  }
+void BaseSpec::SetMember(const String& member, const String& value) {
+  String mbr_eff = member;
+  if(mbr_eff.contains('.'))
+    mbr_eff = mbr_eff.before('.');
+  SetUnique(mbr_eff, true);
+  inherited::SetMember(member, value);
 }
 
 

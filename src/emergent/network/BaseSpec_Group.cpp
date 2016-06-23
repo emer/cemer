@@ -178,7 +178,7 @@ void BaseSpec_Group::SetParam(TypeDef* spec_type, const String& param_path,
                               const String& value) {
   FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     if(bs->InheritsFrom(spec_type))
-      bs->SetParam(param_path, value);
+      bs->SetMember(param_path, value);
   }
 }
 

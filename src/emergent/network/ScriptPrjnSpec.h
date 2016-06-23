@@ -34,7 +34,7 @@ public:
   Projection*	prjn;		// #READ_ONLY #NO_SAVE this holds the argument to the prjn
   bool          make_cons;      // #READ_ONLY #NO_SAVE this holds the argument to the make_cons
   bool          do_init_wts;    // #READ_ONLY #NO_SAVE this is true when Init_Weights_Prjn is called
-  SArg_Array	s_args;		// string-valued arguments to pass to script
+  SArg_Array	s_args;		// string-valued arguments to pass to the script
 
   void          Connect_impl(Projection* prj, bool make_cns) override;
   void	        Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
