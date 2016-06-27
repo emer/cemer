@@ -1046,35 +1046,36 @@ String taiMisc::GetSequenceFromActionFriendly(taiMisc::BindingContext context, t
   else if (friendly_str.contains("Meta")) {
     friendly_str = friendly_str.repl("Meta", "control");
   }
-  else if (friendly_str.contains("Alt")) {
-    if (context == taiMisc::TEXTEDIT_CONTEXT) {
-      if (action == taiMisc::TEXTEDIT_COPY_CLEAR) {
-        friendly_str = friendly_str.repl("?", "W");
-      }
-      if (action == taiMisc::TEXTEDIT_WORD_FORWARD) {
-        friendly_str = friendly_str.repl("?", "F");
-      }
-      if (action == taiMisc::TEXTEDIT_WORD_BACKWARD) {
-        friendly_str = friendly_str.repl("?", "B");
-      }
-    }
-    if (context == taiMisc::PROJECTWINDOW_CONTEXT) {
-      if (action == taiMisc::PROJECTWINDOW_FRAME_LEFT_II) {
-        friendly_str = friendly_str.repl("?", "J");
-      }
-      if (action == taiMisc::PROJECTWINDOW_FRAME_RIGHT_II) {
-        friendly_str = friendly_str.repl("\xac", "L");
-      }
-    }
-    if (context == taiMisc::TREE_CONTEXT) {
-      if (action == taiMisc::TREE_FIND) {
-        friendly_str = friendly_str.repl("?", "F");
-      }
-      if (action == taiMisc::taiMisc::TREE_FIND_REPLACE) {
-        friendly_str = friendly_str.repl("?", "R");
-      }
-    }
-  }
+// not needed since Qt 5.5
+//  else if (friendly_str.contains("Alt")) {
+//    if (context == taiMisc::TEXTEDIT_CONTEXT) {
+//      if (action == taiMisc::TEXTEDIT_COPY_CLEAR) {
+//        friendly_str = friendly_str.repl("?", "W");
+//      }
+//      if (action == taiMisc::TEXTEDIT_WORD_FORWARD) {
+//        friendly_str = friendly_str.repl("?", "F");
+//      }
+//      if (action == taiMisc::TEXTEDIT_WORD_BACKWARD) {
+//        friendly_str = friendly_str.repl("?", "B");
+//      }
+//    }
+//    if (context == taiMisc::PROJECTWINDOW_CONTEXT) {
+//      if (action == taiMisc::PROJECTWINDOW_FRAME_LEFT_II) {
+//        friendly_str = friendly_str.repl("?", "J");
+//      }
+//      if (action == taiMisc::PROJECTWINDOW_FRAME_RIGHT_II) {
+//        friendly_str = friendly_str.repl("\xac", "L");
+//      }
+//    }
+//    if (context == taiMisc::TREE_CONTEXT) {
+//      if (action == taiMisc::TREE_FIND) {
+//        friendly_str = friendly_str.repl("?", "F");
+//      }
+//      if (action == taiMisc::taiMisc::TREE_FIND_REPLACE) {
+//        friendly_str = friendly_str.repl("?", "R");
+//      }
+//    }
+//  }
 #endif
   return friendly_str;
 }
@@ -1234,16 +1235,8 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_DELETE_II, QKeySequence());
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_TOGGLE_PANEL_PIN, QKeySequence(control_key + Qt::Key_P));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_TOGGLE_PANEL_PIN_II, QKeySequence());
-  
-#ifdef TA_OS_MAC  // why both control and alt for shifting focus
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_LEFT_II, QKeySequence(Qt::AltModifier + 0x2206));
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_RIGHT_II, QKeySequence(Qt::AltModifier + 0xAC));
-#else
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_LEFT_II, QKeySequence(Qt::AltModifier + Qt::Key_J));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_RIGHT_II, QKeySequence(Qt::AltModifier + Qt::Key_L));
-#endif  
-  
-//  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_XYZ, QKeySequence(Qt::Key_Question));
 
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_STOP, QKeySequence(meta_key + Qt::Key_C));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_STOP_II, QKeySequence());
@@ -1377,13 +1370,8 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_HISTORY_FORWARD_II, QKeySequence());
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_HISTORY_BACKWARD, QKeySequence(control_key + Qt::Key_Left));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_HISTORY_BACKWARD_II, QKeySequence());
-#ifdef TA_OS_MAC
-  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND, QKeySequence(Qt::AltModifier + 0x191));
-  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_REPLACE, QKeySequence(Qt::AltModifier + 0xAE));
-#else
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND, QKeySequence(Qt::AltModifier + Qt::Key_F));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_REPLACE, QKeySequence(Qt::AltModifier + Qt::Key_R));
-#endif
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_II, QKeySequence());
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_REPLACE_II, QKeySequence());
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_DECREASE_FONTSIZE, QKeySequence(QKeySequence::ZoomOut));
@@ -1465,15 +1453,12 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_PAGE_UP_II, QKeySequence());
 #ifdef TA_OS_MAC
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_PAGE_DOWN, QKeySequence(control_key + Qt::Key_V));
-  default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_COPY_CLEAR, QKeySequence(Qt::AltModifier + 0x2211)); // W
-  default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_WORD_FORWARD, QKeySequence(Qt::AltModifier + 0x191)); // F
-  default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_WORD_BACKWARD, QKeySequence(Qt::AltModifier + 0x222B)); // B
 #else
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_PAGE_DOWN, QKeySequence());  // leave empty - ctrl + v is paste on non-mac
+#endif
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_COPY_CLEAR, QKeySequence(Qt::AltModifier + Qt::Key_W));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_WORD_FORWARD, QKeySequence(Qt::AltModifier + Qt::Key_F));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_WORD_BACKWARD, QKeySequence(Qt::AltModifier + Qt::Key_B));
-#endif
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_PAGE_DOWN_II, QKeySequence());  // leave empty - ctrl + v is paste on non-mac
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_COPY_CLEAR_II, QKeySequence());
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_WORD_FORWARD_II, QKeySequence());
