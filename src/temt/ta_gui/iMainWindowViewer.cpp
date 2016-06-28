@@ -1281,21 +1281,27 @@ void iMainWindowViewer::Constr_HelpMenu()
   helpHelpAction->setStatusTip(s);
 
   helpAboutAction = AddAction(new iAction("&About", QKeySequence(), "helpAboutAction"));
+  
+  helpAPIAction = AddAction(new iAction("&API Browser", QKeySequence(), "helpAPIAction"));
+
   helpFileBugAction = AddAction(new iAction("Report Bug", QKeySequence(), "helpFileBugAction"));
   helpFileBugAction->setIcon(QIcon(QPixmap(":/images/report_bug_icon.png")));
   helpFileBugAction->setToolTip(taiMisc::ToolTipPreProcess("Opens web page for reporting a problem or requesting an enhancement"));
 
   // Build menu items.
   helpMenu->AddAction(helpHelpAction);
+  helpMenu->AddAction(helpAPIAction);
   helpMenu->AddAction(helpFileBugAction);
   helpMenu->insertSeparator();
   helpMenu->AddAction(helpAboutAction);
   
   helpHelpAction->setEnabled(true);
+  helpAPIAction->setEnabled(true);
   helpFileBugAction->setEnabled(true);
 
   // Make connetions.
   connect(helpHelpAction, SIGNAL(Action()), this, SLOT(helpHelp()));
+  connect(helpAPIAction, SIGNAL(Action()), this, SLOT(toolsHelpBrowser()));
   connect(helpAboutAction, SIGNAL(Action()), this, SLOT(helpAbout()));
   connect(helpFileBugAction, SIGNAL(Action()), this, SLOT(FileBugReport()));
 }
@@ -2468,7 +2474,16 @@ void iMainWindowViewer::WindowMinimize() {
 void iMainWindowViewer::WindowZoom()  {
   foreach (QWidget *widget, QApplication::topLevelWidgets()) {
     if (widget->isActiveWindow()) {
-      widget->showMaximized();
+      if (!widget->isMaximized()) {
+        window_rect_pre_zoom = widget->rect();
+        window_pos_pre_zoom = widget->pos();
+        widget->showMaximized();
+      }
+      else {
+        widget->showNormal();
+        widget->setGeometry(window_rect_pre_zoom);
+        widget->move(window_pos_pre_zoom);
+      }
       break;
     }
   }

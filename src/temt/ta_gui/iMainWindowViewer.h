@@ -211,6 +211,7 @@ public:
   iAction*            progStatusAction; // program run status and button
 
   iAction*            helpHelpAction;
+  iAction*            helpAPIAction;
   iAction*            helpAboutAction;
   iAction*            helpFileBugAction;
   
@@ -466,7 +467,10 @@ protected:
   bool                  m_close_proj_now; // flag used to pass command to close proj
   int                   m_unique_id;
   bool                  tools_dock_was_visible;  // holds on to the visibility of the programming dock so it can be restored when the either the tree or the panels are restored
-
+  // the window_pos and window_rect are only saved before zooming and only used for restoring from zoom!
+  QPoint                 window_pos_pre_zoom;  // upper left window pos before zoom
+  QRect                  window_rect_pre_zoom; // window rect before zoom
+  
   void         closeEvent(QCloseEvent* ev) override;
   bool         event(QEvent* ev) override;
   void         resizeEvent(QResizeEvent* ev) override;
