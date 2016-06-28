@@ -153,7 +153,7 @@ int ProgVar::GetEnabled() const {
 }
 
 int ProgVar::GetSpecialState() const {
-  if(HasVarFlag(LOCAL_VAR)) return 0;
+  if(IsLocal()) return 0;
   if(init_from) return 1;
   if(!HasVarFlag(SAVE_VAL)) return 4;
   return 0;
@@ -247,7 +247,7 @@ void ProgVar::UpdateAfterEdit_impl() {
   SetFlagsByOwnership();
   UpdateUsedFlag();
   GetInitFromVar(true);         // warn
-  TestError(HasVarFlag(LOCAL_VAR) && var_type == T_HardEnum, "UpdateAfterEdit",
+  TestError(IsLocal() && var_type == T_HardEnum, "UpdateAfterEdit",
               "Hard-coded (C++) enum's are not supported for local variables -- please use an int or String variable instead.");
 
   UpdateCssObjVal();
@@ -259,7 +259,7 @@ void ProgVar::UpdateAfterEdit_impl() {
 }
 
 bool ProgVar::UpdateCssObjVal() {
-  if(var_type != T_Object || HasVarFlag(LOCAL_VAR) || css_idx < 0)
+  if(var_type != T_Object || IsLocal() || css_idx < 0)
     return false;
 
   Program* myprg = (Program*)GetOwner(&TA_Program);
@@ -303,14 +303,14 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
 	     "Program variable type is undefined -- you must pick an appropriate data type for the variable to hold the information it needs to hold");
 
   if(var_type == T_Object) {
-    if(!HasVarFlag(LOCAL_VAR) && HasVarFlag(NULL_CHECK) && !object_val) {
+    if(!IsLocal() && HasVarFlag(NULL_CHECK) && !object_val) {
       if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
                                     "object pointer is NULL");
       rval = false;
     }
     if(object_type) {
       if(!HasVarFlag(QUIET)) {
-        TestWarning(!objs_ptr && !HasVarFlag(LOCAL_VAR) && object_type->InheritsFrom(&TA_taMatrix),
+        TestWarning(!objs_ptr && !IsLocal() && object_type->InheritsFrom(&TA_taMatrix),
                     "ProgVar", "for Matrix* ProgVar named:",name,
                     "Matrix pointers should be located in LocalVars within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
       }
@@ -764,7 +764,7 @@ taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
 
   // override saving based on SAVE_VAL -- only if not always_save flag on, and
   // always save LOCAL_VAR's because they are initializers
-  if(!HasVarFlag(SAVE_VAL) && !always_save && !HasVarFlag(LOCAL_VAR)) {
+  if(!HasVarFlag(SAVE_VAL) && !always_save && !IsLocal()) {
     rval = DQR_NO_SAVE;
   }
   return rval;
@@ -883,7 +883,7 @@ const String ProgVar::GenCssVar_impl() {
   rval += GenCssType() + " ";
   rval += name;
   rval += ";  ";
-  if(HasVarFlag(LOCAL_VAR)) {
+  if(IsLocal()) {
     rval += name + " = " + GenCssInitVal() + ";";
   }
   return rval;

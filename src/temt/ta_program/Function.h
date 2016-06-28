@@ -26,7 +26,8 @@
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
-class ProgVar; // 
+class ProgVar; //
+class LocalVars; //
 
 
 taTypeDef_Of(Function);
@@ -63,6 +64,10 @@ public:
   // generate forward declarations for all functions -- allows them to appear in any order
 
   ProgVar*     FindVarName(const String& var_nm) const override;
+  virtual ProgVar* FindMakeVarName(const String& var_nm, bool& made_new);
+  virtual LocalVars* FindMakeLocalVars();
+  // find or make the main LocalVars for this function, in program element 0
+  
   String       GetDisplayName() const override;
   String       GetTypeDecoKey() const override { return "Function"; }
   String       GetToolbarName() const override { return "function"; }

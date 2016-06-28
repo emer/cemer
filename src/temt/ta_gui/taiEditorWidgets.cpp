@@ -42,11 +42,9 @@ void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
 {
 // have to be a taBase to use SelEdit
   if (!rbase || !md) return;
-//obs  if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
-//    return;
   // get list of control panels
   taProject* proj = dynamic_cast<taProject*>(rbase->GetThisOrOwner(&TA_taProject));
-  if (!proj || proj->ctrl_panels.leaves == 0) return;
+  // if (!proj || proj->ctrl_panels.leaves == 0) return;
 
   // if any edits, populate menu for adding, for all seledits not already on
   QMenu* sub = menu->addMenu("Add to ControlPanel");
@@ -56,8 +54,7 @@ void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
   for (int i = 0; i < proj->ctrl_panels.leaves; ++i) {
     ControlPanel* se = proj->ctrl_panels.Leaf(i);
     act = sub->addAction(se->GetName()/*, slot_obj, slot*/); //
-    act->setData(i); // sets data, which is what is used in signal, to i
-    // determine if already on that seledit, and disable if it is (we do this to maintain constant positionality in menu)
+    act->setData(QVariant::fromValue((void*)se));
     if (se->FindMbrBase(rbase, md) >= 0)
       act->setEnabled(false);
   }
@@ -71,8 +68,7 @@ void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
   for (int i = 0; i < proj->ctrl_panels.leaves; ++i) {
     ControlPanel* se = proj->ctrl_panels.Leaf(i);
     act = sub->addAction(se->GetName()/*, slot_obj, slot*/);
-    act->setData(i); // sets data, which is what is used in signal, to i
-    // determine if already on that seledit, and disable if it isn't
+    act->setData(QVariant::fromValue((void*)se));
     if (se->FindMbrBase(rbase, md) < 0)
       act->setEnabled(false);
   }
@@ -86,9 +82,7 @@ void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
   for (int i = 0; i < proj->param_sets.leaves; ++i) {
     ParamSet* ps = proj->param_sets.Leaf(i);
     act = sub->addAction(ps->GetName()/*, slot_obj, slot*/); //
-    // values above 100 for param set edit items - figure out how to change the slot! - that would be much cleaner
-    act->setData(100+i); // sets data, which is what is used in signal, to i
-    // determine if already on that seledit, and disable if it is (we do this to maintain constant positionality in menu)
+    act->setData(QVariant::fromValue((void*)ps));
     if (ps->FindMbrBase(rbase, md) >= 0)
       act->setEnabled(false);
   }
@@ -102,14 +96,48 @@ void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
   for (int i = 0; i < proj->param_sets.leaves; ++i) {
     ParamSet* ps = proj->param_sets.Leaf(i);
     act = sub->addAction(ps->GetName()/*, slot_obj, slot*/);
-    // values above 100 for param set edit items - figure out how to change the slot! - that would be much cleaner
-    act->setData(100+i); // sets data, which is what is used in signal, to i
-    // determine if already on that seledit, and disable if it isn't
+    act->setData(QVariant::fromValue((void*)ps));
     if (ps->FindMbrBase(rbase, md) < 0)
       act->setEnabled(false);
   }
   if (sub->actions().count() == 0)
     sub->setEnabled(false); // show item for usability, but disable
+
+  TypeDef* pstd = taMisc::FindTypeName("ParamStep", false);
+  if(pstd) {
+    sub = menu->addMenu("Add to ParamStep");
+    connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
+    sub->setFont(menu->font());
+    act = NULL; // we need to track last one
+    for (int i = 0; i < pstd->tokens.size; ++i) {
+      void* tok = pstd->tokens[i];
+      if(!tok) continue;
+      ControlPanel* ps = (ControlPanel*)tok;
+      if(!ps->SameScope(proj, &TA_taProject)) continue;
+      act = sub->addAction(ps->GetName()/*, slot_obj, slot*/); //
+      act->setData(QVariant::fromValue((void*)ps));
+      if (ps->FindMbrBase(rbase, md) >= 0)
+        act->setEnabled(false);
+    }
+    if (sub->actions().count() == 0)
+      sub->setEnabled(false); // show item for usability, but disable
+
+    sub = menu->addMenu("Remove from ParamStep");
+    connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
+    sub->setFont(menu->font());
+    for (int i = 0; i < pstd->tokens.size; ++i) {
+      void* tok = pstd->tokens[i];
+      if(!tok) continue;
+      ControlPanel* ps = (ControlPanel*)tok;
+      if(!ps->SameScope(proj, &TA_taProject)) continue;
+      act = sub->addAction(ps->GetName()/*, slot_obj, slot*/);
+      act->setData(QVariant::fromValue((void*)ps));
+      if (ps->FindMbrBase(rbase, md) < 0)
+        act->setEnabled(false);
+    }
+    if (sub->actions().count() == 0)
+      sub->setEnabled(false); // show item for usability, but disable
+  }
 }
 
 void taiEditorWidgets::GetName(MemberDef* md, String& name, String& help_text) {

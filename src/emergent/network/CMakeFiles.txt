@@ -52,7 +52,10 @@ set(network_HEADS_MAKETA_base
 
   Weights.h
   Weights_List.h
-
+  ParamStep.h
+  ParamSeq.h
+  ParamSeq_Group.h
+  
   Network.h
   Network_Group.h
 
@@ -258,6 +261,9 @@ set(network_SRCS
 
   Weights.cpp
   Weights_List.cpp
+  ParamStep.cpp
+  ParamSeq.cpp
+  ParamSeq_Group.cpp
 
   Network.cpp
   Network_Group.cpp

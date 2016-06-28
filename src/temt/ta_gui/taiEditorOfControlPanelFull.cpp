@@ -79,12 +79,12 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   String help_text;
     
   dat_cnt = 0;  // keeps track of control count
-  if (sele->InheritsFrom(&TA_ParamSet)) {
-    
+  if(sele->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
     MemberSpace& ms = sele->GetTypeDef()->members;
     for (int i = 0; i < ms.size; ++i) {
       MemberDef* md = ms.FastEl(i);
-      if ((md->name == "name") || (md->name == "desc")) {
+      if ((md->name == "name") || (md->name == "desc") ||
+          md->HasOption("CONTROL_PANEL_SHOW")) {
         prop_membs.memb_el.Add(md);
         // Create data widget
         taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
@@ -168,7 +168,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
       
       // if this panel is a param set panel
       bool added_param_set = false;
-      if(sele->InheritsFrom(&TA_ParamSet)) {
+      if(sele->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
         MemberDef* psv_md = TA_EditMbrItem.members.FindName("param_set_value");
         if (psv_md) {
           added_param_set = true;
@@ -196,7 +196,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           ++dat_cnt;
           
           // highlight the rows where active and saved values are different
-          if (!dynamic_cast<ParamSet*>(sele)->ActiveEqualsSaved(item->GetName())) {
+          if (!((ParamSet*)sele)->ActiveEqualsSaved(item->GetName())) {
             MarkRowException(dat_cnt);
           }
         }
@@ -280,7 +280,7 @@ void taiEditorOfControlPanelFull::FillLabelContextMenu_SelEdit(QMenu* menu,
 }
 
 void taiEditorOfControlPanelFull::GetImage_Membs_def() {
-  if (sele->InheritsFrom(&TA_ParamSet)) {
+  if(sele->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
     taBase* rbase = Base();
     for (int i = 0; i < prop_membs.widget_el.size; ++i) {
       taiWidget* mb_dat = prop_membs.widget_el.FastEl(i);
@@ -324,7 +324,7 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
 }
 
 void taiEditorOfControlPanelFull::GetValue_Membs_def() {
-  if (sele->InheritsFrom(&TA_ParamSet)) {
+  if(sele->InheritsFrom(&TA_ParamSet)) { // other types have more advanced edits
     taBase* rbase = Base();
     for (int i = 0; i < prop_membs.widget_el.size; ++i) {
       taiWidget* mb_dat = prop_membs.widget_el.FastEl(i);

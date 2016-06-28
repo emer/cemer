@@ -2294,7 +2294,7 @@ bool taBase::Copy(const taBase* cp) {
   return CanDoCopy_impl(cp, false, true);
 }
 
-bool taBase::CopyFrom(taBase* cp) {
+bool taBase::CopyFrom(const taBase* cp) {
   // copyfrom is used widely but really Copy has the best semantics and is the one and only
   bool rval = false;
   String saved_name = this->GetName();

@@ -1267,7 +1267,7 @@ public:
   { GetTypeDef()->MemberCopyFrom(memb_no, (void*)this, src_base); }
    // #IGNORE copy given member index no from source object of same type
 //note: CopyFrom/To should NOT be virtual -- specials should be handled in the impl routines, or the Copy_ routines
-  bool                  CopyFrom(taBase* cpy_from);
+  bool                  CopyFrom(const taBase* cpy_from);
   // #TYPE_ON_this #PROJ_SCOPE #CAT_ObjectMgmt Copy from given object into this object (this is a safe interface to UnSafeCopy)
   bool                  CopyTo(taBase* cpy_to);
   // #TYPE_ON_this #PROJ_SCOPE #CAT_ObjectMgmt Copy to given object from this object

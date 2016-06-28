@@ -33,6 +33,7 @@
 #include <DMemComm>
 #include <DMemAggVars>
 #include <DataTable_Group>
+#include <ParamSeq_Group>
 
 // NOTE: by including network, you end up including all the network code:
 // #include <Connection>
@@ -223,6 +224,7 @@ public:
   
   DataTable_Group spec_tables;  // #CAT_Structure Tables comparing parent and child specs
   BaseSpec_Group specs;         // #CAT_Structure Specifications for network parameters
+  ParamSeq_Group param_seqs;    // #CAT_Structure parameter sequences keyed off of epoch -- supports automatic arbitrary parameter changes whenver the network epoch is incremented
   Layer_Group   layers;         // #CAT_Structure Layers or Groups of Layers
   Weights_List  weights;        // #CAT_Structure saved weights objects
 

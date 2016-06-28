@@ -75,8 +75,9 @@ void ProgExprBase::Copy_(const ProgExprBase& cp) {
   var_expr = cp.var_expr;
   var_names = cp.var_names;
   bad_vars = cp.bad_vars;
-
-  ReParseExpr();                // get all new vars for our new location!
+  vars = cp.vars;
+  // can't do this until after prog vars are copied..
+  // ReParseExpr();                // get all new vars for our new location!
 }
 
 void ProgExprBase::UpdateAfterEdit_impl() {
@@ -86,7 +87,8 @@ void ProgExprBase::UpdateAfterEdit_impl() {
 
 void ProgExprBase::UpdateAfterMove_impl(taBase* old_owner) {
   inherited::UpdateAfterMove_impl(old_owner);
-  ReParseExpr();
+  // can't do this until after prog vars are copied..
+  // ReParseExpr();
 }
 
 void ProgExprBase::ReParseExpr() {
@@ -105,16 +107,6 @@ void ProgExprBase::ReParseExpr() {
         }
       }
     }
-  }
-}
-
-void ProgExprBase::UpdateProgExpr_NewOwner() {
-  // note: this is assumed to be called *prior* to any updating of pointers!
-  ProgEl* pel = GET_MY_OWNER(ProgEl);
-  if(!pel) return;
-  for(int i=0;i<vars.size;i++) {
-    ProgVarRef* pvr = vars[i];
-    pel->UpdateProgVarRef_NewOwner(*pvr);
   }
 }
 
@@ -403,7 +395,7 @@ bool ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
   if(!prog)
     return true;
   ProgVar* var = dynamic_cast<ProgVar*>(static_cast<taBase*>(var_));
-  if(!var || !var->HasVarFlag(ProgVar::LOCAL_VAR))
+  if(!var || !var->IsLocal())
     return true; // definitely all globals
   Function* varfun = GET_OWNER(var, Function);
   if(!varfun)

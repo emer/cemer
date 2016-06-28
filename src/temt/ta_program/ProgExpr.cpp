@@ -25,7 +25,7 @@ bool ProgExpr::StdProgVarFilter(void* base_, void* var_) {
   ProgExprBase* base = dynamic_cast<ProgExprBase*>(static_cast<taBase*>(base_));
   if(!base) return true;
   ProgVar* var = dynamic_cast<ProgVar*>(static_cast<taBase*>(var_));
-  if(!var || !var->HasVarFlag(ProgVar::LOCAL_VAR)) return true; // definitely all globals
+  if(!var || !var->IsLocal()) return true; // definitely all globals
   Function* varfun = GET_OWNER(var, Function);
   if(!varfun) return true;      // not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
   Function* basefun = GET_OWNER(base, Function);

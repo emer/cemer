@@ -159,6 +159,9 @@ public:
   { if(on) SetVarFlag(flg); else ClearVarFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
+  inline bool   IsLocal() const { return HasVarFlag(LOCAL_VAR); }
+  // is this a local variable (i.e., not in program args or vars)
+  
   inline void   CtrlPanel()     { SetVarFlag(CTRL_PANEL); ClearVarFlag(CTRL_READ_ONLY); }
   inline void   NoCtrlPanel()   { ClearVarFlag(CTRL_PANEL); ClearVarFlag(CTRL_READ_ONLY);}
   inline void   CtrlReadOnly()  { SetVarFlag(CTRL_PANEL); SetVarFlag(CTRL_READ_ONLY); }
@@ -192,7 +195,7 @@ public:
   bool         BrowserCollapseAll() override;
   bool         BrowserEditEnable() override { return true; }
   bool         BrowserEditSet(const String& new_val, int move_after = 0) override;
-
+  
   virtual  String       CodeGetDesc(const String& code);
   // get description (comment) from the code string -- returns code without the comment
 

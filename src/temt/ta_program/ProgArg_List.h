@@ -47,9 +47,6 @@ public:
   String GetTypeDecoKey() const override { return "ProgArg"; }
   virtual const String  GenCssArgs();
 
-  virtual void  UpdateProgExpr_NewOwner();
-  // calls UpdateProgExpr_NewOwner() on all the prog expr's in the list
-
   virtual void  ParseArgString(const String& args);
   // parse arg string into arg expressions -- for inline code editor system
 

@@ -34,9 +34,6 @@ public:
 
   String GetTypeDecoKey() const override { return "ProgExpr"; }
 
-  virtual void  UpdateProgExpr_NewOwner();
-  // calls UpdateProgExpr_NewOwner() on all the prog expr's in the list
-
   TA_BASEFUNS_NOCOPY(ProgExpr_List);
 protected:
   void CheckChildConfig_impl(bool quiet, bool& rval) override;

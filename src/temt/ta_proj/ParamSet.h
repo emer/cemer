@@ -34,7 +34,8 @@ public:
 
   virtual void          CopyActiveToSaved();  // #BUTTON
   virtual void          CopySavedToActive();  // #BUTTON
-  virtual bool          ActiveEqualsSaved(String member_name);  // are the 2 values equal
+  virtual bool          ActiveEqualsSaved(String member_name); 
+  // test whether active and saved versions of a member are the same or different
 
 protected:
   void                  UpdateAfterEdit_impl() override;

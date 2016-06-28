@@ -29,7 +29,8 @@
 #include <iTreeView>
 #include <iTreeViewItem>
 
-taTypeDef_Of(LocalVars);
+#include <LocalVars>
+
 taTypeDef_Of(ProgCode);
 taTypeDef_Of(DynEnumType);
 
@@ -50,64 +51,6 @@ taTypeDef_Of(DynEnumType);
 #include <QKeyEvent>
 
 #include <Function>
-
-#include <ForLoop>
-#include <ForeachLoop>
-#include <DoLoop>
-#include <WhileLoop>
-
-#include <If>
-#include <Else>
-#include <ElseIf>
-#include <IfContinue>
-#include <IfBreak>
-#include <IfReturn>
-#include <IfGuiPrompt>
-#include <Switch>
-#include <StopStepPoint>
-
-#include <AssignExpr>
-#include <VarIncr>
-#include <MemberAssign>
-#include <MethodCall>
-#include <MemberMethodCall>
-#include <FunctionCall>
-#include <ProgramCall>
-#include <ProgramCallFun>
-#include <StaticMethodCall>
-#include <MathCall>
-#include <RandomCall>
-#include <MiscCall>
-#include <PrintExpr>
-#include <PrintVar>
-#include <Comment>
-#include <BlankLineEl>
-#include <CaseBlock>
-
-#include <DataLoop>
-#include <ResetDataRows>
-#include <AddNewDataRow>
-#include <DoneWritingDataRow>
-#include <DataVarProg>
-#include <DataVarRead>
-#include <DataVarWrite>
-#include <DataVarProgMatrix>
-
-#include <DataSortProg>
-#include <DataGroupProg>
-#include <DataSelectRowsProg>
-#include <DataSelectColsProg>
-#include <DataJoinProg>
-
-#include <DataCalcLoop>
-#include <DataCalcAddDestRow>
-#include <DataCalcSetDestRow>
-#include <DataCalcSetSrcRow>
-#include <DataCalcCopyCommonCols>
-
-#include <DataProcCall>
-#include <DataAnalCall>
-#include <DataGenCall>
 
 #include <OtherProgramVar>
 #include <ProgramCallVar>
@@ -1154,6 +1097,53 @@ ProgramCallBase* Program::FindSubProgTarget(Program* prg) {
   return NULL;
 }
 
+ProgVar* Program::FindMakeLocalVarName(const String& var_nm, bool& made_new) {
+  made_new = false;
+  LocalVars* locvars = FindMakeLocalVars();
+  ProgVar* rval = locvars->FindVarName(var_nm);
+  if(rval)
+    return rval;
+  made_new = true;
+  rval = locvars->AddVar();
+  rval->name = var_nm;
+  return rval;
+}
+
+ProgVar* Program::FindMakeArgName(const String& var_nm, bool& made_new) {
+  made_new = false;
+  ProgVar* rval = args.FindName(var_nm);
+  if(rval)
+    return rval;
+  made_new = true;
+  rval = (ProgVar*)args.New(1);
+  rval->name = var_nm;
+  return rval;
+}
+
+ProgVar* Program::FindMakeVarName(const String& var_nm, bool& made_new) {
+  made_new = false;
+  ProgVar* rval = vars.FindName(var_nm);
+  if(rval)
+    return rval;
+  made_new = true;
+  rval = (ProgVar*)vars.New(1);
+  rval->name = var_nm;
+  return rval;
+}
+
+LocalVars* Program::FindMakeLocalVars() {
+  if(prog_code.size == 0) {
+    LocalVars* rval = (LocalVars*)prog_code.New(1, &TA_LocalVars);
+    return rval;
+  }
+  if(prog_code[0]->InheritsFrom(&TA_LocalVars)) {
+    return (LocalVars*)prog_code[0];
+  }
+  LocalVars* rval = new LocalVars;
+  prog_code.Insert(rval, 0);
+  return rval;
+}
+
 bool Program::AddLine(taBase* prog_el, const String& code, int pline_flags,
                       const String& desc) {
   String desc_oneline = desc;
@@ -1257,7 +1247,7 @@ void Program::AddDescString(taBase* prog_el, const String& dsc) {
 String Program::GetProgCodeInfo(int line_no, const String& code_str) {
   //   return String("info on line: ") + String(line_no) + " str: " + code_str;
   ProgVar* pv = FindVarName(code_str);
-  if(pv && !pv->HasVarFlag(ProgVar::LOCAL_VAR)) {
+  if(pv && !pv->IsLocal()) {
     if(pv->var_type == ProgVar::T_Object && pv->object_val) {
       return pv->object_val->PrintStr();
     }
@@ -2300,4 +2290,91 @@ void Program::Help() {
   else {
     inherited::Help();
   }
+}
+
+ProgVar* Program::FindMakeProgVarInNewScope
+(const ProgVar* prog_var, const taBase* old_scope, taBase* new_scope) {
+  if(!prog_var) return NULL;
+
+  bool made_new = false;
+  
+  String var_nm = prog_var->name;
+  Program* var_prg = GET_OWNER(prog_var, Program);
+  Function* var_fun = GET_OWNER(prog_var, Function);
+  bool var_local = prog_var->IsLocal();
+    
+  Program* old_prg = GET_OWNER(old_scope, Program);
+  Function* old_fun = GET_OWNER(old_scope, Function);
+
+  Program* new_prg = GET_OWNER(new_scope, Program);
+  Function* new_fun = GET_OWNER(new_scope, Function);
+
+  if(var_local) {               // local variables need more updating!
+    if(var_fun) {
+      if(var_fun && new_fun && var_fun != new_fun) { // need a new local var
+        ProgVar* rval = new_fun->FindMakeVarName(var_nm, made_new);
+        if(made_new) {
+          rval->CopyFrom(prog_var); // copy everything
+          rval->name = var_nm;      // make sure no _copy etc
+          taMisc::Info("Note: made new program variable:",
+                       var_nm, "in function:", new_fun->name,
+                       "as a copy of one from function:",
+                       var_fun->name, "because moved/copied program element refers to it");
+        }
+        else {
+          // todo: could do some type-checking here..
+        }
+        return rval;
+      }
+    }
+    else { // program local variable
+      if(var_prg && !var_fun && new_fun) { // moving from program into function
+        ProgVar* rval = new_fun->FindMakeVarName(var_nm, made_new);
+        if(made_new) {
+          rval->CopyFrom(prog_var); // copy everything
+          rval->name = var_nm;      // make sure no _copy etc
+          taMisc::Info("Note: made new program variable:",
+                       var_nm, "in function:", new_fun->name,
+                       "as a copy of one from program:",
+                       var_prg->name, "because moved/copied program element refers to it");
+        }
+        return rval;
+      }
+      else if(var_prg && new_prg && var_prg != new_prg) { // need a new local var
+        ProgVar* rval = new_prg->FindMakeLocalVarName(var_nm, made_new);
+        if(made_new) {
+          rval->CopyFrom(prog_var); // copy everything
+          rval->name = var_nm;      // make sure no _copy etc
+          taMisc::Info("Note: made new program variable:",
+                       var_nm, "in program local vars:", new_prg->name,
+                       "as a copy of one from program:",
+                       var_prg->name, "because moved/copied program element refers to it");
+        }
+        return rval;
+      }
+    }
+  }
+  else {                        // global program variable
+    if(var_prg && new_prg && var_prg != new_prg) {
+      ProgVar_List* own = GET_OWNER(prog_var, ProgVar_List);
+      ProgVar* rval = NULL;
+      if(own == &(var_prg->args)) { // args
+        rval = new_prg->FindMakeArgName(var_nm, made_new);
+      }
+      else {                    // vars
+        rval = new_prg->FindMakeVarName(var_nm, made_new);
+      }
+      if(made_new) {
+        rval->CopyFrom(prog_var); // copy everything
+        rval->name = var_nm;      // make sure no _copy etc
+        taMisc::Info("Note: made new global program variable:",
+                     var_nm, "in program:", new_prg->name,
+                     "as a copy of one from program:",
+                     var_prg->name, "because moved/copied program element refers to it");
+      }
+      return rval;
+    }
+  }
+
+  return NULL;                  // nothing new made
 }

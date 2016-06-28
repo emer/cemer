@@ -28,9 +28,3 @@ void ProgExpr_List::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
 }
 
-void ProgExpr_List::UpdateProgExpr_NewOwner() {
-  for (int i = 0; i < size; ++ i) {
-    ProgExpr* pe = FastEl(i);
-    pe->UpdateProgExpr_NewOwner();
-  }
-}

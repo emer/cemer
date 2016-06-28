@@ -18,6 +18,7 @@
 #include <taProject>
 #include <taBase_PtrList>
 #include <FunctionCall>
+#include <LocalVars>
 
 #include <taMisc>
 
@@ -166,6 +167,31 @@ ProgVar* Function::FindVarName(const String& var_nm) const {
   ProgVar* pv = args.FindName(var_nm);
   if(pv) return pv;
   return fun_code.FindVarName(var_nm);
+}
+
+LocalVars* Function::FindMakeLocalVars() {
+  if(fun_code.size == 0) {
+    LocalVars* rval = (LocalVars*)fun_code.New(1, &TA_LocalVars);
+    return rval;
+  }
+  if(fun_code[0]->InheritsFrom(&TA_LocalVars)) {
+    return (LocalVars*)fun_code[0];
+  }
+  LocalVars* rval = new LocalVars;
+  fun_code.Insert(rval, 0);
+  return rval;
+}
+
+ProgVar* Function::FindMakeVarName(const String& var_nm, bool& made_new) {
+  made_new = false;
+  ProgVar* rval = FindVarName(var_nm);
+  if(rval)
+    return rval;
+  made_new = true;
+  LocalVars* locvars = FindMakeLocalVars();
+  rval = locvars->AddVar();
+  rval->name = var_nm;
+  return rval;
 }
 
 void Function::GetCallers(taBase_PtrList& callers) {

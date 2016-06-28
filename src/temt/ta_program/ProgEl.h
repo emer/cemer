@@ -175,10 +175,13 @@ public:
   virtual void          UpdateProgCode();
   // #IGNORE save the latest successfully compiled code
 
-  void                  UpdateAfterMove(taBase* old_owner) override;
+  // void                  UpdateAfterMove(taBase* old_owner) override;
   // #IGNORE called after object has been moved from one location to another in the object hierarchy (i.e., list Transfer fun) -- actual functions should be put in the _impl version which should call inherited:: etc just as for UAE -- use for updating pointers etc
-  void                 UpdatePointersAfterCopy_(const taBase& cp) override;
+  // void                 UpdatePointersAfterCopy_(const taBase& cp) override;
 
+  virtual void UpdateProgElVars(const taBase* old_scope, taBase* new_scope);
+  // update our progvar elements after change in scope (move, copy)
+  
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
@@ -222,8 +225,6 @@ protected:
   // check for common mistake of using = instead of == for logical equals
   virtual bool          CheckProgVarRef(ProgVarRef& pvr, bool quiet, bool& rval);
   // check program variable reference to make sure it is in same Program scope as this progel
-  virtual bool          UpdateProgVarRef_NewOwner(ProgVarRef& pvr);
-  // if program variable reference is not in same Program scope as this progel (because progel was moved to a new program), then try to find the same progvar in new owner (by name), emit warning if not found -- auto called by UpdateAfterMove and UpdateAfterCopy
   virtual ProgVar*      FindVarNameInScope_impl(const String& var_nm) const;
     // #IGNORE impl
 

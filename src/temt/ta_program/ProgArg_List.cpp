@@ -27,13 +27,6 @@ void ProgArg_List::Initialize() {
   setUseStale(true);
 }
 
-void ProgArg_List::UpdateProgExpr_NewOwner() {
-  for (int i = 0; i < size; ++ i) {
-    ProgArg* pa = FastEl(i);
-    pa->expr.UpdateProgExpr_NewOwner();
-  }
-}
-
 void ProgArg_List::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   // make sure that once a def args is used, no more have values
