@@ -30,6 +30,7 @@
 #include <DataSelectEl>
 #include <String_Array>
 #include <AnalysisRun>  // need for analysis type enum
+#include <Variant>
 
 #include <SigLinkSignal>
 #include <tabMisc>
@@ -256,6 +257,29 @@ int DataCol::GetSpecialState() const {
   if(!HasColFlag(SAVE_DATA)) return 2;
   if(HasColFlag(READ_ONLY)) return 4; // light red -- 3 is green
   return 0;
+}
+
+Variant::VarType DataCol::varType() {
+  switch (valType()) {
+    case VT_STRING:
+      return Variant::T_String;
+      break;
+    case VT_FLOAT:
+      return Variant::T_Float;
+      break;
+    case VT_INT:
+      return Variant::T_Int;
+      break;
+    case VT_BYTE:
+      return Variant::T_UInt;
+      break;
+    case VT_BOOL:
+      return Variant::T_Bool;
+      break;
+    default:
+      return Variant::T_String;
+      break;
+  }
 }
 
 void DataCol::ChangeColType_gui(ValType new_type) {

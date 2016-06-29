@@ -96,6 +96,8 @@ public:
   // #CAT_Access the type of data in each element
   virtual TypeDef*      valTypeDef() const = 0;
   // #CAT_Access the type of data in each element, as a TypeDef
+  virtual Variant::VarType  varType();
+  // #CAT_Access best guess as to VarType for the valType
   inline bool           isMatrix() const {return is_matrix;}
   // #CAT_Access true if data is a matrix
   virtual bool          isNumeric() const {return false;}

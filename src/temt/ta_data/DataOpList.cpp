@@ -17,6 +17,7 @@
 #include <DataSrcDestProg>
 #include <DataOpBaseSpec>
 #include <DataTable>
+#include <DataSelectEl>
 
 #include <taMisc>
 #include <tabMisc>
@@ -56,6 +57,20 @@ DataOpEl* DataOpList::AddColumn(const String& col_name, DataTable* dt) {
   DataOpEl* dop = (DataOpEl*)New(1);
   dop->SetColName(col_name);
   dop->SetDataTable(dt);
+  if (!dt) {
+    ((DataSelectEl*)dop)->cmp.setType(Variant::T_Invalid);
+  }
+  else {
+    if (dop->InheritsFrom(&TA_DataSelectEl)) {
+      DataCol* data_col = dt->FindColName(col_name);
+      if (data_col) {
+        ((DataSelectEl*)dop)->cmp.setType(data_col->varType());
+      }
+      else {
+        ((DataSelectEl*)dop)->cmp.setType(Variant::T_Invalid);
+      }
+    }
+  }
   dop->UpdateAfterEdit();
   if(taMisc::gui_active)
     tabMisc::DelayedFunCall_gui(dop, "BrowserSelectMe");
@@ -70,6 +85,9 @@ void DataOpList::AddAllColumns(DataTable* dt) {
     if(dop) continue;
     dop = (DataOpEl*)New(1);
     dop->SetColName(da->name);
+    if(dop->InheritsFrom(&TA_DataSelectEl)) {
+      ((DataSelectEl*)dop)->cmp.setType(da->varType());
+    }
     dop->SigEmitUpdated();
   }
   SetDataTable(dt);
