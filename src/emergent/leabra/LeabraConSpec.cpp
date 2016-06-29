@@ -402,7 +402,7 @@ void LeabraConSpec::ExpLrateSched(int epcs_per_step, float n_steps, float pct_pe
 }
 
 void LeabraConSpec::LinearLrateSched(int epcs_per_step, float n_steps, float final_factor) {
-  float decr = (1.0f - final_factor) / n_steps;
+  float decr = (1.0f - final_factor) / (n_steps - 1.0f);
   float cur_pct = 1.0f;
   lrate_sched.SetSize((int)n_steps);
   for(int i=0;i<n_steps;i++) {
