@@ -84,6 +84,7 @@ public:
   QCheckBox*                chkYAxisLabel; // show or hide Y axis label
   QCheckBox*                chkAltYAxisLabel; // show or hide Y alt axis label
   QCheckBox*                chkZAxisLabel; // show or hide Z axis label
+  QCheckBox*                chkLinesSolid; // solid lines
   
   QHBoxLayout*            layXAxis;
   QLabel*                   lblXAxis;

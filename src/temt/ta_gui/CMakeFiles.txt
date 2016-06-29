@@ -261,10 +261,6 @@ set(ta_gui_HEADS_MAKETA_MOC
   iDataTableModel.h
   iDataTableEditor.h
   
-  iViewPanelOfDataTable.h
-  iViewPanelOfGridTable.h
-  iViewPanelOfGraphTable.h
-
   iSubversionBrowser.h
 )
 
@@ -750,10 +746,6 @@ set(ta_gui_SRCS_MAKETA
   iMatrixEditor.cpp
   iDataTableModel.cpp
   iDataTableEditor.cpp
-
-  iViewPanelOfDataTable.cpp
-  iViewPanelOfGridTable.cpp
-  iViewPanelOfGraphTable.cpp
 
   ProgElChoiceDlg.cpp
   ViewBackground.cpp

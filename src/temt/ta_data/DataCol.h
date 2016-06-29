@@ -54,9 +54,9 @@ class TA_API DataCol : public taNBase {
 INHERITED(taNBase)
 friend class DataTable;
 public:
-  static const String   udkey_width; // WIDTH=n display width, in chars
-  static const String   udkey_narrow; // NARROW=b if narrow (default for ints)
-  static const String   udkey_hidden; // HIDDEN=b defaults to not visible
+  static const String   udkey_width; // #IGNORE WIDTH=n display width, in chars
+  static const String   udkey_narrow; // #IGNORE NARROW=b if narrow (default for ints)
+  static const String   udkey_hidden; // #IGNORE HIDDEN=b defaults to not visible
 
   enum ColFlags { // #BITS flags for data table columns
     DC_NONE             = 0, // #NO_BIT

@@ -176,6 +176,7 @@ void GraphTableView::Initialize() {
   dev_pix_ratio = 1.0f;
   point_size = .01f;
   point_spacing = 1;
+  solid_lines = false;
   bar_space = .2f;
   bar_depth = 0.01f;
   color_mode = FIXED;
@@ -563,9 +564,15 @@ void GraphTableView::DefaultPlotStyles(int start_y, int end_y) {
     GraphPlotView* gpv = plots[i];
     gpv->color.setColorName(colors[i % n_colors]);
     gpv->point_style = (GraphPlotView::PointStyle)styles[i % n_styles];
-    gpv->line_style = (GraphPlotView::LineStyle)(i / n_colors);
+    if(solid_lines) {
+      gpv->line_style = GraphPlotView::SOLID;
+    }
+    else {
+      gpv->line_style = (GraphPlotView::LineStyle)(i / n_colors);
+    }
     gpv->UpdateAfterEdit_NoGui();
   }
+  UpdateDisplay();
 }
 
 void GraphTableView::SetLineStyle(GraphPlotView::LineStyle line_style,
@@ -579,6 +586,7 @@ void GraphTableView::SetLineStyle(GraphPlotView::LineStyle line_style,
     gpv->line_style = line_style;
     gpv->UpdateAfterEdit_NoGui();
   }
+  UpdateDisplay();
 }
 
 const iColor GraphTableView::bgColor(bool& ok) const {

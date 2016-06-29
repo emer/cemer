@@ -49,6 +49,12 @@ set(ta_3d_HEADS_MAKETA_NOMOC_base
   GraphTableView.h
 )
 
+set(ta_3d_HEADS_MAKETA_MOC
+  iViewPanelOfDataTable.h
+  iViewPanelOfGridTable.h
+  iViewPanelOfGraphTable.h
+)
+
 # multiple inheritence -- in correspondence with deps below
 set(ta_3d_HEADS_MAKETA_MI
   T3DataView.h
@@ -59,10 +65,6 @@ set(ta_3d_HEADS_MAKETA_MI
 set(ta_3d_HEADS_MAKETA_MI_DEPS
   "../ta_gui/taDataView.h;../ta_core/taBase.h"
 )
-
-# need both maketa and moc -- relatively rare
-# set(ta_3d_HEADS_MAKETA_MOC
-# )
 
 set(ta_3d_HEADS_NOMAKETA_MOC_base
   iT3PanelViewer.h
@@ -184,14 +186,14 @@ set(ta_3d_HEADS_MAKETA
 
 # headers that need Qt moc run
 set(ta_3d_HEADS_MOC
-#  ${ta_3d_HEADS_MAKETA_MOC}
+  ${ta_3d_HEADS_MAKETA_MOC}
   ${ta_3d_HEADS_NOMAKETA_MOC}
 )
 
 # all heads
 set(ta_3d_HEADS
   ${ta_3d_HEADS_MAKETA_NOMOC}
-#  ${ta_3d_HEADS_MAKETA_MOC}
+  ${ta_3d_HEADS_MAKETA_MOC}
   ${ta_3d_HEADS_NOMAKETA_NOMOC}
   ${ta_3d_HEADS_NOMAKETA_MOC}
   ${ta_3d_HEADS_MAKETA_MI}
@@ -238,6 +240,10 @@ set(ta_3d_SRCS_MAKETA
   GraphAxisView.cpp
   GraphPlotView.cpp
   GraphTableView.cpp
+
+  iViewPanelOfDataTable.cpp
+  iViewPanelOfGridTable.cpp
+  iViewPanelOfGraphTable.cpp
 )
 
 # these correspond to TA_3D_HEADS_NOMAKETA*

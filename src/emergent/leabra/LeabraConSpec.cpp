@@ -401,6 +401,18 @@ void LeabraConSpec::ExpLrateSched(int epcs_per_step, float n_steps, float pct_pe
   UpdateAfterEdit();            // needed to update the sub guys
 }
 
+void LeabraConSpec::LinearLrateSched(int epcs_per_step, float n_steps, float final_factor) {
+  float decr = (1.0f - final_factor) / n_steps;
+  float cur_pct = 1.0f;
+  lrate_sched.SetSize((int)n_steps);
+  for(int i=0;i<n_steps;i++) {
+    lrate_sched[i]->start_ctr = i * epcs_per_step;
+    lrate_sched[i]->start_val = cur_pct;
+    cur_pct -= decr;
+  }
+  UpdateAfterEdit();            // needed to update the sub guys
+}
+
 void LeabraConSpec::CreateWtSigFun() {
   if((wt_sig_fun_lst.gain == wt_sig.gain) && (wt_sig_fun_lst.off == wt_sig.off)
      && (wt_sig_fun_res == wt_sig_fun.res))

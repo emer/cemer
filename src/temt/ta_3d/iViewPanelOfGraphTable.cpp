@@ -192,18 +192,27 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layAxisLabelChks->addWidget(lblAxisLabelChks);
   lblAxisLabelChks->setToolTip(taiMisc::ToolTipPreProcess("Check to have axis label appear"));
   
-  chkXAxisLabel = new QCheckBox("X    ", widg); chkXAxisLabel->setObjectName("chkXAxisLabel");
+  chkXAxisLabel = new QCheckBox("X    ", widg);
+  chkXAxisLabel->setObjectName("chkXAxisLabel");
   layAxisLabelChks->addWidget(chkXAxisLabel);
   connect(chkXAxisLabel, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  chkYAxisLabel = new QCheckBox("Y    ", widg); chkYAxisLabel->setObjectName("chkYAxisLabel");
+  chkYAxisLabel = new QCheckBox("Y    ", widg);
+  chkYAxisLabel->setObjectName("chkYAxisLabel");
   layAxisLabelChks->addWidget(chkYAxisLabel);
   connect(chkYAxisLabel, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  chkAltYAxisLabel = new QCheckBox("Alt_Y    ", widg); chkAltYAxisLabel->setObjectName("chkAltYAxisLabel");
+  chkAltYAxisLabel = new QCheckBox("Alt_Y    ", widg);
+  chkAltYAxisLabel->setObjectName("chkAltYAxisLabel");
   layAxisLabelChks->addWidget(chkAltYAxisLabel);
   connect(chkAltYAxisLabel, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  chkZAxisLabel = new QCheckBox("Z    ", widg); chkZAxisLabel->setObjectName("chkZAxisLabel");
+  chkZAxisLabel = new QCheckBox("Z              ", widg);
+  chkZAxisLabel->setObjectName("chkZAxisLabel");
   layAxisLabelChks->addWidget(chkZAxisLabel);
   connect(chkZAxisLabel, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  chkLinesSolid = new QCheckBox("Solid Lines    ", widg);
+  chkLinesSolid->setObjectName("chkLinesSolid");
+  layAxisLabelChks->addWidget(chkLinesSolid);
+  chkLinesSolid->setToolTip(taiMisc::ToolTipPreProcess("make all lines solid instead of dashed, dotted -- useful for cluster run results or other cases using grouped plot colors"));
+  connect(chkLinesSolid, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   
   layAxisLabelChks->addSpacing(taiM->hsep_c);
   layAxisLabelChks->addStretch();
@@ -579,6 +588,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   pdtZAxis->GetImage_(&(glv->z_axis.fixed_range));
   cellZAxis->GetImage((String)glv->z_axis.matrix_cell);
   chkZAxisLabel->setChecked(glv->z_axis.show_axis_label);
+  chkLinesSolid->setChecked(glv->solid_lines);
   
   lelZAxis->SetFlag(taiWidget::flgReadOnly, !glv->z_axis.on);
   rncZAxis->setAttribute(Qt::WA_Disabled, !glv->z_axis.on);
@@ -665,6 +675,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->z_axis.SetColPtr(tcol);
   glv->z_axis.matrix_cell = (int)cellZAxis->GetValue();
   glv->z_axis.show_axis_label = chkZAxisLabel->isChecked();
+  glv->solid_lines = chkLinesSolid->isChecked();
   
   int pltsz = MIN(max_plots, glv->plots.size);
   

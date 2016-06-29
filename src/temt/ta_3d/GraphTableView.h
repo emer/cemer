@@ -82,6 +82,7 @@ public:
   float                 dev_pix_ratio;  // #NO_SAVE multiplier on display device -- for multiplying line_width 
   float                 point_size;     // size of point marker symbols
   int                   point_spacing;  // #CONDEDIT_OFF_plot_style:LINE #MIN_1 how frequently to display point markers
+  bool                  solid_lines;    // only use solid line style -- not dotted or dashed
   float                 bar_space;      // #DEF_0.2 amount of space between bars
   float                 bar_depth;      // #DEF_0.01 how deep to make the 3d bars
   int                   label_spacing;  // how frequently to display text labels of the data values (-1 = never); if plotting a string column, the other data column (e.g. plot_2) is used to determine the y axis values
@@ -169,10 +170,10 @@ public:
   virtual void          CopyFromView(GraphTableView* cp);
   // #BUTTON #NO_SCOPE special copy function that just copies user view options in a robust manner
   virtual void          DefaultPlotStyles(int start_y=1, int end_y=-1);
-  // #BUTTON #NO_SAVE_UNDO set the default plot styles for given range of Y plots (all by default -- -1 = end) -- iterates through colors: black, red, blue, green, purple, orange, brown, chartreuse; and in parallel point sytles circle, square, diamond, triangle_up, triangle_down, plus, cross, star; and then as an outer loop line styles (solid, dot, dash, dash-dot)
+  // #BUTTON set the default plot styles for given range of Y plots (all by default -- -1 = end) -- iterates through colors: black, red, blue, green, purple, orange, brown, chartreuse; and in parallel point sytles circle, square, diamond, triangle_up, triangle_down, plus, cross, star; and then as an outer loop line styles (solid, dot, dash, dash-dot)
   virtual void          SetLineStyle(GraphPlotView::LineStyle line_style,
                                      int start_y=1, int end_y=-1);
-  // #BUTTON #NO_SAVE_UNDO set the line style for given range of Y plots (all by default -- -1 = end) 
+  // #BUTTON set the line style for given range of Y plots (all by default -- -1 = end) 
 
   void          SaveImageSVG(const String& svg_fname) override;
 

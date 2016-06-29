@@ -136,19 +136,10 @@ macro(CREATE_MAKETA_COMMAND_MI infile outfile extradep)
 
   set(exdeplist ${extradep})
 
-  # we're just going to have to assume it is 2 dependencies!
-  list(GET exdeplist 0 dep0)
-  list(GET exdeplist 1 dep1)
-
-  # foreach(dep ${exdeplist})
-  #   message(STATUS "dep: ${dep}")
-  #   set(deps "${deps} ${dep}")
-  # endforeach()
-
   add_custom_command(
     OUTPUT ${outfile}
     COMMAND ${MAKETA_CMD} ${MAKETA_FLAGS} ${maketa_includes} -o ${outfile} ${infile}
-    DEPENDS ${infile} ${dep0} ${dep1}
+    DEPENDS ${infile} ${exdeplist}
   )
 endmacro (CREATE_MAKETA_COMMAND_MI)
 

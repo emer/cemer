@@ -652,6 +652,8 @@ public:
   // #BUTTON #CAT_Learning establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks
   virtual void	ExpLrateSched(int epcs_per_step = 50, float n_steps=7, float pct_per_step = 0.5);
   // #BUTTON #CAT_Learning establish an exponentially-decreasing learning rate schedule with given total number of steps (including first step at lrate) and epochs per step -- learning rate changes by pct_per_step at each step in epoch increment
+  virtual void	LinearLrateSched(int epcs_per_step = 50, float n_steps=7, float final_lrate_factor = 0.01);
+  // #BUTTON #CAT_Learning establish a linearly-decreasing learning rate schedule with given total number of steps (including first step at lrate) and epochs per step -- learning rate changes linearly to achieve the final lrate factor at the last step
 
   virtual void	GraphWtSigFun(DataTable* graph_data = NULL);
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the sigmoidal weight contrast enhancement function (NULL = new data table)

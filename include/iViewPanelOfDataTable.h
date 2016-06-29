@@ -1,1 +1,1 @@
-#include "../src/temt/ta_gui/iViewPanelOfDataTable.h"
+#include "../src/temt/ta_3d/iViewPanelOfDataTable.h"
