@@ -39,16 +39,14 @@ void ParamSeq::SetParamsAtEpoch(int epoch) {
     ParamStep* ps = steps[i];
     if(ps->epoch == epoch) {
       if(verbose) {
-        FOREACH_ELEM_IN_GROUP(ControlPanelItem, sei, ps->mbrs) {
-          EditMbrItem* edit_mbr = dynamic_cast<EditMbrItem*>(sei);
-          taBase* bs = sei->base;
-          String cur_val = edit_mbr->CurValAsString();
-          edit_mbr->mbr->SetValStr(edit_mbr->param_set_value.saved_value, bs);
-          String new_val = edit_mbr->CurValAsString();
-          taMisc::Info("ParamStep:", ps->name, "set:", edit_mbr->label,
+        FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, ps->mbrs) {
+          String cur_val = sei->CurValAsString();
+          sei->CopySavedToActive();
+          String new_val = sei->CurValAsString();
+          taMisc::Info("ParamStep:", ps->name, "set:", sei->label,
                        "to:", new_val, "was:", cur_val);
         }
-        ps->mbrs.UpdateAfterEdit();
+        ps->ReShowEdit(true);
       }
       else {
         ps->CopySavedToActive();

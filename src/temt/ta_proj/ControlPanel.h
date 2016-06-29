@@ -114,7 +114,9 @@ public: // public API
   virtual String  ToWikiTable();
   // #MENU #CONFIRM #USE_RVAL save current parameters and notes to a mediawiki-formatted table, suitable for pasting into a wiki for recording params and notes
 
-public: // IRefListClient i/f
+  bool                  ReShowEdit(bool force = false); // #IGNORE this is just really a synonym for doing a SigEmit
+
+ public: // IRefListClient i/f
   void*        This() override {return this;}
   void         SigDestroying_Ref(taBase_RefList* src, taBase* ta) override;
     // note: item will already have been removed from list
@@ -136,7 +138,6 @@ protected:
   virtual bool          SelectMember_impl(taBase* base, MemberDef* md,
                   const String& lbl, const String& desc, const String& sub_gp_nm = _nilString, bool custom_label = false);
   virtual bool          SelectMethod_impl(taBase* base, MethodDef* md, const String& desc);
-  bool                  ReShowEdit(bool force = false); // this is just really a synonym for doing a SigEmit
 
 private:
   void  Initialize();
