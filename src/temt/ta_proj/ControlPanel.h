@@ -49,8 +49,8 @@ public:
 
   bool                  running_updt; // update the control panel while a program is running -- specs and other objects can be updated quite frequently and can slow things down considerably due to constant updating of the display -- only enable if you need it!
   String                desc;   // #EDIT_DIALOG description of what this edit contains
-  EditMbrItem_Group     mbrs; // #TREE_EXPERT the members of the control panel
-  EditMthItem_Group     mths; // #TREE_EXPERT the mthods of the control panel
+  EditMbrItem_Group     mbrs;   // the members of the control panel
+  EditMthItem_Group     mths;   // the methods of the control panel
 
   bool                  auto_edit; // #HIDDEN #NO_SAVE #OBSOLETE automatically activate control panel upon loading -- replaced with user data user_pinned 
 
@@ -66,7 +66,7 @@ public:
   int                   UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
   String                GetToolbarName() const override { return "cntrl panel"; }
   
-SIMPLE_LINKS(ControlPanel);
+  SIMPLE_LINKS(ControlPanel);
   TA_BASEFUNS(ControlPanel);
 
 public: // public API

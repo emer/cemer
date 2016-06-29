@@ -200,6 +200,7 @@ void Network::InitLinks() {
   proj = GET_MY_OWNER(ProjectBase);
   taBase::Own(spec_tables, this);
   taBase::Own(specs, this);
+  taBase::Own(param_seqs, this);
   taBase::Own(layers, this);
   taBase::Own(weights, this);
   taBase::Own(max_disp_size, this);
@@ -1553,6 +1554,10 @@ void Network::RemoveCons_Thr(int thr_no) {
 //   aggregate stats over units, then that is most efficiently done by layer-level
 // TODO: need to figure out a better soln for layer-level processing!!
 
+void Network::Init_Epoch() {
+  param_seqs.SetParamsAtEpoch(epoch);
+}
+
 void Network::Init_InputData() {
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
@@ -1638,6 +1643,9 @@ void Network::Init_Weights() {
   UpdateAllViews();
 
   SendWeightsToGPU();
+
+  param_seqs.SetParamsAtEpoch(0);
+  
   taMisc::DoneBusy();
 }
 

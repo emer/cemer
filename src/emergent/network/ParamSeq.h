@@ -28,7 +28,7 @@
 eTypeDef_Of(ParamSeq);
 
 class E_API ParamSeq : public taNBase {
-  // #EXPAND_DEF_2 A sequence of parameters to apply over training of a network
+  // #STEM_BASE ##TOKENS ##CAT_Network ##DEF_CHILD_steps ##EXPAND_DEF_3 ##EXPAND_AS_GROUP A sequence of parameters to apply over training of a network
 INHERITED(taNBase)
 public:
   String          desc;           // description of what this parameter sequence does
@@ -44,8 +44,14 @@ public:
   int             GetEnabled() const override { return on; }
   void            SetEnabled(bool value) override { on = value; }
   String          GetTypeDecoKey() const override { return "ControlPanel"; }
+  taList_impl*	  children_() override {return &steps;}
   
   TA_SIMPLE_BASEFUNS(ParamSeq);
+protected:
+  String          prev_name;    // for detecting name changes
+
+  void            UpdateAfterEdit_impl();
+  
 private:
   void Initialize();
   void Destroy()     { };

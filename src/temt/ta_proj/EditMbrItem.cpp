@@ -48,7 +48,6 @@ void EditMbrItem::Copy_(const EditMbrItem& cp) {
 void EditMbrItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   
-  
   if (taMisc::is_loading && base && mbr) {
     // get default label - if not equal to current label mark as custom
     String generated_label;
@@ -120,3 +119,13 @@ bool EditMbrItem::SetCurVal(const Variant& cur_val) {
   return true;
 }
 
+void EditMbrItem::CopyActiveToSaved() {
+  if(!mbr || !base) return;
+  param_set_value.saved_value = mbr->GetValStr(base);
+}
+
+void EditMbrItem::CopySavedToActive() {
+  if(!mbr || !base) return;
+  mbr->SetValStr(param_set_value.saved_value, base);
+  base->UpdateAfterEdit();
+}

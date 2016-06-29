@@ -1097,9 +1097,10 @@ ProgramCallBase* Program::FindSubProgTarget(Program* prg) {
   return NULL;
 }
 
-ProgVar* Program::FindMakeLocalVarName(const String& var_nm, bool& made_new) {
+ProgVar* Program::FindMakeLocalVarName(const String& var_nm, bool& made_new,
+                                       bool in_prog_code) {
   made_new = false;
-  LocalVars* locvars = FindMakeLocalVars();
+  LocalVars* locvars = FindMakeLocalVars(in_prog_code);
   ProgVar* rval = locvars->FindVarName(var_nm);
   if(rval)
     return rval;
@@ -1131,16 +1132,24 @@ ProgVar* Program::FindMakeVarName(const String& var_nm, bool& made_new) {
   return rval;
 }
 
-LocalVars* Program::FindMakeLocalVars() {
-  if(prog_code.size == 0) {
-    LocalVars* rval = (LocalVars*)prog_code.New(1, &TA_LocalVars);
+LocalVars* Program::FindMakeLocalVars(bool in_prog_code) {
+  ProgEl_List* code;
+  if(in_prog_code) {
+    code = &prog_code;
+  }
+  else {
+    code = &init_code;
+  }
+  
+  if(code->size == 0) {
+    LocalVars* rval = (LocalVars*)code->New(1, &TA_LocalVars);
     return rval;
   }
-  if(prog_code[0]->InheritsFrom(&TA_LocalVars)) {
-    return (LocalVars*)prog_code[0];
+  if(code->FastEl(0)->InheritsFrom(&TA_LocalVars)) {
+    return (LocalVars*)code->FastEl(0);
   }
   LocalVars* rval = new LocalVars;
-  prog_code.Insert(rval, 0);
+  code->Insert(rval, 0);
   return rval;
 }
 
@@ -2341,7 +2350,8 @@ ProgVar* Program::FindMakeProgVarInNewScope
         return rval;
       }
       else if(var_prg && new_prg && var_prg != new_prg) { // need a new local var
-        ProgVar* rval = new_prg->FindMakeLocalVarName(var_nm, made_new);
+        bool in_prog_code = var_prg->prog_code.IsParentOf(prog_var);
+        ProgVar* rval = new_prg->FindMakeLocalVarName(var_nm, made_new, in_prog_code);
         if(made_new) {
           rval->CopyFrom(prog_var); // copy everything
           rval->name = var_nm;      // make sure no _copy etc
@@ -2351,6 +2361,32 @@ ProgVar* Program::FindMakeProgVarInNewScope
                        var_prg->name, "because moved/copied program element refers to it");
         }
         return rval;
+      }
+      else if(var_prg && new_prg) { // check for move from init_code to prog_code or vice-versa
+        if(var_prg->init_code.IsParentOf(prog_var) &&
+           var_prg->prog_code.IsParentOf(new_scope)) {
+          ProgVar* rval = var_prg->FindMakeLocalVarName(var_nm, made_new, true); // true = prog_code
+          if(made_new) {
+            rval->CopyFrom(prog_var); // copy everything
+            rval->name = var_nm;      // make sure no _copy etc
+            taMisc::Info("Note: made new program variable:",
+                         var_nm, "in program prog_code local vars:", new_prg->name,
+                         "as a copy of one from init_code, because moved/copied program element refers to it");
+          }
+          return rval;
+        }
+        else if(var_prg->prog_code.IsParentOf(prog_var) &&
+                var_prg->init_code.IsParentOf(new_scope)) {
+          ProgVar* rval = new_prg->FindMakeLocalVarName(var_nm, made_new, false); // false = init_code
+          if(made_new) {
+            rval->CopyFrom(prog_var); // copy everything
+            rval->name = var_nm;      // make sure no _copy etc
+            taMisc::Info("Note: made new program variable:",
+                         var_nm, "in program init_code local vars:", new_prg->name,
+                         "as a copy of one from prog_code, because moved/copied program element refers to it");
+          }
+          return rval;
+        }
       }
     }
   }

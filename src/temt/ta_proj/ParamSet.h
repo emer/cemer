@@ -32,11 +32,19 @@ class TA_API ParamSet : public ControlPanel {
 public:
   TA_SIMPLE_BASEFUNS(ParamSet);
 
-  virtual void          CopyActiveToSaved();  // #BUTTON
-  virtual void          CopySavedToActive();  // #BUTTON
+  virtual void          CopyActiveToSaved();
+  // #BUTTON copy the current active (live) values on the objects to the saved values
+  virtual void          CopySavedToActive();
+  // #BUTTON copy the previously-saved values to be active (live) values on the objects
   virtual bool          ActiveEqualsSaved(String member_name); 
   // test whether active and saved versions of a member are the same or different
 
+  virtual void          CopyActiveToSaved_item(int itm_idx);
+  // #IGNORE copy the current active (live) values on the objects to the saved values
+  virtual void          CopySavedToActive_item(int itm_idx);
+  // #IGNORE copy the previously-saved values to be active (live) values on the objects
+
+  
 protected:
   void                  UpdateAfterEdit_impl() override;
 

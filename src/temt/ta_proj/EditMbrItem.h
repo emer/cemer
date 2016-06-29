@@ -47,6 +47,11 @@ public:
   virtual bool          SetCurVal(const Variant& cur_val);
   // #CAT_ControlPanel set current value of item from a variant
 
+  virtual void          CopyActiveToSaved();
+  // #BUTTON for ParamSet elements: copy the current active (live) values on the objects to the saved values
+  virtual void          CopySavedToActive();
+  // #BUTTON for ParamSet elements: copy the previously-saved values to be active (live) values on the objects
+
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   TA_BASEFUNS(EditMbrItem);
   void  InitLinks() override;

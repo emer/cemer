@@ -408,57 +408,35 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     expand = true;
   }
   
-    // figure out default if not otherwise saved
-    if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
-    if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
+  // figure out default if not otherwise saved
+  if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
+  if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
     
-    if (!(exp_flags & EF_CUSTOM_FILTER) && tab && (!(exp_flags & EF_EXPAND_FULLY))) {
-      // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
-      // those being treated like top level are specific networks (i.e. network -- not an actual group but has spec and layer groups
-      if ((tab && tab->InheritsFrom(&TA_taGroup_impl)) || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
-        String name;
-        if (tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
-          name = tab->GetTypeDef()->OptionAfter("FILETYPE_");  // I didn't want to add another directive for this single case
-          name.downcase();
-        }
-        else {
-          name = tab->GetName();
-        }
-        int depth = taiMisc::GetGroupDefaultExpand(name);
+  if (!(exp_flags & EF_CUSTOM_FILTER) && tab && (!(exp_flags & EF_EXPAND_FULLY))) {
+    // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
+    // those being treated like top level are specific networks (i.e. network -- not an actual group but has spec and layer groups
+    if ((tab && tab->InheritsFrom(&TA_taGroup_impl)) || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
+      String name;
+      if (tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
+        name = tab->GetTypeDef()->OptionAfter("FILETYPE_");  // I didn't want to add another directive for this single case
+        name.downcase();
+      }
+      else {
+        name = tab->GetName();
+      }
+      int depth = taiMisc::GetGroupDefaultExpand(name);
         
-        if (depth == 0 && exp_flags & EF_DEFAULT_UNDER) {
-          depth = 1;  // if user asked for expansion expand 1 level even when default is zero
-        }
-        if (depth >= 0) {
-          is_subgroup = true;
-          max_levels = depth;
-          if (max_levels > 0) {
-            expand = true;
-          }
-        }
-        else if (!is_subgroup) {  // expand INITIATED on this non top-level group -- thus not being expanded as a subgroup
-          String exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
-          if (exp_def_str.nonempty()) {
-            max_levels = (int)exp_def_str;
-          }
-          else {
-            max_levels = 1;
-          }
-          if (level <= max_levels) {
-            expand = true;
-          }
-          else {
-            expand = false;
-          }
-        }
-        else if (level <= max_levels) {  // expand initiated by ancestor group -- just check level
+      if (depth == 0 && exp_flags & EF_DEFAULT_UNDER) {
+        depth = 1;  // if user asked for expansion expand 1 level even when default is zero
+      }
+      if (depth >= 0) {
+        is_subgroup = true;
+        max_levels = depth;
+        if (max_levels > 0) {
           expand = true;
         }
-        else {
-          expand = false;  // this level is > max_levels
-        }
       }
-      else {  // not a top-level group - get class default -- if none set max_levels to 1
+      else if (!is_subgroup) {  // expand INITIATED on this non top-level group -- thus not being expanded as a subgroup
         String exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
         if (exp_def_str.nonempty()) {
           max_levels = (int)exp_def_str;
@@ -466,30 +444,52 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
         else {
           max_levels = 1;
         }
-        
-        if (level < max_levels) {
+        if (level <= max_levels) {
           expand = true;
         }
         else {
           expand = false;
         }
       }
+      else if (level <= max_levels) {  // expand initiated by ancestor group -- just check level
+        expand = true;
+      }
+      else {
+        expand = false;  // this level is > max_levels
+      }
     }
-    
-    if (!(exp_flags & EF_EXPAND_DISABLED)) {
-      if (!item->link()->isEnabled())
+    else {  // not a top-level group - get class default -- if none set max_levels to 1
+      String exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
+      if (exp_def_str.nonempty()) {
+        max_levels = (int)exp_def_str;
+      }
+      else {
+        max_levels = 1;
+      }
+        
+      if (level < max_levels) {
+        expand = true;
+      }
+      else {
         expand = false;
+      }
     }
-    if (exp_flags & EF_CUSTOM_FILTER) {
-      max_levels = 1;  // this gets it open, then custom will take over
-      expand = true;
-      emit CustomExpandFilter(item, level, expand);
-    }
-    if (exp_flags & EF_NAVIGATOR_FILTER) {
-      max_levels = 1;  // this gets it open, then custom will take over
-      expand = true;
-      emit CustomExpandNavigatorFilter(item, level, expand);
-    }
+  }
+    
+  if (!(exp_flags & EF_EXPAND_DISABLED)) {
+    if (!item->link()->isEnabled())
+      expand = false;
+  }
+  if (exp_flags & EF_CUSTOM_FILTER) {
+    max_levels = 1;  // this gets it open, then custom will take over
+    expand = true;
+    emit CustomExpandFilter(item, level, expand);
+  }
+  if (exp_flags & EF_NAVIGATOR_FILTER) {
+    max_levels = 1;  // this gets it open, then custom will take over
+    expand = true;
+    emit CustomExpandNavigatorFilter(item, level, expand);
+  }
   
   if (expand) {
     // first expand the guy...

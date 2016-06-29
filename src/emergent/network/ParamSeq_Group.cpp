@@ -22,7 +22,7 @@ void ParamSeq_Group::Initialize() {
   SetBaseType(&TA_ParamSeq);
 }
 
-void ParamSeq_Group::SetParamSeqsAtEpoch(int epoch) {
+void ParamSeq_Group::SetParamsAtEpoch(int epoch) {
   FOREACH_ELEM_IN_GROUP(ParamSeq, ps, (*this)) {
     if(!ps->on) continue;
     ps->SetParamsAtEpoch(epoch);

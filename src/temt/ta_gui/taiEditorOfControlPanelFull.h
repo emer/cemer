@@ -39,6 +39,8 @@ protected slots:
   void          DoRemoveSelEdit() override;
   void          DoGoToObject();
   void          DoEditLabel();
+  void          DoCopyActiveToSaved();
+  void          DoCopySavedToActive();
 
 protected:
   void          ClearBody_impl() override;       // we also clear all the methods, and then rebuild them

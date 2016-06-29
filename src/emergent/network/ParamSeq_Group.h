@@ -28,14 +28,14 @@ class ParamSeq; //
 eTypeDef_Of(ParamSeq_Group);
 
 class E_API ParamSeq_Group : public taGroup<ParamSeq> {
-  // #EXPAND_DEF_0 group of parameter sequences, where each parameter sequence defines parameters that are set at a particular epoch 
+  // #EXPAND_DEF_2 group of parameter sequences, where each parameter sequence defines parameters that are set at a particular epoch 
 INHERITED(taGroup<ParamSeq>)
 public:
 
   String          GetTypeDecoKey() const override { return "ControlPanel"; }
 
-  virtual void    SetParamSeqsAtEpoch(int epoch);
-  // #BUTTON set all parameter sequences at given epoch
+  virtual void    SetParamsAtEpoch(int epoch);
+  // #BUTTON set all parameter sequence values at given epoch
  
   TA_BASEFUNS_NOCOPY(ParamSeq_Group);
 private:

@@ -27,17 +27,19 @@
 eTypeDef_Of(ParamStep);
 
 class E_API ParamStep : public ParamSet {
-  // one step of parameters to set at given epoch of network training -- always include an epoch 0 case to initialize any changing parameters at the start of training
+  // ##DEF_CHILD_mbrs one step of parameters to set at given epoch of network training -- always include an epoch 0 case to initialize any changing parameters at the start of training
 INHERITED(ParamSet)
 public:
   int                   epoch;  // #CONTROL_PANEL_SHOW epoch at which these parameters will be set -- always include an epoch 0 case to initialize any changing parameters at the start of training
 
 #ifdef __MAKETA__
+  EditMbrItem_Group     mbrs;   // the members of the control panel
   EditMthItem_Group     mths; // #HIDDEN
 #endif
 
   int             GetEnabled() const override;
   String          GetTypeDecoKey() const override { return "ControlPanel"; }
+  taList_impl*	  children_() override {return &mbrs;}
 
   virtual void  AutoName();
   // #IGNORE
@@ -57,7 +59,7 @@ private:
 taTypeDef_Of(ParamStep_List);
 
 class E_API ParamStep_List : public taList<ParamStep> {
-  // #NO_TOKENS #NO_UPDATE_AFTER list of parameter steps
+  // #NO_TOKENS #NO_UPDATE_AFTER ##EXPAND_DEF_2 list of parameter steps
 INHERITED(taList<ParamStep>)
 public:
   TA_BASEFUNS(ParamStep_List);

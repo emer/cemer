@@ -26,21 +26,33 @@ void ParamSet::UpdateAfterEdit_impl() {
 }
 
 void ParamSet::CopyActiveToSaved() {
-  FOREACH_ELEM_IN_GROUP(ControlPanelItem, sei, mbrs) {
-    EditMbrItem* edit_mbr = dynamic_cast<EditMbrItem*>(sei);
-    taBase* bs = sei->base;
-    edit_mbr->param_set_value.saved_value = edit_mbr->mbr->GetValStr(bs);
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, mbrs) {
+    sei->CopyActiveToSaved();
   }
-  this->mbrs.UpdateAfterEdit();
+  ReShowEdit(true);
 }
 
 void ParamSet::CopySavedToActive() {
-  FOREACH_ELEM_IN_GROUP(ControlPanelItem, sei, mbrs) {
-    EditMbrItem* edit_mbr = dynamic_cast<EditMbrItem*>(sei);
-    taBase* bs = sei->base;
-    edit_mbr->mbr->SetValStr(edit_mbr->param_set_value.saved_value, bs);
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, mbrs) {
+    sei->CopySavedToActive();
   }
-  this->mbrs.UpdateAfterEdit();
+  ReShowEdit(true);
+}
+
+void ParamSet::CopyActiveToSaved_item(int idx) {
+  EditMbrItem* item = mbrs.Leaf(idx);
+  if(item && item->base) {
+    item->CopyActiveToSaved();
+    ReShowEdit(true);
+  }
+}
+
+void ParamSet::CopySavedToActive_item(int idx) {
+  EditMbrItem* item = mbrs.Leaf(idx);
+  if(item && item->base) {
+    item->CopySavedToActive();
+    ReShowEdit(true);
+  }
 }
 
 bool ParamSet::ActiveEqualsSaved(String member_name) {

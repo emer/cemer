@@ -241,8 +241,9 @@ void taiEditorOfControlPanelFull::DoRemoveSelEdit() {
   if (sel_item_index >= 0) {
     sele->RemoveField(sel_item_index);
   }
-  else
+  else {
     taMisc::DebugInfo("taiEditorOfControlPanelFull::DoRemoveSelEdit: could not find item");
+  }
 }
 
 void taiEditorOfControlPanelFull::DoGoToObject() {
@@ -250,8 +251,29 @@ void taiEditorOfControlPanelFull::DoGoToObject() {
   if (sel_item_index >= 0) {
     sele->GoToObject(sel_item_index);
   }
-  else
+  else {
     taMisc::DebugInfo("taiEditorOfControlPanelFull::DoGoToObject: could not find item");
+  }
+}
+
+void taiEditorOfControlPanelFull::DoCopyActiveToSaved() {
+  int sel_item_index = membs.GetFlatWidgetIndex(sel_item_dat);
+  if (sel_item_index >= 0) {
+    ((ParamSet*)sele)->CopyActiveToSaved_item(sel_item_index);
+  }
+  else {
+    taMisc::DebugInfo("taiEditorOfControlPanelFull::DoCopyActiveToSaved: could not find item");
+  }
+}
+
+void taiEditorOfControlPanelFull::DoCopySavedToActive() {
+  int sel_item_index = membs.GetFlatWidgetIndex(sel_item_dat);
+  if (sel_item_index >= 0) {
+    ((ParamSet*)sele)->CopySavedToActive_item(sel_item_index);
+  }
+  else {
+    taMisc::DebugInfo("taiEditorOfControlPanelFull::DoCopySavedToActive: could not find item");
+  }
 }
 
 void taiEditorOfControlPanelFull::DoEditLabel() {
@@ -259,8 +281,9 @@ void taiEditorOfControlPanelFull::DoEditLabel() {
   if (sel_item_index >= 0) {
     sele->EditLabel(sel_item_index);
   }
-  else
+  else {
     taMisc::DebugInfo("taiEditorOfControlPanelFull::EditLabel: could not find item");
+  }
 }
 
 void taiEditorOfControlPanelFull::FillLabelContextMenu_SelEdit(QMenu* menu,
@@ -271,6 +294,8 @@ void taiEditorOfControlPanelFull::FillLabelContextMenu_SelEdit(QMenu* menu,
     return;
   if (sele->InheritsFrom(&TA_ParamSet)) {
     menu->addAction("Remove from ParamSet", this, SLOT(DoRemoveSelEdit()));
+    menu->addAction("Copy Active To Saved", this, SLOT(DoCopyActiveToSaved()));
+    menu->addAction("Copy Saved To Active", this, SLOT(DoCopySavedToActive()));
   }
   else {
     menu->addAction("Remove from ControlPanel", this, SLOT(DoRemoveSelEdit()));
