@@ -61,6 +61,13 @@ void ParamStep::AutoName() {
   SetName(nm);
 }
 
+void ParamStep::SetEpoch(int epc) {
+  epoch = epc;
+  prev_epoch = epc;             // prevent auto-sorting
+  AutoName();
+}
+
+
 int ParamStep::GetEnabled() const {
   ParamSeq* ps = GET_MY_OWNER(ParamSeq);
   if(!ps) return -1;

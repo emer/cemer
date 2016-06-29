@@ -39,6 +39,11 @@ public:
 
   virtual void    SetParamsAtEpoch(int epoch);
   // #BUTTON set parameters at given epoch
+  virtual void    MakeEpochSteps(int epcs_per_step = 50, int n_steps=4,
+                                 bool copy_first = true);
+  // #BUTTON make regular epoch steps, optionally copying the parameters present in the first step if it is already present
+  virtual void    LinearInterp();
+  // #BUTTON #CONFIRM linearly interpolate the values between the first and last steps as currently present -- only for single numeric parameters, and the params must be in the same position of the mbrs list across all steps -- to use, setup the saved values for the first and last steps and then run this function
   
   String          GetDesc() const override { return desc; }
   int             GetEnabled() const override { return on; }

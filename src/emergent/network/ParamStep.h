@@ -44,6 +44,8 @@ public:
 
   virtual void  AutoName();
   // #IGNORE
+  virtual void  SetEpoch(int epc);
+  // for programmatic setting of epoch -- updates name but does not redo-sorting
 
   void InitLinks() override;
   SIMPLE_CUTLINKS(ParamStep);

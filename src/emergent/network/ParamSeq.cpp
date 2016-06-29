@@ -55,3 +55,50 @@ void ParamSeq::SetParamsAtEpoch(int epoch) {
     }
   }
 }
+
+void ParamSeq::MakeEpochSteps(int epcs_per_step, int n_steps, bool copy_first) {
+  if(TestError(n_steps <= 1, "MakeEpochSteps",
+               "requires at least 2 steps")) {
+    return;
+  }
+  int epc = 0;
+  steps.SetSize(n_steps);
+  ParamStep* fs = steps[0];
+  for(int i=0; i<steps.size; i++) {
+    ParamStep* ps = steps[i];
+    if(copy_first && i >= 1) {
+      ps->CopyFrom(fs);
+    }      
+    ps->SetEpoch(epc);
+    epc += epcs_per_step;
+  }
+  SigEmitUpdated();
+}
+
+void ParamSeq::LinearInterp() {
+  if(TestError(steps.size < 3, "LinearInterp",
+               "requires at least 3 steps to perform linear interpolation")) {
+    return;
+  }
+  ParamStep* fs = steps[0];
+  ParamStep* ls = steps.Peek();
+  for(int i=1; i<steps.size-1; i++) {
+    ParamStep* ps = steps[i];
+    for(int lfi = 0; lfi < ps->mbrs.leaves; lfi++) {
+      EditMbrItem* psi = ps->mbrs.Leaf(lfi);
+      if(!(psi->is_numeric && psi->is_single)) continue;
+      EditMbrItem* fsi = fs->mbrs.Leaf(lfi);
+      EditMbrItem* lsi = ls->mbrs.Leaf(lfi);
+      if(TestError(!fsi || !lsi, "LinearInterp",
+                   "corresponding first and/or last step items not found for item:",
+                   psi->label, "aborting")) {
+        return;
+      }
+      double fval = fsi->param_set_value.saved_value.toDouble();
+      double lval = lsi->param_set_value.saved_value.toDouble();
+      double ival = fval + (double)i * ((lval - fval) / (double)(steps.size-1));
+      psi->param_set_value.saved_value = (String)ival;
+    }
+  }
+  SigEmitUpdated();
+}
