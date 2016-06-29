@@ -74,7 +74,7 @@ void iApplicationToolBar::Constr_post() {
   tb->addAction(win->viewConsoleFrontAction);
 
   tb->addSeparator();
-  tb->addAction(win->helpHelpAction);
+  tb->addAction(win->helpWebDocsAction);
   tb->addAction(win->fileOptionsAction);
   tb->addAction(win->helpFileBugAction);
 }

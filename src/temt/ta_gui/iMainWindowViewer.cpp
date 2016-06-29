@@ -1195,8 +1195,8 @@ void iMainWindowViewer::Constr_ToolsMenu()
   toolsDiffLayersAction = AddAction(new iAction(0, "Layers...", QKeySequence(), "toolsDiffLayersAction"));
   toolsDiffSpecsAction = AddAction(new iAction(0, "Specs...", QKeySequence(), "toolsDiffSpecsAction"));
   
-  toolsHelpBrowseAction = AddAction(new iAction(0, "&Help Browser", QKeySequence(), "toolsHelpBrowseAction"));
-  toolsTypeInfoBrowseAction = AddAction(new iAction(0, "Type Info Browser", QKeySequence(), "toolsTypeInfoBrowseAction"));
+  toolsClassReferenceAction = AddAction(new iAction(0, "&C++ Class Reference", QKeySequence(), "toolsClassReferenceAction"));
+  toolsTypeInfoReferenceAction = AddAction(new iAction(0, "Type Info Reference", QKeySequence(), "toolsTypeInfoReferenceAction"));
   
   toolsSvnBrowseActionEmergent = AddAction(new iAction(0, "&SVN Browser Emergent", QKeySequence(), "toolsSvnBrowseActionEmergent"));
   toolsSvnBrowseActionSvn1 = AddAction
@@ -1224,8 +1224,8 @@ void iMainWindowViewer::Constr_ToolsMenu()
     diffCompareMenu->AddAction(toolsDiffSpecsAction);
     toolsMenu->AddAction(toolsChooseKeyBindingsAction);
     toolsMenu->insertSeparator();
-    toolsMenu->AddAction(toolsHelpBrowseAction);
-    toolsMenu->AddAction(toolsTypeInfoBrowseAction);
+    toolsMenu->AddAction(toolsClassReferenceAction);
+    toolsMenu->AddAction(toolsTypeInfoReferenceAction);
     toolsMenu->insertSeparator();
     toolsMenu->AddAction(toolsSvnBrowseActionEmergent);
     if(taMisc::svn_repo1_url.name.nonempty())
@@ -1252,7 +1252,7 @@ void iMainWindowViewer::Constr_ToolsMenu()
           this, SLOT(toolsDiffLayers()));
   connect(toolsDiffSpecsAction, SIGNAL(triggered()),
           this, SLOT(toolsDiffSpecs()));
-  connect(toolsHelpBrowseAction, SIGNAL(triggered()),
+  connect(toolsClassReferenceAction, SIGNAL(triggered()),
           this, SLOT(toolsHelpBrowser()));
   connect(toolsSvnBrowseActionEmergent, SIGNAL(triggered()),
           this, SLOT(toolsSvnBrowserEmergent()));
@@ -1262,7 +1262,7 @@ void iMainWindowViewer::Constr_ToolsMenu()
           this, SLOT(toolsSvnBrowserSvn2()));
   connect(toolsSvnBrowseActionSvn3, SIGNAL(triggered()),
           this, SLOT(toolsSvnBrowserSvn3()));
-  connect(toolsTypeInfoBrowseAction, SIGNAL(triggered()),
+  connect(toolsTypeInfoReferenceAction, SIGNAL(triggered()),
           this, SLOT(toolsTypeInfoBrowser()));
   connect(toolsOpenServerAction, SIGNAL(triggered()),
           this, SLOT(toolsOpenRemoteServer()));
@@ -1275,33 +1275,34 @@ void iMainWindowViewer::Constr_ToolsMenu()
 void iMainWindowViewer::Constr_HelpMenu()
 {
   String s = taMisc::app_name + " help on the web (F1)";
-  helpHelpAction = AddAction(new iAction("&Help", QKeySequence("F1"), "helpHelpAction"));
-  helpHelpAction->setIcon(QIcon(QPixmap(":/images/help_icon.png")));
-  helpHelpAction->setToolTip(taiMisc::ToolTipPreProcess(s));
-  helpHelpAction->setStatusTip(s);
+  helpWebDocsAction = AddAction(new iAction("&Web Docs", QKeySequence("F1"), "helpWebDocsAction"));
+  helpWebDocsAction->setIcon(QIcon(QPixmap(":/images/help_icon.png")));
+  helpWebDocsAction->setToolTip(taiMisc::ToolTipPreProcess(s));
+  helpWebDocsAction->setStatusTip(s);
 
   helpAboutAction = AddAction(new iAction("&About", QKeySequence(), "helpAboutAction"));
   
-  helpAPIAction = AddAction(new iAction("&API Browser", QKeySequence(), "helpAPIAction"));
+  helpClassReferenceAction = AddAction(new iAction("&C++ Class Reference", QKeySequence(), "helpClassReferenceAction"));
+  helpClassReferenceAction->setIcon(QIcon(QPixmap(":/images/class_ref_icon.png")));
 
   helpFileBugAction = AddAction(new iAction("Report Bug", QKeySequence(), "helpFileBugAction"));
   helpFileBugAction->setIcon(QIcon(QPixmap(":/images/report_bug_icon.png")));
   helpFileBugAction->setToolTip(taiMisc::ToolTipPreProcess("Opens web page for reporting a problem or requesting an enhancement"));
 
   // Build menu items.
-  helpMenu->AddAction(helpHelpAction);
-  helpMenu->AddAction(helpAPIAction);
+  helpMenu->AddAction(helpWebDocsAction);
+  helpMenu->AddAction(helpClassReferenceAction);
   helpMenu->AddAction(helpFileBugAction);
   helpMenu->insertSeparator();
   helpMenu->AddAction(helpAboutAction);
   
-  helpHelpAction->setEnabled(true);
-  helpAPIAction->setEnabled(true);
+  helpWebDocsAction->setEnabled(true);
+  helpClassReferenceAction->setEnabled(true);
   helpFileBugAction->setEnabled(true);
 
   // Make connetions.
-  connect(helpHelpAction, SIGNAL(Action()), this, SLOT(helpHelp()));
-  connect(helpAPIAction, SIGNAL(Action()), this, SLOT(toolsHelpBrowser()));
+  connect(helpWebDocsAction, SIGNAL(Action()), this, SLOT(helpWebDocs()));
+  connect(helpClassReferenceAction, SIGNAL(Action()), this, SLOT(toolsHelpBrowser()));
   connect(helpAboutAction, SIGNAL(Action()), this, SLOT(helpAbout()));
   connect(helpFileBugAction, SIGNAL(Action()), this, SLOT(FileBugReport()));
 }
@@ -2496,7 +2497,7 @@ void iMainWindowViewer::fileClearRecentsMenu() {
 void iMainWindowViewer::filePrint() {
 }
 
-void iMainWindowViewer::helpHelp() {
+void iMainWindowViewer::helpWebDocs() {
   String url = taMisc::web_help_general;
   if (url.nonempty()) {
     QDesktopServices::openUrl(QUrl(url));

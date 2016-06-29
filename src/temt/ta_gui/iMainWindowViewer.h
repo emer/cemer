@@ -193,8 +193,8 @@ public:
   iAction*            toolsDiffNetworksAction;
   iAction*            toolsDiffLayersAction;
   iAction*            toolsDiffSpecsAction;
-  iAction*            toolsTypeInfoBrowseAction;
-  iAction*            toolsHelpBrowseAction;
+  iAction*            toolsClassReferenceAction;
+  iAction*            toolsTypeInfoReferenceAction;
   iAction*            toolsSvnBrowseActionEmergent;
   iAction*            toolsSvnBrowseActionSvn1;
   iAction*            toolsSvnBrowseActionSvn2;
@@ -210,8 +210,8 @@ public:
   iAction*            ctrlStepAction;
   iAction*            progStatusAction; // program run status and button
 
-  iAction*            helpHelpAction;
-  iAction*            helpAPIAction;
+  iAction*            helpWebDocsAction;
+  iAction*            helpClassReferenceAction;
   iAction*            helpAboutAction;
   iAction*            helpFileBugAction;
   
@@ -397,7 +397,7 @@ public slots:
   virtual void  windowActivateByName(const Variant& title);
   virtual void  WindowMinimize();
   virtual void  WindowZoom();
-  virtual void  helpHelp();
+  virtual void  helpWebDocs();
   virtual void  helpAbout();
   virtual void  FileBugReport();
   virtual void  ConsoleToFront();

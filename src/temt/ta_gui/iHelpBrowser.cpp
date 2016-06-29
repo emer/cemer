@@ -146,7 +146,7 @@ iHelpBrowser::~iHelpBrowser() {
 
 void iHelpBrowser::init() {
   this->setAttribute(Qt::WA_DeleteOnClose, false); // keep alive when closed
-  this->setWindowTitle("Help Browser");
+  this->setWindowTitle("C++ Class Reference");
 //  this->setSizeGripEnabled(true);
 
   int font_spec = taiMisc::fonMedium;
@@ -623,7 +623,7 @@ void iHelpBrowser::LoadUrl(const String& url) {
     LoadExternal_impl(url);
   }
   else {
-    taMisc::Warning("Attempt to load unsupported url into Help Browser:",
+    taMisc::Warning("Attempt to load unsupported url into C++ Class Reference:",
       url);
   }
 }
