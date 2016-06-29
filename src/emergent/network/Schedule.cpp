@@ -41,12 +41,17 @@ void Schedule::Initialize() {
 
 void Schedule::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  SortItems();
+  UpdateDurations();
+}
+
+void Schedule::SortItems() {
   last_ctr = -1;
   cur_val = 0;
   int lst_ctr = -1;
   Schedule temp;
-  int i;
-  for(i=0; i < size; i++) {
+  for(int i=0; i < size; i++) {
     SchedItem* itm = FastEl(i);
     if(itm->start_ctr < lst_ctr) {
       temp.Transfer(itm);
@@ -63,11 +68,13 @@ void Schedule::UpdateAfterEdit_impl() {
     Insert(itm,j);              // always insert item in new spot
     temp.RemoveIdx(0);
   }
+}
 
+void Schedule::UpdateDurations() {
   if(size > 0)
     FastEl(0)->start_ctr = 0;
 
-  for(i=0; i < size; i++) {
+  for(int i=0; i < size; i++) {
     SchedItem* itm = FastEl(i);
     if(i == (size - 1)) {
       itm->duration = 1;

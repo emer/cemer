@@ -61,6 +61,11 @@ public:
   float         GetVal(int ctr);
   // #MENU #MENU_ON_Edit #USE_RVAL get current schedule val, based on counter
 
+  virtual void  SortItems();
+  // sorts the items according to start_ctr -- called automatically in UAE
+  virtual void  UpdateDurations();
+  // update the durations based on counter intervals -- called automatically in UAE
+  
   TA_SIMPLE_BASEFUNS(Schedule);
 protected:
   void UpdateAfterEdit_impl() override;

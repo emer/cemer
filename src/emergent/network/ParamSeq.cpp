@@ -32,6 +32,7 @@ void ParamSeq::UpdateAfterEdit_impl() {
     }
   }
   prev_name = name;
+  steps.Sort();                 // should sort by name!
 }
 
 void ParamSeq::SetParamsAtEpoch(int epoch) {

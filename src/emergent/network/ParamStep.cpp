@@ -22,6 +22,7 @@ TA_BASEFUNS_CTORS_DEFN(ParamStep_List);
 
 void ParamStep::Initialize() {
   epoch = 0;
+  prev_epoch = 0;
 }
 
 void ParamStep::InitLinks() {
@@ -38,12 +39,25 @@ void ParamStep::InitLinks() {
 void ParamStep::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   AutoName();
+  if(taMisc::is_loading) {
+    prev_epoch = epoch;
+  }
+  else if(epoch != prev_epoch) {
+    prev_epoch = epoch;
+    ParamSeq* ps = GET_MY_OWNER(ParamSeq);
+    if(!ps) return;
+    ps->steps.Sort();           // re-sort!
+  }
 }
 
 void ParamStep::AutoName() {
   ParamSeq* ps = GET_MY_OWNER(ParamSeq);
   if(!ps) return;
-  String nm = ps->name + "_" + taMisc::LeadingZeros(epoch, 3);
+  String nm = ps->name + "_";
+  if(epoch >= 0)
+    nm += taMisc::LeadingZeros(epoch, 3);
+  else
+    nm += "off";
   SetName(nm);
 }
 
