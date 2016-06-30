@@ -91,7 +91,6 @@ public:
   QSignalMapper*        signalMapperForDataProc;   // #IGNORE used to map several actions to one action and pass a value
   QSignalMapper*        signalMapperForDataAnal;   // #IGNORE used to map several actions to one action and pass a value
   QSignalMapper*        signalMapperForDataGen;   // #IGNORE used to map several actions to one action and pass a value
-  QSignalMapper*        signalMapperForImageProc;   // #IGNORE used to map several actions to one action and pass a value
   
   taiWidgetMenu*              fileMenu;
   taiWidgetMenu*              fileOpenRecentMenu;
@@ -112,7 +111,6 @@ public:
   taiWidgetMenu*              processMenu;       // data_proc methods
   taiWidgetMenu*              analysisMenu;      // data_analysis methods
   taiWidgetMenu*              generateMenu;      // data_gen methods
-  taiWidgetMenu*              processImageMenu;  // image_proc methods
   taiWidgetMenu*              diffCompareMenu;   // all the types you can diff compare
 
   iAction*            historyBackAction;
@@ -167,10 +165,6 @@ public:
   iAction_List         dataGenRandomActions;
   iAction_List         dataGenFeatPatsActions;
   iAction_List         dataGenFilesActions;
-  iAction_List         imageProcTransformActions;
-  iAction_List         imageProcFilterActions;
-  iAction_List         imageProcNoiseActions;
-  iAction_List         imageProcImageProcActions;
   
   iAction*            viewRefreshAction;
   iAction*            viewSetSaveViewAction;
@@ -456,7 +450,6 @@ protected slots:
   virtual void          DataProcLauncher(QString method_name);
   virtual void          DataAnalLauncher(QString method_name);
   virtual void          DataGenLauncher(QString method_name);
-  virtual void          ImageProcLauncher(QString method_name);
 
 protected:
   static int            s_next_unique_id;

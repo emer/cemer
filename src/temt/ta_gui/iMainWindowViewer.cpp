@@ -877,12 +877,10 @@ void iMainWindowViewer::Constr_DataMenu() {
   signalMapperForDataProc = new QSignalMapper (this);
   signalMapperForDataAnal = new QSignalMapper (this);
   signalMapperForDataGen = new QSignalMapper (this);
-  signalMapperForImageProc = new QSignalMapper (this);
   
   processMenu = dataMenu->AddSubMenu("Process");
   analysisMenu = dataMenu->AddSubMenu("Analyze");
   generateMenu = dataMenu->AddSubMenu("Generate");
-  processImageMenu = dataMenu->AddSubMenu("Process Image");
   
   MethodSpace* methods;
   MethodDef* mdef;
@@ -1118,71 +1116,10 @@ void iMainWindowViewer::Constr_DataMenu() {
       (dataGenFilesActions[i], dataGenFilesActions[i]->usr_data.toQString());
   }
 
-  // Build the action lists for taImageProc methods
-  // type = &TA_taImageProc;
-  // methods = &type->methods;
-  // for (int i=0; i<methods->size; i++) {
-  //   mdef = methods->FastEl(i);
-  //   if (mdef == NULL)
-  //     continue;
-  //   bool show = true;
-  //   if (mdef->HasOption("MENU_BUTTON")) {
-  //     TypeSpace* args = &mdef->arg_types;
-  //     // if there were methods we didn't want to show (perhaps they require a spec) put that logic here
-  //     if (show) {
-  //       String label = mdef->name + "..."; taMisc::SpaceLabel(label);
-  //       if (mdef->HasOption("CAT_Transform")) {
-  //         String actionString = "imageProc" + mdef->name + "Action";
-  //         imageProcTransformActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));  // put the method name into usr_data - needed for later call to actual method
-  //       }
-  //       if (mdef->HasOption("CAT_Filter")) {
-  //         String actionString = "imageProc" + mdef->name + "Action";
-  //         imageProcFilterActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
-  //       }
-  //       if (mdef->HasOption("CAT_Noise")) {
-  //         String actionString = "imageProc" + mdef->name + "Action";
-  //         imageProcNoiseActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
-  //       }
-  //       if (mdef->HasOption("CAT_ImageProc")) {
-  //         String actionString = "imageProc" + mdef->name + "Action";
-  //         imageProcImageProcActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
-  //       }
-  //     }
-  //   }
-  // }
-  
-  // for (int i=0; i<imageProcTransformActions.size; i++) {
-  //   processImageMenu->AddAction(imageProcTransformActions[i]);
-  //   connect (imageProcTransformActions[i], SIGNAL(Action()), signalMapperForImageProc, SLOT(map())) ;
-  //   signalMapperForImageProc->setMapping
-  //     (imageProcTransformActions[i], imageProcTransformActions[i]->usr_data.toQString());
-  // }
-  // processImageMenu->AddSep();
-  // for (int i=0; i<imageProcFilterActions.size; i++) {
-  //   processImageMenu->AddAction(imageProcFilterActions[i]);
-  //   connect (imageProcFilterActions[i], SIGNAL(Action()), signalMapperForImageProc, SLOT(map())) ;
-  //   signalMapperForImageProc->setMapping
-  //     (imageProcFilterActions[i], imageProcFilterActions[i]->usr_data.toQString());
-  // }
-  // processImageMenu->AddSep();
-  // for (int i=0; i<imageProcNoiseActions.size; i++) {
-  //   processImageMenu->AddAction(imageProcNoiseActions[i]);
-  //   connect (imageProcNoiseActions[i], SIGNAL(Action()), signalMapperForImageProc, SLOT(map())) ;
-  //   signalMapperForImageProc->setMapping
-  //     (imageProcNoiseActions[i], imageProcNoiseActions[i]->usr_data.toQString());
-  // }
-  // processImageMenu->AddSep();
-  // for (int i=0; i<imageProcImageProcActions.size; i++) {
-  //   processImageMenu->AddAction(imageProcImageProcActions[i]);
-  //   connect (imageProcImageProcActions[i], SIGNAL(Action()), signalMapperForImageProc, SLOT(map())) ;
-  //   signalMapperForImageProc->setMapping
-  //     (imageProcImageProcActions[i], imageProcImageProcActions[i]->usr_data.toQString());
-  // }
   
   connect (signalMapperForDataProc, SIGNAL(mapped(QString)), this, SLOT(DataProcLauncher(QString))) ;
   connect (signalMapperForDataAnal, SIGNAL(mapped(QString)), this, SLOT(DataAnalLauncher(QString))) ;
   connect (signalMapperForDataGen, SIGNAL(mapped(QString)), this, SLOT(DataGenLauncher(QString))) ;
-  connect (signalMapperForImageProc, SIGNAL(mapped(QString)), this, SLOT(ImageProcLauncher(QString))) ;
 }
 
 void iMainWindowViewer::Constr_ToolsMenu()
@@ -1858,16 +1795,6 @@ void iMainWindowViewer::DataGenLauncher(QString method_name) {
       inst->CallFun(meth_name);
     }
   }
-}
-
-void iMainWindowViewer::ImageProcLauncher(QString method_name) {
-  // String meth_name(method_name.toStdString().c_str());
-  // if (myProject()) {
-  //   taBase* inst = myProject()->FindMakeNewDataProc(&TA_taImageProc, "");
-  //   if (inst) {
-  //     inst->CallFun(meth_name);
-  //   }
-  // }
 }
 
 iTreeView* iMainWindowViewer::GetMainTreeView() {
@@ -2803,18 +2730,6 @@ void iMainWindowViewer::dataMenu_aboutToShow() {
   }
   for (int i=0; i<dataGenFilesActions.size; i++) {
     dataGenFilesActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<imageProcTransformActions.size; i++) {
-    imageProcTransformActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<imageProcFilterActions.size; i++) {
-    imageProcFilterActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<imageProcNoiseActions.size; i++) {
-    imageProcNoiseActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<imageProcImageProcActions.size; i++) {
-    imageProcImageProcActions[i]->setEnabled(myProject());
   }
 }
 
