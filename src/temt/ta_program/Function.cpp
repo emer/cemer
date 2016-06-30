@@ -123,7 +123,7 @@ String Function::GetFunDecl() {
 
 void Function::GenCss_Decl(Program* prog) {
   for(int i=0; i<args.size; i++) {
-    args[i]->UpdateAfterEdit_NoGui(); // make sure everything updated
+    args[i]->UpdateAfterEdit(); // make sure everything updated
   }
   
   String rval = GetFunDecl() + ";";

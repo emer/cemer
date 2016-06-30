@@ -182,6 +182,8 @@ public:
   // #IGNORE auto-set the LOCAL_VAR and FUN_ARG flags based on my owners
   virtual bool          UpdateUsedFlag();
   // #IGNORE update the USED flag based on siglink refs
+  virtual bool          UpdateUsedFlag_gui();
+  // #IGNORE update the USED flag based on siglink refs -- updates gui if changed
   virtual bool          UpdateCssObjVal();
   // #IGNORE update cssSmartRef if we are a non-local object pointer
 

@@ -142,6 +142,19 @@ void ProgEl::UpdateAfterEdit_impl() {
   UpdateProgFlags();
   pre_compile_code_string = BrowserEditString();  // hold on to the current code; if compile successful copy to
   UpdateProgCode();
+
+  // update used flags on variables early and often!
+  TypeDef* td = GetTypeDef();
+  for(int i=0;i<td->members.size;i++) {
+    MemberDef* md = td->members[i];
+    if(md->type->InheritsFromName("ProgVarRef")) {
+      ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);
+      if(pvr->ptr()) {
+        ProgVar* pv = pvr->ptr();
+        pv->UpdateUsedFlag_gui();
+      }
+    }
+  }
 }
 
 void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {

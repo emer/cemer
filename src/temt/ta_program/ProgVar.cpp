@@ -148,6 +148,15 @@ bool ProgVar::UpdateUsedFlag() {
   return HasVarFlag(USED) != prv_val; // return value is whether we changed
 }
 
+bool ProgVar::UpdateUsedFlag_gui() {
+  bool was_used = HasVarFlag(USED);
+  bool rval = UpdateUsedFlag();
+  if(was_used != HasVarFlag(USED)) {
+    SigEmitUpdated();
+  }
+  return rval;
+}
+
 int ProgVar::GetEnabled() const {
   return HasVarFlag(USED);
 }
@@ -391,7 +400,9 @@ void ProgVar::FreeParseCssEl() {
 }
 
 void ProgVar::ResetParseStuff() {
+  // this is called by expressions after they parse us as a variable
   FreeParseCssEl();
+  UpdateUsedFlag_gui();
 }
 
 TypeDef* ProgVar::act_object_type() const {
