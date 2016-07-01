@@ -493,6 +493,8 @@ protected:
   void                  UpdateAfterEdit_impl() override;
   bool                  CheckConfig_impl(bool quiet) override;
   void                  CheckChildConfig_impl(bool quiet, bool& rval) override;
+  bool                  HasCallCycle();  // check for Program A calling B calling A or a more indirect call cycle - either is bad!
+  bool                  CallsMe(Program* caller_program, String& callee_name, int depth); // true if direct or indirect call cycle
   void                  InitScriptObj_impl() override; // no "this" and install
   bool                  PreCompileScript_impl() override; // CheckConfig & add/update the global vars
 

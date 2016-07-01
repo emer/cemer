@@ -270,13 +270,17 @@ void Program::UpdateAfterEdit_impl() {
 }
 
 bool Program::CheckConfig_impl(bool quiet) {
-  //TODO: global program dependencies and other objects -- check them all here
+  //TODO: global program deendencies and other objects -- check them all here
   bool rval = inherited::CheckConfig_impl(quiet);
+//  has_call_cycle = false;
+//  if (HasCallCycle()) {
+//    rval = false;
+//  }
+//  
   m_checked = true;
   if (!rval) ret_val = RV_CHECK_ERR;
   return rval;
 }
-
 
 void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
@@ -370,6 +374,52 @@ int Program::CallInit_impl(Program* caller) {
   return ret_val;
 }
 
+bool Program::HasCallCycle() {
+  for (int i=0; i<prog_code.size; i++) {
+    ProgEl* prog_el = prog_code.FastEl(i);
+    if (prog_el->DerivesFromName("ProgramCallBase")) {
+      ProgramCallBase* call = (ProgramCallBase*)prog_el;
+      Program* callee = call->GetTarget();
+      if (callee) {
+        String callee_name = callee->GetName();
+        if (callee->CallsMe(this, callee_name, 0)) {
+          bool rval = false;
+          CheckError(true, false, rval, "Infinite Call cycle -- HINT: Program ", callee_name, " calls program ", callee->GetName());
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+// this method which checks for cycles in the call chain can cycle itself!
+// didn't figure out how to check for them today so I went with a limit on depth.
+// someday with more time and coffee maybe I'll think of the solution
+bool Program::CallsMe(Program* caller, String& callee_name, int depth) {
+  if (depth > 10) {
+    return true;
+  }
+  
+  for (int i=0; i<prog_code.size; i++) {
+    ProgEl* prog_el = prog_code.FastEl(i);
+    if (prog_el->DerivesFromName("ProgramCallBase")) {
+      ProgramCallBase* call = (ProgramCallBase*)prog_el;
+      Program* callee = call->GetTarget();
+      if (callee) {
+        if (callee == caller) {
+          return true;
+        }
+        else { // check the next level of calls
+          callee_name = callee->GetName();
+          return callee->CallsMe(caller, callee_name, depth + 1);
+        }
+      }
+    }
+  }
+  return false;
+}
+
 void Program::Init() {
   //   cur_step_prog = NULL;  // if a program calls Init() directly, this will prevent stepping
   // it is not clear if we really need to clear this setting here
@@ -395,14 +445,17 @@ void Program::Init() {
   // running unchecked code, so we need to make sure all progel's have
   // an extra compile-time check and don't just crash (fail quietly -- err will showup later)
   taMisc::CheckConfigStart(false); // CallInit will do CheckConfig..
+
   if(!CompileScript(true)) {
     if (ret_val != RV_CHECK_ERR)
       ret_val = RV_COMPILE_ERR;
   }
+  
   if(ret_val == RV_OK) {
     // check args and vars before running any code, to get NULL_CHECK etc
     bool chkargs = args.CheckConfig(false);
     bool chkvars = vars.CheckConfig(false);
+    
     if(chkargs && chkvars) {
       SetAllBreakpoints();          // reinstate all active breakpoints
       bool did_struct_updt = false;
@@ -410,15 +463,27 @@ void Program::Init() {
         objs.StructUpdateEls(true);
         did_struct_updt = true;
       }
-      script->SetDebug((int)HasProgFlag(TRACE));
-      script->Run();
+
+      GetSubProgsAll();
+      // check for any cycles in the program call chain
+      for (int i=0; i<sub_progs_all.size; i++) {
+        Program* program = sub_progs_all[i];
+        if (program->HasCallCycle()) {
+          ret_val = RV_CHECK_ERR;
+          taMisc::check_ok = false;
+          break;
+        }
+      }
+      
+      if (ret_val == RV_OK) {
+        script->SetDebug((int)HasProgFlag(TRACE));
+        script->Run();
+      }
       if(did_struct_updt)
         objs.StructUpdateEls(false);
     }
   }
   
-  // get these here after all the sub-guys have been initialized -- should now be current
-  GetSubProgsAll();
   GetSubProgsStep();
   
   taMisc::DoneBusy();
