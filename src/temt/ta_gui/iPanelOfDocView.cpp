@@ -16,7 +16,6 @@
 #include "iPanelOfDocView.h"
 #include <taDoc>
 #include <iLineEdit>
-#include <iNetworkAccessManager>
 #include <iHelpBrowser>
 #include <iTextBrowser>
 #include <iWebView>
@@ -43,6 +42,7 @@
 #else // USE_QT_WEBENGINE
 
 #include <QWebFrame>
+#include <iNetworkAccessManager>
 
 #endif // USE_QT_WEBENGINE
 
@@ -144,15 +144,9 @@ iPanelOfDocView::iPanelOfDocView()
   connect(webview, SIGNAL(loadFinished(bool)), this, SLOT(doc_loadFinished(bool)) );
 
 #ifdef USE_QT_WEBENGINE
-//  webview->page()->setNetworkAccessManager(taiMisc::net_access_mgr);
-//  webview->page()->setForwardUnsupportedContent(true);
-//  webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-  connect(webview->page(), SIGNAL(linkClicked(const QUrl&)),
-          this, SLOT(doc_linkClicked(const QUrl&)) );
-  connect(webview, SIGNAL(sigCreateWindow(QWebEnginePage::WebWindowType,
-                                          iWebView*&)), this, SLOT(doc_createWindow(QWebEnginePage::WebWindowType,
-                                                                                    iWebView*&)) );
-  // QWebEngineProfile* profile = webview->page()->prof
+  connect(webview,
+          SIGNAL(sigCreateWindow(QWebEnginePage::WebWindowType, iWebView*&)), this,
+          SLOT(doc_createWindow(QWebEnginePage::WebWindowType, iWebView*&)) );
 #else // USE_QT_WEBENGINE
   webview->page()->setNetworkAccessManager(taiMisc::net_access_mgr);
   webview->page()->setForwardUnsupportedContent(true);
@@ -172,8 +166,10 @@ iPanelOfDocView::iPanelOfDocView()
 }
 
 iPanelOfDocView::~iPanelOfDocView() {
+#ifndef USE_QT_WEBENGINE
   if(taiMisc::net_access_mgr)
     taiMisc::net_access_mgr->setMainWindow(NULL); // not us anymore -- someone else will set..
+#endif
   m_doc = NULL;
 }
 
@@ -196,49 +192,10 @@ void iPanelOfDocView::doc_createWindow(QWebPage::WebWindowType type, iWebView*& 
 #endif // USE_QT_WEBENGINE
 
 void iPanelOfDocView::doc_linkClicked(const QUrl& url) {
-  String path = url.toString();
-  bool ta_path = false;
-  QUrl new_url(url);
-#if (QT_VERSION >= 0x050000)
-  QUrlQuery urq(url);
-#else
-#endif
-  if(path.startsWith("ta:") || path.startsWith(".")) {
-    ta_path = true;
-  }
-  String qry;
-#if (QT_VERSION >= 0x050000)
-  if(!ta_path && urq.hasQueryItem("title")) { // wiki versions of our action urls get translated into queries with title=...
-    qry = urq.queryItemValue("title");
-  }
-#else
-  if(!ta_path && url.hasQueryItem("title")) { // wiki versions of our action urls get translated into queries with title=...
-    qry = url.queryItemValue("title");
-  }
-#endif
-  if(qry.nonempty()) {
-    if(qry.startsWith("ta:") || qry.startsWith(".")) {
-      if(!qry.startsWith("ta:"))
-        qry = "ta:"+qry;        // rectify
-      new_url.setUrl(qry);      // start from there.
-      ta_path = true;
-    }
-  }
-  if(!ta_path) {
-    // a standard path:
+  bool ta_handle = iWebView::handleTaLinkClick(url);
+  if(!ta_handle) {
     webview->load(url);
-    // todo: we could make a note of this somewhere, but key idea is that our URL
-    // is fixed!!!
-    return;
   }
-
-  // handle it internally
-  if (!new_url.hasFragment()) {
-    if (viewerWindow())
-      new_url.setFragment("#winid_" + QString::number(viewerWindow()->uniqueId()));
-  }
-  // goes to: iMainWindowViewer::taUrlHandler  in ta_qtviewer.cpp
-  QDesktopServices::openUrl(new_url);
 }
 
 void iPanelOfDocView::doc_loadStarted() {
@@ -359,8 +316,10 @@ void iPanelOfDocView::UpdatePanel_impl() {
   taDoc* doc_ = this->doc();
   if(!doc_) return;
 
+#ifndef USE_QT_WEBENGINE
   if(taiMisc::net_access_mgr)
     taiMisc::net_access_mgr->setMainWindow(viewerWindow());
+#endif
 
   wiki_edit->setText(doc_->wiki);
   url_edit->setText(doc_->url);

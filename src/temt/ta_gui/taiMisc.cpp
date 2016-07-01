@@ -26,6 +26,7 @@
 #include <KeyBindings>
 #include <KeyBindings_List>
 #include <KeyActionPair_PArray>
+#include <iWebView>
 
 #include <taMisc>
 
@@ -814,6 +815,8 @@ void taiMisc::RemoveLoadDialog(){
 }*/
 
 void taiMisc::Cleanup(int) {
+  iWebView::cleanupWeb();
+
 #ifndef __GNUG__
   String cmd = "/bin/rm ";
   cmd += taMisc::GetTemporaryPath() + "/tai_gf." + String((int)taMisc::ProcessId()) + ".* >/dev/null 2>&1";

@@ -28,21 +28,19 @@
 #include <ViewBackground_List>
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
+#include <iNetworkAccessManager>
 #include <ConsoleDockViewer>
 #include <cssConsoleWindow>
-#include <iNetworkAccessManager>
 #include <taGenDoc>
 #include <taCodeUtils>
 #include <Program>
 #include <taDoc>
 #include <taiWidgetTokenChooser>
 #include <KeyBindings_List>
-#include <ClusterRun>
 #include <MTRnd>
 #include <DynEnumType>
 #include <ControlPanel>
 #include <DataTable>
-#include <ForLoop>
 
 taTypeDef_Of(PluginWizard);
 taTypeDef_Of(StartupWizard);
@@ -2150,6 +2148,7 @@ extern "C" {
 // todo: could partition these out into separate guys..
 void taRootBase::Cleanup_Main() {
   taMisc::in_shutdown++;
+  taiMisc::Cleanup(0);      // cleanup stuff in tai
   taMisc::aka_types.Reset();    // errs happen when this gets reset out of order
   taMisc::reg_funs.Reset();    // errs happen when this gets reset out of order
   // remove sig handler -- very nasty when baddies happen after this point

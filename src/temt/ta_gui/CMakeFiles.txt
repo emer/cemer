@@ -306,7 +306,6 @@ set(ta_gui_HEADS_NOMAKETA_MOC
   iColorPad.h
   iTableWidget.h
   iWebView.h
-  iWebUrlInterceptor.h
   iToolBar.h
 
   iTabBarBase.h
@@ -801,7 +800,6 @@ set(ta_gui_SRCS_NOMAKETA
   iColorPad.cpp
   iTableWidget.cpp
   iWebView.cpp
-  iWebUrlInterceptor.cpp
   iToolBar.cpp
 
   iTabBarBase.cpp
