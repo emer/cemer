@@ -19,6 +19,7 @@
 #include <taProject>
 #include <ControlPanel>
 #include <ProgramCallBase>
+#include <ProgEl>
 #include <taiEditorOfString>
 #include <iDialogChoice>
 
@@ -380,7 +381,7 @@ bool Program::HasCallCycle() {
     if (prog_el->DerivesFromName("ProgramCallBase")) {
       ProgramCallBase* call = (ProgramCallBase*)prog_el;
       Program* callee = call->GetTarget();
-      if (callee) {
+      if (callee && !prog_el->HasProgFlag(ProgEl::OFF)) {
         String callee_name = callee->GetName();
         if (callee->CallsMe(this, callee_name, 0)) {
           bool rval = false;
@@ -406,7 +407,7 @@ bool Program::CallsMe(Program* caller, String& callee_name, int depth) {
     if (prog_el->DerivesFromName("ProgramCallBase")) {
       ProgramCallBase* call = (ProgramCallBase*)prog_el;
       Program* callee = call->GetTarget();
-      if (callee) {
+      if (callee && !prog_el->HasProgFlag(ProgEl::OFF)) {
         if (callee == caller) {
           return true;
         }
