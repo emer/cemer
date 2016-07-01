@@ -1654,7 +1654,7 @@ void Network::Init_Weights_Thr(int thr_no) {
     const int nrcg = ThrNRecvConGps(thr_no);
     for(int i=0; i<nrcg; i++) {
       ConGroup* rcg = ThrRecvConGroup(thr_no, i);
-      if(rcg->NotActive()) continue;
+      if(rcg->NotActive() || rcg->Sharing()) continue;
       if(rcg->prjn->spec->init_wts) {
         rcg->prjn->Init_Weights_Prjn(rcg, this, thr_no);
       }

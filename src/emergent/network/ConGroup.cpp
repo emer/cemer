@@ -94,7 +94,6 @@ Unit* ConGroup::SharedUn(Network* net) const {
 }
 
 ConGroup* ConGroup::SharedUnCons(Network* net) const {
-  if(!Sharing()) return NULL;
   if(IsRecv()) return net->RecvConGroup(share_idx, prjn->recv_idx);
   return net->SendConGroup(share_idx, prjn->send_idx);
 }

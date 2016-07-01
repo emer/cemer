@@ -960,7 +960,7 @@ void taMisc::Error(const String& a, const String& b, const String& c, const Stri
     taiMiscCore::Quit();        // all errors are *fatal* for non-interactive jobs!!!
   }
   else {
-    if (taMisc::gui_active && !taMisc::is_loading) {
+    if (taMisc::gui_active && !taMisc::is_loading && taMisc::InMainThread()) {
       bool cancel = iDialogChoice::ErrorDialog(NULL, msg);
       taMisc::ErrorCancelSet(cancel);
     }
@@ -972,6 +972,7 @@ int taMisc::Choice(const String& text, const String& a, const String& b, const S
   const String& d, const String& e, const String& f, const String& g, const String& h, const String& i)
 {
   int m=-1;
+  if(!taMisc::InMainThread()) return -1;
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0) return -1;
 #endif

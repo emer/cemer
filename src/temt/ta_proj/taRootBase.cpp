@@ -2193,6 +2193,8 @@ void taRootBase::Cleanup_Main() {
     rl_cleanup_after_signal();
   }
 #endif
+
+  delete QCoreApplication::instance(); // nuke it!
 }
 
 #ifdef DMEM_COMPILE

@@ -140,8 +140,8 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
 }
 
 void TiledGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
-                                             Layer* send_lay,
-                                             int rgpidx, int sgpidx, bool make_cons) {
+                                          Layer* send_lay,
+                                          int rgpidx, int sgpidx, bool make_cons) {
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
 
@@ -183,8 +183,9 @@ void TiledGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
           ru_u->ShareRecvConsFrom(shru, prjn);
         }
       }
-      else
+      else {
         ru_u = recv_lay->units.SafeEl(rui);
+      }
       for(int sui=0; sui < su_nunits; sui++) {
         Unit* su_u;
         if(sgpidx >= 0)

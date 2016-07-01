@@ -101,7 +101,7 @@ public:
   Projection*   prjn;           // #CAT_Structure #READ_ONLY #SHOW #NO_SET_POINTER pointer to the projection which created these connections -- has the source con_type and con spec information
   ConSpec*      con_spec;       // #IGNORE con spec that we use: controlled entirely by the projection!
   int           other_idx;      // #CAT_Structure #READ_ONLY #SHOW index into other direction's list of cons objects (i.e., send_idx for RecvCons and recv_idx for SendCons)
-  int           share_idx;      // #CAT_Structure #READ_ONLY #SHOW index of other unit that this congroup shares connection objects with -- unit must be in same layer with same -- projection must set this during the initial pre-allocation phase of connecting -- if -1 then this congroup has its own unique connection objects
+  int           share_idx;      // #CAT_Structure #READ_ONLY #SHOW index of other unit that this congroup shares connection objects with -- unit must be in same layer with same number of connections, and must be *earlier* in the layer (typically the first unit group) -- projection must set this during the initial pre-allocation phase of connecting -- if -1 then this congroup has its own unique connection objects
 
   int           n_con_vars;     // #IGNORE number of connection variables
   int           own_flat_idx;   // #IGNORE unit flat index of unit that owns us
