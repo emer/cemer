@@ -349,6 +349,7 @@ public:
 
   int*          thrs_own_cons_max_size; // #IGNORE maximum alloc_size of any owning connection group, by thread -- for allocating temp structures..
   int64_t*      thrs_own_cons_tot_size; // #IGNORE total number of owned connections, by thread
+  int64_t*      thrs_own_cons_tot_size_nonshared; // #IGNORE total number of owned connections, by thread, non-shared
   int*          thrs_own_cons_avg_size; // #IGNORE average size of any owning connection group, by thread -- for optimizing computation
   int*          thrs_own_cons_max_vars; // #IGNORE maximum NConVars of any owning connection group, by thread -- for allocating temp structures..
   float*        thrs_pct_cons_vec_chunked; // #IGNORE average percent of connections that are vector chunked (across owned projections and units), by thread

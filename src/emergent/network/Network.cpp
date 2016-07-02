@@ -168,6 +168,7 @@ void Network::Initialize() {
 
   thrs_own_cons_max_size = NULL;
   thrs_own_cons_tot_size = NULL;
+  thrs_own_cons_tot_size_nonshared = NULL;
   thrs_own_cons_avg_size = NULL;
   thrs_own_cons_max_vars = NULL;
   thrs_pct_cons_vec_chunked = NULL;
@@ -684,6 +685,7 @@ void Network::FreeConThreadMem() {
   // now go back and get the rest
   net_free((void**)&thrs_own_cons_max_size);
   net_free((void**)&thrs_own_cons_tot_size);
+  net_free((void**)&thrs_own_cons_tot_size_nonshared);
   net_free((void**)&thrs_own_cons_avg_size);
   net_free((void**)&thrs_own_cons_max_vars);
   net_free((void**)&thrs_pct_cons_vec_chunked);
@@ -1030,6 +1032,7 @@ void Network::Connect_Alloc() {
 
   net_aligned_malloc((void**)&thrs_own_cons_max_size, n_thrs_built * sizeof(int));
   net_aligned_malloc((void**)&thrs_own_cons_tot_size, n_thrs_built * sizeof(int64_t));
+  net_aligned_malloc((void**)&thrs_own_cons_tot_size_nonshared, n_thrs_built * sizeof(int64_t));
   net_aligned_malloc((void**)&thrs_own_cons_avg_size, n_thrs_built * sizeof(int));
   net_aligned_malloc((void**)&thrs_own_cons_max_vars, n_thrs_built * sizeof(int));
   net_aligned_malloc((void**)&thrs_pct_cons_vec_chunked, n_thrs_built * sizeof(float));
@@ -1118,6 +1121,7 @@ void Network::Connect_AllocSizes_Thr(int thr_no) {
   thrs_own_cons_max_size[thr_no] = 0;
   thrs_own_cons_max_vars[thr_no] = 0;
   int64_t ocsum = 0;
+  int64_t ocsum_nonshared = 0;
   int ocn = 0;
 
   // recv cons
@@ -1131,6 +1135,8 @@ void Network::Connect_AllocSizes_Thr(int thr_no) {
       thrs_own_cons_max_vars[thr_no] = MAX(thrs_own_cons_max_vars[thr_no],
                                            rcg->NConVars());
       ocsum += rcg->alloc_size;
+      if(!rcg->Sharing())
+        ocsum_nonshared += rcg->alloc_size;
       ocn++;
     }
     else {
@@ -1149,6 +1155,7 @@ void Network::Connect_AllocSizes_Thr(int thr_no) {
       thrs_own_cons_max_vars[thr_no] = MAX(thrs_own_cons_max_vars[thr_no],
                                            scg->NConVars());
       ocsum += scg->alloc_size;
+      ocsum_nonshared += scg->alloc_size;
       ocn++;
     }
     else {
@@ -1157,6 +1164,7 @@ void Network::Connect_AllocSizes_Thr(int thr_no) {
   }
 
   thrs_own_cons_tot_size[thr_no] = ocsum;
+  thrs_own_cons_tot_size_nonshared[thr_no] = ocsum_nonshared;
   if(ocn > 0) {
     thrs_own_cons_avg_size[thr_no] = round((float)ocsum / (float)ocn);
   }
@@ -2457,7 +2465,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
   // }
   // else {
   for(int i=0; i<n_thrs_built; i++) {
-    int64_t n_floats = thrs_own_cons_tot_size[i] + thrs_n_units[i];
+    int64_t n_floats = thrs_own_cons_tot_size_nonshared[i] + thrs_n_units[i];
     if(taMisc::thread_defaults.alt_mpi) {
       dmem_trl_comm.my_reduce->allreduce
         (thrs_dmem_sum_dwts_send[i], thrs_dmem_sum_dwts_recv[i], n_floats);
@@ -2496,6 +2504,7 @@ void Network::DMem_SumDWts_ToTmp_Thr(int thr_no) {
     const int nrcg = ThrNRecvConGps(thr_no);
     for(int i=0; i<nrcg; i++) {
       ConGroup* rcg = ThrRecvConGroup(thr_no, i); // guaranteed to be active..
+      if(rcg->Sharing()) continue;
       float* dwts = rcg->OwnCnVar(ConGroup::DWT);
       memcpy(dwt_tmp + cidx, (char*)dwts, rcg->size * sizeof(float));
       cidx += rcg->size;
@@ -2525,6 +2534,7 @@ void Network::DMem_SumDWts_FmTmp_Thr(int thr_no) {
     const int nrcg = ThrNRecvConGps(thr_no);
     for(int i=0; i<nrcg; i++) {
       ConGroup* rcg = ThrRecvConGroup(thr_no, i); // guaranteed to be active..
+      if(rcg->Sharing()) continue;
       float* dwts = rcg->OwnCnVar(ConGroup::DWT);
       memcpy(dwts, (char*)(dwt_tmp + cidx), rcg->size * sizeof(float));
       cidx += rcg->size;
