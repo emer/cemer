@@ -19,16 +19,16 @@
 // parent includes:
 #include "ta_def.h"
 #ifndef __MAKETA__
+class iPanelOfDocView;
 
 #ifdef USE_QT_WEBENGINE
 #include <QWebEngineView>
 #include <QWebEngineUrlRequestInterceptor>
 class QWebEngineProfile;
-class iPanelOfDocView;
 #else // USE_QT_WEBENGINE
 #include <QWebView>
 #endif // USE_QT_WEBENGINE
-#endif
+#endif // __MAKETA__
 
 // member includes:
 
