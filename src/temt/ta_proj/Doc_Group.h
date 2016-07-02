@@ -31,7 +31,6 @@ class TA_API Doc_Group : public taGroup<taDoc> {
   // ##CAT_Docs ##EXPAND_DEF_1 group of doc objects
 INHERITED(taGroup<taDoc>)
 public:
-  virtual void          AutoEdit();
   virtual void          RestorePanels();
   // if the panel was pinned when the program was saved redisplay it on project open
 

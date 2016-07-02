@@ -20,13 +20,6 @@
 
 TA_BASEFUNS_CTORS_DEFN(Doc_Group);
 
-void Doc_Group::AutoEdit() {  // Obsolete - see RestorePanels()
-  FOREACH_ELEM_IN_GROUP(taDoc, doc, *this) {
-    if (doc->auto_open)
-      doc->EditPanel(true, true); // true,true = new tab, pinned in place
-  }
-}
-
 void Doc_Group::RestorePanels() {
   FOREACH_ELEM_IN_GROUP(taDoc, doc, *this) {
     if(doc->GetUserDataAsBool("user_pinned")) {

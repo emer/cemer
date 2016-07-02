@@ -2119,12 +2119,14 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
   // something not to have a value
   if(path.startsWith(".T3Tab.")) {
     String tbnm = path.after(".T3Tab.");
+    // taMisc::Info("ta: URL selecting T3 tab:", tbnm);
     if(!proj_view || !proj_view->SelectT3ViewTabName(tbnm)) {
       taMisc::Warning("ta: URL -- could not activate 3D View Tab named:", tbnm);
     }
   }
   else if(path.startsWith(".PanelTab.")) {
     String tbnm = path.after(".PanelTab.");
+    // taMisc::Info("ta: URL selecting Panel tab:", tbnm);
     if(!proj_brow || !proj_brow->SelectPanelTabName(tbnm)) {
       taMisc::Warning("ta: URL -- could not activate Panel Tab named:", tbnm);
     }
@@ -2156,6 +2158,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
       return;
     }
     if(fun_call.nonempty()) {
+      // taMisc::Info("ta: URL calling method:", fun_call, "on object:", tab->GetPathNames());
       tab->CallFun(fun_call);
     }
     else {

@@ -60,6 +60,9 @@ public:
   QAction*              find_prev;
   QAction*              find_next;
 
+  bool                  go_back_after_load;
+  // hacky workaround for engine url interceptor -- if set, then go back after load finishes
+  
   virtual void          setDoc(taDoc* doc); // only called if changes after creation
 
   taDoc*                doc() {return (m_link) ? (taDoc*)(link()->data()) : NULL;}
@@ -86,10 +89,11 @@ protected:
 
 #ifndef __MAKETA__
 protected slots:
-  void                  doc_linkClicked(const QUrl& url);
 #ifdef USE_QT_WEBENGINE
+  void                  doc_createWindow(QWebEnginePage::WebWindowType type, iWebView*& window);
 #else // USE_QT_WEBENGINE
   void                  doc_createWindow(QWebPage::WebWindowType type, iWebView*& window);
+  void                  doc_linkClicked(const QUrl& url);
 #endif // USE_QT_WEBENGINE
   void                  doc_goPressed();
   void                  doc_bakPressed();

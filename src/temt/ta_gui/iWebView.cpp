@@ -16,8 +16,10 @@
 #include "iWebView.h"
 
 #include <taiMisc>
-
-#include <QDesktopServices>
+#include <iMainWindowViewer>
+#include <iPanelOfDocView>
+#include <taDoc>
+#include <taProject>
 
 #if (QT_VERSION >= 0x050000)
 #include <QUrlQuery>
@@ -39,9 +41,14 @@ void iWebUrlInterceptor::interceptRequest(QWebEngineUrlRequestInfo &info) {
     QUrl url = info.requestUrl();
     bool ta_handle = iWebView::handleTaLinkClick(url);
     if(ta_handle) {
-      QUrl page = info.firstPartyUrl();
-      info.redirect(page);      // send it back to page
-      // info.block(true);             // block anything further from happening
+      if(iWebView::last_docview) {
+        // super-hacky trick: hit the back button after blocking the loading of the url
+        iWebView::last_docview->go_back_after_load = true;
+      }
+      info.block(true);             // block anything further from happening
+      // nothing so far works for preventing thing from going on..
+      // QUrl null;
+      // info.redirect(null);      // does this work?
     }
     // otherwise, it is just a pass-through
   }
@@ -50,8 +57,9 @@ void iWebUrlInterceptor::interceptRequest(QWebEngineUrlRequestInfo &info) {
 QWebEngineProfile* iWebView::temt_profile = NULL;
 iWebUrlInterceptor* iWebView::url_interceptor = NULL;
 
-iWebView::iWebView(QWidget* parent) :
-  inherited(parent)
+iWebView::iWebView(QWidget* parent, iPanelOfDocView* docview)
+  : inherited(parent)
+  , own_docview(docview)
 {
   setPage(new QWebEnginePage(temtProfile(), this));
 }
@@ -87,12 +95,21 @@ void iWebView::cleanupWeb() {
   }
 }
 
+void iWebView::childEvent(QChildEvent* ev) {
+  if(own_docview) {
+    if(ev->added()) {
+      ev->child()->installEventFilter(own_docview);
+    }
+  }
+}
+
+
 #else // USE_QT_WEBENGINE
 
-iWebView::iWebView(QWidget* parent) :
-  inherited(parent)
+iWebView::iWebView(QWidget* parent, iPanelOfDocView* docview)
+  : inherited(parent)
+  , own_docview(docview)
 {
-
 }
 
 QWebView* iWebView::createWindow(QWebPage::WebWindowType type) {
@@ -107,12 +124,15 @@ void iWebView::cleanupWeb() {
   
 }
 
-#endif // USE_QT_WEBENGINE
-
 void iWebView::keyPressEvent(QKeyEvent* e) {
   taiMisc::UpdateUiOnCtrlPressed(this, e);
   inherited::keyPressEvent(e);
 }
+
+#endif // USE_QT_WEBENGINE
+
+iPanelOfDocView* iWebView::last_docview = NULL;
+
 
 bool iWebView::handleTaLinkClick(const QUrl& url) {
   String path = url.toString();
@@ -147,13 +167,29 @@ bool iWebView::handleTaLinkClick(const QUrl& url) {
     return false;               // we don't do anything with it
   }
 
-  // handle it internally
-  if (!new_url.hasFragment()) {
-    // todo: need viewerWindow()
-    // if (viewerWindow())
-    //   new_url.setFragment("#winid_" + QString::number(viewerWindow()->uniqueId()));
+  iMainWindowViewer* imv = NULL;
+  if(last_docview && last_docview->doc()) {
+    taDoc* doc = last_docview->doc();
+    taProject* proj = GET_OWNER(doc, taProject);
+    if(proj) {
+      MainWindowViewer* mwv = proj->GetDefaultProjectBrowser();
+      if(mwv) {
+        imv = mwv->widget();
+      }
+    }
   }
-  // goes to: iMainWindowViewer::taUrlHandler  in ta_qtviewer.cpp
-  QDesktopServices::openUrl(new_url);
+  else {
+    imv = taiMisc::active_wins.Peek_MainWindow();
+  }
+  // tag with window id:
+  if (!new_url.hasFragment()) {
+    new_url.setFragment("#winid_" + QString::number(imv->uniqueId()));
+  }
+
+  // this will send the message over the thread system to the window slot!
+  QMetaObject::invokeMethod(imv, "taUrlHandler",
+                            Q_ARG(const QUrl&, new_url));
+
   return true;
 }
+

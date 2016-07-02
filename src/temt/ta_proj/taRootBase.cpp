@@ -1717,7 +1717,7 @@ bool taRootBase::Startup_MakeMainWin() {
 
   // needs extra time to process window opening
   taMisc::ProcessEvents();
-  tabMisc::root->docs.AutoEdit();
+  // tabMisc::root->docs.AutoEdit();
   tabMisc::root->wizards.AutoEdit();
 
   bw->setFocus();

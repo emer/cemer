@@ -54,6 +54,7 @@
 iPanelOfDocView::iPanelOfDocView()
 :inherited(NULL) // usual case: we dynamically set the link, via setDoc
 {
+  go_back_after_load = false;
   is_loading = false;
 
   wb_widg = new QWidget();
@@ -120,7 +121,7 @@ iPanelOfDocView::iPanelOfDocView()
   find_next = url_bar->addAction(">");
   find_next->setToolTip(taiMisc::ToolTipPreProcess("Find next occurrence of find: text within current page"));
 
-  webview = new iWebView(wb_widg);
+  webview = new iWebView(wb_widg, this);
   wb_box->addWidget(webview);
 
   setCentralWidget(wb_widg);
@@ -179,6 +180,14 @@ QWidget* iPanelOfDocView::firstTabFocusWidget() {
 
 #ifdef USE_QT_WEBENGINE
 
+void iPanelOfDocView::doc_createWindow(QWebEnginePage::WebWindowType type, iWebView*& window) {
+  // fork to browser
+  if (type == QWebEnginePage::WebBrowserWindow) {
+    iHelpBrowser* hbrow = iHelpBrowser::instance();
+    window = hbrow->AddWebView(_nilString);
+  }
+}
+
 #else // USE_QT_WEBENGINE
 
 void iPanelOfDocView::doc_createWindow(QWebPage::WebWindowType type, iWebView*& window) {
@@ -189,14 +198,14 @@ void iPanelOfDocView::doc_createWindow(QWebPage::WebWindowType type, iWebView*& 
   }
 }
 
-#endif // USE_QT_WEBENGINE
-
 void iPanelOfDocView::doc_linkClicked(const QUrl& url) {
   bool ta_handle = iWebView::handleTaLinkClick(url);
   if(!ta_handle) {
     webview->load(url);
   }
 }
+
+#endif // USE_QT_WEBENGINE
 
 void iPanelOfDocView::doc_loadStarted() {
   is_loading = true;
@@ -207,6 +216,10 @@ void iPanelOfDocView::doc_loadStarted() {
 void iPanelOfDocView::doc_loadFinished(bool ok) {
   is_loading = false;
   go_but->setText("Go");
+  if(go_back_after_load) {
+    go_back_after_load = false;
+    webview->back();
+  }
   if(!ok) return;
   taDoc* doc_ = this->doc();
   if(!doc_) return;
@@ -349,7 +362,7 @@ void iPanelOfDocView::UpdatePanel_impl() {
     String nw_url = doc_->GetURL();
     if(cur_url != nw_url)
       webview->load(QUrl(nw_url));
-        url_edit->setEnabled(true);
+    url_edit->setEnabled(true);
     fwd_but->setEnabled(true);
     bak_but->setEnabled(true);
     //     go_but->setEnabled(true);
@@ -400,12 +413,16 @@ void iPanelOfDocView::setDoc(taDoc* doc) {
   
 bool iPanelOfDocView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {
+    if(event->type() == QEvent::MouseButtonPress) {
+      // taMisc::Info("mbp");
+      iWebView::last_docview = this;
+    }
     return inherited::eventFilter(obj, event);
   }
   QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
-  if (!taiMisc::KeyEventCtrlPressed(key_event)) {
-    return false;
-  }
+  // if (!taiMisc::KeyEventCtrlPressed(key_event)) {
+  //   return false;
+  // }
   QCoreApplication* app = QCoreApplication::instance();
   switch (key_event->key()) {
   case Qt::Key_P:
@@ -429,6 +446,7 @@ bool iPanelOfDocView::eventFilter(QObject* obj, QEvent* event) {
     return true;
 #ifdef TA_OS_MAC
   case Qt::Key_V:
+    // taMisc::Info("cv");
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
     return true;              // we absorb this event
 #endif
