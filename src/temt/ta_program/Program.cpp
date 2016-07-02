@@ -465,16 +465,16 @@ void Program::Init() {
         did_struct_updt = true;
       }
 
-      GetSubProgsAll();
+      GetSubProgsAll(0, false);  // don't set timestamp -- next call will do it
       // check for any cycles in the program call chain
-      for (int i=0; i<sub_progs_all.size; i++) {
-        Program* program = sub_progs_all[i];
-        if (program->HasCallCycle()) {
-          ret_val = RV_CHECK_ERR;
-          taMisc::check_ok = false;
-          break;
-        }
-      }
+//      for (int i=0; i<sub_progs_all.size; i++) {
+//        Program* program = sub_progs_all[i];
+//        if (program->HasCallCycle()) {
+//          ret_val = RV_CHECK_ERR;
+//          taMisc::check_ok = false;
+//          break;
+//        }
+//      }
       
       if (ret_val == RV_OK) {
         script->SetDebug((int)HasProgFlag(TRACE));
@@ -485,6 +485,7 @@ void Program::Init() {
     }
   }
   
+  GetSubProgsAll();  // don't set timestamp -- next call will do it
   GetSubProgsStep();
   
   taMisc::DoneBusy();
@@ -1493,14 +1494,18 @@ bool Program::ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln) {
   return true;
 }
 
-void Program::GetSubProgsAll(int depth) {
+void Program::GetSubProgsAll(int depth, bool set_timestamp) {
   if(last_subprog_timestamp == global_init_timestamp) // already did it..
     return;
+  
   // the following should not happen anymore, with the subprog timestamp logic
   if(TestError((depth >= 100), "GetSubProgsAll",
-               "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
+               "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting")) {
     return;
-  last_subprog_timestamp = global_init_timestamp;
+  }
+  if (set_timestamp) {
+    last_subprog_timestamp = global_init_timestamp;
+  }
   sub_progs_updtd = true;
   sub_progs_all.Reset();
   for(int i=0;i<sub_prog_calls.size; i++) {
@@ -1510,7 +1515,7 @@ void Program::GetSubProgsAll(int depth) {
   int init_sz = sub_progs_all.size;
   for(int i=0;i<init_sz; i++) {
     Program* sp = sub_progs_all[i];
-    sp->GetSubProgsAll(depth+1);        // no loops please!!!
+    sp->GetSubProgsAll(depth+1, set_timestamp);        // no loops please!!!
     // now get our sub-progs sub-progs..
     for(int j=0;j<sp->sub_progs_all.size;j++) {
       Program* ssp = sp->sub_progs_all[j];

@@ -506,7 +506,7 @@ protected:
   virtual void          UpdateProgElCodeStrings();  // keep each ProgEl saved code_string up to date
   void                  ShowRunError(); // factored error msg code
   virtual void          ViewScript_impl(int sel_ln_st = -1, int sel_ln_ed = -1);
-  virtual void          GetSubProgsAll(int depth=0);
+  virtual void          GetSubProgsAll(int depth=0, bool set_timestamp = true);
   // populate the sub_progs_all lists of all sub programs
   virtual void          GetSubProgsStep();
   // populate the sub_progs_step lists of all sub programs in sub_progs_all that don't have the NO_STOP_STEP flag set
