@@ -20,6 +20,8 @@
 #include <ControlPanel>
 #include <ProgramCallBase>
 #include <ProgEl>
+#include <Loop>
+#include <CondBase>
 #include <taiEditorOfString>
 #include <iDialogChoice>
 
@@ -375,50 +377,56 @@ int Program::CallInit_impl(Program* caller) {
   return ret_val;
 }
 
-bool Program::HasCallCycle() {
-  for (int i=0; i<prog_code.size; i++) {
-    ProgEl* prog_el = prog_code.FastEl(i);
-    if (prog_el->DerivesFromName("ProgramCallBase")) {
-      ProgramCallBase* call = (ProgramCallBase*)prog_el;
-      Program* callee = call->GetTarget();
-      if (callee && !prog_el->HasProgFlag(ProgEl::OFF)) {
-        String callee_name = callee->GetName();
-        if (callee->CallsMe(this, callee_name, 0)) {
-          bool rval = false;
-          CheckError(true, false, rval, "Infinite Call cycle -- HINT: Program ", callee_name, " calls program ", callee->GetName());
-          return true;
-        }
-      }
-    }
+void Program::HasCallCycle(Program* program) {
+  if (has_call_cycle) {
+    return;
   }
-  return false;
+  if (call_stack.FindEl(program) != -1) {
+    has_call_cycle = true;
+    bool rval = false;
+    CheckError(true, false, rval, "Infinite Call cycle -- HINT: Program ", call_stack.SafeEl(call_stack.size -1)->GetName(), " calls program ", program->GetName());
+    return;
+  }
+  else {
+    call_stack.Link(program);
+    int index = 0;
+    Program* callee;
+    do {
+      if (has_call_cycle == true) {
+        break;
+      }
+      callee = GetNextTarget(&program->prog_code, index);
+      if (callee) {
+        HasCallCycle(callee);
+      }
+    } while (callee != NULL);
+    call_stack.RemoveEl(program);
+  }
 }
 
-// this method which checks for cycles in the call chain can cycle itself!
-// didn't figure out how to check for them today so I went with a limit on depth.
-// someday with more time and coffee maybe I'll think of the solution
-bool Program::CallsMe(Program* caller, String& callee_name, int depth) {
-  if (depth > 10) {
-    return true;
-  }
-  
-  for (int i=0; i<prog_code.size; i++) {
-    ProgEl* prog_el = prog_code.FastEl(i);
+Program* Program::GetNextTarget(ProgEl_List* code_list, int& index) {
+  for (int i=index; i<code_list->size; i++) {
+    ProgEl* prog_el = code_list->FastEl(i);
     if (prog_el->DerivesFromName("ProgramCallBase")) {
       ProgramCallBase* call = (ProgramCallBase*)prog_el;
       Program* callee = call->GetTarget();
-      if (callee && !prog_el->HasProgFlag(ProgEl::OFF)) {
-        if (callee == caller) {
-          return true;
-        }
-        else { // check the next level of calls
-          callee_name = callee->GetName();
-          return callee->CallsMe(caller, callee_name, depth + 1);
-        }
+      if (!callee || prog_el->HasProgFlag(ProgEl::OFF)) {
+        continue;
+      }
+      else {
+        index = i + 1;
+        return callee;
       }
     }
+    if (prog_el->DerivesFromName("Loop")) {
+      Loop* loop = (Loop*)prog_el;
+      ProgEl_List* list = &loop->loop_code;
+      int sub_index = 0;
+      index = i + 1;
+      return GetNextTarget(list, sub_index);
+    }
   }
-  return false;
+  return NULL;
 }
 
 void Program::Init() {
@@ -465,16 +473,14 @@ void Program::Init() {
         did_struct_updt = true;
       }
 
-      GetSubProgsAll(0, false);  // don't set timestamp -- next call will do it
       // check for any cycles in the program call chain
-//      for (int i=0; i<sub_progs_all.size; i++) {
-//        Program* program = sub_progs_all[i];
-//        if (program->HasCallCycle()) {
-//          ret_val = RV_CHECK_ERR;
-//          taMisc::check_ok = false;
-//          break;
-//        }
-//      }
+      has_call_cycle = false;
+      call_stack.Reset();
+      HasCallCycle(this);
+      if (has_call_cycle) {
+        ret_val = RV_CHECK_ERR;
+        taMisc::check_ok = false;
+      }
       
       if (ret_val == RV_OK) {
         script->SetDebug((int)HasProgFlag(TRACE));
@@ -1494,7 +1500,7 @@ bool Program::ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln) {
   return true;
 }
 
-void Program::GetSubProgsAll(int depth, bool set_timestamp) {
+void Program::GetSubProgsAll(int depth) {
   if(last_subprog_timestamp == global_init_timestamp) // already did it..
     return;
   
@@ -1503,9 +1509,8 @@ void Program::GetSubProgsAll(int depth, bool set_timestamp) {
                "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting")) {
     return;
   }
-  if (set_timestamp) {
-    last_subprog_timestamp = global_init_timestamp;
-  }
+  last_subprog_timestamp = global_init_timestamp;
+
   sub_progs_updtd = true;
   sub_progs_all.Reset();
   for(int i=0;i<sub_prog_calls.size; i++) {
@@ -1515,7 +1520,7 @@ void Program::GetSubProgsAll(int depth, bool set_timestamp) {
   int init_sz = sub_progs_all.size;
   for(int i=0;i<init_sz; i++) {
     Program* sp = sub_progs_all[i];
-    sp->GetSubProgsAll(depth+1, set_timestamp);        // no loops please!!!
+    sp->GetSubProgsAll(depth+1);        // no loops please!!!
     // now get our sub-progs sub-progs..
     for(int j=0;j<sp->sub_progs_all.size;j++) {
       Program* ssp = sp->sub_progs_all[j];

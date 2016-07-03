@@ -165,6 +165,8 @@ public:
   // #HIDDEN #GUI_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
   ProgEl_List           sub_prog_calls;
   // #HIDDEN #NO_SAVE the ProgramCall direct subprogs of this one, enumerated in the PreGen phase (note: these are ProgramCallBase's, not the actual Program's)
+  Program_List          call_stack;
+  // #HIDDEN #NO_SAVE
   Program_List          sub_progs_dir;
   // #HIDDEN #NO_SAVE direct sub-programs -- called by sub_prog_calls within this program -- also populated during the PreGen phase
   Program_List          sub_progs_all;
@@ -493,8 +495,9 @@ protected:
   void                  UpdateAfterEdit_impl() override;
   bool                  CheckConfig_impl(bool quiet) override;
   void                  CheckChildConfig_impl(bool quiet, bool& rval) override;
-  bool                  HasCallCycle();  // check for Program A calling B calling A or a more indirect call cycle - either is bad!
-  bool                  CallsMe(Program* caller_program, String& callee_name, int depth); // true if direct or indirect call cycle
+  void                  HasCallCycle(Program* program);  // check for Program A calling B calling A or a more indirect call cycle - either is bad!
+  bool                  has_call_cycle; // did we find a cycle - set to false in Init() before the test
+  Program*              GetNextTarget(ProgEl_List* program_code, int& index);  // find the next call target
   void                  InitScriptObj_impl() override; // no "this" and install
   bool                  PreCompileScript_impl() override; // CheckConfig & add/update the global vars
 
@@ -506,7 +509,7 @@ protected:
   virtual void          UpdateProgElCodeStrings();  // keep each ProgEl saved code_string up to date
   void                  ShowRunError(); // factored error msg code
   virtual void          ViewScript_impl(int sel_ln_st = -1, int sel_ln_ed = -1);
-  virtual void          GetSubProgsAll(int depth=0, bool set_timestamp = true);
+  virtual void          GetSubProgsAll(int depth=0);
   // populate the sub_progs_all lists of all sub programs
   virtual void          GetSubProgsStep();
   // populate the sub_progs_step lists of all sub programs in sub_progs_all that don't have the NO_STOP_STEP flag set
