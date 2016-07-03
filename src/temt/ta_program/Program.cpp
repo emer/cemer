@@ -22,6 +22,8 @@
 #include <ProgEl>
 #include <Loop>
 #include <CondBase>
+#include <If>
+#include <Else>
 #include <taiEditorOfString>
 #include <iDialogChoice>
 
@@ -407,10 +409,13 @@ void Program::HasCallCycle(Program* program) {
 Program* Program::GetNextTarget(ProgEl_List* code_list, int& index) {
   for (int i=index; i<code_list->size; i++) {
     ProgEl* prog_el = code_list->FastEl(i);
+    if (prog_el->HasProgFlag(ProgEl::OFF)) {
+      continue;
+    }
     if (prog_el->DerivesFromName("ProgramCallBase")) {
       ProgramCallBase* call = (ProgramCallBase*)prog_el;
       Program* callee = call->GetTarget();
-      if (!callee || prog_el->HasProgFlag(ProgEl::OFF)) {
+      if (!callee) {
         continue;
       }
       else {
@@ -425,7 +430,28 @@ Program* Program::GetNextTarget(ProgEl_List* code_list, int& index) {
       index = i + 1;
       return GetNextTarget(list, sub_index);
     }
-  }
+    if (prog_el->DerivesFromName("CondBase")) {
+      CondBase* cond_base = (CondBase*)prog_el;
+      ProgEl_List* list = &cond_base->true_code;
+      int sub_index = 0;
+      index = i + 1;
+      return GetNextTarget(list, sub_index);
+    }
+    if (prog_el->DerivesFromName("Else")) {
+      Else* else_el = (Else*)prog_el;
+      ProgEl_List* list = &else_el->else_code;
+      int sub_index = 0;
+      index = i + 1;
+      return GetNextTarget(list, sub_index);
+    }
+   if (prog_el->DerivesFromName("If")) {
+      If* if_el = (If*)prog_el;
+      ProgEl_List* list = &if_el->false_code;
+      int sub_index = 0;
+      index = i + 1;
+      return GetNextTarget(list, sub_index);
+    }
+ }
   return NULL;
 }
 
