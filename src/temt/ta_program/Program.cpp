@@ -379,18 +379,18 @@ int Program::CallInit_impl(Program* caller) {
   return ret_val;
 }
 
-void Program::HasCallCycle(Program* program) {
+void Program::HasCallCycle(Program* program, Program_List* call_stack) {
   if (has_call_cycle) {
     return;
   }
-  if (call_stack.FindEl(program) != -1) {
+  if (call_stack->FindEl(program) != -1) {
     has_call_cycle = true;
     bool rval = false;
-    CheckError(true, false, rval, "Infinite Call cycle -- HINT: Program ", call_stack.SafeEl(call_stack.size -1)->GetName(), " calls program ", program->GetName());
+    CheckError(true, false, rval, "Infinite Call cycle -- HINT: Program ", call_stack->SafeEl(call_stack->size -1)->GetName(), " calls program ", program->GetName());
     return;
   }
   else {
-    call_stack.Link(program);
+    call_stack->Link(program);
     int index = 0;
     Program* callee;
     do {
@@ -399,10 +399,10 @@ void Program::HasCallCycle(Program* program) {
       }
       callee = GetNextTarget(&program->prog_code, index);
       if (callee) {
-        HasCallCycle(callee);
+        HasCallCycle(callee, call_stack);
       }
     } while (callee != NULL);
-    call_stack.RemoveEl(program);
+    call_stack->RemoveEl(program);
   }
 }
 
@@ -501,12 +501,13 @@ void Program::Init() {
 
       // check for any cycles in the program call chain
       has_call_cycle = false;
-      call_stack.Reset();
-      HasCallCycle(this);
+      Program_List* call_stack = new Program_List();
+      HasCallCycle(this, call_stack);
       if (has_call_cycle) {
         ret_val = RV_CHECK_ERR;
         taMisc::check_ok = false;
       }
+      delete call_stack;
       
       if (ret_val == RV_OK) {
         script->SetDebug((int)HasProgFlag(TRACE));
