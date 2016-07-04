@@ -24,6 +24,8 @@
 #include <CondBase>
 #include <If>
 #include <Else>
+#include <Switch>
+#include <CodeBlock>
 #include <taiEditorOfString>
 #include <iDialogChoice>
 
@@ -402,6 +404,24 @@ void Program::HasCallCycle(Program* program, Program_List* call_stack) {
         HasCallCycle(callee, call_stack);
       }
     } while (callee != NULL);
+    
+    // to check the Init code just copy and paste the do_while loop and replace prog_code with init_code
+    // but as we don't allow program calls in Init code it is left out of the cycle check
+    
+    // done with program code - check the functions for Program calls
+    for (int i=0; i<program->functions.size; i++) {
+      Function* function = program->functions[i];
+      
+      if (has_call_cycle == true) {
+        break;
+      }
+      int fun_code_index = 0;
+      callee = GetNextTarget(&(function->fun_code), fun_code_index);
+      if (callee) {
+        HasCallCycle(callee, call_stack);
+      }
+    }
+    
     call_stack->RemoveEl(program);
   }
 }
@@ -444,9 +464,23 @@ Program* Program::GetNextTarget(ProgEl_List* code_list, int& index) {
       index = i + 1;
       return GetNextTarget(list, sub_index);
     }
-   if (prog_el->DerivesFromName("If")) {
+    if (prog_el->DerivesFromName("If")) {
       If* if_el = (If*)prog_el;
       ProgEl_List* list = &if_el->false_code;
+      int sub_index = 0;
+      index = i + 1;
+      return GetNextTarget(list, sub_index);
+    }
+    if (prog_el->DerivesFromName("Switch")) {
+      Switch* switch_el = (Switch*)prog_el;
+      ProgEl_List* list = &switch_el->cases;
+      int sub_index = 0;
+      index = i + 1;
+      return GetNextTarget(list, sub_index);
+    }
+    if (prog_el->DerivesFromName("CodeBlock")) {
+      CodeBlock* code_block_el = (CodeBlock*)prog_el;
+      ProgEl_List* list = &code_block_el->prog_code;
       int sub_index = 0;
       index = i + 1;
       return GetNextTarget(list, sub_index);
