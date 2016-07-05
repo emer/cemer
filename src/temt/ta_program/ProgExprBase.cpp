@@ -103,10 +103,11 @@ void ProgExprBase::ReParseExpr() {
     if (pel) {
       if(!taMisc::is_loading && bad_vars.size > 0) {
         for(int i=0; i<bad_vars.size; i++) {
+          bool make = true;  // if non-existant create it
           if (bad_vars[i] == "_toolbox_tmp_") { // just a temporary variable
-            continue;
+            make = false;
           }
-          pel->FindVarNameInScope(bad_vars[i], true);
+          pel->FindVarNameInScope(bad_vars[i], make);
         }
       }
     }
