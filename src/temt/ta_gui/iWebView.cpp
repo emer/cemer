@@ -91,13 +91,13 @@ void iWebView::cleanupWeb() {
 }
 
 // this is needed to actually get event filter on a web view
-// void iWebView::childEvent(QChildEvent* ev) {
-//   if(own_docview) {
-//     if(ev->added()) {
-//       ev->child()->installEventFilter(own_docview);
-//     }
-//   }
-// }
+void iWebView::childEvent(QChildEvent* ev) {
+  if(own_docview) {
+    if(ev->added()) {
+      ev->child()->installEventFilter(own_docview);
+    }
+  }
+}
 
 
 #else // USE_QT_WEBENGINE
