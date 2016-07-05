@@ -199,7 +199,7 @@ void iPanelOfDocView::doc_createWindow(QWebPage::WebWindowType type, iWebView*& 
 }
 
 void iPanelOfDocView::doc_linkClicked(const QUrl& url) {
-  bool ta_handle = iWebView::handleTaLinkClick(url);
+  bool ta_handle = iWebView::handleTaLinkClick(url, this);
   if(!ta_handle) {
     webview->load(url);
   }
@@ -413,10 +413,10 @@ void iPanelOfDocView::setDoc(taDoc* doc) {
   
 bool iPanelOfDocView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {
-    if(event->type() == QEvent::MouseButtonPress) {
-      // taMisc::Info("mbp");
-      iWebView::last_docview = this;
-    }
+    // if(event->type() == QEvent::MouseButtonPress) {
+    //   // taMisc::Info("mbp");
+    //   iWebView::last_docview = this;
+    // }
     return inherited::eventFilter(obj, event);
   }
   QKeyEvent* key_event = static_cast<QKeyEvent *>(event);

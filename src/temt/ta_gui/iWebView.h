@@ -23,7 +23,7 @@ class iPanelOfDocView;
 
 #ifdef USE_QT_WEBENGINE
 #include <QWebEngineView>
-#include <QWebEngineUrlRequestInterceptor>
+#include <QWebEnginePage>
 class QWebEngineProfile;
 #else // USE_QT_WEBENGINE
 #include <QWebView>
@@ -36,26 +36,25 @@ class QWebEngineProfile;
 
 #ifdef USE_QT_WEBENGINE
 
-class iWebUrlInterceptor : public QWebEngineUrlRequestInterceptor {
-  // catch the url request and pass to a UrlHandler
+class iWebPage: public QWebEnginePage {
   Q_OBJECT
-  INHERITED(QWebEngineUrlRequestInterceptor)
+  INHERITED(QWebEnginePage);
 public:
-
-  iWebUrlInterceptor(QObject *p = Q_NULLPTR);
   
-  void          interceptRequest(QWebEngineUrlRequestInfo &info);
+  iWebPage(QWidget* parent = Q_NULLPTR);
+  iWebPage(QWebEngineProfile *profile, QObject *parent = Q_NULLPTR);
+    
+protected:
+  bool acceptNavigationRequest(const QUrl &url, NavigationType type, bool isMainFrame);
 };
+
 
 class iWebView: public QWebEngineView {
   Q_OBJECT
   INHERITED(QWebEngineView);
 public:
 
-  static iPanelOfDocView*       last_docview;
-  // hacky workaround to figure out who clicked link last, for interceptor
-  
-  static bool handleTaLinkClick(const QUrl& url);
+  static bool handleTaLinkClick(const QUrl& url, iPanelOfDocView* docview);
   // handle special ta: resource requests for special interactive links -- returns true if it is a special ta: link and was handled, and false if a regular link to be handled by the view
   
   static QWebEngineProfile*     temtProfile();
@@ -64,19 +63,17 @@ public:
   static void           cleanupWeb();
   // get rid of our profile
   
+  iPanelOfDocView*              own_docview;
+  // owning doc view
+
   iWebView(QWidget* parent = 0, iPanelOfDocView* docview = 0);
 signals:
   void            sigCreateWindow(QWebEnginePage::WebWindowType type,
                                   QWebEngineView*& window);
 protected:
   static QWebEngineProfile*     temt_profile;
-  static iWebUrlInterceptor*    url_interceptor;
-  iPanelOfDocView*              own_docview;
-  // owning doc view
   
-
   QWebEngineView* createWindow(QWebEnginePage::WebWindowType type) override;
-  void childEvent(QChildEvent* ev) override;
 };
 
 
@@ -88,15 +85,15 @@ class iWebView: public QWebView {
   Q_OBJECT
   INHERITED(QWebView);
 public:
-  static iPanelOfDocView*       last_docview;
-  // hacky workaround to figure out who clicked link last, for interceptor
-  
-  static bool handleTaLinkClick(const QUrl& url);
+  static bool handleTaLinkClick(const QUrl& url, iPanelOfDocView* docview);
   // handle special ta: resource requests for special interactive links -- returns true if it is a special ta: link and was handled, and false if a regular link to be handled by the view
 
   static void           cleanupWeb();
   // cleanup any web stuff before exiting
   
+  iPanelOfDocView*              own_docview;
+  // owning doc view
+
   iWebView(QWidget* parent = 0, iPanelOfDocView* docview = 0);
 
 signals:
@@ -105,8 +102,6 @@ signals:
 protected:
   QWebView* createWindow(QWebPage::WebWindowType type) override;
   void keyPressEvent(QKeyEvent* e) override;
-  iPanelOfDocView*              own_docview;
-  // owning doc view
 };
 
 #endif // USE_QT_WEBENGINE

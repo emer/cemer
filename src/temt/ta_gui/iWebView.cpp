@@ -29,46 +29,45 @@
 
 #include <QWebEngineProfile>
 #include <QWebEngineSettings>
-#include <QWebEnginePage>
 
-iWebUrlInterceptor::iWebUrlInterceptor(QObject *p) :
-  QWebEngineUrlRequestInterceptor(p)
+iWebPage::iWebPage(QWidget* parent) :
+  inherited(parent)
 {
 }
 
-void iWebUrlInterceptor::interceptRequest(QWebEngineUrlRequestInfo &info) {
-  if(info.navigationType() == QWebEngineUrlRequestInfo::NavigationTypeLink) {
-    QUrl url = info.requestUrl();
-    bool ta_handle = iWebView::handleTaLinkClick(url);
-    if(ta_handle) {
-      if(iWebView::last_docview) {
-        // super-hacky trick: hit the back button after blocking the loading of the url
-        iWebView::last_docview->go_back_after_load = true;
-      }
-      info.block(true);             // block anything further from happening
-      // nothing so far works for preventing thing from going on..
-      // QUrl null;
-      // info.redirect(null);      // does this work?
-    }
-    // otherwise, it is just a pass-through
-  }
+iWebPage::iWebPage(QWebEngineProfile *profile, QObject* parent) :
+  inherited(profile, parent)
+{
 }
 
+bool iWebPage::acceptNavigationRequest(const QUrl &url, NavigationType type,
+                                       bool isMainFrame) {
+  QObject* own = parent();
+  iPanelOfDocView* dv = NULL;
+  if(own->inherits("iWebView")) {
+    iWebView* wv = (iWebView*)own;
+    dv = wv->own_docview;
+  }
+  bool ta_handle = iWebView::handleTaLinkClick(url, dv);
+  if(ta_handle) {
+    return false;
+  }
+  return inherited::acceptNavigationRequest(url, type, isMainFrame);
+}
+
+
 QWebEngineProfile* iWebView::temt_profile = NULL;
-iWebUrlInterceptor* iWebView::url_interceptor = NULL;
 
 iWebView::iWebView(QWidget* parent, iPanelOfDocView* docview)
   : inherited(parent)
   , own_docview(docview)
 {
-  setPage(new QWebEnginePage(temtProfile(), this));
+  setPage(new iWebPage(temtProfile(), this));
 }
 
 QWebEngineProfile* iWebView::temtProfile() {
   if(temt_profile) return temt_profile;
   temt_profile = new QWebEngineProfile("edu_colorado_ccnlab_emergent_webview");
-  url_interceptor = new iWebUrlInterceptor();
-  temt_profile->setRequestInterceptor(url_interceptor);
   temt_profile->setHttpCacheType(QWebEngineProfile::DiskHttpCache);
   temt_profile->setPersistentCookiesPolicy(QWebEngineProfile::AllowPersistentCookies);
   // QWebEngineSettings* set = temt_profile->settings();
@@ -89,19 +88,16 @@ void iWebView::cleanupWeb() {
     delete temt_profile;
     temt_profile = NULL;
   }
-  if(url_interceptor) {
-    delete url_interceptor;
-    url_interceptor = NULL;
-  }
 }
 
-void iWebView::childEvent(QChildEvent* ev) {
-  if(own_docview) {
-    if(ev->added()) {
-      ev->child()->installEventFilter(own_docview);
-    }
-  }
-}
+// this is needed to actually get event filter on a web view
+// void iWebView::childEvent(QChildEvent* ev) {
+//   if(own_docview) {
+//     if(ev->added()) {
+//       ev->child()->installEventFilter(own_docview);
+//     }
+//   }
+// }
 
 
 #else // USE_QT_WEBENGINE
@@ -131,10 +127,7 @@ void iWebView::keyPressEvent(QKeyEvent* e) {
 
 #endif // USE_QT_WEBENGINE
 
-iPanelOfDocView* iWebView::last_docview = NULL;
-
-
-bool iWebView::handleTaLinkClick(const QUrl& url) {
+bool iWebView::handleTaLinkClick(const QUrl& url, iPanelOfDocView* docview) {
   String path = url.toString();
   bool ta_path = false;
   QUrl new_url(url);
@@ -168,8 +161,8 @@ bool iWebView::handleTaLinkClick(const QUrl& url) {
   }
 
   iMainWindowViewer* imv = NULL;
-  if(last_docview && last_docview->doc()) {
-    taDoc* doc = last_docview->doc();
+  if(docview && docview->doc()) {
+    taDoc* doc = docview->doc();
     taProject* proj = GET_OWNER(doc, taProject);
     if(proj) {
       MainWindowViewer* mwv = proj->GetDefaultProjectBrowser();

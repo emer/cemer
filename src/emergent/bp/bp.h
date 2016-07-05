@@ -141,6 +141,12 @@ public:
     dwt = 0.0f;
   }
   // NORMALIZED
+  inline void C_NOM_Compute_Weights(float& wt, float& dwt, float& pdw) {
+    C_Compute_WtDecay(wt, dwt); // decay goes into dwt...
+    wt += cur_lrate * dwt;
+    dwt = 0.0f;
+  }
+  // NO MOMENTUM
 
   inline void	Compute_Weights(ConGroup* cg, Network* net, int thr_no) override;
 
@@ -310,7 +316,10 @@ inline void BpConSpec::Compute_Weights(ConGroup* cg, Network* net, int thr_no) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
   float* pdwts = cg->OwnCnVar(PDW);
-  if(momentum_type == AFTER_LRATE) {
+  if(momentum == 0.0f) {
+    CON_GROUP_LOOP(cg, C_NOM_Compute_Weights(wts[i], dwts[i], pdwts[i]));
+  }
+  else if(momentum_type == AFTER_LRATE) {
     CON_GROUP_LOOP(cg, C_AFT_Compute_Weights(wts[i], dwts[i], pdwts[i]));
   }
   else if(momentum_type == BEFORE_LRATE) {

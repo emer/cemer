@@ -708,6 +708,9 @@ void GraphTableView::Render_impl() {
     if(win) {
       dev_pix_ratio = win->devicePixelRatio();
     }
+    else {
+      dev_pix_ratio = ((QGuiApplication*)QGuiApplication::instance())->devicePixelRatio();
+    }
   }
   else {
     dev_pix_ratio = ((QGuiApplication*)QGuiApplication::instance())->devicePixelRatio();
