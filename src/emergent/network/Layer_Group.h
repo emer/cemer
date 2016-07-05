@@ -117,6 +117,13 @@ public:
                           bool& nw_itm = nw_itm_def_arg, const String& alt_nm = "");
   // #CAT_Structure find a given layer group and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
 
+  virtual void  SetLayerSpec(LayerSpec* layspec);
+  // #BUTTON #DROP1 #DYN1 #CAT_Structure set the layer specification for all layers in group
+  virtual void  SetUnitSpec(UnitSpec* unitspec);
+  // #BUTTON #DROP1 #DYN1 #CAT_Structure set unit spec for all layers in group
+  virtual void  SetUnitType(TypeDef* td);
+  // #BUTTON #DYN1 #TYPE_Unit #CAT_Structure set unit type for layers in group
+
   void          TriggerContextUpdate();
   // #CAT_Activation for context layers, manually triggers the update
   

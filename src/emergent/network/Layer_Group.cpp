@@ -651,3 +651,21 @@ void Layer_Group::RestorePanels() {
     }
   }
 }
+
+void Layer_Group::SetLayerSpec(LayerSpec* layspec) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
+    l->SetLayerSpec(layspec);
+  }
+}
+
+void Layer_Group::SetUnitSpec(UnitSpec* unitspec) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
+    l->SetUnitSpec(unitspec);
+  }
+}
+
+void Layer_Group::SetUnitType(TypeDef* td) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
+    l->SetUnitType(td);
+  }
+}
