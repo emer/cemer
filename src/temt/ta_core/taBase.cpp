@@ -1383,6 +1383,8 @@ taBase* taBase::GetScopeObj(TypeDef* scp_tp) {
 }
 
 bool taBase::SameScope(taBase* ref_obj, TypeDef* scp_tp) {
+  if(GetOwner() == NULL) return false; // un-owned never in scope
+  
   if (!ref_obj)
     return true;
   if (!scp_tp)
@@ -1391,7 +1393,15 @@ bool taBase::SameScope(taBase* ref_obj, TypeDef* scp_tp) {
     return true;
 
   taBase* my_scp = GetOwner(scp_tp);
-  if(!my_scp) return false;     // non-owners never in scope
+  if(!my_scp) {
+    if(scp_tp == taMisc::default_scope) {
+      return true;              // fully outside of scope -- could be a global of some sort -- include
+    }
+    else { // try again with default scope if outside of narrower scope
+      return SameScope(ref_obj, taMisc::default_scope);
+    }
+  }
+
   if ((my_scp == ref_obj) || (my_scp == ref_obj->GetOwner(scp_tp)))
     return true;
   return false;

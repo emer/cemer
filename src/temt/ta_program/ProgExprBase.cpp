@@ -1017,7 +1017,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       if (el.downcase() == "call" || el.downcase().startsWith("prog")) {
         taiWidgetTokenChooser* pgrm_look_up =  new taiWidgetTokenChooser
           (&TA_Program, NULL, NULL, NULL, 0, lookup_seed);
-        pgrm_look_up->GetImageScoped(NULL, &TA_Program, NULL, &TA_Program); // scope to this guy
+        pgrm_look_up->GetImageScoped(NULL, &TA_Program, NULL, &TA_taProject);
         bool okc = pgrm_look_up->OpenChooser();
         if(okc && pgrm_look_up->token()) {
           rval = pgrm_look_up->token()->GetName();
