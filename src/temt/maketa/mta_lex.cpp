@@ -441,14 +441,25 @@ int MTA::lex() {
     if(c == '=') {
       if((state != Parse_enum) && !in_templ_pars) {
 	bdepth = 0;
+        int got_quote = 0;
 	EqualsBuf = "";
 	do {
 	  c = Peekc();
 	  if(((bdepth == 0) && ((c == ',') || (c == ')') || (c == '>'))) || (c == ';')) {
+            if(got_quote==2 && EqualsBuf.nonempty() && trim(EqualsBuf).empty()) {
+              // we got a quoted string of spaces -- replace with ascii space code
+              EqualsBuf.gsub(" ", "\\x20");
+            }
 	    yylval.chr = EqualsBuf;
 	    return MP_EQUALS;
 	  }
 	  Getc();
+          if(c == '"') {
+            if(got_quote == 0 && trim(EqualsBuf).empty()) { // first quote and only space so far
+              EqualsBuf = ""; // clear it!
+            }
+            got_quote++;
+          }
 	  if ((c != '"') && (c != '\n') && (c != '\r'))
 	    EqualsBuf += (char)c;
 	  if(c == ')' || c == '>')	bdepth--;

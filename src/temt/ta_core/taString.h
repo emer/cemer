@@ -558,7 +558,7 @@ public:
 
 #ifndef NO_TA_BASE
   String_Array*         split(const String& delim = " ");
-  // #CAT_Access return a string array with the sub-strings split by given delimeter
+  // #CAT_Access return a string array with the sub-strings split by given delimeter (excludes delimiter in sub strings)
   String_Array*         to_array();
   // #CAT_Access return a string array, with one character of this string in each element of array -- useful for using foreach iterator
 #endif

@@ -30,7 +30,7 @@ class MatrixIndex; //
 taTypeDef_Of(String_Matrix);
 
 class TA_API String_Matrix: public taMatrixT<String> {
-  // #INSTANCE a matrix of strings
+  // #INSTANCE a Matrix of string values
 INHERITED(taMatrixT<String>)
 public:
   int          defAlignment() const override;

@@ -16,7 +16,7 @@
 #ifndef DataTable_h
 #define DataTable_h 1
 
-// this is useful for seeing who is including this and why..
+// this is useful for seeing who is including this and why...
 // #warning "datatable included"
 
 // parent includes:

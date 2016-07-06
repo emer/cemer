@@ -29,7 +29,7 @@ class QStringList; //
 taTypeDef_Of(String_Array);
 
 class TA_API String_Array : public taArray<String> {
-  // #NO_UPDATE_AFTER #NO_TOKENS array of Strings
+  // #NO_UPDATE_AFTER #NO_TOKENS array of String values
 INHERITED(taArray<String>)
 public:
   static const String blank; // #HIDDEN #READ_ONLY
