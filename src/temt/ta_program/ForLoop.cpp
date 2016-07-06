@@ -40,7 +40,7 @@ void ForLoop::InitLinks() {
   inherited::InitLinks();
   InitLinks_taAuto(&TA_ForLoop);
   if (taMisc::is_loading || taMisc::is_duplicating) return;
-  UpdateOnInsert_impl();
+  UpdateAfterEdit_impl();
 }
 
 void ForLoop::UpdateAfterEdit_impl() {
