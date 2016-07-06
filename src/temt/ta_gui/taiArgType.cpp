@@ -195,7 +195,7 @@ cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
   return NULL;
 }
 
-bool taiArgType::GetHasOption(const String& opt, MethodDef* md, int aidx) {
+bool taiArgType::GetHasOption(const String& opt, const MethodDef* md, int aidx) {
   if(!md) md = meth;
   if(!md) return false;
   if(aidx < 0) aidx = arg_idx;
@@ -216,7 +216,7 @@ bool taiArgType::GetHasOption(const String& opt, MethodDef* md, int aidx) {
   return md->HasOption(opt);
 }
 
-String taiArgType::GetOptionAfter(const String& opt, MethodDef* md, int aidx) {
+String taiArgType::GetOptionAfter(const String& opt, const MethodDef* md, int aidx) {
   if(!md) md = meth;
   if(!md) return _nilString;
   if(aidx < 0) aidx = arg_idx;

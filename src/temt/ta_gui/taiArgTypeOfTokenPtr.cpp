@@ -22,7 +22,7 @@
 #include <css_ta.h>
 
 
-int taiArgTypeOfTokenPtr::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+int taiArgTypeOfTokenPtr::BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) {
   if (td->IsActualTaBase() &&
      (argt->IsPointer()) && argt->IsTaBase())
     return taiArgType::BidForArgType(aidx,argt,md,td)+1;

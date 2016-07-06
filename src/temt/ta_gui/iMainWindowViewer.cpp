@@ -2137,9 +2137,12 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
   }
   else {
     String fun_call;
-    if(path.endsWith("()")) {   // function call!
+    String fun_args;
+    if(path.endsWith(')')) {   // function call!
+      fun_args = path.after('(', -1);
+      fun_args = fun_args.before(')',-1);
+      path = path.before('(', -1);
       fun_call = path.after(".",-1);
-      fun_call = fun_call.before("()");
       path = path.before(".",-1);       // get part before last call
     }
     taBase* tab = NULL;
@@ -2159,7 +2162,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
     }
     if(fun_call.nonempty()) {
       // taMisc::Info("ta: URL calling method:", fun_call, "on object:", tab->GetPathNames());
-      tab->CallFun(fun_call);
+      tab->CallFun(fun_call, fun_args);
     }
     else {
       taiSigLink* link = (taiSigLink*)tab->GetSigLink();

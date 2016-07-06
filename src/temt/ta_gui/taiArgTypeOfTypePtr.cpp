@@ -22,7 +22,7 @@
 
 #include <css_ta.h>
 
-int taiArgTypeOfTypePtr::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+int taiArgTypeOfTypePtr::BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) {
   if (argt->DerivesFrom(TA_TypeDef) && (argt->IsPointer()))
     return taiArgType::BidForArgType(aidx,argt,md,td)+1;
   return 0;

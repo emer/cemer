@@ -29,7 +29,6 @@ class cssMbrScriptFun;
 class cssEnumType;
 class cssProgSpace;
 class cssClassType;
-class taiType_List;
 class cssClassInst;
 class taiArgType;
 
@@ -53,7 +52,7 @@ public:
   // ati is for when leading argument(s) are predetermined, and user shouldn't be prompted for them
 
 protected:
-  void	 		GetName(int idx, cssEl* md, String& name, String& desc);
+  void	 	GetName(int idx, cssEl* md, String& name, String& desc);
   void		ClearBody_impl() override; // delete the data items
   void		Constr_Inline() override {} // n/a
   void		Constr_Widget_Labels() override; // construct the data and label elements of the dialog
@@ -79,20 +78,16 @@ public:
 
   cssiArgDialog(MethodDef* md, TypeDef* typ, void* base, int use_argc, int hide_args,
     bool read_only_ = false, bool modal_ = true, QObject* parent = 0);
-//nn  cssiArgDialog()		{ };
   ~cssiArgDialog();
 
-  void		Constr_ArgTypes();
   using inherited::GetImage;
   void		GetImage(bool force) override; // force ignored
   void		GetValue() override;
-  int	Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
+  int	        Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
   // ati is for when n leading args are predetermined by context, and so shouldn't be shown to the user
 
   void		Ok() override;
 
-
-  taiArgType*	GetBestArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
 protected:
   void		Constr_impl() override;
   void		Constr_Strings() override;

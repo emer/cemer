@@ -21,7 +21,8 @@
 #ifndef NO_TA_BASE
 #include <taiMethod>
 #include <taiWidgetMethod>
-#include <css_machine.h>
+#include <css_ta.h>
+#include <taiType_List>
 #endif
 
 void MethodDef::Initialize() {
@@ -138,20 +139,19 @@ bool MethodDef::CompareArgs(MethodDef* it) const {
   return true;
 }
 
-void MethodDef::CallFun(void* base) const {
+void MethodDef::CallFun(void* base, const String& args_str) const {
 #if !defined(NO_TA_BASE) && defined(TA_GUI)
-  taiWidgetMethod* mth_rep = NULL;
-  if (taMisc::gui_active && (im != NULL)) {
-    //TODO: following may not work, because it doesn't have enough context to pass to the routine
-    mth_rep = im->GetGenericMethodRep(base, NULL);
-  }
-  if(mth_rep != NULL) {
-    ++taMisc::in_gui_call;
-    mth_rep->CallFun();
-    --taMisc::in_gui_call;
-    delete mth_rep;
-  }
-  else {
+  if(args_str.empty()) {
+    taiWidgetMethod* mth_rep = NULL;
+    if (taMisc::gui_active && (im != NULL)) {
+      mth_rep = im->GetGenericMethodRep(base, NULL);
+    }
+    if(mth_rep != NULL) {
+      ++taMisc::in_gui_call;
+      mth_rep->CallFun();
+      --taMisc::in_gui_call;
+      delete mth_rep;
+    }
     if((fun_argc == 0) || (fun_argd == 0)) {
       ++taMisc::in_gui_call;
       cssEl* rval = (*(stubp))(base, 0, (cssEl**)NULL);
@@ -162,11 +162,22 @@ void MethodDef::CallFun(void* base) const {
       --taMisc::in_gui_call;
     }
     else {
-      taMisc::Warning("*** CallFun Error: function:", name,
-                    "not available, because args are required and no dialog requestor can be opened",
-                    "(must be gui, and function must have #MENU or #BUTTON");
-      return;
+      taMisc::Error("*** CallFun Error: function:", name,
+                      "not available, because args are required but weren't passed, and no dialog requestor can be opened",
+                      "(must be gui, and function must have #MENU or #BUTTON");
     }
+  }
+  else { // use args str
+    cssClassInst* obj = new cssClassInst;
+    taiType_List type_el;
+    bool ok = cssTA::BuildCssObjFromArgTypes(obj, this, base, fun_argc, type_el);
+    if(ok) {
+      ok = cssTA::SetCssObjArgsFromString(obj, this, fun_argc, type_el, args_str);
+      if(ok) {
+        cssEl* rval = (*(stubp))(base, obj->members->size-1, obj->members->els);
+      }
+    }
+    delete obj;
   }
 #endif
 }

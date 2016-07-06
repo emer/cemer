@@ -40,7 +40,7 @@ void taiArgTypeOfStream::Destroy() {
   }
 }
 
-int taiArgTypeOfStream::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+int taiArgTypeOfStream::BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) {
   if(argt->InheritsFrom(TA_ios))
     return taiArgType::BidForArgType(aidx,argt,md,td)+1;
   return 0;

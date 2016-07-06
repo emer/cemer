@@ -1229,8 +1229,8 @@ public:
   { return _nilString; }
   // #IGNORE special lookup function called when Ctrl-L is pressed for string members -- is passed current text and position of cursor, and name of member, and it must return the replacement text for the entire edit (if rval is empty, nothing happens)
 
-  virtual void          CallFun(const String& fun_name);
-  // #CAT_ObjectMgmt call function (method) of given name on this object, prompting for args using gui interface
+  virtual void          CallFun(const String& fun_name, const String& args_str=NULLStr);
+  // #CAT_ObjectMgmt call function (method) of given name on this object, using args as comma-separated simple literal expressions for argument values, or prompting for args using gui interface otherwise if needed
   static  void          CallObjFun(taBase* obj, const String& fun_name);
   // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 call function (method) of given name on given object, prompting for args using gui interface
   static  void          SetMemberStr(taBase* obj, const String& memb_name,

@@ -23,7 +23,7 @@
 
 
 
-int taiArgTypeOfMethodPtr::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+int taiArgTypeOfMethodPtr::BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) {
   if(argt->DerivesFrom(TA_MethodDef) && (argt->IsPointer()))
     return taiArgType::BidForArgType(aidx,argt,md,td)+1;
   return 0;

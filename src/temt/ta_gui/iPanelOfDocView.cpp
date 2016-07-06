@@ -420,9 +420,9 @@ bool iPanelOfDocView::eventFilter(QObject* obj, QEvent* event) {
     return inherited::eventFilter(obj, event);
   }
   QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
-  // if (!taiMisc::KeyEventCtrlPressed(key_event)) {
-  //   return false;
-  // }
+  if (!taiMisc::KeyEventCtrlPressed(key_event)) {
+    return false;
+  }
   QCoreApplication* app = QCoreApplication::instance();
   switch (key_event->key()) {
   case Qt::Key_P:

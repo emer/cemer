@@ -22,7 +22,7 @@
 
 taTypeDef_Of(taGroup_impl);
 
-int taiArgTypeOfFromGroup::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+int taiArgTypeOfFromGroup::BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) {
   if (!argt->IsPointer() || !argt->IsTaBase())
     return 0;
   String fmgp = GetOptionAfter("FROM_GROUP_", md, aidx);

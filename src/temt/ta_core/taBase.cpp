@@ -3121,13 +3121,10 @@ const iColor taBase::GetEditColorInherit(bool& ok) {
   return bgclr;
 }
 
-void taBase::CallFun(const String& fun_name) {
-#ifdef TA_GUI
-  if(!taMisc::gui_active) return;
-#endif
+void taBase::CallFun(const String& fun_name, const String& args_str) {
   MethodDef* md = GetTypeDef()->methods.FindName(fun_name);
   if(md != NULL)
-    md->CallFun((void*)this);
+    md->CallFun((void*)this, args_str);
   else
     TestError(true, "CallFun", "function:", fun_name, "not found on object");
 }

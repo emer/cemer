@@ -31,7 +31,7 @@ class TA_API taiArgTypeOfFromGroup : public taiArgTypeOfTokenPtr {
   // for taBase pointers with FROM_GROUP_xxx or FROM_LIST_xxx
   TAI_ARGTYPE_SUBCLASS(taiArgTypeOfFromGroup, taiArgTypeOfTokenPtr);
 public:
-  int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) override;
+  int           BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) override;
   cssEl*        GetElFromArg(const char* arg_nm, void* base) override;
   taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr) override;

@@ -115,9 +115,20 @@ bool taiWidgetMethod::CallFun_impl() {
     }
   }
 
+  String pre_call_str = meth->OptionAfter("PRE_CALL_");
+  if(pre_call_str.nonempty()) {
+    MethodDef* pcmeth = typ->methods.FindName(pre_call_str);
+    if(!pcmeth) {
+      taMisc::Error("programmer error: PRE_CALL method not found:", pre_call_str, "in type:", typ->name);
+    }
+    else {
+      pcmeth->CallFun(base); // call it!
+    }
+  }
+  
   use_argc = meth->fun_argc;
   String argc_str = meth->OptionAfter("ARGC_");
-  if (argc_str != "")
+  if (argc_str.nonempty())
     use_argc = (int)argc_str;
   use_argc = MIN(use_argc, meth->arg_types.size);
   use_argc = MIN(use_argc, meth->arg_names.size);

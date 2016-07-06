@@ -30,7 +30,7 @@ class TA_API taiArgTypeOfListOnObjBasePtr : public taiArgTypeOfListBasePtr {
   // for taBase pointers in groups with ARG_IN_OBJ
   TAI_ARGTYPE_SUBCLASS(taiArgTypeOfListOnObjBasePtr, taiArgTypeOfListBasePtr);
 public:
-  int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) override;
+  int           BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) override;
   cssEl*        GetElFromArg(const char* arg_nm, void* base) override;
   taiWidget*    GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr) override;

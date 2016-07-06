@@ -22,6 +22,8 @@
 #include "css_machine.h"
 #include "css_basic_types.h"
 #include <taMatrix>
+class taiArgType; //
+class taiType_List; // 
 
 ///////////////////////////////////////////////////////////////////////
 //		Assignment semantics
@@ -140,6 +142,26 @@ public:
   cssEl* GetMethodFmName(const String& memb) const override;
   cssEl* GetMethodFmNo(int memb) const override;
   cssEl* GetScoped(const String&) const override;
+
+  // these are the key methods for generating a list of css method argument types based on
+  // MethodDef information -- they are used in making gui arg dialog or parsing string
+  // into arg values -- used in cssiArgDialog and MethodDef::CallFun
+  // arg types are members of obj object -- 1st 2 members are Void place-holder for instr
+  // and this pointer -- args start at index 2
+  static bool	BuildCssObjFromArgTypes
+    (cssClassInst* obj, const MethodDef* md, void* base, int use_argc,
+     taiType_List& type_el);
+  // this is the main method -- returns false if any issues came up..
+  static taiArgType* GetBestArgType
+    (int arg_idx, TypeDef* argt, const MethodDef* md, TypeDef* td);
+  // helper to get best argtype for arg
+  static void        SetCssObjArgElFromString
+    (const String& val, const MethodDef* md, cssEl* el, taiArgType* art);
+  // set a given argument element from string -- mainly uses css assign from string..
+  static bool        SetCssObjArgsFromString
+    (cssClassInst* obj, const MethodDef* md, int use_argc, taiType_List& type_el,
+     const String& args_str);
+  // set a list of args from simple comma-separated string literal expressions in args_str
 };
 
 #define cssTA_inst(l,n,c,t)		l .Push(new cssTA(n, c, t, #n))

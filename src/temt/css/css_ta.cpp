@@ -35,9 +35,113 @@
 #include <DataTableCols>
 #include <taLeafItr>
 #include <taBaseItr>
-
+#include <taiArgType>
+#include <taiType_List>
+#include <taiMisc>
 
 using namespace std;
+
+bool cssTA::BuildCssObjFromArgTypes(cssClassInst* obj, const MethodDef* md, void* base,
+                                    int use_argc, taiType_List& type_el) {
+  bool rval = true;
+  TypeDef* typ = md->GetOwnerType();
+  obj->name = String("(") + md->type->name + ") " + md->name +
+    ": " + md->desc;
+  obj->members->Push(&cssMisc::Void); // this is just a place-holder for arg[0]
+  obj->members->Push(&cssMisc::Void); // this is just a place-holder for arg[1]
+  // note: constr all args, even if any leading hidden
+  for (int i = 0; i < use_argc; ++i) {
+    String arg_name = md->arg_names.FastEl(i);
+    TypeDef* argtd = md->arg_types.FastEl(i);
+    taiArgType* art = GetBestArgType(i, argtd, md, typ);
+    if (art == NULL) {
+      taMisc::Warning("could not get a taiArgType for parameter of type: ", argtd->name,
+        "for arg_name: ", arg_name, " -- no more parameters will be shown for this function");
+      rval = false;
+      break;			// don't add new args after bad one..
+    }
+    cssEl* el = art->GetElFromArg(arg_name, base);
+    if (el == NULL) {
+      taMisc::Warning("could not get a cssEl for taiArgType: ", art->GetTypeDef()->name,
+        "for arg_name: ", arg_name, " -- no more parameters will be shown for this function"); 
+      delete art;
+      rval = false;
+      break;
+    }
+    // set to default value if not empty
+    String val = md->arg_vals.FastEl(i);
+    String init_argval = art->GetOptionAfter("INIT_ARGVAL_ON_");
+    if(init_argval.nonempty()) {
+      TypeDef* own_td = typ;
+      ta_memb_ptr net_mbr_off = 0;
+      int net_base_off = 0;
+      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+						    init_argval, true);
+      if(md != NULL) {
+	void* mbrbase = MemberDef::GetOff_static(base, net_base_off, net_mbr_off);
+	val = md->type->GetValStr(mbrbase, NULL, md, TypeDef::SC_DEFAULT, true); // force_inline
+	// get val from member
+      }
+    }
+    if (!val.empty()) {
+      SetCssObjArgElFromString(val, md, el, art);
+    }
+    obj->members->Push(el);
+    type_el.Add(art);
+  }
+  return rval;
+}
+
+taiArgType* cssTA::GetBestArgType(int aidx, TypeDef* argt, const MethodDef* md, TypeDef* td) {
+  taiArgType* hi_arg = NULL;
+  int hi_bid = 0;
+  for (int i = 0; i < taiMisc::arg_types.size; ++i) {
+    taiArgType* art = (taiArgType*)taiMisc::arg_types.FastEl(i)->GetInstance();
+    int bid = art->BidForArgType(aidx, argt, md, td);
+    if (bid >= hi_bid) {		// preference for the last one..
+      hi_bid = bid;
+      hi_arg = art;
+    }
+  }
+  if (hi_arg == NULL)
+    return NULL;
+  return hi_arg->ArgTypeInst(aidx, argt, const_cast<MethodDef*>(md), td);
+}
+
+void cssTA::SetCssObjArgElFromString(const String& val, const MethodDef* md,
+                                     cssEl* el, taiArgType* art) {
+  if (art->arg_typ->DerivesFrom(&TA_ios))
+    return;                     // no can do..
+  
+  String tval = trim(val);
+  // taMisc::DebugInfo("Method", md->name, "arg:", el->name, "set to:", val);
+  if (art->arg_typ->IsEnum()) {
+    art->arg_typ->SetValStr(val, art->arg_base);
+  }
+  else {
+    *el = val;
+  }
+}
+
+bool cssTA::SetCssObjArgsFromString(cssClassInst* obj, const MethodDef* md, int use_argc,
+                                    taiType_List& type_el, const String& args_str) {
+  bool rval = true;
+  String_Array sary;
+  sary.Split(args_str, ',');
+  int use_sz = MIN(sary.size, use_argc);
+  for(int i=0; i<use_sz; i++) {
+    String argv = sary[i];
+    argv.trim();
+    cssEl* el = obj->members->El(i+2);
+    if(!el || el == &cssMisc::Void) {
+      continue;
+    }
+    taiArgType* art = (taiArgType*)type_el[i];
+    SetCssObjArgElFromString(argv, md, el, art);
+  }
+  return rval;
+}
+
 
 /////////////////////////
 //  cssTA	       //

@@ -45,7 +45,7 @@ public:
 
   int           BidForType(TypeDef*)                    { return 0; }
   // none of the argtype specific ones should apply to types
-  virtual int   BidForArgType(int, TypeDef*, MethodDef*, TypeDef*)      { return 1; }
+  virtual int   BidForArgType(int, const TypeDef*, const MethodDef*, const TypeDef*)      { return 1; }
   // bid for (appropriateness) for given type of method and argument type
 
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
@@ -58,9 +58,9 @@ public:
   void          GetImage_impl(taiWidget* dat, const void* base);
   void          GetValue_impl(taiWidget* dat, void* base);
 
-  virtual bool  GetHasOption(const String& opt, MethodDef* md = NULL, int aidx = -1);
+  virtual bool  GetHasOption(const String& opt, const MethodDef* md = NULL, int aidx = -1);
   // check the meth->HasOption, also taking into account a possible restriction to a particular argument index, specified as opt_n_xxx where n = arg idx
-  virtual String GetOptionAfter(const String& opt, MethodDef* md = NULL, int aidx = -1);
+  virtual String GetOptionAfter(const String& opt, const MethodDef* md = NULL, int aidx = -1);
   // get the meth->OptionAfter(opt), also taking into account a possible restriction to a particular argument index, specified as opt_n_xxx where n = arg idx
 
   taiArgType(int aidx, TypeDef* argt, MethodDef* mb, TypeDef* td);

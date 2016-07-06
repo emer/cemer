@@ -19,7 +19,7 @@
 taTypeDef_Of(ProgLibEl);
 
 
-int taiArgTypeOfProgLibEl::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+int taiArgTypeOfProgLibEl::BidForArgType(int aidx, const TypeDef* argt, const MethodDef* md, const TypeDef* td) {
   if (!argt->IsPointer() || !argt->DerivesFrom(TA_ProgLibEl))
     return 0;
   return taiArgTypeOfFromGroup::BidForArgType(aidx,argt,md,td)+1;
