@@ -31,8 +31,6 @@
 #include <ProgElChoiceDlg>
 #include <SigLinkSignal>
 
-#include <AssignExpr> // temporary
-
 #include <taMisc>
 
 #include <css_machine.h>
@@ -500,15 +498,6 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
     return NULL;
   }
   
-  // JAR - temporary fix - is this really a method name? (Bug 2556)
-  if (this->InheritsFromName("AssignExpr")) {
-    AssignExpr* ae = (AssignExpr*)this;
-    String dot_method_str = "." + var_nm;
-    String ptr_method_str = "->" + var_nm;
-    if (ae->expr.expr.contains(dot_method_str) || ae->expr.expr.contains(ptr_method_str)) {
-      return NULL;
-    }
-  }
   // in cases like AssignTo we don't pop the choice dialog
   if(prg) {
     taProject* proj = prg->GetMyProj();

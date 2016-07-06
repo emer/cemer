@@ -297,7 +297,11 @@ int ProgExprBase::cssExtParseFun_post(void* udata, const char* nm, cssElPtr& el_
   ProgExprBase* pe = (ProgExprBase*)udata;
   pe->bad_vars.AddUnique(vnm);  // this will trigger err msg later..
 //   cerr << "added bad var: " << vnm << endl;
-  return 0;                             // we don't do any cleanup -- return false
+  // now add a dummy var that will fill in for the bad var for the rest of the parse
+  cssEl* el = new cssString("", vnm);
+  pe->parse_tmp->Push(el);
+  el_ptr.SetDirect(el);
+  return el->GetParse();
 }
 
 bool ProgExprBase::ParseExpr() {

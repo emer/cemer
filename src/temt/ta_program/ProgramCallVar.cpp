@@ -239,6 +239,8 @@ bool ProgramCallVar::CvtFmCode(const String& code) {
   String args;
   if(remainder.contains('(')) {
     args = trim(remainder.after('('));
+    if(args.endsWith(')'))
+      args = args.before(')',-1);
     remainder = remainder.before('(');
   }
   
