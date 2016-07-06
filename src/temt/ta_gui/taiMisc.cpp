@@ -43,6 +43,7 @@
 #include <QDebug>
 
 #ifdef USE_QT_WEBENGINE
+#include <QWebEngineSettings>
 
 #else // USE_QT_WEBENGINE
 
@@ -150,6 +151,11 @@ void taiMisc::Init(bool gui) {
     this, SLOT(desktopWidget_workAreaResized(int)));
 
 #ifdef USE_QT_WEBENGINE
+  QWebEngineSettings *defaultSettings = QWebEngineSettings::defaultSettings();
+  defaultSettings->setAttribute(QWebEngineSettings::PluginsEnabled, true);
+  
+  net_access_mgr = new iNetworkAccessManager;
+  net_access_mgr->setCookieJar(new iCookieJar(net_access_mgr));
 
 #else // USE_QT_WEBENGINE
   
