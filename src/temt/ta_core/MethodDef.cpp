@@ -152,7 +152,7 @@ void MethodDef::CallFun(void* base, const String& args_str) const {
       --taMisc::in_gui_call;
       delete mth_rep;
     }
-    if((fun_argc == 0) || (fun_argd == 0)) {
+    else if((fun_argc == 0) || (fun_argd == 0)) {
       ++taMisc::in_gui_call;
       cssEl* rval = (*(stubp))(base, 0, (cssEl**)NULL);
       if(rval) {

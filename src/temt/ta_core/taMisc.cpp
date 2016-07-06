@@ -190,8 +190,8 @@ taExpandDefaultsProject::taExpandDefaultsProject() {
   wizards = 1;
   ctrl_panels = 1;
   param_sets = 0;
-  data = 1;
-  programs = 1;
+  data = 2;
+  programs = 2;
   viewers = 0;
   networks = 1;
   network = 1;
