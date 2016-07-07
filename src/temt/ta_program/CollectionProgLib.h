@@ -13,50 +13,47 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ProgLib_h
-#define ProgLib_h 1
+#ifndef CollectionProgLib_h
+#define CollectionProgLib_h 1
 
 // parent includes:
-#include <ProgLibEl_List>
+#include <taNBase>
+#include <ProgLib>
+#include <NameVar>
+#include <NameVar_PArray>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taBase; // 
-class ProgLibEl; // 
-class Program_Group; // 
+class taBase; //
+class ProgLibEl; //
+class Program_Group; //
 class Program; //
 
-taTypeDef_Of(ProgLib);
 
-class TA_API ProgLib: public ProgLibEl_List {
-  // the abstract program library
-INHERITED(ProgLibEl_List)
+taTypeDef_Of(CollectionProgLib);
+
+class TA_API CollectionProgLib : public ProgLib {
+  // #INSTANCE #INLINE #CAT_Program the program library as a collection of sub ProgLibs, such as system, user, wiki prog lib into a combined prog lib
+
+INHERITED(ProgLib)
 public:
-  enum ProgLibs {               // program library locations: must be sync'd with Program
-    USER_LIB,                   // user's personal library
-    SYSTEM_LIB,                 // local system library
-    WEB_LIB,                    // web-based library
-    SEARCH_LIBS,                // search through the libraries (for loading)
-  };
-
-  bool                  not_init; // list has not been initialized yet
-
-  virtual void  FindPrograms() {};         // search paths to find all available programs
+  
+  
+  void  FindPrograms();         // search paths to find all available programs
   taBase* NewProgram(ProgLibEl* prog_type, Program_Group* new_owner);
-  // ** #MENU #MENU_ON_Object #MENU_CONTEXT #NO_SAVE_ARG_VAL create a new program in new_owner of given type (return value could be a Program or a Program_Group);  new_owner is group where program will be created
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #NO_SAVE_ARG_VAL create a new program in new_owner of given type (return value could be a Program or a Program_Group);  new_owner is group where program will be created
   taBase* NewProgramFmName(const String& prog_nm, Program_Group* new_owner);
   // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found); new_owner is group where program will be created
-  virtual bool SaveProgToProgLib(Program* prg, ProgLibs library) {return false;};
+  bool SaveProgToProgLib(Program* prg, ProgLibs library);
   bool SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs library);
 
-  TA_SIMPLE_BASEFUNS(ProgLib);
-protected:
-
-
+  TA_SIMPLE_BASEFUNS(CollectionProgLib);
 private:
-  void  Initialize();
-  void  Destroy() { CutLinks(); }
+  NameVar_PArray subProgLibs;
+  void setupSubLibs();
+  void Initialize();
+  void Destroy()     { };
 };
 
-#endif // ProgLib_h
+#endif // CollectionProgLib_h

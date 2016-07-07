@@ -36,11 +36,12 @@
 #include <String_Array>
 #include <ProgExpr>
 #include <taDoc>
+#include <ProgLib>
 
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
 class cssTA_Base; // 
-class ProgLib; // 
+class ProgLib; //
 class Program_Group; // 
 class MemberDef; // 
 class ProgLibEl; // 
@@ -91,13 +92,6 @@ public:
     SR_STEP_POINT,              // the program reached the stopping point associated with Step mode -- stop_msg has program name
     SR_BREAKPOINT,              // a css breakpoint was reached -- stop_msg has info
     SR_ERROR,                   // some form of runtime error occurred -- stop_msg has text
-  };
-
-  enum ProgLibs {               // program library locations: must be sync'd with Program_Group
-    USER_LIB,                   // user's personal library
-    SYSTEM_LIB,                 // local system library
-    WEB_LIB,                    // web-based library
-    SEARCH_LIBS,                // search through the libraries (for loading)
   };
 
   static ProgLib*       prog_lib; // #NO_SHOW_TREE #NO_SAVE #NO_FIND library of available programs
@@ -318,11 +312,9 @@ public:
   virtual void          Reset();
   // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE #CONFIRM #CAT_Code reset (remove) all program elements -- typically in preparation for loading a new program over this one
 
-  static String         GetProgLibPath(ProgLibs library);
-  // #CAT_ProgLib get path to given program library
-
-  virtual void          SaveToProgLib(ProgLibs library = USER_LIB);
+  virtual void          SaveToProgLib(ProgLib::ProgLibs library = ProgLib::USER_LIB);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #CAT_ProgLib save the program to given program library -- file name = object name -- be sure to add good desc comments!!
+ 
   virtual void          UpdateFromProgLib(ProgLibEl* prog_type);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib #ARG_VAL_FM_FUN #CAT_ProgLib (re)load the program from the program library element of given type
   taBase*               AddFromProgLib(ProgLibEl* prog_type) ;

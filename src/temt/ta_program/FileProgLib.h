@@ -13,11 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ProgLib_h
-#define ProgLib_h 1
+#ifndef FileProgLib_h
+#define FileProgLib_h 1
 
 // parent includes:
-#include <ProgLibEl_List>
+#include <ProgLib>
 
 // member includes:
 
@@ -27,36 +27,32 @@ class ProgLibEl; //
 class Program_Group; // 
 class Program; //
 
-taTypeDef_Of(ProgLib);
+taTypeDef_Of(FileProgLib);
 
-class TA_API ProgLib: public ProgLibEl_List {
-  // the abstract program library
-INHERITED(ProgLibEl_List)
+class TA_API FileProgLib: public ProgLib {
+  // #INSTANCE #INLINE #CAT_Program the program library
+INHERITED(ProgLib)
 public:
-  enum ProgLibs {               // program library locations: must be sync'd with Program
-    USER_LIB,                   // user's personal library
-    SYSTEM_LIB,                 // local system library
-    WEB_LIB,                    // web-based library
-    SEARCH_LIBS,                // search through the libraries (for loading)
-  };
 
+  FileProgLib(String path, String lib_name);
   bool                  not_init; // list has not been initialized yet
 
-  virtual void  FindPrograms() {};         // search paths to find all available programs
+  void  FindPrograms() override;         // search paths to find all available programs
   taBase* NewProgram(ProgLibEl* prog_type, Program_Group* new_owner);
-  // ** #MENU #MENU_ON_Object #MENU_CONTEXT #NO_SAVE_ARG_VAL create a new program in new_owner of given type (return value could be a Program or a Program_Group);  new_owner is group where program will be created
+  // create a new program in new_owner of given type (return value could be a Program or a Program_Group);  new_owner is group where program will be created
   taBase* NewProgramFmName(const String& prog_nm, Program_Group* new_owner);
   // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found); new_owner is group where program will be created
-  virtual bool SaveProgToProgLib(Program* prg, ProgLibs library) {return false;};
-  bool SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs library);
+  bool SaveProgToProgLib(Program* prg,  ProgLib::ProgLibs library) override;
+  bool SaveProgGrpToProgLib(Program_Group* prg_grp);
 
-  TA_SIMPLE_BASEFUNS(ProgLib);
+  TA_SIMPLE_BASEFUNS(FileProgLib);
 protected:
-
 
 private:
   void  Initialize();
   void  Destroy() { CutLinks(); }
+  String path;
+  String lib_name;
 };
 
-#endif // ProgLib_h
+#endif // FileProgLib_h

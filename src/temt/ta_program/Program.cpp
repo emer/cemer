@@ -1810,52 +1810,8 @@ void  Program::UpdateProgVars() {
   }
 }
 
-String Program::GetProgLibPath(ProgLibs library) {
-  if(library == SEARCH_LIBS) {
-    taMisc::Error("Cannot do SEARCH_LIBS for saving -- program saved in local directory!");
-    return "";
-  }
-  String path = "./";
-  if(library == USER_LIB)
-    path = taMisc::prog_lib_paths.GetVal("UserLib").toString();
-  else if(library == SYSTEM_LIB) {
-    if(taMisc::in_dev_exe) {
-      String top_lev_path = taMisc::GetDirFmPath(taMisc::exe_path, 1); // go up 1
-      path = top_lev_path + "/prog_lib";
-    }
-    else {
-      path = taMisc::prog_lib_paths.GetVal("SystemLib").toString();
-    }
-  }
-  else if(library == WEB_LIB)
-    path = QDir::tempPath();
-  if(library != WEB_LIB) {
-    QFileInfo qfi(path);
-    if(!qfi.isDir()) {
-      QDir qd;
-      qd.mkpath(path);          // attempt to make it..
-      taMisc::Warning("Note: did mkdir for program library directory:", path);
-    }
-  }
-  return path;
-}
-
-void Program::SaveToProgLib(ProgLibs library) {
-  String path = GetProgLibPath(library);
-  String fname = path + "/" + name + ".prog";
-  QFileInfo qfi(fname);
-  if(qfi.isFile()) {
-    int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",
-                             "Ok", "Cancel");
-    if(chs == 1) return;
-  }
-  SaveAs(fname);
-  if (library == WEB_LIB) {
-    taMediaWiki::PublishItemOnWeb("Program", name, fname, "test" /* TODO: taMisc::web_help_wiki*/, GetMyProj());
-    QFile::remove(fname);
-  }
-  Program_Group::prog_lib.FindPrograms();
-  
+void Program::SaveToProgLib(ProgLib::ProgLibs library) {
+  prog_lib->SaveProgToProgLib(this, library);
 }
 
 taBase* Program::AddFromProgLib(ProgLibEl* prog_type) {

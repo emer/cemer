@@ -48,6 +48,7 @@ set(ta_program_HEADS_MAKETA
   ProgLibEl.h
   ProgLibEl_List.h
   ProgLib.h
+  FileProgLib.h
   Program_Group.h
   Program_TopGroup.h
 
@@ -101,6 +102,8 @@ set(ta_program_HEADS_MAKETA
   ProgVarFmArg.h
   ControlPanelsFmArgs.h
   RegisterArgs.h
+  CollectionProgLib.h
+  WikiProgLib.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -160,6 +163,7 @@ set(ta_program_SRCS
   ProgLibEl.cpp
   ProgLibEl_List.cpp
   ProgLib.cpp
+  FileProgLib.cpp
   Program_Group.cpp
   Program_TopGroup.cpp
 
@@ -213,6 +217,8 @@ set(ta_program_SRCS
   ProgVarFmArg.cpp
   ControlPanelsFmArgs.cpp
   RegisterArgs.cpp
+  CollectionProgLib.cpp
+  WikiProgLib.cpp
 )
 
 set(ta_program_FILES ${ta_program_HEADS} ${ta_program_SRCS})

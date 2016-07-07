@@ -51,17 +51,8 @@ void Program_Group::Copy_(const Program_Group& cp) {
   desc = cp.desc;
 }
 
-void Program_Group::SaveToProgLib(ProgLibs library) {
-  String path = Program::GetProgLibPath((Program::ProgLibs)library);
-  String fname = path + "/" + name + ".progp";
-  QFileInfo qfi(fname);
-  if(qfi.isFile()) {
-    int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",
-                             "Ok", "Cancel");
-    if(chs == 1) return;
-  }
-  SaveAs(fname);
-  Program_Group::prog_lib.FindPrograms();
+void Program_Group::SaveToProgLib(ProgLib::ProgLibs library) {
+  Program_Group::prog_lib.SaveProgGrpToProgLib(this, library);
 }
 
 void Program_Group::SetProgsStale() {
@@ -71,7 +62,7 @@ void Program_Group::SetProgsStale() {
   }
 }
 
-ProgLib Program_Group::prog_lib;
+CollectionProgLib Program_Group::prog_lib;
 
 taBase* Program_Group::AddFromProgLib(ProgLibEl* prog_type) {
   return prog_lib.NewProgram(prog_type, this);
