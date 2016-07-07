@@ -33,7 +33,9 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QApplication>
+#if (QT_VERSION >= 0x050500)
 #include <QWindow>
+#endif
 
 #include <taMisc>
 #include <taiMisc>
