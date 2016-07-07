@@ -33,6 +33,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QApplication>
+#include <QWindow>
 
 #include <taMisc>
 #include <taiMisc>
@@ -1436,7 +1437,6 @@ void T3ExaminerViewer::printImage() {
 }
 
 float T3ExaminerViewer::devicePixelRatio() {
-#ifdef TA_QT3D
   QWidget* winwidg = window();
   QWindow* win = NULL;
   if(winwidg) {
@@ -1448,9 +1448,6 @@ float T3ExaminerViewer::devicePixelRatio() {
   else {
     return ((QGuiApplication*)QGuiApplication::instance())->devicePixelRatio();
   }
-#else
-  return quarter->devicePixelRatio();
-#endif
 }
 
 bool T3ExaminerViewer::event(QEvent* ev_) {
