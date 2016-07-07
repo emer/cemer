@@ -1437,6 +1437,7 @@ void T3ExaminerViewer::printImage() {
 }
 
 float T3ExaminerViewer::devicePixelRatio() {
+#if (QT_VERSION >= 0x050500)
   QWidget* winwidg = window();
   QWindow* win = NULL;
   if(winwidg) {
@@ -1448,6 +1449,9 @@ float T3ExaminerViewer::devicePixelRatio() {
   else {
     return ((QGuiApplication*)QGuiApplication::instance())->devicePixelRatio();
   }
+#else
+  return 1.0f;
+#endif
 }
 
 bool T3ExaminerViewer::event(QEvent* ev_) {
