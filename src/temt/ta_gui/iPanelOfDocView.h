@@ -90,7 +90,7 @@ protected:
 #ifndef __MAKETA__
 protected slots:
 #ifdef USE_QT_WEBENGINE
-  void                  doc_createWindow(QWebEnginePage::WebWindowType type, iWebView*& window);
+  void                  doc_createWindow(QWebEnginePage::WebWindowType type, QWebEngineView*& window);
 #else // USE_QT_WEBENGINE
   void                  doc_createWindow(QWebPage::WebWindowType type, iWebView*& window);
   void                  doc_linkClicked(const QUrl& url);

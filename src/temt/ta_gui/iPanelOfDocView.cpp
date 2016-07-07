@@ -146,8 +146,8 @@ iPanelOfDocView::iPanelOfDocView()
 
 #ifdef USE_QT_WEBENGINE
   connect(webview,
-          SIGNAL(sigCreateWindow(QWebEnginePage::WebWindowType, iWebView*&)), this,
-          SLOT(doc_createWindow(QWebEnginePage::WebWindowType, iWebView*&)) );
+          SIGNAL(sigCreateWindow(QWebEnginePage::WebWindowType, QWebEngineView*&)), this,
+          SLOT(doc_createWindow(QWebEnginePage::WebWindowType, QWebEngineView*&)) );
 #else // USE_QT_WEBENGINE
   webview->page()->setNetworkAccessManager(taiMisc::net_access_mgr);
   webview->page()->setForwardUnsupportedContent(true);
@@ -180,12 +180,12 @@ QWidget* iPanelOfDocView::firstTabFocusWidget() {
 
 #ifdef USE_QT_WEBENGINE
 
-void iPanelOfDocView::doc_createWindow(QWebEnginePage::WebWindowType type, iWebView*& window) {
-  // fork to browser
-  if (type == QWebEnginePage::WebBrowserWindow) {
+void iPanelOfDocView::doc_createWindow(QWebEnginePage::WebWindowType type, QWebEngineView*& window) {
+  // fork to browser -- always!
+  // if (type == QWebEnginePage::WebBrowserWindow) {
     iHelpBrowser* hbrow = iHelpBrowser::instance();
     window = hbrow->AddWebView(_nilString);
-  }
+  // }
 }
 
 #else // USE_QT_WEBENGINE

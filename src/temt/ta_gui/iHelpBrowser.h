@@ -28,6 +28,9 @@
 
 #ifdef USE_QT_WEBENGINE
 
+#include <QWebEnginePage>
+class QWebEngineView;
+
 #else // USE_QT_WEBENGINE
 
 #include <QWebPage>
@@ -140,7 +143,7 @@ protected slots:
   void                  back_clicked();
   void                  addTab_clicked(); // or return in url_text
 #ifdef USE_QT_WEBENGINE
-  
+  void                  brow_createWindow(QWebEnginePage::WebWindowType type, QWebEngineView*& window);
 #else // USE_QT_WEBENGINE
   void                  brow_createWindow(QWebPage::WebWindowType type, iWebView*& window);
 #endif // USE_QT_WEBENGINE

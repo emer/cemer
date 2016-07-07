@@ -29,6 +29,7 @@
 
 #include <QWebEngineProfile>
 #include <QWebEngineSettings>
+#include <QContextMenuEvent>
 
 iWebPage::iWebPage(QWidget* parent) :
   inherited(parent)
@@ -77,7 +78,7 @@ QWebEngineProfile* iWebView::temtProfile() {
 
 QWebEngineView* iWebView::createWindow(QWebEnginePage::WebWindowType type) {
   QWebEngineView* rval = NULL;
-  emit sigCreateWindow(type, rval);
+  emit sigCreateWindow(type, rval); // calls iPanelOfDocView handler
   if (!rval)
     rval = inherited::createWindow(type);
   return rval;
@@ -99,6 +100,27 @@ void iWebView::childEvent(QChildEvent* ev) {
   }
 }
 
+void iWebView::contextMenuEvent(QContextMenuEvent *event) {
+  QMenu* menu = page()->createStandardContextMenu();
+  connect(menu, &QMenu::aboutToHide, menu, &QObject::deleteLater);
+  menu->addSeparator();
+  if(hasSelection()) {
+    menu->addAction(pageAction(QWebEnginePage::Cut));
+    menu->addAction(pageAction(QWebEnginePage::Copy));
+  }
+  menu->addAction(pageAction(QWebEnginePage::Paste));
+  menu->addAction(pageAction(QWebEnginePage::Undo));
+  menu->addAction(pageAction(QWebEnginePage::Redo));
+  menu->addAction(pageAction(QWebEnginePage::SelectAll));
+  menu->addSeparator();
+  menu->addAction(pageAction(QWebEnginePage::OpenLinkInThisWindow));
+  menu->addAction(pageAction(QWebEnginePage::OpenLinkInNewWindow));
+  menu->addAction(pageAction(QWebEnginePage::CopyLinkToClipboard));
+  menu->addAction(pageAction(QWebEnginePage::DownloadLinkToDisk));
+  menu->addAction(pageAction(QWebEnginePage::DownloadImageToDisk));
+  menu->addAction(pageAction(QWebEnginePage::DownloadMediaToDisk));
+  menu->popup(event->globalPos());
+}
 
 #else // USE_QT_WEBENGINE
 

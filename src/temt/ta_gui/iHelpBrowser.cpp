@@ -65,10 +65,12 @@ iHelpBrowser* iHelpBrowser::instance() {
     inst->resize(sz.width(), (int)(1.2f * (float)sz.height())); // a bit bigger than .6h
     inst->show();
     inst->raise();
-    taiMiscCore::ProcessEvents(); // run default stuff
-    taiMiscCore::ProcessEvents(); // run default stuff
-    taiMiscCore::ProcessEvents(); // run default stuff
-  } else {
+    // this causes crashing in Qt5.6:
+    // taiMiscCore::ProcessEvents(); // run default stuff
+    // taiMiscCore::ProcessEvents(); // run default stuff
+    // taiMiscCore::ProcessEvents(); // run default stuff
+  }
+  else {
     inst->show();
     inst->raise();
   }
@@ -392,6 +394,9 @@ iWebView* iHelpBrowser::AddWebView(const String& label) {
     status_bar, SLOT(showMessage(const QString&)) );
 
 #ifdef USE_QT_WEBENGINE
+  connect(brow,
+          SIGNAL(sigCreateWindow(QWebEnginePage::WebWindowType, QWebEngineView*&)), this,
+          SLOT(brow_createWindow(QWebEnginePage::WebWindowType, QWebEngineView*&)) );
 
 #else // USE_QT_WEBENGINE
 
@@ -453,6 +458,13 @@ void iHelpBrowser::ApplyFiltering() {
 }
 
 #ifdef USE_QT_WEBENGINE
+
+void iHelpBrowser::brow_createWindow(QWebEnginePage::WebWindowType type, QWebEngineView*& window) {
+  // fork to browser -- always!
+  // if (type == QWebEnginePage::WebBrowserWindow) {
+    window = AddWebView(_nilString);
+  // }
+}
 
 #else // USE_QT_WEBENGINE
 

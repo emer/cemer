@@ -75,6 +75,7 @@ protected:
   
   QWebEngineView* createWindow(QWebEnginePage::WebWindowType type) override;
   void          childEvent(QChildEvent* ev);
+  void          contextMenuEvent(QContextMenuEvent *event) override;
 };
 
 
