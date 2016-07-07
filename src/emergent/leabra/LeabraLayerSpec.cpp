@@ -157,6 +157,8 @@ void LeabraLayStats::Initialize() {
 
 void LeabraLayStats::Defaults_init() {
   cos_diff_avg_tau = 100.0f;
+  cos_diff_lrate_mod = false;
+  cos_diff_lrate_max = 10.0f;
   hog_thr = 0.3f;
   dead_thr = 0.01f;
 
@@ -858,6 +860,11 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
 
   lstats.UpdtDiffAvg(lay->cos_diff_avg, lay->cos_diff);
   lay->lrate_mod = lay_lrate;
+
+  if(lstats.cos_diff_lrate_mod) {
+    lay->lrate_mod *= lstats.CosDiffLrateMod(lay->cos_diff, lay->cos_diff_avg);
+  }
+  
   if(lay->layer_type == Layer::HIDDEN) {
     lay->cos_diff_avg_lrn = 1.0f - lay->cos_diff_avg;
   }

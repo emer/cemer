@@ -245,7 +245,9 @@ class E_API LeabraLayStats : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra leabra layer-level statistics parameters
 INHERITED(SpecMemberBase)
 public:
-  float		cos_diff_avg_tau;  // #DEF_100 #MIN_1 time constant in trials (roughly how long significant change takes, 1.4 x half-life) for computing running average cos_diff value for the layer, cos_diff_avg = cosine difference between act_m and act_p -- this is an important statistic for how much phase-based difference there is between phases in this layer -- it is used in standard X_COS_DIFF modulation of l_mix in LeabraConSpec
+  float		cos_diff_avg_tau;  // #DEF_100 #MIN_1 time constant in trials (roughly how long significant change takes, 1.4 x half-life) for computing running average cos_diff value for the layer, cos_diff_avg = cosine difference between act_m and act_p -- this is an important statistic for how much phase-based difference there is between phases in this layer -- it is used in standard X_COS_DIFF modulation of l_mix in LeabraConSpec, and for modulating learning rate as a function of predictability in the DeepLeabra predictive auto-encoder learning
+  bool          cos_diff_lrate_mod; // modulate learning rate in this layer as a function of the cos_diff on this trial relative to running average cos_diff values (see cos_diff_avg_tau) -- lrate_mod = cos_diff_lrate_mult * (cos_diff / cos_diff_avg) -- if this layer is less predictable than previous trials, we don't learn as much
+  float         cos_diff_lrate_max; // #CONDSHOW_ON_cos_diff_lrate_mod maximum learning rate modulation that can be produced by cos_diff_lrate_mod mechanism -- can prevent learning rate from getting too big 
   float         hog_thr;           // #MIN_0 #MAX_1 #DEF_0.3;0.2 threshold on unit avg_act (long time-averaged activation), above which the unit is considered to be a 'hog' that is dominating the representational space
   float         dead_thr;         // #MIN_0 #MAX_1 #DEF_0.01;0.005 threshold on unit avg_act (long time-averaged activation), above which the unit is considered to be a 'hog' that is dominating the representational space
 
@@ -261,6 +263,14 @@ public:
   }
   // update the running average diff value
 
+  inline float  CosDiffLrateMod(const float cos_diff, const float diff_avg) {
+    if(diff_avg <= 0.0f) return 1.0f;
+    float rval = cos_diff / diff_avg;
+    if(rval > cos_diff_lrate_max)
+      rval = cos_diff_lrate_max;
+    return rval;
+  }
+  
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(LeabraLayStats);

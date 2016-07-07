@@ -704,16 +704,7 @@ void GraphTableView::Render_impl() {
 #if (QT_VERSION >= 0x050000)
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
-    QWindow* win = vw->windowHandle();
-    if(win) {
-      dev_pix_ratio = win->devicePixelRatio();
-    }
-    else {
-      dev_pix_ratio = ((QGuiApplication*)QGuiApplication::instance())->devicePixelRatio();
-    }
-  }
-  else {
-    dev_pix_ratio = ((QGuiApplication*)QGuiApplication::instance())->devicePixelRatio();
+    dev_pix_ratio = vw->devicePixelRatio();
   }
 #endif
   

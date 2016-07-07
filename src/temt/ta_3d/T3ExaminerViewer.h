@@ -278,7 +278,9 @@ public:
   // save the current viewer image to given file name
   virtual void          printImage();
   // print the current viewer image to a printer
-
+  virtual float         devicePixelRatio();
+  // ratio of physical to logical pixels
+                                          
 public slots:
   void hrotwheelChanged(int value);
   void vrotwheelChanged(int value);

@@ -1435,6 +1435,24 @@ void T3ExaminerViewer::printImage() {
   }
 }
 
+float T3ExaminerViewer::devicePixelRatio() {
+#ifdef TA_QT3D
+  QWidget* winwidg = window();
+  QWindow* win = NULL;
+  if(winwidg) {
+    win = winwidg->windowHandle();
+  }
+  if(win) {
+    return win->devicePixelRatio();
+  }
+  else {
+    return ((QGuiApplication*)QGuiApplication::instance())->devicePixelRatio();
+  }
+#else
+  return quarter->devicePixelRatio();
+#endif
+}
+
 bool T3ExaminerViewer::event(QEvent* ev_) {
 #ifdef TA_QT3D
   return inherited::event(ev_);
