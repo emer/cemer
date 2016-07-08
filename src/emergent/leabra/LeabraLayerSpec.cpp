@@ -27,6 +27,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraInhibMisc);
 TA_BASEFUNS_CTORS_DEFN(LeabraClampSpec);
 TA_BASEFUNS_CTORS_DEFN(LayerDecaySpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDelInhib);
+TA_BASEFUNS_CTORS_DEFN(LeabraCosDiffMod);
 TA_BASEFUNS_CTORS_DEFN(LeabraLayStats);
 TA_BASEFUNS_CTORS_DEFN(LeabraLayerSpec);
 TA_BASEFUNS_CTORS_LITE_DEFN(LeabraLayerSpec_SPtr);
@@ -151,24 +152,37 @@ void LeabraDelInhib::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
+void LeabraCosDiffMod::Initialize() {
+  Defaults_init();
+}
+
+void LeabraCosDiffMod::Defaults_init() {
+  avg_tau = 100.0f;
+  lrate_mod = false;
+  lrmod_gain = 0.5f;
+  lrmod_off = 1.0f;
+  lrmod_max = 2.0f;
+  lrmod_min = 0.0f;
+
+  avg_dt = 1.0f / avg_tau;
+  avg_dt_c = 1.0f - avg_dt;
+}
+
+void LeabraCosDiffMod::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  avg_dt = 1.0f / avg_tau;
+  avg_dt_c = 1.0f - avg_dt;
+}
+
 void LeabraLayStats::Initialize() {
   Defaults_init();
 }
 
 void LeabraLayStats::Defaults_init() {
-  cos_diff_avg_tau = 100.0f;
-  cos_diff_lrate_mod = false;
-  cos_diff_lrate_max = 10.0f;
   hog_thr = 0.3f;
   dead_thr = 0.01f;
-
-  cos_diff_avg_dt = 1.0f / cos_diff_avg_tau;
 }
 
-void LeabraLayStats::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  cos_diff_avg_dt = 1.0f / cos_diff_avg_tau;
-}
 
 //////////////////////////////////////////////////////////
 
@@ -193,7 +207,7 @@ void LeabraLayerSpec::UpdateAfterEdit_impl() {
   multi_gp_inhib.UpdateAfterEdit_NoGui();
   lay_gp_inhib.UpdateAfterEdit_NoGui();
   avg_act.UpdateAfterEdit_NoGui();
-  lstats.UpdateAfterEdit_NoGui();
+  cos_diff.UpdateAfterEdit_NoGui();
 }
 
 void LeabraLayerSpec::InitLinks() {
@@ -338,6 +352,7 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->cos_diff = 0.0f;
   lay->avg_cos_diff.ResetAvg();
   lay->cos_diff_avg = 0.0f;
+  lay->cos_diff_var = 0.0f;
   lay->cos_diff_avg_lrn = 0.0f;
   lay->lrate_mod = lay_lrate;
   lay->avg_act_diff = 0.0f;
@@ -858,11 +873,12 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
     cosv /= dist;
   lay->cos_diff = cosv;
 
-  lstats.UpdtDiffAvg(lay->cos_diff_avg, lay->cos_diff);
+  cos_diff.UpdtDiffAvgVar(lay->cos_diff_avg, lay->cos_diff_var, lay->cos_diff);
   lay->lrate_mod = lay_lrate;
 
-  if(lstats.cos_diff_lrate_mod) {
-    lay->lrate_mod *= lstats.CosDiffLrateMod(lay->cos_diff, lay->cos_diff_avg);
+  if(cos_diff.lrate_mod) {
+    lay->lrate_mod *= cos_diff.CosDiffLrateMod(lay->cos_diff, lay->cos_diff_avg,
+                                               lay->cos_diff_var);
   }
   
   if(lay->layer_type == Layer::HIDDEN) {

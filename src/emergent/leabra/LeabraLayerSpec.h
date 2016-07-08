@@ -239,44 +239,80 @@ private:
   void	Defaults_init();
 };
 
+eTypeDef_Of(LeabraCosDiffMod);
+
+class E_API LeabraCosDiffMod : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra leabra layer-level cosine of difference between plus and minus phase activations -- used to modulate amount of hebbian learning, and overall learning rate
+INHERITED(SpecMemberBase)
+public:
+  float		avg_tau;  // #DEF_100 #MIN_1 time constant in trials (roughly how long significant change takes, 1.4 x half-life) for computing running average cos_diff value for the layer, cos_diff_avg = cosine difference between act_m and act_p -- this is an important statistic for how much phase-based difference there is between phases in this layer -- it is used in standard X_COS_DIFF modulation of l_mix in LeabraConSpec, and for modulating learning rate as a function of predictability in the DeepLeabra predictive auto-encoder learning -- running average variance also computed with this: cos_diff_var
+  bool          lrate_mod; // modulate learning rate in this layer as a function of the cos_diff on this trial relative to running average cos_diff values (see avg_tau) -- lrate_mod = cos_diff_lrate_mult * (cos_diff / cos_diff_avg) -- if this layer is less predictable than previous trials, we don't learn as much
+  float         lrmod_gain; // #CONDSHOW_ON_lrate_mod gain on learning rate modulation as function of z-normalized cos_diff value on this trial -- normalization computed using incrementally computed average and variance values -- e.g., .5 means that values 2 standard deviations above the average have a learning rate of 1.0 higher than those at the mean (see lrmod_off for offset)
+  float         lrmod_off; // #CONDSHOW_ON_lrate_mod offset on learning rate modulation as function of z-normalized cos_diff value on this trial -- normalization computed using incrementally computed average and variance values -- e.g., 1 means that an average cos_diff value gets a learning rate of 1
+  float         lrmod_max; // #CONDSHOW_ON_lrate_mod maximum learning rate modulation that can be produced by lrate_mod mechanism -- cutoff high values
+  float         lrmod_min; // #CONDSHOW_ON_lrate_mod #MIN_0 minimum learning rate modulation that can be produced by lrate_mod mechanism -- cutoff low values -- cannot go below 0 (learning rate must remain positive)
+
+  float         avg_dt; // #READ_ONLY #EXPERT rate constant = 1 / cos_diff_avg_tau
+  float         avg_dt_c; // #READ_ONLY #EXPERT complement of rate constant = 1 - cos_diff_avg_dt
+
+  inline void	UpdtDiffAvgVar(float& diff_avg, float& diff_var, const float cos_diff) {
+    if(diff_avg == 0.0f) {        // first time -- set
+      diff_avg = cos_diff;
+      diff_var = 0.0f;
+    }
+    else {
+      float del = cos_diff - diff_avg;
+      float incr = avg_dt * del;
+      diff_avg += incr;
+      // following is magic exponentially-weighted incremental variance formula
+      // derived by Finch, 2009: Incremental calculation of weighted mean and variance
+      if(diff_var == 0.0f)
+        diff_var = 2.0f * avg_dt_c * del * incr;
+      else
+        diff_var = avg_dt_c * (diff_var + del * incr);
+    }
+  }
+  // update the running average diff value
+
+  inline float  CosDiffLrateMod(const float cos_diff, const float diff_avg,
+                                const float diff_var) {
+    if(diff_var <= 0.0f) return 1.0f;
+    float zval = (cos_diff - diff_avg) / sqrtf(diff_var); // stdev = sqrt of var
+    // z-normal value is starting point for learning rate factor
+    float rval = zval * lrmod_gain + lrmod_off;
+    if(rval > lrmod_max) rval = lrmod_max;
+    if(rval < lrmod_min) rval = lrmod_min;
+    return rval;
+  }
+  
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraCosDiffMod);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl() override;
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(LeabraLayStats);
 
 class E_API LeabraLayStats : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra leabra layer-level statistics parameters
 INHERITED(SpecMemberBase)
 public:
-  float		cos_diff_avg_tau;  // #DEF_100 #MIN_1 time constant in trials (roughly how long significant change takes, 1.4 x half-life) for computing running average cos_diff value for the layer, cos_diff_avg = cosine difference between act_m and act_p -- this is an important statistic for how much phase-based difference there is between phases in this layer -- it is used in standard X_COS_DIFF modulation of l_mix in LeabraConSpec, and for modulating learning rate as a function of predictability in the DeepLeabra predictive auto-encoder learning
-  bool          cos_diff_lrate_mod; // modulate learning rate in this layer as a function of the cos_diff on this trial relative to running average cos_diff values (see cos_diff_avg_tau) -- lrate_mod = cos_diff_lrate_mult * (cos_diff / cos_diff_avg) -- if this layer is less predictable than previous trials, we don't learn as much
-  float         cos_diff_lrate_max; // #CONDSHOW_ON_cos_diff_lrate_mod maximum learning rate modulation that can be produced by cos_diff_lrate_mod mechanism -- can prevent learning rate from getting too big 
   float         hog_thr;           // #MIN_0 #MAX_1 #DEF_0.3;0.2 threshold on unit avg_act (long time-averaged activation), above which the unit is considered to be a 'hog' that is dominating the representational space
   float         dead_thr;         // #MIN_0 #MAX_1 #DEF_0.01;0.005 threshold on unit avg_act (long time-averaged activation), above which the unit is considered to be a 'hog' that is dominating the representational space
 
-  float         cos_diff_avg_dt; // #READ_ONLY #EXPERT rate constant = 1 / cos_diff_avg_taua
 
-  inline void	UpdtDiffAvg(float& diff_avg, const float cos_diff) {
-    if(diff_avg == 0.0f) {        // first time -- set
-      diff_avg = cos_diff;
-    }
-    else {
-      diff_avg += cos_diff_avg_dt * (cos_diff - diff_avg);
-    }
-  }
-  // update the running average diff value
-
-  inline float  CosDiffLrateMod(const float cos_diff, const float diff_avg) {
-    if(diff_avg <= 0.0f) return 1.0f;
-    float rval = cos_diff / diff_avg;
-    if(rval > cos_diff_lrate_max)
-      rval = cos_diff_lrate_max;
-    return rval;
-  }
-  
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(LeabraLayStats);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
+
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -301,8 +337,9 @@ public:
   LeabraClampSpec clamp;        // #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   LayerDecaySpec  decay;        // #CAT_Activation decay of activity state vars between trials
   LeabraDelInhib  del_inhib;	// #CAT_Activation delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
+  float           lay_lrate;    // #CAT_Statistic layer-level learning rate modulator, multiplies learning rates for all connections coming into layer(s) that this spec applies to -- sets lrate_mod value on layer -- see also cos_diff for additional lrate modulation on top of this
+  LeabraCosDiffMod cos_diff;    // #CAT_Statistic leabra layer-level cosine of difference between plus and minus phase activations -- used to modulate amount of hebbian learning, and overall learning rate
   LeabraLayStats  lstats;       // #CAT_Statistic layer-level statistics parameters
-  float           lay_lrate;    // #CAT_Statistic layer-level learning rate modulator, multiplies learning rates for all connections coming into layer(s) that this spec applies to -- sets lrate_mod value on layer
 
   ///////////////////////////////////////////////////////////////////////
   //	Access, status functions

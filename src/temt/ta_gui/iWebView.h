@@ -25,6 +25,7 @@ class iPanelOfDocView;
 #include <QWebEngineView>
 #include <QWebEnginePage>
 class QWebEngineProfile;
+class QWebEngineDownloadItem;
 #else // USE_QT_WEBENGINE
 #include <QWebView>
 #endif // USE_QT_WEBENGINE
@@ -67,6 +68,10 @@ public:
   // owning doc view
 
   iWebView(QWidget* parent = 0, iPanelOfDocView* docview = 0);
+
+public slots:
+  void  downloadRequested(QWebEngineDownloadItem*);
+  
 signals:
   void            sigCreateWindow(QWebEnginePage::WebWindowType type,
                                   QWebEngineView*& window);

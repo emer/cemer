@@ -30,6 +30,9 @@
 #include <QWebEngineProfile>
 #include <QWebEngineSettings>
 #include <QContextMenuEvent>
+#include <QWebEngineDownloadItem>
+#include <QStandardPaths>
+#include <QFileDialog>
 
 iWebPage::iWebPage(QWidget* parent) :
   inherited(parent)
@@ -64,6 +67,8 @@ iWebView::iWebView(QWidget* parent, iPanelOfDocView* docview)
   , own_docview(docview)
 {
   setPage(new iWebPage(temtProfile(), this));
+  connect(temt_profile, SIGNAL(downloadRequested(QWebEngineDownloadItem*)),
+          this, SLOT(downloadRequested(QWebEngineDownloadItem*)));
 }
 
 QWebEngineProfile* iWebView::temtProfile() {
@@ -71,9 +76,28 @@ QWebEngineProfile* iWebView::temtProfile() {
   temt_profile = new QWebEngineProfile("edu_colorado_ccnlab_emergent_webview");
   temt_profile->setHttpCacheType(QWebEngineProfile::DiskHttpCache);
   temt_profile->setPersistentCookiesPolicy(QWebEngineProfile::AllowPersistentCookies);
+
   // QWebEngineSettings* set = temt_profile->settings();
   // todo: could set font size etc
   return temt_profile;
+}
+
+void iWebView::downloadRequested(QWebEngineDownloadItem* down) {
+  if(!down || down->state() != QWebEngineDownloadItem::DownloadRequested)
+    return;
+  QString defaultLocation =
+    QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+
+  QString defaultFileName = QFileInfo
+    (defaultLocation, QFileInfo(down->path()).fileName()).absoluteFilePath();
+  QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                                                  defaultFileName);
+  if (fileName.isEmpty()) {
+    down->cancel();
+    return;
+  }
+  down->setPath(QFileInfo(fileName).absoluteFilePath());
+  down->accept();
 }
 
 QWebEngineView* iWebView::createWindow(QWebEnginePage::WebWindowType type) {
