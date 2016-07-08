@@ -85,7 +85,8 @@ Apr::Apr()
 Apr::~Apr()
 {
   apr_terminate();
-  taMisc::Info("Terminated APR");
+  // this happens in full program global destructors -- cannot send such a message then!
+  // taMisc::Info("Terminated APR");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
