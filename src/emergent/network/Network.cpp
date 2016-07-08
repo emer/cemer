@@ -3528,7 +3528,7 @@ void Network::WriteSpecMbrNamesToTable(DataTable* spec_table, BaseSpec* spec) {
     MemberDef* spec_td_md = spec_td->members.FastEl(m);
     TypeDef* spec_member_td = spec_td_md->type;
     if (spec_member_td->IsBool() || spec_member_td->IsString() || spec_member_td->IsInt() ||
-        spec_member_td->IsFloat() || spec_member_td->IsVariant()) {
+        spec_member_td->IsFloat() || spec_member_td->IsVariant() || spec_member_td->IsEnum()) {
       DataCol* name_column = spec_table->data.FindName("Member");
       if (ShowSpecMember(spec_td_md, NULL)) {
         String name = spec_td_md->name;
@@ -3590,7 +3590,7 @@ void Network::WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, boo
     MemberDef* spec_td_md = spec_td->members.FastEl(m);
     TypeDef* spec_member_td = spec_td_md->type;
     if (spec_member_td->IsBool() || spec_member_td->IsString() || spec_member_td->IsInt() ||
-        spec_member_td->IsFloat() || spec_member_td->IsVariant()) {
+        spec_member_td->IsFloat() || spec_member_td->IsVariant() || spec_member_td->IsEnum()) {
       if (ShowSpecMember(spec_td_md, NULL)) {
         if ((!is_child && !is_peer) || (is_child && spec->GetUnique(spec_td_md->name))) {
           DataCol* name_column = spec_table->data.FindName("Member");
