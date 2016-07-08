@@ -1816,6 +1816,13 @@ bool taRootBase::Startup_Console() {
   }
   cssMisc::TopShell->StartupShellInit(cin, cout);
 
+  if(!taMisc::interactive) {
+    String hostname = getenv("HOSTNAME");
+    if (hostname.nonempty()) {
+      taMisc::Info(taMisc::app_name, "running non-interactively on host:", hostname);
+    }
+  }
+  
   return true;
 }
 
