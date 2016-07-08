@@ -1026,17 +1026,23 @@ public:
   virtual BaseSpec* FindSpecType(TypeDef* td);
   // #CAT_Structure find a given spec by type
 
-  virtual void      SpecCompare(BaseSpec* parent_spec);
+  virtual void      SpecCompareWithChildren(BaseSpec* parent_spec);
   // creates a table with a column of values for the parent spec and each child spec - values are shown if #CONDSHOW is on and if a child spec also checks override - if both are true the value is displayed
+  virtual void      SpecComparePeers(BaseSpec* spec, BaseSpec* peer_spec);
+  // creates a table with a column of values for the parent spec and each child spec - values are shown if #CONDSHOW is on and if a child spec also checks override - if both are true the value is displayed
+  
   virtual void      AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec);
-  // #IGNORE called recursively to add a column for all child specs to spec data table -- called by SpecCompare() -- this table is not updated -- call again if you change specs!
+  // #IGNORE called recursively to add a column for all child specs to spec data table -- called by SpecCompare() -- this table is not automatically updated -- call again if you change specs!
+  virtual void      AddPeerToSpecCompareTable(DataTable* spec_table, BaseSpec* spec);
+  // #IGNORE called to add a column for a single spec to spec data table -- called by SpecComparePeers() -- this table is not automatically updated -- call again if you change specs!
+  
   virtual bool      ShowSpecMember(MemberDef* spec_md, MemberDef* spec_member_md);
   // #IGNORE returns true for members that are user editable and are visible in spec panel
   virtual bool      ShowSpecMemberValue(MemberDef* spec_member_md, TypeDef* typ, taBase* base);
   // #IGNORE checks CONDSHOW
   virtual void      WriteSpecMbrNamesToTable(DataTable* spec_table, BaseSpec* spec);
   // #IGNORE writes spec member names to a spec compare table -- See SpecCompare()
-  virtual void      WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, bool is_child);
+  virtual void      WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, bool is_child, bool is_peer);
   // #IGNORE writes spec member values to a spec compare table -- See SpecCompare()
   
   virtual Layer*    FindMakeLayer(const String& nm, TypeDef* td = NULL,

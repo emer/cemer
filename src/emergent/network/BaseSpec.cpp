@@ -168,7 +168,12 @@ bool BaseSpec::RemoveChild(const String& nm, TypeDef* td) {
 
 void BaseSpec::CompareWithChildren() {
   Network* network = (Network*)GetOwnerOfType(&TA_Network);
-  network->SpecCompare(this);
+  network->SpecCompareWithChildren(this);
+}
+
+void BaseSpec::ComparePeers(BaseSpec* spec) {
+  Network* network = (Network*)GetOwnerOfType(&TA_Network);
+  network->SpecComparePeers(this, spec);
 }
 
 void BaseSpec::SetUnique(const String& memb_nm, bool on) {

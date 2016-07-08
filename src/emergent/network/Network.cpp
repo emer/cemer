@@ -3423,7 +3423,47 @@ BaseSpec* Network::FindSpecType(TypeDef* td) {
   return rval;
 }
 
-void Network::SpecCompare(BaseSpec* parent_spec) {
+void Network::SpecComparePeers(BaseSpec* spec, BaseSpec* peer_spec) {
+  if (!spec || !peer_spec) return;
+  
+  String table_name = spec->name + "_spec_peer_table";
+  DataTable* spec_table = (DataTable*)spec_tables.FindLeafName_(table_name);
+  
+  if (spec_table) {
+    spec_table->StructUpdate(true);
+    spec_table->RemoveAllCols();  // not worth dealing with specs that have been deleted, changed name, etc.
+  }
+  else {
+    spec_table = spec_tables.NewEl(1, NULL);   // add a new data table to the group
+    spec_table->SetName(table_name);
+    spec_table->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these
+    spec_table->StructUpdate(true);
+  }
+
+  DataCol* dc = (DataCol*)spec_table->NewColString("Member");
+  dc->SetColFlag(DataCol::READ_ONLY);
+  dc = (DataCol*)spec_table->NewColString(spec->name);
+  dc->SetColFlag(DataCol::READ_ONLY);
+  spec_table->SetColumnWidth("Member", 250);
+  spec_table->RefreshViews();
+  
+  WriteSpecMbrNamesToTable(spec_table, spec);
+  WriteSpecMbrValsToTable(spec_table, spec, false, false);
+  AddPeerToSpecCompareTable(spec_table, peer_spec);
+  spec_table->StructUpdate(false);
+  tabMisc::DelayedFunCall_gui(spec_table, "BrowserSelectMe");
+}
+
+void Network::AddPeerToSpecCompareTable(DataTable* spec_table, BaseSpec* peer_spec) {
+  DataCol* dc = (DataCol*)spec_table->NewColString(peer_spec->name);
+  if (dc) {
+    dc->SetColFlag(DataCol::READ_ONLY);
+  }
+  WriteSpecMbrNamesToTable(spec_table, peer_spec);  // and any members not in first peer
+  WriteSpecMbrValsToTable(spec_table, peer_spec, false, true); // not child, is peer
+}
+
+void Network::SpecCompareWithChildren(BaseSpec* parent_spec) {
   if (parent_spec->children.size == 0) {
     taMisc::Warning("Spec has no children - nothing to compare to");
     return;
@@ -3451,7 +3491,7 @@ void Network::SpecCompare(BaseSpec* parent_spec) {
   spec_table->RefreshViews();
   
   WriteSpecMbrNamesToTable(spec_table, parent_spec);
-  WriteSpecMbrValsToTable(spec_table, parent_spec, false);
+  WriteSpecMbrValsToTable(spec_table, parent_spec, false, false);
   AddChildToSpecCompareTable(spec_table, parent_spec);
   spec_table->StructUpdate(false);
   tabMisc::DelayedFunCall_gui(spec_table, "BrowserSelectMe");
@@ -3464,7 +3504,7 @@ void Network::AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec) 
       dc->SetColFlag(DataCol::READ_ONLY);
     }
     WriteSpecMbrNamesToTable(spec_table, child);  // and any members not in parent
-    WriteSpecMbrValsToTable(spec_table, child, true); // rows already add by parent - pass false
+    WriteSpecMbrValsToTable(spec_table, child, true, false); // rows already add by parent - pass false
     if (child->children.size > 0) {
       AddChildToSpecCompareTable(spec_table, child);  // recursion
     }
@@ -3534,7 +3574,7 @@ bool Network::ShowSpecMember(MemberDef* spec_md, MemberDef* spec_member_md) {
   return true;
 }
 
-void Network::WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, bool is_child) {
+void Network::WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, bool is_child, bool is_peer) {
   TypeDef* spec_td = spec->GetTypeDef();
   
   for(int m=0; m<spec_td->members.size; m++) {
@@ -3543,13 +3583,22 @@ void Network::WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, boo
     if (spec_member_td->IsBool() || spec_member_td->IsString() || spec_member_td->IsInt() ||
         spec_member_td->IsFloat() || spec_member_td->IsVariant()) {
       if (ShowSpecMember(spec_td_md, NULL)) {
-        if (!is_child || (is_child && spec->GetUnique(spec_td_md->name))) {
+        if ((!is_child && !is_peer) || (is_child && spec->GetUnique(spec_td_md->name))) {
           DataCol* name_column = spec_table->data.FindName("Member");
           String name = spec_td_md->name;
           int row = name_column->FindVal(name);
           String value = spec_td_md->GetValStr(spec);
           spec_table->SetValAsVar(value, spec->name, row);
-          
+        }
+        else if (!is_child && is_peer) {
+          DataCol* name_column = spec_table->data.FindName("Member");
+          String name = spec_td_md->name;
+          int row = name_column->FindVal(name);
+          String peer_value = spec_td_md->GetValStr(spec);
+          String col_1_value = spec_table->GetValAsString(1, row);
+          if (peer_value != col_1_value) {
+            spec_table->SetValAsVar(peer_value, spec->name, row);
+          }
         }
       }
     }
@@ -3559,7 +3608,7 @@ void Network::WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, boo
         if (ShowSpecMember(spec_td_md, spec_member_base_md)) {
           SpecMemberBase* new_base = (SpecMemberBase*)spec_td->members.SafeEl(m)->GetOff(spec);
           // display value if member overrides
-          if (!is_child || (is_child && spec->GetUnique(spec_td_md->name))) {
+          if ((!is_child && !is_peer) || (is_child && spec->GetUnique(spec_td_md->name))) {
             // but check conditional show value
             if (ShowSpecMemberValue(spec_member_base_md, spec_member_td, new_base)) {
               DataCol* name_column = spec_table->data.FindName("Member");
@@ -3567,6 +3616,19 @@ void Network::WriteSpecMbrValsToTable(DataTable* spec_table, BaseSpec* spec, boo
               int row = name_column->FindVal(name);
               String value = spec_member_base_md->GetValStr(new_base);
               spec_table->SetValAsVar(value, spec->name, row);
+            }
+          }
+          else if (!is_child && is_peer) {
+            // but check conditional show value
+            if (ShowSpecMemberValue(spec_member_base_md, spec_member_td, new_base)) {
+              DataCol* name_column = spec_table->data.FindName("Member");
+              String name = spec_td_md->name + "_" + spec_member_base_md->name;
+              int row = name_column->FindVal(name);
+              String peer_value = spec_member_base_md->GetValStr(new_base);
+              String col_1_value = spec_table->GetValAsString(1, row); // column one is the key spec
+              if (peer_value != col_1_value) {
+                spec_table->SetValAsVar(peer_value, spec->name, row);
+              }
             }
           }
         }

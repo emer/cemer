@@ -126,7 +126,9 @@ public:
   // #DYN1 . This also automatically sets the spec unique flag to 'On' so that this value is unique to this spec, and updates all the children of this spec so they can inherit this change (or not depending on their unique flags).
 
   virtual void    CompareWithChildren();
-  // #BUTTON calls network::ComareSpecWithChildren to populate a table that compares this specs member values with its children's values - this data does not update - call again if you edit spec values!
+  // #BUTTON calls network::SpecCompareWithChildren to populate a table that compares this specs member values with its children's values - this data does not update - call again if you edit spec values!
+  virtual void    ComparePeers(BaseSpec* spec);
+  // #DYN12N calls network::SpecComparePeers to populate a table that compares this specs member values with its children's values - this data does not update - call again if you edit spec values!
 
   taBase*         ChooseNew(taBase* origin) override;
   bool            HasChooseNew() override { return true; }
