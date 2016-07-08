@@ -393,7 +393,12 @@ void ISelectableHost::DoDynAction(int idx) {
           itN = sel_items_cp.FastEl(i);
           link = itN->effLink(gui_ctxt); //note: prob can't be null, because we wouldn't get called
           if (!link) continue;
-          *param[2] = (void*)link->data();
+          if (link->isBase()) {
+            *param[2] = (taBase*)link->data();
+          }
+          else {
+            *param[2] = (void*)link->data();
+          }
           rval = (*(meth->stubp))(base, 1 + prompt_argc, param);
           if(rval) {
             cssEl::Ref(rval);
