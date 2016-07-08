@@ -3442,6 +3442,7 @@ void Network::SpecComparePeers(BaseSpec* key_spec, BaseSpec* peer_spec) {
     DataCol* dc_spec = (DataCol*)spec_table->FindMakeCol(key_spec->name, taBase::VT_STRING);
     dc_spec->SetColFlag(DataCol::READ_ONLY);
     spec_table->SetColumnWidth(key_spec->name, 200);
+    spec_table->StructUpdate(false);
     spec_table->RefreshViews();
     
     WriteSpecMbrNamesToTable(spec_table, key_spec);
@@ -3452,6 +3453,7 @@ void Network::SpecComparePeers(BaseSpec* key_spec, BaseSpec* peer_spec) {
     WriteSpecMbrValsToTable(spec_table, key_spec, false, false);
   }
   
+  spec_table->StructUpdate(true);
   AddPeerToSpecCompareTable(spec_table, peer_spec);
   spec_table->StructUpdate(false);
   tabMisc::DelayedFunCall_gui(spec_table, "BrowserSelectMe");
@@ -3459,11 +3461,13 @@ void Network::SpecComparePeers(BaseSpec* key_spec, BaseSpec* peer_spec) {
 
 void Network::AddPeerToSpecCompareTable(DataTable* spec_table, BaseSpec* peer_spec) {
   if (!spec_table->FindColName(peer_spec->name)) {
+    spec_table->StructUpdate(true);
     DataCol* dc = (DataCol*)spec_table->FindMakeCol(peer_spec->name, taBase::VT_STRING);
     if (dc) {
       dc->SetColFlag(DataCol::READ_ONLY);
       spec_table->SetColumnWidth(peer_spec->name, 200);
     }
+    spec_table->StructUpdate(false);
   }
   // regardless update values
   WriteSpecMbrNamesToTable(spec_table, peer_spec);  // and any members not in first peer
