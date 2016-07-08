@@ -1028,9 +1028,8 @@ public:
 
   virtual void      SpecCompareWithChildren(BaseSpec* parent_spec);
   // creates a table with a column of values for the parent spec and each child spec - values are shown if #CONDSHOW is on and if a child spec also checks override - if both are true the value is displayed
-  virtual void      SpecComparePeers(BaseSpec* spec, BaseSpec* peer_spec);
-  // creates a table with a column of values for the parent spec and each child spec - values are shown if #CONDSHOW is on and if a child spec also checks override - if both are true the value is displayed
-  
+  virtual void      SpecComparePeers(BaseSpec* key_spec, BaseSpec* peer_spec);
+  // creates a table with a column of values for key_spec and another column for peer_spec - values for peer_spec are shown if different from key_spec - if table with key_spec exists a call with a new peer adds a column to the table
   virtual void      AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec);
   // #IGNORE called recursively to add a column for all child specs to spec data table -- called by SpecCompare() -- this table is not automatically updated -- call again if you change specs!
   virtual void      AddPeerToSpecCompareTable(DataTable* spec_table, BaseSpec* spec);

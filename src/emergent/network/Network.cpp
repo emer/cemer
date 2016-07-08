@@ -3423,42 +3423,49 @@ BaseSpec* Network::FindSpecType(TypeDef* td) {
   return rval;
 }
 
-void Network::SpecComparePeers(BaseSpec* spec, BaseSpec* peer_spec) {
-  if (!spec || !peer_spec) return;
+void Network::SpecComparePeers(BaseSpec* key_spec, BaseSpec* peer_spec) {
+  if (!key_spec || !peer_spec) return;
   
-  String table_name = spec->name + "_spec_peer_table";
+  String table_name = key_spec->name + "_spec_peer_table";
   DataTable* spec_table = (DataTable*)spec_tables.FindLeafName_(table_name);
   
-  if (spec_table) {
-    spec_table->StructUpdate(true);
-    spec_table->RemoveAllCols();  // not worth dealing with specs that have been deleted, changed name, etc.
-  }
-  else {
+  if (!spec_table) {  // create new table, add member column and key_spec column
     spec_table = spec_tables.NewEl(1, NULL);   // add a new data table to the group
     spec_table->SetName(table_name);
     spec_table->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these
     spec_table->StructUpdate(true);
+    
+    DataCol* dc_member = (DataCol*)spec_table->FindMakeCol("Member", taBase::VT_STRING);
+    dc_member->SetColFlag(DataCol::READ_ONLY);
+    spec_table->SetColumnWidth("Member", 200);
+    
+    DataCol* dc_spec = (DataCol*)spec_table->FindMakeCol(key_spec->name, taBase::VT_STRING);
+    dc_spec->SetColFlag(DataCol::READ_ONLY);
+    spec_table->SetColumnWidth(key_spec->name, 200);
+    spec_table->RefreshViews();
+    
+    WriteSpecMbrNamesToTable(spec_table, key_spec);
+    WriteSpecMbrValsToTable(spec_table, key_spec, false, false);
   }
-
-  DataCol* dc = (DataCol*)spec_table->NewColString("Member");
-  dc->SetColFlag(DataCol::READ_ONLY);
-  dc = (DataCol*)spec_table->NewColString(spec->name);
-  dc->SetColFlag(DataCol::READ_ONLY);
-  spec_table->SetColumnWidth("Member", 250);
-  spec_table->RefreshViews();
+  else {  // do updates
+    WriteSpecMbrNamesToTable(spec_table, key_spec);
+    WriteSpecMbrValsToTable(spec_table, key_spec, false, false);
+  }
   
-  WriteSpecMbrNamesToTable(spec_table, spec);
-  WriteSpecMbrValsToTable(spec_table, spec, false, false);
   AddPeerToSpecCompareTable(spec_table, peer_spec);
   spec_table->StructUpdate(false);
   tabMisc::DelayedFunCall_gui(spec_table, "BrowserSelectMe");
 }
 
 void Network::AddPeerToSpecCompareTable(DataTable* spec_table, BaseSpec* peer_spec) {
-  DataCol* dc = (DataCol*)spec_table->NewColString(peer_spec->name);
-  if (dc) {
-    dc->SetColFlag(DataCol::READ_ONLY);
+  if (!spec_table->FindColName(peer_spec->name)) {
+    DataCol* dc = (DataCol*)spec_table->FindMakeCol(peer_spec->name, taBase::VT_STRING);
+    if (dc) {
+      dc->SetColFlag(DataCol::READ_ONLY);
+      spec_table->SetColumnWidth(peer_spec->name, 200);
+    }
   }
+  // regardless update values
   WriteSpecMbrNamesToTable(spec_table, peer_spec);  // and any members not in first peer
   WriteSpecMbrValsToTable(spec_table, peer_spec, false, true); // not child, is peer
 }
@@ -3483,11 +3490,12 @@ void Network::SpecCompareWithChildren(BaseSpec* parent_spec) {
     spec_table->StructUpdate(true);
   }
   
-  DataCol* dc = (DataCol*)spec_table->NewColString("Member");
-  dc->SetColFlag(DataCol::READ_ONLY);
-  dc = (DataCol*)spec_table->NewColString(parent_spec->name);
-  dc->SetColFlag(DataCol::READ_ONLY);
-  spec_table->SetColumnWidth("Member", 250);
+  DataCol* dc_member = (DataCol*)spec_table->NewColString("Member");
+  dc_member->SetColFlag(DataCol::READ_ONLY);
+  spec_table->SetColumnWidth("Member", 200);
+  DataCol* dc_spec = (DataCol*)spec_table->NewColString(parent_spec->name);
+  dc_spec->SetColFlag(DataCol::READ_ONLY);
+  spec_table->SetColumnWidth(parent_spec->name, 200);
   spec_table->RefreshViews();
   
   WriteSpecMbrNamesToTable(spec_table, parent_spec);
@@ -3502,6 +3510,7 @@ void Network::AddChildToSpecCompareTable(DataTable* spec_table, BaseSpec* spec) 
     DataCol* dc = (DataCol*)spec_table->NewColString(child->name);
     if (dc) {
       dc->SetColFlag(DataCol::READ_ONLY);
+      spec_table->SetColumnWidth(child->name, 200);
     }
     WriteSpecMbrNamesToTable(spec_table, child);  // and any members not in parent
     WriteSpecMbrValsToTable(spec_table, child, true, false); // rows already add by parent - pass false
