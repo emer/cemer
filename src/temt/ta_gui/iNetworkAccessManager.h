@@ -64,9 +64,9 @@ public:
 public slots:
   void  load();                 // save to persistent file storage
   void  save();                 // load from persistent file storage
+  void  provideAuthentication(QNetworkReply *reply, QAuthenticator *auth);
+  void  provideAuthenticationUrl(const QUrl& url, QAuthenticator *auth);
 
-private slots:
-  void provideAuthentication(QNetworkReply *reply, QAuthenticator *auth);
   //     void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *auth);
 
 private:
@@ -87,7 +87,8 @@ protected:
   iAuthSaver    m_auth_saver;
 
 public slots:
-  void loadSettings();
+  void  loadSettings();
+  void  provideAuthenticationUrl(const QUrl& url, QAuthenticator *auth);
 
 private slots:
 #ifndef QT_NO_OPENSSL

@@ -103,6 +103,10 @@ iNetworkAccessManager::iNetworkAccessManager(QObject *parent)
   // #endif
 }
 
+void iNetworkAccessManager::provideAuthenticationUrl(const QUrl& url, QAuthenticator *auth) {
+  m_auth_saver.provideAuthenticationUrl(url, auth);
+}
+
 void iNetworkAccessManager::setMainWindow(QMainWindow* mw) {
   m_main_win = mw;
   m_auth_saver.m_main_win = mw;
@@ -408,12 +412,14 @@ bool iAuthSaver::saveAuthRecord(const QString& user, const QString& password,
 }
 
 void iAuthSaver::provideAuthentication(QNetworkReply *reply, QAuthenticator *auth) {
-//   QString realm = Qt::escape(auth->realm());
-//   QString url_str = Qt::escape(reply->url().toString());
-//   QString host = Qt::escape(reply->url().host());
+  QUrl url = reply->url();
+  provideAuthenticationUrl(url, auth);
+}
+
+void iAuthSaver::provideAuthenticationUrl(const QUrl& url, QAuthenticator *auth) {
   QString realm = auth->realm();
-  QString url_str = reply->url().toString();
-  QString host = reply->url().host();
+  QString url_str = url.toString();
+  QString host = url.host();
 
   //  qDebug() << "auth of: " << realm << " and: " << host;
 

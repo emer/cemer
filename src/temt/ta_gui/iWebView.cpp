@@ -33,6 +33,7 @@
 #include <QWebEngineDownloadItem>
 #include <QStandardPaths>
 #include <QFileDialog>
+#include <iNetworkAccessManager>
 
 iWebPage::iWebPage(QWidget* parent) :
   inherited(parent)
@@ -66,9 +67,18 @@ iWebView::iWebView(QWidget* parent, iPanelOfDocView* docview)
   : inherited(parent)
   , own_docview(docview)
 {
-  setPage(new iWebPage(temtProfile(), this));
+  QWebEnginePage* pg = new iWebPage(temtProfile(), this);
+  setPage(pg);
   connect(temt_profile, SIGNAL(downloadRequested(QWebEngineDownloadItem*)),
           this, SLOT(downloadRequested(QWebEngineDownloadItem*)));
+  connect(pg, SIGNAL(authenticationRequired(const QUrl &, QAuthenticator*)),
+          this,
+          SLOT(authenticationRequired(const QUrl &, QAuthenticator*)));
+  connect
+    (pg,
+     SIGNAL(proxyAuthenticationRequired(const QUrl &, QAuthenticator *, const QString &)),
+     this,
+     SLOT(proxyAuthenticationRequired(const QUrl &, QAuthenticator *, const QString &)));
 }
 
 QWebEngineProfile* iWebView::temtProfile() {
@@ -98,6 +108,10 @@ void iWebView::downloadRequested(QWebEngineDownloadItem* down) {
   }
   down->setPath(QFileInfo(fileName).absoluteFilePath());
   down->accept();
+}
+
+void iWebView::authenticationRequired(const QUrl& url, QAuthenticator* auth) {
+  taiMisc::net_access_mgr->provideAuthenticationUrl(url, auth);
 }
 
 QWebEngineView* iWebView::createWindow(QWebEnginePage::WebWindowType type) {

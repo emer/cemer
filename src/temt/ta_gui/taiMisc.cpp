@@ -153,19 +153,13 @@ void taiMisc::Init(bool gui) {
 #ifdef USE_QT_WEBENGINE
   QWebEngineSettings *defaultSettings = QWebEngineSettings::defaultSettings();
   defaultSettings->setAttribute(QWebEngineSettings::PluginsEnabled, true);
-  
-  net_access_mgr = new iNetworkAccessManager;
-  net_access_mgr->setCookieJar(new iCookieJar(net_access_mgr));
-
 #else // USE_QT_WEBENGINE
-  
   QWebSettings *defaultSettings = QWebSettings::globalSettings();
   defaultSettings->setAttribute(QWebSettings::PluginsEnabled, true);
+#endif // USE_QT_WEBENGINE
 
   net_access_mgr = new iNetworkAccessManager;
   net_access_mgr->setCookieJar(new iCookieJar(net_access_mgr));
-  
-#endif // USE_QT_WEBENGINE
 }
 
 int taiMisc::Exec_impl() {

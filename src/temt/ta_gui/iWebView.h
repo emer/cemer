@@ -26,6 +26,7 @@ class iPanelOfDocView;
 #include <QWebEnginePage>
 class QWebEngineProfile;
 class QWebEngineDownloadItem;
+class QAuthenticator;
 #else // USE_QT_WEBENGINE
 #include <QWebView>
 #endif // USE_QT_WEBENGINE
@@ -71,6 +72,7 @@ public:
 
 public slots:
   void  downloadRequested(QWebEngineDownloadItem*);
+  void  authenticationRequired(const QUrl& url, QAuthenticator* auth);
   
 signals:
   void            sigCreateWindow(QWebEnginePage::WebWindowType type,

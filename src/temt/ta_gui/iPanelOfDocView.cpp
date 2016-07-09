@@ -21,6 +21,7 @@
 #include <iWebView>
 #include <iMainWindowViewer>
 #include <taProject>
+#include <iNetworkAccessManager>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -42,7 +43,6 @@
 #else // USE_QT_WEBENGINE
 
 #include <QWebFrame>
-#include <iNetworkAccessManager>
 
 #endif // USE_QT_WEBENGINE
 
@@ -167,10 +167,8 @@ iPanelOfDocView::iPanelOfDocView()
 }
 
 iPanelOfDocView::~iPanelOfDocView() {
-#ifndef USE_QT_WEBENGINE
   if(taiMisc::net_access_mgr)
     taiMisc::net_access_mgr->setMainWindow(NULL); // not us anymore -- someone else will set..
-#endif
   m_doc = NULL;
 }
 
@@ -329,10 +327,8 @@ void iPanelOfDocView::UpdatePanel_impl() {
   taDoc* doc_ = this->doc();
   if(!doc_) return;
 
-#ifndef USE_QT_WEBENGINE
   if(taiMisc::net_access_mgr)
     taiMisc::net_access_mgr->setMainWindow(viewerWindow());
-#endif
 
   wiki_edit->setText(doc_->wiki);
   url_edit->setText(doc_->url);
