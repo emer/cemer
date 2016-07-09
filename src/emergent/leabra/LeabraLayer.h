@@ -225,6 +225,9 @@ public:
   float Compute_CosDiff(LeabraNetwork* net)
   { return spec->Compute_CosDiff(this, net); }
   // #CAT_Statistic compute cosine (normalized dot product) of phase activation difference in this layer: act_p compared to act_m -- must be called after Quarter_Final for plus phase to get the act_p values
+  void Compute_CosDiff_post(LeabraNetwork* net)
+  { spec->Compute_CosDiff_post(this, net); }
+  // #CAT_Statistic post step of cos_diff -- needed for sharing cos_diff based lrate mod
   float Compute_AvgActDiff(LeabraNetwork* net)
   { return spec->Compute_AvgActDiff(this, net); }
   // #CAT_Statistic compute average act_diff (act_p - act_m) for this layer -- must be called after Quarter_Final for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 

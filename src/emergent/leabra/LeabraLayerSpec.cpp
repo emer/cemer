@@ -159,7 +159,13 @@ void LeabraCosDiffMod::Initialize() {
 void LeabraCosDiffMod::Defaults_init() {
   avg_tau = 100.0f;
   lrate_mod = false;
+  lrmod_fm_trc = false;
+  lrmod_thr = true;
   lrmod_z_thr = -1.0f;
+  lrmod_gain = 0.5f;
+  lrmod_off = 1.0f;
+  lrmod_max = 2.0f;
+  lrmod_min = 0.0f;
 
   avg_dt = 1.0f / avg_tau;
   avg_dt_c = 1.0f - avg_dt;
@@ -873,7 +879,7 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
   cos_diff.UpdtDiffAvgVar(lay->cos_diff_avg, lay->cos_diff_var, lay->cos_diff);
   lay->lrate_mod = lay_lrate;
 
-  if(cos_diff.lrate_mod) {
+  if(cos_diff.lrate_mod && !cos_diff.lrmod_fm_trc) {
     lay->lrate_mod *= cos_diff.CosDiffLrateMod(lay->cos_diff, lay->cos_diff_avg,
                                                lay->cos_diff_var);
   }
@@ -888,6 +894,21 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
   lay->avg_cos_diff.Increment(lay->cos_diff);
   
   return cosv;
+}
+
+void LeabraLayerSpec::Compute_CosDiff_post(LeabraLayer* lay, LeabraNetwork* net) {
+  if(cos_diff.lrate_mod && cos_diff.lrmod_fm_trc) {
+    for(int i=0;i<lay->projections.size;i++) {
+      LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+      if(prjn->NotActive()) continue;
+      LeabraLayer* from = (LeabraLayer*)prjn->from.ptr();
+      LeabraUnitSpec* frus = (LeabraUnitSpec*)from->GetUnitSpec();
+      if(frus->deep.IsTRC()) {
+        LeabraLayerSpec* frls = (LeabraLayerSpec*)from->GetLayerSpec();
+        lay->lrate_mod *= (from->lrate_mod / frls->lay_lrate); // deconfound sender lrate
+      }
+    }
+  }
 }
 
 float LeabraLayerSpec::Compute_AvgActDiff(LeabraLayer* lay, LeabraNetwork* net) {

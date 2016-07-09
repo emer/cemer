@@ -2348,6 +2348,12 @@ float LeabraNetwork::Compute_CosDiff_Agg() {
       n_lays++;
     }
   }
+  // second step for sharing cos_diff-based lrate_mod
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* l = (LeabraLayer*)ActiveLayer(li);
+    l->Compute_CosDiff_post(this);
+  }
+  
   if(n_lays > 0) {
     cosv /= (float)n_lays;
 

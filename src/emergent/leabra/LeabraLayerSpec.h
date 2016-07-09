@@ -247,7 +247,13 @@ INHERITED(SpecMemberBase)
 public:
   float		avg_tau;  // #DEF_100 #MIN_1 time constant in trials (roughly how long significant change takes, 1.4 x half-life) for computing running average cos_diff value for the layer, cos_diff_avg = cosine difference between act_m and act_p -- this is an important statistic for how much phase-based difference there is between phases in this layer -- it is used in standard X_COS_DIFF modulation of l_mix in LeabraConSpec, and for modulating learning rate as a function of predictability in the DeepLeabra predictive auto-encoder learning -- running average variance also computed with this: cos_diff_var
   bool          lrate_mod; // modulate learning rate in this layer as a function of the cos_diff on this trial relative to running average cos_diff values (see avg_tau) -- lrate_mod = cos_diff_lrate_mult * (cos_diff / cos_diff_avg) -- if this layer is less predictable than previous trials, we don't learn as much
-  float         lrmod_z_thr; // #CONDSHOW_ON_lrate_mod threshold for setting learning rate modulation to zero, as function of z-normalized cos_diff value on this trial -- normalization computed using incrementally computed average and variance values -- this essentially has the network ignoring trials where the diff was significantly below average
+  bool          lrmod_fm_trc;   // #CONDSHOW_ON_lrate_mod get our learning rate modulation from our corresponding trc layer, which has the strongest and most accurate cos_diff signals
+  bool          lrmod_thr;   // #CONDSHOW_ON_lrate_mod&&!lrmod_fm_trc use simple thresholding mechanism for learning rate modulation -- else continous-valued function of z-value normalized cos diff
+  float         lrmod_z_thr; // #CONDSHOW_ON_lrate_mod&&lrmod_thr&&!lrmod_fm_trc threshold for setting learning rate modulation to zero, as function of z-normalized cos_diff value on this trial -- normalization computed using incrementally computed average and variance values -- this essentially has the network ignoring trials where the diff was significantly below average
+  float         lrmod_gain; // #CONDSHOW_ON_lrate_mod&&!lrmod_thr&&!lrmod_fm_trc gain on learning rate modulation as function of z-normalized cos_diff value on this trial -- normalization computed using incrementally computed average and variance values -- e.g., .5 means that values 2 standard deviations above the average have a learning rate of 1.0 higher than those at the mean (see lrmod_off for offset)
+  float         lrmod_off; // #CONDSHOW_ON_lrate_mod&&!lrmod_thr&&!lrmod_fm_trc offset on learning rate modulation as function of z-normalized cos_diff value on this trial -- normalization computed using incrementally computed average and variance values -- e.g., 1 means that an average cos_diff value gets a learning rate of 1
+  float         lrmod_max; // #CONDSHOW_ON_lrate_mod&&!lrmod_thr&&!lrmod_fm_trc maximum learning rate modulation that can be produced by lrate_mod mechanism -- cutoff high values
+  float         lrmod_min; // #CONDSHOW_ON_lrate_mod&&!lrmod_thr&&!lrmod_fm_trc #MIN_0 minimum learning rate modulation that can be produced by lrate_mod mechanism -- cutoff low values -- cannot go below 0 (learning rate must remain positive)
 
   float         avg_dt; // #READ_ONLY #EXPERT rate constant = 1 / cos_diff_avg_tau
   float         avg_dt_c; // #READ_ONLY #EXPERT complement of rate constant = 1 - cos_diff_avg_dt
@@ -276,8 +282,16 @@ public:
     if(diff_var <= 0.0f) return 1.0f;
     float zval = (cos_diff - diff_avg) / sqrtf(diff_var); // stdev = sqrt of var
     // z-normal value is starting point for learning rate factor
-    if(zval < lrmod_z_thr) return 0.0f;
-    return 1.0f;
+    if(lrmod_thr) {
+      if(zval < lrmod_z_thr) return 0.0f;
+      return 1.0f;
+    }
+    else {
+      float rval = zval * lrmod_gain + lrmod_off;
+      if(rval > lrmod_max) rval = lrmod_max;
+      if(rval < lrmod_min) rval = lrmod_min;
+      return rval;
+    }
   }
   
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
@@ -469,6 +483,8 @@ public:
 
   virtual float  Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute cosine (normalized dot product) of phase activation difference in this layer: act_p compared to act_m -- must be called after Quarter_Final for plus phase to get the act_p values
+  virtual void   Compute_CosDiff_post(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic post step of cos_diff -- needed for sharing cos_diff based lrate mod
   virtual float  Compute_AvgActDiff(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute average act_diff (act_p - act_m) for this layer -- must be called after Quarter_Final for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
   virtual float  Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net);
