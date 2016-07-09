@@ -21,6 +21,7 @@
 
 class QDataStream;
 class QMainWindow;
+class QUrl;
 
 class iAuthRecord : public QObject {
   // #IGNORE one authentication record
