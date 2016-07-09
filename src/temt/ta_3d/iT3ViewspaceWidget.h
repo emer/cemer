@@ -40,6 +40,7 @@ class SoNode; //
 class iSoSelectionEvent; //
 class SoPath; //
 class SoEnvironment; //
+class SoPickedPoint; //
 #endif
 
 class TA_API iT3ViewspaceWidget: public QWidget, public ISelectableHost { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS widget that encapsulates an Inventor viewer; adds context menu handling, and optional scroll bars
@@ -101,6 +102,7 @@ protected:
   SoNode*               m_scene; // actual top item set by user
 
   void                  SoSelectionEvent(iSoSelectionEvent* ev); // #IGNORE
+  static SoPath*        SoPickFilterCallback(void* inst, const SoPickedPoint* ppoint); // #IGNORE
   static void           SoSelectionCallback(void* inst, SoPath* path); // #IGNORE
   static void           SoDeselectionCallback(void* inst, SoPath* path); // #IGNORE
 #endif

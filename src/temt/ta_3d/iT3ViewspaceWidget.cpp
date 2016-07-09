@@ -40,6 +40,7 @@ using namespace Qt3DCore;
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoEnvironment.h>
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
+#include <Inventor/SoPickedPoint.h>
 #endif
 
 iT3ViewspaceWidget::iT3ViewspaceWidget(iT3Panel* parent)
@@ -156,6 +157,7 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     case SM_MULTI: sel_so->policy = SoSelection::SHIFT; break;
     default: break; // compiler food
     }
+    sel_so->setPickFilterCallback(SoPickFilterCallback, (void*)this);
     sel_so->addSelectionCallback(SoSelectionCallback, (void*)this);
     sel_so->addDeselectionCallback(SoDeselectionCallback, (void*)this);
     sel_so->addChild(m_root_so);
@@ -223,6 +225,13 @@ void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
 
   // notify to our frame that we have grabbed focus
   Emit_GotFocusSignal();
+}
+
+SoPath* iT3ViewspaceWidget::SoPickFilterCallback(void* inst, const SoPickedPoint* ppoint) {
+  SoPath* path = ppoint->getPath();
+  T3DataView* t3node = T3DataView::GetViewFromPath(path);
+  if (!t3node) return NULL;     // not eligible for selection
+  return path;
 }
 
 void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {

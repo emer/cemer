@@ -159,10 +159,7 @@ void LeabraCosDiffMod::Initialize() {
 void LeabraCosDiffMod::Defaults_init() {
   avg_tau = 100.0f;
   lrate_mod = false;
-  lrmod_gain = 0.5f;
-  lrmod_off = 1.0f;
-  lrmod_max = 2.0f;
-  lrmod_min = 0.0f;
+  lrmod_z_thr = -1.0f;
 
   avg_dt = 1.0f / avg_tau;
   avg_dt_c = 1.0f - avg_dt;

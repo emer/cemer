@@ -1467,6 +1467,8 @@ bool T3ExaminerViewer::event(QEvent* ev_) {
   
   bool rval = inherited::event(ev_);
   
+#ifndef QT_OPEN_GL_WIDGET
+  // this is no longer needed (and is in fact bad) using the open gl widget..
   if(so_scrollbar_is_dragging) {
     if(!inside_event_loop) {
       inside_event_loop = true;
@@ -1476,6 +1478,7 @@ bool T3ExaminerViewer::event(QEvent* ev_) {
       inside_event_loop = false;
     }
   }
+#endif
   return rval;
 #endif
 }
