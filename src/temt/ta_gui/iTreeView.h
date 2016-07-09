@@ -111,8 +111,7 @@ public:
   void                  setDecorateEnabled(bool value); //note: must be done at create time
   int                   defaultExpandLevels() const {return m_def_exp_levels;}
     // how many levels the DefaultExpand expands
-  void                  setDefaultExpandLevels(int value)
-    {m_def_exp_levels = (int)value;}
+  void                  setDefaultExpandLevels(int value) {m_def_exp_levels = (int)value;}
   iTreeViewItem*        item(int i) const; // item at i, NULL if out of range
   inline int            itemCount() const {return topLevelItemCount();}
   void                  setHeaderText(int col, const String& value); // convenience
@@ -240,6 +239,7 @@ protected:
   String                m_show_context;
   int                   in_mouse_press; // ugly hack
   int                   m_saved_scroll_pos;
+  bool                  tree_state_restored;  // set when tree state is restored so we know not to call ExpandDefault()
 
   iTreeWidgetItem_List  expandedItemList;   // used as stack to keep track of expanded items
   iTreeWidgetItem*      possibleDropTargetItem;

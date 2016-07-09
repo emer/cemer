@@ -86,6 +86,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   tv_flags = tv_flags_;
   m_filters = NULL; // only created if needed
   m_def_exp_levels = 2; // works well for most contexts
+  tree_state_restored = false;
   m_show = (TypeItem::ShowMembs)(TypeItem::USE_SHOW_GUI_DEF | taMisc::show_gui);
   m_decorate_enabled = true;
   italic_font = NULL;
@@ -568,6 +569,11 @@ void iTreeView::ExpandDefaultUnderInt(void* item) {
 }
 
 void iTreeView::ExpandDefault() {
+  if (tree_state_restored) {
+    tree_state_restored = false; // used to prevent expanding to defaults if we already expanded to saved state
+    return;
+  }
+  
   int exp_flags = EF_DEFAULT;
   
   if (parent_type == iTreeView::TYPE_PROGRAMEDITOR && useEditorCustomExpand()) {
@@ -631,6 +637,7 @@ void iTreeView::RestoreTreeState_impl(iTreeViewItem* node, String_Array& tree_st
       RestoreTreeState_impl(child, tree_state);
     }
   }
+  tree_state_restored = true;
 }
 
 void iTreeView::GetTreeState(String_Array& tree_state) {
