@@ -526,22 +526,24 @@ void taProject::AutoNameProj(const String& fname) {
 }
 
 int taProject::SaveAs(const String& fname) {
-  if (save_view == true) { // save current view with project
-    for (int i = 0; i < viewers.size; ++i) {
-      MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
-      if (!(vwr && vwr->isProjBrowser())) continue;
-      iMainWindowViewer* imwv = vwr->widget();
-      if(!imwv) continue;
-      imwv->viewSaveView();
-    }
-  }
-
   bool tmp_save_as_only = save_as_only;
   if (save_as_only)
     save_as_only = false;   // ok to save the new project on top of itself so set to false before the save
 
   int rval = false;
   taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString, true, tmp_save_as_only);
+  
+  if (flr->ostrm) {
+    if (save_view == true) { // save current view with project
+      for (int i = 0; i < viewers.size; ++i) {
+        MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
+        if (!(vwr && vwr->isProjBrowser())) continue;
+        iMainWindowViewer* imwv = vwr->widget();
+        if(!imwv) continue;
+        imwv->viewSaveView();
+      }
+    }
+  }
 
   if (flr->ostrm) {
     QFileInfo fi(flr->FileName()); // set to current working dir

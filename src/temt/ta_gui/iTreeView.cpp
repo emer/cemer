@@ -594,7 +594,7 @@ void iTreeView::GetTreeState_impl(iTreeViewItem* node, String_Array& tree_state)
   
   if (node->isExpanded()) {
     taBase* tab = node->link()->taData();
-    tree_state.Add(tab->GetPath());
+    tree_state.Add(tab->GetPathNames());
   }
   for (int i = 0; i < node->childCount(); ++i) {
     iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(node->child(i));
@@ -612,12 +612,9 @@ void iTreeView::RestoreTreeState_impl(iTreeViewItem* node, String_Array& tree_st
   if (node) {
     taBase* tab = node->link()->taData();
     if(tab) {
-      String path = tab->GetPath(); // this is a bit expensive to compute, cache..
-      path = path.after(']');
+      String path = tab->GetPathNames(); // this is a bit expensive to compute, cache..
       for (int i=0; i<tree_state.size; i++) {
-        String tree_state_path = tree_state.SafeEl(i);
-        tree_state_path = tree_state_path.after(']');
-        if (path == tree_state_path) {
+        if (path == tree_state.SafeEl(i)) {
           expand = true;
           tree_state.RemoveIdx(i);
           break;
