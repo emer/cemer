@@ -249,6 +249,7 @@ public:
   bool          lrate_mod; // modulate learning rate in this layer as a function of the cos_diff on this trial relative to running average cos_diff values (see avg_tau) -- lrate_mod = cos_diff_lrate_mult * (cos_diff / cos_diff_avg) -- if this layer is less predictable than previous trials, we don't learn as much
   bool          lrmod_fm_trc;   // #CONDSHOW_ON_lrate_mod get our learning rate modulation from our corresponding TRC layer, which has the strongest and most accurate cos_diff signals -- definitely recommended for non-TRC layers assocated with one -- must find a connection
   float         lrmod_z_thr; // #DEF_-1.5 #CONDSHOW_ON_lrate_mod&&!lrmod_fm_trc threshold for setting learning rate modulation to zero, as function of z-normalized cos_diff value on this trial -- normalization computed using incrementally computed average and variance values -- this essentially has the network ignoring trials where the diff was significantly below average -- replaces the manual unlearnable trial mechanism
+  bool          set_net_unlrn;  // #CONDSHOW_ON_lrate_mod&&!lrmod_fm_trc set the network-level unlearnable_trial flag based on our learning rate modulation factor -- only makes sense for one layer to do this
 
   float         avg_dt; // #READ_ONLY #EXPERT rate constant = 1 / cos_diff_avg_tau
   float         avg_dt_c; // #READ_ONLY #EXPERT complement of rate constant = 1 - cos_diff_avg_dt

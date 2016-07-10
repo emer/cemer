@@ -161,6 +161,7 @@ void LeabraCosDiffMod::Defaults_init() {
   lrate_mod = false;
   lrmod_fm_trc = false;
   lrmod_z_thr = -1.5f;
+  set_net_unlrn = false;
 
   avg_dt = 1.0f / avg_tau;
   avg_dt_c = 1.0f - avg_dt;
@@ -877,6 +878,9 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
   if(cos_diff.lrate_mod && !cos_diff.lrmod_fm_trc) {
     lay->lrate_mod *= cos_diff.CosDiffLrateMod(lay->cos_diff, lay->cos_diff_avg,
                                                lay->cos_diff_var);
+    if(cos_diff.set_net_unlrn && lay->lrate_mod == 0.0f) {
+      net->unlearnable_trial = true;
+    }
   }
   
   if(lay->layer_type == Layer::HIDDEN) {
