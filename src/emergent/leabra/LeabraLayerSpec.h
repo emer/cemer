@@ -247,13 +247,8 @@ INHERITED(SpecMemberBase)
 public:
   float		avg_tau;  // #DEF_100 #MIN_1 time constant in trials (roughly how long significant change takes, 1.4 x half-life) for computing running average cos_diff value for the layer, cos_diff_avg = cosine difference between act_m and act_p -- this is an important statistic for how much phase-based difference there is between phases in this layer -- it is used in standard X_COS_DIFF modulation of l_mix in LeabraConSpec, and for modulating learning rate as a function of predictability in the DeepLeabra predictive auto-encoder learning -- running average variance also computed with this: cos_diff_var
   bool          lrate_mod; // modulate learning rate in this layer as a function of the cos_diff on this trial relative to running average cos_diff values (see avg_tau) -- lrate_mod = cos_diff_lrate_mult * (cos_diff / cos_diff_avg) -- if this layer is less predictable than previous trials, we don't learn as much
-  bool          lrmod_fm_trc;   // #CONDSHOW_ON_lrate_mod get our learning rate modulation from our corresponding trc layer, which has the strongest and most accurate cos_diff signals
-  bool          lrmod_thr;   // #CONDSHOW_ON_lrate_mod&&!lrmod_fm_trc use simple thresholding mechanism for learning rate modulation -- else continous-valued function of z-value normalized cos diff
-  float         lrmod_z_thr; // #CONDSHOW_ON_lrate_mod&&lrmod_thr&&!lrmod_fm_trc threshold for setting learning rate modulation to zero, as function of z-normalized cos_diff value on this trial -- normalization computed using incrementally computed average and variance values -- this essentially has the network ignoring trials where the diff was significantly below average
-  float         lrmod_gain; // #CONDSHOW_ON_lrate_mod&&!lrmod_thr&&!lrmod_fm_trc gain on learning rate modulation as function of z-normalized cos_diff value on this trial -- normalization computed using incrementally computed average and variance values -- e.g., .5 means that values 2 standard deviations above the average have a learning rate of 1.0 higher than those at the mean (see lrmod_off for offset)
-  float         lrmod_off; // #CONDSHOW_ON_lrate_mod&&!lrmod_thr&&!lrmod_fm_trc offset on learning rate modulation as function of z-normalized cos_diff value on this trial -- normalization computed using incrementally computed average and variance values -- e.g., 1 means that an average cos_diff value gets a learning rate of 1
-  float         lrmod_max; // #CONDSHOW_ON_lrate_mod&&!lrmod_thr&&!lrmod_fm_trc maximum learning rate modulation that can be produced by lrate_mod mechanism -- cutoff high values
-  float         lrmod_min; // #CONDSHOW_ON_lrate_mod&&!lrmod_thr&&!lrmod_fm_trc #MIN_0 minimum learning rate modulation that can be produced by lrate_mod mechanism -- cutoff low values -- cannot go below 0 (learning rate must remain positive)
+  bool          lrmod_fm_trc;   // #CONDSHOW_ON_lrate_mod get our learning rate modulation from our corresponding TRC layer, which has the strongest and most accurate cos_diff signals -- definitely recommended for non-TRC layers assocated with one -- must find a connection
+  float         lrmod_z_thr; // #DEF_-1.5 #CONDSHOW_ON_lrate_mod&&!lrmod_fm_trc threshold for setting learning rate modulation to zero, as function of z-normalized cos_diff value on this trial -- normalization computed using incrementally computed average and variance values -- this essentially has the network ignoring trials where the diff was significantly below average -- replaces the manual unlearnable trial mechanism
 
   float         avg_dt; // #READ_ONLY #EXPERT rate constant = 1 / cos_diff_avg_tau
   float         avg_dt_c; // #READ_ONLY #EXPERT complement of rate constant = 1 - cos_diff_avg_dt
@@ -282,17 +277,10 @@ public:
     if(diff_var <= 0.0f) return 1.0f;
     float zval = (cos_diff - diff_avg) / sqrtf(diff_var); // stdev = sqrt of var
     // z-normal value is starting point for learning rate factor
-    if(lrmod_thr) {
-      if(zval < lrmod_z_thr) return 0.0f;
-      return 1.0f;
-    }
-    else {
-      float rval = zval * lrmod_gain + lrmod_off;
-      if(rval > lrmod_max) rval = lrmod_max;
-      if(rval < lrmod_min) rval = lrmod_min;
-      return rval;
-    }
+    if(zval < lrmod_z_thr) return 0.0f;
+    return 1.0f;
   }
+  // get lrate modulation based on cos_diff level
   
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
