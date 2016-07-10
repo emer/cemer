@@ -44,7 +44,7 @@ supports. The Browser can then add its own generic modifiers for attributes not 
 ex. the browser can add a generic small arrow to indicate a link
 */
 
-enum NodeBitmapFlags {
+enum NodeBitmapFlags { // #IGNORE
   NBF_FOLDER_OPEN               = 0x01,
   NBF_LINK_ITEM                 = 0x02
 };

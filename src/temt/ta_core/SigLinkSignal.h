@@ -64,7 +64,7 @@
   PLEASE keep numbers updated as some debuggers do not record the enum symbols..
 */
 
-enum SigLinkSignal { /* reason why SigEmit being called, as well as defining ops (also used by taBase and other classes) -- some operations will emit multiple SigEmit calls */
+enum SigLinkSignal { /* #IGNORE reason why SigEmit being called, as well as defining ops (also used by taBase and other classes) -- some operations will emit multiple SigEmit calls */
   SLS_ITEM_UPDATED = 0, // 0 after user edits (or load) ex. taBase::UpdateAfterEdit call; ops not used
   SLS_ITEM_UPDATED_ND,  // 1 same as IU, but doesn't invoke Dirty (to avoid circular dirtying)
   SLS_CHILD_ITEM_UPDATED = 3, // 3 op1=item; can optionally be invoked by an owned object (usually a member, usually not list/group items) -- owner can ignore this, or do something with it

@@ -33,7 +33,7 @@ class QTimer; //
 
 // note: because this defines CancelOp, it must be TA parsed -- otherwise it would not be
 
-enum CancelOp { // ops for passing cancel status and instructions, typically for Window closing
+enum CancelOp { // #IGNORE ops for passing cancel status and instructions, typically for Window closing
   CO_PROCEED,           // tells caller to proceed with operation (typical default)
   CO_CANCEL,            // client can set this to tell caller to cancel the operation
   CO_NOT_CANCELLABLE,   // preset, to tell client that operation will go ahead unconditionally
@@ -58,7 +58,7 @@ public:
   static taiMiscCore*   New(QObject* parent = NULL);
   // #IGNORE either call this or call taiMisc::New
 
-  static void           WaitProc(); // the core idle loop process
+  static void           WaitProc(); // #IGNORE the core idle loop process
 
   static int            ProcessEvents();
   // run any pending qt events that might need processed
@@ -66,22 +66,22 @@ public:
   // check to see if any events are pending, and run if true -- MUCH faster than processevents, but also likely to miss some events along the way.
 
   static void           Quit(CancelOp cancel_op = CO_NOT_CANCELLABLE);
-   // call to quit, invokes Quit_impl on instance first
-  static void           OnQuitting(CancelOp& cancel_op); // call this when a quit situation is detected -- does all the save logic
-  static void           BgRunKilled(); // called when a background job (!interactive) is quitting prematurely -- can save state -- calls project BgRunKilled method on Project
+  // #IGNORE call to quit, invokes Quit_impl on instance first
+  static void           OnQuitting(CancelOp& cancel_op); // #IGNORE call this when a quit situation is detected -- does all the save logic
+  static void           BgRunKilled(); // #IGNORE called when a background job (!interactive) is quitting prematurely -- can save state -- calls project BgRunKilled method on Project
 
-  const String          classname(); // 3.x compatability, basically the app name
+  const String          classname(); // #IGNORE 3.x compatability, basically the app name
 
-  int                   Exec(); // enter the event loop, either QCoreApplication or QApplication
-  virtual void          Busy_(bool busy) {} // impl for gui in taiMisc
+  int                   Exec(); // #IGNORE enter the event loop, either QCoreApplication or QApplication
+  virtual void          Busy_(bool busy) {} // #IGNORE impl for gui in taiMisc
   virtual void          CheckConfigResult_(bool ok);
-    // this is the nogui version; taiMisc does the gui version
+    // #IGNORE this is the nogui version; taiMisc does the gui version
 
   taiMiscCore(QObject* parent = NULL);
   ~taiMiscCore();
 
 public slots:
-  void                  PostUpdateAfter(); // run the dumpMisc::PostUpdateAfter; called asynchronously via a timer
+  void                  PostUpdateAfter(); // #IGNORE run the dumpMisc::PostUpdateAfter; called asynchronously via a timer
 
 protected slots:
   void                  app_aboutToQuit();

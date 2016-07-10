@@ -87,10 +87,10 @@ public:
   virtual bool          GetWinState(); // copy gui state to us (impl) override; true if done (ie mapped)
   virtual bool          SetWinState(); // set gui state from us (override impl)
 
-  virtual void          ResolveChanges(CancelOp& cancel_op); // resolve all changes (if mapped)
+  virtual void          ResolveChanges(CancelOp& cancel_op); // #IGNORE resolve all changes (if mapped)
   virtual void          WindowClosing(CancelOp& cancel_op) {}
-   // cb from m_widget, subordinate wins may not be cancellable
-  virtual void          WidgetDeleting(); // lets us do any cleanup -- override the impl
+   // #IGNORE cb from m_widget, subordinate wins may not be cancellable
+  virtual void          WidgetDeleting(); // #IGNORE lets us do any cleanup -- override the impl
 
   virtual QPixmap       GrabImage(bool& got_image);
   // #IGNORE grabs the widget image into a pixmap object

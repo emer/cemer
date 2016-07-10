@@ -81,9 +81,9 @@ public:
   virtual bool  SetExpr(const String& ex);
   // set to use given expression -- calls ParseExpr followed by UpdateAfterEdit_impl
 
-  static int    cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_ptr);
+  static int    cssExtParseFun_pre(void* udata, const String& nm, cssElPtr& el_ptr);
   // #IGNORE external parsing function for css: pre for initial parsing
-  static int    cssExtParseFun_post(void* udata, const char* nm, cssElPtr& el_ptr);
+  static int    cssExtParseFun_post(void* udata, const String& nm, cssElPtr& el_ptr);
   // #IGNORE external parsing function for css: post if nothing else gets it (bad var)
 
   virtual bool  ParseExpr();

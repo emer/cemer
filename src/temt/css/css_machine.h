@@ -286,6 +286,16 @@ public:
   void	SetSpace(cssSpace* spc, int idx = -1)
   { ptr_type = SPACE; ptr = (void*)spc; if(idx >= 0) dx = idx; }
 
+  bool  IsDirect() const { return ptr_type == DIRECT; }
+  bool  IsClassMember() const { return ptr_type == CLASS_MEMBER; }
+  bool  IsProgAuto() const { return ptr_type == PROG_AUTO; }
+  bool  IsSpace() const { return ptr_type == SPACE; }
+
+  cssSpace*     GetOwnerSpace() const;
+  // get the space that owns object if in a SPACE or PROG_AUTO (else NULL)
+  cssProg*     GetOwnerProg() const;
+  // get the prog that owns object if a PROG_AUTO (else NULL)
+  
   void 	Reset() 	{ ptr_type = NULL_PTR; dx = -1; ptr = NULL; }
   cssElPtr()            { Reset(); }
   cssElPtr(cssEl* el)	{ Reset(); SetDirect(el); }
@@ -1613,7 +1623,7 @@ public:
 
 // for an external parsing function that is called first -- can use the css parser
 // to parse expressions -- used in ProgExpr 
-typedef int (*css_progspace_ext_parse_fun)(void* udata, const char* parse_nm, cssElPtr& el_ptr);
+typedef int (*css_progspace_ext_parse_fun)(void* udata, const String& parse_nm, cssElPtr& el_ptr);
 
 class CSS_API cssProgSpace: public QObject {
   // an entire program space, including all functions defined, variables etc.
@@ -1775,6 +1785,10 @@ public:
   void		Undo()			{ Undo(src_ln-2); }
   void		ResetParseFlags();
   int		OptimizeCode();	      // 2nd pass that optimizes code -- returns # of optimizations
+  bool          CheckNameConflicts();
+  // check for variable name conflicts, issue warnings -- returns true if conflicts found
+  bool          CheckNameConflictSpace(const cssSpace& sp);
+  // check for variable name conflicts in this space, issue warnings -- returns true if conflicts found
 
   // compile control actions
   void		ClearCompileCtrl()	{ compile_ctrl = CC_None; }

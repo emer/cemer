@@ -207,7 +207,7 @@ cssTA::cssTA(const cssTA& cp, const String& nm) : cssCPtr(cp,nm) {
 cssEl* cssTA::GetTypeObject() const {
   if(!type_def)	return &cssMisc::Void;
   cssElPtr s;
-  if((s = cssMisc::TypesSpace.FindName((char*)type_def->name)) != 0)
+  if((s = cssMisc::TypesSpace.FindName(type_def->name)) != 0)
     return s.El();
   if((s = cssMisc::TypesSpace.FindName("TA")) != 0)
     return s.El();
@@ -958,7 +958,7 @@ cssEl* cssTA_Base::GetMemberFmName(const String& memb) const {
   MemberDef* md;
   void* mbr = ths->FindMembeR(memb, md);
   if(!mbr) {
-    cssMisc::Error(prog, "Member not found:", memb, "in class of type:", (char*)GetTypeName());
+    cssMisc::Error(prog, "Member not found:", memb, "in class of type:", GetTypeName());
     return &cssMisc::Void;
   }
   String mbnm;

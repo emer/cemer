@@ -199,7 +199,7 @@ void ProgExprBase::ParseExpr_SkipPath(int& pos) {
 }
 
 
-int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_ptr) {
+int ProgExprBase::cssExtParseFun_pre(void* udata, const String& nm, cssElPtr& el_ptr) {
   String vnm = nm;
   if(vnm == "__tmp") return 0;  // skip
 
@@ -291,8 +291,7 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
   return 0;                     // not found!
 }
 
-int ProgExprBase::cssExtParseFun_post(void* udata, const char* nm, cssElPtr& el_ptr) {
-  String vnm = nm;
+int ProgExprBase::cssExtParseFun_post(void* udata, const String& vnm, cssElPtr& el_ptr) {
   if(vnm == "__tmp" || vnm == "this") return 0; // skip that guy
   ProgExprBase* pe = (ProgExprBase*)udata;
   pe->bad_vars.AddUnique(vnm);  // this will trigger err msg later..

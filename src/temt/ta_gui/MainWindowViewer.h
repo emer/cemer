@@ -178,7 +178,6 @@ protected:
   void         WidgetDeleting_impl() override;
   void         Show_impl() override; // only called if mapped; de-iconifies
   void         Hide_impl() override; // only called if mapped; iconifies
-//nn  void             ResolveChanges_impl(CancelOp& cancel_op) override;
 
   // from TopLevelView
   void         MakeWinName_impl() override;

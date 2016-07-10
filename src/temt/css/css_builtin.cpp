@@ -1034,8 +1034,6 @@ static void Install_Internals() {
   cssElCFun_inst_nm     (cssMisc::Parse, del_opr, 1, "delete", CSS_DELETE, " ");
   cssElInCFun_inst_ptr	(cssMisc::Parse, constr, 1, CSS_FUN);
 
-  cssElCFun_inst_nm     (cssMisc::Parse, new_opr, cssEl::VarArg, "new", CSS_NEW, " ");
-
   cssElCFun_inst_flg(cssMisc::Functions, call, cssEl::VarArg, CSS_FUN,
 		     "call(obj, \"meth_name\", [args]): call the given method on given object(s), with given arguments to that function -- advantage over a direct method call is that it works even if obj is a list of objects, in which case it calls method on each in turn, and return value is a Variant_Matrix of all the return values.",
 		     cssElFun::FUN_ITR_LIST, 1);
@@ -1318,7 +1316,7 @@ static cssEl* cssElCFun_remove_stub(int, cssEl* arg[]) {
   if(!csh->src_prog->types.Replace(arg[1], &cssMisc::Void)) {
     if(!cssMisc::TypesSpace.Replace(arg[1], &cssMisc::Void)) {
       if(!csh->src_prog->DelVar(arg[1]))
-	cssMisc::Error(cp, "Could not delete type/variable:", (char*)arg[1]->GetName());
+	cssMisc::Error(cp, "Could not delete type/variable:", arg[1]->GetName());
     }
   }
   return &cssMisc::Void;
@@ -1700,7 +1698,9 @@ static void Install_Math() {
   TypeDef* mathtd = &TA_cssMath;
   cssMath* mdobj = (cssMath*)mathtd->GetInstance();
 
-  for(int i=0; i< mathtd->methods.size; i++) {
+  int stidx = TA_taNBase.methods.size; // skip all the tabase guys
+  
+  for(int i=stidx; i< mathtd->methods.size; i++) {
     MethodDef* md = mathtd->methods[i];
     if(!md->is_static) continue;
     if(md->HasOption("NO_CSS_MATH")) continue; // skip entirely
@@ -1896,7 +1896,7 @@ static cssEl* cssElCFun_fopen_stub(int, cssEl* arg[]) {
     strm->open(*arg[1], ios::out | ios::app);
   else {
     delete strm;
-    cssMisc::Error(arg[0]->prog, "fopen: open type not recognized: ", (char*)optype);
+    cssMisc::Error(arg[0]->prog, "fopen: open type not recognized: ", optype);
     return &cssMisc::Void;
   }
   return new cssIOS((void*)strm, 1, &TA_fstream);
@@ -2573,13 +2573,11 @@ static void Install_Types() {
 	}
       }
     }
-    else if(tmp->IsEnum()) {
-      if((tmp->name != "SigLinkSignal") && (tmp->name != "CancelOp") &&
-	 (tmp->name != "NodeBitmapFlags")) {
-	cssEnum_inst_nm(cssMisc::Enums, 0, tmp->name);
-	for(j=0; j < tmp->enum_vals.size; j++)
-	  cssInt_inst_nm(cssMisc::Enums, tmp->enum_vals.FastEl(j)->enum_no,
-			 tmp->enum_vals.FastEl(j)->name);
+    else if(tmp->IsEnum() && tmp->IsActual()) {
+      cssEnum_inst_nm(cssMisc::Enums, 0, tmp->name);
+      for(j=0; j < tmp->enum_vals.size; j++) {
+        cssInt_inst_nm(cssMisc::Enums, tmp->enum_vals.FastEl(j)->enum_no,
+                       tmp->enum_vals.FastEl(j)->name);
       }
     }
     else if(tmp->IsFunction() && tmp->IsActual()) { // RegFun

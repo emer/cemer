@@ -453,10 +453,10 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
 
   void          InitMetrics(bool reinit=false); // initializes all the sizes/fonts/etc. -- QApplication object must be created
   void          AdjustFont(int fontSpec, iFont& font); // sets the font according to the spec parameter
-  void          ResolveEditChanges(CancelOp& cancel_op); // resolve all changes on ALL edits panels and dialogs
-  void          ResolveViewerChanges(CancelOp& cancel_op); // resolve all changes on ALL top level viewers
-  void          Busy_(bool busy) override;// impl for taMisc, puts system in a 'busy' state (pointer, no input)
-  void          CheckConfigResult_(bool ok) override;
+  void          ResolveEditChanges(CancelOp& cancel_op); // #IGNORE resolve all changes on ALL edits panels and dialogs
+  void          ResolveViewerChanges(CancelOp& cancel_op); // #IGNORE resolve all changes on ALL top level viewers
+  void          Busy_(bool busy) override;// #IGNORE impl for taMisc, puts system in a 'busy' state (pointer, no input)
+  void          CheckConfigResult_(bool ok) override; 
 
 #ifndef __MAKETA__
   static bool   UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e);

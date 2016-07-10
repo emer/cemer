@@ -48,7 +48,7 @@ public:
   virtual void          SetWinName();
   // #IGNORE set the window name
 
-  void         WindowClosing(CancelOp& cancel_op) override;
+  void         WindowClosing(CancelOp& cancel_op) override; // #IGNORE
 
   void  InitLinks() override;
   void  CutLinks() override;

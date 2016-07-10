@@ -423,6 +423,28 @@ cssEl* cssElPtr::El() const {
   }
 }
 
+cssSpace* cssElPtr::GetOwnerSpace() const {
+  if(!ptr) return NULL;
+  if(IsSpace()) {
+    return (cssSpace*)ptr;
+  }
+  if(IsProgAuto()) {
+    cssProg* prg = (cssProg*)ptr;
+    if(!prg->Autos())
+      return NULL;
+    return prg->Autos();
+  }
+  return NULL;
+}
+
+cssProg* cssElPtr::GetOwnerProg() const {
+  if(!ptr) return NULL;
+  if(IsProgAuto()) {
+    return (cssProg*)ptr;
+  }
+  return NULL;
+}
+
 String cssElPtr::PrintStr() const {
   String rval;
   switch(ptr_type) {
@@ -598,14 +620,14 @@ cssEl* cssEl::GetTypeObject() const {
   tp_nm = tp_nm.before(')');
   cssElPtr s;
   if((prog) && (prog->top)) {
-    if((s = prog->top->types.FindName((char*)tp_nm)) != 0)
+    if((s = prog->top->types.FindName(tp_nm)) != 0)
       return s.El();
   }
   if(cssMisc::cur_top) {
-    if((s = cssMisc::cur_top->types.FindName((char*)tp_nm)) != 0)
+    if((s = cssMisc::cur_top->types.FindName(tp_nm)) != 0)
       return s.El();
   }
-  if((s = cssMisc::TypesSpace.FindName((char*)tp_nm)) != 0)
+  if((s = cssMisc::TypesSpace.FindName(tp_nm)) != 0)
     return s.El();
   return &cssMisc::Void;
 }
@@ -2519,7 +2541,7 @@ cssElPtr& cssSpace::Push(cssEl* it) {
   return el_retv;
 }
 cssElPtr& cssSpace::PushUniqNameNew(cssEl* it) {
-  cssElPtr p = FindName((char*)it->name);
+  cssElPtr p = FindName(it->name);
   if(!p) {
     return Push(it);
   }
@@ -2531,7 +2553,7 @@ cssElPtr& cssSpace::PushUniqNameNew(cssEl* it) {
 }
 
 cssElPtr& cssSpace::PushUniqNameOld(cssEl* it) {
-  cssElPtr p = FindName((char*)it->name);
+  cssElPtr p = FindName(it->name);
   if(!p) {
     return Push(it);
   }
@@ -2842,12 +2864,12 @@ cssInst::~cssInst() {
 }
 
 void cssInst::SetInst(const cssElPtr& it) {
-  if ((it.ptr_type == cssElPtr::SPACE) &&
-     ((it.ptr == (void*)&(prog->top->statics)) ||
-      (it.ptr == (void*)&(prog->top->hard_vars)) ||
-      (it.ptr == (void*)&(prog->top->prog_vars)) ||
-      (it.ptr == (void*)&(prog->top->enums)) ||
-      (it.ptr == (void*)&(prog->top->hard_funs))))
+  if (it.IsSpace() &&
+      ((it.ptr == (void*)&(prog->top->statics)) ||
+       (it.ptr == (void*)&(prog->top->hard_vars)) ||
+       (it.ptr == (void*)&(prog->top->prog_vars)) ||
+       (it.ptr == (void*)&(prog->top->enums)) ||
+       (it.ptr == (void*)&(prog->top->hard_funs))))
   {
     cssScriptFun* cur_fun = prog->top->GetCurrentFun();
     if((cur_fun) && ((cur_fun->GetType() == cssEl::T_MbrScriptFun) ||
@@ -2875,13 +2897,8 @@ void cssInst::SetInst(const cssElPtr& it) {
       cssEl::SetRefElPtr(inst, nw_ptr);
       return;
     }
-//     else {                   // otherwise just set direct for efficiency!!
-//       cssElPtr nw_ptr;
-//       nw_ptr.SetDirect(it.El());
-//       cssEl::SetRefElPtr(inst, nw_ptr);
-//       return;
-//     }
-  } else if ((it.ptr_type == cssElPtr::PROG_AUTO) ||
+  }
+  else if ((it.ptr_type == cssElPtr::PROG_AUTO) ||
           (it.ptr_type == cssElPtr::CLASS_MEMBER) ||
           (it.ptr_type == cssElPtr::NVIRT_METHOD) ||
           (it.ptr_type == cssElPtr::VIRT_METHOD))
@@ -4444,7 +4461,8 @@ bool cssProgSpace::Compile(istream& fh) {
   src_fin = old_fh;             // this is key for include -- not sure why it was removed..
 
   OptimizeCode();
-
+  CheckNameConflicts();
+  
   cssMisc::PopCurTop();
   return !err;
 }
@@ -4626,6 +4644,41 @@ int cssProgSpace::OptimizeCode() {
 //   if(nopt > 0)
 //     cerr << name << " optimized: " << nopt << " times" << endl;
   return nopt;
+}
+
+bool cssProgSpace::CheckNameConflicts() {
+  int psi = 0;
+  cssSpace* spc=NULL;
+  bool rval = false;
+  while((spc = GetParseSpace(psi++))) {
+    if((spc == &(cssMisc::Commands) && !AmCmdProg())) // don't process commands unless I'm a command prog!
+      continue;
+    bool got = CheckNameConflictSpace(*spc);
+    if(got) rval = true;
+  }
+  return rval;
+}
+
+bool cssProgSpace::CheckNameConflictSpace(const cssSpace& sp) {
+  bool rval = false;
+  for(int i=0; i<sp.size; i++) {
+    cssEl* el = sp.FastEl(i);
+
+    cssElPtr s;
+    int psi = 0;
+    cssSpace* spc=NULL;
+    while((spc = GetParseSpace(psi++))) {
+      if((spc == &(cssMisc::Commands) && !AmCmdProg())) // don't process commands unless I'm a command prog!
+        continue;
+      if((s = spc->FindName(el->name)) != 0) {
+        if(s.El() == el) continue; // just found us..
+        cssMisc::Warning(Prog(), "variable named:", el->name, "in space:", sp.name,
+                         "has name conflict with item in space:", spc->name);
+        rval = true;
+      }
+    }
+  }
+  return rval;
 }
 
 
