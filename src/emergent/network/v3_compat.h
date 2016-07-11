@@ -24,14 +24,11 @@
 
 #include "network_def.h"
 
-#include "ta_script.h"
-#include "ta_time.h"
-#include "minmax.h"
-#include "ta_datatable.h"
-#include "emergent_base.h"
-#include "spec.h"
-#include "emergent_project.h"
-#include "netdata.h"
+#include <TimeUsed>
+#include <MinMax>
+#include <DataTable>
+#include <Network>
+#include <ProjectBase>
 
 // forwards this file
 // from process.h

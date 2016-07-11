@@ -33,6 +33,7 @@ class CsUnitSpec;
 class SigmoidUnitSpec;
 class BoltzUnitSpec;
 class IACUnitSpec;
+class CsUnitVars;
 class CsUnit;
 class CsLayer;
 class CsNetwork;
@@ -85,7 +86,7 @@ public:
   }
 
   inline void   Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
-    Init_Weights_symflag(net);
+    Init_Weights_symflag(net, thr_no);
 
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
@@ -130,7 +131,7 @@ public:
   inline void B_Init_dWt(UnitVars* uv, Network* net, int thr_no) override;
   inline void B_Compute_dWt(UnitVars* uv, Network* net, int thr_no) override;
  
-  inline void B_Compute_Weights(UnitVars* iv, Network* net, int thr_no) override;
+  inline void B_Compute_Weights(UnitVars* uv, Network* net, int thr_no) override;
 
   void	InitLinks();
   SIMPLE_COPY(CsConSpec);
@@ -186,26 +187,27 @@ public:
   void Init_Acts(UnitVars* uv, Network* net, int thr_no) override;
   void Init_Weights(UnitVars* u, Network* net, int thr_no) override;
 
-  virtual void 	Compute_ClampAct(CsUnitVars* u, CsNetwork* net);
+  virtual void 	Compute_ClampAct(CsUnitVars* u, CsNetwork* net, int thr_no);
   // hard-fast-clamp inputs (at start of settling)
-  virtual void 	Compute_ClampNet(CsUnitVars* u, CsNetwork* net);
+  virtual void 	Compute_ClampNet(CsUnitVars* u, CsNetwork* net, int thr_no);
   // compute net input from clamped inputs (at start of settling)
 
   void Compute_Netin(UnitVars* u, Network* net, int thr_no) override;
   void Compute_Act(UnitVars* u, Network* net, int thr_no) override;
-  virtual void	Compute_Act_impl(CsUnitVars* u, int cycle, int phase); 
+  virtual void	Compute_Act_impl(CsUnitVars* u, CsNetwork* net, int thr_no,
+                                 int cycle, int phase); 
   // actually computes specific activation function 
 
-  virtual void	DecayState(CsUnitVars* u, CsNetwork* net);
+  virtual void	DecayState(CsUnitVars* u, CsNetwork* net, int thr_no);
   // decay activation state information
-  virtual void	PhaseInit(CsUnitVars* u, CsNetwork* net);
+  virtual void	PhaseInit(CsUnitVars* u, CsNetwork* net, int thr_no);
   // initialize external inputs based on phase information
   
   virtual void	Aggregate_dWt(CsUnitVars* u, CsNetwork* net, int thr_no);
   void	Compute_dWt(UnitVars* u, Network* net, int thr_no) override;
   void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override;
 
-  virtual void	PostSettle(CsUnitVars* u, CsNetwork* net);
+  virtual void	PostSettle(CsUnitVars* u, CsNetwork* net, int thr_no);
   // set stuff after settling is over
 
   virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0, int ncycles=50);
@@ -223,10 +225,10 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(SigmoidUnitSpec);
+eTypeDef_Of(SigmoidCsUnitSpec);
 
-class E_API SigmoidUnitSpec : public CsUnitSpec {
-  // Sigmoid (logistic) activation function (float-valued within range)
+class E_API SigmoidCsUnitSpec : public CsUnitSpec {
+  // #AKA_SigmoidUnitSpec Sigmoid (logistic) activation function (float-valued within range)
 INHERITED(CsUnitSpec)
 public:
   enum TimeAvgType {		// type of time-averaging to perform
@@ -235,9 +237,10 @@ public:
   };
   TimeAvgType	time_avg;	// type of time-averaging to perform
 
-  void		Compute_Act_impl(CsUnitVars* u,int cycle, int phase);
+  void	Compute_Act_impl(CsUnitVars* u, CsNetwork* net, int thr_no,
+                         int cycle, int phase) override; 
 
-  TA_SIMPLE_BASEFUNS(SigmoidUnitSpec);
+  TA_SIMPLE_BASEFUNS(SigmoidCsUnitSpec);
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -251,7 +254,8 @@ INHERITED(CsUnitSpec)
 public:
   float		temp;		// temperature (1/gain)
 
-  void		Compute_Act_impl(CsUnitVars* u, int cycle, int phase);
+  void	Compute_Act_impl(CsUnitVars* u, CsNetwork* net, int thr_no,
+                         int cycle, int phase) override; 
 
   TA_SIMPLE_BASEFUNS(BoltzUnitSpec);
 protected:
@@ -270,7 +274,8 @@ public:
   float		rest;		// rest level of activation
   float		decay;		// decay rate (1/gain) (continuous decay -- not between phases or trials, which is state_decay)
 
-  void		Compute_Act_impl(CsUnitVars* u, int cycle, int phase);
+  void	Compute_Act_impl(CsUnitVars* u, CsNetwork* net, int thr_no,
+                         int cycle, int phase) override; 
 
   TA_SIMPLE_BASEFUNS(IACUnitSpec);
 protected:
@@ -286,7 +291,9 @@ class E_API LinearCsUnitSpec : public CsUnitSpec {
   // linear version of Cs units with time-averaging on the net inputs
 INHERITED(CsUnitSpec)
 public:
-  void		Compute_Act_impl(CsUnitVars* u, int cycle, int phase);
+
+  void	Compute_Act_impl(CsUnitVars* u, CsNetwork* net, int thr_no,
+                         int cycle, int phase) override; 
 
   TA_BASEFUNS_NOCOPY(LinearCsUnitSpec);
 private:
@@ -302,7 +309,8 @@ INHERITED(CsUnitSpec)
 public:
   float		threshold;
 
-  void		Compute_Act_impl(CsUnitVars* u, int cycle, int phase);
+  void	Compute_Act_impl(CsUnitVars* u, CsNetwork* net, int thr_no,
+                         int cycle, int phase) override; 
 
   TA_SIMPLE_BASEFUNS(ThreshLinCsUnitSpec);
 private:
@@ -310,34 +318,61 @@ private:
   void	Destroy()		{ };
 };
 
+eTypeDef_Of(CsUnitVars);
+
+class E_API CsUnitVars : public UnitVars {
+  // #STEM_BASE ##CAT_Cs constraint satisfaction unit variables
+INHERITED(Unit)
+public:
+  float		bias_pdw;	// #NO_SAVE the previous delta-weight (for momentum), bias
+  float		bias_dwt_agg;	// #NO_VIEW #NO_SAVE variable for aggregating the outer-prods of bias weights
+  float		da;		// #VIEW_HOT delta-activation (or net input) value
+  float		prv_net;	// #NO_VIEW previous net input
+  float		clmp_net;	// #NO_VIEW net input from hard_fast_clamp
+  float		act_m;		// #VIEW_HOT minus phase activation
+  float		act_p;		// #VIEW_HOT plus phase activation
+  float		n_dwt_aggs;	// number of delta-weight aggregations performed
+};
+  
 eTypeDef_Of(CsUnit);
 
 class E_API CsUnit : public Unit {
   // #STEM_BASE ##CAT_Cs constraint satisfaction unit
 INHERITED(Unit)
 public:
-  float		da;		// #VIEW_HOT delta-activation (or net input) value
-  float		prv_net;	// #NO_VIEW previous net input
-  float		clmp_net;	// #NO_VIEW net input from hard_fast_clamp
-  float		act_m;		// #VIEW_HOT minus phase activation
-  float		act_p;		// #VIEW_HOT plus phase activation
-  int		n_dwt_aggs;	// number of delta-weight aggregations performed
+  inline UnitVars::ExtFlags ext_flag() { return GetUnitVars()->ext_flag; }
+  // #CAT_UnitVar external input flags -- determines whether the unit is receiving an external input (EXT), target (TARG), or comparison value (COMP)
+  inline float& targ()  { return GetUnitVars()->targ; }
+  // #VIEW_HOT #CAT_UnitVar target value: drives learning to produce this activation value
+  inline float& ext()   { return GetUnitVars()->ext; }
+  // #VIEW_HOT #CAT_UnitVar external input: drives activation of unit from outside influences (e.g., sensory input)
+  inline float& act()   { return GetUnitVars()->act; }
+  // #VIEW_HOT #CAT_UnitVar activation value -- what the unit communicates to others
+  inline float& net()   { return GetUnitVars()->net; }
+  // #VIEW_HOT #CAT_UnitVar net input value -- what the unit receives from others  (typically sum of sending activations times the weights)
+  inline float& bias_wt() { return GetUnitVars()->bias_wt; }
+  // #VIEW_HOT #CAT_UnitVar bias weight value -- the bias weight acts like a connection from a unit that is always active with a constant value of 1 -- reflects intrinsic excitability from a biological perspective
+  inline float& bias_dwt() { return GetUnitVars()->bias_dwt; }
+  // #VIEW_HOT #CAT_UnitVar change in bias weight value as computed by a learning mechanism
 
-  void	Compute_ClampAct(CsNetwork* net)
-  { ((CsUnitSpec*)GetUnitSpec())->Compute_ClampAct(this, net); }
-  void	Compute_ClampNet(CsNetwork* net)
-  { ((CsUnitSpec*)GetUnitSpec())->Compute_ClampNet(this, net); }
-  void	DecayState(CsNetwork* net)
-  { ((CsUnitSpec*)GetUnitSpec())->DecayState(this, net); }
-  void	PhaseInit(CsNetwork* net)
-  { ((CsUnitSpec*)GetUnitSpec())->PhaseInit(this, net); }
-  void	PostSettle(CsNetwork* net)
-  { ((CsUnitSpec*)GetUnitSpec())->PostSettle(this, net); }
-  void	Aggregate_dWt(CsNetwork* net, int thr_no)
-  { ((CsUnitSpec*)GetUnitSpec())->Aggregate_dWt(this, net, thread_no); }
+  inline float& bias_pdw() { return ((CsUnitVars*)GetUnitVars())->bias_pdw; }
+  // #VIEW_HOT #CAT_UnitVar the previous delta-weight (for momentum), bias
+  inline float& bias_dwt_agg() { return ((CsUnitVars*)GetUnitVars())->bias_dwt_agg; }
+  // #VIEW_HOT #CAT_UnitVar variable for aggregating the outer-prods of bias weights
+  inline float& da() { return ((CsUnitVars*)GetUnitVars())->da; }
+  // #VIEW_HOT #CAT_UnitVar delta-activation (or net input) value
+  inline float& prv_net() { return ((CsUnitVars*)GetUnitVars())->prv_net; }
+  // #NO_VIEW #CAT_UnitVar previous net input
+  inline float& clmp_net() { return ((CsUnitVars*)GetUnitVars())->clmp_net; }
+  // #NO_VIEW #CAT_UnitVar net input from hard_fast_clamp
+  inline float& act_m() { return ((CsUnitVars*)GetUnitVars())->act_m; }
+  // #VIEW_HOT #CAT_UnitVar minus phase activation
+  inline float& act_p() { return ((CsUnitVars*)GetUnitVars())->act_p; }
+  // #VIEW_HOT #CAT_UnitVar plus phase activation
+  inline float& n_dwt_aggs() { return ((CsUnitVars*)GetUnitVars())->n_dwt_aggs; }
+  // #CAT_UnitVar number of delta-weight aggregations performed
 
-  void	Copy_(const CsUnit& cp);
-  TA_BASEFUNS(CsUnit);
+  TA_BASEFUNS_NOCOPY(CsUnit);
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -447,6 +482,8 @@ public:
   // #CAT_Cycle get maxda value from units
   virtual void	Aggregate_dWt();
   // #CAT_Cycle aggregate weight changes (for probabilistic sampling)
+    virtual void Aggregate_dWt_Thr(int thr_no);
+    // #IGNORE aggregate weight changes (for probabilistic sampling)
   virtual void	Cycle_Run();
   // #CAT_Cycle compuate one cyle of updating
 
@@ -454,14 +491,24 @@ public:
   // 	settle
   virtual void	PhaseInit();
   // #CAT_Settle initialize at start of settling phase -- sets external input flags based on phase (called by Settle_Init)
+    virtual void PhaseInit_Thr(int thr_no);
+    // #IGNORE 
   virtual void	DecayState();
   // #CAT_Settle decay state at start of settling phase (called by Settle_Init)
+    virtual void DecayState_Thr(int thr_no);
+    // #IGNORE 
   virtual void	Compute_ClampAct();
   // #CAT_Settle compute activations of hard clamped units (called by Settle_Init)
+    virtual void Compute_ClampAct_Thr(int thr_no);
+    // #IGNORE 
   virtual void	Compute_ClampNet();
   // #CAT_Settle compute fixed netinputs from hard clamped units (optimizes computation) (called by Settle_Init)
+    virtual void Compute_ClampNet_Thr(int thr_no);
+    // #IGNORE 
   virtual void	PostSettle();
   // #CAT_Settle get activation states after settling
+    virtual void PostSettle_Thr(int thr_no);
+    // #IGNORE 
   virtual void	Settle_Init();
   // #CAT_Settle run various initialization steps at the start of settling
   virtual void	Settle_Final();
@@ -502,37 +549,51 @@ private:
 // 	In-line functions     //
 ////////////////////////////////
 
-inline void CsConSpec::Aggregate_dWt(ConGroup* cg, CsNetwork* net, 
-                                     const float phase) {
-  float* aggs = cg->OwnCnVar(DWT_AGG);
-  const float ru_act = ru->act;
-  CON_GROUP_LOOP(cg, C_Aggregate_dWt(aggs[i], cg->Un(i,net)->act,
-                                     ru_act, phase));
-}
-inline void CsConSpec::B_Aggregate_dWt(ConGroup* bias, CsUnit* ru, float phase) {
-  bias->OwnCn(0,DWT_AGG) += phase * ru->act;
+inline void CsConSpec::B_Init_dWt(UnitVars* u, Network* net, int thr_no) {
+  C_Init_dWt(u->bias_wt);
+  CsUnitVars* uv = (CsUnitVars*)u;
+  uv->bias_pdw = 0.0f;
+  uv->bias_dwt_agg = 0.0f;
 }
 
-inline void CsConSpec::Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
+inline void CsConSpec::Aggregate_dWt(ConGroup* cg, CsNetwork* net, int thr_no,
+                                     const float phase) {
+  CsUnitVars* ru = (CsUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+  float* aggs = cg->OwnCnVar(DWT_AGG);
+  const float ru_act = ru->act;
+  CON_GROUP_LOOP(cg, C_Aggregate_dWt(aggs[i], cg->UnVars(i,net)->act,
+                                     ru_act, phase));
+}
+inline void CsConSpec::B_Aggregate_dWt(CsUnitVars* uv, CsNetwork* net, int thr_no,
+                                       const float phase) {
+  uv->bias_dwt_agg += phase * uv->act;
+}
+
+inline void CsConSpec::Compute_dWt(ConGroup* cg, Network* net, int thr_no) {
+  CsUnitVars* ru = (CsUnitVars*)cg->ThrOwnUnVars(net, thr_no);
   float* aggs = cg->OwnCnVar(DWT_AGG);
   float* dwts = cg->OwnCnVar(DWT);
-  const float n_dwt_aggs = ((CsUnit*)ru)->n_dwt_aggs; // already guaranteed to be non-0
+  const float n_dwt_aggs = ru->n_dwt_aggs; // already guaranteed to be non-0
   CON_GROUP_LOOP(cg, C_Compute_dWt(aggs[i], dwts[i], n_dwt_aggs));
 }
 
-inline void CsConSpec::B_Compute_dWt(ConGroup* bias, CsUnit* ru) {
-  C_Compute_dWt(bias->OwnCn(0,DWT_AGG), bias->OwnCn(0,DWT),
-                (float)ru->n_dwt_aggs);
+inline void CsConSpec::B_Compute_dWt(UnitVars* uvg, Network* net, int thr_no) {
+  CsUnitVars* uv = (CsUnitVars*)uvg;
+  C_Compute_dWt(uv->bias_dwt_agg, uv->bias_dwt, uv->n_dwt_aggs);
 }
 
-inline void CsConSpec::Compute_Weights(ConGroup* cg, Unit* ru, Network* net) {
+inline void CsConSpec::Compute_Weights(ConGroup* cg, Network* net, int thr_no) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
   float* pdws = cg->OwnCnVar(PDW);
   CON_GROUP_LOOP(cg, C_Compute_Weights(wts[i], dwts[i], pdws[i]));
-  ApplyLimits(cg, ru, net);
+  ApplyLimits(cg, net, thr_no);
 }
 
+inline void CsConSpec::B_Compute_Weights(UnitVars* uvg, Network* net, int thr_no) {
+  CsUnitVars* uv = (CsUnitVars*)uvg;
+  C_Compute_Weights(uv->bias_wt, uv->bias_dwt, uv->bias_pdw);
+}
 
 //////////////////////////////////////////
 //	Additional ConSpec Types	//
@@ -544,21 +605,23 @@ class E_API HebbCsConSpec : public CsConSpec {
   // Simple Hebbian wt update (send act * recv act), operates only on final activity states
 INHERITED(CsConSpec)
 public:
-  void 	Aggregate_dWt(ConGroup*, CsUnit*, CsNetwork*, float) 	override { };
-  void 	B_Aggregate_dWt(ConGroup*, CsUnit*, float)		override { }; 
+  void 	Aggregate_dWt(ConGroup*, CsNetwork*, int, float) 	override { };
+  void 	B_Aggregate_dWt(CsUnitVars*, CsNetwork*, int, float)	override { }; 
   // disable both of these functions
 
   inline void 		C_Compute_dWt_Hebb(float& dwt, const float ru_act,
                                            const float su_act) 
   { dwt += ru_act * su_act; }
-  inline void 		Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
+  inline void 		Compute_dWt(ConGroup* cg, Network* net, int thr_no) {
+    CsUnitVars* ru = (CsUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     float* dwts = cg->OwnCnVar(DWT);
-    const float ru_act = (ru->ext_flag & Unit::TARG) ? ru->targ : ru->act;
-    CON_GROUP_LOOP(cg, C_Compute_dWt_Hebb(dwts[i], ru_act, cg->Un(i,net)->act));
+    const float ru_act = (ru->ext_flag & UnitVars::TARG) ? ru->targ : ru->act;
+    CON_GROUP_LOOP(cg, C_Compute_dWt_Hebb(dwts[i], ru_act, cg->UnVars(i,net)->act));
   }
 
-  inline void		B_Compute_dWt(ConGroup* bias, CsUnit* ru) 
-  { bias->OwnCn(0,DWT) += ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act); }
+  inline void		B_Compute_dWt(UnitVars* uvg, Network* net, int thr_no) 
+  { CsUnitVars* uv = (CsUnitVars*)uvg;
+    uv->bias_dwt += ((uv->ext_flag & UnitVars::TARG) ? uv->targ : uv->act); }
 
   TA_BASEFUNS_NOCOPY(HebbCsConSpec);
 private:

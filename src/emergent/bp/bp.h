@@ -244,7 +244,7 @@ E_API void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnitVars* u)
 eTypeDef_Of(BpUnitVars);
 
 class E_API BpUnitVars : public UnitVars {
-  // #STEM_BASE ##CAT_Bp standard feed-forward Bp unit
+  // #STEM_BASE ##CAT_Bp standard feed-forward Bp unit variables
 public:
   float         bias_pdw;       // #VIEW_HOT previous bias weight change
   float 	err; 		// #VIEW_HOT error value -- this is E for target units, not dEdA
@@ -273,18 +273,18 @@ public:
   inline float& bias_dwt() { return GetUnitVars()->bias_dwt; }
   // #VIEW_HOT #CAT_UnitVar change in bias weight value as computed by a learning mechanism
 
-  float&        bias_pdw()
+  inline float& bias_pdw()
   { return ((BpUnitVars*)GetUnitVars())->bias_pdw; }
-  // #VIEW_HOT previous bias weight change
-  float&	err()
+  // #VIEW_HOT #CAT_UnitVar previous bias weight change
+  inline float&	err()
   { return ((BpUnitVars*)GetUnitVars())->err; }
-  // #VIEW_HOT error value -- this is E for target units, not dEdA
-  float& 	dEdA()
+  // #VIEW_HOT #CAT_UnitVar error value -- this is E for target units, not dEdA
+  inline float& dEdA()
   { return ((BpUnitVars*)GetUnitVars())->dEdA; }
-  // #VIEW_HOT derivative of error wrt activation
-  float& 	dEdNet()
+  // #VIEW_HOT #CAT_UnitVar derivative of error wrt activation
+  inline float& dEdNet()
   { return ((BpUnitVars*)GetUnitVars())->dEdNet; }
-  // #VIEW_HOT derivative of error wrt net input
+  // #VIEW_HOT #CAT_UnitVar derivative of error wrt net input
 
   TA_BASEFUNS_NOCOPY(BpUnit);
 private:

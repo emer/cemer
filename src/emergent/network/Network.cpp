@@ -924,6 +924,8 @@ void Network::InitUnitConGpThreadMem(int thr_no) {
     Layer* lay = un->own_lay();
 
     UnitSpec* us = un->GetUnitSpec();
+    if(!us)
+      us = lay->GetUnitSpec();  // shouldn't happen but does..
     UnitVars* uv = ThrUnitVars(thr_no, i);
     uv->unit_spec = us;
     uv->thr_un_idx = i;
