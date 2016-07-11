@@ -45,7 +45,7 @@ class E_API CsCon : public Connection {
   // #STEM_BASE ##CAT_Cs connection values for constraint satisfaction
 public:
   float		pdw;		// #NO_SAVE the previous delta-weight (for momentum)
-  float		dwt_agg;	// #NO_VIEW #NO_SAVE variable for aggregating the outer-prods
+  float		dwt_agg;	// #NO_SAVE variable for aggregating the outer-prods
 
   CsCon() { pdw = dwt_agg = 0.0f; }
 };

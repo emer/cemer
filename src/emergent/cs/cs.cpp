@@ -297,15 +297,9 @@ void CsUnitSpec::PhaseInit(CsUnitVars* u, CsNetwork* net, int thr_no) {
 }
 
 void CsUnitSpec::Aggregate_dWt(CsUnitVars* u, CsNetwork* net, int thr_no) {
-  int phase = net->phase;
+  float phase = net->phase;
   ((CsConSpec*)bias_spec.SPtr())->B_Aggregate_dWt(u, net, thr_no, phase);
-  const int nrcg = net->ThrUnNRecvConGps(thr_no, u->thr_un_idx);
-  for(int g=0; g<nrcg; g++) {
-    ConGroup* rgp = net->ThrUnRecvConGroup(thr_no, u->thr_un_idx, g);
-    if(rgp->NotActive()) continue;
-    ((CsConSpec*)rgp->GetConSpec())->Aggregate_dWt(rgp, net, thr_no, phase);
-  }
-  u->n_dwt_aggs++;
+  u->n_dwt_aggs += 1.0f;
 }
 
 void CsUnitSpec::PostSettle(CsUnitVars* u, CsNetwork* net, int thr_no) {
@@ -649,6 +643,13 @@ void CsNetwork::Aggregate_dWt_Thr(int thr_no) {
     ConGroup* rcg = ThrRecvConGroup(thr_no, i);
     if(rcg->NotActive()) continue;
     ((CsConSpec*)rcg->con_spec)->Aggregate_dWt(rcg, this, thr_no, (float)phase);
+  }
+  // also unit-level, as separate pass
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    CsUnitVars* uv = (CsUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((CsUnitSpec*)uv->unit_spec)->Aggregate_dWt(uv, this, thr_no);
   }
 }
 
