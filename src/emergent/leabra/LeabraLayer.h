@@ -266,6 +266,10 @@ public:
   
   String        GetToolbarName() const override { return "layer"; }
 
+  inline float  GetTotalActEq()  { return acts_eq.avg * (float)units.size; }
+  // Get the total act_eq activation in the layer based on average and number of units
+  inline float  GetTotalActQ0()  { return acts_q0.avg * (float)units.size; }
+  // Get the total act_q0 activation in the layer based on average and number of units
 
   void	InitLinks() override;
   void	CutLinks() override;

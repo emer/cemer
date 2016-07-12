@@ -31,7 +31,7 @@ class E_API PVLVDaSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         tonic_da;       // #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
-  bool          patch_cur;      // #DEF_false use current trial patch activations -- otherwise use previous trial -- current trial is appropriate for simple discrete trial environments (e.g., with some PBWM models), whereas previous is more approprate for trials with more realistic temporal structure
+  bool          patch_cur;      // #DEF_true use current trial patch activations -- otherwise use previous trial -- current trial is appropriate for simple discrete trial environments (e.g., with some PBWM models), whereas previous is more approprate for trials with more realistic temporal structure
   float         pv_thr;         // #DEF_0.1 threshold on pv max act for setting pv_detected
   float         vsp_thr;        // #DEF_0.1 threshold on VS Patch Indir max act for setting pv_detected
   float         se_gain;        // strength of the serotonin 5HT inputs on the dopamine outputs -- sev values when present subtract from the dopamine value otherwise computed
@@ -59,11 +59,10 @@ public:
   float         pptg_gain;    // #DEF_1 gain on bursts from PPTg
   float         lhb_gain;     // #DEF_1 gain on dips from LHbRMTg
   float         pv_gain;      // #DEF_1 gain on positive PV component of total phasic DA signal (net after subtracting VSPatchIndir (PVi) shunt signal)
-  bool          subtract_d2r; // #DEF_true if true, subtract VSPatchD2 act in computing PVi shunt value
-  float         pvi_d1_gain;  // #COND_SHOW_subtract_d2r:true #DEF_1 gain on VSPatchD1 component of PVi shunt signal
-  float         pvi_d2_gain;  // #DEF_1 gain on VSPatchD2 component of PVi shunt signal
-  
-  float         pvi_gain;     // #DEF_1 gain on VSPatch (PVi) shunt signal - higher pvi_gain == more shunting
+  float         pvi_burst_shunt_gain;  // #DEF_1.2 gain on VSPatch projection that shunts bursting in VTA (for VTAp = VSPatchPosD1, for VTAn = VSPatchNegD2)
+  float         pvi_anti_burst_shunt_gain;  // #DEF_1 gain on VSPatch projection that opposes shunting of bursting in VTA (for VTAp = VSPatchPosD2, for VTAn = VSPatchNegD1)
+  float         pvi_dip_shunt_gain;  // #DEF_0 gain on VSPatch projection that shunts dipping of VTA (currently only VTAp supported = VSPatchNegD2) -- optional and somewhat controversial 
+  float         pvi_anti_dip_shunt_gain;  // #DEF_0 gain on VSPatch projection that opposes the shunting of dipping in VTA (currently only VTAp supported = VSPatchNegD1)
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -119,14 +118,15 @@ public:
   virtual void  Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // compute negative-valence dopamine
 
-  virtual bool  GetRecvLayers_P(LeabraUnit* u, LeabraLayer*& pospv_lay,
-                                LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,
-                                LeabraLayer*& vspatch_lay, LeabraLayer*& vspatch_d2_lay);
+  virtual bool  GetRecvLayers_P
+    (LeabraUnit* u, LeabraLayer*& pospv_lay, LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,
+     LeabraLayer*& vspatchposd1_lay, LeabraLayer*& vspatchposd2_lay,
+     LeabraLayer*& vspatchnegd1_lay, LeabraLayer*& vspatchnegd2_lay);
     // get the recv layers to VTAp (DA_P case)
   
-  virtual bool  GetRecvLayers_N(LeabraUnit* u, LeabraLayer*& negpv_lay,
-                                LeabraLayer*& pptg_lay_n, LeabraLayer*& lhb_lay,
-                                LeabraLayer*& vspatch_lay_n, LeabraLayer*& vspatch_d1_lay_n);
+  virtual bool  GetRecvLayers_N
+    (LeabraUnit* u, LeabraLayer*& negpv_lay, LeabraLayer*& pptg_lay_n, LeabraLayer*& lhb_lay,
+     LeabraLayer*& vspatchnegd1_lay, LeabraLayer*& vspatchnegd2_lay);
   // get the recv layers to VTAn (DA_N case)
 
   void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
