@@ -49,6 +49,9 @@ public:
   // get the column pointers for given data table (looking up by name)
   virtual void 	ClearColumns();
   // clear column pointers (don't keep these guys hanging around)
+  void  UpdateColIdxs(DataTable* dt_a, DataTable* dt_b)
+  { GetColumns(dt_a, dt_b); ClearColumns(); }
+  // update the column indexes for the current data tables
 
   String GetDisplayName() const override;
   TA_SIMPLE_BASEFUNS(DataJoinSpec);

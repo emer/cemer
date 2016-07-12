@@ -1410,7 +1410,6 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
   if(!src_a) { taMisc::Error("taDataProc::Join: src_a is NULL"); return false; }
   if(!src_b) { taMisc::Error("taDataProc::Join: src_b is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::Join: spec is NULL"); return false; }
-  if((spec->col_a.col_idx < 0) || (spec->col_b.col_idx < 0)) return false;
   bool in_place_req = false;
   GetDest(dest, src_a, "Join", in_place_req);
   if(in_place_req) {

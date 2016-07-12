@@ -590,11 +590,12 @@ void iTreeView::ExpandDefault() {
 }
 
 void iTreeView::GetTreeState_impl(iTreeViewItem* node, String_Array& tree_state) {
-  if (!myProject()) return;
+  taProject* proj = myProject();
+  if (!proj) return;
   
   if (node->isExpanded()) {
     taBase* tab = node->link()->taData();
-    tree_state.Add(tab->GetPathNames());
+    tree_state.Add(tab->GetPath(NULL, proj)); // project-relative path!
   }
   for (int i = 0; i < node->childCount(); ++i) {
     iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(node->child(i));
@@ -605,14 +606,15 @@ void iTreeView::GetTreeState_impl(iTreeViewItem* node, String_Array& tree_state)
 }
 
 void iTreeView::RestoreTreeState_impl(iTreeViewItem* node, String_Array& tree_state) {
-  if (!myProject()) return;
+  taProject* proj = myProject();
+  if (!proj) return;
   if (tree_state.size == 0) return;
   
   bool expand = false;
   if (node) {
     taBase* tab = node->link()->taData();
     if(tab) {
-      String path = tab->GetPathNames(); // this is a bit expensive to compute, cache..
+      String path = tab->GetPath(NULL, proj); // this is a bit expensive to compute, cache..
       for (int i=0; i<tree_state.size; i++) {
         if (path == tree_state.SafeEl(i)) {
           expand = true;

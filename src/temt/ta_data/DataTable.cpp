@@ -2182,6 +2182,24 @@ void DataTable::Reset() {
   StructUpdate(false);
 }
 
+void DataTable::MakeJointStringCol
+(const String& new_col_nm, const Variant& col1, const Variant& col2) {
+  StructUpdate(true);
+  DataCol* da1 = GetColData(col1);
+  if (!da1) return;
+  DataCol* da2 = GetColData(col2);
+  if (!da2) return;
+  DataCol* jcol = NewCol(VT_STRING, new_col_nm);
+  for(int i=0; i<rows; i++) {
+    String val1 = da1->GetValAsString(i);
+    String val2 = da2->GetValAsString(i);
+    String nval;
+    nval << val1 << "_" << val2;
+    jcol->SetValAsString(nval, i);
+  }
+  StructUpdate(false);
+}
+
 void DataTable::ResetData() {  // this permanently deletes all row data!
   if (rows == 0 && rows_total == 0) return; // prevent erroneous m_dm calls
   StructUpdate(true);

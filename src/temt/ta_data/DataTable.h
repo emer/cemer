@@ -531,6 +531,10 @@ public:
   virtual void          SetColumnWidth(const Variant& col, int width_in_pixels);
   // #CAT_Columns set the column width (in pixels)
 
+  virtual void          MakeJointStringCol
+    (const String& new_col_nm, const Variant& col1, const Variant& col2);
+  // #CAT_Columns make a new String column that contains the values of col1 and col2 (which can be any type of scalar columns) concatenated together with an _ in between -- this is particularly useful for creating a column that can be used in a taDataProc::Join operation with another similarly-processed table, so that you can do a joint join on the values across these two columns
+  
   /////////////////////////////////////////////////////////
   // rows
 
