@@ -474,6 +474,8 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
   // #IGNORE add all of the default key/action bindings - these are set in code
   static void   LoadCustomKeyBindings();
   // #IGNORE the custom key/action bindings are loaded from a file
+  static void   ResetKeyBindings();
+  // #IGNORE move the custom key bindings file and create new one with the default values
   static void   DefaultCustomKeyBindings();
   // #IGNORE create a custom key binding file that starts with the default bindings
   static void   UpdateCustomKeyBindings();

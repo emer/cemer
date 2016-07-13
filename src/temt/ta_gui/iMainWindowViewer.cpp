@@ -1125,6 +1125,7 @@ void iMainWindowViewer::Constr_DataMenu() {
 void iMainWindowViewer::Constr_ToolsMenu()
 {
   toolsChooseKeyBindingsAction = AddAction(new iAction(0, "Choose Key Bindings...", QKeySequence(), "toolsChooseKeyBindingsAction"));
+  toolsResetKeyBindingsAction = AddAction(new iAction(0, "Reset Key Bindings...", QKeySequence(), "toolsResetKeyBindingsAction"));
   toolsDiffProjectsAction = AddAction(new iAction(0, "Projects...", QKeySequence(), "toolsDiffProjectsAction"));
   toolsDiffProgramsAction = AddAction(new iAction(0, "Programs...", QKeySequence(), "toolsDiffProgramsAction"));
   toolsDiffDataTablesAction = AddAction(new iAction(0, "Data Tables...", QKeySequence(), "toolsDiffDataTablesAction"));
@@ -1160,6 +1161,7 @@ void iMainWindowViewer::Constr_ToolsMenu()
     diffCompareMenu->AddAction(toolsDiffLayersAction);
     diffCompareMenu->AddAction(toolsDiffSpecsAction);
     toolsMenu->AddAction(toolsChooseKeyBindingsAction);
+    toolsMenu->AddAction(toolsResetKeyBindingsAction);
     toolsMenu->insertSeparator();
     toolsMenu->AddAction(toolsClassReferenceAction);
     toolsMenu->AddAction(toolsTypeInfoReferenceAction);
@@ -1207,6 +1209,8 @@ void iMainWindowViewer::Constr_ToolsMenu()
           this, SLOT(toolsCloseRemoteServer()));
   connect(toolsChooseKeyBindingsAction, SIGNAL(triggered()),
           this, SLOT(toolsChooseKeyBindings()));
+  connect(toolsResetKeyBindingsAction, SIGNAL(triggered()),
+          this, SLOT(toolsResetKeyBindings()));
 }
 
 void iMainWindowViewer::Constr_HelpMenu()
@@ -1288,6 +1292,12 @@ void iMainWindowViewer::toolsChooseKeyBindings() {
   key_bindings_dialog->show();
   key_bindings_dialog->raise();
   key_bindings_dialog->activateWindow();
+}
+
+void iMainWindowViewer::toolsResetKeyBindings() {
+  int chs = taMisc::Choice("Reset all custom key bindings to defaults?", "Ok", "Cancel");
+  if(chs == 1) return;
+  taiMisc::ResetKeyBindings();
 }
 
 void iMainWindowViewer::Find(taiSigLink* root, const String& find_str) {

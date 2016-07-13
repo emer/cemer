@@ -196,6 +196,7 @@ public:
   iAction*            toolsOpenServerAction;
   iAction*            toolsCloseServerAction;
   iAction*            toolsChooseKeyBindingsAction;
+  iAction*            toolsResetKeyBindingsAction;
 
   iAction*            ctrlInitAction;
   iAction*            ctrlRunAction;
@@ -369,6 +370,7 @@ public slots:
   void          toolsDiffLayers();
   void          toolsDiffSpecs();
   void          toolsChooseKeyBindings();
+  void          toolsResetKeyBindings();
   void          toolsTypeInfoBrowser();
   void          toolsHelpBrowser();
   void          toolsSvnBrowserEmergent();

@@ -1468,6 +1468,22 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_WORD_BACKWARD_II, QKeySequence());
 }
 
+void taiMisc::ResetKeyBindings() {
+  String filename = taMisc::GetCustomKeyFilename();
+  String filename_saved = filename + "_saved";
+  
+  QFile saved_file(filename_saved);
+  if (saved_file.exists()) {
+    saved_file.remove(filename_saved);  // get rid of old saved bindings
+  }
+
+  QFile in_file(filename);
+  if (in_file.exists()) {
+    in_file.rename(filename, filename_saved);
+  }
+  LoadCustomKeyBindings();  // this will set create a new file with the default bindings
+}
+
 void taiMisc::LoadCustomKeyBindings() {
   String filename = taMisc::GetCustomKeyFilename();
   QFile in_file(filename);
