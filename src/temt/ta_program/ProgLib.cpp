@@ -22,10 +22,11 @@
 #include <QStringList>
 
 TA_BASEFUNS_CTORS_DEFN(ProgLib);
+TA_BASEFUNS_CTORS_DEFN(ProgLib_List);
 
 
 void ProgLib::Initialize() {
-  not_init = true;
+  init = false;
 }
 
 taBase* ProgLib::NewProgram(ProgLibEl* prog_type, Program_Group* new_owner) {
@@ -37,6 +38,3 @@ taBase* ProgLib::NewProgramFmName(const String& prog_nm, Program_Group* new_owne
   return NewProgram(FindName(prog_nm), new_owner);
 }
 
-bool ProgLib::SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs library) {
-  return false;
-}

@@ -1810,6 +1810,12 @@ void  Program::UpdateProgVars() {
   }
 }
 
+void Program::InitProgLib() {
+  if(!prog_lib->init) {
+    prog_lib->FindPrograms();
+  }
+}
+
 void Program::SaveToProgLib(ProgLib::ProgLibs library) {
   prog_lib->SaveProgToProgLib(this, library);
 }

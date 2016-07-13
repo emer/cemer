@@ -186,15 +186,15 @@ bool VTAUnitSpec::CheckConfig_Unit(Layer* lay, bool quiet) {
                      "did not find LHbRMTg layer projection (looks for LHbRMTgUnitSpec)")) {
       rval = false;
     }
+    if(lay->CheckError(!vspatchnegd2_lay, quiet, rval,
+                     "did not find VSPatch D2 layer projection (looks for MSNUnitSpec AVERSIVE D2R")) {
+      rval = false;
+    }
     if(gains.pvi_anti_burst_shunt_gain > 0.0f) {
       if(lay->CheckError(!vspatchnegd1_lay, quiet, rval,
                          "did not find VSPatch D1 layer projection (looks for MSNUnitSpec AVERSIVE D1R)")) {
         rval = false;
       }
-    }
-    if(lay->CheckError(!vspatchnegd2_lay, quiet, rval,
-                     "did not find VSPatch D2 layer projection (looks for MSNUnitSpec AVERSIVE D2R")) {
-      rval = false;
     }
   }
   return rval;
@@ -299,23 +299,43 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   float pptg_da_p = pptg_lay_p->acts_eq.avg * pptg_lay_p->units.size;
   float lhb_da = lhb_lay->acts_eq.avg * lhb_lay->units.size;
   float pospv = pospv_lay->acts_eq.avg * pospv_lay->units.size;
-  float vspospvi;
+  float vspospvi = 0.0f;
   if(da.patch_cur) {
-    vspospvi = (gains.pvi_burst_shunt_gain * vspatchposd1_lay->GetTotalActEq()) -
+    if(gains.pvi_anti_burst_shunt_gain > 0.0f) {
+      vspospvi = (gains.pvi_burst_shunt_gain * vspatchposd1_lay->GetTotalActEq()) -
         (gains.pvi_anti_burst_shunt_gain * vspatchposd2_lay->GetTotalActEq());
+    }
+    else {
+      vspospvi = gains.pvi_burst_shunt_gain * vspatchposd1_lay->GetTotalActEq();
+    }
   }
   else {
-    vspospvi = (gains.pvi_burst_shunt_gain * vspatchposd1_lay->GetTotalActQ0()) -
-      (gains.pvi_anti_burst_shunt_gain * vspatchposd2_lay->GetTotalActQ0());
+    if(gains.pvi_anti_burst_shunt_gain > 0.0f) {
+      vspospvi = (gains.pvi_burst_shunt_gain * vspatchposd1_lay->GetTotalActQ0()) -
+        (gains.pvi_anti_burst_shunt_gain * vspatchposd2_lay->GetTotalActQ0());
+    }
+    else {
+      vspospvi = gains.pvi_burst_shunt_gain * vspatchposd1_lay->GetTotalActQ0();
+    }
   }
-  float vsnegpvi;
+  float vsnegpvi = 0.0f;
   if(da.patch_cur) {
-    vsnegpvi = (gains.pvi_dip_shunt_gain * vspatchnegd2_lay->GetTotalActEq()) -
+    if(gains.pvi_dip_shunt_gain > 0.0f && gains.pvi_anti_dip_shunt_gain > 0.0f) {
+      vsnegpvi = (gains.pvi_dip_shunt_gain * vspatchnegd2_lay->GetTotalActEq()) -
         (gains.pvi_anti_dip_shunt_gain * vspatchnegd1_lay->GetTotalActEq());
+    }
+    else if(gains.pvi_dip_shunt_gain > 0.0f) {
+      vsnegpvi = gains.pvi_dip_shunt_gain * vspatchnegd2_lay->GetTotalActEq();
+    }
   }
   else {
-    vsnegpvi = (gains.pvi_dip_shunt_gain * vspatchnegd2_lay->GetTotalActQ0()) -
-      (gains.pvi_anti_dip_shunt_gain * vspatchnegd1_lay->GetTotalActQ0());
+    if(gains.pvi_dip_shunt_gain > 0.0f && gains.pvi_anti_dip_shunt_gain > 0.0f) {
+      vsnegpvi = (gains.pvi_dip_shunt_gain * vspatchnegd2_lay->GetTotalActQ0()) -
+        (gains.pvi_anti_dip_shunt_gain * vspatchnegd1_lay->GetTotalActQ0());
+    }
+    else if(gains.pvi_dip_shunt_gain > 0.0f) {
+      vsnegpvi = gains.pvi_dip_shunt_gain * vspatchnegd2_lay->GetTotalActQ0();
+    }
   }
 
   float burst_lhb_da = MIN(lhb_da, 0.0f); // if neg, promotes bursting
@@ -381,14 +401,24 @@ void VTAUnitSpec::Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
   float pptg_da_n = pptg_lay_n->acts_eq.avg * pptg_lay_n->units.size;
   float lhb_da_n = lhb_lay_n->acts_eq.avg * lhb_lay_n->units.size;
 
-  float vspvi_n;
+  float vspvi_n = 0.0f;
   if(da.patch_cur) {
-    vspvi_n = (gains.pvi_burst_shunt_gain * vspatchnegd2_lay->GetTotalActEq()) -
-      (gains.pvi_anti_burst_shunt_gain * vspatchnegd1_lay->GetTotalActEq());
+    if(gains.pvi_anti_burst_shunt_gain > 0.0f) {
+      vspvi_n = (gains.pvi_burst_shunt_gain * vspatchnegd2_lay->GetTotalActEq()) -
+        (gains.pvi_anti_burst_shunt_gain * vspatchnegd1_lay->GetTotalActEq());
+    }
+    else {
+      vspvi_n = gains.pvi_burst_shunt_gain * vspatchnegd2_lay->GetTotalActEq();
+    }
   }
   else {
-    vspvi_n = (gains.pvi_burst_shunt_gain * vspatchnegd2_lay->GetTotalActQ0()) -
-      (gains.pvi_anti_burst_shunt_gain * vspatchnegd1_lay->GetTotalActQ0());
+    if(gains.pvi_anti_burst_shunt_gain > 0.0f) {
+      vspvi_n = (gains.pvi_burst_shunt_gain * vspatchnegd2_lay->GetTotalActQ0()) -
+        (gains.pvi_anti_burst_shunt_gain * vspatchnegd1_lay->GetTotalActQ0());
+    }
+    else {
+      vspvi_n = gains.pvi_burst_shunt_gain * vspatchnegd2_lay->GetTotalActQ0();
+    }
   }
   float burst_lhb_da_n = MAX(lhb_da_n, 0.0f); // if pos, promotes bursting
   float dip_lhb_da_n = MIN(lhb_da_n, 0.0f);   // else, promotes dipping

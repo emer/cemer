@@ -27,23 +27,21 @@
 taTypeDef_Of(WikiProgLib);
 
 class TA_API WikiProgLib : public ProgLib {
-  // <describe here in full detail in one extended line comment>
+  // program library for programs located on a wiki
 INHERITED(ProgLib)
 public:
-  WikiProgLib(String wiki_url, String lib_name);
-  void  FindPrograms() override;         // search paths to find all available programs
-  taBase* NewProgram(ProgLibEl* prog_type, Program_Group* new_owner);
+  String   wiki_name;            // name of wiki -- looked up in taMisc::wiki_url's
 
-  taBase* NewProgramFmName(const String& prog_nm, Program_Group* new_owner);
-  // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found); new_owner is group where program will be created
-  bool SaveProgToProgLib(Program* prg, ProgLibs library) override;
-  bool SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs library);
+  void  FindPrograms() override;
+  bool  SaveProgToProgLib(Program* prg, ProgLibs library) override;
+  bool  SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs library) override;
 
-
+  virtual String        GetLocalCacheDir();
+  // get the local file cache dir for programs downloaded from this wiki
+  
+  WikiProgLib(const String& wiki_name, const String& lib_name);
   TA_SIMPLE_BASEFUNS(WikiProgLib);
 private:
-  String wiki_url;
-  String lib_name;
   void Initialize();
   void Destroy()     { };
 };

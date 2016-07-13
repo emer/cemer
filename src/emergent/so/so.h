@@ -26,7 +26,8 @@
 
 class SoCon;
 class SoConSpec;
-class SoRecvCons;
+class SoConGroup;
+class SoUnitVars;
 class SoUnit;
 class SoUnitSpec;
 class SoLayer;
@@ -62,7 +63,7 @@ public:
   AvgInActSource avg_act_source; // source of average input actviation value
 
 
-  inline void   Init_dWt(ConGroup* cg, Unit* un, Network* net) override {
+  inline void   Init_dWt(ConGroup* cg, Network* net, int thr_no) override {
     float* dwts = cg->OwnCnVar(DWT);
     float* pdws = cg->OwnCnVar(PDW);
     for(int i=0; i<cg->size; i++) {
@@ -71,8 +72,8 @@ public:
     }
   }
 
-  inline void   Init_Weights(ConGroup* cg, Unit* un, Network* net) override {
-    Init_Weights_symflag(net);
+  inline void   Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
+    Init_Weights_symflag(net, thr_no);
     if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
 
     float* wts = cg->OwnCnVar(WT);
@@ -88,16 +89,13 @@ public:
     }
   }
 
-  inline void    B_Init_dWt(RecvCons* cg, Unit* ru, Network* net) override {
-    C_Init_dWt(cg->OwnCn(0, ConGroup::DWT));
-    cg->OwnCn(0, PDW) = 0.0f;
-  }
+  inline void   B_Init_dWt(UnitVars* ru, Network* net, int thr_no) override;
 
   inline void	C_Compute_Weights(float& wt, float& dwt, float& pdw)
   { pdw = dwt;  wt += lrate * dwt;  dwt = 0.0f; }
-  inline void	Compute_Weights(ConGroup* cg, Unit* ru, Network* net);
+  inline void	Compute_Weights(ConGroup* cg, Network* net, int thr_no);
 
-  inline virtual void	Compute_AvgInAct(SoRecvCons* cg, SoUnit* ru, SoNetwork* net);
+  inline virtual void	Compute_AvgInAct(SoConGroup* cg, SoNetwork* net, int thr_no);
   // compute the average input activation 
 
   void	InitLinks();
@@ -108,43 +106,14 @@ private:
   void	Destroy()		{ };
 };
 
-eTypeDef_Of(SoRecvCons);
+eTypeDef_Of(SoConGroup);
 
-class E_API SoRecvCons : public RecvCons {
+class E_API SoConGroup : public ConGroup {
   // #STEM_BASE ##CAT_So self-organizing connection group
-INHERITED(RecvCons)
+INHERITED(ConGroup)
 public:
   float		avg_in_act;	// average input activation
   float		sum_in_act;	// summed input activation
-
-  void		Compute_AvgInAct(SoUnit* ru, SoNetwork* net)
-  { ((SoConSpec*)GetConSpec())->Compute_AvgInAct(this, ru, net); }
-  // compute the average (and sum) input activation
-
-  TypeDef*      DefaultConType() override
-  { return &TA_SoCon; }
-
-  void	Copy_(const SoRecvCons& cp);
-  TA_BASEFUNS(SoRecvCons);
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-};
-
-eTypeDef_Of(SoSendCons);
-
-class E_API SoSendCons : public SendCons {
-  // #STEM_BASE ##CAT_So group of self-organizing sending connections
-INHERITED(SendCons)
-public:
-
-  TypeDef*      DefaultConType() override
-  { return &TA_SoCon; }
-
-  TA_BASEFUNS_NOCOPY(SoSendCons);
-private:
-  void	Initialize();
-  void 	Destroy()		{ };
 };
 
 eTypeDef_Of(SoUnitSpec);
@@ -153,10 +122,10 @@ class E_API SoUnitSpec : public UnitSpec {
   // #STEM_BASE ##CAT_So generic self-organizing unit spec: linear act of std dot-product netin
 INHERITED(UnitSpec)
 public:
-  void	Init_Acts(Unit* u, Network* net) override;
-  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	Init_Acts(UnitVars* u, Network* net, int thr_no) override;
+  void	Compute_Act(UnitVars* u, Network* net, int thr_no) override;
 
-  virtual void	Compute_AvgInAct(SoUnit* u, SoNetwork* net);
+  virtual void	Compute_AvgInAct(SoUnitVars* u, SoNetwork* net, int thr_no);
   // compute average input activations
   virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0);
   // #BUTTON #NULL_OK graph the activation function (NULL = new graph data)
@@ -176,7 +145,7 @@ INHERITED(SoUnitSpec)
 public:
   float		threshold;
 
-  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_Act(UnitVars* u, Network* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(ThreshLinSoUnitSpec);
 private:
@@ -184,20 +153,46 @@ private:
   void	Destroy()	{ };
 };
   
+eTypeDef_Of(SoUnitVars);
+
+class E_API SoUnitVars : public UnitVars {
+  // #STEM_BASE ##CAT_So generic self-organizing unit variables
+INHERITED(UnitVars)
+public:
+  float		bias_pdw;
+  // #NO_SAVE the previous delta-weight (for momentum), bias
+  float		act_i;
+  // #VIEW_HOT independent activation of the unit (before layer-level rescaling)
+};
+
+
 eTypeDef_Of(SoUnit);
 
 class E_API SoUnit : public Unit {
   // #STEM_BASE ##CAT_So generic self-organizing unit
 INHERITED(Unit)
 public:
-  float		act_i;
-  //  #VIEW_HOT independent activation of the unit (before layer-level rescaling)
+  inline UnitVars::ExtFlags ext_flag() { return GetUnitVars()->ext_flag; }
+  // #CAT_UnitVar external input flags -- determines whether the unit is receiving an external input (EXT), target (TARG), or comparison value (COMP)
+  inline float& targ()  { return GetUnitVars()->targ; }
+  // #VIEW_HOT #CAT_UnitVar target value: drives learning to produce this activation value
+  inline float& ext()   { return GetUnitVars()->ext; }
+  // #VIEW_HOT #CAT_UnitVar external input: drives activation of unit from outside influences (e.g., sensory input)
+  inline float& act()   { return GetUnitVars()->act; }
+  // #VIEW_HOT #CAT_UnitVar activation value -- what the unit communicates to others
+  inline float& net()   { return GetUnitVars()->net; }
+  // #VIEW_HOT #CAT_UnitVar net input value -- what the unit receives from others  (typically sum of sending activations times the weights)
+  inline float& bias_wt() { return GetUnitVars()->bias_wt; }
+  // #VIEW_HOT #CAT_UnitVar bias weight value -- the bias weight acts like a connection from a unit that is always active with a constant value of 1 -- reflects intrinsic excitability from a biological perspective
+  inline float& bias_dwt() { return GetUnitVars()->bias_dwt; }
+  // #VIEW_HOT #CAT_UnitVar change in bias weight value as computed by a learning mechanism
 
-  void		Compute_AvgInAct(SoNetwork* net)
-  { ((SoUnitSpec*)GetUnitSpec())->Compute_AvgInAct(this, net); }
+  inline float& bias_pdw() { return ((SoUnitVars*)GetUnitVars())->bias_pdw; }
+  // #VIEW_HOT #CAT_UnitVar the previous delta-weight (for momentum), bias
+  inline float& act_i() { return ((SoUnitVars*)GetUnitVars())->act_i; }
+  // #VIEW_HOT #CAT_UnitVar independent activation of the unit (before layer-level rescaling)
 
-  void Copy_(const SoUnit& cp) { act_i = cp.act_i; }
-  TA_BASEFUNS(SoUnit);
+  TA_BASEFUNS_NOCOPY(SoUnit);
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -242,10 +237,10 @@ class E_API SoLayer : public Layer {
   // #STEM_BASE ##CAT_So generic self-organizing layer
 INHERITED(Layer)
 public:
-  SoLayerSpec_SPtr	spec;	// the spec for this layer
+  SoLayerSpec_SPtr spec;	// the spec for this layer
   float		avg_act;	// average activation over layer
   float		sum_act;	// summed activation over layer
-  Unit*		winner;		// #READ_ONLY #NO_SAVE winning unit
+  UnitVars*	winner;		// #READ_ONLY #NO_SAVE winning unit
 
   void	Compute_Act_post(SoNetwork* net) { spec->Compute_Act_post(this, net); }
   void	Compute_AvgAct(SoNetwork* net)	{ spec->Compute_AvgAct(this, net); }
@@ -309,15 +304,20 @@ private:
 //	Inline Functions	//
 //////////////////////////////////
 
-inline void SoConSpec::Compute_Weights(ConGroup* cg, Unit* ru, Network* net) {
+inline void SoConSpec::B_Init_dWt(UnitVars* ru, Network* net, int thr_no) {
+  C_Init_dWt(ru->bias_dwt);
+  ((SoUnitVars*)ru)->bias_pdw = 0.0f;
+}
+
+inline void SoConSpec::Compute_Weights(ConGroup* cg, Network* net, int thr_no) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
   float* pdws = cg->OwnCnVar(PDW);
   CON_GROUP_LOOP(cg, C_Compute_Weights(wts[i], dwts[i], pdws[i]));
-  ApplyLimits(cg, ru, net);
+  ApplyLimits(cg, net, thr_no);
 }
 
-inline void SoConSpec::Compute_AvgInAct(SoRecvCons* cg, SoUnit*, SoNetwork* net) {
+inline void SoConSpec::Compute_AvgInAct(SoConGroup* cg, SoNetwork* net, int thr_no) {
   if(avg_act_source == LAYER_AVG_ACT) {
     cg->avg_in_act = ((SoLayer*)cg->prjn->from.ptr())->avg_act;
     cg->sum_in_act = ((SoLayer*)cg->prjn->from.ptr())->sum_act;
@@ -326,7 +326,7 @@ inline void SoConSpec::Compute_AvgInAct(SoRecvCons* cg, SoUnit*, SoNetwork* net)
     float sum = 0.0f;
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
-      sum += cg->Un(i,net)->act;
+      sum += cg->UnVars(i,net)->act;
     }
     cg->sum_in_act = sum;
     cg->avg_in_act = sum / (float)cg->size;
@@ -347,10 +347,11 @@ public:
   inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act) 
   { dwt += ru_act * su_act; }
 
-  inline void 	Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
+  inline void 	Compute_dWt(ConGroup* cg, Network* net, int thr_no) {
+    SoUnitVars* ru = (SoUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     float* dwts = cg->OwnCnVar(DWT);
     const float ru_act = ru->act;
-    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act));
+    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->UnVars(i,net)->act));
   }
   // compute weight change according to simple hebb function
 

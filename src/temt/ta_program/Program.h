@@ -312,13 +312,15 @@ public:
   virtual void          Reset();
   // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE #CONFIRM #CAT_Code reset (remove) all program elements -- typically in preparation for loading a new program over this one
 
+  virtual void          InitProgLib();
+  // initialize the program library -- find all the programs -- called just-in-time when needed
   virtual void          SaveToProgLib(ProgLib::ProgLibs library = ProgLib::USER_LIB);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #CAT_ProgLib save the program to given program library -- file name = object name -- be sure to add good desc comments!!
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #PRE_CALL_InitProgLib #CAT_ProgLib save the program to given program library -- file name = object name -- be sure to add good desc comments -- USER_LIB: user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent prog_lib), SYSTEM_LIB: local system library, installed with software, in /usr/share/Emergent/prog_lib, WEB_APP_LIB: web-based application-specific library (e.g., emergent, WEB_SCI_LIB: web-based scientifically oriented library (e.g., CCN), WEB_USER_LIB: web-based user's library (e.g., from lab wiki)
  
   virtual void          UpdateFromProgLib(ProgLibEl* prog_type);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib #ARG_VAL_FM_FUN #CAT_ProgLib (re)load the program from the program library element of given type
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib #ARG_VAL_FM_FUN #PRE_CALL_InitProgLib #CAT_ProgLib (re)load the program from the program library element of given type
   taBase*               AddFromProgLib(ProgLibEl* prog_type) ;
-  // #BUTTON #MENU_CONTEXT #FROM_LIST_prog_lib #NO_SAVE_ARG_VAL #CAT_Program adds a program from a library of existing program types
+  // #BUTTON #MENU_CONTEXT #FROM_LIST_prog_lib #NO_SAVE_ARG_VAL #PRE_CALL_InitProgLib #CAT_Program adds a program from a library of existing program types
   
   virtual void          RunLoadInitCode();
   // #CAT_Run Run the initialization code for object pointer variables and program calls -- to resolve pointers after loading

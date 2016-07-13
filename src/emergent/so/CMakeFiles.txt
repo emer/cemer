@@ -10,7 +10,7 @@
 
 # all headers that need maketa run on them
 set(so_HEADS_MAKETA
-#    so.h
+    so.h
 #    som.h
 #    cl.h
 #    zsh.h
@@ -19,7 +19,7 @@ set(so_HEADS_MAKETA
 
 # all heads -- include maketa generated ones here
 set(so_HEADS
-#    so.h
+    so.h
 #    som.h
 #    cl.h
 #    zsh.h
@@ -29,7 +29,7 @@ set(so_HEADS
 # all source files to compile: NOTE: do NOT include .moc files -- auto generated
 # but DO include _TA.cpp files
 set(so_SRCS
-#    so.cpp
+    so.cpp
 #    som.cpp
 #    cl.cpp
 #    zsh.cpp

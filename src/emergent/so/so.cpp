@@ -21,8 +21,6 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(SoConSpec);
-TA_BASEFUNS_CTORS_DEFN(SoRecvCons);
-TA_BASEFUNS_CTORS_DEFN(SoSendCons);
 TA_BASEFUNS_CTORS_DEFN(SoUnitSpec);
 TA_BASEFUNS_CTORS_DEFN(SoUnit);
 TA_BASEFUNS_CTORS_DEFN(SoLayer);
@@ -87,21 +85,6 @@ void SoConSpec::InitLinks() {
   children.el_typ = GetTypeDef(); // but make the default to be me!
 }
 
-void SoRecvCons::Initialize() {
-  SetConType(&TA_SoCon);
-  avg_in_act = 0.0f;
-  sum_in_act = 0.0f;
-}
-
-void SoRecvCons::Copy_(const SoRecvCons& cp) {
-  avg_in_act = cp.avg_in_act;
-  sum_in_act = cp.sum_in_act;
-}
-
-void SoSendCons::Initialize() {
-  SetConType(&TA_SoCon);
-}
-
 void HebbConSpec::Initialize() {
   wt_limits.min = -1.0f;
   wt_limits.max = 1.0f;
@@ -121,24 +104,25 @@ void SoUnitSpec::InitLinks() {
   children.el_typ = GetTypeDef(); // but make the default to be me!
 }
 
-void SoUnitSpec::Init_Acts(Unit* u, Network* net) {
-  inherited::Init_Acts(u, net);
-  ((SoUnit*)u)->act_i = 0.0f;
+void SoUnitSpec::Init_Acts(UnitVars* u, Network* net, int thr_no) {
+  inherited::Init_Acts(u, net, thr_no);
+  ((SoUnitVars*)u)->act_i = 0.0f;
 }
 
-void SoUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
+void SoUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
   // simple linear function
-  if(u->ext_flag & Unit::EXT)
+  if(u->ext_flag & UnitVars::EXT)
     u->act = u->ext;
   else
     u->act = u->net;
 }
 
-void SoUnitSpec::Compute_AvgInAct(SoUnit* u, SoNetwork* net) {
-  FOREACH_ELEM_IN_LIST(SoRecvCons, recv_gp, u->recv) {
-    if (!recv_gp->prjn->from->lesioned()) {
-      recv_gp->Compute_AvgInAct(u, net);
-    }
+void SoUnitSpec::Compute_AvgInAct(SoUnitVars* u, SoNetwork* net, int thr_no) {
+  const int nrcg = net->ThrUnNRecvConGps(thr_no, u->thr_un_idx);
+  for(int g=0; g<nrcg; g++) {
+    SoConGroup* rgp = (SoConGroup*)net->ThrUnRecvConGroup(thr_no, u->thr_un_idx, g);
+    if(rgp->NotActive()) continue;
+    ((SoConSpec*)rgp->con_spec)->Compute_AvgInAct(rgp, net, thr_no);
   }
 }
 
@@ -153,11 +137,11 @@ void SoUnitSpec::GraphActFun(DataTable* graph_data, float min, float max) {
   DataCol* netin = graph_data->FindMakeColName("Netin", idx, VT_FLOAT);
   DataCol* act = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
 
-  SoUnit un;
+  SoUnitVars un;
   float x;
   for(x = min; x <= max; x += .01f) {
     un.net = x;
-    Compute_Act(&un, NULL);
+    Compute_Act(&un, NULL, 0);
     graph_data->AddBlankRow();
     netin->SetValAsFloat(x, -1);
     act->SetValAsFloat(un.act, -1);
@@ -170,15 +154,14 @@ void ThreshLinSoUnitSpec::Initialize() {
   threshold = 0.0f;
 }
 
-void ThreshLinSoUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
-  if(u->ext_flag & Unit::EXT)
+void ThreshLinSoUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
+  if(u->ext_flag & UnitVars::EXT)
     u->act = u->ext;
   else
     u->act = (u->net > threshold) ? (u->net - threshold) : 0.0f;
 }
 
 void SoUnit::Initialize() {
-  act_i = 0.0f;
 }
 
 //////////////////////////
@@ -196,11 +179,11 @@ SoUnit* SoLayerSpec::FindMaxNetIn(SoLayer* lay) {
   SoUnit* max_val_u = NULL;
   FOREACH_ELEM_IN_GROUP(SoUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    u->act = uspec->act_range.min;
-    u->act_i = uspec->act_range.min;
-    if(u->net > max_val) {
+    u->act() = uspec->act_range.min;
+    u->act_i() = uspec->act_range.min;
+    if(u->net() > max_val) {
       max_val_u = u;
-      max_val = u->net;
+      max_val = u->net();
     }
   }
   return max_val_u;
@@ -212,11 +195,11 @@ SoUnit* SoLayerSpec::FindMinNetIn(SoLayer* lay) {
   SoUnit* min_val_u = NULL;
   FOREACH_ELEM_IN_GROUP(SoUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    u->act = uspec->act_range.min;
-    u->act_i = uspec->act_range.min;
-    if(u->net < min_val) {
+    u->act() = uspec->act_range.min;
+    u->act_i() = uspec->act_range.min;
+    if(u->net() < min_val) {
       min_val_u = u;
-      min_val = u->net;
+      min_val = u->net();
     }
   }
   return min_val_u;
@@ -233,11 +216,12 @@ void SoLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
 }
 
 void SoLayerSpec::Compute_AvgAct(SoLayer* lay, SoNetwork* net) {
+  // todo: this could be done faster as in Leabra, but..
   lay->sum_act = 0.0f;
   if(lay->units.leaves == 0)    return;
   FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
     if(u->lesioned()) continue;
-    lay->sum_act += u->act;
+    lay->sum_act += u->act();
   }
   lay->avg_act = lay->sum_act / (float)lay->units.leaves;
 }
@@ -291,7 +275,7 @@ void SoftMaxLayerSpec::Initialize() {
 }
 
 void SoftMaxLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
-  if(lay->ext_flag & Unit::EXT) { // input layer
+  if(lay->ext_flag & UnitVars::EXT) { // input layer
     SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
@@ -301,14 +285,14 @@ void SoftMaxLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
   float sum = 0.0f;
   FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
     if(u->lesioned()) continue;
-    u->act = expf(softmax_gain * u->net); // e to the net
-    sum += u->act;
+    u->act() = expf(softmax_gain * u->net()); // e to the net
+    sum += u->act();
   }
 
   if(sum > 0.0f) {
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
       if(u->lesioned()) continue;
-      u->act = uspec->act_range.Project(u->act / sum);
+      u->act() = uspec->act_range.Project(u->act() / sum);
       // normalize by sum, rescale to act range range
     }
   }
@@ -323,6 +307,8 @@ void SoftMaxLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
 
 void SoNetwork::Initialize() {
   layers.SetBaseType(&TA_SoLayer);
+  unit_vars_type = &TA_SoUnitVars;
+  con_group_type = &TA_SoConGroup;
 }
 
 void SoNetwork::BuildNullUnit() {
@@ -334,26 +320,12 @@ void SoNetwork::BuildNullUnit() {
 void SoNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   inherited::SetProjectionDefaultTypes(prjn);
   prjn->con_type = &TA_SoCon;
-  prjn->recvcons_type = &TA_SoRecvCons;
-  prjn->sendcons_type = &TA_SoSendCons;
   prjn->con_spec.SetBaseType(&TA_SoConSpec);
   prjn->con_spec.type = &TA_HebbConSpec;
 }
 
 void SoNetwork::Compute_NetinAct() {
-  // important note: any algorithms using this for feedforward computation are not
-  // compatible with dmem computation on the network level (over connections)
-  // because otherwise the netinput needs to be sync'd at the layer level prior to calling
-  // the activation function at the layer level.  Threading should be much faster than
-  // dmem in general so this takes precidence.  See BpNetwork::UpdateAfterEdit_impl for
-  // a warning message that should be included.
-  ThreadUnitCall un_call(&Unit::Compute_NetinAct);
-  threads.Run(&un_call, false, true); // backwards = false, layer_sync=true
-
-  // Important note: the Compute_Act_post call will NOT obey the cascade dynamic
-  // so anything relying on that (e.g., multilayer nets) will not work!  hmm.
-  // may need to change this to a pure non-thread call, or add a layer-level
-  // callback to occur with layer_sync mode
+  inherited::Compute_NetinAct();
   FOREACH_ELEM_IN_GROUP(SoLayer, lay, layers) {
     lay->Compute_Act_post(this);
   }

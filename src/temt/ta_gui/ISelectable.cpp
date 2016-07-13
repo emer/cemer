@@ -258,7 +258,7 @@ void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
   if (ea == 0)
     return;
   
-  int kb_set = (static_cast<int>(taMisc::current_key_bindings));
+  int kb_set = taMisc::current_key_bindings; // enums are automatically int's right?  don't need a static cast here..
 
   if (menu->count() > 0)
     menu->AddSep();

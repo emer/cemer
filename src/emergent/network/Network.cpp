@@ -925,7 +925,11 @@ void Network::InitUnitConGpThreadMem(int thr_no) {
 
     UnitSpec* us = un->GetUnitSpec();
     if(!us)
-      us = lay->GetUnitSpec();  // shouldn't happen but does..
+      us = lay->GetUnitSpec();  // shouldn't happen..
+    if(!us) {
+      taMisc::Error("unit spec is null in network initialization -- typically programmer error due to not setting unit_vars_type properly!  stuff will probably crash now..");
+      return;
+    }
     UnitVars* uv = ThrUnitVars(thr_no, i);
     uv->unit_spec = us;
     uv->thr_un_idx = i;

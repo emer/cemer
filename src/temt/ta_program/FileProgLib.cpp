@@ -17,19 +17,22 @@
 #include <NameVar>
 #include <taMisc>
 #include <Program>
+#include <Program_Group>
 
 #include <QDir>
 #include <QStringList>
 
 TA_BASEFUNS_CTORS_DEFN(FileProgLib);
 
-FileProgLib::FileProgLib(String path, String lib_name) {
-  this->path = path;
-  this->lib_name = lib_name;
+FileProgLib::FileProgLib(const String& pth, const String& lib)
+  : inherited(false)
+  , path(pth)
+{
+  Initialize__(true);
+  name = lib;
 }
 
 void FileProgLib::Initialize() {
-  not_init = true;
 }
 
 void FileProgLib::FindPrograms() {
@@ -40,43 +43,61 @@ void FileProgLib::FindPrograms() {
     String fl = files[i];
     if(!fl.contains(".prog")) continue;
     ProgLibEl* pe = new ProgLibEl;
-    pe->lib_name = lib_name;
+    pe->lib_name = name;
     if(pe->ParseProgFile(fl, path))
       Add(pe);
     else
       delete pe;
   }
-  not_init = false;
+  init = true;
 }
 
-taBase* FileProgLib::NewProgram(ProgLibEl* prog_type, Program_Group* new_owner) {
-  if(prog_type == NULL) return NULL;
-  return prog_type->NewProgram(new_owner);
-}
-
-taBase* FileProgLib::NewProgramFmName(const String& prog_nm, Program_Group* new_owner) {
-  return NewProgram(FindName(prog_nm), new_owner);
-}
-
-bool FileProgLib::SaveProgGrpToProgLib(Program_Group* prg_grp) {
-  return false;
-}
-
-bool FileProgLib::SaveProgToProgLib(Program* prg,  ProgLib::ProgLibs library) {
+bool FileProgLib::SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs library) {
   QFileInfo qfi(path);
   if(!qfi.isDir()) {
     QDir qd;
     qd.mkpath(path);          // attempt to make it..
     taMisc::Warning("Note: did mkdir for program library directory:", path);
   }
-  String fname = path + "/" + prg->name + ".prog";
-  QFileInfo qfi2(fname);
+  String fname = prg_grp->name + ".progp";
+  String fpath = path + PATH_SEP + fname;
+  QFileInfo qfi2(fpath);
   if(qfi2.isFile()) {
-    int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",
+    int chs = taMisc::Choice("Program group library file: " + fpath + " already exists: Overwrite?",
                              "Ok", "Cancel");
     if(chs == 1) return false;
   }
-  prg->SaveAs(fname);
-  FindPrograms();
-  return false;
+  prg_grp->SaveAs(fpath);
+  ProgLibEl* pe = new ProgLibEl;
+  pe->lib_name = name;
+  if(pe->ParseProgFile(fname, path))
+    AddUniqNameNew(pe);
+  else
+    delete pe;
+  return true;
+}
+
+bool FileProgLib::SaveProgToProgLib(Program* prg, ProgLibs library) {
+  QFileInfo qfi(path);
+  if(!qfi.isDir()) {
+    QDir qd;
+    qd.mkpath(path);          // attempt to make it..
+    taMisc::Warning("Note: did mkdir for program library directory:", path);
+  }
+  String fname = prg->name + ".prog";
+  String fpath = path + PATH_SEP + fname;
+  QFileInfo qfi2(fpath);
+  if(qfi2.isFile()) {
+    int chs = taMisc::Choice("Program library file: " + fpath + " already exists: Overwrite?",
+                             "Ok", "Cancel");
+    if(chs == 1) return false;
+  }
+  prg->SaveAs(fpath);
+  ProgLibEl* pe = new ProgLibEl;
+  pe->lib_name = name;
+  if(pe->ParseProgFile(fname, path))
+    AddUniqNameNew(pe);
+  else
+    delete pe;
+  return true;
 }

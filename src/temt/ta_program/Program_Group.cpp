@@ -24,10 +24,9 @@
 TA_BASEFUNS_CTORS_DEFN(Program_Group);
 SMARTREF_OF_CPP(Program_Group); // Program_GroupRef
 
-
-
 using namespace std;
 
+CollectionProgLib Program_Group::prog_lib;
 
 void Program_Group::Initialize() {
   SetBaseType(&TA_Program);
@@ -37,10 +36,6 @@ void Program_Group::Initialize() {
 void Program_Group::InitLinks() {
   inherited::InitLinks();
   taBase::Own(step_prog, this);
-  if(prog_lib.not_init) {
-    taBase::Ref(prog_lib);
-    prog_lib.FindPrograms();
-  }
 }
 
 void Program_Group::CutLinks() {
@@ -62,7 +57,11 @@ void Program_Group::SetProgsStale() {
   }
 }
 
-CollectionProgLib Program_Group::prog_lib;
+void Program_Group::InitProgLib() {
+  if(!prog_lib.init) {
+    prog_lib.FindPrograms();
+  }
+}
 
 taBase* Program_Group::AddFromProgLib(ProgLibEl* prog_type) {
   return prog_lib.NewProgram(prog_type, this);

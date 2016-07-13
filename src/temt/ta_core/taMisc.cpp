@@ -350,6 +350,9 @@ String  taMisc::custom_key_file;
 String  taMisc::web_home = "https://grey.colorado.edu/emergent/index.php/Main_Page";
 String  taMisc::web_help_wiki = "emergent";
 String  taMisc::web_help_general = "https://grey.colorado.edu/emergent/index.php/User_hub";
+String  taMisc::plib_app_wiki = "emergent";
+String  taMisc::plib_sci_wiki = "CCN";
+String  taMisc::plib_user_wiki;
 
 NamedURL        taMisc::wiki1_url("emergent", "https://grey.colorado.edu/emergent");
 NamedURL        taMisc::wiki2_url("CCN", "https://grey.colorado.edu/CompCogNeuro");
@@ -1671,12 +1674,16 @@ void taMisc::Init_Defaults_PostLoadConfig() {
   css_include_paths.AddUnique(user_app_dir); // for .init files in user app dir
   css_include_paths.AddUnique(user_dir); // needed for .init files **DEPRECATED**
 
-  prog_lib_paths.AddUnique(NameVar("SystemLib",
-    (Variant)(app_dir + PATH_SEP + "prog_lib")));
   prog_lib_paths.AddUnique(NameVar("UserLib",
     (Variant)(user_app_dir + PATH_SEP + "prog_lib")));
-  prog_lib_paths.AddUnique(NameVar("WebLib",
-    (Variant)(web_home + "/prog_lib"))); //note: urls always use '/'
+  prog_lib_paths.AddUnique(NameVar("SystemLib",
+    (Variant)(app_dir + PATH_SEP + "prog_lib")));
+  prog_lib_paths.AddUnique(NameVar("WebAppLib",
+    (Variant)(user_app_dir + PATH_SEP + "web_app_prog_lib")));
+  prog_lib_paths.AddUnique(NameVar("WebSciLib",
+    (Variant)(user_app_dir + PATH_SEP + "web_sci_prog_lib")));
+  prog_lib_paths.AddUnique(NameVar("WebUserLib",
+    (Variant)(user_app_dir + PATH_SEP + "web_user_prog_lib")));
 
   proj_template_paths.AddUnique(NameVar("SystemLib",
     (Variant)(app_dir + PATH_SEP + "proj_templates")));

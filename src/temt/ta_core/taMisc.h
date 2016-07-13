@@ -338,7 +338,7 @@ public:
   static KeyBindings_List* key_binding_lists;   // #NO_SAVE #NO_SHOW a list of key binding sets; each set has bindings for various contexts (for shortcuts and keyPressEvent)
 #endif
 
-  static KeyBindingSet  current_key_bindings;  // #SAVE the user has a choice of key bindings - custom or detault
+  static KeyBindingSet  current_key_bindings;  // #NO_SAVE #HIDDEN key bindings are always set to KEY_BINDINGS_CUSTOM -- default is just used for revert etc -- otherwise it is potentially confusing which bindings are in effect, esp when user edits custom set..
   static int            antialiasing_level; // #SAVE #CAT_GUI level of smoothing to perform in the 3d display -- values depend on hardware acceleration, but 2 or 4 are typical values.  1 or lower disables entirely.  modern hardware can do typically do level 4 with little slowdown in speed.
   static float          text_complexity;     // #SAVE #CAT_GUI #EXPERT complexity value (between 0 and 1) for rendering 3D text -- values above .5 are usually not noticibly better and slow rendering
   static TypeItem::ShowMembs show_gui;       // #IGNORE #CAT_GUI #EXPERT what to show in the gui -- set in main window viewer
@@ -400,11 +400,17 @@ public:
   static String         web_home;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for location of main web home page for this application
   static String         web_help_wiki;
-  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File wiki name for web application help such that appending the name of the object in question will produce help for that specific object or topic
+  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File wiki name for web application help such that appending the name of the object in question will produce help for that specific object or topic -- wiki must be defined in wiki_url's
   static String         web_help_general;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for general web application help, not associated with a specific object
   static String         pub_proj_page;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url to search for and download published projects
+  static String         plib_app_wiki;
+  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File wiki name for program / project library for application-relevant items (e.g., emergent) -- wiki must be defined in wiki_url's
+  static String         plib_sci_wiki;
+  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File wiki name for program / project library for scientifically-relevant items (e.g., CCN) -- wiki must be defined in wiki_url's
+  static String         plib_user_wiki;
+  // #SAVE #CAT_File user-maintained wiki name for program / project library items (e.g., for a specific lab's wiki for their own projects) -- wiki must be defined in wiki_url's
 
   static NamedURL       wiki1_url;
   // #SAVE #CAT_File short name and url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) -- full url is looked up by name to refer to specific sites
@@ -455,7 +461,7 @@ public:
   static String_PArray  load_paths;
   // #NO_SAVE #HIDDEN #CAT_File paths to be used for loading object files for the ta dump file system
   static NameVar_PArray prog_lib_paths;
-  // #NO_SAVE #HIDDEN #CAT_File paths/url's for specific categories of program library files (e.g., System, User, Web)
+  // #NO_SAVE #HIDDEN #CAT_File paths/url's for specific categories of program library files (e.g., UserLib, SystemLib, WebAppLib, WebSciLib, WebUserLib) -- for Web these are locations of local cache of downloaded programs
   static NameVar_PArray proj_template_paths;
   // #NO_SAVE #HIDDEN #CAT_File paths/url's for collections of project template files (e.g., System, User, Web)
   static NameVar_PArray named_paths;

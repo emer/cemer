@@ -28,71 +28,71 @@
 TA_BASEFUNS_CTORS_DEFN(CollectionProgLib);
 
 void CollectionProgLib::Initialize() {
-  not_init = true;
+  init = false;
 }
 
-void CollectionProgLib::setupSubLibs() {
-  subProgLibs.Reset();
-  ProgLib* subLib;
-  subLib = new FileProgLib(taMisc::prog_lib_paths.GetVal("SystemLib").toString(), "SystemLib");
-  subProgLibs.AddUnique(NameVar("SystemLib",(Variant)subLib));
-  subLib = new FileProgLib(taMisc::prog_lib_paths.GetVal("UserLib").toString(), "UserLib");
-  subProgLibs.AddUnique(NameVar("UserLib",(Variant)subLib));
-  subLib = new WikiProgLib("test", "WebLib");
-  subProgLibs.AddUnique(NameVar("WebLib",(Variant)subLib));
+void CollectionProgLib::CreateSubLibs() {
+  if(sub_libs.size >= WEB_USER_LIB) return;
+  sub_libs.Reset();
+  // NOTE: make this in same order as ProgLibs enum so can just use index addressing
+  sub_libs.Add
+    (new FileProgLib(taMisc::prog_lib_paths.GetVal("UserLib").toString(), "UserLib"));
+  sub_libs.Add
+    (new FileProgLib(taMisc::prog_lib_paths.GetVal("SystemLib").toString(), "SystemLib"));
+  sub_libs.Add
+    (new WikiProgLib(taMisc::plib_app_wiki, "WebAppLib"));
+  sub_libs.Add
+    (new WikiProgLib(taMisc::plib_sci_wiki, "WebSciLib"));
+  if(taMisc::plib_user_wiki.nonempty()) {
+    sub_libs.Add
+      (new WikiProgLib(taMisc::plib_user_wiki, "WebUserLib"));
+  }
+}
+
+ProgLib* CollectionProgLib::GetSubLib(ProgLibs library) {
+  if(library >= SEARCH_LIBS) return NULL;
+  CreateSubLibs();
+  return sub_libs.SafeEl(library);
 }
 
 void CollectionProgLib::FindPrograms() {
-  if (subProgLibs.size == 0)
-    setupSubLibs();
-
+  taMisc::Busy();
+  taMisc::Info("loading program library -- can take a few moments depending..");
+  CreateSubLibs();
   Reset();  // clear existing
   
-  
-  ProgLib* subLib;
-  //Iterate over all program libraries in the collection and call their respective FindPrograms
-  for (int i = 0; i < subProgLibs.size; i++) {
-    subLib = (ProgLib*)subProgLibs[i].value.toPtr();
-    subLib->FindPrograms();
-    for (int pi = 0; pi < subLib->size; pi++) {
-      Add(subLib->FastEl(pi));
+  // Iterate over all program libraries in the collection and call their respective FindPrograms
+  for (int i = 0; i < sub_libs.size; i++) {
+    ProgLib* lib = sub_libs[i];
+    lib->FindPrograms();
+    for (int pi = 0; pi < lib->size; pi++) {
+      Add(lib->FastEl(pi));
     }
   }
-
-  not_init = false;
-}
-
-taBase* CollectionProgLib::NewProgram(ProgLibEl* prog_type, Program_Group* new_owner) {
-  if(prog_type == NULL) return NULL;
-  return prog_type->NewProgram(new_owner);
-}
-
-taBase* CollectionProgLib::NewProgramFmName(const String& prog_nm, Program_Group* new_owner) {
-  return NewProgram(FindName(prog_nm), new_owner);
+  init = true;
+  taMisc::DoneBusy();
 }
 
 bool CollectionProgLib::SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs library) {
-  return false;
+  if(library == SEARCH_LIBS) {
+    taMisc::Error("Cannot do SEARCH_LIBS for saving!");
+    return false;
+  }
+  ProgLib* lib = GetSubLib(library);
+  if(!lib) return false;
+  lib->SaveProgGrpToProgLib(prg_grp, library);
+  // lib->FindPrograms();          // local save already does update!
+  return true;
 }
 
 bool CollectionProgLib::SaveProgToProgLib(Program* prg, ProgLibs library) {
   if(library == SEARCH_LIBS) {
-    taMisc::Error("Cannot do SEARCH_LIBS for saving -- program saved in local directory!");
+    taMisc::Error("Cannot do SEARCH_LIBS for saving!");
     return false;
   }
-  ProgLib* subLib;
-  String path = "./";
-  if(library == USER_LIB)
-    subLib = (ProgLib*)subProgLibs.GetVal("UserLib").toPtr();
-  else if(library == SYSTEM_LIB) {
-    subLib = (ProgLib*)subProgLibs.GetVal("SystemLib").toPtr();
-  }
-  else if(library == WEB_LIB) {
-    subLib = (ProgLib*)subProgLibs.GetVal("WebLib").toPtr();
-  } else {
-    return false;
-  }
-  subLib->SaveProgToProgLib(prg, library);
-  FindPrograms();
-  return false;
+  ProgLib* lib = GetSubLib(library);
+  if(!lib) return false;
+  lib->SaveProgToProgLib(prg, library);
+  // lib->FindPrograms();          // local save already does update!
+  return true;
 }

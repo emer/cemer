@@ -30,29 +30,20 @@ class Program; //
 taTypeDef_Of(FileProgLib);
 
 class TA_API FileProgLib: public ProgLib {
-  // #INSTANCE #INLINE #CAT_Program the program library
+  // program library for programs located in file system
 INHERITED(ProgLib)
 public:
+  String  path;                 // path to search for programs
+ 
+  void  FindPrograms() override;
+  bool  SaveProgToProgLib(Program* prg, ProgLibs library) override;
+  bool  SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs library) override;
 
-  FileProgLib(String path, String lib_name);
-  bool                  not_init; // list has not been initialized yet
-
-  void  FindPrograms() override;         // search paths to find all available programs
-  taBase* NewProgram(ProgLibEl* prog_type, Program_Group* new_owner);
-  // create a new program in new_owner of given type (return value could be a Program or a Program_Group);  new_owner is group where program will be created
-  taBase* NewProgramFmName(const String& prog_nm, Program_Group* new_owner);
-  // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found); new_owner is group where program will be created
-  bool SaveProgToProgLib(Program* prg,  ProgLib::ProgLibs library) override;
-  bool SaveProgGrpToProgLib(Program_Group* prg_grp);
-
+  FileProgLib(const String& path, const String& lib_name);
   TA_SIMPLE_BASEFUNS(FileProgLib);
-protected:
-
 private:
   void  Initialize();
   void  Destroy() { CutLinks(); }
-  String path;
-  String lib_name;
 };
 
 #endif // FileProgLib_h
