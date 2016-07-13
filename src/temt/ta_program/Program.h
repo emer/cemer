@@ -319,6 +319,8 @@ public:
  
   virtual void          UpdateFromProgLib(ProgLibEl* prog_type);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib #ARG_VAL_FM_FUN #PRE_CALL_InitProgLib #CAT_ProgLib (re)load the program from the program library element of given type
+  virtual void          UpdateFromProgLibByName(const String& prog_nm);
+  // (re)load the program from the program library -- lookup by given name
   taBase*               AddFromProgLib(ProgLibEl* prog_type) ;
   // #BUTTON #MENU_CONTEXT #FROM_LIST_prog_lib #NO_SAVE_ARG_VAL #PRE_CALL_InitProgLib #CAT_Program adds a program from a library of existing program types
   

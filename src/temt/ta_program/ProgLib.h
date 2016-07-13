@@ -35,21 +35,23 @@ INHERITED(ProgLibEl_List)
 public:
   enum ProgLibs {               // program library locations: must be sync'd with Program
     USER_LIB,                   // user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent prog_lib)
-    SYSTEM_LIB,                 // local system library, installed with software, in /usr/share/Emergent/prog_lib
+    SYSTEM_LIB,                 // local system library, installed with software, in /usr/local/share/Emergent/prog_lib
     WEB_APP_LIB,                // web-based application-specific library (e.g., emergent)
     WEB_SCI_LIB,                // web-based scientifically oriented library (e.g., CCN)
     WEB_USER_LIB,               // web-based user's library (e.g., from lab wiki)
-    SEARCH_LIBS,                // search through the libraries (for loading)
   };
 
   bool  init; // has list been initialized yet?
 
+  virtual taBase* NewProgram(ProgLibEl* prog_type, Program_Group* new_owner);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #NO_SAVE_ARG_VAL create a new program in new_owner of given type (return value could be a Program or a Program_Group);  new_owner is group where program will be created
+  virtual taBase* NewProgramFmName(const String& prog_nm, Program_Group* new_owner);
+  // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found); new_owner is group where program will be created
+  virtual bool    UpdateProgramFmName(const String& prog_nm, Program* prog);
+  // update given program from program element lookup by name
+
   virtual void  FindPrograms() {};
   // search paths to find all available programs in this library
-  taBase* NewProgram(ProgLibEl* prog_type, Program_Group* new_owner);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #NO_SAVE_ARG_VAL create a new program in new_owner of given type (return value could be a Program or a Program_Group);  new_owner is group where program will be created
-  taBase* NewProgramFmName(const String& prog_nm, Program_Group* new_owner);
-  // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found); new_owner is group where program will be created
   virtual bool SaveProgToProgLib(Program* prg, ProgLibs library)
   { return false; }
   // save a program to a program library -- defined for specific subtypes

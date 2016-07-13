@@ -1685,12 +1685,16 @@ void taMisc::Init_Defaults_PostLoadConfig() {
   prog_lib_paths.AddUnique(NameVar("WebUserLib",
     (Variant)(user_app_dir + PATH_SEP + "web_user_prog_lib")));
 
-  proj_template_paths.AddUnique(NameVar("SystemLib",
-    (Variant)(app_dir + PATH_SEP + "proj_templates")));
   proj_template_paths.AddUnique(NameVar("UserLib",
     (Variant)(user_app_dir + PATH_SEP + "proj_templates")));
-  proj_template_paths.AddUnique(NameVar("WebLib",
-    (Variant)(web_home + "/proj_templates"))); //note: urls always use '/'
+  proj_template_paths.AddUnique(NameVar("SystemLib",
+    (Variant)(app_dir + PATH_SEP + "proj_templates")));
+  proj_template_paths.AddUnique(NameVar("WebAppLib",
+    (Variant)(user_app_dir + PATH_SEP + "web_app_proj_templates")));
+  proj_template_paths.AddUnique(NameVar("WebSciLib",
+    (Variant)(user_app_dir + PATH_SEP + "web_sci_proj_templates")));
+  proj_template_paths.AddUnique(NameVar("WebUserLib",
+    (Variant)(user_app_dir + PATH_SEP + "web_user_proj_templates")));
 
   String curdir = QDir::currentPath();
   taMisc::load_paths.AddUnique(curdir);

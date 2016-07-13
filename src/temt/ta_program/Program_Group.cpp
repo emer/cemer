@@ -68,6 +68,7 @@ taBase* Program_Group::AddFromProgLib(ProgLibEl* prog_type) {
 }
 
 taBase* Program_Group::AddFromProgLibByName(const String& prog_nm) {
+  InitProgLib();
   return prog_lib.NewProgramFmName(prog_nm, this);
 }
 

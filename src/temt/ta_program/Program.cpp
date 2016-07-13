@@ -1848,6 +1848,12 @@ void Program::UpdateFromProgLib(ProgLibEl* prog_type) {
   prog_type->LoadProgram(this);
 }
 
+void Program::UpdateFromProgLibByName(const String& prog_nm) {
+  if(TestError(prog_nm.empty(), "UpdateFromProgLibByName", "program name is empty")) return;
+  InitProgLib();
+  prog_lib->UpdateProgramFmName(prog_nm, this);
+}
+
 void Program::SigEmit(int sls, void* op1, void* op2) {
   // just for debug trapping..
   inherited::SigEmit(sls, op1, op2);

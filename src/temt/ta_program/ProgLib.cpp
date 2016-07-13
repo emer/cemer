@@ -35,6 +35,22 @@ taBase* ProgLib::NewProgram(ProgLibEl* prog_type, Program_Group* new_owner) {
 }
 
 taBase* ProgLib::NewProgramFmName(const String& prog_nm, Program_Group* new_owner) {
-  return NewProgram(FindName(prog_nm), new_owner);
+  ProgLibEl* el = FindName(prog_nm);
+  if(!el) {
+    taMisc::Error("NewProgramFmName: could not find program of given name in library:",
+                  prog_nm);
+    return NULL;
+  }
+  return NewProgram(el, new_owner);
 }
 
+bool ProgLib::UpdateProgramFmName(const String& prog_nm, Program* prog) {
+  ProgLibEl* el = FindName(prog_nm);
+  if(!el) {
+    taMisc::Error("UpdateProgramFmName: could not find program of given name in library:",
+                  prog_nm);
+    return false;
+  }
+  prog->UpdateFromProgLib(el);
+  return true;
+}

@@ -667,25 +667,13 @@ bool taProject::UploadFilesForProjectOnWeb(const String &repo_name) {
 }
 
 String taProject::GetProjTemplatePath(ProjLibs library) {
-  if(library == SEARCH_LIBS) {
-    taMisc::Error("Cannot do SEARCH_LIBS for saving -- program saved in local directory!");
-    return "";
-  }
   String path = "./";
-  if(library == USER_LIB)
-    path = taMisc::proj_template_paths.GetVal("UserLib").toString();
-  else if(library == SYSTEM_LIB) {
-    if(taMisc::in_dev_exe) {
-      String top_lev_path = taMisc::GetDirFmPath(taMisc::exe_path, 1); // go up 1
-      path = top_lev_path + "/proj_templates";
-    }
-    else {
-      path = taMisc::proj_template_paths.GetVal("SystemLib").toString();
-    }
+  path = taMisc::proj_template_paths[library].value.toString();
+  if(library == SYSTEM_LIB && taMisc::in_dev_exe) {
+    String top_lev_path = taMisc::GetDirFmPath(taMisc::exe_path, 1); // go up 1
+    path = top_lev_path + "/proj_templates";
   }
-  else if(library == WEB_LIB)
-    path = taMisc::proj_template_paths.GetVal("WebLib").toString();
-  if(library != WEB_LIB) {
+  if(library < WEB_APP_LIB) {
     QFileInfo qfi(path);
     if(!qfi.isDir()) {
       QDir qd;

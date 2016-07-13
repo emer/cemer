@@ -50,7 +50,6 @@ void CollectionProgLib::CreateSubLibs() {
 }
 
 ProgLib* CollectionProgLib::GetSubLib(ProgLibs library) {
-  if(library >= SEARCH_LIBS) return NULL;
   CreateSubLibs();
   return sub_libs.SafeEl(library);
 }
@@ -74,10 +73,6 @@ void CollectionProgLib::FindPrograms() {
 }
 
 bool CollectionProgLib::SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs library) {
-  if(library == SEARCH_LIBS) {
-    taMisc::Error("Cannot do SEARCH_LIBS for saving!");
-    return false;
-  }
   ProgLib* lib = GetSubLib(library);
   if(!lib) return false;
   lib->SaveProgGrpToProgLib(prg_grp, library);
@@ -86,10 +81,6 @@ bool CollectionProgLib::SaveProgGrpToProgLib(Program_Group* prg_grp, ProgLibs li
 }
 
 bool CollectionProgLib::SaveProgToProgLib(Program* prg, ProgLibs library) {
-  if(library == SEARCH_LIBS) {
-    taMisc::Error("Cannot do SEARCH_LIBS for saving!");
-    return false;
-  }
   ProgLib* lib = GetSubLib(library);
   if(!lib) return false;
   lib->SaveProgToProgLib(prg, library);

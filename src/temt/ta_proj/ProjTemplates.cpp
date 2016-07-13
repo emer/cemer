@@ -24,7 +24,7 @@
 TA_BASEFUNS_CTORS_DEFN(ProjTemplates);
 
 void ProjTemplates::Initialize() {
-  not_init = true;
+  init = false;
 }
 
 void ProjTemplates::FindProjects() {
@@ -46,7 +46,7 @@ void ProjTemplates::FindProjects() {
         delete pe;
     }
   }
-  not_init = false;
+  init = true;
 }
 
 taProject* ProjTemplates::NewProject(ProjTemplateEl* proj_type, Project_Group* new_owner) {
@@ -55,6 +55,11 @@ taProject* ProjTemplates::NewProject(ProjTemplateEl* proj_type, Project_Group* n
 }
 
 taProject* ProjTemplates::NewProjectFmName(const String& proj_nm, Project_Group* new_owner) {
-  return NewProject(FindName(proj_nm), new_owner);
+  ProjTemplateEl* el = FindName(proj_nm);
+  if(!el) {
+    taMisc::Error("NewProjectFmName: project template name not found:", proj_nm);
+    return NULL;
+  }
+  return NewProject(el, new_owner);
 }
 

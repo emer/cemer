@@ -1607,7 +1607,8 @@ void iMainWindowViewer::fileOpenFromWeb(const Variant &repo)
     return;
   }
   String url = wikiUrl + taMisc::pub_proj_page;
-  httpUrlHandler(QUrl(url));
+  //  httpUrlHandler(QUrl(url));
+  iHelpBrowser::StatLoadUrl(url);
 }
 
 void iMainWindowViewer::filePublishProjectOnWeb_aboutToShow()
@@ -1675,7 +1676,8 @@ void iMainWindowViewer::fileUploadFilesForProjectOnWeb(const Variant &repo)
 
 bool iMainWindowViewer::WikiSupportsPublishProject(const String &wiki_name) {
   if (!taMediaWiki::PubProjPagesInstalled(wiki_name)) {
-    taMisc::Confirm("The Publish to Web feature requires the installation of some pages before projects can be published. Installation and usage information can be found at 'https://grey.colorado.edu/emergent/index.php/Publish_to_web_implementation'");
+    taMisc::Confirm("The Publish to Web feature requires the installation of some pages before projects can be published. Installation and usage information can be found at 'https://grey.colorado.edu/emergent/index.php/Publish_to_web_implementation' -- you will be taken there now.");
+    iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_to_web_implementation");
     return false;
   }
   return true;

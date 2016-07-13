@@ -14,20 +14,15 @@
 //   GNU General Public License for more details.
 
 
-
 #include "som.h"
 
 TA_BASEFUNS_CTORS_DEFN(SomUnitSpec);
-
 TA_BASEFUNS_CTORS_DEFN(NeighborEl_List);
-
 TA_BASEFUNS_CTORS_DEFN(NeighborEl);
-
 TA_BASEFUNS_CTORS_DEFN(SomLayerSpec);
 
-void SomUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
-  // Modified by Danke, Feb. 9, 2003
-  if (u->ext_flag & Unit::EXT)
+void SomUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thread_no) {
+  if (u->ext_flag & UnitVars::EXT)
     u->net = u->ext;
   else {
     // do distance instead of net input
@@ -195,14 +190,14 @@ int SomLayerSpec::WrapClip(int coord, int max_coord) {
 
 
 void SomLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
-  if(lay->ext_flag & Unit::EXT) {  // input layer
+  if(lay->ext_flag & UnitVars::EXT) {  // input layer
     SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
 
   // Added by Danke, Feb. 9, 2003
   if(lay->units.leaves > 0 &&      // sync layer
-     lay->units.FastEl(0)->ext_flag & Unit::EXT) {
+     lay->units.FastEl(0)->ext_flag & UnitVars::EXT) {
     SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }

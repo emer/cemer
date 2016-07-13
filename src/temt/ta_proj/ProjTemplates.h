@@ -33,7 +33,7 @@ class TA_API ProjTemplates: public ProjTemplateEl_List {
   // #INSTANCE #INLINE #CAT_Project the set of project templates available
 INHERITED(ProjTemplateEl_List)
 public:
-  bool                  not_init; // list has not been initialized yet
+  bool          init; // has list has been initialized yet
 
   void          FindProjects();         // search paths to find all available projects
   taProject*    NewProject(ProjTemplateEl* proj_type, Project_Group* new_owner);

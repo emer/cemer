@@ -29,7 +29,7 @@ using namespace std;
 
 void Project_Group::InitLinks() {
   inherited::InitLinks();
-  if(proj_templates.not_init) {
+  if(!proj_templates.init) {
     taBase::Ref(proj_templates);
     proj_templates.FindProjects();
   }
@@ -52,7 +52,7 @@ int Project_Group::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr
 
 int Project_Group::LoadFromWiki(const String wiki, const String project_name) {
   int rval = 0;
-  String path = QDir::tempPath() + "/" + project_name + ".proj";
+  String path = QDir::tempPath() + PATH_SEP + project_name + ".proj";
   QFileInfo fi(path);
   if (!taMediaWiki::DownloadFile(wiki, project_name, path)) {
     taMisc::Error("Failed to download project " + project_name + " from wiki " + wiki);

@@ -1458,7 +1458,7 @@ bool taMediaWiki::PublishItem(taProjPubInfo* pub_info, String publish_type) {
   return true; // return true if item page created - even if upload of item file fails
 }
 
-bool taMediaWiki::PublishItemOnWeb(const String publish_type, const String name, const String fname, const String &repo_name, const taProject * proj)
+bool taMediaWiki::PublishItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& repo_name, const taProject * proj, const String& tags)
 {
   // Is pub to program supported on this wiki?
   
@@ -1473,7 +1473,7 @@ bool taMediaWiki::PublishItemOnWeb(const String publish_type, const String name,
   if (taMediaWiki::IsPublished(repo_name, item_filename)) {
     int choice = taMisc::Choice("The " + publish_type  + " " + name + " is already published on  wiki \"" + repo_name + ".\" Would you like to upload a new version?", "Upload", "Cancel");
     if (choice == 0) {
-      return UpdateItemOnWeb(publish_type, name, fname, repo_name, proj);
+      return UpdateItemOnWeb(publish_type, name, fname, repo_name, proj, tags);
     }
     else {
       return false;
@@ -1503,7 +1503,12 @@ bool taMediaWiki::PublishItemOnWeb(const String publish_type, const String name,
       dialog.SetEmail(QString("Set default in preferences."));
     }
     dialog.SetDesc(QString("A brief description of the program. You will be able to edit later on the wiki."));
-    dialog.SetTags(QString("comma separated, please"));
+    if(tags.nonempty()) {
+      dialog.SetTags(tags);
+    }
+    else {
+      dialog.SetTags(QString("comma separated, please"));
+    }
     //dialog.SetVersion((this->version.GetString().toQString()));
     if (dialog.exec()) {
       // User clicked OK.
@@ -1540,7 +1545,7 @@ bool taMediaWiki::PublishItemOnWeb(const String publish_type, const String name,
   return was_published;
 }
 
-bool taMediaWiki::UpdateItemOnWeb(const String publish_type, const String name, const String fname, const String &repo_name, const taProject * proj) {
+bool taMediaWiki::UpdateItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& repo_name, const taProject * proj, const String& tags) {
   String proj_filename_only = fname.after('/', -1);
   
   String emer_version = taMisc::version;

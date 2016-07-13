@@ -69,10 +69,11 @@ public:
   };
 
   enum ProjLibs {
-    USER_LIB,                   // user's personal library
-    SYSTEM_LIB,                 // local system library
-    WEB_LIB,                    // web-based library
-    SEARCH_LIBS,                // search through the libraries (for loading)
+    USER_LIB,                   // user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent proj_templates)
+    SYSTEM_LIB,                 // local system library, installed with software, in /usr/local/share/Emergent/proj_templates
+    WEB_APP_LIB,                // web-based application-specific library (e.g., emergent)
+    WEB_SCI_LIB,                // web-based scientifically oriented library (e.g., CCN)
+    WEB_USER_LIB,               // web-based user's library (e.g., from lab wiki)
   };
 
   String                proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for the project -- automatically set when loading or saving the project
