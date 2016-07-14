@@ -15,23 +15,32 @@
 
 #include "taiViewTypeOfDataTable.h"
 #include <iPanelOfDataTable>
+#include <iPanelOfList>
+#include <DataTable>
 
 taTypeDef_Of(DataTable);
 
 int taiViewTypeOfDataTable::BidForView(TypeDef* td) {
-  if (td->InheritsFrom(&TA_DataTable))
+  if (td->InheritsFrom(&TA_DataTable)) {
     return (inherited::BidForView(td) +1);
+  }
   return 0;
 }
 
 /*taiSigLink* taiViewTypeOfDataTable::CreateSigLink_impl(taBase* data_) {
-  return new taSigLinkList((taList_impl*)data_);
-} */
+ return new taSigLinkList((taList_impl*)data_);
+ } */
 
 void taiViewTypeOfDataTable::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // we create ours first, because it should be the default
   iPanelOfDataTable* dp = new iPanelOfDataTable(dl_);
   DataPanelCreated(dp);
+  
   inherited::CreateDataPanel_impl(dl_);
+  
+  if (taiSigLink *cells_link = dynamic_cast<taiSigLink *>(((DataTable*)dl_->taData())->control_panel_cells.GetSigLink())) {
+    iPanelOfList* dp = new iPanelOfList(cells_link, "Control Panel Cells");
+    DataPanelCreated(dp);
+  }
 }
