@@ -90,7 +90,7 @@ void NetViewParams::Initialize() {
   prjn_width = .002f;
   prjn_trans = .5f;
   lay_trans = .5f;
-  unit_trans = 0.6f;
+  unit_trans = 0.4f;
   laygp_width = 1.0f;
   show_laygp = true;
 }
@@ -452,6 +452,15 @@ void NetView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) {	// set to initial
     prev_lay_layout = lay_layout;
+#if (QT_VERSION >= 0x050601)
+    taVersion v788(7, 8, 8);
+    if(taMisc::loading_version < v788) { // one-time update..
+      if(view_params.unit_trans > 0.4f)
+        view_params.unit_trans = 0.4f;        // Qt 5.6.1 needs lower transparency
+      if(view_params.lay_trans > 0.4f)
+        view_params.lay_trans = 0.4f;
+    }
+#endif
   }
 }
 
