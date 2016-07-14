@@ -2959,6 +2959,14 @@ bool DataTable::FlattenTo(DataTable* flattened_table) {
     in_place = true;
     flattened_table = new DataTable;
   }
+  
+  // remove any DataTableCells associated with hidden rows
+  for (int i = control_panel_cells.size-1; i >= 0; i--) {
+    DataTableCell* cell = control_panel_cells.FastEl(i);
+    if (!cell->dtc_is_column_type && !cell->enabled) {
+      control_panel_cells.RemoveIdx(i);
+    }
+  }
 
   flattened_table->StructUpdate(true);
   flattened_table->Copy_NoData(*this);
