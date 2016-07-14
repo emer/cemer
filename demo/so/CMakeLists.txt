@@ -1,4 +1,5 @@
 ########### demo/so install files ###############
+# touch to update
 
 FILE(GLOB PROJ_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.proj")
 

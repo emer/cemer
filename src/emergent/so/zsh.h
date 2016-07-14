@@ -41,15 +41,16 @@ public:
     dwt += tmp;
   }
 
-  inline void 	Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
-    Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
-    const float avg_in_act = ((SoRecvCons*)cg)->avg_in_act;
+  inline void 	Compute_dWt(ConGroup* gcg, Network* net, int thr_no) {
+    SoConGroup* cg = (SoConGroup*)gcg;
+    SoUnitVars* ru = (SoUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+    Compute_AvgInAct(cg, (SoNetwork*)net, thr_no);
+    const float avg_in_act = cg->avg_in_act;
     const float ru_act = ru->act;
     float* dwts = cg->OwnCnVar(DWT);
     float* wts = cg->OwnCnVar(WT);
-    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act, avg_in_act,
+    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->UnVars(i,net)->act, avg_in_act,
                                      wts[i]));
-   
   }
   // compute weight change according to Cl function (normalized input acts)
 
@@ -59,16 +60,10 @@ private:
   void	Destroy()		{ };
 };
 
-// MaxIn is an algorithm developed in O'Reilly, 1994, which is based
-// on units that have a signal-to-noise ratio activation function
-// and maximize this ratio over learning.  It basically amounts to 
-// Zsh plus SoftCl, though the actual derivative for MaxIn dynamically
-// weights the Zsh-like term, which is missing in this version
-
 eTypeDef_Of(MaxInConSpec);
 
 class E_API MaxInConSpec : public ZshConSpec {
-  // approximation to MaxIn (Zsh + SoftCl)
+  // approximation to MaxIn (Zsh + SoftCl) -- MaxIn is an algorithm developed in O'Reilly, 1994, which is based on units that have a signal-to-noise ratio activation function and maximize this ratio over learning.  It basically amounts to Zsh plus SoftCl, though the actual derivative for MaxIn dynamically weights the Zsh-like term, which is missing in this version
 INHERITED(ZshConSpec)
 public:
   float		k_scl;
@@ -85,13 +80,15 @@ public:
     dwt += tmp;
   }
 
-  inline void 	Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
-    Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
-    const float avg_in_act = ((SoRecvCons*)cg)->avg_in_act;
+  inline void 	Compute_dWt(ConGroup* gcg, Network* net, int thr_no) {
+    SoConGroup* cg = (SoConGroup*)gcg;
+    SoUnitVars* ru = (SoUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+    Compute_AvgInAct(cg, (SoNetwork*)net, thr_no);
+    const float avg_in_act = cg->avg_in_act;
     const float ru_act = ru->act;
     float* dwts = cg->OwnCnVar(DWT);
     float* wts = cg->OwnCnVar(WT);
-    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act, avg_in_act,
+    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->UnVars(i,net)->act, avg_in_act,
                                      wts[i]));
    
   }

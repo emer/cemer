@@ -21,17 +21,18 @@ TA_BASEFUNS_CTORS_DEFN(NeighborEl_List);
 TA_BASEFUNS_CTORS_DEFN(NeighborEl);
 TA_BASEFUNS_CTORS_DEFN(SomLayerSpec);
 
-void SomUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thread_no) {
+void SomUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
   if (u->ext_flag & UnitVars::EXT) {
     u->net = u->ext;
   }
   else {
     // do distance instead of net input
     u->net = 0.0f;
-    for(int g=0; g<u->recv.size; g++) {
-      SoRecvCons* recv_gp = (SoRecvCons*)u->recv.FastEl(g);
-      if(recv_gp->NotActive()) continue;
-      u->net += recv_gp->Compute_Dist(u, net);
+    const int nrcg = net->ThrUnNRecvConGps(thr_no, u->thr_un_idx);
+    for(int g=0; g<nrcg; g++) {
+      SoConGroup* rgp = (SoConGroup*)net->ThrUnRecvConGroup(thr_no, u->thr_un_idx, g);
+      if(rgp->NotActive()) continue;
+      u->net += rgp->con_spec->Compute_Dist(rgp, net, thr_no);
     }
   }
 }
@@ -198,12 +199,12 @@ void SomLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
 
   // Added by Danke, Feb. 9, 2003
   if(lay->units.leaves > 0 &&      // sync layer
-     lay->units.FastEl(0)->ext_flag & UnitVars::EXT) {
+     lay->units.FastEl(0)->ext_flag() & UnitVars::EXT) {
     SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
 
-  Unit* win_u = FindWinner(lay);
+  SoUnit* win_u = FindWinner(lay);
   lay->winner = win_u;
   if(win_u == NULL)	return;
 
@@ -221,7 +222,7 @@ void SomLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
     if(su_idx >= lay->units.leaves)
       continue;
 
-    Unit* su_u = (Unit*)lay->units.Leaf(su_idx);
-    su_u->act = te->act_val;
+    SoUnit* su_u = (SoUnit*)lay->units.Leaf(su_idx);
+    su_u->act() = te->act_val;
   }
 }

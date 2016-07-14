@@ -243,6 +243,7 @@ void SoLayer::Initialize() {
 
 void SoLayer::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(spec, this);
   spec.SetDefaultSpec(this);
 }
 

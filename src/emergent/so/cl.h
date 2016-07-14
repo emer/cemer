@@ -38,13 +38,15 @@ public:
                               const float sum_in_act, const float wt)
   { dwt += ru_act * ((su_act / sum_in_act) - wt); }
 
-  inline void 	Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
-    Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
-    const float sum_in_act = ((SoRecvCons*)cg)->sum_in_act;
+  inline void 	Compute_dWt(ConGroup* gcg, Network* net, int thr_no) {
+    SoConGroup* cg = (SoConGroup*)gcg;
+    SoUnitVars* ru = (SoUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+    Compute_AvgInAct(cg, (SoNetwork*)net, thr_no);
+    const float sum_in_act = cg->sum_in_act;
     const float ru_act = ru->act;
     float* dwts = cg->OwnCnVar(DWT);
     float* wts = cg->OwnCnVar(WT);
-    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act, sum_in_act,
+    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->UnVars(i,net)->act, sum_in_act,
                                      wts[i]));
   }
   // compute weight change according to Cl function (normalized input acts)
@@ -65,11 +67,12 @@ public:
                               const float wt)
   { dwt += ru_act * (su_act - wt); }
 
-  inline void 	Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
+  inline void 	Compute_dWt(ConGroup* cg, Network* net, int thr_no) {
+    SoUnitVars* ru = (SoUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     const float ru_act = ru->act;
     float* dwts = cg->OwnCnVar(DWT);
     float* wts = cg->OwnCnVar(WT);
-    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act, wts[i]));
+    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->UnVars(i,net)->act, wts[i]));
   }
 
   TA_BASEFUNS_NOCOPY(SoftClConSpec);
@@ -104,9 +107,9 @@ public:
   float         norm_const;     // #HIDDEN normalization const for Gaussian
   float         denom_const;    // #HIDDEN denominator const for Gaussian
 
-  void Compute_Netin(Unit* u, Network* net, int thread_no=-1) override;
+  void Compute_Netin(UnitVars* u, Network* net, int thr_no) override;
   // redefine to call compute_dist
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void Compute_Act(UnitVars* u, Network* net, int thr_no) override;
   // activation is a gaussian function of the net input
 
   TA_SIMPLE_BASEFUNS(SoftClUnitSpec);

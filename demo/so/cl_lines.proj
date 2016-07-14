@@ -1,5 +1,5 @@
 // ta_Dump File v3.0 -- code v7.8.7.0 rev9667
-SoProject .projects["SoStd"] { 
+SoProject .projects["cl_lines"] { 
  Doc_Group @.docs = [0] {
  };
 
@@ -1551,8 +1551,8 @@ SoProject .projects["SoStd"] {
   };
  };
 };
-SoProject .projects["SoStd"] {
- name="SoStd";
+SoProject .projects["cl_lines"] {
+ name="cl_lines";
  desc=;
  tags=;
  version {
@@ -1628,7 +1628,7 @@ SoProject .projects["SoStd"] {
      label="HebbConSpec_0_lrate";
      desc=" learning rate";
      cust_desc=0;
-     base=.projects["SoStd"].networks["Network_0"].specs["HebbConSpec_0"]$$;
+     base=.projects["cl_lines"].networks["Network_0"].specs["HebbConSpec_0"]$$;
      mbr=SoConSpec::lrate;
      is_numeric=1;
      is_single=1;
@@ -1654,28 +1654,28 @@ SoProject .projects["SoStd"] {
      label="Train_Init";
      desc=" run init_code, global variables retain current values unless reset in the init_code";
      cust_desc=0;
-     base=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$$;
+     base=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"]$$;
      mth=Program::Init;
     };
     EditMthItem @[1] {
      label="Train_Run";
      desc=" run the program -- if not yet Init, will run Init first";
      cust_desc=0;
-     base=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$;
+     base=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"]$;
      mth=Program::Run_Gui;
     };
     EditMthItem @[2] {
      label="Train_Step";
      desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
      cust_desc=0;
-     base=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$;
+     base=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"]$;
      mth=Program::Step_Gui;
     };
     EditMthItem @[3] {
      label="Train_Stop";
      desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
      cust_desc=0;
-     base=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$;
+     base=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"]$;
      mth=Program::Stop;
     };
    };
@@ -5365,7 +5365,7 @@ SoProject .projects["SoStd"] {
     el_def=0;
     UserData_DocLink @["DocLink"] {
      name="DocLink";
-     doc=.projects["SoStd"].programs["SoStartup"].doc$$;
+     doc=.projects["cl_lines"].programs["SoStartup"].doc$$;
     };
    };
    name="SoStartup";
@@ -5394,7 +5394,7 @@ SoProject .projects["SoStd"] {
      name="network";
      var_type=T_Object;
      object_type=SoNetwork;
-     object_val=.projects["SoStd"].networks["Network_0"]$$;
+     object_val=.projects["cl_lines"].networks["Network_0"]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
      reference=0;
@@ -5405,7 +5405,7 @@ SoProject .projects["SoStd"] {
      name="input_data";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects["SoStd"].data.gp["InputData"]["StdInputData"]$$;
+     object_val=.projects["cl_lines"].data.gp["InputData"]["StdInputData"]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
      reference=0;
@@ -5421,7 +5421,7 @@ SoProject .projects["SoStd"] {
      name="train";
      var_type=T_Object;
      object_type=Program;
-     object_val=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$;
+     object_val=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"]$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
      reference=0;
@@ -5432,7 +5432,7 @@ SoProject .projects["SoStd"] {
      name="batch";
      var_type=T_Object;
      object_type=Program;
-     object_val=.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"]$$;
+     object_val=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -5488,7 +5488,7 @@ SoProject .projects["SoStd"] {
      name="EpochOutputData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"]$$;
+     object_val=.projects["cl_lines"].data.gp["OutputData"]["EpochOutputData"]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -5499,7 +5499,7 @@ SoProject .projects["SoStd"] {
      name="TrialOutputData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects["SoStd"].data.gp["OutputData"]["TrialOutputData"]$$;
+     object_val=.projects["cl_lines"].data.gp["OutputData"]["TrialOutputData"]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -5557,7 +5557,7 @@ SoProject .projects["SoStd"] {
      flags=0;
      code_string="Set Var:tag in Program:SoStartup from Arg:tag";
      pre_compile_code_string="Set Var:tag in Program:SoStartup from Arg:tag";
-     prog=.projects["SoStd"].programs["SoStartup"]$$;
+     prog=.projects["cl_lines"].programs["SoStartup"]$$;
      var_name="tag";
      arg_name="tag";
     };
@@ -5566,7 +5566,7 @@ SoProject .projects["SoStd"] {
      flags=0;
      code_string="Set Var:log_dir in Program:SoStartup from Arg:log_dir";
      pre_compile_code_string="Set Var:log_dir in Program:SoStartup from Arg:log_dir";
-     prog=$.projects["SoStd"].programs["SoStartup"]$;
+     prog=$.projects["cl_lines"].programs["SoStartup"]$;
      var_name="log_dir";
      arg_name="log_dir";
     };
@@ -5575,7 +5575,7 @@ SoProject .projects["SoStd"] {
      flags=0;
      code_string="Set Var:max_epoch in Program:SoTrain from Arg:epochs";
      pre_compile_code_string="Set Var:max_epoch in Program:SoTrain from Arg:epochs";
-     prog=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$;
+     prog=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"]$;
      var_name="max_epoch";
      arg_name="epochs";
     };
@@ -5584,7 +5584,7 @@ SoProject .projects["SoStd"] {
      flags=0;
      code_string="Set Var:rnd_init in Program:SoTrain from Arg:rnd_init";
      pre_compile_code_string="Set Var:rnd_init in Program:SoTrain from Arg:rnd_init";
-     prog=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$;
+     prog=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"]$;
      var_name="rnd_init";
      arg_name="rnd_init";
     };
@@ -5593,7 +5593,7 @@ SoProject .projects["SoStd"] {
      flags=0;
      code_string="Set Var:max_batch in Program:SoBatch from Arg:batches";
      pre_compile_code_string="Set Var:max_batch in Program:SoBatch from Arg:batches";
-     prog=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"]$;
+     prog=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"]$;
      var_name="max_batch";
      arg_name="batches";
     };
@@ -5602,7 +5602,7 @@ SoProject .projects["SoStd"] {
      flags=0;
      code_string="Set Var:max_batch in Program:SoBatch from Arg:b_end";
      pre_compile_code_string="Set Var:max_batch in Program:SoBatch from Arg:b_end";
-     prog=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"]$;
+     prog=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"]$;
      var_name="max_batch";
      arg_name="b_end";
     };
@@ -5611,7 +5611,7 @@ SoProject .projects["SoStd"] {
      flags=0;
      code_string="Set Var:batch in Program:SoBatch from Arg:b_start";
      pre_compile_code_string="Set Var:batch in Program:SoBatch from Arg:b_start";
-     prog=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"]$;
+     prog=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"]$;
      var_name="batch";
      arg_name="b_start";
     };
@@ -5645,7 +5645,7 @@ SoProject .projects["SoStd"] {
        code_string="batch->SetVar(\"init_batch\", false)";
        pre_compile_code_string="batch->SetVar(\"init_batch\", false)";
        result_var=NULL;
-       obj=.projects["SoStd"].programs["SoStartup"].vars["batch"]$$;
+       obj=.projects["cl_lines"].programs["SoStartup"].vars["batch"]$$;
        method=Program::SetVar;
        meth_args {
 	name=;
@@ -5682,7 +5682,7 @@ SoProject .projects["SoStd"] {
        flags=0;
        code_string="Set Var:batch_start in Program:SoStartup from Arg:b_start";
        pre_compile_code_string="Set Var:batch_start in Program:SoStartup from Arg:b_start";
-       prog=$.projects["SoStd"].programs["SoStartup"]$;
+       prog=$.projects["cl_lines"].programs["SoStartup"]$;
        var_name="batch_start";
        arg_name="b_start";
       };
@@ -5691,7 +5691,7 @@ SoProject .projects["SoStd"] {
        flags=0;
        code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
        pre_compile_code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
-       result_var=.projects["SoStd"].programs["SoStartup"].vars["batch_str"]$$;
+       result_var=.projects["cl_lines"].programs["SoStartup"].vars["batch_str"]$$;
        object_type=taMisc;
        method=taMisc::LeadingZeros;
        meth_args {
@@ -5727,7 +5727,7 @@ SoProject .projects["SoStd"] {
        flags=CAN_REVERT_TO_CODE;
        code_string="tag += \".\" + batch_str";
        pre_compile_code_string="tag += \".\" + batch_str";
-       var=.projects["SoStd"].programs["SoStartup"].vars["tag"]$$;
+       var=.projects["cl_lines"].programs["SoStartup"].vars["tag"]$$;
        expr {
 	expr="\".\" + batch_str";
        };
@@ -5749,8 +5749,8 @@ SoProject .projects["SoStd"] {
 	 flags=0;
 	 code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
 	 pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
-	 result_var=.projects["SoStd"].programs["SoStartup"].vars["log_file_nm"]$$;
-	 obj=.projects["SoStd"].programs["SoStartup"].vars["EpochOutputData"]$$;
+	 result_var=.projects["cl_lines"].programs["SoStartup"].vars["log_file_nm"]$$;
+	 obj=.projects["cl_lines"].programs["SoStartup"].vars["EpochOutputData"]$$;
 	 method=taBase::GetFileNameFmProject;
 	 meth_args {
 	  name=;
@@ -5847,8 +5847,8 @@ SoProject .projects["SoStd"] {
        flags=0;
        code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
        pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
-       result_var=$.projects["SoStd"].programs["SoStartup"].vars["log_file_nm"]$;
-       obj=$.projects["SoStd"].programs["SoStartup"].vars["EpochOutputData"]$;
+       result_var=$.projects["cl_lines"].programs["SoStartup"].vars["log_file_nm"]$;
+       obj=$.projects["cl_lines"].programs["SoStartup"].vars["EpochOutputData"]$;
        method=taBase::GetFileNameFmProject;
        meth_args {
 	name=;
@@ -5940,8 +5940,8 @@ SoProject .projects["SoStd"] {
      flags=0;
      code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".epc.dat\", tag, log_dir, false)";
      pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".epc.dat\", tag, log_dir, false)";
-     result_var=$.projects["SoStd"].programs["SoStartup"].vars["log_file_nm"]$;
-     obj=$.projects["SoStd"].programs["SoStartup"].vars["EpochOutputData"]$;
+     result_var=$.projects["cl_lines"].programs["SoStartup"].vars["log_file_nm"]$;
+     obj=$.projects["cl_lines"].programs["SoStartup"].vars["EpochOutputData"]$;
      method=taBase::GetFileNameFmProject;
      meth_args {
       name=;
@@ -6001,7 +6001,7 @@ SoProject .projects["SoStd"] {
      code_string="EpochOutputData->SaveDataLog(log_file_nm, false, true)";
      pre_compile_code_string="EpochOutputData->SaveDataLog(log_file_nm, false, true)";
      result_var=NULL;
-     obj=$.projects["SoStd"].programs["SoStartup"].vars["EpochOutputData"]$;
+     obj=$.projects["cl_lines"].programs["SoStartup"].vars["EpochOutputData"]$;
      method=DataTable::SaveDataLog;
      meth_args {
       name=;
@@ -6050,7 +6050,7 @@ SoProject .projects["SoStd"] {
      code_string="Print  \"Saving epoch log data to:\" log_file_nm";
      pre_compile_code_string="Print  \"Saving epoch log data to:\" log_file_nm";
      message="Saving epoch log data to:";
-     print_var=$.projects["SoStd"].programs["SoStartup"].vars["log_file_nm"]$;
+     print_var=$.projects["cl_lines"].programs["SoStartup"].vars["log_file_nm"]$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -6069,8 +6069,8 @@ SoProject .projects["SoStd"] {
      flags=OFF;
      code_string="log_file_nm = TrialOutputData->GetFileNameFmProject(\".trl.dat\", tag, log_dir, true)";
      pre_compile_code_string="log_file_nm = TrialOutputData->GetFileNameFmProject(\".trl.dat\", tag, log_dir, true)";
-     result_var=$.projects["SoStd"].programs["SoStartup"].vars["log_file_nm"]$;
-     obj=.projects["SoStd"].programs["SoStartup"].vars["TrialOutputData"]$$;
+     result_var=$.projects["cl_lines"].programs["SoStartup"].vars["log_file_nm"]$;
+     obj=.projects["cl_lines"].programs["SoStartup"].vars["TrialOutputData"]$$;
      method=taBase::GetFileNameFmProject;
      meth_args {
       name=;
@@ -6130,7 +6130,7 @@ SoProject .projects["SoStd"] {
      code_string="TrialOutputData->SaveDataLog(log_file_nm, false, false)";
      pre_compile_code_string="TrialOutputData->SaveDataLog(log_file_nm, false, false)";
      result_var=NULL;
-     obj=$.projects["SoStd"].programs["SoStartup"].vars["TrialOutputData"]$;
+     obj=$.projects["cl_lines"].programs["SoStartup"].vars["TrialOutputData"]$;
      method=DataTable::SaveDataLog;
      meth_args {
       name=;
@@ -6179,7 +6179,7 @@ SoProject .projects["SoStd"] {
      code_string="Print  \"Saving trial log data to:\" log_file_nm";
      pre_compile_code_string="Print  \"Saving trial log data to:\" log_file_nm";
      message="Saving trial log data to:";
-     print_var=$.projects["SoStd"].programs["SoStartup"].vars["log_file_nm"]$;
+     print_var=$.projects["cl_lines"].programs["SoStartup"].vars["log_file_nm"]$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -6192,9 +6192,9 @@ SoProject .projects["SoStd"] {
      flags=0;
      code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
      pre_compile_code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
-     other_prog=.projects["SoStd"].programs.gp["SoAll_Std"]["SaveWeights"]$$;
+     other_prog=.projects["cl_lines"].programs.gp["SoAll_Std"]["SaveWeights"]$$;
      set_other=1;
-     var_1=$.projects["SoStd"].programs["SoStartup"].vars["tag"]$;
+     var_1=$.projects["cl_lines"].programs["SoStartup"].vars["tag"]$;
      var_2=NULL;
      var_3=NULL;
      var_4=NULL;
@@ -6241,7 +6241,7 @@ SoProject .projects["SoStd"] {
        };
       };
      };
-     target=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"]$;
+     target=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"]$;
      targ_ld_init="*SoBatch*";
     };
    };
@@ -6273,7 +6273,7 @@ SoProject .projects["SoStd"] {
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"].doc$$;
+      doc=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"].doc$$;
      };
     };
     name="SoBatch";
@@ -6302,7 +6302,7 @@ SoProject .projects["SoStd"] {
       name="network";
       var_type=T_Object;
       object_type=SoNetwork;
-      object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_val=$.projects["cl_lines"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -6313,7 +6313,7 @@ SoProject .projects["SoStd"] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_val=$.projects["cl_lines"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -6367,8 +6367,8 @@ SoProject .projects["SoStd"] {
       flags=0;
       code_string="Net Counter Init: batch";
       pre_compile_code_string="Net Counter Init: batch";
-      network_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"].args["network"]$$;
-      local_ctr_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"].vars["batch"]$$;
+      network_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"].args["network"]$$;
+      local_ctr_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"].vars["batch"]$$;
       counter=Network::batch;
       update_after=0;
      };
@@ -6394,8 +6394,8 @@ SoProject .projects["SoStd"] {
 	flags=0;
 	code_string="Net Counter Init: batch";
 	pre_compile_code_string="Net Counter Init: batch";
-	network_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"].args["network"]$;
-	local_ctr_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"].vars["batch"]$;
+	network_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"].args["network"]$;
+	local_ctr_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"].vars["batch"]$;
 	counter=Network::batch;
 	update_after=0;
        };
@@ -6415,7 +6415,7 @@ SoProject .projects["SoStd"] {
 	flags=CAN_REVERT_TO_CODE;
 	code_string="network.batch = batch";
 	pre_compile_code_string="network.batch = batch";
-	obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"].args["network"]$;
+	obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"].args["network"]$;
 	path="batch";
 	expr {
 	 expr="batch";
@@ -6476,7 +6476,7 @@ SoProject .projects["SoStd"] {
 	  };
 	 };
 	};
-	target=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"]$;
+	target=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"]$;
 	targ_ld_init="*SoTrain*";
        };
        NetCounterIncr @[1] {
@@ -6484,8 +6484,8 @@ SoProject .projects["SoStd"] {
 	flags=0;
 	code_string="Net Counter Incr: batch";
 	pre_compile_code_string="Net Counter Incr: batch";
-	network_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"].args["network"]$;
-	local_ctr_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoBatch"].vars["batch"]$;
+	network_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"].args["network"]$;
+	local_ctr_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoBatch"].vars["batch"]$;
 	counter=Network::batch;
 	update_after=0;
        };
@@ -6516,7 +6516,7 @@ SoProject .projects["SoStd"] {
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].doc$$;
+      doc=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].doc$$;
      };
     };
     name="SoTrain";
@@ -6682,7 +6682,7 @@ SoProject .projects["SoStd"] {
       name="network";
       var_type=T_Object;
       object_type=SoNetwork;
-      object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_val=$.projects["cl_lines"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -6693,7 +6693,7 @@ SoProject .projects["SoStd"] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_val=$.projects["cl_lines"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -6747,7 +6747,7 @@ SoProject .projects["SoStd"] {
       var_type=T_DynEnum;
       dyn_enum_val {
        user_data_=NULL;
-       enum_type=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].types["RndInitType"]$$;
+       enum_type=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].types["RndInitType"]$$;
        value=2;
       };
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -6805,7 +6805,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="rnd_seeds";
       var_type=T_Object;
       object_type=RndSeed_List;
-      object_val=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].objs["rnd_seeds"]$$;
+      object_val=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].objs["rnd_seeds"]$$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6816,7 +6816,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="train_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects["SoStd"].networks["Network_0"].train_time$$;
+      object_val=.projects["cl_lines"].networks["Network_0"].train_time$$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6827,7 +6827,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="rnd_seed";
       var_type=T_Object;
       object_type=RndSeed;
-      object_val=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].objs["rnd_seed"]$$;
+      object_val=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].objs["rnd_seed"]$$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6872,7 +6872,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=CAN_REVERT_TO_CODE;
 	code_string="switch(rnd_init)";
 	pre_compile_code_string="switch(rnd_init)";
-	switch_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["rnd_init"]$$;
+	switch_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["rnd_init"]$$;
 	cases {
 	 name=;
 	 el_typ=CaseBlock;
@@ -6892,7 +6892,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	    code_string="rnd_seed->OldSeed()";
 	    pre_compile_code_string="rnd_seed->OldSeed()";
 	    result_var=NULL;
-	    obj=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["rnd_seed"]$$;
+	    obj=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["rnd_seed"]$$;
 	    method=RndSeed::OldSeed;
 	    meth_args {
 	     name=;
@@ -6923,7 +6923,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	    code_string="rnd_seed->NewSeed()";
 	    pre_compile_code_string="rnd_seed->NewSeed()";
 	    result_var=NULL;
-	    obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["rnd_seed"]$;
+	    obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["rnd_seed"]$;
 	    method=RndSeed::NewSeed;
 	    meth_args {
 	     name=;
@@ -6954,7 +6954,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	    code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
 	    pre_compile_code_string="rnd_seeds->UseSeed(network.batch % rnd_seeds.seeds.size)";
 	    result_var=NULL;
-	    obj=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["rnd_seeds"]$$;
+	    obj=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["rnd_seeds"]$$;
 	    method=RndSeed_List::UseSeed;
 	    meth_args {
 	     name=;
@@ -6995,7 +6995,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="no_prompts = false";
       pre_compile_code_string="no_prompts = false";
-      result_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].args["no_prompts"]$$;
+      result_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].args["no_prompts"]$$;
       expr {
        expr="false";
       };
@@ -7006,7 +7006,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="network->CheckConfig(false)";
       pre_compile_code_string="network->CheckConfig(false)";
       result_var=NULL;
-      obj=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].args["network"]$$;
+      obj=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].args["network"]$$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -7032,7 +7032,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer = network.train_time";
       pre_compile_code_string="train_timer = network.train_time";
-      result_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["train_timer"]$$;
+      result_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["train_timer"]$$;
       expr {
        expr="network.train_time";
       };
@@ -7042,7 +7042,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="n_under_cnt = 0";
       pre_compile_code_string="n_under_cnt = 0";
-      result_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["n_under_cnt"]$$;
+      result_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["n_under_cnt"]$$;
       expr {
        expr="0";
       };
@@ -7053,7 +7053,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="GetRandomSeed()";
       pre_compile_code_string="GetRandomSeed()";
       result_var=NULL;
-      fun=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].functions["GetRandomSeed"]$$;
+      fun=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].functions["GetRandomSeed"]$$;
       fun_args {
        name=;
        el_typ=ProgArg;
@@ -7078,7 +7078,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	code_string="network->Init_Weights()";
 	pre_compile_code_string="network->Init_Weights()";
 	result_var=NULL;
-	obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].args["network"]$;
+	obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].args["network"]$;
 	method=Network::Init_Weights;
 	meth_args {
 	 name=;
@@ -7105,7 +7105,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch = network.epoch";
       pre_compile_code_string="epoch = network.epoch";
-      result_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["epoch"]$$;
+      result_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["epoch"]$$;
       expr {
        expr="network.epoch";
       };
@@ -7120,7 +7120,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="train_timer = network.train_time";
       pre_compile_code_string="train_timer = network.train_time";
-      result_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["train_timer"]$;
+      result_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["train_timer"]$;
       expr {
        expr="network.train_time";
       };
@@ -7131,7 +7131,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="train_timer->StartTimer(true)";
       pre_compile_code_string="train_timer->StartTimer(true)";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["train_timer"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["train_timer"]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name=;
@@ -7157,7 +7157,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="n_under_cnt = 0";
       pre_compile_code_string="n_under_cnt = 0";
-      result_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["n_under_cnt"]$;
+      result_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["n_under_cnt"]$;
       expr {
        expr="0";
       };
@@ -7167,7 +7167,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="network.train_mode = train_mode";
       pre_compile_code_string="network.train_mode = train_mode";
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].args["network"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].args["network"]$;
       path="train_mode";
       expr {
        expr="train_mode";
@@ -7180,7 +7180,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="GetRandomSeed()";
       pre_compile_code_string="GetRandomSeed()";
       result_var=NULL;
-      fun=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].functions["GetRandomSeed"]$;
+      fun=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].functions["GetRandomSeed"]$;
       fun_args {
        name=;
        el_typ=ProgArg;
@@ -7205,7 +7205,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	code_string="network->Init_Weights()";
 	pre_compile_code_string="network->Init_Weights()";
 	result_var=NULL;
-	obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].args["network"]$;
+	obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].args["network"]$;
 	method=Network::Init_Weights;
 	meth_args {
 	 name=;
@@ -7232,7 +7232,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch = network.epoch";
       pre_compile_code_string="epoch = network.epoch";
-      result_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["epoch"]$;
+      result_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["epoch"]$;
       expr {
        expr="network.epoch";
       };
@@ -7278,7 +7278,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  };
 	 };
 	};
-	target=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"]$$;
+	target=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"]$$;
 	targ_ld_init="*SoEpoch*";
        };
        NetCounterIncr @[1] {
@@ -7286,8 +7286,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: epoch";
 	pre_compile_code_string="Net Counter Incr: epoch";
-	network_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].args["network"]$;
-	local_ctr_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["epoch"]$;
+	network_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].args["network"]$;
+	local_ctr_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["epoch"]$;
 	counter=Network::epoch;
 	update_after=0;
        };
@@ -7308,7 +7308,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="n_under_cnt += 1";
 	  pre_compile_code_string="n_under_cnt += 1";
-	  var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["n_under_cnt"]$;
+	  var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["n_under_cnt"]$;
 	  expr {
 	   expr="1";
 	  };
@@ -7338,7 +7338,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  flags=CAN_REVERT_TO_CODE;
 	  code_string="n_under_cnt = 0";
 	  pre_compile_code_string="n_under_cnt = 0";
-	  result_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["n_under_cnt"]$;
+	  result_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["n_under_cnt"]$;
 	  expr {
 	   expr="0";
 	  };
@@ -7390,7 +7390,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	      };
 	     };
 	    };
-	    target=$.projects["SoStd"].programs.gp["SoAll_Std"]["SaveWeights"]$;
+	    target=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SaveWeights"]$;
 	    targ_ld_init="*SaveWeights*";
 	   };
 	  };
@@ -7435,7 +7435,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  };
 	 };
 	};
-	target=$.projects["SoStd"].programs.gp["SoAll_Std"]["SaveWeights"]$;
+	target=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SaveWeights"]$;
 	targ_ld_init="*SaveWeights*";
        };
       };
@@ -7446,7 +7446,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="train_timer->EndTimer()";
       pre_compile_code_string="train_timer->EndTimer()";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrain"].vars["train_timer"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrain"].vars["train_timer"]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name=;
@@ -7457,7 +7457,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
     };
-    step_prog=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"]$$;
+    step_prog=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrial"]$$;
     step_n=1;
     doc {
      name="doc";
@@ -7478,7 +7478,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].doc$$;
+      doc=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].doc$$;
      };
     };
     name="SoEpoch";
@@ -7507,7 +7507,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="network";
       var_type=T_Object;
       object_type=SoNetwork;
-      object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_val=$.projects["cl_lines"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -7518,7 +7518,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_val=$.projects["cl_lines"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -7554,7 +7554,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["SoStd"].data.gp["OutputData"]["TrialOutputData"]$;
+      object_val=$.projects["cl_lines"].data.gp["OutputData"]["TrialOutputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7565,7 +7565,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects["SoStd"].networks["Network_0"].epoch_time$$;
+      object_val=.projects["cl_lines"].networks["Network_0"].epoch_time$$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7596,8 +7596,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=0;
       code_string="Net Counter Init: trial";
       pre_compile_code_string="Net Counter Init: trial";
-      network_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].args["network"]$$;
-      local_ctr_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].vars["trial"]$$;
+      network_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].args["network"]$$;
+      local_ctr_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].vars["trial"]$$;
       counter=Network::trial;
       update_after=0;
      };
@@ -7606,7 +7606,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
       pre_compile_code_string="epoch_timer = network.epoch_time";
-      result_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].vars["epoch_timer"]$$;
+      result_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].vars["epoch_timer"]$$;
       expr {
        expr="network.epoch_time";
       };
@@ -7621,8 +7621,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: trial";
       pre_compile_code_string="Net Counter Init: trial";
-      network_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].args["network"]$;
-      local_ctr_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].vars["trial"]$;
+      network_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].args["network"]$;
+      local_ctr_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].vars["trial"]$;
       counter=Network::trial;
       update_after=0;
      };
@@ -7631,7 +7631,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
       pre_compile_code_string="epoch_timer = network.epoch_time";
-      result_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].vars["epoch_timer"]$;
+      result_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].vars["epoch_timer"]$;
       expr {
        expr="network.epoch_time";
       };
@@ -7642,7 +7642,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="epoch_timer->StartTimer(true)";
       pre_compile_code_string="epoch_timer->StartTimer(true)";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].vars["epoch_timer"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].vars["epoch_timer"]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name=;
@@ -7669,7 +7669,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="trial_mon_data->ResetData()";
       pre_compile_code_string="trial_mon_data->ResetData()";
       result_var=NULL;
-      obj=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].vars["trial_mon_data"]$$;
+      obj=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].vars["trial_mon_data"]$$;
       method=DataTable::ResetData;
       meth_args {
        name=;
@@ -7720,7 +7720,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  };
 	 };
 	};
-	target=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"]$;
+	target=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrial"]$;
 	targ_ld_init="*SoTrial*";
        };
        If @[1] {
@@ -7741,7 +7741,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  code_string="network->Compute_Weights()";
 	  pre_compile_code_string="network->Compute_Weights()";
 	  result_var=NULL;
-	  obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].args["network"]$;
+	  obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].args["network"]$;
 	  method=Network::Compute_Weights;
 	  meth_args {
 	   name=;
@@ -7754,9 +7754,9 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	};
        };
       };
-      data_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].args["input_data"]$$;
-      index_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].vars["data_loop_index"]$$;
-      order_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].vars["data_loop_order"]$$;
+      data_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].args["input_data"]$$;
+      index_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].vars["data_loop_index"]$$;
+      order_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].vars["data_loop_order"]$$;
       order=PERMUTED;
       update_after=0;
       dmem_nprocs=1;
@@ -7786,7 +7786,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	code_string="network->Compute_Weights()";
 	pre_compile_code_string="network->Compute_Weights()";
 	result_var=NULL;
-	obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].args["network"]$;
+	obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].args["network"]$;
 	method=Network::Compute_Weights;
 	meth_args {
 	 name=;
@@ -7804,7 +7804,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="network->Compute_EpochStats()";
       pre_compile_code_string="network->Compute_EpochStats()";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].args["network"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].args["network"]$;
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        name=;
@@ -7835,7 +7835,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	};
        };
       };
-      target=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"]$$;
+      target=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"]$$;
       targ_ld_init="*SoEpochMonitor*";
      };
      MethodCall @[8] {
@@ -7844,7 +7844,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="epoch_timer->EndTimer()";
       pre_compile_code_string="epoch_timer->EndTimer()";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpoch"].vars["epoch_timer"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpoch"].vars["epoch_timer"]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name=;
@@ -7876,7 +7876,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"].doc$$;
+      doc=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrial"].doc$$;
      };
     };
     name="SoTrial";
@@ -7905,7 +7905,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="network";
       var_type=T_Object;
       object_type=SoNetwork;
-      object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_val=$.projects["cl_lines"].networks["Network_0"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -7916,7 +7916,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_val=$.projects["cl_lines"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -7958,7 +7958,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       code_string="network->Init_InputData()";
       pre_compile_code_string="network->Init_InputData()";
       result_var=NULL;
-      obj=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"].args["network"]$$;
+      obj=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrial"].args["network"]$$;
       method=Network::Init_InputData;
       meth_args {
        name=;
@@ -8001,7 +8001,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      target=.projects["SoStd"].programs.gp["SoAll_Std"]["ApplyInputs"]$$;
+      target=.projects["cl_lines"].programs.gp["SoAll_Std"]["ApplyInputs"]$$;
       targ_ld_init="*ApplyInputs*";
      };
      MethodCall @[2] {
@@ -8010,7 +8010,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="network->Trial_Run()";
       pre_compile_code_string="network->Trial_Run()";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"].args["network"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrial"].args["network"]$;
       method=SoNetwork::Trial_Run;
       meth_args {
        name=;
@@ -8026,7 +8026,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="network->Compute_TrialStats()";
       pre_compile_code_string="network->Compute_TrialStats()";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"].args["network"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrial"].args["network"]$;
       method=LeabraNetwork::Compute_TrialStats;
       meth_args {
        name=;
@@ -8057,7 +8057,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      target=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"]$$;
+      target=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"]$$;
       targ_ld_init="*SoTrialMonitor*";
      };
      NetUpdateView @[5] {
@@ -8065,8 +8065,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
       pre_compile_code_string="Net Update View";
-      network_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"].args["network"]$;
-      update_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"].vars["update_net_view"]$$;
+      network_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrial"].args["network"]$;
+      update_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrial"].vars["update_net_view"]$$;
      };
     };
     step_prog=NULL;
@@ -8090,7 +8090,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["ApplyInputs"].doc$$;
+      doc=.projects["cl_lines"].programs.gp["SoAll_Std"]["ApplyInputs"].doc$$;
      };
     };
     name="ApplyInputs";
@@ -8107,8 +8107,8 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      LayerWriter @["LayerWriter_0"] {
       name="LayerWriter_0";
-      data=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
-      network=$.projects["SoStd"].networks["Network_0"]$;
+      data=$.projects["cl_lines"].data.gp["InputData"]["StdInputData"]$;
+      network=$.projects["cl_lines"].networks["Network_0"]$;
       layer_data {
        name="layer_data";
        el_typ=LayerWriterEl;
@@ -8151,7 +8151,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_val=$.projects["cl_lines"].networks["Network_0"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -8162,7 +8162,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
+      object_val=$.projects["cl_lines"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -8178,7 +8178,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="LayerWriter_0";
       var_type=T_Object;
       object_type=LayerWriter;
-      object_val=.projects["SoStd"].programs.gp["SoAll_Std"]["ApplyInputs"].objs["LayerWriter_0"]$$;
+      object_val=.projects["cl_lines"].programs.gp["SoAll_Std"]["ApplyInputs"].objs["LayerWriter_0"]$$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8201,7 +8201,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
-      obj=.projects["SoStd"].programs.gp["SoAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$$;
+      obj=.projects["cl_lines"].programs.gp["SoAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name=;
@@ -8239,7 +8239,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="LayerWriter_0->CheckConfig(false)";
       pre_compile_code_string="LayerWriter_0->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=taList_impl::CheckConfig;
       meth_args {
        name=;
@@ -8271,7 +8271,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="LayerWriter_0->ApplyInputData()";
       pre_compile_code_string="LayerWriter_0->ApplyInputData()";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::ApplyInputData;
       meth_args {
        name=;
@@ -8303,7 +8303,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].doc$$;
+      doc=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].doc$$;
      };
     };
     name="SoTrialMonitor";
@@ -8326,10 +8326,10 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
        NetMonItem @["batch"] {
 	name="batch";
-	monitor=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$$;
+	monitor=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["SoStd"].networks["Network_0"]$;
+	object=$.projects["cl_lines"].networks["Network_0"]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8361,10 +8361,10 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch"] {
 	name="epoch";
-	monitor=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
+	monitor=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["SoStd"].networks["Network_0"]$;
+	object=$.projects["cl_lines"].networks["Network_0"]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8396,10 +8396,10 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["trial"] {
 	name="trial";
-	monitor=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
+	monitor=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["SoStd"].networks["Network_0"]$;
+	object=$.projects["cl_lines"].networks["Network_0"]$;
 	variable="trial";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8431,10 +8431,10 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["trial_name"] {
 	name="trial_name";
-	monitor=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
+	monitor=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["SoStd"].networks["Network_0"]$;
+	object=$.projects["cl_lines"].networks["Network_0"]$;
 	variable="trial_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8466,10 +8466,10 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["group_name"] {
 	name="group_name";
-	monitor=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
+	monitor=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["SoStd"].networks["Network_0"]$;
+	object=$.projects["cl_lines"].networks["Network_0"]$;
 	variable="group_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8501,10 +8501,10 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["sse"] {
 	name="sse";
-	monitor=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
+	monitor=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["SoStd"].networks["Network_0"]$;
+	object=$.projects["cl_lines"].networks["Network_0"]$;
 	variable="sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8535,8 +8535,8 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects["SoStd"].networks["Network_0"]$;
-      data=$.projects["SoStd"].data.gp["OutputData"]["TrialOutputData"]$;
+      network=$.projects["cl_lines"].networks["Network_0"]$;
+      data=$.projects["cl_lines"].data.gp["OutputData"]["TrialOutputData"]$;
       rmv_orphan_cols=1;
      };
     };
@@ -8553,7 +8553,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_val=$.projects["cl_lines"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -8569,7 +8569,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["SoStd"].data.gp["OutputData"]["TrialOutputData"]$;
+      object_val=$.projects["cl_lines"].data.gp["OutputData"]["TrialOutputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8580,7 +8580,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
+      object_val=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].objs["trial_netmon"]$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8603,7 +8603,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       pre_compile_code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       result_var=NULL;
-      obj=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].vars["trial_netmon"]$$;
+      obj=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].vars["trial_netmon"]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name=;
@@ -8641,7 +8641,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="trial_netmon->CheckConfig(false)";
       pre_compile_code_string="trial_netmon->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].vars["trial_netmon"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].vars["trial_netmon"]$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -8668,7 +8668,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="trial_netmon->UpdateMonitors(true)";
       pre_compile_code_string="trial_netmon->UpdateMonitors(true)";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].vars["trial_netmon"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].vars["trial_netmon"]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name=;
@@ -8700,7 +8700,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="trial_mon_data->AddBlankRow()";
       pre_compile_code_string="trial_mon_data->AddBlankRow()";
       result_var=NULL;
-      obj=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].vars["trial_mon_data"]$$;
+      obj=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].vars["trial_mon_data"]$$;
       method=DataTable::AddBlankRow;
       meth_args {
        name=;
@@ -8716,7 +8716,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="trial_netmon->GetMonVals()";
       pre_compile_code_string="trial_netmon->GetMonVals()";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].vars["trial_netmon"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].vars["trial_netmon"]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name=;
@@ -8732,7 +8732,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="trial_mon_data->WriteClose()";
       pre_compile_code_string="trial_mon_data->WriteClose()";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].vars["trial_mon_data"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].vars["trial_mon_data"]$;
       method=DataTable::WriteClose;
       meth_args {
        name=;
@@ -8748,7 +8748,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
       pre_compile_code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
       result_var=NULL;
-      obj=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrialMonitor"].args["network"]$$;
+      obj=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoTrialMonitor"].args["network"]$$;
       method=Network::DMem_ShareTrialData;
       meth_args {
        name=;
@@ -8802,7 +8802,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].doc$$;
+      doc=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].doc$$;
      };
     };
     name="SoEpochMonitor";
@@ -8825,10 +8825,10 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
        NetMonItem @["batch"] {
 	name="batch";
-	monitor=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$$;
+	monitor=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["SoStd"].networks["Network_0"]$;
+	object=$.projects["cl_lines"].networks["Network_0"]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8860,10 +8860,10 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch"] {
 	name="epoch";
-	monitor=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
+	monitor=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["SoStd"].networks["Network_0"]$;
+	object=$.projects["cl_lines"].networks["Network_0"]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8895,10 +8895,10 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["avg_sse"] {
 	name="avg_sse";
-	monitor=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
+	monitor=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["SoStd"].networks["Network_0"]$;
+	object=$.projects["cl_lines"].networks["Network_0"]$;
 	variable="avg_sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8930,10 +8930,10 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["cnt_err"] {
 	name="cnt_err";
-	monitor=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
+	monitor=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["SoStd"].networks["Network_0"]$;
+	object=$.projects["cl_lines"].networks["Network_0"]$;
 	variable="cnt_err";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8965,7 +8965,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch_time_tot"] {
 	name="epoch_time_tot";
-	monitor=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
+	monitor=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
 	computed=1;
 	object_type=NULL;
 	object=NULL;
@@ -9000,7 +9000,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
        NetMonItem @["epoch_time_usr"] {
 	name="epoch_time_usr";
-	monitor=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
+	monitor=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
 	computed=1;
 	object_type=NULL;
 	object=NULL;
@@ -9034,8 +9034,8 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects["SoStd"].networks["Network_0"]$;
-      data=$.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"]$;
+      network=$.projects["cl_lines"].networks["Network_0"]$;
+      data=$.projects["cl_lines"].data.gp["OutputData"]["EpochOutputData"]$;
       rmv_orphan_cols=1;
      };
     };
@@ -9052,7 +9052,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_val=$.projects["cl_lines"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -9068,7 +9068,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"]$;
+      object_val=$.projects["cl_lines"].data.gp["OutputData"]["EpochOutputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9079,7 +9079,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
+      object_val=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].objs["epoch_netmon"]$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9090,7 +9090,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=$.projects["SoStd"].networks["Network_0"].epoch_time$;
+      object_val=$.projects["cl_lines"].networks["Network_0"].epoch_time$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9112,7 +9112,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
       pre_compile_code_string="epoch_timer = network.epoch_time";
-      result_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_timer"]$$;
+      result_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_timer"]$$;
       expr {
        expr="network.epoch_time";
       };
@@ -9123,7 +9123,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       pre_compile_code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       result_var=NULL;
-      obj=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_netmon"]$$;
+      obj=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_netmon"]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name=;
@@ -9161,7 +9161,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="epoch_netmon->CheckConfig(false)";
       pre_compile_code_string="epoch_netmon->CheckConfig(false)";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_netmon"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_netmon"]$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -9188,7 +9188,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="epoch_netmon->UpdateMonitors(true)";
       pre_compile_code_string="epoch_netmon->UpdateMonitors(true)";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_netmon"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_netmon"]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name=;
@@ -9220,7 +9220,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="epoch_mon_data->AddBlankRow()";
       pre_compile_code_string="epoch_mon_data->AddBlankRow()";
       result_var=NULL;
-      obj=.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_mon_data"]$$;
+      obj=.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_mon_data"]$$;
       method=DataTable::AddBlankRow;
       meth_args {
        name=;
@@ -9236,7 +9236,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="epoch_netmon->GetMonVals()";
       pre_compile_code_string="epoch_netmon->GetMonVals()";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_netmon"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_netmon"]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name=;
@@ -9251,7 +9251,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer = network.epoch_time";
       pre_compile_code_string="epoch_timer = network.epoch_time";
-      result_var=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_timer"]$;
+      result_var=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_timer"]$;
       expr {
        expr="network.epoch_time";
       };
@@ -9262,7 +9262,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
       pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_mon_data"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_mon_data"]$;
       method=DataTable::SetValColName;
       meth_args {
        name=;
@@ -9322,7 +9322,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
       pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_mon_data"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_mon_data"]$;
       method=DataTable::SetValColName;
       meth_args {
        name=;
@@ -9382,7 +9382,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="epoch_mon_data->WriteClose()";
       pre_compile_code_string="epoch_mon_data->WriteClose()";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_mon_data"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SoEpochMonitor"].vars["epoch_mon_data"]$;
       method=DataTable::WriteClose;
       meth_args {
        name=;
@@ -9414,7 +9414,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["SoStd"].programs.gp["SoAll_Std"]["SaveWeights"].doc$$;
+      doc=.projects["cl_lines"].programs.gp["SoAll_Std"]["SaveWeights"].doc$$;
      };
     };
     name="SaveWeights";
@@ -9443,7 +9443,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["SoStd"].networks["Network_0"]$;
+      object_val=$.projects["cl_lines"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
@@ -9538,7 +9538,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="batch_str = taMisc::LeadingZeros(network.batch, 2)";
       pre_compile_code_string="batch_str = taMisc::LeadingZeros(network.batch, 2)";
-      result_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SaveWeights"].vars["batch_str"]$$;
+      result_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SaveWeights"].vars["batch_str"]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -9574,7 +9574,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_str = taMisc::LeadingZeros(network.epoch, 4)";
       pre_compile_code_string="epoch_str = taMisc::LeadingZeros(network.epoch, 4)";
-      result_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SaveWeights"].vars["epoch_str"]$$;
+      result_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SaveWeights"].vars["epoch_str"]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -9610,7 +9610,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="final_tag = tag + \".\" + batch_str + \"_\" + epoch_str";
       pre_compile_code_string="final_tag = tag + \".\" + batch_str + \"_\" + epoch_str";
-      result_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SaveWeights"].vars["final_tag"]$$;
+      result_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SaveWeights"].vars["final_tag"]$$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
       };
@@ -9620,8 +9620,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=CAN_REVERT_TO_CODE;
       code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
       pre_compile_code_string="fname = network->GetFileNameFmProject(\".wts.gz\", final_tag, wts_subdir, false)";
-      result_var=.projects["SoStd"].programs.gp["SoAll_Std"]["SaveWeights"].vars["fname"]$$;
-      obj=.projects["SoStd"].programs.gp["SoAll_Std"]["SaveWeights"].args["network"]$$;
+      result_var=.projects["cl_lines"].programs.gp["SoAll_Std"]["SaveWeights"].vars["fname"]$$;
+      obj=.projects["cl_lines"].programs.gp["SoAll_Std"]["SaveWeights"].args["network"]$$;
       method=taBase::GetFileNameFmProject;
       meth_args {
        name=;
@@ -9681,7 +9681,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       code_string="network->SaveWeights(fname, Network::NET_FMT)";
       pre_compile_code_string="network->SaveWeights(fname, Network::NET_FMT)";
       result_var=NULL;
-      obj=$.projects["SoStd"].programs.gp["SoAll_Std"]["SaveWeights"].args["network"]$;
+      obj=$.projects["cl_lines"].programs.gp["SoAll_Std"]["SaveWeights"].args["network"]$;
       method=Network::SaveWeights;
       meth_args {
        name=;
@@ -9771,10 +9771,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    name="Browser2";
-   m_data=.projects["SoStd"]$$;
+   m_data=.projects["cl_lines"]$$;
    cur_font_size=12;
    visible=1;
-   win_name=".projects[\"SoStd\"] - SoStd.proj";
+   win_name=".projects[\"cl_lines\"] - cl_lines.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -9814,7 +9814,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      visible=1;
      root_typ=SoProject;
      root_md=NULL;
-     m_root=$.projects["SoStd"]$;
+     m_root=$.projects["cl_lines"]$;
     };
     PanelViewer @["Editor"] {
      name="Editor";
@@ -9857,7 +9857,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 el_def=0;
 	 NetView @["Network_0_View"] {
 	  name="Network_0_View";
-	  m_data=$.projects["SoStd"].networks["Network_0"]$;
+	  m_data=$.projects["cl_lines"].networks["Network_0"]$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
@@ -10064,7 +10064,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 el_def=0;
 	 GraphTableView @["EpochOutputData_Graph"] {
 	  name="EpochOutputData_Graph";
-	  m_data=$.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"]$;
+	  m_data=$.projects["cl_lines"].data.gp["OutputData"]["EpochOutputData"]$;
 	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
@@ -10073,7 +10073,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	   GraphColView @["batch"] {
 	    name="batch";
-	    m_data=.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$$;
+	    m_data=.projects["cl_lines"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10082,7 +10082,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["epoch"] {
 	    name="epoch";
-	    m_data=.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
+	    m_data=.projects["cl_lines"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10091,7 +10091,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["avg_sse"] {
 	    name="avg_sse";
-	    m_data=.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
+	    m_data=.projects["cl_lines"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10100,7 +10100,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["cnt_err"] {
 	    name="cnt_err";
-	    m_data=.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
+	    m_data=.projects["cl_lines"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10109,7 +10109,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["epoch_time_tot"] {
 	    name="epoch_time_tot";
-	    m_data=.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
+	    m_data=.projects["cl_lines"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -10118,7 +10118,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["epoch_time_usr"] {
 	    name="epoch_time_usr";
-	    m_data=.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
+	    m_data=.projects["cl_lines"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
 	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
@@ -11383,7 +11383,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="send_prjns";
       el_typ=Projection;
       el_def=0;
-      Projection_Group @. = [0] = Projection .projects["SoStd"].networks["Network_0"].layers["Hidden"].projections["Fm_Input"];
+      Projection_Group @. = [0] = Projection .projects["cl_lines"].networks["Network_0"].layers["Hidden"].projections["Fm_Input"];
      };
      units {
       name="units";
@@ -11392,7 +11392,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=SoftClUnitSpec: spec=.projects["SoStd"].networks["Network_0"].specs["SoUnitSpec_0"].children["SoftClUnitSpec_1"]$$: };
+     unit_spec {type=SoftClUnitSpec: spec=.projects["cl_lines"].networks["Network_0"].specs["SoUnitSpec_0"].children["SoftClUnitSpec_1"]$$: };
      dist {
       fm_input=0;
       fm_output=-1;
@@ -11401,7 +11401,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     spec {type=SoLayerSpec: spec=.projects["SoStd"].networks["Network_0"].specs["SoLayerSpec_0"]$$: };
+     spec {type=SoLayerSpec: spec=.projects["cl_lines"].networks["Network_0"].specs["SoLayerSpec_0"]$$: };
      avg_act=0.4;
      sum_act=10;
     };
@@ -11434,10 +11434,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects["SoStd"].networks["Network_0"].layers["Input"]$$;
-       spec {type=FullPrjnSpec: spec=.projects["SoStd"].networks["Network_0"].specs["FullPrjnSpec_0"]$$: };
+       from=.projects["cl_lines"].networks["Network_0"].layers["Input"]$$;
+       spec {type=FullPrjnSpec: spec=.projects["cl_lines"].networks["Network_0"].specs["FullPrjnSpec_0"]$$: };
        con_type=SoCon;
-       con_spec {type=MaxInConSpec: spec=.projects["SoStd"].networks["Network_0"].specs["HebbConSpec_0"].children["MaxInConSpec_1"]$$: };
+       con_spec {type=MaxInConSpec: spec=.projects["cl_lines"].networks["Network_0"].specs["HebbConSpec_0"].children["MaxInConSpec_1"]$$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -11460,7 +11460,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=ThreshLinSoUnitSpec: spec=.projects["SoStd"].networks["Network_0"].specs["SoUnitSpec_0"].children["ThreshLinSoUnitSpec_1"]$$: };
+     unit_spec {type=ThreshLinSoUnitSpec: spec=.projects["cl_lines"].networks["Network_0"].specs["SoUnitSpec_0"].children["ThreshLinSoUnitSpec_1"]$$: };
      dist {
       fm_input=1;
       fm_output=-1;
@@ -11469,7 +11469,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     spec {type=SoLayerSpec: spec=$.projects["SoStd"].networks["Network_0"].specs["SoLayerSpec_0"]$: };
+     spec {type=SoLayerSpec: spec=$.projects["cl_lines"].networks["Network_0"].specs["SoLayerSpec_0"]$: };
      avg_act=0.528762;
      sum_act=13.21905;
     };

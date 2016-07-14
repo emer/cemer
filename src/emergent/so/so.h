@@ -240,7 +240,7 @@ public:
   SoLayerSpec_SPtr spec;	// the spec for this layer
   float		avg_act;	// average activation over layer
   float		sum_act;	// summed activation over layer
-  UnitVars*	winner;		// #READ_ONLY #NO_SAVE winning unit
+  SoUnit*	winner;		// #READ_ONLY #NO_SAVE winning unit
 
   void	Compute_Act_post(SoNetwork* net) { spec->Compute_Act_post(this, net); }
   void	Compute_AvgAct(SoNetwork* net)	{ spec->Compute_AvgAct(this, net); }

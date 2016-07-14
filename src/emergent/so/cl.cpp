@@ -13,18 +13,12 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-
-
 #include "cl.h"
 
 TA_BASEFUNS_CTORS_DEFN(ClConSpec);
-
 TA_BASEFUNS_CTORS_DEFN(SoftClConSpec);
-
 TA_BASEFUNS_CTORS_DEFN(ClLayerSpec);
-
 TA_BASEFUNS_CTORS_DEFN(SoftClLayerSpec);
-
 TA_BASEFUNS_CTORS_DEFN(SoftClUnitSpec);
 
 void ClLayerSpec::Initialize() {
@@ -32,7 +26,7 @@ void ClLayerSpec::Initialize() {
 }
 
 void ClLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
-  if(lay->ext_flag & Unit::EXT) { // input layer
+  if(lay->ext_flag & UnitVars::EXT) { // input layer
     SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
@@ -48,8 +42,8 @@ void ClLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
   lay->avg_act = (uspec->act_range.max / lvcnt) +
     (((lvcnt - 1.0f) * uspec->act_range.min) / lvcnt);
 
-  win_u->act = uspec->act_range.max;
-  win_u->act_i = lay->avg_act;  // this is the rescaled value..
+  win_u->act() = uspec->act_range.max;
+  win_u->act_i() = lay->avg_act;  // this is the rescaled value..
 }
 
 void SoftClUnitSpec::Initialize() {
@@ -64,27 +58,31 @@ void SoftClUnitSpec::UpdateAfterEdit_impl() {
   denom_const = 0.5f / var;
 }
 
-void SoftClUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
+void SoftClUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
   // do distance instead of net input
-  if (u->ext_flag & Unit::EXT)
+  if (u->ext_flag & UnitVars::EXT) {
     u->net = u->ext;
+  }
   else {
     // do distance instead of net input
     u->net = 0.0f;
-    for(int g=0; g<u->recv.size; g++) {
-      SoRecvCons* recv_gp = (SoRecvCons*)u->recv.FastEl(g);
-      if(recv_gp->NotActive()) continue;
-      u->net += recv_gp->Compute_Dist(u, net);
+    const int nrcg = net->ThrUnNRecvConGps(thr_no, u->thr_un_idx);
+    for(int g=0; g<nrcg; g++) {
+      SoConGroup* rgp = (SoConGroup*)net->ThrUnRecvConGroup(thr_no, u->thr_un_idx, g);
+      if(rgp->NotActive()) continue;
+      u->net += rgp->con_spec->Compute_Dist(rgp, net, thr_no);
     }
   }
 }
 
-void SoftClUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
-  SoUnit* su = (SoUnit*)u;
-  if(u->ext_flag & Unit::EXT)
+void SoftClUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
+  SoUnitVars* su = (SoUnitVars*)u;
+  if(su->ext_flag & UnitVars::EXT) {
     su->act = su->act_i = u->ext;
-  else
+  }
+  else {
     su->act = su->act_i = norm_const * expf(-denom_const * su->net);
+  }
 }
 
 void SoftClLayerSpec::Initialize() {
@@ -92,7 +90,7 @@ void SoftClLayerSpec::Initialize() {
 }
 
 void SoftClLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
-  if(lay->ext_flag & Unit::EXT) { // input layer
+  if(lay->ext_flag & UnitVars::EXT) { // input layer
     SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
@@ -102,12 +100,13 @@ void SoftClLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
   float sum = 0.0f;
   FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
     // act has already been computed..
-    sum += u->act;
+    sum += u->act();
   }
 
   if(sum > 0.0f) {
+    float norm = 1.0f / sum;
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
-      u->act = uspec->act_range.Project(u->act / sum);
+      u->act() = uspec->act_range.Project(u->act() * norm);
       // normalize by sum, rescale to act range range
     }
   }
