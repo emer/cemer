@@ -98,6 +98,7 @@ public:
   taiWidgetMenu*              filePublishProjectOnWebMenu;
   taiWidgetMenu*              fileUpdateProjectOnWebMenu;
   taiWidgetMenu*              fileUploadFilesForProjectOnWebMenu;
+  taiWidgetMenu*              fileBrowseProgramLibsOnWebMenu;
   taiWidgetMenu*              editMenu;
   taiWidgetMenu*              viewMenu;
   taiWidgetMenu*              show_menu;
@@ -129,6 +130,7 @@ public:
   iAction*            filePublishProjectOnWebAction;
   iAction*            fileUpdateProjectOnWebAction;
   iAction*            fileUploadFilesForProjectOnWebAction;
+  iAction*            fileBrowseProgramLibsOnWebAction;
   iAction*            fileCloseAction;
   iAction*            fileOptionsAction;
   iAction*            fileCloseWindowAction; //note: special, because it is always at bottom of File menu for non-root
@@ -337,6 +339,8 @@ public slots:
   virtual void  fileUpdateProjectOnWeb(const Variant &repo); // Upload a revised (or possibly the first version) of a published project to wiki
   virtual void  fileUploadFilesForProjectOnWeb_aboutToShow();
   virtual void  fileUploadFilesForProjectOnWeb(const Variant &repo); // Add project files to wiki (e.g. weights files, data files, etc.)
+  virtual void  fileBrowseProgramLibsOnWeb_aboutToShow();
+  virtual void  fileBrowseProgramLibsOnWeb(const Variant &repo); // Add project files to wiki (e.g. weights files, data files, etc.)
   virtual bool  WikiSupportsPublishProject(const String &repo);
   virtual void  fileClose();    // Close Project (only enabled if viewer)
   virtual void  fileOptions();  // edits taMisc

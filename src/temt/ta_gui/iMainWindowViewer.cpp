@@ -188,6 +188,7 @@ void iMainWindowViewer::Init() {
   filePublishProjectOnWebAction = NULL;
   fileUpdateProjectOnWebAction = NULL;
   fileUploadFilesForProjectOnWebAction = NULL;
+  fileBrowseProgramLibsOnWebAction = NULL;
   fileCloseAction = NULL;
   fileCloseWindowAction = NULL;
   fileQuitAction = NULL;
@@ -514,11 +515,8 @@ void iMainWindowViewer::Constr_FileMenu()
     filePublishProjectOnWebMenu = fileMenu->AddSubMenu("Publish &Project on Web");
     fileUpdateProjectOnWebMenu = fileMenu->AddSubMenu("Update Project on Web");
     fileUploadFilesForProjectOnWebMenu = fileMenu->AddSubMenu("Upload Project Files to Web");
+    fileBrowseProgramLibsOnWebMenu = fileMenu->AddSubMenu("Browse Program Libraries on Web");
   }
-//  fileUpdateProjectOnWebAction = AddAction(new iAction("Update Project on Web", QKeySequence(), "fileUpdateProjectOnWebAction"));
-//  fileUploadFilesForProjectOnWebAction = AddAction(new iAction("Upload Project Files to Web", QKeySequence(), "fileUploadFilesForProjectOnWebAction"));
-//  fileMenu->AddAction(fileUpdateProjectOnWebAction);
-//  fileMenu->AddAction(fileUploadFilesForProjectOnWebAction);
 
   fileMenu->insertSeparator();
   fileMenu->AddAction(fileCloseAction);
@@ -560,8 +558,7 @@ void iMainWindowViewer::Constr_FileMenu()
     connect(filePublishProjectOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(filePublishProjectOnWeb_aboutToShow()));
     connect(fileUpdateProjectOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(fileUpdateProjectOnWeb_aboutToShow()));
     connect(fileUploadFilesForProjectOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(fileUploadFilesForProjectOnWeb_aboutToShow()));
-//    connect(fileUpdateProjectOnWebAction, SIGNAL(Action()), this, SLOT(fileUpdateProjectOnWeb()));
-//    connect(fileUploadFilesForProjectOnWebAction, SIGNAL(Action()), this, SLOT(fileUploadFilesForProjectOnWeb()));
+    connect(fileBrowseProgramLibsOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(fileBrowseProgramLibsOnWeb_aboutToShow()));
 
     connect(fileCloseAction, SIGNAL(Action()), this, SLOT(fileClose()));
   }
@@ -1612,11 +1609,11 @@ void iMainWindowViewer::fileOpenFromWeb(const Variant &repo)
   if (!WikiSupportsPublishProject(wiki_name))
     return  ;
   
-  String wikiUrl = taMisc::GetWikiURL(wiki_name);
-  if (wikiUrl.empty()) {
+  String wiki_url = taMisc::GetWikiURL(wiki_name);
+  if (wiki_url.empty()) {
     return;
   }
-  String url = wikiUrl + taMisc::pub_proj_page;
+  String url = wiki_url + taMisc::pub_proj_page;
   //  httpUrlHandler(QUrl(url));
   iHelpBrowser::StatLoadUrl(url);
 }
@@ -1682,6 +1679,29 @@ void iMainWindowViewer::fileUploadFilesForProjectOnWeb(const Variant &repo)
   if (proj && WikiSupportsPublishProject(wiki_name)) {
     proj->UploadFilesForProjectOnWeb(wiki_name); // repository name held by project
   }
+}
+
+void iMainWindowViewer::fileBrowseProgramLibsOnWeb_aboutToShow()
+{
+  // Clear and rebuild submenu.
+  fileBrowseProgramLibsOnWebMenu->Reset();
+  for(int i=0;i<taMisc::wikis.size; i++) {
+    String wiki_name = taMisc::wikis[i].name;
+    String label = wiki_name + "...";
+    fileBrowseProgramLibsOnWebMenu->AddItem(label, iAction::var_act, this, SLOT(fileBrowseProgramLibsOnWeb(const Variant &)), wiki_name);
+  }
+}
+
+void iMainWindowViewer::fileBrowseProgramLibsOnWeb(const Variant &repo)
+{
+  String wiki_name = repo.toString();
+  String wiki_url = taMisc::GetWikiURL(wiki_name);
+  if (wiki_url.empty()) {
+    return;
+  }
+  String url = wiki_url + "BrowseProgramLibrary";
+  //  httpUrlHandler(QUrl(url));
+  iHelpBrowser::StatLoadUrl(url);
 }
 
 bool iMainWindowViewer::WikiSupportsPublishProject(const String &wiki_name) {
