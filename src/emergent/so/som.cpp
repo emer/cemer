@@ -22,8 +22,9 @@ TA_BASEFUNS_CTORS_DEFN(NeighborEl);
 TA_BASEFUNS_CTORS_DEFN(SomLayerSpec);
 
 void SomUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thread_no) {
-  if (u->ext_flag & UnitVars::EXT)
+  if (u->ext_flag & UnitVars::EXT) {
     u->net = u->ext;
+  }
   else {
     // do distance instead of net input
     u->net = 0.0f;

@@ -180,7 +180,7 @@ void ProgEl::UpdateProgElVars(const taBase* old_scope, taBase* new_scope) {
           }
         }
       }
-      peb->ReParseExpr();       // good idea..
+      peb->ReParseExpr(false);       // re-parse, but don't prompt..
     }
     else if(md->type->InheritsFromName("ProgVarRef")) {
       ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);

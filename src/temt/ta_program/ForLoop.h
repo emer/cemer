@@ -38,9 +38,7 @@ public:
 
   virtual void		ChangeLoopVar(const String& to_var);
   // #BUTTON change looping variable name from its current name to new variable name -- just does simple search & replace by text
-
-  virtual String	GetLoopVar(bool& is_local) const;
-  // this is a fuzzy "best guess" at the loop var -- it is used esp for creating a new one (j,k, etc.) in new nested loops; is_local is true if the var is declared in the init
+  virtual ProgVar*	GetLoopVar();
 
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;
@@ -55,14 +53,16 @@ public:
   SIMPLE_CUTLINKS(ForLoop);
   TA_BASEFUNS(ForLoop)
 protected:
-  virtual void	MakeIndexVar(const String& var_nm);
-  // make default 'i' variable in program.vars -- just makes it easier to deal with loops in default case..
+  virtual ProgVar* MakeIndexVar(const String& var_nm);
+  // make given variable, favoring local vars..
 
   void	        UpdateAfterEdit_impl() override;
-  virtual void	UpdateOnInsert_impl(); // check for being nested, and update def var 
+
+  bool	        UpdateVarClashes();
   bool		ParentForLoopVarClashes(const String& loop_var); // true if a parent For loop is also using the loop_var
   void		MorphVar(String& cur_loop_var); // typically i,j,k, etc. or var2, var3, etc
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+
+  void	        CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		GenCssPre_impl(Program* prog) override; 
   void		GenCssPost_impl(Program* prog) override; 
 private:

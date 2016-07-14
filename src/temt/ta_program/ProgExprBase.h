@@ -88,10 +88,12 @@ public:
 
   virtual bool  ParseExpr();
   // parse the current expr for variables and update vars and var_expr accordingly (returns false if there are some bad_vars)
-  virtual void  ReParseExpr();
-  // calls ParseExpr if appropriate
+  virtual void  ReParseExpr(bool prompt_for_bad_vars = true);
+  // calls ParseExpr if appropriate, prompts for bad vars if true
   virtual String GetFullExpr() const;
   // get full expression with variable names substituted appropriately
+  virtual int   ReplaceVar(ProgVar* old_var, ProgVar* new_var);
+  // replace old var with new var in code -- uses parsed variables
 
   inline void           SetExprFlag(ExprFlags flg)   { flags = (ExprFlags)(flags | flg); }
   // set flag state on

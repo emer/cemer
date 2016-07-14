@@ -51,26 +51,57 @@ void ForLoop::UpdateAfterEdit_impl() {
   if(!prg || isDestroying()) return;
   if(init.expr == "_toolbox_tmp_") {
     init.expr = "i = 0";
-    UpdateOnInsert_impl();
+    init.ParseExpr();
+    if(!UpdateVarClashes()) {
+      MakeIndexVar("i");
+    }
   }
-  bool is_local;
-  String loop_var = GetLoopVar(is_local);
-  if(!is_local)
-    MakeIndexVar(loop_var);     // make sure it exists
+  else {
+    UpdateVarClashes();
+  }
+  // whatever we do, make sure these guys are parsed!
+  init.ParseExpr();
+  test.ParseExpr();
+  iter.ParseExpr();
 }
 
-void ForLoop::UpdateOnInsert_impl() {
-  bool is_local;
-  String loop_var = GetLoopVar(is_local);
-  if (is_local) return; // locals don't clash with above
-  bool clashes = ParentForLoopVarClashes(loop_var);
-  if (!clashes) return;
-  String new_loop_var = loop_var;
+ProgVar* ForLoop::GetLoopVar() {
+  // use init expression for the loop variable -- most likely to just contain 1 item, and in any case should be first item
+  ProgExprBase* peb = &init;
+  peb->ParseExpr();
+  if(peb->vars.size == 0) {     // try iter then
+    peb = &iter;
+    peb->ParseExpr();
+    if(peb->vars.size == 0) {
+      peb = &test;
+      peb->ParseExpr();
+    }
+  }
+  if(peb->vars.size == 0) {     // couldn't get nothing! could do err msg
+    return NULL;
+  }
+  ProgVar* rval = NULL;
+  for(int i=0; i<peb->vars.size; i++) {
+    ProgVarRef* vrf = peb->vars.FastEl(i);
+    if(!vrf->ptr()) continue;   // shouldn't happen..
+    // todo: could do some things here to test but for now just take the first guy!
+    rval = vrf->ptr();
+  }
+  return rval;
+}
+
+bool ForLoop::UpdateVarClashes() {
+  ProgVar* var = GetLoopVar();
+  if(!var) return false;
+  bool clashes = ParentForLoopVarClashes(var->name);
+  if (!clashes) return false;
+  String new_loop_var = var->name;
   while (clashes) {
     MorphVar(new_loop_var);
     clashes = ParentForLoopVarClashes(new_loop_var);
   }
   ChangeLoopVar(new_loop_var);
+  return true;
 }
 
 void ForLoop::MorphVar(String& cur_loop_var) {
@@ -91,67 +122,42 @@ void ForLoop::MorphVar(String& cur_loop_var) {
 bool ForLoop::ParentForLoopVarClashes(const String& loop_var) {
   ForLoop* outer_loop = GET_MY_OWNER(ForLoop);
   while (outer_loop) {
-    bool is_local;
-    String outer_loop_var = outer_loop->GetLoopVar(is_local);
-    // note: is_local irrelevant because we will still clash
-    if (loop_var == outer_loop_var) return true;
+    ProgVar* outer_loop_var = outer_loop->GetLoopVar();
+    if (loop_var == outer_loop_var->name) return true;
     outer_loop = (ForLoop*)outer_loop->GetOwner(&TA_ForLoop);
   }
   return false;
 }
 
-String ForLoop::GetLoopVar(bool& is_local) const {
-  // note: this heuristic is going to work 99.9% of the time
-  // get trimmed part before first =
-  String loop_var;
-  String expr_start = code_string.before("=");
-  if (expr_start.contains("(int ")) {
-    loop_var = expr_start.after("(int ");
-  }
-  else {
-    loop_var = expr_start.after("(");
-  }
-  loop_var = trim(loop_var);
-
-  // there will only be any embedded spaces if there is a type declaration
-  is_local = loop_var.contains(" ");
-  if (is_local) {
-    loop_var = trim(loop_var.after(" "));
-  }
-  return loop_var;
-}
-
-void ForLoop::MakeIndexVar(const String& var_nm) {
-  if(var_nm.empty()) return;
+ProgVar* ForLoop::MakeIndexVar(const String& var_nm) {
+  if(var_nm.empty()) return NULL;
 
   Program* my_prog = GET_MY_OWNER(Program);
-  if(!my_prog) return;
+  if(!my_prog) return NULL;
   Function* my_fun = GET_MY_OWNER(Function);
 
+  ProgVar* rval = NULL;
   if(my_fun) {                  // use function scope by default
-    if(my_fun->FindVarName(var_nm)) return; // all good
+    rval = my_fun->FindVarName(var_nm);
+    if(rval) return rval;
   }
-  if(my_prog->FindVarName(var_nm)) return; // still good
+  rval = my_prog->FindVarName(var_nm);
+  if(rval) return rval;
 
-  ProgVar* var = NULL;
   LocalVars* locvars = FindLocalVarList();
   if(locvars) {
-    var = locvars->AddVar();
+    rval = locvars->AddVar();
   }
   else {
-    var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+    rval = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
   }
-  if(var) {
-    var->name = var_nm;
-    var->SetInt(0);
-    var->ClearVarFlag(ProgVar::CTRL_PANEL);
-    var->SigEmitUpdated();
-    // get the var ptrs in case someone changes them later!
-    init.ParseExpr();
-    test.ParseExpr();
-    iter.ParseExpr();
-    return;
+  if(rval) {
+    rval->name = var_nm;
+    rval->SetInt(0);
+    rval->ClearVarFlag(ProgVar::CTRL_PANEL);
+    rval->SigEmitUpdated();
   }
+  return rval;
 }
 
 void ForLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -181,17 +187,14 @@ String ForLoop::GetDisplayName() const {
 }
 
 void ForLoop::ChangeLoopVar(const String& to_var) {
-  bool is_local;
-  String fm_var = GetLoopVar(is_local);
-  if (fm_var.empty()) return; // TODO: mebe should complain?
-  code_string.gsub(fm_var, to_var);
-  CvtFmCode(code_string);  // this will reset the parts init, test and iter
-  MakeIndexVar(to_var);      // have to make the new var *before* parsing!!
-  // this is possibly redundant with make index var but not always..
-  init.ParseExpr();
-  test.ParseExpr();
-  iter.ParseExpr();
-  UpdateAfterEdit();
+  ProgVar* cur_var = GetLoopVar();
+  ProgVar* new_var = MakeIndexVar(to_var);
+  if(cur_var && new_var) {
+    init.ReplaceVar(cur_var, new_var);
+    test.ReplaceVar(cur_var, new_var);
+    iter.ReplaceVar(cur_var, new_var);
+  }
+  SigEmitUpdated();
 }
 
 bool ForLoop::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
@@ -208,10 +211,11 @@ bool ForLoop::CvtFmCode(const String& code) {
       cd = cd.before(')', -1);
   }
   if(cd.endsWith(';')) cd = cd.before(';',-1);
-  init.SetExpr(trim(cd.before(';')));
+  init.expr = trim(cd.before(';')); // IMPORTANT: don't use SetExpr here --- will trigger full UAE before rest of expressions are updated!
   String rest = cd.after(';');
-  test.SetExpr(trim(rest.before(';')));
-  iter.SetExpr(trim(rest.after(';')));
+  test.expr = trim(rest.before(';'));
+  iter.expr = trim(rest.after(';'));
+  // NOW do our UAE -- will reparse and do everything good..
   UpdateAfterEdit_impl();       // make local var
   return true;
 }

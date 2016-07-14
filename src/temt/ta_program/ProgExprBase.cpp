@@ -91,16 +91,16 @@ void ProgExprBase::UpdateAfterMove_impl(taBase* old_owner) {
   // ReParseExpr();
 }
 
-void ProgExprBase::ReParseExpr() {
+void ProgExprBase::ReParseExpr(bool prompt_for_bad) {
   if(HasExprFlag(NO_PARSE)) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying()) return;
   ProgEl* pel = GET_MY_OWNER(ProgEl);
   if(pel && (pel->GetEnabled() == 0)) return;
   ParseExpr();
-  if(!HasExprFlag(NO_VAR_ERRS)) { // todo: not 100% sure this should be here or only in UAE
+  if(prompt_for_bad && !HasExprFlag(NO_VAR_ERRS)) { // todo: not 100% sure this should be here or only in UAE
     ProgEl* pel = GET_MY_OWNER(ProgEl);
-    if (pel) {
+    if (pel && !pel->HasBaseFlag(COPYING) && !pel->isDestroying()) {
       if(!taMisc::is_loading && bad_vars.size > 0) {
         for(int i=0; i<bad_vars.size; i++) {
           bool make = true;  // if non-existant create it
@@ -393,6 +393,23 @@ String ProgExprBase::GetFullExpr() const {
     }
   }
   return rval;
+}
+
+int ProgExprBase::ReplaceVar(ProgVar* old_var, ProgVar* new_var) {
+  ParseExpr();                  // need to make sure we have current vars first
+  int n_repl = 0;
+  for(int i=0; i<vars.size; i++) {
+    ProgVarRef* vrf = vars.FastEl(i);
+    if(vrf->ptr() == old_var) {
+      vrf->set(new_var);
+      n_repl++;
+    }
+  }
+  if(n_repl > 0) {
+    expr = GetFullExpr();       // update expression with new vars
+    SigEmitUpdated();
+  }
+  return n_repl;
 }
 
 bool ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
