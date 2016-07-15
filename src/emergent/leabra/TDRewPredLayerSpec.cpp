@@ -118,7 +118,7 @@ void TDRewPredLayerSpec::Compute_ClampPred(LeabraLayer* lay, Layer::AccessMode a
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    u->ext = u->misc_1;
+    u->ext = u->ext_orig = u->misc_1;
     u->SetExtFlag(Unit::EXT);
   }
 }
@@ -133,7 +133,7 @@ void TDRewPredLayerSpec::Compute_TdPlusPhase_ugp(LeabraLayer* lay, Layer::Access
 
   LeabraTdUnit* u = (LeabraTdUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   LeabraTdUnit* u2 = (LeabraTdUnit*)lay->UnitAccess(acc_md, 1, gpidx);
-  u->ext = u->act_m + u2->da_p;
+  u->ext = u->ext_orig = u->act_m + u2->da_p;
   ClampValue_ugp(lay, acc_md, gpidx, net);              // apply new value
   Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);       // copy ext values to act_p
 }

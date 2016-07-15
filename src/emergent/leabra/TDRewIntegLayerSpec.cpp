@@ -170,7 +170,7 @@ void TDRewIntegLayerSpec::Compute_TDRewInteg(LeabraLayer* lay, LeabraNetwork* ne
 
   UNIT_GP_ITR(lay,
               LeabraTdUnit* u = (LeabraTdUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-              u->ext = new_val;
+              u->ext = u->ext_orig = new_val;
               ClampValue_ugp(lay, acc_md, gpidx, net);
               );
   HardClampExt(lay, net);

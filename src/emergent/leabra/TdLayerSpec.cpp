@@ -135,7 +135,7 @@ bool TdLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 void TdLayerSpec::Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork*) {
   lay->da_p = 0.0f;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    u->ext = 0.0f;
+    u->ext = u->ext_orig = 0.0f;
     u->SetExtFlag(Unit::EXT);
   }
 }
@@ -149,7 +149,7 @@ void TdLayerSpec::Compute_Td(LeabraLayer* lay, LeabraNetwork* net) {
   lay->da_p = 0.0f;
   FOREACH_ELEM_IN_GROUP(LeabraTdUnit, u, lay->units) {
     u->da_p = su->act_eq - su->act_m; // subtract current minus previous!
-    u->ext = u->da_p;
+    u->ext = u->ext_orig = u->da_p;
     u->act_eq = u->act_nd = u->act = u->net = u->ext;
     lay->da_p += u->da_p;
   }

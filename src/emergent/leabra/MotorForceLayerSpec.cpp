@@ -141,7 +141,7 @@ void MotorForceLayerSpec::ClampForce(LeabraLayer* lay, LeabraNetwork* net, float
       float wt = motor_force.GetWt(x,y);
       int gpidx = y * lay->gp_geom.x + x;
       LeabraUnit* un0 = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, 0, gpidx);
-      un0->ext = force;
+      un0->ext = un0->ext_orig = force;
       ClampValue_ugp(lay, Layer::ACC_GP, gpidx, net, wt);
     }
   }
@@ -151,7 +151,7 @@ void MotorForceLayerSpec::ClampForce(LeabraLayer* lay, LeabraNetwork* net, float
   scalar.clamp_pat = true;      // must have this to keep this clamped val
   UNIT_GP_ITR(lay,
               LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-              u->ext = 0.0f;            // must reset so it doesn't contribute!
+              u->ext = u->ext_orig = 0.0f; // must reset so it doesn't contribute!
               );
 }
 

@@ -168,7 +168,7 @@ void SubiculumLayerSpec::Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net)
   UNIT_GP_ITR
     (lay,
      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-     u->ext = nov;
+     u->ext = u->ext_orig = nov;
      ClampValue_ugp(lay, acc_md, gpidx, net);
      Compute_ExtToAct_ugp(lay, acc_md, gpidx, net);
      );
