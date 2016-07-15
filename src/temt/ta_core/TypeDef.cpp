@@ -3238,9 +3238,11 @@ void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
                             MemberDef* memb_def, const void* par,
                             TypeDef* par_typ, taObjDiffRec* par_od) const {
   if(IsTaBase()) {
-    taBase* rbase = (taBase*)base;
-    if(rbase) {
-      rbase->GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
+    if (!IsPointer() || (IsPointer() && size > 0)) {
+      taBase* rbase = (taBase*)base;
+      if(rbase) {
+        rbase->GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
+      }
     }
     return;
   }
