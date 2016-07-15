@@ -45,6 +45,7 @@ void LeabraInhibSpec::Defaults_init() {
   ff = 1.0f;
   fb = 1.0f;
   fb_tau = 1.4f;
+  max_vs_avg = 0.0f;
   ff0 = 0.1f;
   
   fb_dt = 1.0f / fb_tau;
@@ -570,7 +571,7 @@ void LeabraLayerSpec::Compute_Inhib_FfFb
     return;
   }
 
-  float nw_ffi = ispec.FFInhib(thr->netin.avg);
+  float nw_ffi = ispec.FFInhib(thr->netin.avg, thr->netin.max);
   float nw_fbi = ispec.FBInhib(thr->acts.avg);
 
   thr->i_val.ffi = nw_ffi;
