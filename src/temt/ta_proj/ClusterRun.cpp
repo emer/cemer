@@ -967,6 +967,12 @@ void ClusterRun::ListOtherProjFiles(const String& proj_name) {
   ListOtherSvn();               // use defaults
 }
 
+void ClusterRun::Cleanup() {
+  if(!InitClusterManager())
+    return;
+  m_cm->Cleanup();
+}
+
 void ClusterRun::OpenSvnBrowser() {
   if(!InitClusterManager())
     return;

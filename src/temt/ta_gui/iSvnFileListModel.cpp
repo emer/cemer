@@ -387,6 +387,25 @@ bool iSvnFileListModel::update() {
   return false;                 // not updated!
 }
 
+bool iSvnFileListModel::revertFile(const String& file_path) {
+  if(!svn_client)
+    return false;
+  if(wc_path().isEmpty()) {
+    taMisc::Error("working copy path is empty -- can only revert with working copy");
+    return false;
+  }
+  String_PArray files;
+  files.Add(file_path);
+  try {
+    svn_client->RevertFiles(files);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in revert\n", ex.what());
+    return false;
+  }
+  return true;
+}
+
 bool iSvnFileListModel::commit(const String& msg) {
   if(!svn_client)
     return false;
@@ -429,6 +448,23 @@ bool iSvnFileListModel::checkout(String& to_path, int rv) {
     return false;
   }
   taMisc::Info("Subversion url:", path, "checked out to:", to_path);
+  return true;
+}
+
+bool iSvnFileListModel::cleanup() {
+  if(!svn_client)
+    return false;
+  if(wc_path().isEmpty()) {
+    taMisc::Error("working copy path is empty -- can only cleanup with working copy");
+    return false;
+  }
+  try {
+    svn_client->Cleanup();
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in cleanup\n", ex.what());
+    return false;
+  }
   return true;
 }
 

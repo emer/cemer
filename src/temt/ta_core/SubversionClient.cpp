@@ -1582,11 +1582,11 @@ int
 SubversionClient::UpdateFiles(const String_PArray& files, int rev) {
   m_cancelled = false;
 
-  apr_pool_t* m_pool = svn_pool_create(0);
-
   if(files.size == 0) {
     return Update(rev);
   }
+
+  apr_pool_t* m_pool = svn_pool_create(0);
 
   // The value of the revision(s) checked out from the repository will be
   // populated into this array.
@@ -1658,6 +1658,42 @@ SubversionClient::UpdateFiles(const String_PArray& files, int rev) {
   svn_revnum_t updateRev = APR_ARRAY_IDX(result_revs, 0, svn_revnum_t);
   svn_pool_destroy(m_pool);
   return updateRev;
+}
+
+void
+SubversionClient::RevertFiles(const String_PArray& files) {
+  m_cancelled = false;
+
+  if(files.size == 0) {
+    return;
+  }
+  apr_pool_t* m_pool = svn_pool_create(0);
+
+  // create an array containing a single element which is the input path to be updated
+  apr_array_header_t *paths = apr_array_make(m_pool, files.size, sizeof(const char *));
+  for(int i=0; i< files.size; i++) {
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
+    APR_ARRAY_PUSH(paths, const char *) = svn_path_canonicalize(files[i], m_pool);
+#else
+    APR_ARRAY_PUSH(paths, const char *) = svn_dirent_canonicalize(files[i], m_pool);
+#endif
+  }
+
+  // Get all files.
+  svn_depth_t depth = svn_depth_infinity;
+
+  if (svn_error_t *error = svn_client_revert2(
+        paths,
+        depth,
+        NULL,                   // changelists.. nope
+        m_ctx,
+        m_pool))
+  {
+    svn_pool_destroy(m_pool);
+    throw Exception("Subversion revert files error", error);
+  }
+
+  svn_pool_destroy(m_pool);
 }
 
 void
@@ -2006,6 +2042,25 @@ void
 SubversionClient::Cancel()
 {
   m_cancelled = true;
+}
+
+void
+SubversionClient::Cleanup()
+{
+  m_cancelled = false;
+
+  apr_pool_t* m_pool = svn_pool_create(0);
+
+  if (svn_error_t *error = svn_client_cleanup(
+        m_wc_path,
+        m_ctx,
+        m_pool))
+  {
+    svn_pool_destroy(m_pool);
+    throw Exception("Subversion cleanup error", error);
+  }
+
+  svn_pool_destroy(m_pool);
 }
 
 // Note: Should never throw exceptions in callbacks, since the C code

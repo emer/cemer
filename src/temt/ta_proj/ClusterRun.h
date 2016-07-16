@@ -178,6 +178,8 @@ public:
   // #MENU_BUTTON #MENU_ON_Files #MENU_SEP_BEFORE get project file at selected revision (must have one and only one job row selected in any of the jobs tables -- searches in running, done, then archive) -- saves file to projname_rev.proj -- you can then load that and revert project to it by saving back to original project file name if that is in fact what you want to do
   virtual void  ListOtherProjFiles(const String& proj_name);
   // #MENU_BUTTON #MENU_ON_Files list the files checked into svn for given other project name -- once the files are displayed, you can select files and click on GetFiles to copy those files to your directory
+  virtual void  Cleanup();
+  // #MENU_BUTTON #MENU_ON_Files cleanup working copy directory, cleaning locks and generally allowing an interrupted or broken action to be undone -- call this whenever stuff isn't working
   virtual void  OpenSvnBrowser();
   // #MENU_BUTTON #MENU_ON_Files open subversion browser for this repository
 

@@ -91,6 +91,8 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   connect(a_add_file, SIGNAL(triggered()), this, SLOT(a_add_file_do()));
   a_rm_file =   main_tb->addAction("Del File");
   connect(a_rm_file, SIGNAL(triggered()), this, SLOT(a_rm_file_do()));
+  a_rev_file =   main_tb->addAction("Revert File");
+  connect(a_rev_file, SIGNAL(triggered()), this, SLOT(a_rev_file_do()));
 
   main_tb->addSeparator();
   a_update    = main_tb->addAction("Update");
@@ -99,6 +101,8 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   connect(a_commit, SIGNAL(triggered()), this, SLOT(a_commit_do()));
   a_checkout  = main_tb->addAction("Checkout");
   connect(a_checkout, SIGNAL(triggered()), this, SLOT(a_checkout_do()));
+  a_cleanup  = main_tb->addAction("Cleanup");
+  connect(a_cleanup, SIGNAL(triggered()), this, SLOT(a_cleanup_do()));
 
   // main_tb->addSeparator();
   // a_list_mod  = main_tb->addAction("Show Modified");
@@ -680,12 +684,14 @@ void iSubversionBrowser::wc_table_customContextMenuRequested(const QPoint& pos) 
                       iAction::int_act, this, SLOT(a_view_file_wc_do()), 1);
   act = menu->AddItem("&Edit File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_edit_file_wc_do()), 1);
-  act = menu->AddItem("View &Diffs", taiWidgetMenu::normal,
+  act = menu->AddItem("View D&iffs", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_view_diff_wc_do()), 1);
   act = menu->AddItem("&Add File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_add_file_do()), 1);
   act = menu->AddItem("&Del File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_rm_file_wc_do()), 1);
+  act = menu->AddItem("&Revert File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_rev_file_wc_do()), 1);
 
   menu->exec(wc_table->mapToGlobal(pos));
   delete menu;
@@ -845,6 +851,33 @@ void iSubversionBrowser::a_rm_file_wc_do() {
   }
 }
 
+void iSubversionBrowser::a_rev_file_do() {
+  int rev;
+  String fnm = selSvnFile(rev);
+  if(fnm.nonempty()) {
+    int chs = taMisc::Choice(String("Are you sure you want to revert local changes in  file: ") + fnm + " -- all local modifictions will be lost!",
+                             "Ok", "Cancel");
+    if(chs == 0) {
+      svn_file_model->revertFile(fnm);
+    }
+  }
+  else {
+    a_rev_file_wc_do();
+  }
+}
+
+void iSubversionBrowser::a_rev_file_wc_do() {
+  int rev;
+  String fnm = selWcFile();
+  if(fnm.nonempty()) {
+    int chs = taMisc::Choice(String("Are you sure you want to revert local changes in file: ") + fnm  + " -- all local modifictions will be lost!",
+                             "Ok", "Cancel");
+    if(chs == 0) {
+      svn_file_model->revertFile(fnm);
+    }
+  }
+}
+
 void iSubversionBrowser::a_update_do() {
   bool updt = svn_file_model->update();
   if(updt) {
@@ -867,6 +900,10 @@ void iSubversionBrowser::a_checkout_do() {
     String new_url = svn_file_model->url_full(); // change to full url
     setUrlWcPath(new_url, new_wc);
   }
+}
+
+void iSubversionBrowser::a_cleanup_do() {
+  svn_file_model->cleanup();
 }
 
 void iSubversionBrowser::a_list_mod_do() {

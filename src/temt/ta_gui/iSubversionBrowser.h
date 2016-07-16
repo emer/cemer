@@ -117,11 +117,14 @@ protected slots:
   void    a_save_file_do();
   void    a_add_file_do();
   void    a_rm_file_do();
+  void    a_rev_file_do();
   void    a_rm_file_wc_do();
+  void    a_rev_file_wc_do();
           
   void    a_update_do();
   void    a_commit_do();
   void    a_checkout_do();
+  void    a_cleanup_do();
 
   void    a_list_mod_do();
 
@@ -141,10 +144,12 @@ protected:
   QAction*              a_save_file;
   QAction*              a_add_file;
   QAction*              a_rm_file;
+  QAction*              a_rev_file;
 
   QAction*              a_update;
   QAction*              a_commit;
   QAction*              a_checkout;
+  QAction*              a_cleanup;
 
   QAction*              a_list_mod;
 

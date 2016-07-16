@@ -57,6 +57,7 @@ public:
   // commit current working copy files
   int   UpdateWorkingCopy();
   // update current working copy files -- returns the current svn revision number
+  void  Cleanup();
 
   int    GetCurSvnRev() const { return m_cur_svn_rev; }
   // get the current svn revision number

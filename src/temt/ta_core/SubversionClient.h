@@ -140,7 +140,9 @@ public:
   int   Update(int rev = -1);
   // Update the working copy and return the revision.
   int   UpdateFiles(const String_PArray& files, int rev = -1);
-  // Update specific list of files and return the revision -- if files empty upates the entire working copy
+  // Update specific list of files and return the revision -- if files empty updates the entire working copy
+  void  RevertFiles(const String_PArray& files);
+  // revert specific list of files -- remove any local modifications, restore to prior updated state -- good to do if you've made non-needed local mods, prior to updating to a new version, to prevent conflicts
 
   void  Add(const String& file_or_dir, bool recurse = true, bool add_parents = true);
   // Add files to the working copy and schedule for future commit -- Does not throw if file is already versioned.
@@ -172,6 +174,10 @@ public:
   void Cancel();
   // Call to cancel current operation in progress.
 
+  void Cleanup();
+  // cleanup working copy directory, cleaning locks and generally allowing an interrupted or broken action to be undone -- call this whenever stuff isn't working
+
+  
 private:
   svn_client_ctx_t * createContext();
   apr_array_header_t * createAuthProviders(apr_hash_t *config);

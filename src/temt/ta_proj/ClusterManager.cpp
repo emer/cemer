@@ -730,6 +730,20 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
 }
 
 void
+ClusterManager::Cleanup() {
+  try {
+    m_svn_client->Cleanup();
+    return;
+  }
+  catch (const ClusterManager::Exception &ex) {
+    taMisc::Error("Could not cleanup:", ex.what());
+  }
+  catch (const SubversionClient::Exception &ex) {
+    HandleException(ex);
+  }
+}
+
+void
 ClusterManager::RunSearchAlgo()
 {
   if (!m_cluster_run.cur_search_algo || !m_cluster_run.use_search_algo) {

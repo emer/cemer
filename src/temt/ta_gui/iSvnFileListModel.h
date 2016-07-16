@@ -107,10 +107,14 @@ public:
   // save file in repository to given file name -- if to_fnm is empty, then pulls up dialog
   virtual bool    update();
   // update svn repository to latest version -- returns true if did update -- svn_head_rev is updated as well
+  virtual bool    revertFile(const String& file_name);
+  // revert file -- remove any local modifications, restore to prior updated state -- good to do if you've made non-needed local mods, prior to updating to a new version, to prevent conflicts -- file is relative to current wc_path and subdir
   virtual bool    commit(const String& msg);
   // check in any changes in the current subdir
   virtual bool    checkout(String& to_path, int rev);
   // check out currently-set url at given rev to given path - if empty, then prompts for it, and fills it in to to_path
+  virtual bool    cleanup();
+  // cleanup working copy directory, cleaning locks and generally allowing an interrupted or broken action to be undone -- call this whenever stuff isn't working
   virtual bool    getUrlFromPath(String& url, const String& path);
   // get the server url from path to local file
   virtual bool    exists(const String& path);
