@@ -202,7 +202,7 @@ void taArray_impl::Permute(int thr_no) {
 #ifndef NO_TA_BASE
     nv = (int) ((MTRnd::GenRandInt32(thr_no) % (size - i)) + i); // get someone from the future
 #else
-    nv = (int) ((random() % (size - i)) + i);
+    nv = (int) ((rand() % (size - i)) + i);
 #endif
     El_Copy_(tmp, FastEl_(i));
     El_Copy_(FastEl_(i), FastEl_(nv));  // swap with yourself

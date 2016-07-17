@@ -18,6 +18,7 @@
 
 #include <taHashTable>
 #include <taMisc>
+#include <stdlib.h>
 #ifndef NO_TA_BASE
 #include <MTRnd>
 #endif
@@ -599,7 +600,7 @@ void taPtrList_impl::Permute(int thr_no) {
 #ifndef NO_TA_BASE
     nv = (int) ((MTRnd::GenRandInt32(thr_no) % (size - i)) + i); // get someone from the future
 #else
-    nv = (int) ((random() % (size - i)) + i);
+    nv = (int) ((rand() % (size - i)) + i);
 #endif
     SwapIdx(i, nv);
   }
