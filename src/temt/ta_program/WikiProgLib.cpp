@@ -60,7 +60,7 @@ void WikiProgLib::FindPrograms() {
   for (int i = 0; i < progList.rows; i++) {
     String prog_name = progList.GetVal(pt_col, i).toString();
     String prog_file = prog_name + ".prog";
-    String path = loc_path + taMisc::PATH_SEP + prog_file;
+    String path = loc_path + PATH_SEP + prog_file;
     // todo: could do a comparison of modification dates here and only download if newer!
     taMediaWiki::DownloadFile(wiki_name, prog_name, path);
     ProgLibEl* pe = new ProgLibEl;
