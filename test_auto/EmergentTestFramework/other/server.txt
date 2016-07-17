@@ -33,7 +33,7 @@ Connection
     Sleep                  1 sec
     ${output} =            Read
     Print                  ${output}
-    Should Contain         ${output}    Emergent Server v7.
+    Should Contain         ${output}    Emergent Server v8.
 
 # TODO: Start another process and check for the "Too many connections already" error.
 
