@@ -150,6 +150,9 @@ public:
   void  Delete(const String_PArray& files, bool force, bool keep_local);
   // Delete listed files (or directories) from the repository, with force and keep_local options
 
+  void  MoveFile(const String_PArray& from_nms, String& to_nm, bool force = false);
+  // move files from given names to given name -- force = overwrite existing etc
+  
   // All functions return true if a new directory was created.
   bool  MakeDir(const String& new_dir, bool make_parents = true);
   // Create a directory in the working copy -- returns true if directory created

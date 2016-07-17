@@ -103,6 +103,12 @@ public:
   // add file to repository -- file is relative to current wc_path and subdir
   virtual bool    delFile(const String& file_name, bool force, bool keep_local);
   // delete file from repository and locally -- file is relative to current wc_path and subdir -- does NOT confirm -- just does it..
+  virtual bool    delFileLocal(const String& file_name);
+  // delete file locally ONLY -- file is relative to current wc_path and subdir -- does NOT confirm -- just does it..
+  virtual bool    moveFile(const String& from_nm, const String& to_nm, bool force = false);
+  // move file from one name to the other
+  virtual bool    moveFileLocal(const String& from_nm, const String& to_nm, bool force = false);
+  // move file from one name to the other -- local only!
   virtual bool    saveFile(const String& fnm, const String& to_fnm, int rev);
   // save file in repository to given file name -- if to_fnm is empty, then pulls up dialog
   virtual bool    update();

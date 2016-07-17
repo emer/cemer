@@ -326,9 +326,65 @@ bool iSvnFileListModel::delFile(const String& fnm, bool force, bool keep_local) 
     svn_client->Delete(files, force, keep_local);
   }
   catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in delFile, trying local remove:\n", ex.what());
     taMisc::RemoveFile(path);   // if svn fails, then try locally
   }
   taMisc::Info("subversion deleted path:", path);
+  return true;
+}
+
+bool iSvnFileListModel::delFileLocal(const String& fnm) {
+  if(!svn_client)
+    return false;
+  if(wc_path().isEmpty()) {
+    taMisc::Error("working copy path is empty -- can only delete from working copy");
+    return false;
+  }
+  String path = wc_path_full();
+  path = taMisc::FinalPathSep(path);
+  path += fnm;
+  taMisc::RemoveFile(path);
+  taMisc::Info("locally deleted path:", path);
+  return true;
+}
+
+bool iSvnFileListModel::moveFile(const String& from_nm, const String& to_nm, bool force) {
+  if(!svn_client)
+    return false;
+  if(wc_path().isEmpty()) {
+    taMisc::Error("working copy path is empty -- can only move files in working copy");
+    return false;
+  }
+  String path = wc_path_full();
+  path = taMisc::FinalPathSep(path);
+  String fm_path = path + from_nm;
+  String_PArray files;
+  files.Add(fm_path);
+  String to_path = path + to_nm;
+  try {
+    svn_client->MoveFile(files, to_path, force);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in moveFile\n", ex.what());
+    return false;
+  }
+  taMisc::Info("subversion moved file from:", fm_path, "to:", to_path);
+  return true;
+}
+
+bool iSvnFileListModel::moveFileLocal(const String& from_nm, const String& to_nm, bool force) {
+  if(!svn_client)
+    return false;
+  if(wc_path().isEmpty()) {
+    taMisc::Error("working copy path is empty -- can only move files in working copy");
+    return false;
+  }
+  String path = wc_path_full();
+  path = taMisc::FinalPathSep(path);
+  String fm_path = path + from_nm;
+  String to_path = path + to_nm;
+  taMisc::RenameFile(fm_path, to_path);
+  taMisc::Info("locally moved file from:", fm_path, "to:", to_path);
   return true;
 }
 
@@ -421,6 +477,7 @@ bool iSvnFileListModel::commit(const String& msg) {
     taMisc::Error("Subversion client error in commit\n", ex.what());
     return false;
   }
+  update();
   return true;
 }
 

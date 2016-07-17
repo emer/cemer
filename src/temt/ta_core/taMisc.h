@@ -659,6 +659,11 @@ public:
           const String& g=NULLStr, const String& h=NULLStr, const String& i=NULLStr);
   // #CAT_Dialog displays informative msg in a dialog -- use this instead of Choice for such confirmations
 
+  static bool StringPrompt
+    (String& str_val, const String& prompt, 
+     const String& ok_txt = "Ok", const String cancel_txt = "Cancel");
+  // #CAT_Dialog prompt user for a string value -- returns in str_val, and false = cancel -- supply any current value in str_val as well
+
   static void   LogEvent(const String& log_data);
   // #CAT_Log record data to current log stream file -- log all significant data using this (errors and warnings above are logged for example)
   static void   SetLogFile(const String& log_fname);

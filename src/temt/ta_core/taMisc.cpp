@@ -42,6 +42,7 @@ taTypeDef_Of(EnumDef);
 #include <taRootBase>
 #include <taStringDiff>
 #include <iDialogChoice>
+#include <iDialogLineEdit>
 
 #include <taiMisc>
 #include <taiType>
@@ -916,6 +917,20 @@ void taMisc::Confirm(const String& a, const String& b, const String& c,
   }
 }
 
+bool taMisc::StringPrompt(String& str_val, const String& prompt,
+     const String& ok_txt, const String cancel_txt)
+{
+  int m=-1;
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
+  if(taMisc::dmem_proc > 0) return -1;
+#endif
+  {
+    cout << prompt << endl;
+    cin >> str_val;
+  }
+  return str_val.nonempty();
+}
+
 #else // def TA_NO_GUI
 
 #ifndef NO_TA_BASE
@@ -1037,6 +1052,18 @@ void taMisc::Confirm(const String& a, const String& b, const String& c,
     iDialogChoice::ConfirmDialog(NULL, msg);
   }
 #endif
+}
+
+bool taMisc::StringPrompt(String& str_val, const String& prompt, 
+     const String& ok_txt, const String cancel_txt)
+{
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
+  if(taMisc::dmem_proc > 0) return false;
+#endif
+  QString qval = str_val;
+  bool rval = iDialogLineEdit::LineEditDialog(qval, prompt, ok_txt, cancel_txt);
+  str_val = qval;
+  return rval;
 }
 
 #endif // NO_TA_BASE

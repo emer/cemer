@@ -112,23 +112,30 @@ protected slots:
 
   void    a_view_file_do();
   void    a_view_diff_do();
-  void    a_view_file_wc_do();
-  void    a_view_diff_wc_do();
   void    a_save_file_do();
-  void    a_add_file_do();
   void    a_rm_file_do();
+  void    a_mv_file_do();
   void    a_rev_file_do();
+  
+  void    a_view_file_wc_do();
+  void    a_edit_file_wc_do();
+  void    a_view_diff_wc_do();
+  
+  void    a_add_file_wc_do();
   void    a_rm_file_wc_do();
   void    a_rev_file_wc_do();
-          
+  void    a_mv_file_wc_do();
+  void    a_mv_file_wc_force_do();
+
+  void    a_rm_file_loc_do();
+  void    a_mv_file_loc_do();
+
   void    a_update_do();
   void    a_commit_do();
   void    a_checkout_do();
   void    a_cleanup_do();
 
   void    a_list_mod_do();
-
-  void    a_edit_file_wc_do();
 
 protected:
   iSvnRevLogModel*       svn_log_model;
@@ -144,6 +151,7 @@ protected:
   QAction*              a_save_file;
   QAction*              a_add_file;
   QAction*              a_rm_file;
+  QAction*              a_mv_file;
   QAction*              a_rev_file;
 
   QAction*              a_update;

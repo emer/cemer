@@ -278,7 +278,6 @@ set(ta_gui_HEADS_NOMAKETA_MOC
   iCheckBox.h
   iComboBox.h
   iDialog.h
-  iDialogTextEdit.h
   iDimEdit.h
   iEditGrid.h
   iLabel.h
@@ -371,6 +370,8 @@ set(ta_gui_HEADS_NOMAKETA_MOC
 
   iDialogEditor.h
   iDialogChoice.h
+  iDialogTextEdit.h
+  iDialogLineEdit.h
   iDialogWidgetField.h
   iDialogItemChooser.h
   iDialogObjChooser.h
@@ -772,7 +773,6 @@ set(ta_gui_SRCS_NOMAKETA
   iCheckBox.cpp
   iComboBox.cpp
   iDialog.cpp
-  iDialogTextEdit.cpp
   iDimEdit.cpp
   iEditGrid.cpp
   iLabel.cpp
@@ -866,6 +866,8 @@ set(ta_gui_SRCS_NOMAKETA
 
   iDialogEditor.cpp
   iDialogChoice.cpp
+  iDialogTextEdit.cpp
+  iDialogLineEdit.cpp
   iDialogWidgetField.cpp
   iDialogItemChooser.cpp
   iDialogObjChooser.cpp
@@ -979,6 +981,7 @@ set(ta_gui_SRCS_NOMAKETA
 
   iDialogRegexpPopulator.cpp
   taSound_QObj.cpp
+  iDialogLineEdit.cpp
 )
 
 set(ta_gui_SRCS_UI
