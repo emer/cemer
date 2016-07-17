@@ -53,7 +53,7 @@ using namespace std;
 
 #include <cstdarg>
 
-inline int ta_snprintf(char * s, size_t n, const char * format, ...) {
+int taString::ta_snprintf(char * s, size_t n, const char * format, ...) {
    int retval;
    va_list ap;
    va_start(ap, format);
