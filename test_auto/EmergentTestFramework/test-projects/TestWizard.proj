@@ -3243,7 +3243,7 @@ LeabraProject .projects["TestWizard"] {
     };
    };
   };
-  Program_Group @.gp["WizardTestPrograms"] = [3] { 
+  Program_Group @.gp["WizardTestPrograms"] = [4] { 
    Program @["TestLeabraTI"] { 
     UserDataItem_List @*(.user_data_) {
      UserData_DocLink @["DocLink"] { };
@@ -3353,6 +3353,46 @@ LeabraProject .projects["TestWizard"] {
       ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
+      };
+     };
+    };
+   };
+   Program @["TestPVLV"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [2] {
+     ProgVar @["network_0"] { };
+     ProgVar @["leabra_wizard_1"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [2] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     MethodCall @[1] { 
+      ProgArg_List @.meth_args = [4] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
+       ProgArg @[3] { };
       };
      };
     };
@@ -22419,7 +22459,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       object_type=LeabraNetwork;
       object_val=$.projects["TestWizard"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -22464,8 +22504,8 @@ and the testing data is updated.  The first epoch monitor should have all the it
      MethodCall @[1] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="leabra_wizard_1->Hippo(network_0, )";
-      pre_compile_code_string="leabra_wizard_1->Hippo(network_0, )";
+      code_string="leabra_wizard_1->Hippo(network_0, 5)";
+      pre_compile_code_string="leabra_wizard_1->Hippo(network_0, 5)";
       result_var=NULL;
       obj=.projects["TestWizard"].programs.gp["WizardTestPrograms"]["TestHippo"].vars["leabra_wizard_1"]$$;
       method=LeabraWizard::Hippo;
@@ -22514,6 +22554,166 @@ and the testing data is updated.  The first epoch monitor should have all the it
      html_text=;
     };
    };
+   Program @["TestPVLV"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=$.projects["TestWizard"].programs.gp["WizardTestPrograms"]["TestDeepLeabra"].doc$;
+     };
+    };
+    name="TestPVLV";
+    short_nm="TsPVLV";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="objs";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="types";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="args";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="vars";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["network_0"] {
+      name="network_0";
+      var_type=T_Object;
+      object_type=LeabraNetwork;
+      object_val=$.projects["TestWizard"].networks["Network_0"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["leabra_wizard_1"] {
+      name="leabra_wizard_1";
+      var_type=T_Object;
+      object_type=LeabraWizard;
+      object_val=$.projects["TestWizard"].wizards["LeabraWizard_1"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="functions";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="init_code";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="prog_code";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (0 vars)";
+      pre_compile_code_string="LocalVars (0 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     MethodCall @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="leabra_wizard_1->PVLV(network_0, , , )";
+      pre_compile_code_string="leabra_wizard_1->PVLV(network_0, , , )";
+      result_var=NULL;
+      obj=.projects["TestWizard"].programs.gp["WizardTestPrograms"]["TestPVLV"].vars["leabra_wizard_1"]$$;
+      method=LeabraWizard::PVLV;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=LeabraNetwork_ptr;
+	type="LeabraNetwork*";
+	name="net";
+	required=1;
+	def_val=;
+	prev_expr="network_0";
+	expr {
+	 expr="network_0";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="n_pos_pv";
+	required=0;
+	def_val="1";
+	prev_expr="5";
+	expr {
+	 expr=;
+	};
+       };
+       ProgArg @[2] {
+	arg_type=int;
+	type="int";
+	name="n_neg_pv";
+	required=0;
+	def_val="1";
+	prev_expr=;
+	expr {
+	 expr=;
+	};
+       };
+       ProgArg @[3] {
+	arg_type=bool;
+	type="bool";
+	name="da_mod_all";
+	required=0;
+	def_val="false";
+	prev_expr=;
+	expr {
+	 expr=;
+	};
+       };
+      };
+      meth_sig="bool PVLV(LeabraNetwork* net, int n_pos_pv = 1, int n_neg_pv = 1, bool da_mod_all = false)";
+      meth_desc=" configure PVLV (pavlovian primary value and learned value) learning layers in a network -- provides a simulated dopamine signal that reflects unexpected primary rewards through interaction of PV (primary value) and LV (learned value) systems -- this is the goal-driven version; n_pos_pv = number of positive PV states (positive outcomes); n_neg_pv = number of negative PV states (negative outcomes); da_mod_all = have vta dopamine value modulate all the regular units in the network";
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
+   };
   };
  };
  viewers {
@@ -22542,7 +22742,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=1;
+     value 8 0=0.7993159;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -24179,7 +24379,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.8950969;
+       value 8 0=0.6944128;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
