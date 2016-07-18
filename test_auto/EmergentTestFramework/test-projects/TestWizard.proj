@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9458
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9688
 LeabraProject .projects["TestWizard"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -701,6 +701,10 @@ LeabraProject .projects["TestWizard"] {
 
  Program_TopGroup @.programs = [1] {
   Program @["MasterStartup"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [0] {
    };
 
@@ -870,6 +874,10 @@ LeabraProject .projects["TestWizard"] {
   };
   Program_Group @.gp["StartupProgs"] = [1] { 
    Program @["BasicStartup"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -898,6 +906,10 @@ LeabraProject .projects["TestWizard"] {
   };
   Program_Group @.gp["ConfigProgs"] = [3] { 
    Program @["MasterBatch"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -942,6 +954,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["MasterTrain"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1017,6 +1033,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["MasterRun"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1094,6 +1114,10 @@ LeabraProject .projects["TestWizard"] {
    };
    Program_Group @.gp["InitProgs"] = [1] { 
     Program @["BasicInit"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserData_DocLink @["DocLink"] { };
+     };
+
      ProgObjList @.objs = [0] {
      };
 
@@ -1148,6 +1172,10 @@ LeabraProject .projects["TestWizard"] {
    };
    Program_Group @.gp["RunProgs"] = [1] { 
     Program @["BasicRun"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserData_DocLink @["DocLink"] { };
+     };
+
      ProgObjList @.objs = [0] {
      };
 
@@ -1215,6 +1243,10 @@ LeabraProject .projects["TestWizard"] {
   };
   Program_Group @.gp["TaskProgs"] = [1] { 
    Program @["BasicTrain"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      TimeUsed @["BasicTrainTime"] { };
     };
@@ -1319,6 +1351,10 @@ LeabraProject .projects["TestWizard"] {
   };
   Program_Group @.gp["EnviroProgs"] = [3] { 
    Program @["ChooseNextEvent"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      DataTable @["PermIdxTable"] { 
       DataTableCols @.data = [1] {
@@ -1506,6 +1542,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["ChooseRandomEvent"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1541,6 +1581,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["ApplyInputs"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      LayerWriter @["LayerWriter_0"] { 
       LayerDataEl_List @.layer_data = [3] {
@@ -1601,6 +1645,10 @@ LeabraProject .projects["TestWizard"] {
   };
   Program_Group @.gp["UtilProgs"] = [17] { 
    Program @["StdGlobalsInit"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1650,6 +1698,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["BatchRndSeed"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      RndSeed_List @["rnd_seeds"] { 
       taList @.seeds = [25] {
@@ -1708,6 +1760,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["ConfigNetwork"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      String_Matrix @["les_lay_mat"] { };
     };
@@ -1813,6 +1869,7 @@ LeabraProject .projects["TestWizard"] {
    Program @["PositionLayersFromTable"] { 
     UserDataItem_List @*(.user_data_) {
      UserDataItem @["user_pinned"] { };
+     UserData_DocLink @["DocLink"] { };
     };
 
     ProgObjList @.objs = [2] {
@@ -2180,6 +2237,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["NetworkToggleLesion"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      String_Matrix @["les_lay_mat"] { };
     };
@@ -2268,6 +2329,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["TrainStart"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      RndSeed @["dmem_rnd_seed"] { };
     };
@@ -2353,6 +2418,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["TrainEnd"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2393,6 +2462,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["EpochStart"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2432,6 +2505,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["EpochEnd"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2478,6 +2555,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["TrialStart"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2518,6 +2599,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["TrialEnd"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2547,6 +2632,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["SettleMinus"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2586,6 +2675,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["SettlePlus"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2620,6 +2713,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["Trial"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2676,6 +2773,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["Quarter"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2732,6 +2833,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["Cycle"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2762,6 +2867,10 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["SaveWeights"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -2820,6 +2929,10 @@ LeabraProject .projects["TestWizard"] {
    };
    Program_Group @.gp["Monitors"] = [3] { 
     Program @["SaveLogFiles"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserData_DocLink @["DocLink"] { };
+     };
+
      ProgObjList @.objs = [0] {
      };
 
@@ -2890,6 +3003,10 @@ LeabraProject .projects["TestWizard"] {
      };
     };
     Program @["LeabraTrialMonitor"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserData_DocLink @["DocLink"] { };
+     };
+
      ProgObjList @.objs = [1] {
       NetMonitor @["trial_netmon"] { 
        NetMonItem_List @.items = [25] {
@@ -2996,6 +3113,10 @@ LeabraProject .projects["TestWizard"] {
      };
     };
     Program @["LeabraEpochMonitor"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserData_DocLink @["DocLink"] { };
+     };
+
      ProgObjList @.objs = [1] {
       NetMonitor @["epoch_netmon"] { 
        NetMonItem_List @.items = [30] {
@@ -3122,8 +3243,12 @@ LeabraProject .projects["TestWizard"] {
     };
    };
   };
-  Program_Group @.gp["WizardTestPrograms"] = [2] { 
+  Program_Group @.gp["WizardTestPrograms"] = [3] { 
    Program @["TestLeabraTI"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -3157,6 +3282,48 @@ LeabraProject .projects["TestWizard"] {
     };
    };
    Program @["TestDeepLeabra"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [2] {
+     ProgVar @["network_0"] { };
+     ProgVar @["leabra_wizard_1"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [2] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     MethodCall @[1] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+    };
+   };
+   Program @["TestHippo"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -3473,6 +3640,9 @@ LeabraProject .projects["TestWizard"] {
     };
    };
 
+   ParamSeq_Group @.param_seqs = [0] {
+   };
+
    Layer_Group @.layers = [3] {
     LeabraLayer @["Input"] { 
      Projection_Group @.projections = [0] {
@@ -3501,12 +3671,6 @@ LeabraProject .projects["TestWizard"] {
    };
 
    Weights_List @.weights = [0] {
-   };
-
-   NetTiming_List NULL = [3] {
-    LeabraNetTiming @[0] { };
-    LeabraNetTiming @[1] { };
-    LeabraNetTiming @[2] { };
    };
   };
  };
@@ -3554,7 +3718,7 @@ LeabraProject .projects["TestWizard"] {
    web_doc=1;
    wiki="emergent";
    url="LeabraFlexProgs";
-   full_url="http://grey.colorado.edu/emergent/index.php/LeabraFlexProgs";
+   full_url="https://grey.colorado.edu/emergent/index.php/LeabraFlexProgs";
    text_size=1;
    text="<html>
 <head></head>
@@ -8430,6 +8594,15 @@ mw.config.set({\"wgBackendResponseTime\":131});
   desc=;
   debug_mode=0;
   Program @["MasterStartup"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["TestWizard"].programs["MasterStartup"].doc$$;
+    };
+   };
    name="MasterStartup";
    short_nm="Startup";
    tags="Leabra, Startup";
@@ -8620,7 +8793,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        object_type=Layer;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -8629,7 +8802,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="n_units";
        var_type=T_Int;
        int_val=0;
-       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -9438,6 +9611,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    };
    step_prog=.projects["TestWizard"].programs.gp["UtilProgs"]["Cycle"]$$;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
   Program_Group @.gp["StartupProgs"] {
    name="StartupProgs";
@@ -9447,6 +9631,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    desc=;
    debug_mode=0;
    Program @["BasicStartup"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["StartupProgs"]["BasicStartup"].doc$$;
+     };
+    };
     name="BasicStartup";
     short_nm="BsStrt";
     tags="Leabra, Startup";
@@ -9524,6 +9717,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
   };
   Program_Group @.gp["ConfigProgs"] {
@@ -9534,6 +9738,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    desc=;
    debug_mode=0;
    Program @["MasterBatch"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["ConfigProgs"]["MasterBatch"].doc$$;
+     };
+    };
     name="MasterBatch";
     short_nm="MstBtc";
     tags="Leabra, Std";
@@ -9637,7 +9850,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="i";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -9723,8 +9936,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["MasterTrain"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["ConfigProgs"]["MasterTrain"].doc$$;
+     };
+    };
     name="MasterTrain";
     short_nm="MstTrn";
     tags=;
@@ -9795,6 +10028,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="cur_config";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["TestWizard"].programs.gp["ConfigProgs"]["MasterTrain"].types["ConfigOptions"]$$;
        value=0;
       };
@@ -10102,8 +10336,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=$.projects["TestWizard"].programs.gp["ConfigProgs"]["MasterRun"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["MasterRun"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["ConfigProgs"]["MasterRun"].doc$$;
+     };
+    };
     name="MasterRun";
     short_nm="MstrRn";
     tags=;
@@ -10205,6 +10459,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="stop_step_grain";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["TestWizard"].programs.gp["ConfigProgs"]["MasterRun"].types["StopStepGrain"]$$;
        value=0;
       };
@@ -10404,6 +10659,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program_Group @.gp["InitProgs"] {
     name="InitProgs";
@@ -10413,6 +10679,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     desc="contains specific Init programs called at start of running by RobotInit";
     debug_mode=0;
     Program @["BasicInit"] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserData_DocLink;
+      el_def=0;
+      UserData_DocLink @["DocLink"] {
+       name="DocLink";
+       doc=.projects["TestWizard"].programs.gp["ConfigProgs"].gp["InitProgs"]["BasicInit"].doc$$;
+      };
+     };
      name="BasicInit";
      short_nm="BaseInit";
      tags=;
@@ -10630,6 +10905,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
      step_prog=NULL;
      step_n=1;
+     doc {
+      name="doc";
+      desc=;
+      web_doc=0;
+      wiki=;
+      url="local";
+      full_url="local";
+      text_size=1;
+      text=;
+      html_text=;
+     };
     };
    };
    Program_Group @.gp["RunProgs"] {
@@ -10640,6 +10926,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     desc=;
     debug_mode=0;
     Program @["BasicRun"] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserData_DocLink;
+      el_def=0;
+      UserData_DocLink @["DocLink"] {
+       name="DocLink";
+       doc=.projects["TestWizard"].programs.gp["ConfigProgs"].gp["RunProgs"]["BasicRun"].doc$$;
+      };
+     };
      name="BasicRun";
      short_nm="BaseRun";
      tags=;
@@ -10946,6 +11241,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
      step_prog=NULL;
      step_n=1;
+     doc {
+      name="doc";
+      desc=;
+      web_doc=0;
+      wiki=;
+      url="local";
+      full_url="local";
+      text_size=1;
+      text=;
+      html_text=;
+     };
     };
    };
   };
@@ -10957,6 +11263,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    desc=;
    debug_mode=0;
    Program @["BasicTrain"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["TaskProgs"]["BasicTrain"].doc$$;
+     };
+    };
     name="BasicTrain";
     short_nm="BscTrn";
     tags=;
@@ -11431,6 +11746,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=$.projects["TestWizard"].programs.gp["UtilProgs"]["Cycle"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
   };
   Program_Group @.gp["EnviroProgs"] {
@@ -11441,6 +11767,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    desc=;
    debug_mode=0;
    Program @["ChooseNextEvent"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["EnviroProgs"]["ChooseNextEvent"].doc$$;
+     };
+    };
     name="ChooseNextEvent";
     short_nm="ChNxEvt";
     tags="InputData, Permuted, FlexProgs, ApplyInput";
@@ -12202,8 +12537,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["ChooseRandomEvent"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["EnviroProgs"]["ChooseRandomEvent"].doc$$;
+     };
+    };
     name="ChooseRandomEvent";
     short_nm="ChRndm";
     tags=;
@@ -12332,8 +12687,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["ApplyInputs"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["EnviroProgs"]["ApplyInputs"].doc$$;
+     };
+    };
     name="ApplyInputs";
     short_nm="Inputs";
     tags="Network, InputData, Apply";
@@ -12601,6 +12976,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
   };
   Program_Group @.gp["UtilProgs"] {
@@ -12611,6 +12997,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    desc=;
    debug_mode=0;
    Program @["StdGlobalsInit"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["StdGlobalsInit"].doc$$;
+     };
+    };
     name="StdGlobalsInit";
     short_nm="GlobInit";
     tags=;
@@ -12866,8 +13261,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["BatchRndSeed"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["BatchRndSeed"].doc$$;
+     };
+    };
     name="BatchRndSeed";
     short_nm="BatchSeed";
     tags=;
@@ -13070,8 +13485,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["ConfigNetwork"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["ConfigNetwork"].doc$$;
+     };
+    };
     name="ConfigNetwork";
     short_nm="CfgNet";
     tags=;
@@ -13297,14 +13732,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	type="taString&";
 	name="delim";
 	required=0;
-	def_val="\"\"";
+	def_val=" ";
 	prev_expr=;
 	expr {
 	 expr="\" \"";
 	};
        };
       };
-      meth_sig="void FmDelimString(taString& str, taString& delim)";
+      meth_sig="void FmDelimString(taString& str, taString& delim =  )";
       meth_desc=" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything";
      };
      ForLoop @[4] {
@@ -13595,6 +14030,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["PositionLayersFromTable"] {
     UserDataItem_List @*(.user_data_) {
@@ -13605,6 +14051,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="user_pinned";
       value 1 0=1;
       val_type_fixed=0;
+     };
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["PositionLayersFromTable"].doc$$;
      };
     };
     name="PositionLayersFromTable";
@@ -14274,6 +14724,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="action";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["TestWizard"].programs.gp["UtilProgs"]["PositionLayersFromTable"].types["ActionType"]$$;
        value=0;
       };
@@ -14286,6 +14737,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="use_group";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["TestWizard"].programs.gp["UtilProgs"]["PositionLayersFromTable"].types["UseGroup"]$$;
        value=0;
       };
@@ -14367,7 +14819,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="leaf";
 	  var_type=T_Int;
 	  int_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14378,7 +14830,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc="current_layer = NULL (Layer)";
 	  init_from=NULL;
@@ -14389,7 +14841,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer_Group;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14400,7 +14852,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer_Group;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14420,7 +14872,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
-	  arg_type=taBase_ptr;
+	  arg_type=const_taBase_ptr;
 	  type="taBase*";
 	  name="cpy_from";
 	  required=1;
@@ -14697,7 +15149,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="row";
 	  var_type=T_Int;
 	  int_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14708,7 +15160,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14717,7 +15169,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="layer_name";
 	  var_type=T_String;
 	  string_val=;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14728,7 +15180,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer_Group;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+	  flags=LOCAL_VAR|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14737,7 +15189,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="group_name";
 	  var_type=T_String;
 	  string_val=;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14746,7 +15198,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lgrow";
 	  var_type=T_Int;
 	  int_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14755,7 +15207,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lg_x";
 	  var_type=T_Int;
 	  int_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14764,7 +15216,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lg_y";
 	  var_type=T_Int;
 	  int_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14773,7 +15225,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lg_z";
 	  var_type=T_Int;
 	  int_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -15456,8 +15908,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["NetworkToggleLesion"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["NetworkToggleLesion"].doc$$;
+     };
+    };
     name="NetworkToggleLesion";
     short_nm="NtwTgg";
     tags=;
@@ -15600,14 +16072,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	type="taString&";
 	name="delim";
 	required=0;
-	def_val="\"\"";
+	def_val=" ";
 	prev_expr=;
 	expr {
 	 expr="\" \"";
 	};
        };
       };
-      meth_sig="void FmDelimString(taString& str, taString& delim)";
+      meth_sig="void FmDelimString(taString& str, taString& delim =  )";
       meth_desc=" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything";
      };
      ForLoop @[1] {
@@ -15897,8 +16369,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["TrainStart"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["TrainStart"].doc$$;
+     };
+    };
     name="TrainStart";
     short_nm="TrnStart";
     tags=;
@@ -16300,8 +16792,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["TrainEnd"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["TrainEnd"].doc$$;
+     };
+    };
     name="TrainEnd";
     short_nm="TrnEnd";
     tags=;
@@ -16454,8 +16966,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["EpochStart"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["EpochStart"].doc$$;
+     };
+    };
     name="EpochStart";
     short_nm="EpcStart";
     tags=;
@@ -16606,8 +17138,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["EpochEnd"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["EpochEnd"].doc$$;
+     };
+    };
     name="EpochEnd";
     short_nm="EpcEnd";
     tags=;
@@ -16768,8 +17320,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["TrialStart"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["TrialStart"].doc$$;
+     };
+    };
     name="TrialStart";
     short_nm="TrStrt";
     tags=;
@@ -16900,8 +17472,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["TrialEnd"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["TrialEnd"].doc$$;
+     };
+    };
     name="TrialEnd";
     short_nm="TrlEnd";
     tags=;
@@ -16991,8 +17583,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["SettleMinus"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["SettleMinus"].doc$$;
+     };
+    };
     name="SettleMinus";
     short_nm="SetlMin";
     tags=;
@@ -17068,7 +17680,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="qtr";
 	var_type=T_Int;
 	int_val=1;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -17130,8 +17742,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=$.projects["TestWizard"].programs.gp["UtilProgs"]["Cycle"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["SettlePlus"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["SettlePlus"].doc$$;
+     };
+    };
     name="SettlePlus";
     short_nm="SttPls";
     tags=;
@@ -17240,8 +17872,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=$.projects["TestWizard"].programs.gp["UtilProgs"]["Cycle"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["Trial"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["Trial"].doc$$;
+     };
+    };
     name="Trial";
     short_nm="Trial";
     tags="Leabra, Std";
@@ -17317,7 +17969,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="qtr";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -17447,8 +18099,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=$.projects["TestWizard"].programs.gp["UtilProgs"]["Cycle"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["Quarter"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["Quarter"].doc$$;
+     };
+    };
     name="Quarter";
     short_nm="Quarter";
     tags="Leabra, Std";
@@ -17543,7 +18215,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="cycle_max";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -17552,7 +18224,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="cyc";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -17678,8 +18350,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=$.projects["TestWizard"].programs.gp["UtilProgs"]["Cycle"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["Cycle"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["Cycle"].doc$$;
+     };
+    };
     name="Cycle";
     short_nm="Cycle";
     tags="Leabra, Std";
@@ -17781,8 +18473,28 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["SaveWeights"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["UtilProgs"]["SaveWeights"].doc$$;
+     };
+    };
     name="SaveWeights";
     short_nm="SWghts";
     tags="Weights, Specs";
@@ -18084,6 +18796,17 @@ also save specs.";
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program_Group @.gp["Monitors"] {
     name="Monitors";
@@ -18093,6 +18816,15 @@ also save specs.";
     desc=;
     debug_mode=0;
     Program @["SaveLogFiles"] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserData_DocLink;
+      el_def=0;
+      UserData_DocLink @["DocLink"] {
+       name="DocLink";
+       doc=.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["SaveLogFiles"].doc$$;
+      };
+     };
      name="SaveLogFiles";
      short_nm="SLFls";
      tags="Leabra, Startup";
@@ -18487,8 +19219,28 @@ also save specs.";
      };
      step_prog=NULL;
      step_n=1;
+     doc {
+      name="doc";
+      desc=;
+      web_doc=0;
+      wiki=;
+      url="local";
+      full_url="local";
+      text_size=1;
+      text=;
+      html_text=;
+     };
     };
     Program @["LeabraTrialMonitor"] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserData_DocLink;
+      el_def=0;
+      UserData_DocLink @["DocLink"] {
+       name="DocLink";
+       doc=.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].doc$$;
+      };
+     };
      name="LeabraTrialMonitor";
      short_nm="TrialMon";
      tags="Leabra, Std, Monitor";
@@ -19739,8 +20491,28 @@ also save specs.";
      };
      step_prog=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"]$;
      step_n=1;
+     doc {
+      name="doc";
+      desc=;
+      web_doc=0;
+      wiki=;
+      url="local";
+      full_url="local";
+      text_size=1;
+      text=;
+      html_text=;
+     };
     };
     Program @["LeabraEpochMonitor"] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserData_DocLink;
+      el_def=0;
+      UserData_DocLink @["DocLink"] {
+       name="DocLink";
+       doc=.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].doc$$;
+      };
+     };
      name="LeabraEpochMonitor";
      short_nm="EpcMon";
      tags="Leabra, Std, Monitor";
@@ -21318,6 +22090,17 @@ and the testing data is updated.  The first epoch monitor should have all the it
      };
      step_prog=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"]$;
      step_n=1;
+     doc {
+      name="doc";
+      desc=;
+      web_doc=0;
+      wiki=;
+      url="local";
+      full_url="local";
+      text_size=1;
+      text=;
+      html_text=;
+     };
     };
    };
   };
@@ -21329,6 +22112,15 @@ and the testing data is updated.  The first epoch monitor should have all the it
    desc=;
    debug_mode=0;
    Program @["TestLeabraTI"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["WizardTestPrograms"]["TestLeabraTI"].doc$$;
+     };
+    };
     name="TestLeabraTI";
     short_nm="TsLbT";
     tags=;
@@ -21362,7 +22154,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       object_type=LeabraNetwork;
       object_val=$.projects["TestWizard"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -21434,8 +22226,28 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["TestDeepLeabra"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["TestWizard"].programs.gp["WizardTestPrograms"]["TestDeepLeabra"].doc$$;
+     };
+    };
     name="TestDeepLeabra";
     short_nm="TsDLbr";
     tags=;
@@ -21552,6 +22364,155 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
+   };
+   Program @["TestHippo"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=$.projects["TestWizard"].programs.gp["WizardTestPrograms"]["TestDeepLeabra"].doc$;
+     };
+    };
+    name="TestHippo";
+    short_nm="TstHpp";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    stop_step_cond {
+     expr=;
+    };
+    objs {
+     name="objs";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="types";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="args";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="vars";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["network_0"] {
+      name="network_0";
+      var_type=T_Object;
+      object_type=LeabraNetwork;
+      object_val=$.projects["TestWizard"].networks["Network_0"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["leabra_wizard_1"] {
+      name="leabra_wizard_1";
+      var_type=T_Object;
+      object_type=LeabraWizard;
+      object_val=$.projects["TestWizard"].wizards["LeabraWizard_1"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="functions";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="init_code";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="prog_code";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (0 vars)";
+      pre_compile_code_string="LocalVars (0 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     MethodCall @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="leabra_wizard_1->Hippo(network_0, )";
+      pre_compile_code_string="leabra_wizard_1->Hippo(network_0, )";
+      result_var=NULL;
+      obj=.projects["TestWizard"].programs.gp["WizardTestPrograms"]["TestHippo"].vars["leabra_wizard_1"]$$;
+      method=LeabraWizard::Hippo;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=LeabraNetwork_ptr;
+	type="LeabraNetwork*";
+	name="net";
+	required=1;
+	def_val=;
+	prev_expr="network_0";
+	expr {
+	 expr="network_0";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="n_ec_slots";
+	required=0;
+	def_val="8";
+	prev_expr=;
+	expr {
+	 expr="5";
+	};
+       };
+      };
+      meth_sig="bool Hippo(LeabraNetwork* net, int n_ec_slots = 8)";
+      meth_desc=" configure standard Hippocampus system, using specialized QuadPhase learning mechanisms";
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
   };
  };
@@ -21566,7 +22527,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=-0.002785515;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -21576,7 +22537,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=1.002786;
+     value 8 0=1;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -21737,8 +22698,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
+	   lay_trans=0.4;
+	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
 	  };
@@ -21781,11 +22742,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -22271,6 +23234,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  line_width=2;
 	  point_size=0.01;
 	  point_spacing=1;
+	  solid_lines=0;
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
@@ -23101,11 +24065,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -23203,7 +24169,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.05555556;
+       value 8 0=0.03078677;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
@@ -23213,7 +24179,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.9222222;
+       value 8 0=0.8950969;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -23256,6 +24222,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 * added load_0_epc in lesson -- reinit network.epoch after loading weights -- we load pretrained eye weights, but want to start counter over..
 
 ";
+ tree_state{ .;.ctrl_panels;.data;.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[5];.networks;.networks[0];.networks[0].specs; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -23432,44 +24399,58 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
-       lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-       lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
        avg_act {targ_init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
        inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
-       inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+       inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: };
        decay {trial=0: };
        del_inhib {on=0: prv_trl=0: prv_q=0: };
+       lay_lrate=1;
+       cos_diff {
+	avg_tau=100;
+	lrate_mod=0;
+	lrmod_fm_trc=0;
+	lrmod_z_thr=-1.5;
+	set_net_unlrn=0;
+	avg_dt=0.01;
+	avg_dt_c=0.99;
+       };
        lstats {
-	cos_diff_avg_tau=100;
 	hog_thr=0.3;
 	dead_thr=0.01;
-	cos_diff_avg_dt=0.01;
        };
-       lay_lrate=1;
       };
      };
-     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-     lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      avg_act {targ_init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
      inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
-     inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
      decay {trial=0: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lay_lrate=1;
+     cos_diff {
+      avg_tau=100;
+      lrate_mod=0;
+      lrmod_fm_trc=0;
+      lrmod_z_thr=-1.5;
+      set_net_unlrn=0;
+      avg_dt=0.01;
+      avg_dt_c=0.99;
+     };
      lstats {
-      cos_diff_avg_tau=100;
       hog_thr=0.3;
       dead_thr=0.01;
-      cos_diff_avg_dt=0.01;
      };
-     lay_lrate=1;
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
@@ -23540,7 +24521,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       act_thr=0.2;
      };
      deep_raw_qtr=0;
-     deep {on=0: role=SUPER: raw_thr_rel=0.2: raw_thr_abs=0.2: mod_min=0.7: trc_p_thr=0: trc_p_clamp=0: trc_p_max=0: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.3: };
+     deep {on=0: role=SUPER: raw_thr_rel=0.2: raw_thr_abs=0.2: mod_min=0.7: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.3: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -23826,6 +24807,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
    };
+   param_seqs {
+    name="param_seqs";
+    el_typ=ParamSeq;
+    el_def=0;
+   };
    layers {
     name="layers";
     el_typ=LeabraLayer;
@@ -24077,44 +25063,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     run_time_pct=0;
     sync_time_pct=0;
     wake_in_sync_pct=1.216681899864304e+285;
-   };
-   net_timing {
-    name="net_timing";
-    el_typ=LeabraNetTiming;
-    el_def=0;
-    LeabraNetTiming @[0] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[1] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[2] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
    };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;

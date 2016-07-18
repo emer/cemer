@@ -47,9 +47,13 @@ General RunState
     Status OK Match Result     ${output}             4
 
 
-
+Hippo
+    Ensure Emergent Free
+    Run Emergent Program	TestHippo
+    Run Emergent Program	MasterTrain
 
 DeepLeabra
+    Restart Emergent
     Ensure Emergent Free
     Run Emergent Program	TestDeepLeabra
     Run Emergent Program	MasterTrain
