@@ -19,7 +19,7 @@ TA_BASEFUNS_CTORS_DEFN(T3CameraParams);
 
 void T3CameraParams::Initialize() {
   field_of_view = 45;
-  near = 0.1f;
+  near_distance = 0.1f;
   focal = 5.0f;
-  far = 1000.0f;
+  far_distance = 1000.0f;
 }

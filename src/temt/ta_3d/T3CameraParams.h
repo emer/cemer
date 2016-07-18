@@ -30,9 +30,9 @@ class TA_API T3CameraParams : public taOBase {
 INHERITED(taOBase)
 public:
   float         field_of_view;  // field of view in degrees of the camera -- how wide or narrow the field is
-  float         near;           // #DEF_0.1 near distance of camera -- closest things can be seen
+  float         near_distance;  // #DEF_0.1 near distance of camera -- closest things can be seen
   float         focal;          // focal distance of camera -- where is it focused on in scene?
-  float         far;            // far distance of camera -- furthest things that can be seen
+  float         far_distance;   // far distance of camera -- furthest things that can be seen
 
   TA_SIMPLE_BASEFUNS(T3CameraParams);
 private:
