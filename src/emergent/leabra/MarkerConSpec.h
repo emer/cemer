@@ -35,7 +35,7 @@ public:
 
   // don't send regular net inputs or learn!
   void Send_NetinDelta(LeabraConGroup*, LeabraNetwork* net, int thr_no, 
-				float su_act_delta_eff) override { };
+				const float su_act_delta_eff) override { };
   float Compute_Netin(ConGroup* cg, Network* net, int thr_no) override
   { return 0.0f; }
   void  Compute_dWt(ConGroup*, Network* net, int thr_no) override { };
