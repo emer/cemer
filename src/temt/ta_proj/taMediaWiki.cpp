@@ -1380,10 +1380,12 @@ String taMediaWiki::GetApiURL(const String& wiki_name) {
   return wiki_url + "/api.php";
 }
 
-String taMediaWiki::GetEditToken(const String& wiki_name) {
+QByteArray taMediaWiki::GetEditToken(const String& wiki_name) {
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
-  if (wikiUrl.empty()) { return _nilString; }
+  if (wikiUrl.empty()) {
+	  return QByteArray(_nilString.chars());
+  }
 
   // Build the request URL.
   // .../api.php?action=tokens&type=edit&format=xml
@@ -1407,7 +1409,7 @@ String taMediaWiki::GetEditToken(const String& wiki_name) {
     QString apiResponse(reply->readAll());
     if(CheckResponseError(apiResponse)) {
       taMisc::Error("Could not retrieve edit token for", wiki_name, "wiki!");
-      return _nilString;;
+      return QByteArray(_nilString.chars());
     }
     QXmlStreamReader reader(apiResponse.toStdString().c_str());
     while(!reader.atEnd()) {
@@ -1416,12 +1418,12 @@ String taMediaWiki::GetEditToken(const String& wiki_name) {
         QString token = attrs.value("edittoken").toString();
         if(!token.isEmpty()) {
           taMisc::Info("Edit token retrieval successful");
-          return token.toUtf8().constData();
+          return QByteArray(token.toUtf8().constData());
         }
       }
     }
   }
-  return _nilString;
+  return QByteArray(_nilString.chars());
 }
 
 bool taMediaWiki::PublishProject(taProjPubInfo* pub_info) {

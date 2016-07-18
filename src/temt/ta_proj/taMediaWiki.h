@@ -28,6 +28,7 @@
 
 // declare all other types mentioned but not required to include:
 class DataTable; //
+class QByteArray; //
 
 
 taTypeDef_Of(taMediaWiki);
@@ -142,8 +143,8 @@ public:
   static String GetApiURL(const String& wiki_name);
   // #CAT_Wiki Gets the url for the wiki api
 
-  static String GetEditToken(const String& wiki_name);
-  // #CAT_Wiki Return a String containing an unencoded edit token for the wiki (need to percent-encode this to make post requests to the API directly through a URL query) -- on failure, return an empty String
+  static QByteArray GetEditToken(const String& wiki_name);
+  //#IGNORE  #CAT_Wiki Return a String containing an unencoded edit token for the wiki (need to percent-encode this to make post requests to the API directly through a URL query) -- on failure, return an empty String
 
   static bool   PublishProject(taProjPubInfo* pub_info);
   // #CAT_Wiki Create/edit the wiki page for this project with given content and categories -- if a project filename is specified, upload the project file and post a link to it on the project's wiki page -- returns true if all steps were completed successfully
