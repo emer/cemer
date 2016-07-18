@@ -20,6 +20,7 @@
 
 #include "WavetableGlottalSource.h"
 
+#include "ta_stdef.h"
 #include <cmath>
 
 #include "FIRFilter.h"
@@ -35,6 +36,10 @@
 #define FIR_BETA                  .2
 #define FIR_GAMMA                 .1
 #define FIR_CUTOFF                .00000001
+
+#ifdef TA_OS_WIN
+#define M_PI                   3.141592653587932846
+#endif
 
 WavetableGlottalSource::WavetableGlottalSource(
                                                Type type, float sampleRate,

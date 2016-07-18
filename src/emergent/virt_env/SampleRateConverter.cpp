@@ -20,6 +20,7 @@
 
 #include "SampleRateConverter.h"
 
+#include "ta_stdef.h"  // to get OS compiler switch
 #include <cmath>
 
 #define BETA                      5.658        /*  kaiser window parameters  */
@@ -50,6 +51,10 @@
 #define fractionValue(x)          ((x) & FRACTION_MASK)
 
 #define BUFFER_SIZE               1024                 /*  ring buffer size  */
+
+#ifdef TA_OS_WIN
+  #define M_PI                    3.141592653587932846
+#endif
 
 SampleRateConverter::SampleRateConverter(int sampleRate, float outputRate, std::vector<float>& outputData)
 : sampleRateRatio_(0.0)

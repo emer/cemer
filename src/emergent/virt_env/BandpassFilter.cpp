@@ -20,7 +20,12 @@
 
 #include "BandpassFilter.h"
 
+#include "ta_stdef.h"  // to get OS compiler switch
 #include <cmath>
+
+#ifdef TA_OS_WIN
+  #define M_PI                   3.141592653587932846
+#endif
 
 BandpassFilter::BandpassFilter()
   : bpAlpha_(0.0)

@@ -30,29 +30,15 @@
 // declare all other types mentioned but not required to include:
 class SoPerspectiveCamera; // #IGNORE
 
-#ifdef TA_OS_WIN
-// following for msvc
-# ifdef near
-#   undef near
-# endif
-# ifdef far
-#   undef far
-# endif
-// # ifdef GetObject
-// #   undef GetObject
-// # endif
-#endif
-
-
 eTypeDef_Of(VECameraDists);
 
 class E_API VECameraDists : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env camera distances
 INHERITED(taOBase)
 public:
-  float         near;           // #DEF_0.1 near distance of camera -- closest things can be seen
+  float         near_distance;  // #DEF_0.1 near distance of camera -- closest things can be seen
   float         focal;          // focal distance of camera -- where is it focused on in scene?
-  float         far;            // far distance of camera -- furthest things that can be seen
+  float         far_distance;   // far distance of camera -- furthest things that can be seen
 
   TA_SIMPLE_BASEFUNS(VECameraDists);
 private:

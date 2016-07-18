@@ -30,9 +30,9 @@ SMARTREF_OF_CPP(VECamera); // VECameraRef
 TA_BASEFUNS_CTORS_DEFN(VECameraDists);
 
 void VECameraDists::Initialize() {
-  near = 0.1f;
+  near_distance = 0.1f;
   focal = 1.0f;
-  far = 10.0f;
+  far_distance = 10.0f;
 }
 
 void VECamera::Initialize() {
@@ -70,13 +70,6 @@ void VECamera::CurToODE() {
   UpdtDirNorm();
 }
 
-#ifdef near
-#undef near
-#endif
-#ifdef far
-#undef far
-#endif
-
 #ifdef TA_QT3D
 
 #else // TA_QT3D
@@ -85,9 +78,9 @@ void VECamera::ConfigCamera(SoPerspectiveCamera* cam) {
   cam->position.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
   cam->orientation.setValue(cur_quat.x, cur_quat.y, cur_quat.z, cur_quat.s);
   // SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
-  cam->nearDistance = this->view_dist.near;
+  cam->nearDistance = this->view_dist.near_distance;
   cam->focalDistance = view_dist.focal;
-  cam->farDistance = view_dist.far;
+  cam->farDistance = view_dist.far_distance;
   cam->heightAngle = field_of_view * taMath_float::rad_per_deg;
 }
 
