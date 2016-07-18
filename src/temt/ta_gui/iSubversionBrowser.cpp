@@ -335,7 +335,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   tool_bar->addWidget(wc_text);
 
   wc_updt = new iCheckBox("view", wbrow);
-  wc_updt->setToolTip(taiMisc::ToolTipPreProcess("view the working copy files -- this can be somewhat slow and memory intensive for large directories (e.g., emergent/src/temt/ta)"));
+  wc_updt->setToolTip(taiMisc::ToolTipPreProcess("view the working copy files -- this can be somewhat slow and memory intensive for large directories"));
   tool_bar->addWidget(wc_updt);
 
   wb_act_go = tool_bar->addAction("Go");
@@ -355,13 +355,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   // Don't highlight the header cells when a selection is made (looks dumb).
   header->setHighlightSections(false);
   header->setSortIndicator(0, Qt::AscendingOrder);
-  for(int i=0; i<svn_wc_model->columnCount(); i++) {
-#if (QT_VERSION >= 0x050000)
-    header->setSectionResizeMode(i, QHeaderView::ResizeToContents);
-#else
-    header->setResizeMode(i, QHeaderView::ResizeToContents);
-#endif
-  }
+  wBrowResizeCols();            // this doesn't do anything unfortunately
   wc_table->setSortingEnabled(true);
 
   // Disallow complex selections.
@@ -380,6 +374,10 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   // these are evil -- use only the go box for this!
   // connect(end_rev_box, SIGNAL(editingFinished()), this, SLOT(lBrowGoClicked()) );
   // connect(n_entries_box, SIGNAL(editingFinished()), this, SLOT(lBrowGoClicked()) );
+#if (QT_VERSION >= 0x040700)
+  connect(svn_wc_model, SIGNAL(directoryLoaded(const QString&)),
+          this, SLOT(wBrowResizeCols()));
+#endif
   connect(lb_act_go, SIGNAL(triggered()), this, SLOT(lBrowGoClicked()) );
   connect(log_table, SIGNAL(doubleClicked(const QModelIndex &)), this, 
           SLOT(logCellDoubleClicked(const QModelIndex&)));
@@ -553,6 +551,17 @@ void iSubversionBrowser::wBrowGoClicked() {
   if(updt) {
     String subtxt = subdir_text->text();
     setSubDir(subtxt);
+  }
+}
+
+void iSubversionBrowser::wBrowResizeCols() {
+  QHeaderView* header = wc_table->horizontalHeader();
+  for(int i=0; i<svn_wc_model->columnCount(); i++) {
+#if (QT_VERSION >= 0x050000)
+    header->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+#else
+    header->setResizeMode(i, QHeaderView::ResizeToContents);
+#endif
   }
 }
 
@@ -957,7 +966,7 @@ void iSubversionBrowser::a_update_do() {
     int rev = svn_file_model->svn_head_rev;
     setEndRev(rev);
     rev_only->setChecked(true);   // filter
-    wc_updt->setChecked(false);  // no updt
+    // wc_updt->setChecked(false);  // no updt
     setRev(rev);
   }
 }

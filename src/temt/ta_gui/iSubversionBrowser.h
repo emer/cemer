@@ -98,6 +98,7 @@ protected slots:
   void    lBrowGoClicked();
   void    fBrowGoClicked();
   void    wBrowGoClicked();
+  void    wBrowResizeCols();
 
   void    endRevPgUp();
   void    endRevPgDn();
