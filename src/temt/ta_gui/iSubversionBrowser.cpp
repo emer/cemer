@@ -892,7 +892,6 @@ void iSubversionBrowser::a_rev_file_do() {
 }
 
 void iSubversionBrowser::a_rev_file_wc_do() {
-  int rev;
   String fnm = selWcFile();
   if(fnm.nonempty()) {
     int chs = taMisc::Choice(String("Are you sure you want to revert local changes in file: ") + fnm  + " -- all local modifictions will be lost!",
