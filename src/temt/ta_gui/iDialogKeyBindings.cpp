@@ -121,7 +121,6 @@ void iDialogKeyBindings::Constr() {
     bindings_layout[ctxt]->setLabelAlignment(Qt::AlignLeft);
     a_tab->setLayout(bindings_layout[ctxt]);
     
-    QKeySequenceEdit* edit;
     int action_count = static_cast<int>(taiMisc::ACTION_COUNT);
     for (int i=0; i<action_count; i++) {
       action_label = TA_taiMisc.GetEnumString("BoundAction", i);
