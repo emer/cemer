@@ -33,6 +33,7 @@ public:
   int                   epoch;  // #CONTROL_PANEL_SHOW epoch at which these parameters will be set -- always include an epoch 0 case to initialize any changing parameters at the start of training -- set to -1 to disable
 
 #ifdef __MAKETA__
+  String                name;  // #READ_ONLY #SHOW name is automatically computed based on sequence name and the epoch
   EditMbrItem_Group     mbrs;   // the members of the control panel
   EditMthItem_Group     mths; // #HIDDEN
 #endif
