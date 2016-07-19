@@ -33,7 +33,6 @@ public:
   int                   epoch;  // #CONTROL_PANEL_SHOW epoch at which these parameters will be set -- always include an epoch 0 case to initialize any changing parameters at the start of training -- set to -1 to disable
 
 #ifdef __MAKETA__
-  String                name;  // #READ_ONLY #SHOW name is automatically computed based on sequence name and the epoch
   EditMbrItem_Group     mbrs;   // the members of the control panel
   EditMthItem_Group     mths; // #HIDDEN
 #endif
@@ -52,7 +51,7 @@ public:
   TA_BASEFUNS_SC(ParamStep);
 protected:
   int           prev_epoch;     // detect if epoch changed..
-  void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() override;
 
 private:
   void Initialize();
@@ -60,7 +59,7 @@ private:
 };
 
 
-taTypeDef_Of(ParamStep_List);
+eTypeDef_Of(ParamStep_List);
 
 class E_API ParamStep_List : public taList<ParamStep> {
   // #NO_TOKENS #NO_UPDATE_AFTER ##EXPAND_DEF_2 list of parameter steps
