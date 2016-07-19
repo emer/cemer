@@ -1,6 +1,10 @@
-// ta_Dump File v3.0 -- code v7.8.5.0 rev9244
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9686
 Program_Group .projects[0].programs.gp[0] { 
  Program @[0] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [0] {
   };
 
@@ -51,6 +55,10 @@ Program_Group .projects[0].programs.gp[0] {
   };
  };
  Program @[1] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [2] {
    RndSeed_List @[0] { 
     taList @.seeds = [25] {
@@ -257,6 +265,10 @@ Program_Group .projects[0].programs.gp[0] {
   };
  };
  Program @[2] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [0] {
   };
 
@@ -284,7 +296,7 @@ Program_Group .projects[0].programs.gp[0] {
    AssignExpr @[1] { };
   };
 
-  ProgEl_List @.prog_code = [9] {
+  ProgEl_List @.prog_code = [10] {
    NetCounterInit @[0] { };
    AssignExpr @[1] { };
    MethodCall @[2] { 
@@ -296,7 +308,11 @@ Program_Group .projects[0].programs.gp[0] {
     ProgArg_List @.meth_args = [0] {
     };
    };
-   NetDataLoop @[4] { 
+   MethodCall @[4] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   NetDataLoop @[5] { 
     ProgEl_List @.loop_code = [2] {
      ProgramCall @[0] { 
       ProgArg_List @.prog_args = [2] {
@@ -314,7 +330,7 @@ Program_Group .projects[0].programs.gp[0] {
      };
     };
    };
-   If @[5] { 
+   If @[6] { 
     ProgEl_List @.true_code = [1] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [0] {
@@ -322,22 +338,26 @@ Program_Group .projects[0].programs.gp[0] {
      };
     };
    };
-   MethodCall @[6] { 
+   MethodCall @[7] { 
     ProgArg_List @.meth_args = [0] {
     };
    };
-   ProgramCall @[7] { 
+   ProgramCall @[8] { 
     ProgArg_List @.prog_args = [1] {
      ProgArg @[0] { };
     };
    };
-   MethodCall @[8] { 
+   MethodCall @[9] { 
     ProgArg_List @.meth_args = [0] {
     };
    };
   };
  };
  Program @[3] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [0] {
   };
 
@@ -387,6 +407,10 @@ Program_Group .projects[0].programs.gp[0] {
   };
  };
  Program @[4] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [1] {
    LayerWriter @[0] { 
     LayerDataEl_List @.layer_data = [3] {
@@ -445,6 +469,10 @@ Program_Group .projects[0].programs.gp[0] {
   };
  };
  Program @[5] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [1] {
    NetMonitor @[0] { 
     NetMonItem_List @.items = [6] {
@@ -514,6 +542,10 @@ Program_Group .projects[0].programs.gp[0] {
   };
  };
  Program @[6] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [1] {
    NetMonitor @[0] { 
     NetMonItem_List @.items = [6] {
@@ -596,6 +628,10 @@ Program_Group .projects[0].programs.gp[0] {
   };
  };
  Program @[7] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [0] {
   };
 
@@ -661,6 +697,15 @@ Program_Group .projects[0].programs.gp[0] {
  desc="The full set of programs for training a standard Backpropagation network";
  debug_mode=0;
  Program @[0] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[0][0].doc$$;
+   };
+  };
   name="BpBatch";
   short_nm="Batch";
   tags="Bp, Std";
@@ -714,7 +759,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="batch";
     var_type=T_Int;
     int_val=0;
-    objs_ptr=0;
     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="batch counter";
@@ -724,7 +768,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="init_batch";
     var_type=T_Bool;
     bool_val=1;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="initialize batch counter at start of run -- turn off if using \"parallel batch\" mode to run different batches on different processes";
@@ -734,7 +777,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="max_batch";
     var_type=T_Int;
     int_val=10;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="maximum number of batch runs to perform";
@@ -885,8 +927,28 @@ Program_Group .projects[0].programs.gp[0] {
   };
   step_prog=NULL;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[1] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[0][1].doc$$;
+   };
+  };
   name="BpTrain";
   short_nm="Train";
   tags="Bp, Train, RndSeedList";
@@ -1072,7 +1134,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="no_prompts";
     var_type=T_Bool;
     bool_val=0;
-    objs_ptr=0;
     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
     reference=0;
     desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
@@ -1087,7 +1148,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="max_epoch";
     var_type=T_Int;
     int_val=500;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc=;
@@ -1097,7 +1157,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="epoch";
     var_type=T_Int;
     int_val=0;
-    objs_ptr=0;
     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc=;
@@ -1108,7 +1167,6 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_HardEnum;
     int_val=1;
     hard_enum_type=Network::TrainMode;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc=;
@@ -1118,10 +1176,10 @@ Program_Group .projects[0].programs.gp[0] {
     name="rnd_init";
     var_type=T_DynEnum;
     dyn_enum_val {
+     user_data_=NULL;
      enum_type=.projects[0].programs.gp[0][1].types[0]$$;
      value=2;
     };
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="how to initialize the random numbers when the Init button is pressed";
@@ -1131,7 +1189,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="err_stopcrit";
     var_type=T_Real;
     real_val=0;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="stopping criterion -- network avg_sse must be <= this number to stop training -- see n_under_thr too";
@@ -1141,7 +1198,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="n_under_thr";
     var_type=T_Int;
     int_val=1;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="number of times network needs to be under stopcrit threshold to actually stop";
@@ -1151,7 +1207,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="save_final_wts";
     var_type=T_Bool;
     bool_val=0;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="save the network's weights at the end of training?  ";
@@ -1161,7 +1216,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="save_wts_interval";
     var_type=T_Int;
     int_val=-1;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="save the weights every this many epochs, if number is >= 1 (otherwise do not save weights)";
@@ -1171,7 +1225,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="n_under_cnt";
     var_type=T_Int;
     int_val=0;
-    objs_ptr=0;
     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="current under threshold counter";
@@ -1835,8 +1888,28 @@ Program_Group .projects[0].programs.gp[0] {
   };
   step_prog=.projects[0].programs.gp[0][3]$$;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[2] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[0][2].doc$$;
+   };
+  };
   name="BpEpoch";
   short_nm="Epoch";
   tags="Bp, Std";
@@ -1891,7 +1964,6 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_HardEnum;
     int_val=1;
     hard_enum_type=DataLoop::Order;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="controls the order in which events (rows of the input data datatable) are presented to the network
@@ -1902,7 +1974,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="trial";
     var_type=T_Int;
     int_val=0;
-    objs_ptr=0;
     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="current trial (event) within the epoch -- increments automatically";
@@ -1934,7 +2005,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="data_loop_index";
     var_type=T_Int;
     int_val=5;
-    objs_ptr=0;
     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -2023,6 +2093,22 @@ Program_Group .projects[0].programs.gp[0] {
     meth_desc=" record the current time as the starting time, and optionally reset the time used information";
    };
    MethodCall @[3] {
+    desc="added in 8.0: essential for param_seqs";
+    flags=NEW_EL|CAN_REVERT_TO_CODE;
+    code_string="network->Init_Epoch()";
+    pre_compile_code_string="network->Init_Epoch()";
+    result_var=NULL;
+    obj=$.projects[0].programs.gp[0][2].args[0]$;
+    method=Network::Init_Epoch;
+    meth_args {
+     name="meth_args";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig="void Init_Epoch()";
+    meth_desc=" Initializes network state at the start of a new epoch -- updates parameters according to param_seq for example";
+   };
+   MethodCall @[4] {
     desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
     flags=CAN_REVERT_TO_CODE;
     code_string="trial_mon_data->ResetData()";
@@ -2038,7 +2124,7 @@ Program_Group .projects[0].programs.gp[0] {
     meth_sig="void ResetData()";
     meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
    };
-   NetDataLoop @[4] {
+   NetDataLoop @[5] {
     desc="iterates over the events/rows of input_data, according to data_loop_order variable";
     flags=CAN_REVERT_TO_CODE;
     code_string="Net Data Loop (PERMUTED):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
@@ -2127,7 +2213,7 @@ Program_Group .projects[0].programs.gp[0] {
     group_order=PERMUTED;
     group_idx_list{     };
    };
-   If @[5] {
+   If @[6] {
     desc="if full batch mode, update only at end of epoch";
     flags=CAN_REVERT_TO_CODE;
     code_string="if (network.wt_update == Network::BATCH)";
@@ -2157,7 +2243,7 @@ Program_Group .projects[0].programs.gp[0] {
      };
     };
    };
-   MethodCall @[6] {
+   MethodCall @[7] {
     desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
     flags=CAN_REVERT_TO_CODE;
     code_string="network->Compute_EpochStats()";
@@ -2173,7 +2259,7 @@ Program_Group .projects[0].programs.gp[0] {
     meth_sig="void Compute_EpochStats()";
     meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles";
    };
-   ProgramCall @[7] {
+   ProgramCall @[8] {
     desc="run program that records data from network and possibly other sources about the epoch";
     flags=CAN_REVERT_TO_CODE;
     code_string="BpEpochMonitor(network)";
@@ -2197,7 +2283,7 @@ Program_Group .projects[0].programs.gp[0] {
     target=.projects[0].programs.gp[0][6]$$;
     targ_ld_init="*BpEpochMonitor*";
    };
-   MethodCall @[8] {
+   MethodCall @[9] {
     desc="done with the computation in the epoch -- record time it took";
     flags=CAN_REVERT_TO_CODE;
     code_string="epoch_timer->EndTimer()";
@@ -2216,8 +2302,28 @@ Program_Group .projects[0].programs.gp[0] {
   };
   step_prog=NULL;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[3] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[0][3].doc$$;
+   };
+  };
   name="BpTrial";
   short_nm="Trial";
   tags="Bp, Std";
@@ -2271,7 +2377,6 @@ Program_Group .projects[0].programs.gp[0] {
     name="update_net_view";
     var_type=T_Bool;
     bool_val=1;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="determines whether to update any network view displays after trial is completed";
@@ -2411,8 +2516,28 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   step_prog=NULL;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[4] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[0][4].doc$$;
+   };
+  };
   name="ApplyInputs";
   short_nm="Inputs";
   tags="Network, InputData, Apply";
@@ -2680,8 +2805,28 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   step_prog=NULL;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[5] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[0][5].doc$$;
+   };
+  };
   name="BpTrialMonitor";
   short_nm="TrlMon";
   tags="Bp, Std, Monitor";
@@ -3159,8 +3304,28 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   step_prog=NULL;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[6] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[0][6].doc$$;
+   };
+  };
   name="BpEpochMonitor";
   short_nm="EpcMon";
   tags="Bp, Std, Monitor";
@@ -3751,8 +3916,28 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   step_prog=NULL;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[7] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[0][7].doc$$;
+   };
+  };
   name="SaveWeights";
   short_nm="SavWts";
   tags="Network, Weights";
@@ -3795,7 +3980,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="tag";
     var_type=T_String;
     string_val="_gui";
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="user-provided tag (startup script will set this!)";
@@ -3805,7 +3989,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="wts_subdir";
     var_type=T_String;
     string_val=;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="user-provided subdirectory to save weights in";
@@ -3815,7 +3998,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="fname";
     var_type=T_String;
     string_val=;
-    objs_ptr=0;
     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="final generated file name -- do not edit!";
@@ -3825,7 +4007,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="epoch_str";
     var_type=T_String;
     string_val="0036";
-    objs_ptr=0;
     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="string rep of epoch with leading zeros";
@@ -3835,7 +4016,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="batch_str";
     var_type=T_String;
     string_val="03";
-    objs_ptr=0;
     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="string rep of batch with leading zeros";
@@ -3845,7 +4025,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="final_tag";
     var_type=T_String;
     string_val=".03_0036";
-    objs_ptr=0;
     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="batch + epoch";
@@ -4058,5 +4237,16 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   step_prog=NULL;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
 };

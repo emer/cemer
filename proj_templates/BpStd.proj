@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.5.0 rev9244
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9686
 BpProject .projects["BpStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -12,9 +12,15 @@ BpProject .projects["BpStd"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [2] {
+   EditMbrItem_Group @.mbrs = [8] {
     EditMbrItem @[0] { };
     EditMbrItem @[1] { };
+    EditMbrItem @[2] { };
+    EditMbrItem @[3] { };
+    EditMbrItem @[4] { };
+    EditMbrItem @[5] { };
+    EditMbrItem @[6] { };
+    EditMbrItem @[7] { };
    };
 
    EditMthItem_Group @.mths = [4] {
@@ -35,13 +41,13 @@ BpProject .projects["BpStd"] {
    EditMthItem_Group @.mths = [0] {
    };
 
-   DataTableCols @.jobs_running.data = [32] {
+   DataTableCols @.jobs_running.data = [34] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["status"] { };
-    String_Data @["notes"] { };
     String_Data @["label"] { };
+    String_Data @["notes"] { };
     String_Data @["filename"] { };
     String_Data @["params"] { };
     String_Data @["status_info"] { };
@@ -95,6 +101,8 @@ BpProject .projects["BpStd"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
     String_Data @["model_svn"] { };
    };
 
@@ -104,13 +112,13 @@ BpProject .projects["BpStd"] {
    DataTableCell_List @.jobs_running.control_panel_cells = [0] {
    };
 
-   DataTableCols @.jobs_done.data = [32] {
+   DataTableCols @.jobs_done.data = [34] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["status"] { };
-    String_Data @["notes"] { };
     String_Data @["label"] { };
+    String_Data @["notes"] { };
     String_Data @["filename"] { };
     String_Data @["params"] { };
     String_Data @["status_info"] { };
@@ -164,6 +172,8 @@ BpProject .projects["BpStd"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
     String_Data @["model_svn"] { };
    };
 
@@ -173,13 +183,83 @@ BpProject .projects["BpStd"] {
    DataTableCell_List @.jobs_done.control_panel_cells = [0] {
    };
 
+   DataTableCols @.jobs_deleted.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
+    String_Data @["tag"] { };
+    String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
+   };
+
+   DataOpList @.jobs_deleted.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
+   };
+
    DataTableCols @.jobs_archive.data = [31] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["status"] { };
-    String_Data @["notes"] { };
     String_Data @["label"] { };
+    String_Data @["notes"] { };
     String_Data @["filename"] { };
     String_Data @["params"] { };
     String_Data @["status_info"] { };
@@ -390,6 +470,10 @@ BpProject .projects["BpStd"] {
 
  Program_TopGroup @.programs = [1] {
   Program @["BpStartup"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [0] {
    };
 
@@ -402,10 +486,9 @@ BpProject .projects["BpStd"] {
    };
 
    ProgVar_List @.vars = [12] {
-    ProgVar @["train"] { };
-    ProgVar @["batch"] { };
-    ProgVar @["batches"] { };
-    ProgVar @["epochs"] { };
+    ProgVar @["train_prog"] { };
+    ProgVar @["batch_prog"] { };
+    ProgVar @["param_set"] { };
     ProgVar @["tag"] { };
     ProgVar @["batch_str"] { };
     ProgVar @["log_dir"] { };
@@ -414,6 +497,7 @@ BpProject .projects["BpStd"] {
     ProgVar @["EpochOutputData"] { };
     ProgVar @["TrialOutputData"] { };
     ProgVar @["MyClusterRun"] { };
+    ProgVar @["param_sets"] { };
    };
 
    Function_List @.functions = [0] {
@@ -423,10 +507,10 @@ BpProject .projects["BpStd"] {
    };
 
    ProgEl_List @.prog_code = [30] {
-    IfReturn @[0] { };
-    RegisterArgs @[1] { };
-    PrintExpr @[2] { };
-    Comment @[3] { };
+    RegisterArgs @[0] { };
+    PrintExpr @[1] { };
+    Comment @[2] { };
+    ProgVarFmArg @[3] { };
     ProgVarFmArg @[4] { };
     ProgVarFmArg @[5] { };
     ProgVarFmArg @[6] { };
@@ -435,27 +519,29 @@ BpProject .projects["BpStd"] {
     ProgVarFmArg @[9] { };
     ProgVarFmArg @[10] { };
     ProgVarFmArg @[11] { };
-    ProgVarFmArg @[12] { };
-    ControlPanelsFmArgs @[13] { };
+    ControlPanelsFmArgs @[12] { };
+    If @[13] { 
+     ProgEl_List @.true_code = [1] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
     Comment @[14] { };
     Comment @[15] { };
     If @[16] { 
-     ProgEl_List @.true_code = [5] {
-      MethodCall @[0] { 
+     ProgEl_List @.true_code = [4] {
+      ProgVarFmArg @[0] { };
+      MiscCall @[1] { 
        ProgArg_List @.meth_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
        };
       };
-      ProgVarFmArg @[1] { };
-      MiscCall @[2] { 
-       ProgArg_List @.meth_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-       };
-      };
-      VarIncr @[3] { };
-      If @[4] { 
+      VarIncr @[2] { };
+      If @[3] { 
        ProgEl_List @.true_code = [2] {
 	MethodCall @[0] { 
 	 ProgArg_List @.meth_args = [4] {
@@ -542,6 +628,10 @@ BpProject .projects["BpStd"] {
   };
   Program_Group @.gp["BpAll_Std"] = [8] { 
    Program @["BpBatch"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -555,8 +645,8 @@ BpProject .projects["BpStd"] {
 
     ProgVar_List @.vars = [3] {
      ProgVar @["batch"] { };
-     ProgVar @["init_batch"] { };
-     ProgVar @["max_batch"] { };
+     ProgVar @["batch_start"] { };
+     ProgVar @["n_batches"] { };
     };
 
     Function_List @.functions = [0] {
@@ -566,18 +656,15 @@ BpProject .projects["BpStd"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [3] {
-     If @[0] { 
-      ProgEl_List @.true_code = [1] {
-       NetCounterInit @[0] { };
+    ProgEl_List @.prog_code = [5] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["i"] { };
       };
      };
-     Else @[1] { 
-      ProgEl_List @.else_code = [1] {
-       MemberAssign @[0] { };
-      };
-     };
-     WhileLoop @[2] { 
+     AssignExpr @[1] { };
+     MemberAssign @[2] { };
+     ForLoop @[3] { 
       ProgEl_List @.loop_code = [2] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [3] {
@@ -589,9 +676,14 @@ BpProject .projects["BpStd"] {
        NetCounterIncr @[1] { };
       };
      };
+     BlankLineEl @[4] { };
     };
    };
    Program @["BpTrain"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [2] {
      RndSeed_List @["rnd_seeds"] { 
       taList @.seeds = [25] {
@@ -798,6 +890,10 @@ BpProject .projects["BpStd"] {
     };
    };
    Program @["BpEpoch"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -825,7 +921,7 @@ BpProject .projects["BpStd"] {
      AssignExpr @[1] { };
     };
 
-    ProgEl_List @.prog_code = [9] {
+    ProgEl_List @.prog_code = [10] {
      NetCounterInit @[0] { };
      AssignExpr @[1] { };
      MethodCall @[2] { 
@@ -837,25 +933,21 @@ BpProject .projects["BpStd"] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     NetDataLoop @[4] { 
-      ProgEl_List @.loop_code = [2] {
+     MethodCall @[4] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     NetDataLoop @[5] { 
+      ProgEl_List @.loop_code = [1] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [2] {
 	 ProgArg @[0] { };
 	 ProgArg @[1] { };
 	};
        };
-       If @[1] { 
-	ProgEl_List @.true_code = [1] {
-	 MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	 };
-	};
-       };
       };
      };
-     If @[5] { 
+     If @[6] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -863,22 +955,26 @@ BpProject .projects["BpStd"] {
        };
       };
      };
-     MethodCall @[6] { 
+     MethodCall @[7] { 
       ProgArg_List @.meth_args = [0] {
-      };
-     };
-     ProgramCall @[7] { 
-      ProgArg_List @.prog_args = [1] {
-       ProgArg @[0] { };
       };
      };
      MethodCall @[8] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
+     ProgramCall @[9] { 
+      ProgArg_List @.prog_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
     };
    };
    Program @["BpTrial"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -890,8 +986,9 @@ BpProject .projects["BpStd"] {
      ProgVar @["input_data"] { };
     };
 
-    ProgVar_List @.vars = [1] {
+    ProgVar_List @.vars = [2] {
      ProgVar @["update_net_view"] { };
+     ProgVar @["trial"] { };
     };
 
     Function_List @.functions = [0] {
@@ -900,34 +997,46 @@ BpProject .projects["BpStd"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [6] {
-     MethodCall @[0] { 
+    ProgEl_List @.prog_code = [7] {
+     If @[0] { 
+      ProgEl_List @.true_code = [1] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
+      };
+     };
+     MethodCall @[1] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ProgramCall @[1] { 
+     ProgramCall @[2] { 
       ProgArg_List @.prog_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
-      };
-     };
-     MethodCall @[2] { 
-      ProgArg_List @.meth_args = [0] {
       };
      };
      MethodCall @[3] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ProgramCall @[4] { 
+     MethodCall @[4] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     ProgramCall @[5] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     NetUpdateView @[5] { };
+     NetUpdateView @[6] { };
     };
    };
    Program @["ApplyInputs"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      LayerWriter @["LayerWriter_0"] { 
       LayerDataEl_List @.layer_data = [3] {
@@ -986,6 +1095,10 @@ BpProject .projects["BpStd"] {
     };
    };
    Program @["BpTrialMonitor"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["trial_netmon"] { 
       NetMonItem_List @.items = [6] {
@@ -1055,6 +1168,10 @@ BpProject .projects["BpStd"] {
     };
    };
    Program @["BpEpochMonitor"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [1] {
      NetMonitor @["epoch_netmon"] { 
       NetMonItem_List @.items = [6] {
@@ -1137,6 +1254,10 @@ BpProject .projects["BpStd"] {
     };
    };
    Program @["SaveWeights"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
     ProgObjList @.objs = [0] {
     };
 
@@ -1233,8 +1354,12 @@ BpProject .projects["BpStd"] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
-	 ScaleRange_List @.scale_ranges = [1] {
+	 ScaleRange_List @.scale_ranges = [5] {
 	  ScaleRange @[0] { };
+	  ScaleRange @[1] { };
+	  ScaleRange @[2] { };
+	  ScaleRange @[3] { };
+	  ScaleRange @[4] { };
 	 };
 	};
        };
@@ -1380,6 +1505,9 @@ BpProject .projects["BpStd"] {
     };
    };
 
+   ParamSeq_Group @.param_seqs = [0] {
+   };
+
    Layer_Group @.layers = [3] {
     BpLayer @["Input"] { 
      Projection_Group @.projections = [0] {
@@ -1407,14 +1535,6 @@ BpProject .projects["BpStd"] {
    };
 
    Weights_List @.weights = [0] {
-   };
-
-   NetTiming_List NULL = [5] {
-    NetTiming @[0] { };
-    NetTiming @[1] { };
-    NetTiming @[2] { };
-    NetTiming @[3] { };
-    NetTiming @[4] { };
    };
   };
  };
@@ -1475,7 +1595,67 @@ BpProject .projects["BpStd"] {
     el_typ=EditMbrItem;
     el_def=0;
     EditMbrItem @[0] {
-     label="BpConSpec_0_lrate";
+     label="bp_unit_spec_0_sig_gain";
+     desc=" gain";
+     cust_desc=0;
+     base=.projects["BpStd"].networks["Network_0"].specs["BpUnitSpec_0"].sig$$;
+     mbr=SigmoidSpec::gain;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      record=1;
+      search=0;
+      range=;
+     };
+     param_set_value {
+      saved_value=;
+     };
+     notes {
+      notes=;
+     };
+    };
+    EditMbrItem @[1] {
+     label="bp_unit_spec_0_err_fun";
+     desc=" this points to the error fun, set appropriately";
+     cust_desc=0;
+     base=.projects["BpStd"].networks["Network_0"].specs["BpUnitSpec_0"]$$;
+     mbr=BpUnitSpec::err_fun;
+     is_numeric=0;
+     is_single=0;
+     param_search {
+      record=0;
+      search=0;
+      range=;
+     };
+     param_set_value {
+      saved_value=;
+     };
+     notes {
+      notes=;
+     };
+    };
+    EditMbrItem @[2] {
+     label="bp_unit_spec_0_err_tol";
+     desc=" error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations";
+     cust_desc=0;
+     base=$.projects["BpStd"].networks["Network_0"].specs["BpUnitSpec_0"]$;
+     mbr=BpUnitSpec::err_tol;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      record=0;
+      search=0;
+      range="0:1:0.1";
+     };
+     param_set_value {
+      saved_value=;
+     };
+     notes {
+      notes=;
+     };
+    };
+    EditMbrItem @[3] {
+     label="bp_con_spec_0_lrate";
      desc=" learning rate";
      cust_desc=0;
      base=.projects["BpStd"].networks["Network_0"].specs["BpConSpec_0"]$$;
@@ -1494,18 +1674,78 @@ BpProject .projects["BpStd"] {
       notes=;
      };
     };
-    EditMbrItem @[1] {
-     label="BpUnitSpec_0_err_tol";
-     desc=" error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations";
+    EditMbrItem @[4] {
+     label="bp_con_spec_0_momentum";
+     desc=" momentum";
      cust_desc=0;
-     base=.projects["BpStd"].networks["Network_0"].specs["BpUnitSpec_0"]$$;
-     mbr=BpUnitSpec::err_tol;
+     base=$.projects["BpStd"].networks["Network_0"].specs["BpConSpec_0"]$;
+     mbr=BpConSpec::momentum;
      is_numeric=1;
      is_single=1;
      param_search {
+      record=1;
+      search=0;
+      range=;
+     };
+     param_set_value {
+      saved_value=;
+     };
+     notes {
+      notes=;
+     };
+    };
+    EditMbrItem @[5] {
+     label="bp_con_spec_0_momentum_type";
+     desc=" type of momentum function to use<br> * AFTER LRATE:  apply momentum after learning rate (old pdp style)<br> * BEFORE LRATE:  apply momentum before learning rate<br> * NORMALIZED:  like BEFORE, but normalize direction to unit length";
+     cust_desc=0;
+     base=$.projects["BpStd"].networks["Network_0"].specs["BpConSpec_0"]$;
+     mbr=BpConSpec::momentum_type;
+     is_numeric=0;
+     is_single=1;
+     param_search {
+      record=1;
+      search=0;
+      range=;
+     };
+     param_set_value {
+      saved_value=;
+     };
+     notes {
+      notes=;
+     };
+    };
+    EditMbrItem @[6] {
+     label="bp_con_spec_0_decay";
+     desc=" decay rate (before lrate and momentum)";
+     cust_desc=0;
+     base=$.projects["BpStd"].networks["Network_0"].specs["BpConSpec_0"]$;
+     mbr=BpConSpec::decay;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      record=1;
+      search=0;
+      range=;
+     };
+     param_set_value {
+      saved_value=;
+     };
+     notes {
+      notes=;
+     };
+    };
+    EditMbrItem @[7] {
+     label="bp_con_spec_0_decay_fun";
+     desc=" the weight decay function to use";
+     cust_desc=0;
+     base=$.projects["BpStd"].networks["Network_0"].specs["BpConSpec_0"]$;
+     mbr=BpConSpec::decay_fun;
+     is_numeric=0;
+     is_single=0;
+     param_search {
       record=0;
       search=0;
-      range="0:1:0.1";
+      range=;
      };
      param_set_value {
       saved_value=;
@@ -1585,7 +1825,7 @@ BpProject .projects["BpStd"] {
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1602,7 +1842,7 @@ BpProject .projects["BpStd"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1619,7 +1859,7 @@ BpProject .projects["BpStd"] {
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1636,24 +1876,7 @@ BpProject .projects["BpStd"] {
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      ar {
-       name="ar";
-      [0]       };
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1670,7 +1893,24 @@ BpProject .projects["BpStd"] {
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+      ar {
+       name="ar";
+      [0]       };
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1687,7 +1927,7 @@ BpProject .projects["BpStd"] {
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1704,7 +1944,7 @@ BpProject .projects["BpStd"] {
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1721,7 +1961,7 @@ BpProject .projects["BpStd"] {
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1738,7 +1978,7 @@ BpProject .projects["BpStd"] {
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1755,7 +1995,7 @@ BpProject .projects["BpStd"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1772,7 +2012,7 @@ BpProject .projects["BpStd"] {
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1789,7 +2029,7 @@ BpProject .projects["BpStd"] {
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1806,7 +2046,7 @@ BpProject .projects["BpStd"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1823,7 +2063,7 @@ BpProject .projects["BpStd"] {
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1840,7 +2080,7 @@ BpProject .projects["BpStd"] {
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1857,7 +2097,7 @@ BpProject .projects["BpStd"] {
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1874,7 +2114,7 @@ BpProject .projects["BpStd"] {
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1901,7 +2141,7 @@ BpProject .projects["BpStd"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1918,7 +2158,7 @@ BpProject .projects["BpStd"] {
      String_Data @["command"] {
       name="command";
       desc="emergent command line";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1935,7 +2175,7 @@ BpProject .projects["BpStd"] {
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1952,7 +2192,7 @@ BpProject .projects["BpStd"] {
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1969,7 +2209,7 @@ BpProject .projects["BpStd"] {
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1996,7 +2236,7 @@ BpProject .projects["BpStd"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2023,7 +2263,7 @@ BpProject .projects["BpStd"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2050,7 +2290,7 @@ BpProject .projects["BpStd"] {
       };
       name="mpi_nodes";
       desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2077,7 +2317,7 @@ BpProject .projects["BpStd"] {
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2104,7 +2344,7 @@ BpProject .projects["BpStd"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2131,7 +2371,7 @@ BpProject .projects["BpStd"] {
       };
       name="pb_nodes";
       desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2148,7 +2388,7 @@ BpProject .projects["BpStd"] {
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the job submission commands";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2165,7 +2405,41 @@ BpProject .projects["BpStd"] {
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+      ar {
+       name="ar";
+      [0]       };
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+      ar {
+       name="ar";
+      [0]       };
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2182,7 +2456,7 @@ BpProject .projects["BpStd"] {
      String_Data @["model_svn"] {
       name="model_svn";
       desc="svn revision for the model";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2228,7 +2502,7 @@ BpProject .projects["BpStd"] {
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2245,7 +2519,7 @@ BpProject .projects["BpStd"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2262,7 +2536,7 @@ BpProject .projects["BpStd"] {
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2279,24 +2553,7 @@ BpProject .projects["BpStd"] {
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      ar {
-       name="ar";
-      [0]       };
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2313,7 +2570,24 @@ BpProject .projects["BpStd"] {
      String_Data @["label"] {
       name="label";
       desc="label for the job -- a brief description that you can use to label this job's results on your graph";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+      ar {
+       name="ar";
+      [0]       };
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2330,7 +2604,7 @@ BpProject .projects["BpStd"] {
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2347,7 +2621,7 @@ BpProject .projects["BpStd"] {
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2364,7 +2638,7 @@ BpProject .projects["BpStd"] {
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2381,7 +2655,7 @@ BpProject .projects["BpStd"] {
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2398,7 +2672,7 @@ BpProject .projects["BpStd"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2415,7 +2689,7 @@ BpProject .projects["BpStd"] {
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2432,7 +2706,7 @@ BpProject .projects["BpStd"] {
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2449,7 +2723,7 @@ BpProject .projects["BpStd"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2466,7 +2740,7 @@ BpProject .projects["BpStd"] {
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2483,7 +2757,7 @@ BpProject .projects["BpStd"] {
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2500,7 +2774,7 @@ BpProject .projects["BpStd"] {
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2517,7 +2791,7 @@ BpProject .projects["BpStd"] {
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2544,7 +2818,7 @@ BpProject .projects["BpStd"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2561,7 +2835,7 @@ BpProject .projects["BpStd"] {
      String_Data @["command"] {
       name="command";
       desc="emergent command line";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2578,7 +2852,7 @@ BpProject .projects["BpStd"] {
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2595,7 +2869,7 @@ BpProject .projects["BpStd"] {
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2612,7 +2886,7 @@ BpProject .projects["BpStd"] {
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2639,7 +2913,7 @@ BpProject .projects["BpStd"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2666,7 +2940,7 @@ BpProject .projects["BpStd"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2693,7 +2967,7 @@ BpProject .projects["BpStd"] {
       };
       name="mpi_nodes";
       desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2720,7 +2994,7 @@ BpProject .projects["BpStd"] {
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2747,7 +3021,7 @@ BpProject .projects["BpStd"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2774,7 +3048,7 @@ BpProject .projects["BpStd"] {
       };
       name="pb_nodes";
       desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2791,7 +3065,7 @@ BpProject .projects["BpStd"] {
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the job submission commands";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2808,7 +3082,41 @@ BpProject .projects["BpStd"] {
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+      ar {
+       name="ar";
+      [0]       };
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+      ar {
+       name="ar";
+      [0]       };
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2825,7 +3133,7 @@ BpProject .projects["BpStd"] {
      String_Data @["model_svn"] {
       name="model_svn";
       desc="svn revision for the model";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2861,8 +3169,8 @@ BpProject .projects["BpStd"] {
      el_def=0;
     };
    };
-   jobs_archive {
-    name="jobs_archive";
+   jobs_deleted {
+    name="jobs_deleted";
     desc=;
     data {
      name="data";
@@ -2871,9 +3179,9 @@ BpProject .projects["BpStd"] {
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2885,7 +3193,7 @@ BpProject .projects["BpStd"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2899,7 +3207,7 @@ BpProject .projects["BpStd"] {
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2913,7 +3221,21 @@ BpProject .projects["BpStd"] {
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2927,21 +3249,7 @@ BpProject .projects["BpStd"] {
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["label"] {
-      name="label";
-      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2955,7 +3263,7 @@ BpProject .projects["BpStd"] {
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2969,7 +3277,7 @@ BpProject .projects["BpStd"] {
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2983,7 +3291,7 @@ BpProject .projects["BpStd"] {
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2997,7 +3305,7 @@ BpProject .projects["BpStd"] {
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3011,7 +3319,7 @@ BpProject .projects["BpStd"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3025,7 +3333,7 @@ BpProject .projects["BpStd"] {
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3039,7 +3347,7 @@ BpProject .projects["BpStd"] {
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3053,7 +3361,7 @@ BpProject .projects["BpStd"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3067,7 +3375,7 @@ BpProject .projects["BpStd"] {
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3081,7 +3389,7 @@ BpProject .projects["BpStd"] {
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3095,7 +3403,7 @@ BpProject .projects["BpStd"] {
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3109,7 +3417,7 @@ BpProject .projects["BpStd"] {
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3133,7 +3441,7 @@ BpProject .projects["BpStd"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3147,7 +3455,7 @@ BpProject .projects["BpStd"] {
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3161,7 +3469,7 @@ BpProject .projects["BpStd"] {
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3175,7 +3483,7 @@ BpProject .projects["BpStd"] {
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3189,7 +3497,7 @@ BpProject .projects["BpStd"] {
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3213,7 +3521,7 @@ BpProject .projects["BpStd"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3237,7 +3545,7 @@ BpProject .projects["BpStd"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3260,8 +3568,8 @@ BpProject .projects["BpStd"] {
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3285,7 +3593,7 @@ BpProject .projects["BpStd"] {
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3309,7 +3617,568 @@ BpProject .projects["BpStd"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
+   jobs_archive {
+    name="jobs_archive";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3333,7 +4202,7 @@ BpProject .projects["BpStd"] {
       };
       name="pb_nodes";
       desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3347,7 +4216,7 @@ BpProject .projects["BpStd"] {
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3361,7 +4230,7 @@ BpProject .projects["BpStd"] {
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3404,7 +4273,7 @@ BpProject .projects["BpStd"] {
      String_Data @["cluster"] {
       name="cluster";
       desc="cluster where this job was submitted / run";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3418,7 +4287,7 @@ BpProject .projects["BpStd"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3432,7 +4301,7 @@ BpProject .projects["BpStd"] {
      String_Data @["file_name"] {
       name="file_name";
       desc="name of file -- does not include any path information";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3446,7 +4315,7 @@ BpProject .projects["BpStd"] {
      String_Data @["tag"] {
       name="tag";
       desc="job tag associated with this file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3460,7 +4329,7 @@ BpProject .projects["BpStd"] {
      String_Data @["size"] {
       name="size";
       desc="size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3474,7 +4343,7 @@ BpProject .projects["BpStd"] {
      String_Data @["kind"] {
       name="kind";
       desc="type of file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3488,7 +4357,7 @@ BpProject .projects["BpStd"] {
      String_Data @["date_modified"] {
       name="date_modified";
       desc="timestamp for when the file was last modified";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3502,7 +4371,7 @@ BpProject .projects["BpStd"] {
      String_Data @["date_created"] {
       name="date_created";
       desc="timestamp for when the file was first created";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3516,7 +4385,7 @@ BpProject .projects["BpStd"] {
      String_Data @["svn_file_path"] {
       name="svn_file_path";
       desc="path to file in SVN repository, relative to root of svn_repo repository";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3530,7 +4399,7 @@ BpProject .projects["BpStd"] {
      String_Data @["proj_file_path"] {
       name="proj_file_path";
       desc="path to file relative to the parent project directory -- e.g., results/filename.dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3544,7 +4413,7 @@ BpProject .projects["BpStd"] {
      String_Data @["file_path"] {
       name="file_path";
       desc="full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3587,7 +4456,7 @@ BpProject .projects["BpStd"] {
      String_Data @["queue"] {
       name="queue";
       desc="queue that this info relates to";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3601,7 +4470,7 @@ BpProject .projects["BpStd"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number or total number of actve jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3615,7 +4484,7 @@ BpProject .projects["BpStd"] {
      String_Data @["user"] {
       name="user";
       desc="user name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3629,7 +4498,7 @@ BpProject .projects["BpStd"] {
      String_Data @["state"] {
       name="state";
       desc="current scheduler state -- or description of global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3643,7 +4512,7 @@ BpProject .projects["BpStd"] {
      String_Data @["procs"] {
       name="procs";
       desc="number of processors for this job or for global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3657,7 +4526,7 @@ BpProject .projects["BpStd"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="timestamp for when the job was submitted or started running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3701,6 +4570,7 @@ BpProject .projects["BpStd"] {
    proj_name=;
    auto_updt_interval=10;
    auto_updt_timeout=30;
+   cluster=;
    clusters=;
    users=;
    last_submit_time=;
@@ -3709,7 +4579,6 @@ BpProject .projects["BpStd"] {
    extra_files=;
    svn_repo=;
    repo_url=;
-   cluster=;
    queue=;
    run_time=;
    exe_cmd="emergent";
@@ -3756,12 +4625,12 @@ BpProject .projects["BpStd"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1572327017784119;
+	value 8 0=0.1559055;
 	val_type_fixed=0;
        };
       };
       name="Name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3770,7 +4639,7 @@ BpProject .projects["BpStd"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=0;
+      width=99;
       ar {
        name="ar";
       [5] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";      };
@@ -3782,12 +4651,12 @@ BpProject .projects["BpStd"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1572327017784119;
+	value 8 0=0.1559055;
 	val_type_fixed=0;
        };
       };
       name="Input";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=1;
       cell_geom{ 5;5;      };
       calc_expr {
@@ -3796,7 +4665,7 @@ BpProject .projects["BpStd"] {
       dim_names {
        name="dim_names";
       [2] ;;      };
-      width=0;
+      width=99;
       ar {
        name="ar";
       [5 5 5] 1;0;0;0;1;0;0;0;0;0;
@@ -3820,12 +4689,12 @@ BpProject .projects["BpStd"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1572327017784119;
+	value 8 0=0.1559055;
 	val_type_fixed=0;
        };
       };
       name="Output";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=1;
       cell_geom{ 5;5;      };
       calc_expr {
@@ -3834,7 +4703,7 @@ BpProject .projects["BpStd"] {
       dim_names {
        name="dim_names";
       [2] ;;      };
-      width=0;
+      width=99;
       ar {
        name="ar";
       [5 5 5] 1;0;0;0;1;0;0;0;0;0;
@@ -3898,7 +4767,7 @@ BpProject .projects["BpStd"] {
        };
       };
       name="batch";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3924,7 +4793,7 @@ BpProject .projects["BpStd"] {
        };
       };
       name="epoch";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3950,7 +4819,7 @@ BpProject .projects["BpStd"] {
        };
       };
       name="trial";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3966,7 +4835,7 @@ BpProject .projects["BpStd"] {
      };
      String_Data @["trial_name"] {
       name="trial_name";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3982,7 +4851,7 @@ BpProject .projects["BpStd"] {
      };
      String_Data @["group_name"] {
       name="group_name";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -3998,7 +4867,7 @@ BpProject .projects["BpStd"] {
      };
      float_Data @["sse"] {
       name="sse";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4058,7 +4927,7 @@ BpProject .projects["BpStd"] {
        };
       };
       name="batch";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4089,7 +4958,7 @@ BpProject .projects["BpStd"] {
        };
       };
       name="epoch";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4115,7 +4984,7 @@ BpProject .projects["BpStd"] {
        };
       };
       name="avg_sse";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4141,7 +5010,7 @@ BpProject .projects["BpStd"] {
        };
       };
       name="cnt_err";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4167,7 +5036,7 @@ BpProject .projects["BpStd"] {
        };
       };
       name="epoch_time_tot";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4193,7 +5062,7 @@ BpProject .projects["BpStd"] {
        };
       };
       name="epoch_time_usr";
-      col_flags=MARK|PIN|SAVE_ROWS|SAVE_DATA;
+      col_flags=MARK|PIN|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4245,9 +5114,18 @@ BpProject .projects["BpStd"] {
   desc=;
   debug_mode=0;
   Program @["BpStartup"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["BpStd"].programs["BpStartup"].doc$$;
+    };
+   };
    name="BpStartup";
    short_nm="Startup";
-   tags="Bp, Startup, Parallel Batch";
+   tags="Leabra, Startup, Parallel Batch";
    desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
    flags=STARTUP_RUN;
    stop_step_cond {
@@ -4294,8 +5172,8 @@ BpProject .projects["BpStd"] {
     name="vars";
     el_typ=ProgVar;
     el_def=0;
-    ProgVar @["train"] {
-     name="train";
+    ProgVar @["train_prog"] {
+     name="train_prog";
      var_type=T_Object;
      object_type=Program;
      object_val=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
@@ -4305,8 +5183,8 @@ BpProject .projects["BpStd"] {
      desc="set this to point to your train process";
      init_from=NULL;
     };
-    ProgVar @["batch"] {
-     name="batch";
+    ProgVar @["batch_prog"] {
+     name="batch_prog";
      var_type=T_Object;
      object_type=Program;
      object_val=.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$$;
@@ -4316,31 +5194,19 @@ BpProject .projects["BpStd"] {
      desc="set this to point to your batch process";
      init_from=NULL;
     };
-    ProgVar @["batches"] {
-     name="batches";
-     var_type=T_Int;
-     int_val=100;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+    ProgVar @["param_set"] {
+     name="param_set";
+     var_type=T_String;
+     string_val=;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
-     desc="this is a \"dummy\" var for ClusterRun to set the startup arg";
-     init_from=NULL;
-    };
-    ProgVar @["epochs"] {
-     name="epochs";
-     var_type=T_Int;
-     int_val=10000;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-     reference=0;
-     desc="this is a \"dummy\" var for ClusterRun to set the startup arg";
+     desc="name of saved parameter set to apply at startup";
      init_from=NULL;
     };
     ProgVar @["tag"] {
      name="tag";
      var_type=T_String;
      string_val="_gui";
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -4350,7 +5216,6 @@ BpProject .projects["BpStd"] {
      name="batch_str";
      var_type=T_String;
      string_val="00";
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="batch number as a string (leading zeros)";
@@ -4360,7 +5225,6 @@ BpProject .projects["BpStd"] {
      name="log_dir";
      var_type=T_String;
      string_val=;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="log file directory";
@@ -4369,8 +5233,7 @@ BpProject .projects["BpStd"] {
     ProgVar @["log_file_nm"] {
      name="log_file_nm";
      var_type=T_String;
-     string_val=;
-     objs_ptr=0;
+     string_val="/Users/oreilly/projects_1_gui.epc.dat";
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="name of log file";
@@ -4380,7 +5243,6 @@ BpProject .projects["BpStd"] {
      name="batch_start";
      var_type=T_Int;
      int_val=0;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="batch starting number";
@@ -4419,6 +5281,17 @@ BpProject .projects["BpStd"] {
      desc=;
      init_from=NULL;
     };
+    ProgVar @["param_sets"] {
+     name="param_sets";
+     var_type=T_Object;
+     object_type=ParamSet_Group;
+     object_val=.projects["BpStd"].param_sets$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
    };
    functions {
     name="functions";
@@ -4434,22 +5307,13 @@ BpProject .projects["BpStd"] {
     name="prog_code";
     el_typ=ProgCode;
     el_def=0;
-    IfReturn @[0] {
-     desc="don't run if running in the gui!";
-     flags=CAN_REVERT_TO_CODE;
-     code_string="if(taMisc::gui_active) return";
-     pre_compile_code_string="if(taMisc::gui_active) return";
-     cond {
-      expr="taMisc::gui_active";
-     };
-    };
-    RegisterArgs @[1] {
+    RegisterArgs @[0] {
      desc="This is KEY!!! actually processes all args, including those from ProgVarFmArg guys below";
      flags=CAN_REVERT_TO_CODE;
      code_string="Register Args";
      pre_compile_code_string="Register Args";
     };
-    PrintExpr @[2] {
+    PrintExpr @[1] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Print \"Loaded project: \" << .projects[0].file_name";
@@ -4459,13 +5323,13 @@ BpProject .projects["BpStd"] {
      };
      debug=0;
     };
-    Comment @[3] {
+    Comment @[2] {
      desc="= Std variables in startup program itself =";
      flags=CAN_REVERT_TO_CODE;
      code_string="// = Std variables in startup program itself =";
      pre_compile_code_string="// = Std variables in startup program itself =";
     };
-    ProgVarFmArg @[4] {
+    ProgVarFmArg @[3] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:tag in Program:BpStartup from Arg:tag";
@@ -4474,7 +5338,7 @@ BpProject .projects["BpStd"] {
      var_name="tag";
      arg_name="tag";
     };
-    ProgVarFmArg @[5] {
+    ProgVarFmArg @[4] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:log_dir in Program:BpStartup from Arg:log_dir";
@@ -4482,6 +5346,15 @@ BpProject .projects["BpStd"] {
      prog=$.projects["BpStd"].programs["BpStartup"]$;
      var_name="log_dir";
      arg_name="log_dir";
+    };
+    ProgVarFmArg @[5] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Set Var:param_set in Program:BpStartup from Arg:param_set";
+     pre_compile_code_string="Set Var:param_set in Program:BpStartup from Arg:param_set";
+     prog=$.projects["BpStd"].programs["BpStartup"]$;
+     var_name="param_set";
+     arg_name="param_set";
     };
     ProgVarFmArg @[6] {
      desc=;
@@ -4502,33 +5375,24 @@ BpProject .projects["BpStd"] {
      arg_name="rnd_init";
     };
     ProgVarFmArg @[8] {
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:max_batch in Program:BpBatch from Arg:batches";
-     pre_compile_code_string="Set Var:max_batch in Program:BpBatch from Arg:batches";
+     desc="starting batch -- replaces b_start";
+     flags=NEW_EL|CAN_REVERT_TO_CODE;
+     code_string="Set Var:batch_start in Program:BpBatch from Arg:batch_start";
+     pre_compile_code_string="Set Var:batch_start in Program:BpBatch from Arg:batch_start";
      prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$;
-     var_name="max_batch";
-     arg_name="batches";
+     var_name="batch_start";
+     arg_name="batch_start";
     };
     ProgVarFmArg @[9] {
-     desc="b_end is parallel-batch mode of operation (see b_start)";
-     flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:max_batch in Program:BpBatch from Arg:b_end";
-     pre_compile_code_string="Set Var:max_batch in Program:BpBatch from Arg:b_end";
+     desc="number of batches to run";
+     flags=NEW_EL|CAN_REVERT_TO_CODE;
+     code_string="Set Var:n_batches in Program:BpBatch from Arg:n_batches";
+     pre_compile_code_string="Set Var:n_batches in Program:BpBatch from Arg:n_batches";
      prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$;
-     var_name="max_batch";
-     arg_name="b_end";
+     var_name="n_batches";
+     arg_name="n_batches";
     };
     ProgVarFmArg @[10] {
-     desc="b_start is parallel-batch mode of operation (see also b_end)";
-     flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:batch in Program:BpBatch from Arg:b_start";
-     pre_compile_code_string="Set Var:batch in Program:BpBatch from Arg:b_start";
-     prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$;
-     var_name="batch";
-     arg_name="b_start";
-    };
-    ProgVarFmArg @[11] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:save_wts_interval in Program:BpTrain from Arg:save_wts_interval";
@@ -4537,7 +5401,7 @@ BpProject .projects["BpStd"] {
      var_name="save_wts_interval";
      arg_name="save_wts_interval";
     };
-    ProgVarFmArg @[12] {
+    ProgVarFmArg @[11] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:save_final_wts in Program:BpTrain from Arg:save_final_wts";
@@ -4546,12 +5410,53 @@ BpProject .projects["BpStd"] {
      var_name="save_final_wts";
      arg_name="save_final_wts";
     };
-    ControlPanelsFmArgs @[13] {
+    ControlPanelsFmArgs @[12] {
      desc="sets any arg listed in the control panel";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      pre_compile_code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=.projects["BpStd"].programs["BpStartup"].vars["MyClusterRun"]$$;
+    };
+    If @[13] {
+     desc="set variables to values stored in a param set";
+     flags=CAN_REVERT_TO_CODE;
+     code_string="if (param_set.nonempty())";
+     pre_compile_code_string="if (param_set.nonempty())";
+     cond {
+      expr="param_set.nonempty()";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       code_string="param_sets->LoadParamSet(param_set)";
+       pre_compile_code_string="param_sets->LoadParamSet(param_set)";
+       result_var=NULL;
+       obj=.projects["BpStd"].programs["BpStartup"].vars["param_sets"]$$;
+       method=ParamSet_Group::LoadParamSet;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="set_name";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="param_set";
+	 };
+	};
+       };
+       meth_sig="bool LoadParamSet(taString& set_name)";
+       meth_desc=;
+      };
+     };
     };
     Comment @[14] {
      desc="= Add your own variables here =";
@@ -4566,65 +5471,27 @@ BpProject .projects["BpStd"] {
      pre_compile_code_string="// = Below saves log files of standard data tables =";
     };
     If @[16] {
-     desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
-     flags=CAN_REVERT_TO_CODE;
-     code_string="if (taMisc::CheckArgByName(\"b_start\"))";
-     pre_compile_code_string="if (taMisc::CheckArgByName(\"b_start\"))";
+     desc="set tag for starting batch (new code in v 8.0)";
+     flags=NEW_EL|CAN_REVERT_TO_CODE;
+     code_string="if (taMisc::CheckArgByName(\"batch_start\"))";
+     pre_compile_code_string="if (taMisc::CheckArgByName(\"batch_start\"))";
      cond {
-      expr="taMisc::CheckArgByName(\"b_start\")";
+      expr="taMisc::CheckArgByName(\"batch_start\")";
      };
      true_code {
       name=;
       el_typ=ProgCode;
       el_def=0;
-      MethodCall @[0] {
-       desc="directly set variable on batch program";
-       flags=CAN_REVERT_TO_CODE;
-       code_string="batch->SetVar(\"init_batch\", false)";
-       pre_compile_code_string="batch->SetVar(\"init_batch\", false)";
-       result_var=NULL;
-       obj=.projects["BpStd"].programs["BpStartup"].vars["batch"]$$;
-       method=Program::SetVar;
-       meth_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="var_nm";
-	 required=1;
-	 def_val="\"\"";
-	 prev_expr=;
-	 expr {
-	  expr="\"init_batch\"";
-	 };
-	};
-	ProgArg @[1] {
-	 arg_type=const_Variant_ref;
-	 type="Variant&";
-	 name="value";
-	 required=1;
-	 def_val=;
-	 prev_expr=;
-	 expr {
-	  expr="false";
-	 };
-	};
-       };
-       meth_sig="bool SetVar(taString& var_nm, Variant& value)";
-       meth_desc=" set the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program";
-      };
-      ProgVarFmArg @[1] {
+      ProgVarFmArg @[0] {
        desc="read in the arg to us too, so we can set file names based on it";
        flags=CAN_REVERT_TO_CODE;
-       code_string="Set Var:batch_start in Program:BpStartup from Arg:b_start";
-       pre_compile_code_string="Set Var:batch_start in Program:BpStartup from Arg:b_start";
+       code_string="Set Var:batch_start in Program:BpStartup from Arg:batch_start";
+       pre_compile_code_string="Set Var:batch_start in Program:BpStartup from Arg:batch_start";
        prog=$.projects["BpStd"].programs["BpStartup"]$;
        var_name="batch_start";
-       arg_name="b_start";
+       arg_name="batch_start";
       };
-      MiscCall @[2] {
+      MiscCall @[1] {
        desc="string version with leading zeros";
        flags=CAN_REVERT_TO_CODE;
        code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
@@ -4660,7 +5527,7 @@ BpProject .projects["BpStd"] {
 	};
        };
       };
-      VarIncr @[3] {
+      VarIncr @[2] {
        desc="add to tag for setting log file names";
        flags=CAN_REVERT_TO_CODE;
        code_string="tag += \".\" + batch_str";
@@ -4670,7 +5537,7 @@ BpProject .projects["BpStd"] {
 	expr="\".\" + batch_str";
        };
       };
-      If @[4] {
+      If @[3] {
        desc="save startup args: only for first job in parallel batch mode, or this should be 0 otherwise in any case";
        flags=CAN_REVERT_TO_CODE;
        code_string="if (batch_start == 0)";
@@ -5165,10 +6032,10 @@ BpProject .projects["BpStd"] {
     PrintExpr @[28] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Print \"Running: \" << batch.name";
-     pre_compile_code_string="Print \"Running: \" << batch.name";
+     code_string="Print \"Running: \" << batch_prog.name";
+     pre_compile_code_string="Print \"Running: \" << batch_prog.name";
      expr {
-      expr="\"Running: \" << batch.name";
+      expr="\"Running: \" << batch_prog.name";
      };
      debug=0;
     };
@@ -5182,12 +6049,12 @@ BpProject .projects["BpStd"] {
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
-       arg_type=BpNetwork;
+       arg_type=LeabraNetwork;
        type="BpNetwork*";
        name="network";
        required=1;
        def_val=;
-       prev_expr=;
+       prev_expr="network";
        expr {
 	expr="network";
        };
@@ -5198,18 +6065,29 @@ BpProject .projects["BpStd"] {
        name="input_data";
        required=1;
        def_val=;
-       prev_expr=;
+       prev_expr="input_data";
        expr {
 	expr="input_data";
        };
       };
      };
      target=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$;
-     targ_ld_init="*BpBatch*";
+     targ_ld_init="*LeabraBatch*";
     };
    };
-   step_prog=NULL;
+   step_prog=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"]$$;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
   Program_Group @.gp["BpAll_Std"] {
    name="BpAll_Std";
@@ -5219,9 +6097,18 @@ BpProject .projects["BpStd"] {
    desc="The full set of programs for training a standard Backpropagation network";
    debug_mode=0;
    Program @["BpBatch"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"].doc$$;
+     };
+    };
     name="BpBatch";
     short_nm="Batch";
-    tags="Bp, Std";
+    tags="Leabra, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
     flags=0;
     stop_step_cond {
@@ -5244,7 +6131,7 @@ BpProject .projects["BpStd"] {
      ProgVar @["network"] {
       name="network";
       var_type=T_Object;
-      object_type=BpNetwork;
+      object_type=LeabraNetwork;
       object_val=$.projects["BpStd"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -5272,30 +6159,27 @@ BpProject .projects["BpStd"] {
       name="batch";
       var_type=T_Int;
       int_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch counter";
       init_from=NULL;
      };
-     ProgVar @["init_batch"] {
-      name="init_batch";
-      var_type=T_Bool;
-      bool_val=1;
-      objs_ptr=0;
+     ProgVar @["batch_start"] {
+      name="batch_start";
+      var_type=T_Int;
+      int_val=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="initialize batch counter at start of run -- turn off if using \"parallel batch\" mode to run different batches on different processes";
+      desc="batch number to start on";
       init_from=NULL;
      };
-     ProgVar @["max_batch"] {
-      name="max_batch";
+     ProgVar @["n_batches"] {
+      name="n_batches";
       var_type=T_Int;
       int_val=10;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="maximum number of batch runs to perform";
+      desc="number of batches to run";
       init_from=NULL;
      };
     };
@@ -5323,60 +6207,55 @@ BpProject .projects["BpStd"] {
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     If @[0] {
+     LocalVars @[0] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="if (init_batch)";
-      pre_compile_code_string="if (init_batch)";
-      cond {
-       expr="init_batch";
-      };
-      true_code {
-       name=;
-       el_typ=ProgCode;
+      code_string="LocalVars (1 vars)";
+      pre_compile_code_string="LocalVars (1 vars)";
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
        el_def=0;
-       NetCounterInit @[0] {
-	desc="initializes local batch counter and batch field on network";
-	flags=CAN_REVERT_TO_CODE;
-	code_string="Net Counter Init: batch";
-	pre_compile_code_string="Net Counter Init: batch";
-	network_var=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"].args["network"]$;
-	local_ctr_var=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"].vars["batch"]$;
-	counter=Network::batch;
-	update_after=0;
+       ProgVar @["i"] {
+	name="i";
+	var_type=T_Int;
+	int_val=0;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
        };
       };
      };
-     Else @[1] {
-      desc=;
+     AssignExpr @[1] {
+      desc="start at the start";
       flags=CAN_REVERT_TO_CODE;
-      code_string="else";
-      pre_compile_code_string="else";
-      else_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-       MemberAssign @[0] {
-	desc="just set directly to current batch value";
-	flags=CAN_REVERT_TO_CODE;
-	code_string="network.batch = batch";
-	pre_compile_code_string="network.batch = batch";
-	obj=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"].args["network"]$;
-	path="batch";
-	expr {
-	 expr="batch";
-	};
-	update_after=0;
-       };
+      code_string="batch = batch_start";
+      pre_compile_code_string="batch = batch_start";
+      result_var=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"].vars["batch"]$;
+      expr {
+       expr="batch_start";
       };
      };
-     WhileLoop @[2] {
-      desc="the main loop over training runs";
+     MemberAssign @[2] {
+      desc="update network";
       flags=CAN_REVERT_TO_CODE;
-      code_string="while (batch < max_batch)";
-      pre_compile_code_string="while (batch < max_batch)";
+      code_string="network.batch = batch";
+      pre_compile_code_string="network.batch = batch";
+      obj=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"].args["network"]$;
+      path="batch";
+      expr {
+       expr="batch";
+      };
+      update_after=0;
+     };
+     ForLoop @[3] {
+      desc="main loop over training runs";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="for (i=0; i<n_batches; i++)";
+      pre_compile_code_string="for (i=0; i<n_batches; i++)";
       loop_code {
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
@@ -5385,7 +6264,7 @@ BpProject .projects["BpStd"] {
 	code_string="BpTrain(network, input_data, true)";
 	pre_compile_code_string="BpTrain(network, input_data, true)";
 	prog_args {
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -5394,7 +6273,7 @@ BpProject .projects["BpStd"] {
 	  name="network";
 	  required=1;
 	  def_val=;
-	  prev_expr=;
+	  prev_expr="network";
 	  expr {
 	   expr="network";
 	  };
@@ -5405,7 +6284,7 @@ BpProject .projects["BpStd"] {
 	  name="input_data";
 	  required=1;
 	  def_val=;
-	  prev_expr=;
+	  prev_expr="input_data";
 	  expr {
 	   expr="input_data";
 	  };
@@ -5416,7 +6295,7 @@ BpProject .projects["BpStd"] {
 	  name="no_prompts";
 	  required=1;
 	  def_val=;
-	  prev_expr=;
+	  prev_expr="true";
 	  expr {
 	   expr="true";
 	  };
@@ -5436,15 +6315,47 @@ BpProject .projects["BpStd"] {
 	update_after=0;
        };
       };
-      test {
-       expr="batch < max_batch";
+      init {
+       expr="i=0";
       };
+      test {
+       expr="i<n_batches";
+      };
+      iter {
+       expr="i++";
+      };
+     };
+     BlankLineEl @[4] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string=" ";
+      pre_compile_code_string=" ";
      };
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["BpTrain"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"].doc$$;
+     };
+    };
     name="BpTrain";
     short_nm="Train";
     tags="Bp, Train, RndSeedList";
@@ -5567,7 +6478,7 @@ BpProject .projects["BpStd"] {
      };
      RndSeed @["rnd_seed"] {
       name="rnd_seed";
-      rnd_seed=2436029060;
+      rnd_seed=2947437512;
      };
     };
     types {
@@ -5630,7 +6541,6 @@ BpProject .projects["BpStd"] {
       name="no_prompts";
       var_type=T_Bool;
       bool_val=0;
-      objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
@@ -5645,7 +6555,6 @@ BpProject .projects["BpStd"] {
       name="max_epoch";
       var_type=T_Int;
       int_val=500;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -5655,7 +6564,6 @@ BpProject .projects["BpStd"] {
       name="epoch";
       var_type=T_Int;
       int_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -5666,7 +6574,6 @@ BpProject .projects["BpStd"] {
       var_type=T_HardEnum;
       int_val=1;
       hard_enum_type=Network::TrainMode;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -5676,10 +6583,10 @@ BpProject .projects["BpStd"] {
       name="rnd_init";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"].types["RndInitType"]$$;
        value=2;
       };
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="how to initialize the random numbers when the Init button is pressed";
@@ -5689,7 +6596,6 @@ BpProject .projects["BpStd"] {
       name="err_stopcrit";
       var_type=T_Real;
       real_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="stopping criterion -- network avg_sse must be <= this number to stop training -- see n_under_thr too";
@@ -5699,7 +6605,6 @@ BpProject .projects["BpStd"] {
       name="n_under_thr";
       var_type=T_Int;
       int_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="number of times network needs to be under stopcrit threshold to actually stop";
@@ -5709,7 +6614,6 @@ BpProject .projects["BpStd"] {
       name="save_final_wts";
       var_type=T_Bool;
       bool_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="save the network's weights at the end of training?  ";
@@ -5719,7 +6623,6 @@ BpProject .projects["BpStd"] {
       name="save_wts_interval";
       var_type=T_Int;
       int_val=-1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="save the weights every this many epochs, if number is >= 1 (otherwise do not save weights)";
@@ -5729,7 +6632,6 @@ BpProject .projects["BpStd"] {
       name="n_under_cnt";
       var_type=T_Int;
       int_val=0;
-      objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current under threshold counter";
@@ -6391,10 +7293,30 @@ BpProject .projects["BpStd"] {
       meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
     };
-    step_prog=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"]$$;
+    step_prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"]$;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["BpEpoch"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["BpStd"].programs.gp["BpAll_Std"]["BpEpoch"].doc$$;
+     };
+    };
     name="BpEpoch";
     short_nm="Epoch";
     tags="Bp, Std";
@@ -6449,7 +7371,6 @@ BpProject .projects["BpStd"] {
       var_type=T_HardEnum;
       int_val=1;
       hard_enum_type=DataLoop::Order;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="controls the order in which events (rows of the input data datatable) are presented to the network
@@ -6460,7 +7381,6 @@ BpProject .projects["BpStd"] {
       name="trial";
       var_type=T_Int;
       int_val=0;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
@@ -6491,8 +7411,7 @@ BpProject .projects["BpStd"] {
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=5;
-      objs_ptr=0;
+      int_val=6;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -6581,6 +7500,22 @@ BpProject .projects["BpStd"] {
       meth_desc=" record the current time as the starting time, and optionally reset the time used information";
      };
      MethodCall @[3] {
+      desc="added in 8.0: essential for param_seqs";
+      flags=NEW_EL|CAN_REVERT_TO_CODE;
+      code_string="network->Init_Epoch()";
+      pre_compile_code_string="network->Init_Epoch()";
+      result_var=NULL;
+      obj=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpEpoch"].args["network"]$;
+      method=Network::Init_Epoch;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Init_Epoch()";
+      meth_desc=" Initializes network state at the start of a new epoch -- updates parameters according to param_seq for example";
+     };
+     MethodCall @[4] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
@@ -6596,7 +7531,7 @@ BpProject .projects["BpStd"] {
       meth_sig="void ResetData()";
       meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
      };
-     NetDataLoop @[4] {
+     NetDataLoop @[5] {
       desc="iterates over the events/rows of input_data, according to data_loop_order variable";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Data Loop (PERMUTED):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
@@ -6640,36 +7575,6 @@ BpProject .projects["BpStd"] {
 	target=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"]$;
 	targ_ld_init="*BpTrial*";
        };
-       If @[1] {
-	desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
-	flags=CAN_REVERT_TO_CODE;
-	code_string="if (network.Compute_Weights_Test(trial+1))";
-	pre_compile_code_string="if (network.Compute_Weights_Test(trial+1))";
-	cond {
-	 expr="network.Compute_Weights_Test(trial+1)";
-	};
-	true_code {
-	 name=;
-	 el_typ=ProgCode;
-	 el_def=0;
-	 MethodCall @[0] {
-	  desc="update the weight values based on changes computed by trial program";
-	  flags=CAN_REVERT_TO_CODE;
-	  code_string="network->Compute_Weights()";
-	  pre_compile_code_string="network->Compute_Weights()";
-	  result_var=NULL;
-	  obj=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpEpoch"].args["network"]$;
-	  method=Network::Compute_Weights;
-	  meth_args {
-	   name=;
-	   el_typ=ProgArg;
-	   el_def=0;
-	  };
-	  meth_sig="void Compute_Weights()";
-	  meth_desc=" update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode";
-	 };
-	};
-       };
       };
       data_var=.projects["BpStd"].programs.gp["BpAll_Std"]["BpEpoch"].args["input_data"]$$;
       index_var=.projects["BpStd"].programs.gp["BpAll_Std"]["BpEpoch"].vars["data_loop_index"]$$;
@@ -6685,7 +7590,7 @@ BpProject .projects["BpStd"] {
       group_order=PERMUTED;
       group_idx_list{       };
      };
-     If @[5] {
+     If @[6] {
       desc="if full batch mode, update only at end of epoch";
       flags=CAN_REVERT_TO_CODE;
       code_string="if (network.wt_update == Network::BATCH)";
@@ -6715,7 +7620,7 @@ BpProject .projects["BpStd"] {
        };
       };
      };
-     MethodCall @[6] {
+     MethodCall @[7] {
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_EpochStats()";
@@ -6731,7 +7636,23 @@ BpProject .projects["BpStd"] {
       meth_sig="void Compute_EpochStats()";
       meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles";
      };
-     ProgramCall @[7] {
+     MethodCall @[8] {
+      desc="done with the computation in the epoch -- record time it took";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="epoch_timer->EndTimer()";
+      pre_compile_code_string="epoch_timer->EndTimer()";
+      result_var=NULL;
+      obj=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpEpoch"].vars["epoch_timer"]$;
+      method=TimeUsed::EndTimer;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void EndTimer()";
+      meth_desc=" record the current time as the ending time, and compute difference as the time used";
+     };
+     ProgramCall @[9] {
       desc="run program that records data from network and possibly other sources about the epoch";
       flags=CAN_REVERT_TO_CODE;
       code_string="BpEpochMonitor(network)";
@@ -6755,27 +7676,31 @@ BpProject .projects["BpStd"] {
       target=.projects["BpStd"].programs.gp["BpAll_Std"]["BpEpochMonitor"]$$;
       targ_ld_init="*BpEpochMonitor*";
      };
-     MethodCall @[8] {
-      desc="done with the computation in the epoch -- record time it took";
-      flags=CAN_REVERT_TO_CODE;
-      code_string="epoch_timer->EndTimer()";
-      pre_compile_code_string="epoch_timer->EndTimer()";
-      result_var=NULL;
-      obj=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpEpoch"].vars["epoch_timer"]$;
-      method=TimeUsed::EndTimer;
-      meth_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
-      };
-      meth_sig="void EndTimer()";
-      meth_desc=" record the current time as the ending time, and compute difference as the time used";
-     };
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["BpTrial"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"].doc$$;
+     };
+    };
     name="BpTrial";
     short_nm="Trial";
     tags="Bp, Std";
@@ -6829,10 +7754,18 @@ BpProject .projects["BpStd"] {
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
+      init_from=NULL;
+     };
+     ProgVar @["trial"] {
+      name="trial";
+      var_type=T_Int;
+      int_val=1;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="current trial (event) within the epoch -- increments automatically";
       init_from=NULL;
      };
     };
@@ -6850,13 +7783,43 @@ BpProject .projects["BpStd"] {
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     MethodCall @[0] {
+     If @[0] {
+      desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="if (network.Compute_Weights_Test(trial+1))";
+      pre_compile_code_string="if (network.Compute_Weights_Test(trial+1))";
+      cond {
+       expr="network.Compute_Weights_Test(trial+1)";
+      };
+      true_code {
+       name="true_code";
+       el_typ=ProgCode;
+       el_def=0;
+       MethodCall @[0] {
+	desc="update the weight values based on changes computed by trial program";
+	flags=CAN_REVERT_TO_CODE;
+	code_string="network->Compute_Weights()";
+	pre_compile_code_string="network->Compute_Weights()";
+	result_var=NULL;
+	obj=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"].args["network"]$$;
+	method=Network::Compute_Weights;
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+	meth_sig="void Compute_Weights()";
+	meth_desc=" update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode";
+       };
+      };
+     };
+     MethodCall @[1] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Init_InputData()";
       pre_compile_code_string="network->Init_InputData()";
       result_var=NULL;
-      obj=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"].args["network"]$$;
+      obj=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"].args["network"]$;
       method=Network::Init_InputData;
       meth_args {
        name=;
@@ -6866,7 +7829,7 @@ BpProject .projects["BpStd"] {
       meth_sig="void Init_InputData()";
       meth_desc=" Initializes external and target inputs";
      };
-     ProgramCall @[1] {
+     ProgramCall @[2] {
       desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
       flags=CAN_REVERT_TO_CODE;
@@ -6902,8 +7865,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       target=.projects["BpStd"].programs.gp["BpAll_Std"]["ApplyInputs"]$$;
       targ_ld_init="*ApplyInputs*";
      };
-     MethodCall @[2] {
-      desc="initializes various counters at start of trial";
+     MethodCall @[3] {
+      desc="run the trial: compute net, act (one pass), then backprop to dEdA,dEdNet (second pass), then Compute_dWt (third pass)";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Trial_Run()";
       pre_compile_code_string="network->Trial_Run()";
@@ -6918,7 +7881,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_sig="void Trial_Run()";
       meth_desc=" run one trial of Bp: calls SetCurLrate, Compute_NetinAct, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt. If you want to save some speed just for testing, you can just call Compute_NetinAct and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)";
      };
-     MethodCall @[3] {
+     MethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_TrialStats()";
@@ -6934,7 +7897,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_sig="void Compute_TrialStats()";
       meth_desc=" compute trial-level statistics (SSE and others defined by specific algorithms) do not call this function anymore -- it is obsolete -- please use Compute_PhaseStats or Compute_MinusStats / Compute_PlusStats for more appropriate stats computation at the right time";
      };
-     ProgramCall @[4] {
+     ProgramCall @[5] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
       flags=CAN_REVERT_TO_CODE;
       code_string="BpTrialMonitor(network)";
@@ -6958,7 +7921,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       target=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrialMonitor"]$$;
       targ_ld_init="*BpTrialMonitor*";
      };
-     NetUpdateView @[5] {
+     NetUpdateView @[6] {
       desc="update the network view(s) (only if update_net_view is true)";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Update View";
@@ -6969,8 +7932,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["ApplyInputs"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["BpStd"].programs.gp["BpAll_Std"]["ApplyInputs"].doc$$;
+     };
+    };
     name="ApplyInputs";
     short_nm="Inputs";
     tags="Network, InputData, Apply";
@@ -7238,8 +8221,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["BpTrialMonitor"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrialMonitor"].doc$$;
+     };
+    };
     name="BpTrialMonitor";
     short_nm="TrlMon";
     tags="Bp, Std, Monitor";
@@ -7717,8 +8720,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["BpEpochMonitor"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["BpStd"].programs.gp["BpAll_Std"]["BpEpochMonitor"].doc$$;
+     };
+    };
     name="BpEpochMonitor";
     short_nm="EpcMon";
     tags="Bp, Std, Monitor";
@@ -8309,8 +9332,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
    Program @["SaveWeights"] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["BpStd"].programs.gp["BpAll_Std"]["SaveWeights"].doc$$;
+     };
+    };
     name="SaveWeights";
     short_nm="SavWts";
     tags="Network, Weights";
@@ -8353,7 +9396,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="tag";
       var_type=T_String;
       string_val="_gui";
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="user-provided tag (startup script will set this!)";
@@ -8363,7 +9405,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="wts_subdir";
       var_type=T_String;
       string_val=;
-      objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="user-provided subdirectory to save weights in";
@@ -8373,7 +9414,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="fname";
       var_type=T_String;
       string_val=;
-      objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="final generated file name -- do not edit!";
@@ -8383,7 +9423,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_str";
       var_type=T_String;
       string_val="0036";
-      objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of epoch with leading zeros";
@@ -8393,7 +9432,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="batch_str";
       var_type=T_String;
       string_val="03";
-      objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="string rep of batch with leading zeros";
@@ -8403,7 +9441,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="final_tag";
       var_type=T_String;
       string_val=".03_0036";
-      objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="batch + epoch";
@@ -8616,6 +9653,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     step_prog=NULL;
     step_n=1;
+    doc {
+     name="doc";
+     desc=;
+     web_doc=0;
+     wiki=;
+     url="local";
+     full_url="local";
+     text_size=1;
+     text=;
+     html_text=;
+    };
    };
   };
  };
@@ -8630,22 +9678,22 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=0.001594896;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0;
+     value 8 0=0.01954121;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9984085;
+     value 8 0=0.9984051;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.8181818;
+     value 8 0=0.7994902;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -8661,6 +9709,7 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    name="Browser2";
    m_data=.projects["BpStd"]$$;
+   cur_font_size=12;
    visible=1;
    win_name=".projects[\"BpStd\"] - BpStd.proj";
    m_is_root=0;
@@ -8684,6 +9733,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      name="Application";
      m_data=NULL;
+     cur_font_size=12;
      visible=0;
      lft=0;
      top=0;
@@ -8697,6 +9747,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     BrowseViewerTaBase @["Navigator"] {
      name="Navigator";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      root_typ=BpProject;
      root_md=NULL;
@@ -8705,6 +9756,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     PanelViewer @["Editor"] {
      name="Editor";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
     };
     T3PanelViewer @["T3Frames"] {
@@ -8720,6 +9772,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      name="T3Frames";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      panels {
       name="panels";
@@ -8728,10 +9781,12 @@ this program can be extended to do arbitrary things to generate data and apply i
       T3Panel @["Network_0"] {
        name="Network_0";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -8740,6 +9795,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 NetView @["Network_0_View"] {
 	  name="Network_0_View";
 	  m_data=$.projects["BpStd"].networks["Network_0"]$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
@@ -8760,7 +9816,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
-	  unit_src_path=".layers[2].units[0]";
+	  unit_src_path=".layers[2].units[7]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -8788,8 +9844,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
+	   lay_trans=0.4;
+	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
 	  };
@@ -8807,8 +9863,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   chunks=133;
 	   min=-1;
 	   max=1;
-	   last_min=0;
-	   last_max=0;
+	   last_min=-1;
+	   last_max=1;
 	   range=1;
 	   zero=0;
 	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
@@ -8824,6 +9880,30 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	    min=-1;
 	    max=1;
 	   };
+	   ScaleRange @[1] {
+	    var_name="targ";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[2] {
+	    var_name="dEdA";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[3] {
+	    var_name="dEdNet";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[4] {
+	    var_name="r.wt";
+	    auto_scale=1;
+	    min=-0.9760795;
+	    max=0.9760795;
+	   };
 	  };
 	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;	  };
 	 };
@@ -8832,11 +9912,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -8918,10 +10000,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       T3Panel @["EpochOutputData"] {
        name="EpochOutputData";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -8930,6 +10014,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 GraphTableView @["EpochOutputData_Graph"] {
 	  name="EpochOutputData_Graph";
 	  m_data=$.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"]$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name="children";
@@ -8938,6 +10023,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["batch"] {
 	    name="batch";
 	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -8946,22 +10032,25 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["epoch"] {
 	    name="epoch";
 	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=35: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=476: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["avg_sse"] {
 	    name="avg_sse";
 	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.88273: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.9023: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["cnt_err"] {
 	    name="cnt_err";
 	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -8970,6 +10059,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["epoch_time_tot"] {
 	    name="epoch_time_tot";
 	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -8978,6 +10068,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["epoch_time_usr"] {
 	    name="epoch_time_usr";
 	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -9007,6 +10098,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  line_width=2;
 	  point_size=0.01;
 	  point_spacing=1;
+	  solid_lines=0;
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
@@ -9017,6 +10109,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  x_axis {
 	   name="x_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=1;
 	   axis=X;
@@ -9036,6 +10129,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  z_axis {
 	   name="z_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Z;
@@ -9060,6 +10154,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_1"] {
 	    name="EpochOutputData_Graph_plot_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -9081,6 +10176,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_2"] {
 	    name="EpochOutputData_Graph_plot_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9102,6 +10198,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_3"] {
 	    name="EpochOutputData_Graph_plot_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9123,6 +10220,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_4"] {
 	    name="EpochOutputData_Graph_plot_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9144,6 +10242,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_5"] {
 	    name="EpochOutputData_Graph_plot_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9165,6 +10264,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_6"] {
 	    name="EpochOutputData_Graph_plot_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9186,6 +10286,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_7"] {
 	    name="EpochOutputData_Graph_plot_7";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9207,6 +10308,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_8"] {
 	    name="EpochOutputData_Graph_plot_8";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9228,6 +10330,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_9"] {
 	    name="EpochOutputData_Graph_plot_9";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9249,6 +10352,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_10"] {
 	    name="EpochOutputData_Graph_plot_10";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9270,6 +10374,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_11"] {
 	    name="EpochOutputData_Graph_plot_11";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9291,6 +10396,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_12"] {
 	    name="EpochOutputData_Graph_plot_12";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9312,6 +10418,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_13"] {
 	    name="EpochOutputData_Graph_plot_13";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9333,6 +10440,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_14"] {
 	    name="EpochOutputData_Graph_plot_14";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9354,6 +10462,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_15"] {
 	    name="EpochOutputData_Graph_plot_15";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9375,6 +10484,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_plot_16"] {
 	    name="EpochOutputData_Graph_plot_16";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9401,6 +10511,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_1"] {
 	    name="EpochOutputData_Graph_err_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9422,6 +10533,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_2"] {
 	    name="EpochOutputData_Graph_err_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9443,6 +10555,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_3"] {
 	    name="EpochOutputData_Graph_err_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9464,6 +10577,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_4"] {
 	    name="EpochOutputData_Graph_err_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9485,6 +10599,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_5"] {
 	    name="EpochOutputData_Graph_err_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9506,6 +10621,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_6"] {
 	    name="EpochOutputData_Graph_err_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9527,6 +10643,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_7"] {
 	    name="EpochOutputData_Graph_err_7";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9548,6 +10665,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_8"] {
 	    name="EpochOutputData_Graph_err_8";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9569,6 +10687,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_9"] {
 	    name="EpochOutputData_Graph_err_9";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9590,6 +10709,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_10"] {
 	    name="EpochOutputData_Graph_err_10";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9611,6 +10731,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_11"] {
 	    name="EpochOutputData_Graph_err_11";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9632,6 +10753,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_12"] {
 	    name="EpochOutputData_Graph_err_12";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9653,6 +10775,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_13"] {
 	    name="EpochOutputData_Graph_err_13";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9674,6 +10797,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_14"] {
 	    name="EpochOutputData_Graph_err_14";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9695,6 +10819,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_15"] {
 	    name="EpochOutputData_Graph_err_15";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9716,6 +10841,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["EpochOutputData_Graph_err_16"] {
 	    name="EpochOutputData_Graph_err_16";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -9741,6 +10867,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -9772,6 +10899,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  raster_axis {
 	   name="raster_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -9801,11 +10929,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -9908,12 +11038,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04350132;
+       value 8 0=0.04359383;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.7544605;
+       value 8 0=0.7357689;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -9929,6 +11059,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      name="Tools";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
@@ -9941,6 +11072,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
+ tree_state{ .;.docs;.ctrl_panels;.ctrl_panels[0];.ctrl_panels[0].mbrs;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].specs[1];.networks[0].layers;.networks[0].layers[0];.networks[0].layers[1];.networks[0].layers[1].projections;.networks[0].layers[2];.networks[0].layers[2].projections; };
  networks {
   name="networks";
   el_typ=BpNetwork;
@@ -10052,8 +11184,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      rnd {name="rnd": type=UNIFORM: mean=0: var=0.5: par=1: };
      wt_limits {type=NONE: min=-1: max=1: sym=0: sym_fm_top=0: };
-     lrate=0.2;
-     cur_lrate=0.2;
+     lrate=0.1;
+     cur_lrate=0.1;
      lrate_sched {
       name="lrate_sched";
       el_typ=SchedItem;
@@ -10062,10 +11194,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       interpolate=0;
      };
      momentum=0;
-     momentum_type=BEFORE_LRATE;
+     momentum_type=AFTER_LRATE;
      momentum_c=1;
      decay=0;
-     decay_fun=NULL;
+     decay_fun=Bp_Simple_WtDecay;
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      name="FullPrjnSpec_0";
@@ -10081,7 +11213,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      init_wts=0;
      set_scale=0;
      add_rnd_var=0;
+     renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
+   };
+   param_seqs {
+    name="param_seqs";
+    el_typ=ParamSeq;
+    el_def=0;
    };
    layers {
     name="layers";
@@ -10300,41 +11438,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     run_time_pct=0;
     sync_time_pct=0;
     wake_in_sync_pct=1.343325861150661e-23;
-   };
-   net_timing {
-    name="net_timing";
-    el_typ=NetTiming;
-    el_def=0;
-    NetTiming @[0] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    NetTiming @[1] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    NetTiming @[2] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    NetTiming @[3] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    NetTiming @[4] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
    };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;

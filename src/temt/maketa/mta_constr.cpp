@@ -1100,10 +1100,15 @@ void MTA::MemberSpace_Gen_Data(MemberSpace* ths, TypeDef* ownr, ostream& strm) {
       strm << "(void*)(&" << ownr->Get_C_Name() << "::" << md->name << ")";
     }
     else {
-      strm << "  *((ta_memb_ptr*)&(" << mbr_off_nm
-            << "=(char " << ownr->Get_C_Name() << "::*)(&"
-            << ownr->Get_C_Name() << "::" << md->name << ")))";
-      strm << ",0,NULL";
+      if(md->HasOption("COMMENT_UPDATE_ONLY")) {
+        strm << "(ta_memb_ptr)NULL,0,NULL"; // null member, non-static = comment only
+      }
+      else {
+        strm << "  *((ta_memb_ptr*)&(" << mbr_off_nm
+             << "=(char " << ownr->Get_C_Name() << "::*)(&"
+             << ownr->Get_C_Name() << "::" << md->name << ")))";
+        strm << ",0,NULL";
+      }
     }
     if(md->fun_ptr)     strm << ",1";
     else                strm << ",0";

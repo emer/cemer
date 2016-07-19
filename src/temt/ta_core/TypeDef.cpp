@@ -973,6 +973,26 @@ void TypeDef::ComputeMembBaseOff() {
     MemberDef* md = members.FastEl(i);
     TypeDef* mo = md->GetOwnerType();
 
+    // fix the COMMENT_UPDATE_ONLY guys!!
+    if(md->off == NULL && !md->is_static && md->HasOption("COMMENT_UPDATE_ONLY")) {
+      MemberDef* par_md = NULL;
+      for(int i=0; i<parents.size; i++) {
+        par_md = parents.FastEl(i)->members.FindName(md->name);
+        if(par_md) {
+          mo = par_md->GetOwnerType(); // TRUE owner type!
+          break;
+        }
+      }
+      if(par_md) {
+        md->off = par_md->off; // grab offset from previous
+      }
+      else {
+        taMisc::Error("Programmer error: a COMMENT_UPDATE_ONLY member:", md->name,
+                      "in class:", name,
+                      "cannot find prior member!  Shouldn't happen!");
+      }
+    }
+    
     if((mo == this) || (mo == NULL))
       continue;
 

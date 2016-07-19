@@ -1951,6 +1951,7 @@ void Network::Compute_NetinAct_Thr(int thr_no) {
     }
     //    threads.SyncSpin(thr_no, li % 3);   // need to sync for each layer!
     threads.SyncSpin(thr_no, 0);
+    threads.SyncSpin(thr_no, 1); // double check
   }
 }
 

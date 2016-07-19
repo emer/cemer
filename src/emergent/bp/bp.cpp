@@ -700,7 +700,8 @@ void BpNetwork::Compute_dEdA_dEdNet_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       ((BpUnitSpec*)uv->unit_spec)->Compute_dEdA_dEdNet(uv, this, thr_no);
     }
-    threads.SyncSpin(thr_no);   // need to sync for each layer!
+    threads.SyncSpin(thr_no, 0);   // need to sync for each layer!
+    threads.SyncSpin(thr_no, 1);   // double check
   }
 }
 

@@ -421,6 +421,7 @@ void taThreadMgr::EndTimers(bool print_report) {
 }
 
 void taThreadMgr::SyncSpin(int thread_no, int sync_no, int usec_wait) {
+  if(n_threads == 1) return;
   taTask* ntt = tasks[thread_no];
   switch(sync_no) {
   case 0:

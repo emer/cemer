@@ -179,6 +179,10 @@ public:
   // pop current class off the stack and return, previous becomes new current class, along with its previous member state
   void          ResetClassStack();
   // reset class stack back to empty
+  bool          AddMemberToCurClass(MemberDef* md);
+  // add given member to current class -- checkes IGNORE and public status etc
+  bool          AddMethodToCurClass(MethodDef* md);
+  // add given method to current class -- checkes IGNORE and public status etc
   void          SetSource(TypeDef* td, bool use_defn_st_line);
   // set the source_file and source_start values in type to current vals, optionally using defn_st_line
   void          ClearSource(TypeDef* td);

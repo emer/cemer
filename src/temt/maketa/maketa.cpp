@@ -238,6 +238,40 @@ void MTA::ResetClassStack() {
   cur_class = NULL;
 }
 
+bool MTA::AddMemberToCurClass(MemberDef* md) {
+  if(!md) return false;
+  if(cur_mstate != MTA::pblc) return false;
+  if(md->HasOption("IGNORE")) return false;
+  if(md->type->IsConst()) return false;
+
+  MemberDef* curmd = cur_class->members.FindName(md->name);
+  if(curmd) {
+    Warning(3, "Re-defining an existing member named:", md->name, "in class:",
+            cur_class->name,
+            " -- Assuming that it is within #ifdef __MAKETA__ and only updating comments");
+    cur_class->members.AddUniqNameNew(md);
+    md->AddOption("COMMENT_UPDATE_ONLY");
+  }
+  else {
+    cur_class->members.Add(md);
+    Info(3, "member:", md->name, "added to class:",  cur_class->name);
+  }
+  return true;
+}
+
+bool MTA::AddMethodToCurClass(MethodDef* md) {
+  if(!md) return false;
+  if(cur_mstate != MTA::pblc) return false;
+  if(md->HasOption("IGNORE")) {
+    cur_class->ignore_meths.AddUnique(md->name);
+  }
+  else {
+    cur_class->methods.AddUniqNameNew(md);
+    Info(3, "method:", md->name, "added to class:", cur_class->name);
+  }
+  return true;
+}
+
 void MTA::Class_ResetCurPtrs() {
   cur_memb = NULL; cur_memb_type = NULL; cur_meth = NULL;
   last_memb = NULL; last_meth = NULL;

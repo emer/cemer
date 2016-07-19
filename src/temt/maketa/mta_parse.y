@@ -576,24 +576,11 @@ membs:	  membline		{ mta->Class_UpdateLastPtrs(); }
         ;
 
 membline: membdefn			{
-            if($1 != NULL) {
-	      if((mta->cur_mstate == MTA::pblc) && !($1->HasOption("IGNORE"))
-		 && !($1->type->IsConst())) {
-		mta->cur_class->members.AddUniqNameNew($1);
-                mta->Info(3, "member:", $1->name, "added to class:",
-                          mta->cur_class->name); } }
+            if($1 != NULL) { mta->AddMemberToCurClass($1); }
 	    mta->memb_stack.Pop(); $$ = NULL; }
         | methdefn			{
-            if($1 != NULL) {
-	      if(mta->cur_mstate == MTA::pblc) {
-		if($1->HasOption("IGNORE"))
-		  mta->cur_class->ignore_meths.AddUnique($1->name);
-		else {
-		  mta->cur_class->methods.AddUniqNameNew($1);
-                  mta->Info(3, "method:", $1->name, "added to class:",
-                            mta->cur_class->name); } } }
-	    else {
-	      mta->cur_meth = NULL; }
+            if($1 != NULL) {mta->AddMethodToCurClass($1); }
+	    else { mta->cur_meth = NULL; }
 	    mta->meth_stack.Pop(); $$ = NULL; }
         | enumdsub			{
 	    mta->cur_class->sub_types.AddUniqNameNew($1);
@@ -664,12 +651,10 @@ nostatmemb:
 
 membnames:
            membname			{
-	     if(mta->cur_mstate == MTA::pblc)
-	       mta->cur_class->members.AddUniqNameNew($1);
+	     mta->AddMemberToCurClass($1);
              mta->memb_stack.Pop(); $$ = NULL; }
         |  membnames ',' membname       {
-	     if(mta->cur_mstate == MTA::pblc)
-	       mta->cur_class->members.AddUniqNameNew($3);
+             mta->AddMemberToCurClass($3);
              mta->memb_stack.Pop(); $$ = NULL; }
         ;
 
