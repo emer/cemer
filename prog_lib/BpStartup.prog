@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9686
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 Program .projects[0].programs[0] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -163,13 +163,13 @@ Program .projects[0].programs[0] {
   el_def=0;
   UserData_DocLink @[0] {
    name="DocLink";
-   doc=.projects[1].programs[0].doc$$<taDoc,doc>;
+   doc=.projects[0].programs[0].doc$$;
   };
  };
  name="BpStartup";
  short_nm="Startup";
- tags="Leabra, Startup, Parallel Batch";
- desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
+ tags="Bp, Startup";
+ desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batch_start=xxx] [n_batches=xx} [tag=xxx] and other opts -- see code";
  flags=STARTUP_RUN;
  stop_step_cond {
   expr=;
@@ -203,7 +203,7 @@ Program .projects[0].programs[0] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[1].data.gp[0][0]$$<DataTable,StdInputData>;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
@@ -295,7 +295,7 @@ Program .projects[0].programs[0] {
    name="EpochOutputData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[1].data.gp[1][1]$$<DataTable,EpochOutputData>;
+   object_val=.projects[0].data.gp[1][1]$$<DataTable,EpochOutputData>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -306,7 +306,7 @@ Program .projects[0].programs[0] {
    name="TrialOutputData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[1].data.gp[1][0]$$<DataTable,TrialOutputData>;
+   object_val=.projects[0].data.gp[1][0]$$<DataTable,TrialOutputData>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -317,7 +317,7 @@ Program .projects[0].programs[0] {
    name="MyClusterRun";
    var_type=T_Object;
    object_type=ClusterRun;
-   object_val=.projects[1].ctrl_panels[1]$$<ClusterRun,ClusterRun>;
+   object_val=.projects[0].ctrl_panels[1]$$<ClusterRun,ClusterRun>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -328,7 +328,7 @@ Program .projects[0].programs[0] {
    name="param_sets";
    var_type=T_Object;
    object_type=ParamSet_Group;
-   object_val=.projects[1].param_sets$$<ParamSet_Group,param_sets>;
+   object_val=.projects[0].param_sets$$<ParamSet_Group,param_sets>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -375,8 +375,8 @@ Program .projects[0].programs[0] {
   ProgVarFmArg @[3] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="Set Var:tag in Program:LeabraStartup from Arg:tag";
-   pre_compile_code_string="Set Var:tag in Program:LeabraStartup from Arg:tag";
+   code_string="Set Var:tag in Program:BpStartup from Arg:tag";
+   pre_compile_code_string="Set Var:tag in Program:BpStartup from Arg:tag";
    prog=.projects[0].programs[0]$$;
    var_name="tag";
    arg_name="tag";
@@ -384,8 +384,8 @@ Program .projects[0].programs[0] {
   ProgVarFmArg @[4] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="Set Var:log_dir in Program:LeabraStartup from Arg:log_dir";
-   pre_compile_code_string="Set Var:log_dir in Program:LeabraStartup from Arg:log_dir";
+   code_string="Set Var:log_dir in Program:BpStartup from Arg:log_dir";
+   pre_compile_code_string="Set Var:log_dir in Program:BpStartup from Arg:log_dir";
    prog=$.projects[0].programs[0]$;
    var_name="log_dir";
    arg_name="log_dir";
@@ -393,8 +393,8 @@ Program .projects[0].programs[0] {
   ProgVarFmArg @[5] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="Set Var:param_set in Program:LeabraStartup from Arg:param_set";
-   pre_compile_code_string="Set Var:param_set in Program:LeabraStartup from Arg:param_set";
+   code_string="Set Var:param_set in Program:BpStartup from Arg:param_set";
+   pre_compile_code_string="Set Var:param_set in Program:BpStartup from Arg:param_set";
    prog=$.projects[0].programs[0]$;
    var_name="param_set";
    arg_name="param_set";
@@ -402,8 +402,8 @@ Program .projects[0].programs[0] {
   ProgVarFmArg @[6] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="Set Var:max_epoch in Program:LeabraTrain from Arg:epochs";
-   pre_compile_code_string="Set Var:max_epoch in Program:LeabraTrain from Arg:epochs";
+   code_string="Set Var:max_epoch in Program:BpTrain from Arg:epochs";
+   pre_compile_code_string="Set Var:max_epoch in Program:BpTrain from Arg:epochs";
    prog=$.projects[0].programs.gp[0][1]$;
    var_name="max_epoch";
    arg_name="epochs";
@@ -411,8 +411,8 @@ Program .projects[0].programs[0] {
   ProgVarFmArg @[7] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="Set Var:rnd_init in Program:LeabraTrain from Arg:rnd_init";
-   pre_compile_code_string="Set Var:rnd_init in Program:LeabraTrain from Arg:rnd_init";
+   code_string="Set Var:rnd_init in Program:BpTrain from Arg:rnd_init";
+   pre_compile_code_string="Set Var:rnd_init in Program:BpTrain from Arg:rnd_init";
    prog=$.projects[0].programs.gp[0][1]$;
    var_name="rnd_init";
    arg_name="rnd_init";
@@ -420,8 +420,8 @@ Program .projects[0].programs[0] {
   ProgVarFmArg @[8] {
    desc="starting batch -- replaces b_start";
    flags=NEW_EL|CAN_REVERT_TO_CODE;
-   code_string="Set Var:batch_start in Program:LeabraBatch from Arg:batch_start";
-   pre_compile_code_string="Set Var:batch_start in Program:LeabraBatch from Arg:batch_start";
+   code_string="Set Var:batch_start in Program:BpBatch from Arg:batch_start";
+   pre_compile_code_string="Set Var:batch_start in Program:BpBatch from Arg:batch_start";
    prog=$.projects[0].programs.gp[0][0]$;
    var_name="batch_start";
    arg_name="batch_start";
@@ -429,8 +429,8 @@ Program .projects[0].programs[0] {
   ProgVarFmArg @[9] {
    desc="number of batches to run";
    flags=NEW_EL|CAN_REVERT_TO_CODE;
-   code_string="Set Var:n_batches in Program:LeabraBatch from Arg:n_batches";
-   pre_compile_code_string="Set Var:n_batches in Program:LeabraBatch from Arg:n_batches";
+   code_string="Set Var:n_batches in Program:BpBatch from Arg:n_batches";
+   pre_compile_code_string="Set Var:n_batches in Program:BpBatch from Arg:n_batches";
    prog=$.projects[0].programs.gp[0][0]$;
    var_name="n_batches";
    arg_name="n_batches";
@@ -438,8 +438,8 @@ Program .projects[0].programs[0] {
   ProgVarFmArg @[10] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="Set Var:save_wts_interval in Program:LeabraTrain from Arg:save_wts_interval";
-   pre_compile_code_string="Set Var:save_wts_interval in Program:LeabraTrain from Arg:save_wts_interval";
+   code_string="Set Var:save_wts_interval in Program:BpTrain from Arg:save_wts_interval";
+   pre_compile_code_string="Set Var:save_wts_interval in Program:BpTrain from Arg:save_wts_interval";
    prog=$.projects[0].programs.gp[0][1]$;
    var_name="save_wts_interval";
    arg_name="save_wts_interval";
@@ -447,8 +447,8 @@ Program .projects[0].programs[0] {
   ProgVarFmArg @[11] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="Set Var:save_final_wts in Program:LeabraTrain from Arg:save_final_wts";
-   pre_compile_code_string="Set Var:save_final_wts in Program:LeabraTrain from Arg:save_final_wts";
+   code_string="Set Var:save_final_wts in Program:BpTrain from Arg:save_final_wts";
+   pre_compile_code_string="Set Var:save_final_wts in Program:BpTrain from Arg:save_final_wts";
    prog=$.projects[0].programs.gp[0][1]$;
    var_name="save_final_wts";
    arg_name="save_final_wts";
@@ -528,8 +528,8 @@ Program .projects[0].programs[0] {
     ProgVarFmArg @[0] {
      desc="read in the arg to us too, so we can set file names based on it";
      flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:batch_start in Program:LeabraStartup from Arg:batch_start";
-     pre_compile_code_string="Set Var:batch_start in Program:LeabraStartup from Arg:batch_start";
+     code_string="Set Var:batch_start in Program:BpStartup from Arg:batch_start";
+     pre_compile_code_string="Set Var:batch_start in Program:BpStartup from Arg:batch_start";
      prog=$.projects[0].programs[0]$;
      var_name="batch_start";
      arg_name="batch_start";
@@ -1065,7 +1065,7 @@ Program .projects[0].programs[0] {
    flags=CAN_REVERT_TO_CODE;
    code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
    pre_compile_code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
-   other_prog=.projects[1].programs.gp[0][9]$$<Program,SaveWeights>;
+   other_prog=.projects[0].programs.gp[0][7]$$<Program,SaveWeights>;
    set_other=1;
    var_1=$.projects[0].programs[0].vars[3]$;
    var_2=NULL;
@@ -1085,19 +1085,19 @@ Program .projects[0].programs[0] {
   ProgramCall @[29] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="LeabraBatch(network, input_data)";
-   pre_compile_code_string="LeabraBatch(network, input_data)";
+   code_string="BpBatch(network, input_data)";
+   pre_compile_code_string="BpBatch(network, input_data)";
    prog_args {
     name=;
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
      arg_type=LeabraNetwork;
-     type="LeabraNetwork*";
+     type="BpNetwork*";
      name="network";
      required=1;
      def_val=;
-     prev_expr=;
+     prev_expr="network";
      expr {
       expr="network";
      };
@@ -1108,7 +1108,7 @@ Program .projects[0].programs[0] {
      name="input_data";
      required=1;
      def_val=;
-     prev_expr=;
+     prev_expr="input_data";
      expr {
       expr="input_data";
      };

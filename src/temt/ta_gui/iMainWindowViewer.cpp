@@ -1751,13 +1751,13 @@ void iMainWindowViewer::fileOptions() {
 }
 
 void iMainWindowViewer::ctrlInit() {
-  if(!Program::last_run_prog) {
-    taMisc::Error("Init: cannot continue because there is no record of which program was running previously");
-    return;
+  taProject* proj = myProject();
+  if(proj && proj->last_run_prog) {
+    proj->last_run_prog->Init();
   }
-  taMisc::Info("Init: reinitialize last running program:", Program::last_run_prog->name);
-  Program::last_run_prog->Init();
-  
+  else {
+    taMisc::Error("Init: cannot continue because there is no record of which program was running previously in this project");
+  }
 }
 
 void iMainWindowViewer::ctrlStop() {
@@ -1765,37 +1765,42 @@ void iMainWindowViewer::ctrlStop() {
 }
 
 void iMainWindowViewer::ctrlCont() {
-  if(!Program::last_run_prog) {
-    taMisc::Error("Continue: cannot continue because there is no record of which program was running previously");
-    return;
+  taProject* proj = myProject();
+  if(proj && proj->last_run_prog) {
+    proj->last_run_prog->Run_Gui(); // same as Run!
   }
-  taMisc::Info("Continue: running program:", Program::last_run_prog->name);
-  Program::last_run_prog->Run_Gui();
+  else {
+    taMisc::Error("Continue: cannot continue because there is no record of which program was running previously in this project");
+  }
 }
 
 void iMainWindowViewer::ctrlRun() {
-  if(!Program::last_run_prog) {
-    taMisc::Error("Run: cannot continue because there is no record of which program was running previously");
-    return;
+  taProject* proj = myProject();
+  if(proj && proj->last_run_prog) {
+    proj->last_run_prog->Run_Gui();
   }
-  taMisc::Info("Run: running program:", Program::last_run_prog->name);
-  Program::last_run_prog->Run_Gui();
+  else {
+    taMisc::Error("Run: cannot continue because there is no record of which program was running previously in this project");
+  }
 }
 
 void iMainWindowViewer::ctrlStep() {
-  if(!Program::last_step_prog) {
-    taMisc::Error("Step: cannot step because there is no record of which step was last run");
-    return;
+  taProject* proj = myProject();
+  if(proj && proj->last_run_prog && proj->last_step_prog) {
+    proj->last_run_prog->Step(proj->last_step_prog);
   }
-  Program::last_run_prog->Step(Program::last_step_prog);
+  else {
+    taMisc::Error("Step: cannot step because there is no record of which step was last run in this project");
+  }
 }
 
 void iMainWindowViewer::progStatus() {
-  if(Program::last_run_prog) {
-    Program::last_run_prog->GlobalTrace();
+  taProject* proj = myProject();
+  if(proj && proj->last_run_prog) {
+    proj->last_run_prog->GlobalTrace();
   }
   else {
-    taMisc::Info("No global trace available -- no last run program");
+    taMisc::Info("No global trace available -- no last run program in this project");
   }
 }
 
@@ -2991,23 +2996,16 @@ void iMainWindowViewer::UpdateUi() {
   if(proj) {
     editUndoAction->setEnabled(proj->undo_mgr.UndosAvail() > 0);
     editRedoAction->setEnabled(proj->undo_mgr.RedosAvail() > 0);
+    progStatusAction->setText(proj->ProgGlobalStatus());
   }
   else {
     editUndoAction->setEnabled(false);
     editRedoAction->setEnabled(false);
+    progStatusAction->setEnabled(false);
   }
 
   UpdateStateActions();
   
-  bool css_running = (Program::global_run_state == Program::RUN);
-//  ctrlStopAction->setEnabled(css_running);
-//  ctrlInitAction->setEnabled(!css_running && Program::last_run_prog);
-//  ctrlContAction->setEnabled(!css_running && Program::last_run_prog);
-//  ctrlStepAction->setEnabled(!css_running && Program::last_step_prog);
-////  ctrlRunAction->setEnabled(!css_running && Program::last_run_prog);
-
-  progStatusAction->setText(Program::GlobalStatus());
-
   if (tabMisc::root) {
     fileSaveAllAction->setEnabled(!tabMisc::root->projects.IsEmpty());
   }
@@ -3256,11 +3254,6 @@ void iMainWindowViewer::UpdateStateActions() {
     return;
   }
   
-  // if we set last_program_run on init this would be good
-//  if (Program::global_run_state == Program::DONE && Program::last_global_run_state == Program::INIT) {
-//    ctrlRunAction->setEnabled(true);
-//  }
-  
   ToolBar* tb = viewer()->FindToolBarByType(&TA_ToolBar,"Application");
   if (!tb) {
     return;
@@ -3269,11 +3262,21 @@ void iMainWindowViewer::UpdateStateActions() {
   Program::SetLastRunState(Program::global_run_state); // set the old state to current so we don't keep updating
 
   bool css_running = (Program::global_run_state == Program::RUN);
+  bool has_run_prog = false;
+  bool has_step_prog = false; 
+  taProject* proj = myProject();
+  if(proj && proj->last_run_prog) {
+    has_run_prog = true;
+  }
+  if(proj && proj->last_step_prog) {
+    has_step_prog = true;
+  }
+  
   ctrlStopAction->setEnabled(css_running);
-  ctrlInitAction->setEnabled(!css_running && Program::last_run_prog);
-  ctrlContAction->setEnabled(!css_running && Program::last_run_prog);
-  ctrlStepAction->setEnabled(!css_running && Program::last_step_prog);
-  ctrlRunAction->setEnabled(!css_running && Program::last_run_prog);
+  ctrlInitAction->setEnabled(!css_running && has_run_prog);
+  ctrlContAction->setEnabled(!css_running && has_run_prog);
+  ctrlStepAction->setEnabled(!css_running && has_run_prog && has_step_prog);
+  ctrlRunAction->setEnabled(!css_running && has_run_prog);
   
   switch (Program::global_run_state) {
     case Program::RUN:
@@ -3281,26 +3284,21 @@ void iMainWindowViewer::UpdateStateActions() {
       ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
       tb->widget()->removeAction(ctrlRunAction);
       break;
-      
     case Program::INIT:
       ctrlStepAction->setEnabled(false);
       break;
-      
     case Program::NOT_INIT:
       break;
-      
     case Program::DONE:
       tb->widget()->insertAction(ctrlStopAction, ctrlRunAction);
       ctrlRunAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
       tb->widget()->removeAction(ctrlContAction);
       break;
-      
     case Program::STOP:
       tb->widget()->insertAction(ctrlStopAction, ctrlContAction);
       ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
       tb->widget()->removeAction(ctrlRunAction);
       break;
-      
     default:
       break;
   }

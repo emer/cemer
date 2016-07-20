@@ -1,123 +1,139 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 Program .projects[0].programs.gp[0][6] { 
-  ProgObjList @.objs = [1] {
-    LayerWriter @[0] { 
-      LayerDataEl_List @.layer_data = [3] {
-	LayerWriterEl @[0] { };
-	LayerWriterEl @[1] { };
-	LayerWriterEl @[2] { };
-      };
-    };
-  };
+ UserDataItem_List @*(.user_data_) {
+  UserData_DocLink @[0] { };
+ };
 
-  ProgType_List @.types = [0] {
+ ProgObjList @.objs = [1] {
+  LayerWriter @[0] { 
+   LayerDataEl_List @.layer_data = [3] {
+    LayerWriterEl @[0] { };
+    LayerWriterEl @[1] { };
+    LayerWriterEl @[2] { };
+   };
   };
+ };
 
-  ProgVar_List @.args = [2] {
-    ProgVar @[0] { };
-    ProgVar @[1] { };
-  };
+ ProgType_List @.types = [0] {
+ };
 
-  ProgVar_List @.vars = [1] {
-    ProgVar @[0] { };
-  };
+ ProgVar_List @.args = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
 
-  Function_List @.functions = [0] {
-  };
+ ProgVar_List @.vars = [1] {
+  ProgVar @[0] { };
+ };
 
-  ProgEl_List @.load_code = [0] {
-  };
+ Function_List @.functions = [0] {
+ };
 
-  ProgEl_List @.init_code = [3] {
-    MethodCall @[0] { 
-      ProgArg_List @.meth_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-      };
-    };
-    MethodCall @[1] { 
-      ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-      };
-    };
-    MethodCall @[2] { 
-      ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-      };
-    };
+ ProgEl_List @.init_code = [3] {
+  MethodCall @[0] { 
+   ProgArg_List @.meth_args = [2] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+   };
   };
+  MethodCall @[1] { 
+   ProgArg_List @.meth_args = [1] {
+    ProgArg @[0] { };
+   };
+  };
+  MethodCall @[2] { 
+   ProgArg_List @.meth_args = [1] {
+    ProgArg @[0] { };
+   };
+  };
+ };
 
-  ProgEl_List @.prog_code = [2] {
-    MethodCall @[0] { 
-      ProgArg_List @.meth_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-      };
-    };
-    MethodCall @[1] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-    };
+ ProgEl_List @.prog_code = [2] {
+  MethodCall @[0] { 
+   ProgArg_List @.meth_args = [2] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+   };
   };
+  MethodCall @[1] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+ };
 };
 Program .projects[0].programs.gp[0][6] {
+ UserDataItem_List @*(.user_data_) {
+  name=;
+  el_typ=UserData_DocLink;
+  el_def=0;
+  UserData_DocLink @[0] {
+   name="DocLink";
+   doc=.projects[0].programs.gp[0][6].doc$$;
+  };
+ };
  name="ApplyInputs";
  short_nm="Inputs";
  tags="Network, InputData, Apply";
  desc="apply the current input data to the network as external input and target values";
  flags=NO_STOP_STEP;
+ stop_step_cond {
+  expr=;
+ };
  objs {
-  name=;
+  name="objs";
   el_typ=LayerWriter;
   el_def=0;
   LayerWriter @[0] {
    name="LayerWriter_0";
-   data=.projects[0].data.gp[0][0]$$<DataTable,Inputs>;
+   data=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    network=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
    layer_data {
-    name=;
+    name="layer_data";
     el_typ=LayerWriterEl;
     el_def=0;
     LayerWriterEl @[0] {
-     chan_name="Input";
+     col_name="Input";
      net_target=LAYER;
      layer_name="Input";
      offset {x=0: y=0: };
      use_layer_type=1;
+     quiet=0;
      na_by_range=0;
-     ext_flags=;
+     ext_flags=EXT;
      noise {name="RandomSpec_7": type=NONE: mean=0: var=0.5: par=1: };
     };
     LayerWriterEl @[1] {
-     chan_name="Output";
+     col_name="Name";
+     net_target=TRIAL_NAME;
+     layer_name="Name";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     quiet=0;
+     na_by_range=0;
+     ext_flags=0;
+     noise {name="RandomSpec_9": type=NONE: mean=0: var=0.5: par=1: };
+    };
+    LayerWriterEl @[2] {
+     col_name="Output";
      net_target=LAYER;
      layer_name="Output";
      offset {x=0: y=0: };
      use_layer_type=1;
+     quiet=0;
      na_by_range=0;
-     ext_flags=;
-     noise {name="RandomSpec_8": type=NONE: mean=0: var=0.5: par=1: };
-    };
-    LayerWriterEl @[2] {
-     chan_name="Name";
-     net_target=TRIAL_NAME;
-     layer_name=;
-     offset {x=0: y=0: };
-     use_layer_type=1;
-     na_by_range=0;
-     ext_flags=;
-     noise {name="RandomSpec_9": type=NONE: mean=0: var=0.5: par=1: };
+     ext_flags=TARG;
+     noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
     };
    };
   };
  };
  types {
-  name=;
-  el_typ=ProgType;
+  name="types";
+  el_typ=DynEnumType;
   el_def=0;
  };
  args {
-  name=;
+  name="args";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
@@ -126,7 +142,7 @@ Program .projects[0].programs.gp[0][6] {
    object_type=Network;
    object_val=$.projects[0].networks[0]$;
    objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="network to apply inputs to -- typically set by calling program";
    init_from=NULL;
@@ -137,14 +153,14 @@ Program .projects[0].programs.gp[0][6] {
    object_type=DataTable;
    object_val=$.projects[0].data.gp[0][0]$;
    objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="input datatable containing input/output patterns";
    init_from=NULL;
   };
  };
  vars {
-  name=;
+  name="vars";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
@@ -153,29 +169,26 @@ Program .projects[0].programs.gp[0][6] {
    object_type=LayerWriter;
    object_val=.projects[0].programs.gp[0][6].objs[0]$$;
    objs_ptr=1;
-   flags=NULL_CHECK|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
    init_from=NULL;
   };
  };
  functions {
-  name=;
+  name="functions";
   el_typ=Function;
   el_def=0;
  };
- load_code {
-  name=;
-  el_typ=ProgEl;
-  el_def=0;
- };
  init_code {
-  name=;
-  el_typ=MethodCall;
+  name="init_code";
+  el_typ=ProgCode;
   el_def=0;
   MethodCall @[0] {
    desc="sets the datatable and network for the layer writer, so it knows what to write to";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
+   pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
    result_var=NULL;
    obj=.projects[0].programs.gp[0][6].vars[0]$$;
    method=LayerWriter::SetDataNetwork;
@@ -184,11 +197,12 @@ Program .projects[0].programs.gp[0][6] {
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
-     arg_type=DataBlock_ptr;
-     type="DataBlock*";
+     arg_type=DataTable_ptr;
+     type="DataTable*";
      name="db";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="input_data";
      };
@@ -199,15 +213,20 @@ Program .projects[0].programs.gp[0][6] {
      name="net";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="network";
      };
     };
    };
+   meth_sig="void SetDataNetwork(DataTable* db, Network* net)";
+   meth_desc=" set the data table and network pointers -- convenience function for programs ";
   };
   MethodCall @[1] {
    desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LayerWriter_0->AutoConfig()";
+   pre_compile_code_string="LayerWriter_0->AutoConfig()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][6].vars[0]$;
    method=LayerWriter::AutoConfig;
@@ -218,18 +237,23 @@ Program .projects[0].programs.gp[0][6] {
     ProgArg @[0] {
      arg_type=bool;
      type="bool";
-     name="reset_existing";
+     name="remove_unused";
      required=0;
      def_val="true";
+     prev_expr=;
      expr {
-      expr="true";
+      expr=;
      };
     };
    };
+   meth_sig="void AutoConfig(bool remove_unused = true)";
+   meth_desc=" do a 'best guess' configuration of items by matching up like-named data Channels and network Layers -- if remove_unused is true, then layer writer elements that existed previously but were not found in input data and network are removed";
   };
   MethodCall @[2] {
    desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LayerWriter_0->CheckConfig(false)";
+   pre_compile_code_string="LayerWriter_0->CheckConfig(false)";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][6].vars[0]$;
    method=taList_impl::CheckConfig;
@@ -243,20 +267,25 @@ Program .projects[0].programs.gp[0][6] {
      name="quiet";
      required=0;
      def_val="false";
+     prev_expr=;
      expr {
       expr="false";
      };
     };
    };
+   meth_sig="bool CheckConfig(bool quiet = false)";
+   meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
   };
  };
  prog_code {
-  name=;
-  el_typ=MethodCall;
+  name="prog_code";
+  el_typ=ProgCode;
   el_def=0;
   MethodCall @[0] {
    desc="sets the datatable and network for the layer writer, so it knows what to write to";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
+   pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][6].vars[0]$;
    method=LayerWriter::SetDataNetwork;
@@ -265,11 +294,12 @@ Program .projects[0].programs.gp[0][6] {
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
-     arg_type=DataBlock_ptr;
-     type="DataBlock*";
+     arg_type=DataTable_ptr;
+     type="DataTable*";
      name="db";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="input_data";
      };
@@ -280,15 +310,20 @@ Program .projects[0].programs.gp[0][6] {
      name="net";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="network";
      };
     };
    };
+   meth_sig="void SetDataNetwork(DataTable* db, Network* net)";
+   meth_desc=" set the data table and network pointers -- convenience function for programs ";
   };
   MethodCall @[1] {
    desc="apply inputs to the network!  layer writer has all the key specs";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LayerWriter_0->ApplyInputData()";
+   pre_compile_code_string="LayerWriter_0->ApplyInputData()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][6].vars[0]$;
    method=LayerWriter::ApplyInputData;
@@ -297,8 +332,21 @@ Program .projects[0].programs.gp[0][6] {
     el_typ=ProgArg;
     el_def=0;
    };
+   meth_sig="bool ApplyInputData()";
+   meth_desc=" apply data to the layers, using the network's current context settings (TEST,TRAIN,etc) -- returns success";
   };
  };
  step_prog=NULL;
  step_n=1;
+ doc {
+  name="doc";
+  desc=;
+  web_doc=1;
+  wiki="emergent";
+  url="ApplyInputs";
+  full_url="https://grey.colorado.edu/emergent/index.php/ApplyInputs";
+  text_size=1;
+  text=;
+  html_text=;
+ };
 };

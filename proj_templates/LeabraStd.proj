@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9480
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -1525,7 +1525,7 @@ LeabraProject .projects["LeabraStd"] {
      AssignExpr @[1] { };
     };
 
-    ProgEl_List @.prog_code = [9] {
+    ProgEl_List @.prog_code = [10] {
      NetCounterInit @[0] { };
      AssignExpr @[1] { };
      MethodCall @[2] { 
@@ -1537,7 +1537,11 @@ LeabraProject .projects["LeabraStd"] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     NetDataLoop @[4] { 
+     MethodCall @[4] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     NetDataLoop @[5] { 
       ProgEl_List @.loop_code = [2] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [2] {
@@ -1552,7 +1556,7 @@ LeabraProject .projects["LeabraStd"] {
        };
       };
      };
-     If @[5] { 
+     If @[6] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -1560,15 +1564,15 @@ LeabraProject .projects["LeabraStd"] {
        };
       };
      };
-     MethodCall @[6] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
      MethodCall @[7] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ProgramCall @[8] { 
+     MethodCall @[8] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     ProgramCall @[9] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
@@ -2918,6 +2922,9 @@ LeabraProject .projects["LeabraStd"] {
     };
    };
 
+   ParamSeq_Group @.param_seqs = [0] {
+   };
+
    Layer_Group @.layers = [3] {
     LeabraLayer @["Input"] { 
      Projection_Group @.projections = [0] {
@@ -2947,14 +2954,6 @@ LeabraProject .projects["LeabraStd"] {
 
    Weights_List @.weights = [0] {
    };
-
-   NetTiming_List NULL = [5] {
-    LeabraNetTiming @[0] { };
-    LeabraNetTiming @[1] { };
-    LeabraNetTiming @[2] { };
-    LeabraNetTiming @[3] { };
-    LeabraNetTiming @[4] { };
-   };
   };
  };
 };
@@ -2970,8 +2969,8 @@ LeabraProject .projects["LeabraStd"] {
  author=;
  email=;
  license {
-  owner="Regents of the University of Colorado";
   license=NO_LIC;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
   year="2011";
   custom=;
@@ -9144,8 +9143,8 @@ LeabraProject .projects["LeabraStd"] {
    };
    name="LeabraStartup";
    short_nm="Startup";
-   tags="Leabra, Startup, Parallel Batch";
-   desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
+   tags="Leabra, Startup";
+   desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batch_start=xxx] [n_batches=xx} [tag=xxx] and other opts -- see code";
    flags=STARTUP_RUN;
    stop_step_cond {
     expr=;
@@ -10239,7 +10238,7 @@ LeabraProject .projects["LeabraStd"] {
 	name="i";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -10345,15 +10344,15 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    step_prog=NULL;
+    step_prog=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraCycle"]$$;
     step_n=1;
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraBatch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraBatch";
      text_size=1;
      text=;
      html_text=;
@@ -10596,6 +10595,7 @@ LeabraProject .projects["LeabraStd"] {
       name="rnd_init";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].types["RndInitType"]$$;
        value=2;
       };
@@ -11329,7 +11329,7 @@ LeabraProject .projects["LeabraStd"] {
      web_doc=1;
      wiki="emergent";
      url="LeabraTrain";
-     full_url="http://grey.colorado.edu/emergent/index.php/LeabraTrain";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrain";
      text_size=1;
      text=;
      html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
@@ -11635,7 +11635,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=6;
+      int_val=4;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -11724,6 +11724,22 @@ mw.config.set({\"wgBackendResponseTime\":155});
       meth_desc=" record the current time as the starting time, and optionally reset the time used information";
      };
      MethodCall @[3] {
+      desc="added in 8.0: essential for param_seqs";
+      flags=NEW_EL|CAN_REVERT_TO_CODE;
+      code_string="network->Init_Epoch()";
+      pre_compile_code_string="network->Init_Epoch()";
+      result_var=NULL;
+      obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
+      method=Network::Init_Epoch;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Init_Epoch()";
+      meth_desc=" Initializes network state at the start of a new epoch -- updates parameters according to param_seq for example";
+     };
+     MethodCall @[4] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
       flags=CAN_REVERT_TO_CODE;
       code_string="trial_mon_data->ResetData()";
@@ -11739,7 +11755,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       meth_sig="void ResetData()";
       meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
      };
-     NetDataLoop @[4] {
+     NetDataLoop @[5] {
       desc="iterates over the events/rows of input_data, according to data_loop_order variable";
       flags=CAN_REVERT_TO_CODE;
       code_string="Net Data Loop (PERMUTED):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
@@ -11821,7 +11837,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       group_order=PERMUTED;
       group_idx_list{       };
      };
-     If @[5] {
+     If @[6] {
       desc="if full batch mode, update only at end of epoch";
       flags=CAN_REVERT_TO_CODE;
       code_string="if (network.wt_update == Network::BATCH)";
@@ -11851,7 +11867,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
        };
       };
      };
-     MethodCall @[6] {
+     MethodCall @[7] {
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Compute_EpochStats()";
@@ -11867,7 +11883,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       meth_sig="void Compute_EpochStats()";
       meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles";
      };
-     MethodCall @[7] {
+     MethodCall @[8] {
       desc="done with the computation in the epoch -- record time it took";
       flags=CAN_REVERT_TO_CODE;
       code_string="epoch_timer->EndTimer()";
@@ -11883,7 +11899,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
       meth_sig="void EndTimer()";
       meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
-     ProgramCall @[8] {
+     ProgramCall @[9] {
       desc="run program that records data from network and possibly other sources about the epoch";
       flags=CAN_REVERT_TO_CODE;
       code_string="LeabraEpochMonitor(network)";
@@ -11908,15 +11924,15 @@ mw.config.set({\"wgBackendResponseTime\":155});
       targ_ld_init="*LeabraEpochMonitor*";
      };
     };
-    step_prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"]$;
+    step_prog=NULL;
     step_n=1;
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraEpoch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraEpoch";
      text_size=1;
      text=;
      html_text=;
@@ -12018,7 +12034,7 @@ mw.config.set({\"wgBackendResponseTime\":155});
 	name="qtr";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -12233,15 +12249,15 @@ this program can be extended to do arbitrary things to generate data and apply i
       update_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].vars["update_net_view"]$$;
      };
     };
-    step_prog=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraCycle"]$$;
+    step_prog=NULL;
     step_n=1;
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrial";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrial";
      text_size=1;
      text=;
      html_text=;
@@ -12362,7 +12378,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cycle_max";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -12371,7 +12387,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cyc";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -12453,7 +12469,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_desc=" initialize network for quarter-level processing (hard clamp, netscale)";
      };
      MethodCall @[5] {
-      desc=;
+      desc="will be 25 if network times.cycle_qtr is true, else 1";
       flags=CAN_REVERT_TO_CODE;
       code_string="cycle_max = network->CycleRunMax()";
       pre_compile_code_string="cycle_max = network->CycleRunMax()";
@@ -12568,10 +12584,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraQuarter";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraQuarter";
      text_size=1;
      text=;
      html_text=;
@@ -12650,7 +12666,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
-      desc="this does all the standard leabra processing lthreads.n_cycles cycles of activation updating";
+      desc="this does all the standard leabra processing of activation updating -- either 1 cycle (1 msec) or 25 cycles if times.cycle_qtr is TRUE (default)";
       flags=CAN_REVERT_TO_CODE;
       code_string="network->Cycle_Run()";
       pre_compile_code_string="network->Cycle_Run()";
@@ -12679,10 +12695,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraCycle";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraCycle";
      text_size=1;
      text=;
      html_text=;
@@ -12730,17 +12746,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	noise {name="RandomSpec_7": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
-	col_name="Output";
-	net_target=LAYER;
-	layer_name="Output";
-	offset {x=0: y=0: };
-	use_layer_type=1;
-	quiet=0;
-	na_by_range=0;
-	ext_flags=TARG;
-	noise {name="RandomSpec_8": type=NONE: mean=0: var=0.5: par=1: };
-       };
-       LayerWriterEl @[2] {
 	col_name="Name";
 	net_target=TRIAL_NAME;
 	layer_name="Name";
@@ -12750,6 +12755,17 @@ this program can be extended to do arbitrary things to generate data and apply i
 	na_by_range=0;
 	ext_flags=0;
 	noise {name="RandomSpec_9": type=NONE: mean=0: var=0.5: par=1: };
+       };
+       LayerWriterEl @[2] {
+	col_name="Output";
+	net_target=LAYER;
+	layer_name="Output";
+	offset {x=0: y=0: };
+	use_layer_type=1;
+	quiet=0;
+	na_by_range=0;
+	ext_flags=TARG;
+	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
       };
      };
@@ -12968,10 +12984,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="ApplyInputs";
+     full_url="https://grey.colorado.edu/emergent/index.php/ApplyInputs";
      text_size=1;
      text=;
      html_text=;
@@ -14132,13 +14148,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="Monitor_Data";
+     full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
      text_size=1;
      text=;
-     html_text="<html><head></head><body></body></html>";
+     html_text=;
     };
    };
    Program @["LeabraEpochMonitor"] {
@@ -15623,10 +15639,10 @@ and the testing data is updated.  The first epoch monitor should have all the it
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="Monitor_Data";
+     full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
      text_size=1;
      text=;
      html_text=;
@@ -15944,10 +15960,10 @@ and the testing data is updated.  The first epoch monitor should have all the it
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="SaveWeights";
+     full_url="https://grey.colorado.edu/emergent/index.php/SaveWeights";
      text_size=1;
      text=;
      html_text=;
@@ -16344,10 +16360,10 @@ and the testing data is updated.  The first epoch monitor should have all the it
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraEpoch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraEpoch";
      text_size=1;
      text=;
      html_text=;
@@ -16449,7 +16465,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	name="qtr";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -16669,10 +16685,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrial";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrial";
      text_size=1;
      text=;
      html_text=;
@@ -16793,7 +16809,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cycle_max";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -16802,7 +16818,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cyc";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -16999,10 +17015,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraQuarter";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraQuarter";
      text_size=1;
      text=;
      html_text=;
@@ -17110,10 +17126,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraCycle";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraCycle";
      text_size=1;
      text=;
      html_text=;
@@ -17399,10 +17415,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="ApplyInputs";
+     full_url="https://grey.colorado.edu/emergent/index.php/ApplyInputs";
      text_size=1;
      text=;
      html_text=;
@@ -18353,10 +18369,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="Monitor_Data";
+     full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
      text_size=1;
      text=;
      html_text=;
@@ -19420,10 +19436,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="Monitor_Data";
+     full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
      text_size=1;
      text=;
      html_text=;
@@ -19442,17 +19458,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=0.0005313496;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.02293968;
+     value 8 0=0.01954121;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9957537;
+     value 8 0=0.9957492;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -19608,8 +19624,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
+	   lay_trans=0.4;
+	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
 	  };
@@ -19718,11 +19734,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -20208,6 +20226,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  line_width=2;
 	  point_size=0.01;
 	  point_spacing=1;
+	  solid_lines=0;
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
@@ -21038,11 +21057,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -21430,7 +21451,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  mat_block_spc=0.1;
 	  mat_block_height=0;
 	  mat_rot=0;
-	  mat_trans=0.6;
+	  mat_trans=0.4;
 	  mat_size_range {min=4: max=16: };
 	  text_size_range {min=0.02: max=0.05: };
 	  click_vals=0;
@@ -21443,11 +21464,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -21550,7 +21573,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04352441;
+       value 8 0=0.04357067;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -21584,6 +21607,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -21760,44 +21784,58 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
-       lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       unit_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       unit_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-       lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
        avg_act {targ_init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
        inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
-       inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+       inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: };
        decay {trial=1: };
        del_inhib {on=0: prv_trl=0: prv_q=0: };
+       lay_lrate=1;
+       cos_diff {
+	avg_tau=100;
+	lrate_mod=0;
+	lrmod_fm_trc=0;
+	lrmod_z_thr=-1.5;
+	set_net_unlrn=0;
+	avg_dt=0.01;
+	avg_dt_c=0.99;
+       };
        lstats {
-	cos_diff_avg_tau=100;
 	hog_thr=0.3;
 	dead_thr=0.01;
-	cos_diff_avg_dt=0.01;
        };
-       lay_lrate=1;
       };
      };
-     lay_inhib {on=1: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     unit_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_inhib {on=1: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      avg_act {targ_init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
      inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
-     inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lay_lrate=1;
+     cos_diff {
+      avg_tau=100;
+      lrate_mod=0;
+      lrmod_fm_trc=0;
+      lrmod_z_thr=-1.5;
+      set_net_unlrn=0;
+      avg_dt=0.01;
+      avg_dt_c=0.99;
+     };
      lstats {
-      cos_diff_avg_tau=100;
       hog_thr=0.3;
       dead_thr=0.01;
-      cos_diff_avg_dt=0.01;
      };
-     lay_lrate=1;
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
@@ -21868,7 +21906,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       act_thr=0.2;
      };
      deep_raw_qtr=Q4;
-     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_thr=0: trc_p_clamp=0: trc_p_max=0: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -21952,7 +21990,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        learn_qtr=Q4;
        lrate=0.04;
        use_lrate_sched=1;
-       cur_lrate=0.08;
+       cur_lrate=0.04;
        lrs_mult=1;
        lrate_sched {
 	name="lrate_sched";
@@ -21986,7 +22024,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      learn_qtr=Q4;
      lrate=0.04;
      use_lrate_sched=1;
-     cur_lrate=0.02;
+     cur_lrate=0.04;
      lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
@@ -22027,6 +22065,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      add_rnd_var=0;
      renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
+   };
+   param_seqs {
+    name="param_seqs";
+    el_typ=ParamSeq;
+    el_def=0;
    };
    layers {
     name="layers";
@@ -22280,66 +22323,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     sync_time_pct=0;
     wake_in_sync_pct=2.298735696848069e-314;
    };
-   net_timing {
-    name="net_timing";
-    el_typ=LeabraNetTiming;
-    el_def=0;
-    LeabraNetTiming @[0] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[1] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[2] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[3] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[4] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-   };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=76;
@@ -22371,12 +22354,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    net_misc {
     spike=0;
     deep=0;
-    bias_learn=1;
+    bias_learn=0;
     trial_decay=1;
     diff_scale_p=0;
     diff_scale_q1=0;
     dwt_norm=0;
-    wt_bal=0;
+    wt_bal=1;
     rugp_wt_sync=0;
     lay_gp_inhib=0;
     inhib_cons=0;

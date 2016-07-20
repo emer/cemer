@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9480
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -3764,6 +3764,9 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
 
+   ParamSeq_Group @.param_seqs = [0] {
+   };
+
    Layer_Group @.layers = [3] {
     LeabraLayer @["Input"] { 
      Projection_Group @.projections = [0] {
@@ -3793,14 +3796,6 @@ LeabraProject .projects["LeabraFlex"] {
 
    Weights_List @.weights = [0] {
    };
-
-   NetTiming_List NULL = [5] {
-    LeabraNetTiming @[0] { };
-    LeabraNetTiming @[1] { };
-    LeabraNetTiming @[2] { };
-    LeabraNetTiming @[3] { };
-    LeabraNetTiming @[4] { };
-   };
   };
  };
 };
@@ -3816,8 +3811,8 @@ LeabraProject .projects["LeabraFlex"] {
  author=;
  email=;
  license {
-  owner="Regents of the University of Colorado";
   license=GPLv2;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
   year="2010";
   custom=;
@@ -8262,7 +8257,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1791590452194214;
+	value 8 0=0.1313673;
 	val_type_fixed=0;
        };
       };
@@ -8289,7 +8284,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1791590452194214;
+	value 8 0=0.1313673;
 	val_type_fixed=0;
        };
       };
@@ -8316,7 +8311,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1791590452194214;
+	value 8 0=0.1313673;
 	val_type_fixed=0;
        };
       };
@@ -8343,7 +8338,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1791590452194214;
+	value 8 0=0.1313673;
 	val_type_fixed=0;
        };
       };
@@ -8370,7 +8365,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1791590452194214;
+	value 8 0=0.1313673;
 	val_type_fixed=0;
        };
       };
@@ -8397,7 +8392,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1791590452194214;
+	value 8 0=0.1313673;
 	val_type_fixed=0;
        };
       };
@@ -8424,7 +8419,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1791590452194214;
+	value 8 0=0.1313673;
 	val_type_fixed=0;
        };
       };
@@ -8451,7 +8446,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1791590452194214;
+	value 8 0=0.1313673;
 	val_type_fixed=0;
        };
       };
@@ -8478,7 +8473,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1791590452194214;
+	value 8 0=0.1313673;
 	val_type_fixed=0;
        };
       };
@@ -8505,7 +8500,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1791590452194214;
+	value 8 0=0.1313673;
 	val_type_fixed=0;
        };
       };
@@ -8532,7 +8527,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1791590452194214;
+	value 8 0=0.1313673;
 	val_type_fixed=0;
        };
       };
@@ -8559,7 +8554,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1791590452194214;
+	value 8 0=0.1313673;
 	val_type_fixed=0;
        };
       };
@@ -8586,7 +8581,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.2650822699069977;
+	value 8 0=0.19437;
 	val_type_fixed=0;
        };
       };
@@ -8613,7 +8608,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1151736751198769;
+	value 8 0=0.0844504;
 	val_type_fixed=0;
        };
       };
@@ -8645,7 +8640,7 @@ mw.config.set({\"wgBackendResponseTime\":192});
        };
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1517367511987686;
+	value 8 0=0.1112601;
 	val_type_fixed=0;
        };
       };
@@ -8896,7 +8891,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        object_type=Layer;
        object_val=NULL;
        objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -8905,7 +8900,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="n_units";
        var_type=T_Int;
        int_val=0;
-       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -9953,7 +9948,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="i";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -10131,6 +10126,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="cur_config";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].types["ConfigOptions"]$$;
        value=0;
       };
@@ -10561,6 +10557,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="stop_step_grain";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterRun"].types["StopStepGrain"]$$;
        value=0;
       };
@@ -11445,7 +11442,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=276950: sys=307233: tot=146256150755: }: end={usr=276949: sys=307233: tot=146256150753: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=5881: sys=1608: tot=146903995128: }: end={usr=5882: sys=1608: tot=146903995128: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -11986,7 +11983,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [0]       };
+      [6] 2;0;1;5;3;4;      };
       last_sort_spec {
        name="last_sort_spec";
        ops {
@@ -12050,7 +12047,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["cur_idx"] {
       name="cur_idx";
       var_type=T_Int;
-      int_val=1;
+      int_val=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current index into permuted table ";
@@ -12059,7 +12056,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["input_idx"] {
       name="input_idx";
       var_type=T_Int;
-      int_val=5;
+      int_val=4;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
@@ -13779,7 +13776,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer_Group;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -13790,7 +13787,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -13909,7 +13906,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="laygps";
 	var_type=T_String;
 	string_val=;
-	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -13918,7 +13915,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="lay_gp_on";
 	var_type=T_Bool;
 	bool_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -13943,7 +13940,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=String_Matrix;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -13954,7 +13951,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer_Group;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -13963,7 +13960,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="laygp_nm";
 	  var_type=T_String;
 	  string_val=;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -13998,14 +13995,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  type="taString&";
 	  name="delim";
 	  required=0;
-	  def_val="\"\"";
+	  def_val=" ";
 	  prev_expr=;
 	  expr {
 	   expr="\" \"";
 	  };
 	 };
 	};
-	meth_sig="void FmDelimString(taString& str, taString& delim)";
+	meth_sig="void FmDelimString(taString& str, taString& delim =  )";
 	meth_desc=" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything";
        };
        ForeachLoop @[2] {
@@ -14294,7 +14291,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="lays";
 	var_type=T_String;
 	string_val=;
-	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -14303,7 +14300,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="lay_on";
 	var_type=T_Bool;
 	bool_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -14328,7 +14325,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=String_Matrix;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14339,7 +14336,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14348,7 +14345,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lay_nm";
 	  var_type=T_String;
 	  string_val=;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14383,14 +14380,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  type="taString&";
 	  name="delim";
 	  required=0;
-	  def_val="\"\"";
+	  def_val=" ";
 	  prev_expr=;
 	  expr {
 	   expr="\" \"";
 	  };
 	 };
 	};
-	meth_sig="void FmDelimString(taString& str, taString& delim)";
+	meth_sig="void FmDelimString(taString& str, taString& delim =  )";
 	meth_desc=" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything";
        };
        ForeachLoop @[2] {
@@ -14679,7 +14676,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="prjns";
 	var_type=T_String;
 	string_val=;
-	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -14688,7 +14685,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="prjn_on";
 	var_type=T_Bool;
 	bool_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -14713,7 +14710,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=String_Matrix;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14724,7 +14721,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Projection;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14733,7 +14730,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="prjn_nm";
 	  var_type=T_String;
 	  string_val=;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14742,7 +14739,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lay_nm";
 	  var_type=T_String;
 	  string_val=;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14753,7 +14750,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -14788,14 +14785,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  type="taString&";
 	  name="delim";
 	  required=0;
-	  def_val="\"\"";
+	  def_val=" ";
 	  prev_expr=;
 	  expr {
 	   expr="\" \"";
 	  };
 	 };
 	};
-	meth_sig="void FmDelimString(taString& str, taString& delim)";
+	meth_sig="void FmDelimString(taString& str, taString& delim =  )";
 	meth_desc=" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything";
        };
        ForeachLoop @[2] {
@@ -15386,8 +15383,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      FunctionCall @[2] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="LayerGpsOnOff(lesion_layer_groups, )";
-      pre_compile_code_string="LayerGpsOnOff(lesion_layer_groups, )";
+      code_string="LayerGpsOnOff(lesion_layer_groups, false)";
+      pre_compile_code_string="LayerGpsOnOff(lesion_layer_groups, false)";
       result_var=NULL;
       fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayerGpsOnOff"]$$;
       fun_args {
@@ -15421,8 +15418,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      FunctionCall @[3] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="LayersOnOff(lesion_layers, )";
-      pre_compile_code_string="LayersOnOff(lesion_layers, )";
+      code_string="LayersOnOff(lesion_layers, false)";
+      pre_compile_code_string="LayersOnOff(lesion_layers, false)";
       result_var=NULL;
       fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["LayersOnOff"]$$;
       fun_args {
@@ -15456,8 +15453,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      FunctionCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="ProjectionsOnOff(lesion_prjns, )";
-      pre_compile_code_string="ProjectionsOnOff(lesion_prjns, )";
+      code_string="ProjectionsOnOff(lesion_prjns, false)";
+      pre_compile_code_string="ProjectionsOnOff(lesion_prjns, false)";
       result_var=NULL;
       fun=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"]$$;
       fun_args {
@@ -15491,8 +15488,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      FunctionCall @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="ProjectionsOnOff(un_lesion_prjns, )";
-      pre_compile_code_string="ProjectionsOnOff(un_lesion_prjns, )";
+      code_string="ProjectionsOnOff(un_lesion_prjns, true)";
+      pre_compile_code_string="ProjectionsOnOff(un_lesion_prjns, true)";
       result_var=NULL;
       fun=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].functions["ProjectionsOnOff"]$;
       fun_args {
@@ -16262,6 +16259,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="action";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].types["ActionType"]$$;
        value=0;
       };
@@ -16274,6 +16272,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="use_group";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PositionLayersFromTable"].types["UseGroup"]$$;
        value=0;
       };
@@ -16355,7 +16354,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="leaf";
 	  var_type=T_Int;
 	  int_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -16366,7 +16365,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc="current_layer = NULL (Layer)";
 	  init_from=NULL;
@@ -16377,7 +16376,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer_Group;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -16388,7 +16387,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer_Group;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -16408,7 +16407,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
-	  arg_type=taBase_ptr;
+	  arg_type=const_taBase_ptr;
 	  type="taBase*";
 	  name="cpy_from";
 	  required=1;
@@ -16685,7 +16684,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="row";
 	  var_type=T_Int;
 	  int_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -16696,7 +16695,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -16705,7 +16704,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="layer_name";
 	  var_type=T_String;
 	  string_val=;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -16716,7 +16715,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  object_type=Layer_Group;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+	  flags=LOCAL_VAR|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -16725,7 +16724,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="group_name";
 	  var_type=T_String;
 	  string_val=;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -16734,7 +16733,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lgrow";
 	  var_type=T_Int;
 	  int_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -16743,7 +16742,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lg_x";
 	  var_type=T_Int;
 	  int_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -16752,7 +16751,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lg_y";
 	  var_type=T_Int;
 	  int_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -16761,7 +16760,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="lg_z";
 	  var_type=T_Int;
 	  int_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -17608,14 +17607,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	type="taString&";
 	name="delim";
 	required=0;
-	def_val="\"\"";
+	def_val=" ";
 	prev_expr=;
 	expr {
 	 expr="\" \"";
 	};
        };
       };
-      meth_sig="void FmDelimString(taString& str, taString& delim)";
+      meth_sig="void FmDelimString(taString& str, taString& delim =  )";
       meth_desc=" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything";
      };
      ForLoop @[1] {
@@ -19216,7 +19215,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="qtr";
 	var_type=T_Int;
 	int_val=1;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -19505,7 +19504,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="qtr";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -19698,7 +19697,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["cycle"] {
       name="cycle";
       var_type=T_Int;
-      int_val=25;
+      int_val=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
@@ -19751,7 +19750,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="cycle_max";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -19760,7 +19759,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="cyc";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -21726,7 +21725,7 @@ also save specs.";
       ProgVar @["run_already"] {
        name="run_already";
        var_type=T_Bool;
-       bool_val=1;
+       bool_val=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
        desc=;
@@ -23652,7 +23651,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.001592357;
+     value 8 0=0.001062699;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -23662,7 +23661,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9930999;
+     value 8 0=0.9930924;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -23823,8 +23822,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
+	   lay_trans=0.4;
+	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
 	  };
@@ -23867,11 +23866,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -24357,6 +24358,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  line_width=2;
 	  point_size=0.01;
 	  point_spacing=1;
+	  solid_lines=0;
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
@@ -25187,11 +25189,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -25294,7 +25298,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04352442;
+       value 8 0=0.04357067;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -25342,6 +25346,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 * added load_0_epc in lesson -- reinit network.epoch after loading weights -- we load pretrained eye weights, but want to start counter over..
 
 ";
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -25518,44 +25523,58 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
-       lay_inhib {on=1: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       unit_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       lay_inhib {on=1: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       unit_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-       lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
        avg_act {targ_init=0.15: fixed=0: tau=100: adjust=1: dt=0.01: };
        inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
-       inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+       inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: };
        decay {trial=1: };
        del_inhib {on=0: prv_trl=0: prv_q=0: };
+       lay_lrate=1;
+       cos_diff {
+	avg_tau=100;
+	lrate_mod=0;
+	lrmod_fm_trc=0;
+	lrmod_z_thr=-1.5;
+	set_net_unlrn=0;
+	avg_dt=0.01;
+	avg_dt_c=0.99;
+       };
        lstats {
-	cos_diff_avg_tau=100;
 	hog_thr=0.3;
 	dead_thr=0.01;
-	cos_diff_avg_dt=0.01;
        };
-       lay_lrate=1;
       };
      };
-     lay_inhib {on=1: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     unit_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_inhib {on=1: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_gp_inhib {on=0: gi=1.8: ff=1: fb=1: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      avg_act {targ_init=0.15: fixed=0: tau=100: adjust=1: dt=0.01: };
      inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
-     inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lay_lrate=1;
+     cos_diff {
+      avg_tau=100;
+      lrate_mod=0;
+      lrmod_fm_trc=0;
+      lrmod_z_thr=-1.5;
+      set_net_unlrn=0;
+      avg_dt=0.01;
+      avg_dt_c=0.99;
+     };
      lstats {
-      cos_diff_avg_tau=100;
       hog_thr=0.3;
       dead_thr=0.01;
-      cos_diff_avg_dt=0.01;
      };
-     lay_lrate=1;
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
@@ -25626,7 +25645,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       act_thr=0.2;
      };
      deep_raw_qtr=0;
-     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_thr=0: trc_p_clamp=0: trc_p_max=0: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -25912,6 +25931,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
    };
+   param_seqs {
+    name="param_seqs";
+    el_typ=ParamSeq;
+    el_def=0;
+   };
    layers {
     name="layers";
     el_typ=LeabraLayer;
@@ -26164,66 +26188,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     sync_time_pct=0;
     wake_in_sync_pct=1.216681899864304e+285;
    };
-   net_timing {
-    name="net_timing";
-    el_typ=LeabraNetTiming;
-    el_def=0;
-    LeabraNetTiming @[0] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[1] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[2] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[3] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[4] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-   };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=76;
@@ -26260,7 +26224,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     diff_scale_p=0;
     diff_scale_q1=0;
     dwt_norm=0;
-    wt_bal=0;
+    wt_bal=1;
     rugp_wt_sync=0;
     lay_gp_inhib=0;
     inhib_cons=0;

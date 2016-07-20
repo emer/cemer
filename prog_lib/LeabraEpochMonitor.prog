@@ -1,5 +1,9 @@
-// ta_Dump File v3.0 -- code v7.8.1.0 rev8269
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 Program .projects[0].programs.gp[0][8] { 
+ UserDataItem_List @*(.user_data_) {
+  UserData_DocLink @[0] { };
+ };
+
  ProgObjList @.objs = [1] {
   NetMonitor @[0] { 
    NetMonItem_List @.items = [30] {
@@ -107,11 +111,23 @@ Program .projects[0].programs.gp[0][8] {
  };
 };
 Program .projects[0].programs.gp[0][8] {
+ UserDataItem_List @*(.user_data_) {
+  name=;
+  el_typ=UserData_DocLink;
+  el_def=0;
+  UserData_DocLink @[0] {
+   name="DocLink";
+   doc=.projects[0].programs.gp[0][8].doc$$;
+  };
+ };
  name="LeabraEpochMonitor";
  short_nm="EpcMon";
  tags="Leabra, Std, Monitor";
  desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
  flags=NO_STOP_STEP;
+ stop_step_cond {
+  expr=;
+ };
  objs {
   name="objs";
   el_typ=NetMonitor;
@@ -124,6 +140,7 @@ Program .projects[0].programs.gp[0][8] {
     el_def=0;
     NetMonItem @[0] {
      name="batch";
+     monitor=.projects[0].programs.gp[0][8].objs[0]$$;
      computed=0;
      object_type=LeabraNetwork;
      object=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
@@ -158,6 +175,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[1] {
      name="epoch";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -192,6 +210,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[2] {
      name="avg_sse";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -226,6 +245,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[3] {
      name="cnt_err";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -260,6 +280,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[4] {
      name="pct_cor";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -294,6 +315,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[5] {
      name="pct_err";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -328,6 +350,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[6] {
      name="avg_norm_err";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -362,6 +385,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[7] {
      name="avg_cos_err";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -396,6 +420,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[8] {
      name="avg_ext_rew";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -430,6 +455,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[9] {
      name="avg_cycles";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -464,6 +490,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[10] {
      name="epoch_time_tot";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=1;
      object_type=NULL;
      object=NULL;
@@ -498,6 +525,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[11] {
      name="epoch_time_usr";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=1;
      object_type=NULL;
      object=NULL;
@@ -532,6 +560,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[12] {
      name="lay_avg_sse";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -566,6 +595,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[13] {
      name="lay_cnt_err";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -600,6 +630,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[14] {
      name="lay_pct_cor";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -634,6 +665,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[15] {
      name="lay_pct_err";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -668,6 +700,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[16] {
      name="lay_avg_norm_err";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -702,6 +735,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[17] {
      name="lay_avg_cos_err";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -736,6 +770,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[18] {
      name="net_avg_cos_diff";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -770,6 +805,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[19] {
      name="net_avg_trial_cos_diff";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -804,6 +840,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[20] {
      name="net_avg_avg_act_diff";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -838,6 +875,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[21] {
      name="avg_cos_diff";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -872,6 +910,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[22] {
      name="avg_trial_cos_diff";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -906,6 +945,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[23] {
      name="avg_avg_act_diff";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -940,6 +980,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[24] {
      name="avg_net_sd";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -968,12 +1009,13 @@ Program .projects[0].programs.gp[0][8] {
       var=NULL;
       enable_var=NULL;
      };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[25] {
      name="hog_pct";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -1008,6 +1050,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[26] {
      name="dead_pct";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -1042,6 +1085,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[27] {
      name="netmax";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -1076,6 +1120,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[28] {
      name="avg_act";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -1110,6 +1155,7 @@ Program .projects[0].programs.gp[0][8] {
     };
     NetMonItem @[29] {
      name="netrel";
+     monitor=$.projects[0].programs.gp[0][8].objs[0]$;
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
@@ -1188,7 +1234,7 @@ Program .projects[0].programs.gp[0][8] {
    name="epoch_netmon";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=.projects[0].programs.gp[0][8].objs[0]$$;
+   object_val=$.projects[0].programs.gp[0][8].objs[0]$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -1218,8 +1264,9 @@ Program .projects[0].programs.gp[0][8] {
   el_def=0;
   AssignExpr @[0] {
    desc="get the epoch timer from current network";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="epoch_timer = network.epoch_time";
+   pre_compile_code_string="epoch_timer = network.epoch_time";
    result_var=.projects[0].programs.gp[0][8].vars[2]$$;
    expr {
     expr="network.epoch_time";
@@ -1227,8 +1274,9 @@ Program .projects[0].programs.gp[0][8] {
   };
   MethodCall @[1] {
    desc="set data and network on NetMonitor object";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
+   pre_compile_code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
    result_var=NULL;
    obj=.projects[0].programs.gp[0][8].vars[1]$$;
    method=NetMonitor::SetDataNetwork;
@@ -1264,8 +1312,9 @@ Program .projects[0].programs.gp[0][8] {
   };
   MethodCall @[2] {
    desc="check configuration and emit errors/warnings for problems";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="epoch_netmon->CheckConfig(false)";
+   pre_compile_code_string="epoch_netmon->CheckConfig(false)";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][8].vars[1]$;
    method=taBase::CheckConfig;
@@ -1290,8 +1339,9 @@ Program .projects[0].programs.gp[0][8] {
   };
   MethodCall @[3] {
    desc="update the monitor items and data schema based on current settings of NetMonitor";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="epoch_netmon->UpdateMonitors(true)";
+   pre_compile_code_string="epoch_netmon->UpdateMonitors(true)";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][8].vars[1]$;
    method=NetMonitor::UpdateMonitors;
@@ -1321,8 +1371,9 @@ Program .projects[0].programs.gp[0][8] {
   el_def=0;
   MethodCall @[0] {
    desc="add a new blank row to the data";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="epoch_mon_data->AddBlankRow()";
+   pre_compile_code_string="epoch_mon_data->AddBlankRow()";
    result_var=NULL;
    obj=.projects[0].programs.gp[0][8].vars[0]$$;
    method=DataTable::AddBlankRow;
@@ -1336,8 +1387,9 @@ Program .projects[0].programs.gp[0][8] {
   };
   MethodCall @[1] {
    desc="get the new monitor data and stor it into the data table -- this does the main job here";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="epoch_netmon->GetMonVals()";
+   pre_compile_code_string="epoch_netmon->GetMonVals()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][8].vars[1]$;
    method=NetMonitor::GetMonVals;
@@ -1351,8 +1403,9 @@ Program .projects[0].programs.gp[0][8] {
   };
   AssignExpr @[2] {
    desc="get the epoch timer from current network";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="epoch_timer = network.epoch_time";
+   pre_compile_code_string="epoch_timer = network.epoch_time";
    result_var=$.projects[0].programs.gp[0][8].vars[2]$;
    expr {
     expr="network.epoch_time";
@@ -1360,8 +1413,9 @@ Program .projects[0].programs.gp[0][8] {
   };
   MethodCall @[3] {
    desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
+   pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][8].vars[0]$;
    method=DataTable::SetValColName;
@@ -1419,8 +1473,9 @@ Program .projects[0].programs.gp[0][8] {
   };
   MethodCall @[4] {
    desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
+   pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][8].vars[0]$;
    method=DataTable::SetValColName;
@@ -1478,8 +1533,9 @@ Program .projects[0].programs.gp[0][8] {
   };
   MethodCall @[5] {
    desc="update after writing new data to monitor data table";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="epoch_mon_data->WriteClose()";
+   pre_compile_code_string="epoch_mon_data->WriteClose()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][8].vars[0]$;
    method=DataTable::WriteClose;
@@ -1504,10 +1560,44 @@ This will ensure that training data is monitored first, right after the training
 and the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.
  
 ";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="// NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:
+http://grey.colorado.edu/emergent/index.php/Test_Programs
+quick summary here:
+* Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.
+* duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,
+  turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false
+* in original LeabraEpochMonitor, click OFF flag for WriteClose() line
+* in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.
+This will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,
+and the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.
+ 
+";
+   pre_compile_code_string="// NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:
+http://grey.colorado.edu/emergent/index.php/Test_Programs
+quick summary here:
+* Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.
+* duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,
+  turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false
+* in original LeabraEpochMonitor, click OFF flag for WriteClose() line
+* in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.
+This will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,
+and the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.
+ 
+";
   };
  };
  step_prog=.projects[0].programs.gp[0][8]$$;
  step_n=1;
+ doc {
+  name="doc";
+  desc=;
+  web_doc=1;
+  wiki="emergent";
+  url="Monitor_Data";
+  full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
+  text_size=1;
+  text=;
+  html_text=;
+ };
 };

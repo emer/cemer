@@ -1,5 +1,9 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7646
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 Program .projects[0].programs.gp[0][4] { 
+ UserDataItem_List @*(.user_data_) {
+  UserData_DocLink @[0] { };
+ };
+
  ProgObjList @.objs = [0] {
  };
 
@@ -71,11 +75,23 @@ Program .projects[0].programs.gp[0][4] {
  };
 };
 Program .projects[0].programs.gp[0][4] {
+ UserDataItem_List @*(.user_data_) {
+  name=;
+  el_typ=UserData_DocLink;
+  el_def=0;
+  UserData_DocLink @[0] {
+   name="DocLink";
+   doc=.projects[0].programs.gp[0][4].doc$$;
+  };
+ };
  name="LeabraQuarter";
  short_nm="Quarter";
  tags="Leabra, Std";
  desc="iterates over cycles of activation updating for a gamma-frequency (25 msec / 40 Hz) quarter of an alpha frequency (100 msec / 10 Hz) trial";
  flags=0;
+ stop_step_cond {
+  expr=;
+ };
  objs {
   name="objs";
   el_typ=taNBase;
@@ -121,7 +137,6 @@ Program .projects[0].programs.gp[0][4] {
    name="cycle";
    var_type=T_Int;
    int_val=0;
-   objs_ptr=0;
    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="current cycle of settling (local loop counter)";
@@ -131,7 +146,6 @@ Program .projects[0].programs.gp[0][4] {
    name="update_net_view";
    var_type=T_Bool;
    bool_val=1;
-   objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="if true, will update network views at end of settling";
@@ -149,8 +163,9 @@ Program .projects[0].programs.gp[0][4] {
   el_def=0;
   NetCounterInit @[0] {
    desc="initialize local cycle counter and corresponding counter on network";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="Net Counter Init: cycle";
+   pre_compile_code_string="Net Counter Init: cycle";
    network_var=.projects[0].programs.gp[0][4].args[0]$$;
    local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$$;
    counter=Network::cycle;
@@ -163,8 +178,9 @@ Program .projects[0].programs.gp[0][4] {
   el_def=0;
   LocalVars @[0] {
    desc=;
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LocalVars (2 vars)";
+   pre_compile_code_string="LocalVars (2 vars)";
    local_vars {
     name="local_vars";
     el_typ=ProgVar;
@@ -173,8 +189,7 @@ Program .projects[0].programs.gp[0][4] {
      name="cycle_max";
      var_type=T_Int;
      int_val=0;
-     objs_ptr=0;
-     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     flags=LOCAL_VAR|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -183,8 +198,7 @@ Program .projects[0].programs.gp[0][4] {
      name="cyc";
      var_type=T_Int;
      int_val=0;
-     objs_ptr=0;
-     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     flags=LOCAL_VAR|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -194,12 +208,14 @@ Program .projects[0].programs.gp[0][4] {
   Comment @[1] {
    desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
    flags=CAN_REVERT_TO_CODE;
-   orig_prog_code="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+   code_string="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+   pre_compile_code_string="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
   };
   MethodCall @[2] {
    desc="resets input data, before getting new external inputs data from apply inputs call";
-   flags=OFF;
-   orig_prog_code=;
+   flags=OFF|CAN_REVERT_TO_CODE;
+   code_string="network->Init_InputData()";
+   pre_compile_code_string="network->Init_InputData()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=Network::Init_InputData;
@@ -214,8 +230,9 @@ Program .projects[0].programs.gp[0][4] {
   ProgramCall @[3] {
    desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
-   flags=OFF;
-   orig_prog_code=;
+   flags=OFF|CAN_REVERT_TO_CODE;
+   code_string="ApplyInputs(network, input_data)";
+   pre_compile_code_string="ApplyInputs(network, input_data)";
    prog_args {
     name=;
     el_typ=ProgArg;
@@ -248,8 +265,9 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   MethodCall @[4] {
    desc="initializes various counters at start of settling";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="network->Quarter_Init()";
+   pre_compile_code_string="network->Quarter_Init()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=LeabraNetwork::Quarter_Init;
@@ -262,9 +280,10 @@ this program can be extended to do arbitrary things to generate data and apply i
    meth_desc=" initialize network for quarter-level processing (hard clamp, netscale)";
   };
   MethodCall @[5] {
-   desc=;
+   desc="will be 25 if network times.cycle_qtr is true, else 1";
    flags=CAN_REVERT_TO_CODE;
-   orig_prog_code="cycle_max = network.CycleRunMax()";
+   code_string="cycle_max = network->CycleRunMax()";
+   pre_compile_code_string="cycle_max = network->CycleRunMax()";
    result_var=.projects[0].programs.gp[0][4].prog_code[0].local_vars[0]$$;
    obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=LeabraNetwork::CycleRunMax;
@@ -278,16 +297,18 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   ForLoop @[6] {
    desc="// the main loop over cycles of updating";
-   flags=0;
-   orig_prog_code="for(cyc=0; cyc<cycle_max; cyc++)";
+   flags=CAN_REVERT_TO_CODE;
+   code_string="for (cyc=0; cyc<cycle_max; cyc++)";
+   pre_compile_code_string="for (cyc=0; cyc<cycle_max; cyc++)";
    loop_code {
     name="loop_code";
     el_typ=ProgCode;
     el_def=0;
     ProgramCall @[0] {
      desc="run the cycle program -- can run multiple cycles at a time due to threading";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LeabraCycle(network)";
+     pre_compile_code_string="LeabraCycle(network)";
      prog_args {
       name="prog_args";
       el_typ=ProgArg;
@@ -310,7 +331,8 @@ this program can be extended to do arbitrary things to generate data and apply i
     AssignExpr @[1] {
      desc="grab the updated cycle count";
      flags=CAN_REVERT_TO_CODE;
-     orig_prog_code="cycle = network.cycle";
+     code_string="cycle = network.cycle";
+     pre_compile_code_string="cycle = network.cycle";
      result_var=$.projects[0].programs.gp[0][4].vars[0]$;
      expr {
       expr="network.cycle";
@@ -329,8 +351,9 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   MethodCall @[7] {
    desc="perform final operations at end of settling (storing final activations, etc)";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="network->Quarter_Final()";
+   pre_compile_code_string="network->Quarter_Final()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=LeabraNetwork::Quarter_Final;
@@ -344,8 +367,9 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   MethodCall @[8] {
    desc="compute appropriate stats for each phase (MinusStats, PlusStats)";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="network->Compute_PhaseStats()";
+   pre_compile_code_string="network->Compute_PhaseStats()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=LeabraNetwork::Compute_PhaseStats;
@@ -359,12 +383,24 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   NetUpdateView @[9] {
    desc="update network views, if update_net_view == true";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="Net Update View";
+   pre_compile_code_string="Net Update View";
    network_var=$.projects[0].programs.gp[0][4].args[0]$;
    update_var=.projects[0].programs.gp[0][4].vars[1]$$;
   };
  };
  step_prog=NULL;
  step_n=1;
+ doc {
+  name="doc";
+  desc=;
+  web_doc=1;
+  wiki="emergent";
+  url="LeabraQuarter";
+  full_url="https://grey.colorado.edu/emergent/index.php/LeabraQuarter";
+  text_size=1;
+  text=;
+  html_text=;
+ };
 };

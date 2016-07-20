@@ -75,9 +75,6 @@ Program::StopReason Program::stop_reason = Program::SR_NONE;
 String Program::stop_msg;
 bool Program::step_mode = false;
 ProgramRef Program::cur_step_prog;
-ProgramRef Program::last_run_prog;
-ProgramRef Program::last_stop_prog;
-ProgramRef Program::last_step_prog;
 int Program::cur_step_n = 1;
 int Program::cur_step_cnt = 0;
 Program::RunState Program::global_run_state = Program::NOT_INIT;
@@ -566,10 +563,14 @@ void Program::Init() {
   }
   script->Restart();            // restart script at beginning if run again
   
-  if(!taMisc::check_ok)
+  if(!taMisc::check_ok) {
     SetRunState(NOT_INIT);
-  else
+  }
+  else {
     SetRunState(DONE);
+    if(proj)
+      proj->last_run_prog = this;
+  }
   stop_req = false;  // this does not do full clear, so that information can be queried
   UpdateUi();
   SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
@@ -663,11 +664,9 @@ void Program::Run() {
   }
   ProjDirToCurrent();
   ClearStopReq();
-  last_run_prog = this;
   SetAllBreakpoints();          // reinstate all active breakpoints
   step_mode = false;
   cur_step_prog = NULL;
-  last_step_prog = NULL;
   taMisc::Busy();
   SetRunState(RUN);
   UpdateUi();
@@ -692,6 +691,10 @@ void Program::Run() {
   else {
     script->Restart();
     SetRunState(DONE);
+  }
+  taProject* proj = GetMyProj();
+  if(proj) {
+    proj->last_run_prog = this;
   }
   UpdateUi();
   stop_req = false;  // this does not do full clear, so that information can be queried
@@ -725,7 +728,6 @@ void Program::Step(Program* step_prg) {
   ProjDirToCurrent();
   ClearStopReq();
   SetAllBreakpoints();          // reinstate all active breakpoints
-  last_run_prog = this;
   step_mode = true;
   if(step_prg)
     cur_step_prog = step_prg;
@@ -737,7 +739,6 @@ void Program::Step(Program* step_prg) {
     return;
   }
   
-  last_step_prog = step_prg;    // the last step_pgm that was run -- static -- called by gui repeat last step button
   if(step_prog != step_prg)     // save this as new default..
     step_prog = step_prg;
   
@@ -771,6 +772,11 @@ void Program::Step(Program* step_prg) {
     SetRunState(DONE);
   }
   stop_req = false;                 // this does not do full clear, so that information can be queried
+  taProject* proj = GetMyProj();
+  if(proj) {
+    proj->last_run_prog = this;
+    proj->last_step_prog = step_prg;    // the last step_pgm that was run -- called by gui repeat last step button
+  }
   UpdateUi();
   SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
@@ -796,11 +802,9 @@ void Program::RunFunction(Function* fun) {
   }
   ProjDirToCurrent();
   ClearStopReq();
-  last_run_prog = this;
   SetAllBreakpoints();          // reinstate all active breakpoints
   step_mode = false;
   cur_step_prog = NULL;
-  last_step_prog = NULL;
   taMisc::Busy();
   SetRunState(RUN);
   UpdateUi();
@@ -828,6 +832,9 @@ void Program::RunFunction(Function* fun) {
     script->Restart();
     SetRunState(DONE);
   }
+  taProject* proj = GetMyProj();
+  if(proj)
+    proj->last_run_prog = this;
   UpdateUi();
   stop_req = false;  // this does not do full clear, so that information can be queried
   SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
@@ -854,7 +861,9 @@ void Program::ClearStopReq() {
   stop_req = false;
   stop_reason = SR_NONE;
   stop_msg = _nilString;
-  last_stop_prog = NULL;
+  taProject* proj = GetMyProj();
+  if(proj)
+    proj->last_stop_prog = NULL;
 }
 
 void Program::UpdateUi() {
@@ -879,7 +888,9 @@ void Program::Abort() {
 }
 
 void Program::Stop_impl() {
-  last_stop_prog = this;
+  taProject* proj = GetMyProj();
+  if(proj)
+    proj->last_stop_prog = this;
   global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
   script->Stop();
   //  SetRunState(STOP);
@@ -1016,7 +1027,9 @@ void Program::CssWarning(int src_ln_no, bool running, const String& err_msg) {
 
 void Program::CssBreakpoint(int src_ln_no, int bpno, int pc, const String& prognm,
                             const String& topnm, const String& src_ln) {
-  last_stop_prog = this;
+  taProject* proj = GetMyProj();
+  if(proj)
+    proj->last_stop_prog = this;
   global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
   ProgLine* pl = script_list.SafeEl(src_ln_no);
   String fh;
@@ -1947,59 +1960,34 @@ String Program::RenderGlobalTrace(bool html) {
   return rval;
 }
 
-String Program::GlobalStatus() {
+String Program::DecodeStopReason(StopReason sr) {
   String rval;
-  if(global_run_state == RUN) {
-    rval = "Run: ";
-    if(last_run_prog) {
-      rval += " " + last_run_prog->name; // could use short..
-    }
-  }
-  else if(global_run_state == STOP) {
-    switch(stop_reason) {
-    case SR_NONE:
-      rval = "Stop?: ";
-      break;
-    case SR_USER_STOP:
-      rval = "Stop: ";
-      break;
-    case SR_USER_ABORT:
-      rval = "Abort: ";
-      break;
-    case SR_USER_INTR:
-      rval = "C^c: ";
-      break;
-    case SR_STEP_POINT:
-      rval = "Step: ";
-      break;
-    case SR_BREAKPOINT:
-      rval = "Break: ";
-      break;
-    case SR_ERROR:
-      rval = "Break: ";
-      break;
-    }
-    if(last_stop_prog) {
-      rval += last_stop_prog->name;
-    }
-  }
-  else if(global_run_state == INIT) {
-    rval = "Init: ";
-    if(last_run_prog) {
-      rval += " " + last_run_prog->name; // could use short..
-    }
-  }
-  else if(global_run_state == DONE) {
-    rval = "Done: ";
-    if(last_run_prog) {
-      rval += " " + last_run_prog->name; // could use short..
-    }
-  }
-  else if(global_run_state == NOT_INIT) {
-    rval = "No Program Initialized";
+  switch(sr) {
+  case SR_NONE:
+    rval = "Stop?: ";
+    break;
+  case SR_USER_STOP:
+    rval = "Stop: ";
+    break;
+  case SR_USER_ABORT:
+    rval = "Abort: ";
+    break;
+  case SR_USER_INTR:
+    rval = "C^c: ";
+    break;
+  case SR_STEP_POINT:
+    rval = "Step: ";
+    break;
+  case SR_BREAKPOINT:
+    rval = "Break: ";
+    break;
+  case SR_ERROR:
+    rval = "Break: ";
+    break;
   }
   return rval;
 }
+  
 
 String Program::RenderLocalTrace(bool html) {
   String rval;

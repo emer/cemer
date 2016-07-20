@@ -1,5 +1,9 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7646
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 Program .projects[0].programs.gp[0][3] { 
+ UserDataItem_List @*(.user_data_) {
+  UserData_DocLink @[0] { };
+ };
+
  ProgObjList @.objs = [0] {
  };
 
@@ -73,11 +77,23 @@ Program .projects[0].programs.gp[0][3] {
  };
 };
 Program .projects[0].programs.gp[0][3] {
+ UserDataItem_List @*(.user_data_) {
+  name=;
+  el_typ=UserData_DocLink;
+  el_def=0;
+  UserData_DocLink @[0] {
+   name="DocLink";
+   doc=.projects[0].programs.gp[0][3].doc$$;
+  };
+ };
  name="LeabraTrial";
  short_nm="Trial";
  tags="Leabra, Std";
  desc="Leabra processing of a single input/output event or external information, over a single alpha frequency cycle (100 msec / 10 Hz) -- iterates over gamma-frequency (25 msec / 40 Hz) quarter-trials";
  flags=0;
+ stop_step_cond {
+  expr=;
+ };
  objs {
   name="objs";
   el_typ=taNBase;
@@ -123,7 +139,6 @@ Program .projects[0].programs.gp[0][3] {
    name="update_net_view";
    var_type=T_Bool;
    bool_val=0;
-   objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="determines whether to update any network view displays after trial is completed";
@@ -146,8 +161,9 @@ Program .projects[0].programs.gp[0][3] {
   el_def=0;
   LocalVars @[0] {
    desc=;
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LocalVars (1 vars)";
+   pre_compile_code_string="LocalVars (1 vars)";
    local_vars {
     name="local_vars";
     el_typ=ProgVar;
@@ -156,8 +172,7 @@ Program .projects[0].programs.gp[0][3] {
      name="qtr";
      var_type=T_Int;
      int_val=0;
-     objs_ptr=0;
-     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     flags=LOCAL_VAR|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -166,8 +181,9 @@ Program .projects[0].programs.gp[0][3] {
   };
   If @[1] {
    desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="if (network.Compute_Weights_Test(network.trial+1))";
+   pre_compile_code_string="if (network.Compute_Weights_Test(network.trial+1))";
    cond {
     expr="network.Compute_Weights_Test(network.trial+1)";
    };
@@ -177,8 +193,9 @@ Program .projects[0].programs.gp[0][3] {
     el_def=0;
     MethodCall @[0] {
      desc="update weights -- do this at start instead of end, so that dwt is valid";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="network->Compute_Weights()";
+     pre_compile_code_string="network->Compute_Weights()";
      result_var=NULL;
      obj=.projects[0].programs.gp[0][3].args[0]$$;
      method=Network::Compute_Weights;
@@ -194,8 +211,9 @@ Program .projects[0].programs.gp[0][3] {
   };
   MethodCall @[2] {
    desc="initializes various counters at start of trial";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="network->Trial_Init()";
+   pre_compile_code_string="network->Trial_Init()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][3].args[0]$;
    method=LeabraNetwork::Trial_Init;
@@ -210,12 +228,14 @@ Program .projects[0].programs.gp[0][3] {
   Comment @[3] {
    desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
    flags=CAN_REVERT_TO_CODE;
-   orig_prog_code="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+   code_string="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+   pre_compile_code_string="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
   };
   MethodCall @[4] {
    desc="resets input data, before getting new external inputs data from apply inputs call";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="network->Init_InputData()";
+   pre_compile_code_string="network->Init_InputData()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][3].args[0]$;
    method=Network::Init_InputData;
@@ -230,8 +250,9 @@ Program .projects[0].programs.gp[0][3] {
   ProgramCall @[5] {
    desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="ApplyInputs(network, input_data)";
+   pre_compile_code_string="ApplyInputs(network, input_data)";
    prog_args {
     name="prog_args";
     el_typ=ProgArg;
@@ -264,16 +285,18 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   ForLoop @[6] {
    desc=;
-   flags=0;
-   orig_prog_code="for(qtr = 0; qtr < 4; qtr++)";
+   flags=CAN_REVERT_TO_CODE;
+   code_string="for (qtr = 0; qtr < 4; qtr++)";
+   pre_compile_code_string="for (qtr = 0; qtr < 4; qtr++)";
    loop_code {
     name="loop_code";
     el_typ=ProgCode;
     el_def=0;
     ProgramCall @[0] {
      desc="run the quarter program (which iterates over cyles of network activation updating) for each quarter";
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="LeabraQuarter(network, input_data)";
+     pre_compile_code_string="LeabraQuarter(network, input_data)";
      prog_args {
       name="prog_args";
       el_typ=ProgArg;
@@ -317,8 +340,9 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   MethodCall @[7] {
    desc="after the trial is over, do final computations";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="network->Trial_Final()";
+   pre_compile_code_string="network->Trial_Final()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][3].args[0]$;
    method=LeabraNetwork::Trial_Final;
@@ -332,8 +356,9 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   ProgramCall @[8] {
    desc="records data about the trial-level processing to a datatable for graphing/processing";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LeabraTrialMonitor(network)";
+   pre_compile_code_string="LeabraTrialMonitor(network)";
    prog_args {
     name=;
     el_typ=ProgArg;
@@ -355,12 +380,24 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   NetUpdateView @[9] {
    desc="update the network view(s) (only if update_net_view is true)";
-   flags=0;
-   orig_prog_code=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="Net Update View";
+   pre_compile_code_string="Net Update View";
    network_var=$.projects[0].programs.gp[0][3].args[0]$;
    update_var=.projects[0].programs.gp[0][3].vars[0]$$;
   };
  };
- step_prog=.projects[0].programs.gp[0][5]$$<Program,LeabraCycle>;
+ step_prog=NULL;
  step_n=1;
+ doc {
+  name="doc";
+  desc=;
+  web_doc=1;
+  wiki="emergent";
+  url="LeabraTrial";
+  full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrial";
+  text_size=1;
+  text=;
+  html_text=;
+ };
 };

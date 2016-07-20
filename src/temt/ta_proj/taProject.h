@@ -37,6 +37,7 @@
 #include <ParamSet_Group>
 #include <DataTable_Group>
 #include <Program_TopGroup>
+#include <ProgramRef>
 #include <taViewer_List>
 #include <taUndoMgr>
 #include <TimeUsed>
@@ -107,6 +108,12 @@ public:
   String                view_plog;
   // #READ_ONLY #NO_SAVE current view of project log data
   String_Array          tree_state;  // #HIDDEN #READ_ONLY save!! this is the expand/collapse state of the navigator tree nodes
+  ProgramRef            last_step_prog;
+  // #READ_ONLY #NO_SAVE the last program to be single-stepped -- set by the Step call of the program that was last run
+  ProgramRef            last_run_prog;
+  // #READ_ONLY #NO_SAVE the last program to have been run by the user -- top-level run call
+  ProgramRef            last_stop_prog;
+  // #READ_ONLY #NO_SAVE the last program that was stopped from a stop request of any sort
 
   bool                  isDirty() const override {return m_dirty;}
   void                  setDirty(bool value) override;  //
@@ -194,6 +201,10 @@ public:
   virtual void          AutoNameProj(const String& fname);
   // #CAT_File update the name of the project based on given file name
 
+  virtual String        ProgGlobalStatus();
+  // #CAT_Code #IGNORE get a global status string for programs for display in status bar
+
+  
   bool                  SetFileName(const String& val) override;
   int                   Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0) override;
   int                   Save() override;

@@ -111,12 +111,6 @@ public:
   // #READ_ONLY #NO_SAVE the program was run in step mode -- check for stepping
   static ProgramRef     cur_step_prog;
   // #READ_ONLY #NO_SAVE the current program to be single-stepped -- set by the Step call of the program that was last run
-  static ProgramRef     last_step_prog;
-  // #READ_ONLY #NO_SAVE the last program to be single-stepped -- set by the Step call of the program that was last run
-  static ProgramRef     last_run_prog;
-  // #READ_ONLY #NO_SAVE the last program to have been run by the user -- top-level run call
-  static ProgramRef     last_stop_prog;
-  // #READ_ONLY #NO_SAVE the last program that was stopped from a stop request of any sort
   static int            cur_step_n;
   // #READ_ONLY #NO_SAVE current number of steps to take -- set by the Step call of the program that was last run
   static int            cur_step_cnt;
@@ -205,7 +199,7 @@ public:
   // #CAT_Run make sure that the project directory is the current directory
   static void           SetStopReq(StopReason stop_rsn, const String& stop_message = "");
   // #CAT_Run request that the currently-running program stop at its earliest convenience..
-  static void           ClearStopReq();
+  virtual void          ClearStopReq();
   // #CAT_Run reset the stop request information
   static const String   GetDescString(const String& dsc, int indent_level);
   // #IGNORE get an appropriately formatted version of the description string for css code
@@ -261,8 +255,8 @@ public:
   // #BUTTON #CAT_Code display trace of all the programs called up to the point of the last stop (e.g., due to error or user stop/step)
     static String  RenderGlobalTrace(bool html = true);
     // #CAT_Code #IGNORE render a string representation of the global trace -- if html then render to html format that is useful for gui dialog with clickable program href links -- else plain text
-    static String  GlobalStatus();
-    // #CAT_Code #IGNORE get a global status string for display in status bar
+    static String DecodeStopReason(StopReason sr);
+    // #IGNORE decode stop reason to string
 
   virtual void  LocalTrace();
   // #BUTTON #GHOST_OFF_run_state:STOP #CAT_Code display trace of program flow within this program up to the point of the last stop (e.g., due to error or user stop/step)

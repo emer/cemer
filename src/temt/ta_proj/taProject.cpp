@@ -24,6 +24,7 @@
 #include <iDialogPublishDocs>
 #include <taiEditorOfString>
 #include <ClusterRun>
+#include <Program>
 #include <iSubversionBrowser>
 #include <iSvnFileListModel>
 #include <iDialogChoice>
@@ -1075,3 +1076,36 @@ void taProject::CloseLater() {
 void taProject::SetSaveView(bool value) {
   save_view = value;
 }
+
+String taProject::ProgGlobalStatus() {
+  String rval;
+  if(Program::global_run_state == Program::RUN) {
+    rval = "Run: ";
+    if(last_run_prog) {
+      rval += " " + last_run_prog->name; // could use short..
+    }
+  }
+  else if(Program::global_run_state == Program::STOP) {
+    rval = Program::DecodeStopReason(Program::stop_reason);
+    if(last_stop_prog) {
+      rval += last_stop_prog->name;
+    }
+  }
+  else if(Program::global_run_state == Program::INIT) {
+    rval = "Init: ";
+    if(last_run_prog) {
+      rval += " " + last_run_prog->name; // could use short..
+    }
+  }
+  else if(Program::global_run_state == Program::DONE) {
+    rval = "Done: ";
+    if(last_run_prog) {
+      rval += " " + last_run_prog->name; // could use short..
+    }
+  }
+  else if(Program::global_run_state == Program::NOT_INIT) {
+    rval = "No Program Initialized";
+  }
+  return rval;
+}
+

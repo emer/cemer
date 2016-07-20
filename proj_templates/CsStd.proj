@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9657
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 CsProject .projects["CsStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -253,7 +253,7 @@ CsProject .projects["CsStd"] {
    DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
    };
 
-   DataTableCols @.jobs_archive.data = [30] {
+   DataTableCols @.jobs_archive.data = [31] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
@@ -292,6 +292,11 @@ CsProject .projects["CsStd"] {
      };
     };
     int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
      };
@@ -1684,8 +1689,8 @@ CsProject .projects["CsStd"] {
  author="Randall C. O'Reilly";
  email="randy.oreilly@colorado.edu";
  license {
-  owner="Regents of the University of Colorado";
   license=NO_LIC;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
   year="2011";
   custom=;
@@ -3745,10 +3750,10 @@ CsProject .projects["CsStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
     last_sort_spec {
-     name=;
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -3756,7 +3761,7 @@ CsProject .projects["CsStd"] {
      };
     };
     control_panel_cells {
-     name=;
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -4162,6 +4167,30 @@ CsProject .projects["CsStd"] {
       name="mpi_nodes";
       desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
       col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -5475,7 +5504,7 @@ CsProject .projects["CsStd"] {
     };
     RegisterArgs @[1] {
      desc="This is KEY!!! actually processes all args, including those from ProgVarFmArg guys below";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Register Args";
      pre_compile_code_string="Register Args";
     };
@@ -5491,13 +5520,13 @@ CsProject .projects["CsStd"] {
     };
     Comment @[3] {
      desc="= Std variables in startup program itself =";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="// = Std variables in startup program itself =";
      pre_compile_code_string="// = Std variables in startup program itself =";
     };
     ProgVarFmArg @[4] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:tag in Program:CsStartup from Arg:tag";
      pre_compile_code_string="Set Var:tag in Program:CsStartup from Arg:tag";
      prog=.projects["CsStd"].programs["CsStartup"]$$;
@@ -5506,7 +5535,7 @@ CsProject .projects["CsStd"] {
     };
     ProgVarFmArg @[5] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:log_dir in Program:CsStartup from Arg:log_dir";
      pre_compile_code_string="Set Var:log_dir in Program:CsStartup from Arg:log_dir";
      prog=$.projects["CsStd"].programs["CsStartup"]$;
@@ -5515,7 +5544,7 @@ CsProject .projects["CsStd"] {
     };
     ProgVarFmArg @[6] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:max_epoch in Program:CsTrain from Arg:epochs";
      pre_compile_code_string="Set Var:max_epoch in Program:CsTrain from Arg:epochs";
      prog=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"]$;
@@ -5524,7 +5553,7 @@ CsProject .projects["CsStd"] {
     };
     ProgVarFmArg @[7] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:rnd_init in Program:CsTrain from Arg:rnd_init";
      pre_compile_code_string="Set Var:rnd_init in Program:CsTrain from Arg:rnd_init";
      prog=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"]$;
@@ -5533,7 +5562,7 @@ CsProject .projects["CsStd"] {
     };
     ProgVarFmArg @[8] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:max_batch in Program:CsBatch from Arg:batches";
      pre_compile_code_string="Set Var:max_batch in Program:CsBatch from Arg:batches";
      prog=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"]$;
@@ -5542,7 +5571,7 @@ CsProject .projects["CsStd"] {
     };
     ProgVarFmArg @[9] {
      desc="b_end is parallel-batch mode of operation (see b_start)";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:max_batch in Program:CsBatch from Arg:b_end";
      pre_compile_code_string="Set Var:max_batch in Program:CsBatch from Arg:b_end";
      prog=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"]$;
@@ -5551,7 +5580,7 @@ CsProject .projects["CsStd"] {
     };
     ProgVarFmArg @[10] {
      desc="b_start is parallel-batch mode of operation (see also b_end)";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:batch in Program:CsBatch from Arg:b_start";
      pre_compile_code_string="Set Var:batch in Program:CsBatch from Arg:b_start";
      prog=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"]$;
@@ -5560,7 +5589,7 @@ CsProject .projects["CsStd"] {
     };
     ProgVarFmArg @[11] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:save_wts_interval in Program:CsTrain from Arg:save_wts_interval";
      pre_compile_code_string="Set Var:save_wts_interval in Program:CsTrain from Arg:save_wts_interval";
      prog=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"]$;
@@ -5569,7 +5598,7 @@ CsProject .projects["CsStd"] {
     };
     ProgVarFmArg @[12] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Set Var:save_final_wts in Program:CsTrain from Arg:save_final_wts";
      pre_compile_code_string="Set Var:save_final_wts in Program:CsTrain from Arg:save_final_wts";
      prog=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"]$;
@@ -5578,20 +5607,20 @@ CsProject .projects["CsStd"] {
     };
     ControlPanelsFmArgs @[13] {
      desc="sets any arg listed in the control panel";
-     flags=NEW_EL;
+     flags=NEW_EL|CAN_REVERT_TO_CODE;
      code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      pre_compile_code_string="CtrlPanel Fm Args: var = MyClusterRun ";
      ctrl_panel_var=.projects["CsStd"].programs["CsStartup"].vars["MyClusterRun"]$$;
     };
     Comment @[14] {
      desc="= Add your own variables here =";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="// = Add your own variables here =";
      pre_compile_code_string="// = Add your own variables here =";
     };
     Comment @[15] {
      desc="= Below saves log files of standard data tables =";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="// = Below saves log files of standard data tables =";
      pre_compile_code_string="// = Below saves log files of standard data tables =";
     };
@@ -5609,7 +5638,7 @@ CsProject .projects["CsStd"] {
       el_def=0;
       MethodCall @[0] {
        desc="directly set variable on batch program";
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="batch->SetVar(\"init_batch\", false)";
        pre_compile_code_string="batch->SetVar(\"init_batch\", false)";
        result_var=NULL;
@@ -5647,7 +5676,7 @@ CsProject .projects["CsStd"] {
       };
       ProgVarFmArg @[1] {
        desc="read in the arg to us too, so we can set file names based on it";
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="Set Var:batch_start in Program:CsStartup from Arg:b_start";
        pre_compile_code_string="Set Var:batch_start in Program:CsStartup from Arg:b_start";
        prog=$.projects["CsStd"].programs["CsStartup"]$;
@@ -5656,7 +5685,7 @@ CsProject .projects["CsStd"] {
       };
       MiscCall @[2] {
        desc="string version with leading zeros";
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
        pre_compile_code_string="batch_str = taMisc::LeadingZeros(batch_start, 2)";
        result_var=.projects["CsStd"].programs["CsStartup"].vars["batch_str"]$$;
@@ -5714,7 +5743,7 @@ CsProject .projects["CsStd"] {
 	el_def=0;
 	MethodCall @[0] {
 	 desc="save args to file: last arg is to include dmem proc number";
-	 flags=0;
+	 flags=CAN_REVERT_TO_CODE;
 	 code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
 	 pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag.before(\".00\",-1), log_dir, false)";
 	 result_var=.projects["CsStd"].programs["CsStartup"].vars["log_file_nm"]$$;
@@ -5774,7 +5803,7 @@ CsProject .projects["CsStd"] {
 	};
 	MiscCall @[1] {
 	 desc=;
-	 flags=0;
+	 flags=CAN_REVERT_TO_CODE;
 	 code_string="taMisc::FullArgStringToFile(log_file_nm)";
 	 pre_compile_code_string="taMisc::FullArgStringToFile(log_file_nm)";
 	 result_var=NULL;
@@ -5812,7 +5841,7 @@ CsProject .projects["CsStd"] {
       el_def=0;
       MethodCall @[0] {
        desc="save args to file: last arg is to include dmem proc number";
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
        pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".args\", tag, log_dir, false)";
        result_var=$.projects["CsStd"].programs["CsStartup"].vars["log_file_nm"]$;
@@ -5872,7 +5901,7 @@ CsProject .projects["CsStd"] {
       };
       MiscCall @[1] {
        desc=;
-       flags=0;
+       flags=CAN_REVERT_TO_CODE;
        code_string="taMisc::FullArgStringToFile(log_file_nm)";
        pre_compile_code_string="taMisc::FullArgStringToFile(log_file_nm)";
        result_var=NULL;
@@ -5924,13 +5953,13 @@ CsProject .projects["CsStd"] {
     };
     Comment @[19] {
      desc="== Save epoch log -- on by default ==";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="// == Save epoch log -- on by default ==";
      pre_compile_code_string="// == Save epoch log -- on by default ==";
     };
     MethodCall @[20] {
      desc="last arg is to include dmem proc number";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".epc.dat\", tag, log_dir, false)";
      pre_compile_code_string="log_file_nm = EpochOutputData->GetFileNameFmProject(\".epc.dat\", tag, log_dir, false)";
      result_var=$.projects["CsStd"].programs["CsStartup"].vars["log_file_nm"]$;
@@ -5990,7 +6019,7 @@ CsProject .projects["CsStd"] {
     };
     MethodCall @[21] {
      desc="last arg is to restrict log to dmem_proc = 0";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="EpochOutputData->SaveDataLog(log_file_nm, false, true)";
      pre_compile_code_string="EpochOutputData->SaveDataLog(log_file_nm, false, true)";
      result_var=NULL;
@@ -6039,7 +6068,7 @@ CsProject .projects["CsStd"] {
     };
     PrintVar @[22] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Print  \"Saving epoch log data to:\" log_file_nm";
      pre_compile_code_string="Print  \"Saving epoch log data to:\" log_file_nm";
      message="Saving epoch log data to:";
@@ -6053,13 +6082,13 @@ CsProject .projects["CsStd"] {
     };
     Comment @[23] {
      desc="== Save trial log -- OFF by default ==";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="// == Save trial log -- OFF by default ==";
      pre_compile_code_string="// == Save trial log -- OFF by default ==";
     };
     MethodCall @[24] {
      desc="last arg is to include dmem proc number";
-     flags=OFF;
+     flags=OFF|CAN_REVERT_TO_CODE;
      code_string="log_file_nm = TrialOutputData->GetFileNameFmProject(\".trl.dat\", tag, log_dir, true)";
      pre_compile_code_string="log_file_nm = TrialOutputData->GetFileNameFmProject(\".trl.dat\", tag, log_dir, true)";
      result_var=$.projects["CsStd"].programs["CsStartup"].vars["log_file_nm"]$;
@@ -6119,7 +6148,7 @@ CsProject .projects["CsStd"] {
     };
     MethodCall @[25] {
      desc="last arg is to restrict log to dmem_proc = 0";
-     flags=OFF;
+     flags=OFF|CAN_REVERT_TO_CODE;
      code_string="TrialOutputData->SaveDataLog(log_file_nm, false, false)";
      pre_compile_code_string="TrialOutputData->SaveDataLog(log_file_nm, false, false)";
      result_var=NULL;
@@ -6168,7 +6197,7 @@ CsProject .projects["CsStd"] {
     };
     PrintVar @[26] {
      desc=;
-     flags=OFF;
+     flags=OFF|CAN_REVERT_TO_CODE;
      code_string="Print  \"Saving trial log data to:\" log_file_nm";
      pre_compile_code_string="Print  \"Saving trial log data to:\" log_file_nm";
      message="Saving trial log data to:";
@@ -6182,7 +6211,7 @@ CsProject .projects["CsStd"] {
     };
     OtherProgramVar @[27] {
      desc="propagate the tag";
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
      pre_compile_code_string="Vars To:  program=SaveWeights set=to  var_1=tag  var_2=?  var_3=?  var_4=? ";
      other_prog=.projects["CsStd"].programs.gp["CsAll_Std"]["SaveWeights"]$$;
@@ -6204,7 +6233,7 @@ CsProject .projects["CsStd"] {
     };
     ProgramCall @[29] {
      desc=;
-     flags=0;
+     flags=CAN_REVERT_TO_CODE;
      code_string="CsBatch(network, input_data)";
      pre_compile_code_string="CsBatch(network, input_data)";
      prog_args {
@@ -6357,7 +6386,7 @@ CsProject .projects["CsStd"] {
      el_def=0;
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: batch";
       pre_compile_code_string="Net Counter Init: batch";
       network_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$$;
@@ -6384,7 +6413,7 @@ CsProject .projects["CsStd"] {
        el_def=0;
        NetCounterInit @[0] {
 	desc="initializes local batch counter and batch field on network";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Init: batch";
 	pre_compile_code_string="Net Counter Init: batch";
 	network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$;
@@ -6428,7 +6457,7 @@ CsProject .projects["CsStd"] {
        el_def=0;
        ProgramCall @[0] {
 	desc="run the training program -- sets the network and input_data args";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="CsTrain(network, input_data, true)";
 	pre_compile_code_string="CsTrain(network, input_data, true)";
 	prog_args {
@@ -6474,7 +6503,7 @@ CsProject .projects["CsStd"] {
        };
        NetCounterIncr @[1] {
 	desc="increment the local batch counter and copy to network";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="Net Counter Incr: batch";
 	pre_compile_code_string="Net Counter Incr: batch";
 	network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$;
@@ -6994,7 +7023,7 @@ CsProject .projects["CsStd"] {
      };
      MethodCall @[1] {
       desc="check network to make sure it is ready to be run";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="network->CheckConfig(false)";
       pre_compile_code_string="network->CheckConfig(false)";
       result_var=NULL;
@@ -7066,7 +7095,7 @@ CsProject .projects["CsStd"] {
        el_def=0;
        MethodCall @[0] {
 	desc="initialize network weights: could also load pre-set weights or something else here";
-	flags=0;
+	flags=CAN_REVERT_TO_CODE;
 	code_string="network->Init_Weights()";
 	pre_compile_code_string="network->Init_Weights()";
 	result_var=NULL;
@@ -7585,7 +7614,7 @@ CsProject .projects["CsStd"] {
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: trial";
       pre_compile_code_string="Net Counter Init: trial";
       network_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$$;
@@ -8225,7 +8254,7 @@ CsProject .projects["CsStd"] {
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize local cycle counter and corresponding counter on network";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="Net Counter Init: cycle";
       pre_compile_code_string="Net Counter Init: cycle";
       network_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$$;
@@ -8712,7 +8741,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      MethodCall @[0] {
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
       result_var=NULL;
@@ -8750,7 +8779,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[1] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="LayerWriter_0->CheckConfig(false)";
       pre_compile_code_string="LayerWriter_0->CheckConfig(false)";
       result_var=NULL;
@@ -9219,7 +9248,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      MethodCall @[0] {
       desc="set the network and datatable for the NetMonitor";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       pre_compile_code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
       result_var=NULL;
@@ -9257,7 +9286,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[1] {
       desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->CheckConfig(false)";
       pre_compile_code_string="trial_netmon->CheckConfig(false)";
       result_var=NULL;
@@ -9284,7 +9313,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[2] {
       desc="update the monitor items and data schema based on current settings of the NetMonitor object";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="trial_netmon->UpdateMonitors(true)";
       pre_compile_code_string="trial_netmon->UpdateMonitors(true)";
       result_var=NULL;
@@ -9809,7 +9838,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[1] {
       desc="set data and network on NetMonitor object";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       pre_compile_code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
       result_var=NULL;
@@ -9847,7 +9876,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[2] {
       desc="check configuration and emit errors/warnings for problems";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->CheckConfig(false)";
       pre_compile_code_string="epoch_netmon->CheckConfig(false)";
       result_var=NULL;
@@ -9874,7 +9903,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
      MethodCall @[3] {
       desc="update the monitor items and data schema based on current settings of NetMonitor";
-      flags=0;
+      flags=CAN_REVERT_TO_CODE;
       code_string="epoch_netmon->UpdateMonitors(true)";
       pre_compile_code_string="epoch_netmon->UpdateMonitors(true)";
       result_var=NULL;
@@ -10441,7 +10470,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9984051;
+     value 8 0=0.9978746;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -10597,7 +10626,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
+	   lay_trans=0.4;
 	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
@@ -10645,9 +10674,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -11689,9 +11718,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -11794,7 +11823,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04359383;
+       value 8 0=0.04357067;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -11828,7 +11857,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .projects["CsStd"];.projects["CsStd"].docs;.projects["CsStd"].ctrl_panels;.projects["CsStd"].param_sets;.projects["CsStd"].data;.projects["CsStd"].data.gp["InputData"];.projects["CsStd"].data.gp["OutputData"];.projects["CsStd"].data.gp["AnalysisData"];.projects["CsStd"].programs;.projects["CsStd"].programs.gp["CsAll_Std"];.projects["CsStd"].viewers["Browser2"];.projects["CsStd"].viewers["Browser2"].frames["T3Frames"];.projects["CsStd"].networks;.projects["CsStd"].networks["Network_0"];.projects["CsStd"].networks["Network_0"].specs;.projects["CsStd"].networks["Network_0"].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=CsNetwork;

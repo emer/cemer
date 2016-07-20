@@ -1,6 +1,10 @@
-// ta_Dump File v3.0 -- code v7.8.1.0 rev8269
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 Program_Group .projects[0].programs.gp[1] { 
  Program @[0] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [0] {
   };
 
@@ -76,6 +80,10 @@ Program_Group .projects[0].programs.gp[1] {
   };
  };
  Program @[1] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [0] {
   };
 
@@ -149,6 +157,10 @@ Program_Group .projects[0].programs.gp[1] {
   };
  };
  Program @[2] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [0] {
   };
 
@@ -220,6 +232,10 @@ Program_Group .projects[0].programs.gp[1] {
   };
  };
  Program @[3] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [0] {
   };
 
@@ -249,6 +265,10 @@ Program_Group .projects[0].programs.gp[1] {
   };
  };
  Program @[4] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [1] {
    LayerWriter @[0] { 
     LayerDataEl_List @.layer_data = [3] {
@@ -307,6 +327,10 @@ Program_Group .projects[0].programs.gp[1] {
   };
  };
  Program @[5] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [1] {
    NetMonitor @[0] { 
     NetMonItem_List @.items = [19] {
@@ -389,6 +413,10 @@ Program_Group .projects[0].programs.gp[1] {
   };
  };
  Program @[6] { 
+  UserDataItem_List @*(.user_data_) {
+   UserData_DocLink @[0] { };
+  };
+
   ProgObjList @.objs = [1] {
    NetMonitor @[0] { 
     NetMonItem_List @.items = [19] {
@@ -490,12 +518,25 @@ Program_Group .projects[0].programs.gp[1] {
  el_def=0;
  tags="Leabra, Std, All, Test";
  desc="The full set of programs for testing a standard Leabra network (starting with Epoch)";
+ debug_mode=0;
  Program @[0] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[1][0].doc$$;
+   };
+  };
   name="LeabraEpochTest";
   short_nm="EpcTest";
   tags="Leabra, Std, Test";
   desc="sets testing flag, iterates over all of the items in a data table and calls LeabraTestTrial process on them";
   flags=0;
+  stop_step_cond {
+   expr=;
+  };
   objs {
    name="objs";
    el_typ=taNBase;
@@ -542,7 +583,6 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_HardEnum;
     int_val=0;
     hard_enum_type=DataLoop::Order;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="controls the order in which events (rows of the input data datatable) are presented to the network
@@ -553,7 +593,6 @@ Program_Group .projects[0].programs.gp[1] {
     name="trial";
     var_type=T_Int;
     int_val=0;
-    objs_ptr=0;
     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="current trial (event) within the epoch -- increments automatically";
@@ -585,7 +624,6 @@ Program_Group .projects[0].programs.gp[1] {
     name="data_loop_index";
     var_type=T_Int;
     int_val=6;
-    objs_ptr=0;
     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -603,8 +641,9 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    NetCounterInit @[0] {
     desc="initialize trial counter (local variable and in the network)";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="Net Counter Init: trial";
+    pre_compile_code_string="Net Counter Init: trial";
     network_var=.projects[0].programs.gp[1][0].args[0]$$;
     local_ctr_var=.projects[0].programs.gp[1][0].vars[2]$$;
     counter=Network::trial;
@@ -612,8 +651,9 @@ Program_Group .projects[0].programs.gp[1] {
    };
    AssignExpr @[1] {
     desc="get pointer to epoch timer object on network";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_timer = network.epoch_time";
+    pre_compile_code_string="epoch_timer = network.epoch_time";
     result_var=.projects[0].programs.gp[1][0].vars[4]$$;
     expr {
      expr="network.epoch_time";
@@ -626,8 +666,9 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    NetCounterInit @[0] {
     desc="initialize trial counter (local variable and in the network)";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="Net Counter Init: trial";
+    pre_compile_code_string="Net Counter Init: trial";
     network_var=$.projects[0].programs.gp[1][0].args[0]$;
     local_ctr_var=$.projects[0].programs.gp[1][0].vars[2]$;
     counter=Network::trial;
@@ -635,8 +676,9 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MemberAssign @[1] {
     desc="set to testing mode";
-    flags=NEW_EL;
-    orig_prog_code=;
+    flags=NEW_EL|CAN_REVERT_TO_CODE;
+    code_string="network.train_mode = Network::TEST";
+    pre_compile_code_string="network.train_mode = Network::TEST";
     obj=$.projects[0].programs.gp[1][0].args[0]$;
     path="train_mode";
     expr {
@@ -646,8 +688,9 @@ Program_Group .projects[0].programs.gp[1] {
    };
    AssignExpr @[2] {
     desc="get pointer to epoch timer object on network";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_timer = network.epoch_time";
+    pre_compile_code_string="epoch_timer = network.epoch_time";
     result_var=$.projects[0].programs.gp[1][0].vars[4]$;
     expr {
      expr="network.epoch_time";
@@ -655,8 +698,9 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MethodCall @[3] {
     desc="start the epoch timer to record computation time per epoch";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_timer->StartTimer(true)";
+    pre_compile_code_string="epoch_timer->StartTimer(true)";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][0].vars[4]$;
     method=TimeUsed::StartTimer;
@@ -681,8 +725,9 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MethodCall @[4] {
     desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="trial_mon_data->ResetData()";
+    pre_compile_code_string="trial_mon_data->ResetData()";
     result_var=NULL;
     obj=.projects[0].programs.gp[1][0].vars[3]$$;
     method=DataTable::ResetData;
@@ -696,16 +741,18 @@ Program_Group .projects[0].programs.gp[1] {
    };
    NetDataLoop @[5] {
     desc="iterates over the events/rows of input_data, according to data_loop_order variable";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="Net Data Loop (SEQUENTIAL):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
+    pre_compile_code_string="Net Data Loop (SEQUENTIAL):  table=input_data  index=data_loop_index  order_var=data_loop_order ";
     loop_code {
      name=;
      el_typ=ProgCode;
      el_def=0;
      ProgramCall @[0] {
       desc="run the trial program, passing network and input_data";
-      flags=0;
-      orig_prog_code=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LeabraTrialTest(network, input_data)";
+      pre_compile_code_string="LeabraTrialTest(network, input_data)";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -753,8 +800,9 @@ Program_Group .projects[0].programs.gp[1] {
    };
    If @[6] {
     desc="if full batch mode, update only at end of epoch";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="if (network.wt_update == Network::BATCH)";
+    pre_compile_code_string="if (network.wt_update == Network::BATCH)";
     cond {
      expr="network.wt_update == Network::BATCH";
     };
@@ -764,8 +812,9 @@ Program_Group .projects[0].programs.gp[1] {
      el_def=0;
      MethodCall @[0] {
       desc="final update of weights based on accumulated changes";
-      flags=0;
-      orig_prog_code=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="network->Compute_Weights()";
+      pre_compile_code_string="network->Compute_Weights()";
       result_var=NULL;
       obj=$.projects[0].programs.gp[1][0].args[0]$;
       method=Network::Compute_Weights;
@@ -781,8 +830,9 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MethodCall @[7] {
     desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="network->Compute_EpochStats()";
+    pre_compile_code_string="network->Compute_EpochStats()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][0].args[0]$;
     method=LeabraNetwork::Compute_EpochStats;
@@ -796,8 +846,9 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MethodCall @[8] {
     desc="done with the computation in the epoch -- record time it took";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_timer->EndTimer()";
+    pre_compile_code_string="epoch_timer->EndTimer()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][0].vars[4]$;
     method=TimeUsed::EndTimer;
@@ -811,8 +862,9 @@ Program_Group .projects[0].programs.gp[1] {
    };
    ProgramCall @[9] {
     desc="run program that records data from network and possibly other sources about the epoch";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="LeabraEpochMonitorTest(network)";
+    pre_compile_code_string="LeabraEpochMonitorTest(network)";
     prog_args {
      name=;
      el_typ=ProgArg;
@@ -834,8 +886,9 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MemberAssign @[10] {
     desc="set back to training mode";
-    flags=NEW_EL;
-    orig_prog_code=;
+    flags=NEW_EL|CAN_REVERT_TO_CODE;
+    code_string="network.train_mode = Network::TRAIN";
+    pre_compile_code_string="network.train_mode = Network::TRAIN";
     obj=$.projects[0].programs.gp[1][0].args[0]$;
     path="train_mode";
     expr {
@@ -846,13 +899,36 @@ Program_Group .projects[0].programs.gp[1] {
   };
   step_prog=$.projects[0].programs.gp[1][1]$;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="LeabraEpoch";
+   full_url="https://grey.colorado.edu/emergent/index.php/LeabraEpoch";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[1] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[1][1].doc$$;
+   };
+  };
   name="LeabraTrialTest";
   short_nm="TrlTst";
   tags="Leabra, Std";
   desc="Leabra processing of a single input/output event or external information, over a single alpha frequency cycle (100 msec / 10 Hz) -- iterates over gamma-frequency (25 msec / 40 Hz) quarter-trials";
   flags=0;
+  stop_step_cond {
+   expr=;
+  };
   objs {
    name="objs";
    el_typ=taNBase;
@@ -898,7 +974,6 @@ Program_Group .projects[0].programs.gp[1] {
     name="update_net_view";
     var_type=T_Bool;
     bool_val=0;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="determines whether to update any network view displays after trial is completed";
@@ -921,8 +996,9 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    LocalVars @[0] {
     desc=;
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="LocalVars (1 vars)";
+    pre_compile_code_string="LocalVars (1 vars)";
     local_vars {
      name="local_vars";
      el_typ=ProgVar;
@@ -931,8 +1007,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="qtr";
       var_type=T_Int;
       int_val=0;
-      objs_ptr=0;
-      flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+      flags=LOCAL_VAR|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -941,8 +1016,9 @@ Program_Group .projects[0].programs.gp[1] {
    };
    If @[1] {
     desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="if (network.Compute_Weights_Test(network.trial+1))";
+    pre_compile_code_string="if (network.Compute_Weights_Test(network.trial+1))";
     cond {
      expr="network.Compute_Weights_Test(network.trial+1)";
     };
@@ -952,8 +1028,9 @@ Program_Group .projects[0].programs.gp[1] {
      el_def=0;
      MethodCall @[0] {
       desc="update weights -- do this at start instead of end, so that dwt is valid";
-      flags=0;
-      orig_prog_code=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="network->Compute_Weights()";
+      pre_compile_code_string="network->Compute_Weights()";
       result_var=NULL;
       obj=.projects[0].programs.gp[1][1].args[0]$$;
       method=Network::Compute_Weights;
@@ -969,8 +1046,9 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MethodCall @[2] {
     desc="initializes various counters at start of trial";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="network->Trial_Init()";
+    pre_compile_code_string="network->Trial_Init()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][1].args[0]$;
     method=LeabraNetwork::Trial_Init;
@@ -985,12 +1063,14 @@ Program_Group .projects[0].programs.gp[1] {
    Comment @[3] {
     desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
     flags=CAN_REVERT_TO_CODE;
-    orig_prog_code="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+    code_string="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+    pre_compile_code_string="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
    };
    MethodCall @[4] {
     desc="resets input data, before getting new external inputs data from apply inputs call";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="network->Init_InputData()";
+    pre_compile_code_string="network->Init_InputData()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][1].args[0]$;
     method=Network::Init_InputData;
@@ -1005,8 +1085,9 @@ Program_Group .projects[0].programs.gp[1] {
    ProgramCall @[5] {
     desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="ApplyInputsTest(network, input_data)";
+    pre_compile_code_string="ApplyInputsTest(network, input_data)";
     prog_args {
      name="prog_args";
      el_typ=ProgArg;
@@ -1039,16 +1120,18 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    ForLoop @[6] {
     desc=;
-    flags=0;
-    orig_prog_code="for(qtr = 0; qtr < 4; qtr++)";
+    flags=CAN_REVERT_TO_CODE;
+    code_string="for (qtr = 0; qtr < 4; qtr++)";
+    pre_compile_code_string="for (qtr = 0; qtr < 4; qtr++)";
     loop_code {
      name="loop_code";
      el_typ=ProgCode;
      el_def=0;
      ProgramCall @[0] {
       desc="run the quarter program (which iterates over cyles of network activation updating) for each quarter";
-      flags=0;
-      orig_prog_code=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LeabraQuarterTest(network, input_data)";
+      pre_compile_code_string="LeabraQuarterTest(network, input_data)";
       prog_args {
        name="prog_args";
        el_typ=ProgArg;
@@ -1092,8 +1175,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[7] {
     desc="after the trial is over, do final computations";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="network->Trial_Final()";
+    pre_compile_code_string="network->Trial_Final()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][1].args[0]$;
     method=LeabraNetwork::Trial_Final;
@@ -1107,8 +1191,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    ProgramCall @[8] {
     desc="records data about the trial-level processing to a datatable for graphing/processing";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="LeabraTrialMonitorTest(network)";
+    pre_compile_code_string="LeabraTrialMonitorTest(network)";
     prog_args {
      name=;
      el_typ=ProgArg;
@@ -1130,21 +1215,45 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    NetUpdateView @[9] {
     desc="update the network view(s) (only if update_net_view is true)";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="Net Update View";
+    pre_compile_code_string="Net Update View";
     network_var=$.projects[0].programs.gp[1][1].args[0]$;
     update_var=.projects[0].programs.gp[1][1].vars[0]$$;
    };
   };
   step_prog=.projects[0].programs.gp[1][3]$$;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="LeabraTrial";
+   full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrial";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[2] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[1][2].doc$$;
+   };
+  };
   name="LeabraQuarterTest";
   short_nm="QrtTst";
   tags="Leabra, Std";
   desc="iterates over cycles of activation updating for a gamma-frequency (25 msec / 40 Hz) quarter of an alpha frequency (100 msec / 10 Hz) trial";
   flags=0;
+  stop_step_cond {
+   expr=;
+  };
   objs {
    name="objs";
    el_typ=taNBase;
@@ -1190,7 +1299,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="cycle";
     var_type=T_Int;
     int_val=0;
-    objs_ptr=0;
     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="current cycle of settling (local loop counter)";
@@ -1200,7 +1308,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="update_net_view";
     var_type=T_Bool;
     bool_val=1;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="if true, will update network views at end of settling";
@@ -1218,8 +1325,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    el_def=0;
    NetCounterInit @[0] {
     desc="initialize local cycle counter and corresponding counter on network";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="Net Counter Init: cycle";
+    pre_compile_code_string="Net Counter Init: cycle";
     network_var=.projects[0].programs.gp[1][2].args[0]$$;
     local_ctr_var=.projects[0].programs.gp[1][2].vars[0]$$;
     counter=Network::cycle;
@@ -1232,8 +1340,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    el_def=0;
    LocalVars @[0] {
     desc=;
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="LocalVars (2 vars)";
+    pre_compile_code_string="LocalVars (2 vars)";
     local_vars {
      name="local_vars";
      el_typ=ProgVar;
@@ -1242,8 +1351,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="cycle_max";
       var_type=T_Int;
       int_val=0;
-      objs_ptr=0;
-      flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+      flags=LOCAL_VAR|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -1252,8 +1360,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="cyc";
       var_type=T_Int;
       int_val=0;
-      objs_ptr=0;
-      flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+      flags=LOCAL_VAR|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -1263,12 +1370,14 @@ this program can be extended to do arbitrary things to generate data and apply i
    Comment @[1] {
     desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
     flags=CAN_REVERT_TO_CODE;
-    orig_prog_code="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+    code_string="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+    pre_compile_code_string="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
    };
    MethodCall @[2] {
     desc="resets input data, before getting new external inputs data from apply inputs call";
-    flags=OFF;
-    orig_prog_code=;
+    flags=OFF|CAN_REVERT_TO_CODE;
+    code_string="network->Init_InputData()";
+    pre_compile_code_string="network->Init_InputData()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][2].args[0]$;
     method=Network::Init_InputData;
@@ -1283,8 +1392,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    ProgramCall @[3] {
     desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
-    flags=OFF;
-    orig_prog_code=;
+    flags=OFF|CAN_REVERT_TO_CODE;
+    code_string="program_name()";
+    pre_compile_code_string="program_name()";
     prog_args {
      name=;
      el_typ=ProgArg;
@@ -1317,8 +1427,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[4] {
     desc="initializes various counters at start of settling";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="network->Quarter_Init()";
+    pre_compile_code_string="network->Quarter_Init()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][2].args[0]$;
     method=LeabraNetwork::Quarter_Init;
@@ -1333,7 +1444,8 @@ this program can be extended to do arbitrary things to generate data and apply i
    MethodCall @[5] {
     desc=;
     flags=CAN_REVERT_TO_CODE;
-    orig_prog_code="cycle_max = network.CycleRunMax()";
+    code_string="cycle_max = network->CycleRunMax()";
+    pre_compile_code_string="cycle_max = network->CycleRunMax()";
     result_var=.projects[0].programs.gp[1][2].prog_code[0].local_vars[0]$$;
     obj=$.projects[0].programs.gp[1][2].args[0]$;
     method=LeabraNetwork::CycleRunMax;
@@ -1347,16 +1459,18 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    ForLoop @[6] {
     desc="// the main loop over cycles of updating";
-    flags=0;
-    orig_prog_code="for(cyc=0; cyc<cycle_max; cyc++)";
+    flags=CAN_REVERT_TO_CODE;
+    code_string="for (cyc=0; cyc<cycle_max; cyc++)";
+    pre_compile_code_string="for (cyc=0; cyc<cycle_max; cyc++)";
     loop_code {
      name="loop_code";
      el_typ=ProgCode;
      el_def=0;
      ProgramCall @[0] {
       desc="run the cycle program -- can run multiple cycles at a time due to threading";
-      flags=0;
-      orig_prog_code=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LeabraCycleTest(network)";
+      pre_compile_code_string="LeabraCycleTest(network)";
       prog_args {
        name="prog_args";
        el_typ=ProgArg;
@@ -1379,7 +1493,8 @@ this program can be extended to do arbitrary things to generate data and apply i
      AssignExpr @[1] {
       desc="grab the updated cycle count";
       flags=CAN_REVERT_TO_CODE;
-      orig_prog_code="cycle = network.cycle";
+      code_string="cycle = network.cycle";
+      pre_compile_code_string="cycle = network.cycle";
       result_var=$.projects[0].programs.gp[1][2].vars[0]$;
       expr {
        expr="network.cycle";
@@ -1398,8 +1513,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[7] {
     desc="perform final operations at end of settling (storing final activations, etc)";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="network->Quarter_Final()";
+    pre_compile_code_string="network->Quarter_Final()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][2].args[0]$;
     method=LeabraNetwork::Quarter_Final;
@@ -1413,8 +1529,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[8] {
     desc="compute appropriate stats for each phase (MinusStats, PlusStats)";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="network->Compute_PhaseStats()";
+    pre_compile_code_string="network->Compute_PhaseStats()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][2].args[0]$;
     method=LeabraNetwork::Compute_PhaseStats;
@@ -1428,21 +1545,45 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    NetUpdateView @[9] {
     desc="update network views, if update_net_view == true";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="Net Update View";
+    pre_compile_code_string="Net Update View";
     network_var=$.projects[0].programs.gp[1][2].args[0]$;
     update_var=.projects[0].programs.gp[1][2].vars[1]$$;
    };
   };
   step_prog=NULL;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="LeabraQuarter";
+   full_url="https://grey.colorado.edu/emergent/index.php/LeabraQuarter";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[3] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[1][3].doc$$;
+   };
+  };
   name="LeabraCycleTest";
   short_nm="CycTest";
   tags="Leabra, Std";
   desc="runs one cycle of leabra processing (updating net inputs and activations)";
   flags=0;
+  stop_step_cond {
+   expr=;
+  };
   objs {
    name="objs";
    el_typ=taNBase;
@@ -1477,7 +1618,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="update_net_view";
     var_type=T_Bool;
     bool_val=0;
-    objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
@@ -1500,8 +1640,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    el_def=0;
    MethodCall @[0] {
     desc="this does all the standard leabra processing for one cycle of activation updating";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="network->Cycle_Run()";
+    pre_compile_code_string="network->Cycle_Run()";
     result_var=NULL;
     obj=.projects[0].programs.gp[1][3].args[0]$$;
     method=LeabraNetwork::Cycle_Run;
@@ -1515,21 +1656,45 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    NetUpdateView @[1] {
     desc="update network views if update_net_view == true";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="Net Update View";
+    pre_compile_code_string="Net Update View";
     network_var=$.projects[0].programs.gp[1][3].args[0]$;
     update_var=.projects[0].programs.gp[1][3].vars[0]$$;
    };
   };
   step_prog=NULL;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="LeabraCycle";
+   full_url="https://grey.colorado.edu/emergent/index.php/LeabraCycle";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[4] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[1][4].doc$$;
+   };
+  };
   name="ApplyInputsTest";
   short_nm="InTest";
   tags="Network, InputData, Apply";
   desc="apply the current input data to the network as external input and target values";
   flags=NO_STOP_STEP;
+  stop_step_cond {
+   expr=;
+  };
   objs {
    name="objs";
    el_typ=LayerWriter;
@@ -1637,8 +1802,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    el_def=0;
    MethodCall @[0] {
     desc="sets the datatable and network for the layer writer, so it knows what to write to";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
+    pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
     result_var=NULL;
     obj=.projects[0].programs.gp[1][4].vars[0]$$;
     method=LayerWriter::SetDataNetwork;
@@ -1674,8 +1840,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[1] {
     desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="LayerWriter_0->AutoConfig(true)";
+    pre_compile_code_string="LayerWriter_0->AutoConfig(true)";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][4].vars[0]$;
     method=LayerWriter::AutoConfig;
@@ -1700,8 +1867,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[2] {
     desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="LayerWriter_0->CheckConfig(false)";
+    pre_compile_code_string="LayerWriter_0->CheckConfig(false)";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][4].vars[0]$;
     method=taList_impl::CheckConfig;
@@ -1731,8 +1899,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    el_def=0;
    MethodCall @[0] {
     desc="sets the datatable and network for the layer writer, so it knows what to write to";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
+    pre_compile_code_string="LayerWriter_0->SetDataNetwork(input_data, network)";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][4].vars[0]$;
     method=LayerWriter::SetDataNetwork;
@@ -1768,8 +1937,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[1] {
     desc="apply inputs to the network!  layer writer has all the key specs";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="LayerWriter_0->ApplyInputData()";
+    pre_compile_code_string="LayerWriter_0->ApplyInputData()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][4].vars[0]$;
     method=LayerWriter::ApplyInputData;
@@ -1784,13 +1954,36 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   step_prog=NULL;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="ApplyInputs";
+   full_url="https://grey.colorado.edu/emergent/index.php/ApplyInputs";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[5] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[1][5].doc$$;
+   };
+  };
   name="LeabraTrialMonitorTest";
   short_nm="TrlMonTst";
   tags="Leabra, Std, Monitor";
   desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
   flags=NO_STOP_STEP;
+  stop_step_cond {
+   expr=;
+  };
   objs {
    name="objs";
    el_typ=NetMonitor;
@@ -1803,6 +1996,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      NetMonItem @[0] {
       name="batch";
+      monitor=.projects[0].programs.gp[1][5].objs[0]$$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -1837,6 +2031,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[1] {
       name="epoch";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -1871,6 +2066,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[2] {
       name="train_mode";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -1905,6 +2101,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[3] {
       name="group";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -1939,6 +2136,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[4] {
       name="trial";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -1973,6 +2171,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[5] {
       name="tick";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2007,6 +2206,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[6] {
       name="time";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2041,6 +2241,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[7] {
       name="trial_name";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2075,6 +2276,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[8] {
       name="group_name";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2109,6 +2311,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[9] {
       name="output_name";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2143,6 +2346,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[10] {
       name="rt_cycles";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2177,6 +2381,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[11] {
       name="sse";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2211,6 +2416,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[12] {
       name="norm_err";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2245,6 +2451,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[13] {
       name="cos_err";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2279,6 +2486,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[14] {
       name="ext_rew";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2313,6 +2521,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[15] {
       name="lay_sse";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2347,6 +2556,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[16] {
       name="lay_norm_err";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2381,6 +2591,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[17] {
       name="lay_cos_err";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2415,6 +2626,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[18] {
       name="lay_net_sd";
+      monitor=$.projects[0].programs.gp[1][5].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2443,9 +2655,9 @@ this program can be extended to do arbitrary things to generate data and apply i
        var=NULL;
        enable_var=NULL;
       };
-      pre_proc_1 {name="SimpleMathSpec_277": opr=NONE: arg=0: lw=-1: hi=1: };
-      pre_proc_2 {name="SimpleMathSpec_278": opr=NONE: arg=0: lw=-1: hi=1: };
-      pre_proc_3 {name="SimpleMathSpec_279": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
     };
     network=$.projects[0].networks[0]$;
@@ -2493,7 +2705,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="trial_netmon";
     var_type=T_Object;
     object_type=NetMonitor;
-    object_val=.projects[0].programs.gp[1][5].objs[0]$$;
+    object_val=$.projects[0].programs.gp[1][5].objs[0]$;
     objs_ptr=1;
     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
@@ -2512,8 +2724,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    el_def=0;
    MethodCall @[0] {
     desc="set the network and datatable for the NetMonitor";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
+    pre_compile_code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
     result_var=NULL;
     obj=.projects[0].programs.gp[1][5].vars[1]$$;
     method=NetMonitor::SetDataNetwork;
@@ -2549,8 +2762,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[1] {
     desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="trial_netmon->CheckConfig(false)";
+    pre_compile_code_string="trial_netmon->CheckConfig(false)";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][5].vars[1]$;
     method=taBase::CheckConfig;
@@ -2575,8 +2789,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[2] {
     desc="update the monitor items and data schema based on current settings of the NetMonitor object";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="trial_netmon->UpdateMonitors(true)";
+    pre_compile_code_string="trial_netmon->UpdateMonitors(true)";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][5].vars[1]$;
     method=NetMonitor::UpdateMonitors;
@@ -2606,8 +2821,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    el_def=0;
    MethodCall @[0] {
     desc="add a new blank row to the data";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="trial_mon_data->AddBlankRow()";
+    pre_compile_code_string="trial_mon_data->AddBlankRow()";
     result_var=NULL;
     obj=.projects[0].programs.gp[1][5].vars[0]$$;
     method=DataTable::AddBlankRow;
@@ -2621,8 +2837,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[1] {
     desc="get the new monitor data from the network and other sources -- this does the main work";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="trial_netmon->GetMonVals()";
+    pre_compile_code_string="trial_netmon->GetMonVals()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][5].vars[1]$;
     method=NetMonitor::GetMonVals;
@@ -2636,8 +2853,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[2] {
     desc="update views and other things after writing new data to monitor data table";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="trial_mon_data->WriteClose()";
+    pre_compile_code_string="trial_mon_data->WriteClose()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][5].vars[0]$;
     method=DataTable::WriteClose;
@@ -2651,8 +2869,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[3] {
     desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
+    pre_compile_code_string="network->DMem_ShareTrialData(trial_mon_data, 1)";
     result_var=NULL;
     obj=.projects[0].programs.gp[1][5].args[0]$$;
     method=Network::DMem_ShareTrialData;
@@ -2689,13 +2908,36 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   step_prog=NULL;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="Monitor_Data";
+   full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
  Program @[6] {
+  UserDataItem_List @*(.user_data_) {
+   name=;
+   el_typ=UserData_DocLink;
+   el_def=0;
+   UserData_DocLink @[0] {
+    name="DocLink";
+    doc=.projects[0].programs.gp[1][6].doc$$;
+   };
+  };
   name="LeabraEpochMonitorTest";
   short_nm="EpcMonTst";
   tags="Leabra, Std, Monitor";
   desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
   flags=NO_STOP_STEP;
+  stop_step_cond {
+   expr=;
+  };
   objs {
    name="objs";
    el_typ=NetMonitor;
@@ -2708,6 +2950,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
      NetMonItem @[0] {
       name="batch";
+      monitor=.projects[0].programs.gp[1][6].objs[0]$$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2742,6 +2985,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[1] {
       name="epoch";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2776,6 +3020,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[2] {
       name="avg_sse";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2810,6 +3055,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[3] {
       name="cnt_err";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2844,6 +3090,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[4] {
       name="pct_cor";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2878,6 +3125,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[5] {
       name="pct_err";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2912,6 +3160,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[6] {
       name="avg_norm_err";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2946,6 +3195,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[7] {
       name="avg_cos_err";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -2980,6 +3230,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[8] {
       name="avg_ext_rew";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -3014,6 +3265,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[9] {
       name="avg_cycles";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -3048,6 +3300,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[10] {
       name="epoch_time_tot";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=1;
       object_type=NULL;
       object=NULL;
@@ -3082,6 +3335,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[11] {
       name="epoch_time_usr";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=1;
       object_type=NULL;
       object=NULL;
@@ -3116,6 +3370,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[12] {
       name="lay_avg_sse";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -3150,6 +3405,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[13] {
       name="lay_cnt_err";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -3184,6 +3440,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[14] {
       name="lay_pct_cor";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -3218,6 +3475,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[15] {
       name="lay_pct_err";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -3252,6 +3510,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[16] {
       name="lay_avg_norm_err";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -3286,6 +3545,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[17] {
       name="lay_avg_cos_err";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -3320,6 +3580,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
      NetMonItem @[18] {
       name="avg_net_sd";
+      monitor=$.projects[0].programs.gp[1][6].objs[0]$;
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
@@ -3348,9 +3609,9 @@ this program can be extended to do arbitrary things to generate data and apply i
        var=NULL;
        enable_var=NULL;
       };
-      pre_proc_1 {name="SimpleMathSpec_280": opr=NONE: arg=0: lw=-1: hi=1: };
-      pre_proc_2 {name="SimpleMathSpec_281": opr=NONE: arg=0: lw=-1: hi=1: };
-      pre_proc_3 {name="SimpleMathSpec_282": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
     };
     network=$.projects[0].networks[0]$;
@@ -3398,7 +3659,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="epoch_netmon";
     var_type=T_Object;
     object_type=NetMonitor;
-    object_val=.projects[0].programs.gp[1][6].objs[0]$$;
+    object_val=$.projects[0].programs.gp[1][6].objs[0]$;
     objs_ptr=1;
     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
@@ -3428,8 +3689,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    el_def=0;
    AssignExpr @[0] {
     desc="get the epoch timer from current network";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_timer = network.epoch_time";
+    pre_compile_code_string="epoch_timer = network.epoch_time";
     result_var=.projects[0].programs.gp[1][6].vars[2]$$;
     expr {
      expr="network.epoch_time";
@@ -3437,8 +3699,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[1] {
     desc="set data and network on NetMonitor object";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
+    pre_compile_code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
     result_var=NULL;
     obj=.projects[0].programs.gp[1][6].vars[1]$$;
     method=NetMonitor::SetDataNetwork;
@@ -3474,8 +3737,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[2] {
     desc="check configuration and emit errors/warnings for problems";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_netmon->CheckConfig(false)";
+    pre_compile_code_string="epoch_netmon->CheckConfig(false)";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][6].vars[1]$;
     method=taBase::CheckConfig;
@@ -3500,8 +3764,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[3] {
     desc="update the monitor items and data schema based on current settings of NetMonitor";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_netmon->UpdateMonitors(true)";
+    pre_compile_code_string="epoch_netmon->UpdateMonitors(true)";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][6].vars[1]$;
     method=NetMonitor::UpdateMonitors;
@@ -3531,8 +3796,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    el_def=0;
    MethodCall @[0] {
     desc="add a new blank row to the data";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_mon_data->AddBlankRow()";
+    pre_compile_code_string="epoch_mon_data->AddBlankRow()";
     result_var=NULL;
     obj=.projects[0].programs.gp[1][6].vars[0]$$;
     method=DataTable::AddBlankRow;
@@ -3546,8 +3812,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[1] {
     desc="get the new monitor data and stor it into the data table -- this does the main job here";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_netmon->GetMonVals()";
+    pre_compile_code_string="epoch_netmon->GetMonVals()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][6].vars[1]$;
     method=NetMonitor::GetMonVals;
@@ -3561,8 +3828,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    AssignExpr @[2] {
     desc="get the epoch timer from current network";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_timer = network.epoch_time";
+    pre_compile_code_string="epoch_timer = network.epoch_time";
     result_var=$.projects[0].programs.gp[1][6].vars[2]$;
     expr {
      expr="network.epoch_time";
@@ -3570,8 +3838,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[3] {
     desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
+    pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\", -1, )";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][6].vars[0]$;
     method=DataTable::SetValColName;
@@ -3629,8 +3898,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[4] {
     desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
+    pre_compile_code_string="epoch_mon_data->SetValColName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\", -1, )";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][6].vars[0]$;
     method=DataTable::SetValColName;
@@ -3688,8 +3958,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    MethodCall @[5] {
     desc="update after writing new data to monitor data table";
-    flags=0;
-    orig_prog_code=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string="epoch_mon_data->WriteClose()";
+    pre_compile_code_string="epoch_mon_data->WriteClose()";
     result_var=NULL;
     obj=$.projects[0].programs.gp[1][6].vars[0]$;
     method=DataTable::WriteClose;
@@ -3704,5 +3975,16 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   step_prog=NULL;
   step_n=1;
+  doc {
+   name="doc";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="Monitor_Data";
+   full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
+   text_size=1;
+   text=;
+   html_text=;
+  };
  };
 };

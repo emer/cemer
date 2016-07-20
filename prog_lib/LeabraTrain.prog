@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9480
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 Program .projects[0].programs.gp[0][1] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -450,6 +450,7 @@ Program .projects[0].programs.gp[0][1] {
    name="rnd_init";
    var_type=T_DynEnum;
    dyn_enum_val {
+    user_data_=NULL;
     enum_type=.projects[0].programs.gp[0][1].types[0]$$;
     value=2;
    };
@@ -1183,7 +1184,7 @@ Program .projects[0].programs.gp[0][1] {
   web_doc=1;
   wiki="emergent";
   url="LeabraTrain";
-  full_url="http://grey.colorado.edu/emergent/index.php/LeabraTrain";
+  full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrain";
   text_size=1;
   text=;
   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
