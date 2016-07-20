@@ -168,8 +168,8 @@ Program .projects[0].programs[0] {
  };
  name="SoStartup";
  short_nm="Startup";
- tags="Leabra, Startup, Parallel Batch";
- desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
+ tags="So, Startup";
+ desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batch_start=xxx] [n_batches=xx} [tag=xxx] and other opts -- see code";
  flags=STARTUP_RUN;
  stop_step_cond {
   expr=;
@@ -1123,10 +1123,10 @@ Program .projects[0].programs[0] {
  doc {
   name="doc";
   desc=;
-  web_doc=0;
-  wiki=;
-  url="local";
-  full_url="local";
+  web_doc=1;
+  wiki="emergent";
+  url="Startup_program";
+  full_url="https://grey.colorado.edu/emergent/index.php/Startup_program";
   text_size=1;
   text=;
   html_text=;

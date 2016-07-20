@@ -6256,8 +6256,8 @@ SoProject .projects["SoStd"] {
    };
    name="SoStartup";
    short_nm="Startup";
-   tags="Leabra, Startup, Parallel Batch";
-   desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
+   tags="So, Startup";
+   desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batch_start=xxx] [n_batches=xx} [tag=xxx] and other opts -- see code";
    flags=STARTUP_RUN;
    stop_step_cond {
     expr=;
@@ -7211,10 +7211,10 @@ SoProject .projects["SoStd"] {
    doc {
     name="doc";
     desc=;
-    web_doc=0;
-    wiki=;
-    url="local";
-    full_url="local";
+    web_doc=1;
+    wiki="emergent";
+    url="Startup_program";
+    full_url="https://grey.colorado.edu/emergent/index.php/Startup_program";
     text_size=1;
     text=;
     html_text=;
@@ -7239,7 +7239,7 @@ SoProject .projects["SoStd"] {
     };
     name="SoBatch";
     short_nm="Batch";
-    tags="Leabra, Std";
+    tags="So, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
     flags=0;
     stop_step_cond {
@@ -7262,7 +7262,7 @@ SoProject .projects["SoStd"] {
      ProgVar @["network"] {
       name="network";
       var_type=T_Object;
-      object_type=LeabraNetwork;
+      object_type=SoNetwork;
       object_val=$.projects["SoStd"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -7457,15 +7457,15 @@ SoProject .projects["SoStd"] {
       };
      };
     };
-    step_prog=NULL;
+    step_prog=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"]$$;
     step_n=1;
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraBatch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraBatch";
      text_size=1;
      text=;
      html_text=;
@@ -8419,15 +8419,15 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
     };
-    step_prog=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"]$$;
+    step_prog=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"]$;
     step_n=1;
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrain";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrain";
      text_size=1;
      text=;
      html_text=;
@@ -8838,10 +8838,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraEpoch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraEpoch";
      text_size=1;
      text=;
      html_text=;
@@ -9052,10 +9052,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="BpTrial";
+     full_url="https://grey.colorado.edu/emergent/index.php/BpTrial";
      text_size=1;
      text=;
      html_text=;
@@ -9292,10 +9292,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="ApplyInputs";
+     full_url="https://grey.colorado.edu/emergent/index.php/ApplyInputs";
      text_size=1;
      text=;
      html_text=;
@@ -9791,10 +9791,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="Monitor_Data";
+     full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
      text_size=1;
      text=;
      html_text=;
@@ -10403,10 +10403,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="Monitor_Data";
+     full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
      text_size=1;
      text=;
      html_text=;
@@ -10724,10 +10724,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="SaveWeights";
+     full_url="https://grey.colorado.edu/emergent/index.php/SaveWeights";
      text_size=1;
      text=;
      html_text=;
@@ -11154,10 +11154,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraEpoch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraEpoch";
      text_size=1;
      text=;
      html_text=;
@@ -11368,10 +11368,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="BpTrial";
+     full_url="https://grey.colorado.edu/emergent/index.php/BpTrial";
      text_size=1;
      text=;
      html_text=;
@@ -11608,10 +11608,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="ApplyInputs";
+     full_url="https://grey.colorado.edu/emergent/index.php/ApplyInputs";
      text_size=1;
      text=;
      html_text=;
@@ -12107,10 +12107,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="Monitor_Data";
+     full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
      text_size=1;
      text=;
      html_text=;
@@ -12719,10 +12719,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="Monitor_Data";
+     full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
      text_size=1;
      text=;
      html_text=;
@@ -12746,12 +12746,12 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.04927782;
+     value 8 0=0.04842821;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9978746;
+     value 8 0=0.9968119;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -14135,7 +14135,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[0][0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].specs[4];.networks[0].layers; };
  networks {
   name="networks";
   el_typ=SoNetwork;
@@ -14414,8 +14414,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      brain_area=;
      voxel_fill_pct=1;
      spec {type=SoLayerSpec: spec=.projects["SoStd"].networks["Network_0"].specs["SoLayerSpec_0"]$$: };
-     avg_act=0.36;
-     sum_act=9;
+     avg_act=0.4;
+     sum_act=10;
     };
     SoLayer @["Hidden"] {
      name="Hidden";
@@ -14482,8 +14482,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      brain_area=;
      voxel_fill_pct=1;
      spec {type=SoLayerSpec: spec=$.projects["SoStd"].networks["Network_0"].specs["SoLayerSpec_0"]$: };
-     avg_act=0.4246573;
-     sum_act=10.61643;
+     avg_act=0.5855454;
+     sum_act=14.63863;
     };
    };
    weights {

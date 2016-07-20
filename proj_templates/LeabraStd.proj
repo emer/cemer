@@ -10098,10 +10098,10 @@ LeabraProject .projects["LeabraStd"] {
    doc {
     name="doc";
     desc=;
-    web_doc=0;
-    wiki=;
-    url="local";
-    full_url="local";
+    web_doc=1;
+    wiki="emergent";
+    url="Startup_program";
+    full_url="https://grey.colorado.edu/emergent/index.php/Startup_program";
     text_size=1;
     text=;
     html_text=;

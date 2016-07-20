@@ -1,54 +1,67 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 Program .projects[0].programs.gp[0][5] { 
-  ProgObjList @.objs = [0] {
-  };
+ UserDataItem_List @*(.user_data_) {
+  UserData_DocLink @[0] { };
+ };
 
-  ProgType_List @.types = [0] {
-  };
+ ProgObjList @.objs = [0] {
+ };
 
-  ProgVar_List @.args = [1] {
-    ProgVar @[0] { };
-  };
+ ProgType_List @.types = [0] {
+ };
 
-  ProgVar_List @.vars = [1] {
-    ProgVar @[0] { };
-  };
+ ProgVar_List @.args = [1] {
+  ProgVar @[0] { };
+ };
 
-  Function_List @.functions = [0] {
-  };
+ ProgVar_List @.vars = [1] {
+  ProgVar @[0] { };
+ };
 
-  ProgEl_List @.load_code = [0] {
-  };
+ Function_List @.functions = [0] {
+ };
 
-  ProgEl_List @.init_code = [0] {
-  };
+ ProgEl_List @.init_code = [0] {
+ };
 
-  ProgEl_List @.prog_code = [2] {
-    MethodCall @[0] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-    };
-    NetUpdateView @[1] { };
+ ProgEl_List @.prog_code = [2] {
+  MethodCall @[0] { 
+   ProgArg_List @.meth_args = [0] {
+   };
   };
+  NetUpdateView @[1] { };
+ };
 };
 Program .projects[0].programs.gp[0][5] {
+ UserDataItem_List @*(.user_data_) {
+  name=;
+  el_typ=UserData_DocLink;
+  el_def=0;
+  UserData_DocLink @[0] {
+   name="DocLink";
+   doc=.projects[0].programs.gp[0][5].doc$$;
+  };
+ };
  name="CsCycle";
  short_nm="Cycle";
  tags="Cs, Std";
  desc="runs one cycle of CS processing (updating net inputs and activations)";
- flags=;
+ flags=0;
+ stop_step_cond {
+  expr=;
+ };
  objs {
-  name=;
-  el_typ=taOBase;
+  name="objs";
+  el_typ=taNBase;
   el_def=0;
  };
  types {
-  name=;
-  el_typ=ProgType;
+  name="types";
+  el_typ=DynEnumType;
   el_def=0;
  };
  args {
-  name=;
+  name="args";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
@@ -57,49 +70,45 @@ Program .projects[0].programs.gp[0][5] {
    object_type=CsNetwork;
    object_val=.projects[0].networks[0]$$<CsNetwork,Network_0>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc=;
    init_from=NULL;
   };
  };
  vars {
-  name=;
+  name="vars";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
    name="update_net_view";
    var_type=T_Bool;
    bool_val=0;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
    init_from=NULL;
   };
  };
  functions {
-  name=;
+  name="functions";
   el_typ=Function;
   el_def=0;
  };
- load_code {
-  name=;
-  el_typ=ProgEl;
-  el_def=0;
- };
  init_code {
-  name=;
-  el_typ=ProgEl;
+  name="init_code";
+  el_typ=ProgCode;
   el_def=0;
  };
  prog_code {
-  name=;
-  el_typ=MethodCall;
+  name="prog_code";
+  el_typ=ProgCode;
   el_def=0;
   MethodCall @[0] {
    desc="this does all the standard cs processing for one cycle of activation updating";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="network->Cycle_Run()";
+   pre_compile_code_string="network->Cycle_Run()";
    result_var=NULL;
    obj=.projects[0].programs.gp[0][5].args[0]$$;
    method=LeabraNetwork::Cycle_Run;
@@ -108,14 +117,29 @@ Program .projects[0].programs.gp[0][5] {
     el_typ=ProgArg;
     el_def=0;
    };
+   meth_sig="void Cycle_Run()";
+   meth_desc=" compute cycle(s) of updating: netinput, inhibition, activations -- multiple cycles can be run depending on lthreads.n_cycles setting and whether multiple threads are actually being used -- see lthreads.n_threads_act";
   };
   NetUpdateView @[1] {
    desc="update network views if update_net_view == true";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="Net Update View";
+   pre_compile_code_string="Net Update View";
    network_var=$.projects[0].programs.gp[0][5].args[0]$;
    update_var=.projects[0].programs.gp[0][5].vars[0]$$;
   };
  };
  step_prog=NULL;
  step_n=1;
+ doc {
+  name="doc";
+  desc=;
+  web_doc=1;
+  wiki="emergent";
+  url="LeabraCycle";
+  full_url="https://grey.colorado.edu/emergent/index.php/LeabraCycle";
+  text_size=1;
+  text=;
+  html_text=;
+ };
 };

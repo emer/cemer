@@ -7013,10 +7013,10 @@ BpProject .projects["BpStd"] {
    doc {
     name="doc";
     desc=;
-    web_doc=0;
-    wiki=;
-    url="local";
-    full_url="local";
+    web_doc=1;
+    wiki="emergent";
+    url="Startup_program";
+    full_url="https://grey.colorado.edu/emergent/index.php/Startup_program";
     text_size=1;
     text=;
     html_text=;
@@ -12660,7 +12660,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0.04587935;
+     value 8 0=0.04502974;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {

@@ -1,74 +1,85 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 Program .projects[0].programs.gp[0][0] { 
-  ProgObjList @.objs = [0] {
-  };
+ UserDataItem_List @*(.user_data_) {
+  UserData_DocLink @[0] { };
+ };
 
-  ProgType_List @.types = [0] {
-  };
+ ProgObjList @.objs = [0] {
+ };
 
-  ProgVar_List @.args = [2] {
+ ProgType_List @.types = [0] {
+ };
+
+ ProgVar_List @.args = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
+
+ ProgVar_List @.vars = [3] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+  ProgVar @[2] { };
+ };
+
+ Function_List @.functions = [0] {
+ };
+
+ ProgEl_List @.init_code = [1] {
+  NetCounterInit @[0] { };
+ };
+
+ ProgEl_List @.prog_code = [4] {
+  LocalVars @[0] { 
+   ProgVar_List @.local_vars = [1] {
     ProgVar @[0] { };
-    ProgVar @[1] { };
+   };
   };
-
-  ProgVar_List @.vars = [3] {
-    ProgVar @[0] { };
-    ProgVar @[1] { };
-    ProgVar @[2] { };
-  };
-
-  Function_List @.functions = [0] {
-  };
-
-  ProgEl_List @.load_code = [0] {
-  };
-
-  ProgEl_List @.init_code = [1] {
-    NetCounterInit @[0] { };
-  };
-
-  ProgEl_List @.prog_code = [2] {
-    IfElse @[0] { 
-      ProgEl_List @.true_code = [1] {
-	NetCounterInit @[0] { };
-      };
-
-      ProgEl_List @.false_code = [1] {
-	MemberAssign @[0] { };
-      };
+  AssignExpr @[1] { };
+  MemberAssign @[2] { };
+  ForLoop @[3] { 
+   ProgEl_List @.loop_code = [2] {
+    ProgramCall @[0] { 
+     ProgArg_List @.prog_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
     };
-    WhileLoop @[1] { 
-      ProgEl_List @.loop_code = [2] {
-	ProgramCall @[0] { 
-	  ProgArg_List @.prog_args = [3] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	  };
-	};
-	NetCounterIncr @[1] { };
-      };
-    };
+    NetCounterIncr @[1] { };
+   };
   };
+ };
 };
 Program .projects[0].programs.gp[0][0] {
+ UserDataItem_List @*(.user_data_) {
+  name=;
+  el_typ=UserData_DocLink;
+  el_def=0;
+  UserData_DocLink @[0] {
+   name="DocLink";
+   doc=.projects[0].programs.gp[0][0].doc$$;
+  };
+ };
  name="SoBatch";
  short_nm="Batch";
  tags="So, Std";
  desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
- flags=;
+ flags=0;
+ stop_step_cond {
+  expr=;
+ };
  objs {
-  name=;
-  el_typ=taOBase;
+  name="objs";
+  el_typ=taNBase;
   el_def=0;
  };
  types {
-  name=;
-  el_typ=ProgType;
+  name="types";
+  el_typ=DynEnumType;
   el_def=0;
  };
  args {
-  name=;
+  name="args";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
@@ -77,7 +88,7 @@ Program .projects[0].programs.gp[0][0] {
    object_type=SoNetwork;
    object_val=.projects[0].networks[0]$$<SoNetwork,Network_0>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="network to operate on -- updates batch counter on network and passes it to train program";
    init_from=NULL;
@@ -88,64 +99,58 @@ Program .projects[0].programs.gp[0][0] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="datatable with training patterns -- not used by this program, but passed to train program";
    init_from=NULL;
   };
  };
  vars {
-  name=;
+  name="vars";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
    name="batch";
    var_type=T_Int;
    int_val=0;
-   objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="batch counter";
    init_from=NULL;
   };
   ProgVar @[1] {
-   name="init_batch";
-   var_type=T_Bool;
-   bool_val=1;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   name="batch_start";
+   var_type=T_Int;
+   int_val=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
-   desc="initialize batch counter at start of run -- turn off if using \"parallel batch\" mode to run different batches on different processes";
+   desc="batch number to start on";
    init_from=NULL;
   };
   ProgVar @[2] {
-   name="max_batch";
+   name="n_batches";
    var_type=T_Int;
    int_val=10;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
-   desc="maximum number of batch runs to perform";
+   desc="number of batches to run";
    init_from=NULL;
   };
  };
  functions {
-  name=;
+  name="functions";
   el_typ=Function;
   el_def=0;
  };
- load_code {
-  name=;
-  el_typ=ProgEl;
-  el_def=0;
- };
  init_code {
-  name=;
-  el_typ=NetCounterInit;
+  name="init_code";
+  el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
    desc="initializes local batch counter and batch field on network";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="Net Counter Init: batch";
+   pre_compile_code_string="Net Counter Init: batch";
    network_var=.projects[0].programs.gp[0][0].args[0]$$;
    local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$$;
    counter=Network::batch;
@@ -153,64 +158,76 @@ Program .projects[0].programs.gp[0][0] {
   };
  };
  prog_code {
-  name=;
-  el_typ=ProgEl;
+  name="prog_code";
+  el_typ=ProgCode;
   el_def=0;
-  IfElse @[0] {
+  LocalVars @[0] {
    desc=;
-   flags=;
-   cond {
-    expr="init_batch";
-   };
-   true_code {
-    name=;
-    el_typ=ProgEl;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="LocalVars (1 vars)";
+   pre_compile_code_string="LocalVars (1 vars)";
+   local_vars {
+    name="local_vars";
+    el_typ=ProgVar;
     el_def=0;
-    NetCounterInit @[0] {
-     desc="initializes local batch counter and batch field on network";
-     flags=;
-     network_var=$.projects[0].programs.gp[0][0].args[0]$;
-     local_ctr_var=$.projects[0].programs.gp[0][0].vars[0]$;
-     counter=Network::batch;
-     update_after=0;
-    };
-   };
-   false_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-    MemberAssign @[0] {
-     desc="just set directly to current batch value";
-     flags=;
-     obj=$.projects[0].programs.gp[0][0].args[0]$;
-     path="batch";
-     expr {
-      expr="batch";
-     };
-     update_after=0;
+    ProgVar @[0] {
+     name="i";
+     var_type=T_Int;
+     int_val=0;
+     flags=LOCAL_VAR|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
     };
    };
   };
-  WhileLoop @[1] {
-   desc="the main loop over training runs";
-   flags=;
+  AssignExpr @[1] {
+   desc="start at the start";
+   flags=CAN_REVERT_TO_CODE;
+   code_string="batch = batch_start";
+   pre_compile_code_string="batch = batch_start";
+   result_var=$.projects[0].programs.gp[0][0].vars[0]$;
+   expr {
+    expr="batch_start";
+   };
+  };
+  MemberAssign @[2] {
+   desc="update network";
+   flags=CAN_REVERT_TO_CODE;
+   code_string="network.batch = batch";
+   pre_compile_code_string="network.batch = batch";
+   obj=$.projects[0].programs.gp[0][0].args[0]$;
+   path="batch";
+   expr {
+    expr="batch";
+   };
+   update_after=0;
+  };
+  ForLoop @[3] {
+   desc="main loop over training runs";
+   flags=CAN_REVERT_TO_CODE;
+   code_string="for (i=0; i<n_batches; i++)";
+   pre_compile_code_string="for (i=0; i<n_batches; i++)";
    loop_code {
-    name=;
-    el_typ=ProgEl;
+    name="loop_code";
+    el_typ=ProgCode;
     el_def=0;
     ProgramCall @[0] {
      desc="run the training program -- sets the network and input_data args";
-     flags=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="SoTrain(network, input_data, true)";
+     pre_compile_code_string="SoTrain(network, input_data, true)";
      prog_args {
-      name=;
+      name="prog_args";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
-       arg_type=LeabraNetwork;
+       arg_type=SoNetwork;
        type="SoNetwork*";
        name="network";
        required=1;
        def_val=;
+       prev_expr="network";
        expr {
 	expr="network";
        };
@@ -221,6 +238,7 @@ Program .projects[0].programs.gp[0][0] {
        name="input_data";
        required=1;
        def_val=;
+       prev_expr="input_data";
        expr {
 	expr="input_data";
        };
@@ -231,6 +249,7 @@ Program .projects[0].programs.gp[0][0] {
        name="no_prompts";
        required=1;
        def_val=;
+       prev_expr="true";
        expr {
 	expr="true";
        };
@@ -241,18 +260,37 @@ Program .projects[0].programs.gp[0][0] {
     };
     NetCounterIncr @[1] {
      desc="increment the local batch counter and copy to network";
-     flags=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Net Counter Incr: batch";
+     pre_compile_code_string="Net Counter Incr: batch";
      network_var=$.projects[0].programs.gp[0][0].args[0]$;
      local_ctr_var=$.projects[0].programs.gp[0][0].vars[0]$;
      counter=Network::batch;
      update_after=0;
     };
    };
+   init {
+    expr="i=0";
+   };
    test {
-    expr="batch < max_batch";
+    expr="i<n_batches";
+   };
+   iter {
+    expr="i++";
    };
   };
  };
- step_prog=NULL;
+ step_prog=.projects[0].programs.gp[0][3]$$<Program,SoTrial>;
  step_n=1;
+ doc {
+  name="doc";
+  desc=;
+  web_doc=1;
+  wiki="emergent";
+  url="LeabraBatch";
+  full_url="https://grey.colorado.edu/emergent/index.php/LeabraBatch";
+  text_size=1;
+  text=;
+  html_text=;
+ };
 };

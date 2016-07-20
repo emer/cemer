@@ -698,7 +698,7 @@ Program_Group .projects[0].programs.gp[0] {
   };
   name="SoBatch";
   short_nm="Batch";
-  tags="Leabra, Std";
+  tags="So, Std";
   desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
   flags=0;
   stop_step_cond {
@@ -721,7 +721,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[0] {
     name="network";
     var_type=T_Object;
-    object_type=LeabraNetwork;
+    object_type=SoNetwork;
     object_val=.projects[0].networks[0]$$<SoNetwork,Network_0>;
     objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -916,15 +916,15 @@ Program_Group .projects[0].programs.gp[0] {
     };
    };
   };
-  step_prog=NULL;
+  step_prog=.projects[0].programs.gp[0][3]$$;
   step_n=1;
   doc {
    name="doc";
    desc=;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
+   web_doc=1;
+   wiki="emergent";
+   url="LeabraBatch";
+   full_url="https://grey.colorado.edu/emergent/index.php/LeabraBatch";
    text_size=1;
    text=;
    html_text=;
@@ -1878,15 +1878,15 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     meth_desc=" record the current time as the ending time, and compute difference as the time used";
    };
   };
-  step_prog=.projects[0].programs.gp[0][3]$$;
+  step_prog=$.projects[0].programs.gp[0][3]$;
   step_n=1;
   doc {
    name="doc";
    desc=;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
+   web_doc=1;
+   wiki="emergent";
+   url="LeabraTrain";
+   full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrain";
    text_size=1;
    text=;
    html_text=;
@@ -2297,10 +2297,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   doc {
    name="doc";
    desc=;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
+   web_doc=1;
+   wiki="emergent";
+   url="LeabraEpoch";
+   full_url="https://grey.colorado.edu/emergent/index.php/LeabraEpoch";
    text_size=1;
    text=;
    html_text=;
@@ -2511,10 +2511,10 @@ this program can be extended to do arbitrary things to generate data and apply i
   doc {
    name="doc";
    desc=;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
+   web_doc=1;
+   wiki="emergent";
+   url="BpTrial";
+   full_url="https://grey.colorado.edu/emergent/index.php/BpTrial";
    text_size=1;
    text=;
    html_text=;
@@ -2751,10 +2751,10 @@ this program can be extended to do arbitrary things to generate data and apply i
   doc {
    name="doc";
    desc=;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
+   web_doc=1;
+   wiki="emergent";
+   url="ApplyInputs";
+   full_url="https://grey.colorado.edu/emergent/index.php/ApplyInputs";
    text_size=1;
    text=;
    html_text=;
@@ -3250,10 +3250,10 @@ this program can be extended to do arbitrary things to generate data and apply i
   doc {
    name="doc";
    desc=;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
+   web_doc=1;
+   wiki="emergent";
+   url="Monitor_Data";
+   full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
    text_size=1;
    text=;
    html_text=;
@@ -3862,10 +3862,10 @@ this program can be extended to do arbitrary things to generate data and apply i
   doc {
    name="doc";
    desc=;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
+   web_doc=1;
+   wiki="emergent";
+   url="Monitor_Data";
+   full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
    text_size=1;
    text=;
    html_text=;
@@ -4183,10 +4183,10 @@ this program can be extended to do arbitrary things to generate data and apply i
   doc {
    name="doc";
    desc=;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
+   web_doc=1;
+   wiki="emergent";
+   url="SaveWeights";
+   full_url="https://grey.colorado.edu/emergent/index.php/SaveWeights";
    text_size=1;
    text=;
    html_text=;

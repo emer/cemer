@@ -1,82 +1,95 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
 Program .projects[0].programs.gp[0][3] { 
-  ProgObjList @.objs = [0] {
-  };
+ UserDataItem_List @*(.user_data_) {
+  UserData_DocLink @[0] { };
+ };
 
-  ProgType_List @.types = [0] {
-  };
+ ProgObjList @.objs = [0] {
+ };
 
-  ProgVar_List @.args = [2] {
-    ProgVar @[0] { };
-    ProgVar @[1] { };
-  };
+ ProgType_List @.types = [0] {
+ };
 
-  ProgVar_List @.vars = [2] {
-    ProgVar @[0] { };
-    ProgVar @[1] { };
-  };
+ ProgVar_List @.args = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
 
-  Function_List @.functions = [0] {
-  };
+ ProgVar_List @.vars = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
 
-  ProgEl_List @.load_code = [0] {
-  };
+ Function_List @.functions = [0] {
+ };
 
-  ProgEl_List @.init_code = [1] {
-    NetCounterInit @[0] { };
-  };
+ ProgEl_List @.init_code = [1] {
+  NetCounterInit @[0] { };
+ };
 
-  ProgEl_List @.prog_code = [6] {
-    NetCounterInit @[0] { };
-    MethodCall @[1] { 
-      ProgArg_List @.meth_args = [0] {
-      };
+ ProgEl_List @.prog_code = [6] {
+  NetCounterInit @[0] { };
+  MethodCall @[1] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+  WhileLoop @[2] { 
+   ProgEl_List @.loop_code = [3] {
+    ProgramCall @[0] { 
+     ProgArg_List @.prog_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
     };
-    WhileLoop @[2] { 
-      ProgEl_List @.loop_code = [3] {
-	ProgramCall @[0] { 
-	  ProgArg_List @.prog_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	NetCounterIncr @[1] { };
-	MethodCall @[2] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-      };
+    NetCounterIncr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [0] {
+     };
     };
-    MethodCall @[3] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-    };
-    ProgramCall @[4] { 
-      ProgArg_List @.prog_args = [1] {
-	ProgArg @[0] { };
-      };
-    };
-    NetUpdateView @[5] { };
+   };
   };
+  MethodCall @[3] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+  ProgramCall @[4] { 
+   ProgArg_List @.prog_args = [1] {
+    ProgArg @[0] { };
+   };
+  };
+  NetUpdateView @[5] { };
+ };
 };
 Program .projects[0].programs.gp[0][3] {
+ UserDataItem_List @*(.user_data_) {
+  name=;
+  el_typ=UserData_DocLink;
+  el_def=0;
+  UserData_DocLink @[0] {
+   name="DocLink";
+   doc=.projects[0].programs.gp[0][3].doc$$;
+  };
+ };
  name="CsTrial";
  short_nm="Trial";
  tags="Cs, Std";
  desc="Constraint Satisfaction processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
- flags=;
+ flags=0;
+ stop_step_cond {
+  expr=;
+ };
  objs {
-  name=;
-  el_typ=taOBase;
+  name="objs";
+  el_typ=taNBase;
   el_def=0;
  };
  types {
-  name=;
-  el_typ=ProgType;
+  name="types";
+  el_typ=DynEnumType;
   el_def=0;
  };
  args {
-  name=;
+  name="args";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
@@ -85,7 +98,7 @@ Program .projects[0].programs.gp[0][3] {
    object_type=CsNetwork;
    object_val=.projects[0].networks[0]$$<CsNetwork,Network_0>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="network to operate on -- typically set by higher-level calling programs";
    init_from=NULL;
@@ -96,22 +109,21 @@ Program .projects[0].programs.gp[0][3] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="datatable containing training input/output patterns";
    init_from=NULL;
   };
  };
  vars {
-  name=;
+  name="vars";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
    name="phase_no";
    var_type=T_Int;
    int_val=0;
-   objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
    init_from=NULL;
@@ -120,51 +132,51 @@ Program .projects[0].programs.gp[0][3] {
    name="update_net_view";
    var_type=T_Bool;
    bool_val=1;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="determines whether to update any network view displays after trial is completed";
    init_from=NULL;
   };
  };
  functions {
-  name=;
+  name="functions";
   el_typ=Function;
   el_def=0;
  };
- load_code {
-  name=;
-  el_typ=ProgEl;
-  el_def=0;
- };
  init_code {
-  name=;
-  el_typ=NetCounterInit;
+  name="init_code";
+  el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
    desc="initialize the local phase_no counter, and corresponding network one";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="Net Counter Init: phase_no";
+   pre_compile_code_string="Net Counter Init: phase_no";
    network_var=.projects[0].programs.gp[0][3].args[0]$$;
    local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$$;
-   counter=LeabraNetwork::phase_no;
+   counter=CsNetwork::phase_no;
    update_after=0;
   };
  };
  prog_code {
-  name=;
-  el_typ=MethodCall;
+  name="prog_code";
+  el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
    desc="initialize the local phase_no counter, and corresponding network one";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="Net Counter Init: phase_no";
+   pre_compile_code_string="Net Counter Init: phase_no";
    network_var=$.projects[0].programs.gp[0][3].args[0]$;
    local_ctr_var=$.projects[0].programs.gp[0][3].vars[0]$;
-   counter=LeabraNetwork::phase_no;
+   counter=CsNetwork::phase_no;
    update_after=0;
   };
   MethodCall @[1] {
    desc="initializes various counters at start of trial";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="network->Trial_Init()";
+   pre_compile_code_string="network->Trial_Init()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][3].args[0]$;
    method=CsNetwork::Trial_Init;
@@ -173,17 +185,23 @@ Program .projects[0].programs.gp[0][3] {
     el_typ=ProgArg;
     el_def=0;
    };
+   meth_sig="void Trial_Init()";
+   meth_desc=" initialize at start of trial: initializes activations and phase counters";
   };
   WhileLoop @[2] {
    desc="loop over phases of settling in the network";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="while (phase_no < network.phase_max)";
+   pre_compile_code_string="while (phase_no < network.phase_max)";
    loop_code {
     name=;
-    el_typ=ProgramCall;
+    el_typ=ProgCode;
     el_def=0;
     ProgramCall @[0] {
      desc="run the settle program (which iterates over cyles of network activation updating) for each phase";
-     flags=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="CsSettle(network, input_data)";
+     pre_compile_code_string="CsSettle(network, input_data)";
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -194,6 +212,7 @@ Program .projects[0].programs.gp[0][3] {
        name="network";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="network";
        };
@@ -204,6 +223,7 @@ Program .projects[0].programs.gp[0][3] {
        name="input_data";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="input_data";
        };
@@ -214,15 +234,19 @@ Program .projects[0].programs.gp[0][3] {
     };
     NetCounterIncr @[1] {
      desc="increment the phase number (also on network)";
-     flags=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="Net Counter Incr: phase_no";
+     pre_compile_code_string="Net Counter Incr: phase_no";
      network_var=$.projects[0].programs.gp[0][3].args[0]$;
      local_ctr_var=$.projects[0].programs.gp[0][3].vars[0]$;
-     counter=LeabraNetwork::phase_no;
+     counter=CsNetwork::phase_no;
      update_after=0;
     };
     MethodCall @[2] {
      desc="increments other phase state information to prepare for the next phase of settling";
-     flags=;
+     flags=CAN_REVERT_TO_CODE;
+     code_string="network->Trial_UpdatePhase()";
+     pre_compile_code_string="network->Trial_UpdatePhase()";
      result_var=NULL;
      obj=$.projects[0].programs.gp[0][3].args[0]$;
      method=CsNetwork::Trial_UpdatePhase;
@@ -231,6 +255,8 @@ Program .projects[0].programs.gp[0][3] {
       el_typ=ProgArg;
       el_def=0;
      };
+     meth_sig="void Trial_UpdatePhase()";
+     meth_desc=" update phase after one settle -- just sets phase to plus phase";
     };
    };
    test {
@@ -239,7 +265,9 @@ Program .projects[0].programs.gp[0][3] {
   };
   MethodCall @[3] {
    desc="after the trial is over, do final computations: Compute_dWt (learn weights), compute stats";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="network->Trial_Final()";
+   pre_compile_code_string="network->Trial_Final()";
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][3].args[0]$;
    method=CsNetwork::Trial_Final;
@@ -248,10 +276,14 @@ Program .projects[0].programs.gp[0][3] {
     el_typ=ProgArg;
     el_def=0;
    };
+   meth_sig="void Trial_Final()";
+   meth_desc=" at end of trial, calls Compute_dWt if not testing";
   };
   ProgramCall @[4] {
    desc="records data about the trial-level processing to a datatable for graphing/processing";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="CsTrialMonitor(network)";
+   pre_compile_code_string="CsTrialMonitor(network)";
    prog_args {
     name=;
     el_typ=ProgArg;
@@ -262,6 +294,7 @@ Program .projects[0].programs.gp[0][3] {
      name="network";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="network";
      };
@@ -272,11 +305,24 @@ Program .projects[0].programs.gp[0][3] {
   };
   NetUpdateView @[5] {
    desc="update the network view(s) (only if update_net_view is true)";
-   flags=;
+   flags=CAN_REVERT_TO_CODE;
+   code_string="Net Update View";
+   pre_compile_code_string="Net Update View";
    network_var=$.projects[0].programs.gp[0][3].args[0]$;
    update_var=.projects[0].programs.gp[0][3].vars[1]$$;
   };
  };
  step_prog=.projects[0].programs.gp[0][5]$$<Program,CsCycle>;
  step_n=1;
+ doc {
+  name="doc";
+  desc=;
+  web_doc=1;
+  wiki="emergent";
+  url="LeabraTrial";
+  full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrial";
+  text_size=1;
+  text=;
+  html_text=;
+ };
 };
