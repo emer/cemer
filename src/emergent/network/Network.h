@@ -337,8 +337,8 @@ public:
   int*          thrs_n_recv_cgps;       // #IGNORE total number of units * recv con groups per unit, per thread: array of int[n_thrs_built] of units * thrs_units_n_recv_cgps 
   int*          thrs_n_send_cgps;       // #IGNORE total number of units * send con groups per unit, per thread: array of int[n_thrs_built] of units * thrs_units_n_send_cgps 
 
-  char**        thrs_recv_cgp_mem; // #IGNORE memory allocation for ConGroup for all recv connection group objects, by thread -- array of char*[n_thrs_built], pointing to arrays of char[n_recv_cgps[thr_no] * con_group_size], containing the recv ConGroup processed by a given thread -- this is the primary memory allocation of recv ConGroups
-  char**        thrs_send_cgp_mem; // #IGNORE memory allocation for ConGroup for all send connection group objects, by thread -- array of char*[n_thrs_built], pointing to arrays of char[n_send_cgps[thr_no] * con_group_size], containing the send ConGroup processed by a given thread -- this is the primary memory allocation of send ConGroups
+  char**        thrs_recv_cgp_mem; // #IGNORE memory allocation for ConGroup for all recv connection group objects, by thread -- array of char*[n_thrs_built], pointing to arrays of char[thrs_n_recv_cgps[thr_no] * con_group_size], containing the recv ConGroup processed by a given thread -- this is the primary memory allocation of recv ConGroups
+  char**        thrs_send_cgp_mem; // #IGNORE memory allocation for ConGroup for all send connection group objects, by thread -- array of char*[n_thrs_built], pointing to arrays of char[thrs_n_send_cgps[thr_no] * con_group_size], containing the send ConGroup processed by a given thread -- this is the primary memory allocation of send ConGroups
   int**         thrs_recv_cgp_start; // #IGNORE starting indexes into thrs_recv_cgp_mem, per thread units (organized 1-to-1 with thrs_units*) -- array of int*[n_thrs_built], pointing to arrays of int[thrs_n_units[thr_no]], containing indexes into thrs_recv_cgp_mem for first recv gp for given unit -- contains 0 for units that have none 
   int**         thrs_send_cgp_start; // #IGNORE starting indexes into thrs_send_cgp_mem, per thread units (organized 1-to-1 with thrs_units*) -- array of int*[n_thrs_built], pointing to arrays of int[thrs_n_units[thr_no]], containing indexes into thrs_send_cgp_mem for send recv gp for given unit -- contains 0 for units that have none 
 
@@ -687,14 +687,26 @@ public:
     // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks
     virtual void  Connect_UpdtActives_Thr(int thr_no);
     // #IGNORE update the active flag status of all connections
+
+#if 0 // turn off when not in need for debugging    
     virtual bool CompareNetThrVal_int
       (Network* oth_net, const String& nm, const int our, const int their);
+    // #IGNORE
+    virtual bool CompareNetThrVal_int64
+      (Network* oth_net, const String& nm, const int64_t our, const int64_t their);
     // #IGNORE
     virtual bool CompareNetThrVal_ints
       (Network* oth_net, const String& nm, const int* our, const int* their, int n);
     // #IGNORE
+    virtual bool CompareNetThrVal_mem
+      (Network* oth_net, const String& nm, const char* our, const char* their, int n);
+    // #IGNORE
+    virtual bool CompareNetThrVal_memf
+      (Network* oth_net, const String& nm, const float* our, const float* their, int64_t n);
+    // #IGNORE
     virtual bool CompareNetThrVals(Network* oth_net);
     // Compare network threading values across networks -- to debug differences..
+#endif // CompareNetThrVals debugging -- turn off when not needed
     
   virtual void  UnBuild();
   // #BUTTON #CAT_Structure un-build the network -- remove all units and connections -- network configuration is much faster when operating on an un-built network

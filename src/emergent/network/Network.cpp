@@ -1458,10 +1458,22 @@ void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record, ConSpec* consp
   }
 }
 
+#if 0 // turn off when not in need for debugging
+
 bool Network::CompareNetThrVal_int
 (Network* oth_net, const String& nm, const int our, const int their) {
   if(our != their) {
-    taMisc::Info("CompareNetThrVals diff net:", name, "vs. oth_net:",
+    taMisc::Info("CompareNetThrVals int diff net:", name, "vs. oth_net:",
+                 oth_net->name, "var:", nm, "our: " + String(our) + "their:" + String(their));
+    return false;
+  }
+  return true;
+}
+
+bool Network::CompareNetThrVal_int64
+(Network* oth_net, const String& nm, const int64_t our, const int64_t their) {
+  if(our != their) {
+    taMisc::Info("CompareNetThrVals int64 diff net:", name, "vs. oth_net:",
                  oth_net->name, "var:", nm, "our: " + String(our) + "their:" + String(their));
     return false;
   }
@@ -1472,10 +1484,71 @@ bool Network::CompareNetThrVal_ints
 (Network* oth_net, const String& nm, const int* our, const int* their, int n) {
   int n_diff = 0;
   for(int i=0; i < n; i++) {
-    if(our[i] != their[i]) n_diff++;
+    if(our[i] != their[i]) {
+      taMisc::Info(String(i), "our:", String(our[i]), "their:", String(their[i]));
+      n_diff++;
+    }
   }
   if(n_diff > 0) {
-    taMisc::Info("CompareNetThrVals diff net:", name, "vs. oth_net:",
+    taMisc::Info("CompareNetThrVals ints diff net:", name, "vs. oth_net:",
+                 oth_net->name, "var:", nm, "n_diffs:", String(n_diff));
+    return false;
+  }
+  return true;
+}
+
+#define CNVcg(x) String("cg.") + #x, ocg->x, tcg->x
+
+bool Network::CompareNetThrVal_mem
+(Network* oth_net, const String& nm, const char* our, const char* their, int n) {
+
+  int n_cg = n / con_group_size; // this is only called for con group!
+  
+  int n_diff = 0;
+  for(int i=0; i < n_cg; i++) {
+    int idx = i * con_group_size;
+    ConGroup* ocg = (ConGroup*)(our + idx);
+    ConGroup* tcg = (ConGroup*)(their + idx);
+    if(!CompareNetThrVal_int(oth_net, CNVcg(size))) n_diff++;
+    if(!CompareNetThrVal_int(oth_net, CNVcg(vec_chunked_size))) n_diff++;
+    if(!CompareNetThrVal_int(oth_net, CNVcg(alloc_size))) n_diff++;
+    if(!CompareNetThrVal_int(oth_net, CNVcg(other_idx))) n_diff++;
+    if(!CompareNetThrVal_int(oth_net, CNVcg(share_idx))) n_diff++;
+    if(!CompareNetThrVal_int(oth_net, CNVcg(n_con_vars))) n_diff++;
+    if(!CompareNetThrVal_int(oth_net, CNVcg(own_flat_idx))) n_diff++;
+    if(!CompareNetThrVal_int(oth_net, CNVcg(own_thr_idx))) n_diff++;
+  }
+  if(n_diff > 0) {
+    taMisc::Info("CompareNetThrVals cg diff net:", name, "vs. oth_net:",
+                 oth_net->name, "var:", nm, "n_diffs:", String(n_diff));
+    return false;
+  }
+  return true;
+}
+
+bool Network::CompareNetThrVal_memf
+(Network* oth_net, const String& nm, const float* our, const float* their, int64_t n) {
+  int n_diff = 0;
+  if(nm.contains("recv")) {
+    for(int i=0; i < n; i++) {
+      if(our[i] != their[i]) { // fabs(our[i] - their[i]) > 1.0e-6f) {
+        // taMisc::Info(String(i), "our:", String(our[i]), "their:", String(their[i]));
+        n_diff++;
+      }
+    }
+  }
+  else {
+    int32_t* oint = (int32_t*)our;
+    int32_t* tint = (int32_t*)their;
+    for(int i=0; i < n; i++) {
+      if(oint[i] != tint[i]) {
+        // taMisc::Info(String(i), "our:", String(our[i]), "their:", String(their[i]));
+        n_diff++;
+      }
+    }
+  }
+  if(n_diff > 0) {
+    taMisc::Info("CompareNetThrVals mem diff net:", name, "vs. oth_net:",
                  oth_net->name, "var:", nm, "n_diffs:", String(n_diff));
     return false;
   }
@@ -1483,7 +1556,7 @@ bool Network::CompareNetThrVal_ints
 }
 
 #define CNV(x) #x, x, oth_net->x
-#define CNVi(x,i) (String)#x + "_" + #i, x[i], oth_net->x[i]
+#define CNVi(x,i) (String)#x + "_" + String(i), x[i], oth_net->x[i]
 
 bool Network::CompareNetThrVals(Network* oth_net) {
   bool thr_same = CompareNetThrVal_int(oth_net, CNV(n_thrs_built));
@@ -1498,15 +1571,48 @@ bool Network::CompareNetThrVals(Network* oth_net) {
   CompareNetThrVal_int(oth_net, CNV(n_send_cgps));
   CompareNetThrVal_int(oth_net, CNV(n_lay_stats));
   CompareNetThrVal_int(oth_net, CNV(n_lay_stats_vars));
-  CompareNetThrVal_ints(oth_net, CNV(units_thrs), n_units+1);
-  CompareNetThrVal_ints(oth_net, CNV(units_thr_un_idxs), n_units+1);
+  CompareNetThrVal_ints(oth_net, CNV(units_thrs), n_units_built);
+  CompareNetThrVal_ints(oth_net, CNV(units_thr_un_idxs), n_units_built);
   CompareNetThrVal_ints(oth_net, CNV(thrs_n_units), n_thrs_built);
+  CompareNetThrVal_ints(oth_net, CNV(units_n_recv_cgps), n_units_built);
+  CompareNetThrVal_ints(oth_net, CNV(units_n_send_cgps), n_units_built);
   
   for(int thr_no=0; thr_no < n_thrs_built; thr_no++) {
     CompareNetThrVal_int(oth_net, CNVi(thrs_n_units, thr_no));
+    CompareNetThrVal_ints(oth_net, CNVi(thrs_unit_idxs, thr_no), thrs_n_units[thr_no]);
+    CompareNetThrVal_ints(oth_net, CNVi(thrs_lay_unit_idxs, thr_no), n_layers_built*2);
+    CompareNetThrVal_ints(oth_net, CNVi(thrs_ungp_unit_idxs, thr_no), n_ungps_built*2);
+    CompareNetThrVal_int(oth_net, CNVi(thrs_n_recv_cgps, thr_no));
+    CompareNetThrVal_int(oth_net, CNVi(thrs_n_send_cgps, thr_no));
+    CompareNetThrVal_ints(oth_net, CNVi(thrs_units_n_recv_cgps, thr_no),
+                          thrs_n_units[thr_no]);
+    CompareNetThrVal_ints(oth_net, CNVi(thrs_units_n_send_cgps, thr_no),
+                          thrs_n_units[thr_no]);
+    CompareNetThrVal_ints(oth_net, CNVi(thrs_recv_cgp_start, thr_no),
+                          thrs_n_units[thr_no]);
+    CompareNetThrVal_ints(oth_net, CNVi(thrs_send_cgp_start, thr_no),
+                          thrs_n_units[thr_no]);
+    CompareNetThrVal_int(oth_net, CNVi(thrs_own_cons_max_size, thr_no));
+    CompareNetThrVal_int(oth_net, CNVi(thrs_own_cons_avg_size, thr_no));
+
+    CompareNetThrVal_int64(oth_net, CNVi(thrs_recv_cons_cnt, thr_no));
+    CompareNetThrVal_int64(oth_net, CNVi(thrs_send_cons_cnt, thr_no));
+
+    CompareNetThrVal_mem(oth_net, CNVi(thrs_recv_cgp_mem, thr_no),
+                         thrs_n_recv_cgps[thr_no] * con_group_size);
+    CompareNetThrVal_mem(oth_net, CNVi(thrs_send_cgp_mem, thr_no),
+                         thrs_n_send_cgps[thr_no] * con_group_size);
+
+    CompareNetThrVal_memf(oth_net, CNVi(thrs_recv_cons_mem, thr_no),
+                          thrs_recv_cons_cnt[thr_no]);
+    CompareNetThrVal_memf(oth_net, CNVi(thrs_send_cons_mem, thr_no),
+                          thrs_send_cons_cnt[thr_no]);
+
   }
   return true;
 }
+
+#endif // CompareNetThrVals debugging -- turn off when not needed
 
 #ifdef TA_GUI
 NetView* Network::NewView(T3Panel* fr) {
@@ -1988,7 +2094,6 @@ void Network::Compute_NetinAct() {
 }
 
 void Network::Compute_NetinAct_Thr(int thr_no) {
-  threads.SyncSpin(thr_no, 0);
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
     Layer* lay = ActiveLayer(li);
@@ -1999,9 +2104,7 @@ void Network::Compute_NetinAct_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       uv->unit_spec->Compute_NetinAct(uv, this, thr_no);
     }
-    //    threads.SyncSpin(thr_no, li % 3);   // need to sync for each layer!
-    threads.SyncSpin(thr_no, 1);
-    threads.SyncSpin(thr_no, 2); // double check
+    threads.SyncSpin(thr_no, li % 3);   // need to sync for each layer!
   }
 }
 

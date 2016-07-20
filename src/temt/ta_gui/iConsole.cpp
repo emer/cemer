@@ -121,6 +121,7 @@ void iConsole::InitHistory(QStringList& string_list) {
     QString command = string_list[i];
     history.append(command);
   }
+  historyIndex = history.size();
 }
 
 void iConsole::setFontNameSize(QString fnm, int sz) {
@@ -784,6 +785,8 @@ QString iConsole::interpretCommand(QString command, int *res) {
   historyIndex = history.size();
   
   // write history to file for reloading
+  // it is a bit excessive to save this every single command, OTOH there aren't many
+  // typically and time take is minimal and it can be useful to make sure they are all in
   String filename = taMisc::prefs_dir + PATH_SEP + "console_history";
   QFile history_file(filename);
   if (history_file.open(QIODevice::Append)) {

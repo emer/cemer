@@ -122,7 +122,7 @@ inline void ConSpec::Compute_Weights(ConGroup* cg, Network* net, int thr_no) {
 
 inline void ConSpec::B_Init_Weights(UnitVars* uv, Network* net, int thr_no) {
   C_Init_Weight_Rnd(uv->bias_wt, thr_no);
-  C_Init_dWt(uv->bias_dwt);
+  B_Init_dWt(uv, net, thr_no);  // user not expecting to have to init this -- call virtual
 }
 
 inline void ConSpec::B_Init_dWt(UnitVars* uv, Network* net, int thr_no) {
