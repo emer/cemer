@@ -174,7 +174,7 @@ Run Emergent Program
     Status OK No Result        ${output}
 
     ${command} =       Set Variable     {"command": "RunProgramAsync", "program": "${program}"}    
-    ${output} =        Run Command      ${command}       1500ms
+    ${output} =        Run Command      ${command}       2500ms
     Status OK No Result        ${output}
 
     :FOR   ${i}  IN RANGE      600
