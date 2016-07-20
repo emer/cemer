@@ -4660,6 +4660,7 @@ bool cssProgSpace::CheckNameConflicts() {
 }
 
 bool cssProgSpace::CheckNameConflictSpace(const cssSpace& sp) {
+  if(AmCmdProg()) return false; // don't check in command shell
   bool rval = false;
   for(int i=0; i<sp.size; i++) {
     cssEl* el = sp.FastEl(i);

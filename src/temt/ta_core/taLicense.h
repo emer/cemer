@@ -44,7 +44,7 @@ public:
   };
 
   StdLicense    license;   // select a standard license to use, or CUSTOM_LIC to enter custom license text
-  String        owner;          // legal name of copyright owner (e.g., Regents of University of xyz) -- will be filled in by license_owner in global preferences/options setting by default for new items
+  String        owner_name;     // #AKA_owner legal name of copyright owner (e.g., Regents of University of xyz) -- will be filled in by license_owner in global preferences/options setting by default for new items
   String        org;            // name of organization that actually created the content (e.g., MyLab at University of xyz) -- defaults to owner if left blank  -- will be filled in by license_org in global preferences/options setting by default for new items
   String        year;           // copyright year (can be a range)
   String        custom;         // #CONDSHOW_ON_license:CUSTOM_LIC custom license text

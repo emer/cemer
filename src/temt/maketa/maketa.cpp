@@ -246,11 +246,21 @@ bool MTA::AddMemberToCurClass(MemberDef* md) {
 
   MemberDef* curmd = cur_class->members.FindName(md->name);
   if(curmd) {
-    Warning(3, "Re-defining an existing member named:", md->name, "in class:",
-            cur_class->name,
-            " -- Assuming that it is within #ifdef __MAKETA__ and only updating comments");
-    cur_class->members.AddUniqNameNew(md);
-    md->AddOption("COMMENT_UPDATE_ONLY");
+    if(curmd->type == md->type) {
+      Warning(3, "Re-defining an existing member named:", md->name, "in class:",
+              cur_class->name,
+              " -- Assuming that it is within #ifdef __MAKETA__ and only updating comments");
+      cur_class->members.AddUniqNameNew(md);
+      md->AddOption("COMMENT_UPDATE_ONLY");
+    }
+    else {
+      Warning(0, "Re-defining an existing member named:", md->name, "in class:",
+              cur_class->name,
+              "with a different type:",
+              md->type->name,
+              "class of existing member:", md->GetOwnerType()->name,
+              "-- this is NOT a good idea -- please fix!");
+    }
   }
   else {
     cur_class->members.Add(md);

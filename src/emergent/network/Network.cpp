@@ -1458,6 +1458,56 @@ void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record, ConSpec* consp
   }
 }
 
+bool Network::CompareNetThrVal_int
+(Network* oth_net, const String& nm, const int our, const int their) {
+  if(our != their) {
+    taMisc::Info("CompareNetThrVals diff net:", name, "vs. oth_net:",
+                 oth_net->name, "var:", nm, "our: " + String(our) + "their:" + String(their));
+    return false;
+  }
+  return true;
+}
+
+bool Network::CompareNetThrVal_ints
+(Network* oth_net, const String& nm, const int* our, const int* their, int n) {
+  int n_diff = 0;
+  for(int i=0; i < n; i++) {
+    if(our[i] != their[i]) n_diff++;
+  }
+  if(n_diff > 0) {
+    taMisc::Info("CompareNetThrVals diff net:", name, "vs. oth_net:",
+                 oth_net->name, "var:", nm, "n_diffs:", String(n_diff));
+    return false;
+  }
+  return true;
+}
+
+#define CNV(x) #x, x, oth_net->x
+#define CNVi(x,i) (String)#x + "_" + #i, x[i], oth_net->x[i]
+
+bool Network::CompareNetThrVals(Network* oth_net) {
+  bool thr_same = CompareNetThrVal_int(oth_net, CNV(n_thrs_built));
+  if(!thr_same) return thr_same;
+  CompareNetThrVal_int(oth_net, CNV(con_group_size));
+  CompareNetThrVal_int(oth_net, CNV(unit_vars_size));
+  CompareNetThrVal_int(oth_net, CNV(n_units_built));
+  CompareNetThrVal_int(oth_net, CNV(n_layers_built));
+  CompareNetThrVal_int(oth_net, CNV(n_ungps_built));
+  CompareNetThrVal_int(oth_net, CNV(max_thr_n_units));
+  CompareNetThrVal_int(oth_net, CNV(n_recv_cgps));
+  CompareNetThrVal_int(oth_net, CNV(n_send_cgps));
+  CompareNetThrVal_int(oth_net, CNV(n_lay_stats));
+  CompareNetThrVal_int(oth_net, CNV(n_lay_stats_vars));
+  CompareNetThrVal_ints(oth_net, CNV(units_thrs), n_units+1);
+  CompareNetThrVal_ints(oth_net, CNV(units_thr_un_idxs), n_units+1);
+  CompareNetThrVal_ints(oth_net, CNV(thrs_n_units), n_thrs_built);
+  
+  for(int thr_no=0; thr_no < n_thrs_built; thr_no++) {
+    CompareNetThrVal_int(oth_net, CNVi(thrs_n_units, thr_no));
+  }
+  return true;
+}
+
 #ifdef TA_GUI
 NetView* Network::NewView(T3Panel* fr) {
   return NetView::New(this, fr);
@@ -1938,20 +1988,20 @@ void Network::Compute_NetinAct() {
 }
 
 void Network::Compute_NetinAct_Thr(int thr_no) {
+  threads.SyncSpin(thr_no, 0);
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
     Layer* lay = ActiveLayer(li);
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
-    bool has_targ = false;
     for(int ui = ust; ui < ued; ui++) {
       UnitVars* uv = ThrUnitVars(thr_no, ui);
       if(uv->lesioned()) continue;
       uv->unit_spec->Compute_NetinAct(uv, this, thr_no);
     }
     //    threads.SyncSpin(thr_no, li % 3);   // need to sync for each layer!
-    threads.SyncSpin(thr_no, 0);
-    threads.SyncSpin(thr_no, 1); // double check
+    threads.SyncSpin(thr_no, 1);
+    threads.SyncSpin(thr_no, 2); // double check
   }
 }
 

@@ -25,13 +25,13 @@ TA_BASEFUNS_CTORS_DEFN(taLicense);
 
 void taLicense::Initialize() {
   license = taMisc::license_def;
-  owner = taMisc::license_owner;
+  owner_name = taMisc::license_owner;
   org = taMisc::license_org;
   year = String(QDate::currentDate().year());
 }
 
 void taLicense::ViewLicense() {
-  lic_text = GetLicenseText(license, owner, year, org);
+  lic_text = GetLicenseText(license, owner_name, year, org);
   if(license == CUSTOM_LIC) lic_text += custom;
   TypeDef* td = GetTypeDef();
   MemberDef* md = td->members.FindName("lic_text");

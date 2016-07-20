@@ -687,7 +687,15 @@ public:
     // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks
     virtual void  Connect_UpdtActives_Thr(int thr_no);
     // #IGNORE update the active flag status of all connections
-
+    virtual bool CompareNetThrVal_int
+      (Network* oth_net, const String& nm, const int our, const int their);
+    // #IGNORE
+    virtual bool CompareNetThrVal_ints
+      (Network* oth_net, const String& nm, const int* our, const int* their, int n);
+    // #IGNORE
+    virtual bool CompareNetThrVals(Network* oth_net);
+    // Compare network threading values across networks -- to debug differences..
+    
   virtual void  UnBuild();
   // #BUTTON #CAT_Structure un-build the network -- remove all units and connections -- network configuration is much faster when operating on an un-built network
   
