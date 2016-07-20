@@ -2726,7 +2726,7 @@ LeabraProject .projects["LeabraFlex"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [4] {
+    ProgEl_List @.prog_code = [5] {
      MemberAssign @[0] { };
      MemberMethodCall @[1] { 
       ProgArg_List @.meth_args = [1] {
@@ -2738,6 +2738,10 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
      MethodCall @[3] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     MethodCall @[4] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
@@ -9712,10 +9716,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    doc {
     name="doc";
     desc=;
-    web_doc=0;
-    wiki=;
-    url="local";
-    full_url="local";
+    web_doc=1;
+    wiki="emergent";
+    url="Startup_program";
+    full_url="https://grey.colorado.edu/emergent/index.php/Startup_program";
     text_size=1;
     text=;
     html_text=;
@@ -10037,10 +10041,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraBatch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraBatch";
      text_size=1;
      text=;
      html_text=;
@@ -10437,10 +10441,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrain";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrain";
      text_size=1;
      text=;
      html_text=;
@@ -10760,10 +10764,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraFlex";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraFlex";
      text_size=1;
      text=;
      html_text=;
@@ -11983,7 +11987,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [6] 2;0;1;5;3;4;      };
+      [0]       };
       last_sort_spec {
        name="last_sort_spec";
        ops {
@@ -13137,10 +13141,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="ApplyInputs";
+     full_url="https://grey.colorado.edu/emergent/index.php/ApplyInputs";
      text_size=1;
      text=;
      html_text=;
@@ -18330,10 +18334,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrain";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrain";
      text_size=1;
      text=;
      html_text=;
@@ -18504,10 +18508,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrain";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrain";
      text_size=1;
      text=;
      html_text=;
@@ -18670,16 +18674,32 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       meth_sig="void ResetData()";
       meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
      };
+     MethodCall @[4] {
+      desc="added in 8.0: essential for param_seqs";
+      flags=NEW_EL|CAN_REVERT_TO_CODE;
+      code_string="network->Init_Epoch()";
+      pre_compile_code_string="network->Init_Epoch()";
+      result_var=NULL;
+      obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochStart"].args["network"]$;
+      method=Network::Init_Epoch;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Init_Epoch()";
+      meth_desc=" Initializes network state at the start of a new epoch -- updates parameters according to param_seq for example";
+     };
     };
     step_prog=NULL;
     step_n=1;
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraEpoch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraEpoch";
      text_size=1;
      text=;
      html_text=;
@@ -18858,10 +18878,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraEpoch";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraEpoch";
      text_size=1;
      text=;
      html_text=;
@@ -19010,10 +19030,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrial";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrial";
      text_size=1;
      text=;
      html_text=;
@@ -19121,10 +19141,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrial";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrial";
      text_size=1;
      text=;
      html_text=;
@@ -19280,10 +19300,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrial";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrial";
      text_size=1;
      text=;
      html_text=;
@@ -19410,10 +19430,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrial";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrial";
      text_size=1;
      text=;
      html_text=;
@@ -19637,10 +19657,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraTrial";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraTrial";
      text_size=1;
      text=;
      html_text=;
@@ -19888,10 +19908,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraQuarter";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraQuarter";
      text_size=1;
      text=;
      html_text=;
@@ -20011,10 +20031,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="LeabraCycle";
+     full_url="https://grey.colorado.edu/emergent/index.php/LeabraCycle";
      text_size=1;
      text=;
      html_text=;
@@ -20334,10 +20354,10 @@ also save specs.";
     doc {
      name="doc";
      desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
+     web_doc=1;
+     wiki="emergent";
+     url="SaveWeights";
+     full_url="https://grey.colorado.edu/emergent/index.php/SaveWeights";
      text_size=1;
      text=;
      html_text=;
@@ -22029,10 +22049,10 @@ also save specs.";
      doc {
       name="doc";
       desc=;
-      web_doc=0;
-      wiki=;
-      url="local";
-      full_url="local";
+      web_doc=1;
+      wiki="emergent";
+      url="Monitor_Data";
+      full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
       text_size=1;
       text=;
       html_text=;
@@ -23628,10 +23648,10 @@ and the testing data is updated.  The first epoch monitor should have all the it
      doc {
       name="doc";
       desc=;
-      web_doc=0;
-      wiki=;
-      url="local";
-      full_url="local";
+      web_doc=1;
+      wiki="emergent";
+      url="Monitor_Data";
+      full_url="https://grey.colorado.edu/emergent/index.php/Monitor_Data";
       text_size=1;
       text=;
       html_text=;
@@ -23651,7 +23671,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.001062699;
+     value 8 0=0.0005313496;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -23661,7 +23681,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9930924;
+     value 8 0=0.9925611;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
