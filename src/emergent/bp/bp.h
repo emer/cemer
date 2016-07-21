@@ -332,7 +332,7 @@ inline void BpConSpec::Compute_Weights(ConGroup* cg, Network* net, int thr_no) {
 }
 
 inline void BpConSpec::B_Init_dWt(UnitVars* uv, Network* net, int thr_no) {
-  C_Init_dWt(uv->bias_wt);
+  C_Init_dWt(uv->bias_dwt);
   ((BpUnitVars*)uv)->bias_pdw = 0.0f;
 }
 

@@ -550,7 +550,7 @@ private:
 ////////////////////////////////
 
 inline void CsConSpec::B_Init_dWt(UnitVars* u, Network* net, int thr_no) {
-  C_Init_dWt(u->bias_wt);
+  C_Init_dWt(u->bias_dwt);
   CsUnitVars* uv = (CsUnitVars*)u;
   uv->bias_pdw = 0.0f;
   uv->bias_dwt_agg = 0.0f;
