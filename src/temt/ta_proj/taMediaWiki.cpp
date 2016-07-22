@@ -78,8 +78,8 @@ bool taMediaWiki::CheckResponseError(const QString &xmlResponse) {
     ///Check if the actual XML document has an error during parsing
     if(reader.hasError()) {
       hasErrors = true;
-      taMisc::Error("MediaWiki Api call returned invalid XML");
-      taMisc::Warning(xmlResponse);
+      taMisc::Error("MediaWiki Api call returned invalid XML: " + xmlResponse);
+      //taMisc::Warning(xmlResponse);
       return hasErrors;
     }
     if (token == QXmlStreamReader::StartElement) {
@@ -681,57 +681,79 @@ bool taMediaWiki::QueryPagesByCategory(DataTable* results, const String& wiki_na
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
+  // Prepare the data table.
+  results->RemoveAllRows();
+  DataCol* pt_col = results->FindMakeCol("PageTitle", VT_STRING);
+  DataCol* pid_col = results->FindMakeCol("PageId", VT_INT);
+
+  
+  bool gotAllResults = false;
+  String continutationURL = "";
 
   // Build the request URL.
   // .../api.php?action=query&format=xml&list=categorymembers&cmtitle=Category:<category>&cmnamespace=0&cmtype=page|subcat&cmlimit=<max_results>
-  QUrl url(wikiUrl);
+  while (!gotAllResults) {
+    QUrl url(wikiUrl);
 #if (QT_VERSION >= 0x050000)
-  QUrlQuery urq;
-  urq.addQueryItem("action", "query");
-  urq.addQueryItem("format", "xml");
-  urq.addQueryItem("list", "categorymembers");
-  urq.addQueryItem("cmtitle", "Category:" + category);
-  if (name_space.empty()) { urq.addQueryItem("cmnamespace", "0"); }
-  else { urq.addQueryItem("cmnamespace", "0"); } // TODO: convert namespace string to appropriate namespace ID (int)
-  urq.addQueryItem("cmtype", "page|subcat");
-  if (max_results > 0) { urq.addQueryItem("cmlimit", QString::number(max_results)); }
-  url.setQuery(urq);
+    QUrlQuery urq;
+    urq.addQueryItem("action", "query");
+    urq.addQueryItem("format", "xml");
+    urq.addQueryItem("list", "categorymembers");
+    urq.addQueryItem("cmtitle", "Category:" + category);
+    if (name_space.empty()) { urq.addQueryItem("cmnamespace", "0"); }
+    else { urq.addQueryItem("cmnamespace", "0"); } // TODO: convert namespace string to appropriate namespace ID (int)
+    urq.addQueryItem("cmtype", "page|subcat");
+    if (max_results > 0) { urq.addQueryItem("cmlimit", QString::number(max_results)); }
+    if (!continutationURL.empty()) { urq.addQueryItem("cmcontinue",continutationURL);}
+  
+    url.setQuery(urq);
 #else
-  url.addQueryItem("action", "query");
-  url.addQueryItem("format", "xml");
-  url.addQueryItem("list", "categorymembers");
-  url.addQueryItem("cmtitle", "Category:" + category);
-  if (name_space.empty()) { url.addQueryItem("cmnamespace", "0"); }
-  else { url.addQueryItem("cmnamespace", "0"); } // TODO: convert namespace string to appropriate namespace ID (int)
-  url.addQueryItem("cmtype", "page|subcat");
-  if (max_results > 0) { url.addQueryItem("cmlimit", QString::number(max_results)); }
+    url.addQueryItem("action", "query");
+    url.addQueryItem("format", "xml");
+    url.addQueryItem("list", "categorymembers");
+    url.addQueryItem("cmtitle", "Category:" + category);
+    if (name_space.empty()) { url.addQueryItem("cmnamespace", "0"); }
+    else { url.addQueryItem("cmnamespace", "0"); } // TODO: convert namespace string to appropriate namespace ID (int)
+    url.addQueryItem("cmtype", "page|subcat");
+    if (max_results > 0) { url.addQueryItem("cmlimit", QString::number(max_results)); }
+    if (!continutationURL.empty()) { url.addQueryItem("cmcontinue",continutationURL);}
 #endif
 
-  // Make the network request.
-  // Note: The reply will be deleted when the request goes out of scope.
-  iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpGet(url)) {
+    // Make the network request.
+    // Note: The reply will be deleted when the request goes out of scope.
+    iSynchronousNetRequest request;
+    if (QNetworkReply *reply = request.httpGet(url)) {
 
-    // Prepare the data table.
-    results->RemoveAllRows();
-    DataCol* pt_col = results->FindMakeCol("PageTitle", VT_STRING);
-    DataCol* pid_col = results->FindMakeCol("PageId", VT_INT);
-
-    // For all <cm> elements in the XML, add the page title and page ID to the data table.
-    QXmlStreamReader reader(reply);
-    while (findNextElement(reader, "cm")) {
-      QXmlStreamAttributes attrs = reader.attributes();
-      String pt = attrs.value("title").toString();
-      int pid = attrs.value("pageid").toString().toInt();
-      results->AddBlankRow();
-      pt_col->SetVal(pt, -1);
-      pid_col->SetVal(pid, -1);
+      // For all <cm> elements in the XML, add the page title and page ID to the data table.
+      QString apiResponse(reply->readAll());
+      QXmlStreamReader reader(apiResponse);
+      while (findNextElement(reader, "cm")) {
+        QXmlStreamAttributes attrs = reader.attributes();
+        String pt = attrs.value("title").toString();
+        int pid = attrs.value("pageid").toString().toInt();
+        results->AddBlankRow();
+        pt_col->SetVal(pt, -1);
+        pid_col->SetVal(pid, -1);
+      }
+      if (reader.hasError()) {return false;}
+      // The way the findNextElement works, we will need to reparse the whole API response if we are looking
+      // for a new type of element. Not elegant, but given the sizes of API response, this should be acceptable inefficiency.
+      reader.clear();
+      reader.addData(apiResponse);
+      if (findNextElement(reader,"continue")) {
+        QXmlStreamAttributes attrs = reader.attributes();
+        continutationURL = attrs.value("cmcontinue").toString();
+        gotAllResults = false;
+        if (reader.hasError()) {return false;}
+      } else {
+        gotAllResults = true;
+        // Return true (success) as long as there were no errors in the XML.
+        return !reader.hasError();
+      }
+      
     }
-
-    // Return true (success) as long as there were no errors in the XML.
-    return !reader.hasError();
+    
   }
-
   return false;
 }
 
@@ -904,6 +926,7 @@ bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
     QString apiResponse(reply->readAll());
     if (CheckResponseError(apiResponse)) {
       taMisc::Error("Could not determine if page", page_name, "exists on", wiki_name, "wiki.");
+      taMisc::Warning("Tried to get information from: " + url.toString());
       return false;
     }
     QXmlStreamReader reader(apiResponse.toStdString().c_str());
