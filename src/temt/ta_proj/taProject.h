@@ -212,6 +212,7 @@ public:
   void                  SetSaveView(bool value);
   // #CAT_File determines whether or not the current view settings will be saved with the project
 
+  bool                  openPublishWeb(const String name, String wiki_name = "(default name)");
   virtual bool          PublishProjectOnWeb(const String &repositoryName);
   virtual bool          UpdateProjectOnWeb(const String &repositoryName);
   virtual bool          UploadFilesForProjectOnWeb(const String &repositoryName);

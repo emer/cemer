@@ -362,7 +362,7 @@ NamedURL        taMisc::wiki4_url;
 NamedURL        taMisc::wiki5_url;
 NamedURL        taMisc::wiki6_url;
 
-String  taMisc::pub_proj_page = "PublishedProjects";
+String  taMisc::pub_proj_page = "Category:PublishedProject";
 
 NameVar_PArray  taMisc::wikis;
 

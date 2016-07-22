@@ -572,6 +572,20 @@ int taProject::SaveAs(const String& fname) {
   return rval;
 }
 
+bool taProject::openPublishWeb(const String page_name, const String wiki_name) {
+  String proj_file = QDir::tempPath() + "/" + page_name + ".proj";
+  if (!taMediaWiki::FileExists(wiki_name, page_name + ".proj")) {
+    taMisc::Error("The project file " + page_name + " on the wiki " + wiki_name + " does not exist");
+    return false;
+  }
+  taMediaWiki::DownloadFile(wiki_name, page_name, proj_file );
+  QFileInfo fi(proj_file);
+  taBase* el = NULL;
+  tabMisc::root->projects.Load(proj_file, &el);
+  taMisc::Confirm("The project has been downloaded and stored in a temporary directory. Please resave project in an appropriate location.");
+  return true;
+}
+
 bool taProject::PublishProjectOnWeb(const String &repo_name)
 {
   if (GetFileName().empty()) {
