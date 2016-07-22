@@ -39,8 +39,7 @@ void ForLoop::Initialize() {
 void ForLoop::InitLinks() {
   inherited::InitLinks();
   InitLinks_taAuto(&TA_ForLoop);
-  if (taMisc::is_loading || taMisc::is_duplicating) return;
-  UpdateAfterEdit_impl();
+  // note: no need to call UAE here or anything -- indeed it is bad!
 }
 
 void ForLoop::UpdateAfterEdit_impl() {
@@ -49,7 +48,7 @@ void ForLoop::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying()) return;
-  if(init.expr == "_toolbox_tmp_") {
+  if(init.expr == "_toolbox_tmp_") { // special code-word for toolbox version
     init.expr = "i = 0";
     init.ParseExpr();
     if(!UpdateVarClashes()) {
@@ -215,7 +214,12 @@ bool ForLoop::CvtFmCode(const String& code) {
   String rest = cd.after(';');
   test.expr = trim(rest.before(';'));
   iter.expr = trim(rest.after(';'));
-  // NOW do our UAE -- will reparse and do everything good..
-  UpdateAfterEdit_impl();       // make local var
+  // NOW re-parse everything
+  init.ReParseExpr();
+  test.ReParseExpr();
+  iter.ReParseExpr();
+  UpdateVarClashes();
+  SigEmitUpdated();
+  // uae will be auto-called after this point, to update us
   return true;
 }
