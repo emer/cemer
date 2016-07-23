@@ -26,6 +26,7 @@ void Weights::Initialize() {
   save_with_proj = false;
   auto_load = false;
   quiet_load = false;
+  auto_init = false;
 }
 
 void Weights::UpdateAfterEdit_impl() {

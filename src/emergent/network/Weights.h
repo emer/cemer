@@ -36,6 +36,7 @@ public:
   bool          auto_load;      // #CONDSHOW_OFF_save_with_proj automatically load weights from file named in load_file -- this makes the project file smaller, but requires managing multiple different files
   bool          quiet_load;     // suppress warning messages when loading weights files into the network (not recommended!)
   String        load_file;      // #CONDSHOW_ON_auto_load name of file to load weights from for auto_load
+  bool          auto_init;      // #CONDSHOW_ON_save_with_proj||auto_load automatically initialize network weights with these weights whenever network is built -- only avail for save_with_proj or auto_load weights (for initial auto-build) -- first set of weights with this setting is actually used, if multiple
   String        wt_file;        // #HIDDEN the weights, encoded as a file
 
   virtual bool  HasWeights(bool err = true);

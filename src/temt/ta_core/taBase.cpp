@@ -2156,7 +2156,8 @@ void taBase::BatchUpdate(bool begin, bool struc) {
 }
 
 void taBase::SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) {
-  UpdateAfterEdit();
+  if(!isDestroying())
+    UpdateAfterEdit();
 }
 
 String& taBase::ListSigClients(String& strm, int indent) {

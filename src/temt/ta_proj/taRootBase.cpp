@@ -2393,10 +2393,12 @@ void taRootBase::SaveRecoverFileHandler(int err) {
   taMisc::Decode_Signal(err);
   cerr << endl;
 
-  taiMiscCore::BgRunKilled();
-  if (tabMisc::root) for (int i = 0; i < tabMisc::root->projects.size; ++i) {
-    taProject* prj = tabMisc::root->projects.FastEl(i);
-    prj->SaveRecoverFile();
+  taiMiscCore::BgRunKilled(); // saves weights in network, for emergent
+  if (tabMisc::root) {
+    for (int i = 0; i < tabMisc::root->projects.size; ++i) {
+      taProject* prj = tabMisc::root->projects.FastEl(i);
+      prj->SaveRecoverFile();
+    }
   }
 
 #ifdef TA_OS_WIN // MS CRT doesn't handle these signals...

@@ -149,7 +149,7 @@ int ProgExprBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
 }
 
 void ProgExprBase::SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) {
-  inherited::SmartRef_SigDestroying(ref, obj); // does UAE
+  inherited::SmartRef_SigDestroying(ref, obj); // does UAE, which does re-parse
 }
 
 void ProgExprBase::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
@@ -358,11 +358,18 @@ bool ProgExprBase::ParseExpr() {
 
   parse_prog->CompileCode(parse_expr);   // use css to do all the parsing!
 
-  for(int i=0;i<vars.size;i++)  {
+  for(int i=vars.size-1; i>=0; i--)  {
     ProgVarRef* vrf = vars.FastEl(i);
-    if(TestError((!vrf->ptr()), "ParseExpr", "vrf->ptr() == NULL -- this shouldn't happen -- report as a bug!")) {
-      ProgVar* var = (ProgVar*)vrf->ptr();
-      var->ResetParseStuff();
+    if(!vrf->ptr()) {
+      // anyone who is a bad ref is now a bad var -- not even clear how this happens!
+      if(var_names.size > i) {
+        String vnm = var_names[i];
+        bad_vars.Add(vnm);
+      }
+      vars.RemoveIdx(i);        // in any case, get rid of it from our list!
+    }
+    else {
+      vrf->ptr()->ResetParseStuff(); // needed to relinquish temps, plug leaks
     }
   }
   // get the rest
