@@ -1496,12 +1496,17 @@ bool taMediaWiki::PublishItemOnWeb(const String& publish_type, const String& nam
   String item_filename = "File:" + fname.after('/', -1);
   
   if (taMediaWiki::IsPublished(repo_name, item_filename)) {
-    int choice = taMisc::Choice("The " + publish_type  + " " + name + " is already published on  wiki \"" + repo_name + ".\" Would you like to upload a new version?", "Upload", "Cancel");
-    if (choice == 0) {
-      return UpdateItemOnWeb(publish_type, name, fname, repo_name, proj, tags);
-    }
-    else {
-      return false;
+    if (taMediaWiki::IsPublished(repo_name, name)) {
+      int choice = taMisc::Choice("The " + publish_type  + " " + name + " is already published on  wiki \"" + repo_name + ".\" Would you like to upload a new version?", "Upload", "Cancel");
+      if (choice == 0) {
+        return UpdateItemOnWeb(publish_type, name, fname, repo_name, proj, tags);
+      }
+      else {
+        return false;
+      }
+    } else {
+        //The project file has been uploaded previously, but not with the publish to web feature.
+        //Fall through, as we still need to create the new project page and link it with the file
     }
   }
   
