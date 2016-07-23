@@ -601,7 +601,7 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
   if (GetFileName().empty()) { // was the project really saved?
     return false;
   }
-  return taMediaWiki::PublishItemOnWeb("Project", this->name, GetFileName(), repo_name, this);
+  return taMediaWiki::PublishItemOnWeb("Project", this->name, GetFileName(), repo_name, this, tags);
 }
 
 bool taProject::UpdateProjectOnWeb(const String &repo_name) {

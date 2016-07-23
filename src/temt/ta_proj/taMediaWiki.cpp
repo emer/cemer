@@ -1534,7 +1534,11 @@ bool taMediaWiki::PublishItemOnWeb(const String& publish_type, const String& nam
     else {
       dialog.SetTags(QString("comma separated, please"));
     }
-    //dialog.SetVersion((this->version.GetString().toQString()));
+    if (publish_type == "Project") {
+      dialog.SetVersion(proj->version.GetString().toQString());
+    } else {
+      dialog.SetVersion("1.0");
+    }
     if (dialog.exec()) {
       // User clicked OK.
       page_name = String(name); // needed for call to create the taDoc
@@ -1588,7 +1592,10 @@ bool taMediaWiki::UpdateItemOnWeb(const String& publish_type, const String& name
   // just project name and version for already published project
   iDialogPublishDocs dialog(repo_name, name, false, publish_type); // false = update
   dialog.SetName((name.toQString()));
-  //dialog.SetVersion((this->version.GetString().toQString()));
+  if (publish_type == "Project") {
+      dialog.SetVersion(proj->version.GetString().toQString());
+  }
+  
   QString version;
   if (dialog.exec()) {
     version = dialog.GetVersion();
