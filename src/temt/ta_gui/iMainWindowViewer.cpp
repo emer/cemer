@@ -64,7 +64,7 @@
 #include <taDataProc>
 #include <taDataAnal>
 #include <taDataGen>
-#include <taWikiURL>
+#include <taWikiSpec>
 
 #include <QFileInfo>
 #include <QUrl>

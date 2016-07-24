@@ -29,7 +29,7 @@
 // member includes:
 #include <taProjVersion>
 #include <taLicense>
-#include <taWikiURL>
+#include <taWikiSpec>
 #include <taBase_Group>
 #include <Doc_Group>
 #include <Wizard_Group>
@@ -86,7 +86,7 @@ public:
   String                email;
   // email address for comments, questions about the project - typically the author's email address - by default the one saved in emergent preferences
   taLicense             license; // license for this project -- to be determined by the original creator of the project -- if this is not you, then you must abide by the constraints of the original license, if specified -- do ViewLicense button to see the applicable license information for this project
-  taWikiURL             wiki_url; // url to synchronize project to/from wiki -- see taMisc::wiki_url for base url in case of relative location
+  taWikiSpec            wiki; // wiki info, for projects that have been saved to a wiki
   Doc_Group             docs; // documents, typically linked to other objects
   Wizard_Group          wizards; // Wizards for automatically configuring simulation objects
   ControlPanel_Group    ctrl_panels;  // #AKA_edits special edit dialogs for selected elements
@@ -213,9 +213,9 @@ public:
   // #CAT_File determines whether or not the current view settings will be saved with the project
 
   bool                  openPublishWeb(const String name, String wiki_name = "(default name)");
-  virtual bool          PublishProjectOnWeb(const String &repositoryName);
-  virtual bool          UpdateProjectOnWeb(const String &repositoryName);
-  virtual bool          UploadFilesForProjectOnWeb(const String &repositoryName);
+  virtual bool          PublishProjectOnWeb(const String& wiki_name);
+  virtual bool          UpdateProjectOnWeb(const String& wiki_name);
+  virtual bool          UploadFilesForProjectOnWeb(const String& wiki_name);
 
   int                   Load(const String& fname="", taBase** loaded_obj_ptr = NULL) override;
   virtual void          OpenProjectLog();

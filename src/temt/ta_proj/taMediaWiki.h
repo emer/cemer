@@ -22,7 +22,6 @@
 
 // parent includes:
 #include <taNBase>
-#include <taProjPubInfo>
 
 // member includes:
 
@@ -146,21 +145,20 @@ public:
   static QByteArray GetEditToken(const String& wiki_name);
   //#IGNORE  #CAT_Wiki Return a String containing an unencoded edit token for the wiki (need to percent-encode this to make post requests to the API directly through a URL query) -- on failure, return an empty String
 
-  static bool   PublishProject(taProjPubInfo* pub_info);
-  // #CAT_Wiki Create/edit the wiki page for this project with given content and categories -- if a project filename is specified, upload the project file and post a link to it on the project's wiki page -- returns true if all steps were completed successfully
-  
   static bool   PubProjPagesInstalled(const String& wiki_name);
   //  #CAT_Wiki Are the pages that support the PublishProject featured installed on this wiki? Actually only checks for one crucial page!
 
   static bool PubProgPagesInstalled(const String& wiki_name);
   //  #CAT_Wiki Are the pages that support the PublishProgram featured installed on this wiki? Actually only checks for one crucial page!
 
-  static bool PublishItem(taProjPubInfo* pub_info, String publish_type);
-  // Common code to publish both project and program
+  static bool PublishItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& wiki_name, const taProject* proj, String& tags, String& desc, String& page_prefix);
+  // main interface for publishing an item on a wiki -- prompts user for updated info of items passed -- note that tags, desc, and page_prefix will be updated by user input in the publish dialog, and should be applied back to the object upon successful completion
+  static bool PublishItem_impl(const String& publish_type, const String& page_name, const String& name, const String& fname, const String& wiki_name, const String& tags, const String& desc, const String& version, const String& author, const String& email);
+  // #IGNORE actually publish the item 
   
-  static bool PublishItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& repo_name, const taProject * proj, const String& tags = "");
 
-  static bool UpdateItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& repo_name, const taProject * proj, const String& tags = "");
+  static bool UpdateItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& wiki_name, const taProject* proj);
+  // main interface for updating an item on a wiki
 
   TA_BASEFUNS_NOCOPY(taMediaWiki);
 private:

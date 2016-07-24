@@ -813,6 +813,8 @@ public:
     // #IGNORE
     virtual void Init_Weights_Layer();
     // #CAT_Learning call layer-level init weights functions -- after all unit-level inits
+    virtual void Init_Weights_AutoLoad();
+    // #CAT_Learning auto-load weights from Weights object, if it has auto_load set..
 
   virtual void  Init_Metrics();
   // #CAT_Statistic this is an omnibus guy that initializes every metric: Counters, Stats, and Timers

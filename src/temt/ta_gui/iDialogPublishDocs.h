@@ -35,13 +35,14 @@ class TA_API iDialogPublishDocs : public iDialog {
   Q_OBJECT
   INHERITED(iDialog)
 public:
-  iDialogPublishDocs(const char *repo_name, const char *proj_name, bool new_pub, const char *publish_type);
+  iDialogPublishDocs(const QString& repo_name, const QString& proj_name, bool new_pub, const QString& publish_type);
   QString     GetName() const;
   QString     GetAuthor() const;
   QString     GetEmail() const;
   QString     GetDesc() const;
   QString     GetTags() const;
   QString     GetVersion() const;
+  QString     GetPrefix() const;
   bool        GetUploadChoice() const;
   
   void        SetName(const QString& name);
@@ -50,6 +51,7 @@ public:
   void        SetDesc(const QString& desc);
   void        SetTags(const QString& tags);
   void        SetVersion(const QString& tags);
+  void        SetPrefix(const QString& prefix);
 
 private:
   bool        event(QEvent *event) override;
@@ -61,6 +63,7 @@ private:
   QTextEdit*  descEdit;
   QLineEdit*  tagsEdit;
   QLineEdit*  versionEdit;
+  QLineEdit*  prefixEdit;
   QStatusBar* statusBar;
   QCheckBox*  upload_project;
 };

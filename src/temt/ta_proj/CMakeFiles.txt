@@ -10,7 +10,7 @@
 
 # headers that need maketa run on them, but not moc
 set(ta_proj_HEADS_MAKETA_NOMOC
-  taWikiURL.h
+  taWikiSpec.h
 
   ControlPanelItem.h
   EditParamSearch.h
@@ -55,8 +55,7 @@ set(ta_proj_HEADS_MAKETA_NOMOC
   taProject.h
   Project_Group.h
   CssProject.h
-  taProjPubInfo.h
-
+  
   PluginWizard.h
   TestWizard.h
   StartupWizard.h
@@ -113,7 +112,7 @@ set(ta_proj_HEADS
 
 # NOTE: do NOT include .moc files -- auto generated
 set(ta_proj_SRCS
-  taWikiURL.cpp
+  taWikiSpec.cpp
 
   ControlPanelItem.cpp
   EditParamSearch.cpp
@@ -159,8 +158,7 @@ set(ta_proj_SRCS
   taProject.cpp
   Project_Group.cpp
   CssProject.cpp
-  taProjPubInfo.cpp
-
+  
   PluginWizard.cpp
   TestWizard.cpp
   StartupWizard.cpp

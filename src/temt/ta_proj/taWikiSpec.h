@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taProjPubInfo_h
-#define taProjPubInfo_h 1
+#ifndef taWikiSpec_h
+#define taWikiSpec_h 1
 
 // parent includes:
 #include <taOBase>
@@ -23,26 +23,22 @@
 
 // declare all other types mentioned but not required to include:
 
-taTypeDef_Of(taProjPubInfo);
 
-class TA_API taProjPubInfo : public taOBase {
-  // <describe here in full detail in one extended line comment>
+taTypeDef_Of(taWikiSpec);
+
+class TA_API taWikiSpec: public taOBase {
+  // ##INLINE ##NO_TOKENS wiki URL location information -- include in objects that can be sync'd with a wiki -- relative wiki links
 INHERITED(taOBase)
 public:
-  String              wiki_name;
-  String              page_name;
-  String              proj_name;
-  String              proj_filename;
-  String              proj_author;
-  String              proj_email;
-  String              proj_desc;
-  String              proj_version;
-  String              proj_keywords;
-  
-  TA_SIMPLE_BASEFUNS(taProjPubInfo);
+  String        wiki;           // name of a wiki, as specified in global preferences, where this object was last saved
+  String        page_prefix;    // prefix to insert in front of object name to get the full wiki page name to save / load this object to / from -- by default it is just the name of the object directly
+
+  String        GetURL();       // #CAT_Wiki gets the full url of the wiki, based on wiki name, looking up in the preferences in taMisc
+
+  TA_SIMPLE_BASEFUNS(taWikiSpec);
 private:
-  void Initialize()  { };
-  void Destroy()     { };
+  void Initialize();
+  void Destroy() {}
 };
 
-#endif // taProjPubInfo_h
+#endif // taWikiSpec_h

@@ -1810,6 +1810,9 @@ void Network::Init_Weights() {
 
   Init_Acts();                  // also re-init state at this point..
   Init_Metrics();
+
+  Init_Weights_AutoLoad();
+
   UpdateAllViews();
 
   SendWeightsToGPU();
@@ -1925,6 +1928,16 @@ void Network::Init_Weights_Layer() {
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->Init_Weights_Layer(this);
+  }
+}
+
+void Network::Init_Weights_AutoLoad() {
+  for(int i=0; i < weights.size; i++) {
+    Weights* wts = weights[i];
+    if(wts->auto_load && wts->HasWeights(false)) {
+      wts->WeightsToNet();
+      break;
+    }
   }
 }
 

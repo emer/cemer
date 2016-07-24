@@ -13,7 +13,22 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taProjPubInfo.h"
+#include "taWikiSpec.h"
+#include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(taProjPubInfo);
+TA_BASEFUNS_CTORS_DEFN(taWikiSpec);
 
+void taWikiSpec::Initialize() {
+
+}
+
+String taWikiSpec::GetURL() {
+  if(wiki.nonempty()) {
+    String wiki_url = taMisc::GetWikiURL(wiki, true); // true = add index.php/
+    if(TestError(wiki_url.empty(), "GetURL", "wiki named:", wiki,
+                 "not found in global preferences/options under wiki_url settings"))
+      return _nilString;
+    return wiki_url;
+  }
+  return _nilString;
+}

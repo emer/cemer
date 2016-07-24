@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <taMisc>
 #include <taProject>
+#include <iHelpBrowser>
 
 #include <QFile>
 #include <QDir>
@@ -297,7 +298,7 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
   // Get the custom destination file name, if the user has specified one.
   String dst_filename;
   if (wiki_file_name.empty()) {
-    dst_filename = local_file_name.after('/', -1);
+    dst_filename = taMisc::GetFileFmPath(local_file_name);
   }
   else {
     dst_filename = wiki_file_name;
@@ -329,7 +330,7 @@ bool taMediaWiki::UploadFileAndLink(const String& wiki_name, const String& proj_
   proceed = UploadFile(wiki_name, local_file_name, new_revision, wiki_file_name);
 
   if (proceed) {
-    String filename_only = local_file_name.after('/', -1);
+    String filename_only = taMisc::GetFileFmPath(local_file_name);
     proceed = LinkFile(filename_only, wiki_name, proj_name);  // link the file to the project page
     AppendFileType(wiki_name, filename_only, "other");  // "other" means not a .proj file - we could add .wts, .dat etc
   }
@@ -1449,57 +1450,54 @@ QByteArray taMediaWiki::GetEditToken(const String& wiki_name) {
   return QByteArray(_nilString.chars());
 }
 
-bool taMediaWiki::PublishProject(taProjPubInfo* pub_info) {
-  return PublishItem(pub_info, "Project");
-}
-
-bool taMediaWiki::PublishItem(taProjPubInfo* pub_info, String publish_type) {
+bool taMediaWiki::PublishItem_impl(const String& publish_type, const String& page_name, const String& name, const String& fname, const String& wiki_name, const String& tags, const String& desc, const String& version, const String& author, const String& email) {
   String proj_category = "Published" + publish_type;
   String first_pub = String(QDate::currentDate().toString(Qt::TextDate));
   String emer_version = taMisc::version;  // use the version currently running
   
-  String page_content = "{{Published" + publish_type + "|name=" + pub_info->proj_name + "|emer_proj_overview=" + pub_info->proj_desc + "|EmerProjAuthor = " + pub_info->proj_author + "|EmerProjEmail = " + pub_info->proj_email  + "|EmerProjFirstPub = " + first_pub + "|EmerProjKeyword = " + pub_info->proj_keywords + "}}";
+  String page_content = "{{Published" + publish_type + "|name=" + name + "|emer_proj_overview=" + desc + "|EmerProjAuthor = " + author + "|EmerProjEmail = " + email  + "|EmerProjFirstPub = " + first_pub + "|EmerProjKeyword = " + tags + "}}";
   
-  bool page_created = CreatePage(pub_info->wiki_name, pub_info->page_name, page_content, proj_category);
+  bool page_created = CreatePage(wiki_name, page_name, page_content, proj_category);
   if (!page_created)
     return false;
   
   // If project filename empty, the user does not want to upload the project file
-  if (!pub_info->proj_filename.empty()) {
+  if (!fname.empty()) {
     String filename_only;  // no path
-    bool loaded_and_linked = UploadFile(pub_info->wiki_name, pub_info->proj_filename, "");
+    bool loaded_and_linked = UploadFile(wiki_name, fname, "");
     if (loaded_and_linked) {
-      filename_only = pub_info->proj_filename.after('/', -1);
-      loaded_and_linked = LinkFile(filename_only, pub_info->wiki_name, pub_info->proj_name);  // link the file to the project page
+      filename_only = taMisc::GetFileFmPath(fname);
+      loaded_and_linked = LinkFile(filename_only, wiki_name, page_name);  // link the file to the project page
     }
     if (loaded_and_linked) {
-      AppendVersionInfo(pub_info->wiki_name, filename_only, pub_info->proj_version, emer_version);
-      AppendFileType(pub_info->wiki_name, filename_only, publish_type);
+      AppendVersionInfo(wiki_name, filename_only, version, emer_version);
+      AppendFileType(wiki_name, filename_only, publish_type);
     }
     else {
-      taMisc::Error(publish_type + " page created BUT upload of " + publish_type + " file or linking of uploaded " + publish_type + " file has failed ", pub_info->wiki_name, "wiki");
+      taMisc::Error(publish_type + " page created BUT upload of " + publish_type + " file or linking of uploaded " + publish_type + " file has failed ", wiki_name, "wiki");
     }
   }
   return true; // return true if item page created - even if upload of item file fails
 }
 
-bool taMediaWiki::PublishItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& repo_name, const taProject * proj, const String& tags)
+bool taMediaWiki::PublishItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& wiki_name, const taProject * proj, String& tags, String& desc, String& page_prefix)
 {
   // Is pub to program supported on this wiki?
   
-  if (!PageExists(repo_name, "Category:Published" + publish_type)) {
-    taMisc::Error("The publish " + publish_type + " feature requires the installation of some pages on your wiki. Your wiki administrator can find the installation instructions at ......");
+  if (!PageExists(wiki_name, "Category:Published" + publish_type)) {
+    taMisc::Error("The publish " + publish_type + " feature requires the installation of some pages on your wiki. Your wiki administrator can find the installation instructions at: https://grey.colorado.edu/emergent/index.php/Publish_to_web_implementation -- you will be taken there now.");
+iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_to_web_implementation");
     return false;
   }
   
   // First check to make sure the page doesn't already exist.
-  String item_filename = "File:" + fname.after('/', -1);
+  String item_filename = "File:" + taMisc::GetFileFmPath(fname);
   
-  if (taMediaWiki::IsPublished(repo_name, item_filename)) {
-    if (taMediaWiki::IsPublished(repo_name, name)) {
-      int choice = taMisc::Choice("The " + publish_type  + " " + name + " is already published on  wiki \"" + repo_name + ".\" Would you like to upload a new version?", "Upload", "Cancel");
+  if (taMediaWiki::IsPublished(wiki_name, item_filename)) {
+    if (taMediaWiki::IsPublished(wiki_name, name)) {
+      int choice = taMisc::Choice("The " + publish_type  + " " + name + " is already published on  wiki \"" + wiki_name + ".\" Would you like to upload a new version?", "Upload", "Cancel");
       if (choice == 0) {
-        return UpdateItemOnWeb(publish_type, name, fname, repo_name, proj, tags);
+        return UpdateItemOnWeb(publish_type, name, fname, wiki_name, proj);
       }
       else {
         return false;
@@ -1510,15 +1508,15 @@ bool taMediaWiki::PublishItemOnWeb(const String& publish_type, const String& nam
     }
   }
   
-  String username = taMediaWiki::GetLoggedInUsername(repo_name);
+  String username = taMediaWiki::GetLoggedInUsername(wiki_name);
   
   // TODO - if username not empty ask if they want to stay logged in under that name
   bool was_published = false;
   String page_name;
   
-  bool logged_in = taMediaWiki::Login(repo_name, username);
+  bool logged_in = taMediaWiki::Login(wiki_name, username);
   if (logged_in) {
-    iDialogPublishDocs dialog(repo_name, name, true, publish_type);
+    iDialogPublishDocs dialog(wiki_name, name, true, publish_type);
     dialog.SetName(name.toQString());
     if (!proj->author.empty()) {
       dialog.SetAuthor((proj->author.toQString()));
@@ -1541,12 +1539,14 @@ bool taMediaWiki::PublishItemOnWeb(const String& publish_type, const String& nam
     }
     if (publish_type == "Project") {
       dialog.SetVersion(proj->version.GetString().toQString());
+      dialog.SetPrefix(page_prefix);
     } else {
       dialog.SetVersion("1.0");
     }
     if (dialog.exec()) {
       // User clicked OK.
-      page_name = String(name); // needed for call to create the taDoc
+      page_prefix = dialog.GetPrefix();
+      page_name = page_prefix + String(name); // needed for call to create the taDoc
       QString author = dialog.GetAuthor();
       if (author == "Set default in preferences.") {
         author = "";
@@ -1555,47 +1555,37 @@ bool taMediaWiki::PublishItemOnWeb(const String& publish_type, const String& nam
       if (email == "Set default in preferences.") {
         email = "";
       }
-      QString desc = dialog.GetDesc();
-      QString keywords = dialog.GetTags();
-      if (keywords == "comma separated, please") {
-        keywords = "";
+      desc = dialog.GetDesc();
+      tags = dialog.GetTags();
+      if (tags == "comma separated, please") {
+        tags = "";
       }
       QString version = dialog.GetVersion();
       //      bool upload = dialog.GetUploadChoice();
       
-      taProjPubInfo* pub_info = new taProjPubInfo();
-      pub_info->wiki_name = repo_name;
-      pub_info->page_name = page_name;
-      pub_info->proj_name = name;
-      pub_info->proj_version = version;
-      pub_info->proj_filename = fname;
-      pub_info->proj_author = author;
-      pub_info->proj_email = email;
-      pub_info->proj_desc = desc;
-      pub_info->proj_keywords = keywords;
-      was_published = taMediaWiki::PublishItem(pub_info,publish_type);
+      was_published = taMediaWiki::PublishItem_impl(publish_type, page_name, name, fname, wiki_name, tags, desc, version, author, email);
     }
   }
   return was_published;
 }
 
-bool taMediaWiki::UpdateItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& repo_name, const taProject * proj, const String& tags) {
-  String proj_filename_only = fname.after('/', -1);
+bool taMediaWiki::UpdateItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& wiki_name, const taProject * proj) {
+  String proj_filename_only = taMisc::GetFileFmPath(fname);
   
   String emer_version = taMisc::version;
-  if (!taMediaWiki::IsPublished(repo_name, name)) {
-    taMisc::Error(publish_type + " named \"" + name + "\" not found on wiki \"" + repo_name + "\"");
+  if (!taMediaWiki::IsPublished(wiki_name, name)) {
+    taMisc::Error(publish_type + " named \"" + name + "\" not found on wiki \"" + wiki_name + "\"");
     return false;
   }
   
-  String username = taMediaWiki::GetLoggedInUsername(repo_name);
-  bool logged_in = taMediaWiki::Login(repo_name, username);
+  String username = taMediaWiki::GetLoggedInUsername(wiki_name);
+  bool logged_in = taMediaWiki::Login(wiki_name, username);
   if (!logged_in) {
     return false;
   }
   
   // just project name and version for already published project
-  iDialogPublishDocs dialog(repo_name, name, false, publish_type); // false = update
+  iDialogPublishDocs dialog(wiki_name, name, false, publish_type); // false = update
   dialog.SetName((name.toQString()));
   if (publish_type == "Project") {
       dialog.SetVersion(proj->version.GetString().toQString());
@@ -1606,12 +1596,12 @@ bool taMediaWiki::UpdateItemOnWeb(const String& publish_type, const String& name
     version = dialog.GetVersion();
   }
   
-  bool rval = taMediaWiki::UploadFile(repo_name, fname, false); // true - update new revision
+  bool rval = taMediaWiki::UploadFile(wiki_name, fname, false); // true - update new revision
   if (rval == false) {
     taMisc::Error("Upload failure");
     return false;
   }
-  rval = taMediaWiki::AppendVersionInfo(repo_name, proj_filename_only, version, emer_version);
+  rval = taMediaWiki::AppendVersionInfo(wiki_name, proj_filename_only, version, emer_version);
   if (rval == false) {
     taMisc::Error("AppendVersionInfo failure");
     return false;

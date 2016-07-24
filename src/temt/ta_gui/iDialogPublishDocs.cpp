@@ -52,7 +52,7 @@ namespace // anon
   }
 }
 
-iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_name, bool new_pub, const char *publish_type)
+iDialogPublishDocs::iDialogPublishDocs(const QString& repo_name, const QString& proj_name, bool new_pub, const QString& publish_type)
 : inherited()
 {
   // Size the dialog.
@@ -134,9 +134,9 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_n
     
     // Tags
     tagsEdit = new QLineEdit;
-    tagsEdit->setStatusTip("Instructions: Enter keywords (comma spearated) to help users find your project when searching or browsing");
+    tagsEdit->setStatusTip("Instructions: Enter tags (comma spearated) to help users find your project when searching or browsing");
     tagsEdit->installEventFilter(this);
-    addLabeledWidget(newHBox(vbox), "&Keywords:", tagsEdit);
+    addLabeledWidget(newHBox(vbox), "&Tags:", tagsEdit);
     
     // Description
     descEdit = new QTextEdit;
@@ -144,6 +144,12 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_n
     descEdit->setStatusTip("Instructions: Enter a brief description of the project (more detail can be added later on the wiki)");
     descEdit->installEventFilter(this);
     addLabeledWidget(vbox, "&Description:", descEdit);
+
+    // prefix
+    prefixEdit = new QLineEdit;
+    prefixEdit->setStatusTip("Instructions: Enter a prefix to add to the name for creating the wiki page name)");
+    prefixEdit->installEventFilter(this);
+    addLabeledWidget(vbox, "&Page Prefix:", prefixEdit);
   }
   
   // OK, Cancel buttons
@@ -175,6 +181,11 @@ QString iDialogPublishDocs::GetEmail() const
 QString iDialogPublishDocs::GetDesc() const
 {
   return descEdit->toPlainText();
+}
+
+QString iDialogPublishDocs::GetPrefix() const
+{
+  return prefixEdit->text();
 }
 
 QString iDialogPublishDocs::GetTags() const
@@ -238,6 +249,10 @@ void iDialogPublishDocs::SetEmail(const QString& email) {
 
 void iDialogPublishDocs::SetDesc(const QString& desc) {
   descEdit->setText(desc);
+}
+
+void iDialogPublishDocs::SetPrefix(const QString& prefix) {
+  prefixEdit->setText(prefix);
 }
 
 void iDialogPublishDocs::SetTags(const QString& tags) {
