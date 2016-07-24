@@ -46,6 +46,7 @@ public:
     FULL_STMT           = 0x0002, // expression is full css statement(s), not just isolated expressions -- this affects how the parsing works
     FOR_LOOP_EXPR       = 0x0004, // expression is an initializer or increment for a for loop -- requires different parsing due to possibility of commas..
     NO_PARSE            = 0x0008, // do not parse expression in UAE
+    IN_PARSE            = 0x0010, // currently doing a parse -- prevent loops!
   };
   
   enum LookUpType {

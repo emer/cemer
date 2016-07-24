@@ -82,6 +82,7 @@ void ProgExprBase::Copy_(const ProgExprBase& cp) {
 
 void ProgExprBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(HasExprFlag(IN_PARSE)) return; // no loops!
   ReParseExpr();
 }
 
@@ -93,6 +94,7 @@ void ProgExprBase::UpdateAfterMove_impl(taBase* old_owner) {
 
 void ProgExprBase::ReParseExpr(bool prompt_for_bad) {
   if(HasExprFlag(NO_PARSE)) return;
+  if(HasExprFlag(IN_PARSE)) return; // no loops!
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying()) return;
   ProgEl* pel = GET_MY_OWNER(ProgEl);
@@ -158,6 +160,7 @@ void ProgExprBase::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
   if(sls != SLS_ITEM_UPDATED || !obj || !obj->InheritsFrom(&TA_ProgVar)) {
     return;
   }
+  if(HasExprFlag(IN_PARSE)) return; // no loops!
   ProgVar* pv = (ProgVar*)obj;
   if (!pv->schemaChanged()) {
     // taMisc::DebugInfo("updating expr:", expr, "b/c of ProgVar:", pv->name,
@@ -307,6 +310,10 @@ bool ProgExprBase::ParseExpr() {
   Program_Group* pgp = GET_MY_OWNER(Program_Group);
   if(TestError(!pgp, "ParseExpr", "no parent Program_Group found -- report to developers as bug"))
     return false;
+
+  if(HasExprFlag(IN_PARSE)) return false; // no loops!
+  SetExprFlag(IN_PARSE);
+  
   String pnm = GetPathNames(NULL, pgp);
 
   // todo: temporary fix for saved wrong flags, remove after a while (4.0.10)
@@ -381,6 +388,7 @@ bool ProgExprBase::ParseExpr() {
   parse_tmp->Reset();
   parse_prog->ClearAll();
 
+  ClearExprFlag(IN_PARSE);
   return (bad_vars.size == 0);  // do we have any bad variables??
 }
 
