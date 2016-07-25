@@ -504,13 +504,17 @@ void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int th
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       Compute_Inhib_impl(lay, (LeabraInhib*)gpd, net, unit_gp_inhib);
     }
-
   }
-  if(multi_gp_inhib.on && lay->unit_groups) {
+  if(HasMultiGpInhib(lay)) {
     Compute_MultiGpInhib(lay, net, thr_no);
   }
   if(HasLayerInhib(lay)) {
     Compute_Inhib_impl(lay, (LeabraInhib*)lay, net, lay_inhib);
+  }
+  else {                        // initialize lay inhib -- otherwise it will interfere!
+    lay->i_val.ffi = 0.0f;
+    lay->i_val.fbi = 0.0f;
+    lay->i_val.g_i = 0.0f;
   }
 
   Compute_LayInhibToGps(lay, net); // sync it all up..
@@ -618,7 +622,7 @@ void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net
       }
     }
   }
-  else {
+  else {                        // always do this..
     // propagate layer-level g_i to all subgroups 
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);

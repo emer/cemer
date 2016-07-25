@@ -44,6 +44,7 @@ String WikiProgLib::GetLocalCacheDir() {
 
 void WikiProgLib::FindPrograms() {
   Reset();  // clear existing
+  if(!taMisc::InternetConnected()) return;
   DataTable progList;
   taMediaWiki::QueryPagesByCategory(&progList, wiki_name, "PublishedProgram");
   DataCol* pt_col = progList.FindColName("PageTitle");

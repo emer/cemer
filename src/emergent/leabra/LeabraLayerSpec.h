@@ -347,6 +347,9 @@ public:
   inline bool   HasUnitGpInhib(Layer* lay)
   { return (unit_gp_inhib.on && lay->unit_groups); }
   // does this layer have unit-group level inhibition?
+  inline bool   HasMultiGpInhib(Layer* lay)
+  { return (multi_gp_inhib.on && lay->unit_groups); }
+  // does this layer have unit-group level inhibition?
   inline bool   HasLayerInhib(Layer* lay)
   { return (lay_inhib.on); }
   // does this layer have layer level inhibition

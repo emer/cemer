@@ -1934,7 +1934,7 @@ void Network::Init_Weights_Layer() {
 void Network::Init_Weights_AutoLoad() {
   for(int i=0; i < weights.size; i++) {
     Weights* wts = weights[i];
-    if(wts->auto_load && wts->HasWeights(false)) {
+    if(wts->auto_init && wts->HasWeights(false)) {
       wts->WeightsToNet();
       break;
     }
