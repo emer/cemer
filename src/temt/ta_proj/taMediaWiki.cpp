@@ -1396,7 +1396,7 @@ bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publis
     
   String page_content = "{{Published" + publish_type +
     "\n| page_name=" + page_name +
-    "\n| proj_name=" + obj_name +
+    "\n| obj_name=" + obj_name +
     "\n| filename="+filename_only +
     "\n| desc=" + desc +
     "\n| author=" + author +
