@@ -31,7 +31,7 @@ class TA_API taWikiSpec: public taOBase {
 INHERITED(taOBase)
 public:
   String        wiki;           // name of a wiki, as specified in global preferences, where this object was last saved
-  String        page_prefix;    // prefix to insert in front of object name to get the full wiki page name to save / load this object to / from -- by default it is just the name of the object directly
+  String        page_name;      // full wiki page name to save / load this object to / from -- by default it is just the name of the object directly
 
   String        GetURL();       // #CAT_Wiki gets the full url of the wiki, based on wiki name, looking up in the preferences in taMisc
 

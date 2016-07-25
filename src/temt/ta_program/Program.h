@@ -37,6 +37,7 @@
 #include <ProgExpr>
 #include <taDoc>
 #include <ProgLib>
+#include <taProjVersion>
 
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
@@ -130,6 +131,12 @@ public:
   // #EDIT_DIALOG list of comma separated tags, initial letter capitalized, that indicate the basic function of this program -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the program library -- use Add From Prog Lib to see existing tags in use -- best to re-use where possible
   String                desc;
   // #EDIT_DIALOG #HIDDEN_INLINE description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)
+  taProjVersion         version;
+  // #EDIT_DIALOG #HIDDEN_INLINE version for this program -- can optionally be used for widely-used programs -- standard algorithm programs can use the emergent version in which they were released for example
+  String                author;
+  // the program author - by default the one saved in emergent preferences
+  String                email;
+  // email address for comments, questions about the program - typically the author's email address - by default the one saved in emergent preferences
   ProgFlags             flags;
   // control flags, for display and execution control
   ProgExpr              stop_step_cond;
@@ -455,6 +462,8 @@ public: // XxxGui versions provide feedback to the user
   static ProgVar*       FindMakeProgVarInNewScope
     (const ProgVar* prog_var, const taBase* old_scope, taBase* new_scope);
   // #IGNORE find or make a new program variable in a new scope, relative to the old scope -- the scope pointers can be any kind of relevant element within a program (prog el, function, program itself) -- called by move or copy functions to make sure appropriately local variables are being used
+
+  int                   Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0) override;
   
   void  InitLinks() override;
   void  CutLinks() override;

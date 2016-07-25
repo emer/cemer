@@ -111,6 +111,20 @@ bool taMediaWiki::CheckResponseError(const QString &xmlResponse) {
 /////////////////////////////////////////////////////
 //            ACCOUNT OPERATIONS
 
+String taMediaWiki::GetApiURL(const String& wiki_name) {
+  // Get the URL corresponding to wiki_name.
+  bool appendIndexPhp = false;
+  String wiki_url = taMisc::GetWikiURL(wiki_name, appendIndexPhp);
+  if (wiki_url.empty()) {
+    taMisc::Warning("taMediaWiki::GetApiURL", "wiki named:", wiki_name,
+                  "not found in global preferences/options under wiki_url settings");
+    return _nilString;
+  }
+
+  // Append the URL with "/api.php".
+  return wiki_url + "/api.php";
+}
+
 String taMediaWiki::GetLoggedInUsername(const String &wiki_name)
 {
   // Make sure wiki name is valid before doing anything else.
@@ -324,19 +338,6 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
   return true;
 }
 
-bool taMediaWiki::UploadFileAndLink(const String& wiki_name, const String& proj_name, const String& local_file_name, bool new_revision, const String& wiki_file_name)
-{
-  bool proceed = false;
-  proceed = UploadFile(wiki_name, local_file_name, new_revision, wiki_file_name);
-
-  if (proceed) {
-    String filename_only = taMisc::GetFileFmPath(local_file_name);
-    proceed = LinkFile(filename_only, wiki_name, proj_name);  // link the file to the project page
-    AppendFileType(wiki_name, filename_only, "other");  // "other" means not a .proj file - we could add .wts, .dat etc
-  }
-  return proceed;
-}
-
 bool taMediaWiki::DownloadFile(const String& wiki_name, const String& wiki_file_name,
                                const String& local_file_name)
 {
@@ -518,17 +519,6 @@ bool taMediaWiki::GetDirectoryContents(DataTable* results)
     sz_col->SetVal(sz, -1);
   }
   return true;
-}
-
-// TODO: Rohrlich 2/21/15
-// in addition to project page existing - check that it has category etc - i.e. not conincidence of page name
-bool taMediaWiki::IsPublished(const String& wiki_name, const String& project_name) {
-  if (PageExists(wiki_name, project_name)) {
-    return true;
-  }
-  else {
-    return false;
-  }
 }
 
 bool taMediaWiki::FileExists(const String& wiki_name, const String& file_name, bool quiet)
@@ -1061,7 +1051,7 @@ bool taMediaWiki::DeletePage(const String& wiki_name, const String& page_name, c
 }
 
 bool taMediaWiki::FindMakePage(const String& wiki_name, const String& page_name,
-                               const String& page_content, const String& page_category)
+                               const String& page_content)
 {
   // If given page exists on wiki...
   if(PageExists(wiki_name, page_name)) {
@@ -1071,12 +1061,12 @@ bool taMediaWiki::FindMakePage(const String& wiki_name, const String& page_name,
   // If given page does not exist on wiki...
   else {
     // Create page and populate it with given content.
-    return CreatePage(wiki_name, page_name, page_content, page_category);
+    return CreatePage(wiki_name, page_name, page_content);
   }
 }
 
 bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
-                             const String& page_content, const String& page_category)
+                             const String& page_content)
 {
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
@@ -1150,6 +1140,52 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
 #endif
   taMisc::Warning("Page create request failed -- check the wiki/page names");
   return false;
+}
+
+QByteArray taMediaWiki::GetEditToken(const String& wiki_name) {
+  // Make sure wiki name is valid before doing anything else.
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) {
+	  return QByteArray(_nilString.chars());
+  }
+
+  // Build the request URL.
+  // .../api.php?action=tokens&type=edit&format=xml
+  QUrl url(wikiUrl);
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
+  urq.addQueryItem("action", "tokens");
+  urq.addQueryItem("type", "edit");
+  urq.addQueryItem("format", "xml");
+  url.setQuery(urq);
+#else
+  url.addQueryItem("action", "tokens");
+  url.addQueryItem("type", "edit");
+  url.addQueryItem("format", "xml");
+#endif
+
+  // Make the network request.
+  // Note: The reply will be deleted when the request goes out of scope.
+  iSynchronousNetRequest request;
+  if (QNetworkReply *reply = request.httpPost(url)) {
+    QString apiResponse(reply->readAll());
+    if(CheckResponseError(apiResponse)) {
+      taMisc::Error("Could not retrieve edit token for", wiki_name, "wiki!");
+      return QByteArray(_nilString.chars());
+    }
+    QXmlStreamReader reader(apiResponse.toStdString().c_str());
+    while(!reader.atEnd()) {
+      if (reader.readNext() == QXmlStreamReader::StartElement) {
+        QXmlStreamAttributes attrs = reader.attributes();
+        QString token = attrs.value("edittoken").toString();
+        if(!token.isEmpty()) {
+          taMisc::Info("Edit token retrieval successful");
+          return QByteArray(token.toUtf8().constData());
+        }
+      }
+    }
+  }
+  return QByteArray(_nilString.chars());
 }
 
 bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
@@ -1236,18 +1272,6 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
   return false;
 }
 
-bool taMediaWiki::AppendVersionInfo(const String& wiki_name, const String& proj_filename, const String& proj_version, const String& emer_version) {
-  String content = "[[EmerVersion::" + emer_version + "]][[EmerProjVersion::" + proj_version + "]]";
-  String prefixed_filename = "File:" + proj_filename;
-  return EditPage(wiki_name, prefixed_filename, content);
-}
-
-bool taMediaWiki::AppendFileType(const String& wiki_name, const String& proj_filename, const String& file_type) {
-  String content = "[[EmerFileType::" + file_type + "]]";
-  String prefixed_filename = "File:" + proj_filename;
-  return EditPage(wiki_name, prefixed_filename, content);
-}
-
 #if 0
 bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name, const String& page_category)
 {
@@ -1315,163 +1339,88 @@ bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name
 }
 #endif
 
-bool taMediaWiki::LinkFile(const String& file_name, const String& wiki_name, const String& proj_name) {
-  // Make sure wiki name is valid before doing anything else.
-  String wikiUrl = GetApiURL(wiki_name);
-  if (wikiUrl.empty()) { return false; }
-  
-  if (!IsPublished(wiki_name, proj_name)) {
-    taMisc::Warning("Project", proj_name, "not found on", wiki_name, "wiki! Make sure you've published it first.");
-    return false;
-  }
-  
-  String full_file_name = "File:" + file_name;
-  String proj_line_property = "[[EmerProjName::" + proj_name + "]]";
-  
-  // Get the edit token for this post request.
-  QByteArray token = GetEditToken(wiki_name);
-  if (token.isEmpty()) { return false; }
-
-  QUrl url(wikiUrl);
-  
-#if (QT_VERSION >= 0x040800)
-  QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
-  
-  QHttpPart actionPart;
-  actionPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"action\""));
-  actionPart.setBody("edit");
-  
-  QHttpPart titlePart;
-  titlePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"title\""));
-  titlePart.setBody(full_file_name);
-  
-  QHttpPart nocreatePart;
-  nocreatePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"nocreate\""));
-  nocreatePart.setBody("");
-  
-  QHttpPart tokenPart;
-  tokenPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"token\""));
-  tokenPart.setBody(token);
-  
-  QHttpPart formatPart;
-  formatPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"format\""));
-  formatPart.setBody("xml");
-  
-  
-  QHttpPart contentPart;
-  contentPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"appendtext\""));
-  contentPart.setBody(proj_line_property);
-  
-  multiPart->append(actionPart);
-  multiPart->append(titlePart);
-  multiPart->append(nocreatePart);
-  multiPart->append(formatPart);
-  multiPart->append(contentPart);
-  multiPart->append(tokenPart);
-  
-  
-  // Make the network request.
-  // Note: The reply will be deleted when the request goes out of scope.
-  iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpPost(url,multiPart)) {
-    QString apiResponse(reply->readAll());
-    if(CheckResponseError(apiResponse)) {
-      taMisc::Error("File linking failed for ", proj_name, "to", file_name, "on", wiki_name, "wiki!");
-      return false;
-    } else {
-      return true;
-    }
-  }
-#endif
-  taMisc::Warning("File link request failed -- check the wiki/page names");
-  return false;
-}
 
 /////////////////////////////////////////////////////
 //            WIKI OPERATIONS
 
-String taMediaWiki::GetApiURL(const String& wiki_name) {
-  // Get the URL corresponding to wiki_name.
-  bool appendIndexPhp = false;
-  String wiki_url = taMisc::GetWikiURL(wiki_name, appendIndexPhp);
-  if (wiki_url.empty()) {
-    taMisc::Warning("taMediaWiki::GetApiURL", "wiki named:", wiki_name,
-                  "not found in global preferences/options under wiki_url settings");
-    return _nilString;
-  }
 
-  // Append the URL with "/api.php".
-  return wiki_url + "/api.php";
+bool taMediaWiki::AppendVersionInfo(const String& wiki_name, const String& publish_type, const String& file_name, const String& version, const String& emer_version) {
+  String prefixed_filename = "File:" + file_name;
+  String content = "[[EmerVersion::" + emer_version + "]]";
+  if(publish_type == "Project")
+    content += "[[EmerProjVersion::";
+  else if(publish_type == "Program")
+    content += "[[EmerProgVersion::";
+  content += version + "]]";
+  return EditPage(wiki_name, prefixed_filename, content);
 }
 
-QByteArray taMediaWiki::GetEditToken(const String& wiki_name) {
-  // Make sure wiki name is valid before doing anything else.
-  String wikiUrl = GetApiURL(wiki_name);
-  if (wikiUrl.empty()) {
-	  return QByteArray(_nilString.chars());
-  }
-
-  // Build the request URL.
-  // .../api.php?action=tokens&type=edit&format=xml
-  QUrl url(wikiUrl);
-#if (QT_VERSION >= 0x050000)
-  QUrlQuery urq;
-  urq.addQueryItem("action", "tokens");
-  urq.addQueryItem("type", "edit");
-  urq.addQueryItem("format", "xml");
-  url.setQuery(urq);
-#else
-  url.addQueryItem("action", "tokens");
-  url.addQueryItem("type", "edit");
-  url.addQueryItem("format", "xml");
-#endif
-
-  // Make the network request.
-  // Note: The reply will be deleted when the request goes out of scope.
-  iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpPost(url)) {
-    QString apiResponse(reply->readAll());
-    if(CheckResponseError(apiResponse)) {
-      taMisc::Error("Could not retrieve edit token for", wiki_name, "wiki!");
-      return QByteArray(_nilString.chars());
-    }
-    QXmlStreamReader reader(apiResponse.toStdString().c_str());
-    while(!reader.atEnd()) {
-      if (reader.readNext() == QXmlStreamReader::StartElement) {
-        QXmlStreamAttributes attrs = reader.attributes();
-        QString token = attrs.value("edittoken").toString();
-        if(!token.isEmpty()) {
-          taMisc::Info("Edit token retrieval successful");
-          return QByteArray(token.toUtf8().constData());
-        }
-      }
-    }
-  }
-  return QByteArray(_nilString.chars());
+bool taMediaWiki::AppendFileType(const String& wiki_name, const String& file_type, const String& file_name) {
+  String prefixed_filename = "File:" + file_name;
+  String content = "[[EmerFileType::" + file_type + "]]";
+  return EditPage(wiki_name, prefixed_filename, content);
 }
 
-bool taMediaWiki::PublishItem_impl(const String& publish_type, const String& page_name, const String& name, const String& fname, const String& wiki_name, const String& tags, const String& desc, const String& version, const String& author, const String& email) {
-  String proj_category = "Published" + publish_type;
+bool taMediaWiki::LinkFile(const String& wiki_name, const String& publish_type, const String& file_name, const String& obj_name) {
+  String prefixed_filename = "File:" + file_name;
+  String wiki_tag;
+  if(publish_type == "Project")
+    wiki_tag = "EmerProjName";
+  else if(publish_type == "Program")
+    wiki_tag = "EmerProgName";
+
+  String content = "[[" + wiki_tag + "::" + obj_name + "]]";
+  return EditPage(wiki_name, prefixed_filename, content);
+}
+
+bool taMediaWiki::UploadOtherFile(const String& wiki_name, const String& publish_type, const String& file_name, const String& obj_name, bool new_revision, const String& wiki_file_name)
+{
+  bool proceed = false;
+  proceed = UploadFile(wiki_name, file_name, new_revision, wiki_file_name);
+
+  if (proceed) {
+    String filename_only = taMisc::GetFileFmPath(file_name);
+    proceed = LinkFile(wiki_name, publish_type, filename_only, obj_name);
+    if(proceed) {
+      proceed = AppendFileType(wiki_name, "other", filename_only);
+    }
+  }
+  return proceed;
+}
+
+bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, const String& page_name, const String& tags, const String& desc, const String& version, const String& author, const String& email) {
   String first_pub = String(QDate::currentDate().toString(Qt::TextDate));
   String emer_version = taMisc::version;  // use the version currently running
   
-  String page_content = "{{Published" + publish_type + "|name=" + name + "|emer_proj_overview=" + desc + "|EmerProjAuthor = " + author + "|EmerProjEmail = " + email  + "|EmerProjFirstPub = " + first_pub + "|EmerProjKeyword = " + tags + "}}";
-  
-  bool page_created = CreatePage(wiki_name, page_name, page_content, proj_category);
-  if (!page_created)
+  String filename_only = taMisc::GetFileFmPath(file_name);
+    
+  String page_content = "{{Published" + publish_type +
+    "\n| page_name=" + page_name +
+    "\n| proj_name=" + obj_name +
+    "\n| filename="+filename_only +
+    "\n| desc=" + desc +
+    "\n| author=" + author +
+    "\n| email=" + email +
+    "\n| first_pub=" + first_pub +
+    "\n| tags=" + tags +
+    "\n}}";
+
+  // robust interface
+  if(!FindMakePage(wiki_name, page_name, page_content)) {
     return false;
+  }
   
   // If project filename empty, the user does not want to upload the project file
-  if (!fname.empty()) {
-    String filename_only;  // no path
-    bool loaded_and_linked = UploadFile(wiki_name, fname, "");
-    if (loaded_and_linked) {
-      filename_only = taMisc::GetFileFmPath(fname);
-      loaded_and_linked = LinkFile(filename_only, wiki_name, page_name);  // link the file to the project page
-    }
-    if (loaded_and_linked) {
-      AppendVersionInfo(wiki_name, filename_only, version, emer_version);
-      AppendFileType(wiki_name, filename_only, publish_type);
+  if (!file_name.empty()) {
+    bool proceed = UploadFile(wiki_name, file_name, "");
+    if (proceed) {
+      proceed = LinkFile(wiki_name, publish_type, filename_only, obj_name);
+      if(proceed) {
+        proceed = AppendFileType(wiki_name, publish_type, filename_only);
+        if(proceed) {
+          AppendVersionInfo(wiki_name, publish_type, filename_only, version, emer_version);
+        }
+      }
     }
     else {
       taMisc::Error(publish_type + " page created BUT upload of " + publish_type + " file or linking of uploaded " + publish_type + " file has failed ", wiki_name, "wiki");
@@ -1480,7 +1429,7 @@ bool taMediaWiki::PublishItem_impl(const String& publish_type, const String& pag
   return true; // return true if item page created - even if upload of item file fails
 }
 
-bool taMediaWiki::PublishItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& wiki_name, const taProject * proj, String& tags, String& desc, String& page_prefix)
+bool taMediaWiki::PublishItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, String& page_name, String& tags, String& desc, taProjVersion& version, String& author, String& email)
 {
   // Is pub to program supported on this wiki?
   
@@ -1489,22 +1438,24 @@ bool taMediaWiki::PublishItemOnWeb(const String& publish_type, const String& nam
 iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_to_web_implementation");
     return false;
   }
+
+  String filename_only = taMisc::GetFileFmPath(file_name);
+  String item_filename = "File:" + filename_only;
+
+  if (taMediaWiki::PageExists(wiki_name, page_name)) {
+    int choice = taMisc::Choice("The " + publish_type  + " page name: " + page_name + " is already published on wiki: " + wiki_name + " for object named: " + obj_name + ".  Would you like to just upload a new version of the file?", "Upload", "Cancel");
+    if (choice == 0) {
+      return UpdateItemOnWeb(wiki_name, publish_type, obj_name, file_name, version);
+    }
+    else {
+      return false;
+    }
+  }
   
-  // First check to make sure the page doesn't already exist.
-  String item_filename = "File:" + taMisc::GetFileFmPath(fname);
-  
-  if (taMediaWiki::IsPublished(wiki_name, item_filename)) {
-    if (taMediaWiki::IsPublished(wiki_name, name)) {
-      int choice = taMisc::Choice("The " + publish_type  + " " + name + " is already published on  wiki \"" + wiki_name + ".\" Would you like to upload a new version?", "Upload", "Cancel");
-      if (choice == 0) {
-        return UpdateItemOnWeb(publish_type, name, fname, wiki_name, proj);
-      }
-      else {
-        return false;
-      }
-    } else {
-        //The project file has been uploaded previously, but not with the publish to web feature.
-        //Fall through, as we still need to create the new project page and link it with the file
+  if (taMediaWiki::PageExists(wiki_name, item_filename)) {
+    int choice = taMisc::Choice("The " + publish_type  + " file name: " + filename_only + " is already published on wiki: " + wiki_name + " but the page name: " + page_name + ".  does not yet exist -- Would you like to proceed to create wiki page?", "Proceed", "Cancel");
+    if (choice == 1) {
+      return false;
     }
   }
   
@@ -1512,71 +1463,77 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
   
   // TODO - if username not empty ask if they want to stay logged in under that name
   bool was_published = false;
-  String page_name;
   
   bool logged_in = taMediaWiki::Login(wiki_name, username);
   if (logged_in) {
-    iDialogPublishDocs dialog(wiki_name, name, true, publish_type);
-    dialog.SetName(name.toQString());
-    if (!proj->author.empty()) {
-      dialog.SetAuthor((proj->author.toQString()));
+    iDialogPublishDocs dialog(wiki_name, obj_name, true, publish_type);
+    dialog.SetName(obj_name.toQString());
+    dialog.SetPageName(page_name.toQString());
+    if (author.nonempty()) {
+      dialog.SetAuthor(author.toQString());
     }
     else {
       dialog.SetAuthor(QString("Set default in preferences."));
     }
-    if (!proj->email.empty()) {
-      dialog.SetEmail((proj->email.toQString()));
+    if (email.nonempty()) {
+      dialog.SetEmail(email.toQString());
     }
     else {
       dialog.SetEmail(QString("Set default in preferences."));
     }
-    dialog.SetDesc(QString("A brief description of the program. You will be able to edit later on the wiki."));
+    if(desc.nonempty()) {
+      dialog.SetDesc(desc.toQString());
+    }
+    else {
+      dialog.SetDesc(QString("brief, abstract-like description of main features."));
+    }
     if(tags.nonempty()) {
       dialog.SetTags(tags);
     }
     else {
-      dialog.SetTags(QString("comma separated, please"));
+      dialog.SetTags(QString("comma separated and initial uppercase, please"));
     }
-    if (publish_type == "Project") {
-      dialog.SetVersion(proj->version.GetString().toQString());
-      dialog.SetPrefix(page_prefix);
-    } else {
-      dialog.SetVersion("1.0");
-    }
+    dialog.SetVersion(version.GetString().toQString());
+
     if (dialog.exec()) {
       // User clicked OK.
-      page_prefix = dialog.GetPrefix();
-      page_name = page_prefix + String(name); // needed for call to create the taDoc
-      QString author = dialog.GetAuthor();
+      page_name = dialog.GetPageName();
+      author = dialog.GetAuthor();
       if (author == "Set default in preferences.") {
         author = "";
       }
-      QString email = dialog.GetEmail();
+      email = dialog.GetEmail();
       if (email == "Set default in preferences.") {
         email = "";
       }
       desc = dialog.GetDesc();
+      if(desc == "brief, abstract-like description of main features.") {
+        desc = "";
+      }
       tags = dialog.GetTags();
-      if (tags == "comma separated, please") {
+      if (tags == "comma separated and initial uppercase, please") {
         tags = "";
       }
-      QString version = dialog.GetVersion();
-      //      bool upload = dialog.GetUploadChoice();
-      
-      was_published = taMediaWiki::PublishItem_impl(publish_type, page_name, name, fname, wiki_name, tags, desc, version, author, email);
+      String ver_str = dialog.GetVersion();
+      version.SetFromString(ver_str);
+
+      // double-check for existing page name now that it has been entered:
+      if (taMediaWiki::PageExists(wiki_name, page_name)) {
+        int choice = taMisc::Choice("The " + publish_type  + " page name: " + page_name + " is already published on  wiki: " + wiki_name + " for object named: " + obj_name + ".  Would you like to edit existing page and upload a new version of the file?", "Edit and Upload", "Cancel");
+        if (choice == 1) {
+          return false;
+        }
+      }
+      was_published = taMediaWiki::PublishItem_impl(wiki_name, publish_type, obj_name, file_name, page_name, tags, desc, ver_str, author, email);
     }
   }
   return was_published;
 }
 
-bool taMediaWiki::UpdateItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& wiki_name, const taProject * proj) {
-  String proj_filename_only = taMisc::GetFileFmPath(fname);
+bool taMediaWiki::UpdateItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, taProjVersion& version) {
+  String file_name_only = taMisc::GetFileFmPath(file_name);
   
   String emer_version = taMisc::version;
-  if (!taMediaWiki::IsPublished(wiki_name, name)) {
-    taMisc::Error(publish_type + " named \"" + name + "\" not found on wiki \"" + wiki_name + "\"");
-    return false;
-  }
   
   String username = taMediaWiki::GetLoggedInUsername(wiki_name);
   bool logged_in = taMediaWiki::Login(wiki_name, username);
@@ -1585,28 +1542,26 @@ bool taMediaWiki::UpdateItemOnWeb(const String& publish_type, const String& name
   }
   
   // just project name and version for already published project
-  iDialogPublishDocs dialog(wiki_name, name, false, publish_type); // false = update
-  dialog.SetName((name.toQString()));
-  if (publish_type == "Project") {
-      dialog.SetVersion(proj->version.GetString().toQString());
-  }
+  iDialogPublishDocs dialog(wiki_name, obj_name, false, publish_type); // false = update
+  dialog.SetName(obj_name.toQString());
+  dialog.SetVersion(version.GetString().toQString());
   
-  QString version;
   if (dialog.exec()) {
-    version = dialog.GetVersion();
+    String ver_str = dialog.GetVersion();
+    version.SetFromString(ver_str);
+    bool rval = taMediaWiki::UploadFile(wiki_name, file_name, false); // true - update new revision
+    if (rval == false) {
+      taMisc::Error("Upload failure");
+      return false;
+    }
+    rval = taMediaWiki::AppendVersionInfo(wiki_name, publish_type, file_name_only, ver_str, emer_version);
+    if (rval == false) {
+      taMisc::Error("AppendVersionInfo failure");
+      return false;
+    }
+    return true;
   }
-  
-  bool rval = taMediaWiki::UploadFile(wiki_name, fname, false); // true - update new revision
-  if (rval == false) {
-    taMisc::Error("Upload failure");
-    return false;
-  }
-  rval = taMediaWiki::AppendVersionInfo(wiki_name, proj_filename_only, version, emer_version);
-  if (rval == false) {
-    taMisc::Error("AppendVersionInfo failure");
-    return false;
-  }
-  return true;
+  return false;
 }
 
 

@@ -37,33 +37,33 @@ class TA_API iDialogPublishDocs : public iDialog {
 public:
   iDialogPublishDocs(const QString& repo_name, const QString& proj_name, bool new_pub, const QString& publish_type);
   QString     GetName() const;
+  QString     GetPageName() const;
   QString     GetAuthor() const;
   QString     GetEmail() const;
   QString     GetDesc() const;
   QString     GetTags() const;
   QString     GetVersion() const;
-  QString     GetPrefix() const;
   bool        GetUploadChoice() const;
   
   void        SetName(const QString& name);
+  void        SetPageName(const QString& prefix);
   void        SetAuthor(const QString& author);
   void        SetEmail(const QString& email);
   void        SetDesc(const QString& desc);
   void        SetTags(const QString& tags);
   void        SetVersion(const QString& tags);
-  void        SetPrefix(const QString& prefix);
 
 private:
   bool        event(QEvent *event) override;
   bool        eventFilter(QObject *obj, QEvent *event) override;
 
   QLineEdit*  nameEdit;
+  QLineEdit*  pgnameEdit;
   QLineEdit*  authorEdit;
   QLineEdit*  emailEdit;
   QTextEdit*  descEdit;
   QLineEdit*  tagsEdit;
   QLineEdit*  versionEdit;
-  QLineEdit*  prefixEdit;
   QStatusBar* statusBar;
   QCheckBox*  upload_project;
 };

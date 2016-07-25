@@ -85,6 +85,13 @@ void taProject::Initialize() {
   save_view = true;
   save_as_only = false;
   no_dialogs = false;
+
+  if (author.empty()) {
+    author = taMisc::project_author;
+  }
+  if (email.empty()) {
+    email = taMisc::author_email;
+  }
 }
 
 void taProject::Destroy() {
@@ -125,13 +132,6 @@ void taProject::InitLinks_impl() {
   // if in datatable, it should be accessible in above
 //   FindMakeNewDataProc(&TA_taMath_float, "math_float")->SetUserData("NO_CLIP", true);
 //   FindMakeNewDataProc(&TA_taMath_double, "math_double")->SetUserData("NO_CLIP", true);
-
-  if (author.empty()) {
-    author = taMisc::project_author;
-  }
-  if (email.empty()) {
-    email = taMisc::author_email;
-  }
 }
 
 void taProject::InitLinks_post() {
@@ -578,20 +578,6 @@ int taProject::SaveAs(const String& fname) {
   return rval;
 }
 
-bool taProject::openPublishWeb(const String page_name, const String wiki_name) {
-  String proj_file = QDir::tempPath() + "/" + page_name + ".proj";
-  if (!taMediaWiki::FileExists(wiki_name, page_name + ".proj")) {
-    taMisc::Error("The project file " + page_name + " on the wiki " + wiki_name + " does not exist");
-    return false;
-  }
-  taMediaWiki::DownloadFile(wiki_name, page_name, proj_file );
-  QFileInfo fi(proj_file);
-  taBase* el = NULL;
-  tabMisc::root->projects.Load(proj_file, &el);
-  taMisc::Confirm("The project has been downloaded and stored in a temporary directory. Please resave project in an appropriate location.");
-  return true;
-}
-
 bool taProject::PublishProjectOnWeb(const String &wiki_name)
 {
   if (GetFileName().empty()) {
@@ -608,54 +594,18 @@ bool taProject::PublishProjectOnWeb(const String &wiki_name)
     return false;
   }
   wiki.wiki = wiki_name;
-  return taMediaWiki::PublishItemOnWeb("Project", this->name, GetFileName(), wiki_name, this, tags, desc, wiki.page_prefix);
+  if(wiki.page_name.empty())    // use name by default
+    wiki.page_name = name;
+  return taMediaWiki::PublishItemOnWeb(wiki_name, "Project", this->name, GetFileName(), wiki.page_name, tags, desc, version, author, email);
 }
 
 bool taProject::UpdateProjectOnWeb(const String &wiki_name) {
-  String proj_name = this->name;
-  String proj_filename = GetFileName();
-  String proj_filename_only = proj_filename.after('/', -1);
-  
-  String emer_version = taMisc::version;
-  if (!taMediaWiki::IsPublished(wiki_name, proj_name)) {
-    taMisc::Error("Project named \"" + proj_name + "\" not found on wiki \"" + wiki_name + "\"");
-    return false;
-  }
-  
-  String username = taMediaWiki::GetLoggedInUsername(wiki_name);
-  bool logged_in = taMediaWiki::Login(wiki_name, username);
-  if (!logged_in) {
-    return false;
-  }
-  
-  // just project name and version for already published project
-  iDialogPublishDocs dialog(wiki_name, this->name, false, "Project"); // false = update
-  dialog.SetName((this->name.toQString()));
-  dialog.SetVersion((this->version.GetString().toQString()));
-  QString version;
-  if (dialog.exec()) {
-    version = dialog.GetVersion();
-  }
-  
-  bool rval = taMediaWiki::UploadFile(wiki_name, proj_filename, false); // true - update new revision
-  if (rval == false) {
-    taMisc::Error("Upload failure");
-    return false;
-  }
-  rval = taMediaWiki::AppendVersionInfo(wiki_name, proj_filename_only, version, emer_version);
-  if (rval == false) {
-    taMisc::Error("AppendVersionInfo failure");
-    return false;
-  }
-  return true;
+  // todo: we could do more here to synchronize updates from wiki etc
+  return taMediaWiki::UpdateItemOnWeb(wiki_name, "Project", this->name, GetFileName(), version);
 }
 
+
 bool taProject::UploadFilesForProjectOnWeb(const String &wiki_name) {
-  if (!taMediaWiki::IsPublished(wiki_name, this->name)) {
-    taMisc::Error("Project \"" + this->name + "\" not published. Publish the project before linking files to it.");
-    return false;
-  }
-  
   bool rval = false;
   MainWindowViewer* browser = GetDefaultProjectBrowser();
   if (browser) {
@@ -669,17 +619,17 @@ bool taProject::UploadFilesForProjectOnWeb(const String &wiki_name) {
       if (!file_name_list.empty()) {
         rval = true;
         for (int i=0; i<file_name_list.size(); i++) {
-          String file_name_only = file_name_list.at(i);
-          file_name_only = file_name_only.after('/', -1);
+          String file_name = file_name_list.at(i);
+          String file_name_only = taMisc::GetFileFmPath(file_name);
           if (taMediaWiki::FileExists(wiki_name, file_name_only)) {
-            String info = "File " + file_name_list.at(i) + " already on wiki. Upload revision?";
+            String info = "File " + file_name + " already on wiki. Upload revision?";
             int choice = taMisc::Choice(info, "Upload Revision", "Cancel");
             if (choice == 0) {
-              rval = taMediaWiki::UploadFileAndLink(wiki_name, this->name, file_name_list.at(i), true); // true - update new revision
+              rval = taMediaWiki::UploadOtherFile(wiki_name, "Project", file_name, this->name, true); // true - update new revision
             }
           }
           else { // 1st upload
-            rval = taMediaWiki::UploadFileAndLink(wiki_name, this->name, file_name_list.at(i), false);
+            rval = taMediaWiki::UploadOtherFile(wiki_name, "Project", file_name, this->name, false);
           }
         }
       }

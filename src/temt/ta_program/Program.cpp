@@ -117,6 +117,13 @@ void Program::Initialize() {
 
   if(!prog_lib)
     prog_lib = &Program_Group::prog_lib;
+
+  if (author.empty()) {
+    author = taMisc::project_author;
+  }
+  if (email.empty()) {
+    email = taMisc::author_email;
+  }
 }
 
 void Program::Destroy() {
@@ -125,6 +132,7 @@ void Program::Destroy() {
 
 void Program::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(version, this);
   taBase::Own(stop_step_cond, this);
   taBase::Own(objs, this);
   taBase::Own(types, this);
@@ -271,6 +279,16 @@ void Program::UpdateAfterEdit_impl() {
   if(!GetDocLink()) {
     SetDocLink(&doc);
   }
+}
+
+int Program::Save_strm(ostream& strm, taBase* par, int indent) {
+  if(author.empty() && taMisc::project_author.nonempty()) {
+    author = taMisc::project_author;
+  }
+  if(email.empty() && taMisc::author_email.nonempty()) {
+    email = taMisc::author_email;
+  }
+  return inherited::Save_strm(strm, par, indent);
 }
 
 bool Program::CheckConfig_impl(bool quiet) {

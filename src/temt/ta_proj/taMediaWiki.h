@@ -28,6 +28,7 @@
 // declare all other types mentioned but not required to include:
 class DataTable; //
 class QByteArray; //
+class taProjVersion; //
 
 
 taTypeDef_Of(taMediaWiki);
@@ -39,6 +40,9 @@ class TA_API taMediaWiki : public taNBase {
 public:
   /////////////////////////////////////////////////////
   //            ACCOUNT OPERATIONS
+
+  static String GetApiURL(const String& wiki_name);
+  // #CAT_Wiki Gets the url for the wiki api
 
   static String GetLoggedInUsername(const String &wiki_name);
   // #CAT_Account Get the username of the user currently logged in via emergent's Webkit browser.
@@ -55,9 +59,6 @@ public:
   static bool   UploadFile(const String& wiki_name, const String& local_file_name, bool new_revision, const String& wiki_file_name="");
   // #CAT_File Upload file to wiki, optionally giving it a different file name on the wiki
 
-  static bool   UploadFileAndLink(const String& wiki_name, const String& proj_name, const String& local_file_name, bool new_revision, const String& wiki_file_name="");
-  // #CAT_File Upload file to wiki and link to specific project page - fails if project doesn't exist
-  
   static bool   DownloadFile(const String& wiki_name, const String& wiki_file_name,
                              const String& local_file_name="");
   // #CAT_File Download given file name from wiki, optionally giving it a different file name than what it was on the wiki
@@ -97,9 +98,6 @@ public:
   static bool   PageExists(const String& wiki_name, const String& page_name);
   // #CAT_Page Determine if given page exists on wiki -- returns true if it does, false if it doesn't
 
-  static bool   IsPublished(const String& wiki_name, const String& project_name);
-  // #CAT_Page Is this project published on this wiki
-
   /////////////////////////////////////////////////////
   //            PAGE OPERATIONS
 
@@ -108,56 +106,53 @@ public:
   // #CAT_Page Delete given page from the wiki, optionally providing a reason for the deletion -- returns true on success
 
   static bool   FindMakePage(const String& wiki_name, const String& page_name,
-                             const String& page_content="", const String& page_category="");
+                             const String& page_content="");
   // #CAT_Page Find or create given page on the wiki and populate it with given content -- calls EditPage if the given page already exists on the wiki, otherwise calls CreatePage -- returns true on success
 
   static bool   CreatePage(const String& wiki_name, const String& page_name,
-                           const String& page_content="", const String& page_category="");
+                           const String& page_content="");
   // #CAT_Page Create given page on the wiki and populate it with given content if it does not currently exist  -- returns true on success
+
+  static QByteArray GetEditToken(const String& wiki_name);
+  //#IGNORE  #CAT_Wiki Return a String containing an unencoded edit token for the wiki (need to percent-encode this to make post requests to the API directly through a URL query) -- on failure, return an empty String
 
   static bool   EditPage(const String& wiki_name, const String& page_name,
                          const String& page_content, bool append = true);
   // #CAT_Page Append given page on the wiki with given content if it currently exists -- returns true on success - if append is false content is prepended
 
-  static bool   AppendVersionInfo(const String& wiki_name, const String& page_name,
-                                  const String& proj_version, const String& emer_version);
-  // #CAT_Page Append page with both project version and emergent program version
-  
-  static bool   AppendFileType(const String& wiki_name, const String& page_name,
-                                  const String& file_type);
-  // #CAT_Page Append page content with EmerFileType - "project" or "other"
-  
 #if 0
   static bool   AddCategories(const String& wiki_name, const String& page_name,
                               const String& page_category);
   // #CAT_Page Append given page on the wiki with given list of comma-separated categories -- returns true on success
 #endif
   
-  static bool   LinkFile(const String& file_name, const String& wiki_name, const String& proj_name);
-  // #CAT_Page Add the project name to the the files page so that the project page can find files containing the project page (as property - look at the code)
-  
   /////////////////////////////////////////////////////
   //            WIKI OPERATIONS
 
-  static String GetApiURL(const String& wiki_name);
-  // #CAT_Wiki Gets the url for the wiki api
-
-  static QByteArray GetEditToken(const String& wiki_name);
-  //#IGNORE  #CAT_Wiki Return a String containing an unencoded edit token for the wiki (need to percent-encode this to make post requests to the API directly through a URL query) -- on failure, return an empty String
-
+  static bool   AppendVersionInfo(const String& wiki_name, const String& publish_type, const String& file_name, const String& version, const String& emer_version);
+  // #CAT_Page Append page with both project version and emergent program version
+  
+  static bool   AppendFileType(const String& wiki_name, const String& file_type, const String& page_name);
+  // #CAT_Page Append page content with EmerFileType = file_type of Project, Program, or other
+  
+  static bool   LinkFile(const String& wiki_name, const String& publish_type, const String& file_name, const String& obj_name);
+  // #CAT_Page Add the object name to the the file page so that the object page can find files containing the object name as property using the given wiki tag, which should be either EmerProjName (publish_type = Project) or EmerProgName (Program)-- note that the linkage is with the object name, not the page name, which can be different
+  
+  static bool   UploadOtherFile(const String& wiki_name, const String& publish_type, const String& file_name, const String& obj_name, bool new_revision, const String& wiki_file_name="");
+  // #CAT_File Upload "other" file to wiki and link to specific obj page
+  
   static bool   PubProjPagesInstalled(const String& wiki_name);
   //  #CAT_Wiki Are the pages that support the PublishProject featured installed on this wiki? Actually only checks for one crucial page!
 
   static bool PubProgPagesInstalled(const String& wiki_name);
   //  #CAT_Wiki Are the pages that support the PublishProgram featured installed on this wiki? Actually only checks for one crucial page!
 
-  static bool PublishItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& wiki_name, const taProject* proj, String& tags, String& desc, String& page_prefix);
-  // main interface for publishing an item on a wiki -- prompts user for updated info of items passed -- note that tags, desc, and page_prefix will be updated by user input in the publish dialog, and should be applied back to the object upon successful completion
-  static bool PublishItem_impl(const String& publish_type, const String& page_name, const String& name, const String& fname, const String& wiki_name, const String& tags, const String& desc, const String& version, const String& author, const String& email);
-  // #IGNORE actually publish the item 
+  static bool PublishItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, String& page_name, String& tags, String& desc, taProjVersion& version, String& author, String& email);
+  // main interface for publishing an item on a wiki -- prompts user for updated info of items passed -- note that page_name, version, tags, desc, will be updated by user input in the publish dialog, and should be applied back to the object upon successful completion 
+  static bool PublishItem_impl(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, const String& page_name, const String& tags, const String& desc, const String& version, const String& author, const String& email);
+  // #IGNORE actually publish the item -- if edit_page then edit exsting page, else create
   
-
-  static bool UpdateItemOnWeb(const String& publish_type, const String& name, const String& fname, const String& wiki_name, const taProject* proj);
+  static bool UpdateItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, taProjVersion& version);
   // main interface for updating an item on a wiki
 
   TA_BASEFUNS_NOCOPY(taMediaWiki);

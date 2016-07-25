@@ -119,6 +119,12 @@ iDialogPublishDocs::iDialogPublishDocs(const QString& repo_name, const QString& 
 //  addLabeledWidget(project_box, "Upload Project File", upload_project);
 
   if (new_pub) {
+    // page name
+    pgnameEdit = new QLineEdit;
+    pgnameEdit->setStatusTip("Instructions: Enter the full name of wiki page to use for documenting this object -- for Programs this should always just be the program name)");
+    pgnameEdit->installEventFilter(this);
+    addLabeledWidget(vbox, "&Page Name:", pgnameEdit);
+
     authorEdit = new QLineEdit;
     authorEdit->setStatusTip("Enter name of primary author (set default in preferences)");
     authorEdit->installEventFilter(this);
@@ -145,11 +151,6 @@ iDialogPublishDocs::iDialogPublishDocs(const QString& repo_name, const QString& 
     descEdit->installEventFilter(this);
     addLabeledWidget(vbox, "&Description:", descEdit);
 
-    // prefix
-    prefixEdit = new QLineEdit;
-    prefixEdit->setStatusTip("Instructions: Enter a prefix to add to the name for creating the wiki page name)");
-    prefixEdit->installEventFilter(this);
-    addLabeledWidget(vbox, "&Page Prefix:", prefixEdit);
   }
   
   // OK, Cancel buttons
@@ -183,9 +184,9 @@ QString iDialogPublishDocs::GetDesc() const
   return descEdit->toPlainText();
 }
 
-QString iDialogPublishDocs::GetPrefix() const
+QString iDialogPublishDocs::GetPageName() const
 {
-  return prefixEdit->text();
+  return pgnameEdit->text();
 }
 
 QString iDialogPublishDocs::GetTags() const
@@ -251,8 +252,8 @@ void iDialogPublishDocs::SetDesc(const QString& desc) {
   descEdit->setText(desc);
 }
 
-void iDialogPublishDocs::SetPrefix(const QString& prefix) {
-  prefixEdit->setText(prefix);
+void iDialogPublishDocs::SetPageName(const QString& page_name) {
+  pgnameEdit->setText(page_name);
 }
 
 void iDialogPublishDocs::SetTags(const QString& tags) {

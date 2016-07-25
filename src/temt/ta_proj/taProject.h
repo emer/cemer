@@ -78,7 +78,7 @@ public:
   };
 
   String                proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for the project -- automatically set when loading or saving the project
-  String                tags;      // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded
+  String                tags;      // #EDIT_DIALOG list of comma separated tags (use initial letter uppercase) that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded
   taProjVersion         version;
   // project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
   String                author;
@@ -212,10 +212,12 @@ public:
   void                  SetSaveView(bool value);
   // #CAT_File determines whether or not the current view settings will be saved with the project
 
-  bool                  openPublishWeb(const String name, String wiki_name = "(default name)");
   virtual bool          PublishProjectOnWeb(const String& wiki_name);
+  // #CAT_File publish project on the web (wiki) to given wiki name -- menu chooser for wikis available in gui version in iMainWindowViewer
   virtual bool          UpdateProjectOnWeb(const String& wiki_name);
+  // #CAT_File update (upload latest version) of project on the web (wiki) to given wiki name -- menu chooser for wikis available in gui version in iMainWindowViewer
   virtual bool          UploadFilesForProjectOnWeb(const String& wiki_name);
+  // #CAT_File upload a list of files associated with project to the web (wiki) to given wiki name -- menu chooser for wikis available in gui version in iMainWindowViewer
 
   int                   Load(const String& fname="", taBase** loaded_obj_ptr = NULL) override;
   virtual void          OpenProjectLog();
