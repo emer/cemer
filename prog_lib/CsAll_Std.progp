@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
 Program_Group .projects[0].programs.gp[0] { 
  Program @[0] { 
   UserDataItem_List @*(.user_data_) {
@@ -29,18 +29,15 @@ Program_Group .projects[0].programs.gp[0] {
    NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [3] {
-   If @[0] { 
-    ProgEl_List @.true_code = [1] {
-     NetCounterInit @[0] { };
+  ProgEl_List @.prog_code = [5] {
+   LocalVars @[0] { 
+    ProgVar_List @.local_vars = [1] {
+     ProgVar @[0] { };
     };
    };
-   Else @[1] { 
-    ProgEl_List @.else_code = [1] {
-     MemberAssign @[0] { };
-    };
-   };
-   WhileLoop @[2] { 
+   AssignExpr @[1] { };
+   MemberAssign @[2] { };
+   ForLoop @[3] { 
     ProgEl_List @.loop_code = [2] {
      ProgramCall @[0] { 
       ProgArg_List @.prog_args = [3] {
@@ -52,6 +49,7 @@ Program_Group .projects[0].programs.gp[0] {
      NetCounterIncr @[1] { };
     };
    };
+   BlankLineEl @[4] { };
   };
  };
  Program @[1] { 
@@ -833,6 +831,13 @@ Program_Group .projects[0].programs.gp[0] {
   short_nm="Batch";
   tags="Cs, Std";
   desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -854,7 +859,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[0] {
     name="network";
     var_type=T_Object;
-    object_type=CsNetwork;
+    object_type=LeabraNetwork;
     object_val=.projects[0].networks[0]$$<CsNetwork,Network_0>;
     objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
@@ -888,21 +893,21 @@ Program_Group .projects[0].programs.gp[0] {
     init_from=NULL;
    };
    ProgVar @[1] {
-    name="init_batch";
-    var_type=T_Bool;
-    bool_val=1;
+    name="batch_start";
+    var_type=T_Int;
+    int_val=0;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
-    desc="initialize batch counter at start of run -- turn off if using \"parallel batch\" mode to run different batches on different processes";
+    desc="batch number to start on";
     init_from=NULL;
    };
    ProgVar @[2] {
-    name="max_batch";
+    name="n_batches";
     var_type=T_Int;
     int_val=10;
     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
-    desc="maximum number of batch runs to perform";
+    desc="number of batches to run";
     init_from=NULL;
    };
   };
@@ -930,60 +935,55 @@ Program_Group .projects[0].programs.gp[0] {
    name="prog_code";
    el_typ=ProgCode;
    el_def=0;
-   If @[0] {
+   LocalVars @[0] {
     desc=;
     flags=CAN_REVERT_TO_CODE;
-    code_string="if (init_batch)";
-    pre_compile_code_string="if (init_batch)";
-    cond {
-     expr="init_batch";
-    };
-    true_code {
-     name=;
-     el_typ=ProgCode;
+    code_string="LocalVars (1 vars)";
+    pre_compile_code_string="LocalVars (1 vars)";
+    local_vars {
+     name="local_vars";
+     el_typ=ProgVar;
      el_def=0;
-     NetCounterInit @[0] {
-      desc="initializes local batch counter and batch field on network";
-      flags=CAN_REVERT_TO_CODE;
-      code_string="Net Counter Init: batch";
-      pre_compile_code_string="Net Counter Init: batch";
-      network_var=$.projects[0].programs.gp[0][0].args[0]$;
-      local_ctr_var=$.projects[0].programs.gp[0][0].vars[0]$;
-      counter=Network::batch;
-      update_after=0;
+     ProgVar @[0] {
+      name="i";
+      var_type=T_Int;
+      int_val=0;
+      flags=LOCAL_VAR|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
      };
     };
    };
-   Else @[1] {
-    desc=;
+   AssignExpr @[1] {
+    desc="start at the start";
     flags=CAN_REVERT_TO_CODE;
-    code_string="else";
-    pre_compile_code_string="else";
-    else_code {
-     name=;
-     el_typ=ProgCode;
-     el_def=0;
-     MemberAssign @[0] {
-      desc="just set directly to current batch value";
-      flags=CAN_REVERT_TO_CODE;
-      code_string="network.batch = batch";
-      pre_compile_code_string="network.batch = batch";
-      obj=$.projects[0].programs.gp[0][0].args[0]$;
-      path="batch";
-      expr {
-       expr="batch";
-      };
-      update_after=0;
-     };
+    code_string="batch = batch_start";
+    pre_compile_code_string="batch = batch_start";
+    result_var=$.projects[0].programs.gp[0][0].vars[0]$;
+    expr {
+     expr="batch_start";
     };
    };
-   WhileLoop @[2] {
-    desc="the main loop over training runs";
+   MemberAssign @[2] {
+    desc="update network";
     flags=CAN_REVERT_TO_CODE;
-    code_string="while (batch < max_batch)";
-    pre_compile_code_string="while (batch < max_batch)";
+    code_string="network.batch = batch";
+    pre_compile_code_string="network.batch = batch";
+    obj=$.projects[0].programs.gp[0][0].args[0]$;
+    path="batch";
+    expr {
+     expr="batch";
+    };
+    update_after=0;
+   };
+   ForLoop @[3] {
+    desc="main loop over training runs";
+    flags=CAN_REVERT_TO_CODE;
+    code_string="for (i=0; i<n_batches; i++)";
+    pre_compile_code_string="for (i=0; i<n_batches; i++)";
     loop_code {
-     name=;
+     name="loop_code";
      el_typ=ProgCode;
      el_def=0;
      ProgramCall @[0] {
@@ -992,7 +992,7 @@ Program_Group .projects[0].programs.gp[0] {
       code_string="CsTrain(network, input_data, true)";
       pre_compile_code_string="CsTrain(network, input_data, true)";
       prog_args {
-       name=;
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
@@ -1001,7 +1001,7 @@ Program_Group .projects[0].programs.gp[0] {
 	name="network";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="network";
 	expr {
 	 expr="network";
 	};
@@ -1012,7 +1012,7 @@ Program_Group .projects[0].programs.gp[0] {
 	name="input_data";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input_data";
 	expr {
 	 expr="input_data";
 	};
@@ -1023,7 +1023,7 @@ Program_Group .projects[0].programs.gp[0] {
 	name="no_prompts";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="true";
 	expr {
 	 expr="true";
 	};
@@ -1043,9 +1043,21 @@ Program_Group .projects[0].programs.gp[0] {
       update_after=0;
      };
     };
-    test {
-     expr="batch < max_batch";
+    init {
+     expr="i=0";
     };
+    test {
+     expr="i<n_batches";
+    };
+    iter {
+     expr="i++";
+    };
+   };
+   BlankLineEl @[4] {
+    desc=;
+    flags=CAN_REVERT_TO_CODE;
+    code_string=" ";
+    pre_compile_code_string=" ";
    };
   };
   step_prog=NULL;
@@ -1076,6 +1088,13 @@ Program_Group .projects[0].programs.gp[0] {
   short_nm="Train";
   tags="Cs, Std";
   desc="A complete training run of a constraint satisfaction network: iterating over epochs until the network has learned the task";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -2037,6 +2056,13 @@ Program_Group .projects[0].programs.gp[0] {
   short_nm="Epoch";
   tags="Cs, Std";
   desc="iterates over all of the items in a data table and calls Trial process on them";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -2127,7 +2153,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[4] {
     name="data_loop_index";
     var_type=T_Int;
-    int_val=1;
+    int_val=3;
     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
     desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -2451,6 +2477,13 @@ Program_Group .projects[0].programs.gp[0] {
   short_nm="Trial";
   tags="Cs, Std";
   desc="Constraint Satisfaction processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -2689,7 +2722,7 @@ Program_Group .projects[0].programs.gp[0] {
     update_var=.projects[0].programs.gp[0][3].vars[1]$$;
    };
   };
-  step_prog=.projects[0].programs.gp[0][5]$$;
+  step_prog=NULL;
   step_n=1;
   doc {
    name="doc";
@@ -2717,6 +2750,13 @@ Program_Group .projects[0].programs.gp[0] {
   short_nm="Settle";
   tags="Cs, Std";
   desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -2946,7 +2986,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      target=$.projects[0].programs.gp[0][5]$;
+      target=.projects[0].programs.gp[0][5]$$;
       targ_ld_init="*CsCycle*";
      };
      NetCounterIncr @[1] {
@@ -3066,6 +3106,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
   short_nm="Cycle";
   tags="Cs, Std";
   desc="runs one cycle of CS processing (updating net inputs and activations)";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -3177,6 +3224,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
   short_nm="Inputs";
   tags="Network, InputData, Apply";
   desc="apply the current input data to the network as external input and target values";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -3466,6 +3520,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
   short_nm="TrlMon";
   tags="Cs, Std, Monitor";
   desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -4070,6 +4131,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
   short_nm="EpcMon";
   tags="Cs, Std, Monitor";
   desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -4752,6 +4820,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
   short_nm="SavWts";
   tags="Network, Weights";
   desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;

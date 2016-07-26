@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
 Program .projects[0].programs[0] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -170,6 +170,13 @@ Program .projects[0].programs[0] {
  short_nm="Startup";
  tags="Cs, Startup";
  desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batch_start=xxx] [n_batches=xx} [tag=xxx] and other opts -- see code";
+ version {
+  major=8;
+  minor=0;
+  step=0;
+ };
+ author="Randall C. O'Reilly";
+ email="randy.oreilly@colorado.edu";
  flags=STARTUP_RUN;
  stop_step_cond {
   expr=;
@@ -375,8 +382,8 @@ Program .projects[0].programs[0] {
   ProgVarFmArg @[3] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="Set Var:tag in Program:LeabraStartup from Arg:tag";
-   pre_compile_code_string="Set Var:tag in Program:LeabraStartup from Arg:tag";
+   code_string="Set Var:tag in Program:CsStartup from Arg:tag";
+   pre_compile_code_string="Set Var:tag in Program:CsStartup from Arg:tag";
    prog=.projects[0].programs[0]$$;
    var_name="tag";
    arg_name="tag";
@@ -384,8 +391,8 @@ Program .projects[0].programs[0] {
   ProgVarFmArg @[4] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="Set Var:log_dir in Program:LeabraStartup from Arg:log_dir";
-   pre_compile_code_string="Set Var:log_dir in Program:LeabraStartup from Arg:log_dir";
+   code_string="Set Var:log_dir in Program:CsStartup from Arg:log_dir";
+   pre_compile_code_string="Set Var:log_dir in Program:CsStartup from Arg:log_dir";
    prog=$.projects[0].programs[0]$;
    var_name="log_dir";
    arg_name="log_dir";
@@ -393,8 +400,8 @@ Program .projects[0].programs[0] {
   ProgVarFmArg @[5] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
-   code_string="Set Var:param_set in Program:LeabraStartup from Arg:param_set";
-   pre_compile_code_string="Set Var:param_set in Program:LeabraStartup from Arg:param_set";
+   code_string="Set Var:param_set in Program:CsStartup from Arg:param_set";
+   pre_compile_code_string="Set Var:param_set in Program:CsStartup from Arg:param_set";
    prog=$.projects[0].programs[0]$;
    var_name="param_set";
    arg_name="param_set";
@@ -528,8 +535,8 @@ Program .projects[0].programs[0] {
     ProgVarFmArg @[0] {
      desc="read in the arg to us too, so we can set file names based on it";
      flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:batch_start in Program:LeabraStartup from Arg:batch_start";
-     pre_compile_code_string="Set Var:batch_start in Program:LeabraStartup from Arg:batch_start";
+     code_string="Set Var:batch_start in Program:CsStartup from Arg:batch_start";
+     pre_compile_code_string="Set Var:batch_start in Program:CsStartup from Arg:batch_start";
      prog=$.projects[0].programs[0]$;
      var_name="batch_start";
      arg_name="batch_start";
@@ -1118,7 +1125,7 @@ Program .projects[0].programs[0] {
    targ_ld_init="*CsBatch*";
   };
  };
- step_prog=.projects[0].programs.gp[0][5]$$<Program,CsCycle>;
+ step_prog=NULL;
  step_n=1;
  doc {
   name="doc";

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
 SoProject .projects["SoStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -2036,10 +2036,9 @@ SoProject .projects["SoStd"] {
   year="2011";
   custom=;
  };
- wiki_url {
-  sync=0;
+ wiki {
   wiki=;
-  url=;
+  page_name=;
  };
  docs {
   name="docs";
@@ -6258,6 +6257,13 @@ SoProject .projects["SoStd"] {
    short_nm="Startup";
    tags="So, Startup";
    desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batch_start=xxx] [n_batches=xx} [tag=xxx] and other opts -- see code";
+   version {
+    major=8;
+    minor=0;
+    step=0;
+   };
+   author="Randall C. O'Reilly";
+   email="randy.oreilly@colorado.edu";
    flags=STARTUP_RUN;
    stop_step_cond {
     expr=;
@@ -7180,7 +7186,7 @@ SoProject .projects["SoStd"] {
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
-       arg_type=LeabraNetwork;
+       arg_type=SoNetwork;
        type="SoNetwork*";
        name="network";
        required=1;
@@ -7241,6 +7247,13 @@ SoProject .projects["SoStd"] {
     short_nm="Batch";
     tags="So, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -7457,7 +7470,7 @@ SoProject .projects["SoStd"] {
       };
      };
     };
-    step_prog=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"]$$;
+    step_prog=NULL;
     step_n=1;
     doc {
      name="doc";
@@ -7485,6 +7498,13 @@ SoProject .projects["SoStd"] {
     short_nm="Train";
     tags="So, Std";
     desc="A complete training run of a self organizing network: iterating over epochs until the network has learned the task";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -8419,7 +8439,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
     };
-    step_prog=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"]$;
+    step_prog=NULL;
     step_n=1;
     doc {
      name="doc";
@@ -8447,6 +8467,13 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     short_nm="Epoch";
     tags="So, Std";
     desc="iterates over all of the items in a data table and calls SoTrial process on them";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -8698,7 +8725,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  };
 	 };
 	};
-	target=$.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"]$;
+	target=.projects["SoStd"].programs.gp["SoAll_Std"]["SoTrial"]$$;
 	targ_ld_init="*SoTrial*";
        };
        If @[1] {
@@ -8861,6 +8888,13 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     short_nm="Trial";
     tags="So, Std";
     desc="Self-organizing processing of a single input/output event or external information";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -9075,6 +9109,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="Inputs";
     tags=;
     desc="apply the current input data to the network as external input and target values";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -9315,6 +9356,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="SoTrlMon";
     tags="So, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -9814,6 +9862,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="SoEpcMon";
     tags="So, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -10426,6 +10481,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="SavWts";
     tags="Network, Weights";
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -10755,6 +10817,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="EpcTest";
     tags="So, Std";
     desc="iterates over all of the items in a data table and calls SoTrial process on them";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -11177,6 +11246,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="TrlTest";
     tags="So, Std";
     desc="Self-organizing processing of a single input/output event or external information";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -11391,6 +11467,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="InTest";
     tags=;
     desc="apply the current input data to the network as external input and target values";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -11631,6 +11714,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="SoMonTest";
     tags="So, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -12130,6 +12220,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="SoEpcTest";
     tags="So, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -12741,7 +12838,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.001594049;
+     value 8 0=0.001063264;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -12751,7 +12848,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9968119;
+     value 8 0=0.9968102;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -14101,7 +14198,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04357067;
+       value 8 0=0.04359383;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {

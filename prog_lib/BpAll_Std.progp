@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
 Program_Group .projects[0].programs.gp[0] { 
  Program @[0] { 
   UserDataItem_List @*(.user_data_) {
@@ -709,6 +709,13 @@ Program_Group .projects[0].programs.gp[0] {
   short_nm="Batch";
   tags="Leabra, Std";
   desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -959,6 +966,13 @@ Program_Group .projects[0].programs.gp[0] {
   short_nm="Train";
   tags="Bp, Train, RndSeedList";
   desc="A complete training run of a Backpropagation network: iterating over epochs until the network has learned the task.  Also has a list of random seeds that are tied to the network batch counter, providing consistent runs regardless of what happens in the training of each network, or where it is run (e.g., on different processors)";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -1892,7 +1906,7 @@ Program_Group .projects[0].programs.gp[0] {
     meth_desc=" record the current time as the ending time, and compute difference as the time used";
    };
   };
-  step_prog=.projects[0].programs.gp[0][3]$$;
+  step_prog=NULL;
   step_n=1;
   doc {
    name="doc";
@@ -1920,6 +1934,13 @@ Program_Group .projects[0].programs.gp[0] {
   short_nm="Epoch";
   tags="Bp, Std";
   desc="iterates over all of the items in a data table and calls BpTrial process on them";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -2171,7 +2192,7 @@ Program_Group .projects[0].programs.gp[0] {
 	};
        };
       };
-      target=$.projects[0].programs.gp[0][3]$;
+      target=.projects[0].programs.gp[0][3]$$;
       targ_ld_init="*BpTrial*";
      };
     };
@@ -2304,6 +2325,13 @@ Program_Group .projects[0].programs.gp[0] {
   short_nm="Trial";
   tags="Bp, Std";
   desc="Backpropagation processing of a single input/output event or external information";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -2557,6 +2585,13 @@ this program can be extended to do arbitrary things to generate data and apply i
   short_nm="Inputs";
   tags="Network, InputData, Apply";
   desc="apply the current input data to the network as external input and target values";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -2846,6 +2881,13 @@ this program can be extended to do arbitrary things to generate data and apply i
   short_nm="TrlMon";
   tags="Bp, Std, Monitor";
   desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -3345,6 +3387,13 @@ this program can be extended to do arbitrary things to generate data and apply i
   short_nm="EpcMon";
   tags="Bp, Std, Monitor";
   desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -3957,6 +4006,13 @@ this program can be extended to do arbitrary things to generate data and apply i
   short_nm="SavWts";
   tags="Network, Weights";
   desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;

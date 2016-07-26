@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
 Program .projects[0].programs.gp[0][9] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -74,6 +74,13 @@ Program .projects[0].programs.gp[0][9] {
  short_nm="SavWts";
  tags="Network, Weights";
  desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
+ version {
+  major=8;
+  minor=0;
+  step=0;
+ };
+ author="Randall C. O'Reilly";
+ email="randy.oreilly@colorado.edu";
  flags=NO_STOP_STEP;
  stop_step_cond {
   expr=;

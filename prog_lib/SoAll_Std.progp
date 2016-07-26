@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
 Program_Group .projects[0].programs.gp[0] { 
  Program @[0] { 
   UserDataItem_List @*(.user_data_) {
@@ -700,6 +700,13 @@ Program_Group .projects[0].programs.gp[0] {
   short_nm="Batch";
   tags="So, Std";
   desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -916,7 +923,7 @@ Program_Group .projects[0].programs.gp[0] {
     };
    };
   };
-  step_prog=.projects[0].programs.gp[0][3]$$;
+  step_prog=NULL;
   step_n=1;
   doc {
    name="doc";
@@ -944,6 +951,13 @@ Program_Group .projects[0].programs.gp[0] {
   short_nm="Train";
   tags="So, Std";
   desc="A complete training run of a self organizing network: iterating over epochs until the network has learned the task";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -1878,7 +1892,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     meth_desc=" record the current time as the ending time, and compute difference as the time used";
    };
   };
-  step_prog=$.projects[0].programs.gp[0][3]$;
+  step_prog=NULL;
   step_n=1;
   doc {
    name="doc";
@@ -1906,6 +1920,13 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   short_nm="Epoch";
   tags="So, Std";
   desc="iterates over all of the items in a data table and calls SoTrial process on them";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -2157,7 +2178,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	};
        };
       };
-      target=$.projects[0].programs.gp[0][3]$;
+      target=.projects[0].programs.gp[0][3]$$;
       targ_ld_init="*SoTrial*";
      };
      If @[1] {
@@ -2320,6 +2341,13 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   short_nm="Trial";
   tags="So, Std";
   desc="Self-organizing processing of a single input/output event or external information";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -2534,6 +2562,13 @@ this program can be extended to do arbitrary things to generate data and apply i
   short_nm="Inputs";
   tags=;
   desc="apply the current input data to the network as external input and target values";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -2774,6 +2809,13 @@ this program can be extended to do arbitrary things to generate data and apply i
   short_nm="SoTrlMon";
   tags="So, Std, Monitor";
   desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -3273,6 +3315,13 @@ this program can be extended to do arbitrary things to generate data and apply i
   short_nm="SoEpcMon";
   tags="So, Std, Monitor";
   desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -3885,6 +3934,13 @@ this program can be extended to do arbitrary things to generate data and apply i
   short_nm="SavWts";
   tags="Network, Weights";
   desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;

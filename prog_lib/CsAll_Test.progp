@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
 Program_Group .projects[0].programs.gp[1] { 
  Program @[0] { 
   UserDataItem_List @*(.user_data_) {
@@ -506,6 +506,13 @@ Program_Group .projects[0].programs.gp[1] {
   short_nm="EpcTest";
   tags="Cs, Std";
   desc="iterates over all of the items in a data table and calls Trial process on them";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -614,7 +621,7 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    NetCounterInit @[0] {
     desc="initialize trial counter (local variable and in the network)";
-    flags=0;
+    flags=CAN_REVERT_TO_CODE;
     code_string="Net Counter Init: trial";
     pre_compile_code_string="Net Counter Init: trial";
     network_var=.projects[0].programs.gp[1][0].args[0]$$;
@@ -928,6 +935,13 @@ Program_Group .projects[0].programs.gp[1] {
   short_nm="TrlTest";
   tags="Cs, Std";
   desc="Constraint Satisfaction processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -1003,7 +1017,7 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    NetCounterInit @[0] {
     desc="initialize the local phase_no counter, and corresponding network one";
-    flags=0;
+    flags=CAN_REVERT_TO_CODE;
     code_string="Net Counter Init: ?";
     pre_compile_code_string="Net Counter Init: ?";
     network_var=.projects[0].programs.gp[1][1].args[0]$$;
@@ -1194,6 +1208,13 @@ Program_Group .projects[0].programs.gp[1] {
   short_nm="StlTest";
   tags="Cs, Std";
   desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -1278,7 +1299,7 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    NetCounterInit @[0] {
     desc="initialize local cycle counter and corresponding counter on network";
-    flags=0;
+    flags=CAN_REVERT_TO_CODE;
     code_string="Net Counter Init: cycle";
     pre_compile_code_string="Net Counter Init: cycle";
     network_var=.projects[0].programs.gp[1][2].args[0]$$;
@@ -1543,6 +1564,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
   short_nm="CycTest";
   tags="Cs, Std";
   desc="runs one cycle of CS processing (updating net inputs and activations)";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -1654,6 +1682,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
   short_nm="pplTst";
   tags="Network, InputData, Apply";
   desc="apply the current input data to the network as external input and target values";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -1943,6 +1978,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
   short_nm="TrlMonTest";
   tags="Cs, Std, Monitor";
   desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -2337,7 +2379,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    el_def=0;
    MethodCall @[0] {
     desc="set the network and datatable for the NetMonitor";
-    flags=0;
+    flags=CAN_REVERT_TO_CODE;
     code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
     pre_compile_code_string="trial_netmon->SetDataNetwork(trial_mon_data, network)";
     result_var=NULL;
@@ -2375,7 +2417,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    };
    MethodCall @[1] {
     desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
-    flags=0;
+    flags=CAN_REVERT_TO_CODE;
     code_string="trial_netmon->CheckConfig(false)";
     pre_compile_code_string="trial_netmon->CheckConfig(false)";
     result_var=NULL;
@@ -2402,7 +2444,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    };
    MethodCall @[2] {
     desc="update the monitor items and data schema based on current settings of the NetMonitor object";
-    flags=0;
+    flags=CAN_REVERT_TO_CODE;
     code_string="trial_netmon->UpdateMonitors(true)";
     pre_compile_code_string="trial_netmon->UpdateMonitors(true)";
     result_var=NULL;
@@ -2547,6 +2589,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
   short_nm="EpcMonTest";
   tags="Cs, Std, Monitor";
   desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+  version {
+   major=8;
+   minor=0;
+   step=0;
+  };
+  author="Randall C. O'Reilly";
+  email="randy.oreilly@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -2927,7 +2976,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    };
    MethodCall @[1] {
     desc="set data and network on NetMonitor object";
-    flags=0;
+    flags=CAN_REVERT_TO_CODE;
     code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
     pre_compile_code_string="epoch_netmon->SetDataNetwork(epoch_mon_data, network)";
     result_var=NULL;
@@ -2965,7 +3014,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    };
    MethodCall @[2] {
     desc="check configuration and emit errors/warnings for problems";
-    flags=0;
+    flags=CAN_REVERT_TO_CODE;
     code_string="epoch_netmon->CheckConfig(false)";
     pre_compile_code_string="epoch_netmon->CheckConfig(false)";
     result_var=NULL;
@@ -2992,7 +3041,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    };
    MethodCall @[3] {
     desc="update the monitor items and data schema based on current settings of NetMonitor";
-    flags=0;
+    flags=CAN_REVERT_TO_CODE;
     code_string="epoch_netmon->UpdateMonitors(true)";
     pre_compile_code_string="epoch_netmon->UpdateMonitors(true)";
     result_var=NULL;

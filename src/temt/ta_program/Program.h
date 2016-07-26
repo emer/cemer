@@ -463,6 +463,8 @@ public: // XxxGui versions provide feedback to the user
     (const ProgVar* prog_var, const taBase* old_scope, taBase* new_scope);
   // #IGNORE find or make a new program variable in a new scope, relative to the old scope -- the scope pointers can be any kind of relevant element within a program (prog el, function, program itself) -- called by move or copy functions to make sure appropriately local variables are being used
 
+  virtual void          SigEmitUpdateAllMembers();
+  // #IGNORE issue sig emit updated for all the major members in me -- forces a full re-render
   int                   Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0) override;
   
   void  InitLinks() override;

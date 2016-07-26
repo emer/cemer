@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
 CsProject .projects["CsStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -2317,10 +2317,9 @@ CsProject .projects["CsStd"] {
   year="2011";
   custom=;
  };
- wiki_url {
-  sync=0;
+ wiki {
   wiki=;
-  url=;
+  page_name=;
  };
  docs {
   name="docs";
@@ -6519,6 +6518,13 @@ CsProject .projects["CsStd"] {
    short_nm="Startup";
    tags="Cs, Startup";
    desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batch_start=xxx] [n_batches=xx} [tag=xxx] and other opts -- see code";
+   version {
+    major=8;
+    minor=0;
+    step=0;
+   };
+   author="Randall C. O'Reilly";
+   email="randy.oreilly@colorado.edu";
    flags=STARTUP_RUN;
    stop_step_cond {
     expr=;
@@ -6724,8 +6730,8 @@ CsProject .projects["CsStd"] {
     ProgVarFmArg @[3] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:tag in Program:LeabraStartup from Arg:tag";
-     pre_compile_code_string="Set Var:tag in Program:LeabraStartup from Arg:tag";
+     code_string="Set Var:tag in Program:CsStartup from Arg:tag";
+     pre_compile_code_string="Set Var:tag in Program:CsStartup from Arg:tag";
      prog=.projects["CsStd"].programs["CsStartup"]$$;
      var_name="tag";
      arg_name="tag";
@@ -6733,8 +6739,8 @@ CsProject .projects["CsStd"] {
     ProgVarFmArg @[4] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:log_dir in Program:LeabraStartup from Arg:log_dir";
-     pre_compile_code_string="Set Var:log_dir in Program:LeabraStartup from Arg:log_dir";
+     code_string="Set Var:log_dir in Program:CsStartup from Arg:log_dir";
+     pre_compile_code_string="Set Var:log_dir in Program:CsStartup from Arg:log_dir";
      prog=$.projects["CsStd"].programs["CsStartup"]$;
      var_name="log_dir";
      arg_name="log_dir";
@@ -6742,8 +6748,8 @@ CsProject .projects["CsStd"] {
     ProgVarFmArg @[5] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
-     code_string="Set Var:param_set in Program:LeabraStartup from Arg:param_set";
-     pre_compile_code_string="Set Var:param_set in Program:LeabraStartup from Arg:param_set";
+     code_string="Set Var:param_set in Program:CsStartup from Arg:param_set";
+     pre_compile_code_string="Set Var:param_set in Program:CsStartup from Arg:param_set";
      prog=$.projects["CsStd"].programs["CsStartup"]$;
      var_name="param_set";
      arg_name="param_set";
@@ -6877,8 +6883,8 @@ CsProject .projects["CsStd"] {
       ProgVarFmArg @[0] {
        desc="read in the arg to us too, so we can set file names based on it";
        flags=CAN_REVERT_TO_CODE;
-       code_string="Set Var:batch_start in Program:LeabraStartup from Arg:batch_start";
-       pre_compile_code_string="Set Var:batch_start in Program:LeabraStartup from Arg:batch_start";
+       code_string="Set Var:batch_start in Program:CsStartup from Arg:batch_start";
+       pre_compile_code_string="Set Var:batch_start in Program:CsStartup from Arg:batch_start";
        prog=$.projects["CsStd"].programs["CsStartup"]$;
        var_name="batch_start";
        arg_name="batch_start";
@@ -7467,7 +7473,7 @@ CsProject .projects["CsStd"] {
      targ_ld_init="*CsBatch*";
     };
    };
-   step_prog=.projects["CsStd"].programs.gp["CsAll_Std"]["CsCycle"]$$;
+   step_prog=NULL;
    step_n=1;
    doc {
     name="doc";
@@ -7502,6 +7508,13 @@ CsProject .projects["CsStd"] {
     short_nm="Batch";
     tags="Cs, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -7752,6 +7765,13 @@ CsProject .projects["CsStd"] {
     short_nm="Train";
     tags="Cs, Std";
     desc="A complete training run of a constraint satisfaction network: iterating over epochs until the network has learned the task";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -8713,6 +8733,13 @@ CsProject .projects["CsStd"] {
     short_nm="Epoch";
     tags="Cs, Std";
     desc="iterates over all of the items in a data table and calls Trial process on them";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -9127,6 +9154,13 @@ CsProject .projects["CsStd"] {
     short_nm="Trial";
     tags="Cs, Std";
     desc="Constraint Satisfaction processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -9365,7 +9399,7 @@ CsProject .projects["CsStd"] {
       update_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrial"].vars["update_net_view"]$$;
      };
     };
-    step_prog=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsCycle"]$;
+    step_prog=NULL;
     step_n=1;
     doc {
      name="doc";
@@ -9393,6 +9427,13 @@ CsProject .projects["CsStd"] {
     short_nm="Settle";
     tags="Cs, Std";
     desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -9622,7 +9663,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  };
 	 };
 	};
-	target=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsCycle"]$;
+	target=.projects["CsStd"].programs.gp["CsAll_Std"]["CsCycle"]$$;
 	targ_ld_init="*CsCycle*";
        };
        NetCounterIncr @[1] {
@@ -9742,6 +9783,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     short_nm="Cycle";
     tags="Cs, Std";
     desc="runs one cycle of CS processing (updating net inputs and activations)";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -9853,6 +9901,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     short_nm="Inputs";
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -10142,6 +10197,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     short_nm="TrlMon";
     tags="Cs, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -10746,6 +10808,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     short_nm="EpcMon";
     tags="Cs, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -11428,6 +11497,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     short_nm="SavWts";
     tags="Network, Weights";
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -11757,6 +11833,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     short_nm="EpcTest";
     tags="Cs, Std";
     desc="iterates over all of the items in a data table and calls Trial process on them";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -12179,6 +12262,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     short_nm="TrlTest";
     tags="Cs, Std";
     desc="Constraint Satisfaction processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -12445,6 +12535,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     short_nm="StlTest";
     tags="Cs, Std";
     desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -12794,6 +12891,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     short_nm="CycTest";
     tags="Cs, Std";
     desc="runs one cycle of CS processing (updating net inputs and activations)";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -12905,6 +13009,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     short_nm="pplTst";
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -13194,6 +13305,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     short_nm="TrlMonTest";
     tags="Cs, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -13798,6 +13916,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     short_nm="EpcMonTest";
     tags="Cs, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -14489,7 +14614,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9978746;
+     value 8 0=0.9978735;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -15842,7 +15967,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04357067;
+       value 8 0=0.04359383;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -15876,7 +16001,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1][4].objs;.programs.gp[1][4].functions;.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=CsNetwork;

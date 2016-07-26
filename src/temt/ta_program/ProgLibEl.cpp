@@ -67,6 +67,7 @@ bool ProgLibEl::LoadProgram(Program* prog) {
   }
   prog->Load(path);
   prog->UpdateAfterEdit();      // make sure
+  prog->SigEmitUpdateAllMembers();
   prog->RunLoadInitCode();
   return true;
 }
@@ -85,6 +86,8 @@ bool ProgLibEl::LoadProgramGroup(Program_Group* prog_gp) {
   for(int i=0;i<prog_gp->leaves;i++) {
     Program* prog = prog_gp->Leaf(i);
     prog->UpdateAfterEdit_NoGui();    // make sure
+    prog->SigEmitUpdated();
+    prog->SigEmitUpdateAllMembers();
     prog->RunLoadInitCode();
   }
   return true;

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
 Program .projects[0].programs.gp[0][5] { 
  UserDataItem_List @*(.user_data_) {
   UserData_DocLink @[0] { };
@@ -46,6 +46,13 @@ Program .projects[0].programs.gp[0][5] {
  short_nm="Cycle";
  tags="Cs, Std";
  desc="runs one cycle of CS processing (updating net inputs and activations)";
+ version {
+  major=8;
+  minor=0;
+  step=0;
+ };
+ author="Randall C. O'Reilly";
+ email="randy.oreilly@colorado.edu";
  flags=0;
  stop_step_cond {
   expr=;

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -2966,8 +2966,8 @@ LeabraProject .projects["LeabraStd"] {
   minor=0;
   step=0;
  };
- author=;
- email=;
+ author="Randall C. O'Reilly";
+ email="randy.oreilly@colorado.edu";
  license {
   license=NO_LIC;
   owner_name="Regents of the University of Colorado";
@@ -2975,10 +2975,9 @@ LeabraProject .projects["LeabraStd"] {
   year="2011";
   custom=;
  };
- wiki_url {
-  sync=0;
+ wiki {
   wiki=;
-  url=;
+  page_name=;
  };
  docs {
   name="docs";
@@ -9145,6 +9144,13 @@ LeabraProject .projects["LeabraStd"] {
    short_nm="Startup";
    tags="Leabra, Startup";
    desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batch_start=xxx] [n_batches=xx} [tag=xxx] and other opts -- see code";
+   version {
+    major=8;
+    minor=0;
+    step=0;
+   };
+   author="Randall C. O'Reilly";
+   email="randy.oreilly@colorado.edu";
    flags=STARTUP_RUN;
    stop_step_cond {
     expr=;
@@ -10128,6 +10134,13 @@ LeabraProject .projects["LeabraStd"] {
     short_nm="Batch";
     tags="Leabra, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -10344,7 +10357,7 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    step_prog=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraCycle"]$$;
+    step_prog=NULL;
     step_n=1;
     doc {
      name="doc";
@@ -10372,6 +10385,13 @@ LeabraProject .projects["LeabraStd"] {
     short_nm="Train";
     tags="Leabra, Train, RndSeedList";
     desc="A complete training run of a Leabra network: iterating over epochs until the network has learned the task.  Also has a list of random seeds that are tied to the network batch counter, providing consistent runs regardless of what happens in the training of each network, or where it is run (e.g., on different processors)";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -11321,7 +11341,7 @@ LeabraProject .projects["LeabraStd"] {
       meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
     };
-    step_prog=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraQuarter"]$$;
+    step_prog=NULL;
     step_n=1;
     doc {
      name="doc";
@@ -11536,6 +11556,13 @@ mw.config.set({\"wgBackendResponseTime\":155});
     short_nm="Epoch";
     tags="Leabra, Std";
     desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=2;
     stop_step_cond {
      expr=;
@@ -11952,6 +11979,13 @@ mw.config.set({\"wgBackendResponseTime\":155});
     short_nm="Trial";
     tags="Leabra, Std";
     desc="Leabra processing of a single input/output event or external information, over a single alpha frequency cycle (100 msec / 10 Hz) -- iterates over gamma-frequency (25 msec / 40 Hz) quarter-trials";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -12186,7 +12220,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  };
 	 };
 	};
-	target=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraQuarter"]$;
+	target=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraQuarter"]$$;
 	targ_ld_init="*LeabraQuarter*";
        };
       };
@@ -12277,6 +12311,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="Quarter";
     tags="Leabra, Std";
     desc="iterates over cycles of activation updating for a gamma-frequency (25 msec / 40 Hz) quarter of an alpha frequency (100 msec / 10 Hz) trial";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -12514,7 +12555,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  };
 	 };
 	};
-	target=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraCycle"]$;
+	target=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraCycle"]$$;
 	targ_ld_init="*LeabraCycle*";
        };
        AssignExpr @[1] {
@@ -12607,6 +12648,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="Cycle";
     tags="Leabra, Std";
     desc="runs one cycle of leabra processing (updating net inputs and activations)";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -12718,6 +12766,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="Inputs";
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -13007,6 +13062,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="TrialMon";
     tags="Leabra, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -14143,7 +14205,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_desc=" share trial data from given datatable across the trial-level dmem communicator (outer loop) -- each processor gets data from all other processors; if called every trial with n_rows = 1, data will be identical to non-dmem; if called at end of epoch with n_rows = -1 data will be grouped by processor but this is more efficient";
      };
     };
-    step_prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"]$;
+    step_prog=NULL;
     step_n=1;
     doc {
      name="doc";
@@ -14171,6 +14233,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="EpcMon";
     tags="Leabra, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -15634,7 +15703,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 ";
      };
     };
-    step_prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"]$;
+    step_prog=NULL;
     step_n=1;
     doc {
      name="doc";
@@ -15662,6 +15731,13 @@ and the testing data is updated.  The first epoch monitor should have all the it
     short_nm="SavWts";
     tags="Network, Weights";
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -15991,6 +16067,13 @@ and the testing data is updated.  The first epoch monitor should have all the it
     short_nm="EpcTest";
     tags="Leabra, Std, Test";
     desc="sets testing flag, iterates over all of the items in a data table and calls LeabraTestTrial process on them";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -16355,7 +16438,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       update_after=0;
      };
     };
-    step_prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialTest"]$;
+    step_prog=NULL;
     step_n=1;
     doc {
      name="doc";
@@ -16383,6 +16466,13 @@ and the testing data is updated.  The first epoch monitor should have all the it
     short_nm="TrlTst";
     tags="Leabra, Std";
     desc="Leabra processing of a single input/output event or external information, over a single alpha frequency cycle (100 msec / 10 Hz) -- iterates over gamma-frequency (25 msec / 40 Hz) quarter-trials";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -16680,7 +16770,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       update_var=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraTrialTest"].vars["update_net_view"]$$;
      };
     };
-    step_prog=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraCycleTest"]$$;
+    step_prog=NULL;
     step_n=1;
     doc {
      name="doc";
@@ -16708,6 +16798,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="QrtTst";
     tags="Leabra, Std";
     desc="iterates over cycles of activation updating for a gamma-frequency (25 msec / 40 Hz) quarter of an alpha frequency (100 msec / 10 Hz) trial";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -16945,7 +17042,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  };
 	 };
 	};
-	target=$.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraCycleTest"]$;
+	target=.projects["LeabraStd"].programs.gp["LeabraAll_Test"]["LeabraCycleTest"]$$;
 	targ_ld_init="*LeabraCycle*";
        };
        AssignExpr @[1] {
@@ -17038,6 +17135,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="CycTest";
     tags="Leabra, Std";
     desc="runs one cycle of leabra processing (updating net inputs and activations)";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -17149,6 +17253,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="InTest";
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -17438,6 +17549,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="TrlMonTst";
     tags="Leabra, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -18392,6 +18510,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     short_nm="EpcMonTst";
     tags="Leabra, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+    version {
+     major=8;
+     minor=0;
+     step=0;
+    };
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -19458,7 +19583,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.0005313496;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -19468,7 +19593,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9957492;
+     value 8 0=0.9957469;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -21573,7 +21698,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04357067;
+       value 8 0=0.04359383;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {

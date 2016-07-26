@@ -281,6 +281,16 @@ void Program::UpdateAfterEdit_impl() {
   }
 }
 
+void Program::SigEmitUpdateAllMembers() {
+  objs.SigEmitUpdated();
+  types.SigEmitUpdated();
+  args.SigEmitUpdated();
+  vars.SigEmitUpdated();
+  functions.SigEmitUpdated();
+  init_code.SigEmitUpdated();
+  prog_code.SigEmitUpdated();
+}
+
 int Program::Save_strm(ostream& strm, taBase* par, int indent) {
   if(author.empty() && taMisc::project_author.nonempty()) {
     author = taMisc::project_author;
