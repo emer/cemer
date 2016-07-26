@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -3808,9 +3808,9 @@ LeabraProject .projects["LeabraFlex"] {
  desc="flexible modular framework for Leabra Programs";
  tags="Leabra, flex";
  version {
-  major=0;
-  minor=1;
-  step=15;
+  major=8;
+  minor=0;
+  step=0;
  };
  author=;
  email=;
@@ -3818,13 +3818,12 @@ LeabraProject .projects["LeabraFlex"] {
   license=GPLv2;
   owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2010";
+  year="2016";
   custom=;
  };
- wiki_url {
-  sync=0;
+ wiki {
   wiki=;
-  url=;
+  page_name=;
  };
  docs {
   name="docs";
@@ -8711,6 +8710,13 @@ mw.config.set({\"wgBackendResponseTime\":192});
    desc="run project in the background (replaces leabra_startup.css)
 
 command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xxx]";
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author=;
+   email=;
    flags=STARTUP_RUN;
    stop_step_cond {
     expr=;
@@ -9746,6 +9752,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="BsStrt";
     tags="Leabra, Startup";
     desc="startup args specifically for fixation training parameters";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -9853,6 +9866,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="MstBtc";
     tags="Leabra, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -10064,6 +10084,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="MstTrn";
     tags=;
     desc="modular event-based train program";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -10464,6 +10491,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="MstrRn";
     tags=;
     desc="modular run code -- forks off to RunProgs based on run_prog -- only neccessary to provide common step point for all run progs";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr="StopStepTest()";
@@ -10794,6 +10828,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      short_nm="BaseInit";
      tags=;
      desc="initialization for basic training";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -11101,6 +11142,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      short_nm="BaseRun";
      tags=;
      desc="run basic training -- does ";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -11438,6 +11486,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="BscTrn";
     tags=;
     desc="basic training -- this is a standard Leabra minus-plus trial";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=2;
     stop_step_cond {
      expr=;
@@ -11942,6 +11997,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="ChNxEvt";
     tags="InputData, Permuted, FlexProgs, ApplyInput";
     desc="choose next event in input data in either sequential or permuted order according to its own internal counter-- starts over (re-permutes) when the end is reached -- is automatically dmem compatible for allocating different events to different processors";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -12725,6 +12787,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="ChRndm";
     tags=;
     desc="choose an event at random to present on current trial";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -12875,6 +12944,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="Inputs";
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -13172,6 +13248,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="GlobInit";
     tags=;
     desc="initialize standard global params, which live here too -- set other programs to init_from these guys";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -13449,6 +13532,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="BatchSeed";
     tags=;
     desc="select random seed based on network batch number";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -13673,6 +13763,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="CfgNet";
     tags="Network, Configure";
     desc="configure the network -- basically selectively lesion different parts that are not needed for a given task";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -15600,6 +15697,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="PstLyr";
     tags="Network, Layer, Position";
     desc="positions network layers according to a data table with positions -- can use either absolute or group-relative coordinates, including non-structural groups";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -17473,6 +17577,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="NtwTgg";
     tags=;
     desc="toggle lesion status on or off in network -- for dynamic speedup..";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -17934,6 +18045,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="TrnStart";
     tags=;
     desc="basic stuff (init weights, load weights etc) at start of training -- also calls EpochStart -- most init progs will call this";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -18357,6 +18475,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="TrnEnd";
     tags=;
     desc="end training -- save weights if needed, compute final summary stats -- and set stop_train";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -18531,6 +18656,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="EpcStart";
     tags=;
     desc="Start a new epoch";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -18719,6 +18851,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="EpcEnd";
     tags=;
     desc="end of epoch -- relnet and basic stats compute, calls only the core standard monitor, save weights if doing that";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -18901,6 +19040,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="TrStrt";
     tags=;
     desc="start of trial before any input data applied -- prepares for input data to be applied (Init_InputData)";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -19053,6 +19199,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="TrlEnd";
     tags=;
     desc="standard end-of-trial code -- no monitor calls at all";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -19164,6 +19317,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="SetlMin";
     tags=;
     desc="settle network in the minus phase -- enough different logic in two phases to warrant making them separate";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -19323,6 +19483,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="SttPls";
     tags=;
     desc="settle network in the minus phase -- enough different logic in two phases to warrant making them separate";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -19453,6 +19620,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="Trial";
     tags="Leabra, Std";
     desc="Leabra processing of a single input/output event or external information, over a single alpha frequency cycle (100 msec / 10 Hz) -- iterates over gamma-frequency (25 msec / 40 Hz) quarter-trials";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -19680,6 +19854,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="Quarter";
     tags="Leabra, Std";
     desc="iterates over cycles of activation updating for a gamma-frequency (25 msec / 40 Hz) quarter of an alpha frequency (100 msec / 10 Hz) trial";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -19931,6 +20112,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="Cycle";
     tags="Leabra, Std";
     desc="runs one cycle of leabra processing (updating net inputs and activations)";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -20056,6 +20244,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values
 
 also save specs.";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -20384,6 +20579,13 @@ also save specs.";
      short_nm="SLFls";
      tags="Leabra, Startup";
      desc="startup args specifically for fixation training parameters";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -20800,6 +21002,13 @@ also save specs.";
      short_nm="TrialMon";
      tags="Leabra, Std, Monitor";
      desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -22072,6 +22281,13 @@ also save specs.";
      short_nm="EpcMon";
      tags="Leabra, Std, Monitor";
      desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -23671,7 +23887,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.0005313496;
+     value 8 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -23681,7 +23897,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9925611;
+     value 8 0=0.9925571;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -25318,7 +25534,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04357067;
+       value 8 0=0.04359383;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {

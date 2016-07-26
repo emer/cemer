@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9700
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9717
 LeabraProject .projects["LeabraBlank"] { 
  Doc_Group @.docs = [0] {
  };
@@ -450,15 +450,14 @@ LeabraProject .projects["LeabraBlank"] {
  email=;
  license {
   license=NO_LIC;
-  owner_name="Regents of the University of Colorado";
-  org="CCNLab at the University of Colorado Boulder";
-  year="2011";
+  owner_name=;
+  org=;
+  year="2016";
   custom=;
  };
- wiki_url {
-  sync=0;
+ wiki {
   wiki=;
-  url=;
+  page_name=;
  };
  docs {
   name="docs";
@@ -2210,10 +2209,10 @@ LeabraProject .projects["LeabraBlank"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
     last_sort_spec {
-     name=;
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -2221,7 +2220,7 @@ LeabraProject .projects["LeabraBlank"] {
      };
     };
     control_panel_cells {
-     name=;
+     name="control_panel_cells";
      el_typ=DataTableCell;
      el_def=0;
     };
@@ -3178,7 +3177,7 @@ LeabraProject .projects["LeabraBlank"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9984059;
+     value 8 0=0.9984051;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -3396,7 +3395,7 @@ LeabraProject .projects["LeabraBlank"] {
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04357067;
+       value 8 0=0.04359383;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {

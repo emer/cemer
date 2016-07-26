@@ -512,7 +512,7 @@ Program_Group .projects[0].programs.gp[1] {
    step=0;
   };
   author="Randall C. O'Reilly";
-  email="randy.oreilly@colorado.edu";
+  email="emergent-users@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -941,7 +941,7 @@ Program_Group .projects[0].programs.gp[1] {
    step=0;
   };
   author="Randall C. O'Reilly";
-  email="randy.oreilly@colorado.edu";
+  email="emergent-users@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -1214,7 +1214,7 @@ Program_Group .projects[0].programs.gp[1] {
    step=0;
   };
   author="Randall C. O'Reilly";
-  email="randy.oreilly@colorado.edu";
+  email="emergent-users@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -1570,7 +1570,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    step=0;
   };
   author="Randall C. O'Reilly";
-  email="randy.oreilly@colorado.edu";
+  email="emergent-users@colorado.edu";
   flags=0;
   stop_step_cond {
    expr=;
@@ -1688,7 +1688,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    step=0;
   };
   author="Randall C. O'Reilly";
-  email="randy.oreilly@colorado.edu";
+  email="emergent-users@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -1984,7 +1984,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    step=0;
   };
   author="Randall C. O'Reilly";
-  email="randy.oreilly@colorado.edu";
+  email="emergent-users@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;
@@ -2595,7 +2595,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    step=0;
   };
   author="Randall C. O'Reilly";
-  email="randy.oreilly@colorado.edu";
+  email="emergent-users@colorado.edu";
   flags=NO_STOP_STEP;
   stop_step_cond {
    expr=;

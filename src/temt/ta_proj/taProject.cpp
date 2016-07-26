@@ -47,6 +47,7 @@ taTypeDef_Of(taDataGen);
 #include <QFileInfo>
 #include <QFileDialog>
 #include <QStandardPaths>
+#include <QDateTime>
 
 #include <css_machine.h>
 #include <css_qtconsole.h>
@@ -86,13 +87,6 @@ void taProject::Initialize() {
   save_view = true;
   save_as_only = false;
   no_dialogs = false;
-
-  if (author.empty()) {
-    author = taMisc::project_author;
-  }
-  if (email.empty()) {
-    email = taMisc::author_email;
-  }
 }
 
 void taProject::Destroy() {
@@ -495,16 +489,38 @@ bool taProject::SetFileName(const String& val) {
 
 int taProject::Save_strm(ostream& strm, taBase* par, int indent) {
   taMisc::save_use_name_paths = true; // project is one guy that DOES use name paths!
+  if(!file_name.contains("proj_templates")) { // exclude new from template guys
+    SaveSetAuthor();
+  }
+      
+  int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent);
+  setDirty(false);
+  taMisc::save_use_name_paths = false; // default is off, so restore to default for everything else
+  return rval;
+}
+
+void taProject::SetMeAsAuthor() {
+  author = taMisc::project_author;
+  email = taMisc::author_email;
+  license.license = taMisc::license_def;
+  license.owner_name = taMisc::license_owner;
+  license.org = taMisc::license_org;
+  license.year = QDateTime::currentDateTime().toString("yyyy");
+}
+
+void taProject::SaveSetAuthor() {
   if(author.empty() && taMisc::project_author.nonempty()) {
     author = taMisc::project_author;
   }
   if(email.empty() && taMisc::author_email.nonempty()) {
     email = taMisc::author_email;
   }
-  int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent);
-  setDirty(false);
-  taMisc::save_use_name_paths = false; // default is off, so restore to default for everything else
-  return rval;
+  if(license.license == taLicense::NO_LIC && taMisc::license_def != taLicense::NO_LIC) {
+    license.license = taMisc::license_def;
+    license.owner_name = taMisc::license_owner;
+    license.org = taMisc::license_org;
+    license.year = QDateTime::currentDateTime().toString("yyyy");
+  }
 }
 
 int taProject::Save() {

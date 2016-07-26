@@ -230,6 +230,10 @@ public:
 
   virtual void          ViewLicense();
   // #BUTTON view the applicable license information for this project
+  virtual void          SetMeAsAuthor();
+  // #BUTTON update the author, email, and license information to your default information as set in the preferences (update preferences first if not otherwise set!)
+  virtual void          SaveSetAuthor();
+  // #IGNORE during save, set author if information is otherwise blank
 
   virtual int           SaveNoteChanges();
   // #CAT_File saves the project to a file using current file name, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving

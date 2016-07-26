@@ -2304,17 +2304,17 @@ CsProject .projects["CsStd"] {
  desc=;
  tags=;
  version {
-  major=0;
+  major=8;
   minor=0;
   step=0;
  };
- author="Randall C. O'Reilly";
- email="randy.oreilly@colorado.edu";
+ author=;
+ email=;
  license {
-  license=NO_LIC;
+  license=GPLv2;
   owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2011";
+  year="2016";
   custom=;
  };
  wiki {
@@ -6524,7 +6524,7 @@ CsProject .projects["CsStd"] {
     step=0;
    };
    author="Randall C. O'Reilly";
-   email="randy.oreilly@colorado.edu";
+   email="emergent-users@grey.colorado.edu";
    flags=STARTUP_RUN;
    stop_step_cond {
     expr=;
@@ -7514,7 +7514,7 @@ CsProject .projects["CsStd"] {
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -7771,7 +7771,7 @@ CsProject .projects["CsStd"] {
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -8739,7 +8739,7 @@ CsProject .projects["CsStd"] {
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -9160,7 +9160,7 @@ CsProject .projects["CsStd"] {
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -9433,7 +9433,7 @@ CsProject .projects["CsStd"] {
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -9789,7 +9789,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -9907,7 +9907,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -10203,7 +10203,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -10814,7 +10814,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -11503,7 +11503,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -11839,7 +11839,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -12268,7 +12268,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -12541,7 +12541,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -12897,7 +12897,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -13015,7 +13015,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -13311,7 +13311,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -13922,7 +13922,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -16001,7 +16001,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
- tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1][4].objs;.programs.gp[1][4].functions;.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
+ tree_state{ .;.docs;.wizards;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=CsNetwork;

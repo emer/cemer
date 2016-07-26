@@ -2023,17 +2023,17 @@ SoProject .projects["SoStd"] {
  desc=;
  tags=;
  version {
-  major=0;
+  major=8;
   minor=0;
   step=0;
  };
- author="Randall C. O'Reilly";
- email="randy.oreilly@colorado.edu";
+ author=;
+ email=;
  license {
-  license=NO_LIC;
+  license=GPLv2;
   owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2011";
+  year="2016";
   custom=;
  };
  wiki {
@@ -6263,7 +6263,7 @@ SoProject .projects["SoStd"] {
     step=0;
    };
    author="Randall C. O'Reilly";
-   email="randy.oreilly@colorado.edu";
+   email="emergent-users@grey.colorado.edu";
    flags=STARTUP_RUN;
    stop_step_cond {
     expr=;
@@ -7253,7 +7253,7 @@ SoProject .projects["SoStd"] {
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -7504,7 +7504,7 @@ SoProject .projects["SoStd"] {
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -8473,7 +8473,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -8894,7 +8894,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -9115,7 +9115,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -9362,7 +9362,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -9868,7 +9868,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -10487,7 +10487,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -10823,7 +10823,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -11252,7 +11252,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=0;
     stop_step_cond {
      expr=;
@@ -11473,7 +11473,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -11720,7 +11720,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -12226,7 +12226,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      step=0;
     };
     author="Randall C. O'Reilly";
-    email="randy.oreilly@colorado.edu";
+    email="emergent-users@grey.colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -12838,7 +12838,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.001063264;
+     value 8 0=0.0005316321;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {

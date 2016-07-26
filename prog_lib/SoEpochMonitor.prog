@@ -105,7 +105,7 @@ Program .projects[0].programs.gp[0][6] {
   step=0;
  };
  author="Randall C. O'Reilly";
- email="randy.oreilly@colorado.edu";
+ email="emergent-users@colorado.edu";
  flags=NO_STOP_STEP;
  stop_step_cond {
   expr=;

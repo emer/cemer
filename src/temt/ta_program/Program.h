@@ -324,6 +324,11 @@ public:
   // (re)load the program from the program library -- lookup by given name
   taBase*               AddFromProgLib(ProgLibEl* prog_type) ;
   // #BUTTON #MENU_CONTEXT #FROM_LIST_prog_lib #NO_SAVE_ARG_VAL #PRE_CALL_InitProgLib #CAT_Program adds a program from a library of existing program types
+  virtual void          SetMeAsAuthor();
+  // #MENU #MENU_ON_Object #MENU_CONTEXT update the author, email, and license information to your default information as set in the preferences (update preferences first if not otherwise set!)
+  virtual void          SaveSetAuthor();
+  // #IGNORE during save, set author if information is otherwise blank
+
   
   virtual void          RunLoadInitCode();
   // #CAT_Run Run the initialization code for object pointer variables and program calls -- to resolve pointers after loading

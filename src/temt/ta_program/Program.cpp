@@ -117,13 +117,6 @@ void Program::Initialize() {
 
   if(!prog_lib)
     prog_lib = &Program_Group::prog_lib;
-
-  if (author.empty()) {
-    author = taMisc::project_author;
-  }
-  if (email.empty()) {
-    email = taMisc::author_email;
-  }
 }
 
 void Program::Destroy() {
@@ -292,12 +285,7 @@ void Program::SigEmitUpdateAllMembers() {
 }
 
 int Program::Save_strm(ostream& strm, taBase* par, int indent) {
-  if(author.empty() && taMisc::project_author.nonempty()) {
-    author = taMisc::project_author;
-  }
-  if(email.empty() && taMisc::author_email.nonempty()) {
-    email = taMisc::author_email;
-  }
+  SaveSetAuthor();
   return inherited::Save_strm(strm, par, indent);
 }
 
@@ -1865,6 +1853,19 @@ taBase* Program::AddFromProgLib(ProgLibEl* prog_type) {
   return prog_gp->AddFromProgLib(prog_type);
 }
 
+void Program::SetMeAsAuthor() {
+  author = taMisc::project_author;
+  email = taMisc::author_email;
+}
+
+void Program::SaveSetAuthor() {
+  if(author.empty() && taMisc::project_author.nonempty()) {
+    author = taMisc::project_author;
+  }
+  if(email.empty() && taMisc::author_email.nonempty()) {
+    email = taMisc::author_email;
+  }
+}
 
 Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
   if(fun_name != "LoadFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);
