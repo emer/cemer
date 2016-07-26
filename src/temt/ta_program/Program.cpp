@@ -1853,9 +1853,19 @@ taBase* Program::AddFromProgLib(ProgLibEl* prog_type) {
   return prog_gp->AddFromProgLib(prog_type);
 }
 
-void Program::SetMeAsAuthor() {
-  author = taMisc::project_author;
-  email = taMisc::author_email;
+void Program::AddMeAsAuthor(bool sole_author) {
+  if(sole_author) {
+    author = "";
+    email = "";
+  }
+  if(author.empty())
+    author = taMisc::project_author;
+  else
+    author += ", " + taMisc::project_author;
+  if(email.empty())
+    email = taMisc::author_email;
+  else
+    email += ", " + taMisc::author_email;
 }
 
 void Program::SaveSetAuthor() {

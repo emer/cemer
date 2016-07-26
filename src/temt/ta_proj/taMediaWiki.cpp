@@ -1442,7 +1442,7 @@ bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publis
   return true; // return true if item page created - even if upload of item file fails
 }
 
-bool taMediaWiki::PublishItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, String& page_name, String& tags, String& desc, taProjVersion& version, String& author, String& email)
+bool taMediaWiki::PublishItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, String& page_name, String& tags, String& desc, taProjVersion& version, String& author, String& email, taBase* obj)
 {
   // Is pub to program supported on this wiki?
   
@@ -1458,7 +1458,7 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
   if (taMediaWiki::PageExists(wiki_name, page_name)) {
     int choice = taMisc::Choice("The " + publish_type  + " page name: " + page_name + " is already published on wiki: " + wiki_name + " for object named: " + obj_name + ".  Would you like to just upload a new version of the file?", "Upload", "Cancel");
     if (choice == 0) {
-      return UpdateItemOnWeb(wiki_name, publish_type, obj_name, file_name, version);
+      return UpdateItemOnWeb(wiki_name, publish_type, obj_name, file_name, version, obj);
     }
     else {
       return false;
@@ -1531,6 +1531,8 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
       String ver_str = dialog.GetVersion();
       version.SetFromString(ver_str);
 
+      obj->Save();              // save current changes!
+
       // double-check for existing page name now that it has been entered:
       if (taMediaWiki::PageExists(wiki_name, page_name)) {
         int choice = taMisc::Choice("The " + publish_type  + " page name: " + page_name + " is already published on  wiki: " + wiki_name + " for object named: " + obj_name + ".  Would you like to edit existing page and upload a new version of the file?", "Edit and Upload", "Cancel");
@@ -1544,7 +1546,7 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
   return was_published;
 }
 
-bool taMediaWiki::UpdateItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, taProjVersion& version) {
+bool taMediaWiki::UpdateItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, taProjVersion& version, taBase* obj) {
   String file_name_only = taMisc::GetFileFmPath(file_name);
   
   String emer_version = taMisc::version;
@@ -1563,6 +1565,9 @@ bool taMediaWiki::UpdateItemOnWeb(const String& wiki_name, const String& publish
   if (dialog.exec()) {
     String ver_str = dialog.GetVersion();
     version.SetFromString(ver_str);
+
+    obj->Save();              // save current changes!
+
     bool rval = taMediaWiki::UploadFile(wiki_name, file_name, false); // true - update new revision
     if (rval == false) {
       taMisc::Error("Upload failure");

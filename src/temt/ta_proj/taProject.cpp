@@ -499,13 +499,26 @@ int taProject::Save_strm(ostream& strm, taBase* par, int indent) {
   return rval;
 }
 
-void taProject::SetMeAsAuthor() {
-  author = taMisc::project_author;
-  email = taMisc::author_email;
-  license.license = taMisc::license_def;
-  license.owner_name = taMisc::license_owner;
-  license.org = taMisc::license_org;
-  license.year = QDateTime::currentDateTime().toString("yyyy");
+void taProject::AddMeAsAuthor(bool sole_author, bool updt_license) {
+  if(sole_author) {
+    author = "";
+    email = "";
+    updt_license = true;
+  }
+  if(author.empty())
+    author = taMisc::project_author;
+  else
+    author += ", " + taMisc::project_author;
+  if(email.empty())
+    email = taMisc::author_email;
+  else
+    email += ", " + taMisc::author_email;
+  if(updt_license) {
+    license.license = taMisc::license_def;
+    license.owner_name = taMisc::license_owner;
+    license.org = taMisc::license_org;
+    license.year = QDateTime::currentDateTime().toString("yyyy");
+  }
 }
 
 void taProject::SaveSetAuthor() {
@@ -613,12 +626,12 @@ bool taProject::PublishProjectOnWeb(const String &wiki_name)
   wiki.wiki = wiki_name;
   if(wiki.page_name.empty())    // use name by default
     wiki.page_name = name;
-  return taMediaWiki::PublishItemOnWeb(wiki_name, "Project", this->name, GetFileName(), wiki.page_name, tags, desc, version, author, email);
+  return taMediaWiki::PublishItemOnWeb(wiki_name, "Project", this->name, GetFileName(), wiki.page_name, tags, desc, version, author, email, this);
 }
 
 bool taProject::UpdateProjectOnWeb(const String &wiki_name) {
   // todo: we could do more here to synchronize updates from wiki etc
-  return taMediaWiki::UpdateItemOnWeb(wiki_name, "Project", this->name, GetFileName(), version);
+  return taMediaWiki::UpdateItemOnWeb(wiki_name, "Project", this->name, GetFileName(), version, this);
 }
 
 

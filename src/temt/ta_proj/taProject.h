@@ -230,8 +230,8 @@ public:
 
   virtual void          ViewLicense();
   // #BUTTON view the applicable license information for this project
-  virtual void          SetMeAsAuthor();
-  // #BUTTON update the author, email, and license information to your default information as set in the preferences (update preferences first if not otherwise set!)
+  virtual void          AddMeAsAuthor(bool sole_author, bool updt_license);
+  // #BUTTON update the author, email, and (optionally) license information with your default information as set in the preferences (update preferences first if not otherwise set!) -- if sole_author then updt_licence automatically
   virtual void          SaveSetAuthor();
   // #IGNORE during save, set author if information is otherwise blank
 

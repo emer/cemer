@@ -150,12 +150,12 @@ public:
   static bool PubProgPagesInstalled(const String& wiki_name);
   //  #CAT_Wiki Are the pages that support the PublishProgram featured installed on this wiki? Actually only checks for one crucial page!
 
-  static bool PublishItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, String& page_name, String& tags, String& desc, taProjVersion& version, String& author, String& email);
+  static bool PublishItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, String& page_name, String& tags, String& desc, taProjVersion& version, String& author, String& email, taBase* obj);
   // main interface for publishing an item on a wiki -- prompts user for updated info of items passed -- note that page_name, version, tags, desc, will be updated by user input in the publish dialog, and should be applied back to the object upon successful completion 
   static bool PublishItem_impl(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, const String& page_name, const String& tags, const String& desc, const String& version, const String& author, const String& email);
   // #IGNORE actually publish the item -- if edit_page then edit exsting page, else create
   
-  static bool UpdateItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, taProjVersion& version);
+  static bool UpdateItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, taProjVersion& version, taBase* obj);
   // main interface for updating an item on a wiki
 
   TA_BASEFUNS_NOCOPY(taMediaWiki);
