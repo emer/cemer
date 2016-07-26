@@ -125,6 +125,18 @@ String taMediaWiki::GetApiURL(const String& wiki_name) {
   return wiki_url + "/api.php";
 }
 
+String taMediaWiki::GetWikiNameFromURL(const String& wiki_url) {
+  for(int i=0; i<taMisc::wikis.size; i++) {
+    NameVar& nv = taMisc::wikis.FastEl(i);
+    String url = nv.value.toString();
+    if(wiki_url.startsWith(url)) {
+      return nv.name;
+    }
+  }
+  taMisc::Error("Known wiki not found from url:", wiki_url);
+  return "";
+}
+
 String taMediaWiki::GetLoggedInUsername(const String &wiki_name)
 {
   // Make sure wiki name is valid before doing anything else.
@@ -1397,12 +1409,12 @@ bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publis
   String page_content = "{{Published" + publish_type +
     "\n| page_name=" + page_name +
     "\n| obj_name=" + obj_name +
-    "\n| filename="+filename_only +
-    "\n| desc=" + desc +
+    "\n| filename=" +filename_only +
     "\n| author=" + author +
     "\n| email=" + email +
     "\n| first_pub=" + first_pub +
     "\n| tags=" + tags +
+    "\n| desc=" + desc +
     "\n}}";
 
   // robust interface
@@ -1426,6 +1438,7 @@ bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publis
       taMisc::Error(publish_type + " page created BUT upload of " + publish_type + " file or linking of uploaded " + publish_type + " file has failed ", wiki_name, "wiki");
     }
   }
+  taMisc::Info("Upload Completed!");
   return true; // return true if item page created - even if upload of item file fails
 }
 
@@ -1559,6 +1572,7 @@ bool taMediaWiki::UpdateItemOnWeb(const String& wiki_name, const String& publish
       taMisc::Error("AppendVersionInfo failure");
       return false;
     }
+    taMisc::Info("Upload Completed!");
     return true;
   }
   return false;

@@ -1699,8 +1699,7 @@ void iMainWindowViewer::fileBrowseProgramLibsOnWeb(const Variant &repo)
   if (wiki_url.empty()) {
     return;
   }
-  String url = wiki_url + "BrowseProgramLibrary";
-  //  httpUrlHandler(QUrl(url));
+  String url = wiki_url + "PublishedProgramList";
   iHelpBrowser::StatLoadUrl(url);
 }
 

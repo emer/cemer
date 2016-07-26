@@ -44,6 +44,9 @@ public:
   static String GetApiURL(const String& wiki_name);
   // #CAT_Wiki Gets the url for the wiki api
 
+  static String GetWikiNameFromURL(const String& wiki_url);
+  // get the wiki name in our list of known wikis based on given url
+
   static String GetLoggedInUsername(const String &wiki_name);
   // #CAT_Account Get the username of the user currently logged in via emergent's Webkit browser.
 

@@ -218,6 +218,8 @@ public:
   // #CAT_File update (upload latest version) of project on the web (wiki) to given wiki name -- menu chooser for wikis available in gui version in iMainWindowViewer
   virtual bool          UploadFilesForProjectOnWeb(const String& wiki_name);
   // #CAT_File upload a list of files associated with project to the web (wiki) to given wiki name -- menu chooser for wikis available in gui version in iMainWindowViewer
+  virtual bool          OpenProjectFromWeb(const String& proj_file_name, const String& wiki_name);
+  // #CAT_File upload a list of files associated with project to the web (wiki) to given wiki name -- menu chooser for wikis available in gui version in iMainWindowViewer
 
   int                   Load(const String& fname="", taBase** loaded_obj_ptr = NULL) override;
   virtual void          OpenProjectLog();
