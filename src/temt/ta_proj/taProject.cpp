@@ -634,6 +634,7 @@ bool taProject::UploadFilesForProjectOnWeb(const String &wiki_name) {
           }
         }
       }
+      taMisc::Info("Upload Completed!");
     }
   }
   return rval;

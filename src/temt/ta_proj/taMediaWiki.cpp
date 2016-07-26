@@ -1523,6 +1523,7 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
       if(desc == "brief, abstract-like description of main features.") {
         desc = "";
       }
+      desc.trim();              // tends to have lots of spaces..
       tags = dialog.GetTags();
       if (tags == "comma separated and initial uppercase, please") {
         tags = "";
