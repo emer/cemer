@@ -61,7 +61,7 @@ public:
   QNetworkReply * httpPost(const QUrl &url);
   QNetworkReply * httpPost(const QUrl &url, const char *filename);
   QNetworkReply * httpPost(const QUrl &url, const char *data, int size);
-  QNetworkReply * httpPost(const QUrl &url, const char *local_filename, const char *wiki_filename, const char *token);
+  QNetworkReply * httpPost(const QUrl &url, const char *local_filename, const char *wiki_filename, const char *token, const char *comment);
 
   QNetworkReply * getReply();
   QNetworkReply * getReplyIfSuccess();

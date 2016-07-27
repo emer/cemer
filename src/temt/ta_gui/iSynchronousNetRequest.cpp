@@ -180,7 +180,7 @@ QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, QHttpMultiPart
 }
 #endif
 
-QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *local_filename, const char *wiki_filename, const char *token)
+QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *local_filename, const char *wiki_filename, const char *token, const char *comment)
 {
   reset();
 #if (QT_VERSION >= 0x040800)
@@ -201,6 +201,10 @@ QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *lo
   QHttpPart tokenPart;
   tokenPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"token\""));
   tokenPart.setBody(token);
+  
+  QHttpPart commentPart;
+  commentPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"comment\""));
+  commentPart.setBody(comment);
 
   QHttpPart ignorePart;
   ignorePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"ignorewarnings\""));
@@ -223,6 +227,7 @@ QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *lo
   multiPart->append(filePart);
   multiPart->append(formatPart);
   multiPart->append(ignorePart);
+  multiPart->append(commentPart);
   multiPart->append(tokenPart);
 
   // Make HTTP POST request, wait for reply.

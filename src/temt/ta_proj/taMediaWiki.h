@@ -59,7 +59,7 @@ public:
   /////////////////////////////////////////////////////
   //            FILE OPERATIONS
 
-  static bool   UploadFile(const String& wiki_name, const String& local_file_name, bool new_revision, const String& wiki_file_name="");
+  static bool   UploadFile(const String& wiki_name, const String& local_file_name, bool new_revision, const String& wiki_file_name="", const String& comment="");
   // #CAT_File Upload file to wiki, optionally giving it a different file name on the wiki
 
   static bool   DownloadFile(const String& wiki_name, const String& wiki_file_name,

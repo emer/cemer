@@ -315,7 +315,7 @@ bool taMediaWiki::Logout(const String &wiki_name)
 /////////////////////////////////////////////////////
 //              FILE OPERATIONS
 
-bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_name, bool new_revision, const String& wiki_file_name)
+bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_name, bool new_revision, const String& wiki_file_name, const String& comment)
 {
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
@@ -339,7 +339,7 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
   // Make the multi-part network request (see iSynchronousNetRequest.cpp for implementation).
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpPost(url, local_file_name, dst_filename, token)) {
+  if (QNetworkReply *reply = request.httpPost(url, local_file_name, dst_filename, token, comment)) {
     QString apiResponse(reply->readAll());
     if (CheckResponseError(apiResponse)) {
       taMisc::Error("Failed to upload local file", local_file_name, "to", wiki_file_name, "on", wiki_name, "wiki.");
@@ -1424,7 +1424,7 @@ bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publis
   
   // If project filename empty, the user does not want to upload the project file
   if (!file_name.empty()) {
-    bool proceed = UploadFile(wiki_name, file_name, "");
+    bool proceed = UploadFile(wiki_name, file_name, "", "", "Version: " + version + "; Emergent version used: " + emer_version);
     if (proceed) {
       proceed = LinkFile(wiki_name, publish_type, filename_only, obj_name);
       if(proceed) {
@@ -1568,7 +1568,7 @@ bool taMediaWiki::UpdateItemOnWeb(const String& wiki_name, const String& publish
 
     obj->Save();              // save current changes!
 
-    bool rval = taMediaWiki::UploadFile(wiki_name, file_name, false); // true - update new revision
+    bool rval = taMediaWiki::UploadFile(wiki_name, file_name, false, "", "Version: " + ver_str + "; Emergent version used: " + emer_version); // true - update new revision
     if (rval == false) {
       taMisc::Error("Upload failure");
       return false;
