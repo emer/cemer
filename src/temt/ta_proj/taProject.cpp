@@ -519,6 +519,7 @@ void taProject::AddMeAsAuthor(bool sole_author, bool updt_license) {
     license.org = taMisc::license_org;
     license.year = QDateTime::currentDateTime().toString("yyyy");
   }
+  SigEmitUpdated();
 }
 
 void taProject::SaveSetAuthor() {

@@ -585,8 +585,7 @@ void iHelpBrowser::go_clicked() {
   String urltxt = url_text->text();
   if(urltxt.empty()) return;
   urltxt = taMisc::FixURL(urltxt);
-  QUrl url(urltxt);
-  QDesktopServices::openUrl(url);
+  StatLoadUrl(urltxt);
 }
 
 void iHelpBrowser::ItemChanged(QTreeWidgetItem* item) {

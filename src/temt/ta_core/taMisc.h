@@ -273,6 +273,12 @@ public:
   // #SAVE #CAT_File the person developing the project - used when publishing a project to the wiki
   static String         author_email;
   // #SAVE #CAT_File the person developing the project - used when publishing a project to the wiki
+#ifndef NO_TA_BASE
+  static taLicense::StdLicense license_def; // #SAVE #CAT_File default license to use for new projects that are created -- can change for specific projects -- see license field on projects
+#endif
+  static String         license_owner;     // #SAVE #CAT_File default legal owner of new projects that are created by this user (e.g., Regents of University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects
+  static String         license_org;       // #SAVE #CAT_File default organization that actually created the project for new projects that are created by this user (e.g., MyLab at University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects -- defaults to license_owner if left blank
+
 
   ////////////////////////////////////////////////////////
   //    User-tunable compute params
@@ -369,12 +375,6 @@ public:
 
   static int            strm_ver;       // #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
   static bool           save_compress;  // #SAVE #DEF_false #CAT_File compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
-#ifndef NO_TA_BASE
-  static taLicense::StdLicense license_def; // #SAVE #CAT_File default license to use for new projects that are created -- can change for specific projects -- see license field on projects
-#endif
-  static String         license_owner;     // #SAVE #CAT_File default legal owner of new projects that are created by this user (e.g., Regents of University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects
-  static String         license_org;       // #SAVE #CAT_File default organization that actually created the project for new projects that are created by this user (e.g., MyLab at University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects -- defaults to license_owner if left blank
-
   static String         app_dir;
   // #SHOW #READ_ONLY #CAT_File base of installed app directory -- override with "-a <path>" command line switch
   static String         app_plugin_dir;
@@ -405,6 +405,8 @@ public:
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for general web application help, not associated with a specific object
   static String         pub_proj_page;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url to search for and download published projects
+  static String         pub_prog_page;
+  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url to search for and download published programs
   static String         plib_app_wiki;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File wiki name for program / project library for application-relevant items (e.g., emergent) -- wiki must be defined in wiki_url's
   static String         plib_sci_wiki;

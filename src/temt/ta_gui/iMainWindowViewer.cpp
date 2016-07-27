@@ -1699,7 +1699,7 @@ void iMainWindowViewer::fileBrowseProgramLibsOnWeb(const Variant &repo)
   if (wiki_url.empty()) {
     return;
   }
-  String url = wiki_url + "PublishedProgramList";
+  String url = wiki_url + taMisc::pub_prog_page;
   iHelpBrowser::StatLoadUrl(url);
 }
 

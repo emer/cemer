@@ -58,8 +58,12 @@ public:
 
   virtual void  setUrl(const String& url);
   // set the url for the repository and update display to that
+  virtual void  setUrl_impl(const String& url);
+  // implementation that just the path updating, no logic wrt the corresponding wc..
   virtual void  setWcPath(const String& wc_path);
   // set the url for the repository and update display to that
+  virtual void  setWcPath_impl(const String& wc_path);
+  // implementation that just does the path updating, no logic wrt the url..
   virtual void  setUrlWcPath(const String& url, const String& wc_path, int rev = -1);
   // set the url and working copy path for the repository and update display to that
   virtual void  setUrlWcPathSubDir(const String& url, const String& wc_path, 

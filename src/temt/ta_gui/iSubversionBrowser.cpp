@@ -440,6 +440,45 @@ void iSubversionBrowser::updateView() {
 }
 
 void iSubversionBrowser::setUrl(const String& url) {
+  String org_url = svn_file_model->url();
+  String org_wc = svn_file_model->wc_path();
+
+  setUrl_impl(url);
+
+  if(org_url.empty()) {
+    updateView();
+    return;
+  }
+  String new_url = svn_file_model->url();
+  // update the working copy to match new url -- hopefully some kind of mod of current path
+  // need to find the common path between org_url and ur
+  String com_ur = common_prefix(org_url, new_url, 0);
+  if(com_ur.empty()) {
+    taMisc::Warning("A completely different svn_url has just been set -- working copy cannot be updated automatically -- please update manually!");
+    updateView();
+    return;
+  }
+  if(com_ur == org_url) { // new is an addition to the original
+    String new_sufx = new_url.after(com_ur);
+    String new_wc = org_wc + new_sufx;
+    setWcPath_impl(new_wc);
+  }
+  else {
+    String org_sufx = org_url.after(com_ur); // unique suffix after common path
+    String com_wc = org_wc.before(org_sufx); // assuming this is there!
+    if(com_wc.empty()) {
+      taMisc::Warning("unable to update working copy based on svn url change -- update it manually!");
+      updateView();
+      return;
+    }
+    String new_sufx = new_url.after(com_ur);
+    String new_wc = com_wc + new_sufx;
+    setWcPath_impl(new_wc);
+  }
+  updateView();
+}
+
+void iSubversionBrowser::setUrl_impl(const String& url) {
   svn_file_model->setUrl(url);
   String ur = svn_file_model->url();
   url_text->setText(ur);
@@ -455,10 +494,48 @@ void iSubversionBrowser::setUrl(const String& url) {
     if(svn_log_model->url() != url)
       svn_log_model->setUrl(url, end_rev, n_entries);
   }
-  updateView();
 }
 
 void iSubversionBrowser::setWcPath(const String& wc_path) {
+  String org_url = svn_file_model->url();
+  String org_wc = svn_file_model->wc_path();
+
+  setWcPath_impl(wc_path);
+  
+  if(org_wc.empty()) {
+    updateView();
+    return;
+  }
+  String new_wc = svn_file_model->wc_path();
+  // update the working copy to match new url -- hopefully some kind of mod of current path
+  // need to find the common path between org_url and ur
+  String com_wc = common_prefix(org_wc, new_wc, 0);
+  if(com_wc.empty()) {
+    taMisc::Warning("A completely different working copy path has just been set -- url path cannot be updated automatically -- please update manually!");
+    updateView();
+    return;
+  }
+  if(com_wc == org_wc) { // new is an addition to the original
+    String new_sufx = new_wc.after(com_wc);
+    String new_url = org_url + new_sufx;
+    setUrl_impl(new_url);
+  }
+  else {
+    String org_sufx = org_wc.after(com_wc); // unique suffix after common path
+    String com_ur = org_url.before(org_sufx); // assuming this is there!
+    if(com_ur.empty()) {
+      taMisc::Warning("unable to update url path based on working copy change -- update it manually!");
+      updateView();
+      return;
+    }
+    String new_sufx = new_wc.after(com_wc);
+    String new_url = com_ur + new_sufx;
+    setUrl_impl(new_url);
+  }
+  updateView();
+}
+
+void iSubversionBrowser::setWcPath_impl(const String& wc_path) {
   svn_file_model->setWcPath(wc_path);
   String wc = svn_file_model->wc_path();
   wc_text->setText(wc);
@@ -466,7 +543,6 @@ void iSubversionBrowser::setWcPath(const String& wc_path) {
   if(updt) {
     svn_wc_model->setRootPath(wc);
     wc_table->setRootIndex(svn_wc_sort->mapFromSource(svn_wc_model->index(wc)));
-    updateView();
   }
 }
 

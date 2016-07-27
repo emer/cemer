@@ -109,6 +109,15 @@ String  taMisc::app_name = "temt"; // must be set in main.cpp
 String  taMisc::app_prefs_key; // must be set in main.cpp, else defaults to app_name
 String  taMisc::default_app_install_folder_name = "Emergent";
 String  taMisc::app_suffix;
+
+String          taMisc::project_author = "";
+String          taMisc::author_email = "";
+#ifndef NO_TA_BASE
+taLicense::StdLicense taMisc::license_def = taLicense::NO_LIC;
+#endif
+String          taMisc::license_owner;
+String          taMisc::license_org;
+
 String  taMisc::org_name = "ccnlab";
 
 #ifndef SVN_REV // won't be defined if svnrev.h wasn't included
@@ -328,11 +337,6 @@ taMisc::LoadVerbosity   taMisc::verbose_load = taMisc::QUIET;
 
 int     taMisc::strm_ver = 2;
 bool            taMisc::save_compress = false; // compression not the default in v4
-#ifndef NO_TA_BASE
-taLicense::StdLicense taMisc::license_def = taLicense::NO_LIC;
-#endif
-String          taMisc::license_owner;
-String          taMisc::license_org;
 taMisc::SaveFormat      taMisc::save_format = taMisc::PRETTY;
 
 String  taMisc::app_dir; // set early in startup, algorithmically to find app dir
@@ -363,6 +367,7 @@ NamedURL        taMisc::wiki5_url;
 NamedURL        taMisc::wiki6_url;
 
 String  taMisc::pub_proj_page = "PublishedProjectList";
+String  taMisc::pub_prog_page = "PublishedProgramList";
 
 NameVar_PArray  taMisc::wikis;
 
@@ -404,9 +409,6 @@ DumpFileCvtList taMisc::file_converters;
 String          taMisc::compress_sfx = ".gz";
 bool            taMisc::record_on = false;
 String          taMisc::record_script;
-
-String          taMisc::project_author = "";
-String          taMisc::author_email = "";
 
 // NOTE: we quote all filenames in case they have spaces
 #ifdef TA_OS_WIN

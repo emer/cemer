@@ -1866,6 +1866,7 @@ void Program::AddMeAsAuthor(bool sole_author) {
     email = taMisc::author_email;
   else
     email += ", " + taMisc::author_email;
+  SigEmitUpdated();
 }
 
 void Program::SaveSetAuthor() {

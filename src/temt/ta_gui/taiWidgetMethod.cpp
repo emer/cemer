@@ -28,6 +28,7 @@
 #include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
+// #include <tabMisc>
 
 #include <QToolButton>
 
@@ -255,16 +256,27 @@ void taiWidgetMethod::UpdateAfter() {
   {
     if(base == NULL) return;
     taBase* tap = (taBase*)base;
-    if (meth->HasOption("UPDATE_MENUS"))
+    // note: we do NOT automatically do an UAE for each method -- methods that
+    // require updating must specifically request it!
+    // tabMisc::DelayedUpdateAfterEdit(tap);
+    // the following appears to be a complete no-op: no method defines UPDATE_MENUS
+    // and this update method calls an Update_Hook which never appears to be set!
+    if (meth->HasOption("UPDATE_MENUS")) {
       taiMisc::Update(tap);
+    }
     return;
   }
   // this is inside the host itself
   if ((host->GetRootTypeDef() != NULL) && host->GetRootTypeDef()->IsActualTaBase()) {
     taBase* tap = host->Base();
-    if (tap && meth->HasOption("UPDATE_MENUS")) {
-      taiMisc::Update(tap);     // update menus and stuff
-      tap->UpdateAllViews(); // tell others to update
+    if (tap) {
+      // note: we do NOT automatically do an UAE for each method -- methods that
+      // require updating must specifically request it!
+      // tabMisc::DelayedUpdateAfterEdit(tap);
+      // see above..
+      if(meth->HasOption("UPDATE_MENUS")) {
+        taiMisc::Update(tap);     // update menus and stuff
+      }
     }
   }
 }
