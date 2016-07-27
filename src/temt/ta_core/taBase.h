@@ -176,21 +176,25 @@ public: \
 // ctors -- one size fits all (where used) thanks to Initialize__
 
 #define TA_BASEFUNS_CTORS_(y) \
-  explicit y (bool reg = true); \
+  explicit y (); \
+  explicit y (bool reg); \
   y (const y& cp, bool reg = true); 
 
 #define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
-  explicit y (bool reg = true):inherited(false) { Initialize__(reg); } \
+  explicit y ():inherited(false) { Initialize__(true); } \
+  explicit y (bool reg):inherited(false) { Initialize__(reg); } \
   y (const y<T>& cp, bool reg = true):inherited(cp, false) { Initialize__(reg); Copy__(cp);}
 
 // definition of constructors and destructors: you must put these into .cpp files!
 #define TA_BASEFUNS_CTORS_DEFN(y) \
+  y::y():inherited(false) { Initialize__(true); } \
   y::y(bool reg):inherited(false) { Initialize__(reg); } \
   y::y(const y& cp, bool reg):inherited(cp, false) { Initialize__(reg); Copy__(cp); } \
   y::~y () { CheckDestroyed(); unRegister(); Destroying(); Destroy(); } \
   TA_BASEFUNS_MAIN_DEFN_(y)
 
 #define TA_BASEFUNS_CTORS_LITE_DEFN(y) \
+  y::y():inherited(false) { Initialize__(true); } \
   y::y(bool reg):inherited(false) { Initialize__(reg); } \
   y::y(const y& cp, bool reg):inherited(cp, false) { Initialize__(reg); Copy__(cp); } \
   y::~y() { CheckDestroyed(); Destroying(); Destroy(); } \
@@ -661,7 +665,8 @@ public:
   static taBase*        MakeTokenAry(TypeDef* td, int no);
   // #IGNORE static version to make an array of tokens of the given type
 
-  explicit taBase(bool=false)   { Register(); Initialize(); }
+  explicit taBase()     { Register(); Initialize(); }
+  explicit taBase(bool) { Register(); Initialize(); }
   taBase(const taBase& cp, bool=false)  { Register(); Initialize(); Copy_impl(cp); }
   virtual ~taBase()     { Destroy(); } //
 
