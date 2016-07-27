@@ -2830,6 +2830,10 @@ exit:
 }
 
 void Network::SaveWeights(const String& fname, Network::WtSaveFormat fmt) {
+  if(TestError(!IsBuiltIntact(), "LoadWeights",
+               "network is not built or intact -- cannot save weights")) {
+    return;
+  }
   taFiler* flr = GetSaveFiler(fname, ".wts", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, fmt);
@@ -2838,6 +2842,10 @@ void Network::SaveWeights(const String& fname, Network::WtSaveFormat fmt) {
 }
 
 bool Network::LoadWeights(const String& fname, bool quiet) {
+  if(TestError(!IsBuiltIntact(), "LoadWeights",
+               "network is not built or intact -- cannot load weights")) {
+    return false;
+  }
   taFiler* flr = GetLoadFiler(fname, ".wts", true);
   bool rval = false;
   if(flr->istrm) {
@@ -2853,6 +2861,10 @@ bool Network::LoadWeights(const String& fname, bool quiet) {
 }
 
 void Network::SaveToWeights(Weights* wts) {
+  if(TestError(!IsBuiltIntact(), "SaveToWeights",
+               "network is not built or intact -- cannot save to weights")) {
+    return;
+  }
   if(wts == NULL) {
     wts = (Weights*)weights.New(1);
   }
@@ -2862,12 +2874,16 @@ void Network::SaveToWeights(Weights* wts) {
   wts->epoch = epoch;
   wts->batch = batch;
   if(wts->name.contains("Weights") && file_name.nonempty()) {
-    wts->SetName(file_name);
+    wts->SetName(taMisc::GetFileFmPath(file_name));
   }
   wts->SigEmitUpdated();
 }
 
 bool Network::LoadFmWeights(Weights* wts, bool quiet) {
+  if(TestError(!IsBuiltIntact(), "LoadFmWeights",
+               "network is not built or intact -- cannot load from weights")) {
+    return false;
+  }
   if(TestError(!wts, "LoadFmWeights", "Weights object is NULL")) {
     return false;
   }
