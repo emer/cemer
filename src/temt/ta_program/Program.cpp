@@ -1879,7 +1879,7 @@ void Program::SaveSetAuthor() {
 }
 
 Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
-  if(fun_name != "LoadFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);
+  if(fun_name != "UpdateFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);
   if(!prog_lib) return  _nilVariant;
   //  return _nilVariant;                            // return nil anyway!
   ProgLibEl* pel = prog_lib->FindName(name); // find our name

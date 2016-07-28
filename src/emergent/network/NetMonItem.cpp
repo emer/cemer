@@ -1257,6 +1257,9 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
 
 void NetMonItem::SetObject(taBase* obj) {
   object = obj;
+  if(obj) {
+    object_type = obj->GetTypeDef();
+  }
   UpdateAfterEdit();
 }
 

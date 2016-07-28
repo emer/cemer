@@ -1358,12 +1358,11 @@ bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name
 
 bool taMediaWiki::AppendVersionInfo(const String& wiki_name, const String& publish_type, const String& file_name, const String& version, const String& emer_version) {
   String prefixed_filename = "File:" + file_name;
-  String content = "[[EmerVersion::" + emer_version + "]]";
-  if(publish_type == "Project")
-    content += "[[EmerProjVersion::";
-  else if(publish_type == "Program")
-    content += "[[EmerProgVersion::";
-  content += version + "]]";
+  String up_date = String(QDate::currentDate().toString("MMM d yyyy"));
+  String porp = publish_type == "Project" ? "Proj" : "Prog";
+  String content = "\n* [[Emer"+porp+"FileDate::"+ up_date + "]]" +
+    " Version: [[Emer"+porp+"Version::" + version + "]]" +
+    " Emergent version: [[EmerVersion::" + emer_version + "]]";
   return EditPage(wiki_name, prefixed_filename, content);
 }
 
@@ -1401,7 +1400,7 @@ bool taMediaWiki::UploadOtherFile(const String& wiki_name, const String& publish
 }
 
 bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, const String& page_name, const String& tags, const String& desc, const String& version, const String& author, const String& email) {
-  String first_pub = String(QDate::currentDate().toString(Qt::TextDate));
+  String first_pub = String(QDate::currentDate().toString("MMM d yyyy"));
   String emer_version = taMisc::version;  // use the version currently running
   
   String filename_only = taMisc::GetFileFmPath(file_name);
@@ -1424,7 +1423,7 @@ bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publis
   
   // If project filename empty, the user does not want to upload the project file
   if (!file_name.empty()) {
-    bool proceed = UploadFile(wiki_name, file_name, "", "", "Version: " + version + "; Emergent version used: " + emer_version);
+    bool proceed = UploadFile(wiki_name, file_name, "", "", "Version: " + version + "; Emergent version: " + emer_version);
     if (proceed) {
       proceed = LinkFile(wiki_name, publish_type, filename_only, obj_name);
       if(proceed) {
@@ -1568,7 +1567,7 @@ bool taMediaWiki::UpdateItemOnWeb(const String& wiki_name, const String& publish
 
     obj->Save();              // save current changes!
 
-    bool rval = taMediaWiki::UploadFile(wiki_name, file_name, false, "", "Version: " + ver_str + "; Emergent version used: " + emer_version); // true - update new revision
+    bool rval = taMediaWiki::UploadFile(wiki_name, file_name, false, "", "Version: " + ver_str + "; Emergent version: " + emer_version); // true - update new revision
     if (rval == false) {
       taMisc::Error("Upload failure");
       return false;

@@ -132,7 +132,7 @@ public:
   // #CAT_Monitor get the monitor data information from the object
   
   void          SetObject(taBase* obj);
-  // #DYN1 #TYPE_taNBase
+  // #DROP1 #DYN1 #TYPE_taNBase set given object to be monitored -- after this then you can looup variable to monitor using lookup_var
   void          ToggleOffFlag();
   // #MENU #MENU_ON_Object #DYN1 toggle the off flag to opposite of current state: flag indicates whether monitor should be recorded now or not
 

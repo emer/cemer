@@ -73,14 +73,14 @@ taBase* Program_Group::AddFromProgLibByName(const String& prog_nm) {
 }
 
 Variant Program_Group::GetGuiArgVal(const String& fun_name, int arg_idx) {
-  if(fun_name != "LoadFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);
+  if(fun_name != "UpdateFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);
   ProgLibEl* pel = prog_lib.FindName(name); // find our name
   return Variant(pel);
 }
 
 void Program_Group::UpdateFromProgLib(ProgLibEl* prog_type) {
-  if(TestError(!prog_type, "LoadFromProgLib", "program type to load is null")) return;
-  if(TestError(!prog_type->is_group, "LoadFromProgLib",
+  if(TestError(!prog_type, "UpdateFromProgLib", "program type to load is null")) return;
+  if(TestError(!prog_type->is_group, "UpdateFromProgLib",
                "cannot load a single program file into a program group!")) return;
 //   FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
 //     prog->Reset();
