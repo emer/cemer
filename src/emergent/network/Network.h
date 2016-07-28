@@ -222,7 +222,7 @@ public:
 
   static taBrainAtlas_List* brain_atlases;  // #HIDDEN #READ_ONLY #NO_SAVE #NO_SHOW_TREE atlases available
   
-  DataTable_Group spec_tables;  // #CAT_Structure Tables comparing parent and child specs
+  DataTable_Group spec_tables;  // #CAT_Structure #NO_SAVE Tables comparing parent and child specs
   BaseSpec_Group specs;         // #CAT_Structure Specifications for network parameters
   ParamSeq_Group param_seqs;    // #CAT_Structure parameter sequences keyed off of epoch -- supports automatic arbitrary parameter changes whenver the network epoch is incremented
   Layer_Group   layers;         // #CAT_Structure Layers or Groups of Layers

@@ -332,6 +332,8 @@ void Network::UpdateAfterEdit_impl(){
   if(wt_save_fmt == NET_FMT)
     wt_save_fmt = TEXT;
 
+  spec_tables.save_tables = false;     // don't save -- prevents project bloat
+
 //  if(name.empty()) {
 //    taMisc::Error("name should not be empty -- this indicates the dreaded null dialog bug!!  triggering div zero now -- please report the trace to Randy!");
 //    int zero = 0;
