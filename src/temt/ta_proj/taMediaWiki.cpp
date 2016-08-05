@@ -1399,7 +1399,7 @@ bool taMediaWiki::UploadOtherFile(const String& wiki_name, const String& publish
   return proceed;
 }
 
-bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, const String& page_name, const String& tags, const String& desc, const String& version, const String& author, const String& email) {
+bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, const String& page_name, const String& tags, const String& desc, const String& version, const String& author, const String& email, const String& pub_cite) {
   String first_pub = String(QDate::currentDate().toString("MMM d yyyy"));
   String emer_version = taMisc::version;  // use the version currently running
   
@@ -1413,8 +1413,11 @@ bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publis
     "\n| email=" + email +
     "\n| first_pub=" + first_pub +
     "\n| tags=" + tags +
-    "\n| desc=" + desc +
-    "\n}}";
+    "\n| desc=" + desc;
+  if(publish_type == "Project") {
+    page_content += "\n| pub_cite=" + pub_cite;
+  }
+  page_content += "\n}}";
 
   // robust interface
   if(!FindMakePage(wiki_name, page_name, page_content)) {
@@ -1441,7 +1444,7 @@ bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publis
   return true; // return true if item page created - even if upload of item file fails
 }
 
-bool taMediaWiki::PublishItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, String& page_name, String& tags, String& desc, taProjVersion& version, String& author, String& email, taBase* obj)
+bool taMediaWiki::PublishItemOnWeb(const String& wiki_name, const String& publish_type, const String& obj_name, const String& file_name, String& page_name, String& tags, String& desc, taProjVersion& version, String& author, String& email, String& pub_cite, taBase* obj)
 {
   // Is pub to program supported on this wiki?
   
@@ -1539,7 +1542,7 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
           return false;
         }
       }
-      was_published = taMediaWiki::PublishItem_impl(wiki_name, publish_type, obj_name, file_name, page_name, tags, desc, ver_str, author, email);
+      was_published = taMediaWiki::PublishItem_impl(wiki_name, publish_type, obj_name, file_name, page_name, tags, desc, ver_str, author, email, pub_cite);
     }
   }
   return was_published;

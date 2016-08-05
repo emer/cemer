@@ -99,9 +99,10 @@ bool WikiProgLib::SaveProgToProgLib(Program* prg, ProgLibs library) {
   prg->doc.url = prg->name;
   prg->SaveAs(fpath);
   String page_name = prg->name;
+  String pub_cite;
   taMediaWiki::PublishItemOnWeb
     (wiki_name, "Program", prg->name, fpath, page_name,
-     prg->tags, prg->desc, prg->version, prg->author, prg->email, prg);
+     prg->tags, prg->desc, prg->version, prg->author, prg->email, pub_cite, prg);
   ProgLibEl* pe = new ProgLibEl;
   pe->lib_name = name;
   if(pe->ParseProgFile(fname, path))

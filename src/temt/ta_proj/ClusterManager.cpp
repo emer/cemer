@@ -261,8 +261,8 @@ ClusterManager::GetProjectAtRev(String cluster, String username, String orig_fil
     m_proj_copy_filename_tmp = m_proj_copy_filename;
   } else {
     QFileInfo fi(GetFilename());
-    m_proj_copy_filename_tmp = taMisc::cluster_svn_path + '/' + GetSvnRepo() + '/' + cluster + "/" + username + '/' + fi.completeBaseName() + "/models" + '/' + fi.fileName();
-    m_proj_copy_filename_tmp.gsub("~/", taMisc::GetHomePath() + "/");
+    m_proj_copy_filename_tmp = taMisc::cluster_svn_path + PATH_SEP + GetSvnRepo() + PATH_SEP + cluster + PATH_SEP + username + PATH_SEP + fi.completeBaseName() + PATH_SEP + "models" + PATH_SEP + fi.fileName();
+    m_proj_copy_filename_tmp.gsub("~/", taMisc::GetHomePath() + PATH_SEP);
   }
 
   taMisc::Info("Getting file at revision: ", m_proj_copy_filename_tmp);
@@ -273,7 +273,7 @@ ClusterManager::GetProjectAtRev(String cluster, String username, String orig_fil
     String nwfnm = orig_filename;
     nwfnm += "_" + String(rev) + ".proj";
     nwfnm = taMisc::GetFileFmPath(nwfnm);
-    nwfnm = taMisc::GetDirFmPath(m_proj->file_name) + "/" + nwfnm; // use orig proj dir
+    nwfnm = taMisc::GetDirFmPath(m_proj->file_name) + PATH_SEP + nwfnm; // use orig proj dir
     QFile::copy(m_proj_copy_filename_tmp, nwfnm);
     m_svn_client->UpdateFiles(files, -1); // go back to current
   }
@@ -480,8 +480,8 @@ ClusterManager::GetRepoUrl()
 const String
 ClusterManager::GetRepoUrl_UserClust(const String& user, const String& clust) {
   String repo_url = GetRepoUrl();
-  const char* opt_slash = repo_url.endsWith('/') ? "" : "/";
-  String uurl = repo_url + opt_slash + clust + '/' + user;
+  const char* opt_slash = repo_url.endsWith(PATH_SEP) ? "" : PATH_SEP;
+  String uurl = repo_url + opt_slash + clust + PATH_SEP + user;
   return uurl;
 }
 
@@ -532,38 +532,38 @@ ClusterManager::SetPaths(bool updt_wc) {
 
   // Set the working copy path and get a canonicalized version back.
   String clust_svn = taMisc::cluster_svn_path;
-  clust_svn.gsub("~/", taMisc::GetHomePath() + "/");
+  clust_svn.gsub("~/", taMisc::GetHomePath() + PATH_SEP);
 
   if(updt_wc) {
     taMisc::MakePath(clust_svn);  // ensure good..
   }
 
-  m_wc_path = clust_svn + '/' + svn_repo + '/' + cluster + '/' + username;
+  m_wc_path = clust_svn + PATH_SEP + svn_repo + PATH_SEP + cluster + PATH_SEP + username;
 
   m_svn_client->SetWorkingCopyPath(m_wc_path);
   m_wc_path = m_svn_client->GetWorkingCopyPath().c_str();
 
-  m_cluster_info_filename = m_wc_path + "/cluster_info.dat";
+  m_cluster_info_filename = m_wc_path + PATH_SEP + "cluster_info.dat";
 
   // Make a directory named based on the name of the project, without
   // any path, and without the final ".proj" extension.
   QFileInfo fi(filename);
-  m_wc_proj_path = m_wc_path + '/' + fi.completeBaseName();
+  m_wc_proj_path = m_wc_path + PATH_SEP + fi.completeBaseName();
 
   // Make subdirectories for various files (job params, models, results).
-  m_wc_submit_path = m_wc_proj_path + "/submit";
-  m_wc_models_path = m_wc_proj_path + "/models";
-  m_wc_results_path = m_wc_proj_path + "/results";
+  m_wc_submit_path = m_wc_proj_path + PATH_SEP + "submit";
+  m_wc_models_path = m_wc_proj_path + PATH_SEP + "models";
+  m_wc_results_path = m_wc_proj_path + PATH_SEP + "results";
 
   // Could create these filenames using "m_cluster_run.jobs_submit.name"
   // but seems better to just use fixed names that the cluster script
   // won't have to guess about (in case user renames tables).
-  m_submit_dat_filename = m_wc_submit_path + "/jobs_submit.dat";
-  m_running_dat_filename = m_wc_submit_path + "/jobs_running.dat";
-  m_done_dat_filename = m_wc_submit_path + "/jobs_done.dat";
-  m_archive_dat_filename = m_wc_submit_path + "/jobs_archive.dat";
-  m_deleted_dat_filename = m_wc_submit_path + "/jobs_deleted.dat";
-  m_proj_copy_filename = m_wc_models_path + '/' + fi.fileName();
+  m_submit_dat_filename = m_wc_submit_path + PATH_SEP + "jobs_submit.dat";
+  m_running_dat_filename = m_wc_submit_path + PATH_SEP + "jobs_running.dat";
+  m_done_dat_filename = m_wc_submit_path + PATH_SEP + "jobs_done.dat";
+  m_archive_dat_filename = m_wc_submit_path + PATH_SEP + "jobs_archive.dat";
+  m_deleted_dat_filename = m_wc_submit_path + PATH_SEP + "jobs_deleted.dat";
+  m_proj_copy_filename = m_wc_models_path + PATH_SEP + fi.fileName();
 
   if(updt_wc && m_wc_path != prv_path) {
     taMisc::Info("Repository is at", m_repo_user_url, "local checkout:", m_wc_proj_path);
@@ -666,12 +666,12 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
     taMisc::Busy();
     if (projname.nonempty()) {
       // If we have a specific project, only check out a sub section of the repository to save time
-      String wcp = wc_path + "/" + projname;
-      sc->SetWorkingCopyPath(wc_path + "/" + projname);
+      String wcp = wc_path + PATH_SEP + projname;
+      sc->SetWorkingCopyPath(wc_path + PATH_SEP + projname);
       QFileInfo fi_wcp(wcp.toQString());
       if(!fi_wcp.exists()) {
         String uurl = GetRepoUrl_UserClust(user, clust);
-        uurl += "/" + projname;
+        uurl += PATH_SEP + projname;
         int url_rev;
         if(sc->UrlExists(uurl, url_rev)) {
           taMisc::Info("Working copy doesn't exist, checking out:", wcp);
@@ -694,7 +694,7 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
 
       if(main_svn) {
         // We also need the cluster_info.dat from the top level directory -- only for us..
-        String cip = wc_path + "/cluster_info.dat";
+        String cip = wc_path + PATH_SEP + "cluster_info.dat";
         int wc_rev, url_rev;
         bool same_rev = sc->IsWCRevSameAsHead(cip, wc_rev, url_rev);
         if(!same_rev) {
@@ -762,6 +762,23 @@ ClusterManager::RunSearchAlgo()
   if (!created || m_cluster_run.jobs_submit.rows == 0) {
     throw Exception("Search algorithm did not produce any jobs.");
   }
+}
+
+bool
+ClusterManager::LoadMyRunningTable() {
+  String crpath = m_proj->GetClusterRunPath();
+  String run_fname = crpath + PATH_SEP + "submit" + PATH_SEP + "jobs_running.dat";
+  int run_rows = m_cluster_run.jobs_running_tmp.rows;
+  bool ok = LoadTable(run_fname, m_cluster_run.jobs_running_tmp);
+  if(ok) {
+    int run_rows_now = m_cluster_run.jobs_running_tmp.rows;
+    if(run_rows_now > run_rows) {
+      MergeTableToSummary(m_cluster_run.jobs_running, m_cluster_run.jobs_running_tmp,
+                          "", ""); // we don't know cluster and user!
+      return true;                 // actually loaded something
+    }
+  }
+  return false;                 // didn't load anything new
 }
 
 bool ClusterManager::MergeTableToSummary(DataTable& sum_tab, DataTable& src_tab,
@@ -881,7 +898,7 @@ ClusterManager::SaveExtraFiles()
     // Delete first, since QFile::copy() won't overwrite.
     String srcfn = files[i];
     String fnm = taMisc::GetFileFmPath(srcfn); // just get the file name
-    String wc_fnm = m_wc_models_path + "/" + fnm;
+    String wc_fnm = m_wc_models_path + PATH_SEP + fnm;
     DeleteFile(wc_fnm);
     QFile::copy(srcfn, wc_fnm);
     m_svn_client->Add(wc_fnm);

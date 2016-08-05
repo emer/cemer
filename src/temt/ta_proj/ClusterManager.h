@@ -127,6 +127,7 @@ public:
   bool MergeTableToSummary(DataTable& sum_tab, DataTable& src_tab,
                            const String& clust, const String& user);
   bool LoadAllTables(const String &filename, DataTable& sum_table, DataTable& tmp_table);
+  bool LoadMyRunningTable(); // for job running on cluster, true if loaded new data
   void SaveSubmitTable();
   void SaveCopyOfProject();
   void SaveExtraFiles();

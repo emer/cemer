@@ -659,6 +659,11 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("NoWin", "\
  -- does not open any windows, but does start the basic GUI infrastructure, as a way of doing offscreen rendering");
 
+  taMisc::AddArgName("-cluster_run", "ClusterRun");
+  taMisc::AddArgName("--cluster_run", "ClusterRun");
+  taMisc::AddArgNameDesc("ClusterRun", "\
+ -- indicates that this job is being run as result of ClusterRun submission -- sets the taMisc::cluster_run flag and populates the ClusterRunJob::cur_job with info about this job, and uses job info to save state, etc");
+
   taMisc::AddArgName("-attachwait", "AttachWait");
   taMisc::AddArgName("--attachwait", "AttachWait");
   taMisc::AddArgName("attachwait=", "AttachWait");
@@ -945,6 +950,10 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
   else
     taMisc::gui_no_win = false;
 
+  if(taMisc::CheckArgByName("ClusterRun")) {
+    taMisc::cluster_run = true;
+  }
+  
 #ifndef TA_GUI
   if(taMisc::use_gui) {
     taMisc::Error("Startup_InitArgs: cannot specify '-gui' switch when compiled without gui support");

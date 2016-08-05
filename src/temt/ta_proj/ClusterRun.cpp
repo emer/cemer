@@ -16,6 +16,7 @@
 #include "ClusterRun.h"
 #include <ClusterRun_QObj>
 #include <ClusterManager>
+#include <ClusterRunJob>
 #include <taSigLinkItr>
 #include <iDataTableEditor>
 #include <iPanelOfDataTable>
@@ -1268,6 +1269,8 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   DataCol* dc;
   int idx;
 
+  // NOTE: please update ClusterRunJob with any updates to job tables!
+
   dt.ClearDataFlag(DataTable::SAVE_ROWS);
 
   if(clust_user) {
@@ -1419,7 +1422,89 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   dc->ClearColFlag(DataCol::READ_ONLY);
   dc = dt.FindColName("label");
   dc->ClearColFlag(DataCol::READ_ONLY);
+}
+
+bool ClusterRun::LoadMyRunningTable() {
+  if(!InitClusterManager())
+    return false;
+  return m_cm->LoadMyRunningTable();
+}
+
+bool ClusterRun::GetCurJobData(const String& tag) const {
+  ClusterRunJob::MakeCurJobObj();
+  return GetJobData(*(ClusterRunJob::cur_job), tag);
+}
+
+bool ClusterRun::GetJobData(ClusterRunJob& job_data, const String& tag) const {
+  if(GetJobData_impl(job_data, tag, jobs_running)) return true;
+  if(GetJobData_impl(job_data, tag, jobs_done)) return true;
+  if(GetJobData_impl(job_data, tag, jobs_deleted)) return true;
+  if(GetJobData_impl(job_data, tag, jobs_archive)) return true;
+  return false;
+}
+
+bool ClusterRun::GetJobData_impl(ClusterRunJob& job_data, const String& tag, const DataTable& dt) const {
+  int row = dt.FindVal(tag, "tag", 0, false);
+  if(row < 0) return false;
+
+  job_data.tag = dt.GetValAsString("tag", row);
+  job_data.label = dt.GetValAsString("label", row);
+  job_data.notes = dt.GetValAsString("notes", row);
+  job_data.filename = dt.GetValAsString("filename", row);
+  job_data.params = dt.GetValAsString("params", row);
+    
+  job_data.status = dt.GetValAsString("status", row);
+  job_data.status_info = dt.GetValAsString("status_info", row);
+  job_data.submit_time.fromString(dt.GetValAsString("submit_time", row), timestamp_fmt);
+  job_data.start_time.fromString(dt.GetValAsString("start_time", row), timestamp_fmt);
+  job_data.end_time.fromString(dt.GetValAsString("end_time", row), timestamp_fmt);
+  job_data.running_time = dt.GetValAsString("running_time", row);
+  job_data.job_no = dt.GetValAsString("job_no", row);
+  job_data.job_out = dt.GetValAsString("job_out", row);
+  job_data.job_out_file = dt.GetValAsString("job_out_file", row);
+  job_data.dat_files = dt.GetValAsString("dat_files", row);
+  job_data.other_files = dt.GetValAsString("other_files", row);
+
+  job_data.command_id = dt.GetValAsInt("command_id", row);
+  job_data.command = dt.GetValAsString("command", row);
+
+  job_data.repo_url = dt.GetValAsString("repo_url", row);
+  job_data.cluster = dt.GetValAsString("cluster", row);
+  job_data.user = dt.GetValAsString("user", row);
+  job_data.queue = dt.GetValAsString("queue", row);
+  job_data.run_time = dt.GetValAsString("run_time", row);
+  job_data.ram_gb = dt.GetValAsInt("ram_gb", row);
+  job_data.n_threads = dt.GetValAsInt("n_threads", row);
+  job_data.mpi_nodes = dt.GetValAsInt("mpi_nodes", row);
+  job_data.mpi_per_node = dt.GetValAsInt("mpi_per_node", row);
+  job_data.pb_batches = dt.GetValAsInt("pb_batches", row);
+  job_data.pb_nodes = dt.GetValAsInt("pb_nodes", row);
+
+  job_data.submit_svn = dt.GetValAsString("submit_svn", row);
+  job_data.submit_job = dt.GetValAsString("submit_job", row);
+  job_data.done_svn = dt.GetValAsString("done_svn", row);
+  job_data.last_svn = dt.GetValAsString("last_svn", row);
+
+  job_data.UpdateAfterEdit();
+  
+  return true;
+}
+
+int ClusterRun::RunTimeHrs(const String& run_time) {
+  int rth = 0;                      // run time in hours
+  if(run_time.endsWith('m')) {
+    rth = (int)run_time.before('m');
+    rth /= 60;
+    if(rth < 1) rth = 1;
   }
+  else if(run_time.endsWith('h')) {
+    rth = (int)run_time.before('h');
+  }
+  else if(run_time.endsWith('d')) {
+    rth = (int)run_time.before('d') * 24;
+  }
+  return rth;
+}
 
 void ClusterRun::FormatFileListTable(DataTable& dt) {
   DataCol* dc;
@@ -1535,22 +1620,7 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
     taMisc::Error("run_time is blank -- you MUST specify a run time -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate!");
     return false;
   }
-  int rth = 0;                      // run time in hours
-  if(run_time.endsWith('m')) {
-    rth = (int)run_time.before('m');
-    if(rth == 0) {
-      taMisc::Error("run_time in minutes is 0 -- you MUST specify a non-zero run time -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate!");
-      return false;
-    }
-    rth /= 60;
-    if(rth < 1) rth = 1;
-  }
-  else if(run_time.endsWith('h')) {
-    rth = (int)run_time.before('h');
-  }
-  else if(run_time.endsWith('d')) {
-    rth = (int)run_time.before('d') * 24;
-  }
+  int rth = RunTimeHrs(run_time);
   if(rth == 0) {
     taMisc::Error("run_time is 0 -- you MUST specify a non-zero run time -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate!");
     return false;
@@ -1984,7 +2054,7 @@ void ClusterRun::RunCommand(String& cmd, String& params, bool use_cur_vals) {
     cmd.cat(" -nowin");
   else
     cmd.cat(" -nogui");
-  cmd.cat(" -ni -p <PROJ_FILENAME> tag=<TAG>");
+  cmd.cat(" -ni -p <PROJ_FILENAME> -cluster_run tag=<TAG>");
 
   // Note: cluster script sets number of mpi nodes
 

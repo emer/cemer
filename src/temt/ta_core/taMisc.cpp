@@ -463,6 +463,7 @@ bool    taMisc::gui_active = false;
 bool    taMisc::interactive = true;
 bool    taMisc::gui_no_win = false;
 bool    taMisc::server_active = false; // true while connected
+bool    taMisc::cluster_run = false;
 ContextFlag     taMisc::is_loading;
 taVersion       taMisc::loading_version;
 ContextFlag     taMisc::is_post_loading;

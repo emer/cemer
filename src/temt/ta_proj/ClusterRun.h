@@ -31,6 +31,7 @@
 class TypeDef; // 
 class iDataTableEditor; //
 class ClusterManager; //
+class ClusterRunJob; //
 class DataTable_Group; //
 class iPanelSet; //
 class SubversionClient; //
@@ -207,6 +208,8 @@ public:
                                const String& tag_job, const String& params,
                                const String& notes, const String& label);
   // add parameter values to data table as extra columns -- params is space-separated list of name=value pairs -- also adds the tag and two separate sub-tag columns: tag_svn, tag_job, notes
+  static int        RunTimeHrs(const String& run_time);
+  // convert a run_time spec in m, h, d into hours
 
   ////////////////////////////////////////////
   //  These APIs are mainly for the search algos to use to run jobs
@@ -265,6 +268,15 @@ public:
 
   virtual void      FormatJobTable(DataTable& dt, bool clust_user = false);
   // all job tables have the same format -- this ensures it -- clust_user adds cluster and user fields, for user-visible jobs tables
+  virtual bool      GetCurJobData(const String& tag) const;
+  // Get Job data into ClusterRunJob::cur_job object, based on tag -- searches in running, done, archive, deleted in that order -- returns true if found
+  virtual bool      GetJobData(ClusterRunJob& job_data, const String& tag) const;
+  // Get Job data into a ClusterRunJob object, based on tag -- searches in running, done, archive, deleted in that order -- returns true if found
+  virtual bool      GetJobData_impl(ClusterRunJob& job_data, const String& tag, const DataTable& table) const;
+  // #IGNORE Get Job data into a ClusterRunJob object from tag in table -- returns true if found
+  virtual bool      LoadMyRunningTable();
+  // for job running on cluster, load the local jobs_running.dat table into jobs_running -- returns true if NEW jobs loaded (could still update existing, but we don't know that -- check rows for any existing)
+  
   virtual void      FormatFileListTable(DataTable& dt);
   // for file_list table
   virtual void      FormatClusterInfoTable(DataTable& dt);

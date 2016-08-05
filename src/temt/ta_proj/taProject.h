@@ -86,6 +86,7 @@ public:
   String                email;
   // email address for comments, questions about the project - typically the author's email address - by default the one saved in emergent preferences
   taLicense             license; // license for this project -- to be determined by the original creator of the project -- if this is not you, then you must abide by the constraints of the original license, if specified -- do ViewLicense button to see the applicable license information for this project
+  String                pub_cite; // for a project that has been described in a publication, this is the citation key for that publication, in the form of Author1[Author2][Author3][EtAl]YY where Author is last name of given author -- e.g., OReillyMunakataFrankEtAl12 is the citation key for the online wiki textbook: http://ccnbook.colorado.edu
   taWikiSpec            wiki; // wiki info, for projects that have been saved to a wiki
   Doc_Group             docs; // documents, typically linked to other objects
   Wizard_Group          wizards; // Wizards for automatically configuring simulation objects
@@ -167,7 +168,9 @@ public:
                                     const String& web_url = "");
   // #CAT_Doc get doc document object of given name, or make one if not found -- also set the wiki name and web url if specified
   virtual String        GetClusterRunPath();
-  // #CAT_Edit get the full path to the current cluster run repository associated with this project ---- if currently in non-interactive mode, assume we're actually running on the cluster, in which case the path is one up from the current project directory -- otherwise it is the svn repository path from the ClusterRun object -- if no such path is available, it just returns the current project directory path
+  // #CAT_File get the full path to the current cluster run repository associated with this project ---- if taMisc::cluster_run flag set, then we're actually running on the cluster, in which case the path is one up from the current project directory -- otherwise it is the svn repository path from the ClusterRun object -- if no such path is available, it just returns the current project directory path
+  virtual bool          GetClusterRunJob(int updt_interval_mins = 10);
+  // #CAT_File if we are a taMisc::cluster_run job, get all the current job data into ClusterRunJob::cur_job -- returns true if cur_job updated -- if cur_job does not yet exist, then it always tries to load data, otherwise it updates every 10 minutes by default (which corresponds with how frequently the cluster run script auto-updates running job info)
 
   ///////////////////////////////////////////////////////////////////
   //    misc

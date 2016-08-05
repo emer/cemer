@@ -24,6 +24,7 @@
 #include <iDialogPublishDocs>
 #include <taiEditorOfString>
 #include <ClusterRun>
+#include <ClusterRunJob>
 #include <Program>
 #include <iSubversionBrowser>
 #include <iSvnFileListModel>
@@ -225,7 +226,7 @@ taDoc* taProject::FindMakeDoc(const String& nm, const String& wiki_nm, const Str
 }
 
 String taProject::GetClusterRunPath() {
-  if(!taMisc::interactive) {    // assume we are on the cluster
+  if(taMisc::cluster_run) { // we are on the cluster
     return taMisc::GetDirFmPath(proj_dir); // up one from this path
   }
   // otherwise we are on workstation -- get cr svn repo
@@ -235,6 +236,34 @@ String taProject::GetClusterRunPath() {
   }
   return proj_dir;              // just current path otherwise
 }
+
+bool taProject::GetClusterRunJob(int updt_interval_mins) {
+  static int last_updt_min = -1;
+  if(!taMisc::cluster_run) return false;
+  bool get_new_data = false;
+  if(ClusterRunJob::cur_job) { // we already have current job info
+    taDateTime now; now.currentDateTime();
+    int now_min = now.minute();
+    if(now_min != last_updt_min && (now_min % updt_interval_mins == 0)) {
+      last_updt_min = now_min;
+      get_new_data = true;
+    }
+  }
+  else {
+    get_new_data = true;        // don't have any -- get some!
+  }
+  ClusterRun* cr = (ClusterRun*)FindMakeControlPanel("ClusterRun", &TA_ClusterRun);
+  if(!cr) return false;         // should not happen
+  bool got_new = cr->LoadMyRunningTable();
+  if(cr->jobs_running.rows == 0) return false; // no data..
+
+  String tag = taMisc::FindArgByName("tag");
+  int tag_row = cr->jobs_running.FindVal(tag, "tag", 0, false);
+  if(tag_row < 0) return false; // our job not in it
+  cr->GetCurJobData(tag);       // get it
+  return true;
+}
+
 
 MainWindowViewer* taProject::GetDefaultProjectBrowser() {
   MainWindowViewer* vwr = NULL;
@@ -627,7 +656,7 @@ bool taProject::PublishProjectOnWeb(const String &wiki_name)
   wiki.wiki = wiki_name;
   if(wiki.page_name.empty())    // use name by default
     wiki.page_name = name;
-  return taMediaWiki::PublishItemOnWeb(wiki_name, "Project", this->name, GetFileName(), wiki.page_name, tags, desc, version, author, email, this);
+  return taMediaWiki::PublishItemOnWeb(wiki_name, "Project", this->name, GetFileName(), wiki.page_name, tags, desc, version, author, email, pub_cite, this);
 }
 
 bool taProject::UpdateProjectOnWeb(const String &wiki_name) {

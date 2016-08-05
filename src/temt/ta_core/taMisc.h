@@ -530,6 +530,7 @@ public:
   static bool           in_dev_exe;     // #READ_ONLY #NO_SAVE #NO_SHOW are we running a development executable -- running out of the build directory of the source code -- do some things differently in this case (e.g., no plugins)
   static bool           use_plugins;    // #READ_ONLY #NO_SAVE #NO_SHOW whether to use plugins
   static bool           server_active;  // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT if remote server has been started up or not
+  static bool           cluster_run;    // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT if this process is executing as a result of a ClusterRun job submission -- set by -cluster_run arg passed by ClusterRun
   static ContextFlag    is_loading;     // #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object
   static taVersion      loading_version;
   //  #READ_ONLY #NO_SAVE #EXPERT version number associated with file currently being loaded

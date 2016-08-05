@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil, random, json, urllib2, base64, ast, logging, getpass
-from datetime import datetime
+from datetime import datetime, timedelta
 # requires this package, included with python 2.5 and above -- otherwise get
 # from http://effbot.org/downloads
 import xml.etree.ElementTree as ET
@@ -739,6 +739,8 @@ class SubversionPoller(object):
         self.cluster_info_file = ""
         self.got_submit = False     # got a jobs_submit submission 
         self.status_change = False  # some jobs changed status
+        self.auto_check_mins = 10   # how long between auto-check-running-jobs-and-commit, in minutes
+        self.last_auto_check = datetime.now()
         self.jobs_submit = DataTable()
         self.jobs_running = DataTable()
         self.jobs_done = DataTable()
@@ -850,8 +852,14 @@ class SubversionPoller(object):
             for filename in self.all_running_files:
                 self._query_running_jobs(filename, False)  # don't force updates
 
-            # anytime we issue a command or the status of a job changes 
-            if self.got_submit or self.status_change:
+            # check for an auto-check based on interval, do every so often..
+            tdel = datetime.now() - self.last_auto_check
+            do_auto_check = tdel.seconds >= self.auto_check_mins * 60
+            if do_auto_check:
+                self.last_auto_check = datetime.now()
+
+            # anytime we issue a command or the status of a job changes, or auto-check
+            if self.got_submit or self.status_change or do_auto_check:
                 self._get_cluster_info()
                 self._update_running_jobs(True)  # get latest info on all running jobs
                 self._commit_changes()

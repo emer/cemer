@@ -22,6 +22,7 @@
 #include <UserDataItem>
 #include <ProjectBase>
 #include <ControlPanel>
+#include <ClusterRunJob>
 #include <DataTable>
 #include <taFiler>
 #include <SimpleMathSpec>
@@ -2181,6 +2182,13 @@ void Network::Compute_Weights() {
   DMem_SumDWts(dmem_trl_comm.comm);
 #endif
   NET_THREAD_CALL(Network::Compute_Weights_Thr);
+  if(taMisc::cluster_run) {
+    taProject* proj = GetMyProj();
+    proj->GetClusterRunJob();     // make sure we have cluster run job data
+    if(ClusterRunJob::CurJobCheckSaveTermState()) {
+      BgRunKilled();            // save weights!
+    }
+  }
 }
 
 void Network::Compute_Weights_Thr(int thr_no) {
