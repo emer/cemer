@@ -1484,54 +1484,68 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
     iDialogPublishDocs dialog(wiki_name, obj_name, true, publish_type);
     dialog.SetName(obj_name.toQString());
     dialog.SetPageName(page_name.toQString());
+    QString defdef("Set default in preferences.");
     if (author.nonempty()) {
       dialog.SetAuthor(author.toQString());
     }
     else {
-      dialog.SetAuthor(QString("Set default in preferences."));
+      dialog.SetAuthor(defdef);
     }
     if (email.nonempty()) {
       dialog.SetEmail(email.toQString());
     }
     else {
-      dialog.SetEmail(QString("Set default in preferences."));
+      dialog.SetEmail(defdef);
     }
+    QString dsdef("brief, abstract-like description of main features.");
     if(desc.nonempty()) {
       dialog.SetDesc(desc.toQString());
     }
     else {
-      dialog.SetDesc(QString("brief, abstract-like description of main features."));
+      dialog.SetDesc(dsdef);
     }
+    QString tagdef("comma separated and initial uppercase, please");
     if(tags.nonempty()) {
       dialog.SetTags(tags);
     }
     else {
-      dialog.SetTags(QString("comma separated and initial uppercase, please"));
+      dialog.SetTags(tagdef);
     }
     dialog.SetVersion(version.GetString().toQString());
+    QString psdef("citation in form Author1|Author2|Author3|EtAl|YY");
+    if(pub_cite.nonempty()) {
+      dialog.SetPubCite(pub_cite);
+    }
+    else {
+      dialog.SetPubCite(psdef);
+    }
 
     if (dialog.exec()) {
       // User clicked OK.
       page_name = dialog.GetPageName();
       author = dialog.GetAuthor();
-      if (author == "Set default in preferences.") {
+      if (author == defdef) {
         author = "";
       }
       email = dialog.GetEmail();
-      if (email == "Set default in preferences.") {
+      if (email == defdef) {
         email = "";
       }
       desc = dialog.GetDesc();
-      if(desc == "brief, abstract-like description of main features.") {
+      if(desc == dsdef) {
         desc = "";
       }
       desc.trim();              // tends to have lots of spaces..
       tags = dialog.GetTags();
-      if (tags == "comma separated and initial uppercase, please") {
+      if (tags == tagdef) {
         tags = "";
       }
       String ver_str = dialog.GetVersion();
       version.SetFromString(ver_str);
+      pub_cite = dialog.GetPubCite();
+      if(pub_cite == psdef) {
+        pub_cite = "";
+      }
 
       obj->Save();              // save current changes!
 

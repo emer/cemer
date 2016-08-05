@@ -52,8 +52,9 @@ namespace // anon
   }
 }
 
-iDialogPublishDocs::iDialogPublishDocs(const QString& repo_name, const QString& proj_name, bool new_pub, const QString& publish_type)
+iDialogPublishDocs::iDialogPublishDocs(const QString& repo_name, const QString& proj_name, bool new_pub, const QString& pub_type)
 : inherited()
+, publish_type(pub_type)
 {
   // Size the dialog.
   resize(taiM->dialogSize(taiMisc::dlgSmall | taiMisc::dlgHor));
@@ -111,13 +112,6 @@ iDialogPublishDocs::iDialogPublishDocs(const QString& repo_name, const QString& 
   versionEdit->setStatusTip(tmp);
   addLabeledWidget(project_box, "Version:", versionEdit);
 
-  // upload project - do it now - default is true
-  // rohrlich - 3/11/2015 - require project file when publishing
-//  upload_project = new QCheckBox;
-//  upload_project->setChecked(true);
-//  upload_project->setStatusTip("You can upload the project when you publish or just create the wiki page and later upload the project. You can always upload a new version of the project");
-//  addLabeledWidget(project_box, "Upload Project File", upload_project);
-
   if (new_pub) {
     // page name
     pgnameEdit = new QLineEdit;
@@ -137,6 +131,13 @@ iDialogPublishDocs::iDialogPublishDocs(const QString& repo_name, const QString& 
     emailEdit->setStatusTip("Enter an email address for correspondence (set default in preferences) - typically author's email");
     emailEdit->installEventFilter(this);
     addLabeledWidget(author_box, "&Email:", emailEdit);
+
+    if(publish_type == "Project") {
+      pubCiteEdit = new QLineEdit;
+      pubCiteEdit->setStatusTip("for a project that has been described in a publication, this is the citation key for that publication, in the form of Author1[Author2][Author3][EtAl]YY where Author is last name of given author -- e.g., OReillyMunakataFrankEtAl12 is the citation key for the online wiki textbook: http://ccnbook.colorado.edu");
+      pubCiteEdit->installEventFilter(this);
+      addLabeledWidget(author_box, "&PubCite:", pubCiteEdit);
+    }
     
     // Tags
     tagsEdit = new QLineEdit;
@@ -201,6 +202,11 @@ QString iDialogPublishDocs::GetVersion() const
   return versionEdit->text();
 }
 
+QString iDialogPublishDocs::GetPubCite() const
+{
+  return pubCiteEdit->text();
+}
+
 bool iDialogPublishDocs::GetUploadChoice() const
 {
   return upload_project->isChecked();
@@ -262,5 +268,9 @@ void iDialogPublishDocs::SetTags(const QString& tags) {
 
 void iDialogPublishDocs::SetVersion(const QString& version) {
   versionEdit->setText(version);
+}
+
+void iDialogPublishDocs::SetPubCite(const QString& pub_cite) {
+  pubCiteEdit->setText(pub_cite);
 }
 

@@ -43,6 +43,7 @@ public:
   QString     GetDesc() const;
   QString     GetTags() const;
   QString     GetVersion() const;
+  QString     GetPubCite() const;
   bool        GetUploadChoice() const;
   
   void        SetName(const QString& name);
@@ -51,9 +52,10 @@ public:
   void        SetEmail(const QString& email);
   void        SetDesc(const QString& desc);
   void        SetTags(const QString& tags);
-  void        SetVersion(const QString& tags);
+  void        SetVersion(const QString& vers);
+  void        SetPubCite(const QString& pubcite);
 
-private:
+protected:
   bool        event(QEvent *event) override;
   bool        eventFilter(QObject *obj, QEvent *event) override;
 
@@ -64,8 +66,10 @@ private:
   QTextEdit*  descEdit;
   QLineEdit*  tagsEdit;
   QLineEdit*  versionEdit;
+  QLineEdit*  pubCiteEdit;
   QStatusBar* statusBar;
   QCheckBox*  upload_project;
+  QString     publish_type;
 };
 
 #endif // iDialogPublishDocs_h
