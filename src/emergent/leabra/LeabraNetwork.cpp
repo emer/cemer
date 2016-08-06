@@ -2089,6 +2089,8 @@ void LeabraNetwork::Compute_Weights() {
   if(net_misc.wt_bal) {
     NET_THREAD_CALL(LeabraNetwork::Compute_WtBal_Thr);
   }
+
+  ClusterRunSaveWeights();
 }
 
 void LeabraNetwork::Compute_Weights_Thr(int thr_no) {

@@ -776,6 +776,9 @@ public:
   virtual bool  LoadFmFirstWeights(bool quiet = false);
   // load weight values from first Weights object -- if it does not yet exist, emit an error message -- useful for basic save and load of one cached set of weights, as compared to a situation where you need to manage multiple different weight sets
 
+  virtual bool  ClusterRunSaveWeights();
+  // update cluster run job info and check if it is time to save weights before job ends -- call this in Compute_Weights
+  
   ////////////////////////////////////////////////////////////////////////////////
   //    Below are the primary computational interface to the Network Objects
   //    for performing algorithm-specific activation and learning
