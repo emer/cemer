@@ -250,30 +250,37 @@ bool taProject::GetClusterRunJob(int updt_interval_mins) {
     if(now_min != last_updt_min && (now_min % updt_interval_mins == 0)) {
       last_updt_min = now_min;
       get_new_data = true;
+      taMisc::Info("Cluster Run: get new data every:",String(updt_interval_mins),"mins");
     }
   }
   else {
     get_new_data = true;        // don't have any -- get some!
   }
+  if(!get_new_data) {
+    return false;
+  }
   ClusterRun* cr = (ClusterRun*)FindMakeControlPanel("ClusterRun", &TA_ClusterRun);
   if(!cr) return false;         // should not happen
   bool got_new = cr->LoadMyRunningTable();
-  if(cr->jobs_running.rows == 0) return false; // no data..
-
+  if(cr->jobs_running.rows == 0) {
+    taMisc::Info("Cluster Run: no local jobs_running.dat data");
+    return false; // no data..
+  }
   String tag = taMisc::FindArgByName("tag");
   int tag_row = cr->jobs_running.FindVal(tag, "tag", 0, false);
-  if(tag_row < 0) return false; // our job not in it
-  cr->GetCurJobData(tag);       // get it
-  if(got_new) {
-    if(taMisc::dmem_proc == 0) {
-      ClusterRunJob* cj = ClusterRunJob::cur_job;
-      taMisc::Info
-        ("Cluster run job info loaded, tag:", cj->tag,
-         "start: " + cj->start_time.toString(ClusterRun::timestamp_fmt),
-         "end: " + cj->run_time_end.toString(ClusterRun::timestamp_fmt),
-         "label:", cj->label, "notes:", cj->notes);
-    }
+  if(tag_row < 0) {
+    taMisc::Info("Cluster Run: could not find tag:", tag, "in jobs_running.dat data");
+    return false; // our job not in it
   }
+  cr->GetCurJobData(tag);       // get it
+  // if(got_new) {
+    ClusterRunJob* cj = ClusterRunJob::cur_job;
+    taMisc::Info
+      ("Cluster run job info loaded, tag:", cj->tag,
+       "start: " + cj->start_time.toString(ClusterRun::timestamp_fmt),
+       "end: " + cj->run_time_end.toString(ClusterRun::timestamp_fmt),
+       "label:", cj->label, "notes:", cj->notes);
+  // }
   return true;
 }
 
