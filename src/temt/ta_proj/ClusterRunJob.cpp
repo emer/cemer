@@ -62,6 +62,9 @@ bool ClusterRunJob::CurJobCheckSaveTermState() {
   int secs_to_term = now.secsTo(cur_job->run_time_end);
   if(secs_to_term < 5 * 60) {
     cur_job->term_state_saved = true;
+    taMisc::Info("Cluster Run Job: 5 minutes prior to end of job at:",
+                 cur_job->run_time_end.toString(ClusterRun::timestamp_fmt),
+                 "signaling to save state at this point");
     return true;
   }
   return false;

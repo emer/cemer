@@ -267,6 +267,8 @@ bool taProject::GetClusterRunJob(int updt_interval_mins) {
     return false; // no data..
   }
   String tag = taMisc::FindArgByName("tag");
+  if(tag.startsWith('_'))
+    tag = tag.after('_');
   int tag_row = cr->jobs_running.FindVal(tag, "tag", 0, false);
   if(tag_row < 0) {
     taMisc::Info("Cluster Run: could not find tag:", tag, "in jobs_running.dat data");
@@ -276,10 +278,10 @@ bool taProject::GetClusterRunJob(int updt_interval_mins) {
   // if(got_new) {
     ClusterRunJob* cj = ClusterRunJob::cur_job;
     taMisc::Info
-      ("Cluster run job info loaded, tag:", cj->tag,
+      ("Cluster run job info loaded:", String(got_new), "tag:", cj->tag,
        "start: " + cj->start_time.toString(ClusterRun::timestamp_fmt),
        "end: " + cj->run_time_end.toString(ClusterRun::timestamp_fmt),
-       "label:", cj->label, "notes:", cj->notes);
+       "label: " +  cj->label, "notes: " + cj->notes);
   // }
   return true;
 }

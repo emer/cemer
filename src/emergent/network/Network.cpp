@@ -2192,7 +2192,10 @@ bool Network::ClusterRunSaveWeights() {
   taProject* proj = GetMyProj();
   proj->GetClusterRunJob();     // make sure we have cluster run job data
   if(ClusterRunJob::CurJobCheckSaveTermState()) {
-    BgRunKilled();            // save weights!
+    if(taMisc::dmem_proc == 0) {
+      taMisc::Info("Cluster Run: attempting to save final weights 5 min prior to termination");
+      BgRunKilled();            // save weights!
+    }
     return true;
   }
   return false;
