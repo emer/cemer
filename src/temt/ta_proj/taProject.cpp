@@ -47,7 +47,9 @@ taTypeDef_Of(taDataGen);
 #include <QDir>
 #include <QFileInfo>
 #include <QFileDialog>
+#if (QT_VERSION >= 0x050000)
 #include <QStandardPaths>
+#endif
 #include <QDesktopServices>
 #include <QDateTime>
 
