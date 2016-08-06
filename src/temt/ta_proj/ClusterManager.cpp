@@ -781,6 +781,29 @@ ClusterManager::LoadMyRunningTable() {
   return false;                 // didn't load anything new
 }
 
+bool
+ClusterManager::LoadMyRunningCmdTable() {
+  String crpath = m_proj->GetClusterRunPath();
+  String run_fname = crpath + PATH_SEP + "submit" + PATH_SEP + "jobs_running_cmd.dat";
+  int run_rows = m_cluster_run.jobs_running_cmd.rows;
+  bool ok = LoadTable(run_fname, m_cluster_run.jobs_running_cmd);
+  if(ok) {
+    int run_rows_now = m_cluster_run.jobs_running_cmd.rows;
+    if(run_rows_now > run_rows) {
+      return true;                 // actually loaded something
+    }
+  }
+  return false;                 // didn't load anything new
+}
+
+bool
+ClusterManager::SaveMyRunningCmdTable() {
+  String crpath = m_proj->GetClusterRunPath();
+  String run_fname = crpath + PATH_SEP + "submit" + PATH_SEP + "jobs_running_cmd.dat";
+  m_cluster_run.jobs_running_cmd.SaveData(run_fname);
+  return true;
+}
+
 bool ClusterManager::MergeTableToSummary(DataTable& sum_tab, DataTable& src_tab,
                                          const String& clust, const String& user) {
   int cur_row = sum_tab.rows;

@@ -772,12 +772,16 @@ public:
   // #MENU #FROM_LIST_weights load weight values from given weights object
 
   virtual void  SaveToFirstWeights();
-  // write weight values out to the first Weights object in the weights list -- if it does not yet exist, then create it -- useful for basic save and load of one cached set of weights, as compared to a situation where you need to manage multiple different weight sets
+  // #CAT_File write weight values out to the first Weights object in the weights list -- if it does not yet exist, then create it -- useful for basic save and load of one cached set of weights, as compared to a situation where you need to manage multiple different weight sets
   virtual bool  LoadFmFirstWeights(bool quiet = false);
-  // load weight values from first Weights object -- if it does not yet exist, emit an error message -- useful for basic save and load of one cached set of weights, as compared to a situation where you need to manage multiple different weight sets
-
-  virtual bool  ClusterRunSaveWeights();
-  // update cluster run job info and check if it is time to save weights before job ends -- call this in Compute_Weights
+  // #CAT_File load weight values from first Weights object -- if it does not yet exist, emit an error message -- useful for basic save and load of one cached set of weights, as compared to a situation where you need to manage multiple different weight sets
+  
+  virtual void  SaveWeights_Tagged();
+  // #CAT_File save weights using standard naming format as generted with the SaveWeights program, based on the tag environment variable
+  virtual bool  SaveWeights_ClusterRunCmd();
+  // #CAT_File check if user has sent a specific command to save weights through jobs_running_cmd.dat file -- called at end of epoch in Compute_EpochStats
+  virtual bool  SaveWeights_ClusterRunTerm();
+  // #CAT_File update cluster run job info and check if it is time to save weights before job terminates -- called in Compute_Weights
   
   ////////////////////////////////////////////////////////////////////////////////
   //    Below are the primary computational interface to the Network Objects

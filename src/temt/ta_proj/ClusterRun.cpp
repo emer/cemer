@@ -382,6 +382,34 @@ void ClusterRun::UpdtNotes() {
   }
 }
 
+void ClusterRun::SaveState() {
+  if(!InitClusterManager())
+    return;
+  
+  jobs_submit.ResetData();
+  
+  DataTable* cur_table = GetCurDataTable();
+  
+  // Get the (inclusive) range of rows to update notes.
+  int st_row, end_row;
+  if (cur_table == &jobs_running) {
+    if (SelectedRows(*cur_table, st_row, end_row)) {
+      if (!CheckLocalClustUserRows(*cur_table, st_row, end_row)) {
+        return;
+      }
+      // Populate the jobs_submit table with SAVESTATE requests for the selected jobs.
+      for (int row = st_row; row <= end_row; ++row) {
+        SubmitSaveState(*cur_table, row);
+      }
+      m_cm->CommitJobSubmissionTable();
+      AutoUpdateMe();
+    }
+    else {
+      taMisc::Warning("No rows selected -- no save state requests sent");
+    }
+  }
+}
+
 void ClusterRun::LoadData(bool remove_existing) {
   if(!InitClusterManager())
     return;
@@ -1244,6 +1272,7 @@ void ClusterRun::FormatTables() {
   jobs_running_tmp.name = "jobs_running_tmp";
   jobs_done_tmp.name = "jobs_done_tmp";
   jobs_archive_tmp.name = "jobs_archive_tmp";
+  jobs_running_cmd.name = "jobs_running_cmd";
 
   FormatJobTable(jobs_submit);
   FormatJobTable(jobs_submitted);
@@ -1257,6 +1286,7 @@ void ClusterRun::FormatTables() {
   FormatJobTable(jobs_done_tmp);
   FormatJobTable(jobs_deleted_tmp);
   FormatJobTable(jobs_archive_tmp);
+  FormatJobTable(jobs_running_cmd);
 
   file_list.name = "file_list";
   FormatFileListTable(file_list);
@@ -1313,12 +1343,15 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   //   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
   //   GETFILES  tell cluster to check in all files listed in this other_files entry
   //   REMOVEJOB tell cluster to remove given tags from jobs_done and add to jobs_deleted
+  //   NUKEJOB   remove given tag job from jobs done immediately -- do not add to jobs deleted
   //   CLEANJOBFILES tell cluster to remove job files associated with tags
   //   REMOVEFILES tell cluster to remove specific files listed in this other_files entry
+  //   UPDATENOTE update the notes, label field of a job
   //   ARCHIVEJOB tell cluster to move given tags from jobs_done into jobs_archive
-  //   UNDELETEJOB tell cluster to move given tags from jobs_delete back into jobs_done, and
-  //            recover dat files associated with those jobs back into the current svn directory
+  //   UNDELETEJOB tell cluster to move given tags from jobs_delete back into jobs_done, and recover dat files associated with those jobs back into the current svn directory
   //   REMOVEDELJOB tell cluster to fully remove job from jobs_delete
+  //   SAVESTATE send a command to running job through jobs_running_cmd.dat file to save state
+  
   // The cluster script sets this field in the running/done tables to:
   //   SUBMITTED after job successfully submitted to a queue.
   //   QUEUED    when the job is known to be in the cluster queue.
@@ -1430,6 +1463,18 @@ bool ClusterRun::LoadMyRunningTable() {
   return m_cm->LoadMyRunningTable();
 }
 
+bool ClusterRun::LoadMyRunningCmdTable() {
+  if(!InitClusterManager())
+    return false;
+  return m_cm->LoadMyRunningCmdTable();
+}
+
+bool ClusterRun::SaveMyRunningCmdTable() {
+  if(!InitClusterManager())
+    return false;
+  return m_cm->SaveMyRunningCmdTable();
+}
+
 bool ClusterRun::GetCurJobData(const String& tag) const {
   ClusterRunJob::MakeCurJobObj();
   return GetJobData(*(ClusterRunJob::cur_job), tag);
@@ -1490,20 +1535,18 @@ bool ClusterRun::GetJobData_impl(ClusterRunJob& job_data, const String& tag, con
   return true;
 }
 
-int ClusterRun::RunTimeHrs(const String& run_time) {
-  int rth = 0;                      // run time in hours
+int ClusterRun::RunTimeMins(const String& run_time) {
+  int rtm = 0;                      // run time in minutes
   if(run_time.endsWith('m')) {
-    rth = (int)run_time.before('m');
-    rth /= 60;
-    if(rth < 1) rth = 1;
+    rtm = (int)run_time.before('m');
   }
   else if(run_time.endsWith('h')) {
-    rth = (int)run_time.before('h');
+    rtm = (int)run_time.before('h') * 60;
   }
   else if(run_time.endsWith('d')) {
-    rth = (int)run_time.before('d') * 24;
+    rtm = (int)run_time.before('d') * 24 * 60;
   }
-  return rth;
+  return rtm;
 }
 
 void ClusterRun::FormatFileListTable(DataTable& dt) {
@@ -1620,12 +1663,13 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
     taMisc::Error("run_time is blank -- you MUST specify a run time -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate!");
     return false;
   }
-  int rth = RunTimeHrs(run_time);
-  if(rth == 0) {
+  int rtm = RunTimeMins(run_time);
+  if(rtm == 0) {
     taMisc::Error("run_time is 0 -- you MUST specify a non-zero run time -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate!");
     return false;
   }
 
+  int rth = rtm / 60;           // hours
   if(cs.max_time > 0 && rth > cs.max_time)  {
     int chs = taMisc::Choice("You are requesting to run more than listed max run time on cluster: " + cluster + " -- run time in hours requested: " + String(rth) + " max: " +
                              String(cs.max_time), "Continue Anyway (NOT recommended)", "Cancel");
@@ -2023,6 +2067,18 @@ ClusterRun::SubmitRemoveFiles(const String& files) {
   jobs_submit.SetVal("REMOVEFILES", "status", dst_row);
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
   jobs_submit.SetVal(files, "other_files",  dst_row); 
+}
+
+void
+ClusterRun::SubmitSaveState(const DataTable& table, int tab_row)
+{
+  if(!CheckLocalClustUser(table, tab_row))
+    return;
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("SAVESTATE", "status", dst_row);
+  jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
+  jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
 }
 
 int

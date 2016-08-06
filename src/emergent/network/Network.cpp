@@ -2183,22 +2183,7 @@ void Network::Compute_Weights() {
 #endif
   NET_THREAD_CALL(Network::Compute_Weights_Thr);
 
-  ClusterRunSaveWeights();
-}
-
-bool Network::ClusterRunSaveWeights() {
-  if(!taMisc::cluster_run) return false;
-  
-  taProject* proj = GetMyProj();
-  proj->GetClusterRunJob();     // make sure we have cluster run job data
-  if(ClusterRunJob::CurJobCheckSaveTermState()) {
-    if(taMisc::dmem_proc == 0) {
-      taMisc::Info("Cluster Run: attempting to save final weights 5 min prior to termination");
-      BgRunKilled();            // save weights!
-    }
-    return true;
-  }
-  return false;
+  SaveWeights_ClusterRunTerm();
 }
 
 void Network::Compute_Weights_Thr(int thr_no) {
@@ -2377,6 +2362,8 @@ void Network::Compute_EpochStats() {
     Layer* lay = ActiveLayer(li);
     lay->Compute_EpochStats(this);
   }
+
+  SaveWeights_ClusterRunCmd();  // check for cluster commands!
 }
 
 
@@ -2938,6 +2925,56 @@ bool Weights::WeightsToNet() {
   if(!net) return false;
   return net->LoadFmWeights(this, quiet_load);
 }
+
+void Network::SaveWeights_Tagged() {
+  if(!IsBuiltIntact() || epoch < 1) return;
+
+  if(taMisc::dmem_proc > 0) {
+    return;
+  }
+  String batch_str = taMisc::LeadingZeros(batch, 2);
+  String epoch_str = taMisc::LeadingZeros(epoch, 4);
+  String tag = taMisc::FindArgByName("tag");
+  String final_tag = tag + "." + batch_str + "_" + epoch_str;
+  String fname = GetFileNameFmProject(".wts.gz", final_tag, "", false);
+  taMisc::Info("Saving tagged weights to:", fname);
+  SaveWeights(fname);
+}
+
+bool Network::SaveWeights_ClusterRunTerm() {
+  if(!taMisc::cluster_run) return false;
+  if(total_trials % 10 != 0) return false; // check every 10 trials to minimize load
+  
+  taProject* proj = GetMyProj();
+  proj->GetClusterRunJob();     // make sure we have cluster run job data
+  if(ClusterRunJob::CurJobCheckSaveTermState()) {
+    if(taMisc::dmem_proc == 0) {
+      taMisc::Info("Cluster Run: saving weights 5 min prior to termination");
+      SaveWeights_Tagged();
+    }
+    return true;
+  }
+  return false;
+}
+
+bool Network::SaveWeights_ClusterRunCmd() {
+  if(!taMisc::cluster_run) return false;
+  if(taMisc::dmem_proc != 0) return false;
+  taProject* proj = GetMyProj();
+  String cmd = proj->CheckClusterRunCmd();
+  if(cmd.nonempty()) {
+    if(cmd == "SAVESTATE") {
+      taMisc::Info("Cluster Run: saving weights from SAVESTATE command");
+      SaveWeights_Tagged();
+      return true;
+    }
+    else {
+      taMisc::Info("Cluster Run: don't know how to process this command:", cmd);
+    }
+  }
+  return false;
+}
+
 
 void Network::LayerZPos_Unitize() {
   int_Array zvals;
@@ -4041,3 +4078,4 @@ void Network::BgRunKilled() {
   taMisc::Info("Saving final killed weights to:", fname);
   SaveWeights(fname);
 }
+

@@ -75,6 +75,7 @@ public:
   DataTable     jobs_done_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
   DataTable     jobs_deleted_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
   DataTable     jobs_archive_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
+  DataTable     jobs_running_cmd;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER reads jobs_running_cmd.dat file for commands sent to running job
   ParamSearchAlgo_List search_algos; // #SHOW_TREE #EXPERT Possible search algorithms to run on the cluster
   bool          use_search_algo;     // use search algorithm to explore across parameters -- if false, then just the current values will be used -- must also set cur_search_algo
   ParamSearchAlgoRef cur_search_algo; // #CONDEDIT_ON_use_search_algo The current search algorithm in use -- if not set, then jobs will just use current parameters, for manual param searching -- see also use_search_algo
@@ -154,6 +155,8 @@ public:
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs selected in the jobs_done data table into the jobs_archive table
   virtual void  Cont();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM Continue the search process by submitting the next batch of jobs.
+  virtual void  SaveState();
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM send command to running job to save its state (e.g., weight file) -- typically occurs at end of large-ish chunk (e.g., end of epoch), when running project checks for any commands that have been sent to it
   virtual ParamSearchAlgo*  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
   // #MENU_BUTTON #MENU_ON_Jobs #MENU_SEP_BEFORE #TYPE_0_ParamSearchAlgo Create a search algorithm to use in this cluster run -- will automatically be selected as the current search algo and enabled (use_search_algo = true)
   virtual bool  AddCluster(const String& clust_nm);
@@ -208,8 +211,8 @@ public:
                                const String& tag_job, const String& params,
                                const String& notes, const String& label);
   // add parameter values to data table as extra columns -- params is space-separated list of name=value pairs -- also adds the tag and two separate sub-tag columns: tag_svn, tag_job, notes
-  static int        RunTimeHrs(const String& run_time);
-  // convert a run_time spec in m, h, d into hours
+  static int    RunTimeMins(const String& run_time);
+  // convert a run_time spec in m, h, d into minutes
 
   ////////////////////////////////////////////
   //  These APIs are mainly for the search algos to use to run jobs
@@ -255,7 +258,9 @@ public:
   virtual int   CountJobs(const DataTable& table, const String &status_regexp);
   // count the number of jobs in given table with given status value 
   virtual void  SubmitUpdateNote(const DataTable& table, int row);
-  // add to jobs_submit for update of 'done' job
+  // add to jobs_submit for update notes, label
+  virtual void  SubmitSaveState(const DataTable& table, int row);
+  // add to jobs_submit to send save state command to running job
   
   virtual void  RunCommand(String& cmd, String& params, bool use_cur_vals = false);
   // get the run command and params based on the currently selected search args in this control panel, and other parameters -- if use_cur_vals, then it passes the current values of the items, otherwise it uses the next_val setting, which should be set by the search algorithm prior to calling this function
@@ -276,6 +281,10 @@ public:
   // #IGNORE Get Job data into a ClusterRunJob object from tag in table -- returns true if found
   virtual bool      LoadMyRunningTable();
   // for job running on cluster, load the local jobs_running.dat table into jobs_running -- returns true if NEW jobs loaded (could still update existing, but we don't know that -- check rows for any existing)
+  virtual bool      LoadMyRunningCmdTable();
+  // for job running on cluster, load the local jobs_running_cmd.dat table into jobs_running_cmd -- returns true if NEW rows added to this table
+  virtual bool      SaveMyRunningCmdTable();
+  // for job running on cluster, save current jobs_running_cmd table to the local jobs_running_cmd.dat file -- should do this after removing any commands that were processed
   
   virtual void      FormatFileListTable(DataTable& dt);
   // for file_list table

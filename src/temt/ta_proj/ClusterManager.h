@@ -128,6 +128,8 @@ public:
                            const String& clust, const String& user);
   bool LoadAllTables(const String &filename, DataTable& sum_table, DataTable& tmp_table);
   bool LoadMyRunningTable(); // for job running on cluster, true if loaded new data
+  bool LoadMyRunningCmdTable(); // for job running on cluster, true if loaded new data
+  bool SaveMyRunningCmdTable(); // for job running on cluster
   void SaveSubmitTable();
   void SaveCopyOfProject();
   void SaveExtraFiles();

@@ -267,7 +267,7 @@ bool taProject::GetClusterRunJob(int updt_interval_mins) {
     return false; // no data..
   }
   String tag = taMisc::FindArgByName("tag");
-  if(tag.startsWith('_'))
+  if(tag.startsWith('_'))       // typically true
     tag = tag.after('_');
   int tag_row = cr->jobs_running.FindVal(tag, "tag", 0, false);
   if(tag_row < 0) {
@@ -275,17 +275,39 @@ bool taProject::GetClusterRunJob(int updt_interval_mins) {
     return false; // our job not in it
   }
   cr->GetCurJobData(tag);       // get it
-  // if(got_new) {
+  if(got_new) {
     ClusterRunJob* cj = ClusterRunJob::cur_job;
     taMisc::Info
       ("Cluster run job info loaded:", String(got_new), "tag:", cj->tag,
        "start: " + cj->start_time.toString(ClusterRun::timestamp_fmt),
        "end: " + cj->run_time_end.toString(ClusterRun::timestamp_fmt),
        "label: " +  cj->label, "notes: " + cj->notes);
-  // }
+  }
   return true;
 }
 
+String taProject::CheckClusterRunCmd() {
+  if(!taMisc::cluster_run) return "";
+  ClusterRun* cr = (ClusterRun*)FindMakeControlPanel("ClusterRun", &TA_ClusterRun);
+  if(!cr) return false;         // should not happen
+  bool got_new = cr->LoadMyRunningCmdTable();
+  if(!got_new) return "";
+  String tag = taMisc::FindArgByName("tag");
+  if(tag.startsWith('_'))       // typically true
+    tag = tag.after('_');
+  int tag_row = cr->jobs_running_cmd.FindVal(tag, "tag", 0, false);
+  if(tag_row < 0) {
+    return false; // our job not in it
+  }
+  String cmd = cr->jobs_running_cmd.GetValAsString("status", tag_row);
+  String sub_time = cr->jobs_running_cmd.GetValAsString("submit_time", tag_row);
+  // could get other data too, if needed..
+  cr->jobs_running_cmd.RemoveRows(tag_row, 1);
+  cr->SaveMyRunningCmdTable();
+  taMisc::Info("Cluster run job command:", cmd, "received for tag:", tag,
+               "submit time: " + sub_time);
+  return cmd;
+}
 
 MainWindowViewer* taProject::GetDefaultProjectBrowser() {
   MainWindowViewer* vwr = NULL;

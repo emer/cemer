@@ -171,7 +171,9 @@ public:
   // #CAT_File get the full path to the current cluster run repository associated with this project ---- if taMisc::cluster_run flag set, then we're actually running on the cluster, in which case the path is one up from the current project directory -- otherwise it is the svn repository path from the ClusterRun object -- if no such path is available, it just returns the current project directory path
   virtual bool          GetClusterRunJob(int updt_interval_mins = 10);
   // #CAT_File if we are a taMisc::cluster_run job, get all the current job data into ClusterRunJob::cur_job -- returns true if cur_job updated -- if cur_job does not yet exist, then it always tries to load data, otherwise it updates every 10 minutes by default (which corresponds with how frequently the cluster run script auto-updates running job info)
-
+  virtual String        CheckClusterRunCmd();
+  // #CAT_File if we are a taMisc::cluster_run job, see if we have received a command in jobs_running_cmd.dat file -- if so, returns command (status field of table), and removes this command from the table and saves it
+  
   ///////////////////////////////////////////////////////////////////
   //    misc
 

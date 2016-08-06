@@ -42,9 +42,9 @@ void ClusterRunJob::UpdateAfterEdit_impl() {
     running_time = taDateTime::SecondsToDHM(secs);
   }
 
-  int rth = ClusterRun::RunTimeHrs(run_time);
+  int rtm = ClusterRun::RunTimeMins(run_time);
   run_time_end = start_time;
-  run_time_end.addHours(rth);  
+  run_time_end.addMinutes(rtm);  
 }
 
 void ClusterRunJob::MakeCurJobObj() {

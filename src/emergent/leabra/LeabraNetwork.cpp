@@ -2090,7 +2090,7 @@ void LeabraNetwork::Compute_Weights() {
     NET_THREAD_CALL(LeabraNetwork::Compute_WtBal_Thr);
   }
 
-  ClusterRunSaveWeights();
+  SaveWeights_ClusterRunTerm();
 }
 
 void LeabraNetwork::Compute_Weights_Thr(int thr_no) {

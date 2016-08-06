@@ -123,11 +123,13 @@ job_out_bytes_total = 30000
 #   NUKEJOB   remove given tag job from jobs done immediately -- do not add to jobs deleted
 #   CLEANJOBFILES tell cluster to remove job files associated with tags
 #   REMOVEFILES tell cluster to remove specific files listed in this other_files entry
-#   UPDATENOTE update the notes field of a completed job
+#   UPDATENOTE update the notes, label field of a job
 #   ARCHIVEJOB tell cluster to move given tags from jobs_done into jobs_archive
 #   UNDELETEJOB tell cluster to move given tags from jobs_delete back into jobs_done, and recover dat
 #               files associated with those jobs back into the current svn directory
 #   REMOVEDELJOB tell cluster to fully remove job from jobs_delete
+#   SAVESTATE send a command to running job through jobs_running_cmd.dat file to save state
+
 # The cluster script sets this field in the running/done tables to:
 #   SUBMITTED after job successfully submitted to a queue.
 #   QUEUED    when the job is known to be in the cluster queue.
@@ -733,6 +735,7 @@ class SubversionPoller(object):
         self.cur_tag_proj_file = ""  # project file with tag appended
         self.cur_submit_file = ""
         self.cur_running_file = ""
+        self.cur_running_cmd_file = ""
         self.cur_done_file = ""
         self.cur_deleted_file = ""
         self.cur_archive_file = ""
@@ -743,6 +746,7 @@ class SubversionPoller(object):
         self.last_auto_check = datetime.now()
         self.jobs_submit = DataTable()
         self.jobs_running = DataTable()
+        self.jobs_running_cmd = DataTable()
         self.jobs_done = DataTable()
         self.jobs_deleted = DataTable()
         self.jobs_archive = DataTable()
@@ -857,6 +861,7 @@ class SubversionPoller(object):
             do_auto_check = tdel.seconds >= self.auto_check_mins * 60
             if do_auto_check:
                 self.last_auto_check = datetime.now()
+                print 'Executing auto check now (every %d minutes, update all running jobs and commit data)' % self.auto_check_mins
 
             # anytime we issue a command or the status of a job changes, or auto-check
             if self.got_submit or self.status_change or do_auto_check:
@@ -958,6 +963,7 @@ class SubversionPoller(object):
         self.cur_proj_file = self.cur_proj_root + "/models/" + self.cur_proj_dirname + ".proj"  # this is not accurate if .gz proj
         self.cur_submit_file = self.cur_proj_root + '/submit/jobs_submit.dat'
         self.cur_running_file = self.cur_proj_root + '/submit/jobs_running.dat'
+        self.cur_running_cmd_file = self.cur_proj_root + '/submit/jobs_running_cmd.dat'
         self.cur_done_file = self.cur_proj_root + '/submit/jobs_done.dat'
         self.cur_deleted_file = self.cur_proj_root + '/submit/jobs_deleted.dat'
         self.cur_archive_file = self.cur_proj_root + '/submit/jobs_archive.dat'
@@ -1038,6 +1044,18 @@ class SubversionPoller(object):
             self.jobs_running.copy_cols(self.jobs_submit)
             self.jobs_running.write(self.cur_running_file)
             self._svn_add_cur_running()
+        
+    # initialize the jobs_running_cmd table -- either load from file or init from submit
+    def _init_jobs_running_cmd(self):
+        if os.path.exists(self.cur_running_cmd_file):
+            if debug:
+                logging.info("loading existing running cmd file: %s" % self.cur_running_cmd_file)
+            self.jobs_running_cmd.load_from_file(self.cur_running_cmd_file)
+            self._check_job_table_format(self.jobs_running_cmd, self.cur_running_cmd_file)
+        else:
+            # create new and save
+            self.jobs_running_cmd.copy_cols(self.jobs_submit)
+            self.jobs_running_cmd.write(self.cur_running_cmd_file)
         
     # initialize the jobs_done table -- either load from file or init from running
     def _init_jobs_done(self):
@@ -1149,6 +1167,8 @@ class SubversionPoller(object):
                 self._clean_job_files(filename, rev, row)
             elif status == 'UPDATENOTE':
                 self._update_note(filename, rev, row)
+            elif status == 'SAVESTATE':
+                self._submit_to_cmd_job(filename, rev, row) # pass-thru to jobs_running_cmd
 
         # save any changes to current jobs files
         self._save_cur_files()
@@ -1639,6 +1659,22 @@ class SubversionPoller(object):
                 try: os.remove(fdf)  # for good measure, just nuke it directly
                 except: pass
 
+    def _submit_to_cmd_job(self, filename, rev, row):
+        # copy the current jobs_submit item to jobs_running_cmd, if job is running
+        tag = self.jobs_submit.get_val(row, "tag")
+        runrow = self.jobs_running.find_val("tag", tag)
+        if runrow >= 0:
+            self._init_jobs_running_cmd() # make sure we have a file
+            self.jobs_running_cmd.append_row_from(self.jobs_submit, row)
+            self.jobs_running_cmd.write(self.cur_running_cmd_file)
+            # it is now up to the client to probe this jobs_running_cmd.dat file
+            # and notice a new row, and the submit_time, and act accordingly..
+            # client should also remove the row once it has been processed, and
+            # save file -- no svn checkin -- just live writes on shared fs -- could be
+            # conflicts, but unlikely..
+        else:
+            print "cannot submit running command to non-running job: %s" % tag
+        
     def _unexpected_file(self, filename, rev):
         print 'Ignoring file committed to "submit" folder ' \
               'in revision %s: %s' % (rev, filename)
