@@ -465,7 +465,7 @@ void iSubversionBrowser::setUrl(const String& url) {
   }
   else {
     String org_sufx = org_url.after(com_ur); // unique suffix after common path
-    String com_wc = org_wc.before(org_sufx); // assuming this is there!
+    String com_wc = org_wc.before(org_sufx,-1); // assuming this is there!
     if(com_wc.empty()) {
       taMisc::Warning("unable to update working copy based on svn url change -- update it manually!");
       updateView();
@@ -522,7 +522,7 @@ void iSubversionBrowser::setWcPath(const String& wc_path) {
   }
   else {
     String org_sufx = org_wc.after(com_wc); // unique suffix after common path
-    String com_ur = org_url.before(org_sufx); // assuming this is there!
+    String com_ur = org_url.before(org_sufx,-1); // assuming this is there!
     if(com_ur.empty()) {
       taMisc::Warning("unable to update url path based on working copy change -- update it manually!");
       updateView();
