@@ -48,6 +48,7 @@ taTypeDef_Of(taDataGen);
 #include <QFileInfo>
 #include <QFileDialog>
 #include <QStandardPaths>
+#include <QDesktopServices>
 #include <QDateTime>
 
 #include <css_machine.h>
@@ -261,6 +262,16 @@ bool taProject::GetClusterRunJob(int updt_interval_mins) {
   int tag_row = cr->jobs_running.FindVal(tag, "tag", 0, false);
   if(tag_row < 0) return false; // our job not in it
   cr->GetCurJobData(tag);       // get it
+  if(got_new) {
+    if(taMisc::dmem_proc == 0) {
+      ClusterRunJob* cj = ClusterRunJob::cur_job;
+      taMisc::Info
+        ("Cluster run job info loaded, tag:", cj->tag,
+         "start: " + cj->start_time.toString(ClusterRun::timestamp_fmt),
+         "end: " + cj->run_time_end.toString(ClusterRun::timestamp_fmt),
+         "label:", cj->label, "notes:", cj->notes);
+    }
+  }
   return true;
 }
 
@@ -707,8 +718,13 @@ bool taProject::OpenProjectFromWeb(const String& proj_file_name, const String& w
       return false;
   }
   
+#if (QT_VERSION >= 0x050000)
   QString defaultLocation =
     QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+#else
+  QString defaultLocation =
+    QDesktopServices::storageLocation(QDesktopServices::DesktopLocation);
+#endif
 
   String proj_file = defaultLocation + PATH_SEP + proj_file_name;
   if (!taMediaWiki::FileExists(act_wiki_name, proj_file_name)) {
