@@ -487,21 +487,7 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
 
 
 //////////////////////////////////////////////////////////////////////////////////
-//     Compute dWt Norm: receiver based 
-
-inline void LeabraConSpec::Compute_dWt_Norm(LeabraConGroup* cg, LeabraNetwork* net,
-                                            int thr_no) {
-  if(!learn || !wt_sig.dwt_norm || cg->size < 2) return;
-  float sum_dwt = 0.0f;
-  for(int i=0; i<cg->size; i++) {
-    sum_dwt += cg->PtrCn(i,DWT,net);
-  }
-  if(sum_dwt == 0.0f) return;
-  float dwnorm = sum_dwt / (float)cg->size;
-  for(int i=0; i<cg->size; i++) {
-    cg->PtrCn(i,DWT,net) -= dwnorm;
-  }
-}
+//     Compute Wt Bal: receiver based 
 
 inline void LeabraConSpec::Compute_WtBal(LeabraConGroup* cg, LeabraNetwork* net,
                                          int thr_no) {

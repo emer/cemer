@@ -133,8 +133,6 @@ INHERITED(SpecMemberBase)
 public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1 is standard for XCAL
-  bool		dwt_norm;	// #DEF_false normalize weight changes -- this adds a significant amount of computational cost, and generally makes learning more robust, but a well-tuned network should not require it, and it causes some interference with prior learning that may not be very biologically plausible or desirable -- dwt -= (act_p / sum act_p) (sum dwt) over receiving projection
-  bool          rugp_wt_sync;    // #DEF_false keep weights synchronized for the same recv unit index within its unit group across the layer -- does this upon weight init and also integrates all the weight changes to produce an aggregate dwt -- all done at network level
 
   static inline float	SigFun(const float w, const float gn, const float of) {
     if(w <= 0.0f) return 0.0f;
@@ -193,7 +191,7 @@ class E_API WtBalanceSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight balance maintenance spec: maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- plugs into soft bounding function
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // #DEF_true perform weight balance maintenance?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- this is generally very beneficial and is on by default
+  bool          on;             // perform weight balance maintenance?  if so, maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- this is generally very beneficial for larger models where hog units are a problem, but not as much for smaller models where the additional cosntraints are not beneficial
   float         trg;            // #CONDSHOW_ON_on #DEF_0.3 target average weight value for this projection -- should generally match rnd.mean (plus whatever scaling factors might be in place)
   float         thr;            // #CONDSHOW_ON_on #DEF_0.1 threshold around target value where weight balance factor remains zero -- specifically trg +/- thr is this zero regime, and weight balance factors increase linearly above or below this range
   float         gain;           // #CONDSHOW_ON_on #DEF_2:4 gain multiplier applied to balance factors that are above zero (i.e., average weight > trg) -- higher values turn weight increases down more rapidly as the weights become more imbalanced
@@ -362,7 +360,7 @@ public:
 
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
-  WtBalanceSpec wt_bal;         // #CAT_Learning #CONDSHOW_ON_learn computes weight balance factor 
+  WtBalanceSpec wt_bal;         // #CAT_Learning #CONDSHOW_ON_learn weight balance maintenance spec: maintains overall weight balance across units by progressively penalizing weight increases as a function of extent to which average weights exceed target value, and vice-versa when weight average is less than target -- plugs into soft bounding function
   AdaptWtScaleSpec adapt_scale;	// #CAT_Learning #CONDSHOW_ON_learn parameters to adapt the scale multiplier on weights, as a function of weight value
   SlowWtsSpec   slow_wts;       // #CAT_Learning #CONDSHOW_ON_learn slow weight specifications -- adds a more slowly-adapting weight factor on top of the standard more rapidly adapting weights
   DeepLrateSpec deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
@@ -580,10 +578,6 @@ public:
 #endif
 
   inline void	Compute_Weights(ConGroup* cg, Network* net, int thr_no) override;
-
-  inline virtual void 	Compute_dWt_Norm(LeabraConGroup* cg, LeabraNetwork* net,
-                                         int thr_no);
-  // #IGNORE compute dwt normalization
 
   inline virtual void 	Compute_WtBal(LeabraConGroup* cg, LeabraNetwork* net,
                                       int thr_no);

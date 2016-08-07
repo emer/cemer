@@ -83,9 +83,7 @@ void LeabraNetMisc::Initialize() {
   trial_decay = false;
   diff_scale_p = false;
   diff_scale_q1 = false;
-  dwt_norm = false;
   wt_bal = false;
-  rugp_wt_sync = false;
   lay_gp_inhib = false;
   inhib_cons = false;
 }
@@ -562,9 +560,7 @@ void LeabraNetwork::Trial_Init_Specs() {
   net_misc.trial_decay = false;
   net_misc.diff_scale_p = false;
   net_misc.diff_scale_q1 = false;
-  net_misc.dwt_norm = false;
   net_misc.wt_bal = false;
-  net_misc.rugp_wt_sync = false;
   net_misc.lay_gp_inhib = false;
   net_misc.lrate_updtd = false;
 
@@ -1908,11 +1904,9 @@ void LeabraNetwork::Compute_dWt() {
   Compute_dWt_Layer_pre();
 
 #ifdef CUDA_COMPILE
-  if(!net_misc.dwt_norm) {      // todo: add other checks here for non-std dwts etc
-    NET_THREAD_CALL(LeabraNetwork::Compute_dWt_VecVars_Thr);
-    Cuda_Compute_dWt();
-    return;
-  }
+  NET_THREAD_CALL(LeabraNetwork::Compute_dWt_VecVars_Thr);
+  Cuda_Compute_dWt();
+  return;
 #endif
 
   NET_THREAD_CALL(LeabraNetwork::Compute_dWt_Thr);
@@ -1948,16 +1942,6 @@ void LeabraNetwork::Compute_dWt_Thr(int thr_no) {
     ((LeabraNetTiming*)net_timing[thr_no])->dwt.EndIncrAvg();
 }
 
-void LeabraNetwork::Compute_dWt_Norm_Thr(int thr_no) {
-  if(!net_misc.dwt_norm) return;
-  const int nrcg = ThrNRecvConGps(thr_no);
-  for(int i=0; i<nrcg; i++) {
-    LeabraConGroup* rcg = (LeabraConGroup*)ThrRecvConGroup(thr_no, i);
-    if(rcg->NotActive()) continue;
-    ((LeabraConSpec*)rcg->con_spec)->Compute_dWt_Norm(rcg, this, thr_no);
-  }
-}
-
 void LeabraNetwork::Compute_WtBal_Thr(int thr_no) {
   const int nrcg = ThrNRecvConGps(thr_no);
   for(int i=0; i<nrcg; i++) {
@@ -1968,109 +1952,118 @@ void LeabraNetwork::Compute_WtBal_Thr(int thr_no) {
 }
 
 void LeabraNetwork::Init_Weights_post() {
-  Compute_RUgpWtSync();
   inherited::Init_Weights_post();
 }
 
-void LeabraNetwork::Compute_RUgpWtSync() {
-  if(!net_misc.rugp_wt_sync) return;
+// void LeabraNetwork::Compute_dWt_Norm_Thr(int thr_no) {
+//   if(!net_misc.dwt_norm) return;
+//   const int nrcg = ThrNRecvConGps(thr_no);
+//   for(int i=0; i<nrcg; i++) {
+//     LeabraConGroup* rcg = (LeabraConGroup*)ThrRecvConGroup(thr_no, i);
+//     if(rcg->NotActive()) continue;
+//     ((LeabraConSpec*)rcg->con_spec)->Compute_dWt_Norm(rcg, this, thr_no);
+//   }
+// }
 
-  const int nlay = n_layers_built;
-  for(int li = 0; li < nlay; li++) {
-    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
-    if(!lay->unit_groups) continue;
+// void LeabraNetwork::Compute_RUgpWtSync() {
+//   if(!net_misc.rugp_wt_sync) return;
 
-    const int un_per_gp = lay->un_geom.n;
-    const int n_ugps = lay->gp_geom.n;
-    if(n_ugps <= 1) continue;
+//   const int nlay = n_layers_built;
+//   for(int li = 0; li < nlay; li++) {
+//     LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+//     if(!lay->unit_groups) continue;
+
+//     const int un_per_gp = lay->un_geom.n;
+//     const int n_ugps = lay->gp_geom.n;
+//     if(n_ugps <= 1) continue;
     
-    const int ust = lay->units_flat_idx;
-    const int ued = ust + un_per_gp * n_ugps;
-    const int nfgp_st = ust + un_per_gp;
+//     const int ust = lay->units_flat_idx;
+//     const int ued = ust + un_per_gp * n_ugps;
+//     const int nfgp_st = ust + un_per_gp;
 
-    FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
-      LeabraConSpec* cs = (LeabraConSpec*)p->GetConSpec();
-      if(!cs->wt_sig.rugp_wt_sync) continue;
+//     FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
+//       LeabraConSpec* cs = (LeabraConSpec*)p->GetConSpec();
+//       if(!cs->wt_sig.rugp_wt_sync) continue;
 
-      // copy weights from first unit
-      for(int ui = nfgp_st; ui < ued; ui++) {
-        LeabraUnit* u = (LeabraUnit*)UnFmIdx(ui);
-        int un_idx = (ui - ust) % un_per_gp;
-        LeabraUnit* src_u = (LeabraUnit*)UnFmIdx(ust + un_idx);
-        LeabraConGroup* src_rcg = (LeabraConGroup*)src_u->RecvConGroup(p->recv_idx);
-        LeabraConGroup* rcg = (LeabraConGroup*)u->RecvConGroup(p->recv_idx);
-        const int sz = MIN(src_rcg->size, rcg->size);
-        for(int i=0; i<sz; i++) {
-          rcg->PtrCn(i, LeabraConSpec::WT, this) =
-            src_rcg->PtrCn(i, LeabraConSpec::WT, this);
-        }
-      }
-    }
-  }
-}
+//       // copy weights from first unit
+//       for(int ui = nfgp_st; ui < ued; ui++) {
+//         LeabraUnit* u = (LeabraUnit*)UnFmIdx(ui);
+//         int un_idx = (ui - ust) % un_per_gp;
+//         LeabraUnit* src_u = (LeabraUnit*)UnFmIdx(ust + un_idx);
+//         LeabraConGroup* src_rcg = (LeabraConGroup*)src_u->RecvConGroup(p->recv_idx);
+//         LeabraConGroup* rcg = (LeabraConGroup*)u->RecvConGroup(p->recv_idx);
+//         const int sz = MIN(src_rcg->size, rcg->size);
+//         for(int i=0; i<sz; i++) {
+//           rcg->PtrCn(i, LeabraConSpec::WT, this) =
+//             src_rcg->PtrCn(i, LeabraConSpec::WT, this);
+//         }
+//       }
+//     }
+//   }
+// }
 
-void LeabraNetwork::Compute_RUgpDwtSync() {
-  if(!net_misc.rugp_wt_sync) return;
+// void LeabraNetwork::Compute_RUgpDwtSync() {
+//   if(!net_misc.rugp_wt_sync) return;
 
-  const int nlay = n_layers_built;
-  for(int li = 0; li < nlay; li++) {
-    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
-    if(!lay->unit_groups) continue;
+//   const int nlay = n_layers_built;
+//   for(int li = 0; li < nlay; li++) {
+//     LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+//     if(!lay->unit_groups) continue;
 
-    const int un_per_gp = lay->un_geom.n;
-    const int n_ugps = lay->gp_geom.n;
-    if(n_ugps <= 1) continue;
+//     const int un_per_gp = lay->un_geom.n;
+//     const int n_ugps = lay->gp_geom.n;
+//     if(n_ugps <= 1) continue;
     
-    const int ust = lay->units_flat_idx;
-    const int ued = ust + un_per_gp * n_ugps;
-    const int nfgp_st = ust + un_per_gp;
+//     const int ust = lay->units_flat_idx;
+//     const int ued = ust + un_per_gp * n_ugps;
+//     const int nfgp_st = ust + un_per_gp;
 
-    FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
-      LeabraConSpec* cs = (LeabraConSpec*)p->GetConSpec();
-      if(!cs->wt_sig.rugp_wt_sync) continue;
+//     FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, lay->projections) {
+//       LeabraConSpec* cs = (LeabraConSpec*)p->GetConSpec();
+//       if(!cs->wt_sig.rugp_wt_sync) continue;
 
-      // aggregate weights from non-first-unit-group units into first unit unit group
-      for(int ui = nfgp_st; ui < ued; ui++) {
-        LeabraUnit* u = (LeabraUnit*)UnFmIdx(ui);
-        int un_idx = (ui - ust) % un_per_gp;
-        LeabraUnit* src_u = (LeabraUnit*)UnFmIdx(ust + un_idx);
-        LeabraConGroup* src_rcg = (LeabraConGroup*)src_u->RecvConGroup(p->recv_idx);
-        LeabraConGroup* rcg = (LeabraConGroup*)u->RecvConGroup(p->recv_idx);
-        const int sz = MIN(src_rcg->size, rcg->size);
-        for(int i=0; i<sz; i++) {
-          src_rcg->PtrCn(i, LeabraConSpec::DWT, this) +=
-            rcg->PtrCn(i, LeabraConSpec::DWT, this);
-        }
-      }
+//       // aggregate weights from non-first-unit-group units into first unit unit group
+//       for(int ui = nfgp_st; ui < ued; ui++) {
+//         LeabraUnit* u = (LeabraUnit*)UnFmIdx(ui);
+//         int un_idx = (ui - ust) % un_per_gp;
+//         LeabraUnit* src_u = (LeabraUnit*)UnFmIdx(ust + un_idx);
+//         LeabraConGroup* src_rcg = (LeabraConGroup*)src_u->RecvConGroup(p->recv_idx);
+//         LeabraConGroup* rcg = (LeabraConGroup*)u->RecvConGroup(p->recv_idx);
+//         const int sz = MIN(src_rcg->size, rcg->size);
+//         for(int i=0; i<sz; i++) {
+//           src_rcg->PtrCn(i, LeabraConSpec::DWT, this) +=
+//             rcg->PtrCn(i, LeabraConSpec::DWT, this);
+//         }
+//       }
 
-      float norm = 1.0f / (float)n_ugps;
+//       float norm = 1.0f / (float)n_ugps;
 
-      // average weight changes in first unit group
-      for(int ui = ust; ui < nfgp_st; ui++) {
-        LeabraUnit* u = (LeabraUnit*)UnFmIdx(ui);
-        LeabraConGroup* rcg = (LeabraConGroup*)u->RecvConGroup(p->recv_idx);
-        const int sz = rcg->size;
-        for(int i=0; i<sz; i++) {
-          rcg->PtrCn(i, LeabraConSpec::DWT, this) *= norm;
-        }
-      }
+//       // average weight changes in first unit group
+//       for(int ui = ust; ui < nfgp_st; ui++) {
+//         LeabraUnit* u = (LeabraUnit*)UnFmIdx(ui);
+//         LeabraConGroup* rcg = (LeabraConGroup*)u->RecvConGroup(p->recv_idx);
+//         const int sz = rcg->size;
+//         for(int i=0; i<sz; i++) {
+//           rcg->PtrCn(i, LeabraConSpec::DWT, this) *= norm;
+//         }
+//       }
 
-      // then copy to other guys
-      for(int ui = nfgp_st; ui < ued; ui++) {
-        LeabraUnit* u = (LeabraUnit*)UnFmIdx(ui);
-        int un_idx = (ui - ust) % un_per_gp;
-        LeabraUnit* src_u = (LeabraUnit*)UnFmIdx(ust + un_idx);
-        LeabraConGroup* src_rcg = (LeabraConGroup*)src_u->RecvConGroup(p->recv_idx);
-        LeabraConGroup* rcg = (LeabraConGroup*)u->RecvConGroup(p->recv_idx);
-        const int sz = MIN(src_rcg->size, rcg->size);
-        for(int i=0; i<sz; i++) {
-          rcg->PtrCn(i, LeabraConSpec::DWT, this) =
-            src_rcg->PtrCn(i, LeabraConSpec::DWT, this);
-        }
-      }
-    }
-  }
-}
+//       // then copy to other guys
+//       for(int ui = nfgp_st; ui < ued; ui++) {
+//         LeabraUnit* u = (LeabraUnit*)UnFmIdx(ui);
+//         int un_idx = (ui - ust) % un_per_gp;
+//         LeabraUnit* src_u = (LeabraUnit*)UnFmIdx(ust + un_idx);
+//         LeabraConGroup* src_rcg = (LeabraConGroup*)src_u->RecvConGroup(p->recv_idx);
+//         LeabraConGroup* rcg = (LeabraConGroup*)u->RecvConGroup(p->recv_idx);
+//         const int sz = MIN(src_rcg->size, rcg->size);
+//         for(int i=0; i<sz; i++) {
+//           rcg->PtrCn(i, LeabraConSpec::DWT, this) =
+//             src_rcg->PtrCn(i, LeabraConSpec::DWT, this);
+//         }
+//       }
+//     }
+//   }
+// }
 
 void LeabraNetwork::Compute_Weights() {
 #ifdef DMEM_COMPILE
@@ -2082,8 +2075,6 @@ void LeabraNetwork::Compute_Weights() {
   return;
 #endif
   
-  Compute_RUgpDwtSync();
-
   NET_THREAD_CALL(LeabraNetwork::Compute_Weights_Thr);
   
   if(net_misc.wt_bal) {
@@ -2097,8 +2088,6 @@ void LeabraNetwork::Compute_Weights_Thr(int thr_no) {
   if(threads.get_timing)
     ((LeabraNetTiming*)net_timing[thr_no])->wt.StartTimer(true); // reset
 
-  Compute_dWt_Norm_Thr(thr_no);
-  
   const int nscg = ThrNSendConGps(thr_no);
   for(int i=0; i<nscg; i++) {
     LeabraConGroup* scg = (LeabraConGroup*)ThrSendConGroup(thr_no, i);
@@ -2828,23 +2817,11 @@ String LeabraNetwork::TimingReport(DataTable& dt, bool print) {
     rca->SetValAsFloat(tm->dwt.avg_used.avg * rescale, -1);
     rcs->SetValAsFloat(tm->dwt.avg_used.sum, -1);
 
-    // dt.AddBlankRow();
-    // thc->SetValAsInt(i, -1);
-    // stat->SetValAsString("dwt_norm_time", -1);
-    // rca->SetValAsFloat(dwt_norm.avg_used.avg * rescale, -1);
-    // rcs->SetValAsFloat(dwt_norm.avg_used.sum, -1);
-
     dt.AddBlankRow();
     thc->SetValAsInt(i, -1);
     stat->SetValAsString("wt_time", -1);
     rca->SetValAsFloat(tm->wt.avg_used.avg * rescale, -1);
     rcs->SetValAsFloat(tm->wt.avg_used.sum, -1);
-
-    // dt.AddBlankRow();
-    // thc->SetValAsInt(i, -1);
-    // stat->SetValAsString("ti_netin_time", -1);
-    // rca->SetValAsFloat(ti_netin.avg_used.avg * rescale, -1);
-    // rcs->SetValAsFloat(ti_netin.avg_used.sum, -1);
 
     dt.AddBlankRow();
     thc->SetValAsInt(i, -1);

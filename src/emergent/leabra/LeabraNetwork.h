@@ -135,9 +135,7 @@ public:
   bool          trial_decay;   // #READ_ONLY #SHOW at least one layer spec has a non-zero level of trial decay -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
   bool          diff_scale_p;   // #READ_ONLY #SHOW a unitspec such as the hippocampus ThetaPhase units rescales inputs in plus phase -- this requires initializing the net inputs between these phases
   bool          diff_scale_q1;  // #READ_ONLY #SHOW at least one unit spec rescales inputs at start of second quarter, such as hippocampus ThetaPhase units -- this requires initializing the net inputs at this point
-  bool		dwt_norm;       // #READ_ONLY #SHOW dwt_norm is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_sig.dwt_norm flag is on, and off if not -- updated in Trial_Init_Specs call
   bool		wt_bal;       // #READ_ONLY #SHOW wt_bal weight balancing is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_bal.on flag is on, and off if not -- updated in Trial_Init_Specs call
-  bool		rugp_wt_sync;   // #READ_ONLY #SHOW rugp_wt_sync is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_sig.rugp_wt_sync flag is on, and off if not -- updated in Trial_Init_Specs call
   bool          lay_gp_inhib;   // #READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation -- updated in Trial_Init_Specs call
   bool		inhib_cons;     // #READ_ONLY #SHOW inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
   bool          lrate_updtd;
@@ -621,14 +619,8 @@ public:
   
   void	Compute_dWt() override;
     void Compute_dWt_Thr(int thr_no) override;
-  virtual void	Compute_dWt_Norm_Thr(int thr_no);
-  // #IGNORE compute normalization of weight changes -- must be done as a second pass after initial weight changes
   virtual void	Compute_WtBal_Thr(int thr_no);
   // #IGNORE compute weight balance factors
-  virtual void	Compute_RUgpWtSync();
-  // #IGNORE compute recv unit group sync of weights -- called during init weights
-  virtual void	Compute_RUgpDwtSync();
-  // #IGNORE compute recv unit group sync of weight changes -- must be done as a second pass after initial weight changes
 
   void Compute_Weights() override;
   void Compute_Weights_Thr(int thr_no) override;

@@ -18,6 +18,5 @@
 TA_BASEFUNS_CTORS_DEFN(CerebPfPcConSpec);
 
 void CerebPfPcConSpec::Initialize() {
-  wt_sig.dwt_norm = false;      // dwt norm VERY VERY bad for this!!
   nerr_lrate = 0.1f;
 }
