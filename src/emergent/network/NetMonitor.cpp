@@ -80,6 +80,8 @@ void NetMonitor::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
   if(sls != SLS_STRUCT_UPDATE_END || !obj || !obj->InheritsFrom(&TA_Network)) {
     return;
   }
+  Network* nobj = (Network*)obj;
+  if(!nobj->IsBuiltIntact()) return; // not ready!
   UpdateDataTable();
 }
 

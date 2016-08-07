@@ -426,6 +426,10 @@ void NetMonItem::ScanObject() {
 
   if (!object) return;
 
+  // don't attempt to scan if network not set or intact..
+  if(!monitor || !monitor->network || !monitor->network->IsBuiltIntact())
+    return;
+  
   if (object->InheritsFrom(&TA_Unit))
     ScanObject_Unit((Unit*)object.ptr(), variable);
   else if (object->InheritsFrom(&TA_Layer))
