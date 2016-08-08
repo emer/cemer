@@ -426,10 +426,6 @@ void NetMonItem::ScanObject() {
 
   if (!object) return;
 
-  // don't attempt to scan if network not set or intact..
-  if(!monitor || !monitor->network || !monitor->network->IsBuiltIntact())
-    return;
-  
   if (object->InheritsFrom(&TA_Unit))
     ScanObject_Unit((Unit*)object.ptr(), variable);
   else if (object->InheritsFrom(&TA_Layer))
@@ -571,7 +567,8 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
     }
     else if(obj->InheritsFrom(&TA_Unit)) { // special case for UnitVars
       Unit* un = (Unit*)obj;
-      if(!un->lesioned() && un->own_net()->unit_vars_built) {
+        // don't attempt to scan if network not set or intact..
+      if(!un->lesioned() && un->own_net()->IsBuiltIntact()) {
         md = un->own_net()->unit_vars_built->members.FindName(var);
         if(md) {
           if(name_obj) {
@@ -694,6 +691,9 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
 }
 
 void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
+  if(!lay->own_net->IsBuiltIntact()) // no-can-do
+    return;
+  
   String range2;
   String range1 = var.between('[', ']');
   String rmdr = var.after(']');
@@ -775,6 +775,8 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
 }
 
 void NetMonItem::ScanObject_LayerCons(Layer* lay, String var) {
+  if(!lay->own_net->IsBuiltIntact()) // no-can-do
+    return;
   String subvar = var.before('.');
   if(subvar == "r") {
     for(int i=0;i<lay->projections.size; i++) {
@@ -804,6 +806,9 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
   if(!con_md) return;           // can't find that var!
   Network* net = lay->own_net;
 
+  if(!net->IsBuiltIntact()) // no-can-do
+    return;
+  
   // always create a 4dimensional matrix: 1st 2 are units, 2nd 2 are cons
   taVector2i lay_geom;
   if(lay->unit_groups) {
@@ -939,6 +944,9 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
 
   if (ScanObject_InObject(ug, var, ug)) return;
 
+  if(!ug->own_lay->own_net->IsBuiltIntact()) // no-can-do
+    return;
+  
   // we now know it must be a regular unit variable (or invalid); do that
   MatrixGeom geom;
   if(ug->own_lay->un_geom.n_not_xy)
@@ -967,6 +975,8 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
 
 void NetMonItem::ScanObject_Unit(Unit* u, String var) {
   if(u->lesioned()) return;
+  if(!u->own_net()->IsBuiltIntact()) // no-can-do
+    return;
   if(ScanObject_InObject(u, var, u)) return;
 
   // otherwise, we only grok the special s. and r. indicating conns
@@ -989,6 +999,8 @@ void NetMonItem::ScanObject_RecvCons(ConGroup* cg, String var) {
   if(!con_md) return;           // can't find that var!
 
   Network* net = cg->prjn->layer->own_net;
+  if(!net->IsBuiltIntact()) // no-can-do
+    return;
 
   // find the geometry span of the cons
   taVector2i con_geom_max;
@@ -1029,6 +1041,8 @@ void NetMonItem::ScanObject_SendCons(ConGroup* cg, String var) {
   if(!con_md) return;           // can't find that var!
 
   Network* net = cg->prjn->layer->own_net;
+  if(!net->IsBuiltIntact()) // no-can-do
+    return;
 
   // find the geometry span of the cons
   taVector2i con_geom_max;
