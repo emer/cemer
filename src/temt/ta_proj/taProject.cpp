@@ -250,7 +250,7 @@ bool taProject::GetClusterRunJob(int updt_interval_mins) {
     if(now_min != last_updt_min && (now_min % updt_interval_mins == 0)) {
       last_updt_min = now_min;
       get_new_data = true;
-      taMisc::Info("Cluster Run: get new data every:",String(updt_interval_mins),"mins");
+      // taMisc::Info("Cluster Run: get new data every:",String(updt_interval_mins),"mins");
     }
   }
   else {
