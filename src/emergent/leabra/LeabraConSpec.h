@@ -592,8 +592,8 @@ public:
 
   // same as original:
   inline void B_Init_dWt(UnitVars* uv, Network* net, int thr_no) override {
-    //    C_Init_dWt(uv->bias_dwt);  // should be:
-    C_Init_dWt(uv->bias_wt);
+    C_Init_dWt(uv->bias_dwt);  // should be!
+    // C_Init_dWt(uv->bias_wt);
   }
 
   inline void B_Init_Weights_post(UnitVars* u, Network* net, int thr_no) override {
