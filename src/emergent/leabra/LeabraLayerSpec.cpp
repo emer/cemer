@@ -511,11 +511,12 @@ void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int th
   if(HasLayerInhib(lay)) {
     Compute_Inhib_impl(lay, (LeabraInhib*)lay, net, lay_inhib);
   }
-  else {                        // initialize lay inhib -- otherwise it will interfere!
-    lay->i_val.ffi = 0.0f;
-    lay->i_val.fbi = 0.0f;
-    lay->i_val.g_i = 0.0f;
-  }
+  // todo: is this causing some kind of problem?
+  // else {                        // initialize lay inhib -- otherwise it will interfere!
+  //   lay->i_val.ffi = 0.0f;
+  //   lay->i_val.fbi = 0.0f;
+  //   lay->i_val.g_i = 0.0f;
+  // }
 
   Compute_LayInhibToGps(lay, net); // sync it all up..
 }
