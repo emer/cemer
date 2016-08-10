@@ -1416,7 +1416,7 @@ QImage  T3ExaminerViewer::grabImage() {
   return QImage();
 #else
 #ifdef QT_OPEN_GL_WIDGET
-  return QImage();
+  return quarter->grabFramebuffer();
 #else
   return quarter->grabFrameBuffer(true); // true = get alpha
 #endif // QT_OPEN_GL_WIDGET
