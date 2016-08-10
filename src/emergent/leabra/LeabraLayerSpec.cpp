@@ -44,7 +44,6 @@ void LeabraInhibSpec::Defaults_init() {
   gi = 1.8f;
   ff = 1.0f;
   fb = 1.0f;
-  min_i = 0.0f;
   fb_tau = 1.4f;
   max_vs_avg = 0.0f;
   ff0 = 0.1f;
@@ -595,7 +594,6 @@ void LeabraLayerSpec::Compute_Inhib_FfFb
   }
 
   thr->i_val.g_i = lay->adapt_gi * ispec.gi * (nw_ffi + thr->i_val.fbi); // combine
-  thr->i_val.g_i = MAX(thr->i_val.g_i, ispec.min_i);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
