@@ -22,6 +22,7 @@
 
 #include <iThumbWheel>
 #include <iMenuButton>
+#include <taImage>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -1416,7 +1417,11 @@ QImage  T3ExaminerViewer::grabImage() {
   return QImage();
 #else
 #ifdef QT_OPEN_GL_WIDGET
-  return quarter->grabFramebuffer();
+  QImage img = quarter->grabFramebuffer();
+  taImage taimg;  taimg.SetImage(img);
+  taimg.ScaleColors(1.3f);         // linear scaling
+  img = taimg.GetImage();
+  return img;
 #else
   return quarter->grabFrameBuffer(true); // true = get alpha
 #endif // QT_OPEN_GL_WIDGET

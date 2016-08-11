@@ -20,6 +20,7 @@
 #include <taNBase>
 
 // member includes:
+#include <taMath.h>
 #ifndef __MAKETA__
 #include <QImage>
 #else
@@ -91,6 +92,21 @@ public:
   // #BUTTON #CAT_Image rotate image by given normalized degrees (1 = 360deg)
   virtual bool	TranslateImage(float move_x, float move_y, bool smooth=true);
   // #BUTTON #CAT_Image translate image by given normalized factors (-1 = all the way left, +1 = all the way right, etc)
+  inline float  sRGBToLinear_val(float srgb)
+  { float lin; if(srgb <= 0.04045f) lin = srgb / 12.92f;
+    else lin = powf((srgb + 0.055f) / 1.055f, 2.4f); return lin; }
+  // #CAT_Image convert sRGB standard gamma-transformed value into corresponding linear value for single value
+  inline float  LinearTosRGB_val(float lin)
+  { float srgb; if(lin <= 0.0031308f) srgb = lin * 12.92f;
+    else srgb = 1.055f * powf(lin, 1.0f / 2.4f) - 0.055f; return srgb; }
+  // #CAT_Image convert linear value to sRGB standard gamma-transformed value
+
+  virtual bool  sRGBToLinear();
+  // #CAT_Image convert sRGB standard gamma-transformed values into corresponding linear values for the whole image
+  virtual bool  LinearTosRGB();
+  // #CAT_Image convert linear rgb values to sRGB standard gamma-transformed values for the whole image
+  virtual bool  ScaleColors(float mult);
+  // #CAT_Image multiply colors by given linear multiplicative factor
 
   virtual bool	GetImageSize(int& width, int& height);
   // #CAT_Image get size of current image

@@ -17,6 +17,7 @@
 #include <taFiler>
 #include <float_Matrix>
 #include <DataTable>
+#include <taMath_float>
 
 #include <QByteArray>
 
@@ -439,6 +440,69 @@ bool taImage::RotateImage(float norm_deg, bool smooth) {
     q_img = q_img.transformed(mat, Qt::SmoothTransformation);
   else
     q_img = q_img.transformed(mat); // default is fast
+  ImageChanged();
+  return true;
+}
+
+bool taImage::sRGBToLinear() {
+  if(q_img.isNull()) {
+    return false;
+  }
+  ImageChanging();
+  int ht = q_img.height();
+  int wd = q_img.width();
+  for(int y=0; y<ht; y++) {
+    for(int x=0; x< wd; x++) {
+      QRgb pix = q_img.pixel(x, y);
+      int rval = (int) (sRGBToLinear_val((float)qRed(pix) / 255.0f) * 255.0f);
+      int gval = (int) (sRGBToLinear_val((float)qGreen(pix) / 255.0f) * 255.0f);
+      int bval = (int) (sRGBToLinear_val((float)qBlue(pix) / 255.0f) * 255.0f);
+      QRgb npix = qRgb(rval, gval, bval);
+      q_img.setPixel(x,y, npix);
+    }
+  }
+  ImageChanged();
+  return true;
+}
+
+bool taImage::LinearTosRGB() {
+  if(q_img.isNull()) {
+    return false;
+  }
+  ImageChanging();
+  int ht = q_img.height();
+  int wd = q_img.width();
+  for(int y=0; y<ht; y++) {
+    for(int x=0; x< wd; x++) {
+      QRgb pix = q_img.pixel(x, y);
+      int rval = (int) (LinearTosRGB_val((float)qRed(pix) / 255.0f) * 255.0f);
+      int gval = (int) (LinearTosRGB_val((float)qGreen(pix) / 255.0f) * 255.0f);
+      int bval = (int) (LinearTosRGB_val((float)qBlue(pix) / 255.0f) * 255.0f);
+      QRgb npix = qRgb(rval, gval, bval);
+      q_img.setPixel(x,y, npix);
+    }
+  }
+  ImageChanged();
+  return true;
+}
+
+bool taImage::ScaleColors(float mult) {
+  if(q_img.isNull()) {
+    return false;
+  }
+  ImageChanging();
+  int ht = q_img.height();
+  int wd = q_img.width();
+  for(int y=0; y<ht; y++) {
+    for(int x=0; x< wd; x++) {
+      QRgb pix = q_img.pixel(x, y);
+      int rval = MIN(taMath_float::rint((float)qRed(pix) * mult), 255);
+      int gval = MIN(taMath_float::rint((float)qGreen(pix) * mult), 255);
+      int bval = MIN(taMath_float::rint((float)qBlue(pix) * mult), 255);
+      QRgb npix = qRgb(rval, gval, bval);
+      q_img.setPixel(x,y, npix);
+    }
+  }
   ImageChanged();
   return true;
 }
