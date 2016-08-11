@@ -523,7 +523,9 @@ void iMainWindowViewer::Constr_FileMenu()
   fileMenu->AddAction(fileOptionsAction);
   
   fileRecentsClearAction = AddAction(new iAction("Clear Menu", QKeySequence(), "fileRecentsClearAction"));
+  fileRecentsCleanAction = AddAction(new iAction("Remove All Recover/AutoSave Files", QKeySequence(), "fileRecentsCleanAction"));
   connect(fileRecentsClearAction, SIGNAL(Action()), this, SLOT(fileClearRecentsMenu()));
+  connect(fileRecentsCleanAction, SIGNAL(Action()), this, SLOT(fileCleanRecentsMenu()));
 
   fileCloseWindowAction = AddAction(new iAction("C&lose Window", QKeySequence(cmd_str + "W"), "fileCloseWindowAction"));
   connect(fileCloseWindowAction, SIGNAL(Action()), this, SLOT(fileCloseWindow()));
@@ -1478,6 +1480,7 @@ void iMainWindowViewer::fileOpenRecent_aboutToShow() {
   }
   fileOpenRecentMenu->AddSep();
   fileOpenRecentMenu->AddAction(fileRecentsClearAction);
+  fileOpenRecentMenu->AddAction(fileRecentsCleanAction);
 }
 
 void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
@@ -2476,6 +2479,10 @@ void iMainWindowViewer::WindowZoom()  {
 
 void iMainWindowViewer::fileClearRecentsMenu() {
   tabMisc::root->ClearRecentFiles();
+}
+
+void iMainWindowViewer::fileCleanRecentsMenu() {
+  tabMisc::root->CleanRecentFiles();
 }
 
 void iMainWindowViewer::filePrint() {

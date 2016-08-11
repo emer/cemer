@@ -136,6 +136,7 @@ public:
   iAction*            fileCloseWindowAction; //note: special, because it is always at bottom of File menu for non-root
   iAction*            fileQuitAction; //note: only on app window, except on all in Mac
   iAction*            fileRecentsClearAction;
+  iAction*            fileRecentsCleanAction;
   
   iAction*            editUndoAction;
   iAction*            editRedoAction;
@@ -348,6 +349,7 @@ public slots:
   virtual void  fileCloseWindow();// (non-root only)
   virtual void  fileQuit(); // (root) or all on Mac (needed for App menu)
   virtual void  fileClearRecentsMenu();
+  virtual void  fileCleanRecentsMenu();
 
   virtual void  editMenu_aboutToShow();
   virtual void  editUndo();

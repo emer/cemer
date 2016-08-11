@@ -41,6 +41,7 @@
 #include <DynEnumType>
 #include <ControlPanel>
 #include <DataTable>
+#include <iDialogChoice>
 
 taTypeDef_Of(PluginWizard);
 taTypeDef_Of(StartupWizard);
@@ -259,7 +260,23 @@ void taRootBase::MonControl(bool on) {
 
 void taRootBase::ClearRecentFiles() {
   recent_files.Reset();
- }
+}
+
+void taRootBase::CleanRecentFiles() {
+  String msg = "Proceeding will remove all recover and autosave files in the recents list, the actual files as well as the entries in the recents list. Use with caution.";
+  String buttons = "Proceed" + iDialogChoice::delimiter + "Cancel";
+  int chs = iDialogChoice::ChoiceDialog(NULL, msg, buttons);
+  if (chs == 0) {
+    for (int i=0; i<recent_files.size; i++) {
+      String file_fullpath = recent_files[i];
+      if (file_fullpath.contains("_recover") || file_fullpath.contains("_autosave")) {
+        if (QFile::remove(file_fullpath.toQString())) {  // only remove path from recents if file actually removed
+          tabMisc::root->recent_files.RemoveEl(file_fullpath);
+        }
+      }
+    }
+  }
+}
 
 void taRootBase::AddRecentFile(const String& value, bool no_save) {
   if (value.empty()) return; // oops...
