@@ -206,6 +206,9 @@ void Program::Copy_(const Program& cp) {
   }
   tags = cp.tags;
   desc = cp.desc;
+  version = cp.version;
+  author = cp.author;
+  email = cp.email;
   flags = cp.flags;
   objs = cp.objs;
   types = cp.types;
@@ -216,6 +219,7 @@ void Program::Copy_(const Program& cp) {
   prog_code = cp.prog_code;
   step_prog = cp.step_prog;
   doc = cp.doc;
+  stop_step_cond = cp.stop_step_cond;
   
   ret_val = 0; // redo
   m_stale = true; // require rebuild/refetch
