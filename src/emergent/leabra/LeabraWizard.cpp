@@ -1243,7 +1243,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baend1_units->g_bar.l = 0.3f; // todo: control panel!
   
   cem_units->SetUnique("act", true);
-  cem_units->act.gain = 400.0f;
+  cem_units->act.gain = 100.0f; // changed fm 400 9-Aug-2016
 
   vsppd1_units->SetUnique("deep", true);
   vsppd1_units->deep.on = true;
@@ -1377,7 +1377,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baep_cons->rnd.mean = 0.1f;
   baep_cons->rnd.var = 0.0f;
   baep_cons->SetUnique("lrate", true);
-  baep_cons->lrate = base_lrate; // todo: was 2x base..
+  baep_cons->lrate = 2.0f * base_lrate; // todo: was 1x base..
   baep_cons->SetUnique("wt_scale", true);
   baep_cons->wt_scale.abs = 1.2f;
   baep_cons->SetUnique("deep", true);
@@ -1394,7 +1394,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baen_cons->rnd.mean = 0.1f;
   baen_cons->rnd.var = 0.0f;
   baen_cons->SetUnique("lrate", true);
-  baen_cons->lrate = base_lrate; // todo: was 2x base..
+  baen_cons->lrate = 2.0f * base_lrate; // todo: was 1x base..
   baen_cons->SetUnique("wt_scale", true);
   baen_cons->wt_scale.abs = 1.2f;
   baen_cons->SetUnique("deep", true);
@@ -1433,7 +1433,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons_pd2->SetUnique("rnd", false);
   vspatch_cons_pd2->SetUnique("wt_scale", false);
   vspatch_cons_pd2->SetUnique("lrate", true);
-  vspatch_cons_pd2->lrate = 0.5f * base_lrate;
+  vspatch_cons_pd2->lrate = 0.6f * base_lrate;
   vspatch_cons_pd2->SetUnique("wt_sig", false);
   vspatch_cons_pd2->SetUnique("deep", false);
   vspatch_cons_pd2->SetUnique("su_act_var", false);
@@ -1447,7 +1447,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons_nd1->SetUnique("rnd", false);
   vspatch_cons_nd1->SetUnique("wt_scale", false);
   vspatch_cons_nd1->SetUnique("lrate", true);
-  vspatch_cons_nd1->lrate = 0.5f * base_lrate;
+  vspatch_cons_nd1->lrate = 0.6f * base_lrate;
   vspatch_cons_nd1->SetUnique("wt_sig", false);
   vspatch_cons_nd1->SetUnique("deep", false);
   vspatch_cons_nd1->SetUnique("su_act_var", false);
@@ -1478,7 +1478,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons_pd1->SetUnique("wt_scale", true);
   vsmatrix_cons_pd1->wt_scale.abs = 0.5f;
   vsmatrix_cons_pd1->SetUnique("lrate", true);
-  vsmatrix_cons_pd1->lrate = base_lrate;
+  vsmatrix_cons_pd1->lrate = 3.0f * base_lrate;
   vsmatrix_cons_pd1->SetUnique("wt_sig", true);
   vsmatrix_cons_pd1->wt_sig.gain = 1.0f;
   vsmatrix_cons_pd1->SetUnique("deep", true);
@@ -1499,7 +1499,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons_nd2->SetUnique("rnd", false);
   vsmatrix_cons_nd2->SetUnique("wt_scale", false);
   vsmatrix_cons_nd2->SetUnique("lrate", true);
-  vsmatrix_cons_nd2->lrate = 2.0f * base_lrate;
+  vsmatrix_cons_nd2->lrate = 3.0f * base_lrate;
   vsmatrix_cons_nd2->SetUnique("wt_sig", false);
   vsmatrix_cons_nd2->SetUnique("deep", false);
   vsmatrix_cons_nd2->SetUnique("su_act_var", false);
@@ -1513,7 +1513,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons_pd2->SetUnique("rnd", false);
   vsmatrix_cons_pd2->SetUnique("wt_scale", false);
   vsmatrix_cons_pd2->SetUnique("lrate", true);
-  vsmatrix_cons_pd2->lrate = base_lrate;
+  vsmatrix_cons_pd2->lrate = 3.0f * base_lrate;
   vsmatrix_cons_pd2->SetUnique("wt_sig", false);
   vsmatrix_cons_pd2->SetUnique("deep", false);
   vsmatrix_cons_pd2->SetUnique("su_act_var", false);
@@ -1527,7 +1527,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons_nd1->SetUnique("rnd", false);
   vsmatrix_cons_nd1->SetUnique("wt_scale", false);
   vsmatrix_cons_nd1->SetUnique("lrate", true);
-  vsmatrix_cons_nd1->lrate = 2.0f * base_lrate;
+  vsmatrix_cons_nd1->lrate = 3.0f * base_lrate;
   vsmatrix_cons_nd1->SetUnique("wt_sig", false);
   vsmatrix_cons_nd1->SetUnique("deep", false);
   vsmatrix_cons_nd1->SetUnique("su_act_var", false);
@@ -1684,10 +1684,19 @@ bool LeabraWizard::PVLV_SetLrate(LeabraNetwork* net, float base_lrate) {
   PvlvSp("PVLVLrnCons", LeabraConSpec)->lrate = base_lrate;
   PvlvSp("LatAmygCons", LatAmygConSpec)->lrate = 10.0f * base_lrate;
   PvlvSp("BasAmygCons_acq_pos", BasAmygConSpec)->lrate = 10.0f * base_lrate;
-  PvlvSp("BasAmygCons_ext", BasAmygConSpec)->lrate = base_lrate; // todo: was 2x base..
+  PvlvSp("BasAmygCons_ext_pos", BasAmygConSpec)->lrate = 2.0f * base_lrate; // todo: was 1x base..
+  PvlvSp("BasAmygCons_acq_neg", BasAmygConSpec)->lrate = 10.0f * base_lrate;
+  PvlvSp("BasAmygCons_ext_neg", BasAmygConSpec)->lrate = 2.0f * base_lrate; // todo: was 1x base..
 
   PvlvSp("VSPatchCons_ToPosD1", MSNConSpec)->lrate = base_lrate;
-  PvlvSp("VSMatrixCons_ToPosD1", MSNConSpec)->lrate = base_lrate;
+  PvlvSp("VSPatchCons_ToPosD2", MSNConSpec)->lrate = 0.6f * base_lrate;
+  PvlvSp("VSPatchCons_ToNegD2", MSNConSpec)->lrate = base_lrate;
+  PvlvSp("VSPatchCons_ToNegD1", MSNConSpec)->lrate = 0.6f * base_lrate;
+  
+  PvlvSp("VSMatrixCons_ToPosD1", MSNConSpec)->lrate = 3.0f * base_lrate;
+  PvlvSp("VSMatrixCons_ToPosD2", MSNConSpec)->lrate = 3.0f * base_lrate;
+  PvlvSp("VSMatrixCons_ToNegD2", MSNConSpec)->lrate = 3.0f * base_lrate;
+  PvlvSp("VSMatrixCons_ToNegD1", MSNConSpec)->lrate = 3.0f * base_lrate;
 
   if(proj) {
     proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_SetLrate after -- actually saves network specifically");
