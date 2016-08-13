@@ -254,11 +254,15 @@ bool MTA::AddMemberToCurClass(MemberDef* md) {
       md->AddOption("COMMENT_UPDATE_ONLY");
     }
     else {
+      String own_tp_nm = "NULL";
+      TypeDef* own_tp = md->GetOwnerType();
+      if(own_tp)
+        own_tp_nm = own_tp->name;
       Warning(0, "Re-defining an existing member named:", md->name, "in class:",
               cur_class->name,
               "with a different type:",
               md->type->name,
-              "class of existing member:", md->GetOwnerType()->name,
+              "class of existing member:", own_tp_nm,
               "-- this is NOT a good idea -- please fix!");
     }
   }
