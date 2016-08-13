@@ -1646,17 +1646,24 @@ void iMainWindowViewer::fileUpdateProjectOnWeb_aboutToShow()
 {
   // Clear and rebuild submenu.
   fileUpdateProjectOnWebMenu->Reset();
-  for(int i=0;i<taMisc::wikis.size; i++) {
-    String wiki_name = taMisc::wikis[i].name;
-    String label = wiki_name + "...";
-    fileUpdateProjectOnWebMenu->AddItem(label, iAction::var_act, this, SLOT(fileUpdateProjectOnWeb(const Variant &)), wiki_name);
+  taProject *proj = curProject();
+  if(!proj) return;
+  if(proj->wiki.wiki.nonempty()) {
+    String label = proj->wiki.wiki + "...";
+    fileUpdateProjectOnWebMenu->AddItem(label, iAction::var_act, this, SLOT(fileUpdateProjectOnWeb(const Variant &)), proj->wiki.wiki);
+  }
+  else {
+    for(int i=0;i<taMisc::wikis.size; i++) {
+      String wiki_name = taMisc::wikis[i].name;
+      String label = wiki_name + "...";
+      fileUpdateProjectOnWebMenu->AddItem(label, iAction::var_act, this, SLOT(fileUpdateProjectOnWeb(const Variant &)), wiki_name);
+    }
   }
 }
 
 void iMainWindowViewer::fileUpdateProjectOnWeb(const Variant &repo)
 {
   String wiki_name = repo.toString();
-
   taProject *proj = curProject();
   if (proj && WikiSupportsPublishProject(wiki_name)) {
     proj->UpdateProjectOnWeb(wiki_name);  // repository name held by project
@@ -1667,10 +1674,18 @@ void iMainWindowViewer::fileUploadFilesForProjectOnWeb_aboutToShow()
 {
   // Clear and rebuild submenu.
   fileUploadFilesForProjectOnWebMenu->Reset();
-  for(int i=0;i<taMisc::wikis.size; i++) {
-    String wiki_name = taMisc::wikis[i].name;
-    String label = wiki_name + "...";
-    fileUploadFilesForProjectOnWebMenu->AddItem(label, iAction::var_act, this, SLOT(fileUploadFilesForProjectOnWeb(const Variant &)), wiki_name);
+  taProject *proj = curProject();
+  if(!proj) return;
+  if(proj->wiki.wiki.nonempty()) {
+    String label = proj->wiki.wiki + "...";
+    fileUploadFilesForProjectOnWebMenu->AddItem(label, iAction::var_act, this, SLOT(fileUploadFilesForProjectOnWeb(const Variant &)), proj->wiki.wiki);
+  }
+  else {
+    for(int i=0;i<taMisc::wikis.size; i++) {
+      String wiki_name = taMisc::wikis[i].name;
+      String label = wiki_name + "...";
+      fileUploadFilesForProjectOnWebMenu->AddItem(label, iAction::var_act, this, SLOT(fileUploadFilesForProjectOnWeb(const Variant &)), wiki_name);
+    }
   }
 }
 
