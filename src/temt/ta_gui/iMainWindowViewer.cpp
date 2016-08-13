@@ -514,7 +514,7 @@ void iMainWindowViewer::Constr_FileMenu()
   if (!isRoot()) {
     filePublishProjectOnWebMenu = fileMenu->AddSubMenu("Publish &Project on Web");
     fileUpdateProjectOnWebMenu = fileMenu->AddSubMenu("Update Project on Web");
-    fileUploadFilesForProjectOnWebMenu = fileMenu->AddSubMenu("Upload Project Files to Web");
+    fileUploadFilesForProjectOnWebMenu = fileMenu->AddSubMenu("Upload Other Files to Web");
     fileBrowseProgramLibsOnWebMenu = fileMenu->AddSubMenu("Browse Program Libraries on Web");
   }
 

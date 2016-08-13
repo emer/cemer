@@ -129,7 +129,7 @@ class E_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors
 INHERITED(taOBase)
 public:
-  bool          on;             // if true, compute complex features, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors -- at least length sum MUST be computed, and end_stop is optional
+  bool          on;             // if true, compute complex features, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors -- at least length sum MUST be computed, and end_stop is optional -- order of output rows is: length sum (1 row, polarity indep), end stop (2 rows), then v1s at end if add_v1s (2 polarity rows and optionally colors depending on v1s_color)
   bool          end_stop;       // #CONDSHOW_ON_on compute end stop features -- len sum minus single same orientation point after a gap -- requires len_sum!
   bool          add_v1s;        // #CONDSHOW_ON_on include V1 simple (polarized) in the V1C output -- see the v1s_color option as well -- if using square_group'ing then this is the sg version of the v1s features (consistent with what is used for len sum and end stop)
   int		len_sum_len;	// #CONDSHOW_ON_on #DEF_1 length beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
@@ -235,7 +235,7 @@ public:
   XYNGeom	v1sg_feat_geom; // #CONDSHOW_ON_square_group.on #READ_ONLY #SHOW size of one 'hypercolumn' of features for v1s sub group output -- y dimension depends on square_group.v1s_color flag and whether color is activated
 
   /////////// Complex
-  V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after square grouping
+  V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after square grouping -- order of output rows is: length sum (1 row, polarity indep), end stop (2 rows), then v1s at end if add_v1s (2 polarity rows and optionally colors depending on v1s_color)
   V1KwtaSpec	v1c_kwta;	// #CONDSHOW_ON_v1c_specs.on k-winner-take-all inhibitory dynamics for the v1 complex stage
   DataSave	v1c_save;	// #CONDSHOW_ON_v1c_specs.on how to save the V1 complex outputs for the current time step in the data table
 
