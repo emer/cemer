@@ -37,7 +37,7 @@ public:
   
   float         min_pvneg;      // #DEF_0.1 #MIN_0 #MAX_1 proportion of PVNeg that cannot be predicted away - can never afford to take danger for granted!
   
-  bool          rec_data;       // #DEF_false record values
+  bool          rec_data;       // #DEF_true record values
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 

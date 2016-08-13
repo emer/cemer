@@ -35,7 +35,7 @@ public:
   float         pv_thr;         // #DEF_0.1 threshold on pv max act for setting pv_detected
   float         vsp_thr;        // #DEF_0.1 threshold on VS Patch Indir max act for setting pv_detected
   float         se_gain;        // strength of the serotonin 5HT inputs on the dopamine outputs -- sev values when present subtract from the dopamine value otherwise computed
-  bool          rec_data;       // record all the internal computations in user data on the VTA layer
+  bool          rec_data;       // #DEF_true record all the internal computations in user data on the VTA layer
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -57,9 +57,9 @@ INHERITED(SpecMemberBase)
 public:
   float         da_gain;      // #DEF_0:2 #MIN_0 overall multiplier for dopamine values
   float         pptg_gain;    // #DEF_1 gain on bursts from PPTg
-  float         lhb_gain;     // #DEF_1 gain on dips from LHbRMTg
+  float         lhb_gain;     // #DEF_1.1 gain on dips/bursts from LHbRMTg
   float         pv_gain;      // #DEF_1 gain on positive PV component of total phasic DA signal (net after subtracting VSPatchIndir (PVi) shunt signal)
-  float         pvi_burst_shunt_gain;  // #DEF_1.2 gain on VSPatch projection that shunts bursting in VTA (for VTAp = VSPatchPosD1, for VTAn = VSPatchNegD2)
+  float         pvi_burst_shunt_gain;  // #DEF_1.25 gain on VSPatch projection that shunts bursting in VTA (for VTAp = VSPatchPosD1, for VTAn = VSPatchNegD2)
   float         pvi_anti_burst_shunt_gain;  // #DEF_1 gain on VSPatch projection that opposes shunting of bursting in VTA (for VTAp = VSPatchPosD2, for VTAn = VSPatchNegD1)
   float         pvi_dip_shunt_gain;  // #DEF_0 gain on VSPatch projection that shunts dipping of VTA (currently only VTAp supported = VSPatchNegD2) -- optional and somewhat controversial 
   float         pvi_anti_dip_shunt_gain;  // #DEF_0 gain on VSPatch projection that opposes the shunting of dipping in VTA (currently only VTAp supported = VSPatchNegD1)

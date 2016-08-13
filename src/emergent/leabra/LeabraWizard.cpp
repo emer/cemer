@@ -1158,8 +1158,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   FMSpec(LeabraConSpec, fix_cons, pvlvspgp, "PVLVFixedCons");
   FMChild(LeabraBiasSpec, fix_bias, fix_cons, "PVLVFixedBias");
-  FMChild(LeabraConSpec, ba_to_vsm, fix_cons, "BAtoVSMatrix");
-  FMChild(LeabraConSpec, bae_to_cem_inh, fix_cons, "BAExtToCeM_Inhib");
+  //FMChild(LeabraConSpec, ba_to_vsm, fix_cons, "BAtoVSMatrix");
+  //FMChild(LeabraConSpec, bae_to_cem_inh, fix_cons, "BAExtToCeM_Inhib");
   FMChild(LeabraConSpec, bae_to_baa_inh, fix_cons, "BAExtToBAAcq_Inhib");
   FMChild(SendDeepModConSpec, baa_to_bae_dmod, fix_cons, "BAAcqToBAExt_DeepMod");
   FMChild(SendDeepModConSpec, baa_to_vs_dmod, baa_to_bae_dmod, "BAAcqToVS_DeepMod");
@@ -1187,7 +1187,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   //////////////////////////////////////////////////////////////////////////////////
   // set default spec parameters
 
-  pvlvspgp->Defaults();
+  pvlvspgp->Defaults(); // start with all class-defined defaults - LeabraUnitSpec, etc.
 
   //////  Units
   pvlv_units->UpdateAfterEdit();
@@ -1204,6 +1204,9 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vtap_units->da_val = VTAUnitSpec::DA_P;
   vtan_units->SetUnique("da_val", true);
   vtan_units->da_val = VTAUnitSpec::DA_N;
+  vtan_units->SetUnique("gains", true);
+  //vtan_units->SetUnique("pvi_burst_shunt_gain", true);
+  vtan_units->gains.pvi_burst_shunt_gain = 0.9f; // allows for residual NegPV
 
   tan_units->SetUnique("deep_raw_qtr", true);
   tan_units->deep_raw_qtr = LeabraUnitSpec::QALL;
@@ -1433,7 +1436,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons_pd2->SetUnique("rnd", false);
   vspatch_cons_pd2->SetUnique("wt_scale", false);
   vspatch_cons_pd2->SetUnique("lrate", true);
-  vspatch_cons_pd2->lrate = 0.6f * base_lrate;
+  vspatch_cons_pd2->lrate = 0.75f * base_lrate;
   vspatch_cons_pd2->SetUnique("wt_sig", false);
   vspatch_cons_pd2->SetUnique("deep", false);
   vspatch_cons_pd2->SetUnique("su_act_var", false);
@@ -1447,7 +1450,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons_nd1->SetUnique("rnd", false);
   vspatch_cons_nd1->SetUnique("wt_scale", false);
   vspatch_cons_nd1->SetUnique("lrate", true);
-  vspatch_cons_nd1->lrate = 0.6f * base_lrate;
+  vspatch_cons_nd1->lrate = 0.75f * base_lrate;
   vspatch_cons_nd1->SetUnique("wt_sig", false);
   vspatch_cons_nd1->SetUnique("deep", false);
   vspatch_cons_nd1->SetUnique("su_act_var", false);
@@ -1545,16 +1548,16 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   fix_cons->wt_limits.sym = false;
   fix_cons->lrate = 0.0f;
 
-  ba_to_vsm->SetUnique("wt_scale", true);
-  ba_to_vsm->wt_scale.abs = 0.15f;
-
-  bae_to_cem_inh->SetUnique("wt_scale", true);
-  bae_to_cem_inh->wt_scale.abs = 0.5f;
-  bae_to_cem_inh->SetUnique("inhib", true);
-  bae_to_cem_inh->inhib = true;
+//  ba_to_vsm->SetUnique("wt_scale", true);
+//  ba_to_vsm->wt_scale.abs = 0.15f;
+//
+//  bae_to_cem_inh->SetUnique("wt_scale", true);
+//  bae_to_cem_inh->wt_scale.abs = 0.5f;
+//  bae_to_cem_inh->SetUnique("inhib", true);
+//  bae_to_cem_inh->inhib = true;
 
   bae_to_baa_inh->SetUnique("wt_scale", true);
-  bae_to_baa_inh->wt_scale.abs = 1.1f;
+  bae_to_baa_inh->wt_scale.abs = 0.8f;
   bae_to_baa_inh->SetUnique("inhib", true);
   bae_to_baa_inh->inhib = true;
 
@@ -1575,7 +1578,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   pv_to_ba_draw->rnd.var = 0.0f;
   
   ba_to_ca->SetUnique("wt_scale", true);
-  ba_to_ca->wt_scale.abs = 0.7f;
+  ba_to_ca->wt_scale.abs = 0.8f;
   ba_to_ca->SetUnique("rnd", false);
   
   fm_pv->SetUnique("wt_scale", true);
@@ -2139,7 +2142,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   net->FindMakePrjn(vsmpd2, vsmpd1, gponetoone, vsvsmod_cons);
   net->FindMakePrjn(vsmnd2, baand2, gponetoone, bavsmod_cons);
   net->FindMakePrjn(vsmnd1, vsmnd2, gponetoone, vsvsmod_cons);
-  // only stimtime (should be OFC) projections into patch
+  // only US time (should be OFC) projections into patch
 
   LatAmygConSpec* la_cons = PvlvSp("LatAmygCons", LatAmygConSpec);
   BasAmygConSpec* baep_cons = PvlvSp("BasAmygCons_ext_pos", BasAmygConSpec);
@@ -2161,7 +2164,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   
   for(i=0;i<input_lays.size;i++) {
     Layer* il = (Layer*)input_lays[i];
-    net->FindMakePrjn(lat_amyg, il, fullprjn, la_cons);
+    net->FindMakePrjn(lat_amyg, il, onetoone, la_cons);
 
     net->FindMakePrjn(vsmpd1, il, fullprjn, PvlvSp("VSMatrixCons_ToPosD1", MSNConSpec));
     net->FindMakePrjn(vsmpd2, il, fullprjn, PvlvSp("VSMatrixCons_ToPosD2", MSNConSpec));
