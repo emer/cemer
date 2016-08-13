@@ -1319,7 +1319,10 @@ void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
     }
   }
 #else
-  if(quarter->interactionModeOn() != onoff) {
+  // possible fix for bug 2752 - this conditional is returning false after a click in the panel
+  // in interaact mode but I don't see where quarter->interactMode is getting out of sync
+  // so running this code all the time - rohrlich
+//  if(quarter->interactionModeOn() != onoff) {
     SoEventManager* emgr = quarter->getSoEventManager();
     if(onoff) {
       emgr->setNavigationState(SoEventManager::NO_NAVIGATION);
@@ -1337,7 +1340,7 @@ void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
         panl->Render();
       }
     }
-  }
+//  }
   if(quarter->interactionModeOn()) {
     interact_button->setChecked(true);
     view_button->setChecked(false);
