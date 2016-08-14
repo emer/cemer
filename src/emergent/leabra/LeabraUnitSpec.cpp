@@ -404,7 +404,6 @@ void DaModSpec::Defaults_init() {
 
 void NoiseAdaptSpec::Initialize() {
   trial_fixed = true;
-  drop_thr = 0.1f;
   mode = FIXED_NOISE;
   Defaults_init();
 }

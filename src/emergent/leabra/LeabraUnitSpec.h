@@ -601,7 +601,6 @@ public:
   };
 
   bool          trial_fixed;        // keep the same noise value over the entire trial -- prevents noise from being washed out and produces a stable effect that can be better used for learning -- this is strongly recommended for most learning situations
-  float         drop_thr;       // probability of dropping units for DROPOUT_NOISE
   AdaptMode     mode;                // how to adapt noise variance over time
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
