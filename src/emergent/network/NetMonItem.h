@@ -68,7 +68,7 @@ public:
   };
 
   NetMonitor*         monitor;
-  // #HIDDEN this is my net monitor
+  // #HIDDEN #NO_SAVE #NO_COPY this is my net monitor -- owner's owner
   
   bool                off; // #NO_SAVE_EMPTY set this to not use this netmon item
   bool                computed;	// if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
@@ -144,8 +144,6 @@ public:
   void           CollectAllSpecs(NetMonitor* mon);
   // #IGNORE collect all the specs to parent monitor
 
-  void           UpdatePointersAfterCopy_impl(const taBase& cp) override;
-
   int	GetEnabled() const override {return (off) ? 0 : 1;}
   void	SetEnabled(bool value) override {off = !value;}
   void  InitLinks() override;
@@ -160,6 +158,7 @@ protected:
 
   void            UpdateAfterEdit_impl() override;
   void            UpdateAfterMove_impl(taBase* old_owner) override;
+  void            UpdatePointersAfterCopy_impl(const taBase& cp) override;
 
   int             cell_num; // current cell number, when adding mon vals
   void            CheckThisConfig_impl(bool quiet, bool& rval) override;
