@@ -267,7 +267,7 @@ void taRootBase::CleanRecentFiles() {
   String buttons = "Proceed" + iDialogChoice::delimiter + "Cancel";
   int chs = iDialogChoice::ChoiceDialog(NULL, msg, buttons);
   if (chs == 0) {
-    for (int i=0; i<recent_files.size; i++) {
+    for (int i=recent_files.size - 1; i >= 0; i--) {
       String file_fullpath = recent_files[i];
       if (file_fullpath.contains("_recover") || file_fullpath.contains("_autosave")) {
         if (QFile::remove(file_fullpath.toQString())) {  // only remove path from recents if file actually removed
