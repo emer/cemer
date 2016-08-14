@@ -1692,9 +1692,9 @@ bool LeabraWizard::PVLV_SetLrate(LeabraNetwork* net, float base_lrate) {
   PvlvSp("BasAmygCons_ext_neg", BasAmygConSpec)->lrate = 2.0f * base_lrate; // todo: was 1x base..
 
   PvlvSp("VSPatchCons_ToPosD1", MSNConSpec)->lrate = base_lrate;
-  PvlvSp("VSPatchCons_ToPosD2", MSNConSpec)->lrate = 0.6f * base_lrate;
+  PvlvSp("VSPatchCons_ToPosD2", MSNConSpec)->lrate = 0.75f * base_lrate;
   PvlvSp("VSPatchCons_ToNegD2", MSNConSpec)->lrate = base_lrate;
-  PvlvSp("VSPatchCons_ToNegD1", MSNConSpec)->lrate = 0.6f * base_lrate;
+  PvlvSp("VSPatchCons_ToNegD1", MSNConSpec)->lrate = 0.75f * base_lrate;
   
   PvlvSp("VSMatrixCons_ToPosD1", MSNConSpec)->lrate = 3.0f * base_lrate;
   PvlvSp("VSMatrixCons_ToPosD2", MSNConSpec)->lrate = 3.0f * base_lrate;
