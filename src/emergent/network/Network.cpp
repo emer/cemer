@@ -1728,6 +1728,10 @@ void Network::RemoveCons_Thr(int thr_no) {
 // TODO: need to figure out a better soln for layer-level processing!!
 
 void Network::Init_Epoch() {
+  if(TestError(!IsBuiltIntact(), "Init_Epoch",
+               "Network is not built or is not intact -- must Build first")) {
+    return;
+  }
   param_seqs.SetParamsAtEpoch(epoch);
 }
 
@@ -1749,6 +1753,10 @@ void Network::Init_InputData_Thr(int thr_no) {
 }
 
 void Network::Init_Acts() {
+  if(TestError(!IsBuiltIntact(), "Trial_Acts",
+               "Network is not built or is not intact -- must Build first")) {
+    return;
+  }
   NET_THREAD_CALL(Network::Init_Acts_Thr);
 }
 
@@ -2161,6 +2169,10 @@ void Network::Compute_dWt_Thr(int thr_no) {
 }
 
 bool Network::Compute_Weights_Test(int trial_no) {
+  if(TestError(!IsBuiltIntact(), "Compute_Weights_Test",
+               "Network is not built or is not intact -- must Build first")) {
+    return false;
+  }
   if(train_mode == TEST) return false;
   if(wt_update == ON_LINE) return true;
   if(wt_update == BATCH) return false;

@@ -534,6 +534,10 @@ void LeabraNetwork::DecayState_Thr(int thr_no) {
 //      TrialInit -- at start of trial
 
 void LeabraNetwork::Trial_Init() {
+  if(TestError(!IsBuiltIntact(), "Trial_Init",
+               "Network is not built or is not intact -- must Build first")) {
+    return;
+  }
   unlearnable_trial = false;
   Trial_Init_Counters();
   Trial_Init_Specs();
