@@ -64,12 +64,10 @@ set(leabra_HEADS_MAKETA
   CerebConj2PrjnSpec.h
 
   ExtRewLayerSpec.h
-  # LeabraTdUnit.h
-  # LeabraTdUnitSpec.h
-  # TDRewPredConSpec.h
-  # TDRewPredLayerSpec.h
-  # TDRewIntegLayerSpec.h
-  # TdLayerSpec.h
+  TDRewPredConSpec.h
+  TDRewPredUnitSpec.h
+  TDRewIntegUnitSpec.h
+  TDDeltaUnitSpec.h
 
   BasAmygUnitSpec.h
   LatAmygConSpec.h
@@ -190,12 +188,10 @@ set(leabra_SRCS
   CerebConj2PrjnSpec.cpp
 
   ExtRewLayerSpec.cpp
-  # LeabraTdUnit.cpp
-  # LeabraTdUnitSpec.cpp
-  # TDRewPredConSpec.cpp
-  # TDRewPredLayerSpec.cpp
-  # TDRewIntegLayerSpec.cpp
-  # TdLayerSpec.cpp
+  TDRewPredConSpec.cpp
+  TDRewPredUnitSpec.cpp
+  TDRewIntegUnitSpec.cpp
+  TDDeltaUnitSpec.cpp
                    
   BasAmygUnitSpec.cpp
   LatAmygConSpec.cpp

@@ -55,7 +55,7 @@ public:
 protected:
   String          prev_name;    // for detecting name changes
 
-  void            UpdateAfterEdit_impl();
+  void            UpdateAfterEdit_impl() override;
   
 private:
   void Initialize();

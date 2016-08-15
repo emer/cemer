@@ -38,7 +38,7 @@ public:
                               const float sum_in_act, const float wt)
   { dwt += ru_act * ((su_act / sum_in_act) - wt); }
 
-  inline void 	Compute_dWt(ConGroup* gcg, Network* net, int thr_no) {
+  inline void 	Compute_dWt(ConGroup* gcg, Network* net, int thr_no)  override {
     SoConGroup* cg = (SoConGroup*)gcg;
     SoUnitVars* ru = (SoUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     Compute_AvgInAct(cg, (SoNetwork*)net, thr_no);
@@ -67,7 +67,7 @@ public:
                               const float wt)
   { dwt += ru_act * (su_act - wt); }
 
-  inline void 	Compute_dWt(ConGroup* cg, Network* net, int thr_no) {
+  inline void 	Compute_dWt(ConGroup* cg, Network* net, int thr_no) override {
     SoUnitVars* ru = (SoUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     const float ru_act = ru->act;
     float* dwts = cg->OwnCnVar(DWT);

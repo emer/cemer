@@ -47,9 +47,9 @@ void LeabraWizard::Initialize() {
 // #include <LeabraTdUnit>
 // #include <LeabraTdUnitSpec>
 // #include <TDRewPredConSpec>
-// #include <TDRewPredLayerSpec>
-// #include <TDRewIntegLayerSpec>
-// #include <TdLayerSpec>
+// #include <TDRewPredUnitSpec>
+// #include <TDRewIntegUnitSpec>
+// #include <TDDeltaUnitSpec>
 
 #include <PPTgUnitSpec>
 #include <LHbRMTgUnitSpec>
@@ -948,9 +948,9 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   FMSpec(MarkerConSpec, marker_cons, cons, "MarkerCons");
 
   FMSpec(ExtRewLayerSpec, ersp, layers, "ExtRewLayer");
-  FMSpec(TDRewPredLayerSpec, tdrpsp, layers, "Layer");
-  FMSpec(TDRewIntegLayerSpec, tdintsp, layers, "Layer");
-  FMSpec(TdLayerSpec, tdsp, layers, "Layer");
+  FMSpec(TDRewPredUnitSpec, tdrpsp, layers, "Layer");
+  FMSpec(TDRewIntegUnitSpec, tdintsp, layers, "Layer");
+  FMSpec(TDDeltaUnitSpec, tdsp, layers, "Layer");
 
   FMSpec(ProjectionSpec, fullprjn, prjns, "FullPrjn");
   FMSpec(OneToOnePrjnSpec, onetoone, prjns, "OneToOne");

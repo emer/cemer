@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef LeabraTdUnitSpec_h
-#define LeabraTdUnitSpec_h 1
+#ifndef TDRewPredUnitSpec_h
+#define TDRewPredUnitSpec_h 1
 
 // parent includes:
 #include <LeabraUnitSpec>
@@ -23,26 +23,28 @@
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(LeabraTdUnitSpec);
+eTypeDef_Of(TDRewPredUnitSpec);
 
-class E_API LeabraTdUnitSpec : public LeabraUnitSpec {
-  // Leabra unit with temporal-differences variables for prior activation states
+class E_API TDRewPredUnitSpec : public LeabraUnitSpec {
+  // predicts rewards: minus phase = clamped prior expected reward V^(t), plus = settles on expectation of future reward V^(t+1) -- cons should learn based on da_p * prev sending act (act_q0) -- should recv da_p from TDDeltaUnitSpec
 INHERITED(LeabraUnitSpec)
 public:
-  float		lambda;		// exponential decay parameter for updating activation trace values over time: these trace values are used in learning.  in principle this should also include the effects of the discount (gamma) parameter from the TdRewInteg layer
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
-  void	Init_Acts(Unit* u, Network* net) override;
-  void  Init_Weights(Unit* u, Network* net, int thread_no=-1) override;
+  void  Init_Acts(UnitVars* uv, Network* net, int thr_no) override;
+  void  Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
-  void  Trial_Init_PrvVals(LeabraUnit* u, LeabraNetwork* net) override;
+  void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  //  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
-  TA_SIMPLE_BASEFUNS(LeabraTdUnitSpec);
+  TA_BASEFUNS_NOCOPY(TDRewPredUnitSpec);
 protected:
   SPEC_DEFAULTS;
 private:
-  void	Initialize();
+  void 	Initialize();
   void	Destroy()		{ };
   void	Defaults_init() 	{ };
 };
 
-#endif // LeabraTdUnitSpec_h
+#endif // TDRewPredUnitSpec_h

@@ -93,12 +93,12 @@ public:
 
   inline void	C_Compute_Weights(float& wt, float& dwt, float& pdw)
   { pdw = dwt;  wt += lrate * dwt;  dwt = 0.0f; }
-  inline void	Compute_Weights(ConGroup* cg, Network* net, int thr_no);
+  inline void	Compute_Weights(ConGroup* cg, Network* net, int thr_no) override;
 
   inline virtual void	Compute_AvgInAct(SoConGroup* cg, SoNetwork* net, int thr_no);
   // compute the average input activation 
 
-  void	InitLinks();
+  void	InitLinks() override;
   SIMPLE_COPY(SoConSpec);
   TA_BASEFUNS(SoConSpec);
 private:
@@ -130,7 +130,7 @@ public:
   virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0);
   // #BUTTON #NULL_OK graph the activation function (NULL = new graph data)
 
-  void	InitLinks();
+  void	InitLinks() override;
   TA_BASEFUNS_NOCOPY(SoUnitSpec);
 private:
   void	Initialize();
@@ -245,13 +245,13 @@ public:
   void	Compute_Act_post(SoNetwork* net) { spec->Compute_Act_post(this, net); }
   void	Compute_AvgAct(SoNetwork* net)	{ spec->Compute_AvgAct(this, net); }
 
-  bool		SetLayerSpec(LayerSpec* sp);
-  LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.spec; }
+  bool		SetLayerSpec(LayerSpec* sp) override;
+  LayerSpec*	GetLayerSpec()  override { return (LayerSpec*)spec.spec; }
 
   void	CheckSpecs() override;
 
-  void	InitLinks();
-  void	CutLinks();
+  void	InitLinks() override;
+  void	CutLinks() override;
   void	Copy_(const SoLayer& cp);
   TA_BASEFUNS(SoLayer);
 private:
@@ -347,7 +347,7 @@ public:
   inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act) 
   { dwt += ru_act * su_act; }
 
-  inline void 	Compute_dWt(ConGroup* cg, Network* net, int thr_no) {
+  inline void 	Compute_dWt(ConGroup* cg, Network* net, int thr_no) override {
     SoUnitVars* ru = (SoUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     float* dwts = cg->OwnCnVar(DWT);
     const float ru_act = ru->act;

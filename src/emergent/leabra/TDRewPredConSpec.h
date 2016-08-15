@@ -21,34 +21,34 @@
 
 // member includes:
 #include <LeabraNetwork>
-#include <LeabraTdUnit>
 
 // declare all other types mentioned but not required to include:
 
 eTypeDef_Of(TDRewPredConSpec);
 
 class E_API TDRewPredConSpec : public LeabraConSpec {
-  // Reward Prediction connections: for TD RewPred Layer, uses TD algorithm for predicting rewards
+  // Reward Prediction connections: for TD RewPred Unit, uses TD algorithm for predicting rewards -- learns on da_p (TD) * sending trace activation from prev timestep (act_q0)
 INHERITED(LeabraConSpec)
 public:
-  inline void C_Compute_dWt_Delta_NoSB(float& dwt, const float ru_act_p, 
-                                  const float ru_act_m, const float su_trace) {
-    const float err = (ru_act_p - ru_act_m) * su_trace;
-    dwt += cur_lrate * err;
+  inline void C_Compute_dWt_TD(float& dwt, const float ru_da_p, 
+                                       const float su_trace) {
+    dwt += cur_lrate * ru_da_p * su_trace;
   }
   // #IGNORE
 
-  inline void Compute_dWt(LeabraConGroup* cg, LeabraUnit* su, LeabraNetwork* net) override {
-    if(use_unlearnable && net->unlearnable_trial) return;
+  inline void Compute_dWt(ConGroup* scg, Network* rnet, int thr_no) override {
+    LeabraNetwork* net = (LeabraNetwork*)rnet;
+    if(!learn || (use_unlearnable && net->unlearnable_trial)) return;
+    LeabraConGroup* cg = (LeabraConGroup*)scg;
+    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
 
-    LeabraTdUnit* lsu = (LeabraTdUnit*)su;
-    const float su_trace = lsu->trace;
+    const float su_act = su->act_q0; // todo: figure out a trace..
     float* dwts = cg->OwnCnVar(DWT);
-    float* wts = cg->OwnCnVar(WT);
 
-    for(int i=0; i<cg->size; i++) {
-      LeabraTdUnit* ru = (LeabraTdUnit*)cg->Un(i,net);
-      C_Compute_dWt_Delta_NoSB(dwts[i], ru->act_p, ru->act_m, su_trace);
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
+      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+      C_Compute_dWt_TD(dwts[i], ru->da_p, su_act);
     }
   }
 

@@ -13,11 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef TDRewIntegLayerSpec_h
-#define TDRewIntegLayerSpec_h 1
+#ifndef TDRewIntegUnitSpec_h
+#define TDRewIntegUnitSpec_h 1
 
 // parent includes:
-#include <ScalarValLayerSpec>
+#include <LeabraUnitSpec>
 
 // member includes:
 
@@ -26,7 +26,7 @@
 eTypeDef_Of(TDRewIntegSpec);
 
 class E_API TDRewIntegSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for TDRewIntegLayerSpec
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for TDRewIntegUnitSpec
 INHERITED(SpecMemberBase)
 public:
   float		discount;	// discount factor for V(t+1) from TDRewPredLayer
@@ -43,22 +43,31 @@ private:
   void	Defaults_init() { };
 };
 
-eTypeDef_Of(TDRewIntegLayerSpec);
+eTypeDef_Of(TDRewIntegUnitSpec);
 
-class E_API TDRewIntegLayerSpec : public ScalarValLayerSpec {
+class E_API TDRewIntegUnitSpec : public LeabraUnitSpec {
   // integrates perceived and external rewards: delta over phases = DA td-like signal. minus phase = prev exp rew V^(t), plus phase = extrew (r) + tdrewpred computing V(t+1)
-INHERITED(ScalarValLayerSpec)
+INHERITED(LeabraUnitSpec)
 public:
-  TDRewIntegSpec	rew_integ;	// misc specs for TDRewIntegLayerSpec
+  TDRewIntegSpec	rew_integ;	// misc specs for TDRewIntegUnitSpec
 
-  virtual void  Compute_TDRewInteg(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void  Compute_TDRewInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
 
-  void  Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net,int thread_no=-1) override;
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+
+  // nullify other major routines:
+  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_ApplyInhib
+    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
+     LeabraInhib* thr, float ival) override { };
+  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
+  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  // bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
-  TA_SIMPLE_BASEFUNS(TDRewIntegLayerSpec);
+  TA_SIMPLE_BASEFUNS(TDRewIntegUnitSpec);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl() override;
@@ -68,4 +77,4 @@ private:
   void	Defaults_init() 	{ };
 };
 
-#endif // TDRewIntegLayerSpec_h
+#endif // TDRewIntegUnitSpec_h

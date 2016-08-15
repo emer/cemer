@@ -13,36 +13,35 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef TdLayerSpec_h
-#define TdLayerSpec_h 1
+#ifndef TDDeltaUnitSpec_h
+#define TDDeltaUnitSpec_h 1
 
 // parent includes:
-#include <LeabraLayerSpec>
+#include <LeabraUnitSpec>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(TdLayerSpec);
+eTypeDef_Of(TDDeltaUnitSpec);
 
-class E_API TdLayerSpec : public LeabraLayerSpec {
+class E_API TDDeltaUnitSpec : public LeabraUnitSpec {
   // computes activation = temporal derivative (act_eq - act_m) of sending units in plus phases: note, act will go negative!
-INHERITED(LeabraLayerSpec)
+INHERITED(LeabraUnitSpec)
 public:
-  virtual void	Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork* net);
-  // compute a zero td value: in minus phase
-  virtual void	Compute_Td(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void	Compute_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // compute the td value based on recv projections: every cycle in 1+ phases
-  virtual void	Send_Td(LeabraLayer* lay, LeabraNetwork* net);
-  // send the td value to sending projections: every cycle
 
-  void	Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
+  virtual void  Send_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // send the TD value to sending projections in da_p: every cycle
+
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  // bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
-  TA_SIMPLE_BASEFUNS(TdLayerSpec);
+  TA_SIMPLE_BASEFUNS(TDDeltaUnitSpec);
 protected:
   SPEC_DEFAULTS;
 private:
@@ -51,4 +50,4 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-#endif // TdLayerSpec_h
+#endif // TDDeltaUnitSpec_h

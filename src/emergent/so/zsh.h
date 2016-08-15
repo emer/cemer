@@ -41,7 +41,7 @@ public:
     dwt += tmp;
   }
 
-  inline void 	Compute_dWt(ConGroup* gcg, Network* net, int thr_no) {
+  inline void 	Compute_dWt(ConGroup* gcg, Network* net, int thr_no) override {
     SoConGroup* cg = (SoConGroup*)gcg;
     SoUnitVars* ru = (SoUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     Compute_AvgInAct(cg, (SoNetwork*)net, thr_no);
@@ -80,7 +80,7 @@ public:
     dwt += tmp;
   }
 
-  inline void 	Compute_dWt(ConGroup* gcg, Network* net, int thr_no) {
+  inline void 	Compute_dWt(ConGroup* gcg, Network* net, int thr_no) override {
     SoConGroup* cg = (SoConGroup*)gcg;
     SoUnitVars* ru = (SoUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     Compute_AvgInAct(cg, (SoNetwork*)net, thr_no);

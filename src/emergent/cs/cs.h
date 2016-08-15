@@ -133,12 +133,12 @@ public:
  
   inline void B_Compute_Weights(UnitVars* uv, Network* net, int thr_no) override;
 
-  void	InitLinks();
+  void	InitLinks() override;
   SIMPLE_COPY(CsConSpec);
   TA_BASEFUNS(CsConSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -213,12 +213,12 @@ public:
   virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0, int ncycles=50);
   // #BUTTON #NULL_OK graph the activation function, settling for 50 cycles for each net input (NULL = new graph data)
 
-  void	InitLinks();
+  void	InitLinks() override;
   SIMPLE_COPY(CsUnitSpec);
   TA_BASEFUNS(CsUnitSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -259,7 +259,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(BoltzUnitSpec);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -279,7 +279,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(IACUnitSpec);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -539,7 +539,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(CsNetwork);
 protected:
-  void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{}
@@ -612,14 +612,14 @@ public:
   inline void 		C_Compute_dWt_Hebb(float& dwt, const float ru_act,
                                            const float su_act) 
   { dwt += ru_act * su_act; }
-  inline void 		Compute_dWt(ConGroup* cg, Network* net, int thr_no) {
+  inline void 		Compute_dWt(ConGroup* cg, Network* net, int thr_no) override {
     CsUnitVars* ru = (CsUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     float* dwts = cg->OwnCnVar(DWT);
     const float ru_act = (ru->ext_flag & UnitVars::TARG) ? ru->targ : ru->act;
     CON_GROUP_LOOP(cg, C_Compute_dWt_Hebb(dwts[i], ru_act, cg->UnVars(i,net)->act));
   }
 
-  inline void		B_Compute_dWt(UnitVars* uvg, Network* net, int thr_no) 
+  inline void		B_Compute_dWt(UnitVars* uvg, Network* net, int thr_no) override 
   { CsUnitVars* uv = (CsUnitVars*)uvg;
     uv->bias_dwt += ((uv->ext_flag & UnitVars::TARG) ? uv->targ : uv->act); }
 

@@ -81,7 +81,7 @@ protected:
   static QWebEngineProfile*     temt_profile;
   
   QWebEngineView* createWindow(QWebEnginePage::WebWindowType type) override;
-  void          childEvent(QChildEvent* ev);
+  void          childEvent(QChildEvent* ev) override;
   void          contextMenuEvent(QContextMenuEvent *event) override;
 };
 
