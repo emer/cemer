@@ -30,6 +30,9 @@ void TDRewIntegSpec::Initialize() {
 }
 
 void TDRewIntegUnitSpec::Initialize() {
+  SetUnique("act_range", true);
+  act_range.min = -100.0f;
+  act_range.max = 100.0f;
 }
 
 void TDRewIntegUnitSpec::UpdateAfterEdit_impl() {
@@ -145,7 +148,7 @@ void TDRewIntegUnitSpec::Compute_TDRewInteg(LeabraUnitVars* u, LeabraNetwork* ne
   }
 
   float new_val;
-  if(net->phase == LeabraNetwork::MINUS_PHASE) {
+  if(!Quarter_DeepRawNow(net->quarter)) { // plus phase marker..
     new_val = rew_pred_val; // no discount in minus phase!!!  should only reflect previous V^(t)
   }
   else {

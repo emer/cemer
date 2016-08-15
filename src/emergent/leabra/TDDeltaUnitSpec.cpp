@@ -123,7 +123,7 @@ void TDDeltaUnitSpec::HelpConfig() {
 // }
 
 void TDDeltaUnitSpec::Compute_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(net->phase == LeabraNetwork::MINUS_PHASE) {
+  if(!Quarter_DeepRawNow(net->quarter)) { // plus phase marker..
     u->da_p = 0.0f;
     u->ext = u->da_p;
     u->act_eq = u->act_nd = u->act = u->net = u->ext;
@@ -154,7 +154,7 @@ void TDDeltaUnitSpec::Compute_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_
 }
 
 void TDDeltaUnitSpec::Send_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  float snd_val = u->act;
+  float snd_val = u->act_eq;
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);

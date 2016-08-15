@@ -52,6 +52,30 @@ public:
     }
   }
 
+  inline void	C_Compute_Weights_LinNoBound(float& wt, float& dwt, float& fwt) {
+    if(dwt != 0.0f) {
+      wt += dwt;
+      fwt = wt;
+      dwt = 0.0f;
+    }
+  }
+  // #IGNORE compute weights -- linear, no bounds
+
+  inline void Compute_Weights(ConGroup* scg, Network* net, int thr_no) override {
+    if(!learn) return;
+
+    LeabraConGroup* cg = (LeabraConGroup*)scg;
+
+    float* wts = cg->OwnCnVar(WT);
+    float* dwts = cg->OwnCnVar(DWT);
+    float* fwts = cg->OwnCnVar(FWT);
+
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
+      C_Compute_Weights_LinNoBound(wts[i], dwts[i], fwts[i]);
+    }
+  }
+  
   TA_BASEFUNS_NOCOPY(TDRewPredConSpec);
 protected:
   SPEC_DEFAULTS;

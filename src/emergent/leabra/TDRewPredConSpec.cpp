@@ -23,5 +23,13 @@ void TDRewPredConSpec::Initialize() {
   rnd.var = 0.0f;
 
   SetUnique("wt_limits", true);
+  wt_limits.type = WeightLimits::NONE;
   wt_limits.sym = false;
+
+  SetUnique("wt_sig", true);
+  wt_sig.gain = 1.0f;
+  wt_sig.off = 1.0f;
+  
+  SetUnique("wt_bal", true);
+  wt_bal.on = false;
 }

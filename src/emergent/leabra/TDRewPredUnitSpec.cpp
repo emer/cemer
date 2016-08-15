@@ -23,7 +23,9 @@ TA_BASEFUNS_CTORS_DEFN(TDRewPredUnitSpec);
 
 
 void TDRewPredUnitSpec::Initialize() {
-  // ??
+  SetUnique("act_range", true);
+  act_range.min = -100.0f;
+  act_range.max = 100.0f;
 }
 
 void TDRewPredUnitSpec::HelpConfig() {
@@ -89,13 +91,14 @@ void TDRewPredUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
 }
   
 void TDRewPredUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(Quarter_DeepRawNow(net->quarter)) { // plus phase marker..
+  if(!Quarter_DeepRawNow(net->quarter)) { // plus phase marker..
     u->ext = u->misc_1;                  // clamp to previous prediction
     u->act_eq = u->act_nd = u->act = u->net = u->ext;
     u->da = 0.0f;
   }
   else {
-    inherited::Compute_Act_Rate(u, net, thr_no);
+    u->act_eq = u->act_nd = u->act = u->net;            // linear!
+    u->da = 0.0f;
   }
 }
 
@@ -104,13 +107,8 @@ void TDRewPredUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net,
 }
 
 void TDRewPredUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(net->quarter == 3) {       // plus phase
-    float cur_pred = u->act_eq;
-    float prev_pred = u->misc_1;
-    float train_act = prev_pred + u->da_p; // plus phase training = previous pred + da
-    // i.e., just da.. not clear we need this but just do it..
-    u->misc_1 = cur_pred;              // now save cur for next time
-    u->act_nd = u->act_eq = train_act; // this will be act_p either way..
+  if(Quarter_DeepRawNow(net->quarter)) { // plus phase marker..
+    u->misc_1 = u->act_eq;               // save current prediction for next trial
   }
   inherited::Quarter_Final(u, net, thr_no); // this will record as act_p
 }
