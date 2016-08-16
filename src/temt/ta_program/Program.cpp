@@ -2462,6 +2462,7 @@ ProgVar* Program::FindMakeProgVarInNewScope
         if(made_new) {
           rval->CopyFrom(prog_var); // copy everything
           rval->name = var_nm;      // make sure no _copy etc
+          rval->SigEmitUpdated();
           taMisc::Info("Note: made new program variable:",
                        var_nm, "in function:", new_fun->name,
                        "as a copy of one from function:",
@@ -2479,6 +2480,7 @@ ProgVar* Program::FindMakeProgVarInNewScope
         if(made_new) {
           rval->CopyFrom(prog_var); // copy everything
           rval->name = var_nm;      // make sure no _copy etc
+          rval->SigEmitUpdated();
           taMisc::Info("Note: made new program variable:",
                        var_nm, "in function:", new_fun->name,
                        "as a copy of one from program:",
@@ -2492,6 +2494,7 @@ ProgVar* Program::FindMakeProgVarInNewScope
         if(made_new) {
           rval->CopyFrom(prog_var); // copy everything
           rval->name = var_nm;      // make sure no _copy etc
+          rval->SigEmitUpdated();
           taMisc::Info("Note: made new program variable:",
                        var_nm, "in program local vars:", new_prg->name,
                        "as a copy of one from program:",
@@ -2506,6 +2509,7 @@ ProgVar* Program::FindMakeProgVarInNewScope
           if(made_new) {
             rval->CopyFrom(prog_var); // copy everything
             rval->name = var_nm;      // make sure no _copy etc
+            rval->SigEmitUpdated();
             taMisc::Info("Note: made new program variable:",
                          var_nm, "in program prog_code local vars:", new_prg->name,
                          "as a copy of one from init_code, because moved/copied program element refers to it");
@@ -2518,6 +2522,7 @@ ProgVar* Program::FindMakeProgVarInNewScope
           if(made_new) {
             rval->CopyFrom(prog_var); // copy everything
             rval->name = var_nm;      // make sure no _copy etc
+            rval->SigEmitUpdated();
             taMisc::Info("Note: made new program variable:",
                          var_nm, "in program init_code local vars:", new_prg->name,
                          "as a copy of one from prog_code, because moved/copied program element refers to it");
@@ -2540,6 +2545,7 @@ ProgVar* Program::FindMakeProgVarInNewScope
       if(made_new) {
         rval->CopyFrom(prog_var); // copy everything
         rval->name = var_nm;      // make sure no _copy etc
+        rval->SigEmitUpdated();
         taMisc::Info("Note: made new global program variable:",
                      var_nm, "in program:", new_prg->name,
                      "as a copy of one from program:",
