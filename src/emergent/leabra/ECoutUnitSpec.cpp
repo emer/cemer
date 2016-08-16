@@ -76,7 +76,7 @@ void ECoutUnitSpec::ClampFromECin(LeabraUnitVars* u, LeabraNetwork* net, int thr
 }
 
 void ECoutUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(net->quarter == 3)
+  if(net->quarter == 3 && net->train_mode == Network::TRAIN)
     ClampFromECin(u, net, thr_no);
   else
     inherited::Compute_Act_Rate(u, net, thr_no);
