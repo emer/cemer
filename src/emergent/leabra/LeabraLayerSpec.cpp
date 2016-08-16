@@ -74,6 +74,7 @@ void LayerAvgActSpec::Initialize() {
 
 void LayerAvgActSpec::Defaults_init() {
   fixed = false;
+  use_ext_act = false;
   tau = 100.0f;
   adjust = 1.0f;
   dt = 1.0f / tau;
@@ -463,6 +464,7 @@ void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 
 void LeabraLayerSpec::Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   Quarter_Init_TargFlags_Layer(lay, net);
+  Quarter_Init_AvgAct_Layer(lay, net);
 }
 
 void LeabraLayerSpec::Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) {
@@ -470,6 +472,49 @@ void LeabraLayerSpec::Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwo
     if(net->phase == LeabraNetwork::PLUS_PHASE)
       lay->SetExtFlag(UnitVars::EXT);
   }
+}
+
+void LeabraLayerSpec::Quarter_Init_AvgAct_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  if(avg_act.fixed) {
+    lay->acts_p_avg_eff = avg_act.targ_init;
+  }
+  else if(avg_act.use_ext_act) {
+    if(TestWarning(!(lay->HasExtFlag(UnitVars::EXT) || lay->HasExtFlag(UnitVars::TARG)),
+                   "Quarter_Init_AvgAct_Layer",
+                   "avg_act.use_ext_act is on but layer does not have EXT input!  falling back on avg_act.targ_init")) {
+      lay->acts_p_avg_eff = avg_act.targ_init;
+    }
+    else {
+      float avg_ext = Compute_AvgExt(lay, net);
+      if(TestWarning(avg_ext == 0.0f, "Quarter_Init_AvgAct",
+                     "avg_act.use_ext_act is on but avg ext is 0 -- falling back on avg_act.targ_init")) {
+        lay->acts_p_avg_eff = avg_act.targ_init;
+      }
+      else {
+        lay->acts_p_avg_eff = avg_ext;
+      }
+    }
+  }
+  Quarter_Init_TargFlags_Layer(lay, net);
+}
+
+float LeabraLayerSpec::Compute_AvgExt(LeabraLayer* lay, LeabraNetwork* net) {
+  float avg_ext = 0.0f;
+  int avg_n = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    if(lay->HasExtFlag(UnitVars::TARG)) { // targ comes first b/c not copied to ext at this point yet!
+      avg_ext += u->targ();
+    }
+    else if(lay->HasExtFlag(UnitVars::EXT)) {
+      avg_ext += u->ext();
+    }
+    avg_n++;
+  }
+  if(avg_n > 0) {
+    avg_ext /= (float)avg_n;
+  }
+  return avg_ext;
 }
 
 void LeabraLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) {
@@ -719,8 +764,11 @@ void LeabraLayerSpec::Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* ne
 void LeabraLayerSpec::Quarter_Final_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_p = lay->acts_eq;
   lay->acts_p_avg += avg_act.dt * (lay->acts_p.avg - lay->acts_p_avg); 
-  if(avg_act.fixed) {
+  if(avg_act.fixed) {           // note: already done in Quarter_Init
     lay->acts_p_avg_eff = avg_act.targ_init;
+  }
+  else if(avg_act.use_ext_act) {
+    // nop -- already set during Quarter_Init
   }
   else {
     lay->acts_p_avg_eff = avg_act.adjust * lay->acts_p_avg;
