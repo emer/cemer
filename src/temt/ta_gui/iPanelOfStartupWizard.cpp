@@ -17,7 +17,7 @@
 #include <SigLinkSignal>
 #include <iSplitter>
 #include <taiWidgetProjTemplateElChooser>
-#include <taiWidgetWikiChooser>
+#include <taiWidgetNameVarArrayChooser>
 #include <taiWidgetStringArrayChooser>
 #include <tabMisc>
 #include <taRootBase>
@@ -32,6 +32,7 @@
 #include <iMainWindowViewer>
 #include <BuiltinTypeDefs>
 #include <iTreeWidget>
+#include <iHelpBrowser>
 
 #include <taMisc>
 #include <taiMisc>
@@ -52,7 +53,7 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
   ///////////////////////////////////////////
   //  new project template chooser
 
-  ls_split = new iSplitter(Qt::Horizontal);
+  ls_split = new iSplitter(Qt::Vertical);
   sw_split->addWidget(ls_split);
 
   // new project templates
@@ -95,7 +96,7 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 
   hb = new QHBoxLayout;
   hb->setMargin(0);
-  lbl = new QLabel("<b>Open Project From Web -- Choose Wiki</b>");
+  lbl = new QLabel("<b>Open Project From Web -- Choose Wiki To Browse</b>");
   lbl->setToolTip(taiMisc::ToolTipPreProcess("Select from one of the following wiki locations to browse for downloading and opening a new project"));
   hb->addStretch();
   hb->addWidget(lbl);
@@ -103,13 +104,13 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
   lay_nw->addLayout(hb);
 
   new_web_nv = NULL;
-  new_web_chs = new taiWidgetWikiChooser(&TA_NameVar_PArray,
+  new_web_chs = new taiWidgetNameVarArrayChooser(&TA_NameVar,
                                           NULL, NULL, NULL, 0); // last is flags
   new_web_chs->GetImage(&(taMisc::wikis), new_web_nv);
 
   new_web_chs->BuildCategories(); // for subtypes that use categories
-  String chs2_title = new_web_chs->titleText();
-  new_web_chs_dlg = iDialogItemChooser::New(chs2_title, new_web_chs, 0, ls_split);
+  chs_title = new_web_chs->titleText();
+  new_web_chs_dlg = iDialogItemChooser::New(chs_title, new_web_chs, 0, ls_split);
 
   lay_nw->addWidget(new_web_chs_dlg->body);
   new_web_chs_dlg->Activate(new_web_chs);
@@ -181,9 +182,9 @@ iPanelOfStartupWizard::~iPanelOfStartupWizard() {
 
 void iPanelOfStartupWizard::UpdateRecents() {
   int nrf = tabMisc::root->recent_files.size;
-  recent_files.SetSize(nrf);
+  recent_files.SetSize(nrf+2);
   for(int i=0; i<nrf; i++) {
-    recent_files[i] = taMisc::CompressFilePath(tabMisc::root->recent_files[i]);
+    recent_files[i+2] = taMisc::CompressFilePath(tabMisc::root->recent_files[i]);
   }
   // todo: i can't seem to force this thing to redraw if number of items doesn't change!
   // rec_proj_chs_dlg->items->clear();
@@ -210,9 +211,10 @@ void iPanelOfStartupWizard::NewProjSelected() {
 
 void iPanelOfStartupWizard::NewWebSelected() {
   SaveSplitterSettings();
-  new_web_nv = (NameVar*)new_proj_chs_dlg->selObj();
+  new_web_nv = (NameVar*)new_web_chs_dlg->selObj();
   if(new_web_nv) {
-    String url = new_wb_nv->var.toString() + taMisc::pub_proj_page;
+    String wiki_url = taMisc::GetWikiURL(new_web_nv->name);
+    String url = wiki_url + taMisc::pub_proj_page;
     iHelpBrowser::StatLoadUrl(url);
   }
 }
@@ -227,8 +229,10 @@ void iPanelOfStartupWizard::RecProjSelected() {
       iMainWindowViewer* imwv = vwr->widget();
       if(!imwv) continue;
       if(*rec_proj_nm == clear_menu_txt) {
+        imwv->fileClearRecentsMenu();
       }
       else if(*rec_proj_nm == remove_files_txt) {
+        imwv->fileCleanRecentsMenu();
       }
       else {
         String rfn = taMisc::ExpandFilePath(*rec_proj_nm);

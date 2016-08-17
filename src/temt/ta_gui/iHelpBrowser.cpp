@@ -148,7 +148,7 @@ iHelpBrowser::~iHelpBrowser() {
 
 void iHelpBrowser::init() {
   this->setAttribute(Qt::WA_DeleteOnClose, false); // keep alive when closed
-  this->setWindowTitle("C++ Class Reference");
+  this->setWindowTitle("C++ Class Reference / Web Browser");
 //  this->setSizeGripEnabled(true);
 
   int font_spec = taiMisc::fonMedium;
@@ -302,6 +302,7 @@ void iHelpBrowser::find_clear_clicked() {
   last_find.clear();
 
 #ifdef USE_QT_WEBENGINE
+  curWebView()->page()->findText("");
 
 #else // USE_QT_WEBENGINE
  
@@ -317,7 +318,16 @@ void iHelpBrowser::find_clear_clicked() {
 void iHelpBrowser::find_next_clicked() {
   QString cur_find = find_text->text();
 #ifdef USE_QT_WEBENGINE
-
+  if(cur_find != last_find) {
+    // NOT: first one highlights all then goes to first one
+    curWebView()->page()->findText(cur_find);
+    last_find = cur_find;
+  }
+  else {
+    // NOT: subsequent ones go through one by one 
+    curWebView()->page()->findText(cur_find);
+  }
+  
 #else // USE_QT_WEBENGINE
 
   if(cur_find != last_find) {
@@ -339,6 +349,7 @@ void iHelpBrowser::find_next_clicked() {
 
 void iHelpBrowser::find_prev_clicked() {
 #ifdef USE_QT_WEBENGINE
+  curWebView()->page()->findText(find_text->text(), QWebEnginePage::FindBackward);
 
 #else // USE_QT_WEBENGINE
   

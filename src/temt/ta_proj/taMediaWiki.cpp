@@ -1386,6 +1386,7 @@ bool taMediaWiki::LinkFile(const String& wiki_name, const String& publish_type, 
 
 bool taMediaWiki::UploadOtherFile(const String& wiki_name, const String& publish_type, const String& file_name, const String& obj_name, bool new_revision, const String& wiki_file_name)
 {
+  taMisc::Busy();
   bool proceed = false;
   proceed = UploadFile(wiki_name, file_name, new_revision, wiki_file_name);
 
@@ -1396,6 +1397,7 @@ bool taMediaWiki::UploadOtherFile(const String& wiki_name, const String& publish
       proceed = AppendFileType(wiki_name, "other", filename_only);
     }
   }
+  taMisc::DoneBusy();
   return proceed;
 }
 
@@ -1419,8 +1421,11 @@ bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publis
   }
   page_content += "\n}}";
 
+  taMisc::Busy();
+  
   // robust interface
   if(!FindMakePage(wiki_name, page_name, page_content)) {
+    taMisc::DoneBusy();
     return false;
   }
   
@@ -1441,6 +1446,7 @@ bool taMediaWiki::PublishItem_impl(const String& wiki_name, const String& publis
     }
   }
   taMisc::Info("Upload Completed!");
+  taMisc::DoneBusy();
   return true; // return true if item page created - even if upload of item file fails
 }
 
@@ -1582,19 +1588,23 @@ bool taMediaWiki::UpdateItemOnWeb(const String& wiki_name, const String& publish
     String ver_str = dialog.GetVersion();
     version.SetFromString(ver_str);
 
+    taMisc::Busy();
     obj->Save();              // save current changes!
 
     bool rval = taMediaWiki::UploadFile(wiki_name, file_name, false, "", "Version: " + ver_str + "; Emergent version: " + emer_version); // true - update new revision
     if (rval == false) {
       taMisc::Error("Upload failure");
+      taMisc::DoneBusy();
       return false;
     }
     rval = taMediaWiki::AppendVersionInfo(wiki_name, publish_type, file_name_only, ver_str, emer_version);
     if (rval == false) {
       taMisc::Error("AppendVersionInfo failure");
+      taMisc::DoneBusy();
       return false;
     }
     taMisc::Info("Upload Completed!");
+    taMisc::DoneBusy();
     return true;
   }
   return false;

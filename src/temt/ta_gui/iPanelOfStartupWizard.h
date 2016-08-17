@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class iSplitter; //
 class taiWidgetProjTemplateElChooser; //
-class taiWidgetWikiChooser; //
+class taiWidgetNameVarArrayChooser; //
 class ProjTemplateEl; //
 class iDialogItemChooser; //
 class taiWidgetStringArrayChooser; //
@@ -45,7 +45,7 @@ public:
   taiWidgetProjTemplateElChooser* new_proj_chs;  // new project chooser
   iDialogItemChooser*           new_proj_chs_dlg; // dialog for chooser
   ProjTemplateEl*               new_proj_tmplt; // chosen template
-  taiWidgetWikiChooser*         new_web_chs;  // new from web chooser
+  taiWidgetNameVarArrayChooser*         new_web_chs;  // new from web chooser
   iDialogItemChooser*           new_web_chs_dlg; // dialog for chooser
   NameVar*                      new_web_nv;    // chosen name-var
   taiWidgetStringArrayChooser*  rec_proj_chs; // recent project chooser

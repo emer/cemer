@@ -1624,7 +1624,6 @@ void iMainWindowViewer::fileOpenFromWeb(const Variant &repo)
     return;
   }
   String url = wiki_url + taMisc::pub_proj_page;
-  //  httpUrlHandler(QUrl(url));
   iHelpBrowser::StatLoadUrl(url);
 }
 

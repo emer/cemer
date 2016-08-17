@@ -264,7 +264,12 @@ void taRootBase::MonControl(bool on) {
 }
 
 void taRootBase::ClearRecentFiles() {
-  recent_files.Reset();
+  String msg = "Remove all files listed in the recent files menu list?";
+  String buttons = "Proceed" + iDialogChoice::delimiter + "Cancel";
+  int chs = iDialogChoice::ChoiceDialog(NULL, msg, buttons);
+  if (chs == 0) {
+    recent_files.Reset();
+  }
 }
 
 void taRootBase::CleanRecentFiles() {
@@ -2517,7 +2522,10 @@ bool taRootBase::OpenProjectFromWeb(const String& proj_file_name, const String& 
     taMisc::Error("The project file " + proj_file_name + " on the wiki " + act_wiki_name + " does not exist");
     return false;
   }
+  taMisc::Info("Downloading project file " + proj_file_name + " from the wiki " + act_wiki_name);
+  taMisc::Busy();
   taMediaWiki::DownloadFile(act_wiki_name, proj_file_name, proj_file);
+  taMisc::DoneBusy();
   taBase* el = NULL;
   projects.Load(proj_file, &el);
   taMisc::Confirm("The project has been downloaded and stored in your Desktop directory. Please resave project in an appropriate location.");
