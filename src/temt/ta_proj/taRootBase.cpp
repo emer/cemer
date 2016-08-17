@@ -277,13 +277,23 @@ void taRootBase::CleanRecentFiles() {
   String buttons = "Proceed" + iDialogChoice::delimiter + "Cancel";
   int chs = iDialogChoice::ChoiceDialog(NULL, msg, buttons);
   if (chs == 0) {
+    CleanNonexistentRecentFiles();
     for (int i=recent_files.size - 1; i >= 0; i--) {
       String file_fullpath = recent_files[i];
       if (file_fullpath.contains("_recover") || file_fullpath.contains("_autosave")) {
         if (QFile::remove(file_fullpath.toQString())) {  // only remove path from recents if file actually removed
-          tabMisc::root->recent_files.RemoveEl(file_fullpath);
+          recent_files.RemoveIdx(i);
         }
       }
+    }
+  }
+}
+
+void taRootBase::CleanNonexistentRecentFiles() {
+  for (int i=recent_files.size - 1; i >= 0; i--) {
+    String file_fullpath = recent_files[i];
+    if(!taMisc::FileExists(file_fullpath)) {
+      recent_files.RemoveIdx(i);
     }
   }
 }
@@ -315,6 +325,9 @@ bool taRootBase::AddRecentFile_impl(const String& value) {
       return true;
     } else return false;
   }
+
+  CleanNonexistentRecentFiles();
+  
   int idx = recent_files.FindEl(value);
   if (idx == 0) return false; // already at top, no need to save either!
   else if (idx > 0) {
@@ -373,8 +386,8 @@ int taRootBase::Save() {
 
   // save the view state info into us..
   if(taMisc::gui_active) {
-    for (int i = 0; i < tabMisc::root->viewers.size; ++i) {
-      MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(tabMisc::root->viewers.FastEl(i));
+    for (int i = 0; i < viewers.size; ++i) {
+      MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
       if (!(vwr && vwr->isRoot())) continue;
       vwr->GetWinState();
       float lft = vwr->GetUserDataDef("view_win_lft", 0.0f).toFloat();

@@ -103,6 +103,7 @@ public:
   void          RemoveRecentFile(const String& value); // #IGNORE remove recent file that was not found
   void          ClearRecentFiles(); // #IGNORE
   void          CleanRecentFiles(); // #IGNORE delete recover and autosave files
+  void          CleanNonexistentRecentFiles(); // #IGNORE delete recent files that no longer exist
   void          AddRecentPath(const String& value, bool no_save = false); // #IGNORE add this path to the recent list
 
   taBase*       FindGlobalObject(TypeDef* base_type = &TA_taBase, const String& name = _nilString);

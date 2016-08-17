@@ -100,14 +100,14 @@ QWidget* taiWidgetProgStepButton::GetButtonRep() {
   lbl->setFont(taiM->menuFont(defSize()));
   newbar->addWidget(lbl);
 
-  int but_marg_minus = 10;
+  int but_marg_minus = 12;
 
-  QWidget* stpwidg = new QWidget();
-  QHBoxLayout* hbl = new QHBoxLayout(stpwidg);
-  hbl->setMargin(0); hbl->setSpacing(0);
+  // QWidget* stpwidg = new QWidget();
+  // QHBoxLayout* hbl = new QHBoxLayout(stpwidg);
+  // hbl->setMargin(0); hbl->setSpacing(0);
   for(int i=0;i<prg->sub_progs_step.size; i++) {
     Program* sp = (Program*)prg->sub_progs_step[i];
-    QToolButton* tbut = new iContextMenuButton(stpwidg);
+    QToolButton* tbut = new iContextMenuButton();
     step_buts[i] = tbut;
     String stpnm = sp->short_nm + ":" + String(sp->step_n);
     iAction* act = new iAction(taiWidgetActions::normal, stpnm);
@@ -121,7 +121,8 @@ QWidget* taiWidgetProgStepButton::GetButtonRep() {
     }
     QSize sz = tbut->minimumSizeHint();
     tbut->setMaximumWidth(sz.width() - but_marg_minus);
-    hbl->addWidget(tbut);
+    newbar->addSeparator();
+    newbar->addWidget(tbut);
 
     QMenu* step_menu = new QMenu(tbut);
     step_menu->setFont(taiM->menuFont(taiMisc::fonMedium));
@@ -137,7 +138,7 @@ QWidget* taiWidgetProgStepButton::GetButtonRep() {
     tbut->setMenu(step_menu);
     tbut->setPopupMode(QToolButton::DelayedPopup);
   }
-  newbar->addWidget(stpwidg);
+  // newbar->addWidget(stpwidg);
   n_step_progs = prg->sub_progs_step.size;
 
   if(tool_bar) {

@@ -137,11 +137,12 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 
   int nrf = tabMisc::root->recent_files.size;
   recent_files.SetSize(nrf + 2);
-  recent_files[0] = clear_menu_txt;
-  recent_files[1] = remove_files_txt;
-  for(int i=0; i<nrf; i++) {
-    recent_files[i+2] = taMisc::CompressFilePath(tabMisc::root->recent_files[i]);
+  int i;
+  for(i=0; i<nrf; i++) {
+    recent_files[i] = taMisc::CompressFilePath(tabMisc::root->recent_files[i]);
   }
+  recent_files[i++] = clear_menu_txt;
+  recent_files[i++] = remove_files_txt;
 
   rec_proj_nm = NULL;
   rec_proj_chs = new taiWidgetStringArrayChooser(&TA_taString,
@@ -183,9 +184,12 @@ iPanelOfStartupWizard::~iPanelOfStartupWizard() {
 void iPanelOfStartupWizard::UpdateRecents() {
   int nrf = tabMisc::root->recent_files.size;
   recent_files.SetSize(nrf+2);
-  for(int i=0; i<nrf; i++) {
-    recent_files[i+2] = taMisc::CompressFilePath(tabMisc::root->recent_files[i]);
+  int i;
+  for(i=0; i<nrf; i++) {
+    recent_files[i] = taMisc::CompressFilePath(tabMisc::root->recent_files[i]);
   }
+  recent_files[i++] = clear_menu_txt;
+  recent_files[i++] = remove_files_txt;
   // todo: i can't seem to force this thing to redraw if number of items doesn't change!
   // rec_proj_chs_dlg->items->clear();
   // taMisc::RunPending();
