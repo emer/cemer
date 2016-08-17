@@ -24,35 +24,29 @@
 // declare all other types mentioned but not required to include:
 class Program; //
 class QToolBar; //
-class QRadioButton; //
-
+class QToolButton; //
 
 class TA_API taiWidgetProgStepButton : public taiWidgetMethod {
   // one method with a list of buttons for args
   Q_OBJECT
 public:
+  static const int* std_steps;  // standard step increments
+  static const int  n_std_steps;      // number of standard step increments
+  
   QWidget* GetButtonRep() override;
   bool UpdateButtonRep() override;
 
   taiWidgetProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0);
 
- public slots:
+public slots:
   virtual void  CallFunList(void* prg); // call step on given program (void* needed for callback)
-  virtual void  Step1(bool on);         // step level callbacks
-  virtual void  Step5(bool on);
-  virtual void  Step10(bool on);
+  virtual void  setStepN(int multiplex_val); // set step callback -- step prog * 100 + step_idx
 
- protected:
-  Program*      last_step;      // last program stepped -- used to reset step size when switching
-  int           new_step_n;     // if > 0, then this is the new value to apply to next program stepped
-  int           last_step_n;    // last step n value used
-  int           step10_val;
+protected:
   int           n_step_progs;   // number of step progs we have rendered currently
   QToolBar*     tool_bar;
-  QRadioButton* stp1;
-  QRadioButton* stp5;
-  QRadioButton* stp10;
+  QToolButton** step_buts;
 };
 
 #endif // taiWidgetProgStepButton_h

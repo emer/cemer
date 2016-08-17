@@ -18,6 +18,7 @@
 #include <MethodDef>
 #include <taiWidgetActions>
 #include <Program>
+#include <iContextMenuButton>
 
 #include <taMisc>
 #include <taiMisc>
@@ -29,20 +30,18 @@
 #include <QToolButton>
 
 
+static const int std_steps_data[] = {1,2,3,4,5,6,7,8,9,10,15,20,25,30,40,50,60,75,100};
+const int* taiWidgetProgStepButton::std_steps = std_steps_data;
+const int taiWidgetProgStepButton::n_std_steps = 19;
+
 taiWidgetProgStepButton::taiWidgetProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_)
 : taiWidgetMethod(bs, md, typ_, host_, par, gui_parent_, flags_)
 {
   is_menu_item = false;
   tool_bar = NULL;
-  new_step_n = -1;
-  last_step_n = 1;
-  step10_val = 10;
   n_step_progs = 0;
-  last_step = NULL;             // reset when switching
-  stp1 = NULL;
-  stp5 = NULL;
-  stp10 = NULL;
+  step_buts = NULL;
 }
 
 void taiWidgetProgStepButton::CallFunList(void* itm) {
@@ -67,130 +66,39 @@ void taiWidgetProgStepButton::CallFunList(void* itm) {
     // true = force project-level save
   }
 
-  if(trg && trg->owner) {
-    if(new_step_n > 0)
-      trg->step_n = new_step_n;
-    last_step_n = trg->step_n;
-  }
-
   prg->Step_Gui(trg);   // that was simple!
-
-  last_step = trg;
-  new_step_n = -1;
 }
-
-void taiWidgetProgStepButton::Step1(bool on) {
-  if(!on) {
-    stp1->setChecked(true);     // can't click off!
-    return;
-  }
-  Program* prg = (Program*)base; // definitively this
-  if(!prg) return;
-  new_step_n = 1;
-  stp5->setChecked(false);
-  stp10->setChecked(false);
-}
-
-void taiWidgetProgStepButton::Step5(bool on) {
-  if(!on) {
-    stp5->setChecked(true);     // can't click off!
-    return;
-  }
-  Program* prg = (Program*)base; // definitively this
-  if(!prg) return;
-  new_step_n = 5;
-  stp1->setChecked(false);
-  stp10->setChecked(false);
-}
-
-
-void taiWidgetProgStepButton::Step10(bool on) {
-  if(!on) {
-    stp10->setChecked(true);    // can't click off!
-    return;
-  }
-  Program* prg = (Program*)base; // definitively this
-  if(!prg) return;
-  new_step_n = step10_val;
-  stp1->setChecked(false);
-  stp5->setChecked(false);
-}
-
 
 QWidget* taiWidgetProgStepButton::GetButtonRep() {
   Program* prg = (Program*)base; // definitively this
   if(!prg) return buttonRep;
 
   // we are all up-to-date and this is expensive so just bail!!
-  if(buttonRep && !prg->sub_progs_updtd && n_step_progs == prg->sub_progs_step.size)
+  if(buttonRep && !prg->sub_progs_updtd && n_step_progs == prg->sub_progs_step.size) {
+    for(int i=0;i<prg->sub_progs_step.size; i++) {
+      Program* sp = (Program*)prg->sub_progs_step[i];
+      QToolButton* tbut = step_buts[i];
+      String stpnm = sp->short_nm + ":" + String(sp->step_n);
+      tbut->setText(stpnm);
+    }
     return buttonRep;
+  }
 
   if(!buttonRep) {
     buttonRep = new QStackedWidget(gui_parent);
     SetRep(buttonRep);
-    if(prg->step_prog)
-      last_step_n = prg->step_prog->step_n;
   }
 
+  if(step_buts)
+    delete[] step_buts;
+  step_buts = new QToolButton*[prg->sub_progs_step.size];
+  
   QToolBar* newbar = new QToolBar();
   newbar->setFont(taiM->menuFont(defSize()));
   QLabel* lbl = new QLabel("Step:");
-  lbl->setToolTip(taiMisc::ToolTipPreProcess("Run N Step(s) of a program -- select N (1,5,10) in adjacent buttons, and then click on the name of the program shown after N's to Step that given program (this Step label is not a button and does not do anything)"));
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("Run N Step(s) of a program -- select N with context menu or hold down button (this Step label is not a button and does not do anything)"));
   lbl->setFont(taiM->menuFont(defSize()));
   newbar->addWidget(lbl);
-
-  QWidget* intstak = new QWidget();
-  QGridLayout* glay = new QGridLayout(intstak);
-  glay->setMargin(0); glay->setSpacing(0);
-
-  stp1 = new QRadioButton(intstak);
-  stp1->setToolTip(taiMisc::ToolTipPreProcess("step by single (1) steps"));
-//   QSize sz = stp1->minimumSizeHint();
-  // this size is useless!
-//   taMisc::Info("radio sz:", String(sz.width()), String(sz.height()));
-  int radio_width = 16;
-  int radio_height = 16;
-  stp1->setMaximumSize(radio_width, radio_height);
-  connect(stp1, SIGNAL(clicked(bool)), this, SLOT(Step1(bool)) );
-  glay->addWidget(stp1, 0, 0, Qt::AlignHCenter);
-
-  stp5 = new QRadioButton(intstak);
-  stp5->setToolTip(taiMisc::ToolTipPreProcess("step by 5 steps per step click"));
-  stp5->setMaximumSize(radio_width, radio_height);
-  connect(stp5, SIGNAL(clicked(bool)), this, SLOT(Step5(bool)) );
-  glay->addWidget(stp5, 0, 1, Qt::AlignHCenter);
-
-  stp10 = new QRadioButton(intstak);
-  stp10->setToolTip(taiMisc::ToolTipPreProcess("step by 10 steps per step click, or amount shown if different from 10 (if program step_n != {1,5,10}"));
-  stp10->setMaximumSize(radio_width, radio_height);
-  connect(stp10, SIGNAL(clicked(bool)), this, SLOT(Step10(bool)) );
-  glay->addWidget(stp10, 0, 2, Qt::AlignHCenter);
-
-  step10_val = 10;
-  int stp_n = last_step_n;
-  if(new_step_n > 0)
-    stp_n = new_step_n;
-
-  if(stp_n == 1)
-    stp1->setChecked(true);
-  else if(stp_n == 5)
-    stp5->setChecked(true);
-  else if(stp_n == 10)
-    stp10->setChecked(true);
-  else {
-    step10_val = stp_n;
-    stp10->setChecked(true);
-  }
-
-  int steps[3] = {1,5,step10_val};
-
-  for(int i=0;i<3;i++) {
-    lbl = new QLabel(String(steps[i]));
-    lbl->setFont(taiM->menuFont(taiMisc::sizSmall));
-    glay->addWidget(lbl, 1, i, Qt::AlignHCenter);
-  }
-
-  newbar->addWidget(intstak);
 
   int but_marg_minus = 10;
 
@@ -199,8 +107,10 @@ QWidget* taiWidgetProgStepButton::GetButtonRep() {
   hbl->setMargin(0); hbl->setSpacing(0);
   for(int i=0;i<prg->sub_progs_step.size; i++) {
     Program* sp = (Program*)prg->sub_progs_step[i];
-    QToolButton* tbut = new QToolButton(stpwidg);
-    iAction* act = new iAction(taiWidgetActions::normal, sp->short_nm);
+    QToolButton* tbut = new iContextMenuButton(stpwidg);
+    step_buts[i] = tbut;
+    String stpnm = sp->short_nm + ":" + String(sp->step_n);
+    iAction* act = new iAction(taiWidgetActions::normal, stpnm);
     act->usr_data = (void*)sp;
     act->connect(iAction::ptr_act, this, SLOT(CallFunList(void*)));
     act->setToolTip(taiMisc::ToolTipPreProcess(sp->name));
@@ -212,17 +122,40 @@ QWidget* taiWidgetProgStepButton::GetButtonRep() {
     QSize sz = tbut->minimumSizeHint();
     tbut->setMaximumWidth(sz.width() - but_marg_minus);
     hbl->addWidget(tbut);
+
+    QMenu* step_menu = new QMenu(tbut);
+    step_menu->setFont(taiM->menuFont(taiMisc::fonMedium));
+
+    for(int st=0; st<n_std_steps; st++) {
+      int multiplex_val = 100 * i + st;
+      iAction* step_act = new iAction(multiplex_val, String(std_steps[st]),
+                                      QKeySequence());
+      step_act->connect(iAction::int_act, this,  SLOT(setStepN(int)));
+      step_act->setParent(step_menu);
+      step_menu->addAction(step_act);
+    }
+    tbut->setMenu(step_menu);
+    tbut->setPopupMode(QToolButton::DelayedPopup);
   }
   newbar->addWidget(stpwidg);
- n_step_progs = prg->sub_progs_step.size;
+  n_step_progs = prg->sub_progs_step.size;
 
   if(tool_bar) {
     ((QStackedWidget*)buttonRep.data())->removeWidget(tool_bar);
   }
   tool_bar = newbar;
   ((QStackedWidget*)buttonRep.data())->addWidget(tool_bar);
-//   newbar->show();
   return buttonRep;
+}
+
+void taiWidgetProgStepButton::setStepN(int multiplex_val) {
+  Program* prg = (Program*)base; // definitively this
+  int prog_idx = multiplex_val / 100;
+  int step_idx = multiplex_val % 100;
+  Program* sp = (Program*)prg->sub_progs_step[prog_idx];
+  int step_n = std_steps[step_idx];
+  sp->step_n = step_n;
+  GetButtonRep();
 }
 
 bool taiWidgetProgStepButton::UpdateButtonRep() {

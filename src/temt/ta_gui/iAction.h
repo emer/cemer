@@ -46,7 +46,7 @@ public:
     var_act             // slot for signal takes a "const Variant&" parameter
   };
 
-  int                   sel_type;
+  int                   sel_type; // type of selection made -- taiWidgetMenu::use_default or taiWidgetActions::radio, toggle, etc
   String                label() {return String(text());}
   Variant               usr_data; // default is Invalid, can also be int or void*
 

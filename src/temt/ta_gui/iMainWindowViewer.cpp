@@ -847,11 +847,11 @@ void iMainWindowViewer::Constr_ControlMenu()
   ctrlStepAction->setToolTip(taiMisc::ToolTipPreProcess("Step: Step again"));
   
   progStatusAction = AddAction(new iAction("Program Status", QKeySequence(), "progStatusAction"));
-  progStatusAction->setToolTip(taiMisc::ToolTipPreProcess("Current Program status -- click button to see the current Global backtrace of programs run"));
+  progStatusAction->setToolTip(taiMisc::ToolTipPreProcess("Current Program status -- click button to see the current Global backtrace of programs run up to point of last stop"));
   
   progTraceAction = AddAction(new iAction("Trace", QKeySequence(), "progTraceAction"));
   progTraceAction->setIcon(QIcon(QPixmap(":/images/trace_icon.png")));
-  progTraceAction->setToolTip(taiMisc::ToolTipPreProcess("Global backtrace of running program"));
+  progTraceAction->setToolTip(taiMisc::ToolTipPreProcess("Global backtrace of programs run up to point of last stop"));
 
   
   // Build menu items.

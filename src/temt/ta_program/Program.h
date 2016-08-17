@@ -253,27 +253,33 @@ public:
   // #IGNORE update gui from changes in run status etc -- for global program controls
 
   virtual void  Compile();
-  // #BUTTON #GHOST_ON_script_compiled:true #CAT_Code generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)
+  // #MENU_BUTTON #MENU_ON_Debug #GHOST_ON_script_compiled:true #CAT_Debug generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)
   virtual void  CmdShell();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP #CAT_Code set css command shell to operate on this program, so you can run, debug, etc this script from the command line
+  // #MENU_BUTTON #MENU_ON_Debug #GHOST_OFF_run_state:DONE,STOP #CAT_Debug set css command shell to operate on this program, so you can run, debug, etc this script from the command line
   virtual void  ExitShell();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP #CAT_Code exit the command shell for this program (shell returns to previous script)
+  // #MENU_BUTTON #MENU_ON_Debug #GHOST_OFF_run_state:DONE,STOP #CAT_Debug exit the command shell for this program (shell returns to previous script)
   virtual void  GlobalTrace();
-  // #BUTTON #CAT_Code display trace of all the programs called up to the point of the last stop (e.g., due to error or user stop/step)
+  // #MENU_BUTTON #MENU_ON_Debug #CAT_Debug display trace of all the programs called up to the point of the last stop (e.g., due to error or user stop/step)
     static String  RenderGlobalTrace(bool html = true);
-    // #CAT_Code #IGNORE render a string representation of the global trace -- if html then render to html format that is useful for gui dialog with clickable program href links -- else plain text
+    // #CAT_Debug #IGNORE render a string representation of the global trace -- if html then render to html format that is useful for gui dialog with clickable program href links -- else plain text
     static String DecodeStopReason(StopReason sr);
     // #IGNORE decode stop reason to string
 
   virtual void  LocalTrace();
-  // #BUTTON #GHOST_OFF_run_state:STOP #CAT_Code display trace of program flow within this program up to the point of the last stop (e.g., due to error or user stop/step)
+  // #MENU_BUTTON #MENU_ON_Debug #GHOST_OFF_run_state:STOP #CAT_Debug display trace of program flow within this program up to the point of the last stop (e.g., due to error or user stop/step)
     virtual String  RenderLocalTrace(bool html = true);
-    // #CAT_Code #EXPERT render a string representation of the local trace -- if html then render to html format that is useful for gui dialog with clickable program href links -- else plain text
+    // #CAT_Debug #EXPERT render a string representation of the local trace -- if html then render to html format that is useful for gui dialog with clickable program href links -- else plain text
+
+  virtual void          ClearAllBreakpoints();
+  // #MENU_BUTTON #MENU_ON_Debug #DYN1 #CAT_Code clear all breakpoints that might have been set in the program elements
+  virtual void          SetAllBreakpoints();
+  // #IGNORE re-set all the breakpoints in the code to be currently active -- after recompiling, need to reinstate them all
 
   virtual void  UpdateCallerArgs();
-  // #BUTTON #CAT_Code run UpdateArgs on all the other programs that call me, and also display all these calls in the Find dialog (searching on this program's name) so you can make sure the args are correct for each such program
+  // #MENU_BUTTON #MENU_ON_Debug #MENU_SEP_BEFORE #CAT_Code run UpdateArgs on all the other programs that call me, and also display all these calls in the Find dialog (searching on this program's name) so you can make sure the args are correct for each such program
   virtual void  ListCallers();
-  // #BUTTON #MENU #MENU_CONTEXT #CAT_Code Display all callers of this program in the Find dialog (searching on this program's name)
+  // #MENU_BUTTON #MENU_ON_Debug #CAT_Code Display all callers of this program in the Find dialog (searching on this program's name)
+  
   virtual void  CssError(int src_ln_no, bool running, const String& err_msg);
   // #IGNORE an error was triggered by css -- this is callback from css Error handling routine for program to update gui with relevant info
   virtual void  CssWarning(int src_ln_no, bool running, const String& err_msg);
@@ -311,19 +317,19 @@ public:
   bool                  AddFromTemplate(taBase* obj, bool& is_acceptable) override;
 
   virtual void          Reset();
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE #CONFIRM #CAT_Code reset (remove) all program elements -- typically in preparation for loading a new program over this one
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #CONFIRM #CAT_Code reset (remove) all program elements -- typically in preparation for loading a new program over this one
 
   virtual void          InitProgLib();
   // initialize the program library -- find all the programs -- called just-in-time when needed
   virtual void          SaveToProgLib(ProgLib::ProgLibs library = ProgLib::USER_LIB);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #PRE_CALL_InitProgLib #CAT_ProgLib save the program to given program library -- file name = object name -- be sure to add good desc comments -- USER_LIB: user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent prog_lib), SYSTEM_LIB: local system library, installed with software, in /usr/share/Emergent/prog_lib, WEB_APP_LIB: web-based application-specific library (e.g., emergent, WEB_SCI_LIB: web-based scientifically oriented library (e.g., CCN), WEB_USER_LIB: web-based user's library (e.g., from lab wiki)
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE #PRE_CALL_InitProgLib #CAT_ProgLib save the program to given program library -- file name = object name -- be sure to add good desc comments -- USER_LIB: user's personal library -- located in app user dir (~/lib/emergent or ~/Library/Emergent prog_lib), SYSTEM_LIB: local system library, installed with software, in /usr/share/Emergent/prog_lib, WEB_APP_LIB: web-based application-specific library (e.g., emergent, WEB_SCI_LIB: web-based scientifically oriented library (e.g., CCN), WEB_USER_LIB: web-based user's library (e.g., from lab wiki)
  
   virtual void          UpdateFromProgLib(ProgLibEl* prog_type);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_LIST_prog_lib #ARG_VAL_FM_FUN #PRE_CALL_InitProgLib #CAT_ProgLib (re)load the program from the program library element of given type
   virtual void          UpdateFromProgLibByName(const String& prog_nm);
   // (re)load the program from the program library -- lookup by given name
   taBase*               AddFromProgLib(ProgLibEl* prog_type) ;
-  // #BUTTON #MENU_CONTEXT #FROM_LIST_prog_lib #NO_SAVE_ARG_VAL #PRE_CALL_InitProgLib #CAT_Program adds a program from a library of existing program types
+  // #MENU #MENU_ON_Object #FROM_LIST_prog_lib #NO_SAVE_ARG_VAL #PRE_CALL_InitProgLib #CAT_Program adds a program from a library of existing program types
   virtual void          AddMeAsAuthor(bool sole_author);
   // #MENU #MENU_ON_Object #MENU_CONTEXT update the author and email information to your default information as set in the preferences (update preferences first if not otherwise set!)
   virtual void          SaveSetAuthor();
@@ -356,9 +362,6 @@ public:
 
   virtual void          SaveScript(std::ostream& strm);
   // #MENU #MENU_ON_Script #MENU_CONTEXT #CAT_File save the css script generated by the program to a file
-  virtual void          SaveListing(std::ostream& strm);
-  // #MENU #MENU_SEP_BEFORE #MENU_CONTEXT #CAT_Code save the program listing to a file
-
   virtual void          ViewScript();
   // #MENU #MENU_CONTEXT #NO_BUSY  #CAT_Code view the css script generated by the program
   virtual bool          ViewScriptEl(taBase* pel);
@@ -367,6 +370,7 @@ public:
   // #MENU #MENU_CONTEXT #CAT_Code open css script in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
   virtual void          ViewScriptUpdate();
   // #IGNORE regenerate view_script listing
+
   virtual void          EditProgram();
   // #MENU #MENU_CONTEXT #NO_BUSY  #CAT_Code view the associated code in the program editor frame
   virtual bool          EditProgramEl(taBase* pel);
@@ -376,15 +380,12 @@ public:
   // #CAT_Code attempt to get program code information (e.g., current variable value) for given code string element on given line number -- code_str may contain other surrounding text which is parsed to extract a variable name or other interpretable value
 
 public: // XxxGui versions provide feedback to the user
+  virtual void          SaveListing(std::ostream& strm);
+  // #MENU #MENU_CONTEXT #MENU_SEP_BEFORE #CAT_Code save the program listing to a file
   virtual void          ViewListing();
   // #MENU #MENU_CONTEXT #NO_BUSY #CAT_Code view the listing of the program
   virtual void          ViewListing_Editor();
   // #MENU #MENU_CONTEXT #CAT_Code open listing of the program in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
-
-  virtual void          ClearAllBreakpoints();
-  // #MENU #MENU_SEP_BEFORE #MENU_ON_Script #DYN1 #CAT_Code clear all breakpoints that might have been set in the program elements
-  virtual void          SetAllBreakpoints();
-  // #IGNORE re-set all the breakpoints in the code to be currently active -- after recompiling, need to reinstate them all
 
   virtual bool          AddCtrlFunsToControlPanel(ControlPanel* ctrl_panel,
               const String& extra_label = "", const String& sub_gp_nm = "");
