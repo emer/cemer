@@ -507,6 +507,8 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
   }
 
   if(!rval && else_make) {
+    if(taMisc::is_loading) return rval;
+    
     ProgElChoiceDlg dlg;
     taBase::Ref(dlg);
     int choice = 2;

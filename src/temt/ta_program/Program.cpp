@@ -279,7 +279,7 @@ void Program::UpdateAfterEdit_impl() {
 }
 
 void Program::SigEmitUpdateAllMembers() {
-  objs.SigEmitUpdated();
+  // objs.SigEmitUpdated(); // this triggers re-binding of vars prematurely
   types.SigEmitUpdated();
   args.SigEmitUpdated();
   vars.SigEmitUpdated();

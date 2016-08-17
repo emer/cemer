@@ -203,6 +203,8 @@ bool ProgVar::CheckUndefType(const String& function_context, bool quiet) const {
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl(); // this will make it a legal C name
+
+  Cleanup();                    // cleanup irrelevant variable values
   
   if(Program::IsForbiddenName(this, name)) {
     name = "My" + name;

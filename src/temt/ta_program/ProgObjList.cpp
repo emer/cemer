@@ -80,7 +80,7 @@ void ProgObjList::GetVarsForObjs() {
   // now cleanup any orphaned
   for(int i = prog->vars.size-1; i >= 0; --i) {
     ProgVar* var = prog->vars[i];
-    if(!var->objs_ptr) continue;
+    if(!(var->objs_ptr && var->var_type == ProgVar::T_Object)) continue;
     taBase* obj = FindName(var->name);
     if(obj == NULL) {
       if (is_transfer) {

@@ -100,7 +100,7 @@ void ProgExprBase::ReParseExpr(bool prompt_for_bad) {
   ProgEl* pel = GET_MY_OWNER(ProgEl);
   if(pel && (pel->GetEnabled() == 0)) return;
   ParseExpr();
-  if(prompt_for_bad && !HasExprFlag(NO_VAR_ERRS)) { // todo: not 100% sure this should be here or only in UAE
+  if(prompt_for_bad && !HasExprFlag(NO_VAR_ERRS)) {
     ProgEl* pel = GET_MY_OWNER(ProgEl);
     if (pel && !pel->HasBaseFlag(COPYING) && !pel->isDestroying()) {
       if(!taMisc::is_loading && bad_vars.size > 0) {
