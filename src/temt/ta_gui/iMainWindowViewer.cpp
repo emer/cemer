@@ -877,6 +877,7 @@ void iMainWindowViewer::Constr_ControlMenu()
   ctrlContAction->setEnabled(false);
   ctrlStepAction->setEnabled(false);
   ctrlRunAction->setEnabled(false);
+  progTraceAction->setEnabled(false);
 }
 
 void iMainWindowViewer::Constr_DataMenu() {
@@ -3329,6 +3330,7 @@ void iMainWindowViewer::UpdateStateActions() {
   ctrlContAction->setEnabled(!css_running && has_run_prog);
   ctrlStepAction->setEnabled(!css_running && has_run_prog && has_step_prog);
   ctrlRunAction->setEnabled(!css_running && has_run_prog);
+  progTraceAction->setEnabled(has_run_prog);
   
   switch (Program::global_run_state) {
     case Program::RUN:
