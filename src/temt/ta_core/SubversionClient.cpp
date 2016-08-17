@@ -28,7 +28,7 @@
 #include <QString>
 #include <QTextStream>
 #include <QUrl>
-#include <QTextEdit>
+#include <iTextEdit>
 #include <QBoxLayout>
 
 #include <cstring>
@@ -2163,7 +2163,7 @@ String SubversionClient::getCommitMessage(const String& com_itm_str) {
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   // use a text field not a single line edit box
-  QTextEdit* text_edit = new QTextEdit();
+  iTextEdit* text_edit = new iTextEdit();
   // Get the hbox for this row so we can add our combobox to it.
   taGuiLayout *hboxEmer = dlg.FindLayout(row);
   if (!hboxEmer)

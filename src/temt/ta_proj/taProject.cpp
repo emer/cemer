@@ -43,6 +43,7 @@ taTypeDef_Of(taDataGen);
 #include <tabMisc>
 #include <taRootBase>
 #include <taMediaWiki>
+#include <taGuiDialog>
 
 #include <QDir>
 #include <QFileInfo>
@@ -52,6 +53,8 @@ taTypeDef_Of(taDataGen);
 #endif
 #include <QDesktopServices>
 #include <QDateTime>
+#include <QBoxLayout>
+#include <iTextEdit>
 
 #include <css_machine.h>
 #include <css_qtconsole.h>
@@ -938,17 +941,29 @@ bool taProject::SvnAdd() {
   Save();
   bool in_repo = true;
   String path = GetFileName();
+  int svn_rev = 0;
   if(path.nonempty()) {
-    in_repo = iSvnFileListModel::FileInRepo(path);
+    in_repo = iSvnFileListModel::FileInRepo(path, svn_rev);
     if (in_repo) {
       String msg = "The project " + path + " is already in the repository";
-      taMisc::Warning(msg);
+      taMisc::Error(msg);
       return false;
     }
-    if (iSvnFileListModel::AddFile(taMisc::GetDirFmPath(GetFileName()), taMisc::GetFileFmPath(GetFileName()))) {
-      bool project_file_only = true;
-      bool first_commit = true;
-      return iSvnFileListModel::CommitFile(path, project_file_only, "", first_commit);
+    if (iSvnFileListModel::AddFile(taMisc::GetDirFmPath(path),
+                                   taMisc::GetFileFmPath(path))) {
+      String msg;
+      String com_itm_str = path + " A";
+      bool updt_change_log = true;
+      bool do_it = SvnCommitDialog(msg, updt_change_log, com_itm_str);
+      if(do_it) {
+        if(updt_change_log) {
+          RecordChangeLog(msg);
+          Save();
+        }
+        bool project_file_only = true;
+        bool first_commit = true;
+        return iSvnFileListModel::CommitFile(path, project_file_only, msg, first_commit);
+      }
     }
   }
   return false;
@@ -958,65 +973,143 @@ void taProject::SvnCommit(bool project_file_only) {
   Save();
   bool in_repo = true;
   String path = GetFileName();
+  int svn_rev = 0;
   if (project_file_only) {
-    in_repo = iSvnFileListModel::FileInRepo(path);
+    in_repo = iSvnFileListModel::FileInRepo(path, svn_rev);
     if (!in_repo) {
       iDialogChoice::ConfirmDialog(NULL, "Project file not found in repository - to add choose SVN Add from the file menu", "", false);
     }
   }
   
   if(path.nonempty() && in_repo) {
-    iSvnFileListModel::CommitFile(path, project_file_only); // true means project file only
+    String msg;
+    String com_itm_str = path + " M";
+    bool updt_change_log = true;
+    bool do_it = SvnCommitDialog(msg, updt_change_log, com_itm_str);
+    if(do_it) {
+      if(updt_change_log) {
+        String ulmsg;
+        if(svn_rev > 0)
+          ulmsg = "svn rev: " + String(svn_rev+1) + " " + msg;
+        else
+          ulmsg = msg;
+        RecordChangeLog(ulmsg);
+        Save();
+      }
+      iSvnFileListModel::CommitFile(path, project_file_only, msg, false); // false = first commit
+    }
   }
 }
 
+bool taProject::SvnCommitDialog(String& commit_msg, bool& updt_change_log,
+                                const String& com_itm_str) {
+  taGuiDialog dlg;
+  taBase::Ref(dlg);   // no need to UnRef - will be deleted at end of method
+  
+  dlg.win_title = "Svn Commit Message";
+  dlg.width = 400;
+  dlg.height = 200;
+  
+  String widget("main");
+  String vbox("mainv");
+  dlg.AddWidget(widget);
+  dlg.AddVBoxLayout(vbox, "", widget);
+  
+  String row("");
+  int space = 5;
+  
+  row = "prompt";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("prmpt_lbl", widget, row, "label=Provide Commit Message:;");
+  
+  row = "itms";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("itms_lbl", widget, row, "label=" + com_itm_str +";");
+  
+  row = "msg";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  // use a text field not a single line edit box
+  iTextEdit* text_edit = new iTextEdit();
+  // Get the hbox for this row so we can add our combobox to it.
+  text_edit->setText(commit_msg);
+  taGuiLayout *hboxEmer = dlg.FindLayout(row);
+  if (!hboxEmer)
+    return false;
+  QBoxLayout *hbox = hboxEmer->layout;
+  if (!hbox)
+    return false;
+  hbox->addWidget(text_edit);
+
+  row = "chlog";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  String tt = "tooltip=This will add a new entry in the docs/ChangeLog doc with the svn commit message and time-stamp etc -- increments version step by 1 -- provides a project-local record of changes -- recommended!;";
+  dlg.AddLabel("chlog_lbl", widget, row, "label=Update Change Log: ;" + tt);
+  dlg.AddBoolCheckbox(&updt_change_log, "usechlog", widget, row, tt);
+  dlg.AddStretch(row);
+  
+  int drval = dlg.PostDialog(true);
+  if(drval) {
+    commit_msg = String(text_edit->toPlainText());
+    return true;
+  }
+  return false;
+}
+
 void taProject::UpdateChangeLog() {
-#ifdef TA_GUI
-  version.step++;               // increment the step always
   TypeDef* td = GetTypeDef();
   MemberDef* md = td->members.FindName("last_change_desc");
   taiEditorOfString* dlg = new taiEditorOfString(md, this, td, false); // false = not read only
   dlg->Constr("Please enter a detailed description of the changes made to the project since it was last saved -- this will be recorded in a docs object called ChangeLog.  You can use self-contained HTML formatting tags.  <b>NOTE: Cancel</b> here is <i>only</i> for the change log entry -- not for the project save!");
   if(dlg->Edit(true)) {
-    time_t tmp = time(NULL);
-    String tstamp = ctime(&tmp);
-    tstamp = tstamp.before('\n');
-
-    String vers = version.GetString();
-
-    String user = taMisc::UserName();
-    String host = taMisc::HostName();
-    if (host.nonempty()) user += String("@") + host;
-
-    String cur_fname = taMisc::GetFileFmPath(file_name);
-    String prv_fname = taMisc::GetFileFmPath(GetFileName());
-
-    if(prv_fname == cur_fname) prv_fname = "";
-    else prv_fname = "(was: <code>" + prv_fname + "</code>)";
-
-    String nw_txt = "\n<li>" + tstamp
-      + " version: " + vers + " user: " + user + " file_name: <code>" + cur_fname
-      + "</code> " + prv_fname + "<br>\n";
-    if(!last_change_desc.empty()) nw_txt += last_change_desc + "\n";
-
-    taDoc* doc = docs.FindName("ChangeLog");
-    if(!doc) {
-      doc = docs.NewEl(1);
-      doc->name = "ChangeLog";
-      doc->text = "<html>\n<head>ChangeLog</head>\n<body>\n<h1>ChangeLog</h1>\n<ul>\n";
-      doc->text += nw_txt;
-      doc->text += "</ul>\n</body>\n</html>\n";
-    }
-    else {
-      String hdr = trim(doc->text.through("<ul>"));
-      String trl = trim(doc->text.after("<ul>"));
-      doc->text = hdr + "\n\n" + nw_txt + trl;
-    }
-    doc->UpdateText();
-    doc->SigEmitUpdated();
+    RecordChangeLog(last_change_desc);
   }
   delete dlg;
-#endif
+}
+
+void taProject::RecordChangeLog(const String& msg) {
+  version.step++;               // increment the step always
+  last_change_desc = msg;       // record last change msg
+  
+  time_t tmp = time(NULL);
+  String tstamp = ctime(&tmp);
+  tstamp = tstamp.before('\n');
+
+  String vers = version.GetString();
+
+  String user = taMisc::UserName();
+  String host = taMisc::HostName();
+  if (host.nonempty()) user += String("@") + host;
+
+  String cur_fname = taMisc::GetFileFmPath(file_name);
+  String prv_fname = taMisc::GetFileFmPath(GetFileName());
+
+  if(prv_fname == cur_fname) prv_fname = "";
+  else prv_fname = "(was: <code>" + prv_fname + "</code>)";
+
+  String nw_txt = "\n<li>" + tstamp
+    + " version: " + vers + " user: " + user + " file_name: <code>" + cur_fname
+    + "</code> " + prv_fname + "<br>\n";
+  if(!msg.empty()) nw_txt += msg + "\n";
+
+  taDoc* doc = docs.FindName("ChangeLog");
+  if(!doc) {
+    doc = docs.NewEl(1);
+    doc->name = "ChangeLog";
+    doc->text = "<html>\n<head>ChangeLog</head>\n<body>\n<h1>ChangeLog</h1>\n<ul>\n";
+    doc->text += nw_txt;
+    doc->text += "</ul>\n</body>\n</html>\n";
+  }
+  else {
+    String hdr = trim(doc->text.through("<ul>"));
+    String trl = trim(doc->text.after("<ul>"));
+    doc->text = hdr + "\n\n" + nw_txt + trl;
+  }
+  doc->UpdateText();
+  doc->SigEmitUpdated();
 }
 
 void taProject::UndoStats(bool show_list, bool show_diffs) {

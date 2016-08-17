@@ -42,8 +42,8 @@ INHERITED(QAbstractItemModel)
 public:
   static bool   CommitFile(const String& file_path, bool single_file, const String& msg = "", bool first_commit = false);
   // commit file at given file_path to its repository, or all modified files in directory if single file is false, with optional commit message (will prompt if empty) -- uses the model to manage the svn_client
-  static bool   FileInRepo(const String& file_path);
-  // is the file in the repository - single file only
+  static bool   FileInRepo(const String& file_path, int& rev);
+  // is the file in the repository - single file only -- also does an update and gets the current head revision number in rev -- if returns true should be good for checkin!
   static bool   AddFile(const String& file_path, const String& name, const String& msg = "");
   // add single file to repository and commit
 

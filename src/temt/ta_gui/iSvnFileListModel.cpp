@@ -61,12 +61,17 @@ bool iSvnFileListModel::AddFile(const String& file_path, const String& name, con
   return rval;
 }
 
-bool iSvnFileListModel::FileInRepo(const taString &path) {
+bool iSvnFileListModel::FileInRepo(const taString &path, int& rev) {
   iSvnFileListModel* svn_file_model = new iSvnFileListModel();
   svn_file_model->setWcPath(path);
-  return svn_file_model->exists(path);
+  bool ok = svn_file_model->exists(path);
+  if(ok) {
+    ok = svn_file_model->update();     // always update first!
+    rev = svn_file_model->svn_head_rev;
+  }
+  delete svn_file_model;
+  return ok;
 }
-
 
 iSvnFileListModel::iSvnFileListModel(QObject* parent)
   : inherited(parent)

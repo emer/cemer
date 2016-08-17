@@ -183,9 +183,14 @@ public:
   // #BUTTON #CAT_File commit this project file (saves first) into svn (only if already added to svn repository -- use SvnBrowser to do that if necessary)
   virtual bool          SvnAdd();
   // #BUTTON #CAT_File add a single file to the svn repository
+  virtual bool          SvnCommitDialog(String& commit_msg, bool& updt_change_log,
+                                        const String& com_itm_str);
+  // #IGNORE popup an svn commit dialog, return false if canceled.  commit_msg = msg
 
   virtual void          UpdateChangeLog();
-  // #BUTTON #CAT_File update change log for this project, stored as a ChangeLog item in docs on the project -- you will be prompted to enter a description of recent changes, and the date, user, and file names will be recorded
+  // #BUTTON #ARGC_0 #CAT_File update change log for this project, stored as a ChangeLog item in docs on the project -- you will be prompted to enter a description of recent changes, and the date, user, and file names will be recorded -- increments version step by 1
+  virtual void          RecordChangeLog(const String& msg);
+  // #CAT_File record a new change log entry with given message text -- increments version step by 1
   virtual void          UndoStats(bool show_list = false, bool show_diffs = false);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_File report to css Console the current undo statistics in terms of # of records and total amount of RAM taken, etc -- if show_list, show full list of current undo info, if show_diffs, then show full diffs of changes from orig source data (requires show_list too)
   virtual void          ReplaceString(const String& srch, const String& repl);
