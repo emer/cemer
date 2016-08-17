@@ -42,6 +42,7 @@
 #include <ControlPanel>
 #include <DataTable>
 #include <iDialogChoice>
+#include <taMediaWiki>
 
 taTypeDef_Of(PluginWizard);
 taTypeDef_Of(StartupWizard);
@@ -64,6 +65,10 @@ taTypeDef_Of(StartupWizard);
 #include <QBrush>
 #include <QLocale>
 #include <QFile>
+#if (QT_VERSION >= 0x050000)
+#include <QStandardPaths>
+#endif
+#include <QDesktopServices>
 
 #include <css_machine.h>
 #include <css_qtconsole.h>
@@ -2491,3 +2496,30 @@ void taRootBase::ChooseForDiffCompare(String type_name, taProject* cur_prj, Stri
   }
 }
 
+bool taRootBase::OpenProjectFromWeb(const String& proj_file_name, const String& wiki_name) {
+  String act_wiki_name = wiki_name;
+  if(wiki_name.startsWith("http")) { // got the full url -- need to decode
+    act_wiki_name = taMediaWiki::GetWikiNameFromURL(wiki_name);
+    if(act_wiki_name.empty())
+      return false;
+  }
+  
+#if (QT_VERSION >= 0x050000)
+  QString defaultLocation =
+    QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+#else
+  QString defaultLocation =
+    QDesktopServices::storageLocation(QDesktopServices::DesktopLocation);
+#endif
+
+  String proj_file = defaultLocation + PATH_SEP + proj_file_name;
+  if (!taMediaWiki::FileExists(act_wiki_name, proj_file_name)) {
+    taMisc::Error("The project file " + proj_file_name + " on the wiki " + act_wiki_name + " does not exist");
+    return false;
+  }
+  taMediaWiki::DownloadFile(act_wiki_name, proj_file_name, proj_file);
+  taBase* el = NULL;
+  projects.Load(proj_file, &el);
+  taMisc::Confirm("The project has been downloaded and stored in your Desktop directory. Please resave project in an appropriate location.");
+  return true;
+}

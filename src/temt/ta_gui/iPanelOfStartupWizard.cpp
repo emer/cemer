@@ -17,6 +17,7 @@
 #include <SigLinkSignal>
 #include <iSplitter>
 #include <taiWidgetProjTemplateElChooser>
+#include <taiWidgetWikiChooser>
 #include <taiWidgetStringArrayChooser>
 #include <tabMisc>
 #include <taRootBase>
@@ -35,6 +36,10 @@
 #include <taMisc>
 #include <taiMisc>
 
+const String iPanelOfStartupWizard::clear_menu_txt = " -> Clear Menu <- ";
+const String iPanelOfStartupWizard::remove_files_txt = " -> Remove All Recover / AutoSave Files <- ";
+
+
 iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 :inherited(dl_) // usual case: we dynamically set the link, via setDoc
 {
@@ -47,6 +52,10 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
   ///////////////////////////////////////////
   //  new project template chooser
 
+  ls_split = new iSplitter(Qt::Horizontal);
+  sw_split->addWidget(ls_split);
+
+  // new project templates
   QFrame* npfrm = new QFrame(this);
   npfrm->setFrameStyle(QFrame::Panel); //  | QFrame::Sunken);
 
@@ -70,14 +79,43 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 
   new_proj_chs->BuildCategories(); // for subtypes that use categories
   String chs_title = new_proj_chs->titleText();
-  new_proj_chs_dlg = iDialogItemChooser::New(chs_title, new_proj_chs, 0,
-                                             sw_split);
+  new_proj_chs_dlg = iDialogItemChooser::New(chs_title, new_proj_chs, 0, ls_split);
 
   lay_np->addWidget(new_proj_chs_dlg->body);
   new_proj_chs_dlg->Activate(new_proj_chs);
   connect(new_proj_chs_dlg, SIGNAL(accepted()), this, SLOT(NewProjSelected()) );
-  sw_split->addWidget(npfrm);
+  ls_split->addWidget(npfrm);
 
+  // new from web
+  QFrame* nwfrm = new QFrame(this);
+  nwfrm->setFrameStyle(QFrame::Panel); //  | QFrame::Sunken);
+
+  QVBoxLayout* lay_nw = new QVBoxLayout(nwfrm);
+  lay_nw->setMargin(0); lay_nw->setSpacing(2);
+
+  hb = new QHBoxLayout;
+  hb->setMargin(0);
+  lbl = new QLabel("<b>Open Project From Web -- Choose Wiki</b>");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("Select from one of the following wiki locations to browse for downloading and opening a new project"));
+  hb->addStretch();
+  hb->addWidget(lbl);
+  hb->addStretch();
+  lay_nw->addLayout(hb);
+
+  new_web_nv = NULL;
+  new_web_chs = new taiWidgetWikiChooser(&TA_NameVar_PArray,
+                                          NULL, NULL, NULL, 0); // last is flags
+  new_web_chs->GetImage(&(taMisc::wikis), new_web_nv);
+
+  new_web_chs->BuildCategories(); // for subtypes that use categories
+  String chs2_title = new_web_chs->titleText();
+  new_web_chs_dlg = iDialogItemChooser::New(chs2_title, new_web_chs, 0, ls_split);
+
+  lay_nw->addWidget(new_web_chs_dlg->body);
+  new_web_chs_dlg->Activate(new_web_chs);
+  connect(new_web_chs_dlg, SIGNAL(accepted()), this, SLOT(NewWebSelected()) );
+  ls_split->addWidget(nwfrm);
+  
   ///////////////////////////////////////////
   //  recent project items chooser
 
@@ -97,9 +135,11 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
   lay_rp->addLayout(hb);
 
   int nrf = tabMisc::root->recent_files.size;
-  recent_files.SetSize(nrf);
+  recent_files.SetSize(nrf + 2);
+  recent_files[0] = clear_menu_txt;
+  recent_files[1] = remove_files_txt;
   for(int i=0; i<nrf; i++) {
-    recent_files[i] = taMisc::CompressFilePath(tabMisc::root->recent_files[i]);
+    recent_files[i+2] = taMisc::CompressFilePath(tabMisc::root->recent_files[i]);
   }
 
   rec_proj_nm = NULL;
@@ -109,8 +149,7 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 
   rec_proj_chs->BuildCategories(); // for subtypes that use categories
   chs_title = rec_proj_chs->titleText();
-  rec_proj_chs_dlg = iDialogItemChooser::New(chs_title, rec_proj_chs, 0,
-                                             sw_split);
+  rec_proj_chs_dlg = iDialogItemChooser::New(chs_title, rec_proj_chs, 0, sw_split);
 
   lay_rp->addWidget(rec_proj_chs_dlg->body);
   rec_proj_chs_dlg->Activate(rec_proj_chs);
@@ -119,50 +158,23 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
   connect(rec_proj_chs_dlg, SIGNAL(accepted()), this, SLOT(RecProjSelected()) );
   sw_split->addWidget(rpfrm);
 
-
-  ///////////////////////////////////////////
-  //  open project chooser
-
-  // probably we don't need this one..
-
-  // QFrame* opfrm = new QFrame(this);
-  // opfrm->setFrameStyle(QFrame::Panel); //  | QFrame::Sunken);
-
-  // QVBoxLayout* lay_op = new QVBoxLayout(opfrm);
-  // lay_op->setMargin(0); lay_op->setSpacing(2);
-
-  // hb = new QHBoxLayout;
-  // hb->setMargin(0);
-  // lbl = new QLabel("<b>Open Any Project</b>");
-  // lbl->setToolTip(taiMisc::ToolTipPreProcess("Click here to pull up a file dialog to choose a project to open anywhere in the file system"));
-  // hb->addStretch();
-  // hb->addWidget(lbl);
-  // hb->addStretch();
-  // lay_op->addLayout(hb);
-
-  // QToolBar* op_tb = new QToolBar(opfrm);
-  // lay_op->addWidget(op_tb);
-
-  // iAction* op_act  = new iAction("&Open Project...", QKeySequence(), "projOpenAction");
-  // op_act->setIcon(QIcon(QPixmap(":/images/fileopen.png")));
-
-  // connect(op_act, SIGNAL(Action()), this, SLOT(OpenProject()));
-
-  // op_tb->addAction(op_act);
-  // lay_op->addStretch();
-
-  // sw_split->addWidget(opfrm);
-
   if(tabMisc::root->startupwiz_splits.nonempty()) {
     QByteArray ba =
       QByteArray::fromBase64(QByteArray(tabMisc::root->startupwiz_splits.chars()));
     sw_split->restoreState(ba);
+  }
+  if(tabMisc::root->startupwiz_ls_splits.nonempty()) {
+    QByteArray ba =
+      QByteArray::fromBase64(QByteArray(tabMisc::root->startupwiz_ls_splits.chars()));
+    ls_split->restoreState(ba);
   }
 }
 
 iPanelOfStartupWizard::~iPanelOfStartupWizard() {
   delete new_proj_chs_dlg;
   delete new_proj_chs;
+  delete new_web_chs_dlg;
+  delete new_web_chs;
   delete rec_proj_chs_dlg;
   delete rec_proj_chs;
 }
@@ -184,6 +196,8 @@ void iPanelOfStartupWizard::UpdateRecents() {
 void iPanelOfStartupWizard::SaveSplitterSettings() {
   if(!tabMisc::root) return;
   tabMisc::root->startupwiz_splits = String(sw_split->saveState().toBase64().constData());
+  tabMisc::root->startupwiz_ls_splits =
+    String(ls_split->saveState().toBase64().constData());
 }
 
 void iPanelOfStartupWizard::NewProjSelected() {
@@ -191,6 +205,15 @@ void iPanelOfStartupWizard::NewProjSelected() {
   new_proj_tmplt = (ProjTemplateEl*)new_proj_chs_dlg->selObj();
   if(new_proj_tmplt) {
     tabMisc::root->projects.NewFromTemplate(new_proj_tmplt);
+  }
+}
+
+void iPanelOfStartupWizard::NewWebSelected() {
+  SaveSplitterSettings();
+  new_web_nv = (NameVar*)new_proj_chs_dlg->selObj();
+  if(new_web_nv) {
+    String url = new_wb_nv->var.toString() + taMisc::pub_proj_page;
+    iHelpBrowser::StatLoadUrl(url);
   }
 }
 
@@ -203,8 +226,14 @@ void iPanelOfStartupWizard::RecProjSelected() {
       if (!(vwr && vwr->isRoot())) continue;
       iMainWindowViewer* imwv = vwr->widget();
       if(!imwv) continue;
-      String rfn = taMisc::ExpandFilePath(*rec_proj_nm);
-      imwv->fileOpenFile(rfn);
+      if(*rec_proj_nm == clear_menu_txt) {
+      }
+      else if(*rec_proj_nm == remove_files_txt) {
+      }
+      else {
+        String rfn = taMisc::ExpandFilePath(*rec_proj_nm);
+        imwv->fileOpenFile(rfn);
+      }
       break;
     }
   }

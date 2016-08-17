@@ -24,9 +24,11 @@
 // declare all other types mentioned but not required to include:
 class iSplitter; //
 class taiWidgetProjTemplateElChooser; //
+class taiWidgetWikiChooser; //
 class ProjTemplateEl; //
 class iDialogItemChooser; //
 class taiWidgetStringArrayChooser; //
+class NameVar; //
 
 taTypeDef_Of(iPanelOfStartupWizard);
 
@@ -35,10 +37,17 @@ class TA_API iPanelOfStartupWizard : public iPanel {
   Q_OBJECT
 INHERITED(iPanel)
 public:
-  iSplitter*   sw_split;        // main startup widget splitter 
+  static const String  clear_menu_txt;
+  static const String  remove_files_txt;
+  
+  iSplitter*   sw_split;        // main startup widget splitter
+  iSplitter*   ls_split;        // left-side splitter
   taiWidgetProjTemplateElChooser* new_proj_chs;  // new project chooser
   iDialogItemChooser*           new_proj_chs_dlg; // dialog for chooser
   ProjTemplateEl*               new_proj_tmplt; // chosen template
+  taiWidgetWikiChooser*         new_web_chs;  // new from web chooser
+  iDialogItemChooser*           new_web_chs_dlg; // dialog for chooser
+  NameVar*                      new_web_nv;    // chosen name-var
   taiWidgetStringArrayChooser*  rec_proj_chs; // recent project chooser
   iDialogItemChooser*           rec_proj_chs_dlg; // dialog for chooser
   String*                       rec_proj_nm;     // chosen project
@@ -55,6 +64,8 @@ public:
 public slots:
   virtual void  NewProjSelected();
   // a new project choice has been selected
+  virtual void  NewWebSelected();
+  // a new web choice has been selected
   virtual void  RecProjSelected();
   // a recent project choice has been selected
   virtual void  OpenProject();

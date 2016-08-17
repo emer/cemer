@@ -2216,6 +2216,8 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
         path = path.after(".");
       if (proj)
         tab = proj->FindFromPath(path, md);
+      else
+        tab = tabMisc::root;    // fallback on root!
     }
     if (!tab) {
       taMisc::Warning("ta: URL",path,"not found as a path to an object!");

@@ -73,6 +73,7 @@ public:
   taVector2f            rootview_size;   // #NO_SHOW size for the root viewer
   String                rootview_splits; // #NO_SHOW splitter config in root viewer
   String                startupwiz_splits; // #NO_SHOW splitter config in startup wizard
+  String                startupwiz_ls_splits; // #NO_SHOW splitter config in startup wizard, left size
   taVector2f            console_pos;    // #NO_SHOW position for the css console window
   taVector2f            console_size;   // #NO_SHOW size for the the css console window
   bool                  console_locked; // #NO_SHOW should the console be locked or unlocked by default?
@@ -181,6 +182,10 @@ public:
   virtual void  ConsoleNewStdin(int n_lines);
   // notification that the console has received new input lines
 
+  virtual bool  OpenProjectFromWeb(const String& proj_file_name, const String& wiki_name);
+  // #CAT_File upload a list of files associated with project to the web (wiki) to given wiki name -- menu chooser for wikis available in gui version in iMainWindowViewer
+
+  
 #ifdef DMEM_COMPILE
   static bool   Run_GuiDMem();
   // #IGNORE run the gui under dmem: requires special code..

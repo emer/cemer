@@ -747,33 +747,8 @@ bool taProject::UploadFilesForProjectOnWeb(const String &wiki_name) {
 }
 
 bool taProject::OpenProjectFromWeb(const String& proj_file_name, const String& wiki_name) {
-  String act_wiki_name = wiki_name;
-  if(wiki_name.startsWith("http")) { // got the full url -- need to decode
-    act_wiki_name = taMediaWiki::GetWikiNameFromURL(wiki_name);
-    if(act_wiki_name.empty())
-      return false;
-  }
-  
-#if (QT_VERSION >= 0x050000)
-  QString defaultLocation =
-    QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-#else
-  QString defaultLocation =
-    QDesktopServices::storageLocation(QDesktopServices::DesktopLocation);
-#endif
-
-  String proj_file = defaultLocation + PATH_SEP + proj_file_name;
-  if (!taMediaWiki::FileExists(act_wiki_name, proj_file_name)) {
-    taMisc::Error("The project file " + proj_file_name + " on the wiki " + act_wiki_name + " does not exist");
-    return false;
-  }
-  taMediaWiki::DownloadFile(act_wiki_name, proj_file_name, proj_file);
-  taBase* el = NULL;
-  tabMisc::root->projects.Load(proj_file, &el);
-  taMisc::Confirm("The project has been downloaded and stored in your Desktop directory. Please resave project in an appropriate location.");
-  return true;
+  return tabMisc::root->OpenProjectFromWeb(proj_file_name, wiki_name);
 }
-
 
 String taProject::GetProjTemplatePath(ProjLibs library) {
   String path = "./";

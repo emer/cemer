@@ -473,6 +473,7 @@ set(ta_gui_HEADS_NOMAKETA_NOMOC
   taiWidgetGroupElChooser.h
   taiWidgetProjTemplateElChooser.h
   taiWidgetProgLibElChooser.h
+  taiWidgetWikiChooser.h
 
   taiWidgetTaBaseMenu.h
   taiWidgetTypeItemMenu.h
@@ -961,6 +962,7 @@ set(ta_gui_SRCS_NOMAKETA
   taiWidgetGroupElChooser.cpp
   taiWidgetProjTemplateElChooser.cpp
   taiWidgetProgLibElChooser.cpp
+  taiWidgetWikiChooser.cpp
 
   taiWidgetTaBaseMenu.cpp
   taiWidgetTypeItemMenu.cpp

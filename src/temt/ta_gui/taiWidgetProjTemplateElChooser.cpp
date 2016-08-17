@@ -17,11 +17,7 @@
 #include <ProjTemplates>
 #include <String_Array>
 #include <iDialogItemChooser>
-
-
 #include <QTreeWidgetItem>
-
-
 
 taiWidgetProjTemplateElChooser::taiWidgetProjTemplateElChooser(TypeDef* typ_, IWidgetHost* host, taiWidget* par,
 					 QWidget* gui_parent_, int flags_)
