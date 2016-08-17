@@ -847,7 +847,12 @@ void iMainWindowViewer::Constr_ControlMenu()
   ctrlStepAction->setToolTip(taiMisc::ToolTipPreProcess("Step: Step again"));
   
   progStatusAction = AddAction(new iAction("Program Status", QKeySequence(), "progStatusAction"));
-  progStatusAction->setToolTip(taiMisc::ToolTipPreProcess("Current Program status -- click button to see the current Global Backtrace of programs run"));
+  progStatusAction->setToolTip(taiMisc::ToolTipPreProcess("Current Program status -- click button to see the current Global backtrace of programs run"));
+  
+  progTraceAction = AddAction(new iAction("Trace", QKeySequence(), "progTraceAction"));
+  progTraceAction->setIcon(QIcon(QPixmap(":/images/trace_icon.png")));
+  progTraceAction->setToolTip(taiMisc::ToolTipPreProcess("Global backtrace of running program"));
+
   
   // Build menu items.
   ctrlMenu->AddAction(ctrlInitAction);
@@ -856,6 +861,7 @@ void iMainWindowViewer::Constr_ControlMenu()
   ctrlMenu->AddAction(ctrlStopAction);
   ctrlMenu->AddAction(ctrlStepAction);
   ctrlMenu->AddAction(progStatusAction);
+  ctrlMenu->AddAction(progTraceAction);
 
   // Make connections.
   connect(ctrlInitAction, SIGNAL(Action()), this, SLOT(ctrlInit()));
@@ -864,6 +870,7 @@ void iMainWindowViewer::Constr_ControlMenu()
   connect(ctrlContAction, SIGNAL(Action()), this, SLOT(ctrlCont()));
   connect(ctrlStepAction, SIGNAL(Action()), this, SLOT(ctrlStep()));
   connect(progStatusAction, SIGNAL(Action()), this, SLOT(progStatus()));
+  connect(progTraceAction, SIGNAL(Action()), this, SLOT(progStatus()));
   
   ctrlStopAction->setEnabled(false);
   ctrlInitAction->setEnabled(false);

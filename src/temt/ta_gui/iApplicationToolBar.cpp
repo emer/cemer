@@ -70,6 +70,7 @@ void iApplicationToolBar::Constr_post() {
   tb->addAction(win->ctrlStopAction);
   tb->addAction(win->ctrlStepAction);
   tb->addAction(win->ctrlRunAction);
+  tb->addAction(win->progTraceAction);
   tb->addAction(win->progStatusAction);
   tb->addAction(win->viewConsoleFrontAction);
 

@@ -207,6 +207,7 @@ public:
   iAction*            ctrlContAction;
   iAction*            ctrlStepAction;
   iAction*            progStatusAction; // program run status and button
+  iAction*            progTraceAction;      // global trace button
 
   iAction*            helpWebDocsAction;
   iAction*            helpClassReferenceAction;

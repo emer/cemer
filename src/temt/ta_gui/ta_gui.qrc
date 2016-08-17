@@ -36,5 +36,6 @@
   <file>images/clear.png</file>
   <file>images/select_all.png</file>
   <file>images/console_icon.png</file>
+  <file>images/trace_icon.png</file>
 </qresource>
 </RCC>
