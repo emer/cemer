@@ -416,7 +416,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   if (!(exp_flags & EF_CUSTOM_FILTER) && tab && (!(exp_flags & EF_EXPAND_FULLY))) {
     // if top level node or being treated like one - top level guys are docs, ctrl_panels, data, programs, networks, etc
     // those being treated like top level are specific networks (i.e. network -- not an actual group but has spec and layer groups
-    if ((tab && tab->InheritsFrom(&TA_taGroup_impl)) || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
+    if (tab && (tab->InheritsFrom(&TA_taGroup_impl) || tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP"))) {
       String name;
       if (tab->GetTypeDef()->HasOption("EXPAND_AS_GROUP")) {
         name = tab->GetTypeDef()->OptionAfter("FILETYPE_");  // I didn't want to add another directive for this single case
@@ -425,9 +425,14 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       else {
         name = tab->GetName();
       }
-      int depth = taiMisc::GetGroupDefaultExpand(name);
-        
-      if (depth == 0 && exp_flags & EF_DEFAULT_UNDER) {
+      
+      // if owner is root go with hardcoded default (#EXPAND_DEF on object), otherwise user preference if there is one
+      int depth = -1;
+      if (!tab->GetOwner()->DerivesFromName("taRootBase")) {
+        depth = taiMisc::GetGroupDefaultExpand(name);
+      }
+      
+      if (depth <= 0 && exp_flags & EF_DEFAULT_UNDER) {
         depth = 1;  // if user asked for expansion expand 1 level even when default is zero
       }
       if (depth >= 0) {
