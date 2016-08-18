@@ -33,16 +33,19 @@ class TA_API ControlPanelItem: public taOBase {
   // #STEM_BASE ##CAT_Display base class for membs/meths in a ControlPanel
   INHERITED(taOBase)
 public:
-// some convenience functions
+  // some convenience functions
+    
+  static bool           StatCheckBase(ControlPanelItem* itm, taBase* base);
+  // #IGNORE check if either itm->base == base or itm->mbr->GetOff(itm->base) == base
   static ControlPanelItem*        StatFindItemBase(const taGroup_impl* grp,
     taBase* base, TypeItem* ti, int& idx);
-    // find the item with indicated base and mth/mbr in the group
+  // #IGNORE find the item with indicated base and mth/mbr in the group
   static bool           StatGetBase_Flat(const taGroup_impl* grp, int idx, taBase*& base);
-    // gets the flat (leaf) base
+  // #IGNORE gets the flat (leaf) base
   static bool           StatHasBase(taGroup_impl* grp, taBase* base);
-    // see if anyone has this base
+  // #IGNORE see if anyone has this base
   static bool           StatRemoveItemBase(taGroup_impl* grp, taBase* base);
-    // remove any items with this base
+  // #IGNORE remove any items with this base
 
   String                label;          // full display label for item in edit dialog
   bool                  cust_label;     // #NO_SAVE the label is customized over the default and thus protected from automatic updates -- this flag is automatically set by editing, but can also be set manually if desired

@@ -1681,18 +1681,22 @@ void Network::RemoveUnits() {
 }
 
 void Network::RemoveCons() {
+  taMisc::Busy();
+  StructUpdate(true);
+  RemoveCons_impl();
+  StructUpdate(false);
+  taMisc::DoneBusy();
+}
+
+void Network::RemoveCons_impl() {
   ClearNetFlag(BUILT);
   ClearIntact();
   if(!thrs_n_recv_cgps) return; // cgps already gone
-  taMisc::Busy();
-  StructUpdate(true);
   for(int i=0; i<n_thrs_built; i++) { // don't use actual threading -- maybe destroying
     RemoveCons_Thr(i);
   }
   FreeConThreadMem();
   n_cons = 0;
-  StructUpdate(false);
-  taMisc::DoneBusy();
 }
 
 void Network::RemoveCons_Thr(int thr_no) {

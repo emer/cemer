@@ -65,7 +65,7 @@ void Projection::CutLinks() {
   if(((bool)layer) && taMisc::gui_active) {
     owner = NULL;               // tell view that we're not really here
     if(layer->own_net) {
-      layer->own_net->RemoveCons(); // get rid of connections in any other layers!
+      layer->own_net->RemoveCons_impl(); // get rid of connections in any other layers!
     }
   }
   layer = NULL;

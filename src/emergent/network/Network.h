@@ -740,6 +740,8 @@ public:
 
   virtual void  RemoveCons();
   // #MENU #MENU_ON_Structure #CONFIRM #MENU_SEP_BEFORE #CAT_Structure Remove all connections in network
+    virtual void  RemoveCons_impl();
+    // #IGNORE implementation, with no gui updates etc
     virtual void  RemoveCons_Thr(int thr_no);
     // #IGNORE thread level remove cons
   virtual void  RemoveUnits();

@@ -149,9 +149,10 @@ void ISelectableHost::EditAction(int ea,
                                "&No", "&Yes");
       if (chs != 1) return;
     }
-    EditAction_Delete(gc_typ);
     QApplication::clipboard()->clear();
-  } else {
+    EditAction_Delete(gc_typ);
+  }
+  else {
     ISelectable_PtrList items(selItems());
     int rval = ci->EditAction_(items, ea, gc_typ);
     if (rval == iClipData::ER_CLEAR) {
@@ -191,7 +192,7 @@ void ISelectableHost::EditAction_Delete(ISelectable::GuiContext gc_typ) {
       taMisc::Warning("deleting funcall item!!");
     }
     else {
-      tab->Close(); // if happens immediately, will get removed from list
+      tab->CloseLater(); // always do delayed closes -- safer!!!
     }
   }
 }

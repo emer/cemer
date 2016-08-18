@@ -411,6 +411,8 @@ public:
   // #EXPERT #CAT_Structure allocate recv connections based on those allocated previously
   virtual void  DisConnect();
   // #MENU #CONFIRM #CAT_Structure disconnect layer from all others
+    virtual void  DisConnect_impl();
+    // #IGNORE impl with no gui updates
   virtual int   CountCons(Network* net);
   // #CAT_Structure count connections for all units in layer
 

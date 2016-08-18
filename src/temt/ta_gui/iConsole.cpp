@@ -300,6 +300,7 @@ void iConsole::displayPrompt(bool force) {
   quitPager = false;            // reset this flag whenver prompt returns
   contPager = false;
   promptDisp = true;
+  repaint();                    // do a direct repaint when new info comes in!
 }
 
 void iConsole::gotoPrompt(QTextCursor& cursor, bool select) {
@@ -348,9 +349,7 @@ void iConsole::outputLine(QString line, bool err) {
   if(scrolled_to_end) {         // keep on keeping on..
     gotoEnd();
   }
-  emit receivedNewStdin(1);
-  // QCoreApplication::processEvents();
-  // QCoreApplication::runPending();
+  repaint();                    // do a direct repaint when new info comes in!
 }
 
 #ifndef TA_OS_WIN
@@ -370,6 +369,7 @@ bool iConsole::stdDisplay(QTextStream* s) {
       promptDisp = false;
       if(taMisc::ext_messages) {
         append(line);
+        repaint();                    // do a direct repaint when new info comes in!
       }
       taMisc::LogEvent(line);
       if(logfile.isOpen()) {
@@ -390,6 +390,7 @@ bool iConsole::stdDisplay(QTextStream* s) {
         promptDisp = false;
         if(taMisc::ext_messages) {
           append(line);
+          repaint();                    // do a direct repaint when new info comes in!
         }
         taMisc::LogEvent(line);
         if(logfile.isOpen()) {

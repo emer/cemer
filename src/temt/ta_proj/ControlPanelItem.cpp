@@ -15,11 +15,25 @@
 
 #include "ControlPanelItem.h"
 #include <taGroup_impl>
+#include <MemberDef>
 
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ControlPanelItem);
 
+
+bool ControlPanelItem::StatCheckBase(ControlPanelItem* itm, taBase* base) {
+  if(itm->base == base)
+    return true;
+  TypeItem* ti = itm->typeItem();
+  if(!ti) return false;
+  if(ti->TypeInfoKind() == TypeItem::TIK_MEMBER) {
+    if(((MemberDef*)ti)->GetOff(itm->base) == base) {
+      return true;
+    }
+  }
+  return false;
+}
 
 ControlPanelItem* ControlPanelItem::StatFindItemBase(const taGroup_impl* grp,
    taBase* base, TypeItem* ti, int& idx)
@@ -47,7 +61,7 @@ bool ControlPanelItem::StatGetBase_Flat(const taGroup_impl* grp, int idx,
 
 bool ControlPanelItem::StatHasBase(taGroup_impl* grp, taBase* base) {
   FOREACH_ELEM_IN_GROUP(ControlPanelItem, ei, *grp) {
-    if (ei->base == base) return true;
+    if (StatCheckBase(ei, base)) return true;
   }
   return false;
 }
@@ -55,7 +69,7 @@ bool ControlPanelItem::StatHasBase(taGroup_impl* grp, taBase* base) {
 bool ControlPanelItem::StatRemoveItemBase(taGroup_impl* grp, taBase* base) {
   bool rval = false;
   FOREACH_ELEM_IN_GROUP_REV(ControlPanelItem, ei, *grp) {
-    if (ei->base == base) {
+    if (StatCheckBase(ei, base)) {
       rval = true;
       ei->Close();
     }

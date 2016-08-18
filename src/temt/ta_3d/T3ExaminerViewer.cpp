@@ -1527,6 +1527,7 @@ bool T3ExaminerViewer::eventFilter(QObject* obj, QEvent* ev_) {
 do_inherited:
   static bool inside_event_loop = false;
   
+#ifndef QT_OPEN_GL_WIDGET
   if(so_scrollbar_is_dragging) {
     if(!inside_event_loop) {
       inside_event_loop = true;
@@ -1536,6 +1537,7 @@ do_inherited:
       inside_event_loop = false;
     }
   }
+#endif
   
   return inherited::eventFilter(obj, ev_);
 #endif

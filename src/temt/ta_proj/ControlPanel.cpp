@@ -40,7 +40,7 @@ void ControlPanel::StatSigEmit_Group(taGroup_impl* grp, int sls,
 
 
 void ControlPanel::Initialize() {
-  running_updt = false;
+  updt_while_running = false;
   m_changing = 0;
   base_refs.setOwner(this);
   auto_edit = false;
@@ -73,7 +73,7 @@ void ControlPanel::UpdateAfterEdit_impl() {
     for (int i=mbrs.leaves-1; i>=0; i--) {
       EditMbrItem* item = mbrs.Leaf(i);
       if (item == NULL || item->base == NULL || item->mbr == NULL) {
-        taMisc::DebugInfo("ControlPanel::UpdateAfterEdit_impl: could not find item: ", item->label);
+        taMisc::DebugInfo("ControlPanel::UpdateAfterEdit_impl: could not find item: ", item->label, "in control panel:", name);
         mbrs.RemoveLeafIdx(i);
       }
     }
@@ -96,14 +96,16 @@ int ControlPanel::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
 
 void ControlPanel::BaseAdded(ControlPanelItem* sei) {
   if(!sei->base) return;
-  bool add_base = true;
-  if(sei->InheritsFrom(&TA_EditMthItem)) {
-    add_base = false;         // in general don't add for meths
-    if(sei->base->InheritsFrom(&TA_Program))
-      add_base = true;       // except for programs
-  }
-  if(add_base)
-    base_refs.AddUnique(sei->base);
+  // this is crazy!  absolutely must add for methods otherwise you get a crash
+  // when that object is deleted!
+  // bool add_base = true;
+  // if(sei->InheritsFrom(&TA_EditMthItem)) {
+  //   add_base = false;         // in general don't add for meths
+  //   if(sei->base->InheritsFrom(&TA_Program))
+  //     add_base = true;       // except for programs
+  // }
+  // if(add_base)
+  base_refs.AddUnique(sei->base);
 }
 
 void ControlPanel::BaseRemoved(ControlPanelItem* sei) {
@@ -118,7 +120,7 @@ void ControlPanel::BaseRemoved(ControlPanelItem* sei) {
 }
 
 void ControlPanel::SigDestroying_Ref(taBase_RefList* src, taBase* base) {
-  // note: item will already have been removed from list
+  // note: item will already have been removed from ref base list
   if (m_changing) return;
   m_changing++;
   ControlPanelItem::StatRemoveItemBase(&mbrs, base);
@@ -130,19 +132,27 @@ void ControlPanel::SigEmit_Ref(taBase_RefList* src, taBase* ta,
     int sls, void* op1, void* op2)
 {
   if(sls >= SLS_UPDATE_VIEWS) return;
-  if(!running_updt) {
-    if(Program::global_run_state == Program::RUN ||
-       Program::global_run_state == Program::INIT) {
-      if(ta && !ta->InheritsFrom(&TA_Program))
-        return;                     // skip any non-program updates while running!
+  if(!ta) return;
+
+  bool is_prog = ta->InheritsFrom(&TA_Program);
+  
+  if(!updt_while_running) {
+    if((Program::global_run_state == Program::RUN ||
+        Program::global_run_state == Program::INIT) && !is_prog) {
+      return;                     // skip any non-program updates while running!
     }
   }
-  
-  // possibly need to update labels
-  for (int i=0; i<mbrs.size; i++) {
-    EditMbrItem* item = (EditMbrItem*)mbrs.FastEl(i);
-    if (item->base == ta) {
-      if (!item->cust_label) {
+
+  bool on_meths = ControlPanelItem::StatHasBase(&mths, ta);
+  bool on_membs = ControlPanelItem::StatHasBase(&mbrs, ta);
+
+  if(on_meths && !on_membs && !is_prog) { // don't update for any non-program method only cases
+    return;
+  }
+
+  if(on_membs) {
+    FOREACH_ELEM_IN_GROUP_REV(EditMbrItem, item, mbrs) {
+      if (!item->cust_label && ControlPanelItem::StatCheckBase(item, ta)) {
         // regenerate label as spec name or program name etc might have changed
         String new_label;
         ta->GetControlPanelLabel(item->mbr, new_label);
@@ -150,7 +160,8 @@ void ControlPanel::SigEmit_Ref(taBase_RefList* src, taBase* ta,
       }
     }
   }
-  SigEmitUpdated();
+  
+  SigEmitUpdated();             // trigger an update of us -- this is expensive!
 }
 
 void ControlPanel::SigEmit_Group(taGroup_impl* grp,

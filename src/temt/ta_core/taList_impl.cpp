@@ -608,23 +608,27 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
 }
 
 bool taList_impl::ChangeType(taBase* itm, TypeDef* new_type) {
-    int idx = FindEl(itm);
-    if(idx >= 0)
-      return ChangeType(idx, new_type);
-    TestWarning(true,"ChangeType","item not found");
-    return false;
-  }
+  int idx = FindEl(itm);
+  if(idx >= 0)
+    return ChangeType(idx, new_type);
+  TestWarning(true,"ChangeType","item not found");
+  return false;
+}
   
-  void taList_impl::Close() {
-    if (size > 0) {
-      RemoveAll();
-    }
-    inherited_taBase::Close();
+void taList_impl::Close() {
+  if (size > 0) {
+    RemoveAll();
   }
+  inherited_taBase::Close();
+}
   
-  bool taList_impl::Close_Child(taBase* obj) {
-    return RemoveEl(obj);
-  }
+bool taList_impl::Close_Child(taBase* obj) {
+  // note: could do this at some point if needed
+  // if(!isDestroying() && owner && !owner->isDestroying()) {
+  //   tabMisc::DelayedUpdateAfterEdit(owner);
+  // }
+  return RemoveEl(obj);
+}
 
 bool taList_impl::CloseLater_Child(taBase* obj) {
   if (obj->refn <= 0) {

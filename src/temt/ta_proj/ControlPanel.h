@@ -47,7 +47,7 @@ class TA_API ControlPanel: public taNBase, public virtual IRefListClient {
 public:
   static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
 
-  bool                  running_updt; // update the control panel while a program is running -- specs and other objects can be updated quite frequently and can slow things down considerably due to constant updating of the display -- only enable if you need it!
+  bool                  updt_while_running; // #AKA_running_updt update the control panel while a program is running -- specs and other objects can be updated quite frequently and can slow things down considerably due to constant updating of the display -- only enable if you need it!
   String                desc;   // #EDIT_DIALOG description of what this edit contains
   EditMbrItem_Group     mbrs;   // the members of the control panel
   EditMthItem_Group     mths;   // the methods of the control panel

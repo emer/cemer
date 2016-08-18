@@ -149,6 +149,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
                  "msec.  running average:", String(undo_time_used.avg_used.GetAvg() * 1.0e3f));
   }
   
+  taMisc::ProcessEvents();    // this is key for preventing crashes in delete in ISelectableHost.cpp -- promoting to here in case it helps in other cases
   return true;                  // todo: need to check result of Save_String presumably
 }
 

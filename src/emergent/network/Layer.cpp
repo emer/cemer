@@ -132,7 +132,7 @@ void Layer::CutLinks() {
   if(!owner) return; // already replacing or already dead
   if(own_net)
     own_net->ClearIntact();
-  DisConnect();
+  DisConnect_impl();
   pos.CutLinks();
   pos_abs.CutLinks();
   pos2d.CutLinks();
@@ -950,6 +950,11 @@ void Layer::Connect_Cons(Network* net) {
 
 void Layer::DisConnect() {
   StructUpdate(true);
+  DisConnect_impl();
+  StructUpdate(false);
+}
+
+void Layer::DisConnect_impl() {
   int pi;
   for(pi=send_prjns.size-1; pi>=0; pi--) {
     Projection* p = (Projection*)send_prjns.FastEl(pi);
@@ -962,7 +967,6 @@ void Layer::DisConnect() {
   }
   send_prjns.Reset();
   projections.Reset();
-  StructUpdate(false);
 }
 
 int Layer::CountCons(Network* net) {
