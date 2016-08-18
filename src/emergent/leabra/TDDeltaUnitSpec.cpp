@@ -24,6 +24,13 @@ TA_BASEFUNS_CTORS_DEFN(TDDeltaUnitSpec);
 
 
 void TDDeltaUnitSpec::Initialize() {
+  Defaults_init();
+}
+
+void TDDeltaUnitSpec::Defaults_init() {
+  SetUnique("act_range", true);
+  act_range.min = -100.0f;
+  act_range.max = 100.0f;
 }
 
 void TDDeltaUnitSpec::HelpConfig() {
@@ -37,90 +44,50 @@ void TDDeltaUnitSpec::HelpConfig() {
  - This layer must be after corresp. reward integration layer in list of layers\n\
  - Sending connections must connect to units of type LeabraTdUnit/Spec \
      (td signal from this layer put directly into td var on units)\n\
- - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
-     (because negative td = negative activation signal here";
+ - UnitSpec for this layer must have act_range set to -100 and 100 \
+     (because negative td = negative activation signal here)";
   taMisc::Confirm(help);
 }
 
-// bool TDDeltaUnitSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
-//   LeabraLayer* lay = (LeabraLayer*)ly;
-//   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
+bool TDDeltaUnitSpec::CheckConfig_Unit(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
+  if(!inherited::CheckConfig_Unit(lay, quiet)) return false;
 
-//   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
-//   bool rval = true;
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  bool rval = true;
 
-//   // must have the appropriate ranges for unit specs..
-//   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-//   if(lay->CheckError((us->act_range.max != 2.0f) || (us->act_range.min != -2.0f), quiet, rval,
-//                 "requires UnitSpec act_range.max = 2, min = -2, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)") ) {
-//     us->SetUnique("act_range", true);
-//     us->act_range.max = 2.0f;
-//     us->act_range.min = -2.0f;
-//     us->act_range.UpdateAfterEdit();
-//   }
-//   if(lay->CheckError((us->clamp_range.max != 2.0f) || (us->clamp_range.min != -2.0f), quiet, rval,
-//                 "requires UnitSpec clamp_range.max = 2, min = -2, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {
-//     us->SetUnique("clamp_range", true);
-//     us->clamp_range.max = 2.0f;
-//     us->clamp_range.min = -2.0f;
-//     us->clamp_range.UpdateAfterEdit();
-//   }
+  // check recv connection
+  if(lay->units.leaves == 0) return false;
+  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+  
+  LeabraLayer* rewinteg_lay = NULL;
+  
+  const int nrg = un->NRecvConGps(); 
+  for(int g=0; g< nrg; g++) {
+    LeabraConGroup* recv_gp = (LeabraConGroup*)un->RecvConGroup(g);
+    if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    if(!cs->IsMarkerCon()) continue;
+    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
+    LeabraUnitSpec* us = (LeabraUnitSpec*)fmlay->GetUnitSpec();
+    if(us->InheritsFrom(TA_TDRewIntegUnitSpec)) {
+      rewinteg_lay = fmlay;
+    }
+  }
 
-//   // check recv connection
-//   if(lay->units.leaves == 0) return false;
-//   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
-//   LeabraLayer* rewinteg_lay = NULL;
-//   for(int g=0; g<u->recv.size; g++) {
-//     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-//     if(recv_gp->NotActive()) continue;
-//     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-//     if(recv_gp->GetConSpec()->IsMarkerCon()
-//         && fmlay->spec.SPtr()->InheritsFrom(TA_TDRewIntegUnitSpec)) {
-//       rewinteg_lay = fmlay;
-//       // if(lay->CheckError(recv_gp->size <= 0, quiet, rval,
-//       //                    "requires one recv projection with at least one unit!")) {
-//       //   return false;
-//       // }
-//       if(recv_gp->size <= 0) {
-//         OneToOnePrjnSpec* pspec = (OneToOnePrjnSpec*)recv_gp->prjn->spec.SPtr();
-//         pspec->send_start = 1;
-//         if(lay->CheckError(true, quiet, rval,
-//                            "requires the OneToOnePrjnSpec to have send_start = 1 -- I just set this for you, but you will have to re-build the network and re-init -- save project after this change")) {
-//         }
-//       }
-//       else {
-//         if(lay->CheckError(!recv_gp->Un(0,net)->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
-//                            "I need to receive from a LeabraTdUnit!")) {
-//           return false;
-//         }
-//       }
-//     }
-//   }
+  if(lay->CheckError(rewinteg_lay == NULL, quiet, rval,
+                "did not find layer with TDRewIntegUnitSpec units to get TD from!")) {
+    return false;
+  }
 
-//   if(lay->CheckError(rewinteg_lay == NULL, quiet, rval,
-//                 "did not find TDRewInteg layer to get Td from!")) {
-//     return false;
-//   }
-
-//   int myidx = lay->own_net->layers.FindLeafEl(lay);
-//   int rpidx = lay->own_net->layers.FindLeafEl(rewinteg_lay);
-//   if(lay->CheckError(rpidx > myidx, quiet, rval,
-//                 "reward integration layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-//     return false;
-//   }
-
-//   // check sending layer projections for appropriate unit types
-//   int si;
-//   for(si=0;si<lay->send_prjns.size;si++) {
-//     Projection* prjn = (Projection*)lay->send_prjns[si];
-//     if(lay->CheckError(!prjn->from->units.el_typ->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
-//                   "all layers I send to must have LeabraTdUnits!, layer:",
-//                   prjn->from->GetPath(),"doesn't")) {
-//       return false;
-//     }
-//   }
-//   return true;
-// }
+  // int myidx = lay->own_net->layers.FindLeafEl(lay);
+  // int rpidx = lay->own_net->layers.FindLeafEl(rewinteg_lay);
+  // if(lay->CheckError(rpidx > myidx, quiet, rval,
+  //               "reward integration layer must be *before* this layer in list of layers -- it is now after, won't work")) {
+  //   return false;
+  // }
+  return true;
+}
 
 void TDDeltaUnitSpec::Compute_TD(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!Quarter_DeepRawNow(net->quarter)) { // plus phase marker..

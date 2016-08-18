@@ -73,9 +73,6 @@ public:
   void  Init_Weights(UnitVars* ru, Network* rnet, int thr_no) override;
 
   void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thread_no) override { };
-  void	Compute_ApplyInhib
-    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
-     LeabraInhib* thr, float ival) override { };
   void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 

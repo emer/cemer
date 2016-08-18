@@ -61,8 +61,8 @@ public:
   virtual bool 	Hippo(LeabraNetwork* net, int n_ec_slots = 8);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure standard Hippocampus system, using specialized QuadPhase learning mechanisms
 
-  virtual bool 	TD(LeabraNetwork* net, bool bio_labels = false, bool td_mod_all = false);
-  // #MENU_BUTTON #MENU_SEP_BEFORE configure standard TD reinforcement learning layers; bio_labels = use biologically-based labels for layers, else functional; td_mod_all = have td value modulate all the regular units in the network
+  virtual bool 	TD(LeabraNetwork* net, bool td_mod_all = false);
+  // #MENU_BUTTON #MENU_SEP_BEFORE configure standard TD reinforcement learning layers; td_mod_all = have td value modulate all the regular units in the network
 
   virtual bool 	PVLV(LeabraNetwork* net, int n_pos_pv=1, int n_neg_pv=1,
                      bool da_mod_all = false);

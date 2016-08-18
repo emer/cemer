@@ -58,14 +58,11 @@ public:
 
   // nullify other major routines:
   void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
-  void	Compute_ApplyInhib
-    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
-     LeabraInhib* thr, float ival) override { };
   void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
   void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  // bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  bool  CheckConfig_Unit(Layer* lay, bool quiet=false)  override;
 
   TA_SIMPLE_BASEFUNS(TDRewIntegUnitSpec);
 protected:
@@ -74,7 +71,7 @@ protected:
 private:
   void 	Initialize();
   void	Destroy()		{ };
-  void	Defaults_init() 	{ };
+  void	Defaults_init();
 };
 
 #endif // TDRewIntegUnitSpec_h

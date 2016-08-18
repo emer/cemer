@@ -34,7 +34,8 @@ class Unit; //
 class Network; // 
 class LeabraNetwork; // 
 class LeabraUnit; // 
-class DataTable; // 
+class DataTable; //
+class LeabraLayer; //
 class LeabraLayerSpec; //
 class LeabraInhib; //
 
@@ -71,7 +72,9 @@ public:
   float         net_gain;       // #DEF_1 #MIN_0 multiplier on total synaptic net input -- this multiplies the net_raw, but AFTER the net_raw variable is saved (upon which the netin_raw statistics are computed)
 
   float         act_max_hz;     // #DEF_100 #MIN_1 for translating rate-code activations into discrete spiking (only used for clamped layers), what is the maximum firing rate associated with a maximum activation value (max act is typically 1.0 -- depends on act_range)
-  float         avg_tau;        // #DEF_200 #MIN_1 for integrating activation average (act_avg), time constant in trials (roughly, how long it takes for value to change significantly) -- used mostly for visualization and tracking "hog" units
+  bool          avg_trace;      // #DEF_false set act_avg unit variable to the exponentially decaying trace of activation -- used for TD (temporal differences) reinforcement learning for example -- lambda parameter determines how much of the prior trace carries over into the new trace 
+  float         lambda;         // #CONDSHOW_ON_avg_trace determines how much of the prior trace carries over into the new trace (act_avg = lambda * act_avg + new_act)
+  float         avg_tau;        // #CONDSHOW_OFF_avg_trace #DEF_200 #MIN_1 for integrating activation average (act_avg), time constant in trials (roughly, how long it takes for value to change significantly) -- used mostly for visualization and tracking "hog" units
   float         avg_init;        // #DEF_0.15 #MIN_0 initial activation average value -- used for act_avg, avg_s, avg_m, avg_l
   float         avg_dt;                // #READ_ONLY #EXPERT rate = 1 / tau
 
@@ -807,8 +810,8 @@ public:
                                   LeabraLayerSpec* lspec);
   // #CAT_Activation #IGNORE compute self inhibition value
   virtual void        Compute_ApplyInhib
-    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
-     LeabraInhib* thr, float ival);
+    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayer* lay,
+     LeabraLayerSpec* lspec,  LeabraInhib* thr, float ival);
   // #CAT_Activation #IGNORE apply computed inhibition value to unit inhibitory conductance
 
 

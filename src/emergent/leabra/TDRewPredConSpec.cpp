@@ -18,6 +18,8 @@
 TA_BASEFUNS_CTORS_DEFN(TDRewPredConSpec);
 
 void TDRewPredConSpec::Initialize() {
+  use_trace_act_avg = false;
+  
   SetUnique("rnd", true);
   rnd.mean = 0.0f;
   rnd.var = 0.0f;

@@ -44,12 +44,10 @@ void LeabraWizard::Initialize() {
 #include <LeabraContextLayerSpec>
 
 #include <ExtRewLayerSpec>
-// #include <LeabraTdUnit>
-// #include <LeabraTdUnitSpec>
-// #include <TDRewPredConSpec>
-// #include <TDRewPredUnitSpec>
-// #include <TDRewIntegUnitSpec>
-// #include <TDDeltaUnitSpec>
+#include <TDRewPredConSpec>
+#include <TDRewPredUnitSpec>
+#include <TDRewIntegUnitSpec>
+#include <TDDeltaUnitSpec>
 
 #include <PPTgUnitSpec>
 #include <LHbRMTgUnitSpec>
@@ -99,7 +97,7 @@ String LeabraWizard::RenderWizDoc_network() {
 * [[<this>.DeepLeabra()|DeepLeabra]] -- configure DeepLeabra specs and layers, for hidden layers in the network (all or optionally those that contain given string) -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers\n\
 :* [[<this>.DeepLeabraCopy()|DeepLeabraCopy]] -- configure DeepLeabra layer(s) with name containing given string, copying specs from given source deep layer which is already configured -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers\n\
 * [[<this>.SRNContext()|SRN Context]] -- configure a network with a simple-recurrent-network (SRN) context layer\n\
-* [[<this>.UnitInhib()|Unit Inhib]] -- configure unit-based inhibition for all layers in selected network (as compared with standard kWTA inhibition) ('''NOTE: parameters are out of date''').\n\
+* [[<this>.UnitInhib()|Unit Inhib]] -- configure unit-based inhibition for all layers in selected network (as compared with standard FFFB inhibition).\n\
 * [[<this>.Hippo()|Hippo]] -- configure a Hippocampus using theta-phase specs -- high functioning hippocampal episodic memory system.\n\
 * [[<this>.TD()|Temporal Differences (TD)]] -- configure temporal-differences (TD) reinforcement learning layers.\n\
 * [[<this>.PVLV()|PVLV]] -- configure PVLV (Primary Value, Learned Value) biologically-motivated reinforcement learning layers -- provides a simulated dopamine signal that reflects unexpected primary rewards (PV = primary value system) and unexpected learned reward assocations (conditioned stimuli; LV = learned value = system).\n\
@@ -211,30 +209,49 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
     return false;
   }
 
-  // todo: optimize these params..
-  //  basic_us->dt.vm_tau = ??
-  basic_us->g_bar.i = 10.0f;
   inhib_us->SetUnique("dt", true);
-  //  inhib_us->dt.vm_tau = ??
+  inhib_us->dt.vm_tau = 3.3f;
+  inhib_us->SetUnique("g_bar", true);
+  inhib_us->g_bar.i = 2.0f;
+  inhib_us->g_bar.l = 0.2f;     // higher leak = better
+
+  basic_us->SetUnique("dt", true);
+  basic_us->dt.vm_tau = 6.0f;
+  basic_us->SetUnique("g_bar", true);
+  basic_us->g_bar.i = 1.5f;
+  basic_us->g_bar.l = 0.2f;     // higher leak = better
 
   inhib_cs->SetUnique("rnd", true);
-  inhib_cs->rnd.mean = 1.0f;  inhib_cs->rnd.var = 0.0f;
+  inhib_cs->rnd.mean = 5.0f;  inhib_cs->rnd.var = 0.25f;
   inhib_cs->SetUnique("wt_limits", true);
   inhib_cs->wt_limits.sym = false;
   inhib_cs->SetUnique("inhib", true);
   inhib_cs->inhib = true;
+  inhib_cs->SetUnique("learn", true);
+  inhib_cs->learn = false;
 
   fb_inhib_cs->SetUnique("wt_limits", true);
   fb_inhib_cs->wt_limits.sym = false;
   fb_inhib_cs->SetUnique("rnd", true);
-  fb_inhib_cs->rnd.mean = .5f;  fb_inhib_cs->rnd.var = 0.05f;
-  fb_inhib_cs->SetUnique("lrate", true);
-  fb_inhib_cs->lrate = 0.0f;
+  fb_inhib_cs->rnd.mean = .5f;  fb_inhib_cs->rnd.var = 0.25f;
+  fb_inhib_cs->SetUnique("learn", true);
+  fb_inhib_cs->learn = false;
+  fb_inhib_cs->SetUnique("wt_scale", true);
+  fb_inhib_cs->wt_scale.rel = 1.0f;
 
-  // todo: optimize
   ff_inhib_cs->SetUnique("wt_scale", true);
-  ff_inhib_cs->wt_scale.abs = .4f;
+  ff_inhib_cs->wt_scale.rel = 0.5f; // key!
 
+  basic_ls->lay_inhib.on = false; // turn off std inhib!
+  basic_ls->unit_gp_inhib.on = false;
+  basic_ls->SetUnique("inhib_adapt", true);
+  basic_ls->inhib_adapt.on = true;
+  basic_ls->inhib_adapt.trial_interval = 10;
+  basic_ls->inhib_adapt.tau = 20.0f;
+
+  inhib_ls->SetUnique("inhib_adapt", true);
+  inhib_ls->inhib_adapt.on = false;
+  
   basic_us->UpdateAfterEdit();
   basic_cs->UpdateAfterEdit();
   basic_ls->UpdateAfterEdit();
@@ -293,15 +310,16 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
     basic_us->AddToControlPanelNm("dt", edit, "excite");
     inhib_us->AddToControlPanelNm("dt", edit, "inhib");
     basic_us->AddToControlPanelNm("g_bar", edit, "excite");
+    inhib_us->AddToControlPanelNm("g_bar", edit, "inhib");
     ff_inhib_cs->AddToControlPanelNm("wt_scale", edit, "ff_inhib");
     fb_inhib_cs->AddToControlPanelNm("rnd", edit, "to_inhib");
     inhib_cs->AddToControlPanelNm("rnd", edit, "fm_inhib");
-    basic_ls->AddToControlPanelNm("adapt_i", edit, "layers");
-
-    net->AddToControlPanelNm("cycle_max", edit, net->name);
-    net->AddToControlPanelNm("min_cycles", edit, net->name);
+    basic_ls->AddToControlPanelNm("inhib_adapt", edit, "layers");
   }
 
+  String msg = "Unit Inhib Configuration complete!";
+  taMisc::Confirm(msg);
+  
   if(proj) {
     proj->undo_mgr.SaveUndo(net, "Wizard::UnitInhib -- actually saves network specifically");
   }
@@ -834,8 +852,7 @@ bool LeabraWizard::SRNContext(LeabraNetwork* net) {
 
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
-bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
-#if 0
+bool LeabraWizard::TD(LeabraNetwork* net, bool td_mod_all) {
   if(!net) {
     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
     net = (LeabraNetwork*)proj->GetNewNetwork();
@@ -861,16 +878,13 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
  can be sure everything is ok.";
   taMisc::Confirm(msg);
 
-  net->RemoveUnits();
+  net->UnBuild();
 
   //////////////////////////////////////////////////////////////////////////////////
   // make layers
 
   bool  tdrp_new = false;
-  String tdrpnm = "ABL";  String tdintnm = "NAc";  String tddanm = "VTA";
-  if(!bio_labels) {
-    tdrpnm = "TDRewPred";    tdintnm = "TDRewInteg";    tddanm = "TD";
-  }
+  String tdrpnm = "TDRewPred";  String tdintnm = "TDRewInteg";  String tddanm = "TD";
 
   LeabraLayer* rew_targ_lay = (LeabraLayer*)net->FindMakeLayer("RewTarg");
   LeabraLayer* extrew = (LeabraLayer*)net->FindMakeLayer("ExtRew");
@@ -907,7 +921,6 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   for(i=0;i<net->layers.size;i++) {
     LeabraLayer* lay = (LeabraLayer*)net->layers[i];
     LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-    lay->SetUnitType(&TA_LeabraTdUnit);
     // todo: add any new bg layer exclusions here!
     if(lay != rew_targ_lay && lay != tdrp && lay != extrew && lay != tdint && lay != tdda) {
       other_lays.Link(lay);
@@ -917,10 +930,6 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
         input_lays.Link(lay);
       else
         output_lays.Link(lay);
-      LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-      if(us == NULL || !us->InheritsFrom(TA_LeabraTdUnitSpec)) {
-        us->ChangeMyType(&TA_LeabraTdUnitSpec);
-      }
     }
   }
 
@@ -936,76 +945,49 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   BaseSpec_Group* prjns = net->FindMakeSpecGp(gpprfx + "Prjns");
   if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return false;
 
-  FMSpec(LeabraUnitSpec, rewpred_units, units, "TDRewPredUnits");
-  FMSpec(LeabraUnitSpec, td_units, units, "TdUnits");
+  FMSpec(TDRewPredUnitSpec, rewpred_units, units, "TDRewPredUnits");
+  FMSpec(TDRewIntegUnitSpec, rewinteg_units, units, "TDRewIntegUnits");
+  FMSpec(TDDeltaUnitSpec, td_units, units, "TDDeltaUnits");
+  FMSpec(LeabraUnitSpec, er_units, units, "ExtRewUnits");
 
-  FMSpec(LeabraConSpec, learn_cons, cons, "LearnCons");
-
-  FMChild(TDRewPredConSpec, rewpred_cons, learn_cons, "TDRewPredCons");
-  FMChild(LeabraBiasSpec, bg_bias, learn_cons, "BgBias");
-  FMChild(LeabraBiasSpec, fixed_bias, bg_bias, "FixedBias");
-
+  FMSpec(TDRewPredConSpec, rewpred_cons, cons, "TDRewPredCons");
+  FMSpec(LeabraBiasSpec, bg_bias, cons, "BgBias");
   FMSpec(MarkerConSpec, marker_cons, cons, "MarkerCons");
 
+  FMSpec(LeabraLayerSpec, tdlay, layers, "TDLayer");
   FMSpec(ExtRewLayerSpec, ersp, layers, "ExtRewLayer");
-  FMSpec(TDRewPredUnitSpec, tdrpsp, layers, "Layer");
-  FMSpec(TDRewIntegUnitSpec, tdintsp, layers, "Layer");
-  FMSpec(TDDeltaUnitSpec, tdsp, layers, "Layer");
 
-  FMSpec(ProjectionSpec, fullprjn, prjns, "FullPrjn");
+  FMSpec(FullPrjnSpec, fullprjn, prjns, "FullPrjn");
   FMSpec(OneToOnePrjnSpec, onetoone, prjns, "OneToOne");
 
   //////////////////////////////////////////////////////////////////////////////////
   // set default spec parameters
 
-  onetoone->send_start = 1;     // needed for new index based connections
-
-  // learn_cons->lmix.hebb = .01f; // .01 hebb on learn cons
-//   learn_cons->not_used_ok = true;
-  learn_cons->UpdateAfterEdit();
+  // most happens via spec defaults
+  
   bg_bias->SetUnique("lrate", true);
   bg_bias->lrate = 0.0f;
   bg_bias->SetUnique("learn", true);
   bg_bias->learn = false;
-  fixed_bias->SetUnique("lrate", true);
-  fixed_bias->lrate = 0.0f;
-  fixed_bias->SetUnique("learn", true);
-  fixed_bias->learn = false;
-  rewpred_cons->SetUnique("rnd", true);
-  rewpred_cons->rnd.mean = 0.1f; rewpred_cons->rnd.var = 0.0f;
-  rewpred_cons->SetUnique("wt_sig", true);
-  rewpred_cons->wt_sig.gain = 1.0f;  rewpred_cons->wt_sig.off = 1.0f;
-  // rewpred_cons->SetUnique("lmix", true);
-  // rewpred_cons->lmix.hebb = 0.0f;
 
+  rewpred_units->bias_spec.SetSpec(bg_bias);
+  rewinteg_units->bias_spec.SetSpec(bg_bias);
+  td_units->bias_spec.SetSpec(bg_bias);
+  er_units->bias_spec.SetSpec(bg_bias);
+  
   if(output_lays.size > 0)
     ersp->rew_type = ExtRewLayerSpec::OUT_ERR_REW;
   else
     ersp->rew_type = ExtRewLayerSpec::EXT_REW;
-
-  int n_rp_u = 22;              // number of rewpred-type units
-  ScalarValLayerSpec* valspecs[3] = {tdrpsp, tdintsp, ersp};
-  for(int i=0;i<2;i++) {
-    ScalarValLayerSpec* lsp = valspecs[i];
-    lsp->scalar.rep = ScalarValSpec::GAUSSIAN;
-    lsp->scalar.min_sum_act = .2f;
-    // lsp->inhib.type = LeabraInhibSpec::KWTA_INHIB; lsp->inhib.kwta_pt = 0.25f;
-    // lsp->kwta.k_from = KWTASpec::USE_K;    lsp->kwta.k = 3;
-    // lsp->gp_kwta.k_from = KWTASpec::USE_K; lsp->gp_kwta.k = 3;
-    lsp->unit_range.min = -0.5f;  lsp->unit_range.max = 3.5f;
-    lsp->unit_range.UpdateAfterEdit();
-    lsp->val_range = lsp->unit_range;
-  }
-  ersp->unit_range.max = 1.5f;
-  ersp->unit_range.UpdateAfterEdit();
 
   net->specs.UpdateAllSpecs();
   
   //////////////////////////////////////////////////////////////////////////////////
   // set geometries
 
+  int n_rp_u = 1;
   if(tdrp->un_geom.n != n_rp_u) { tdrp->un_geom.n = n_rp_u; tdrp->un_geom.x = n_rp_u; tdrp->un_geom.y = 1; }
-  if(extrew->un_geom.n != 12) { extrew->un_geom.n = 12; extrew->un_geom.x = 12; extrew->un_geom.y = 1; }
+  if(extrew->un_geom.n != 3) { extrew->un_geom.n = 3; extrew->un_geom.x = 3; extrew->un_geom.y = 1; }
   if(tdint->un_geom.n != n_rp_u) { tdint->un_geom.n = n_rp_u; tdint->un_geom.x = n_rp_u; tdint->un_geom.y = 1; }
   tdda->un_geom.n = 1;
   rew_targ_lay->un_geom.n = 1;
@@ -1013,13 +995,10 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects
 
-  tdrp->SetLayerSpec(tdrpsp);   tdrp->SetUnitSpec(rewpred_units);
-  extrew->SetLayerSpec(ersp);   extrew->SetUnitSpec(rewpred_units);
-  tdint->SetLayerSpec(tdintsp); tdint->SetUnitSpec(rewpred_units);
-  tdda->SetLayerSpec(tdsp);     tdda->SetUnitSpec(td_units);
-
-  rewpred_units->bias_spec.SetSpec(bg_bias);
-  td_units->bias_spec.SetSpec(fixed_bias);
+  tdrp->SetLayerSpec(tdlay);   tdrp->SetUnitSpec(rewpred_units);
+  extrew->SetLayerSpec(ersp);   extrew->SetUnitSpec(er_units);
+  tdint->SetLayerSpec(tdlay); tdint->SetUnitSpec(rewinteg_units);
+  tdda->SetLayerSpec(tdlay);     tdda->SetUnitSpec(td_units);
 
   //////////////////////////////////////////////////////////////////////////////////
   // make projections
@@ -1049,41 +1028,22 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
 
   net->Build();
 
-  bool ok = tdrpsp->CheckConfig_Layer(tdrp, false) && tdintsp->CheckConfig_Layer(tdint, false)
-    && tdsp->CheckConfig_Layer(tdda, false) && ersp->CheckConfig_Layer(extrew, false);
-
-  if(!ok) {
-    msg =
-      "TD: An error in the configuration has occurred (it should be the last message\
- you received prior to this one).  The network will not run until this is fixed.\
- In addition, the configuration process may not be complete, so you should run this\
- function again after you have corrected the source of the error.";
-  }
-  else {
-    msg =
-    "TD configuration is now complete.  Do not forget the one remaining thing\
+  msg = "TD configuration is now complete.  Do not forget the one remaining thing\
  you need to do manually:\n\n" + man_msg;
-  }
   taMisc::Confirm(msg);
-
-  tdrpsp->UpdateAfterEdit();
-  ersp->UpdateAfterEdit();
-  tdintsp->UpdateAfterEdit();
 
   net->specs.UpdateAllSpecs();
 
   //////////////////////////////////////////////////////////////////////////////////
-  // select edit
-
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  ControlPanel* edit = proj->FindMakeControlPanel("TD");
-  if(edit != NULL) {
-    rewpred_cons->AddToControlPanelNm("lrate", edit, "rewpred");
-    ersp->AddToControlPanelNm("rew", edit, "extrew");
-    tdrpsp->AddToControlPanelNm("rew_pred", edit, "tdrp");
-    tdintsp->AddToControlPanelNm("rew_integ", edit, "tdint");
-  }
-#endif
+  // select edit -- not worth it..
+  // LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  // ControlPanel* edit = proj->FindMakeControlPanel("TD");
+  // if(edit != NULL) {
+  //   rewpred_cons->AddToControlPanelNm("lrate", edit, "rewpred");
+  //   ersp->AddToControlPanelNm("rew", edit, "extrew");
+  //   tdrpsp->AddToControlPanelNm("rew_pred", edit, "tdrp");
+  //   tdintsp->AddToControlPanelNm("rew_integ", edit, "tdint");
+  // }
   return true;
 }
 

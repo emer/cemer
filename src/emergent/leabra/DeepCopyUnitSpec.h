@@ -42,9 +42,6 @@ public:
   // set current act of deep unit to sending super unit activation
 
   void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
-  void	Compute_ApplyInhib(LeabraUnitVars* u, LeabraNetwork* net, int thr_no,
-                           LeabraLayerSpec* lspec, LeabraInhib* thr, float ival)
-    override { };
   void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 

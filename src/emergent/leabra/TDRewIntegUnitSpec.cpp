@@ -30,6 +30,10 @@ void TDRewIntegSpec::Initialize() {
 }
 
 void TDRewIntegUnitSpec::Initialize() {
+  Defaults_init();
+}
+
+void TDRewIntegUnitSpec::Defaults_init() {
   SetUnique("act_range", true);
   act_range.min = -100.0f;
   act_range.max = 100.0f;
@@ -51,77 +55,67 @@ void TDRewIntegUnitSpec::HelpConfig() {
  - Requires 2 input projections, from TDRewPred, ExtRew layers.\n\
  - Sending connection to TDDeltaUnitSpec(s) (marked with MarkerConSpec)\n\
  (to compute the td change in expected rewards as computed by this layer)\n\
- - This layer must be before  TDDeltaUnitSpec layer in list of layers\n\
- \n(After pressing OK here, you will see information for configuring the ScalarValLayerSpec\
- which this layer is based on)";
+ - UnitSpec for this layer must have act_range set to -100 and 100 \
+     (because negative td = negative activation signal here)";
   taMisc::Confirm(help);
-  // inherited::HelpConfig();
 }
 
-// bool TDRewIntegUnitSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
-//   LeabraLayer* lay = (LeabraLayer*)ly;
-//   if(!inherited::CheckConfig_Layer(lay, quiet))
-//     return false;
+bool TDRewIntegUnitSpec::CheckConfig_Unit(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
+  if(!inherited::CheckConfig_Unit(lay, quiet))
+    return false;
 
-// //  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
-//   bool rval = true;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  bool rval = true;
 
-//   if(lay->CheckError(!lay->units.el_typ->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
-//                 "must have LeabraTdUnits!")) {
-//     return false;
-//   }
+  // check for conspecs with correct params
+  LeabraLayer* rew_pred_lay = NULL;
+  LeabraLayer* ext_rew_lay = NULL;
 
-//   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-//   if(lay->CheckError(!us->InheritsFrom(TA_LeabraTdUnitSpec), quiet, rval,
-//                 "UnitSpec must be LeabraTdUnitSpec!")) {
-//     return false;
-//   }
-//   us->UpdateAfterEdit();
+  if(lay->units.leaves == 0) return false;
+  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+  
+  const int nrg = un->NRecvConGps(); 
+  for(int g=0; g< nrg; g++) {
+    LeabraConGroup* recv_gp = (LeabraConGroup*)un->RecvConGroup(g);
+    if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    if(!cs->IsMarkerCon()) continue;
+    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
+    LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
+    LeabraUnitSpec* us = (LeabraUnitSpec*)fmlay->GetUnitSpec();
+    if(us->InheritsFrom(&TA_TDRewPredUnitSpec)) {
+      rew_pred_lay = fmlay;
+    }
+    else if(fls->InheritsFrom(&TA_ExtRewLayerSpec)) {
+      ext_rew_lay = fmlay;
+    }
+  }
 
-//   // check for conspecs with correct params
-//   LeabraLayer* rew_pred_lay = NULL;
-//   LeabraLayer* ext_rew_lay = NULL;
+  if(lay->CheckError(rew_pred_lay == NULL, quiet, rval,
+                "requires recv projection from layer with TDRewPredUnitSpec units!")) {
+    return false;
+  }
 
-//   if(lay->units.leaves == 0) return false;
-//   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
-//   for(int g=0; g<u->recv.size; g++) {
-//     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-//     if(recv_gp->NotActive()) continue;
-//     if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
-//       continue;
-//     }
-//     LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-//     LeabraLayerSpec* fls = (LeabraLayerSpec*)flay->spec.SPtr();
-//     if(fls->InheritsFrom(&TA_TDRewPredUnitSpec)) {
-//       rew_pred_lay = flay;
-//     }
-//     else if(fls->InheritsFrom(&TA_ExtRewLayerSpec)) {
-//       ext_rew_lay = flay;
-//     }
-//   }
+  // not required..
+  // int myidx = lay->own_net->layers.FindLeafEl(lay);
+  // int rpidx = lay->own_net->layers.FindLeafEl(rew_pred_lay);
+  // if(lay->CheckError(rpidx > myidx, quiet, rval,
+  //               "reward prediction layer must be *before* this layer in list of layers -- it is now after, won't work")) {
+  //   return false;
+  // }
 
-//   if(lay->CheckError(rew_pred_lay == NULL, quiet, rval,
-//                 "requires recv projection from TDRewPredUnitSpec!")) {
-//     return false;
-//   }
-//   int myidx = lay->own_net->layers.FindLeafEl(lay);
-//   int rpidx = lay->own_net->layers.FindLeafEl(rew_pred_lay);
-//   if(lay->CheckError(rpidx > myidx, quiet, rval,
-//                 "reward prediction layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-//     return false;
-//   }
-
-//   if(lay->CheckError(ext_rew_lay == NULL, quiet, rval,
-//                 "TD requires recv projection from ExtRewLayerSpec!")) {
-//     return false;
-//   }
-//   int eridx = lay->own_net->layers.FindLeafEl(ext_rew_lay);
-//   if(lay->CheckError(eridx > myidx, quiet, rval,
-//                 "external reward layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-//     return false;
-//   }
-//   return true;
-// }
+  if(lay->CheckError(ext_rew_lay == NULL, quiet, rval,
+                "TD requires recv projection from layer with ExtRewLayerSpec!")) {
+    return false;
+  }
+  // int eridx = lay->own_net->layers.FindLeafEl(ext_rew_lay);
+  // if(lay->CheckError(eridx > myidx, quiet, rval,
+  //               "external reward layer must be *before* this layer in list of layers -- it is now after, won't work")) {
+  //   return false;
+  // }
+  return true;
+}
 
 
 void TDRewIntegUnitSpec::Compute_TDRewInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -133,17 +127,16 @@ void TDRewIntegUnitSpec::Compute_TDRewInteg(LeabraUnitVars* u, LeabraNetwork* ne
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    if(!cs->IsMarkerCon()) continue;
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
     LeabraUnitSpec* us = (LeabraUnitSpec*)fmlay->GetUnitSpec();
-    if(cs->IsMarkerCon()) {
-      if(us->InheritsFrom(&TA_TDRewPredUnitSpec)) {
-        rew_pred_val = fmlay->GetTotalActEq();
-      }
-      else if(fls->InheritsFrom(&TA_ExtRewLayerSpec)) {
-        LeabraUnit* eru = (LeabraUnit*)fmlay->units.Leaf(0);
-        ext_rew_val = eru->misc_1(); // readout is in misc_1
-      }
+    if(us->InheritsFrom(&TA_TDRewPredUnitSpec)) {
+      rew_pred_val = fmlay->GetTotalActEq();
+    }
+    else if(fls->InheritsFrom(&TA_ExtRewLayerSpec)) {
+      LeabraUnit* eru = (LeabraUnit*)fmlay->units.Leaf(0);
+      ext_rew_val = eru->misc_1(); // readout is in misc_1
     }
   }
 

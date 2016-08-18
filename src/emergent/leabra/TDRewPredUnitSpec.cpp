@@ -23,6 +23,10 @@ TA_BASEFUNS_CTORS_DEFN(TDRewPredUnitSpec);
 
 
 void TDRewPredUnitSpec::Initialize() {
+  Defaults_init();
+}
+
+void TDRewPredUnitSpec::Defaults_init() {
   SetUnique("act_range", true);
   act_range.min = -100.0f;
   act_range.max = 100.0f;
@@ -33,55 +37,40 @@ void TDRewPredUnitSpec::HelpConfig() {
  Computes expected rewards according to the TD algorithm: predicts V(t+1) at time t. \n\
  - Minus phase = previous expected reward V^(t) clamped\
  - Plus phase = free-running expected reward computed (over settlng, fm recv wts)\n\
- - Learning is (act_p - act_m) * act_q0: delta on recv units times sender activations at (t-1).\n\
+ - Learning is da_p * act_q0: dopamine from TDDeltaUnitSpec times sender activations at (t-1).\n\
  \nTDRewPredUnitSpec Configuration:\n\
  - Sending connection to a TDRewIntegUnitSpec to integrate predictions with external rewards\n\
- - Recv connection from TDDeltaUnitspec to receive da_p TD training signal";
+ - Recv connection from TDDeltaUnitSpec to receive da_p TD training signal\n\
+ - UnitSpec for this layer must have act_range set to -100 and 100 \
+     (because negative td = negative activation signal here)";
   taMisc::Confirm(help);
-  // inherited::HelpConfig();
 }
 
-// bool TDRewPredUnitSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
-//   LeabraLayer* lay = (LeabraLayer*)ly;
-//   if(!inherited::CheckConfig_Layer(lay, quiet))
-//     return false;
+bool TDRewPredUnitSpec::CheckConfig_Unit(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
+  if(!inherited::CheckConfig_Unit(lay, quiet))
+    return false;
 
-// //  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
-//   bool rval = true;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  bool rval = true;
 
-//   if(lay->CheckError(!lay->units.el_typ->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
-//                 "must have LeabraTdUnits!")) {
-//     return false;
-//   }
-
-//   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-//   if(lay->CheckError(!us->InheritsFrom(TA_LeabraTdUnitSpec), quiet, rval,
-//                 "UnitSpec must be LeabraTdUnitSpec!")) {
-//     return false;
-//   }
-//   us->UpdateAfterEdit();
-
-//   // check for conspecs with correct params
-//   if(lay->units.leaves == 0) return false;
-//   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
-//   for(int g=0; g<u->recv.size; g++) {
-//     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-//     if(recv_gp->NotActive()) continue;
-//     if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) continue; // self projection
-//     if(recv_gp->GetConSpec()->IsMarkerCon()) continue;
-//     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-//     if(lay->CheckError(!cs->InheritsFrom(TA_TDRewPredConSpec), quiet, rval,
-//                   "requires recv connections to be of type TDRewPredConSpec")) {
-//       return false;
-//     }
-//     if(lay->CheckError(cs->wt_limits.sym != false, quiet, rval,
-//                   "requires recv connections to have wt_limits.sym=false, I just set it for you in spec:", cs->name, "(make sure this is appropriate for all layers that use this spec!)")) {
-//       cs->SetUnique("wt_limits", true);
-//       cs->wt_limits.sym = false;
-//     }
-//   }
-//   return true;
-// }
+  // check for conspecs with correct params
+  if(lay->units.leaves == 0) return rval;
+  LeabraUnit* un = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+  
+  const int nrg = un->NRecvConGps(); 
+  for(int g=0; g< nrg; g++) {
+    LeabraConGroup* recv_gp = (LeabraConGroup*)un->RecvConGroup(g);
+    if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    if(cs->IsMarkerCon()) continue;
+    if(lay->CheckError(!cs->InheritsFrom(TA_TDRewPredConSpec), quiet, rval,
+                  "requires recv connections to be of type TDRewPredConSpec")) {
+      return false;
+    }
+  }
+  return true;
+}
 
 void TDRewPredUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   LeabraUnitVars* u = (LeabraUnitVars*)ru;

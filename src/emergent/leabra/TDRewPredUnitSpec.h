@@ -36,7 +36,7 @@ public:
   void  Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  //  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
 
   TA_BASEFUNS_NOCOPY(TDRewPredUnitSpec);
 protected:
@@ -44,7 +44,7 @@ protected:
 private:
   void 	Initialize();
   void	Destroy()		{ };
-  void	Defaults_init() 	{ };
+  void	Defaults_init();
 };
 
 #endif // TDRewPredUnitSpec_h

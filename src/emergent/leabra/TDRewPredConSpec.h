@@ -30,9 +30,12 @@ class E_API TDRewPredConSpec : public LeabraConSpec {
   // Reward Prediction connections: for TD RewPred Unit, uses TD algorithm for predicting rewards -- learns on da_p (TD) * sending trace activation from prev timestep (act_q0)
 INHERITED(LeabraConSpec)
 public:
+  bool          use_trace_act_avg;
+  // if true, use act_avg value as sending activation in learning rule -- else uses prior activation state, act_q0
+
   inline void C_Compute_dWt_TD(float& dwt, const float ru_da_p, 
-                                       const float su_trace) {
-    dwt += cur_lrate * ru_da_p * su_trace;
+                                       const float su_act) {
+    dwt += cur_lrate * ru_da_p * su_act;
   }
   // #IGNORE
 
@@ -42,7 +45,11 @@ public:
     LeabraConGroup* cg = (LeabraConGroup*)scg;
     LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
 
-    const float su_act = su->act_q0; // todo: figure out a trace..
+    float su_act;
+    if(use_trace_act_avg)
+      su_act = su->act_avg;
+    else
+      su_act = su->act_q0;
     float* dwts = cg->OwnCnVar(DWT);
 
     const int sz = cg->size;

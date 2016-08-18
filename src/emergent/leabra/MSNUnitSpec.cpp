@@ -70,9 +70,9 @@ MSNUnitSpec::GateType MSNUnitSpec::MatrixGateType(LeabraUnitVars* u, LeabraNetwo
 }
 
 void MSNUnitSpec::Compute_ApplyInhib
-(LeabraUnitVars* u, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
- LeabraInhib* thr, float ival) {
-  inherited::Compute_ApplyInhib(u, net, thr_no, lspec, thr, ival);
+(LeabraUnitVars* u, LeabraNetwork* net, int thr_no, LeabraLayer* lay,
+ LeabraLayerSpec* lspec, LeabraInhib* thr, float ival) {
+  inherited::Compute_ApplyInhib(u, net, thr_no, lay, lspec, thr, ival);
 
   if(matrix_patch != MATRIX) return;
 

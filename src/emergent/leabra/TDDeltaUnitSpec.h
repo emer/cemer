@@ -39,7 +39,7 @@ public:
   void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  // bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  bool  CheckConfig_Unit(Layer* lay, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(TDDeltaUnitSpec);
 protected:
@@ -47,7 +47,7 @@ protected:
 private:
   void 	Initialize();
   void	Destroy()		{ };
-  void	Defaults_init() { Initialize(); }
+  void	Defaults_init();
 };
 
 #endif // TDDeltaUnitSpec_h

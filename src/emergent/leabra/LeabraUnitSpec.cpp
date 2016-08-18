@@ -78,6 +78,8 @@ void LeabraActMiscSpec::Defaults_init() {
   avg_nd = true;
   net_gain = 1.0f;
   act_max_hz = 100.0f;
+  avg_trace = false;
+  lambda = 0.0f;
   avg_tau = 200.0f;
   avg_init = 0.15f;
 
@@ -660,7 +662,10 @@ void LeabraUnitSpec::Init_Weights(UnitVars* ru, Network* rnet, int thr_no) {
 
   u->net_prv_q = 0.0f;
   u->net_prv_trl = 0.0f;
-  u->act_avg = act_misc.avg_init;
+  if(act_misc.avg_trace)
+    u->act_avg = 0.0f;
+  else
+    u->act_avg = act_misc.avg_init;
   u->misc_1 = 0.0f;
   u->misc_2 = 0.0f;
 
@@ -682,7 +687,10 @@ void LeabraUnitSpec::LoadBiasWtVal(float bwt, UnitVars* uv, Network* net) {
 }
 
 void LeabraUnitSpec::Init_ActAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  u->act_avg = act_misc.avg_init;
+  if(act_misc.avg_trace)
+    u->act_avg = 0.0f;
+  else
+    u->act_avg = act_misc.avg_init;
   u->avg_l = act_misc.avg_init;
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
 }
@@ -1608,15 +1616,15 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnitVars* u, LeabraNetwork
 //      Cycle Step 3: activation -- rate code
 
 void LeabraUnitSpec::Compute_ApplyInhib
-(LeabraUnitVars* u, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
- LeabraInhib* thr, float ival) {
+(LeabraUnitVars* u, LeabraNetwork* net, int thr_no, LeabraLayer* lay,
+ LeabraLayerSpec* lspec, LeabraInhib* thr, float ival) {
   Compute_SelfInhib(u, net, thr_no, lspec);
   float gi_ex = 0.0f;
   if(lspec->del_inhib.on) {
     gi_ex = lspec->del_inhib.prv_trl * u->net_prv_trl + 
       lspec->del_inhib.prv_q * u->net_prv_q;
   }
-  u->gc_i = ival + u->gi_syn + u->gi_self + gi_ex;
+  u->gc_i = ival + lay->adapt_gi * (u->gi_syn + u->gi_self) + gi_ex;
   if(taMisc::gui_active) {
     u->gi_ex = gi_ex;
   }
@@ -1669,7 +1677,7 @@ void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int
   LeabraInhib* thr = ((LeabraUnitSpec*)u->unit_spec)->GetInhib(un);
   if(thr) {
     LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-    Compute_ApplyInhib(u, net, thr_no, ls, thr, thr->i_val.g_i);
+    Compute_ApplyInhib(u, net, thr_no, lay, ls, thr, thr->i_val.g_i);
   }
 
   Compute_Vm(u, net, thr_no);
@@ -1790,7 +1798,7 @@ void LeabraUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, in
   LeabraInhib* thr = ((LeabraUnitSpec*)u->unit_spec)->GetInhib(un);
   if(thr) {
     LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-    Compute_ApplyInhib(u, net, thr_no, ls, thr, thr->i_val.g_i);
+    Compute_ApplyInhib(u, net, thr_no, lay, ls, thr, thr->i_val.g_i);
   }
 
   Compute_Vm(u, net, thr_no);
@@ -2177,8 +2185,13 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
 }
 
 void LeabraUnitSpec::Compute_ActTimeAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(act_misc.avg_dt <= 0.0f) return;
-  u->act_avg += act_misc.avg_dt * (u->act_nd - u->act_avg);
+  if(act_misc.avg_trace) {
+    u->act_avg = act_misc.lambda * u->act_avg + u->act_q0; // using prior act to be compatible with std td learning mechanism
+  }
+  else {
+    if(act_misc.avg_dt <= 0.0f) return;
+    u->act_avg += act_misc.avg_dt * (u->act_nd - u->act_avg);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -82,9 +82,9 @@ public:
   virtual GateType      MatrixGateType(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // get type of gating that given unit participates in
   
-  void Compute_ApplyInhib
-    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
-     LeabraInhib* thr, float ival) override;
+  void	Compute_ApplyInhib
+    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayer* lay,
+     LeabraLayerSpec* lspec, LeabraInhib* thr, float ival) override;
 
   virtual void  SaveGatingThal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // save gating value into thal_cnt when it actually takes effect -- synchronized with PFCUnitSpec timing of gating computation

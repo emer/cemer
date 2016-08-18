@@ -117,7 +117,7 @@ protected:
 private:
   void 	Initialize();
   void	Destroy()		{ };
-  void	Defaults_init() 	{ };
+  void	Defaults_init();
 };
 
 #endif // ExtRewLayerSpec_h

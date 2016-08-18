@@ -38,15 +38,29 @@ void ExtRewSpec::Initialize() {
 
 void ExtRewLayerSpec::Initialize() {
   rew_type = OUT_ERR_REW;
-
-//   kwta.k = 1;
-//   scalar.rep = ScalarValSpec::LOCALIST;
-//   unit_range.min = 0.0f;  unit_range.max = 1.0f;
-//   unit_range.UpdateAfterEdit_NoGui();
-//   val_range.min = unit_range.min;
-//   val_range.max = unit_range.max;
+  Defaults_init();
 }
 
+void ExtRewLayerSpec::Defaults_init() {
+  SetUnique("lay_inhib", true);
+  lay_inhib.on = true;
+  lay_inhib.gi = 1.0f;
+  lay_inhib.fb = 0.0f;
+  SetUnique("avg_act", true);
+  avg_act.targ_init = 0.25f;
+  avg_act.fixed = true;
+  SetUnique("inhib_misc", true);
+  inhib_misc.self_fb = 0.3f;
+
+  SetUnique("scalar", true);
+  scalar.rep = ScalarValSpec::LOCALIST;
+  SetUnique("unit_range", true);
+  unit_range.min = 0.0f;  unit_range.max = 1.0f;
+  unit_range.UpdateAfterEdit_NoGui();
+  val_range.min = unit_range.min;
+  val_range.max = unit_range.max;
+}
+  
 void ExtRewLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   rew.UpdateAfterEdit_NoGui();
@@ -63,7 +77,7 @@ void ExtRewLayerSpec::HelpConfig() {
  AND a MarkerConSpec from a layer called RewTarg that signals (>.5 act) when output errors count\n\
  - EXT_REW: external TARGET inputs to targ values deliver the reward value (e.g., input pattern or script)\n\
  - DA_REW: A recv connection or other means of setting da values = reward values.\n\
- - This layer must be before layers that depend on it in list of layers\n\
+ - Recommend using LOCALIST, 3 units, unit_range = 0,1 for simplest encoding\n\
  \n(After pressing OK here, you will see information for configuring the ScalarValLayerSpec\
  which this layer is based on)";
   taMisc::Confirm(help);

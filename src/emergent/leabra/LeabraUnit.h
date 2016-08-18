@@ -130,7 +130,7 @@ public:
   // #CAT_UnitVar learning rate dynamics based on activity profile of the receiving unit -- can implement trace-like learning to support development of invariant representations
   inline float& act_avg()
   { return ((LeabraUnitVars*)GetUnitVars())->act_avg; }
-  // #CAT_UnitVar average activation (of final plus phase activation state) over long time intervals (time constant = act_mid.avg_time -- typically 200) -- useful for finding hog units and seeing overall distribution of activation
+  // #CAT_UnitVar average activation (of final plus phase activation state) over long time intervals (time constant = act_misc.avg_tau -- typically 200) -- useful for finding hog units and seeing overall distribution of activation -- if act_misc.avg_trace is active, then it is instead an exponentially decaying trace -- used in TD reinforcement learning
   inline float& act_raw()
   { return ((LeabraUnitVars*)GetUnitVars())->act_raw; }
   // #CAT_UnitVar raw superficial-layer activation prior to mutliplication by deep_norm -- this may reflect layer 4 activation -- used in computing new deep_raw values
