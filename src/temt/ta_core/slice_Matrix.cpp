@@ -27,17 +27,18 @@ int_Matrix* slice_Matrix::Expand() {
   int end = FastEl_Flat(1);
   int step = FastEl_Flat(2);
   if(step == 0) step = 1;
-  int n_vals = (end-start) / ABS(step);
+  int n_vals = (end-start) / step;
+  if(n_vals < 0) n_vals = 0;    // todo: could raise error
   rval->SetGeom(1, n_vals);
+  // always the same basic for loop!
+  int cnt=0;
   if(step > 0) {
-    int cnt=0;
     for(int i = start; i < end; i += step, cnt++) {
       rval->FastEl_Flat(cnt) = i;
     }
   }
   else {
-    int cnt=0;
-    for(int i = end-1; i >= start; i += step, cnt++) {
+    for(int i = start; i > end; i += step, cnt++) {
       rval->FastEl_Flat(cnt) = i;
     }
   }

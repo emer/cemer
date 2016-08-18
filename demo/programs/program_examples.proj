@@ -20641,7 +20641,7 @@ svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta da
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAABTwAAAlcAAAGIAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAABQQAABHIAAAFGAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
