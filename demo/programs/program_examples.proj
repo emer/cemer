@@ -1,10 +1,11 @@
 // ta_Dump File v3.0 -- code v8.0.0.0 rev9851
 LeabraProject .projects["program_examples"] { 
- Doc_Group @.docs = [4] {
+ Doc_Group @.docs = [5] {
   taDoc @["DataTables"] { };
   taDoc @["Matrix_css"] { };
   taDoc @["DataTable_css"] { };
   taDoc @["DataOperations_tutorial"] { };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -523,7 +524,7 @@ LeabraProject .projects["program_examples"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [3] {
+    ProgEl_List @.prog_code = [4] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [1] {
        ProgVar @["i"] { };
@@ -535,6 +536,11 @@ LeabraProject .projects["program_examples"] {
       };
      };
      ForeachLoop @[2] { 
+      ProgEl_List @.loop_code = [1] {
+       CssExpr @[0] { };
+      };
+     };
+     ForeachLoop @[3] { 
       ProgEl_List @.loop_code = [1] {
        CssExpr @[0] { };
       };
@@ -3401,7 +3407,7 @@ LeabraProject .projects["program_examples"] {
  version {
   major=8;
   minor=0;
-  step=0;
+  step=1;
  };
  author="John Rohrlich, Randall C. O'Reilly";
  email="john.rohrlich@colorado.edu, randy.oreilly@colorado.edu";
@@ -5022,6 +5028,41 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	
 
 </body></html>";
+  };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+<li>Wed Aug 17 22:20:51 2016 version: 8.0.1 user: oreilly file_name: <code>program_examples.proj</code> <br>
+svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta data, and added more foreach examples -- fixing minus step per latest changes in code
+
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<li>Wed Aug 17 22:20:51 2016 version: 8.0.1 user: oreilly file_name: <code>program_examples.proj</code> <br>
+svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta data, and added more foreach examples -- fixing minus step per latest changes in code
+<P>
+</ul>
+</body>
+</html>
+";
   };
  };
  wizards {
@@ -8474,8 +8515,8 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      minor=0;
      step=0;
     };
-    author=;
-    email=;
+    author="Randall C. O'Reilly";
+    email="randy.oreilly@colorado.edu";
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -8559,10 +8600,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
      };
      ForeachLoop @[2] {
-      desc="it has the advange of being easier to go in the opposite direction just by changing the incr value -- doing that in a for loop requires more changes";
+      desc="going backwards -- note that args work just like for loop and ALWAYS exclude end value, just like in Python";
       flags=CAN_REVERT_TO_CODE;
-      code_string="foreach(i in [0:10:-1])";
-      pre_compile_code_string="foreach(i in [0:10:-1])";
+      code_string="foreach(i in [10:0:-1])";
+      pre_compile_code_string="foreach(i in [10:0:-1])";
       loop_code {
        name="loop_code";
        el_typ=ProgCode;
@@ -8579,7 +8620,31 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       el_var=$.projects["program_examples"].programs.gp["Control"]["Foreach"].prog_code[0].local_vars["i"]$;
       in {
-       expr="[0:10:-1]";
+       expr="[10:0:-1]";
+      };
+     };
+     ForeachLoop @[3] {
+      desc="going backwards -- note that args work just like for loop and ALWAYS exclude end value, just like in Python";
+      flags=CAN_REVERT_TO_CODE;
+      code_string="foreach(i in [-1:-10:-1])";
+      pre_compile_code_string="foreach(i in [-1:-10:-1])";
+      loop_code {
+       name="loop_code";
+       el_typ=ProgCode;
+       el_def=0;
+       CssExpr @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	code_string="{ cout << i << endl; };";
+	pre_compile_code_string="{ cout << i << endl; };";
+	expr {
+	 expr="{ cout << i << endl; };";
+	};
+       };
+      };
+      el_var=$.projects["program_examples"].programs.gp["Control"]["Foreach"].prog_code[0].local_vars["i"]$;
+      in {
+       expr="[-1:-10:-1]";
       };
      };
     };
@@ -20551,12 +20616,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0;
+     value 8 0=-0.0005313496;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 8 0=0;
+     value 8 0=0.03228547;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -21938,7 +22003,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc=;
+ last_change_desc="svn rev: 9854 updated expansion, uploaded to emergent wiki, updated that meta data, and added more foreach examples -- fixing minus step per latest changes in code
+";
  tree_state{ .;.docs;.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[2].gp[0];.programs.gp[2].gp[1];.programs.gp[2].gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.programs.gp[4].gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
