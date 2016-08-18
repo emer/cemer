@@ -292,7 +292,10 @@ void taRootBase::CleanRecentFiles() {
 void taRootBase::CleanNonexistentRecentFiles() {
   for (int i=recent_files.size - 1; i >= 0; i--) {
     String file_fullpath = recent_files[i];
-    if(!taMisc::FileExists(file_fullpath)) {
+    String dir = taMisc::GetDirFmPath(file_fullpath);
+    if(!taMisc::FileExists(file_fullpath) && taMisc::DirExists(dir)) {
+      // note: only remove if dir exists b/c it could be on removable media and so
+      // you don't want to nuke those guys
       recent_files.RemoveIdx(i);
     }
   }

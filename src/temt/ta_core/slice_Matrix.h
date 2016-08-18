@@ -31,8 +31,8 @@ class TA_API slice_Matrix: public int_Matrix {
 INHERITED(int_Matrix)
 public:
 
-  virtual int_Matrix*   Expand(int implicit_end = 100);
-  // #CAT_Slice expand the slice range spec to a matrix of all the individual indexes implied in the range -- defaults for unspecified start, end, step are 0:implicit_end:1
+  virtual int_Matrix*   Expand();
+  // #CAT_Slice expand the slice range spec to a matrix of all the individual indexes implied in the range -- defaults for unspecified increment is 1
 
   TA_MATRIX_FUNS_DERIVED(slice_Matrix, int);
 private:

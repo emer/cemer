@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.7.0 rev9497
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9851
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -1182,7 +1182,7 @@ LeabraProject .projects["program_examples"] {
    };
   };
   Program_Group @.gp["Data"] = [0] { 
-   Program_Group @.gp["BasicDataReadWrite"] = [7] { 
+   Program_Group @.gp["BasicDataReadWrite"] = [6] { 
     Program @["ReadAndPrintAllRows"] { 
      UserDataItem_List @*(.user_data_) {
       UserData_DocLink @["DocLink"] { };
@@ -1513,94 +1513,6 @@ LeabraProject .projects["program_examples"] {
 	Comment @[1] { };
 	DataVarProg @[2] { };
 	PrintVar @[3] { };
-       };
-      };
-     };
-    };
-    Program @[5] { 
-     UserDataItem_List @*(.user_data_) {
-      UserData_DocLink @["DocLink"] { };
-     };
-
-     ProgObjList @.objs = [1] {
-      DataTable @["MoreDemoData"] { 
-       DataTableCols @.data = [6] {
-	int_Data @["A"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	int_Data @["B"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	String_Data @["a"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	String_Data @["b"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	String_Data @["user_name"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	String_Data @["value"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-       };
-
-       DataOpList @.last_sort_spec.ops = [0] {
-       };
-
-       DataTableCell_List @.control_panel_cells = [0] {
-       };
-      };
-     };
-
-     ProgType_List @.types = [0] {
-     };
-
-     ProgVar_List @.args = [0] {
-     };
-
-     ProgVar_List @.vars = [9] {
-      ProgVar @["MoreDemoData"] { };
-      ProgVar @["A"] { };
-      ProgVar @["B"] { };
-      ProgVar @["a"] { };
-      ProgVar @["b"] { };
-      ProgVar @["user_name"] { };
-      ProgVar @["value"] { };
-      ProgVar @["data_loop_order"] { };
-      ProgVar @["data_loop_index"] { };
-     };
-
-     Function_List @.functions = [0] {
-     };
-
-     ProgEl_List @.init_code = [0] {
-     };
-
-     ProgEl_List @.prog_code = [5] {
-      Comment @[0] { };
-      Comment @[1] { };
-      Comment @[2] { };
-      LocalVars @[3] { 
-       ProgVar_List @.local_vars = [0] {
-       };
-      };
-      DataLoop @[4] { 
-       ProgEl_List @.loop_code = [2] {
-	DataVarProg @[0] { };
-	PrintVar @[1] { };
        };
       };
      };
@@ -3411,9 +3323,6 @@ LeabraProject .projects["program_examples"] {
     UserDataItem @["phase_no"] { };
    };
 
-   DataTable_Group @.spec_tables = [0] {
-   };
-
    BaseSpec_Group @.specs = [4] {
     LeabraLayerSpec @["HiddenLayer"] { 
      BaseSpec_Group @.children = [1] {
@@ -3450,6 +3359,9 @@ LeabraProject .projects["program_examples"] {
     };
    };
 
+   ParamSeq_Group @.param_seqs = [0] {
+   };
+
    Layer_Group @.layers = [3] {
     LeabraLayer @["Input"] { 
      Projection_Group @.projections = [0] {
@@ -3479,37 +3391,31 @@ LeabraProject .projects["program_examples"] {
 
    Weights_List @.weights = [0] {
    };
-
-   NetTiming_List NULL = [3] {
-    LeabraNetTiming @[0] { };
-    LeabraNetTiming @[1] { };
-    LeabraNetTiming @[2] { };
-   };
   };
  };
 };
 LeabraProject .projects["program_examples"] {
  name="program_examples";
- desc=;
- tags=;
+ desc="simple examples of all manner of Program code, great for copy-and paste to do things you want!";
+ tags="Program, Example Code";
  version {
-  major=0;
+  major=8;
   minor=0;
   step=0;
  };
- author="rohrlich";
- email="john.rohrlich@colorado.edu";
+ author="John Rohrlich, Randall C. O'Reilly";
+ email="john.rohrlich@colorado.edu, randy.oreilly@colorado.edu";
  license {
-  owner="Regents of the University of Colorado";
-  license=NO_LIC;
+  license=GPLv2;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2011";
+  year="2016";
   custom=;
  };
- wiki_url {
-  sync=0;
-  wiki=;
-  url=;
+ pub_cite=;
+ wiki {
+  wiki="emergent";
+  page_name="Program Examples";
  };
  docs {
   name="docs";
@@ -3521,7 +3427,7 @@ LeabraProject .projects["program_examples"] {
    web_doc=1;
    wiki="emergent";
    url="DataTable";
-   full_url="http://grey.colorado.edu/emergent/index.php/DataTable";
+   full_url="https://grey.colorado.edu/emergent/index.php/DataTable";
    text_size=1;
    text="<html>
 <head></head>
@@ -4271,7 +4177,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    web_doc=1;
    wiki="emergent";
    url="Matrix_css";
-   full_url="http://grey.colorado.edu/emergent/index.php/Matrix_css";
+   full_url="https://grey.colorado.edu/emergent/index.php/Matrix_css";
    text_size=1;
    text="<html>
 <head></head>
@@ -4652,7 +4558,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    web_doc=1;
    wiki="emergent";
    url="DataTable_css";
-   full_url="http://grey.colorado.edu/emergent/index.php/DataTable_css";
+   full_url="https://grey.colorado.edu/emergent/index.php/DataTable_css";
    text_size=1;
    text="<html>
 <head></head>
@@ -4882,7 +4788,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    web_doc=1;
    wiki="emergent";
    url="DataProcTutorial";
-   full_url="http://grey.colorado.edu/emergent/index.php/DataProcTutorial";
+   full_url="https://grey.colorado.edu/emergent/index.php/DataProcTutorial";
    text_size=1;
    text="<html>
 <head></head>
@@ -5134,7 +5040,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     };
     UserDataItem @["user_pinned"] {
      name="user_pinned";
-     value 1 0=1;
+     value 1 0=0;
      val_type_fixed=0;
     };
    };
@@ -5152,7 +5058,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     el_def=0;
     UserDataItem @["user_pinned"] {
      name="user_pinned";
-     value 1 0=1;
+     value 1 0=0;
      val_type_fixed=0;
     };
    };
@@ -8408,6 +8314,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="For";
     tags=;
     desc="Illustrates the for loop";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -8486,7 +8399,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="i";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc="typically put the for index into a local variable";
 	init_from=NULL;
@@ -8556,6 +8469,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="Foreac";
     tags=;
     desc="multiple examples of using the foreach looping construct, which is very powerful";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -8607,7 +8527,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="i";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -8691,6 +8611,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="Switch";
     tags=;
     desc="illustrates the switch statement";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -8965,6 +8892,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="If";
     tags=;
     desc="Example of if elseif and else conditional logic";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -9179,6 +9113,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="CndPrn";
     tags=;
     desc="Print debug statements based on current debug_level";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -9226,6 +9167,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="debug_level_1";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].types["debug_level"]$$;
        value=1;
       };
@@ -9238,6 +9180,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="debug_level_2";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=$.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].types["debug_level"]$;
        value=2;
       };
@@ -9250,6 +9193,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="debug_current_level";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=$.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].types["debug_level"]$;
        value=1;
       };
@@ -9389,6 +9333,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="String";
     tags=;
     desc="examples for all the fancy things you can do with string variable types";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -9449,7 +9400,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="mypi";
 	var_type=T_Real;
 	real_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -9458,7 +9409,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="chr";
 	var_type=T_String;
 	string_val=;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -9469,7 +9420,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	object_type=String_Array;
 	object_val=NULL;
 	objs_ptr=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -9785,15 +9736,15 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	type="taString&";
 	name="delim";
 	required=0;
-	def_val="\"\"";
+	def_val=" ";
 	prev_expr=;
 	expr {
 	 expr="\"\"";
 	};
        };
       };
-      meth_sig="String_Array_ptr split(taString& delim)";
-      meth_desc=" return a string array with the sub-strings split by given delimeter";
+      meth_sig="String_Array_ptr split(taString& delim =  )";
+      meth_desc=" return a string array with the sub-strings split by given delimeter (excludes delimiter in sub strings)";
      };
      PrintVar @[26] {
       desc=;
@@ -9826,14 +9777,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	type="taString&";
 	name="delim";
 	required=0;
-	def_val="\"\"";
+	def_val=" ";
 	prev_expr=;
 	expr {
 	 expr="\" \"";
 	};
        };
       };
-      meth_sig="taString Join(taString& delim)";
+      meth_sig="taString Join(taString& delim =  )";
       meth_desc=" generates a string of all the items on the list, using given delimiter between items (same as ToDelimString)";
      };
      PrintVar @[28] {
@@ -9949,6 +9900,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="DyEnum";
     tags=;
     desc="dynamic enumerated types -- these allow you to establish a mapping between names and corresponding values -- very handy for many situations";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -10331,6 +10289,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="cmd";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].types["ProgCmd"]$$;
        value=1;
       };
@@ -10348,6 +10307,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="cur_config";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].types["Configs"]$$;
        value=1;
       };
@@ -10360,6 +10320,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="unit_val";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].types["UnitNames"]$$;
        value=1;
       };
@@ -10372,6 +10333,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="name_var";
       var_type=T_DynEnum;
       dyn_enum_val {
+       user_data_=NULL;
        enum_type=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].types["UnitNames"]$;
        value=0;
       };
@@ -10523,7 +10485,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="row";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -10532,7 +10494,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="i";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -10994,6 +10956,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="MtrCss";
     tags=;
     desc="examples of all the matrix code you can use to manipulate matricies -- many require ; as they are css specific expressions not parsed by program elements";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -11040,7 +11009,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	object_type=double_Matrix;
 	object_val=NULL;
 	objs_ptr=0;
-	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -11049,7 +11018,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="temp";
 	var_type=T_Real;
 	real_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -11074,7 +11043,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  object_type=double_Matrix;
 	  object_val=NULL;
 	  objs_ptr=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -11128,7 +11097,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	object_type=float_Matrix;
 	object_val=NULL;
 	objs_ptr=0;
-	flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	flags=NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -11139,7 +11108,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	object_type=float_Matrix;
 	object_val=NULL;
 	objs_ptr=0;
-	flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	flags=NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -11148,7 +11117,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="smax";
 	var_type=T_Real;
 	real_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -11707,6 +11676,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="GlbvsL";
     tags=;
     desc="Program variables (vars) keep their value whereas local variables (LocalVars) are reset each time the program is run";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -11787,7 +11763,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="aLocalVar";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -11886,6 +11862,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="RCrrRw";
      tags=;
      desc="Loop through a data table and print the values for every row";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -12057,7 +12040,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="Name";
 	 var_type=T_String;
 	 string_val=;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -12066,7 +12049,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="a_value";
 	 var_type=T_Real;
 	 real_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -12171,6 +12154,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="RRBySp";
      tags=;
      desc="Get the data for a single row of a data table when you know the row number";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -12338,7 +12328,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="Name";
 	 var_type=T_String;
 	 string_val=;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -12347,7 +12337,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="Value";
 	 var_type=T_Real;
 	 real_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -12425,6 +12415,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="RRBySp";
      tags=;
      desc="Get the data for a single row and column of a data table using a known row value for another column";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -12586,7 +12583,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="count";
 	 var_type=T_Real;
 	 real_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -12653,6 +12650,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="dRwsWr";
      tags=;
      desc="Add (append) 5 rows to a table and store a value for each row";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -12780,7 +12784,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="i";
 	 var_type=T_Int;
 	 int_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -12789,7 +12793,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="text";
 	 var_type=T_String;
 	 string_val="ab";
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -12900,6 +12904,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="RFrMny";
      tags=;
      desc="To get or set many columns at once use a DataVarProg (drag the 'data=vars' element from the programming toolbar)";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -13302,416 +13313,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       html_text=;
      };
     };
-    Program @[5] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserData_DocLink;
-      el_def=0;
-      UserData_DocLink @["DocLink"] {
-       name="DocLink";
-       doc=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].doc$$;
-      };
-     };
-     name=;
-     short_nm=;
-     tags=;
-     desc="To get or set many columns at once use a DataVarProg (drag the 'data=vars' element from the programming toolbar)";
-     flags=NO_STOP_STEP;
-     stop_step_cond {
-      expr=;
-     };
-     objs {
-      name="objs";
-      el_typ=taNBase;
-      el_def=0;
-      DataTable @["MoreDemoData"] {
-       name="MoreDemoData";
-       desc=;
-       data {
-	name="data";
-	el_typ=String_Data;
-	el_def=0;
-	int_Data @["A"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.1510152220726013;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="A";
-	 col_flags=SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=119;
-	 ar {
-	  name="ar";
-	 [3] 0;1;2;	 };
-	};
-	int_Data @["B"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.1510152220726013;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="B";
-	 col_flags=SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=119;
-	 ar {
-	  name="ar";
-	 [3] 0;10;20;	 };
-	};
-	String_Data @["a"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.1510152220726013;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="a";
-	 col_flags=SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=119;
-	 ar {
-	  name="ar";
-	 [3] "a";"aa";"aaa";	 };
-	};
-	String_Data @["b"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.1510152220726013;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="b";
-	 col_flags=SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=119;
-	 ar {
-	  name="ar";
-	 [3] "b";"bb";"bbb";	 };
-	};
-	String_Data @["user_name"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.1510152220726013;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="user_name";
-	 col_flags=SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=119;
-	 ar {
-	  name="ar";
-	 [3] "joe";"sally";"logan";	 };
-	};
-	String_Data @["value"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.1510152220726013;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="value";
-	 col_flags=SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=119;
-	 ar {
-	  name="ar";
-	 [3] "red";"blue";"green";	 };
-	};
-       };
-       data_flags=SAVE_ROWS|AUTO_CALC;
-       auto_load=NO_AUTO_LOAD;
-       auto_load_file=;
-       keygen 4 0=0;
-       row_indexes {
-	name="row_indexes";
-       [3] 0;1;2;       };
-       last_sort_spec {
-	name="last_sort_spec";
-	ops {
-	 name="ops";
-	 el_typ=DataSortEl;
-	 el_def=0;
-	};
-       };
-       control_panel_cells {
-	name="control_panel_cells";
-	el_typ=DataTableCell;
-	el_def=0;
-       };
-      };
-     };
-     types {
-      name="types";
-      el_typ=DynEnumType;
-      el_def=0;
-     };
-     args {
-      name="args";
-      el_typ=ProgVar;
-      el_def=0;
-     };
-     vars {
-      name="vars";
-      el_typ=ProgVar;
-      el_def=0;
-      ProgVar @["MoreDemoData"] {
-       name="MoreDemoData";
-       var_type=T_Object;
-       object_type=DataTable;
-       object_val=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].objs["MoreDemoData"]$$;
-       objs_ptr=1;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["A"] {
-       name="A";
-       var_type=T_Int;
-       int_val=2;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["B"] {
-       name="B";
-       var_type=T_Int;
-       int_val=20;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["a"] {
-       name="a";
-       var_type=T_String;
-       string_val="aaa";
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["b"] {
-       name="b";
-       var_type=T_String;
-       string_val="bbb";
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["user_name"] {
-       name="user_name";
-       var_type=T_String;
-       string_val="logan";
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["value"] {
-       name="value";
-       var_type=T_String;
-       string_val="green";
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["data_loop_order"] {
-       name="data_loop_order";
-       var_type=T_HardEnum;
-       int_val=0;
-       hard_enum_type=DataLoop::Order;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["data_loop_index"] {
-       name="data_loop_index";
-       var_type=T_Int;
-       int_val=3;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-     };
-     functions {
-      name="functions";
-      el_typ=Function;
-      el_def=0;
-     };
-     init_code {
-      name="init_code";
-      el_typ=ProgCode;
-      el_def=0;
-     };
-     prog_code {
-      name="prog_code";
-      el_typ=ProgCode;
-      el_def=0;
-      Comment @[0] {
-       desc="To retrieve (or set) many columns at once use a DataVarProg (drag the 'data=vars' element from the programming toolbar)";
-       flags=CAN_REVERT_TO_CODE;
-       code_string="// To retrieve (or set) many columns at once use a DataVarProg (drag the 'data=vars' element from the programming toolbar)";
-       pre_compile_code_string="// To retrieve (or set) many columns at once use a DataVarProg (drag the 'data=vars' element from the programming toolbar)";
-      };
-      Comment @[1] {
-       desc="You can specify particular columns (the variable name must match the column name)";
-       flags=CAN_REVERT_TO_CODE;
-       code_string="// You can specify particular columns (the variable name must match the column name)";
-       pre_compile_code_string="// You can specify particular columns (the variable name must match the column name)";
-      };
-      Comment @[2] {
-       desc="or you can click on 'all matches' and any column whose name matches a variable (var) name will be gotten";
-       flags=CAN_REVERT_TO_CODE;
-       code_string="// or you can click on 'all matches' and any column whose name matches a variable (var) name will be gotten";
-       pre_compile_code_string="// or you can click on 'all matches' and any column whose name matches a variable (var) name will be gotten";
-      };
-      LocalVars @[3] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       code_string="LocalVars (0 vars)";
-       pre_compile_code_string="LocalVars (0 vars)";
-       local_vars {
-	name=;
-	el_typ=ProgVar;
-	el_def=0;
-       };
-      };
-      DataLoop @[4] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       code_string="Data Loop (SEQUENTIAL):  table=MoreDemoData  index=data_loop_index  order_var=data_loop_order ";
-       pre_compile_code_string="Data Loop (SEQUENTIAL):  table=MoreDemoData  index=data_loop_index  order_var=data_loop_order ";
-       loop_code {
-	name=;
-	el_typ=ProgCode;
-	el_def=0;
-	DataVarProg @[0] {
-	 desc=;
-	 flags=CAN_REVERT_TO_CODE;
-	 code_string="Data From:  table=MoreDemoData  row_spec=cur_row  set=from  all_matches=true ";
-	 pre_compile_code_string="Data From:  table=MoreDemoData  row_spec=cur_row  set=from  all_matches=true ";
-	 data_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["MoreDemoData"]$$;
-	 row_spec=CUR_ROW;
-	 row_var=NULL;
-	 set_data=0;
-	 all_matches=1;
-	 quiet=0;
-	 var_1=NULL;
-	 var_2=NULL;
-	 var_3=NULL;
-	 var_4=NULL;
-	};
-	PrintVar @[1] {
-	 desc=;
-	 flags=CAN_REVERT_TO_CODE;
-	 code_string="Print  a b A B user_name value";
-	 pre_compile_code_string="Print  a b A B user_name value";
-	 message=;
-	 print_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["a"]$$;
-	 print_var2=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["b"]$$;
-	 print_var3=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["A"]$$;
-	 print_var4=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["B"]$$;
-	 print_var5=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["user_name"]$$;
-	 print_var6=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["value"]$$;
-	 debug=0;
-	};
-       };
-       data_var=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["MoreDemoData"]$;
-       index_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["data_loop_index"]$$;
-       order_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["data_loop_order"]$$;
-       order=SEQUENTIAL;
-      };
-     };
-     step_prog=NULL;
-     step_n=1;
-     doc {
-      name="doc";
-      desc=;
-      web_doc=0;
-      wiki=;
-      url="local";
-      full_url="local";
-      text_size=1;
-      text=;
-      html_text=;
-     };
-    };
     Program @["ExportImport"] {
      UserDataItem_List @*(.user_data_) {
       name=;
@@ -13726,6 +13327,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="xprtmp";
      tags=;
      desc=;
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -14923,6 +14531,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="DtcCss";
      tags=;
      desc="use a LocalVars local variable, which automatically manages the memory allocation and deallocation properly";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -15130,7 +14745,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 object_type=float_Matrix;
 	 object_val=NULL;
 	 objs_ptr=0;
-	 flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc="this is a pointer to the actual matrix object";
 	 init_from=NULL;
@@ -15139,7 +14754,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="i";
 	 var_type=T_Int;
 	 int_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -15340,6 +14955,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="DTblcs";
      tags=;
      desc="demonstrates how to access data table information using css matrix-based syntax -- i.e., the [ ] square brackets";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -15754,6 +15376,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="DLp";
      tags=;
      desc="A data loop is a loop that goes through the rows of a data table";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -15919,7 +15548,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="Name";
 	 var_type=T_String;
 	 string_val=;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -15928,7 +15557,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="Value";
 	 var_type=T_Real;
 	 real_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -16081,6 +15710,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="DClc";
      tags=;
      desc="Calculate a new value for every row and paste that value into a new column of the same or a different datatable";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -16364,7 +16000,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="s_ColumnA";
 	 var_type=T_Int;
 	 int_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -16373,7 +16009,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="s_ColumnC";
 	 var_type=T_Int;
 	 int_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -16457,7 +16093,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="s_ColumnA";
 	 var_type=T_Int;
 	 int_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -16466,7 +16102,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="s_ColumnC";
 	 var_type=T_Int;
 	 int_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+	 flags=LOCAL_VAR|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -16480,7 +16116,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="d_ColumnB";
 	 var_type=T_Int;
 	 int_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -16543,6 +16179,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="DtSlct";
      tags=;
      desc="Filter your data by selecting only those rows that meet a specification";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -16923,6 +16566,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="DtGrp";
      tags=;
      desc="The grouping operation allows you to do calculations on all data of a particular group so you can compare groups";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -17295,6 +16945,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="DSrt";
      tags=;
      desc="Sorting data - You can put the sorted data in a new table or do on the existing table";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -17664,6 +17321,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="DJn";
      tags=;
      desc="Joining data - combine two different data tables according to a common key value";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -18196,6 +17860,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="FnMtcR";
      tags=;
      desc="Compare two columns and mark each row where the data matches";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -18669,6 +18340,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="Rndmnt";
     tags=;
     desc=;
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -18981,6 +18659,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="RndFlt";
     tags=;
     desc=;
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -19032,7 +18717,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="rnd_val";
 	var_type=T_Real;
 	real_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -19041,7 +18726,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="int_val";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -19288,6 +18973,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="MsMth";
     tags=;
     desc="there are a LOT of different math functions you can call!";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -19363,7 +19055,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="rval";
 	var_type=T_Real;
 	real_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -19372,7 +19064,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="f";
 	var_type=T_Real;
 	real_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+	flags=LOCAL_VAR|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -19381,7 +19073,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="i";
 	var_type=T_Int;
 	int_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -19803,6 +19495,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="ClFnct";
     tags=;
     desc="Functions can return a value (programs can't)";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -19847,7 +19546,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="value";
 	var_type=T_Real;
 	real_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	flags=LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -19876,7 +19575,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  name="sq_value";
 	  var_type=T_Real;
 	  real_val=0;
-	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  flags=LOCAL_VAR|USED|EDIT_VAL;
 	  reference=0;
 	  desc=;
 	  init_from=NULL;
@@ -19933,7 +19632,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="result";
 	var_type=T_Real;
 	real_val=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -19999,6 +19698,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="ClFncN";
     tags=;
     desc="Calling a function that does some work but doesn't return a value";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -20203,6 +19909,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="CllPrg";
      tags=;
      desc="This program calls Program_B which in this case simply prints some text so we know it is working";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -20311,6 +20024,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="CllPrg";
      tags=;
      desc="This program calls the function TestFunction in Program_B which in this case simply prints some text so we know it is working";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -20362,7 +20082,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 name="int_var";
 	 var_type=T_Int;
 	 int_val=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 flags=LOCAL_VAR|USED|EDIT_VAL;
 	 reference=0;
 	 desc=;
 	 init_from=NULL;
@@ -20429,6 +20149,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="CllPrg";
      tags=;
      desc="The called program can't return a value but it can set some variable values that the calling program can copy";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -20580,6 +20307,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="PrgSkn";
      tags=;
      desc="Copy a variable value from another program";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -20714,6 +20448,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      short_nm="PrgWtV";
      tags=;
      desc="This program has a variable value that another program needs -- it will copy from us";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -20825,7 +20566,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7993159;
+     value 8 0=0.7986406;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -20976,8 +20717,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
+	   lay_trans=0.4;
+	   unit_trans=0.4;
 	   laygp_width=1;
 	   show_laygp=1;
 	  };
@@ -21020,11 +20761,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -21222,6 +20965,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  line_width=2;
 	  point_size=0.01;
 	  point_spacing=1;
+	  solid_lines=0;
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
@@ -22052,11 +21796,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -22149,22 +21895,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 8 0=-0.002785515;
+       value 8 0=0;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.03078677;
+       value 8 0=0.008496176;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.05710306;
+       value 8 0=0.04357067;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.6944128;
+       value 8 0=0.7349193;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -22193,6 +21939,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc=;
+ tree_state{ .;.docs;.wizards;.wizards[0];.ctrl_panels;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[2].gp[0];.programs.gp[2].gp[1];.programs.gp[2].gp[2];.programs.gp[3];.programs.gp[4];.programs.gp[4].gp[0];.programs.gp[4].gp[1];.networks;.networks[0];.networks[0].specs;.networks[0].layers; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -22340,12 +22087,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    name="Network_0";
    desc=;
-   spec_tables {
-    name="spec_tables";
-    el_typ=DataTable;
-    el_def=0;
-    save_tables=0;
-   };
    specs {
     name="specs";
     el_typ=LeabraLayerSpec;
@@ -22369,44 +22110,58 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
-       lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-       lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-       avg_act {targ_init=0.2: fixed=0: tau=100: adjust=1: dt=0.01: };
+       lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+       avg_act {targ_init=0.2: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
        inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
-       inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+       inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: };
        decay {trial=1: };
        del_inhib {on=0: prv_trl=0: prv_q=0: };
+       lay_lrate=1;
+       cos_diff {
+	avg_tau=100;
+	lrate_mod=0;
+	lrmod_fm_trc=0;
+	lrmod_z_thr=-1.5;
+	set_net_unlrn=0;
+	avg_dt=0.01;
+	avg_dt_c=0.99;
+       };
        lstats {
-	cos_diff_avg_tau=100;
 	hog_thr=0.3;
 	dead_thr=0.01;
-	cos_diff_avg_dt=0.01;
        };
-       lay_lrate=1;
       };
      };
-     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
-     lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
-     avg_act {targ_init=0.2: fixed=0: tau=100: adjust=1: dt=0.01: };
+     lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
+     avg_act {targ_init=0.2: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
      inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
-     inhib_misc {net_thr=0: thr_rel=1: thr_act=0: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
+     inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
      decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lay_lrate=1;
+     cos_diff {
+      avg_tau=100;
+      lrate_mod=0;
+      lrmod_fm_trc=0;
+      lrmod_z_thr=-1.5;
+      set_net_unlrn=0;
+      avg_dt=0.01;
+      avg_dt_c=0.99;
+     };
      lstats {
-      cos_diff_avg_tau=100;
       hog_thr=0.3;
       dead_thr=0.01;
-      cos_diff_avg_dt=0.01;
      };
-     lay_lrate=1;
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
@@ -22477,11 +22232,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       act_thr=0.2;
      };
      deep_raw_qtr=Q4;
-     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_thr=0: trc_p_clamp=0: trc_p_max=0: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
+     deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
-     noise_adapt {trial_fixed=1: drop_thr=0.1: mode=FIXED_NOISE: };
+     noise_adapt {trial_fixed=1: mode=FIXED_NOISE: };
      noise_sched {
       name="noise_sched";
       el_typ=SchedItem;
@@ -22528,7 +22283,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-       wt_sig {gain=6: off=1: dwt_norm=1: rugp_wt_sync=0: };
+       wt_sig {gain=6: off=1: };
        wt_bal {
 	on=0;
 	trg=0.3;
@@ -22563,7 +22318,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1: dwt_norm=1: rugp_wt_sync=0: };
+     wt_sig {gain=6: off=1: };
      wt_bal {
       on=0;
       trg=0.3;
@@ -22593,6 +22348,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      add_rnd_var=0;
      renorm_wts {on=0: mult_norm=1: avg_wt=0.5: };
     };
+   };
+   param_seqs {
+    name="param_seqs";
+    el_typ=ParamSeq;
+    el_def=0;
    };
    layers {
     name="layers";
@@ -22846,44 +22606,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     sync_time_pct=0;
     wake_in_sync_pct=0;
    };
-   net_timing {
-    name="net_timing";
-    el_typ=LeabraNetTiming;
-    el_def=0;
-    LeabraNetTiming @[0] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[1] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-    LeabraNetTiming @[2] {
-     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    };
-   };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=76;
@@ -22919,9 +22641,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     trial_decay=0;
     diff_scale_p=0;
     diff_scale_q1=0;
-    dwt_norm=0;
     wt_bal=0;
-    rugp_wt_sync=0;
     lay_gp_inhib=0;
     inhib_cons=0;
    };

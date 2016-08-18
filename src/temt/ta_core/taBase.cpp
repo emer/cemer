@@ -1097,8 +1097,8 @@ bool taBase::IterPrev_impl(taBaseItr& itr) const {
 }
 
 bool taBase::FixSliceValsFromSize(int& start, int& end, int sz) const {
-  if(start < 0) start += sz;
-  if(end < 0) end += (sz+1); // needs the +1 to allow -1 to be the end and do <
+  if(start < 0)start += sz;
+  if(end <= 0) end += sz; // for 8.0: 0 is end for negative range! only logical case.
   if(start > sz-1) start = sz-1; // keep in bounds
   if(end > sz) end = sz;
   if(TestError(end < start, "Slice Vals",

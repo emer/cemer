@@ -1464,11 +1464,11 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
   String item_filename = "File:" + filename_only;
 
   if (taMediaWiki::PageExists(wiki_name, page_name)) {
-    int choice = taMisc::Choice("The " + publish_type  + " page name: " + page_name + " is already published on wiki: " + wiki_name + " for object named: " + obj_name + ".  Would you like to just upload a new version of the file?", "Upload", "Cancel");
+    int choice = taMisc::Choice("The " + publish_type  + " page name: " + page_name + " is already published on wiki: " + wiki_name + " for object named: " + obj_name + ".  Would you like to just upload a new version of the file, Proceed with adding Publish Project info to existing page, or Cancel?", "Upload", "Proceed", "Cancel");
     if (choice == 0) {
       return UpdateItemOnWeb(wiki_name, publish_type, obj_name, file_name, version, obj);
     }
-    else {
+    else if(choice == 2) {      // cancel
       return false;
     }
   }

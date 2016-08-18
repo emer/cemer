@@ -17,7 +17,7 @@
 
 TA_BASEFUNS_CTORS_DEFN(slice_Matrix);
 
-int_Matrix* slice_Matrix::Expand(int implicit_end) {
+int_Matrix* slice_Matrix::Expand() {
   if(TestError(size < 3, "Expand", "slice matrix does not contain at least 3 elements, as it must"))
     return NULL;
   // todo: could try to handle multi-dimensional case, but it is tricky due to
@@ -27,12 +27,6 @@ int_Matrix* slice_Matrix::Expand(int implicit_end) {
   int end = FastEl_Flat(1);
   int step = FastEl_Flat(2);
   if(step == 0) step = 1;
-  int sz = implicit_end;                // default size
-  if(end > 0)                   // if end set, then it is size
-    sz = end;
-  if(!FixSliceValsFromSize(start, end, sz)) {
-    return NULL;
-  }
   int n_vals = (end-start) / ABS(step);
   rval->SetGeom(1, n_vals);
   if(step > 0) {
