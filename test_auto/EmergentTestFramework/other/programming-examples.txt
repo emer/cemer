@@ -28,7 +28,7 @@ Test For
 
 Test Foreach
     ${output} =                Run Emergent Program           Foreach
-    Should Contain             ${output}    "0\\n1\\n2\\n3\\n4\\n5\\n6\\n7\\n8\\n9\\n9\\n8\\n7\\n6\\n5\\n4\\n3\\n2\\n1\\n0\\n"
+    Should Contain             ${output}    "0\\n1\\n2\\n3\\n4\\n5\\n6\\n7\\n8\\n9\\n10\\n9\\n8\\n7\\n6\\n5\\n4\\n3\\n2\\n1\\n-1\\n-2\\n-3\\n-4\\n-5\\n-6\\n-7\\n-8\\n-9\\n"
 
 Test Switch
     ${output} =                Run Command           {"command": "RunProgram", "program": "Switch"}   5 sec
