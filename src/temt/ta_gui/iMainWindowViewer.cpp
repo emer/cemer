@@ -3303,6 +3303,8 @@ bool taBase::GuiFindFromMe(const String& find_str) {
 }
 
 void iMainWindowViewer::UpdateStateActions() {
+  if(isRoot()) return;          // not for root
+  
   if (Program::global_run_state == Program::last_global_run_state) {
     return;
   }

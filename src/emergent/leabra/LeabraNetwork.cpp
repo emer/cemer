@@ -18,6 +18,7 @@
 
 #include <taProject>
 #include <DataTable>
+#include <Program>
 #include <taMisc>
 #include <tabMisc>
 
@@ -619,6 +620,16 @@ void LeabraNetwork::Trial_Init_Layer() {
 //      QuarterInit -- at start of settling
 
 void LeabraNetwork::Quarter_Init() {
+  if(times.cycle_qtr) {
+    if(Program::step_mode && Program::cur_step_prog.ptr() != NULL) {
+      if(Program::cur_step_prog->name.contains("Cycle")) {
+        times.cycle_qtr = false;
+        taMisc::Info("Note: turned off times.cycle_qtr in network:",
+                     name, "to step by single cycles -- this will slow down precessing significantly, so turn it back on if you want maximum speed later.");
+      }
+    }
+  }
+  
   Quarter_Init_Counters();
   Quarter_Init_Layer();
   Quarter_Init_Unit();           // do chunk of following unit-level functions:

@@ -45,33 +45,39 @@ void iApplicationToolBar::Constr_post() {
   tb->addSeparator();
   tb->addAction(win->fileNewAction);
   tb->addAction(win->fileOpenAction);
-  tb->addAction(win->fileCloseAction);
-  tb->addAction(win->fileSaveAction);
-  tb->addAction(win->fileSaveAsAction);
 
-  tb->addSeparator();
-  tb->addAction(win->fileOpenSvnBrowserAction);
-  tb->addAction(win->fileSvnCommitAction);
-  
-  tb->addSeparator();
-  tb->addAction(win->editUndoAction);
-  tb->addAction(win->editRedoAction);
-  
-  tb->addSeparator();
-  tb->addAction(win->editCutAction);
-  tb->addAction(win->editCopyAction);
-  tb->addAction(win->editPasteAction);
-  tb->addAction(win->editPasteIntoAction);
-  tb->addAction(win->editPasteAssignAction);
-  tb->addAction(win->editPasteAppendAction);
+  if(!win->isRoot()) {
+    tb->addAction(win->fileCloseAction);
+    tb->addAction(win->fileSaveAction);
+    tb->addAction(win->fileSaveAsAction);
 
-  tb->addSeparator();
-  tb->addAction(win->ctrlInitAction);
-  tb->addAction(win->ctrlStopAction);
-  tb->addAction(win->ctrlStepAction);
-  tb->addAction(win->ctrlRunAction);
-  tb->addAction(win->progTraceAction);
-  tb->addAction(win->progStatusAction);
+    tb->addSeparator();
+    tb->addAction(win->fileOpenSvnBrowserAction);
+    tb->addAction(win->fileSvnCommitAction);
+  
+    tb->addSeparator();
+    tb->addAction(win->editUndoAction);
+    tb->addAction(win->editRedoAction);
+  
+    tb->addSeparator();
+    tb->addAction(win->editCutAction);
+    tb->addAction(win->editCopyAction);
+    tb->addAction(win->editPasteAction);
+    tb->addAction(win->editPasteIntoAction);
+    tb->addAction(win->editPasteAssignAction);
+    tb->addAction(win->editPasteAppendAction);
+
+    tb->addSeparator();
+    tb->addAction(win->ctrlInitAction);
+    tb->addAction(win->ctrlStopAction);
+    tb->addAction(win->ctrlStepAction);
+    tb->addAction(win->ctrlRunAction);
+    tb->addAction(win->progTraceAction);
+    tb->addAction(win->progStatusAction);
+  }
+  else {
+    tb->addSeparator();
+  }    
   tb->addAction(win->viewConsoleFrontAction);
 
   tb->addSeparator();

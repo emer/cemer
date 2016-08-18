@@ -133,7 +133,7 @@ String taMediaWiki::GetWikiNameFromURL(const String& wiki_url) {
       return nv.name;
     }
   }
-  taMisc::Error("Known wiki not found from url:", wiki_url);
+  taMisc::Error("Known wiki not found from url:", wiki_url, "check your preferences -- even small differences such as https vs http will trigger this error -- always use https in general");
   return "";
 }
 
@@ -1463,20 +1463,26 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
   String filename_only = taMisc::GetFileFmPath(file_name);
   String item_filename = "File:" + filename_only;
 
+  bool page_exists = false;
   if (taMediaWiki::PageExists(wiki_name, page_name)) {
-    int choice = taMisc::Choice("The " + publish_type  + " page name: " + page_name + " is already published on wiki: " + wiki_name + " for object named: " + obj_name + ".  Would you like to just upload a new version of the file, Proceed with adding Publish Project info to existing page, or Cancel?", "Upload", "Proceed", "Cancel");
+    int choice = taMisc::Choice("The " + publish_type  + " page name: " + page_name + " already exists on wiki: " + wiki_name + ".  Would you like to just upload a new version of the project file (leaving page alone), Proceed with adding Publish Project info to existing page and uploading file, or Cancel?", "Upload", "Proceed", "Cancel");
     if (choice == 0) {
       return UpdateItemOnWeb(wiki_name, publish_type, obj_name, file_name, version, obj);
+    }
+    else if(choice == 1) {
+      page_exists = true;
     }
     else if(choice == 2) {      // cancel
       return false;
     }
   }
-  
-  if (taMediaWiki::PageExists(wiki_name, item_filename)) {
-    int choice = taMisc::Choice("The " + publish_type  + " file name: " + filename_only + " is already published on wiki: " + wiki_name + " but the page name: " + page_name + ".  does not yet exist -- Would you like to proceed to create wiki page?", "Proceed", "Cancel");
-    if (choice == 1) {
-      return false;
+
+  if(!page_exists) {
+    if (taMediaWiki::PageExists(wiki_name, item_filename)) {
+      int choice = taMisc::Choice("The " + publish_type  + " file name: " + filename_only + " is already published on wiki: " + wiki_name + " but the page name: " + page_name + ".  does not yet exist -- Would you like to proceed to create wiki page?", "Proceed", "Cancel");
+      if (choice == 1) {
+        return false;
+      }
     }
   }
   
@@ -1553,6 +1559,13 @@ iHelpBrowser::StatLoadUrl("https://grey.colorado.edu/emergent/index.php/Publish_
         pub_cite = "";
       }
 
+      if(publish_type == "Project") {
+        String chlog = "Published on wiki: " + wiki_name + " page: " + page_name + 
+          " with description: " + desc + " tags: " + tags + " author: " + author +
+          " email: " + email + " version: " + ver_str + " pub_cite: " + pub_cite;
+        ((taProject*)obj)->RecordChangeLog(chlog);
+      }
+      
       obj->Save();              // save current changes!
 
       // double-check for existing page name now that it has been entered:

@@ -706,9 +706,22 @@ bool taProject::PublishProjectOnWeb(const String &wiki_name)
   return taMediaWiki::PublishItemOnWeb(wiki_name, "Project", this->name, GetFileName(), wiki.page_name, tags, desc, version, author, email, pub_cite, this);
 }
 
-bool taProject::UpdateProjectOnWeb(const String &wiki_name) {
+bool taProject::UpdateProjectOnWeb(const String& wiki_name) {
   // todo: we could do more here to synchronize updates from wiki etc
-  return taMediaWiki::UpdateItemOnWeb(wiki_name, "Project", this->name, GetFileName(), version, this);
+  // to a update change log prompt here!
+  String msg = "Project updated on wiki: " + wiki_name + " changes: ";
+  String com_itm_str = "Record this web update in project ChangeLog doc:";
+  bool updt_change_log = true;
+  bool do_it = SvnCommitDialog(msg, updt_change_log, com_itm_str);
+  if(do_it) {
+    if(updt_change_log) {
+      RecordChangeLog(msg);
+      Save();
+    }
+    return taMediaWiki::UpdateItemOnWeb(wiki_name, "Project", this->name, GetFileName(),
+                                        version, this);
+  }
+  return false;
 }
 
 
