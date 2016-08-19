@@ -27,7 +27,6 @@ class Network; //
 class DataTable; //
 class Program; //
 class Program_Group; //
-class RetinaProc; //
 class StdNetWizDlg; //
 
 
@@ -44,9 +43,6 @@ public:
 
   virtual bool	StdNetwork();
   // #MENU_BUTTON #MENU_ON_Network configure a new or existing standard network -- user is prompted for full configuration settings
-
-  virtual bool	RetinaProcNetwork(RetinaProc* retina_proc, Network* net=NULL);
-  // #MENU_BUTTON #NULL_OK_1 #NULL_TEXT_1_NewNetwork configure the input layers of the network to accept the output of the image processing performed by retina_proc (if net == NULL, new network is created)
 
   virtual bool	StdData(Network* net, DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
   // #MENU_BUTTON #MENU_ON_Data #NULL_OK_1 #NULL_TEXT_1_NewDataTable make standard input and output data tables: make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences. also calls StdOutputData to create monitor output data, and UpdateLayerWriters to update any LayerWriter objects (typically in ApplyInputs programs) to the new data layout

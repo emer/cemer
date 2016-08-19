@@ -93,7 +93,6 @@ void LeabraWizard::Initialize() {
 String LeabraWizard::RenderWizDoc_network() {
   String rval = inherited::RenderWizDoc_network();
   rval += String("\
-* [[<this>.LeabraTI()|LeabraTI]] -- configure specs and layers for LeabraTI -- temporal integration of information over time, based on deep neocortical layer biology -- functionally similar to an SRN but auto-encoding and predictive\n\
 * [[<this>.DeepLeabra()|DeepLeabra]] -- configure DeepLeabra specs and layers, for hidden layers in the network (all or optionally those that contain given string) -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers\n\
 :* [[<this>.DeepLeabraCopy()|DeepLeabraCopy]] -- configure DeepLeabra layer(s) with name containing given string, copying specs from given source deep layer which is already configured -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers\n\
 * [[<this>.SRNContext()|SRN Context]] -- configure a network with a simple-recurrent-network (SRN) context layer\n\
@@ -397,57 +396,12 @@ bool LeabraWizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
   return true;
 }
 
-///////////////////////////////////////////////////////////////
-//                LeabraTI -- temporal integration wizard
-///////////////////////////////////////////////////////////////
-
-bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
-  if(TestError(!net, "LeabraTI", "must have basic constructed network first")) {
-    return false;
-  }
-  FMSpec(LeabraConSpec, stdcons, net, "LeabraConSpec_0");
-  FMChild(DeepCtxtConSpec, ti_ctxt, stdcons, "DeepTICtxt");
-  FMSpec(LeabraUnitSpec, stduns, net, "LeabraUnitSpec_0");
-  FMChild(LeabraUnitSpec, ti_uns, stduns, "TICtxtUnits");
-  FMSpec(FullPrjnSpec, full_prjn, net, "FullPrjnSpec_0");
-  FMSpec(TiledGpRFPrjnSpec, ctxt_prjn, net, "RF3x3skp1");
-
-  ti_ctxt->SetUnique("wt_scale", true);
-  ti_ctxt->wt_scale.rel = 1.0f;
-  ti_uns->SetUnique("deep", true);
-  ti_uns->deep.on = true;
-  ti_uns->SetUnique("deep_raw_qtr", true);
-  ti_uns->deep_raw_qtr = LeabraUnitSpec::Q4;
-
-  ctxt_prjn->send_gp_size = 3;
-  ctxt_prjn->send_gp_skip = 1;
-  ctxt_prjn->send_gp_start = -1;
-
-  net->specs.UpdateAllSpecs();
-  
-  for(int li=net->layers.leaves-1; li >= 0; li--) {
-    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
-    if(lay->layer_type != Layer::HIDDEN) continue;
-
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-    if(ls->InheritsFrom(&TA_LeabraContextLayerSpec)) continue; // skip existing srn's
-
-    //	  	 	   to		 from		prjn_spec	con_spec
-    if(lay->unit_groups) {
-      net->FindMakePrjn(lay, lay, ctxt_prjn,  ti_ctxt);
-    }
-    else {
-      net->FindMakePrjn(lay, lay, full_prjn,  ti_ctxt);
-    }
-    lay->SetUnitSpec(ti_uns);
-  }
-
-  net->Build();
-  return true;
-}
-
 bool LeabraWizard::DeepLeabra(LeabraNetwork* net, const String& lay_name_contains) {
   if(TestError(!net, "DeepLeabra", "must have basic constructed network first")) {
+    return false;
+  }
+  if(TestError(!net->IsBuiltIntact(), "DeepLeabra",
+               "network must be built -- we need connection info from it")) {
     return false;
   }
   FMSpec(LeabraUnitSpec, stduns, net, "LeabraUnitSpec_0");
@@ -563,7 +517,7 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, const String& lay_name_contain
 
   net->specs.UpdateAllSpecs();
 
-  net->Build();
+  // net->Build();
   // build first so we can use directional information from existing connections
 
   net->StructUpdate(true);
@@ -1081,6 +1035,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMChild(VTAUnitSpec, vtan_units, vtap_units, "VTAUnits_n");
   FMChild(DRNUnitSpec, drn_units, pvlv_units, "DRNUnits");
   FMChild(TANUnitSpec, tan_units, pvlv_units, "TANUnits");
+  tan_units->is_new = false;   // unused in base pvlv -- prevent prompt
   FMChild(LeabraUnitSpec, cem_units, pvlv_units, "CeMUnits");
   FMChild(LeabraUnitSpec, la_units, pvlv_units, "LatAmygUnits");
   FMChild(BasAmygUnitSpec, baapd1_units, pvlv_units, "BAAcqPosD1Units");
@@ -1099,6 +1054,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMChild(MSNUnitSpec, vsmnd1_units, vsmpd1_units, "VSMatrixNegD1Units");
 
   FMSpec(LeabraConSpec, pvlv_cons, pvlvspgp, "PVLVLrnCons");
+  pvlv_cons->is_new = false;   // unused parent -- prevent prompt
   FMChild(LatAmygConSpec, la_cons, pvlv_cons, "LatAmygCons");
   FMChild(BasAmygConSpec, baap_cons, pvlv_cons, "BasAmygCons_acq_pos");
   FMChild(BasAmygConSpec, baan_cons, baap_cons, "BasAmygCons_acq_neg");
@@ -1131,6 +1087,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMSpec(MarkerConSpec, marker_con, pvlvspgp, "PVLVMarkerCons");
 
   FMSpec(LeabraLayerSpec, laysp, pvlvspgp, "PVLVLayers");
+  laysp->is_new = false;   // unused parent -- prevent prompt
   FMChild(LeabraLayerSpec, pvsp, laysp, "PVLayers");
   FMChild(LeabraLayerSpec, dasp, laysp, "DALayers");
   FMChild(LeabraLayerSpec, amygsp, laysp, "AmygLayer");
@@ -2350,6 +2307,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   ////////////	UnitSpecs
 
   FMSpec(LeabraUnitSpec, pbwm_units, pbwmspgp, prefix + "Units");
+  pbwm_units->is_new = false;   // unused parent -- prevent prompt
   FMChild(MSNUnitSpec, matrix_go_units, pbwm_units, "MatrixGoUnits");
   FMChild(MSNUnitSpec, matrix_no_units, matrix_go_units, "MatrixNoGoUnits");
   FMChild(GPiInvUnitSpec, gpi_units, pbwm_units, "GPiUnits");
@@ -2365,12 +2323,14 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   ////////////	ConSpecs
 
   FMSpec(LeabraConSpec, bg_lrn_cons, pbwmspgp, "BgLrnCons");
+  bg_lrn_cons->is_new = false;   // unused parent -- prevent prompt
   FMChild(MSNConSpec, mtx_cons_go, bg_lrn_cons, "MatrixConsGo");
   FMChild(MSNConSpec, mtx_cons_no, mtx_cons_go, "MatrixConsNoGo");
   FMChild(MSNConSpec, mtx_cons_fm_pfc, mtx_cons_go, "MatrixConsFmPFC");
   FMChild(LeabraDeltaConSpec, to_tans, bg_lrn_cons, "ToTANs");
 
   FMSpec(LeabraConSpec, pfc_lrn_cons, pbwmspgp, "PfcLrnCons");
+  pfc_lrn_cons->is_new = false;   // unused parent -- prevent prompt
   FMChild(DeepCtxtConSpec, deep_ctxt, pfc_lrn_cons, "PFCDeepCtxt");
   FMChild(LeabraConSpec, to_pfc, pfc_lrn_cons, "ToPFC");
   FMChild(LeabraConSpec, pfc_fm_trc, pfc_lrn_cons, "PFCfmTRC");
@@ -2387,6 +2347,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   ////////////	LayerSpecs
 
   FMSpec(LeabraLayerSpec, pbwm_sp, pbwmspgp, prefix + "Layers");
+  pbwm_sp->is_new = false;   // unused parent -- prevent prompt
   FMChild(LeabraLayerSpec, matrix_sp, pbwm_sp, "MatrixLayer");
   FMChild(LeabraLayerSpec, patch_sp, pbwm_sp, "PatchLayer");
   FMChild(LeabraLayerSpec, gpi_sp, pbwm_sp, "GPiLayer");
@@ -2403,10 +2364,12 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMSpec(BgPfcPrjnSpec, bgpfcprjn, pbwmspgp, "BgPfcPrjn");
   FMChild(BgPfcPrjnSpec, bgpfcprjn_toout, bgpfcprjn, "BgPfcPrjnToOut");
   FMChild(BgPfcPrjnSpec, bgpfcprjn_tomnt, bgpfcprjn, "BgPfcPrjnToMnt");
+  bgpfcprjn_tomnt->is_new = false;   // todo: why not used??
 
   FMSpec(TiledGpRFPrjnSpec, deep_prjn, pbwmspgp, "DeepToTRC");
 
   FMSpec(TesselPrjnSpec, tessel1to1, pbwmspgp, "TesselOneToOne");
+  tessel1to1->is_new = false;   // todo: why not used??
 
   // todo: include a TesselOneToOne 
   

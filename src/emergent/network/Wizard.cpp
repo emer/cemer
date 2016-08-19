@@ -19,7 +19,6 @@
 #include <DataTable>
 #include <Program>
 #include <StdNetWizDlg>
-#include <RetinaProc>
 #include <LayerWriter>
 #include <Loop>
 #include <ProgramCall>
@@ -79,8 +78,7 @@ Selecting these options in sequence will configure a standard project to the poi
 String Wizard::RenderWizDoc_network() {
   return String("\n== Network ==\n\
 * [[<this>.StdNetwork()|Standard Network]] -- generate or configure a standard network, specifying number of layers, layer names, sizes, types, and connectivity.\n\
-\n=== Specialized Networks ===\n\
-* [[<this>.RetinaProcNetwork()|Retina Processing Network]] -- configures input layers of network to accept image processing inputs ('''NOTE: currently nonfunctional''').\n");
+\n=== Specialized Networks ===\n");
 }
 
 String Wizard::RenderWizDoc_data() {
@@ -131,45 +129,6 @@ bool Wizard::StdNetwork() {
   return rval;
 }
 
-bool Wizard::RetinaProcNetwork(RetinaProc* retina_spec, Network* net) {
-  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  if(!net) {
-    if(TestError(!proj, "RetinaProcNetwork", "network is NULL and could not find project owner to make a new one -- aborting!")) return false;
-    net = proj->GetNewNetwork();
-    if(TestError(!net, "RetinaProcNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
-  }
-  if(TestError(!retina_spec, "RetinaProcNetwork", "retina_spec is NULL -- you need to create and configure this in advance, as it is then used to configure the network!")) return false;
-
-  if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::RetinaProcNetwork before -- actually saves network specifically");
-  }
-
-  // todo: fixme
-  net->StructUpdate(true);
-  for(int i=0;i<retina_spec->regions.size; i++) {
-    VisRegionSpecBase* sp = retina_spec->regions[i];
-//     Layer* on_lay = net->FindMakeLayer(sp->name + "_on");
-//     on_lay->un_geom.x = sp->spacing.output_size.x;
-//     on_lay->un_geom.y = sp->spacing.output_size.y;
-//     on_lay->un_geom.n = sp->spacing.output_units;
-//     on_lay->layer_type = Layer::INPUT;
-//     Layer* off_lay = net->FindMakeLayer(sp->name + "_off");
-//     off_lay->un_geom.x = sp->spacing.output_size.x;
-//     off_lay->un_geom.y = sp->spacing.output_size.y;
-//     off_lay->un_geom.n = sp->spacing.output_units;
-//     off_lay->layer_type = Layer::INPUT;
-  }
-  net->StructUpdate(false);
-  if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall_gui(net, "BrowserExpandAll");
-    tabMisc::DelayedFunCall_gui(net, "BrowserSelectMe");
-  }
-  if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::RetinaProcNetwork after -- actually saves network specifically");
-  }
-
-  return true;
-}
 
 //////////////////////////////////
 //      Enviro Wizard           //
