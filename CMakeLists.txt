@@ -291,16 +291,26 @@ install(FILES ${PLT}/CMakeLists.txt ${PLT}/NOBUILD ${PLT}/configure
 )
 
 if (WIN32)
-  file(GLOB OUR_3RDPARTY_FILES 
-    "${EMER_3RDPARTY_DIR}/bin/*.dll"
+  if ("${EMER_MISC_LIBS_DIR}" STREQUAL "")
+    message (FATAL_ERROR "EMER_MISC_LIBS_DIR environment variable is not defined!! it must be -- typically C:\EmerMiscLibs")
+  endif()
+  if ("${EMER_SVN_LIBS_DIR}" STREQUAL "")
+    message (FATAL_ERROR "EMER_SVN_LIBS_DIR environment variable is not defined!! it must be -- typically C:\Subversion")
+  endif()
+  if ("${COINDIR}" STREQUAL "")
+    message (FATAL_ERROR "COINDIR environment variable is not defined!! it must be -- typically C:\Coin\4.0.0.a")
+  endif()
+  
+  file(GLOB OUR_MISC_LIBS_FILES 
+    "${EMER_MISC_LIBS_DIR}/bin/*.dll"
+    "${EMER_SVN_LIBS_DIR}/bin/*.dll"
     "${COINDIR}/bin/*.dll"
     "${QT_BINARY_DIR}/*.dll"
-    "${EMER_SVN_LIBS_DIR}/bin/*.dll"
   )
-  install(FILES ${OUR_3RDPARTY_FILES}
+  install(FILES ${OUR_MISC_LIBS_FILES}
     DESTINATION bin
   )
-  install(DIRECTORY "${EMER_3RDPARTY_DIR}"
+  install(DIRECTORY "${EMER_MISC_LIBS_DIR}"
     DESTINATION .
   )
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta_gui/images/emergent.ico
