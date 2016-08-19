@@ -80,7 +80,7 @@ String StaticMethodCall::GetDisplayName() const {
   
   if (!method) {
     rval += object_type->name + "::";
-    rval += "      // to look up methods place cursor after :: and press Control + 'l'";
+    rval += "      // to lookup methods place cursor after :: and press Control + 'l' (lowercase 'L')";
     return rval;
   }
 
