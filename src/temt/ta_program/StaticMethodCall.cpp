@@ -18,6 +18,7 @@
 #include <taMisc>
 #include <MethodDef>
 #include <tabMisc>
+#include <taiWidgetMethodDefChooser>
 
 TA_BASEFUNS_CTORS_DEFN(StaticMethodCall);
 
@@ -149,5 +150,22 @@ bool StaticMethodCall::CvtFmCode(const String& code) {
   String args = trim(code_copy.after('('));
   args = trim(args.before(')', -1));
   meth_args.ParseArgString(args);
+  return true;
+}
+
+bool StaticMethodCall::ChooseMe() {
+  if (this->GetTypeDef() == &TA_StaticMethodCall) return true;
+  
+  // go ahead - must be specific type like Random or taMath
+  bool keep_choosing = false;
+  taiWidgetMethodDefChooser* chooser =  new taiWidgetMethodDefChooser(this->object_type, NULL, NULL, NULL, 0, "");
+  chooser->SetTitleText("Choose the method to cal");
+  chooser->GetImage((MethodDef*)NULL, this->object_type);
+  bool okc = chooser->OpenChooser();
+  if(okc && chooser->md()) {
+    method = chooser->md();
+    UpdateAfterEdit();
+  }
+  delete chooser;
   return true;
 }

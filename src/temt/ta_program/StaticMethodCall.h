@@ -48,6 +48,9 @@ public:
   String       GetDisplayName() const override;
   String       GetTypeDecoKey() const override { return "Function"; }
   String       GetToolbarName() const override { return "static()"; }
+  
+  bool        ChooseMe() override;
+  // #IGNORE pop chooser for selecting a method
 
   PROGEL_SIMPLE_BASEFUNS(StaticMethodCall);
 protected:
