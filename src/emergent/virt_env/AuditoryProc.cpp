@@ -20,6 +20,8 @@
 #include <taProject>
 #include <taMisc>
 
+#include <float_Matrix>
+
 TA_BASEFUNS_CTORS_DEFN(AudInputSpec);
 TA_BASEFUNS_CTORS_DEFN(AudDftSpec);
 TA_BASEFUNS_CTORS_DEFN(MelFBankSpec);
@@ -408,9 +410,9 @@ bool AuditoryProc::InitFilters_Mel() {
     float ml = mel_fbank.lo_mel + (float)idx*mel_inc;
     float hz = mel_fbank.MelToFreq(ml);
     int bin = mel_fbank.FreqToBin(hz, dft_use, input.sample_rate);
-    mel_pts_mel[idx] = ml;
-    mel_pts_hz[idx] = hz;
-    mel_pts_bin[idx] = bin;
+    mel_pts_mel.FastEl_Flat(idx) = ml;
+    mel_pts_hz.FastEl_Flat(idx) = hz;
+    mel_pts_bin.FastEl_Flat(idx) = bin;
   }
 
   mel_filt_max_bins = mel_pts_bin[mel_n_filters_eff-1] - mel_pts_bin[mel_n_filters_eff-3] + 1;

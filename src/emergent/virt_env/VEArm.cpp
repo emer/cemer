@@ -15,14 +15,15 @@
 
 #include "VEArm.h"
 #include <VEWorld>
+#include <VELinearMuscle>
+#include <VEHillMuscle>
+
+#include <float_Matrix>
 #include <taMath_float>
 #include <DataTable>
 #include <DataCol>
 #include <Random>
 #include <Program>
-
-#include <VELinearMuscle>
-#include <VEHillMuscle>
 
 #include <taMisc>
 
@@ -481,10 +482,10 @@ void VEArm::InitMuscles() {
 
     for(int i=0; i<n_musc; i++) {
       AngToLengths(tlens,alphaM[i],betaM[i],gammaM[i],deltaM[i]);
-      max_lens.Set(tlens.FastEl1d(i)+0.003f,i);
+      max_lens.Set(tlens.FastEl_Flat(i)+0.003f,i);
 
       AngToLengths(tlens,alpham[i],betam[i],gammam[i],deltam[i]);
-      min_lens.Set(tlens.FastEl1d(i)-0.004f,i);
+      min_lens.Set(tlens.FastEl_Flat(i)-0.004f,i);
     }
   } else { // musc_geo == NEW_GEO
     // these are the angles at which muscles attain their maximum length for right arms
@@ -510,10 +511,10 @@ void VEArm::InitMuscles() {
 
     for(int i=0; i<n_musc; i++) {
       AngToLengths(tlens,alphaM[i],betaM[i],gammaM[i],deltaM[i]);
-      max_lens.Set(tlens.FastEl1d(i)+0.003f,i);
+      max_lens.Set(tlens.FastEl_Flat(i)+0.003f,i);
 
       AngToLengths(tlens,alpham[i],betam[i],gammam[i],deltam[i]);
-      min_lens.Set(tlens.FastEl1d(i)-0.003f,i);
+      min_lens.Set(tlens.FastEl_Flat(i)-0.003f,i);
     }
   }
 
@@ -527,7 +528,7 @@ void VEArm::InitMuscles() {
   // Initializing the spans vector
   spans.SetGeom(1,n_musc);
   for(int i=0; i<n_musc; i++) {
-    spans.Set(1.0f/(max_lens.FastEl1d(i)-min_lens.FastEl1d(i)),i);
+    spans.Set(1.0f/(max_lens.FastEl_Flat(i)-min_lens.FastEl_Flat(i)),i);
   }
 }
 
@@ -1041,8 +1042,8 @@ bool VEArm::SetPose_impl() {
     taMath_float::mat_mult(&rot_elb_axis, &R, &elb_axis);
     
     humerus->RotateEulerZXZ(init_angs.gamma,init_angs.beta,init_angs.alpha,false); // a rotation on the current quaternion
-    humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1),
-                       RotHumCM.FastEl1d(2)+(alens.humerus_mid),false);
+    humerus->Translate(RotHumCM.FastEl_Flat(0),RotHumCM.FastEl_Flat(1),
+                       RotHumCM.FastEl_Flat(2)+(alens.humerus_mid),false);
   
     float UlnaCM_f[] = {0,0,-(alens.ulna_mid + alens.elbow_gap_mid)};  // Ulna 'CM' with origin at elbow
     float handCM_f[] = {0,0,-alens.Lf};  // Hand 'CM' with origin at elbow
@@ -1070,8 +1071,8 @@ bool VEArm::SetPose_impl() {
     //Rot1UlnaCM.Print(ruout);
     //taMisc::Info("rotated ulna before translation, origin at elbow:\n", ruout);
 
-    Rot1UlnaCM.Set(Rot1UlnaCM.FastEl1d(2)-alens.La,2); // setting origin at shoulder
-    Rot1handCM.Set(Rot1handCM.FastEl1d(2)-alens.La,2); // setting origin at shoulder
+    Rot1UlnaCM.Set(Rot1UlnaCM.FastEl_Flat(2)-alens.La,2); // setting origin at shoulder
+    Rot1handCM.Set(Rot1handCM.FastEl_Flat(2)-alens.La,2); // setting origin at shoulder
 
     //String rudout;
     //Rot1UlnaCM.Print(rudout);
@@ -1085,22 +1086,22 @@ bool VEArm::SetPose_impl() {
     ulna->RotateEulerZXZ(0,init_angs.delta,0,false);  
     ulna->RotateEulerZXZ(init_angs.gamma,init_angs.beta,init_angs.alpha,false);  
 
-    ulna->Translate(Rot2UlnaCM.FastEl1d(0),Rot2UlnaCM.FastEl1d(1),
-                    Rot2UlnaCM.FastEl1d(2)+alens.humerus+
+    ulna->Translate(Rot2UlnaCM.FastEl_Flat(0),Rot2UlnaCM.FastEl_Flat(1),
+                    Rot2UlnaCM.FastEl_Flat(2)+alens.humerus+
                     alens.ulna_mid+alens.elbow_gap,false);
     
-    hand->Translate(Rot2handCM.FastEl1d(0)+should_loc.x,
-                    Rot2handCM.FastEl1d(1)+should_loc.y,
-                    Rot2handCM.FastEl1d(2)+should_loc.z,false,true); // NOT init, absolute position
+    hand->Translate(Rot2handCM.FastEl_Flat(0)+should_loc.x,
+                    Rot2handCM.FastEl_Flat(1)+should_loc.y,
+                    Rot2handCM.FastEl_Flat(2)+should_loc.z,false,true); // NOT init, absolute position
 
     hand->RotateEulerZXZ(0,init_angs.delta,0,false);
     hand->RotateEulerZXZ(init_angs.gamma,init_angs.beta,init_angs.alpha,false);
     
     //------- calculating and updating the joint values --------
     // setting the axes for the elbow joint
-    elbow->axis.x = rot_elb_axis.FastEl1d(0);
-    elbow->axis.y = rot_elb_axis.FastEl1d(1);
-    elbow->axis.z = rot_elb_axis.FastEl1d(2);
+    elbow->axis.x = rot_elb_axis.FastEl_Flat(0);
+    elbow->axis.y = rot_elb_axis.FastEl_Flat(1);
+    elbow->axis.z = rot_elb_axis.FastEl_Flat(2);
     elbow->pos = init_angs.delta;
   } // up_axis == Z
 
@@ -1133,8 +1134,8 @@ bool VEArm::SetPose_impl() {
     taMath_float::mat_mult(&rot_elb_loc, &R, &elbow_loc);
     taMath_float::mat_mult(&rot_elb_axis, &R, &elb_axis);    
 
-    humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1)+(alens.humerus_mid),
-                       RotHumCM.FastEl1d(2),false); // cur, not init
+    humerus->Translate(RotHumCM.FastEl_Flat(0),RotHumCM.FastEl_Flat(1)+(alens.humerus_mid),
+                       RotHumCM.FastEl_Flat(2),false); // cur, not init
 
     humerus->RotateEulerYXY(init_angs.alpha,init_angs.beta,init_angs.gamma,false); // NOT init
 
@@ -1165,8 +1166,8 @@ bool VEArm::SetPose_impl() {
     //Rot1UlnaCM.Print(ruout);
     // taMisc::Info("rotated ulna before translation:\n", ruout);
 
-    Rot1UlnaCM.Set(Rot1UlnaCM.FastEl1d(1)-alens.La,1); // setting origin at shoulder
-    Rot1handCM.Set(Rot1handCM.FastEl1d(1)-alens.La,1); // setting origin at shoulder
+    Rot1UlnaCM.Set(Rot1UlnaCM.FastEl_Flat(1)-alens.La,1); // setting origin at shoulder
+    Rot1handCM.Set(Rot1handCM.FastEl_Flat(1)-alens.La,1); // setting origin at shoulder
 
     //String rudout;
     //Rot1UlnaCM.Print(rudout);
@@ -1177,16 +1178,16 @@ bool VEArm::SetPose_impl() {
     taMath_float::mat_mult(&Rot2UlnaCM, &R, &Rot1UlnaCM); // applying shoulder rotation
     taMath_float::mat_mult(&Rot2handCM, &R, &Rot1handCM); // applying shoulder rotation
 
-    ulna->Translate(Rot2UlnaCM.FastEl1d(0),
-                    Rot2UlnaCM.FastEl1d(1)+alens.humerus+alens.elbow_gap+
-                    alens.ulna_mid,Rot2UlnaCM.FastEl1d(2),false); // NOT init
+    ulna->Translate(Rot2UlnaCM.FastEl_Flat(0),
+                    Rot2UlnaCM.FastEl_Flat(1)+alens.humerus+alens.elbow_gap+
+                    alens.ulna_mid,Rot2UlnaCM.FastEl_Flat(2),false); // NOT init
 
     ulna->RotateEulerYXY(0,-init_angs.delta,0, false); // NOT init
     ulna->RotateEulerYXY(init_angs.alpha,init_angs.beta,init_angs.gamma, false); // NOT init
     
-    hand->Translate(Rot2handCM.FastEl1d(0)+should_loc.x,
-                    Rot2handCM.FastEl1d(1)+should_loc.y,
-                    Rot2handCM.FastEl1d(2)+should_loc.z,false,true); // NOT init, absolute position
+    hand->Translate(Rot2handCM.FastEl_Flat(0)+should_loc.x,
+                    Rot2handCM.FastEl_Flat(1)+should_loc.y,
+                    Rot2handCM.FastEl_Flat(2)+should_loc.z,false,true); // NOT init, absolute position
 
     hand->RotateEulerYXY(0,-init_angs.delta,0,false); // NOT init
     hand->RotateEulerYXY(init_angs.alpha,init_angs.beta,init_angs.gamma,false);
@@ -1194,9 +1195,9 @@ bool VEArm::SetPose_impl() {
     //-------- calculating and updating the joint values --------
     // setting the axes for the elbow joint
     elbow->pos = init_angs.delta;
-    elbow->axis.x = rot_elb_axis.FastEl1d(0);
-    elbow->axis.y = rot_elb_axis.FastEl1d(1);
-    elbow->axis.z = rot_elb_axis.FastEl1d(2);
+    elbow->axis.x = rot_elb_axis.FastEl_Flat(0);
+    elbow->axis.y = rot_elb_axis.FastEl_Flat(1);
+    elbow->axis.z = rot_elb_axis.FastEl_Flat(2);
   } // up_axis == Y
 
   // VERY IMPORTANT:
@@ -1658,10 +1659,10 @@ bool VEArm::ComputeStim_PID() {
   err_drv_dra += err_drv * pid.dra_dt;
   if(pid.max_err > 0.0f) {
     for(int i=0; i<n_musc; i++) {
-      float er = err_len.FastEl1d(i);
+      float er = err_len.FastEl_Flat(i);
       if(er > pid.max_err) er = pid.max_err;
       else if(er < -(pid.max_err)) er = -(pid.max_err);
-      stims_p.FastEl1d(i) = er * pid.p;
+      stims_p.FastEl_Flat(i) = er * pid.p;
     }
   }
   else {
@@ -1807,8 +1808,8 @@ void VEArm::ComputeIOErr() {
   del_lens_err_dt /= world_step;
 
   for(int i=0; i<n_musc; i++) {
-    float ne = del_lens_err_dt.FastEl1d(i);
-    float& io = musc_io_err.FastEl1d(i);
+    float ne = del_lens_err_dt.FastEl_Flat(i);
+    float& io = musc_io_err.FastEl_Flat(i);
     if(hand_io_err) {
       if(ne >= io_err.musc_thr) {
         io = 1.0f;
@@ -2279,7 +2280,7 @@ void VEArm::Vels(float_Matrix& vel) {
 void VEArm::NormVels(float_Matrix& vel_nrm, const float_Matrix& vel) {
   vel_nrm.SetGeom(1, n_musc);       // far better to enforce geom than warn about it
   for(int i=0; i<n_musc; i++) {
-    vel_nrm.FastEl1d(i) = taMath_float::logistic(vel.FastEl1d(i), gains.musc_vel_norm);
+    vel_nrm.FastEl_Flat(i) = taMath_float::logistic(vel.FastEl_Flat(i), gains.musc_vel_norm);
   }
 }
 
@@ -2891,8 +2892,8 @@ void VEArm::ReadArmDelProData() {
   del_vels_norm.SetGeom(1,n_musc);
 
   for(int i=0; i<n_musc; i++) {
-    del_lens_norm.FastEl1d(i) = dc_l->GetValAsFloatM(-delays.pro_st,i); // access fm back
-    del_vels_norm.FastEl1d(i) = dc_v->GetValAsFloatM(-delays.pro_st,i);
+    del_lens_norm.FastEl_Flat(i) = dc_l->GetValAsFloatM(-delays.pro_st,i); // access fm back
+    del_vels_norm.FastEl_Flat(i) = dc_v->GetValAsFloatM(-delays.pro_st,i);
   }
 }
 
@@ -2940,8 +2941,8 @@ void VEArm::ReadArmDelEffData() {
   del_gains.SetGeom(1,n_musc);
 
   for(int i=0; i<n_musc; i++) {
-    del_stims.FastEl1d(i) = dc_s->GetValAsFloatM(-delays.eff_st,i);
-    del_gains.FastEl1d(i) = dc_g->GetValAsFloatM(-delays.eff_st,i);
+    del_stims.FastEl_Flat(i) = dc_s->GetValAsFloatM(-delays.eff_st,i);
+    del_gains.FastEl_Flat(i) = dc_g->GetValAsFloatM(-delays.eff_st,i);
   }
 }
 
