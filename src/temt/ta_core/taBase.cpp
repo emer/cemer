@@ -1384,6 +1384,9 @@ taBase* taBase::GetScopeObj(TypeDef* scp_tp) {
 
 bool taBase::SameScope(taBase* ref_obj, TypeDef* scp_tp) {
   if(GetOwner() == NULL) return false; // un-owned never in scope
+
+  if(GetOwner() == &tabMisc::root->templates) // specifically exclude templates!
+    return false;
   
   if (!ref_obj)
     return true;
