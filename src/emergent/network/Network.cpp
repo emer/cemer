@@ -483,9 +483,9 @@ void Network::Build() {
 
   FreeUnitConGpThreadMem();     // free any and all existing memory!  must still have built params from before!
 
-  //  CheckSpecs();
   BuildLayers(); // note: for Area constructs
   BuildPrjns(); // note: for Area constructs
+  CheckSpecs();
   BuildUnits();
 
   SyncSendPrjns();
