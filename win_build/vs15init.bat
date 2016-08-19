@@ -45,6 +45,6 @@ doskey configure_ide_dbg=cmake %SRC_DIR% -G "Visual Studio 14 Win64" -Wno-dev -D
 doskey vside="C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe" Emergent.sln
 
 :: set the global path to include all our stuff -- this path is also used to find .dll's so it is like LD_LIBRARY_PATH
-path C:\Program Files (x86)\CMake_3.3.2\bin;C:\Subversion;C:\jom_1_1_1;C:\cygwin64\bin;%QTDIR%\bin;%COINDIR%\bin;%EMER_MISC_LIBS_DIR%\bin;%EMER_SVN_LIBS_DIR%;%EMER_SVN_LIBS_DIR%\bin;;C:\Windows\system32;%PATH%
+path C:\Program Files (x86)\CMake\bin;C:\Subversion;C:\jom_1_1_1;C:\cygwin64\bin;%QTDIR%\bin;%COINDIR%\bin;%EMER_MISC_LIBS_DIR%\bin;%EMER_SVN_LIBS_DIR%;%EMER_SVN_LIBS_DIR%\bin;;C:\Windows\system32;%PATH%
 
 cd %SRC_DIR%
