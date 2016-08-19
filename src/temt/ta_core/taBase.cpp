@@ -1227,6 +1227,8 @@ taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) 
     return NULL;
   }
 
+  // taMisc::DebugInfo("ffp:", effective_path.from(start));
+  
   taBase* rval = NULL;
   bool ptrflag = false;
   int length = effective_path.length();
@@ -1253,9 +1255,15 @@ taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) 
     MemberDef* md;
     void* tmp_ptr = FindMembeR(el_path, md);
     ret_md = md;                // default
+    // if(md) {
+    //   taMisc::DebugInfo("elp:", el_path, String(tmp_ptr), md->name);
+    // }
+    // else {
+    //   taMisc::DebugInfo("elp:", el_path, String(tmp_ptr));
+    // }      
     if (tmp_ptr && md && md->type->IsPointer()) {
-      if (md->type->IsTaBase() || md->type->IsClass()) {
-        return NULL;
+      if (!md->type->IsTaBase() && md->type->IsClass()) {
+        return NULL;            // must be tabase
       }
       taBase* mbr = (taBase*)tmp_ptr;
       rval = mbr;
@@ -1282,14 +1290,23 @@ taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) 
       else {
         rval = mbr;             // that's all folks..
         ret_md = md;
+        // if(ret_md) {
+        //   taMisc::DebugInfo("done:", String(rval), ret_md->name);
+        // }
+        // else {
+        //   taMisc::DebugInfo("done:", String(rval));
+        // }
       }
     }
     else if((el_path == "root") && (delim_pos < length)) {
       start = next_pos; // skip this element since it must be us
       continue;
     }
-    if((ptrflag) && (rval != NULL))
-      return *((taBase* *)rval);
+    if((ptrflag) && (rval != NULL)) {
+      taBase* prval = *((taBase* *)rval);
+      // taMisc::DebugInfo("ptr non-null:", String(rval), String(prval));
+      return prval;
+    }
     return rval;
   }
   return NULL;

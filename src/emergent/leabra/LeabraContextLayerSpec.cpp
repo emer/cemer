@@ -77,7 +77,7 @@ void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u,
       return;
     }
     LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(0, net);
-    uv->ext = updt.fm_prv * uv->act_p + updt.fm_hid * su->act_p; // compute new value
+    uv->ext = updt.fm_prv * uv->act_q0 + updt.fm_hid * su->act_q0; // compute new value
   }
   uv->SetExtFlag(UnitVars::EXT);
   ((LeabraUnitSpec*)uv->unit_spec)->Compute_HardClamp(uv, net, thr_no);

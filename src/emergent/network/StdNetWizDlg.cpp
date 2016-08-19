@@ -95,6 +95,8 @@ bool StdNetWizDlg::DoDialog() {
   String curow;
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   String mypath = GetPath(NULL, proj);  // stop at proj - just use path from wizards on
+  if(mypath.startsWith("*(."))
+    mypath = String("*(") + mypath.after("*(.");
   
   Dlg1 = new taGuiDialog;
   taBase::Own(Dlg1, this);

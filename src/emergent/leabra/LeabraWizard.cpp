@@ -801,6 +801,7 @@ bool LeabraWizard::SRNContext(LeabraNetwork* net, const String& lay_name_contain
     net->FindMakePrjn(ctxt, lay, otop, marker); // one-to-one into the ctxt layer
     net->FindMakePrjn(lay, ctxt);       // std prjn back into the hidden from context
   }
+  net->StructUpdate(false);
   net->Build();
   return true;
 }
