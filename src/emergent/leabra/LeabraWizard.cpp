@@ -418,9 +418,12 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, const String& lay_name_contain
   FMSpec(FullPrjnSpec, full_prjn, net, "FullPrjnSpec_0");
   FMSpec(GpOneToOnePrjnSpec, gp_one_to_one, net, "GpOneToOne");
   FMSpec(OneToOnePrjnSpec, one_to_one, net, "OneToOne");
+  one_to_one->is_new = false;   // could not be used
   FMSpec(TiledGpRFPrjnSpec, deep_prjn, net, "DeepToTRC");
   FMSpec(TiledGpRFPrjnSpec, trc_prjn, net, "RF3x3skp1");
+  trc_prjn->is_new = false;   // could not be used
   FMSpec(TiledGpRFPrjnSpec, ctxt_prjn, net, "RF5x5skp1");
+  ctxt_prjn->is_new = false;   // could not be used
 
   stduns->deep.on = true;
   
@@ -771,30 +774,33 @@ bool LeabraWizard::DeepLeabraCopy(LeabraNetwork* net, const String& lay_name_con
 //                      SRN Context
 ///////////////////////////////////////////////////////////////
 
-bool LeabraWizard::SRNContext(LeabraNetwork* net) {
+bool LeabraWizard::SRNContext(LeabraNetwork* net, const String& lay_name_contains) {
   if(TestError(!net, "SRNContext", "must have basic constructed network first")) {
     return false;
   }
   FMSpec(OneToOnePrjnSpec, otop, net, "CtxtPrjn");
+  FMSpec(MarkerConSpec, marker, net, "CtxtMarkerCons");
   FMSpec(LeabraContextLayerSpec, ctxts, net, "CtxtLayerSpec");
 
   net->specs.UpdateAllSpecs();
   
-  if((otop == NULL) || (ctxts == NULL)) {
-    return false;
+  net->StructUpdate(true);
+  for(int li=net->layers.leaves-1; li >= 0; li--) {
+    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
+    if(lay->layer_type != Layer::HIDDEN) continue;
+    if(lay_name_contains.nonempty() && !lay->name.contains(lay_name_contains)) continue;
+
+    LeabraLayer* ctxt = (LeabraLayer*)net->FindMakeLayer(lay->name + "_ctxt");
+    ctxt->un_geom = lay->un_geom;
+    ctxt->unit_groups = lay->unit_groups;
+    ctxt->gp_geom = lay->gp_geom;
+    net->layers.MoveAfter(lay, ctxt);
+    ctxt->PositionBehind(lay, 2);
+    ctxt->SetUnitSpec(lay->GetUnitSpec());
+    ctxt->SetLayerSpec(ctxts);
+    net->FindMakePrjn(ctxt, lay, otop, marker); // one-to-one into the ctxt layer
+    net->FindMakePrjn(lay, ctxt);       // std prjn back into the hidden from context
   }
-
-  LeabraLayer* hidden = (LeabraLayer*)net->FindLayer("Hidden");
-  LeabraLayer* ctxt = (LeabraLayer*)net->FindMakeLayer("Context");
-
-  if((hidden == NULL) || (ctxt == NULL)) return false;
-
-  ctxt->SetLayerSpec(ctxts);
-  ctxt->un_geom = hidden->un_geom;
-
-  net->layers.MoveAfter(hidden, ctxt);
-  net->FindMakePrjn(ctxt, hidden, otop); // one-to-one into the ctxt layer
-  net->FindMakePrjn(hidden, ctxt);       // std prjn back into the hidden from context
   net->Build();
   return true;
 }
@@ -3334,18 +3340,22 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   // FMChild(LeabraUnitSpec, dg_units, hip_units, "DGUnits");
 
   FMSpec(HippoEncoderConSpec, ecca1_cons, hipspec, "EC_CA1ConSpecs");
+  ecca1_cons->is_new = false;   // parent, not used
   FMChild(HippoEncoderConSpec, ecin_ca1_cons, ecca1_cons, "ECin_CA1");
   FMChild(HippoEncoderConSpec, ca1_ecout_cons, ecca1_cons, "CA1_ECout");
   FMChild(HippoEncoderConSpec, ecout_ca1_cons, ecca1_cons, "ECout_CA1");
-  FMChild(HippoEncoderConSpec, ecin_ecout_cons, ecca1_cons, "ECin_ECout");
   FMChild(HippoEncoderConSpec, ecout_ecin_cons, ecca1_cons, "ECout_ECin");
   FMChild(LeabraConSpec, in_ecin_cons, ecca1_cons, "Input_ECin");
+  in_ecin_cons->is_new = false;   // not yet
   FMChild(LeabraConSpec, ecout_out_cons, ecca1_cons, "ECout_Output");
+  ecout_out_cons->is_new = false;   // not yet
   FMChild(LeabraConSpec, tosubic_cons, ecca1_cons, "ToSubic");
+  tosubic_cons->is_new = false;   // not used
   FMChild(MarkerConSpec, marker_cons, ecca1_cons, "HippoMarker");
 
   // connection specs
   FMSpec(CHLConSpec, hip_cons, hipspec, "HippoConSpecs");
+  hip_cons->is_new = false;   // parent, not used
   FMChild(LeabraBiasSpec, hip_bias, hip_cons, "HippoBiasSpec");
   FMChild(CHLConSpec, ppath_cons, hip_cons, "PerfPath");
   FMChild(CHLConSpec, mossy_cons, hip_cons, "Mossy");
@@ -3354,6 +3364,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
 
   // layer specs
   FMSpec(LeabraLayerSpec, hip_laysp, hipspec, "HippoLayerSpec");
+  hip_laysp->is_new = false;   // parent, not used
   FMChild(LeabraLayerSpec, ecout_laysp, hip_laysp, "ECout");
   FMChild(LeabraLayerSpec, ecin_laysp, ecout_laysp, "ECin");
   FMChild(LeabraLayerSpec, dg_laysp, hip_laysp, "DG");
@@ -3468,15 +3479,6 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   // CA1_ECout, abs = 4
   ca1_ecout_cons->SetUnique("wt_scale", true);
   ca1_ecout_cons->wt_scale.abs = 4.0f;
-
-  // ECin_ECout mean/var = .9, .01, rel = 0, lrate = 0
-  ecin_ecout_cons->SetUnique("wt_scale", true);
-  ecin_ecout_cons->wt_scale.rel = 0.0f;
-  ecin_ecout_cons->SetUnique("lrate", true);
-  ecin_ecout_cons->lrate = 0.0f;
-  ecin_ecout_cons->SetUnique("rnd", true);
-  ecin_ecout_cons->rnd.mean = 0.9f;
-  ecin_ecout_cons->rnd.var = 0.01f;
 
   ecout_ecin_cons->SetUnique("lrate", true);
   ecout_ecin_cons->lrate = 0.0f;

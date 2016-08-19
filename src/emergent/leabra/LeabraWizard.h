@@ -49,8 +49,8 @@ public:
                                LeabraLayer* source_deep_layer);
   // #MENU_BUTTON #PROJ_SCOPE_2 configure DeepLeabra layer(s) with name containing given string, copying specs from given source deep layer which is already configured -- creates corresponding deep cortical layer and thalamic TRC layers for predictive auto-encoder learning, driven from deep raw driver projections coming from lower layers
   
-  virtual bool	SRNContext(LeabraNetwork* net);
-  // #MENU_BUTTON configure a simple-recurrent-network context layer in the network
+  virtual bool	SRNContext(LeabraNetwork* net, const String& lay_name_contains = "");
+  // #MENU_BUTTON configure a simple-recurrent-network context layer in the network -- specify name for layers to create context of -- if empty, will do all HIDDEN layers
 
   virtual bool	UnitInhib(LeabraNetwork* net, int n_inhib_units=10);
   // #MENU_BUTTON configures unit-based inhibition for all layers in the network
