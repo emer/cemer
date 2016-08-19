@@ -14,7 +14,7 @@ call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd6
 :: for unix shell users
 doskey ls=dir $*
 doskey cp=copy $*
-doskey del=rm $*
+doskey rm=del $*
 doskey rmr=rmdir /s $*
 doskey mv=move $*
 
