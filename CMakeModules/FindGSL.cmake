@@ -12,8 +12,7 @@ FIND_PATH(GSL_INCLUDE_DIR gsl/gsl_matrix.h
         /usr/local/include
 	/opt/local/include
     $ENV{INCLUDE}
-    ${EMER_3RDPARTY_DIR}/include
-    ${EMERGENTDIR}/3rdparty/include
+    ${EMER_MISC_LIBS_DIR}/include
 )
 
 # NOTE: General FIND_LIBRARY not working for some reason on Windows, but we want our own prereq
@@ -22,21 +21,17 @@ FIND_PATH(GSL_INCLUDE_DIR gsl/gsl_matrix.h
 if (WIN32)
   if (CMAKE_BUILD_TYPE MATCHES "Debug")
     FIND_LIBRARY(GSL_GSL_LIBRARY NAMES gsl_d PATHS
-      ${EMER_3RDPARTY_DIR}/lib 
-      ${EMERGENTDIR}/3rdparty/lib
+      ${EMER_MISC_LIBS_DIR}/lib 
     )
     FIND_LIBRARY(GSL_CBLAS_LIBRARY NAMES cblas_d PATHS
-      ${EMER_3RDPARTY_DIR}/lib 
-      ${EMERGENTDIR}/3rdparty/lib
+      ${EMER_MISC_LIBS_DIR}/lib 
     )
   else (CMAKE_BUILD_TYPE MATCHES "Debug")
     FIND_LIBRARY(GSL_GSL_LIBRARY NAMES gsl PATHS
-      ${EMER_3RDPARTY_DIR}/lib 
-      ${EMERGENTDIR}/3rdparty/lib
+      ${EMER_MISC_LIBS_DIR}/lib 
     )  
     FIND_LIBRARY(GSL_CBLAS_LIBRARY NAMES cblas PATHS
-      ${EMER_3RDPARTY_DIR}/lib 
-      ${EMERGENTDIR}/3rdparty/lib
+      ${EMER_MISC_LIBS_DIR}/lib 
     )
   endif (CMAKE_BUILD_TYPE MATCHES "Debug")
 else (WIN32)
@@ -44,14 +39,12 @@ else (WIN32)
     /usr/lib
     /usr/local/lib
     /opt/local/lib
-    ${EMERGENTDIR}/3rdparty/lib
   ) 
 
   FIND_LIBRARY(GSL_CBLAS_LIBRARY NAMES cblas gslcblas PATHS
     /usr/lib
     /usr/local/lib
     /opt/local/lib
-    $ENV{EMERGENTDIR}/3rdparty/lib
   ) 
  endif (WIN32)
 

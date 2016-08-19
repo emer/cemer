@@ -9,20 +9,17 @@ FIND_PATH(ODE_INCLUDE_DIR ode/ode.h
         /usr/local/include
 	/opt/local/include
     $ENV{INCLUDE}
-    ${EMER_3RDPARTY_DIR}/include
-    ${EMERGENTDIR}/3rdparty/include
+    ${EMER_MISC_LIBS_DIR}/include
 )
 
 if (WIN32)
   if (CMAKE_BUILD_TYPE MATCHES "Debug")
     FIND_LIBRARY(ODE_LIBRARY NAMES ode_singled PATHS
-      ${EMER_3RDPARTY_DIR}/lib 
-      ${EMERGENTDIR}/3rdparty/lib
+      ${EMER_MISC_LIBS_DIR}/lib 
     )
   else (CMAKE_BUILD_TYPE MATCHES "Debug")
     FIND_LIBRARY(ODE_LIBRARY NAMES ode_single PATHS
-      ${EMER_3RDPARTY_DIR}/lib 
-      ${EMERGENTDIR}/3rdparty/lib
+      ${EMER_MISC_LIBS_DIR}/lib 
     )  
   endif (CMAKE_BUILD_TYPE MATCHES "Debug")
 else (WIN32)

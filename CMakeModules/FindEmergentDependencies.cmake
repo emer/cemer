@@ -213,10 +213,7 @@ include_directories(${COIN_INCLUDE_DIR} ${QUARTER_INCLUDE_DIR}
   ${SUBVERSION_INCLUDE_DIRS}
 )
 if (WIN32)
-  #note: valid in main app and plugin contexts:
-  include_directories(${EMERGENT_SHARE_DIR}/3rdparty/include
-    $ENV{COINDIR}/include
-  )
+  include_directories($ENV{COINDIR}/include )
 else (WIN32)
   include_directories(${READLINE_INCLUDE_DIR} )
   # Termcap on Fedora Core
