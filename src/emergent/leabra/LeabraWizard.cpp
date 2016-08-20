@@ -2888,12 +2888,14 @@ can be sure everything is ok.";
   // Harvest from the PVLV function..
   Layer_Group* pvlv_laygp_da = (Layer_Group*)net->layers.gp.FindName("PVLV_DA");
   Layer_Group* pvlv_laygp_pv = (Layer_Group*)net->layers.gp.FindName("PVLV_PV");
+  Layer_Group* pvlv_laygp_amyg = (Layer_Group*)net->layers.gp.FindName("PVLV_Amyg");
 
   LeabraLayer* rew_targ_lay = NULL;
   LeabraLayer* ext_rew = NULL;
   LeabraLayer* vta = NULL;
   LeabraLayer* pos_pv = NULL;
   LeabraLayer* vspatch_posd1 = NULL;
+  LeabraLayer* lat_amyg = NULL;
 
   if(pvlv_laygp_pv) {
     pos_pv = (LeabraLayer*)pvlv_laygp_pv->FindName("PosPV");
@@ -2903,6 +2905,9 @@ can be sure everything is ok.";
   }
   if(pvlv_laygp_da) {
     vta = (LeabraLayer*)pvlv_laygp_da->FindName("VTAp");
+  }
+  if(pvlv_laygp_amyg) {
+    lat_amyg = (LeabraLayer*)pvlv_laygp_amyg->FindName("LatAmyg");
   }
 
   pos_pv->layer_type = Layer::HIDDEN; // not an input layer anymore
@@ -2986,6 +2991,7 @@ can be sure everything is ok.";
 
   String pvlvprefix = "PVLV";
   BaseSpec_Group* pvlvspgp = (BaseSpec_Group*)net->specs.gp.FindName(pvlvprefix);
+  LatAmygConSpec* la_cons = PvlvSp("LatAmygCons", LatAmygConSpec);
 
   BaseSpec_Group* pbwmspgp = net->FindMakeSpecGp(prefix);
   if(!pbwmspgp) return false;
@@ -3086,6 +3092,11 @@ can be sure everything is ok.";
   if(rew_targ_lay) {
     net->FindMakePrjn(matrix_tan, rew_targ_lay, fullprjn, marker_cons);
   }
+
+  if(lat_amyg) {
+    net->FindMakePrjn(lat_amyg, pfc_mnt_d, fullprjn, la_cons);
+  }
+
   // also stim, ctrl
 
   net->FindMakePrjn(patch, pfc_mnt_d, gponetoone, fix_cons);

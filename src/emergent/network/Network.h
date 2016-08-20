@@ -199,7 +199,8 @@ public:
     ABS_POS             = 0x0002, // always use absolute positions for layers as the primary positioning, otherwise if not set then layer positions relative to owning layer group are primary and absolute positions are computed relative to them
     NETIN_PER_PRJN      = 0x0004, // compute netinput per projection instead of a single aggregate value across all inputs (which is the default)
     BUILD_INIT_WTS      = 0x0008, // initialize the weights after building the network -- for very large networks, may want to turn this off to save some redundant time
-    SAVE_KILLED_WTS     = 0x0010, // if the project is killed while running in a non-interactive mode (e.g., on cluster), save this network's weights (only if network is built and epoch > 0)
+    INIT_WTS_1_THREAD   = 0x0010, // use only one (main) thread to initialize weights -- this ensures that runs with different numbers of threads have the same initial weights, but is slower
+    SAVE_KILLED_WTS     = 0x0020, // if the project is killed while running in a non-interactive mode (e.g., on cluster), save this network's weights (only if network is built and epoch > 0)
     BUILT               = 0x1000, // #READ_ONLY #NO_SAVE is the network built -- all memory allocated, etc
     INTACT              = 0x2000, // #READ_ONLY #NO_SAVE if the network is built, is it also still intact, with all the current params set as they were when it was built?
     BUILT_INTACT        = BUILT | INTACT // #NO_BIT built and intact
