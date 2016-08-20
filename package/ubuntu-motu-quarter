@@ -1,4 +1,4 @@
-s#!/bin/bash
+#!/bin/bash
 set -e
 
 sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools devscripts mercurial libcoin80-dev qt5-default
@@ -18,7 +18,7 @@ fi
 
 echo "CPU = " $CPU " use this value to determine the qt include directory"
 
-export CPPFLAGS="-I/usr/include/$QT_INC_DIR -I/usr/include/$QT_INC_DIR/QtCore -I/usr/include/$QT_INC_DIR/QtWidgets -I/usr/include/$QT_INC_DIR/QtOpenGL -I/usr/include/$QT_INC_DIR/QtGui -I/usr/include/qt5/QtCore -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtOpenGL -I/usr/include/qt5/QtGui I/usr/include/qt5/ -L/usr/lib/ -fPIC"
+export CPPFLAGS="-I/usr/include/$QT_INC_DIR -I/usr/include/$QT_INC_DIR/QtCore -I/usr/include/$QT_INC_DIR/QtWidgets -I/usr/include/$QT_INC_DIR/QtOpenGL -I/usr/include/$QT_INC_DIR/QtGui -I/usr/include/qt5/QtCore -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtOpenGL -I/usr/include/qt5/QtGui -I/usr/include/qt5/ -L/usr/lib/ -fPIC"
 
 QUARTER_VERSION=1.0
 DEBEMAIL='brian.mingus@colorado.edu'
