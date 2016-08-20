@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9697
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9877
 LeabraProject .projects["TestWizard"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -3281,44 +3281,7 @@ LeabraProject .projects["TestWizard"] {
     };
    };
   };
-  Program_Group @.gp["WizardTestPrograms"] = [4] { 
-   Program @["TestLeabraTI"] { 
-    UserDataItem_List @*(.user_data_) {
-     UserData_DocLink @["DocLink"] { };
-    };
-
-    ProgObjList @.objs = [0] {
-    };
-
-    ProgType_List @.types = [0] {
-    };
-
-    ProgVar_List @.args = [0] {
-    };
-
-    ProgVar_List @.vars = [2] {
-     ProgVar @["network_0"] { };
-     ProgVar @["leabra_wizard_1"] { };
-    };
-
-    Function_List @.functions = [0] {
-    };
-
-    ProgEl_List @.init_code = [0] {
-    };
-
-    ProgEl_List @.prog_code = [2] {
-     LocalVars @[0] { 
-      ProgVar_List @.local_vars = [0] {
-      };
-     };
-     MethodCall @[1] { 
-      ProgArg_List @.meth_args = [1] {
-       ProgArg @[0] { };
-      };
-     };
-    };
-   };
+  Program_Group @.gp["WizardTestPrograms"] = [3] { 
    Program @["TestDeepLeabra"] { 
     UserDataItem_List @*(.user_data_) {
      UserData_DocLink @["DocLink"] { };
@@ -3759,9 +3722,6 @@ LeabraProject .projects["TestWizard"] {
     UserDataItem @["maxda"] { };
    };
 
-   DataTable_Group @.spec_tables = [0] {
-   };
-
    BaseSpec_Group @.specs = [4] {
     LeabraLayerSpec @["HiddenLayer"] { 
      BaseSpec_Group @.children = [1] {
@@ -3870,8 +3830,8 @@ LeabraProject .projects["TestWizard"] {
   minor=1;
   step=15;
  };
- author=;
- email=;
+ author="Kai Krueger";
+ email="kai.krueger@colorado.edu";
  license {
   license=GPLv2;
   owner_name=;
@@ -3879,10 +3839,10 @@ LeabraProject .projects["TestWizard"] {
   year="2010";
   custom=;
  };
- wiki_url {
-  sync=0;
+ pub_cite=;
+ wiki {
   wiki=;
-  url=;
+  page_name=;
  };
  docs {
   name="docs";
@@ -4157,7 +4117,7 @@ mw.config.set({\"wgBackendResponseTime\":131});
     };
    };
    name="ControlPanel";
-   running_updt=0;
+   updt_while_running=0;
    desc="main control panel for the system";
    mbrs {
     name="mbrs";
@@ -4311,7 +4271,7 @@ mw.config.set({\"wgBackendResponseTime\":131});
     };
    };
    name="ClusterRun";
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -11760,6 +11720,13 @@ mw.config.set({\"wgBackendResponseTime\":131});
    desc="run project in the background (replaces leabra_startup.css)
 
 command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xxx]";
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author=;
+   email=;
    flags=STARTUP_RUN;
    stop_step_cond {
     expr=;
@@ -12795,6 +12762,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="BsStrt";
     tags="Leabra, Startup";
     desc="startup args specifically for fixation training parameters";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -12902,6 +12876,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="MstBtc";
     tags="Leabra, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -13113,6 +13094,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="MstTrn";
     tags=;
     desc="modular event-based train program";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -13518,6 +13506,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="MstrRn";
     tags=;
     desc="modular run code -- forks off to RunProgs based on run_prog -- only neccessary to provide common step point for all run progs";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr="StopStepTest()";
@@ -13848,6 +13843,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      short_nm="BaseInit";
      tags=;
      desc="initialization for basic training";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -14095,6 +14097,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      short_nm="BaseRun";
      tags=;
      desc="run basic training -- does ";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -14432,6 +14441,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="BscTrn";
     tags=;
     desc="basic training -- this is a standard Leabra minus-plus trial";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=2;
     stop_step_cond {
      expr=;
@@ -14936,6 +14952,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="ChNxEvt";
     tags="InputData, Permuted, FlexProgs, ApplyInput";
     desc="choose next event in input data in either sequential or permuted order according to its own internal counter-- starts over (re-permutes) when the end is reached -- is automatically dmem compatible for allocating different events to different processors";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -15719,6 +15742,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="ChRndm";
     tags=;
     desc="choose an event at random to present on current trial";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -15869,6 +15899,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="Inputs";
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -16166,6 +16203,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="GlobInit";
     tags=;
     desc="initialize standard global params, which live here too -- set other programs to init_from these guys";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -16443,6 +16487,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="BatchSeed";
     tags=;
     desc="select random seed based on network batch number";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -16667,6 +16718,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="CfgNet";
     tags=;
     desc="configure the network -- basically selectively lesion different parts that are not needed for a given task";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -17217,6 +17275,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="PstLyr";
     tags="Network, Layer, Position";
     desc="positions network layers according to a data table with positions -- can use either absolute or group-relative coordinates, including non-structural groups";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -19090,6 +19155,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="NtwTgg";
     tags=;
     desc="toggle lesion status on or off in network -- for dynamic speedup..";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -19551,6 +19623,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="TrnStart";
     tags=;
     desc="basic stuff (init weights, load weights etc) at start of training -- also calls EpochStart -- most init progs will call this";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -19974,6 +20053,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="TrnEnd";
     tags=;
     desc="end training -- save weights if needed, compute final summary stats -- and set stop_train";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -20148,6 +20234,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="EpcStart";
     tags=;
     desc="Start a new epoch";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -20320,6 +20413,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="EpcEnd";
     tags=;
     desc="end of epoch -- relnet and basic stats compute, calls only the core standard monitor, save weights if doing that";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -20502,6 +20602,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="TrStrt";
     tags=;
     desc="start of trial before any input data applied -- prepares for input data to be applied (Init_InputData)";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -20654,6 +20761,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="TrlEnd";
     tags=;
     desc="standard end-of-trial code -- no monitor calls at all";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -20765,6 +20879,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="SetlMin";
     tags=;
     desc="settle network in the minus phase -- enough different logic in two phases to warrant making them separate";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -20924,6 +21045,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="SttPls";
     tags=;
     desc="settle network in the minus phase -- enough different logic in two phases to warrant making them separate";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -21054,6 +21182,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="Trial";
     tags="Leabra, Std";
     desc="Leabra processing of a single input/output event or external information, over a single alpha frequency cycle (100 msec / 10 Hz) -- iterates over gamma-frequency (25 msec / 40 Hz) quarter-trials";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -21281,6 +21416,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="Quarter";
     tags="Leabra, Std";
     desc="iterates over cycles of activation updating for a gamma-frequency (25 msec / 40 Hz) quarter of an alpha frequency (100 msec / 10 Hz) trial";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -21532,6 +21674,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="Cycle";
     tags="Leabra, Std";
     desc="runs one cycle of leabra processing (updating net inputs and activations)";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=0;
     stop_step_cond {
      expr=;
@@ -21657,6 +21806,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values
 
 also save specs.";
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -21985,6 +22141,13 @@ also save specs.";
      short_nm="SLFls";
      tags="Leabra, Startup";
      desc="startup args specifically for fixation training parameters";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -22401,6 +22564,13 @@ also save specs.";
      short_nm="TrialMon";
      tags="Leabra, Std, Monitor";
      desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -22417,7 +22587,6 @@ also save specs.";
 	el_def=0;
 	NetMonItem @["batch"] {
 	 name="batch";
-	 monitor=.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22452,7 +22621,6 @@ also save specs.";
 	};
 	NetMonItem @["epoch"] {
 	 name="epoch";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22487,7 +22655,6 @@ also save specs.";
 	};
 	NetMonItem @["train_mode"] {
 	 name="train_mode";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22522,7 +22689,6 @@ also save specs.";
 	};
 	NetMonItem @["group"] {
 	 name="group";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22557,7 +22723,6 @@ also save specs.";
 	};
 	NetMonItem @["trial"] {
 	 name="trial";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22592,7 +22757,6 @@ also save specs.";
 	};
 	NetMonItem @["tick"] {
 	 name="tick";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22627,7 +22791,6 @@ also save specs.";
 	};
 	NetMonItem @["time"] {
 	 name="time";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22662,7 +22825,6 @@ also save specs.";
 	};
 	NetMonItem @["trial_name"] {
 	 name="trial_name";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22697,7 +22859,6 @@ also save specs.";
 	};
 	NetMonItem @["group_name"] {
 	 name="group_name";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22732,7 +22893,6 @@ also save specs.";
 	};
 	NetMonItem @["output_name"] {
 	 name="output_name";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22767,7 +22927,6 @@ also save specs.";
 	};
 	NetMonItem @["rt_cycles"] {
 	 name="rt_cycles";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22802,7 +22961,6 @@ also save specs.";
 	};
 	NetMonItem @["sse"] {
 	 name="sse";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22837,7 +22995,6 @@ also save specs.";
 	};
 	NetMonItem @["norm_err"] {
 	 name="norm_err";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22872,7 +23029,6 @@ also save specs.";
 	};
 	NetMonItem @["cos_err"] {
 	 name="cos_err";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22907,7 +23063,6 @@ also save specs.";
 	};
 	NetMonItem @["ext_rew"] {
 	 name="ext_rew";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22942,7 +23097,6 @@ also save specs.";
 	};
 	NetMonItem @["lay_sse"] {
 	 name="lay_sse";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -22977,7 +23131,6 @@ also save specs.";
 	};
 	NetMonItem @["lay_norm_err"] {
 	 name="lay_norm_err";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23012,7 +23165,6 @@ also save specs.";
 	};
 	NetMonItem @["lay_cos_err"] {
 	 name="lay_cos_err";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23047,7 +23199,6 @@ also save specs.";
 	};
 	NetMonItem @["lay_net_sd"] {
 	 name="lay_net_sd";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23082,7 +23233,6 @@ also save specs.";
 	};
 	NetMonItem @["net_cos_diff"] {
 	 name="net_cos_diff";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23117,7 +23267,6 @@ also save specs.";
 	};
 	NetMonItem @["net_trial_cos_diff"] {
 	 name="net_trial_cos_diff";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23152,7 +23301,6 @@ also save specs.";
 	};
 	NetMonItem @["net_avg_act_diff"] {
 	 name="net_avg_act_diff";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23187,7 +23335,6 @@ also save specs.";
 	};
 	NetMonItem @["cos_diff"] {
 	 name="cos_diff";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23222,7 +23369,6 @@ also save specs.";
 	};
 	NetMonItem @["trial_cos_diff"] {
 	 name="trial_cos_diff";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23257,7 +23403,6 @@ also save specs.";
 	};
 	NetMonItem @["avg_act_diff"] {
 	 name="avg_act_diff";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23336,7 +23481,7 @@ also save specs.";
        name="trial_netmon";
        var_type=T_Object;
        object_type=NetMonitor;
-       object_val=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$;
+       object_val=.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].objs["trial_netmon"]$$;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -23673,6 +23818,13 @@ also save specs.";
      short_nm="EpcMon";
      tags="Leabra, Std, Monitor";
      desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+     version {
+      major=0;
+      minor=0;
+      step=0;
+     };
+     author=;
+     email=;
      flags=NO_STOP_STEP;
      stop_step_cond {
       expr=;
@@ -23689,7 +23841,6 @@ also save specs.";
 	el_def=0;
 	NetMonItem @["batch"] {
 	 name="batch";
-	 monitor=.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23724,7 +23875,6 @@ also save specs.";
 	};
 	NetMonItem @["epoch"] {
 	 name="epoch";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23759,7 +23909,6 @@ also save specs.";
 	};
 	NetMonItem @["avg_sse"] {
 	 name="avg_sse";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23794,7 +23943,6 @@ also save specs.";
 	};
 	NetMonItem @["cnt_err"] {
 	 name="cnt_err";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23829,7 +23977,6 @@ also save specs.";
 	};
 	NetMonItem @["pct_cor"] {
 	 name="pct_cor";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23864,7 +24011,6 @@ also save specs.";
 	};
 	NetMonItem @["pct_err"] {
 	 name="pct_err";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23899,7 +24045,6 @@ also save specs.";
 	};
 	NetMonItem @["avg_norm_err"] {
 	 name="avg_norm_err";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23934,7 +24079,6 @@ also save specs.";
 	};
 	NetMonItem @["avg_cos_err"] {
 	 name="avg_cos_err";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -23969,7 +24113,6 @@ also save specs.";
 	};
 	NetMonItem @["avg_ext_rew"] {
 	 name="avg_ext_rew";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24004,7 +24147,6 @@ also save specs.";
 	};
 	NetMonItem @["avg_cycles"] {
 	 name="avg_cycles";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24039,7 +24181,6 @@ also save specs.";
 	};
 	NetMonItem @["epoch_time_tot"] {
 	 name="epoch_time_tot";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=1;
 	 object_type=NULL;
 	 object=NULL;
@@ -24074,7 +24215,6 @@ also save specs.";
 	};
 	NetMonItem @["epoch_time_usr"] {
 	 name="epoch_time_usr";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=1;
 	 object_type=NULL;
 	 object=NULL;
@@ -24109,7 +24249,6 @@ also save specs.";
 	};
 	NetMonItem @["lay_avg_sse"] {
 	 name="lay_avg_sse";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24144,7 +24283,6 @@ also save specs.";
 	};
 	NetMonItem @["lay_cnt_err"] {
 	 name="lay_cnt_err";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24179,7 +24317,6 @@ also save specs.";
 	};
 	NetMonItem @["lay_pct_cor"] {
 	 name="lay_pct_cor";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24214,7 +24351,6 @@ also save specs.";
 	};
 	NetMonItem @["lay_pct_err"] {
 	 name="lay_pct_err";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24249,7 +24385,6 @@ also save specs.";
 	};
 	NetMonItem @["lay_avg_norm_err"] {
 	 name="lay_avg_norm_err";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24284,7 +24419,6 @@ also save specs.";
 	};
 	NetMonItem @["lay_avg_cos_err"] {
 	 name="lay_avg_cos_err";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24319,7 +24453,6 @@ also save specs.";
 	};
 	NetMonItem @["net_avg_cos_diff"] {
 	 name="net_avg_cos_diff";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24354,7 +24487,6 @@ also save specs.";
 	};
 	NetMonItem @["net_avg_trial_cos_diff"] {
 	 name="net_avg_trial_cos_diff";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24389,7 +24521,6 @@ also save specs.";
 	};
 	NetMonItem @["net_avg_avg_act_diff"] {
 	 name="net_avg_avg_act_diff";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24424,7 +24555,6 @@ also save specs.";
 	};
 	NetMonItem @["avg_cos_diff"] {
 	 name="avg_cos_diff";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24459,7 +24589,6 @@ also save specs.";
 	};
 	NetMonItem @["avg_trial_cos_diff"] {
 	 name="avg_trial_cos_diff";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24494,7 +24623,6 @@ also save specs.";
 	};
 	NetMonItem @["avg_avg_act_diff"] {
 	 name="avg_avg_act_diff";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24529,7 +24657,6 @@ also save specs.";
 	};
 	NetMonItem @["avg_net_sd"] {
 	 name="avg_net_sd";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24564,7 +24691,6 @@ also save specs.";
 	};
 	NetMonItem @["hog_pct"] {
 	 name="hog_pct";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24599,7 +24725,6 @@ also save specs.";
 	};
 	NetMonItem @["dead_pct"] {
 	 name="dead_pct";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24634,7 +24759,6 @@ also save specs.";
 	};
 	NetMonItem @["netmax"] {
 	 name="netmax";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24669,7 +24793,6 @@ also save specs.";
 	};
 	NetMonItem @["avg_act"] {
 	 name="avg_act";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24704,7 +24827,6 @@ also save specs.";
 	};
 	NetMonItem @["netrel"] {
 	 name="netrel";
-	 monitor=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
 	 computed=0;
 	 object_type=LeabraNetwork;
 	 object=$.projects["TestWizard"].networks["Network_0"]$;
@@ -24783,7 +24905,7 @@ also save specs.";
        name="epoch_netmon";
        var_type=T_Object;
        object_type=NetMonitor;
-       object_val=$.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$;
+       object_val=.projects["TestWizard"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].objs["epoch_netmon"]$$;
        objs_ptr=1;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
@@ -25267,20 +25389,27 @@ and the testing data is updated.  The first epoch monitor should have all the it
    tags=;
    desc=;
    debug_mode=0;
-   Program @["TestLeabraTI"] {
+   Program @["TestDeepLeabra"] {
     UserDataItem_List @*(.user_data_) {
      name=;
      el_typ=UserData_DocLink;
      el_def=0;
      UserData_DocLink @["DocLink"] {
       name="DocLink";
-      doc=.projects["TestWizard"].programs.gp["WizardTestPrograms"]["TestLeabraTI"].doc$$;
+      doc=.projects["TestWizard"].programs.gp["WizardTestPrograms"]["TestDeepLeabra"].doc$$;
      };
     };
-    name="TestLeabraTI";
-    short_nm="TsLbT";
+    name="TestDeepLeabra";
+    short_nm="TsDLbr";
     tags=;
     desc=;
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -25320,133 +25449,6 @@ and the testing data is updated.  The first epoch monitor should have all the it
       var_type=T_Object;
       object_type=LeabraWizard;
       object_val=.projects["TestWizard"].wizards["LeabraWizard_1"]$$;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-    };
-    functions {
-     name="functions";
-     el_typ=Function;
-     el_def=0;
-    };
-    init_code {
-     name="init_code";
-     el_typ=ProgCode;
-     el_def=0;
-    };
-    prog_code {
-     name="prog_code";
-     el_typ=ProgCode;
-     el_def=0;
-     LocalVars @[0] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="LocalVars (0 vars)";
-      pre_compile_code_string="LocalVars (0 vars)";
-      local_vars {
-       name="local_vars";
-       el_typ=ProgVar;
-       el_def=0;
-      };
-     };
-     MethodCall @[1] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      code_string="leabra_wizard_1->LeabraTI(network_0)";
-      pre_compile_code_string="leabra_wizard_1->LeabraTI(network_0)";
-      result_var=NULL;
-      obj=.projects["TestWizard"].programs.gp["WizardTestPrograms"]["TestLeabraTI"].vars["leabra_wizard_1"]$$;
-      method=LeabraWizard::LeabraTI;
-      meth_args {
-       name="meth_args";
-       el_typ=ProgArg;
-       el_def=0;
-       ProgArg @[0] {
-	arg_type=LeabraNetwork_ptr;
-	type="LeabraNetwork*";
-	name="net";
-	required=1;
-	def_val=;
-	prev_expr=;
-	expr {
-	 expr="network_0";
-	};
-       };
-      };
-      meth_sig="bool LeabraTI(LeabraNetwork* net)";
-      meth_desc=" configure temporal integration (LeabraTI) specs and connections, for all hidden layers in the network -- creates new conspec and unit spec under the basic LeabraConSpec_0 and LeabraUnitSpec_0 specs, and new SELF projections with this conspec set -- requires unitspec deep.on = true and deep_qtr = Q4";
-     };
-    };
-    step_prog=NULL;
-    step_n=1;
-    doc {
-     name="doc";
-     desc=;
-     web_doc=0;
-     wiki=;
-     url="local";
-     full_url="local";
-     text_size=1;
-     text=;
-     html_text=;
-    };
-   };
-   Program @["TestDeepLeabra"] {
-    UserDataItem_List @*(.user_data_) {
-     name=;
-     el_typ=UserData_DocLink;
-     el_def=0;
-     UserData_DocLink @["DocLink"] {
-      name="DocLink";
-      doc=.projects["TestWizard"].programs.gp["WizardTestPrograms"]["TestDeepLeabra"].doc$$;
-     };
-    };
-    name="TestDeepLeabra";
-    short_nm="TsDLbr";
-    tags=;
-    desc=;
-    flags=NO_STOP_STEP;
-    stop_step_cond {
-     expr=;
-    };
-    objs {
-     name="objs";
-     el_typ=taNBase;
-     el_def=0;
-    };
-    types {
-     name="types";
-     el_typ=DynEnumType;
-     el_def=0;
-    };
-    args {
-     name="args";
-     el_typ=ProgVar;
-     el_def=0;
-    };
-    vars {
-     name="vars";
-     el_typ=ProgVar;
-     el_def=0;
-     ProgVar @["network_0"] {
-      name="network_0";
-      var_type=T_Object;
-      object_type=LeabraNetwork;
-      object_val=$.projects["TestWizard"].networks["Network_0"]$;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["leabra_wizard_1"] {
-      name="leabra_wizard_1";
-      var_type=T_Object;
-      object_type=LeabraWizard;
-      object_val=$.projects["TestWizard"].wizards["LeabraWizard_1"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -25546,6 +25548,13 @@ and the testing data is updated.  The first epoch monitor should have all the it
     short_nm="TstHpp";
     tags=;
     desc=;
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -26371,6 +26380,13 @@ and the testing data is updated.  The first epoch monitor should have all the it
     short_nm="TsPVLV";
     tags=;
     desc=;
+    version {
+     major=0;
+     minor=0;
+     step=0;
+    };
+    author=;
+    email=;
     flags=NO_STOP_STEP;
     stop_step_cond {
      expr=;
@@ -26500,7 +26516,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        };
       };
       meth_sig="bool PVLV(LeabraNetwork* net, int n_pos_pv = 1, int n_neg_pv = 1, bool da_mod_all = false)";
-      meth_desc=" configure PVLV (pavlovian primary value and learned value) learning layers in a network -- provides a simulated dopamine signal that reflects unexpected primary rewards through interaction of PV (primary value) and LV (learned value) systems -- this is the goal-driven version; n_pos_pv = number of positive PV states (positive outcomes); n_neg_pv = number of negative PV states (negative outcomes); da_mod_all = have vta dopamine value modulate all the regular units in the network";
+      meth_desc=" configure PVLV (pavlovian primary value and learned value) learning layers in a network -- provides a simulated dopamine signal that reflects unexpected primary rewards through interaction of PV (primary value) and LV (learned value) systems -- this is the bi-valent (bv) version that includes both appetitive and aversive (punishments) USs; n_pos_pv = number of positive PV states (rewards) available; n_neg_pv = number of negative PV states; da_mod_all = have vta dopamine value modulate all the regular units in the network (not typically used). The PVLV module takes three different kinds of input layers: 1) CS-type inputs, e.g., Stim_In in bvPVLV.proj; one-to-one prjn to lateral amygdala (LA) layer and full projections to all VSMatrix layers; 2) Context-type inputs, e.g., Context_In in bvPVLV.proj; full projection to basal amygdalar EXTINCTION layers; and, 3) Time-evolving inputs, e.g., USTime_In in bvPVLV.proj; full projection to all VSPatch layers HELPFUL NOTE: If PRIOR to running the PVLV wizard there are already three or more layers ALL of layer_type == INPUT, and some of their names contain_ci (case insensitive) the key character strings ``context'', and/or ``time'', the wizard will try to hook everything up appropriately - but that should definitely be checked by the user to make sure things end up as intended. Otherwise, the wizard will connect INPUT layers indiscriminantly and the user will have to correct manually. ALSO, since the LA layer requires a one-to-one projection from the input representing CS-type information, its unit geometry can/should be edited manually to match the corresponding input layer in the larger model. ";
      };
     };
     step_prog=NULL;
@@ -26545,7 +26561,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7993159;
+     value 8 0=0.7993158;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -28225,7 +28241,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 * added load_0_epc in lesson -- reinit network.epoch after loading weights -- we load pretrained eye weights, but want to start counter over..
 
 ";
- tree_state{ .;.ctrl_panels;.data;.data.gp[0];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[1].gp[0];.programs.gp[1].gp[1];.programs.gp[2];.programs.gp[2][0];.programs.gp[2][0].args;.programs.gp[3];.programs.gp[3][0];.programs.gp[3][0].args;.programs.gp[3][1];.programs.gp[3][1].args;.programs.gp[3][2];.programs.gp[3][2].objs;.programs.gp[3][2].args;.programs.gp[3][2].vars;.programs.gp[4];.programs.gp[5];.programs.gp[5][2];.programs.gp[5][2].vars;.networks;.networks[0];.networks[0].specs;.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[2].children[0];.networks[0].specs[2].children[1]; };
+ tree_state{ .;.ctrl_panels;.data;.data.gp[0];.data.gp[3];.programs;.programs.gp[0];.programs.gp[1];.programs.gp[2];.programs.gp[2][0].args;.programs.gp[3];.programs.gp[3][0].args;.programs.gp[3][1].args;.programs.gp[3][2].objs;.programs.gp[3][2].args;.programs.gp[3][2].vars;.programs.gp[4];.programs.gp[5];.programs.gp[5][1].vars;.networks;.networks[0];.networks[0].specs[0];.networks[0].specs[1];.networks[0].specs[2];.networks[0].specs[2].children[0];.networks[0].specs[2].children[1]; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
@@ -28373,12 +28389,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    name="Network_0";
    desc=;
-   spec_tables {
-    name="spec_tables";
-    el_typ=DataTable;
-    el_def=0;
-    save_tables=0;
-   };
    specs {
     name="specs";
     el_typ=LeabraLayerSpec;
@@ -28407,7 +28417,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
        multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
        lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
-       avg_act {targ_init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
+       avg_act {targ_init=0.1: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
        inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
        inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: };
@@ -28434,7 +28444,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
      multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
      lay_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: max_vs_avg=0: ff0=0.1: fb_dt=0.7142857: };
-     avg_act {targ_init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
+     avg_act {targ_init=0.1: fixed=0: use_ext_act=0: tau=100: adjust=1: dt=0.01: };
      inhib_adapt {on=0: tol_pct=0.25: trial_interval=100: tau=200: dt=0.005: };
      inhib_misc {net_thr=0: thr_rel=1: self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
@@ -28470,7 +28480,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.5: gain=100: nvar=0.005: };
-     act_misc {rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
+     act_misc {rec_nd=1: avg_nd=1: net_gain=1: act_max_hz=100: avg_trace=0: lambda=0: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       ex=0;
@@ -28528,7 +28538,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
-     noise_adapt {trial_fixed=1: drop_thr=0.1: mode=FIXED_NOISE: };
+     noise_adapt {trial_fixed=1: mode=FIXED_NOISE: };
      noise_sched {
       name="noise_sched";
       el_typ=SchedItem;
@@ -28617,7 +28627,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-       wt_sig {gain=6: off=1: dwt_norm=0: rugp_wt_sync=0: };
+       wt_sig {gain=6: off=1: };
        wt_bal {
 	on=1;
 	trg=0.3;
@@ -28703,7 +28713,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        use_unlearnable=1;
        xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-       wt_sig {gain=6: off=1: dwt_norm=0: rugp_wt_sync=0: };
+       wt_sig {gain=6: off=1: };
        wt_bal {
 	on=1;
 	trg=0.3;
@@ -28779,7 +28789,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      use_unlearnable=1;
      xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     wt_sig {gain=6: off=1: dwt_norm=0: rugp_wt_sync=0: };
+     wt_sig {gain=6: off=1: };
      wt_bal {
       on=1;
       trg=0.3;
@@ -29102,9 +29112,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     trial_decay=1;
     diff_scale_p=0;
     diff_scale_q1=0;
-    dwt_norm=0;
     wt_bal=0;
-    rugp_wt_sync=0;
     lay_gp_inhib=0;
     inhib_cons=0;
    };

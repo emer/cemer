@@ -66,12 +66,6 @@ DeepLeabra
     Run Emergent Program	MasterTrain
     DataTable Cell Value Should Equal    EpochOutputData	0	epoch		0
 
-LeabraTI
-    Restart Emergent
-    Ensure Emergent Free
-    Run Emergent Program	TestLeabraTI
-    Run Emergent Program	MasterTrain
-    DataTable Cell Value Should Equal    EpochOutputData	0	epoch		0
 
 PVLV
     Restart Emergent
