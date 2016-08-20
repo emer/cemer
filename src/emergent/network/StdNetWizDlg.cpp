@@ -64,19 +64,48 @@ void StdNetWizDlg::NewNetDefaultConfig() {
   Layer* lay;  lay = NULL;
   int i;  i = 0;
   n_lays = net_config->rows;
+
+  bool bidir_net = (network->InheritsFromName("LeabraNetwork") ||
+                    network->InheritsFromName("CsNetwork"));
   if(n_lays > 0) {
     ConfigOneLayer(0, "Input", "INPUT");
   }
   if(n_lays > 1) {
     ConfigOneLayer(1, "Hidden", "HIDDEN");
+    net_config->SetVal("Input", "RecvPrjns", 1);
   }
   if(n_lays == 3) {
     ConfigOneLayer(2, "Output", "TARGET");
+    net_config->SetVal("Hidden", "RecvPrjns", 2);
+    if(bidir_net) {
+      net_config->SetVal("Input Output", "RecvPrjns", 1); // hidden, bidir
+    }
   }
-  if(n_lays > 2) {
+  else if(n_lays > 3) {
     ConfigOneLayer(n_lays-1, "Output", "TARGET");
+    net_config->SetVal("Hidden_" + String(n_lays-2), "RecvPrjns", n_lays-1);
     for(i=2; i<n_lays-1; i++) {
       ConfigOneLayer(i, "Hidden_" + String(i-1), "HIDDEN");
+      if(bidir_net) {
+        if(i == 2) {
+          net_config->SetVal("Hidden Hidden_" + String(i+1), "RecvPrjns", 1);
+        }
+        else if(i < n_lays-2) {
+          net_config->SetVal("Hidden_" + String(i-1) + " Hidden_" + String(i+1),
+                             "RecvPrjns", 1);
+        }
+        else {
+          net_config->SetVal("Hidden_" + String(i-1) + " Output", "RecvPrjns", 1);
+        }
+      }
+      else {
+        if(i == 2) {
+          net_config->SetVal("Hidden", "RecvPrjns", 1);
+        }
+        else {
+          net_config->SetVal("Hidden_" + String(i-1), "RecvPrjns", 1);
+        }
+      }
     }
   }
 }
@@ -103,6 +132,7 @@ bool StdNetWizDlg::DoDialog() {
   Dlg2 = new taGuiDialog;
   taBase::Own(Dlg2, this);
   net_config = new DataTable;
+  taBase::Own(net_config, this);
   n_layers = 3;
 
   bool rval = false;
@@ -177,24 +207,13 @@ bool StdNetWizDlg::DoDialog() {
   // == now build the network to spec ==
   *******************************************************************/
   network->NetStructFmTable(net_config);
-  network->Build();
-  network->LayerZPos_Unitize();
-  network->FindMakeView();
-  network->UpdateAfterEdit();   // update any special settings..
-  if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall_gui(network, "BrowserExpandAll");
-    tabMisc::DelayedFunCall_gui(network, "BrowserSelectMe");
-  }
-  if(proj) {
-    proj->undo_mgr.SaveUndo(network.ptr(), "Wizard::StdNetwork after -- actually saves network specifically");
-  }
   rval = true;
 
  cleanup:
   taBase::unRefDone(Dlg1);
   taBase::unRefDone(Dlg2);
-  delete net_config;
-
+  taBase::unRefDone(net_config);
+  
   Initialize();
   return rval;
 }

@@ -83,7 +83,7 @@ public:
   static void   MakeDarkBgColor(const iColor& bg, iColor& dk_bg); // for use by other users of stripe grids, to make the right dk bg color
 
   TypeDef*      typ;            // type of object (if relevant)
-  void*         root;   // current root pointer of object (if relevant)
+  void*         root;           // current root pointer of object (if relevant)
   int           ctrl_size;      // a taiMisc::SizeSpec-compatible value (ie, from FontSpec) -- def is taiM->ctrl_size
   int           row_height;     // height of edit rows, not including margins and spaces (= max_control_height(def_size)) -- set in Constr_impl
   bool          read_only;      // cannot change data

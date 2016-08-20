@@ -17,9 +17,6 @@
 
 TA_BASEFUNS_CTORS_DEFN(LeabraWizard);
 
-void LeabraWizard::Initialize() {
-}
-
 #include <LeabraProject>
 #include <LeabraNetwork>
 #include <StdNetWizDlg>
@@ -77,6 +74,7 @@ void LeabraWizard::Initialize() {
 //#include <SubiculumLayerSpec>
 
 #include <taMisc>
+#include <tabMisc>
 
 // use these macros to make specs
 #define FMSpec(T, var, par, nm)\
@@ -89,6 +87,9 @@ void LeabraWizard::Initialize() {
   var = (T*)par->FindMakeSpec(nm, &TA_##T)
 #define FMChildPD(T, var, par, nm)\
   var = (T*)par->FindMakeChild(nm, &TA_##T)
+
+void LeabraWizard::Initialize() {
+}
 
 String LeabraWizard::RenderWizDoc_network() {
   String rval = inherited::RenderWizDoc_network();
@@ -121,11 +122,25 @@ bool LeabraWizard::StdNetwork() {
   }
   if(!std_net_dlg) {
     taBase::SetPointer((taBase**)&std_net_dlg, new StdNetWizDlg);
+    taBase::Own(std_net_dlg, this);
   }
-  taBase::Own(std_net_dlg, this);
   bool rval = std_net_dlg->DoDialog();
-  if(std_net_dlg && std_net_dlg->network)
-    StdLeabraSpecs((LeabraNetwork*)std_net_dlg->network.ptr()); // re-run to organize things better now that stuff has happened
+  if(rval && std_net_dlg && std_net_dlg->network) {
+    LeabraNetwork* net = (LeabraNetwork*)std_net_dlg->network.ptr();
+    StdLeabraSpecs(net); // re-run to organize things better now that stuff has happened
+    net->Build();
+    net->LayerZPos_Unitize();
+    net->FindMakeView();
+    net->UpdateAfterEdit();   // update any special settings..
+    if(taMisc::gui_active) {
+      tabMisc::DelayedFunCall_gui(net, "BrowserExpandAll");
+      tabMisc::DelayedFunCall_gui(net, "BrowserSelectMe");
+    }
+    if(proj) {
+      proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork after -- actually saves network specifically");
+    }
+  }
+  std_net_dlg->network.CutLinks(); // done with it
   return rval;
 }
 
@@ -159,13 +174,33 @@ bool LeabraWizard::StdLeabraSpecs(LeabraNetwork* net) {
   }
 
   LeabraConSpec* ps = (LeabraConSpec*)net->specs.FindType(&TA_LeabraConSpec);
-  if(ps) {
-    FMChild(LeabraConSpec, td, ps, "TopDownCons");
-    td->desc = "Leabra (particularly the XCAL learning rule) requires top-down connections to be weaker than bottom-up ones -- this spec achieves that by setting wt_scale.rel = .2 -- set this for any connections coming from higher-level TARGET layers";
-    td->SetUnique("wt_scale", true);
-    td->wt_scale.rel = 0.2f;
-  }
+  if(!ps) return false;
+  
+  FMChild(LeabraConSpec, td, ps, "TopDownCons");
+  td->desc = "Leabra (particularly the XCAL learning rule) requires top-down connections to be weaker than bottom-up ones -- this spec achieves that by setting wt_scale.rel = .2 -- set this for any connections coming from higher-level TARGET layers";
+  td->SetUnique("wt_scale", true);
+  td->wt_scale.rel = 0.2f;
 
+  for(int li=net->layers.leaves-1; li >= 0; li--) {
+    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
+    if(lay->layer_type == Layer::HIDDEN) {
+      lay->SetLayerSpec(hid);
+    }
+    else {
+      lay->SetLayerSpec(inout);
+    }      
+    for(int j=0;j<lay->projections.size;j++) {
+      LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[j];
+      LeabraLayer* fmlay = (LeabraLayer*)prjn->from.ptr();
+      int fmidx = net->layers.FindLeafEl(fmlay);
+      if(fmidx >= li) {
+        prjn->SetConSpec(td);
+      }
+      else {
+        prjn->SetConSpec(ps);
+      }
+    }
+  }
   return true;
 }
 
@@ -255,9 +290,8 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   basic_cs->UpdateAfterEdit();
   basic_ls->UpdateAfterEdit();
 
-  int i;
-  for(i=0;i<net->layers.size;i++) {
-    LeabraLayer* lay = (LeabraLayer*)net->layers[i];
+  for(int li=net->layers.leaves-1; li >= 0; li--) {
+    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
     if(lay->layer_type == Layer::INPUT) continue;
     String nm = lay->name;
     nm.downcase();
@@ -283,9 +317,9 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
     ilay->SetLayerSpec(inhib_ls);
     ilay->SetUnitSpec(inhib_us);
 
-    int j;
-    for(j=0;j<lay->projections.size;j++) {
-      LeabraLayer* fmlay = (LeabraLayer*)((Projection*)lay->projections[j])->from.ptr();
+    for(int j=0;j<lay->projections.size;j++) {
+      LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[j];
+      LeabraLayer* fmlay = (LeabraLayer*)prjn->from.ptr();
       if(fmlay->name.contains("_Inhib")) continue;
       if(fmlay == lay) continue;
       net->FindMakePrjn(ilay, fmlay, fullprjn, ff_inhib_cs);

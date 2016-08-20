@@ -98,7 +98,8 @@ void taGuiWidget::GetImage() {
     TypeDef* td = NULL;
     if(typnm.nonempty()) td = TypeDef::FindGlobalTypeName(typnm);
     if(!td) td = &TA_taOBase;
-    ((taiWidgetTokenChooser*)tai_data)->GetImage(((taBaseRef*)data.toPtr())->ptr(), td);
+    ((taiWidgetTokenChooser*)tai_data)->GetImageScoped(((taBaseRef*)data.toPtr())->ptr(),
+                                                       td, this);
   }
   if(widget_type == "HardEnum_Enum") {
     ((taiWidgetComboBox*)tai_data)->GetImage(*((int*)data.toPtr()));

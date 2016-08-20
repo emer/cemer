@@ -35,13 +35,14 @@ void Wizard::Initialize() {
 }
 
 void Wizard::Destroy() {
+  CutLinks();
+}
+
+void Wizard::CutLinks() {
   if(std_net_dlg) {
     taBase::DelPointer((taBase**)&std_net_dlg);
   }
-}
-
-void Wizard::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+  inherited::CutLinks();
 }
 
 void Wizard::RenderWizDoc() {
@@ -123,9 +124,24 @@ bool Wizard::StdNetwork() {
     proj->networks.New(1);
   if(!std_net_dlg) {
     taBase::SetPointer((taBase**)&std_net_dlg, new StdNetWizDlg);
+    taBase::Own(std_net_dlg, this);
   }
-  taBase::Own(std_net_dlg, this);
   bool rval = std_net_dlg->DoDialog();
+  if(rval) {
+    Network* net = (Network*)std_net_dlg->network.ptr();
+    net->Build();
+    net->LayerZPos_Unitize();
+    net->FindMakeView();
+    net->UpdateAfterEdit();   // update any special settings..
+    if(taMisc::gui_active) {
+      tabMisc::DelayedFunCall_gui(net, "BrowserExpandAll");
+      tabMisc::DelayedFunCall_gui(net, "BrowserSelectMe");
+    }
+    if(proj) {
+      proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork after -- actually saves network specifically");
+    }
+  }
+  std_net_dlg->network.CutLinks(); // done with it
   return rval;
 }
 

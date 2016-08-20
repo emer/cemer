@@ -353,6 +353,7 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, c
     taiWidgetMenu* add_menu = menu->AddSubMenu("Add To Control Panel");
     taiWidgetMenu* remove_menu = menu->AddSubMenu("Remove From Control Panel");
     taProject* proj = dataTable()->GetMyProj();
+    if(!proj) return;
     for (int i = 0; i < proj->ctrl_panels.leaves; ++i) {
       ControlPanel* cp = proj->ctrl_panels.Leaf(i);
       String add_string;

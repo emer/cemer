@@ -73,8 +73,10 @@ public:
 
   void RenderWizDoc() override;
 
-  void	UpdateAfterEdit() override;
-  TA_SIMPLE_BASEFUNS(Wizard);
+  SIMPLE_INITLINKS(Wizard);
+  void  CutLinks() override;
+  SIMPLE_COPY(Wizard);
+  TA_BASEFUNS(Wizard);
 protected:
   void RenderWizDoc_impl() override;
   virtual String RenderWizDoc_intro(); // introductory code

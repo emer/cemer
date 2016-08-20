@@ -30,6 +30,7 @@ TypeItem::ShowMembs taGuiEditor::show() const {
 taGuiEditor::taGuiEditor(taGuiDialog* own, bool read_only_, bool modal_, QObject* parent)
   : taiEditor(&TA_taGuiDialog, read_only_, modal_, parent) {
   gui_owner = own;
+  root = own;                   // this is what the taiEditor base code uses
 }
 
 taGuiEditor::~taGuiEditor() {

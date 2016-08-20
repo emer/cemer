@@ -39,7 +39,7 @@ INHERITED(taNBase)
 public:
 #ifndef __MAKETA__
   QPointer<QWidget>     widget; // the widget
-  taiWidget*              tai_data;// gui data object for widget
+  taiWidget*            tai_data;// gui data object for widget
 #endif
   String                widget_type; // what type of widget is this?  types defined by creation function
   String                attributes; // attributes that were set on this widget

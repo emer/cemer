@@ -221,7 +221,8 @@ show_menu:
   // get current mouse position
   QPoint men_pos = widget()->mapToGlobal(pos);
 
-  taMisc::RunPending();         // clear out any other events prior to popping menu
+  // not good: causes crash!
+  // taMisc::RunPending();         // clear out any other events prior to popping menu
 
   act = menu->menu()->exec(men_pos);
   //menu->deleteLater();
