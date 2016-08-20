@@ -43,8 +43,28 @@ void ClusterRunJob::UpdateAfterEdit_impl() {
   }
 
   int rtm = ClusterRun::RunTimeMins(run_time);
-  run_time_end = start_time;
-  run_time_end.addMinutes(rtm);  
+  if(rtm > 0) {
+    taDateTime new_end;
+    new_end = start_time;
+    new_end.addMinutes(rtm);
+    if(!run_time_end.isValid() || run_time_end.isNull()) {
+      run_time_end = new_end;
+    }
+    else {
+      if(new_end != run_time_end) {
+        taMisc::Info("ClusterRunJob: updated run_end_time:",
+                     run_time_end.toString(ClusterRun::timestamp_fmt));
+      }
+    }
+  }
+  else {
+    taMisc::Info("ClusterRunJob: got null run time from:", run_time,
+                 "defaulting to 7 days");
+    if(!run_time_end.isValid() || run_time_end.isNull()) {
+      run_time_end = start_time;
+      run_time_end.addMinutes(7*24*60); // 7 days default until something valid comes in
+    }
+  }
 }
 
 void ClusterRunJob::MakeCurJobObj() {

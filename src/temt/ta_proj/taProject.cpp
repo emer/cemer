@@ -277,8 +277,8 @@ bool taProject::GetClusterRunJob(int updt_interval_mins) {
     taMisc::Info("Cluster Run: could not find tag:", tag, "in jobs_running.dat data");
     return false; // our job not in it
   }
-  cr->GetCurJobData(tag);       // get it
-  if(got_new) {
+  bool got = cr->GetCurJobData(tag);       // get it
+  if(got_new && got) {
     ClusterRunJob* cj = ClusterRunJob::cur_job;
     taMisc::Info
       ("Cluster run job info loaded:", String(got_new), "tag:", cj->tag,
