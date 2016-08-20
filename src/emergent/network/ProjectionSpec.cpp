@@ -82,7 +82,8 @@ int ProjectionSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt
 void ProjectionSpec::SetCnWt(float wt_val, ConGroup* cg, int cn_idx, Network* net, int thr_no) {
   ConSpec* cs = cg->GetConSpec();
   if(add_rnd_var) {
-    cs->C_Init_Weight_AddRndVar(wt_val, thr_no);
+    bool eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
+    cs->C_Init_Weight_AddRndVar(wt_val, eff_thr_no);
   }
   cs->C_ApplyLimits(wt_val);
   cg->Cn(cn_idx,ConGroup::WT,net) = wt_val;
@@ -92,7 +93,8 @@ void ProjectionSpec::SetCnWt(float wt_val, ConGroup* cg, int cn_idx, Network* ne
 void ProjectionSpec::SetCnWtRnd(ConGroup* cg, int cn_idx, Network* net, int thr_no) {
   ConSpec* cs = cg->GetConSpec();
   float& wt_val = cg->Cn(cn_idx,ConGroup::WT,net);
-  cs->C_Init_Weight_Rnd(wt_val, thr_no); // std rnd wts
+  bool eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
+  cs->C_Init_Weight_Rnd(wt_val, eff_thr_no); // std rnd wts
 }
 
 void ProjectionSpec::SetCnScale(float sc_val, ConGroup* cg, int cn_idx, Network* net, int thr_no) {

@@ -44,9 +44,11 @@ inline void ConSpec::Init_Weights(ConGroup* cg, Network* net, int thr_no) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
 
+  bool eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
+  
   if(rnd.type != Random::NONE) {
     for(int i=0; i<cg->size; i++) {
-      C_Init_Weight_Rnd(wts[i], thr_no);
+      C_Init_Weight_Rnd(wts[i], eff_thr_no);
       C_Init_dWt(dwts[i]);
     }
   }
@@ -121,7 +123,8 @@ inline void ConSpec::Compute_Weights(ConGroup* cg, Network* net, int thr_no) {
 }
 
 inline void ConSpec::B_Init_Weights(UnitVars* uv, Network* net, int thr_no) {
-  C_Init_Weight_Rnd(uv->bias_wt, thr_no);
+  bool eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
+  C_Init_Weight_Rnd(uv->bias_wt, eff_thr_no);
   B_Init_dWt(uv, net, thr_no);  // user not expecting to have to init this -- call virtual
 }
 

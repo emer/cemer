@@ -1814,14 +1814,17 @@ void Network::Init_Weights() {
 
   if(HasNetFlag(INIT_WTS_1_THREAD)) {
     NET_THREAD_LOOP(Network::Init_Weights_Thr);
+    Init_Weights_renorm();
+    if(needs_wt_sym) {
+      NET_THREAD_LOOP(Network::Init_Weights_sym);
+    }
   }
   else {
     NET_THREAD_CALL(Network::Init_Weights_Thr);
-  }
-  
-  Init_Weights_renorm();
-  if(needs_wt_sym) {
-    NET_THREAD_CALL(Network::Init_Weights_sym);
+    Init_Weights_renorm();
+    if(needs_wt_sym) {
+      NET_THREAD_CALL(Network::Init_Weights_sym);
+    }
   }
   
   Init_Weights_post();

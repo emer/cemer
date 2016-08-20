@@ -104,13 +104,15 @@ public:
     float* ntrs = cg->OwnCnVar(NTR);
     float* trs = cg->OwnCnVar(TR);
 
+    bool eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
+  
     for(int i=0; i<cg->size; i++) {
       scales[i] = 1.0f;         // default -- must be set in prjn spec if different
     }
     
     if(rnd.type != Random::NONE) {
       for(int i=0; i<cg->size; i++) {
-        C_Init_Weight_Rnd(wts[i], thr_no);
+        C_Init_Weight_Rnd(wts[i], eff_thr_no);
         C_Init_dWt(dwts[i]);
         ntrs[i] = 0.0f;
         trs[i] = 0.0f;

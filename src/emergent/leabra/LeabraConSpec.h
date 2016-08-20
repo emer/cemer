@@ -386,18 +386,20 @@ public:
     float* dwts = cg->OwnCnVar(DWT);
     float* scales = cg->OwnCnVar(SCALE);
 
+    bool eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
+    
     for(int i=0; i<cg->size; i++) {
       scales[i] = 1.0f;         // default -- must be set in prjn spec if different
     }
     
     if(rnd.type != Random::NONE) {
       for(int i=0; i<cg->size; i++) {
-        C_Init_Weight_Rnd(wts[i], thr_no);
+        C_Init_Weight_Rnd(wts[i], eff_thr_no);
         C_Init_dWt(dwts[i]);
       }
     }
     else {
-      Init_dWt(cg, net, thr_no);
+      Init_dWt(cg, net, eff_thr_no);
     }
   }
 
