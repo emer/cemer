@@ -91,7 +91,7 @@ void  PFCUnitSpec::DefaultDynTable(float std_tau) {
   if(gate.out_gate)
     n_dyns = 1;
   else
-    n_dyns = 5; 
+    n_dyns = 1; 
   FormatDynTable();
 
   int cur = 0;

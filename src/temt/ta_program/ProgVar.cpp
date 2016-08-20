@@ -870,13 +870,16 @@ const String ProgVar::GenCssInitVal() const {
       return hard_enum_type->Get_C_EnumString(int_val);
     else
       return int_val;
-  case T_DynEnum:
-    return dyn_enum_val.NameVal();
+  case T_DynEnum: {
+    String nv = dyn_enum_val.NameVal();
+    if(nv.nonempty()) return nv;
+    return "0";
+  }
   case T_UnDef:
     return "";
     break;
   }
-  return "";
+  return "0";                   // usually bad to return blank..
 }
 
 // note: *never* initialize variables because they are cptrs to actual current
