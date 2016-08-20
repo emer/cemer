@@ -2446,7 +2446,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_go_units->deep.on = true;
   matrix_go_units->deep.role = DeepSpec::SUPER;
   matrix_go_units->deep.mod_min = 0.2f; // key!
-  matrix_go_units->matrix.out_ach_inhib = 0.3f;
+  matrix_go_units->matrix.out_ach_inhib = 0.1f; // 0.3 is pretty agressive -- 
 
   matrix_no_units->SetUnique("noise_type", false);
   matrix_no_units->SetUnique("noise", false);
@@ -2602,7 +2602,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_sp->lay_inhib.fb = 0.5f;
   matrix_sp->SetUnique("unit_gp_inhib", true);
   matrix_sp->unit_gp_inhib.on = true;
-  matrix_sp->unit_gp_inhib.gi = 2.1f;
+  matrix_sp->unit_gp_inhib.gi = 1.9f; // 2.1 for localist
   matrix_sp->unit_gp_inhib.ff = 1.0f;
   matrix_sp->unit_gp_inhib.fb = 0.0f;
   matrix_sp->SetUnique("lay_inhib", true);
@@ -2612,7 +2612,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_sp->avg_act.targ_init = 0.05f;
   matrix_sp->avg_act.fixed = true;
   matrix_sp->SetUnique("inhib_misc", true);
-  matrix_sp->inhib_misc.self_fb = 0.4f;
+  matrix_sp->inhib_misc.self_fb = 0.3f;
   matrix_sp->SetUnique("del_inhib", true);
   matrix_sp->del_inhib.on = true;
   matrix_sp->del_inhib.prv_trl = 0.0f;
@@ -2646,9 +2646,10 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   gpi_sp->UpdateAfterEdit();       // spread before override
 
   gp_nogo_sp->SetUnique("lay_inhib", true);
-  gp_nogo_sp->lay_inhib.gi = 2.2f;
+  gp_nogo_sp->lay_inhib.gi = 1.8f;
   gp_nogo_sp->lay_inhib.fb = 0.5f;
   gp_nogo_sp->lay_inhib.ff0 = 0.1f;
+  gp_nogo_sp->lay_inhib.max_vs_avg = 0.0f;
   
   pfc_sp->SetUnique("lay_inhib", true);
   pfc_sp->lay_inhib.on = false;
@@ -2738,11 +2739,12 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
     
     subgp = "PFC";
 
-    pfc_mnt_units->AddToControlPanelNm("pfc", cp, "pfc_mnt", subgp);
-    // pfc_mnt_units->AddToControlPanelNm("deep", cp, "pfc_mnt", subgp);
+    pfc_mnt_units->AddToControlPanelNm("gate", cp, "pfc_mnt", subgp);
+    pfc_mnt_units->AddToControlPanelNm("maint", cp, "pfc_mnt", subgp);
+    pfc_mnt_units->AddToControlPanelNm("n_dyns", cp, "pfc_mnt", subgp);
 
-    pfc_out_units->AddToControlPanelNm("pfc", cp, "pfc_out", subgp);
-    // pfc_out_units->AddToControlPanelNm("deep", cp, "pfc_out", subgp);
+    pfc_out_units->AddToControlPanelNm("gate", cp, "pfc_out", subgp);
+    pfc_out_units->AddToControlPanelNm("maint", cp, "pfc_out", subgp);
     
     pfc_sp->AddToControlPanelNm("unit_gp_inhib", cp, "pfc", subgp);
     pfc_sp->AddToControlPanelNm("lay_inhib", cp, "pfc", subgp);
@@ -2755,13 +2757,15 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
     pfc_fm_trc->AddToControlPanelNm("wt_scale", cp, "pfc_fm_trc", subgp);
     
     subgp = "BG";
+    matrix_go_units->AddToControlPanelNm("matrix", cp, "matrix", subgp);
+    matrix_go_units->AddToControlPanelNm("noise", cp, "matrix", subgp);
+    matrix_go_units->deep.AddToControlPanelNm("mod_min", cp, "matrix_deep", subgp,
+                                              "Controls strength of bias for output gating to occur in stripes that are already maintaining information -- PFCmnt deep modulation of output gating");
+
     matrix_sp->AddToControlPanelNm("unit_gp_inhib", cp, "matrix", subgp);
     matrix_sp->AddToControlPanelNm("lay_inhib", cp, "matrix", subgp);
     matrix_sp->AddToControlPanelNm("inhib_misc", cp, "matrix", subgp);
     matrix_sp->AddToControlPanelNm("del_inhib", cp, "matrix", subgp);
-
-    matrix_go_units->deep.AddToControlPanelNm("mod_min", cp, "matrix_deep", subgp,
-                                              "Controls strength of bias for output gating to occur in stripes that are already maintaining information -- PFCmnt deep modulation of output gating");
 
     mtx_cons_go->AddToControlPanelNm("lrate", cp, "matrix", subgp,
                                      "Default Matrix lrate is .01");
@@ -2771,8 +2775,10 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
     gpi_units->AddToControlPanelNm("gpi", cp, "gpi", subgp);
 
-    gpi_sp->AddToControlPanelNm("lay_inhib", cp, "gpi", subgp);
-    gp_nogo_sp->AddToControlPanelNm("lay_inhib", cp, "gpe_nogo", subgp);
+    gpi_sp->AddToControlPanelNm("lay_inhib", cp, "gpi", subgp,
+                                "gpi inhib is key param -- between .6 and .8 or so gi seems good overall -- determines how many stripes gate on average");
+    gp_nogo_sp->AddToControlPanelNm("lay_inhib", cp, "gpe_nogo", subgp,
+                                    "gpe nogo inhib also key -- between 1.6 and 2.2 gi is generally good -- gpe does selective editing of gating -- don't want too much activity but need some..");
 
     cp->EditPanel(true, true);
   }
