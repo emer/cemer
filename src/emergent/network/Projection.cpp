@@ -362,7 +362,15 @@ void Projection::SetCustomFrom(Layer* fm_lay) {
 void Projection::CheckSpecs() {
   spec.CheckSpec();
   con_spec.CheckSpec(con_type);
-  UpdateConSpecs();
+  ConSpec* sp = con_spec.SPtr();
+  if(sp) {
+    if(TestWarning(!con_type->InheritsFrom(sp->min_obj_type), "UpdateConSpec",
+                   "connection type set to:",sp->min_obj_type->name,
+                   "as required by the connection spec:", sp->name)) {
+      con_type = sp->min_obj_type;
+    }
+  }
+  // NOTE: checkspecs does NOT go into units or connections!
 }
 
 bool Projection::UpdateConSpecs(bool force) {

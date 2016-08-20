@@ -101,8 +101,7 @@ void  PFCUnitSpec::DefaultDynTable(float std_tau) {
   SetDynVal(0.0f, DYN_RISE_TAU, cur);
   SetDynVal(0.0f, DYN_DECAY_TAU, cur);
 
-  if(gate.out_gate)
-    return;
+  if(n_dyns <= 1) return;       // only do below for 5 default case..
   
   cur++;
   SetDynVal("phasic", DYN_NAME, cur);
