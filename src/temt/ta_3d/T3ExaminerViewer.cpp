@@ -641,7 +641,10 @@ void T3ExaminerViewer::removeAllDynButtons() {
   dyn_buttons.Reset();
   dyn_actions.Reset();
   for(int i=lhs_button_vbox->count()-1; i>=0; i--) {
-    lhs_button_vbox->removeItem(lhs_button_vbox->itemAt(i));
+    QLayoutItem* itm = lhs_button_vbox->itemAt(i);
+    QWidget* widg = itm->widget();
+    lhs_button_vbox->removeItem(itm);
+    if(widg) delete widg;         // need to actually delete the widget!  remove doesn't
   }
 }
 
@@ -649,7 +652,10 @@ bool T3ExaminerViewer::removeDynButton(int but_no) {
   if(but_no < 0 || but_no >= dyn_buttons.size) return false;
   dyn_buttons.RemoveIdx(but_no);
   dyn_actions.RemoveIdx(but_no);
-  lhs_button_vbox->removeItem(lhs_button_vbox->itemAt(but_no));
+  QLayoutItem* itm = lhs_button_vbox->itemAt(but_no);
+  QWidget* widg = itm->widget();
+  lhs_button_vbox->removeItem(itm);
+  if(widg) delete widg;         // need to actually delete the widget!  remove doesn't
   return true;
 }
 

@@ -490,27 +490,6 @@ private:
   void        Defaults_init() { }; // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-eTypeDef_Of(RLrateSpec);
-
-class E_API RLrateSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra receiving unit learning rate spec: learning rate dynamics based on activity profile of the receiving unit -- implements trace-like learning to support development of invariant representations -- high lrate for units that have above-threshold activation for two trials in a row
-INHERITED(SpecMemberBase)
-public:
-  bool          on;                // turn on recv learning rate dynamics
-  float         base;              // #CONDSHOW_ON_on #MIN_0 baseline learning rate -- for units that fail to meet the high lrate criterion of two active trials in a row -- this value multiplies the overall learning rate for this unit across all of its synapses
-  float         act_thr;           // #CONDSHOW_ON_on #MIN_0 activation threshold for units -- only those that are active above this threshold for two sequential trials get the full normal learning rate level -- others get the base level learning rate multiplier
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(RLrateSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void        Initialize();
-  void        Destroy()        { };
-  void        Defaults_init();
-};
-
 
 eTypeDef_Of(DeepSpec);
 
@@ -670,7 +649,6 @@ public:
   ActAdaptSpec     adapt;           // #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   ShortPlastSpec   stp;             // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec     syn_delay;       // #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
-  RLrateSpec       r_lrate;         // #CAT_Learning receiving-unit based learning rate specs -- sets effective learning rate multiplier based on activation profile of receiving unit, to promote greater translation invariance
   Quarters         deep_raw_qtr;    // #CAT_Learning #AKA_deep_qtr quarter(s) during which deep_raw layer 5 intrinsic bursting activations should be updated -- deep_raw is updated and sent to deep_raw_net during this quarter, and deep_ctxt is updated right after this quarter (wrapping around to the first quarter for the 4th quarter)
   DeepSpec         deep;            // #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
   DaModSpec        da_mod;          // #CAT_Learning da modulation of activations (for da-based learning, and other effects)

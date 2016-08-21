@@ -125,9 +125,6 @@ public:
   inline float& avg_l_lrn()
   { return ((LeabraUnitVars*)GetUnitVars())->avg_l_lrn; }
   // #CAT_UnitVar how much to learn based on the long-term floating threshold (avg_l) for BCM-style Hebbian learning -- is modulated level of avg_l itself (stronger hebbian as average activation goes higher) and optionally the average amount of error experienced in the layer (to retain a common proportionality with the level of error-driven learning across layers)
-  inline float& r_lrate()
-  { return ((LeabraUnitVars*)GetUnitVars())->r_lrate; }
-  // #CAT_UnitVar learning rate dynamics based on activity profile of the receiving unit -- can implement trace-like learning to support development of invariant representations
   inline float& act_avg()
   { return ((LeabraUnitVars*)GetUnitVars())->act_avg; }
   // #CAT_UnitVar average activation (of final plus phase activation state) over long time intervals (time constant = act_misc.avg_tau -- typically 200) -- useful for finding hog units and seeing overall distribution of activation -- if act_misc.avg_trace is active, then it is instead an exponentially decaying trace -- used in TD reinforcement learning

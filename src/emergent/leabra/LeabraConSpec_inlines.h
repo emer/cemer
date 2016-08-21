@@ -277,7 +277,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
 #else
   for(int i=0; i<sz; i++) {
     LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-    float lrate_eff = clrate * ru->r_lrate;
+    float lrate_eff = clrate;
     if(deep_on) {
       lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
     }
@@ -314,7 +314,7 @@ inline void LeabraConSpec::Compute_dWt_MaxSugp(LeabraConGroup* cg, LeabraNetwork
     int ru_thr_no = ru->ThrNo(net);
     LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no, cg->other_idx);
     if(sugps[i] != rcg->max_sugp) continue; // only learn on max!
-    float lrate_eff = clrate * ru->r_lrate;
+    float lrate_eff = clrate;
     if(deep_on) {
       lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
     }

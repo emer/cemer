@@ -43,7 +43,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraChannels);
 TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
 TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
-TA_BASEFUNS_CTORS_DEFN(RLrateSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
 TA_BASEFUNS_CTORS_DEFN(NoiseAdaptSpec);
@@ -363,16 +362,6 @@ void SynDelaySpec::Initialize() {
   delay = 4;
 }
 
-void RLrateSpec::Initialize() {
-  on = false;
-  Defaults_init();
-}
-
-void RLrateSpec::Defaults_init() {
-  base = 0.5f;
-  act_thr = 0.2f;
-}
-
 void DeepSpec::Initialize() {
   on = false;
   role = SUPER;
@@ -607,7 +596,6 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->avg_m = 0.15f;
   u->avg_l = avg_l.init;
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
-  u->r_lrate = 1.0f;
   u->act_avg = 0.15f;
   u->act_raw = 0.0f;
   u->deep_raw = 0.0f;
@@ -750,7 +738,6 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->avg_s_eff = u->avg_s;
   u->avg_m = act_misc.avg_init;
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
-  u->r_lrate = 1.0f;
   // not avg_l
   // not act_avg
   u->act_raw = 0.0f;
@@ -2171,14 +2158,6 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
     u->act_q4 = use_act;
     u->act_p = use_act;
     u->act_dif = u->act_p - u->act_m;
-    if(r_lrate.on) {
-      if(u->act_p >= r_lrate.act_thr && u->act_q0 >= r_lrate.act_thr) {
-        u->r_lrate = 1.0f;
-      }
-      else {
-        u->r_lrate = r_lrate.base;
-      }
-    }
     Compute_ActTimeAvg(u, net, thr_no);
     break;
   }
