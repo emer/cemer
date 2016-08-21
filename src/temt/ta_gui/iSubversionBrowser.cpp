@@ -91,6 +91,8 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   connect(a_add_file, SIGNAL(triggered()), this, SLOT(a_add_file_do()));
   a_rm_file =   main_tb->addAction("Del File");
   connect(a_rm_file, SIGNAL(triggered()), this, SLOT(a_rm_file_do()));
+  a_cp_file =   main_tb->addAction("Copy File");
+  connect(a_cp_file, SIGNAL(triggered()), this, SLOT(a_cp_file_do()));
   a_mv_file =   main_tb->addAction("Rename File");
   connect(a_mv_file, SIGNAL(triggered()), this, SLOT(a_mv_file_do()));
   a_rev_file =   main_tb->addAction("Revert File");
@@ -759,6 +761,8 @@ void iSubversionBrowser::file_table_customContextMenuRequested(const QPoint& pos
                       iAction::int_act, this, SLOT(a_save_file_do()), 1);
   act = menu->AddItem("&Del File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_rm_file_do()), 1);
+  act = menu->AddItem("&Copy File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_cp_file_do()), 1);
   act = menu->AddItem("&Rename File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_mv_file_do()), 1);
 
@@ -782,14 +786,18 @@ void iSubversionBrowser::wc_table_customContextMenuRequested(const QPoint& pos) 
                       iAction::int_act, this, SLOT(a_rm_file_wc_do()), 1);
   act = menu->AddItem("Svn &Revert File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_rev_file_wc_do()), 1);
+  act = menu->AddItem("Svn &Copy File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_cp_file_wc_do()), 1);
   act = menu->AddItem("&Svn Rename File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_mv_file_wc_do()), 1);
-  act = menu->AddItem("&Svn Rename File (force)", taiWidgetMenu::normal,
+  act = menu->AddItem("Svn Re&name File (force)", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_mv_file_wc_force_do()), 1);
   
   menu->insertSeparator();
   act = menu->AddItem("Local Delete File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_rm_file_loc_do()), 1);
+  act = menu->AddItem("Local Copy File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_cp_file_loc_do()), 1);
   act = menu->AddItem("Local Rename File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_mv_file_loc_do()), 1);
 
@@ -987,6 +995,19 @@ void iSubversionBrowser::a_rev_file_wc_do() {
   }
 }
 
+void iSubversionBrowser::a_cp_file_do() {
+  int rev = 0;
+  String fnm = selSvnFile(rev);
+  if(fnm.nonempty()) {
+    String org_fnm = fnm;
+    bool ok = taMisc::StringPrompt(fnm, "Copy subversion file to new name and/or path:",
+                             "Ok", "Cancel");
+    if(ok) {
+      svn_file_model->copyFile(org_fnm, fnm);
+    }
+  }
+}
+
 void iSubversionBrowser::a_mv_file_do() {
   int rev = 0;
   String fnm = selSvnFile(rev);
@@ -996,6 +1017,18 @@ void iSubversionBrowser::a_mv_file_do() {
                              "Ok", "Cancel");
     if(ok) {
       svn_file_model->moveFile(org_fnm, fnm, false); // not force
+    }
+  }
+}
+
+void iSubversionBrowser::a_cp_file_wc_do() {
+  String fnm = selWcFile();
+  if(fnm.nonempty()) {
+    String org_fnm = fnm;
+    bool ok = taMisc::StringPrompt(fnm, "Copy subversion file to new name and/or path:",
+                             "Ok", "Cancel");
+    if(ok) {
+      svn_file_model->copyFile(org_fnm, fnm);
     }
   }
 }
@@ -1020,6 +1053,18 @@ void iSubversionBrowser::a_mv_file_wc_force_do() {
                              "Ok", "Cancel");
     if(ok) {
       svn_file_model->moveFile(org_fnm, fnm, true);
+    }
+  }
+}
+
+void iSubversionBrowser::a_cp_file_loc_do() {
+  String fnm = selWcFile();
+  if(fnm.nonempty()) {
+    String org_fnm = fnm;
+    bool ok = taMisc::StringPrompt(fnm, "Copy local file to new name and/or path:",
+                             "Ok", "Cancel");
+    if(ok) {
+      svn_file_model->copyFileLocal(org_fnm, fnm);
     }
   }
 }

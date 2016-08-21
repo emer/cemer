@@ -2938,6 +2938,10 @@ bool taMisc::SetFilePermissions(const String& fname, bool user, bool group,
   return fi.setPermissions(perm);
 }
 
+bool taMisc::CopyFile(const String& old_fn, const String& new_fn) {
+  return QFile::copy(old_fn, new_fn);
+}
+
 bool taMisc::RenameFile(const String& old_fn, const String& new_fn) {
   QDir d;
   return d.rename(old_fn, new_fn);

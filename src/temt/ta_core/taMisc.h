@@ -916,6 +916,8 @@ public:
                    bool group=false, bool other=false, bool readable=true,
                    bool writable=true, bool executable=false);
   // #CAT_File set file permissions for different classes of users
+  static bool   CopyFile(const String& fm_filename, const String& to_filename);
+  // #CAT_File copy file to new name in current working directory (or absolute path) -- returns success
   static bool   RenameFile(const String& old_filename, const String& new_filename);
   // #CAT_File rename file from old to new name in current working directory (or absolute path) -- returns success
   static bool   RemoveFile(const String& filename);

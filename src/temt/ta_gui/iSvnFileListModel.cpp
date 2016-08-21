@@ -353,6 +353,46 @@ bool iSvnFileListModel::delFileLocal(const String& fnm) {
   return true;
 }
 
+bool iSvnFileListModel::copyFile(const String& from_nm, const String& to_nm) {
+  if(!svn_client)
+    return false;
+  if(wc_path().isEmpty()) {
+    taMisc::Error("working copy path is empty -- can only copy files in working copy");
+    return false;
+  }
+  String path = wc_path_full();
+  path = taMisc::FinalPathSep(path);
+  String fm_path = path + from_nm;
+  String_PArray files;
+  files.Add(fm_path);
+  String to_path = path + to_nm;
+  try {
+    svn_client->CopyFile(files, to_path);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in copyFile\n", ex.what());
+    return false;
+  }
+  taMisc::Info("subversion copied file from:", fm_path, "to:", to_path);
+  return true;
+}
+
+bool iSvnFileListModel::copyFileLocal(const String& from_nm, const String& to_nm) {
+  if(!svn_client)
+    return false;
+  if(wc_path().isEmpty()) {
+    taMisc::Error("working copy path is empty -- can only copy files in working copy");
+    return false;
+  }
+  String path = wc_path_full();
+  path = taMisc::FinalPathSep(path);
+  String fm_path = path + from_nm;
+  String to_path = path + to_nm;
+  taMisc::CopyFile(fm_path, to_path);
+  taMisc::Info("locally copied file from:", fm_path, "to:", to_path);
+  return true;
+}
+
 bool iSvnFileListModel::moveFile(const String& from_nm, const String& to_nm, bool force) {
   if(!svn_client)
     return false;

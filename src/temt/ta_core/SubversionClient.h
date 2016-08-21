@@ -150,8 +150,11 @@ public:
   void  Delete(const String_PArray& files, bool force, bool keep_local);
   // Delete listed files (or directories) from the repository, with force and keep_local options
 
+  void  CopyFile(const String_PArray& from_nms, String& to_nm, bool force = false);
+  // copy file from given name(s) to given name (if multiple from names, to must be a dir) -- force = overwrite existing etc
+
   void  MoveFile(const String_PArray& from_nms, String& to_nm, bool force = false);
-  // move files from given names to given name -- force = overwrite existing etc
+  // move files from given name(s) to given name  (if multiple from names, to must be a dir) -- force = overwrite existing etc
   
   // All functions return true if a new directory was created.
   bool  MakeDir(const String& new_dir, bool make_parents = true);

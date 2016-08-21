@@ -105,6 +105,10 @@ public:
   // delete file from repository and locally -- file is relative to current wc_path and subdir -- does NOT confirm -- just does it..
   virtual bool    delFileLocal(const String& file_name);
   // delete file locally ONLY -- file is relative to current wc_path and subdir -- does NOT confirm -- just does it..
+  virtual bool    copyFile(const String& from_nm, const String& to_nm);
+  // copy file from one name to the other
+  virtual bool    copyFileLocal(const String& from_nm, const String& to_nm);
+  // copy file from one name to the other -- local only!
   virtual bool    moveFile(const String& from_nm, const String& to_nm, bool force = false);
   // move file from one name to the other
   virtual bool    moveFileLocal(const String& from_nm, const String& to_nm, bool force = false);

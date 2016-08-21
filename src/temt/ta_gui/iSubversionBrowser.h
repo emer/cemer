@@ -119,6 +119,7 @@ protected slots:
   void    a_view_diff_do();
   void    a_save_file_do();
   void    a_rm_file_do();
+  void    a_cp_file_do();
   void    a_mv_file_do();
   void    a_rev_file_do();
   
@@ -129,10 +130,12 @@ protected slots:
   void    a_add_file_wc_do();
   void    a_rm_file_wc_do();
   void    a_rev_file_wc_do();
+  void    a_cp_file_wc_do();
   void    a_mv_file_wc_do();
   void    a_mv_file_wc_force_do();
 
   void    a_rm_file_loc_do();
+  void    a_cp_file_loc_do();
   void    a_mv_file_loc_do();
 
   void    a_update_do();
@@ -156,6 +159,7 @@ protected:
   QAction*              a_save_file;
   QAction*              a_add_file;
   QAction*              a_rm_file;
+  QAction*              a_cp_file;
   QAction*              a_mv_file;
   QAction*              a_rev_file;
 
