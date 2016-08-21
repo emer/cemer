@@ -12,7 +12,7 @@ echo "$rev $REV"
 TAG="$2"
 if [ -z $TAG ]; then TAG="trunk"; fi
 
-sudo apt-get install cmake g++ libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng12-dev libjpeg-dev libncurses5-dev libsndfile1-dev libsvn-dev qt5-default qttools5-dev qtlocation5-dev libqt5designer5 libqt5webkit5-dev qtdeclarative5-dev libqt5sensors5-dev qtmultimedia5-dev
+sudo apt-get install cmake g++ libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng12-dev libjpeg-dev libncurses5-dev libsndfile1-dev libsvn-dev qt5-default qttools5-dev qtlocation5-dev libqt5designer5 libqt5webkit5-dev qtdeclarative5-dev libqt5sensors5-dev qtmultimedia5-dev libqt5svg5-dev
 
 # for qt4 use the qt4 version of this script
 #QTVER="$3"
