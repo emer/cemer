@@ -60,7 +60,7 @@ TestInitialiseIdentical
     Set Emergent Var		TestInitialiseWeights	test_no		2
     Run Emergent Program	TestInitialiseWeights
     
-    ${diff}=	Run Process		/usr/bin/diff	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise1_0.wts
+    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise1_0.wts
     Should Match	"${diff.stdout}"		""
     ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise2_1.wts
     Should Match	"${diff.stdout}"		"Files ./test-projects/TestRandomWeightsInitialise0_0.wts and ./test-projects/TestRandomWeightsInitialise2_1.wts differ"
@@ -75,9 +75,9 @@ TestInitialiseIdentical
     Set Emergent Var		TestInitialiseWeights	test_no		4
     Run Emergent Program	TestInitialiseWeights
 
-    ${diff}=	Run Process		/usr/bin/diff	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise3_0.wts
+    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise3_0.wts
     Should Match	"${diff.stdout}"		""
-    ${diff}=	Run Process		/usr/bin/diff	./test-projects/TestRandomWeightsInitialise2_1.wts		./test-projects/TestRandomWeightsInitialise4_1.wts
+    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise2_1.wts		./test-projects/TestRandomWeightsInitialise4_1.wts
     Should Match	"${diff.stdout}"		""
 
 
@@ -93,10 +93,10 @@ TestInitialiseIdentical
 #    Set Emergent Var		TestInitialiseWeights	test_no		7
 #    Run Emergent Program	TestInitialiseWeights
     
-#    ${diff}=	Run Process		/usr/bin/diff	./test-projects/TestRandomWeightsInitialise5_0.wts		./test-projects/TestRandomWeightsInitialise6_0.wts
+#    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise5_0.wts		./test-projects/TestRandomWeightsInitialise6_0.wts
 #    Should Match	"${diff.stdout}"		""
-#    ${diff}=	Run Process		/usr/bin/diff	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise6_0.wts
+#    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise6_0.wts
 #    Should Match	"${diff.stdout}"		""
-#    ${diff}=	Run Process		/usr/bin/diff	./test-projects/TestRandomWeightsInitialise2_1.wts		./test-projects/TestRandomWeightsInitialise7_1.wts
+#    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise2_1.wts		./test-projects/TestRandomWeightsInitialise7_1.wts
 #    Should Match	"${diff.stdout}"		""
 
