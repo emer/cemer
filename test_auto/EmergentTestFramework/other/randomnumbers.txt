@@ -27,7 +27,7 @@ ${debug} =       false
 
 Initialize
     Set Suite Variable     ${verbose}       ${false}
-    Set Suite Variable     ${project}       ./test-projects/TestRandomWeightInitialise.proj
+    Set Suite Variable     ${project}       ./test-projects/TestRandomWeightsInitialise.proj
     Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
 
 Connection

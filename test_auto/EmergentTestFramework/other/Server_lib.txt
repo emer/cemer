@@ -137,8 +137,7 @@ Run Command
     [Arguments]        ${command}    ${wait}
     Print              [Sending] ${command}    # temporary
     Write Bare         ${command}\n
-    Sleep              ${wait}
-    ${output} =        Read
+    ${output} =        Read till non empty	"Couldn't get any useful data back from running command ${command}"
     Print              [Received] ${output}    # this is temporary just so I can see what's happening
     [Return]           ${output}
 
