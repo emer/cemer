@@ -156,6 +156,7 @@ public:
   float                 net_text_rot;    // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
   MemberSpace           membs;          // #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
   String_Array          cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
+  String_Array          hot_vars;       // current "hot" variables shown directly in explorer view
   UnitRef               unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
   String                unit_src_path;  // ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading
   String                last_sel_unit_val;   // #READ_ONLY #SHOW #NO_SAVE value of last selected unit (for display)
@@ -252,6 +253,7 @@ public:
   virtual int           GetLayDispMode(const String& lay_nm);
   // get the layer display mode value for given layer name (called by LayerView BuildAll)
   virtual void          SetHighlightSpec(BaseSpec* spec);
+  virtual bool          InitHotVars(); // init default "hot" vars from directives
   static bool           UsesSpec(taBase* obj, BaseSpec* spec);
 
   virtual void          NewLayer(int x = 3, int y = 3);

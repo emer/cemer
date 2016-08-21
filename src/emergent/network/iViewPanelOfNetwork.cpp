@@ -388,7 +388,10 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lvDisplayValues->setSortingEnabled(false);
   lvDisplayValues->setSelectionMode(QAbstractItemView::SingleSelection);
   //layDisplayValues->addWidget(lvDisplayValues, 1);
-  connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()) );
+  connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this,
+          SLOT(lvDisplayValues_selectionChanged()) );
+  connect(lvDisplayValues, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
+          SLOT(lvDisplayValues_itemClicked(QTreeWidgetItem*, int)) );
 
   ////////////////////////////////////////////////////////////////////////////
   // Spec tree
@@ -691,13 +694,19 @@ void iViewPanelOfNetwork::GetVars() {
   lvDisplayValues->clear();
   if (nv->membs.size == 0) return;
 
+  nv->InitHotVars();
+  
   MemberDef* md;
   for (int i=0; i < nv->membs.size; i++) {
     md = nv->membs[i];
     if (md->HasOption("NO_VIEW")) continue;
     QStringList itm;
     itm << md->name << md->desc;
-    new QTreeWidgetItem(lvDisplayValues, itm);
+    QTreeWidgetItem* titm = new QTreeWidgetItem(lvDisplayValues, itm);
+    if(nv->hot_vars.FindEl(md->name) < 0)
+      titm->setCheckState(0, Qt::Unchecked);
+    else
+      titm->setCheckState(0, Qt::Checked);
   }
   lvDisplayValues->resizeColumnToContents(0);
 }
@@ -735,6 +744,23 @@ void iViewPanelOfNetwork::lvDisplayValues_selectionChanged() {
   // note: init will reset history etc and is now unnec for updating view guys..
   nv->UpdateDisplay(false);
 }
+
+void iViewPanelOfNetwork::lvDisplayValues_itemClicked(QTreeWidgetItem* item, int col) {
+  if (updating) return;
+
+  NetView *nv = getNetView();
+  if (!nv) return;
+  Qt::CheckState chk = item->checkState(col);
+  String nm = item->text(0);
+  if(chk == Qt::Checked) {
+    nv->hot_vars.AddUnique(nm);
+  }
+  else {
+    nv->hot_vars.RemoveEl(nm);
+  }
+  nv->UpdateDisplay(false);
+}
+
 
 void iViewPanelOfNetwork::setHighlightSpec(BaseSpec* spec, bool force) {
   if ((spec == m_cur_spec) && !force) return;

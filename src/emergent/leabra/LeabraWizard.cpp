@@ -2646,7 +2646,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   gpi_sp->UpdateAfterEdit();       // spread before override
 
   gp_nogo_sp->SetUnique("lay_inhib", true);
-  gp_nogo_sp->lay_inhib.gi = 1.8f;
+  gp_nogo_sp->lay_inhib.gi = 2.2f;
   gp_nogo_sp->lay_inhib.fb = 0.5f;
   gp_nogo_sp->lay_inhib.ff0 = 0.1f;
   gp_nogo_sp->lay_inhib.max_vs_avg = 0.0f;
@@ -2758,7 +2758,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
     
     subgp = "BG";
     matrix_go_units->AddToControlPanelNm("matrix", cp, "matrix", subgp);
-    matrix_go_units->AddToControlPanelNm("noise", cp, "matrix", subgp);
+    matrix_go_units->AddToControlPanelNm("noise", cp, "matrix", subgp,
+                                         "generally var of around .001 works best");
     matrix_go_units->deep.AddToControlPanelNm("mod_min", cp, "matrix_deep", subgp,
                                               "Controls strength of bias for output gating to occur in stripes that are already maintaining information -- PFCmnt deep modulation of output gating");
 
@@ -2780,6 +2781,9 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
     gp_nogo_sp->AddToControlPanelNm("lay_inhib", cp, "gpe_nogo", subgp,
                                     "gpe nogo inhib also key -- between 1.6 and 2.2 gi is generally good -- gpe does selective editing of gating -- don't want too much activity but need some..");
 
+    patch_units->AddToControlPanelNm("shunt_factor", cp, "patch", subgp);
+    patch_units->AddToControlPanelNm("shunt_ach", cp, "patch", subgp);
+    
     cp->EditPanel(true, true);
   }
   return true;

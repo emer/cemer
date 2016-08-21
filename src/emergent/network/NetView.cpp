@@ -436,6 +436,7 @@ void NetView::InitLinks() {
   taBase::Own(scale, this);
   taBase::Own(scale_ranges, this);
   taBase::Own(cur_unit_vals, this);
+  taBase::Own(hot_vars, this);
   taBase::Own(ctr_hist, this);
   taBase::Own(ctr_hist_idx, this);
   taBase::Own(max_size, this);
@@ -1141,7 +1142,29 @@ void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
 
 #endif // TA_QT3D
 
+bool NetView::InitHotVars() {
+  if(hot_vars.size > 0) {       // cleanup hot vars if already there
+    if(membs.size > 0) {
+      for(int i=hot_vars.size-1; i>=0; i--) {
+        if(membs.FindNameIdx(hot_vars[i]) < 0) { // not on membs list
+          hot_vars.RemoveIdx(i);
+        }
+      }
+    }
+    return false;
+  }
+  // init with programmed hot vars
+  MemberDef* md;
+  for (int i=0; i < membs.size; i++) {
+    md = membs[i];
+    if(!md->HasOption("VIEW_HOT")) continue;
+    hot_vars.Add(md->name);
+  }
+  return true;
+}
+
 void NetView::Render_pre() {
+  InitHotVars();
   if(!no_init_on_rerender)
     InitDisplay();
   no_init_on_rerender = false;
@@ -1174,15 +1197,6 @@ void NetView::Render_pre() {
     node_so()->addChild(ecb);
 #endif
   }
-
-  if(vw) {                      // add hot buttons to viewer
-    MemberDef* md;
-    for (int i=0; i < membs.size; i++) {
-      md = membs[i];
-      if(!md->HasOption("VIEW_HOT")) continue;
-      vw->addDynButton(md->name, md->desc); // add the button
-    }
-  }
   inherited::Render_pre();
 }
 
@@ -1193,6 +1207,16 @@ void NetView::Render_impl() {
 
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
+    InitHotVars();
+    if(hot_vars.size != vw->dyn_buttons.size) {
+      vw->removeAllDynButtons();
+      MemberDef* md;
+      for (int i=0; i < membs.size; i++) {
+        md = membs[i];
+        if(hot_vars.FindEl(md->name) < 0) continue;
+        vw->addDynButton(md->name, md->desc);
+      }
+    }
     vw->syncViewerMode();
     if(unit_disp_md) {
       int but_no = vw->dyn_buttons.FindName(unit_disp_md->name);

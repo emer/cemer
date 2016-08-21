@@ -287,7 +287,10 @@ void iConsole::stdReceived() {
 // Displays the prompt and move the cursor to the end of the line.
 void iConsole::displayPrompt(bool force) {
   flushOutput();
-  if(!force && promptDisp) return;
+  if(!force && promptDisp) {
+    repaint();
+    return;
+  }
   QTextCursor cursor(textCursor());
   // displays the prompt
   gotoEnd(cursor, false);
