@@ -12,7 +12,15 @@ echo "$rev $REV"
 TAG="$2"
 if [ -z $TAG ]; then TAG="trunk"; fi
 
-sudo apt-get install cmake g++ libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng12-dev libjpeg-dev libncurses5-dev libsndfile1-dev libsvn-dev qt5-default qttools5-dev qtlocation5-dev libqt5designer5 libqt5webkit5-dev qtdeclarative5-dev libqt5sensors5-dev qtmultimedia5-dev libqt5svg5-dev
+sudo apt-get install cmake g++ libreadline6-dev libgsl0-dev zlib1g-dev libpng12-dev libjpeg-dev libncurses5-dev libsndfile1-dev libsvn-dev qt5-default qttools5-dev qtlocation5-dev libqt5designer5 libqt5webkit5-dev qtdeclarative5-dev libqt5sensors5-dev qtmultimedia5-dev libqt5svg5-dev
+
+if [ `lsb_release -s -r` == "16.04" ]
+then
+    sudo apt-get install libode-dev
+else
+    sudo apt-get install libode-sp-dev
+fi
+
 
 # for qt4 use the qt4 version of this script
 #QTVER="$3"
@@ -89,7 +97,15 @@ Emergent
 # is to have a single package for emergent, vs. having an emergnet.deb and
 # a separate emergent-dev.deb for people who want to compile plugins.  Also
 # include subversion so users can download and compile the latest emergent.
-EMERGENT_BLD_DEPS="cmake, subversion, g++, libreadline6-dev, libgsl0-dev, libode-sp-dev, libpng-dev, libjpeg-dev, zlib1g-dev, libquarter0, libncurses-dev, libsvn-dev"
+EMERGENT_BLD_DEPS="cmake, subversion, g++, libreadline6-dev, libgsl0-dev, libpng-dev, libjpeg-dev, zlib1g-dev, libquarter0, libncurses-dev, libsvn-dev"
+
+if [ `lsb_release -s -v` == "16.04" ]
+then
+    QT_BLD_DEPS+=" libode-dev"
+else
+    QT_BLD_DEPS+=" libode-sp-dev"
+fi
+
 if [ "$QTVER" == "qt5" ] && [ -z $QTDIR ]; then
   QT_BLD_DEPS="qt5-default, qttools5-dev, qtlocation5-dev, libqt5designer5, libqt5webkit5-dev, qtdeclarative5-dev, libqt5sensors5-dev, qtlocation5-dev"
 fi
