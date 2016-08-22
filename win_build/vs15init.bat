@@ -27,7 +27,7 @@ set QTDIR=C:\Qt\5.6.1\5.6\msvc2015_64
 set EMER_MISC_LIBS_DIR=C:\EmerMiscLibs
 set COINDIR=C:\Coin\4.0.0a
 set EMER_SVN_LIBS_DIR=C:\Subversion
-set ZLIB_ROOT=C:\EmerMiscLibs\zlib-win64-msvs2013
+set ZLIB_ROOT=C:\EmerMiscLibs
 
 :: this is the key configure command -- you can now type it just by typing "configure"
 doskey configure=cmake %SRC_DIR% -G "NMake Makefiles JOM" -Wno-dev -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DQT_USE_5=ON -DQTDIR=%QTDIR% -DCMAKE_SHARED_LINKER_FLAGS_DEBUG="/INCREMENTAL:NO" -DCMAKE_MODULE_LINKER_FLAGS_DEBUG="/INCREMENTAL:NO" -DCMAKE_SHARED_LINKER_FLAGS="/machine:X%ARCH%" -DCMAKE_MODULE_LINKER_FLAGS="/machine:X%ARCH%" -DCMAKE_EXE_LINKER_FLAGS="/machine:X%ARCH%" -DZLIB_ROOT=%ZLIB_ROOT%
