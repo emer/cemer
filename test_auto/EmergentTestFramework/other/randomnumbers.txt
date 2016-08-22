@@ -48,37 +48,37 @@ General RunState
 
 
 
-TestInitialiseIdentical
-    Ensure Emergent Free
-    Set Emergent Var		TestInitialiseWeights	batch_no	0
-    Set Emergent Var		TestInitialiseWeights	test_no		0
-    Run Emergent Program	TestInitialiseWeights
-    Set Emergent Var		TestInitialiseWeights	batch_no	0
-    Set Emergent Var		TestInitialiseWeights	test_no		1
-    Run Emergent Program	TestInitialiseWeights
-    Set Emergent Var		TestInitialiseWeights	batch_no	1
-    Set Emergent Var		TestInitialiseWeights	test_no		2
-    Run Emergent Program	TestInitialiseWeights
+#TestInitialiseIdentical
+#    Ensure Emergent Free
+#    Set Emergent Var		TestInitialiseWeights	batch_no	0
+#    Set Emergent Var		TestInitialiseWeights	test_no		0
+#    Run Emergent Program	TestInitialiseWeights
+#    Set Emergent Var		TestInitialiseWeights	batch_no	0
+#    Set Emergent Var		TestInitialiseWeights	test_no		1
+#    Run Emergent Program	TestInitialiseWeights
+#    Set Emergent Var		TestInitialiseWeights	batch_no	1
+#    Set Emergent Var		TestInitialiseWeights	test_no		2
+#    Run Emergent Program	TestInitialiseWeights
     
-    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise1_0.wts
-    Should Match	"${diff.stdout}"		""
-    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise2_1.wts
-    Should Match	"${diff.stdout}"		"Files ./test-projects/TestRandomWeightsInitialise0_0.wts and ./test-projects/TestRandomWeightsInitialise2_1.wts differ"
+#    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise1_0.wts
+#    Should Match	"${diff.stdout}"		""
+#    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise2_1.wts
+#    Should Match	"${diff.stdout}"		"Files ./test-projects/TestRandomWeightsInitialise0_0.wts and ./test-projects/TestRandomWeightsInitialise2_1.wts differ"
 
-    Restart Emergent
+#    Restart Emergent
 
-    Set Emergent Var		TestInitialiseWeights	batch_no	0
-    Set Emergent Var		TestInitialiseWeights	test_no		3
-    Run Emergent Program	TestInitialiseWeights
+#    Set Emergent Var		TestInitialiseWeights	batch_no	0
+#    Set Emergent Var		TestInitialiseWeights	test_no		3
+#    Run Emergent Program	TestInitialiseWeights
 
-    Set Emergent Var		TestInitialiseWeights	batch_no	1
-    Set Emergent Var		TestInitialiseWeights	test_no		4
-    Run Emergent Program	TestInitialiseWeights
+#    Set Emergent Var		TestInitialiseWeights	batch_no	1
+#    Set Emergent Var		TestInitialiseWeights	test_no		4
+#    Run Emergent Program	TestInitialiseWeights
 
-    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise3_0.wts
-    Should Match	"${diff.stdout}"		""
-    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise2_1.wts		./test-projects/TestRandomWeightsInitialise4_1.wts
-    Should Match	"${diff.stdout}"		""
+#    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise3_0.wts
+#    Should Match	"${diff.stdout}"		""
+#    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise2_1.wts		./test-projects/TestRandomWeightsInitialise4_1.wts
+#    Should Match	"${diff.stdout}"		""
 
 
 #TestInitialiseThreaded
