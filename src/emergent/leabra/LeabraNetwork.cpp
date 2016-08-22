@@ -22,9 +22,9 @@
 #include <taMisc>
 #include <tabMisc>
 
-#ifdef CUDA_COMPILE
-#include "LeabraConSpec_cuda.h"
-#endif
+// #ifdef CUDA_COMPILE
+// #include "LeabraConSpec_cuda.h"
+// #endif
 
 TA_BASEFUNS_CTORS_DEFN(LeabraNetTiming);
 TA_BASEFUNS_CTORS_DEFN(LeabraCudaSpec);
@@ -37,11 +37,11 @@ TA_BASEFUNS_CTORS_DEFN(LeabraNetwork);
 
 
 void LeabraCudaSpec::Initialize() {
-#ifdef CUDA_COMPILE
-  on = true;
-#else
+// #ifdef CUDA_COMPILE
+//   on = true;
+// #else
   on = false;
-#endif
+// #endif
   get_wts = false;
   min_threads = 32;
   max_threads = 1024;
@@ -154,9 +154,9 @@ void LeabraNetwork::Initialize() {
   max_n_sugp = 0;
 #endif // SUGP_NETIN
   
-#ifdef CUDA_COMPILE
-  cudai = new LeabraConSpecCuda;
-#endif
+// #ifdef CUDA_COMPILE
+//   cudai = new LeabraConSpecCuda;
+// #endif
 }
 
 void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
@@ -199,9 +199,9 @@ void LeabraNetwork::Build() {
   // taMisc::Info("sizeof:", String(sizeof(LeabraUnitVars)), ".size:",
   //              String(unit_vars_size));
 
-#ifdef CUDA_COMPILE
-  Cuda_BuildUnits_Threads();
-#endif
+// #ifdef CUDA_COMPILE
+//   Cuda_BuildUnits_Threads();
+// #endif
 }
 
 void LeabraNetwork::BuildLeabraThreadMem() {
@@ -581,9 +581,9 @@ void LeabraNetwork::Trial_Init_Specs() {
   }
   if(net_misc.lrate_updtd) {
     taMisc::Info("cur_lrate updated at epoch:", String(epoch));
-#ifdef CUDA_COMPILE
-    Cuda_UpdateConParams();     // push new params to cuda
-#endif
+// #ifdef CUDA_COMPILE
+//     Cuda_UpdateConParams();     // push new params to cuda
+// #endif
   }
 
   if(!deep.on) {
@@ -1894,9 +1894,9 @@ void LeabraNetwork::Compute_dWt_VecVars_Thr(int thr_no) {
   float* avg_l = UnVecVar(thr_no, AVG_L);
   float* avg_l_lrn = UnVecVar(thr_no, AVG_L_LRN);
   // float* deep =  UnVecVar(thr_no, DEEP);
-#ifdef CUDA_COMPILE
-  float* act_q0 =  UnVecVar(thr_no, ACT_Q0);
-#endif
+// #ifdef CUDA_COMPILE
+//   float* act_q0 =  UnVecVar(thr_no, ACT_Q0);
+// #endif
 
   // each thread copies all unit vars into their *own* thread-local mem in unit_vec_vars
   for(int i=1; i<units_flat.size; i++) {
@@ -1906,11 +1906,11 @@ void LeabraNetwork::Compute_dWt_VecVars_Thr(int thr_no) {
     avg_l[i] = u->avg_l;
     avg_l_lrn[i] = u->avg_l_lrn;
     // deep[i] = u->deep_lrn;
-#ifdef CUDA_COMPILE
-    act_q0[i] = u->act_q0;
-    LeabraUnit* un = (LeabraUnit*)UnFmIdx(i);
-    LeabraLayer* rlay = un->own_lay();
-#endif
+// #ifdef CUDA_COMPILE
+//     act_q0[i] = u->act_q0;
+//     LeabraUnit* un = (LeabraUnit*)UnFmIdx(i);
+//     LeabraLayer* rlay = un->own_lay();
+// #endif
   }
 }
 
@@ -1918,11 +1918,11 @@ void LeabraNetwork::Compute_dWt_VecVars_Thr(int thr_no) {
 void LeabraNetwork::Compute_dWt() {
   Compute_dWt_Layer_pre();
 
-#ifdef CUDA_COMPILE
-  NET_THREAD_CALL(LeabraNetwork::Compute_dWt_VecVars_Thr);
-  Cuda_Compute_dWt();
-  return;
-#endif
+// #ifdef CUDA_COMPILE
+//   NET_THREAD_CALL(LeabraNetwork::Compute_dWt_VecVars_Thr);
+//   Cuda_Compute_dWt();
+//   return;
+// #endif
 
   NET_THREAD_CALL(LeabraNetwork::Compute_dWt_Thr);
 }
@@ -2085,10 +2085,10 @@ void LeabraNetwork::Compute_Weights() {
   DMem_SumDWts(dmem_trl_comm.comm);
 #endif
 
-#ifdef CUDA_COMPILE
-  Cuda_Compute_Weights();
-  return;
-#endif
+// #ifdef CUDA_COMPILE
+//   Cuda_Compute_Weights();
+//   return;
+// #endif
   
   NET_THREAD_CALL(LeabraNetwork::Compute_Weights_Thr);
   
@@ -2879,7 +2879,8 @@ String LeabraNetwork::TimingReport(DataTable& dt, bool print) {
 }
 
 
-#ifdef CUDA_COMPILE
+// #ifdef CUDA_COMPILE
+#if 0 // not enabled for now..
 
 void LeabraNetwork::Cuda_BuildUnits_Threads() {
   if(taMisc::is_loading)        // ignore all the loading-time ones

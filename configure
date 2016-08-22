@@ -26,7 +26,7 @@ echo "  --qt4                        configure for Qt4 -- either qt5 or 4 must b
 echo "  --c++11                      enable c++11 support, using e.g., -std=c++11 flag"
 echo "  --sanitize                   enable advanced sanitization on clang: -fsanitize=address"
 echo "                               (requires recent / latest clang version)"
-echo "  --enable-cuda (or --cuda)    enable NVIDIA CUDA support"
+echo "  --enable-cuda (or --cuda)    enable NVIDIA CUDA support (add after other options) -- sets suffix to _cuda"
 echo "  --enable-hpcprof (or --hpcprof) enable hpctoolkit profiling control with root.MonControl method"
 echo "  --flags=\"your own flags\"     include your own custom flags"
 echo " "

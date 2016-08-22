@@ -28,3 +28,7 @@ set(bp_SRCS
 #    rbp.cpp
 #    bp_v3_compat.cpp
 )
+
+set(bp_CUDA
+  bp_cuda.cu
+)

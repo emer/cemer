@@ -356,11 +356,11 @@ bool iSvnFileListModel::delFileLocal(const String& fnm) {
 bool iSvnFileListModel::copyFile(const String& from_nm, const String& to_nm) {
   if(!svn_client)
     return false;
-  if(wc_path().isEmpty()) {
-    taMisc::Error("working copy path is empty -- can only copy files in working copy");
+  String path = url_full();
+  if(path.empty()) {
+    taMisc::Error("url path is empty -- this does server-side url copies");
     return false;
   }
-  String path = wc_path_full();
   path = taMisc::FinalPathSep(path);
   String fm_path = path + from_nm;
   String_PArray files;

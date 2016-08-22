@@ -240,6 +240,10 @@ void Network::InitLinks() {
   DMem_InitAggs();
 #endif
 
+#ifdef CUDA_COMPILE
+  threads.n_threads = 1;        // always must be!
+#endif
+  
   NetTextUserData();
 
   inherited::InitLinks();
@@ -330,6 +334,11 @@ void Network::UpdatePointersAfterCopy_impl(const taBase& cp) {
 
 void Network::UpdateAfterEdit_impl(){
   inherited::UpdateAfterEdit_impl();
+
+#ifdef CUDA_COMPILE
+  threads.n_threads = 1;        // always must be!
+#endif
+  
   if(wt_save_fmt == NET_FMT)
     wt_save_fmt = TEXT;
 
@@ -365,6 +374,10 @@ void Network::UpdateAfterEdit_impl(){
 void Network::UpdtAfterNetMod() {
   if(!HasNetFlag(BUILT)) return;
   if(!HasNetFlag(INTACT)) return; // already bad
+
+#ifdef CUDA_COMPILE
+  threads.n_threads = 1;        // always must be!
+#endif
 
   bool units_diff = 
     (n_units_built != units_flat.size) ||

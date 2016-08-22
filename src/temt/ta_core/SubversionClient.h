@@ -150,7 +150,7 @@ public:
   void  Delete(const String_PArray& files, bool force, bool keep_local);
   // Delete listed files (or directories) from the repository, with force and keep_local options
 
-  void  CopyFile(const String_PArray& from_nms, String& to_nm, bool force = false);
+  void  CopyFile(const String_PArray& from_nms, String& to_nm);
   // copy file from given name(s) to given name (if multiple from names, to must be a dir) -- force = overwrite existing etc
 
   void  MoveFile(const String_PArray& from_nms, String& to_nm, bool force = false);

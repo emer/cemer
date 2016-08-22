@@ -147,6 +147,11 @@ public:
     dwt = 0.0f;
   }
   // NO MOMENTUM
+  inline void C_NMD_Compute_Weights(float& wt, float& dwt, float& pdw) {
+    wt += cur_lrate * dwt;
+    dwt = 0.0f;
+  }
+  // NO MOMENTUM, NO DECAY
 
   inline void	Compute_Weights(ConGroup* cg, Network* net, int thr_no) override;
 
@@ -316,7 +321,10 @@ inline void BpConSpec::Compute_Weights(ConGroup* cg, Network* net, int thr_no) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
   float* pdwts = cg->OwnCnVar(PDW);
-  if(momentum == 0.0f) {
+  if(momentum == 0.0f && (!decay_fun || decay == 0.0f)) {
+    CON_GROUP_LOOP(cg, C_NMD_Compute_Weights(wts[i], dwts[i], pdwts[i]));
+  }
+  else if(momentum == 0.0f) {
     CON_GROUP_LOOP(cg, C_NOM_Compute_Weights(wts[i], dwts[i], pdwts[i]));
   }
   else if(momentum_type == AFTER_LRATE) {

@@ -16,6 +16,7 @@ ADD_PATH_TO_FILES(emergent_network_SRCS ${mypath}/network "${network_SRCS}")
 ADD_PATH_TO_FILES(emergent_network_HEADS_MOC ${mypath}/network "${network_HEADS_MOC}")
 ADD_PATH_TO_FILES(emergent_network_HEADS_MAKETA ${mypath}/network "${network_HEADS_MAKETA}")
 ADD_PATH_TO_FILES(emergent_network_HEADS ${mypath}/network "${network_HEADS}")
+ADD_PATH_TO_FILES(emergent_network_CUDA ${mypath}/network "${network_CUDA}")
 SET_TA_PROPS(network ${PROJECT_SOURCE_DIR}/src/emergent/network)
 
 MAKETA_WRAP_H(emergent_network_SRCS_MAKETA ${emergent_network_HEADS_MAKETA} OPTIONS network)
@@ -31,6 +32,7 @@ include(${PROJECT_SOURCE_DIR}/src/emergent/bp/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_bp_SRCS ${mypath}/bp "${bp_SRCS}")
 ADD_PATH_TO_FILES(emergent_bp_HEADS_MAKETA ${mypath}/bp "${bp_HEADS_MAKETA}")
 ADD_PATH_TO_FILES(emergent_bp_HEADS ${mypath}/bp "${bp_HEADS}")
+ADD_PATH_TO_FILES(emergent_bp_CUDA ${mypath}/bp "${bp_CUDA}")
 SET_TA_PROPS(bp ${PROJECT_SOURCE_DIR}/src/emergent/bp)
 
 MAKETA_WRAP_H(emergent_bp_SRCS_MAKETA ${emergent_bp_HEADS_MAKETA} OPTIONS bp)
@@ -40,7 +42,8 @@ include(${PROJECT_SOURCE_DIR}/src/emergent/leabra/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_leabra_SRCS ${mypath}/leabra "${leabra_SRCS}")
 ADD_PATH_TO_FILES(emergent_leabra_HEADS_MAKETA ${mypath}/leabra "${leabra_HEADS_MAKETA}")
 ADD_PATH_TO_FILES(emergent_leabra_HEADS ${mypath}/leabra "${leabra_HEADS}")
-ADD_PATH_TO_FILES(emergent_leabra_CUDA ${mypath}/leabra "${leabra_CUDA}")
+# not updated
+#ADD_PATH_TO_FILES(emergent_leabra_CUDA ${mypath}/leabra "${leabra_CUDA}")
 SET_TA_PROPS(leabra ${PROJECT_SOURCE_DIR}/src/emergent/leabra)
 
 MAKETA_WRAP_H(emergent_leabra_SRCS_MAKETA ${emergent_leabra_HEADS_MAKETA} OPTIONS leabra)
@@ -49,7 +52,9 @@ ADD_PATH_TO_FILES(emergent_leabra_HEADS_MAKETA_MI ${mypath}/leabra "${leabra_HEA
 ADD_PATH_TO_FILES(emergent_leabra_HEADS_MAKETA_MI_DEPS ${mypath}/leabra "${leabra_HEADS_MAKETA_MI_DEPS}")
 
 IF(CUDA_BUILD)
-CUDA_WRAP_SRCS(emergentlib OBJ emergent_leabra_CUDA_OBJS "${emergent_leabra_CUDA}")
+CUDA_WRAP_SRCS(emergentlib OBJ emergent_network_CUDA_OBJS "${emergent_network_CUDA}")
+CUDA_WRAP_SRCS(emergentlib OBJ emergent_bp_CUDA_OBJS "${emergent_bp_CUDA}")
+#CUDA_WRAP_SRCS(emergentlib OBJ emergent_leabra_CUDA_OBJS "${emergent_leabra_CUDA}")
 ENDIF(CUDA_BUILD)
 
 MAKETA_WRAP_H_MI(emergent_leabra_SRCS_MAKETA_MI "${emergent_leabra_HEADS_MAKETA_MI}"
@@ -118,12 +123,14 @@ set(emergentlib_SRCS
   ${emergent_virt_env_SRCS_MAKETA}
 
   ${emergent_network_HEADS}
+  ${emergent_network_CUDA_OBJS}
   ${emergent_bp_HEADS}
   ${emergent_leabra_HEADS}
   ${emergent_cs_HEADS}
   ${emergent_so_HEADS}
   ${emergent_actr_HEADS}
-  ${emergent_leabra_CUDA_OBJS}
+  ${emergent_bp_CUDA_OBJS}
+#  ${emergent_leabra_CUDA_OBJS}
   ${emergent_virt_env_HEADS}
 
   ${emergent_virt_env_SRCS_QRC}

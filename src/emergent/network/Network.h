@@ -311,8 +311,8 @@ public:
   int           n_thrs_built; // #NO_SAVE #READ_ONLY #CAT_Threads number of threads that the network was built for -- must use this number of threads for running network, and rebuild if the number changes
   TypeDef*      unit_vars_built; // #NO_SAVE #READ_ONLY #CAT_Structure #TYPE_UnitVars type of unit variables objects actually built
   TypeDef*      con_group_built; // #NO_SAVE #READ_ONLY #CAT_Structure #TYPE_ConGroup type of con group objects actually built
-  int           con_group_size;  // #NO_SAVE #READ_ONLY #CAT_Structure size in bytes of con group objects actually built 
-  int           unit_vars_size;  // #NO_SAVE #READ_ONLY #CAT_Threads number of float variables in the unit_vars_built UnitVars
+  int           con_group_size;  // #NO_SAVE #READ_ONLY #CAT_Structure size in *bytes* of con group objects actually built 
+  int           unit_vars_size;  // #NO_SAVE #READ_ONLY #CAT_Threads size in *bytes* of the unit_vars_built UnitVars
   int           n_units_built;  // #NO_SAVE #READ_ONLY #CAT_Threads number of units built -- actually the n+1 size of units_flat
   int           n_layers_built; // #NO_SAVE #READ_ONLY #CAT_Threads number of active layers when built -- size of active_layers array
   int           n_ungps_built;  // #NO_SAVE #READ_ONLY #CAT_Threads number of active unit groups when built -- size of active_ungpss array
@@ -346,7 +346,7 @@ public:
   int64_t*      thrs_recv_cons_cnt; // #IGNORE number of floats to allocate to thrs_recv_cons_mem
   int64_t*      thrs_send_cons_cnt; // #IGNORE number of floats to allocate to thrs_send_cons_mem
   float**       thrs_recv_cons_mem; // #IGNORE bulk memory allocated for all of the recv connections, by thread -- array of float*[thrs_recv_cons_cnt[thr_no]]
-  float**       thrs_send_cons_mem; // #IGNORE bulk memory allocated for all of the recv connections, by thread -- array of float*[thrs_recv_cons_cnt[thr_no]]
+  float**       thrs_send_cons_mem; // #IGNORE bulk memory allocated for all of the send connections, by thread -- array of float*[thrs_send_cons_cnt[thr_no]]
 
   int*          thrs_own_cons_max_size; // #IGNORE maximum alloc_size of any owning connection group, by thread -- for allocating temp structures..
   int64_t*      thrs_own_cons_tot_size; // #IGNORE total number of owned connections, by thread

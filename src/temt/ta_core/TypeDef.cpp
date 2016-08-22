@@ -1246,7 +1246,15 @@ TypeDef*  TypeDef::FindTypeWithMember(const String& nm, MemberDef** md){
 }
 
 TypeDef* TypeDef::FindSubType(const String& sub_nm) const {
-  return sub_types.FindName(sub_nm);
+  TypeDef* rval = sub_types.FindName(sub_nm);
+  if(!rval && !HasInitFlag(IF_PARENT_DATA_ADDED)) {
+    for(int i=0; i< parents.size; i++) {
+      TypeDef* par = parents[i];
+      rval = par->FindSubType(sub_nm);
+      if(rval) return rval;
+    }
+  }
+  return rval;
 }
 
 EnumDef* TypeDef::FindEnum(const String& nm) const {

@@ -1791,15 +1791,23 @@ SubversionClient::MoveFile(const String_PArray& from_nms, String& to_nm, bool fo
   // create an array containing a single path to be created
   apr_array_header_t *paths = apr_array_make(m_pool, from_nms.size, sizeof(const char *));
   for(int i=0; i< from_nms.size; i++) {
-// #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
-//     APR_ARRAY_PUSH(paths, const char *) = svn_path_canonicalize(from_nms[i], m_pool);
-// #else
-//     APR_ARRAY_PUSH(paths, const char *) = svn_dirent_canonicalize(from_nms[i], m_pool);
-// #endif
-    APR_ARRAY_PUSH(paths, const char *) = from_nms[i];
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
+    APR_ARRAY_PUSH(paths, const char *) = svn_path_canonicalize(from_nms[i], m_pool);
+#else
+    APR_ARRAY_PUSH(paths, const char *) = svn_dirent_canonicalize(from_nms[i], m_pool);
+#endif
   }
 
+  // canonicalize the path
+  String to_can;
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
+  to_can = svn_path_canonicalize(to_nm, m_pool);
+#else
+  to_can = svn_dirent_canonicalize(to_nm, m_pool);
+#endif
+
   svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
+
 
   svn_boolean_t svn_force = force;
   svn_boolean_t svn_move_as_child = (from_nms.size > 1);
@@ -1813,7 +1821,7 @@ SubversionClient::MoveFile(const String_PArray& from_nms, String& to_nm, bool fo
       (
        &commit_info_p,
        paths,
-       to_nm,
+       to_can,
        svn_force,
        svn_move_as_child,
        svn_make_parents,
@@ -1828,7 +1836,7 @@ SubversionClient::MoveFile(const String_PArray& from_nms, String& to_nm, bool fo
 }
 
 void
-SubversionClient::CopyFile(const String_PArray& from_nms, String& to_nm, bool force) {
+SubversionClient::CopyFile(const String_PArray& from_nms, String& to_nm) {
   m_cancelled = false;
 
   apr_pool_t* m_pool = svn_pool_create(0);
@@ -1836,20 +1844,26 @@ SubversionClient::CopyFile(const String_PArray& from_nms, String& to_nm, bool fo
   // create an array containing a single path to be created
   apr_array_header_t *paths = apr_array_make(m_pool, from_nms.size, sizeof(const char *));
   for(int i=0; i< from_nms.size; i++) {
-// #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
-//     APR_ARRAY_PUSH(paths, const char *) = svn_path_canonicalize(from_nms[i], m_pool);
-// #else
-//     APR_ARRAY_PUSH(paths, const char *) = svn_dirent_canonicalize(from_nms[i], m_pool);
-// #endif
-    APR_ARRAY_PUSH(paths, const char *) = from_nms[i];
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
+    APR_ARRAY_PUSH(paths, const char *) = svn_path_canonicalize(from_nms[i], m_pool);
+#else
+    APR_ARRAY_PUSH(paths, const char *) = svn_dirent_canonicalize(from_nms[i], m_pool);
+#endif
   }
+
+  // canonicalize the path
+  String to_can;
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
+  to_can = svn_path_canonicalize(to_nm, m_pool);
+#else
+  to_can = svn_dirent_canonicalize(to_nm, m_pool);
+#endif
 
   svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
 
-  svn_boolean_t svn_force = force;
   svn_boolean_t svn_copy_as_child = (from_nms.size > 1);
   svn_boolean_t svn_make_parents = true;
-  svn_boolean_t svn_ignore_externals = false;
+  svn_boolean_t svn_ignore_externals = true;
 
   // We don't need to set any custom revision properties, so null.
   const apr_hash_t *revprop_table = 0;
@@ -1859,7 +1873,7 @@ SubversionClient::CopyFile(const String_PArray& from_nms, String& to_nm, bool fo
       (
        &commit_info_p,
        paths,
-       to_nm,
+       to_can,
        svn_copy_as_child,
        svn_make_parents,
        svn_ignore_externals,

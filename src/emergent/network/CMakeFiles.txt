@@ -26,12 +26,14 @@ set(network_HEADS_MAKETA_base
   NetworkRef.h
 
   Connection.h
+  ConGroup_core.h
   ConGroup.h
   ConSpec.h
         
   UnitSpec.h
   Voxel.h
   Voxel_List.h
+  UnitVars_core.h
   UnitVars.h
   Unit.h
   UnitPtrList.h
@@ -369,3 +371,8 @@ set(network_SRCS
 )
 
 set(network_FILES ${network_HEADS} ${network_SRCS})
+
+set(network_CUDA
+  ConGroup_cuda.h
+  Network_cuda.h
+)
