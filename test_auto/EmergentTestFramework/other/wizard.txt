@@ -47,17 +47,16 @@ General RunState
     Status OK Match Result     ${output}             4
 
 
-#Disable for now due to bug #2730
-#Hippo
-#    Ensure Emergent Free
-#    Run Emergent Program	TestHippo
-#    Set Emergent Var		MasterTrain	cur_config	"basic_train_longer"
-#    Run Emergent Program	MasterTrain
-#    DataTable Cell Value Should Equal    EpochOutputData	19	epoch		19
-#    ${output} =                Run Command Wait      {"command": "GetData", "table": "EpochOutputData", "row_from": 19, "column" : "cnt_err", "rows": 1}
-#    Status OK                  ${output}
-#    ${err} =		       Get Json Value    ${output}             /result/columns/0/values/0
-#    Should Be True	       ${err} < 10	 "Hippocampus model produced to many errors on testing: ${err}"
+Hippo
+    Ensure Emergent Free
+    Run Emergent Program	TestHippo
+    Set Emergent Var		MasterTrain	cur_config	"basic_train_longer"
+    Run Emergent Program	MasterTrain
+    DataTable Cell Value Should Equal    EpochOutputData	19	epoch		19
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "EpochOutputData", "row_from": 19, "column" : "cnt_err", "rows": 1}
+    Status OK                  ${output}
+    ${err} =		       Get Json Value    ${output}             /result/columns/0/values/0
+    Should Be True	       ${err} < 10	 "Hippocampus model produced to many errors on testing: ${err}"
 
 DeepLeabra
     Restart Emergent
