@@ -154,7 +154,6 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   tb->AddSeparator(sec);
 
   ////////////////////////////////////////////////////////////////////////////
-  //            Looping and Branching
   sec = tb->AssertSection("Control"); //note: need to keep it short
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ForLoop);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ForeachLoop);
@@ -176,25 +175,22 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_BlankLineEl);
 
   ////////////////////////////////////////////////////////////////////////////
-  //            Var/Fun
-  sec = tb->AssertSection("Assign/Call");
+  sec = tb->AssertSection("Assign");
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_AssignExpr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_VarIncr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MemberAssign);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MatrixAssign);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MethodCall);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MemberMethodCall);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCall);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_FunctionCall);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCallFun);
-  tb->AddSeparator(sec);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_OtherProgramVar);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCallVar);
-
 
     ////////////////////////////////////////////////////////////////////////////
-  //            Print/Misc
   sec = tb->AssertSection("Functions");
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MethodCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MemberMethodCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_FunctionCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCallFun);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCallVar);
+  tb->AddSeparator(sec);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_PrintExpr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_PrintVar);
   tb->AddSeparator(sec);
@@ -204,7 +200,6 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MiscCall);
 
   ////////////////////////////////////////////////////////////////////////////
-  //            Data processing
   sec = tb->AssertSection("Data R/W"); //note: need to keep it short
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataLoop);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ResetDataRows);
@@ -216,7 +211,6 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataVarProgMatrix);
 
   ////////////////////////////////////////////////////////////////////////////
-  //            Data processing
   sec = tb->AssertSection("Data Proc"); //note: need to keep it short
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataSortProg);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataGroupProg);
@@ -231,14 +225,12 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataCalcCopyCommonCols);
   
   ////////////////////////////////////////////////////////////////////////////
-  //            Data Procs
   sec = tb->AssertSection("Data Procs"); //note: need to keep it short
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataProcCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataAnalCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataGenCall);
   
   ////////////////////////////////////////////////////////////////////////////
-  //            Network
   // just the section - elements added later
   sec = tb->AssertSection("Network"); //note: need to keep it short
 }
