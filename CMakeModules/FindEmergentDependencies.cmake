@@ -5,6 +5,8 @@
 #  set(CMAKE_LIBRARY_PATH /opt/local/lib ${CMAKE_LIBRARY_PATH})
 # endif (NOT WIN32)
 
+set(IMPORTED_CONFIGURATIONS "Debug" "Release")
+
 if (QT_USE_5)
   set(CMAKE_PREFIX_PATH ${QTDIR}/lib/cmake)
   message(STATUS "Using Qt5, QTDIR = ${QTDIR}")
