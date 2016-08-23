@@ -701,7 +701,7 @@ void MTA::MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int 
 
   bool no_new = false;
   bool has_rval = ((md->type->IsAnyPtr()) || (md->type != &TA_void));
-  if (md->type->IsNotPtr()) {
+  if (md->type->IsNotPtr()) {   // includes references
     has_rval = true;
     if (md->type->IsVoid()) { // explicitly not, so ok,
       has_rval = false;
@@ -741,7 +741,7 @@ void MTA::MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int 
       // we don't know how to handle this rval -- not good!!!!
       has_rval = false;
       if(add_typedefs) {
-        Info(0, "Warning: in file:", cur_fname, "method:",
+        Info(1, "Warning: in file:", cur_fname, "method:",
              md->name, "don't know how to handle return type:", md->type->name,
              "so it will be ignored!");
       }
