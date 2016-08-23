@@ -22,6 +22,10 @@
 #include <stdexcept>
 #include <string>
 
+#ifdef CopyFile
+#undef CopyFile
+#endif
+
 class String_PArray; //
 class int_PArray; //
 

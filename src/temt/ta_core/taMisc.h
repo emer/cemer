@@ -41,6 +41,10 @@
 #endif
 #endif
 
+#ifdef CopyFile
+#undef CopyFile
+#endif
+
 // declare all other types mentioned but not required to include:
 class ViewColor_List; // 
 class ViewBackground_List; //

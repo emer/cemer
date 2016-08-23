@@ -2938,6 +2938,10 @@ bool taMisc::SetFilePermissions(const String& fname, bool user, bool group,
   return fi.setPermissions(perm);
 }
 
+#ifdef CopyFile
+#undef CopyFile
+#endif
+
 bool taMisc::CopyFile(const String& old_fn, const String& new_fn) {
   return QFile::copy(old_fn, new_fn);
 }
