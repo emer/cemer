@@ -49,6 +49,8 @@ public:
   inline void   UpdateNfmXY()   { n = x * y; UpdateFlag(); }
   // update x,y from N
 
+  bool UAEProgramDefault() override { return true; }
+
   bool FitN(int no) override
   { bool rval = inherited::FitN(no); n = no; UpdateFlag(); return rval; }
 

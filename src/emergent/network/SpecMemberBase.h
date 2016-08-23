@@ -38,6 +38,8 @@ public:
 
   void		MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) override;
 
+  bool UAEProgramDefault() override { return true; }
+  
   TA_BASEFUNS_NOCOPY(SpecMemberBase);
 protected:
   virtual void	Defaults_impl() { };

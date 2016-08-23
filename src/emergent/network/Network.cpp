@@ -557,6 +557,8 @@ void Network::BuildLayers() {
   active_ungps_layers.Reset();
   for(int i=0;i<layers.leaves; i++) {
     Layer* l = (Layer*)layers.Leaf(i);
+    l->un_geom.UpdateAfterEdit_NoGui(); // make sure n is accurate!
+    l->gp_geom.UpdateAfterEdit_NoGui();
     if(l->lesioned()) {
       l->active_lay_idx = -1;
       continue;
