@@ -4,6 +4,7 @@
 :: (open the windows file explorer, go to C:\Windows\System32, search for cmd.exe, right click, create shortcut)
 :: then edit the shortcut's properties on the desktop, and in the box where it says Target, enter:
 :: C:\Windows\System32\cmd.exe /K C:\src\emergent\win_build\vs15init.bat
+:: and under the Advanced tab you can click the "Run as Administrator" button
 :: you can also change the name in General tab to something like emergent vs15init
 
 :: all the init for command-line operation of VS

@@ -153,7 +153,11 @@ set(temtlib_SRCS
 
 EMERGENT_ADD_LIBRARY(temt SHARED ${temtlib_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/svnrev.h)
 if (WIN32)
-  set_target_properties(temt PROPERTIES LINK_FLAGS "/INCREMENTAL:NO")
+  # not clear if we need to turn this off anymore, and may interfere with debug:
+  # set_target_properties(temt PROPERTIES LINK_FLAGS "/INCREMENTAL:NO")
+  if(CMAKE_BUILD_TYPE MATCHES "Debug")
+    set_target_properties(temt PROPERTIES LINK_FLAGS "/DEBUG")
+  endif()
 endif (WIN32)
 
 ########### get svn revision ###############

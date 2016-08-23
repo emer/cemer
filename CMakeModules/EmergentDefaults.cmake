@@ -31,7 +31,7 @@ set(CUDA_BUILD FALSE CACHE BOOL "Set to true to enable NVIDIA CUDA GPU compile")
 if (WIN32)
   # shut off warnings: 4250 (inheritance dominance)
   # 4258;4661;4996 (unsafe crt routines)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4250 /wd4258 /wd4661 /wd4996")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4250 /wd4258 /wd4661 /wd4996 /wd4302 /wd4311")
 
   # enable multi-threaded compiling (always safe, will ignore and print warning when incompatible)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
@@ -39,6 +39,12 @@ if (WIN32)
   # need to set this so larger .cpp files don't error (what a stupid non-default!!!)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 
+  # for the visual studio build, it specifically doesn't set this flag (b/c it is
+  # multi-configuration supporting), so we need to set it manually apparently..
+  if(CMAKE_BUILD_TYPE MATCHES "Debug")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DEBUG")
+  endif ()
+  
 else (WIN32) # assume gcc!!!
   # A function with a non-void return-type that doesn't return a value s/b an error!!!
   # GCC added support for treating this as an error somewhere around version 4.2

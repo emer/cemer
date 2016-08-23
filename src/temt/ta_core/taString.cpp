@@ -1188,7 +1188,7 @@ taString taString::CamelToSnake() {
 taString taString::toCamel() {
   makeUnique();
   int spaces = 0;
-  for (uint n = 1; n < this->length(); ++n) {
+  for (int n = 1; n < this->length(); ++n) {
     if ((mrep->s[n] == ' ') || (mrep->s[n] == '_'))
       spaces++;
   }
@@ -1200,8 +1200,8 @@ taString taString::toCamel() {
   rval.makeUnique();
   rval[0] = mrep->s[0];
   bool inWord = false;
-  uint decrement = 0;
-  for (uint n = 0; n < this->length(); ++n) {
+  int decrement = 0;
+  for (int n = 0; n < this->length(); ++n) {
     if ((mrep->s[n] == ' ') || (mrep->s[n] == '_')) {
       decrement++;
       inWord = false;
@@ -1221,8 +1221,8 @@ taString taString::toCamel() {
 taString taString::FileToCamel() {
   makeUnique();
   int spaces = 0;
-  uint dot = 0;
-  for (uint n = 1; n < this->length(); ++n) {
+  int dot = 0;
+  for (int n = 1; n < this->length(); ++n) {
     if ((mrep->s[n] == ' ') || (mrep->s[n] == '_'))
       spaces++;
     else if (mrep->s[n] == '.') {
@@ -1240,8 +1240,8 @@ taString taString::FileToCamel() {
   rval.makeUnique();
   rval[0] = mrep->s[0];
   bool inWord = false;
-  uint decrement = 0;
-  for (uint n = 0; n < dot; ++n) {
+  int decrement = 0;
+  for (int n = 0; n < dot; ++n) {
     if ((mrep->s[n] == ' ') || (mrep->s[n] == '_')) {
       decrement++;
       inWord = false;
@@ -1255,7 +1255,7 @@ taString taString::FileToCamel() {
       inWord = true;
     }
   }
-  for (uint n = dot; n < this->length(); ++n) {
+  for (int n = dot; n < this->length(); ++n) {
     rval[n - decrement] = mrep->s[n];
   }
   return rval;
@@ -1264,7 +1264,7 @@ taString taString::FileToCamel() {
 taString taString::removeSpaces() {
   makeUnique();
   int found = 0;
-  for (uint n = 1; n < this->length(); ++n) {
+  for (int n = 1; n < this->length(); ++n) {
     if ((mrep->s[n] == ' ') || (mrep->s[n] == '_'))
       found++;
   }
@@ -1276,8 +1276,8 @@ taString taString::removeSpaces() {
   rval.makeUnique();
 
   rval[0] = mrep->s[0];
-  uint decrement = 0;
-  for (uint n = 1; n < this->length(); ++n) {
+  int decrement = 0;
+  for (int n = 1; n < this->length(); ++n) {
     if ((mrep->s[n] == ' ') || (mrep->s[n] == '_')) {
       decrement++;
     }
