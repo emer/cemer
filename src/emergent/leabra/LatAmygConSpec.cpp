@@ -15,10 +15,21 @@
 
 #include "LatAmygConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(LatAmygGains);
 TA_BASEFUNS_CTORS_DEFN(LatAmygConSpec);
 
+void LatAmygGains::Initialize() {
+  Defaults_init();
+}
+
+void LatAmygGains::Defaults_init() {
+  burst_da_gain = 1.0f;
+  dip_da_gain= 1.0f;
+  decay_factor = 0.001f;
+  decay_floor = 0.5f;
+}
+
 void LatAmygConSpec::Initialize() {
-  neg_da_gain = 0.0f;
 }
 
 void LatAmygConSpec::Defaults_init() {

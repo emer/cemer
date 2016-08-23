@@ -31,7 +31,7 @@ void LHbRMTgSpecs::Initialize() {
 
 void LHbRMTgSpecs::Defaults_init() {
   matrix_td = false;
-  min_pvneg = 0.1f;
+  pvneg_discount = 0.8f;
   rec_data = false;
 }
 
@@ -50,7 +50,6 @@ void LHbRMTgGains::Defaults_init() {
   vspatch_neg_D2 = 1.0f;
   vsmatrix_neg_D1 = 1.0f;
   vsmatrix_neg_D2 = 1.0f;
-  vspatch_neg_deexcit_gain = 1.0f;
 }
 
 void LHbRMTgUnitSpec::Initialize() {
@@ -259,11 +258,9 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   float vspatch_neg_net = (gains.vspatch_neg_D2 * vspatch_neg_D2) - (gains.vspatch_neg_D1 * vspatch_neg_D1); // positive number is net inhibitory in LHb - disinhibitory "burster"
 
-//TODO: do I need anything like the net_neg_gain guy??????
-//TODO: 0.2 gain here seems to be preventing any mitigation of the neg PV
-    if (vspatch_neg_net > 0.0f) {
-      vspatch_neg_net *= gains.vspatch_neg_deexcit_gain;
-    }
+  if (vspatch_neg_net > 0.0f) {
+    vspatch_neg_net *= lhb.pvneg_discount;
+  }
   
   float vsmatrix_pos_D1 = 0.0f;
   if(vsmatrix_pos_D1_lay)
@@ -284,11 +281,6 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   float pv_neg = pv_neg_lay->acts_eq.avg * pv_neg_lay->units.size;
   
   
-  // actual punishments should never be completely predicted away...
-  float residual_pvneg = 0.0f;
-  if(pv_neg) {residual_pvneg = lhb.min_pvneg * pv_neg; }
-  residual_pvneg = MAX(residual_pvneg, 0.0f); // just a precaution
- 
   // net out the VS matrix D1 versus D2 pairs...WATCH the signs - double negatives!
   float vsmatrix_pos_net = (gains.vsmatrix_pos_D1 * vsmatrix_pos_D1) - (gains.vsmatrix_pos_D2 * vsmatrix_pos_D2); // positive number net inhibitory!
   float vsmatrix_neg_net = (gains.vsmatrix_neg_D2 * vsmatrix_neg_D2) - (gains.vsmatrix_neg_D1 * vsmatrix_neg_D1); // positive number net excitatory!
@@ -301,9 +293,7 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   float net_lhb = net_neg - net_pos + vspatch_pos_net - vspatch_neg_net;
   
-  if(pv_neg) { net_lhb = MAX(net_lhb, residual_pvneg); }
-  
-  net_lhb *=gains.all;
+  net_lhb *= gains.all;
   
   u->act_eq = u->act_nd = u->act = u->net = u->ext = net_lhb;
   
@@ -324,7 +314,6 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
     lay->SetUserData("vspatch_neg_D1", vspatch_neg_D1);
     lay->SetUserData("vspatch_neg_D2", vspatch_neg_D2);
     
-    lay->SetUserData("residual_pvneg", residual_pvneg);
     lay->SetUserData("net_lhb", net_lhb);
   }
 }

@@ -34,8 +34,8 @@ public:
   
   // TODO: matrix_td will need extensive rework if we still want to use it because of four different matrix inputs now entering LHb - LHbRMTgUnitSpec::see Quarter_Final()
   bool          matrix_td;      // #DEF_false compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
-  
-  float         min_pvneg;      // #DEF_0.1 #MIN_0 #MAX_1 proportion of PVNeg that cannot be predicted away - can never afford to take danger for granted!
+
+  float         pvneg_discount;      // #DEF_0.8 #MIN_0 #MAX_1 reduction in effective PVNeg net value (when positive) so that negative outcomes can never be completely predicted away -- still allows for positive da for less-bad outcomes
   
   bool          rec_data;       // #DEF_true record values
 
@@ -65,7 +65,6 @@ public:
   
   float         vspatch_neg_D1;      // #MIN_0 #DEF_1 VS patch D1 pathway versus neg PV outcomes
   float         vspatch_neg_D2;      // #MIN_0 #DEF_1 VS patch D2 pathway versus vspatch_neg_D1
-  float         vspatch_neg_deexcit_gain; // #DEF_1 TODO: do we need any version of this guy?
   
   float         vsmatrix_neg_D1; // #MIN_0 #DEF_1 - VS matrix D1 AVERSIVE
   float         vsmatrix_neg_D2; // #MIN_0 #DEF_1 - VS matrix D2 AVERSIVE

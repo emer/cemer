@@ -1310,7 +1310,6 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   la_cons->SetUnique("lrate", true);
   la_cons->lrate = 10.0f * base_lrate;
-  la_cons->neg_da_gain = 0.05f * base_da_gain;
   baap_cons->SetUnique("lrate", true);
   baap_cons->lrate = 10.0f * base_lrate;
   baap_cons->SetUnique("wt_scale", true);
