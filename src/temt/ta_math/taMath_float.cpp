@@ -3031,7 +3031,7 @@ bool taMath_float::dct(float_Matrix* in_mat) {
   
   { // rescale
     float& el0 = in_mat->FastEl_Flat(0);
-    el0 *= 0.707107; // 1.0 / sqrt(2)
+    el0 *= 0.707107f; // 1.0 / sqrt(2)
     const float scfact = sqrt(2.0 / (float)sz);
     for(int i = 0; i<sz; i++) {
       float& el = in_mat->FastEl_Flat(i);

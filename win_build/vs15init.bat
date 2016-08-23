@@ -31,7 +31,7 @@ set EMER_SVN_LIBS_DIR=C:\Subversion
 set ZLIB_ROOT=C:\EmerMiscLibs
 
 :: this is the key configure command -- you can now type it just by typing "configure"
-doskey configure=cmake %SRC_DIR% -G "NMake Makefiles JOM" -Wno-dev -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DQT_USE_5=ON -DQTDIR=%QTDIR% -DCMAKE_SHARED_LINKER_FLAGS_DEBUG="/INCREMENTAL:NO" -DCMAKE_MODULE_LINKER_FLAGS_DEBUG="/INCREMENTAL:NO" -DCMAKE_SHARED_LINKER_FLAGS="/machine:X%ARCH%" -DCMAKE_MODULE_LINKER_FLAGS="/machine:X%ARCH%" -DCMAKE_EXE_LINKER_FLAGS="/machine:X%ARCH%" -DZLIB_ROOT=%ZLIB_ROOT%
+doskey configure=cmake %SRC_DIR% -G "NMake Makefiles JOM" -Wno-dev -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DQT_USE_5=ON -DQTDIR=%QTDIR% -DCMAKE_SHARED_LINKER_FLAGS="/machine:X%ARCH%" -DCMAKE_MODULE_LINKER_FLAGS="/machine:X%ARCH%" -DCMAKE_EXE_LINKER_FLAGS="/machine:X%ARCH%" -DZLIB_ROOT=%ZLIB_ROOT%
 
 :: Following is for ide usage -- default to Debug mode for ide b/c that is what it is useful for:
 
@@ -39,7 +39,7 @@ doskey configure=cmake %SRC_DIR% -G "NMake Makefiles JOM" -Wno-dev -DCMAKE_BUILD
 set PreferredToolArchitecture=x64
 
 :: run this in a build_ide_dbg subdirectory to configure for ide
-doskey configure_ide_dbg=cmake %SRC_DIR% -G "Visual Studio 14 Win64" -Wno-dev -DCMAKE_BUILD_TYPE=Debug -DQT_USE_5=ON -DQTDIR=%QTDIR% -DCMAKE_SHARED_LINKER_FLAGS_DEBUG="/INCREMENTAL:NO" -DCMAKE_MODULE_LINKER_FLAGS_DEBUG="/INCREMENTAL:NO" -DCMAKE_SHARED_LINKER_FLAGS="/machine:X%ARCH%" -DCMAKE_MODULE_LINKER_FLAGS="/machine:X%ARCH%" -DCMAKE_EXE_LINKER_FLAGS="/machine:X%ARCH%" -DZLIB_ROOT=%ZLIB_ROOT%
+doskey configure_ide_dbg=cmake %SRC_DIR% -G "Visual Studio 14 Win64" -Wno-dev -DCMAKE_BUILD_TYPE=Debug -DQT_USE_5=ON -DQTDIR=%QTDIR% -DCMAKE_SHARED_LINKER_FLAGS="/machine:X%ARCH%" -DCMAKE_MODULE_LINKER_FLAGS="/machine:X%ARCH%" -DCMAKE_EXE_LINKER_FLAGS="/machine:X%ARCH%" -DZLIB_ROOT=%ZLIB_ROOT%
 
 :: run this in any build directory that cmake generated, e.g., the one from configure_ide_dbg above
 :: ALWAYS open the solution from the command line, to ensure the PreferredToolArchitecture variable is set correctly.
