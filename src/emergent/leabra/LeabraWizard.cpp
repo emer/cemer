@@ -1339,9 +1339,9 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baep_cons->rnd.mean = 0.1f;
   baep_cons->rnd.var = 0.0f;
   baep_cons->SetUnique("lrate", true);
-  baep_cons->lrate = 2.0f * base_lrate; // todo: was 1x base..
+  baep_cons->lrate = 1.25f * base_lrate; // todo: was 1x base..
   baep_cons->SetUnique("wt_scale", true);
-  baep_cons->wt_scale.abs = 1.2f;
+  baep_cons->wt_scale.abs = .8f;
   baep_cons->SetUnique("deep", true);
   baep_cons->deep.on = true;
   baep_cons->deep.bg_lrate = 0.0f;
@@ -1356,9 +1356,9 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   baen_cons->rnd.mean = 0.1f;
   baen_cons->rnd.var = 0.0f;
   baen_cons->SetUnique("lrate", true);
-  baen_cons->lrate = 2.0f * base_lrate; // todo: was 1x base..
+  baen_cons->lrate = 1.25f * base_lrate; // todo: was 1x base..
   baen_cons->SetUnique("wt_scale", true);
-  baen_cons->wt_scale.abs = 1.2f;
+  baen_cons->wt_scale.abs = 0.8f;
   baen_cons->SetUnique("deep", true);
   baen_cons->deep.on = true;
   baen_cons->deep.bg_lrate = 0.0f;
