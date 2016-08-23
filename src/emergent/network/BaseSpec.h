@@ -44,7 +44,7 @@ class SpecUser; //
 eTypeDef_Of(BaseSpec);
 
 class E_API BaseSpec : public taNBase {
-  // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##DEF_CHILD_children ##DEF_CHILDNAME_Sub_Specs ##CAT_Spec base specification class
+  // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##DEF_CHILD_children ##DEF_CHILDNAME_Sub_Specs ##CAT_Spec ##UAE_IN_PROGRAM base specification class
 friend class BaseSpec_Group;
 friend class SpecMemberBase;
 INHERITED(taNBase)
@@ -102,7 +102,6 @@ public:
   virtual bool 	    RemoveChild(const String& nm, TypeDef* td = NULL);
   // remove a child based on name or type
 
-  bool            UAEProgramDefault() override { return true; }
   void            MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) override;
   String          GetDesc() const override { return desc; }
 

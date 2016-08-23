@@ -27,7 +27,7 @@
 taTypeDef_Of(XYNGeom);
 
 class TA_API XYNGeom : public PosVector2i {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP two-dimensional X-Y geometry with possibility of total number n != x*y
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##UAE_IN_PROGRAM two-dimensional X-Y geometry with possibility of total number n != x*y
   INHERITED(PosVector2i)
 public:
   bool          n_not_xy;       // #DEF_false total number of units is less than x * y
@@ -48,8 +48,6 @@ public:
   // update x,y from existing n, including updating the n_not_xy flag
   inline void   UpdateNfmXY()   { n = x * y; UpdateFlag(); }
   // update x,y from N
-
-  bool UAEProgramDefault() override { return true; }
 
   bool FitN(int no) override
   { bool rval = inherited::FitN(no); n = no; UpdateFlag(); return rval; }

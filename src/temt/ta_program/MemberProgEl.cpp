@@ -49,33 +49,106 @@ void MemberProgEl::UpdateAfterEdit_impl() {
 
 // StringFieldLookupFun is in ta_program_qt.cpp
 
-bool MemberProgEl::GetTypeFromPath(bool quiet) {
+bool MemberProgEl::GetTypeFromPath() {
   if(!obj) {
     obj_type = &TA_taBase; // placeholder
     return false;
   }
   TypeDef* ot = obj->act_object_type();
   taBase* base_base = obj->object_val;
+
+  taBase* path_obj = NULL;
+  TypeDef* path_type = MemberProgEl::GetObjTypeFromPath(path, ot, base_base, path_obj);
+
+  if(path_type) {
+    obj_type = path_type;
+    return true;
+  }
+  return false;
+}
+
+TypeDef* MemberProgEl::GetObjTypeFromPath
+(const String& path, TypeDef* base_type, taBase* base_obj, taBase*& path_obj) {
+  if(!base_type) {
+    return NULL;
+  }
   MemberDef* md = NULL;
-  bool rval = false;
-  if(base_base) {
-    taBase* mb_tab = base_base->FindFromPath(path, md);
+  if(base_obj) {
+    taBase* mb_tab = base_obj->FindFromPath(path, md);
     if(mb_tab) {
-      obj_type = mb_tab->GetTypeDef();
-      rval = true;
+      return mb_tab->GetTypeDef();
     }
   }
-  if(!rval) {                   // didn't get it yet, try with static
-    int net_base_off = 0;
-    ta_memb_ptr net_mbr_off = 0;
-    md = TypeDef::FindMemberPathStatic(ot, net_base_off, net_mbr_off, path, false);
-    // gets static path based just on member types..
-    if(md) {
-      obj_type = md->type;      // it is the type of the member, not the owner type.
-    }
-    rval = (bool)md;
+
+  // didn't get it yet, try with static
+  int net_base_off = 0;
+  ta_memb_ptr net_mbr_off = 0;
+  md = TypeDef::FindMemberPathStatic(base_type, net_base_off, net_mbr_off, path, false);
+  // gets static path based just on member types..
+  if(md && md->type->IsActualTaBase()) {
+    return md->type;
   }
-  return rval;
+
+  // failed again -- try parent..
+
+  int path_delim = taBase::GetLastPathDelimPos(path);
+  int arrow_idx = taMisc::find_not_in_quotes(path, '>',-1);
+  if(arrow_idx > 0) {
+    if(path[arrow_idx-1] == '-')
+      arrow_idx--;            // get at start
+    else
+      arrow_idx = -1;
+  }
+  if(arrow_idx > path_delim)
+    path_delim = arrow_idx;
+  if(path_delim > 0) {
+    String pre_path = path.before(path_delim);
+    return GetObjTypeFromPath(pre_path, base_type, base_obj, path_obj);
+  }
+  return NULL;
+}
+
+bool MemberProgEl::UAEInProgram(const String& path, TypeDef* base_type, taBase* base_obj) {
+  const String uae_in_prog = "UAE_IN_PROGRAM";
+  if(!base_type) {
+    return false;
+  }
+  if(base_type->HasOption(uae_in_prog))
+    return true;
+  
+  MemberDef* md = NULL;
+  if(base_obj) {
+    taBase* mb_tab = base_obj->FindFromPath(path, md);
+    if(mb_tab) {
+      if(mb_tab->GetTypeDef()->HasOption(uae_in_prog))
+        return true;
+    }
+  }
+
+  int net_base_off = 0;
+  ta_memb_ptr net_mbr_off = 0;
+  md = TypeDef::FindMemberPathStatic(base_type, net_base_off, net_mbr_off, path, false);
+  // gets static path based just on member types..
+  if(md && md->type->HasOption(uae_in_prog)) {
+    return true;
+  }
+
+  // failed again -- try parent..
+  int path_delim = taBase::GetLastPathDelimPos(path);
+  int arrow_idx = taMisc::find_not_in_quotes(path, '>',-1);
+  if(arrow_idx > 0) {
+    if(path[arrow_idx-1] == '-')
+      arrow_idx--;            // get at start
+    else
+      arrow_idx = -1;
+  }
+  if(arrow_idx > path_delim)
+    path_delim = arrow_idx;
+  if(path_delim > 0) {
+    String pre_path = path.before(path_delim);
+    return UAEInProgram(pre_path, base_type, base_obj);
+  }
+  return false;
 }
 
 void MemberProgEl::CheckThisConfig_impl(bool quiet, bool& rval) {

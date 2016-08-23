@@ -42,9 +42,16 @@ public:
   MemberDef*		member_lookup;
   // #TYPE_ON_obj_type #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER lookup a member name -- after you choose, it will copy the name into the path and reset this lookup to NULL
   
-  virtual bool		GetTypeFromPath(bool quiet = false);
+  virtual bool		GetTypeFromPath();
   // get obj_type from current path (also gives warnings about bad paths unless quiet = true)
-
+  static TypeDef*	GetObjTypeFromPath
+    (const String& path, TypeDef* base_type, taBase* base_obj, taBase*& path_obj);
+  // return an object type from path -- if path goes all the way to a non-taBase object, then it gets the parent of that object (recursively) -- sets the object at the end of the found path in path_obj if it is available
+  
+  static bool           UAEInProgram
+    (const String& path, TypeDef* base_type, taBase* base_obj);
+  // determine if the base type or any element of the subsequent path from there has the UAE_IN_PROGRAM class flag set -- use for setting update_after flag where needed
+  
   String StringFieldLookupFun(const String& cur_txt, int cur_pos,
 				       const String& mbr_name, int& new_pos) override;
   void 	Help() override;

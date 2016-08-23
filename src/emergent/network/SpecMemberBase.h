@@ -27,7 +27,7 @@
 eTypeDef_Of(SpecMemberBase);
 
 class E_API SpecMemberBase : public taOBase {
-  // ##EXT_spec ##SCOPE_Network ##CAT_Spec base type for members of spec objects -- defines interface for default values
+  // ##EXT_spec ##SCOPE_Network ##CAT_Spec ##UAE_IN_PROGRAM base type for members of spec objects -- defines interface for default values
 friend class BaseSpec;
 INHERITED(taOBase)
 public:
@@ -36,10 +36,8 @@ public:
   // #BUTTON #CONFIRM #CAT_ObjectMgmt restore specs to their default original parameter values, for parameters that have a strong default value -- WARNING: you will lose any unique parameters for anything that has a strong default value
   // note: typically do NOT redefine basic Defaults function -- see SPEC_DEFAULTS comment above
 
-  void		MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) override;
+  void  MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) override;
 
-  bool UAEProgramDefault() override { return true; }
-  
   TA_BASEFUNS_NOCOPY(SpecMemberBase);
 protected:
   virtual void	Defaults_impl() { };

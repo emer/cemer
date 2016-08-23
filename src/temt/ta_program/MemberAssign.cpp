@@ -28,8 +28,10 @@ void MemberAssign::Initialize() {
 
 void MemberAssign::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if((bool)obj && (bool)obj->object_val && expr.empty()) { // assume ok to set default here based on obj
-    update_after = obj->object_val->UAEProgramDefault();
+  if((bool)obj && expr.empty()) { // assume ok to set default here based on obj
+    TypeDef* ot = obj->act_object_type();
+    taBase* base_base = obj->object_val;
+    update_after = UAEInProgram(path, ot, base_base);
   }
 }
 
@@ -135,8 +137,20 @@ bool MemberAssign::CvtFmCode(const String& code) {
   if(objnm == "?") return false;
   ProgVar* pv = FindVarNameInScope(objnm, true); // true = give option to make one
   if(!pv) return false;
-  obj = pv;
-  path = pathnm;
+  bool do_uae_updt = false;
+  if(obj != pv) {
+    obj = pv;
+    do_uae_updt = true;
+  }
+  if(path != pathnm) {
+    path = pathnm;
+    do_uae_updt = true;
+  }
+  if(do_uae_updt) {
+    TypeDef* ot = obj->act_object_type();
+    taBase* base_base = obj->object_val;
+    update_after = UAEInProgram(path, ot, base_base);
+  }
   String rhs = trim(code.after('='));
   if(rhs.endsWith(';')) rhs = rhs.before(';',-1);
   expr.SetExpr(rhs);
