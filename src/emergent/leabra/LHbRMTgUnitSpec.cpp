@@ -257,10 +257,6 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   }
   
   float vspatch_neg_net = (gains.vspatch_neg_D2 * vspatch_neg_D2) - (gains.vspatch_neg_D1 * vspatch_neg_D1); // positive number is net inhibitory in LHb - disinhibitory "burster"
-
-  if (vspatch_neg_net > 0.0f) {
-    vspatch_neg_net *= lhb.pvneg_discount;
-  }
   
   float vsmatrix_pos_D1 = 0.0f;
   if(vsmatrix_pos_D1_lay)
@@ -280,6 +276,12 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   float pv_pos = pv_pos_lay->acts_eq.avg * pv_pos_lay->units.size;
   float pv_neg = pv_neg_lay->acts_eq.avg * pv_neg_lay->units.size;
   
+  // pvneg_discount - should not fully predict away an expected punishment
+  if (vspatch_neg_net > 0.0f) {
+    //vspatch_neg_net = MIN(vspatch_neg_net,pv_neg); // helps mag .05, but
+    // prevents burst after mag 1.0 training, then test 0.5
+    vspatch_neg_net *= lhb.pvneg_discount;
+  }
   
   // net out the VS matrix D1 versus D2 pairs...WATCH the signs - double negatives!
   float vsmatrix_pos_net = (gains.vsmatrix_pos_D1 * vsmatrix_pos_D1) - (gains.vsmatrix_pos_D2 * vsmatrix_pos_D2); // positive number net inhibitory!
@@ -313,6 +315,7 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
     lay->SetUserData("net_neg", net_neg);
     lay->SetUserData("vspatch_neg_D1", vspatch_neg_D1);
     lay->SetUserData("vspatch_neg_D2", vspatch_neg_D2);
+    lay->SetUserData("vspatch_neg_net", vspatch_neg_net);
     
     lay->SetUserData("net_lhb", net_lhb);
   }
