@@ -518,7 +518,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   else {
     // note: following test not needed for 1st time, but is
     // needed for subsequent ExpandDefault
-    if(!exp_flags && (EF_DEFAULT | EF_CUSTOM_FILTER)) {
+    if(!(exp_flags & EF_DEFAULT) && !(exp_flags & EF_CUSTOM_FILTER)) {
       // for auto-expand, do NOT collapse expanded items!
       if (isItemExpanded(item)) {
         item->setExpanded(false);
