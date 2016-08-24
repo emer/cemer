@@ -72,7 +72,7 @@ public:
   // #MENU_BUTTON set the parameters in the specs of the network to the latest default values for the PVLV model, and also ensures that the standard control panels are built and contain relevant parameters -- this is only for a model that already has PVLV configured
 
   virtual bool PVLV_SetLrate(LeabraNetwork* net, float base_lrate=0.04);
-  // #MENU_BUTTON set the learning rate for PVLV network -- does a coordinated update across the different learning rates, to keep default dynamics balanced -- given value is the base lrate that applies to Patch, Matrix, and BAext layers -- rest of Amyg layers use 10x that value
+  // #MENU_BUTTON set the learning rate for PVLV network -- does a coordinated update across the different learning rates, to keep default dynamics balanced -- given value is the base lrate; actual lrates applied to Patch, Matrix, and BAAcq, BAext layers are different multiples of base lrate
   virtual bool PVLV_ConnectCSLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
 				 bool disconnect = false);
   // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connections between given CS-encoding sending_layer in given network and the relevant PVLV layers (Lateral Amygdala, VSMatrix)

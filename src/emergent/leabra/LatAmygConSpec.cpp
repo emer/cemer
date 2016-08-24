@@ -25,8 +25,8 @@ void LatAmygGains::Initialize() {
 void LatAmygGains::Defaults_init() {
   burst_da_gain = 1.0f;
   dip_da_gain= 1.0f;
-  decay_factor = 0.001f;
-  decay_floor = 0.5f;
+  wt_decay_rate = 0.001f;
+  wt_decay_floor = 0.5f;
 }
 
 void LatAmygConSpec::Initialize() {

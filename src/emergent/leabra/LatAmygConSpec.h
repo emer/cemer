@@ -32,8 +32,8 @@ INHERITED(SpecMemberBase)
 public:
   float         burst_da_gain;  // #MIN_0 multiplicative gain factor applied to positive dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
   float         dip_da_gain;    // #MIN_0 multiplicative gain factor applied to negative dopamine signals -- this operates on the raw dopamine signal prior to any effect of D2 receptors in reversing its sign!
-  float         decay_factor; // extra decay added to dopamine signal
-  float         decay_floor; // #DEF_0.5 minimum decay weight value
+  float         wt_decay_rate; // decay rate (each AlphaTrial) as percentage of the pos-rectified difference between the existing weight less the wt_decay_floor
+  float         wt_decay_floor;  // #DEF_0.5 minimum weight value below which no decay occurs
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -55,15 +55,22 @@ INHERITED(LeabraConSpec)
 public:
   LatAmygGains          lat_amyg;
 
-  inline float  GetDa(float da, float fwt)
-  { return (da < 0.0f) ? lat_amyg.dip_da_gain * da : lat_amyg.burst_da_gain * da;
+  inline float  GetDa(float da)
+  { da = (da < 0.0f) ? lat_amyg.dip_da_gain * da : lat_amyg.burst_da_gain * da;
     da = fabsf(da);
-    if(fwt > lat_amyg.decay_floor) da -= lat_amyg.decay_factor * fwt; }
+    return da;
+    //if(fwt > lat_amyg.wt_decay_floor) da -= lat_amyg.wt_decay_rate * fwt;
+  }
   // get overall dopamine value
   
   inline void C_Compute_dWt_LatAmyg(float& dwt, const float su_act, const float da_p, 
                                     const float fwt)
-  {  dwt += cur_lrate * su_act * GetDa(da_p, fwt); }
+  {
+    float wt_above_floor = fwt - lat_amyg.wt_decay_floor;
+    wt_above_floor = MAX(wt_above_floor,0.0f); // positive-rectify
+    dwt += (cur_lrate * su_act * GetDa(da_p)) - lat_amyg.wt_decay_rate * wt_above_floor;
+    //dwt += cur_lrate * su_act * GetDa(da_p, fwt);
+  }
   // #IGNORE dopamine multiplication
 
   inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {

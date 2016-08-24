@@ -102,7 +102,7 @@ String LeabraWizard::RenderWizDoc_network() {
 * [[<this>.TD()|Temporal Differences (TD)]] -- configure temporal-differences (TD) reinforcement learning layers.\n\
 * [[<this>.PVLV()|PVLV]] -- configure PVLV (Primary Value, Learned Value) biologically-motivated reinforcement learning layers -- provides a simulated dopamine signal that reflects unexpected primary rewards (PV = primary value system) and unexpected learned reward assocations (conditioned stimuli; LV = learned value = system).\n\
 :* [[<this>.PVLV_Defaults()|PVLV Defaults]] -- set the parameters in the specs of the network to the latest default values for the PVLV model, and also ensures that the standard control panels are built and contain relevant parameters -- this is only for a model that already has PVLV configured and in a standard current format.\n\
-:* [[<this>.PVLV_SetLrate()|PVLV Set Lrate]] -- set the learning rate for PVLV network -- does a coordinated update across the different learning rates, to keep default dynamics balanced -- given value is the base lrate that applies to Patch, Matrix, and BAext layers -- rest of Amyg layers use 10x that value.\n\
+:* [[<this>.PVLV_SetLrate()|PVLV Set Lrate]] -- set the learning rate for PVLV network -- does a coordinated update across the different learning rates, to keep default dynamics balanced -- given value is the base lrate; actual lrate applied to Patch, Matrix, and BAAcq, BAext layers are different multiples of the base lrate.\n\
 :* [[<this>.PVLV_ConnectCSLayer()|PVLV Connect CS Layer]] -- connect or disconnect a CS layer as an input to the PVLV system -- connects to the relevant PVLV layers (Lateral Amygdala, VSMatrix).\n\
 :* [[<this>.PVLV_OutToExtRew()|PVLV Connect Output to ExtRew]] -- connect or disconnect an Output layer to the ExtRew layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance.\n\
 * [[<this>.PBWM()|PBWM]] -- create and configure prefrontal cortex basal ganglia working memory (PBWM) layers in the network -- also does a PVLV configuration, which does the reinforcement learning for PBWM.\n\
@@ -1373,7 +1373,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons_pd1->SetUnique("wt_scale", true);
   vspatch_cons_pd1->wt_scale.abs = 1.0f;
   vspatch_cons_pd1->SetUnique("lrate", true);
-  vspatch_cons_pd1->lrate = base_lrate;
+  vspatch_cons_pd1->lrate = 1.5f * base_lrate;
   vspatch_cons_pd1->SetUnique("wt_sig", true);
   vspatch_cons_pd1->wt_sig.gain = 1.0f;
   vspatch_cons_pd1->SetUnique("deep", true);
@@ -1422,7 +1422,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vspatch_cons_nd2->SetUnique("rnd", false);
   vspatch_cons_nd2->SetUnique("wt_scale", false);
   vspatch_cons_nd2->SetUnique("lrate", true);
-  vspatch_cons_nd2->lrate = base_lrate;
+  vspatch_cons_nd2->lrate = 1.5f * base_lrate;
   vspatch_cons_nd2->SetUnique("wt_sig", false);
   vspatch_cons_nd2->SetUnique("deep", false);
   vspatch_cons_nd2->SetUnique("su_act_var", false);
@@ -1649,9 +1649,9 @@ bool LeabraWizard::PVLV_SetLrate(LeabraNetwork* net, float base_lrate) {
   PvlvSp("BasAmygCons_acq_neg", BasAmygConSpec)->lrate = 10.0f * base_lrate;
   PvlvSp("BasAmygCons_ext_neg", BasAmygConSpec)->lrate = 2.0f * base_lrate; // todo: was 1x base..
 
-  PvlvSp("VSPatchCons_ToPosD1", MSNConSpec)->lrate = base_lrate;
+  PvlvSp("VSPatchCons_ToPosD1", MSNConSpec)->lrate = 1.5f * base_lrate;
   PvlvSp("VSPatchCons_ToPosD2", MSNConSpec)->lrate = 0.75f * base_lrate;
-  PvlvSp("VSPatchCons_ToNegD2", MSNConSpec)->lrate = base_lrate;
+  PvlvSp("VSPatchCons_ToNegD2", MSNConSpec)->lrate = 1.5f * base_lrate;
   PvlvSp("VSPatchCons_ToNegD1", MSNConSpec)->lrate = 0.75f * base_lrate;
   
   PvlvSp("VSMatrixCons_ToPosD1", MSNConSpec)->lrate = 3.0f * base_lrate;
