@@ -266,6 +266,10 @@ void Network_cuda::UpdateConParams() {
   }
 }
 
+// todo: definitely should just not use the entire congroup structure
+// and instead just have a size int per congroup and a temp float array for agg results
+
+
 __global__ void Kernel_Compute_Netin_OneLayer
 (const int cgp_st_idx, char* net_cgp_mem, const int con_group_size, char* net_recv_cons_mem, char* net_units_mem, const int unit_vars_size) {
 

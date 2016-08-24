@@ -226,6 +226,7 @@ void Network::InitLinks() {
   taBase::Own(max_disp_size2d, this);
 
   taBase::Own(stats, this);
+  taBase::Own(cuda, this);
   taBase::Own(threads, this);
 
   taBase::Own(avg_sse, this);
