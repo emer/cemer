@@ -463,16 +463,19 @@ int Network::Save_strm(ostream& strm, taBase* par, int indent) {
 bool Network::net_aligned_malloc(void** ptr, size_t sz) {
   // alignment -- 64 = 64 byte (not bit) -- this is needed for Phi MIC but not clear
   // that it is useful for AVX2??  anyway, better safe than sorry?
-  if(sz > 1024) {
+  // 8/23/16 -- unnec to do the 64 byte align -- even any align may be not needed
+  // and windows requires a different free based on the align alloc type, so
+  // we are just standardizing on 16 byte align for all..
+  // if(sz > 1024) {
 #ifdef TA_OS_WIN
-    *ptr = _aligned_malloc(sz, 64);
+  *ptr = _aligned_malloc(sz, 16);
 #else
-    posix_memalign(ptr, 64, sz);
+  posix_memalign(ptr, 16, sz);
 #endif
-  }
-  else {                        // don't bother with align for small guys..
-    *ptr = malloc(sz);
-  }
+  // }
+  // else {                        // don't bother with align for small guys..
+  //   *ptr = malloc(sz);
+  // }
   if(!*ptr) {
     taMisc::Error("Network::net_aligned_alloc memory allocation error! usually fatal -- please quit!  maybe your network is too big to fit into RAM?");
     return false;
