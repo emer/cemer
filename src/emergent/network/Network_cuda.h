@@ -167,6 +167,22 @@ public:
   float*        con_params_h; // host array of sending units * sending con groups -- size own_units_x_cons * N_CON_PARAMS -- parameters for each con group
   float*        con_params_d; // device array of sending units * sending con groups -- size own_units_x_cons * N_CON_PARAMS -- parameters for each con group
 
+  inline UnitVars_core*  UnitVars(char* net_units_mem, int flat_idx) const
+  { return (UnitVars_core*)(net_units_mem[flat_idx * unit_vars_size]); }
+  // #CAT_Structure unit variables for unit at given unit at flat_idx 
+
+  inline ConGroup_cuda*  UnitVars(char* net_units_mem, int flat_idx) const
+  { return (UnitVars*)(net_units_mem[flat_idx * unit_vars_size]); }
+  // #CAT_Structure unit variables for unit at given unit at flat_idx 
+
+  inline int    ThrLayUnStart(int thr_no, int lay_no)
+  { return thrs_lay_unit_idxs[thr_no][2*lay_no]; }
+  // #CAT_Structure starting thread-specific unit index for given layer (from active_layers list)
+  inline int    ThrLayUnEnd(int thr_no, int lay_no)
+  { return thrs_lay_unit_idxs[thr_no][2*lay_no + 1]; }
+  // #CAT_Structure ending thread-specific unit index for given layer (from active_layers list) -- this is like the max in a for loop -- valid indexes are < end
+
+
   inline float*   RecvCnVar(int uncon, int var_no) const
   { return recv_cons_mem_d + con_mem_idxs_d[uncon] + (con_allocs_d[uncon] * (1 + var_no)); }
   // illustration for how to access connection variable in compute code: access connection variable for unit x con, variable

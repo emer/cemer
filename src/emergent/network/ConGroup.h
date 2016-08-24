@@ -23,7 +23,6 @@
 #include <taString>
 #include <Connection>
 
-// todo: ifdef these for CUDA includes
 #include <Random>
 #include <SimpleMathSpec>
 #include <Relation>
