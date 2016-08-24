@@ -27,7 +27,6 @@
 // #endif
 
 TA_BASEFUNS_CTORS_DEFN(LeabraNetTiming);
-TA_BASEFUNS_CTORS_DEFN(LeabraCudaSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraTimes);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetStats);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetMisc);
@@ -35,19 +34,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraNetDeep);
 TA_BASEFUNS_CTORS_DEFN(RelNetinSched);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetwork);
 
-
-void LeabraCudaSpec::Initialize() {
-// #ifdef CUDA_COMPILE
-//   on = true;
-// #else
-  on = false;
-// #endif
-  get_wts = false;
-  min_threads = 32;
-  max_threads = 1024;
-  cons_per_thread = 2;
-  timers_on = false;
-}
 
 void LeabraTimes::Initialize() {
   quarter = 25;

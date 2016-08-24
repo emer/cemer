@@ -373,7 +373,7 @@ set(network_SRCS
 set(network_FILES ${network_HEADS} ${network_SRCS})
 
 set(network_CUDA
-  ConGroup_cuda.h
-  UnitVars_cuda.h
-  Network_cuda.h
+  ConGroup_cuda.cu
+  UnitVars_cuda.cu
+  Network_cuda.cu
 )

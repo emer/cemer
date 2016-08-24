@@ -320,7 +320,7 @@ void ConGroup::SetMemStart(Network* net, float* ms, int midx) {
     }
     cnmem_start = shcg->cnmem_start; // now we're sharing!
 #ifdef CUDA_COMPILE
-    cnmem_idx = shcg->mem_start + alloc_size;
+    cnmem_idx = shcg->mem_idx + alloc_size;
 #endif    
     SetConGroupFlag(SHARING);
   }

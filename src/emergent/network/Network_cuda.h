@@ -37,60 +37,49 @@ typedef int bigint;
 
 
 // CUDA ONLY WORKS WITH THREADS=1 ON NETWORK -- this makes the memory isomorphic!
+// this is automatically enforced
 
 ////////////////////////////////////////////////////////////////////////
 //      Memory layout and overall strategy, etc
 //
-// threads = connections with a sending connection group
-// blocks =  units x cons = sending connection groups
-//           (one for each sending group in each sending unit)
+// threads = connections with a connection group --
+//           each thread divides up the list of connections by the total num of threads:
 //
-// cons_sizes for example is organized like this, for small layers with diff numbers
-//      of sending groups:
-// idx  unit con_group
-//  0   1    0  # first layer, 2 units, 1 send con group per unit
-//  1   2    0
-//  2   3    0  # next layer, 2 units, 2 send con groups per unit
-//  3   3    1
-//  4   4    0
-//  5   4    1
-//  6   5    0
-//  7   5    1
-// ... and so on..
+//   key thread-level code to divvy up sz number of connections:
 //
-// A routine like Network::Cuda_Send_NetinDelta will fill in the "ucidx" (idx above)
-// into cur_units_x_cons_h by going through the network and finding the sending units
-// and sending con groups within them that should be sent on this cycle -- the cuda
-// side will then copy this _h -> _d and call the kernel with blocks = number of 
-// items in cur_units_x_cons and threads = pre-computed threads based on max number of
-// connections in any connection group in the layer (todo: need more params on that)
-// the kernel then looks up all the info needed to access the own_cons_mem raw memory
-// bank of connection data, and does the computation
+//   const int nth = blockDim.x; // number of threads
+//   int th = threadIdx.x;
+//   const float cn_per_th = ((float)sz / (float)nth);
+//   int st = __float2int_rn((float)th * cn_per_th);
+//   int ed = __float2int_rn((float)(th+1) * cn_per_th);
+//   while(st < ed) {
+//     <process connection number st>
+//     st++;
+//   }
 //
-// All conspec parameters and unit-level variables (avg_s, avg_m etc) need to be 
-// consolidated into float* arrays and copied up to the device as needed.
+// TODO: docs say the while loop can be a problem if it diverges
+// could also experiment with various other ways of allocating
+// e.g., padding connections so all same length and having fixed iters, etc
+// NOTE: might be faster to keep all threads at an even workload EXCEPT the last one?
+// ie.., don't use the round float thing, but just use sz / nthr
+
+// blocks = units x con-groups-per-unit = total list of connection groups to process
 //
-// Overall, we ONLY use CUDA for the connection-level processing, due to the need
-// to rewrite everything outside of the standard C++ implementation.
-// CRITICALLY, to avoid excessive memory transfers, EVERYTHING at the connection
-// level must be implemented in CUDA -- the connection memory is only transfered
-// back to the host for display or saving the weights at the end.
-// 
-// *This means that all possible special-function ConSpecs must be implemented here!*
-// *Thus, CUDA only supports a subset of what might be avail outside of it*
-// 
-// The only real interface between connections and the unit-level code is the 
-// net input, and then the activations coming back to influence learning, so
-// those vectors of size n_units do need to be transferred, but that is far far
-// less transfer than the full set of connections.  Overall, memory transfer is 
-// a relatively minor cost of the computation.
-// 
-// The major limitations as far as we can tell are in the memory bandwidth required
-// to feed the computations..
+//   code:
+//
+//   const int cgp_idx = blockIdx.x;  // ConGroup index in list of congroups to process
+//
+//   then just access the relevant data structures from that -- the ConGroup_cuda
+//   structure has the owning unit index in it, so relevant unit-level data can
+//   be accessed from there
+//
+//   also, all conspec parameters and unit-level variables (avg_s, avg_m etc) need to be 
+//   consolidated into float* arrays and copied up to the device as needed.
 //
 
 #include <ConGroup_cuda.h>
-#include <UnitVars_core.h>
+#include <UnitVars_cuda.h>
+
 
 class Network_cuda {
   // NVIDIA CUDA support for calling LeabraConSpec functions
@@ -124,77 +113,102 @@ public:
   int           n_units_built;  // #NO_SAVE #READ_ONLY #CAT_Threads number of units built -- actually the n+1 size of units_flat
   int           n_layers_built; // #NO_SAVE #READ_ONLY #CAT_Threads number of active layers when built -- size of active_layers array
   int           n_ungps_built;  // #NO_SAVE #READ_ONLY #CAT_Threads number of active unit groups when built -- size of active_ungpss array
-  char*         units_mem_h;  // #IGNORE array of char[n_units_built * unit_vars_size], containing ALL units  -- this is the primary memory allocation of units
+  char*         units_mem_h;  // array of char[n_units_built * unit_vars_size], containing ALL units  -- this is the primary memory allocation of units
   char*         units_mem_d;
+  int*          lay_unit_idxs_h; // allocation of units to layers -- arrays of int[n_layers_built * 2], containing start and end unit indexes of units processed by a given thread and a given layer
+  int*          lay_unit_idxs_d;
+  int*          ungp_unit_idxs_h; // allocation of units to unit groups by threads -- array of int**[n_thrs_built], pointing to arrays of int[n_ungps_built * 2], containing  start and end thr_un_idx indexes of units processed by a given thread and a given unit group
+  int*          ungp_unit_idxs_d;
 
-  int          n_lay_stats;     // #IGNORE #DEF_6 number of thread-specific layer-level statistics that require variable memory storage
-  int          n_lay_stats_vars; // #IGNORE #DEF_6 number of thread-specific layer-level statistic variables, per stat, available for stats algorithms
-  float*       lay_stats_h;       // #IGNORE layer-level stats variables available for stats routines to do efficient initial pre-computation across units at the thread level, followed by a main-thread integration of the thread-specific values --  float[n_lay_stats * n_lay_stats_vars * n_layers_built] -- n_lay_stats_vars is accessed as the inner dimension, then n_layers_built, then n_lay_stats as outer
-  float*       lay_stats_d;
+  int           n_lay_stats;     // #DEF_6 number of thread-specific layer-level statistics that require variable memory storage
+  int           n_lay_stats_vars; // #DEF_6 number of thread-specific layer-level statistic variables, per stat, available for stats algorithms
+  float*        lay_stats_h;       // layer-level stats variables available for stats routines to do efficient initial pre-computation across units at the thread level, followed by a main-thread integration of the thread-specific values --  float[n_lay_stats * n_lay_stats_vars * n_layers_built] -- n_lay_stats_vars is accessed as the inner dimension, then n_layers_built, then n_lay_stats as outer
+  float*        lay_stats_d;
 
-  int*          units_n_recv_cgps_h;  // #IGNORE number of receiving connection groups per unit (flat_idx unit indexing, starts at 1)
+  int*          units_n_recv_cgps_h;  // number of receiving connection groups per unit (flat_idx unit indexing, starts at 1)
   int*          units_n_recv_cgps_d;
   
-  int*          units_n_send_cgps_h;  // #IGNORE number of sending connection groups per unit (flat_idx unit indexing, starts at 1)
+  int*          units_n_send_cgps_h;  // number of sending connection groups per unit (flat_idx unit indexing, starts at 1)
   int*          units_n_send_cgps_d;
   
-  int           n_recv_cgps; // #IGNORE total number of units * recv con groups
-  int           n_send_cgps; // #IGNORE total number of units * send con groups
+  int           n_recv_cgps; // total number of units * recv con groups
+  int           n_send_cgps; // total number of units * send con groups
 
-  char*         recv_cgp_mem_h; // #IGNORE memory allocation for ConGroup for all recv connection group objects, array of char[n_recv_cgps * con_group_size], containing the recv ConGroup processed -- this is the primary memory allocation of recv ConGroups
+  char*         recv_cgp_mem_h; // memory allocation for ConGroup for all recv connection group objects, array of char[n_recv_cgps * con_group_size], containing the recv ConGroup processed -- this is the primary memory allocation of recv ConGroups
   char*         recv_cgp_mem_d;
-  char*         send_cgp_mem_h; // #IGNORE memory allocation for ConGroup for all send connection group objects, array of char[n_send_cgps * con_group_size], containing the send ConGroup processed -- this is the primary memory allocation of send ConGroups
+  char*         send_cgp_mem_h; // memory allocation for ConGroup for all send connection group objects, array of char[n_send_cgps * con_group_size], containing the send ConGroup processed -- this is the primary memory allocation of send ConGroups
   char*         send_cgp_mem_d;
   
-  int*          recv_cgp_start_h; // #IGNORE starting indexes into recv_cgp_mem, per unit -- array of int[n_units_built] -- contains 0 for units that have none
+  int*          recv_cgp_start_h; // starting indexes into recv_cgp_mem, per unit -- array of int[n_units_built] -- contains 0 for units that have none
   int*          recv_cgp_start_d;
-  int*          send_cgp_start_h; // #IGNORE starting indexes into send_cgp_mem, per unit -- array of int[n_units_built] -- contains 0 for units that have none 
+  int*          send_cgp_start_h; // starting indexes into send_cgp_mem, per unit -- array of int[n_units_built] -- contains 0 for units that have none 
   int*          send_cgp_start_d;
 
-  bigint        recv_cons_cnt; // #IGNORE number of floats to allocate to recv_cons_mem
-  bigint        send_cons_cnt; // #IGNORE number of floats to allocate to send_cons_mem
-  float*        recv_cons_mem_h; // #IGNORE bulk memory allocated for all of the recv connections, array of float[recv_cons_cnt]
+  bigint        recv_cons_cnt; // number of floats to allocate to recv_cons_mem
+  bigint        send_cons_cnt; // number of floats to allocate to send_cons_mem
+  float*        recv_cons_mem_h; // bulk memory allocated for all of the recv connections, array of float[recv_cons_cnt]
   float*        recv_cons_mem_d;
-  float*        send_cons_mem_h; // #IGNORE bulk memory allocated for all of the send connections, array of float[send_cons_cnt]
+  float*        send_cons_mem_h; // bulk memory allocated for all of the send connections, array of float[send_cons_cnt]
   float*        send_cons_mem_d;
 
-  int           own_cons_max_size; // #IGNORE maximum alloc_size of any owning connection group -- for allocating temp structures..
-  bigint        own_cons_tot_size; // #IGNORE total number of owned connections
-  bigint        own_cons_tot_size_nonshared; // #IGNORE total number of owned connections, by thread, non-shared
-  int           own_cons_avg_size; // #IGNORE average size of any owning connection group -- for optimizing computation
-  int           own_cons_max_vars; // #IGNORE maximum NConVars of any owning connection group -- for allocating temp structures..
+  int           own_cons_max_size; // maximum alloc_size of any owning connection group -- for allocating temp structures..
+  bigint        own_cons_tot_size; // total number of owned connections
+  bigint        own_cons_tot_size_nonshared; // total number of owned connections, by thread, non-shared
+  int           own_cons_avg_size; // average size of any owning connection group -- for optimizing computation
+  int           own_cons_max_vars; // maximum NConVars of any owning connection group -- for allocating temp structures..
 
   float*        con_params_h; // host array of sending units * sending con groups -- size own_units_x_cons * N_CON_PARAMS -- parameters for each con group
   float*        con_params_d; // device array of sending units * sending con groups -- size own_units_x_cons * N_CON_PARAMS -- parameters for each con group
 
-  inline UnitVars_core*  UnitVars(char* net_units_mem, int flat_idx) const
-  { return (UnitVars_core*)(net_units_mem[flat_idx * unit_vars_size]); }
-  // #CAT_Structure unit variables for unit at given unit at flat_idx 
+  ///////////////////////////////////////////////////////////////////////////////
+  //  Key Accessor Routines -- static with all args explicitly passed for use
+  //   inside a kernel
+  
+  static inline UnitVars_cuda*  GetUnitVars(char* net_units_mem, const int unit_vars_size,
+                                            const int unit_idx)
+  { return (UnitVars_cuda*)(net_units_mem[unit_idx * unit_vars_size]); }
+  // #CAT_Structure unit variables for unit at given unit at unit flat_idx 
 
-  inline ConGroup_cuda*  UnitVars(char* net_units_mem, int flat_idx) const
-  { return (UnitVars*)(net_units_mem[flat_idx * unit_vars_size]); }
-  // #CAT_Structure unit variables for unit at given unit at flat_idx 
+  static inline int GetNConGroups(const int* net_n_recv_cgps,
+                                        const int unit_idx)
+  { return net_n_recv_cgps[unit_idx]; }
+  // #CAT_Structure number of congroups for given unit index -- pass in appropriate recv or send memory
 
-  inline int    ThrLayUnStart(int thr_no, int lay_no)
-  { return thrs_lay_unit_idxs[thr_no][2*lay_no]; }
-  // #CAT_Structure starting thread-specific unit index for given layer (from active_layers list)
-  inline int    ThrLayUnEnd(int thr_no, int lay_no)
-  { return thrs_lay_unit_idxs[thr_no][2*lay_no + 1]; }
-  // #CAT_Structure ending thread-specific unit index for given layer (from active_layers list) -- this is like the max in a for loop -- valid indexes are < end
+  static inline ConGroup_cuda*  GetUnConGroup
+  (char* net_cgp_mem, const int* net_cgp_start, const int con_group_size,
+   const int unit_idx, const int cgp_idx)
+  { return (ConGroup_cuda*)
+      (net_cgp_mem[(net_cgp_start[unit_idx] + cgp_idx) * con_group_size]); }
+  // #CAT_Structure connection group for given unit flat index, con group index, pass in appropriate recv or send cgp_mem and cgp_start from network
+
+  static inline ConGroup_cuda*  GetConGroup_Flat
+  (char* net_cgp_mem, const int con_group_size, const int cgp_idx)
+  { return (ConGroup_cuda*)(net_cgp_mem[cgp_idx * con_group_size]); }
+  // #CAT_Structure connection group for given global con group index, pass in appropriate recv or send cgp_mem and cgp_start from network
+  
+  // once you have the con group, use accessor routines there for further con access
+  
+  static inline int  LayUnStart(const int* net_lay_unit_idxs, const int lay_no)
+  { return net_lay_unit_idxs[2*lay_no]; }
+  // #CAT_Structure starting unit index for given layer (from active_layers list)
+  static inline int  LayUnEnd(const int* net_lay_unit_idxs, const int lay_no)
+  { return net_lay_unit_idxs[2*lay_no + 1]; }
+  // #CAT_Structure ending unit index for given layer (from active_layers list) -- this is like the max in a for loop -- valid indexes are < end
 
 
-  inline float*   RecvCnVar(int uncon, int var_no) const
-  { return recv_cons_mem_d + con_mem_idxs_d[uncon] + (con_allocs_d[uncon] * (1 + var_no)); }
-  // illustration for how to access connection variable in compute code: access connection variable for unit x con, variable
-
-  inline int      UnIdx(int uncon, int idx) const
-  { return ((int*)(own_cons_mem_d + con_mem_idxs_d[uncon]))[idx]; }
-  // illustration for how to access access recv unit idx for unit x con
-
-  inline float&   ConParam_h(int uncon, int param_no)
-  { return con_params_h[uncon * N_CON_PARAMS + param_no]; }
-  // connection parameter, on host, for given unit x con and parameter number
-
+  // can't define this here b/c of the __float2int_rn function which only exists on
+  // device
+  // static inline void GetThreadCons(const int nthrs, const int thr_no,
+  //                                  const int n_cons, int& st, int& ed)
+  // { const float cn_per_th = ((float)n_cons / (float)nthrs);
+  //   st = __float2int_rn((float)thr_no * cn_per_th);
+  //   ed = __float2int_rn((float)(thr_no+1) * cn_per_th);
+  //   ed = ed < n_cons ? ed : n_cons;     // max of n_cons
+  // }
+  // Get starting and ending connection index numbers to process within a kernel operating
+  
+  //////////////////////////////////////////////////////
+  //            Main Constructor and memory copying
   
   void  AllocCudaArrays
   (
@@ -203,7 +217,9 @@ public:
    int    n_units_built,  
    int    n_layers_built, 
    int    n_ungps_built,  
-   char*  units_mem_h,  
+   char*  units_mem_h,
+   int*   lay_unit_idxs_h,
+   int*   ungp_unit_idxs_h,
 
    int    n_lay_stats,     
    int    n_lay_stats_vars, 
@@ -236,13 +252,14 @@ public:
   void  UpdateConParams();
   // call whenever any connection parameters change -- copy con_params_h -> d 
 
-  void  Compute_Netin();
-  // AFTER filling in cur_units_x_cons_n, cur_units_x_cons_h..
 
-  void  Compute_dWt(bool sync = true);
-  // AFTER filling in cur_units_x_cons_n, cur_units_x_cons_h, and unit_vec_vars_h, this will compute weight changes -- ONLY on CUDA side -- call OwnCons_DeviceToHost to get back
-  void  Compute_Weights(bool sync = false);
-  // compute weight updates -- ONLY on CUDA side -- call OwnCons_DeviceToHost to get back
+  //////////////////////////////////////////////////////
+  //    Computation routines
+  
+  void  Compute_NetinAct();
+
+  // void  Compute_dWt(bool sync = true);
+  // void  Compute_Weights(bool sync = false);
 
   Network_cuda();
   ~Network_cuda();

@@ -24,30 +24,28 @@
 
 // declare all other types mentioned but not required to include:
 
+class UnitVars_cuda;
+
+
 class  ConGroup_cuda : public ConGroup_core {
   // NVIDIA CUDA version of ConGroup -- has same memory layout and cuda-usable accessors
-INHERITED(ConGroup_core)
 public:
 
   inline float*         MemBlock(float* net_cons_mem, int mem_block) const
-  { return net_cons_mem[mem_idx + alloc_size * mem_block]; }
+  { return net_cons_mem + (mem_idx + alloc_size * mem_block); }
   // access given memory block relative to appropriate network cons_mem block -- just increments of alloc_size from mem_start -- for low-level routines
   inline float*         CnMemBlock(float* net_cons_mem, int mem_block) const
-  { return net_cons_mem[cnmem_idx + alloc_size * mem_block]; }
+  { return net_cons_mem + (cnmem_idx + alloc_size * mem_block); }
   // access given connection memory block relative to appropriate network cons_mem block -- just increments of alloc_size from cnmem_start -- for low-level routines
 
-  inline UnitVars*      OwnUnVars(char* net_units_mem, const int unit_vars_size)
-  { return (UnitVars*)(net_units_mem[own_flat_idx * unit_vars_size]); }
+  inline UnitVars_cuda* OwnUnVars(char* net_units_mem, const int unit_vars_size)
+  { return (UnitVars_cuda*)(net_units_mem[own_flat_idx * unit_vars_size]); }
   // #IGNORE #CAT_Access our own unit variables -- for the unit that owns these connections (could be sending or recv unit depending on type of connection group) -- needs network units_mem_block
 
   inline float*         OwnCnVar(float* net_cons_mem, int var_no) const
-  { return net_cons_mem[cnmem_idx + (alloc_size * var_no)]; }
+  { return net_cons_mem + (cnmem_idx + (alloc_size * var_no)); }
   // #CAT_Access fastest access (no range checking) to owned connection variable value -- get this float* and then index it directly with loop index -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::SCALE) -- needs appropriate network cons_mem block
   
-  inline int32_t*       OwnCnVarInt(float* net_cons_mem, int var_no) const
-  { return ((int32_t*)net_cons_mem)[cnmem_idx + (alloc_size * var_no)]; }
-  // #CAT_Access fastest access (no range checking) to owned connection variable value of INTEGER type -- get this float* and then index it directly with loop index -- var_no is defined in ConSpec -- needs appropriate network cons_mem block
-
   inline float&          OwnCn(float* net_cons_mem, int idx, int var_no) const
   { return net_cons_mem[cnmem_idx + (alloc_size * var_no) + idx]; }
   // #CAT_Access fast access (no range checking) to owned connection variable value at given index -- OwnCnVar with index in loop is preferred for fastest access -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
@@ -69,8 +67,9 @@ public:
   inline ConGroup_cuda*  UnCons
   (float* my_net_cons_mem, char* net_cgp_mem, const int con_group_size,
    int* net_cgp_start, int idx) const 
-  {  (ConGroup_cuda*)(net_cgp_mem[(net_cgp_start[UnIdx(my_net_cons_mem, idx)] + other_idx)
-                                  * con_group_size]); }
+  { return (ConGroup_cuda*)
+      (net_cgp_mem[(net_cgp_start[UnIdx(my_net_cons_mem, idx)] + other_idx) *
+                   con_group_size]); }
   // get ConGroup for this projection in unit at given index at other end of this connection
   
   inline float&  PtrCn

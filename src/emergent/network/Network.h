@@ -52,6 +52,10 @@ class NetView; //
 class BrainView; //
 class T3Panel; //
 
+#ifdef CUDA_COMPILE
+class Network_cuda; // #IGNORE
+#endif
+
 ////////////////////////////////////////////////////////
 //      Memory structure for version 8.0.0 
 //
@@ -130,6 +134,27 @@ public:
 private:
   void Initialize()  { SetBaseType(&TA_NetTiming); };
   void Destroy()     { };
+};
+
+
+eTypeDef_Of(NetworkCudaSpec);
+
+class E_API NetworkCudaSpec : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Network parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
+INHERITED(taOBase)
+public:
+  bool          on;             // #READ_ONLY #SHOW #NO_SAVE is CUDA active?  this is true when running in an executable compiled with CUDA_COMPILE defined -- it will automatically use the cuda GPU for all connection-level computations
+  int           min_threads;    // #DEF_32 #MIN_32 minuimum number of CUDA threads to allocate per block (sending group of connections) -- must be a multiple of 32 (i.e., min of 32) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
+  int           max_threads;    // #DEF_1024 #MAX_1024 maximum number of CUDA threads to allocate per block (sending group of connections) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- for modern cards (compute capability 2.0 or higher) the max is 1024, but in general you might need to experiment to find the best performing number for your card and network, and interactionwith cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
+  int           cons_per_thread; // #DEF_1:8 when computing number of threads to use, divide max number of connections per unit by this number, and then round to nearest multiple of 32, subject to the min and max_threads constraints
+  bool          timers_on;      // Accumulate timing information for each step of processing -- for debugging / optimizing threading
+
+  String       GetTypeDecoKey() const override { return "Network"; }
+
+  TA_SIMPLE_BASEFUNS(NetworkCudaSpec);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
 };
 
 eTypeDef_Of(NetStatsSpecs);
@@ -249,6 +274,7 @@ public:
   int           small_batch_n_eff; // #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
   NetStatsSpecs stats;          // #CAT_Statistic parameters controling the computation of statistics
   NetworkThreadMgr threads;     // #CAT_Threads parallel threading of network computation
+  NetworkCudaSpec  cuda;         // #CAT_CUDA parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
   NetTiming_List net_timing;    // #CAT_Statistic #EXPERT #NO_SAVE #NO_EXPAND_ALL timing for different network-level functions -- per thread, plus one summary item at the end
 
   int           batch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
@@ -372,6 +398,14 @@ public:
 
   ProjectBase*  proj;           // #IGNORE ProjectBase this network is in
 
+#ifdef CUDA_COMPILE
+  Network_cuda*      net_cuda;   // #IGNORE internal structure for cuda specific code
+  RunWaitTime        cuda_send_netin_time;  // #IGNORE
+  RunWaitTime        cuda_compute_dwt_time;  // #IGNORE
+  RunWaitTime        cuda_compute_wt_time;  // #IGNORE
+#endif
+
+  
   inline void           SetNetFlag(NetFlags flg)   { flags = (NetFlags)(flags | flg); }
   // set flag state on
   inline void           ClearNetFlag(NetFlags flg) { flags = (NetFlags)(flags & ~flg); }
@@ -1125,6 +1159,25 @@ public:
   // #IGNORE aggregate network variables across procs for trial-level dmem
 #endif
 
+#ifdef CUDA_COMPILE
+  // void  Cuda_BuildUnits_Threads(); // update device data after net mods
+  // void  Cuda_UpdateConParams();
+  // void  Cuda_Send_Netin();
+  // void  Cuda_Compute_dWt();
+  // void  Cuda_Compute_Weights();
+  // void  GetWeightsFromGPU() override { Cuda_ConStateToHost(); }
+  // void  SendWeightsToGPU() override { Cuda_ConStateToDevice(); }
+#endif
+
+  void    Cuda_ConStateToHost();
+  // #CAT_CUDA get all the connection state variables (weights, dwts, etc) back from the GPU device to the host -- this is done automatically before SaveWeights*
+  void    Cuda_ConStateToDevice();
+  // #CAT_CUDA send all the connection state variables (weights, dwts, etc) to the GPU device from the host -- this is done automatically after Init_Weights and LoadWeights*
+  String  Cuda_MemoryReport(bool print = true);
+  // #CAT_CUDA report about memory allocation required on CUDA device (only does something for cuda compiled version)
+  String  Cuda_TimingReport(bool print = true);
+  // #CAT_CUDA report time used statistics for CUDA operations (only does something for cuda compiled version)
+  
   virtual void  BgRunKilled();
   // #IGNORE called when program is quitting prematurely and is not in an interactive mode - save network if SAVE_KILLED_WTS flag is set
   

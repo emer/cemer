@@ -17,23 +17,16 @@
 #define UnitVars_cuda_h 1
 
 // parent includes:
-#include <taNBase>
+#include <UnitVars_core>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(UnitVars_cuda);
-
-class E_API UnitVars_cuda : public taNBase {
-  // <describe here in full detail in one extended line comment>
-INHERITED(taNBase)
+class UnitVars_cuda : public UnitVars_core {
+  // cuda version of UnitVars
 public:
-
-  TA_SIMPLE_BASEFUNS(UnitVars_cuda);
-private:
-  void Initialize()  { };
-  void Destroy()     { };
+  
 };
 
 #endif // UnitVars_cuda_h

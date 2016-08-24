@@ -120,6 +120,8 @@ void Network_cuda::AllocCudaArrays
   int    nlb,
   int    nugb,
   char*  umh,
+  int*   luih,
+  int*   uuih,
 
   int    nls,
   int    nlsv,
@@ -177,6 +179,11 @@ void Network_cuda::AllocCudaArrays
   units_mem_h = umh;
   cudaSafeCall(cudaMalloc(&units_mem_d, n_units_built * sizeof(char)));
 
+  lay_unit_idxs_h = luih;
+  cudaSafeCall(cudaMalloc(&lay_unit_idxs_d, n_layers_built * 2 * sizeof(int)));
+  ungp_unit_idxs_h = uuih;
+  cudaSafeCall(cudaMalloc(&ungp_unit_idxs_d, n_ungps_built * 2 * sizeof(int)));
+  
   n_lay_stats = nls;
   n_lay_stats_vars = nlsv;
   lay_stats_h = lsh;
@@ -259,194 +266,210 @@ void Network_cuda::UpdateConParams() {
   }
 }
 
-__global__ void Kernel_Compute_Netin
-(int* cur_units_x_cons_d, float* send_net_acts_d, float* compute_netin_tmp_d,
- float* own_cons_mem_d, bigint* con_mem_idxs_d, int* con_allocs_d, int* con_sizes_d) {
-  const int csni = blockIdx.x;
-  const int nth = blockDim.x;
-  const int ucidx = cur_units_x_cons_d[csni];
-  const float send_eff = send_net_acts_d[csni];
-  const int sz = con_sizes_d[ucidx];
-  const float* wts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
-    (con_allocs_d[ucidx] * (1 + Network_cuda::WT));
-  const int* ridxs = ((int*)own_cons_mem_d) + con_mem_idxs_d[ucidx];
-  const int th = threadIdx.x;
-  const float cn_per_th = ((float)sz / (float)nth);
-  int st = __float2int_rn((float)th * cn_per_th);
-  int ed = __float2int_rn((float)(th+1) * cn_per_th);
+__global__ void Kernel_Compute_Netin_OneLayer
+(const int cgp_st_idx, char* net_cgp_mem, const int con_group_size, char* net_recv_cons_mem, char* net_units_mem, const int unit_vars_size) {
+
+  const int nthrs = blockDim.x;
+  const int thr_no = threadIdx.x;
+  const int cgp_idx = blockIdx.x + cgp_st_idx;
+
+  __shared__ float temp_sums[nthrs];
+
+  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(net_cgp_mem, con_group_size, cgp_idx);
+
+  const int sz = cg->size;
+  
+  const float cn_per_th = ((float)sz / (float)nthrs);
+  int st = __float2int_rn((float)thr_no * cn_per_th);
+  int ed = __float2int_rn((float)(thr_no+1) * cn_per_th);
   ed = ed < sz ? ed : sz;     // max of sz
+  // Network_cuda::GetThreadCons(nthrs, thr_no, sz, st, ed);
+     
+  const float* wts = cg->OwnCnVar(net_recv_cons_mem, ConGroup_cuda::WT);
+
+  float sum = 0.0f;
+
   while(st < ed) {
-    int ridx = ridxs[st];
-    atomicAdd(&(compute_netin_tmp_d[ridx]), wts[st] * send_eff);
-    // compute_netin_tmp_d[ridx] += wts[st] * send_eff; // determine effect of atomic -- not much penalty there
+    const int32_t su_idx = cg->UnIdx(net_recv_cons_mem, st);
+    UnitVars_cuda* su = Network_cuda::GetUnitVars(net_units_mem, unit_vars_size, unit_idx);
+    sum += wts[st] * su->act;
     st++;
   }
-}
 
-void Network_cuda::Compute_Netin() {
-  if(cur_units_x_cons_n == 0) return;
+  temp_sums[thr_no] = sum;
 
-  // cudaSafeCall(cudaMemsetAsync(compute_netin_tmp_d, 0,
-  //                              (n_units+1) * send_net_max_prjns * sizeof(float),
-  //                              strm_compute_netin));
+  __synchthreads();            // make sure all threads have written to temp_sums
 
-  cudaSafeCall(cudaMemcpyAsync(cur_units_x_cons_d, cur_units_x_cons_h,
-                               cur_units_x_cons_n * sizeof(int),
-                               cudaMemcpyHostToDevice, strm_compute_netin));
-  cudaSafeCall(cudaMemcpyAsync(send_net_acts_d, send_net_acts_h,
-                               cur_units_x_cons_n * sizeof(float),
-                               cudaMemcpyHostToDevice, strm_compute_netin));
+  int i = nthrs / 2;            // now use a binary tree aggregation of temp_sums
+  while( i!=0 ) {
+    if(thr_no < i)
+      temp_sums[thr_no] += temp_sums[thr_no + i]; // get from next up
 
-  //  Invoke kernel
-  Kernel_Compute_NetinDelta<<<cur_units_x_cons_n, n_threads, 0, strm_compute_netin>>>
-    (cur_units_x_cons_d, send_net_acts_d, compute_netin_tmp_d,
-     own_cons_mem_d, con_mem_idxs_d, con_allocs_d, con_sizes_d);
+    __synchthreads();
+    i /= 2;                     // binary tree -- only earlier and earlier threads get it
+  }
 
-  cudaSafeCall(cudaMemcpyAsync(compute_netin_tmp_h, compute_netin_tmp_d,
-                               (n_units+1) * send_net_max_prjns * sizeof(float),
-                               cudaMemcpyDeviceToHost, strm_compute_netin));
-  // get results back from device -- args are reversed here!
-
-  cudaSafeCall(cudaStreamSynchronize(strm_compute_netin));
-}
-
-
-__global__ void Kernel_Compute_dWt
-(int* cur_units_x_cons_d, float* unit_vec_vars_d, float* con_params_d, int* units_d,
- float* own_cons_mem_d, bigint* con_mem_idxs_d, int* con_allocs_d, int* con_sizes_d,
- const int nu) {
-  const int csni = blockIdx.x;
-  const int nth = blockDim.x;
-  const int ucidx = cur_units_x_cons_d[csni];
-  const int sidx = units_d[ucidx];
-
-  const float su_avg_s = unit_vec_vars_d[Network_cuda::AVG_S * nu + sidx];
-  const float su_avg_m = unit_vec_vars_d[Network_cuda::AVG_M * nu + sidx];
-
-  const float s_mix = con_params_d[ucidx * Network_cuda::N_CON_PARAMS +
-                                   Network_cuda::S_MIX];
-  const float m_mix = con_params_d[ucidx * Network_cuda::N_CON_PARAMS +
-                                   Network_cuda::M_MIX];
-  const float thr_l_mix = con_params_d[ucidx * Network_cuda::N_CON_PARAMS +
-                                       Network_cuda::THR_L_MIX];
-  const float thr_max = con_params_d[ucidx * Network_cuda::N_CON_PARAMS +
-                                     Network_cuda::THR_MAX];
-  const float clrate = con_params_d[ucidx * Network_cuda::N_CON_PARAMS +
-                                    Network_cuda::CUR_LRATE];
-
-  const int sz = con_sizes_d[ucidx];
-  float* dwts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
-    (con_allocs_d[ucidx] * (1 + Network_cuda::DWT));
-  const int* ridxs = ((int*)own_cons_mem_d) + con_mem_idxs_d[ucidx];
-  int th = threadIdx.x;
-  const float cn_per_th = ((float)sz / (float)nth);
-  int st = __float2int_rn((float)th * cn_per_th);
-  int ed = __float2int_rn((float)(th+1) * cn_per_th);
-  //  ed = ed < sz ? ed : sz;     // max of sz
-  while(st < ed) {
-    int ridx = ridxs[st];
-    const float ru_avg_s = unit_vec_vars_d[Network_cuda::AVG_S * nu + ridx];
-    const float ru_avg_m = unit_vec_vars_d[Network_cuda::AVG_M * nu + ridx];
-    const float ru_avg_l = unit_vec_vars_d[Network_cuda::AVG_L * nu + ridx];
-
-    // unfortunately, cos_diff_lmix is on recv layer -- so this needs to be in the loop
-    // whereas normally it is outside the loop.. would require a separate
-    // var array just for it, at the unit_x_con level..  could look into it later
-    const float cos_diff_lmix = unit_vec_vars_d[Network_cuda::COS_DIFF_LMIX * nu
-                                                + ridx];
-    const float efflmix = thr_l_mix * cos_diff_lmix;
-    const float effmmix = 1.0f - efflmix;
-    const float su_act_mult = efflmix * su_avg_m;
-
-    const float srs = ru_avg_s * su_avg_s;
-    const float srm = ru_avg_m * su_avg_m;
-    const float sm_mix = s_mix * srs + m_mix * srm;
-    const float lthr = su_act_mult * ru_avg_l;
-    float effthr = effmmix * srm + lthr;
-    effthr = effthr < thr_max ? effthr : thr_max; // max = thr_max
-
-    float rval;                 // xcal.dWtFun
-    if(sm_mix < 0.0001f)        // d_thr = 0.0001
-      rval = 0.0f;
-    else if(sm_mix > effthr * 0.1f) // d_rev = 0.1
-      rval = (sm_mix - effthr);
-    else
-      rval = sm_mix * -9.0f;    // d_rev_ratio = -9.0;
-    dwts[st] += clrate * rval;
-    st++;
+  if(thr_no == 0) {
+    // super cheesy: using otherwise unused mem_start memory to cache the netin result
+    ((float)(cg->mem_start) = temp_sums[0]; // first guy has it all
   }
 }
 
-void Network_cuda::Compute_dWt(bool sync) {
-  if(cur_units_x_cons_n == 0) return;
+void Network_cuda::Compute_NetinAct() {
+  for(int i=0; i< n_layers_built; i++) {
+    int st_ui = LayUnStart(lay_unit_idxs_h, i);
+    int ed_ui = LayUnEnd(lay_unit_idxs_h, i);
+    int nu = ed_ui - st_ui;
 
-  cudaSafeCall(cudaMemcpyAsync(cur_units_x_cons_d, cur_units_x_cons_h,
-                               cur_units_x_cons_n * sizeof(int),
-                               cudaMemcpyHostToDevice, strm_compute_dwt));
-  cudaSafeCall(cudaMemcpyAsync(unit_vec_vars_d, unit_vec_vars_h,
-                               (n_units+1) * N_VEC_VARS * sizeof(float),
-                               cudaMemcpyHostToDevice, strm_compute_dwt));
+    int cgp_st_idx = recv_cgp_start_h[st_ui];
+    
+    //  Invoke kernel
+    Kernel_Compute_Netin_OneLayer<<<nu, n_threads, 0, strm_compute_netin>>>
+      (cgp_st_idx, recv_cgp_mem_d, con_group_size, recv_cons_mem_d, units_mem_d,
+       unit_vars_size);
+    cudaSafeCall(cudaStreamSynchronize(strm_compute_netin));
 
-  //  Invoke kernel
-  Kernel_Compute_dWt_cosdif<<<cur_units_x_cons_n, n_threads, 0, strm_compute_dwt>>>
-    (cur_units_x_cons_d, unit_vec_vars_d, con_params_d, units_d,
-     own_cons_mem_d, con_mem_idxs_d, con_allocs_d, con_sizes_d, n_units+1);
-
-  if(sync) {
-    cudaSafeCall(cudaStreamSynchronize(strm_compute_dwt));
+    // then aggregate netins and compute activations, all in a thread??
+    
   }
 }
 
-__global__ void Kernel_Compute_Weights
-(float* own_cons_mem_d, bigint* con_mem_idxs_d, int* con_allocs_d, int* con_sizes_d,
- float* wt_sig_fun_d) {
-  const int ucidx = blockIdx.x;  // full unit x con idx here
-  const int nth = blockDim.x;
+// __global__ void Kernel_Compute_dWt
+// (int* cur_units_x_cons_d, float* unit_vec_vars_d, float* con_params_d, int* units_d,
+//  float* own_cons_mem_d, bigint* con_mem_idxs_d, int* con_allocs_d, int* con_sizes_d,
+//  const int nu) {
+//   const int csni = blockIdx.x;
+//   const int nth = blockDim.x;
+//   const int ucidx = cur_units_x_cons_d[csni];
+//   const int sidx = units_d[ucidx];
 
-  const int sz = con_sizes_d[ucidx];
-  float* wts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
-    (con_allocs_d[ucidx] * (1 + Network_cuda::WT));
-  float* dwts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
-    (con_allocs_d[ucidx] * (1 + Network_cuda::DWT));
-  float* fwts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
-    (con_allocs_d[ucidx] * (1 + Network_cuda::FWT));
-  float* swts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
-    (con_allocs_d[ucidx] * (1 + Network_cuda::SWT));
+//   const float su_avg_s = unit_vec_vars_d[Network_cuda::AVG_S * nu + sidx];
+//   const float su_avg_m = unit_vec_vars_d[Network_cuda::AVG_M * nu + sidx];
 
-  int th = threadIdx.x;
-  const float cn_per_th = ((float)sz / (float)nth);
-  int st = __float2int_rn((float)th * cn_per_th);
-  int ed = __float2int_rn((float)(th+1) * cn_per_th);
-  //  ed = ed < sz ? ed : sz;     // max of sz
-  while(st < ed) {
-    float& dwt = dwts[st];
-    if(dwt != 0.0f) {
-      float& wt = wts[st];
-      float& fwt = fwts[st];
-      float& swt = swts[st];
-      if(dwt > 0.0f)  dwt *= (1.0f - fwt);
-      else            dwt *= fwt;
-      fwt += dwt;
-      swt = fwt;                // keep sync'd -- not tech necc..
+//   const float s_mix = con_params_d[ucidx * Network_cuda::N_CON_PARAMS +
+//                                    Network_cuda::S_MIX];
+//   const float m_mix = con_params_d[ucidx * Network_cuda::N_CON_PARAMS +
+//                                    Network_cuda::M_MIX];
+//   const float thr_l_mix = con_params_d[ucidx * Network_cuda::N_CON_PARAMS +
+//                                        Network_cuda::THR_L_MIX];
+//   const float thr_max = con_params_d[ucidx * Network_cuda::N_CON_PARAMS +
+//                                      Network_cuda::THR_MAX];
+//   const float clrate = con_params_d[ucidx * Network_cuda::N_CON_PARAMS +
+//                                     Network_cuda::CUR_LRATE];
 
-      int idx = __float2int_rd(fwt * 10000.0f); // sig_res_inv
-      wt = wt_sig_fun_d[idx];
+//   const int sz = con_sizes_d[ucidx];
+//   float* dwts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
+//     (con_allocs_d[ucidx] * (1 + Network_cuda::DWT));
+//   const int* ridxs = ((int*)own_cons_mem_d) + con_mem_idxs_d[ucidx];
+//   int th = threadIdx.x;
+//   const float cn_per_th = ((float)sz / (float)nth);
+//   int st = __float2int_rn((float)th * cn_per_th);
+//   int ed = __float2int_rn((float)(th+1) * cn_per_th);
+//   //  ed = ed < sz ? ed : sz;     // max of sz
+//   while(st < ed) {
+//     int ridx = ridxs[st];
+//     const float ru_avg_s = unit_vec_vars_d[Network_cuda::AVG_S * nu + ridx];
+//     const float ru_avg_m = unit_vec_vars_d[Network_cuda::AVG_M * nu + ridx];
+//     const float ru_avg_l = unit_vec_vars_d[Network_cuda::AVG_L * nu + ridx];
 
-      dwt = 0.0f;
-    }
-    st++;
-  }
-}
+//     // unfortunately, cos_diff_lmix is on recv layer -- so this needs to be in the loop
+//     // whereas normally it is outside the loop.. would require a separate
+//     // var array just for it, at the unit_x_con level..  could look into it later
+//     const float cos_diff_lmix = unit_vec_vars_d[Network_cuda::COS_DIFF_LMIX * nu
+//                                                 + ridx];
+//     const float efflmix = thr_l_mix * cos_diff_lmix;
+//     const float effmmix = 1.0f - efflmix;
+//     const float su_act_mult = efflmix * su_avg_m;
 
-void Network_cuda::Compute_Weights(bool sync) {
-  //  Invoke kernel -- does all
-  Kernel_Compute_Weights<<<own_units_x_cons, n_threads, 0, strm_compute_wt>>>
-    (own_cons_mem_d, con_mem_idxs_d, con_allocs_d, con_sizes_d, wt_sig_fun_d);
+//     const float srs = ru_avg_s * su_avg_s;
+//     const float srm = ru_avg_m * su_avg_m;
+//     const float sm_mix = s_mix * srs + m_mix * srm;
+//     const float lthr = su_act_mult * ru_avg_l;
+//     float effthr = effmmix * srm + lthr;
+//     effthr = effthr < thr_max ? effthr : thr_max; // max = thr_max
 
-  if(sync) {
-    cudaSafeCall(cudaStreamSynchronize(strm_compute_wt));
-  }
-}
+//     float rval;                 // xcal.dWtFun
+//     if(sm_mix < 0.0001f)        // d_thr = 0.0001
+//       rval = 0.0f;
+//     else if(sm_mix > effthr * 0.1f) // d_rev = 0.1
+//       rval = (sm_mix - effthr);
+//     else
+//       rval = sm_mix * -9.0f;    // d_rev_ratio = -9.0;
+//     dwts[st] += clrate * rval;
+//     st++;
+//   }
+// }
+
+// void Network_cuda::Compute_dWt(bool sync) {
+//   if(cur_units_x_cons_n == 0) return;
+
+//   cudaSafeCall(cudaMemcpyAsync(cur_units_x_cons_d, cur_units_x_cons_h,
+//                                cur_units_x_cons_n * sizeof(int),
+//                                cudaMemcpyHostToDevice, strm_compute_dwt));
+//   cudaSafeCall(cudaMemcpyAsync(unit_vec_vars_d, unit_vec_vars_h,
+//                                (n_units+1) * N_VEC_VARS * sizeof(float),
+//                                cudaMemcpyHostToDevice, strm_compute_dwt));
+
+//   //  Invoke kernel
+//   Kernel_Compute_dWt_cosdif<<<cur_units_x_cons_n, n_threads, 0, strm_compute_dwt>>>
+//     (cur_units_x_cons_d, unit_vec_vars_d, con_params_d, units_d,
+//      own_cons_mem_d, con_mem_idxs_d, con_allocs_d, con_sizes_d, n_units+1);
+
+//   if(sync) {
+//     cudaSafeCall(cudaStreamSynchronize(strm_compute_dwt));
+//   }
+// }
+
+// __global__ void Kernel_Compute_Weights
+// (float* own_cons_mem_d, bigint* con_mem_idxs_d, int* con_allocs_d, int* con_sizes_d,
+//  float* wt_sig_fun_d) {
+//   const int ucidx = blockIdx.x;  // full unit x con idx here
+//   const int nth = blockDim.x;
+
+//   const int sz = con_sizes_d[ucidx];
+//   float* wts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
+//     (con_allocs_d[ucidx] * (1 + Network_cuda::WT));
+//   float* dwts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
+//     (con_allocs_d[ucidx] * (1 + Network_cuda::DWT));
+//   float* fwts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
+//     (con_allocs_d[ucidx] * (1 + Network_cuda::FWT));
+//   float* swts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
+//     (con_allocs_d[ucidx] * (1 + Network_cuda::SWT));
+
+//   int th = threadIdx.x;
+//   const float cn_per_th = ((float)sz / (float)nth);
+//   int st = __float2int_rn((float)th * cn_per_th);
+//   int ed = __float2int_rn((float)(th+1) * cn_per_th);
+//   //  ed = ed < sz ? ed : sz;     // max of sz
+//   while(st < ed) {
+//     float& dwt = dwts[st];
+//     if(dwt != 0.0f) {
+//       float& wt = wts[st];
+//       float& fwt = fwts[st];
+//       float& swt = swts[st];
+//       if(dwt > 0.0f)  dwt *= (1.0f - fwt);
+//       else            dwt *= fwt;
+//       fwt += dwt;
+//       swt = fwt;                // keep sync'd -- not tech necc..
+
+//       int idx = __float2int_rd(fwt * 10000.0f); // sig_res_inv
+//       wt = wt_sig_fun_d[idx];
+
+//       dwt = 0.0f;
+//     }
+//     st++;
+//   }
+// }
+
+// void Network_cuda::Compute_Weights(bool sync) {
+//   //  Invoke kernel -- does all
+//   Kernel_Compute_Weights<<<own_units_x_cons, n_threads, 0, strm_compute_wt>>>
+//     (own_cons_mem_d, con_mem_idxs_d, con_allocs_d, con_sizes_d, wt_sig_fun_d);
+
+//   if(sync) {
+//     cudaSafeCall(cudaStreamSynchronize(strm_compute_wt));
+//   }
+// }
 
 
 

@@ -30,10 +30,6 @@
 // declare all other types mentioned but not required to include:
 class DataTable; // 
 
-#ifdef CUDA_COMPILE
-class LeabraConSpecCuda; // #IGNORE
-#endif
-
 eTypeDef_Of(LeabraNetTiming);
 
 class E_API LeabraNetTiming : public NetTiming {
@@ -52,27 +48,6 @@ private:
   void 	Destroy()	{ };
 };
 
-
-eTypeDef_Of(LeabraCudaSpec);
-
-class E_API LeabraCudaSpec : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
-INHERITED(taOBase)
-public:
-  bool          on;             // #READ_ONLY #SHOW #NO_SAVE is CUDA active?  this is true when running in an executable compiled with CUDA_COMPILE defined -- it will automatically use the cuda GPU for all connection-level computations
-  bool          get_wts;        // #DEF_false #NO_SAVE [this setting is NOT saved -- must set explicitly] get the dwt and wt values back from the GPU after they are updated there -- keeps the host and device sync'd for debugging and display purposes only -- GREATLY slows down processing
-  int           min_threads;    // #DEF_32 #MIN_32 minuimum number of CUDA threads to allocate per block (sending group of connections) -- must be a multiple of 32 (i.e., min of 32) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
-  int           max_threads;    // #DEF_1024 #MAX_1024 maximum number of CUDA threads to allocate per block (sending group of connections) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- for modern cards (compute capability 2.0 or higher) the max is 1024, but in general you might need to experiment to find the best performing number for your card and network, and interactionwith cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
-  int           cons_per_thread; // #DEF_1:8 when computing number of threads to use, divide max number of connections per unit by this number, and then round to nearest multiple of 32, subject to the min and max_threads constraints
-  bool          timers_on;      // Accumulate timing information for each step of processing -- for debugging / optimizing threading
-
-  String       GetTypeDecoKey() const override { return "Network"; }
-
-  TA_SIMPLE_BASEFUNS(LeabraCudaSpec);
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
 
 eTypeDef_Of(LeabraTimes);
 
@@ -219,7 +194,6 @@ public:
     PLUS_PHASE = 1,		// plus phase
   };
 
-  // IMPORTANT: coordinate this with LeabraConSpec_cuda.h!
   enum UnitVecVars {            // unit variables that have special vectorized storage, encoded at end of trial, in time for compute_dwt function
     AVG_S,
     AVG_M,
@@ -254,7 +228,6 @@ public:
     N_LeabraThrLayStats,
   };
 
-  LeabraCudaSpec  cuda;         // #CAT_CUDA parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
   LeabraTimes     times;        // #CAT_Learning time parameters
   LeabraNetStats  lstats;       // #CAT_Statistic leabra network-level statistics parameters
   LeabraNetMisc	  net_misc;	// misc network level parameters for leabra -- these determine various algorithm variants, typically auto-detected based on the network configuration in Trial_Init_Specs
@@ -329,13 +302,6 @@ public:
   float**       thrs_recv_cgp_sugp_net_mem; // #IGNORE bulk memory allocated for all of the recv con group sender unit group netin memory, by thread -- array of  float*[thrs_recv_cgp_sugp_net_cnt[thr_no]]
 #endif // SUGP_NETIN
   float         tmp_arg1;        // #IGNORE for passing args through threaded call
-
-#ifdef CUDA_COMPILE
-  LeabraConSpecCuda* cudai;      // #IGNORE internal structure for cuda specific code
-  RunWaitTime        cuda_send_netin_time;  // #IGNORE
-  RunWaitTime        cuda_compute_dwt_time;  // #IGNORE
-  RunWaitTime        cuda_compute_wt_time;  // #IGNORE
-#endif
 
   inline float*  UnVecVar(int thr_no, UnitVecVars var)
   { return unit_vec_vars[thr_no] + var * n_units_built; }
@@ -729,27 +695,18 @@ public:
   virtual String   TimingReport(DataTable& dt, bool print = true);
   // #CAT_Statistic report detailed timing data to data table, and print a summary -- only collected if thread.get_timing engaged (e.g., call threads.get_timing)
 
-#ifdef CUDA_COMPILE
-  void  Cuda_BuildUnits_Threads(); // update device data after net mods
-  void  Cuda_UpdateConParams();
-  void  Cuda_Send_Netin();
-  void  Cuda_Send_Deep5bNetin();
-  void  Cuda_Send_TICtxtNetin();
-  void  Cuda_Compute_dWt();
-  void  Cuda_Compute_dWt_TICtxt();
-  void  Cuda_Compute_Weights();
-  void  GetWeightsFromGPU() override { Cuda_ConStateToHost(); }
-  void  SendWeightsToGPU() override { Cuda_ConStateToDevice(); }
-#endif
-
-  void    Cuda_ConStateToHost();
-  // #CAT_CUDA get all the connection state variables (weights, dwts, etc) back from the GPU device to the host -- this is done automatically before SaveWeights*, and if cuda.get_wts is set, then host connections are always kept sync'd with the device
-  void    Cuda_ConStateToDevice();
-  // #CAT_CUDA send all the connection state variables (weights, dwts, etc) to the GPU device from the host -- this is done automatically after Init_Weights and LoadWeights*
-  String  Cuda_MemoryReport(bool print = true);
-  // #CAT_CUDA report about memory allocation required on CUDA device (only does something for cuda compiled version)
-  String  Cuda_TimingReport(bool print = true);
-  // #CAT_CUDA report time used statistics for CUDA operations (only does something for cuda compiled version)
+// #ifdef CUDA_COMPILE
+//   void  Cuda_BuildUnits_Threads(); // update device data after net mods
+//   void  Cuda_UpdateConParams();
+//   void  Cuda_Send_Netin();
+//   void  Cuda_Send_Deep5bNetin();
+//   void  Cuda_Send_TICtxtNetin();
+//   void  Cuda_Compute_dWt();
+//   void  Cuda_Compute_dWt_TICtxt();
+//   void  Cuda_Compute_Weights();
+//   void  GetWeightsFromGPU() override { Cuda_ConStateToHost(); }
+//   void  SendWeightsToGPU() override { Cuda_ConStateToDevice(); }
+// #endif
 
   String       GetToolbarName() const override { return "network"; }
 
