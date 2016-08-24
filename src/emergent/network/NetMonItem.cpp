@@ -552,7 +552,7 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
         md = ths->FindMember("avg");
         obj = ths;              // obj is now this..
       }
-      if(name_obj) {
+      if(md && name_obj) {
         String valname = GetColName(name_obj, val_specs.size);
         ValType vt = ValTypeForType(md->type);
         AddScalarCol(valname, vt);
