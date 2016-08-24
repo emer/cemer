@@ -59,7 +59,7 @@ public:
   float         pptg_gain;    // #DEF_1 gain on bursts from PPTg
   float         lhb_gain;     // #DEF_1.1 gain on dips/bursts from LHbRMTg
   float         pv_gain;      // #DEF_1 gain on positive PV component of total phasic DA signal (net after subtracting VSPatchIndir (PVi) shunt signal)
-  float         pvi_burst_shunt_gain;  // #DEF_1.25 gain on VSPatch projection that shunts bursting in VTA (for VTAp = VSPatchPosD1, for VTAn = VSPatchNegD2)
+  float         pvi_burst_shunt_gain;  // #DEF_1.05 gain on VSPatch projection that shunts bursting in VTA (for VTAp = VSPatchPosD1, for VTAn = VSPatchNegD2)
   float         pvi_anti_burst_shunt_gain;  // #DEF_1 gain on VSPatch projection that opposes shunting of bursting in VTA (for VTAp = VSPatchPosD2, for VTAn = VSPatchNegD1)
   float         pvi_dip_shunt_gain;  // #DEF_0 gain on VSPatch projection that shunts dipping of VTA (currently only VTAp supported = VSPatchNegD2) -- optional and somewhat controversial 
   float         pvi_anti_dip_shunt_gain;  // #DEF_0 gain on VSPatch projection that opposes the shunting of dipping in VTA (currently only VTAp supported = VSPatchNegD1)

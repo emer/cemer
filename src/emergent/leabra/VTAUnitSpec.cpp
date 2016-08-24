@@ -49,7 +49,7 @@ void PVLVDaGains::Defaults_init() {
   pptg_gain = 1.0f;
   lhb_gain = 1.0f;
   pv_gain = 1.0f;
-  pvi_burst_shunt_gain = 1.2f;
+  pvi_burst_shunt_gain = 1.05f;
   pvi_anti_burst_shunt_gain = 1.0f;
   pvi_anti_dip_shunt_gain = 0.0f;
   pvi_dip_shunt_gain = 0.0f;
