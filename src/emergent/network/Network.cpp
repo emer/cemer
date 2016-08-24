@@ -482,7 +482,11 @@ bool Network::net_aligned_malloc(void** ptr, size_t sz) {
 
 bool Network::net_free(void** ptr) {
   if(ptr && *ptr) {
+#ifdef TA_OS_WIN
+    _aligned_free(*ptr);
+#else
     free(*ptr);
+#endif
     *ptr = NULL;
     return true;
   }
