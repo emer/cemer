@@ -15,5 +15,3 @@
 
 #include "ConGroup_cuda.h"
 
-TA_BASEFUNS_CTORS_DEFN(ConGroup_cuda);
-

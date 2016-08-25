@@ -16,11 +16,6 @@
 #ifndef UnitVars_core_h
 #define UnitVars_core_h 1
 
-// define this in main C++ code to be UnitSpec
-
-#ifndef UnitVarsUnitSpecType
-#define UnitVarsUnitSpecType void
-#endif
 
 class UnitVars_core {
   // this is the core data for UnitVars, which can be used between CUDA and standard C++ -- CUDA cannot parse Qt and other infrastructure
@@ -39,8 +34,6 @@ public:
 
   ExtFlags      ext_flag;
   // #GUI_READ_ONLY #SHOW #CAT_Activation tells what kind of external input unit received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
-  UnitVarsUnitSpecType*  unit_spec;
-  // UnitSpec that has all the methods for processing information within these variables
   int           flat_idx;
   // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit in a flat array of units (used by parallel threading) -- 0 is special null case -- real idx's start at 1
   int           thr_un_idx;

@@ -802,6 +802,10 @@ public:
   void	SetProjectionDefaultTypes(Projection* prjn) override;
   void  BuildNullUnit() override;
 
+#ifdef CUDA_COMPILE
+  virtual bool  Cuda_MakeCudaNet();
+#endif
+  
   TA_SIMPLE_BASEFUNS(BpNetwork);
 protected:
   void UpdateAfterEdit_impl() override;

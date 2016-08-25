@@ -144,10 +144,11 @@ class E_API NetworkCudaSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool          on;             // #READ_ONLY #SHOW #NO_SAVE is CUDA active?  this is true when running in an executable compiled with CUDA_COMPILE defined -- it will automatically use the cuda GPU for all connection-level computations
-  int           min_threads;    // #DEF_32 #MIN_32 minuimum number of CUDA threads to allocate per block (sending group of connections) -- must be a multiple of 32 (i.e., min of 32) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
-  int           max_threads;    // #DEF_1024 #MAX_1024 maximum number of CUDA threads to allocate per block (sending group of connections) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- for modern cards (compute capability 2.0 or higher) the max is 1024, but in general you might need to experiment to find the best performing number for your card and network, and interactionwith cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
+  int           min_threads;    // #DEF_32 #MIN_32 minuimum number of CUDA threads to allocate per block -- each block works on all the cons in a single ConGroup, and the threads divide up the connections in turn -- must be a multiple of 32 (i.e., min of 32) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
+  int           max_threads;    // #DEF_1024 #MAX_1024 maximum number of CUDA threads to allocate per block (sending group of connections) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- for modern cards (compute capability 2.0 or higher) the max is 1024, but in general you might need to experiment to find the best performing number for your card and network, and interaction with cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
   int           cons_per_thread; // #DEF_1:8 when computing number of threads to use, divide max number of connections per unit by this number, and then round to nearest multiple of 32, subject to the min and max_threads constraints
   bool          timers_on;      // Accumulate timing information for each step of processing -- for debugging / optimizing threading
+  int           n_threads;      // #READ_ONLY #SHOW computed number of threads it is actually using
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
@@ -356,8 +357,8 @@ public:
 
   int*          units_n_recv_cgps;  // #IGNORE number of receiving connection groups per unit (flat_idx unit indexing, starts at 1)
   int*          units_n_send_cgps;  // #IGNORE number of sending connection groups per unit (flat_idx unit indexing, starts at 1)
-  int           n_recv_cgps; // #IGNORE total number of units * recv con groups per unit
-  int           n_send_cgps; // #IGNORE total number of units * send con groups per unit
+  int           n_recv_cgps; // #IGNORE total number of units * recv con groups
+  int           n_send_cgps; // #IGNORE total number of units * send con groups
 
   int**         thrs_units_n_recv_cgps;   // #IGNORE number of receiving connection groups per unit, per thread units (organized 1-to-1 with thrs_units*) -- array of int*[n_thrs_built], pointing to arrays of int[thrs_n_units[thr_no]], containing number of recv groups per unit
   int**         thrs_units_n_send_cgps;   // #IGNORE number of sending connection groups per unit, per thread units (organized 1-to-1 with thrs_units*) -- array of int*[n_thrs_built], pointing to arrays of int[thrs_n_units[thr_no]], containing number of send groups per unit
@@ -397,14 +398,9 @@ public:
 #endif
 
   ProjectBase*  proj;           // #IGNORE ProjectBase this network is in
-
 #ifdef CUDA_COMPILE
-  Network_cuda*      net_cuda;   // #IGNORE internal structure for cuda specific code
-  RunWaitTime        cuda_send_netin_time;  // #IGNORE
-  RunWaitTime        cuda_compute_dwt_time;  // #IGNORE
-  RunWaitTime        cuda_compute_wt_time;  // #IGNORE
+  Network_cuda*      cuda_net;   // #IGNORE internal structure for cuda specific code
 #endif
-
   
   inline void           SetNetFlag(NetFlags flg)   { flags = (NetFlags)(flags | flg); }
   // set flag state on
@@ -785,11 +781,6 @@ public:
   virtual void  UpdatePrjnIdxs();
   // #CAT_Structure fix the projection indexes of the connection groups (recv_idx, send_idx)
 
-  virtual void  GetWeightsFromGPU() { };
-  // #IGNORE this is called before any network-level function that operates on the weights (except Init_Weights()) -- overload to get weights back from a GPU device (e.g., CUDA)
-  virtual void  SendWeightsToGPU() { };
-  // #IGNORE this is called after any network-level function that operates on the weights -- overload to send weights to the GPU device (e.g., CUDA)
-
   virtual void  Copy_Weights(const Network* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other network (incl wts assoc with unit bias member)
 
@@ -1160,22 +1151,29 @@ public:
 #endif
 
 #ifdef CUDA_COMPILE
-  // void  Cuda_BuildUnits_Threads(); // update device data after net mods
-  // void  Cuda_UpdateConParams();
-  // void  Cuda_Send_Netin();
-  // void  Cuda_Compute_dWt();
-  // void  Cuda_Compute_Weights();
-  // void  GetWeightsFromGPU() override { Cuda_ConStateToHost(); }
-  // void  SendWeightsToGPU() override { Cuda_ConStateToDevice(); }
-#endif
+  virtual bool  Cuda_MakeCudaNet();
+  // #IGNORE make the cuda_net object if currently null -- override in specific algos!
+  
+  virtual void  Cuda_BuildNet();
+  // build all the network structures for cuda -- called after regular network build
+  virtual void  Cuda_InitConGroups();
+  // transfer C++ con group info over to cuda con groups -- they are different!  called in Cuda_BuildNet()
 
-  void    Cuda_ConStateToHost();
+
+  
+#endif
+  // these methods can be put in program code, so we always expose -- just dummies
+  // if not actually running cuda..
+  
+  virtual void  Cuda_UnitVarsToHost();
+  // #CAT_CUDA get all the unit state variables (acts etc) back from the GPU device to the host
+  virtual void  Cuda_UnitVarsToDevice();
+  // #CAT_CUDA send all the unit state variables (acts etc) to the GPU device from the host
+  virtual void    Cuda_ConStateToHost();
   // #CAT_CUDA get all the connection state variables (weights, dwts, etc) back from the GPU device to the host -- this is done automatically before SaveWeights*
-  void    Cuda_ConStateToDevice();
+  virtual void    Cuda_ConStateToDevice();
   // #CAT_CUDA send all the connection state variables (weights, dwts, etc) to the GPU device from the host -- this is done automatically after Init_Weights and LoadWeights*
-  String  Cuda_MemoryReport(bool print = true);
-  // #CAT_CUDA report about memory allocation required on CUDA device (only does something for cuda compiled version)
-  String  Cuda_TimingReport(bool print = true);
+  virtual String  Cuda_TimingReport(bool print = true);
   // #CAT_CUDA report time used statistics for CUDA operations (only does something for cuda compiled version)
   
   virtual void  BgRunKilled();

@@ -32,6 +32,34 @@ inline void __cudaSafeCall(cudaError err,
   }
 }
 
+// important: nvcc cannot compile Qt, etc, so we have to define everything
+// completely separately in cuda space
+// regular files can include cuda files, and serve as bridges into cuda
+// but otherwise cuda must remain fully self-contained
+
+// IMPORTANT: for indexing into the connection-level mem, for large nets, we really 
+// should use int64_t -- BUT this does NOT seem to work, at least on latest
+// mac pro retina late 2014 NVIDIA GeForce GT 750M chip!  should be 3.0 compute 
+// capability but still doesn't work reliably!
+
+// todo: revisit!
+
+typedef int cudabigint;
+// typedef int64_t bigint;
+// typedef long long bigint;
+
+
+// this CUDAFUN macro allows marked functions to work either in C++ or
+// in device code, depending on the __CUDACC__ define which is only true
+// inside of nvcc -- marking as both host and device allows either
+
+#ifdef __CUDACC__
+#define CUDAFUN __device__ __host__
+#else
+#define CUDAFUN
+#endif
+
+
 #endif // CUDA_COMPILE
 
 #endif // ta_cuda_h

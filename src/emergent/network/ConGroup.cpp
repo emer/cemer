@@ -54,10 +54,6 @@ void ConGroup::Initialize(int flgs, Projection* prj, int oth_idx,
   share_idx = -1;
   mem_start = 0;
   cnmem_start = 0;
-#ifdef CUDA_COMPILE
-  mem_idx = 0;
-  cnmem_idx = 0;
-#endif
 }
 
 // void ConGroup::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -278,10 +274,6 @@ void ConGroup::AllocCons(int sz) {
   vec_chunked_size = 0;
   alloc_size = sz;
 
-#ifdef CUDA_COMPILE
-  mem_idx = 0;
-  cnmem_idx = 0;
-#endif
   SetInactive();
 }
 
@@ -291,18 +283,11 @@ void ConGroup::FreeCons() {
   size = 0;
   vec_chunked_size = 0;
   alloc_size = 0;
-#ifdef CUDA_COMPILE
-  mem_idx = 0;
-  cnmem_idx = 0;
-#endif
   SetInactive();
 }
 
 void ConGroup::SetMemStart(Network* net, float* ms, int midx) {
   mem_start = ms + midx;
-#ifdef CUDA_COMPILE
-  mem_idx = midx;
-#endif
   if(OwnCons()) {
     cnmem_start = mem_start + alloc_size;
   }
@@ -319,9 +304,6 @@ void ConGroup::SetMemStart(Network* net, float* ms, int midx) {
       return;
     }
     cnmem_start = shcg->cnmem_start; // now we're sharing!
-#ifdef CUDA_COMPILE
-    cnmem_idx = shcg->mem_idx + alloc_size;
-#endif    
     SetConGroupFlag(SHARING);
   }
 }

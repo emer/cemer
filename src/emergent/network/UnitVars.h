@@ -30,23 +30,15 @@ class Projection; //
 
 // to allow CUDA access to the core UnitVars information, we break out the
 // core unitvars info in a separate header that is common..
-
-// this must be defined to give the proper type for unitvars members (else void*)
-#define UnitVarsUnitSpecType UnitSpec
-
 #include <UnitVars_core>
-
 
 eTypeDef_Of(UnitVars);
 
 class E_API UnitVars : public UnitVars_core {
   // ##NO_TOKENS ##CAT_Network Generic unit variables -- basic computational unit of a neural network (e.g., a neuron-like processing unit) -- Unit contains all the structural information, and this class just contains the computationally-relevant variables
 public:
-
-#ifdef __MAKETA__  
   UnitSpec*  unit_spec;
   // UnitSpec that has all the methods for processing information within these variables
-#endif
 
   inline int    ThrNo(Network* net) const;
   // #IGNORE get thread number that owns this unit -- all methods on this unitvar MUST use the correct thread number for the thread that owns it!  so if accessing things at random you must use this method to get the thr_no!
