@@ -2988,7 +2988,7 @@ bool taMisc::MakeSymLink(const String& file_name, const String& link_name, bool 
   }
   return true;
 #else
-  return QFile::link(fnm, link_name)
+  return QFile::link(fnm, link_name);
 #endif
 }
 
