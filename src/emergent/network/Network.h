@@ -1122,7 +1122,7 @@ public:
   // #CAT_Structure remove layer with given name, if it exists
 
   virtual String  MemoryReport(bool print = true);
-  // #CAT_Statistic #MENU #MENU_ON_Structure report about memory allocation for the network
+  // #CAT_Statistic #MENU #MENU_ON_Structure #USE_RVAL report about memory allocation for the network
 
   virtual void  UpdateLayerGroupGeom();
   // #IGNORE update layer group geometries (max_disp_size, positions) and max_disp_size of of network based on current layer layout

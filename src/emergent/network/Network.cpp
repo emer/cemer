@@ -1372,36 +1372,58 @@ String Network::MemoryReport(bool print) {
 
   int64_t recv_cons_tot = 0;
   int64_t send_cons_tot = 0;
+  int     own_cons_max_size = 0;
+  int64_t own_cons_tot_size = 0;
+  int64_t own_cons_tot_size_nonshared = 0;
+  int     own_cons_avg_size = 0;
   for(int i=0; i< n_thrs_built; i++) {
     recv_cons_tot += thrs_recv_cons_cnt[i];
     send_cons_tot += thrs_send_cons_cnt[i];
+    own_cons_max_size = MAX(thrs_own_cons_max_size[i], own_cons_max_size);
+    own_cons_tot_size += thrs_own_cons_tot_size[i];
+    own_cons_tot_size_nonshared += thrs_own_cons_tot_size_nonshared[i];
+    own_cons_avg_size += thrs_own_cons_avg_size[i];
   }
 
-  int64_t congp_tot = (n_recv_cgps + n_send_cgps) * con_group_size;
-  int64_t unit_tot = n_units_built * unit_vars_size;
+  own_cons_avg_size = (int)((float)own_cons_avg_size / 4.0f);
 
-  int64_t mem_tot = recv_cons_tot + send_cons_tot + congp_tot + unit_tot;
+  int64_t recv_cons_mem = sizeof(float) * recv_cons_tot;
+  int64_t send_cons_mem = sizeof(float) * send_cons_tot;
+  
+  int64_t congp_mem = (n_recv_cgps + n_send_cgps) * con_group_size;
+  int64_t unit_mem = n_units_built * unit_vars_size;
+
+  int64_t mem_tot = recv_cons_mem + send_cons_mem + congp_mem + unit_mem;
 
   String report = name + " memory report:\n";
   report << "number of units:            " << n_units_built << "\n"
          << "    bytes per unitvar:      " << unit_vars_size << "\n"
          << "    total unit memory:      " << taMisc::GetSizeString
-    (unit_tot) << "\n"
+    (unit_mem) << "\n"
          << "number of recv con groups:  " << n_recv_cgps << "\n"
          << "number of send con groups:  " << n_send_cgps << "\n"
          << "    bytes per con group:    " << con_group_size << "\n"
          << "    total con group memory: " << taMisc::GetSizeString
-    (congp_tot) << "\n"
+    (congp_mem) << "\n"
          << "number of connections:      " << constr << "\n"
-         << "    bytes per con+idx:      " << thrs_own_cons_max_vars[0] << "\n"
+         << "    bytes per con+idx:      " << (thrs_own_cons_max_vars[0]+1) *
+    sizeof(float) << "\n"
          << "    total con memory:       " << taMisc::GetSizeString
-    (recv_cons_tot + send_cons_tot) << "\n" 
+    (recv_cons_mem + send_cons_mem) << "\n" 
          << "       recv cons:           " << taMisc::GetSizeString
-    (recv_cons_tot) << "\n" 
+    (recv_cons_mem) << "\n" 
          << "       send cons:           " << taMisc::GetSizeString
-    (send_cons_tot) << "\n"
+    (send_cons_mem) << "\n"
          << "grand total memory:         " << taMisc::GetSizeString
-    (mem_tot) << "\n";
+    (mem_tot) << "\n\n"
+         << "owned connection statistics:\n"
+         << "    max_size:               " << (own_cons_max_size) << "\n"
+         << "    avg_size:               " << (own_cons_avg_size) << "\n"
+         << "    pct_vector_chunked:     " << (pct_cons_vec_chunked) << "\n"
+         << "    total_size:             " << (own_cons_tot_size) << "\n"
+         << "      total_nonshared:      " << (own_cons_tot_size_nonshared) << "\n"
+         << "      total_shared:         " << (own_cons_tot_size -
+                                               own_cons_tot_size_nonshared) << "\n";
   if(print)
     taMisc::Info(report);
   return report;
