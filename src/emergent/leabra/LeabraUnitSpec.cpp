@@ -29,9 +29,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraActFunSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActMiscSpec);
 TA_BASEFUNS_CTORS_DEFN(SpikeFunSpec);
 TA_BASEFUNS_CTORS_DEFN(SpikeMiscSpec);
-#ifdef SUGP_NETIN
-TA_BASEFUNS_CTORS_DEFN(LeabraNetinSpec);
-#endif // SUGP_NETIN
 TA_BASEFUNS_CTORS_DEFN(OptThreshSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraInitSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
@@ -154,28 +151,6 @@ void SpikeMiscSpec::Defaults_init() {
 void SpikeMiscSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
-
-#ifdef SUGP_NETIN
-void LeabraNetinSpec::Initialize() {
-  max_on = false;
-  max_ff = false;
-  Defaults_init();
-}
-
-void LeabraNetinSpec::Defaults_init() {
-  max_mix = 0.2f;
-  max_gain = 0.4f;
-  sum_mix = 1.0f - max_mix;
-  max_mult = max_mix * max_gain;
-}
-
-void LeabraNetinSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  sum_mix = 1.0f - max_mix;
-  max_mult = max_mix * max_gain;
-}
-#endif // SUGP_NETIN
-
 
 void OptThreshSpec::Initialize() {
   send = .1f;
@@ -699,12 +674,6 @@ void LeabraUnitSpec::Init_Netins(LeabraUnitVars* u, LeabraNetwork* net, int thr_
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
     recv_gp->net = 0.0f;
     recv_gp->net_raw = 0.0f;
-#ifdef SUGP_NETIN
-    if(netin.max_on) {
-      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-      cs->Init_SUGpNetin(recv_gp, net, thr_no);
-    }
-#endif // SUGP_NETIN
   }
 }
 
@@ -890,16 +859,6 @@ void LeabraUnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
   if(bias_spec) {
     ((LeabraConSpec*)bias_spec.SPtr())->Trial_Init_Specs(net);
   }
-  
-#ifdef SUGP_NETIN
-  if(netin.max_on) {
-    TestWarning(!net->net_misc.sugp_netin, "Trial_Init_Specs",
-                "netin.max_on requires Network net_misc.sugp_net = true -- I will set this now, but you will need to rebuild the network for this to take effect!");
-    TestWarning(!net->NetinPerPrjn(), "Trial_Init_Specs",
-                "netin.max_on requires Network NETIN_PER_PRJN flag to be set -- I will set this now, but you will need to rebuild the network for this to take effect!");
-    net->SetNetFlag(Network::NETIN_PER_PRJN);
-  }
-#endif // SUGP_NETIN
 }
 
 void LeabraUnitSpec::Trial_Init_Unit(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -1310,86 +1269,6 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
 #endif
   float net_delta = 0.0f;
   float gi_delta = 0.0f;
-#ifdef SUGP_NETIN
-  // note: commenting this out to avoid potential confusion -- uncomment if SUGP_NETIN
-  // is ever re-activated..
-  
-  // if(net->net_misc.sugp_netin) {
-  //   const int nrg = u->NRecvConGps(net, thr_no);
-  //   if(netin.max_on) {
-  //     float net_raw = 0.0f;
-  //     for(int g=0; g < nrg; g++) {
-  //       LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
-  //       if(recv_gp->NotActive()) continue;
-  //       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-  //       const int nsgp = MAX(((LeabraPrjn*)recv_gp->prjn)->n_sugps, 1);
-  //       int max_idx = 0;
-  //       float max_raw = 0.0f;
-  //       float sum_raw = 0.0f;
-  //       for(int sg=0; sg < nsgp; sg++) {
-  //         float sg_net_delta = 0.0f;
-  //         for(int j=0;j<nt;j++) {
-  //           float& ndval = net->ThrSendNetinTmpPerSugp(j, g, sg)[flat_idx]; 
-  //           sg_net_delta += ndval;
-  //         }
-  //         if(cs->inhib) {
-  //           recv_gp->net_raw += sg_net_delta;
-  //           gi_delta += sg_net_delta;
-  //         }
-  //         else if(nsgp > 0 && recv_gp->sugp_net) {
-  //           recv_gp->sugp_net[sg] += sg_net_delta; // increment
-  //           if(recv_gp->sugp_net[sg] > max_raw) {
-  //             max_raw = recv_gp->sugp_net[sg];
-  //             max_idx = sg;
-  //           }
-  //           sum_raw += recv_gp->sugp_net[sg];
-  //         }
-  //         else {
-  //           recv_gp->net_raw += sg_net_delta; // use recv_gp
-  //           max_raw = recv_gp->net_raw;
-  //         }
-  //       }
-  //       if(!cs->inhib) {
-  //         if(nsgp > 0 && recv_gp->sugp_net) {
-  //           if(!netin.max_ff || recv_gp->prjn->direction == Projection::FM_INPUT) {
-  //             recv_gp->net_raw = netin.max_mult * max_raw * (float)nsgp +
-  //               netin.sum_mix * sum_raw;
-  //           }
-  //           else {
-  //             recv_gp->net_raw = sum_raw;
-  //           }
-  //         }
-  //         net_raw += recv_gp->net_raw;
-  //       }
-  //     }
-  //     u->net_raw = net_raw;
-  //   }
-  //   else {                      // non max_netin but still sugp_netin
-  //     for(int g=0; g < nrg; g++) {
-  //       LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
-  //       if(recv_gp->NotActive()) continue;
-  //       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-  //       const int nsgp = MAX(((LeabraPrjn*)recv_gp->prjn)->n_sugps, 1);
-  //       for(int sg=0; sg < nsgp; sg++) {
-  //         float sg_net_delta = 0.0f;
-  //         for(int j=0;j<nt;j++) {
-  //           float& ndval = net->ThrSendNetinTmpPerSugp(j, g, sg)[flat_idx]; 
-  //           sg_net_delta += ndval;
-  //         }
-  //         recv_gp->net_raw += sg_net_delta;
-  //         if(cs->inhib) {
-  //           gi_delta += sg_net_delta;
-  //         }
-  //         else {
-  //           net_delta += sg_net_delta;
-  //         }
-  //       }
-  //     }
-  //     u->net_raw += net_delta;
-  //   }
-  // }
-  // else
-#endif // SUGP_NETIN
   if(net->NetinPerPrjn()) {
     const int nrg = u->NRecvConGps(net, thr_no); 
     for(int g=0; g< nrg; g++) {

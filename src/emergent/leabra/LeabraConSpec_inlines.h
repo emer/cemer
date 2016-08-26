@@ -56,57 +56,12 @@ inline void LeabraConSpec::Send_NetinDelta_vec(LeabraConGroup* cg,
   }
 }
 
-#ifdef SUGP_NETIN
-inline void LeabraConSpec::Send_NetinDeltaSugp_vec
-(LeabraConGroup* cg, const float su_act_delta_eff, float* send_netin_vec, const float* wts,
- const int32_t* sugps, const int n_un)
-{
-  VECF sa(su_act_delta_eff);
-  const int sz = cg->size;
-  const int parsz = cg->vec_chunked_size;
-  int i;
-  for(i=0; i<parsz; i += TA_VEC_SIZE) {
-    VECF wt;  wt.load(wts+i);
-    VECF dp = wt * sa;
-    VECF rnet;
-    float* stnet = send_netin_vec + sugps[i] * n_un + cg->UnIdx(i); // all have same
-    rnet.load(stnet);
-    rnet += dp;
-    rnet.store(stnet);
-  }
-
-  // remainder of non-vector chunkable ones
-  for(; i<sz; i++) {
-    send_netin_vec[sugps[i] * n_un + cg->UnIdx(i)] += wts[i] * su_act_delta_eff;
-  }
-}
-#endif // SUGP_NETIN
-
 #endif
 
 inline void LeabraConSpec::Send_NetinDelta_impl(LeabraConGroup* cg, LeabraNetwork* net,
                                          int thr_no, const float su_act_delta,
                                          const float* wts) {
   const float su_act_delta_eff = cg->scale_eff * su_act_delta;
-#ifdef SUGP_NETIN
-  if(net->net_misc.sugp_netin) {
-    const int n_un = net->n_units_built;
-    float* send_netin_vec = net->ThrSendNetinTmpPerSugp(thr_no, cg->other_idx, 0);
-#ifdef TA_VEC_USE
-    if(cg->HasConGroupFlag(ConGroup::CHUNKS_SAME_SUGP)) {
-      Send_NetinDeltaSugp_vec(cg, su_act_delta_eff, send_netin_vec, wts, sugps, n_un);
-    }
-    else {
-      CON_GROUP_LOOP(cg, C_Send_NetinDeltaSugp(wts[i], sugps[i], n_un, send_netin_vec,
-                                               cg->UnIdx(i), su_act_delta_eff));
-    }
-#else
-    CON_GROUP_LOOP(cg, C_Send_NetinDeltaSugp(wts[i], sugps[i], n_un, send_netin_vec,
-                                             cg->UnIdx(i), su_act_delta_eff));
-#endif
-  }
-  else
-#endif // SUGP_NETIN
   if(net->NetinPerPrjn()) {
     float* send_netin_vec = net->ThrSendNetinTmpPerPrjn(thr_no, cg->other_idx);
 #ifdef TA_VEC_USE
@@ -131,11 +86,7 @@ inline void LeabraConSpec::Send_NetinDelta(LeabraConGroup* cg, LeabraNetwork* ne
                                            int thr_no, const float su_act_delta)
 {
   // note: _impl is used b/c subclasses replace WT var with another variable
-  Send_NetinDelta_impl(cg, net, thr_no, su_act_delta, cg->OwnCnVar(WT)
-#ifdef SUGP_NETIN
-                       , cg->OwnCnVarInt(SUGP)
-#endif // SUGP_NETIN
-                       );
+  Send_NetinDelta_impl(cg, net, thr_no, su_act_delta, cg->OwnCnVar(WT));
 }
 
 
@@ -147,18 +98,6 @@ inline float LeabraConSpec::Compute_Netin(ConGroup* rcg, Network* net, int thr_n
 					     cg->UnVars(i,net)->act));
   return ((LeabraConGroup*)cg)->scale_eff * rval;
 }
-
-
-#ifdef SUGP_NETIN
-inline void LeabraConSpec::Init_SUGpNetin(LeabraConGroup* rcg, LeabraNetwork* net,
-                                          int thr_no) {
-  const int nsg = ((LeabraPrjn*)rcg->prjn)->n_sugps;
-  if(nsg == 0 || !rcg->sugp_net) return;
-  for(int i=0; i < nsg; i++) {
-    rcg->sugp_net[i] = 0.0f;
-  }
-}
-#endif // SUGP_NETIN
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -244,15 +183,6 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
   if(su->avg_s < us->opt_thresh.xcal_lrn && su->avg_m < us->opt_thresh.xcal_lrn) return;
   // no need to learn!
 
-#ifdef SUGP_NETIN
-  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-  LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->GetUnitSpec();
-  if(rus->netin.max_on && ((LeabraPrjn*)cg->prjn)->n_sugps > 1) {
-    Compute_dWt_MaxSugp(cg, net, thr_no);
-    return;
-  }
-#endif // SUGP_NETIN
-  
   float clrate, bg_lrate, fg_lrate;
   bool deep_on;
   GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
@@ -294,42 +224,6 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
 // #endif
 }
 
-#ifdef SUGP_NETIN
-inline void LeabraConSpec::Compute_dWt_MaxSugp(LeabraConGroup* cg, LeabraNetwork* net, int thr_no) {
-  LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
-  LeabraUnitSpec* us = (LeabraUnitSpec*)su->unit_spec;
-
-  float clrate, bg_lrate, fg_lrate;
-  bool deep_on;
-  GetLrates(cg, clrate, deep_on, bg_lrate, fg_lrate);
-
-  const float su_avg_s = su->avg_s_eff;
-  const float su_avg_m = su->avg_m;
-  float* dwts = cg->OwnCnVar(DWT);
-  float* sugps = cg->OwnCnVar(SUGP);
-
-  const int sz = cg->size;
-
-  for(int i=0; i<sz; i++) {
-    LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-    int ru_thr_no = ru->ThrNo(net);
-    LeabraConGroup* rcg = (LeabraConGroup*)ru->RecvConGroup(net, ru_thr_no, cg->other_idx);
-    if(sugps[i] != rcg->max_sugp) continue; // only learn on max!
-    float lrate_eff = clrate;
-    if(deep_on) {
-      lrate_eff *= (bg_lrate + fg_lrate * ru->deep_lrn);
-    }
-    float l_lrn_eff;
-    if(xcal.set_l_lrn)
-      l_lrn_eff = xcal.l_lrn;
-    else
-      l_lrn_eff = ru->avg_l_lrn;
-    C_Compute_dWt_CtLeabraXCAL
-      (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
-       ru->avg_l, l_lrn_eff);
-  }
-}
-#endif // SUGP_NETIN
 
 /////////////////////////////////////
 //	Compute_Weights_CtLeabraXCAL

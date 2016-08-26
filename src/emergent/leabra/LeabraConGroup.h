@@ -36,18 +36,11 @@ public:
   float	        wt_avg;	        // #NO_SAVE #CAT_Learning average weight values across this con group
   float	        wb_inc;	        // #NO_SAVE #CAT_Learning weight balance increment factor -- extra multiplier to add to weight increases to maintain overall weight balance
   float	        wb_dec;	        // #NO_SAVE #CAT_Learning weight balance decrement factor -- extra multiplier to add to weight decreases to maintain overall weight balance
-#ifdef SUGP_NETIN
-  int           max_sugp;	// #NO_SAVE #CAT_Activation index of sending unit group that had the maximum net input -- used for learning
-  float*        sugp_net;       // #IGNORE net input stored for each sending unit group -- of size prjn->n_sugps -- only stored on receiving con groups -- points to memory allocated by network in thrs_recv_cgp_sugp_net_mem
-#endif // SUGP_NETIN
 
   inline LeabraConSpec*    GetConSpec() const { return (LeabraConSpec*)con_spec; }
 
   void  LeabraInit()
   { scale_eff = 0.0f; net = 0.0f; net_raw = 0.0f; wt_avg = 0.5f; wb_inc = 1.0f; wb_dec = 1.0f;
-#ifdef SUGP_NETIN
-    max_sugp = 0; sugp_net = NULL;
-#endif // SUGP_NETIN
   }
   // leabra initialize
 };

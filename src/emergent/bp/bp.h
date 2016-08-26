@@ -115,12 +115,16 @@ public:
     }
   }
 
-  // note on vectorization:
-  // functions that involve activation-level variables require compiling vars into
-  // separate sequential vectors so the simple load function can operate on them
-  // the overhead for such a thing may be worth it for leabra (though not
-  // currently using there), but is not generally for bp
-  // update weights however is easily vectorized as it is purely con-level vars
+  // vectorization notes: Compute_Weights is fully vectorized and easy, as everything
+  // is in the connections
+  // other functions require unit access -- the sending units are vector chunked,
+  // but due to the thread organization, their ram is discontinuous and cannot
+  // be sequentially accessed.  The gather<> load function is potentially usable, but
+  // it takes a common offset and has different indexes -- not workable with the current
+  // setup -- so the only way to make it work would be to copy all the acts into a
+  // single common flat array -- probably that takes more time than we save.. but..
+  // could give it a try.. would only work for compute_dwt -- overall unlikely to be
+  // worth it though, so postponing in favor of CUDA etc at this point
   
   inline float		C_Compute_dEdA(const float wt, const float ru_dEdNet)
   { return wt * ru_dEdNet; }
@@ -492,6 +496,7 @@ inline float BpConSpec::Compute_dEdA(ConGroup* cg, Network* net, int thr_no) {
                                             ((BpUnitVars*)cg->UnVars(i,net))->dEdNet));
   return rval;
 }
+
 
 inline void BpConSpec::Compute_dWt(ConGroup* cg, Network* net, int thr_no) {
   BpUnitVars* ru = (BpUnitVars*)cg->ThrOwnUnVars(net, thr_no);
