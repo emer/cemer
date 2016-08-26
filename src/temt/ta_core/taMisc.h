@@ -932,8 +932,8 @@ public:
   // #CAT_File make new subdirectory in current working directory -- returns success
   static bool   MakePath(const String& path);
   // #CAT_File make full path relative to current working directory (or absolute path) including all intermediate directories along the way as needed
-  static bool   MakeSymLink(const String& file_name, const String& link_name);
-  // #CAT_File make a symbolic link to given file with given link name
+  static bool   MakeSymLink(const String& file_name, const String& link_name, bool directory = true);
+  // #CAT_File make a symbolic link to given file with given link name -- for windows must say if file or directory
   static bool   RemoveDir(const String& dir);
   // #CAT_File remove subdirectory in current working directory -- must be empty -- returns success
   static bool   RemovePath(const String& path);

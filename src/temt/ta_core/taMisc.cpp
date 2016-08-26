@@ -2971,9 +2971,25 @@ bool taMisc::MakePath(const String& fn) {
   return d.mkpath(fn);
 }
 
-bool taMisc::MakeSymLink(const String& file_name, const String& link_name) {
+bool taMisc::MakeSymLink(const String& file_name, const String& link_name, bool directory) {
   String fnm = taMisc::ExpandFilePath(file_name);
-  return QFile::link(fnm, link_name);
+#ifdef TA_OS_WIN
+  DWORD rval;
+  if (directory) {
+	  rval = CreateSymbolicLink(link_name, fnm, SYMBOLIC_LINK_FLAG_DIRECTORY);
+  }
+  else {
+    rval = CreateSymbolicLink(link_name, fnm, 0);
+  }
+  if (rval == 0) {
+    DWORD errorMessageID = ::GetLastError();
+	  taMisc::DebugInfo((String)errorMessageID);
+	  return false;
+  }
+  return true;
+#else
+  return QFile::link(fnm, link_name)
+#endif
 }
 
 bool taMisc::RemoveDir(const String& fn) {
