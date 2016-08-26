@@ -24,6 +24,7 @@
 #include <float_CircBuffer>
 #include <ProjectBase>
 #include <ta_vector_ops.h>
+#include <SpecMemberBase>
 
 #include "network_def.h"
 
@@ -333,7 +334,7 @@ public:
       CON_GROUP_LOOP(cg, C_Compute_Weights_Moment(wts[i], dwts[i], pdws[i]));
       break;
     case WU_MOMENT_SIMPLE:
-      CON_GROUP_LOOP(cg, C_Compute_Weights_Moment_Simple(wts[i], dwts[i], pdws[i));
+      CON_GROUP_LOOP(cg, C_Compute_Weights_Moment_Simple(wts[i], dwts[i], pdws[i]));
       break;
     case WU_MOMENT_ELIM:
       CON_GROUP_LOOP(cg, C_Compute_Weights_Moment_Elim(wts[i], dwts[i], pdws[i]));
@@ -366,28 +367,205 @@ private:
   void	Defaults_init();
 };
 
-// the following functions are possible weight decay functions
 
-// #REG_FUN
-E_API void Bp_Simple_WtDecay(BpConSpec* spec, float& wt, float& dwt)
-// #LIST_BpConSpec_WtDecay #OBSOLETE -- replaced with enum -- Simple weight decay (subtract decay*wt)
-     ;				// term here so maketa picks up comment
-// #REG_FUN
-E_API void Bp_WtElim_WtDecay(BpConSpec* spec, float& wt, float& dwt)
-// #LIST_BpConSpec_WtDecay #OBSOLETE -- replaced with enum -- Weight Elimination (Rumelhart) weight decay
-     ;				// term here so maketa picks up comment
+
+///////////////////////////////////////////////////////////
+//              Units: Spec, Vars, etc
+
+eTypeDef_Of(NLXX1ActSpec);
+
+class E_API NLXX1ActSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra noisy linear XX1 activation function specifications
+INHERITED(SpecMemberBase)
+public:
+  float         ramp_start;     // value of negative net input where the linear ramping function starts -- this should be a negative number, typically between -2 and -5
+  float         ramp_max;       // maximum value, achieved at 0, of the linear ramp that started at ramp_start -- typically .05 to .1
+  float         ramp_gain;      // #READ_ONLY = ramp_max / -ramp_start
+  
+  inline float  NLXX1Fun(float netin)
+  { if(netin < ramp_start) return 0.0f;
+    if(netin > 0.0f) { return ramp_max + (netin / (netin + 1.0f)); }
+    return ramp_gain * (ramp_start - netin); }
+  // compute the noisy-linear XX1 function
+
+  inline float  NLXX1Deriv(float netin) {
+    if(netin > 0.0f) {
+      float denom = (1.0f + netin); return 1.0f / (denom * denom); }
+    if(netin < ramp_start) return 0.0f;
+    return -ramp_gain;
+  }
+  
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(NLXX1ActSpec);
+protected:
+  SPEC_DEFAULTS;
+  void        UpdateAfterEdit_impl() override;
+
+private:
+  void        Initialize();
+  void        Destroy()        { };
+  void        Defaults_init();
+};
+
+eTypeDef_Of(GaussActSpec);
+
+class E_API GaussActSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gaussian function
+INHERITED(SpecMemberBase)
+public:
+  float         mean;           // mean of Gaussian
+  float         std_dev;        // std deviation of Gaussian
+  float         std_dev_r;      // #HIDDEN reciprocal of std_dev
+  
+  inline float  GaussActFun(float netin)
+  { float val = std_dev_r * (netin - mean); return expf(- (val * val)); }
+  // compute the gaussian function
+
+  inline float  GaussActDeriv(float act, float net)
+  { return -act * 2.0f * (net - mean) * std_dev_r;  }
+  
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(GaussActSpec);
+protected:
+  SPEC_DEFAULTS;
+  void        UpdateAfterEdit_impl() override;
+
+private:
+  void        Initialize();
+  void        Destroy()        { };
+  void        Defaults_init();
+};
+
 
 eTypeDef_Of(BpUnitSpec);
 
 class E_API BpUnitSpec : public UnitSpec {
-  // #STEM_BASE ##CAT_Bp specifications for Bp units
+  // #STEM_BASE ##CAT_Bp specifications for Bp units, with major different activation functions available 
 INHERITED(UnitSpec)
 public:
-  SigmoidSpec	sig;		// sigmoid activation parameters
-  float		err_tol;	// error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations
-  void 		(*err_fun)(BpUnitSpec* spec, BpUnitVars* u);
-  // #LIST_BpUnit_Error this points to the error fun, set appropriately
+#ifndef __MAKETA__
+  static const float SIGMOID_MAX_VAL; // #READ_ONLY #HIDDEN max eval value
+  static const float SIGMOID_MIN_VAL; // #READ_ONLY #HIDDEN min eval value
+  static const float SIGMOID_MAX_NET; // #READ_ONLY #HIDDEN maximium net input value
+#else
+  static const float SIGMOID_MAX_VAL = 0.999999f; // #READ_ONLY #HIDDEN max eval value
+  static const float SIGMOID_MIN_VAL = 0.000001f; // #READ_ONLY #HIDDEN min eval value
+  static const float SIGMOID_MAX_NET = 13.81551f; // #READ_ONLY #HIDDEN maximium net input value
+#endif
+  
+  enum BpActFun {               // backprop activation function to use
+    SIGMOID,                    // standard sigmoidal activation in 0-1 range: 1 / (1 + e^-net) -- note that we dropped gain and offset params in 8.0 -- just uses standard gain = 1, 0 offset
+    TANH,                       // hyperbolic tangent function -- basically a sigmoid centered around 0 with range -1..1 (which is how we implement it)
+    RELU,                       // rectified linear unit, i.e., a simple threshold nonlinearity --- if netinput < 0, activation = 0, else act = net
+    LINEAR,                     // purely linear output -- not suitable for hidden units, as some form of nonlinearity is essential, but can be useful for output units
+    NLXX1,                      // noisy-linear version of XX1 function = x/(x+1) (= 1/(1+x^1) -- sigmoidal asymptote but hard 0 threshold) where x = netin -- NL version adds a small linear "ramp" for negative inputs starting at ramp_start negative input and reaching a magnitude of ramp_max at 0, after which point it transitions to regular XX1 (starting at ramp_max) -- ramp approximates effects of convolving XX1 with gaussian noise, but with a simpler function -- provides a hybrid of sigmoid and ReLu with good overall properties for sparse representations with bias set to -2
+    BINARY,                     // stochastic binary activation -- produces a 1 or a 0 based on sigmoidal underlying probability
+    GAUSS,                      // gaussian applied to the standard dot-product netinput -- also known as a 'bump' function
+    RBF,                        // radial basis function activation -- uses distance-based net input (net input is distance between activations and weights, instead of usual dot product) and runs that through a gaussian function to produce a radial basis function kernel activation
+    MAX_POOL,                   // compute the activation = max over input activations, and send backprop error only back to max input, rest = 0
+    SOFTMAX,                    // soft-max over the units within the layer -- requires multiple iterations to compute activation -- useful for single-winner output layers (e.g., localist classification outputs) -- unlike in 8.0, this does NOT require an exponential layer input -- everything is done internally
+  };
 
+  enum BpErrFun {                // type of error function to use -- replaces err_fun setting from earlier versions 
+    SQUARED_ERR,                 // use the squared error function in computing derivatives of Target layer units -- appropriate for unbounded linear targets
+    CROSS_ENTROPY,               // use the cross-entropy (sigmoid-based) error function in computing derivatives of Target layer units -- appropriate for binary targets
+  };
+
+  enum BpNoiseType {
+    NO_NOISE,                   // no noise
+    ACT_NOISE,                  // add noise to activations
+    NETIN_NOISE,                // add noise to netinputs
+    DROPOUT,                    // drop out (zero activations) of units according to probability of noise.mean (like multiplying by a bernoulli distribution)
+  };
+
+  BpActFun      act_fun;        // activation function to use -- note that act_range is ignored for most functions except linear-based ones, and for output units using the cross-entropy error function
+  BpErrFun      error_fun;      // error function to use: only applicable to layers of type TARGET -- squared error is appropriate for unbounded linear targets, while cross-entropy is more appropriate for binary targets
+  float		err_tol;	// #DEF_0.05;0 error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations
+  bool          save_err;       // whether to save the actual error value -- this requires extra computation and is not necessary for learning -- just for instructional / informational purposes
+  NLXX1ActSpec  nlxx1;          // #CONDSHOW_ON_act_fun:NLXX1 specs for nlxx1 function when that is being used
+  GaussActSpec  gauss;          // #CONDSHOW_ON_act_fun:GAUSS||act_fun:RBF specs for Gaussian bump or RBF activation function when that is being used
+  BpNoiseType   noise_type;     // type of noise to use
+  RandomSpec    noise;          // #CONDSHOW_OFF_noise_type:NO_NOISE distribution parameters for random added noise
+  
+
+  void 	(*err_fun)(BpUnitSpec* spec, BpUnitVars* u);
+  // #LIST_BpUnit_Error #OBSOLETE #HIDDEN #READ_ONLY #NO_SAVE replaced by enum -- this points to the error fun, set appropriately
+
+  // these methods keep sigmoidal-type values within the correct range to prevent numerical errors
+  static inline float  ClipSigAct(float y)
+  { y = MAX(y,SIGMOID_MIN_VAL); y = MIN(y,SIGMOID_MAX_VAL); return y; }
+  static inline float  ClipTanhAct(float y)
+  { y = MAX(y,-SIGMOID_MAX_VAL); y = MIN(y,SIGMOID_MAX_VAL); return y; }
+  static inline float  ClipSigNet(float x)
+  { x = MAX(x,-SIGMOID_MAX_NET); x = MIN(x,SIGMOID_MAX_NET); return x; }
+
+  // different activation and error derivative functions
+  static inline float  SigmoidFun(float netin)
+  { return ClipSigAct(1.0f / (1.0f + expf(-ClipSigNet(netin)))); }
+  static inline float  SigmoidDeriv(float act)
+  { act = ClipSigAct(act); return act * (1.0f - act); }
+  static inline float  TanhFun(float netin)
+  { return ClipTanhAct( (2.0f / (1.0f + expf(-ClipSigNet(netin)))) - 1.0f); }
+  static inline float  TanhDeriv(float act)
+  { act = ClipSigAct(0.5f * (act + 1.0f)); return act * (1.0f - act); }
+  static inline float  ReLuFun(float netin)
+  { return MAX(netin, 0.0f); }
+  static inline float  ReLuDeriv(float netin) { return (netin > 0.0f) ? 1.0f : 0.0f; }
+  inline float  NLXX1Fun(float netin) { return nlxx1.NLXX1Fun(netin); }
+  inline float  NLXX1Deriv(float netin) { return nlxx1.NLXX1Deriv(netin); }
+
+  inline float  ActFromNetin(float netin, int thr_no) {
+    switch(act_fun) {
+    case SIGMOID:
+      return SigmoidFun(netin);
+    case TANH:
+      return TanhFun(netin);
+    case RELU:
+      return act_range.Clip(ReLuFun(netin));
+    case LINEAR:
+      return act_range.Clip(netin);
+    case NLXX1:
+      return NLXX1Fun(netin);
+    case BINARY:
+      return Random::BoolProb(SigmoidFun(netin), thr_no) ? 1.0f : 0.0f;
+    case GAUSS:
+      return gauss.GaussActFun(netin);
+    case RBF:
+      return gauss.GaussActFun(netin);
+    default:
+      return 0.0f;
+    }
+  }
+  // compute activation from netinput
+
+  inline float ActDeriv(float netin, float act, int thr_no) {
+    switch(act_fun) {
+    case SIGMOID:
+      return SigmoidDeriv(act);
+    case TANH:
+      return TanhDeriv(act);
+    case RELU:
+      return ReLuDeriv(netin);
+    case LINEAR:
+      return 1.0f;
+    case NLXX1:
+      return NLXX1Deriv(netin);
+    case BINARY:
+      return act == 0.0f ? 0.0f : 1.0f;
+    case GAUSS:
+      return gauss.GaussActDeriv(act, netin);
+    case RBF:
+      return -act;
+    case SOFTMAX:
+      return 1.0f;
+    default:
+      return 0.0f;
+    }
+  }
+  // compute derivative of activation from either netin or act
+  
   // generic unit functions
   void Init_Acts(UnitVars* uv, Network* net, int thr_no) override;
   void Compute_Netin(UnitVars* uv, Network* net, int thr_no) override;
@@ -410,30 +588,25 @@ public:
   virtual void	SetCurLrate(BpUnitVars* u, BpNetwork* net, int thr_no);
   // set current learning rate based on epoch
 
+  virtual void Compute_MaxPoolNetin(BpUnitVars* u, Network* net, int thr_no);
+  // compute netin = max over sending acts for max_pool case
+
   virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0);
-  // #BUTTON #NULL_OK graph the activation function (NULL = new graph log)
+  // #BUTTON #NULL_OK graph the activation function along with derivative (NULL = new graph log)
 
   void	InitLinks() override;
   SIMPLE_COPY(BpUnitSpec);
   TA_BASEFUNS(BpUnitSpec);
 protected:
   SPEC_DEFAULTS;
+  void  UpdateAfterEdit_impl() override;
+  
 private:
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void	Defaults_init();
 };
 
-// the following functions are possible error functions.
-
-// #REG_FUN
-E_API void Bp_Squared_Error(BpUnitSpec* spec, BpUnitVars* u)
-// #LIST_BpUnit_Error Squared error function for bp
-     ;				// term here so scanner picks up comment
-// #REG_FUN
-E_API void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnitVars* u)
-// #LIST_BpUnit_Error Cross entropy error function for bp
-     ;				// term here so scanner picks up comment
 
 eTypeDef_Of(BpUnitVars);
 
@@ -444,6 +617,7 @@ public:
   float 	err; 		// #VIEW_HOT error value -- this is E for target units, not dEdA
   float 	dEdA;		// #VIEW_HOT derivative of error wrt activation
   float 	dEdNet;		// #VIEW_HOT derivative of error wrt net input
+  float         misc1;          // miscellaneous computational value -- used for exp(netin) in SOFTMAX case, and to hold the index of the most active unit among input connections for MAX_POOL (cast to int)
 };
 
 eTypeDef_Of(BpUnit);
@@ -479,6 +653,9 @@ public:
   inline float& dEdNet()
   { return ((BpUnitVars*)GetUnitVars())->dEdNet; }
   // #VIEW_HOT #CAT_UnitVar derivative of error wrt net input
+  inline float& misc1()
+  { return ((BpUnitVars*)GetUnitVars())->misc1; }
+  // #VIEW_HOT #CAT_UnitVar miscellaneous computational value -- used for exp(netin) in SOFTMAX case, and to hold the index of the most active unit among input connections for MAX_POOL (cast to int)
 
   TA_BASEFUNS_NOCOPY(BpUnit);
 private:
@@ -541,9 +718,10 @@ inline void BpConSpec::B_Compute_Weights(UnitVars* u, Network* net, int thr_no) 
   C_ApplyLimits(uv->bias_wt);
 }
 
-//////////////////////////////////////////
-//	Additional ConSpec Types	//
-//////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////
+//	                Specialized types
+
 
 eTypeDef_Of(HebbBpConSpec);
 
@@ -576,7 +754,7 @@ private:
 eTypeDef_Of(ErrScaleBpConSpec);
 
 class E_API ErrScaleBpConSpec : public BpConSpec {
-  // con spec that scales the error by given parameter
+  // con spec that scales the error by given parameter -- can be used to differentially weight the learning impact of one projection relative to another
 INHERITED(BpConSpec)
 public:
   float		err_scale;	// the scaling parameter
@@ -606,9 +784,9 @@ eTypeDef_Of(DeltaBarDeltaBpCon);
 class E_API DeltaBarDeltaBpCon : public BpCon {
   // delta-bar-delta connection object with local learning rate
 public:
-  float 		lrate; 		// #NO_SAVE local learning rate
+  float 		lr; 		// #NO_SAVE local synapse-specific learning rate
 
-  DeltaBarDeltaBpCon() { lrate = 0.0f; }
+  DeltaBarDeltaBpCon() { lr = 0.0f; }
 };
 
 eTypeDef_Of(DeltaBarDeltaBpConSpec);
@@ -618,7 +796,7 @@ class E_API DeltaBarDeltaBpConSpec : public BpConSpec {
 INHERITED(BpConSpec)
 public:
   enum DBDBpConVars {
-    LRATE = PDW+1,                // local learning rate
+    LR = N_BP_CON_VARS,         // local learning rate
   };
 
   float		lrate_incr;	// rate of learning rate increase (additive)
@@ -631,7 +809,7 @@ public:
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
     float* pdws = cg->OwnCnVar(PDW);
-    float* lrs = cg->OwnCnVar(LRATE);
+    float* lrs = cg->OwnCnVar(LR);
 
     if(rnd.type != Random::NONE) {
       for(int i=0; i<cg->size; i++) {
@@ -643,70 +821,59 @@ public:
     }
   }
 
-  inline void	C_UpdateLrate(float& lrate, const float dwt, const float pdw) {
+  inline void	C_UpdateLrate(float& lr, const float dwt, const float pdw) {
     const float prod = pdw * dwt;
     if(prod > 0.0f)
-      lrate += act_lrate_incr;
+      lr += act_lrate_incr;
     else if(prod < 0.0f)
-      lrate *= lrate_decr;
+      lr *= lrate_decr;
     // prod = 0 means first epoch, don't change lrate..
   }
 
-  // inline void C_AFT_Compute_Weights(float& wt, float& dwt, float& pdw, float& lrate) {
-  //   C_Compute_WtDecay(wt, dwt); // decay goes into dwt...
-  //   C_UpdateLrate(lrate, dwt, pdw);
-  //   pdw = cur_lrate * dwt + momentum * pdw;
-  //   wt += pdw;
-  //   dwt = 0.0f;
-  // }
-
-  // inline void C_BEF_Compute_Weights(float& wt, float& dwt, float& pdw, float& lrate) {
-  //   C_Compute_WtDecay(wt, dwt); // decay goes into dwt...
-  //   C_UpdateLrate(lrate, dwt, pdw);
-  //   pdw = dwt + momentum * pdw;
-  //   wt += cur_lrate * pdw;
-  //   dwt = 0.0f;
-  // }
-
-  // inline void C_NRM_Compute_Weights(float& wt, float& dwt, float& pdw, float& lrate) {
-  //   C_Compute_WtDecay(wt, dwt); // decay goes into dwt...
-  //   C_UpdateLrate(lrate, dwt, pdw);
-  //   pdw = momentum_c * dwt + momentum * pdw;
-  //   wt += cur_lrate * pdw;
-  //   dwt = 0.0f;
-  // }
-
+  inline void C_Compute_Weights_DBD(float& wt, float& dwt, float& pdw, float& lr) {
+    pdw = lr * dwt + momentum * pdw;
+    wt += pdw;
+    dwt = 0.0f;
+    C_UpdateLrate(lr, dwt, pdw);
+  }
+  inline void C_Compute_Weights_DBD_Simple(float& wt, float& dwt, float& pdw, float& lr) {
+    pdw = lr * (dwt - decay * wt) + momentum * pdw;
+    wt += pdw;
+    dwt = 0.0f;
+    C_UpdateLrate(lr, dwt, pdw);
+  }
+  inline void C_Compute_Weights_DBD_Elim(float& wt, float& dwt, float& pdw, float &lr) {
+    float denom = (1.0f + wt * wt);
+    pdw = lr * (dwt - ((decay * wt) / (denom * denom))) + momentum * pdw;
+    wt += pdw;
+    dwt = 0.0f;
+    C_UpdateLrate(lr, dwt, pdw);
+  }
+  
   inline void	Compute_Weights(ConGroup* cg, Network* net, int thr_no) override {
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
-    float* pdwts = cg->OwnCnVar(PDW);
-    float* lrates = cg->OwnCnVar(LRATE);
-    // if(momentum_type == AFTER_LRATE) {
-    //   CON_GROUP_LOOP(cg, C_AFT_Compute_Weights(wts[i], dwts[i], pdwts[i], lrates[i]));
-    // }
-    // else if(momentum_type == BEFORE_LRATE) {
-    //   CON_GROUP_LOOP(cg, C_BEF_Compute_Weights(wts[i], dwts[i], pdwts[i], lrates[i]));
-    // }
-    // else {
-    //   CON_GROUP_LOOP(cg, C_NRM_Compute_Weights(wts[i], dwts[i], pdwts[i], lrates[i]));
-    // }
+    float* pdws = cg->OwnCnVar(PDW);
+    float* lrs = cg->OwnCnVar(LR);
+
+    switch(decay_type) {
+    case NO_DECAY: {
+      CON_GROUP_LOOP(cg, C_Compute_Weights_DBD(wts[i], dwts[i], pdws[i], lrs[i]));
+      break;
+    }
+    case SIMPLE_DECAY: {
+      CON_GROUP_LOOP(cg, C_Compute_Weights_DBD_Simple(wts[i], dwts[i], pdws[i], lrs[i]));
+      break;
+    }
+    case ELIMINATION: {
+      CON_GROUP_LOOP(cg, C_Compute_Weights_DBD_Elim(wts[i], dwts[i], pdws[i], lrs[i]));
+      break;
+    }
+    }
     ApplyLimits(cg, net, thr_no);
   }
 
-  // todo: we need a new BpDBDUnitVars type, with the bias_lrate
-  // inline void B_Compute_Weights(UnitVars* u, Network* net, int thr_no) override {
-  //   BpUnitVars* uv = (BpUnitVars*)u;
-  //   if(momentum_type == AFTER_LRATE)
-  //     C_AFT_Compute_Weights(uv->bias_wt), uv->bias_dwt),
-  //                           uv->bias_pdw), uv->bias_lrate));
-  //   else if(momentum_type == BEFORE_LRATE)
-  //     C_BEF_Compute_Weights(uv->bias_wt), uv->bias_dwt),
-  //                           uv->bias_pdw), uv->bias_lrate));
-  //   else
-  //     C_NRM_Compute_Weights(uv->bias_wt), uv->bias_dwt),
-  //                           uv->bias_pdw), uv->bias_lrate));
-  //   C_ApplyLimits(uv->bias_WT));
-  // }
+  // bias weight is NOT suported for delta-bar-delta -- would require a new unit var -- not worth it..
 
   TA_SIMPLE_BASEFUNS(DeltaBarDeltaBpConSpec);
 protected:
@@ -760,189 +927,7 @@ private:
   void	Defaults_init() 	{ };
 };
 
-eTypeDef_Of(LinearBpUnitSpec);
 
-class E_API LinearBpUnitSpec : public BpUnitSpec {
-  // linear unit in Bp
-INHERITED(BpUnitSpec)
-public:
-  void  Compute_Act(UnitVars* u, Network* net, int thr_no) override;
-  void	Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) override;
-
-  TA_BASEFUNS(LinearBpUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
-private:
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	Defaults_init() 	{ Initialize(); }
-};
-
-eTypeDef_Of(ThreshLinBpUnitSpec);
-
-class E_API ThreshLinBpUnitSpec : public BpUnitSpec {
-  // thresholded linear unit in Bp -- otherwise known as a ReLu or rectified linear unit -- uses the sig.off parameter as the threshold value, and applies the sig.gain parameter as well if != 1.0f
-INHERITED(BpUnitSpec)
-public:
-  void  Compute_Act(UnitVars* u, Network* net, int thr_no) override;
-  void	Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) override;
-
-  TA_SIMPLE_BASEFUNS(ThreshLinBpUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
-private:
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	Defaults_init() 	{ };
-};
-
-eTypeDef_Of(XX1BpUnitSpec);
-
-class E_API XX1BpUnitSpec : public BpUnitSpec {
-  // X / (X+1) = 1 / (1 + X^-1) = activation function -- should be much faster than sigmoidal function -- uses sig.off and sig.gain parameters as well
-INHERITED(BpUnitSpec)
-public:
-
-  void  Compute_Act(UnitVars* u, Network* net, int thr_no) override;
-  void	Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) override;
-
-  TA_SIMPLE_BASEFUNS(XX1BpUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
-private:
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	Defaults_init() 	{ };
-};
-
-eTypeDef_Of(NoisyBpUnitSpec);
-
-class E_API NoisyBpUnitSpec : public BpUnitSpec {
-  // Bp with noisy output signal (act plus noise)
-INHERITED(BpUnitSpec)
-public:
-  RandomSpec	noise;		// what kind of noise to add to activations
-
-  void Compute_Act(UnitVars* u, Network* net, int thr_no) override;
-
-  TA_SIMPLE_BASEFUNS(NoisyBpUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	Defaults_init() 	{ };
-};
-
-eTypeDef_Of(StochasticBpUnitSpec);
-
-class E_API StochasticBpUnitSpec : public BpUnitSpec {
-  // Bp with a binary stochastic activation function
-INHERITED(BpUnitSpec)
-public:
-  void Compute_Act(UnitVars* u, Network* net, int thr_no) override;
-
-  TA_BASEFUNS_NOCOPY(StochasticBpUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize()		{ };
-  void 	Destroy()		{ };
-  void	Defaults_init() 	{ };
-};
-
-eTypeDef_Of(RBFBpUnitSpec);
-
-class E_API RBFBpUnitSpec : public BpUnitSpec {
-  // Radial basis function (Gaussian) function units in Bp
-INHERITED(BpUnitSpec)
-public:
-  float         var;            // variance of Gaussian
-  float         norm_const;     // #HIDDEN normalization const for Gaussian
-  float         denom_const;    // #HIDDEN denominator const for Gaussian
-
-  void Compute_Netin(UnitVars* u, Network* net, int thr_no) override;
-  void Compute_Act(UnitVars* u, Network* net, int thr_no) override;
-  void	Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) override;
-
-  TA_SIMPLE_BASEFUNS(RBFBpUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
-private:
-  void  Initialize();
-  void  Destroy()               { };
-  void	Defaults_init() 	{ };
-};
-
-eTypeDef_Of(BumpBpUnitSpec);
-
-class E_API BumpBpUnitSpec : public BpUnitSpec {
-  // bump function in Bp: Gaussian of std net input
-INHERITED(BpUnitSpec)
-public:
-  float         mean;           // mean of Gaussian
-  float         std_dev;        // std deviation of Gaussian
-  float         std_dev_r;      // #HIDDEN reciprocal of std_dev
-
-  void Compute_Act(UnitVars* u, Network* net, int thr_no) override;
-  void	Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) override;
-
-  TA_SIMPLE_BASEFUNS(BumpBpUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() override;
-private:
-  void  Initialize();
-  void  Destroy()               { };
-  void	Defaults_init() 	{ };
-};
-
-eTypeDef_Of(ExpBpUnitSpec);
-
-class E_API ExpBpUnitSpec : public BpUnitSpec {
-  // exponential units in Bp: simple exponent of net input
-INHERITED(BpUnitSpec)
-public:
-  void Compute_Act(UnitVars* u, Network* net, int thr_no) override;
-  void	Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) override;
-
-  TA_BASEFUNS_NOCOPY(ExpBpUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void  Initialize()	{ };
-  void  Destroy()	{ };
-  void	Defaults_init() { };
-};
-
-eTypeDef_Of(SoftMaxBpUnitSpec);
-
-class E_API SoftMaxBpUnitSpec : public BpUnitSpec {
-  // SoftMax Units: first one-to-one prjn is from corresp exponential unit, second prjn is from single summing linear unit, this then divides two
-INHERITED(BpUnitSpec)
-public:
-
-  void Compute_Netin(UnitVars* u, Network* net, int thr_no) override { };
-  // do nothing
-  void Compute_Act(UnitVars* u, Network* net, int thr_no) override;
-  void	Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) override;
-
-  // don't update my weights
-  void Compute_dWt(UnitVars*, Network* net, int thr_no)	override { };
-  void Compute_Weights(UnitVars*, Network* net, int thr_no)	override { };
-
-  TA_BASEFUNS_NOCOPY(SoftMaxBpUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void  Initialize()	{ };
-  void  Destroy()	{ };
-  void	Defaults_init() { };
-};
 
 eTypeDef_Of(BpLayer);
 
@@ -975,6 +960,7 @@ public:
   // #IGNORE compute local error values, for display purposes only (only call when testing, not training)
 
   void  Init_Weights() override;
+  void  Compute_NetinAct_Thr(int thr_no) override;
   void	Compute_dWt_Thr(int thr_no) override;
   void	Compute_Weights_Thr(int thr_no) override;
   
@@ -996,6 +982,7 @@ private:
   void 	Destroy()		{}
 };
 
+
 eTypeDef_Of(BpProject);
 
 class E_API BpProject : public ProjectBase {
@@ -1008,6 +995,28 @@ private:
   void	Initialize();
   void 	Destroy()		{}
 };
+
+
+
+// These are now OBSOLETE -- remove sometime (as of 8/2016, version 8.0)
+
+// #REG_FUN
+E_API void Bp_Simple_WtDecay(BpConSpec* spec, float& wt, float& dwt)
+// #LIST_BpConSpec_WtDecay #OBSOLETE -- replaced with enum -- Simple weight decay (subtract decay*wt)
+     ;				// term here so maketa picks up comment
+// #REG_FUN
+E_API void Bp_WtElim_WtDecay(BpConSpec* spec, float& wt, float& dwt)
+// #LIST_BpConSpec_WtDecay #OBSOLETE -- replaced with enum -- Weight Elimination (Rumelhart) weight decay
+     ;				// term here so maketa picks up comment
+
+// #REG_FUN
+E_API void Bp_Squared_Error(BpUnitSpec* spec, BpUnitVars* u)
+// #LIST_BpUnit_Error #OBSOLETE -- replaced with enum -- Squared error function for bp
+     ;				// term here so scanner picks up comment
+// #REG_FUN
+E_API void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnitVars* u)
+// #LIST_BpUnit_Error #OBSOLETE -- replaced with enum -- Cross entropy error function for bp
+     ;				// term here so scanner picks up comment
 
 
 

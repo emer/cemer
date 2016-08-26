@@ -114,6 +114,11 @@ void iWebView::authenticationRequired(const QUrl& url, QAuthenticator* auth) {
   taiMisc::net_access_mgr->provideAuthenticationUrl(url, auth);
 }
 
+void iWebView::proxyAuthenticationRequired(const QUrl& url, QAuthenticator* auth,
+                                           const QString& whatisthis) {
+  // todo: this is not yet supported!
+}
+
 QWebEngineView* iWebView::createWindow(QWebEnginePage::WebWindowType type) {
   QWebEngineView* rval = NULL;
   emit sigCreateWindow(type, rval); // calls iPanelOfDocView handler

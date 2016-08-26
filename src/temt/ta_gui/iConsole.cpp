@@ -250,8 +250,10 @@ void iConsole::flushOutput() {
       waiting = (stdDisplay(stderriInterceptor->textIStream()) || waiting);
     }
     if(waiting) {
-      QCoreApplication::processEvents();
-      taMisc::SleepMs(1); //note: 1ms is fine, shorter values result in cpu thrashing
+      // doing any kind of pending / process events here is bad -- causes hangs!
+      // taMisc::RunPending();
+      // QCoreApplication::processEvents();
+      // taMisc::SleepMs(1); //note: 1ms is fine, shorter values result in cpu thrashing
     }
   } while(waiting);
 #endif
@@ -358,60 +360,58 @@ void iConsole::outputLine(QString line, bool err) {
 #ifndef TA_OS_WIN
 // displays redirected stdout/stderr
 bool iConsole::stdDisplay(QTextStream* s) {
-  if((curOutputLn >= maxLines) && !contPager && !noPager)
-    return true;
+  // always grab output!  no paging at all ever on std out -- need to get it!
   bool scrolled_to_end = scrolledToEnd();
   int n_lines_recvd = 0;
-  if(noPager) {
-    // no pager mode just grabs everything and returns true if any lines were recv'd
-    while(true) {
-      QString line = s->readLine(maxCols);
-      if(line.isNull()) break;
-      if(line.endsWith("invalid drawable")) continue; // skip this error!
-      n_lines_recvd++;
-      promptDisp = false;
-      if(taMisc::ext_messages) {
-        append(line);
-        repaint();                    // do a direct repaint when new info comes in!
-      }
-      taMisc::LogEvent(line);
-      if(logfile.isOpen()) {
-        logfile.write(line.toLocal8Bit());
-        logfile.write("\n", strlen("\n"));
-        logfile.flush();
-      }
+  // no pager mode just grabs everything and returns true if any lines were recv'd
+  while(true) {
+    QString line = s->readLine(maxCols);
+    if(line.isNull()) break;
+    if(line.endsWith("invalid drawable")) continue; // skip this error!
+    n_lines_recvd++;
+    promptDisp = false;
+    if(taMisc::ext_messages) {
+      append(line);
+      repaint();                    // do a direct repaint when new info comes in!
+    }
+    taMisc::LogEvent(line);
+    if(logfile.isOpen()) {
+      logfile.write(line.toLocal8Bit());
+      logfile.write("\n", strlen("\n"));
+      logfile.flush();
     }
   }
-  else {
-    // pager mode has more complicated logic
-    while((curOutputLn < maxLines) || contPager || quitPager) {
-      QString line = s->readLine(maxCols);
-      if(line.isNull()) break;
-      if(line.endsWith("invalid drawable")) continue; // skip this error!
-      n_lines_recvd++;
-      if(!quitPager) {
-        promptDisp = false;
-        if(taMisc::ext_messages) {
-          append(line);
-          repaint();                    // do a direct repaint when new info comes in!
-        }
-        taMisc::LogEvent(line);
-        if(logfile.isOpen()) {
-          logfile.write(line.toLocal8Bit());
-          logfile.write("\n", strlen("\n"));
-          logfile.flush();
-        }
-        if(!contPager) {
-          curOutputLn++;
-          if(curOutputLn >= maxLines) {
-            append("---Press Return for More, q=quit displaying, c=continue without paging ---");
-            viewport()->update();       // repaint the window, in case it is weird
-            return true;
-          }
-        }
-      }
-    }
-  }
+  // }
+  // else {
+  //   // pager mode has more complicated logic
+  //   while((curOutputLn < maxLines) || contPager || quitPager) {
+  //     QString line = s->readLine(maxCols);
+  //     if(line.isNull()) break;
+  //     if(line.endsWith("invalid drawable")) continue; // skip this error!
+  //     n_lines_recvd++;
+  //     if(!quitPager) {
+  //       promptDisp = false;
+  //       if(taMisc::ext_messages) {
+  //         append(line);
+  //       }
+  //       repaint();                    // do a direct repaint when new info comes in!
+  //       taMisc::LogEvent(line);
+  //       if(logfile.isOpen()) {
+  //         logfile.write(line.toLocal8Bit());
+  //         logfile.write("\n", strlen("\n"));
+  //         logfile.flush();
+  //       }
+  //       if(!contPager) {
+  //         curOutputLn++;
+  //         if(curOutputLn >= maxLines) {
+  //           append("---Press Return for More, q=quit displaying, c=continue without paging ---");
+  //           viewport()->update();       // repaint the window, in case it is weird
+  //           return true;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   if(scrolled_to_end) {         // keep on keeping on..
     gotoEnd();

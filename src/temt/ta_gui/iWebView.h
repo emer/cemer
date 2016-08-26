@@ -73,6 +73,7 @@ public:
 public slots:
   void  downloadRequested(QWebEngineDownloadItem*);
   void  authenticationRequired(const QUrl& url, QAuthenticator* auth);
+  void  proxyAuthenticationRequired(const QUrl& url, QAuthenticator* auth, const QString& );
   
 signals:
   void            sigCreateWindow(QWebEnginePage::WebWindowType type,
