@@ -314,7 +314,7 @@ public:
   bool          needs_wt_sym;   // #HIDDEN #NO_SAVE tmp flag managed by Init_Weights to determine if any connections have the wt_limits.sym flag checked and thus need weight symmetrizing to happen
 
   Usr1SaveFmt   usr1_save_fmt;  // #CAT_File #EXPERT save network for -USR1 signal: full net or weights
-  WtSaveFormat  wt_save_fmt;    // #CAT_File #EXPERT format to save weights in if saving weights
+  WtSaveFormat  wt_save_fmt;    // #CAT_File format to save weights in if saving weights
 
   int           n_units;        // #READ_ONLY #SHOW #CAT_Structure total number of units in the network
   int64_t       n_cons;         // #READ_ONLY #SHOW #CAT_Structure total number of connections in the network
@@ -745,9 +745,6 @@ public:
   virtual bool    AutoBuild();
   // #CAT_Structure called by ProjectBase::AutoBuildNets() -- does auto-building and loading of weight files after project is loaded
     
-  virtual String  MemoryReport(bool print = true);
-  // #CAT_Statistic report about memory allocation for the network
-
   virtual bool  CheckBuild(bool quiet=false);
   // #CAT_Structure check if network units are built
   virtual bool  CheckConnect(bool quiet=false);
@@ -1123,6 +1120,9 @@ public:
   // #CAT_Structure remove a projection between two layers, if it exists
   virtual bool   RemoveLayer(const String& nm) { return layers.RemoveName(nm); }
   // #CAT_Structure remove layer with given name, if it exists
+
+  virtual String  MemoryReport(bool print = true);
+  // #CAT_Statistic #MENU #MENU_ON_Structure report about memory allocation for the network
 
   virtual void  UpdateLayerGroupGeom();
   // #IGNORE update layer group geometries (max_disp_size, positions) and max_disp_size of of network based on current layer layout
