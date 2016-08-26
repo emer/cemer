@@ -97,9 +97,8 @@ void BpConSpec::Defaults_init() {
   lrate = .2f;
   cur_lrate = .2f;
   lrate_sched.interpolate = false;
-  momentum_type = BEFORE_LRATE;
   momentum = 0.0f;
-  momentum_c = .1f;
+  decay_type = NO_DECAY;
   decay = 0.0f;
   decay_fun = NULL;
 }
@@ -114,7 +113,33 @@ void BpConSpec::InitLinks() {
 void BpConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   lrate_sched.UpdateAfterEdit_NoGui();
-  momentum_c = 1.0f - momentum;
+
+  if(taMisc::is_loading && decay_fun) {
+    if(decay_fun == Bp_Simple_WtDecay)
+      decay_type = SIMPLE_DECAY;
+    else if(decay_fun == Bp_WtElim_WtDecay)
+      decay_type = ELIMINATION;
+    decay_fun = NULL;
+  }
+
+  if(momentum > 0.0f && decay_type != NO_DECAY) {
+    if(decay_type == SIMPLE_DECAY)
+      wt_updt = WU_MOMENT_SIMPLE;
+    else
+      wt_updt = WU_MOMENT_ELIM;
+  }
+  else if(momentum > 0.0f) {
+    wt_updt = WU_MOMENT;
+  }
+  else if(decay_type == SIMPLE_DECAY) {
+    wt_updt = WU_SIMPLE_DECAY;
+  }
+  else if(decay_type == ELIMINATION) {
+    wt_updt = WU_ELIMINATION;
+  }
+  else {
+    wt_updt = WU_DWT_ONLY;
+  }
 }
 
 void BpConSpec::SetCurLrate(int epoch) {
@@ -132,14 +157,14 @@ void BpConSpec::LogLrateSched(int epcs_per_step, float n_steps) {
   UpdateAfterEdit();            // needed to update the sub guys
 }
 
+// these are both OBSOLETE as of 8.0, 8/2016 -- delete at some future point (
 void Bp_Simple_WtDecay(BpConSpec* spec, float& wt, float& dwt) {
   dwt -= spec->decay * wt;
 }
 
 void Bp_WtElim_WtDecay(BpConSpec* spec, float& wt, float& dwt) {
-  const float wt_sq = wt * wt;
-  float denom = (1.0f + wt_sq);
-  dwt -= spec->decay * ((2.0f * wt_sq) / (denom * denom));
+  float denom = (1.0f + wt * wt);
+  dwt -= (spec->decay * wt) / (denom * denom); // note: before 8.0, had wt_sq in numerator!  bad error -- only decays for positive weights!
 }
 
 

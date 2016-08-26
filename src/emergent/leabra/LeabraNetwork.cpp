@@ -1897,7 +1897,6 @@ void LeabraNetwork::Compute_dWt() {
   Compute_dWt_Layer_pre();
 
 // #ifdef CUDA_COMPILE
-//   NET_THREAD_CALL(LeabraNetwork::Compute_dWt_VecVars_Thr);
 //   Cuda_Compute_dWt();
 //   return;
 // #endif

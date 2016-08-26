@@ -65,10 +65,10 @@ public:
   bool          sym;            // if true, also symmetrize weights with those in reciprocal connections, during weight initialization process -- this is automatically turned off if the random variance (rnd.var) in the weights is set to 0 (e.g., for fixed weight patterns)
   bool          sym_fm_top;     // #CONDSHOW_ON_sym if symmetrizing, and this is true, then top-down weights end up driving the symmetrized weights -- otherwise the bottom-up end of driving (default)
 
-  void  ApplyMinLimit(float& wt)        { if(wt < min) wt = min; }
-  void  ApplyMaxLimit(float& wt)        { if(wt > max) wt = max; }
+  inline void  ApplyMinLimit(float& wt)        { if(wt < min) wt = min; }
+  inline void  ApplyMaxLimit(float& wt)        { if(wt > max) wt = max; }
 
-  void  ApplyLimits(float& wt)
+  inline void  ApplyLimits(float& wt)
   { if(type == GT_MIN)          ApplyMinLimit(wt);
     else if(type == LT_MAX)     ApplyMaxLimit(wt);
     else if(type == MIN_MAX)    { ApplyMinLimit(wt); ApplyMaxLimit(wt); } }

@@ -194,7 +194,7 @@ public:
     PLUS_PHASE = 1,		// plus phase
   };
 
-  enum UnitVecVars {            // unit variables that have special vectorized storage, encoded at end of trial, in time for compute_dwt function
+  enum UnitVecVars {            // unit variables that have special vectorized storage, encoded at end of trial, in time for compute_dwt function -- note: not currently using!
     AVG_S,
     AVG_M,
     AVG_L,
