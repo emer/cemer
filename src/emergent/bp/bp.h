@@ -465,7 +465,7 @@ public:
     GAUSS,                      // gaussian applied to the standard dot-product netinput -- also known as a 'bump' function
     RBF,                        // radial basis function activation -- uses distance-based net input (net input is distance between activations and weights, instead of usual dot product) and runs that through a gaussian function to produce a radial basis function kernel activation
     MAX_POOL,                   // compute the activation = max over input activations, and send backprop error only back to max input, rest = 0
-    SOFTMAX,                    // soft-max over the units within the layer -- requires multiple iterations to compute activation -- useful for single-winner output layers (e.g., localist classification outputs) -- unlike in 8.0, this does NOT require an exponential layer input -- everything is done internally
+    SOFTMAX,                    // soft-max over the units within the layer -- does a few passes to compute activation -- useful for single-winner output layers (e.g., localist classification outputs) -- unlike in 8.0, this does NOT require an exponential layer input -- everything is done internally -- implies CROSS_ENTROPY error so that derivative is simple, and is ONLY applicable to output (TARGET) layers
   };
 
   enum BpErrFun {                // type of error function to use -- replaces err_fun setting from earlier versions 

@@ -23,7 +23,7 @@
 #include <QPrinter>
 #include <QShortcut>
 #include <QSizePolicy>
-#include <QTextEdit>
+#include <iTextEdit>
 #include <QPalette>
 #include <QClipboard>
 
@@ -41,7 +41,7 @@ void iDialogTextEdit::init(bool readOnly_) {
   if(wd > 640) wd = 640;        // don't make it too wide..
   this->resize(wd, ht);
   QVBoxLayout* layOuter = new QVBoxLayout(this);
-  txtText = new QTextEdit(this);
+  txtText = new iTextEdit(this);
   layOuter->addWidget(txtText);
   QHBoxLayout* layButtons = new QHBoxLayout();
   layButtons->setMargin(2);

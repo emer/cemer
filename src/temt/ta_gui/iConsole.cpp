@@ -213,7 +213,7 @@ iConsole::iConsole(QWidget *parent, const char *name, bool initiInterceptor)
   connect(this, SIGNAL(anchorClicked(const QUrl&)), SLOT(linkClicked(const QUrl&)));
 
 #ifndef TA_OS_WIN
-  if(initiInterceptor) {
+  if(initiInterceptor && taMisc::ext_messages) {
     //Initialize the interceptors
     stdoutiInterceptor = new iInterceptor(this);
     stdoutiInterceptor->initialize(1);

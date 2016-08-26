@@ -234,6 +234,15 @@ void BpUnitSpec::InitLinks() {
 
 void BpUnitSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  if(taMisc::is_loading && err_fun) {
+    if(err_fun == Bp_Squared_Error)
+      error_fun = SQUARED_ERR;
+    else if(err_fun == Bp_CrossEnt_Error)
+      error_fun = CROSS_ENTROPY;
+    err_fun = NULL;
+  }
+  
   // update activation ranges from fun type
   switch(act_fun) {
   case SIGMOID:

@@ -28,7 +28,7 @@
 #include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
-// #include <tabMisc>
+#include <iDialogTextEdit>
 
 #include <QToolButton>
 
@@ -47,9 +47,12 @@ void taiWidgetMethod::ShowReturnVal(cssEl* rval, IWidgetHost* host,
     rval->Edit(true); // always show modally
     return;
   }
-  String val = meth_name + " Return Value: \n";
-  val += rval->PrintStr();
-  taMisc::Confirm(val);
+  String title = meth_name + " Return Value: \n";
+  iDialogTextEdit* td = new iDialogTextEdit(true); // read only
+  td->setWindowTitle(title);
+  td->setText(rval->PrintStr());
+  td->exec();
+  td->deleteLater();
 }
 
 taiWidgetMethod::taiWidgetMethod(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
