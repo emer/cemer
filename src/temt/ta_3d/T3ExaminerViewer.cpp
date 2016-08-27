@@ -1431,6 +1431,9 @@ QImage  T3ExaminerViewer::grabImage() {
 #else
 #ifdef QT_OPEN_GL_WIDGET
   QImage img = quarter->grabFramebuffer();
+#ifdef TA_OS_WIN
+  return img;
+#else
   // this fixes the problem!!  framebuffer is premultiplied but grabFramebuffer routine
   // doesn't know it! see https://bugreports.qt.io/browse/QTBUG-55245
   QImage fiximg(img.constBits(), img.width(), img.height(),
@@ -1442,6 +1445,7 @@ QImage  T3ExaminerViewer::grabImage() {
   // taimg.ScaleColors(1.3f);         // linear scaling
   // img = taimg.GetImage();
   //  return img;
+#endif
 #else
   return quarter->grabFrameBuffer(true); // true = get alpha
 #endif // QT_OPEN_GL_WIDGET
