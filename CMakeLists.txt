@@ -306,6 +306,8 @@ if (WIN32)
     "${EMER_SVN_LIBS_DIR}/bin/*.dll"
     "${COINDIR}/bin/*.dll"
     "${QT_BINARY_DIR}/*.dll"
+    "${QT_BINARY_DIR}/QtWebEngineProcess.exe"
+    "${QT_RESOURCES_DIR}/*"
   )
   install(FILES ${OUR_MISC_LIBS_FILES}
     DESTINATION bin

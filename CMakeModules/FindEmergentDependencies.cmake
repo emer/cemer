@@ -92,6 +92,7 @@ if (QT_USE_5)
   SET(QT_LIBRARY_DIR "${_qt5Core_install_prefix}/lib")
   SET(QT_PLUGINS_DIR "${_qt5Core_install_prefix}/plugins")
   SET(QT_TRANSLATIONS_DIR "${_qt5Core_install_prefix}/translations")
+  SET(QT_RESOURCES_DIR "${_qt5Core_install_prefix}/resources")
 
   # Instruct CMake to run moc automatically when needed.
 #  set(CMAKE_AUTOMOC ON)
