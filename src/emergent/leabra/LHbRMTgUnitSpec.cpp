@@ -278,7 +278,7 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   // pvneg_discount - should not fully predict away an expected punishment
   if (vspatch_neg_net > 0.0f) {
-    //vspatch_neg_net = MIN(vspatch_neg_net,pv_neg); // helps mag .05, but
+    //vspatch_neg_net = fminf(vspatch_neg_net,pv_neg); // helps mag .05, but
     // prevents burst after mag 1.0 training, then test 0.5
     vspatch_neg_net *= lhb.pvneg_discount;
   }
@@ -289,9 +289,9 @@ void LHbRMTgUnitSpec::Compute_Lhb(LeabraUnitVars* u, LeabraNetwork* net, int thr
   
   // don't double count pv going through the matrix guys
   float net_pos = vsmatrix_pos_net;
-  if(pv_pos) { net_pos = MAX(pv_pos, vsmatrix_pos_net); }
+  if(pv_pos) { net_pos = fmaxf(pv_pos, vsmatrix_pos_net); }
   float net_neg = vsmatrix_neg_net;
-  if(pv_neg) { net_neg = MAX(pv_neg, vsmatrix_neg_net); }
+  if(pv_neg) { net_neg = fmaxf(pv_neg, vsmatrix_neg_net); }
   
   float net_lhb = net_neg - net_pos + vspatch_pos_net - vspatch_neg_net;
   

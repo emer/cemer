@@ -150,7 +150,7 @@ public:
   inline void C_Compute_dWt_DaHebbVS
     (float& dwt, const float da_p, const bool d2r, const float ru_act,
      const float deep_lrn, const float su_act, const float lrate_eff) {
-    dwt += lrate_eff * GetDa(da_p, d2r) * MAX(ru_act, deep_lrn) * su_act;
+    dwt += lrate_eff * GetDa(da_p, d2r) * fmaxf(ru_act, deep_lrn) * su_act;
   }
   // #IGNORE
 
@@ -285,7 +285,7 @@ public:
       tr *= reset_factor;
     }
     
-    ntr = MAX(ru_act, deep_lrn) * su_act;
+    ntr = fmaxf(ru_act, deep_lrn) * su_act;
     
     float decay_factor = fabs(ntr); // decay is function of new trace
     if(decay_factor > 1.0f) decay_factor = 1.0f;

@@ -56,6 +56,8 @@ void NetworkCudaSpec::Initialize() {
 #else
   on = false;
 #endif
+  sync_units = false;
+  sync_cons = false;
   min_threads = 32;
   max_threads = 1024;
   cons_per_thread = 2;
@@ -561,14 +563,14 @@ void Network::Build() {
 
   Compute_PrjnDirections();
   
-  if(HasNetFlag(BUILD_INIT_WTS)) {
-    Init_Weights();
-  }
-
 #ifdef CUDA_COMPILE
   Cuda_BuildNet();
 #endif  
   
+  if(HasNetFlag(BUILD_INIT_WTS)) {
+    Init_Weights();
+  }
+
   StructUpdate(false);
   --taMisc::no_auto_expand;
   taMisc::DoneBusy();
@@ -810,14 +812,9 @@ void Network::AllocUnitConGpThreadMem() {
     thrs_n_send_cgps[i] = 0;
   }
 
-  int st_idx = 1;               // skip over the initial null unit for threads!
-#ifdef CUDA_COMPILE
-  st_idx = 0;                   // except in CUDA, we keep thread and flat idx same!
-#endif
-  
-  for(int i=st_idx; i< n_units_built; i++) {
+  for(int i=1; i< n_units_built; i++) {
     Unit* un = units_flat[i];
-    int thr_no = (i-st_idx) % n_thrs_built; // just increment sequentialy 0,1,2..n_threads-1
+    int thr_no = (i-1) % n_thrs_built; // just increment sequentialy 0,1,2..n_threads-1
     units_thrs[i] = thr_no;
     int thr_un_idx = thrs_n_units[thr_no]++;
     if(TestError(thr_un_idx >= max_thr_n_units, "AllocUnitConGpThreadMem",
@@ -904,6 +901,7 @@ void Network::InitUnitThreadIdxs(int thr_no) {
   }
 
   int thr_un_idx = 0;
+  
   int act_lay_idx = 0;
   int prv_act_lay_idx = -1;
   int ungp_idx = 0;
@@ -916,7 +914,8 @@ void Network::InitUnitThreadIdxs(int thr_no) {
 
     Unit* un = units_flat[i];
     if(TestError(un->thr_un_idx != thr_un_idx, "InitUnitThreadIdxs",
-                 "Programmer error -- un->thr_un_idx != thr_un_idx -- please report!")) {
+                 "Programmer error -- un->thr_un_idx != thr_un_idx -- please report!",
+                 String(un->thr_un_idx), "!=", String(thr_un_idx), "idx:", String(i))) {
       return;
     }
     lay = un->own_lay();
@@ -1424,6 +1423,14 @@ String Network::MemoryReport(bool print) {
          << "      total_nonshared:      " << (own_cons_tot_size_nonshared) << "\n"
          << "      total_shared:         " << (own_cons_tot_size -
                                                own_cons_tot_size_nonshared) << "\n";
+#ifdef CUDA_COMPILE
+  report << "\n\nCUDA specific memory:\n"
+         << "    unit_spec_mem:          " << taMisc::GetSizeString
+    (cuda_net->unit_spec_mem_tot) << "\n"
+         << "    con_spec_mem:           " << taMisc::GetSizeString
+    (cuda_net->con_spec_mem_tot) << "\n";
+#endif    
+  
   if(print)
     taMisc::Info(report);
   return report;
@@ -4220,8 +4227,9 @@ void Network::Cuda_BuildNet() {
   cuda_net->NetToDevice();  // copy everything over to the device
   
   cuda_net->OwnCons_HostToDevice(true); // sync
-  // derived types need to call this!
-  // Cuda_UpdateConParams();
+
+  Cuda_MakeUnitSpecs();         // make and copy to device
+  Cuda_MakeConSpecs();
 }
 
 void Network::Cuda_InitConGroups() {
@@ -4249,35 +4257,122 @@ void Network::Cuda_InitConGroups() {
   }
 }
 
+void Network::Cuda_MakeUnitSpecs() {
+  cuda_unit_specs.Reset();
+  for(int li=0; li< n_layers_built; li++) {
+    int st_ui = ThrLayUnStart(0, li);
+    int ed_ui = ThrLayUnEnd(0, li);
+    Layer* lay = ActiveLayer(li);
+    UnitSpec* us = lay->GetUnitSpec();
+    int us_idx = cuda_unit_specs.FindEl(us);
+    if(us_idx < 0) {
+      cuda_unit_specs.Add(us); // does ref
+      us_idx = cuda_unit_specs.size-1;
+    }
+    for(int ui=st_ui; ui < ed_ui; ui++) {
+      UnitVars_cuda* uv = cuda_net->GetUnitVars
+        (cuda_net->units_mem_h, cuda_net->unit_vars_size, ui);
+      uv->cuda_unit_spec_idx = us_idx;
+    }
+  }
+  bool ok = cuda_net->AllocUnitSpecs(cuda_unit_specs.size);
+  if(TestError(!ok, "Cuda_MakeUnitSpecs",
+               "alloc of unit specs failed -- perhaps there are too many to fit in the 64k constant memory limit?  n_specs:", String(cuda_unit_specs.size), " size: ",
+               String(cuda_net->unit_spec_size), " total: ",
+               taMisc::GetSizeString(cuda_net->unit_spec_mem_tot))) {
+    ClearIntact();
+  }
+  Cuda_UpdateUnitSpecs();
+}
 
-// void Network::Cuda_UpdateConParams() {
-  // const int nu = units_flat.size;
+void Network::Cuda_UpdateUnitSpecs() {
+  if(cuda_unit_specs.size != cuda_net->n_unit_specs) {
+    ClearIntact();
+    taMisc::Error("number of unitspecs has changed from when network was built -- CUDA cannot continue running -- rebuild network!");
+    return;
+  }
+     
+  for(int usi=0; usi < cuda_unit_specs.size; usi++) {
+    UnitSpec* us = (UnitSpec*)cuda_unit_specs[usi];
+    UnitSpec_cuda* cuda_us = cuda_net->GetUnitSpec
+      (cuda_net->unit_spec_mem_h, cuda_net->unit_spec_size, usi);
+    Cuda_CopyUnitSpec(cuda_us, us);
+  }
 
-  // bool first = true;
-  // int uncn = 0;
-  // for(int i=1;i<nu;i++) {     // 0 = dummy idx
-  //   LeabraUnit* un = (LeabraUnit*)units_flat[i];
-  //   for(int p=0;p<un->send.size;p++) {
-  //     LeabraConGroup* sc = (LeabraConGroup*)un->send[p];
-  //     if(!sc->PrjnIsActive()) continue;
-  //     LeabraConSpec* cs = (LeabraConSpec*)sc->GetConSpec();
+  cuda_net->UnitSpecs_HostToDevice();
+}
 
-  //     cuda_net->ConParam_h(uncn, LeabraConSpecCuda::S_MIX) = cs->xcal.s_mix;
-  //     cuda_net->ConParam_h(uncn, LeabraConSpecCuda::M_MIX) = cs->xcal.m_mix;
-  //     cuda_net->ConParam_h(uncn, LeabraConSpecCuda::THR_L_MIX) = cs->xcal.thr_l_mix;
-  //     // cuda_net->ConParam_h(uncn, LeabraConSpecCuda::THR_MAX) = cs->xcal.thr_max;
-  //     cuda_net->ConParam_h(uncn, LeabraConSpecCuda::CUR_LRATE) = cs->cur_lrate;
+void Network::Cuda_MakeConSpecs() {
+  cuda_con_specs.Reset();
+  for(int li=0; li < n_layers_built; li++) {
+    int st_ui = ThrLayUnStart(0, li);
+    int ed_ui = ThrLayUnEnd(0, li);
+    Layer* lay = ActiveLayer(li);
 
-  //     if(first) {
-  //       cuda_net->wt_sig_fun_h = cs->wt_sig_fun.el;
-  //       first = false;
-  //     }
+    // first doing recv
+    for(int pi=0; pi < lay->projections.size; pi++) {
+      Projection* prjn = lay->projections[pi];
+      if(prjn->NotActive()) continue;
+      ConSpec* cs = prjn->GetConSpec();
+      int cs_idx = cuda_con_specs.FindEl(cs);
+      if(cs_idx < 0) {
+        cuda_con_specs.Add(cs); // does ref
+        cs_idx = cuda_con_specs.size-1;
+      }
+      for(int ui=st_ui; ui < ed_ui; ui++) {
+        // this is for recv as iterating over projections
+        ConGroup_cuda* cg = cuda_net->GetUnConGroup
+          (cuda_net->recv_cgp_mem_h, cuda_net->recv_cgp_start_h, cuda_net->con_group_size,
+           ui, pi);
+        cg->con_spec_idx = cs_idx;
+      }
+    }
+    
+    // then send
+    for(int pi=0; pi < lay->send_prjns.size; pi++) {
+      Projection* prjn = lay->send_prjns[pi];
+      if(prjn->NotActive()) continue;
+      ConSpec* cs = prjn->GetConSpec();
+      int cs_idx = cuda_con_specs.FindEl(cs);
+      if(cs_idx < 0) {
+        cuda_con_specs.Add(cs); // does ref
+        cs_idx = cuda_con_specs.size-1;
+      }
+      for(int ui=st_ui; ui < ed_ui; ui++) {
+        // this is for recv as iterating over projections
+        ConGroup_cuda* cg = cuda_net->GetUnConGroup
+          (cuda_net->send_cgp_mem_h, cuda_net->send_cgp_start_h, cuda_net->con_group_size,
+           ui, pi);
+        cg->con_spec_idx = cs_idx;
+      }
+    }
+  }
+  bool ok = cuda_net->AllocConSpecs(cuda_con_specs.size);
+  if(TestError(!ok, "Cuda_MakeConSpecs",
+               "alloc of con specs failed -- perhaps there are too many to fit in the 64k constant memory limit?  n_specs:", String(cuda_con_specs.size), " size: ",
+               String(cuda_net->con_spec_size), " total: ",
+               taMisc::GetSizeString(cuda_net->con_spec_mem_tot))) {
+    ClearIntact();
+  }
+  Cuda_UpdateConSpecs();
+}
 
-  //     ++uncn;
-  //   }
-  // }
-  // cuda_net->UpdateConParams();
-// }
+void Network::Cuda_UpdateConSpecs() {
+  if(cuda_con_specs.size != cuda_net->n_con_specs) {
+    ClearIntact();
+    taMisc::Error("number of conspecs has changed from when network was built -- CUDA cannot continue running -- rebuild network!");
+    return;
+  }
+     
+  for(int csi=0; csi < cuda_con_specs.size; csi++) {
+    ConSpec* cs = (ConSpec*)cuda_con_specs[csi];
+    ConSpec_cuda* cuda_cs = cuda_net->GetConSpec
+      (cuda_net->con_spec_mem_h, cuda_net->con_spec_size, csi);
+    Cuda_CopyConSpec(cuda_cs, cs);
+  }
+
+  cuda_net->ConSpecs_HostToDevice();
+}
 
 void Network::Cuda_UnitVarsToHost() {
   cuda_net->UnitVars_DeviceToHost(true); // sync

@@ -1325,7 +1325,7 @@ void LeabraNetwork::Compute_CycleStats_Post() {
     acts_eq.CalcAvg();
     acts_raw.CalcAvg();
     if(lay->HasExtFlag(UnitVars::TARG)) {
-      trg_max_act = MAX(trg_max_act, acts_eq.max);
+      trg_max_act = fmaxf(trg_max_act, acts_eq.max);
     }
     if(lay->Iconified()) {
       lay->icon_value = acts_eq.avg;

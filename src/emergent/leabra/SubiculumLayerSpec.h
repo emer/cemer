@@ -37,7 +37,7 @@ public:
 
 
   inline float	ComputeNovelty(float norm_err) {
-    float eff_nov = nov_rescale * MIN(norm_err, max_norm_err);
+    float eff_nov = nov_rescale * fminf(norm_err, max_norm_err);
     return eff_nov;
   }
   inline float	ComputeLrate(float novelty) {

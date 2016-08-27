@@ -67,7 +67,7 @@ public:
                                     const float fwt)
   {
     float wt_above_floor = fwt - lat_amyg.wt_decay_floor;
-    wt_above_floor = MAX(wt_above_floor,0.0f); // positive-rectify
+    wt_above_floor = fmaxf(wt_above_floor,0.0f); // positive-rectify
     dwt += (cur_lrate * su_act * GetDa(da_p)) - lat_amyg.wt_decay_rate * wt_above_floor;
     //dwt += cur_lrate * su_act * GetDa(da_p, fwt);
   }

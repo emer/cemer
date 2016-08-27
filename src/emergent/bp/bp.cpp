@@ -13,8 +13,6 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-
-
 // bp.cc
 
 #include "bp.h"
@@ -33,6 +31,11 @@ eTypeDef_Of(BpWizard);
 #ifdef DMEM_COMPILE
 #include <mpi.h>
 #endif
+
+#ifdef CUDA_COMPILE
+#include "bp_cuda.h"
+#endif
+
 
 TA_BASEFUNS_CTORS_DEFN(BpConSpec);
 TA_BASEFUNS_CTORS_DEFN(NLXX1ActSpec);
@@ -330,8 +333,8 @@ void BpUnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
 
     if(act_fun == SOFTMAX) {
       float expnet = u->net;
-      expnet = MAX(expnet, -50.0f);
-      expnet = MIN(expnet, 50.0f);
+      expnet = fmaxf(expnet, -50.0f);
+      expnet = fminf(expnet, 50.0f);
       ((BpUnitVars*)u)->misc1 = expf(expnet);
     }
   }
@@ -360,39 +363,39 @@ void BpUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
     act_range.Clip(u->act);
   }
   else if(noise_type == DROPOUT) {
-    if(Random::BoolProb(noise.mean, thr_no))
+    if(Random::BoolProb(noise.mean, thr_no)) {
       u->act = 0.0f;            // blank it
+      u->SetExtFlag(UnitVars::UN_FLAG_1); // dropout flag
+    }
+    else {
+      u->ClearExtFlag(UnitVars::UN_FLAG_1);
+    }      
   }
 }
 
 void BpUnitSpec::Compute_Error(BpUnitVars* u, BpNetwork* net, int thr_no) {
   if(!u->ext_flag & UnitVars::TARG) return;
+  if(u->ext_flag & UnitVars::UN_FLAG_1) return; // dropout flag
 
-  if(error_fun == SQUARED_ERR || act_fun == SOFTMAX) { // softmax always uses this!
-    float err = u->targ - u->act;                      // correct err for softmax
-    if(fabs(err) < err_tol) {
-      if(save_err)
-        u->err = 0.0f;
-    }
-    else {
+  float err = u->targ - u->act;
+  if(fabsf(err) < err_tol) {
+    if(save_err)
+      u->err = 0.0f;
+  }
+  else {
+    if(error_fun == SQUARED_ERR || act_fun == SOFTMAX) { // softmax always uses this!
       u->dEdA += err;
       if(save_err)
         u->err = err * err;
     }
-  }
-  else {                        // CROSS_ENTROPY
-    float err = u->targ - u->act;
-    if(fabs(err) < err_tol) {
-      if(save_err)
-        u->err = 0.0f;
-    }
-    else {
+    else {                        // CROSS_ENTROPY
       err /= (u->act - act_range.min) * (act_range.max - u->act) * act_range.scale;
-      float a = ClipSigAct(act_range.Normalize(u->act));
-      float t = act_range.Normalize(u->targ);
       u->dEdA += err;
-      if(save_err)
+      if(save_err) {
+        float a = ClipSigAct(act_range.Normalize(u->act));
+        float t = act_range.Normalize(u->targ);
         u->err = (t * logf(a) + (1.0f - t) * logf(1.0f - a));
+      }
     }
   }
 }
@@ -403,6 +406,7 @@ void BpUnitSpec::Compute_dEdA(BpUnitVars* u, BpNetwork* net, int thr_no) {
   if(net->bp_to_inputs || (u->ext_flag & UnitVars::EXT)) return;
   u->dEdA = 0.0f;
   u->err = 0.0f;
+  if(u->ext_flag & UnitVars::UN_FLAG_1) return; // dropout flag
   const int nscg = net->ThrUnNSendConGps(thr_no, u->thr_un_idx);
   for(int g=0; g<nscg; g++) {
     ConGroup* sgp = net->ThrUnSendConGroup(thr_no, u->thr_un_idx, g);
@@ -424,11 +428,16 @@ void BpUnitSpec::Compute_dEdA(BpUnitVars* u, BpNetwork* net, int thr_no) {
 }
 
 void BpUnitSpec::Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) {
+  if(u->ext_flag & UnitVars::UN_FLAG_1) { // dropout flag
+    u->dEdNet = 0.0f;
+    return;
+  }
   u->dEdNet = u->dEdA * ActDeriv(u->net, u->act, thr_no);
 }
 
 void BpUnitSpec::Compute_dWt(UnitVars* u, Network* net, int thr_no) {
   if(u->ext_flag & UnitVars::EXT)  return; // don't compute dwts for clamped units
+  if(u->ext_flag & UnitVars::UN_FLAG_1) return; // dropout flag
   inherited::Compute_dWt(u, net, thr_no);
 }
 
@@ -465,7 +474,7 @@ void BpUnitSpec::GraphActFun(DataTable* graph_data, float min, float max) {
 // NOTE: OBSOLETE as of 8.0, 8/2016
 void Bp_Squared_Error(BpUnitSpec* spec, BpUnitVars* u) {
   float err = u->targ - u->act;
-  if(fabs(err) < spec->err_tol) {
+  if(fabsf(err) < spec->err_tol) {
     u->err = 0.0f;
   }
   else {
@@ -476,7 +485,7 @@ void Bp_Squared_Error(BpUnitSpec* spec, BpUnitVars* u) {
 
 void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnitVars* u) {
   float err = u->targ - u->act;
-  if(fabs(err) < spec->err_tol) {
+  if(fabsf(err) < spec->err_tol) {
     u->err = 0.0f;
   }
   else {
@@ -646,7 +655,6 @@ void BpNetwork::Compute_dEdA_dEdNet_Thr(int thr_no) {
     Layer* lay = ActiveLayer(li);
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
-    bool has_targ = false;
     for(int ui = ust; ui < ued; ui++) {
       BpUnitVars* uv = (BpUnitVars*)ThrUnitVars(thr_no, ui);
       if(uv->lesioned()) continue;
@@ -716,6 +724,14 @@ void BpNetwork::Trial_Run() {
     NET_THREAD_CALL(BpNetwork::SetCurLrate_Thr);
     prev_epoch = epoch;
   }
+#ifdef CUDA_COMPILE
+  if(cuda.on) {
+    DataUpdate(true);
+    Cuda_Trial_Run();
+    DataUpdate(false);
+    return;
+  }
+#endif
   DataUpdate(true);
   NET_THREAD_CALL(BpNetwork::Trial_Run_Thr);
   DataUpdate(false);
@@ -724,20 +740,64 @@ void BpNetwork::Trial_Run() {
 void BpNetwork::Trial_Run_Thr(int thr_no) {
   Compute_NetinAct_Thr(thr_no);
 
-  threads.SyncSpin(thr_no);
+  threads.SyncSpin(thr_no, 0);
   
-  Compute_dEdA_dEdNet_Thr(thr_no);
-
-  threads.SyncSpin(thr_no);
-
-  // compute the weight err derivatives (only if not testing...)
   if(train_mode == TRAIN) {
+    Compute_dEdA_dEdNet_Thr(thr_no);
+    threads.SyncSpin(thr_no, 1);
     Compute_dWt_Thr(thr_no);
   }
   else {
-    Compute_Error();            // for display purposes only..
+    Compute_Error();            // for display, stats purposes only..
   }
 }
+
+
+
+////////////////////////////////////////////////////////
+//              CUDA  Code
+
+#ifdef CUDA_COMPILE
+
+void BpNetwork::Cuda_CopyUnitSpec(void* cuda_us, const UnitSpec* src) {
+  BpUnitSpec_cuda* cus = (BpUnitSpec_cuda*)cuda_us;
+  BpUnitSpec* us = (BpUnitSpec*)src;
+  cus->act_fun = (BpUnitSpec_cuda::BpActFun)us->act_fun;
+  cus->error_fun = (BpUnitSpec_cuda::BpErrFun)us->error_fun;
+  cus->err_tol = (BpUnitSpec_cuda::BpActFun)us->err_tol;
+}
+
+void BpNetwork::Cuda_CopyConSpec(void* cuda_cs, const ConSpec* src) {
+  BpConSpec_cuda* ccs = (BpConSpec_cuda*)cuda_cs;
+  BpConSpec* cs = (BpConSpec*)src;
+  ccs->cur_lrate = cs->cur_lrate;
+  ccs->momentum = cs->momentum;
+  ccs->decay_type = (BpConSpec_cuda::DecayType)cs->decay_type;
+  ccs->decay = cs->decay;
+  ccs->wt_updt = (BpConSpec_cuda::WtUpdtType)cs->wt_updt;
+}
+
+void BpNetwork::Cuda_Trial_Run() {
+  Cuda_Compute_NetinAct();
+  Cuda_Compute_dEdA_dEdNet();
+  if(cuda.sync_units) {
+    Cuda_UnitVarsToHost();
+  }
+  if(cuda.sync_cons) {
+    Cuda_ConStateToHost();
+  }
+}
+
+void BpNetwork::Cuda_Compute_NetinAct() {
+  ((Bp_cuda*)cuda_net)->Compute_NetinAct();
+}
+
+void BpNetwork::Cuda_Compute_dEdA_dEdNet() {
+  ((Bp_cuda*)cuda_net)->Compute_dEdA_dEdNet();
+}
+
+
+#endif // CUDA_COMPILE
 
 
 //////////////////////////

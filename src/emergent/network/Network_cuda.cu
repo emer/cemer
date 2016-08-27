@@ -68,10 +68,16 @@ void Network_cuda::Initialize() {
   // own_cons_avg_size = 0;
   // own_cons_max_vars = 0;
 
-  unit_specs_h = NULL;
-  unit_specs_d = NULL;
-  con_specs_h = NULL;
-  con_specs_d = NULL;
+  n_unit_specs = 0;
+  unit_spec_size = 0;
+  unit_spec_mem_tot = 0;
+  unit_spec_mem_h = NULL;
+  unit_spec_mem_d = NULL;
+  n_con_specs = 0;
+  con_spec_size = 0;
+  con_spec_mem_tot = 0;
+  con_spec_mem_h = NULL;
+  con_spec_mem_d = NULL;
 }
 
 void Network_cuda::NetFree() {
@@ -100,15 +106,15 @@ void Network_cuda::NetFree() {
   if(units_mem_d)
     cudaFree(units_mem_d);
 
-  if(unit_specs_h)
-    free(unit_specs_h);
-  if(unit_specs_d)
-    cudaFree(unit_specs_d);
+  if(unit_spec_mem_h)
+    free(unit_spec_mem_h);
+  if(unit_spec_mem_d)
+    cudaFree(unit_spec_mem_d);
 
-  if(con_specs_h)
-    free(con_specs_h);
-  if(con_specs_d)
-    cudaFree(con_specs_d);
+  if(con_spec_mem_h)
+    free(con_spec_mem_h);
+  if(con_spec_mem_d)
+    cudaFree(con_spec_mem_d);
 
   if(strms_created) {
     cudaStreamDestroy(strm_memcpy_cons);
@@ -268,19 +274,6 @@ int Network_cuda::SetCudaParams(int min_th, int max_th, int cons_per_th,
   return n_threads;
 }
 
-void Network_cuda::UpdateConParams() {
-  if(!con_params_h) return;
-
-  // int sz =  own_units_x_cons * N_CON_PARAMS * sizeof(float);
-
-  // cudaSafeCall(cudaMemcpy(con_params_d, con_params_h, sz, cudaMemcpyHostToDevice));
-
-  // if(wt_sig_fun_h) {
-  //   cudaSafeCall(cudaMemcpy(wt_sig_fun_d, wt_sig_fun_h, 10002 * sizeof(float),
-  //                           cudaMemcpyHostToDevice));
-  // }
-}
-
 void Network_cuda::OwnCons_HostToDevice(bool sync) {
   if(recv_owns_cons) {
     if(!(recv_cons_mem_h && recv_cons_mem_d)) return;
@@ -345,11 +338,17 @@ void Network_cuda::UnitVars_DeviceToHost(bool sync) {
 
 void Network_cuda::ExtInputToDevice(bool sync) {
   if(!(units_mem_h && units_mem_d)) return;
-  for(int i=0; i< n_layers_built; i++) {
-    int st_ui = LayUnStart(lay_unit_idxs_h, i);
-    int ed_ui = LayUnEnd(lay_unit_idxs_h, i);
+  for(int li=0; li < n_layers_built; li++) {
+    int st_ui = LayUnStart(lay_unit_idxs_h, li);
+    int ed_ui = LayUnEnd(lay_unit_idxs_h, li);
     int nu = ed_ui - st_ui;
 
+    UnitVars_cuda* u = (UnitVars_cuda*)Network_cuda::GetUnitVars
+      (units_mem_h, unit_vars_size, st_ui);
+    
+    if(!((u->ext_flag & UnitVars_cuda::EXT) || (u->ext_flag & UnitVars_cuda::TARG)))
+      continue;
+    
     cudaSafeCall
       (cudaMemcpyAsync(units_mem_d + st_ui * unit_vars_size,
                        units_mem_h + st_ui * unit_vars_size,
@@ -359,6 +358,84 @@ void Network_cuda::ExtInputToDevice(bool sync) {
   if(sync) {
     cudaSafeCall(cudaStreamSynchronize(strm_memcpy_units));
   }
+}
+
+void Network_cuda::TargUnitsToHost(bool sync) {
+  if(!(units_mem_h && units_mem_d)) return;
+  for(int li=0; li < n_layers_built; li++) {
+    int st_ui = LayUnStart(lay_unit_idxs_h, li);
+    int ed_ui = LayUnEnd(lay_unit_idxs_h, li);
+    int nu = ed_ui - st_ui;
+
+    UnitVars_cuda* u = (UnitVars_cuda*)Network_cuda::GetUnitVars
+      (units_mem_h, unit_vars_size, st_ui);
+    
+    if(!(u->ext_flag & UnitVars_cuda::TARG))
+      continue;
+    
+    cudaSafeCall
+      (cudaMemcpyAsync(units_mem_h + st_ui * unit_vars_size,
+                       units_mem_d + st_ui * unit_vars_size,
+                       nu * unit_vars_size,
+                       cudaMemcpyDeviceToHost, strm_memcpy_units));
+  }
+  if(sync) {
+    cudaSafeCall(cudaStreamSynchronize(strm_memcpy_units));
+  }
+}
+
+bool Network_cuda::AllocUnitSpecs(int n_us) {
+  if(unit_spec_mem_h)
+    free(unit_spec_mem_h);
+  if(unit_spec_mem_d)
+    cudaFree(unit_spec_mem_d);
+
+  n_unit_specs = n_us;
+  if(n_us == 0)                 // can't really happen..
+    return false;
+
+  unit_spec_mem_tot = n_unit_specs * unit_spec_size;
+  if(unit_spec_mem_tot > max_constant_mem)
+    return false;
+  
+  unit_spec_mem_h = (char*)malloc(unit_spec_mem_tot);
+  cudaSafeCall(cudaMalloc(&unit_spec_mem_d, n_unit_specs * unit_spec_size));
+  return true;
+}
+
+void Network_cuda::UnitSpecs_HostToDevice() {
+  if(!(unit_spec_mem_h && unit_spec_mem_d)) return;
+  
+  cudaSafeCall
+    (cudaMemcpy(unit_spec_mem_d, unit_spec_mem_h, n_unit_specs * unit_spec_size,
+                cudaMemcpyDeviceToHost));
+}
+
+bool Network_cuda::AllocConSpecs(int n_us) {
+  if(con_spec_mem_h)
+    free(con_spec_mem_h);
+  if(con_spec_mem_d)
+    cudaFree(con_spec_mem_d);
+
+  n_con_specs = n_us;
+  if(n_us == 0)                 // can't really happen..
+    return false;
+
+  con_spec_mem_tot = n_con_specs * con_spec_size;
+  if(con_spec_mem_tot > max_constant_mem)
+    return false;
+  
+  con_spec_mem_h = (char*)malloc(con_spec_mem_tot);
+  cudaSafeCall(cudaMalloc(&con_spec_mem_d, n_con_specs * con_spec_size));
+  return true;
+}
+
+void Network_cuda::ConSpecs_HostToDevice() {
+  if(!(con_spec_mem_h && con_spec_mem_d)) return;
+  
+  cudaSafeCall
+    (cudaMemcpy(con_spec_mem_d, con_spec_mem_h, n_con_specs * con_spec_size,
+                cudaMemcpyDeviceToHost));
 }
 
 

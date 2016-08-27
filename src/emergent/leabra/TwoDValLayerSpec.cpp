@@ -411,7 +411,7 @@ void TwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
       y_avg += y_cur * act_val;
       sum_act += act_val;
     }
-    sum_act = MAX(sum_act, twod.min_sum_act);
+    sum_act = fmaxf(sum_act, twod.min_sum_act);
     if(sum_act > 0.0f) {
       x_avg /= sum_act; y_avg /= sum_act;
     }
@@ -459,7 +459,7 @@ void TwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
         float x_prv, y_prv;  twod.GetUnitVal(vo.idx, x_prv, y_prv);
         float x_d = x_cur - x_prv; float y_d = y_cur - y_prv;
         float dist = x_d * x_d + y_d * y_d;
-        my_mn = MIN(dist, my_mn);
+        my_mn = fminf(dist, my_mn);
       }
       if(my_mn < mn_dist) { vi.val = -1.0f; j++; continue; } // mark with -1 so we know we skipped it
 

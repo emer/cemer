@@ -338,26 +338,26 @@ void VTAUnitSpec::Compute_DaP(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
     }
   }
 
-  float burst_lhb_da = MIN(lhb_da, 0.0f); // if neg, promotes bursting
-  float dip_lhb_da = MAX(lhb_da, 0.0f);   // else, promotes dipping
+  float burst_lhb_da = fminf(lhb_da, 0.0f); // if neg, promotes bursting
+  float dip_lhb_da = fmaxf(lhb_da, 0.0f);   // else, promotes dipping
     
   // absorbing PosPV value - prevents double counting
-  float tot_burst_da = MAX(gains.pv_gain * pospv, gains.pptg_gain * pptg_da_p);
+  float tot_burst_da = fmaxf(gains.pv_gain * pospv, gains.pptg_gain * pptg_da_p);
   // likewise for lhb contribution to bursting (burst_lhb_da non-positive)
-  tot_burst_da = MAX(tot_burst_da, -gains.lhb_gain * burst_lhb_da);
+  tot_burst_da = fmaxf(tot_burst_da, -gains.lhb_gain * burst_lhb_da);
    
   // pos PVi shunting
   float net_burst_da = tot_burst_da - vspospvi;
-  net_burst_da = MAX(net_burst_da, 0.0f);
+  net_burst_da = fmaxf(net_burst_da, 0.0f);
 
   float tot_dip_da = gains.lhb_gain * dip_lhb_da;
 
   // neg PVi shunting
   float net_dip_da = tot_dip_da - vsnegpvi;
-  net_dip_da = MAX(net_dip_da, 0.0f);
+  net_dip_da = fmaxf(net_dip_da, 0.0f);
     
   float net_block = (1.0f - (lv_block.pos_pv * pospv + lv_block.lhb_dip * lhb_da));
-  net_block = MAX(0.0f, net_block);
+  net_block = fmaxf(0.0f, net_block);
     
   float net_da = net_burst_da - net_dip_da;
   net_da *= gains.da_gain;
@@ -420,24 +420,24 @@ void VTAUnitSpec::Compute_DaN(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
       vspvi_n = gains.pvi_burst_shunt_gain * vspatchnegd2_lay->GetTotalActQ0();
     }
   }
-  float burst_lhb_da_n = MAX(lhb_da_n, 0.0f); // if pos, promotes bursting
-  float dip_lhb_da_n = MIN(lhb_da_n, 0.0f);   // else, promotes dipping
+  float burst_lhb_da_n = fmaxf(lhb_da_n, 0.0f); // if pos, promotes bursting
+  float dip_lhb_da_n = fminf(lhb_da_n, 0.0f);   // else, promotes dipping
   
   // absorbing NegPV value - prevents double counting
   float negpv_da = negpv;
-  negpv_da = MAX(negpv_da, 0.0f); // in case we add PVi-like shunting later...
+  negpv_da = fmaxf(negpv_da, 0.0f); // in case we add PVi-like shunting later...
     
     
-  float tot_burst_da = MAX(gains.pv_gain * negpv_da, gains.pptg_gain * pptg_da_n);
-  tot_burst_da = MAX(tot_burst_da, gains.lhb_gain * burst_lhb_da_n);
+  float tot_burst_da = fmaxf(gains.pv_gain * negpv_da, gains.pptg_gain * pptg_da_n);
+  tot_burst_da = fmaxf(tot_burst_da, gains.lhb_gain * burst_lhb_da_n);
   
   // PVi shunting
   float net_burst_da = tot_burst_da - vspvi_n;
-  net_burst_da = MAX(net_burst_da, 0.0f);
+  net_burst_da = fmaxf(net_burst_da, 0.0f);
     
   float tot_dip_da = gains.lhb_gain * dip_lhb_da_n;
   
-//  float net_da = MAX(gains.pv_gain * negpv_da, gains.pptg_gain * pptg_da_n);
+//  float net_da = fmaxf(gains.pv_gain * negpv_da, gains.pptg_gain * pptg_da_n);
   
   float net_da = net_burst_da + tot_dip_da;
   

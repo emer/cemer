@@ -54,6 +54,7 @@ class T3Panel; //
 
 #ifdef CUDA_COMPILE
 class Network_cuda; // #IGNORE
+#include <taBase_RefList>
 #endif
 
 ////////////////////////////////////////////////////////
@@ -144,10 +145,12 @@ class E_API NetworkCudaSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool          on;             // #READ_ONLY #SHOW #NO_SAVE is CUDA active?  this is true when running in an executable compiled with CUDA_COMPILE defined -- it will automatically use the cuda GPU for all connection-level computations
-  int           min_threads;    // #DEF_32 #MIN_32 minuimum number of CUDA threads to allocate per block -- each block works on all the cons in a single ConGroup, and the threads divide up the connections in turn -- must be a multiple of 32 (i.e., min of 32) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
-  int           max_threads;    // #DEF_1024 #MAX_1024 maximum number of CUDA threads to allocate per block (sending group of connections) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- for modern cards (compute capability 2.0 or higher) the max is 1024, but in general you might need to experiment to find the best performing number for your card and network, and interaction with cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
-  int           cons_per_thread; // #DEF_1:8 when computing number of threads to use, divide max number of connections per unit by this number, and then round to nearest multiple of 32, subject to the min and max_threads constraints
-  bool          timers_on;      // Accumulate timing information for each step of processing -- for debugging / optimizing threading
+  bool          sync_units;     // #CONDSHOW_ON_on for debugging or visualization purposes -- keep the C++ host state Unit variables synchronized with the GPU device state (which is slow!) -- otherwise the GPU just runs, and updates a few key statistics (fastest)
+  bool          sync_cons;      // #CONDSHOW_ON_on for debugging or visualization purposes -- keep the C++ host state Connection variables synchronized with the GPU device state (which is VERY slow!) -- otherwise the GPU just runs, and updates a few key statistics (fastest)
+  int           min_threads;    // #CONDSHOW_ON_on #DEF_32 #MIN_32 minuimum number of CUDA threads to allocate per block -- each block works on all the cons in a single ConGroup, and the threads divide up the connections in turn -- must be a multiple of 32 (i.e., min of 32) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
+  int           max_threads;    // #CONDSHOW_ON_on #DEF_1024 #MAX_1024 maximum number of CUDA threads to allocate per block (sending group of connections) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- for modern cards (compute capability 2.0 or higher) the max is 1024, but in general you might need to experiment to find the best performing number for your card and network, and interaction with cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number
+  int           cons_per_thread; // #CONDSHOW_ON_on #DEF_1:8 when computing number of threads to use, divide max number of connections per unit by this number, and then round to nearest multiple of 32, subject to the min and max_threads constraints
+  bool          timers_on;      // #CONDSHOW_ON_on Accumulate timing information for each step of processing -- for debugging / optimizing threading
   int           n_threads;      // #READ_ONLY #SHOW computed number of threads it is actually using
 
   String       GetTypeDecoKey() const override { return "Network"; }
@@ -1155,11 +1158,29 @@ public:
   // #IGNORE make the cuda_net object if currently null -- override in specific algos!
   
   virtual void  Cuda_BuildNet();
-  // build all the network structures for cuda -- called after regular network build
+  // #IGNORE build all the network structures for cuda -- called after regular network build
   virtual void  Cuda_InitConGroups();
-  // transfer C++ con group info over to cuda con groups -- they are different!  called in Cuda_BuildNet()
+  // #IGNORE transfer C++ con group info over to cuda con groups -- they are different!  called in Cuda_BuildNet()
 
-
+  taBase_RefList cuda_unit_specs;
+  // #IGNORE list of unique unitspecs actually used in projections -- source for the cuda versions of the unitspecs
+  
+  virtual void  Cuda_CopyUnitSpec(void* cuda_us, const UnitSpec* source) { };
+  // #IGNORE copy parameters from the source unitspec into the cuda unitspec -- algorithms define this
+  virtual void  Cuda_MakeUnitSpecs();
+  // #IGNORE generate the unique_unitspecs list of unique con specs that are actually used in the model -- and then allocate cuda_unit_specs memory block
+  virtual void  Cuda_UpdateUnitSpecs();
+  // #IGNORE copy each of the cuda unitspecs from associated C++ UnitSpecs, and then sync over to device memory
+  
+  taBase_RefList cuda_con_specs;
+  // #IGNORE list of unique conspecs actually used in projections -- source for the cuda versions of the conspecs
+  
+  virtual void  Cuda_CopyConSpec(void* cuda_cs, const ConSpec* source) { };
+  // #IGNORE copy parameters from the source conspec into the cuda conspec -- algorithms define this
+  virtual void  Cuda_MakeConSpecs();
+  // #IGNORE generate the unique_conspecs list of unique con specs that are actually used in the model -- and then allocate cuda_con_specs memory block
+  virtual void  Cuda_UpdateConSpecs();
+  // #IGNORE copy each of the cuda conspecs from associated C++ ConSpecs, and then sync over to device memory
   
 #endif
   // these methods can be put in program code, so we always expose -- just dummies
@@ -1169,13 +1190,13 @@ public:
   // #CAT_CUDA get all the unit state variables (acts etc) back from the GPU device to the host
   virtual void  Cuda_UnitVarsToDevice();
   // #CAT_CUDA send all the unit state variables (acts etc) to the GPU device from the host
-  virtual void    Cuda_ConStateToHost();
+  virtual void  Cuda_ConStateToHost();
   // #CAT_CUDA get all the connection state variables (weights, dwts, etc) back from the GPU device to the host -- this is done automatically before SaveWeights*
-  virtual void    Cuda_ConStateToDevice();
+  virtual void  Cuda_ConStateToDevice();
   // #CAT_CUDA send all the connection state variables (weights, dwts, etc) to the GPU device from the host -- this is done automatically after Init_Weights and LoadWeights*
-  virtual String  Cuda_TimingReport(bool print = true);
+  virtual String Cuda_TimingReport(bool print = true);
   // #CAT_CUDA report time used statistics for CUDA operations (only does something for cuda compiled version)
-  
+
   virtual void  BgRunKilled();
   // #IGNORE called when program is quitting prematurely and is not in an interactive mode - save network if SAVE_KILLED_WTS flag is set
   

@@ -74,6 +74,22 @@
 #include <ConGroup_cuda.h>
 #include <UnitVars_cuda.h>
 
+class UnitSpec_cuda {
+  // cuda unitspec -- empty base class 
+public:
+};
+
+class ConSpec_cuda {
+  // cuda conspec -- empty base class
+public:
+  enum ConVars {                // Connection variables -- must align with Connection obj
+    WT,                         // the synaptic weight of connection
+    DWT,                        // change in synaptic weight as computed by learning mechanism
+    N_CON_VARS,                 // #IGNORE number of basic connection variables -- use this as the starting index for any new connection variables
+  };
+  
+};
+
 
 class Network_cuda {
   // NVIDIA CUDA support -- puts the network on the GPU and runs computations there -- this is the base class for algorithm-specific cases 
@@ -156,14 +172,16 @@ public:
   static const int max_constant_mem = 65535; // how much we can take, max
   
   int           n_unit_specs;   // number of unit specs allocated
-  int           unit_spec_size; // size of the unit specs
-  char*         unit_spec_h; // host array of unit-level parameters (from unit spec) -- of size n_built_units * sizeof(UnitSpec_cuda) for algorithm-specific unitspec
-  char*         unit_spec_d;
+  int           unit_spec_size; // size of the unit spec object
+  int           unit_spec_mem_tot; // total memory used (n * size)
+  char*         unit_spec_mem_h; // host array of unit-level parameters (from unit spec) -- of size n_unit_specs * unit_spec_size for algorithm-specific unitspec
+  char*         unit_spec_mem_d;
 
   int           n_con_specs;   // number of con specs allocated
-  int           con_spec_size; // size of the con specs
-  char*         con_spec_h; // host array of connection-group level parameters (from con spec) -- should be associated with the main computation's cons (recv or send) -- size is that n_*_cgps * sizeof(ConSpec_cuda) for algorithm-specific conspec
-  char*         con_spec_d;
+  int           con_spec_size; // size of the con spec object
+  int           con_spec_mem_tot; // total memory used (n * size)
+  char*         con_spec_mem_h; // host array of connection-group level parameters (from con spec) -- should be associated with the main computation's cons (recv or send) -- size is that n_*_cgps * sizeof(ConSpec_cuda) for algorithm-specific conspec
+  char*         con_spec_mem_d;
 
   ///////////////////////////////////////////////////////////////////////////////
   //  Key Accessor Routines -- static with all args explicitly passed for use
@@ -172,8 +190,13 @@ public:
   CUDAFUN static inline UnitVars_cuda*  GetUnitVars
   (char* net_units_mem, const int unit_vars_size, const int unit_idx)
   { return (UnitVars_cuda*)(net_units_mem + (unit_idx * unit_vars_size)); }
-  // #CAT_Structure unit variables for unit at given unit at unit flat_idx 
+  // #CAT_Structure unit variables for unit at given unit at unit flat_idx  -- cast into proper algo class
 
+  CUDAFUN static inline UnitSpec_cuda*  GetUnitSpec
+  (char* unit_spec_mem, const int unit_spec_size, const int us_idx)
+  { return (UnitSpec_cuda*)(unit_spec_mem + (us_idx * unit_spec_size)); }
+  // #CAT_Structure unit spec from unique unitspec index -- cast into proper algo class
+  
   CUDAFUN static inline int GetNConGroups
   (const int* net_n_recv_cgps, const int unit_idx)
   { return net_n_recv_cgps[unit_idx]; }
@@ -192,6 +215,11 @@ public:
   // #CAT_Structure connection group for given global con group index, pass in appropriate recv or send cgp_mem and cgp_start from network
   
   // once you have the con group, use accessor routines there for further con access
+  
+  CUDAFUN static inline ConSpec_cuda*  GetConSpec
+  (char* con_spec_mem, const int con_spec_size, const int cs_idx)
+  { return (ConSpec_cuda*)(con_spec_mem + (cs_idx * con_spec_size)); }
+  // #CAT_Structure con spec from unique conspec index -- cast into proper algo class
   
   CUDAFUN static inline int  LayUnStart(const int* net_lay_unit_idxs, const int lay_no)
   { return net_lay_unit_idxs[2*lay_no]; }
@@ -267,13 +295,23 @@ public:
   virtual void  ExtInputToDevice(bool sync = false);
   // copy all the unit variables for layers with ext_flag marked as having external input over to the device -- external input comes from C++ side still..
 
-  // derived types need to define their own unit and con params,
+  virtual void  TargUnitsToHost(bool sync = false);
+  // copy all the unit variables for layers with ext_flag marked as TARG back from the device to the host -- this allows regular C++-side stats to compute as normal..
+
+  virtual bool  AllocUnitSpecs(int n_us);
+  // allocate new unit spec memory -- unit_spec_size MUST be set already!  returns false on error
+  virtual void  UnitSpecs_HostToDevice();
+  // copy unitspecs from host to device
+  
+  virtual bool  AllocConSpecs(int n_cs);
+  // allocate new con spec memory -- con_spec_size MUST be set already! returns false on err
+  virtual void  ConSpecs_HostToDevice();
+  // copy conspecs from host to device
+
+  // derived types need to define their own unit and con specs
   // and computation routines
   // see bp_cuda.h / .cu for examples, and leabra has old commented-out cuda code too
 
-  virtual void  UpdateConParams();
-  // call whenever any connection parameters change -- copy con_params_h -> d 
-  
   Network_cuda();
   virtual ~Network_cuda();
   

@@ -79,7 +79,7 @@ public:
       }
     }
     else { // not using us_delta
-      dwt += lrate_eff * su_act * MAX(us, ru_act) * da;
+      dwt += lrate_eff * su_act * fmaxf(us, ru_act) * da;
     }
   }
   // #IGNORE acquisition
@@ -131,7 +131,7 @@ public:
       }
       else {
         // this is the key for learning: up-state or actual ru activation
-        const float ru_act_eff = MAX(ru->deep_lrn, ru->act_eq);
+        const float ru_act_eff = fmaxf(ru->deep_lrn, ru->act_eq);
         C_Compute_dWt_BasAmyg_Ext(dwts[i], su_act, ru_act_eff, ru->deep_raw_net,
                                   ru->da_p, d2r, clrate);
       }

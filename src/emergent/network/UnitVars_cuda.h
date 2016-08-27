@@ -26,7 +26,7 @@
 class UnitVars_cuda : public UnitVars_core {
   // cuda version of UnitVars
 public:
-  
+  void*   unit_spec; // keep our unit vars aligned with C++ one..
 };
 
 #endif // UnitVars_cuda_h

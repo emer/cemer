@@ -159,10 +159,10 @@ void LeabraV1LayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int 
           LeabraUnit* oth_unit = (LeabraUnit*)lay->UnitAtGpCoord(oc, fc);
           float oth_netin = oth_unit->net();
           float ogi = feat_inhib.inhib_g * oth_netin; // note: directly on ithr!
-          feat_inhib_max = MAX(feat_inhib_max, ogi);
+          feat_inhib_max = fmaxf(feat_inhib_max, ogi);
         }
         float eig = unit_gp_inhib.gi * unit_gp_inhib.FFInhib(feat_inhib_max, 0.0f);
-        float gi_eff = MAX(inhib_val, eig);
+        float gi_eff = fmaxf(inhib_val, eig);
         // todo: this logic is out of date..
         // LeabraUnit* u = (LeabraUnit*)lay->UnitAtUnGpIdx((int)uidx, gpidx);
         // u->Compute_ApplyInhib(this, net, thr, gi_eff);

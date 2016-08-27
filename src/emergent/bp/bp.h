@@ -61,7 +61,7 @@ class E_API BpConSpec : public ConSpec {
 INHERITED(ConSpec)
 public:
   enum BpConVars {
-    PDW = DWT+1,                // previous delta weight
+    PDW = N_CON_VARS,           // previous delta weight
     N_BP_CON_VARS,              // #IGNORE number of bp con vars
   };
 
@@ -495,11 +495,11 @@ public:
 
   // these methods keep sigmoidal-type values within the correct range to prevent numerical errors
   static inline float  ClipSigAct(float y)
-  { y = MAX(y,SIGMOID_MIN_VAL); y = MIN(y,SIGMOID_MAX_VAL); return y; }
+  { y = fmaxf(y,SIGMOID_MIN_VAL); y = fminf(y,SIGMOID_MAX_VAL); return y; }
   static inline float  ClipTanhAct(float y)
-  { y = MAX(y,-SIGMOID_MAX_VAL); y = MIN(y,SIGMOID_MAX_VAL); return y; }
+  { y = fmaxf(y,-SIGMOID_MAX_VAL); y = fminf(y,SIGMOID_MAX_VAL); return y; }
   static inline float  ClipSigNet(float x)
-  { x = MAX(x,-SIGMOID_MAX_NET); x = MIN(x,SIGMOID_MAX_NET); return x; }
+  { x = fmaxf(x,-SIGMOID_MAX_NET); x = fminf(x,SIGMOID_MAX_NET); return x; }
 
   // different activation and error derivative functions
   static inline float  SigmoidFun(float netin)
@@ -511,8 +511,8 @@ public:
   static inline float  TanhDeriv(float act)
   { act = ClipSigAct(0.5f * (act + 1.0f)); return act * (1.0f - act); }
   static inline float  ReLuFun(float netin)
-  { return MAX(netin, 0.0f); }
-  static inline float  ReLuDeriv(float netin) { return (netin > 0.0f) ? 1.0f : 0.0f; }
+  { return fmaxf(netin, 0.0f); }
+  static inline float  ReLuDeriv(float act) { return (act > 0.0f) ? 1.0f : 0.0f; }
   inline float  NLXX1Fun(float netin) { return nlxx1.NLXX1Fun(netin); }
   inline float  NLXX1Deriv(float netin) { return nlxx1.NLXX1Deriv(netin); }
 
@@ -547,7 +547,7 @@ public:
     case TANH:
       return TanhDeriv(act);
     case RELU:
-      return ReLuDeriv(netin);
+      return ReLuDeriv(act);
     case LINEAR:
       return 1.0f;
     case NLXX1:
@@ -971,7 +971,15 @@ public:
   void  BuildNullUnit() override;
 
 #ifdef CUDA_COMPILE
-  virtual bool  Cuda_MakeCudaNet();
+  void  Cuda_CopyUnitSpec(void* cuda_us, const UnitSpec* source) override;
+  void  Cuda_CopyConSpec(void* cuda_cs, const ConSpec* source) override;
+
+  virtual void  Cuda_Trial_Run();
+  // #IGNORE
+  virtual void  Cuda_Compute_NetinAct();
+  // #IGNORE
+  virtual void  Cuda_Compute_dEdA_dEdNet();
+  // #IGNORE
 #endif
   
   TA_SIMPLE_BASEFUNS(BpNetwork);

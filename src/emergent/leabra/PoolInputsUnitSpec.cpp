@@ -60,7 +60,7 @@ void PoolInputsUnitSpec::Compute_PooledAct(LeabraUnitVars* u, LeabraNetwork* net
     if(pool_fun == MAX_POOL) {
       for(int i=0; i< sz; i++) {
         LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(i, net);
-        new_act = MAX(su->act_eq, new_act);
+        new_act = fmaxf(su->act_eq, new_act);
       }
     }
     else {                        // AVG_POOL

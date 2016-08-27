@@ -194,7 +194,7 @@ float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
     }
   }
   else {                        // maintaining
-    const float eff_netin_max = MIN(ugd->netin_raw.max, maint.mnt_net_max);
+    const float eff_netin_max = fminf(ugd->netin_raw.max, maint.mnt_net_max);
     const float netin_factor = 1.0f - (eff_netin_max / maint.mnt_net_max);
     const float mnt_net = maint.s_mnt_min +
       netin_factor * (maint.s_mnt_max - maint.s_mnt_min);
@@ -266,7 +266,7 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
 
   float thr_cmp = lay->acts_raw.avg +
     deep.raw_thr_rel * (lay->acts_raw.max - lay->acts_raw.avg);
-  thr_cmp = MAX(thr_cmp, deep.raw_thr_abs);
+  thr_cmp = fmaxf(thr_cmp, deep.raw_thr_abs);
   float draw = 0.0f;
   if(u->act_raw >= thr_cmp) {
     draw = u->act_raw;
@@ -274,7 +274,7 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
 
   float thal_eff = 0.0f;
   if(u->thal_cnt >= 0.0f) {     // gated or maintaining
-    thal_eff = MAX(u->thal, gate.mnt_thal);
+    thal_eff = fmaxf(u->thal, gate.mnt_thal);
   }
   
   u->deep_raw = thal_eff * draw;

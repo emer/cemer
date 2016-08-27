@@ -325,8 +325,8 @@ bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, ConGroup* cg, Unit* ru,
   // if in-range, normalize the send range (for topological congruence to recv range)
   si_pos.x -= srs.x;
   si_pos.y -= srs.y;
-  float mxs_x = (float)MAX((sre.x - srs.x), 1);
-  float mxs_y = (float)MAX((sre.y - srs.y), 1);
+  float mxs_x = (float)fmaxf((sre.x - srs.x), 1);
+  float mxs_y = (float)fmaxf((sre.y - srs.y), 1);
   float si_x = (float)si_pos.x / mxs_x;
   float si_y = (float)si_pos.y / mxs_y;
   
@@ -384,11 +384,11 @@ bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, ConGroup* cg, Unit* ru,
   }
   
   // compute distance of RECV idx from closest edge - first in x-dimension, then y
-  float dfe_x = MIN(ri_pos.x - rrs.x, rre.x - ri_pos.x);
-  dfe_x /= (float)MAX((rre.x - rrs.x), 1);	// normalize
+  float dfe_x = fminf(ri_pos.x - rrs.x, rre.x - ri_pos.x);
+  dfe_x /= (float)fmaxf((rre.x - rrs.x), 1);	// normalize
   dfe_x *= 2; 															// re-normalize to 1.0f
-  float dfe_y = MIN(ri_pos.y - rrs.y, rre.y - ri_pos.y); 				// ... in y dimension
-  dfe_y /= (float)MAX((rre.y - rrs.y), 1);	// normalize
+  float dfe_y = fminf(ri_pos.y - rrs.y, rre.y - ri_pos.y); 				// ... in y dimension
+  dfe_y /= (float)fmaxf((rre.y - rrs.y), 1);	// normalize
   dfe_y *= 2; 															// re-normalize to 1.0
   // dfe_x, dfe_y now should be 0.0 - 1.0f
   
@@ -396,8 +396,8 @@ bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, ConGroup* cg, Unit* ru,
   float dist_x = 0.0f;
   if(sre.x - srs.x == 0 || rre.x - rrs.x == 0) { dist_x = 0.0f; }
   else { dist_x = fabsf(si_x - ri_x); }	// x distance as normalized absolute value
-  //dist_x /= (float)MAX((rre.x - rrs.x), 1);		// normalize
-  //dist_x /= (float)MAX(mxs_x, 1);	// normalize according to send layer scale - NO! already normalized
+  //dist_x /= (float)fmaxf((rre.x - rrs.x), 1);		// normalize
+  //dist_x /= (float)fmaxf(mxs_x, 1);	// normalize according to send layer scale - NO! already normalized
   if(dist_x > 0.5f) { dist_x = 1.0f; }
   else {
     if(dist_x == 0.5f) { dist_x = 0.99f; } // special case for small ranges - keep under 1.0f
@@ -407,7 +407,7 @@ bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, ConGroup* cg, Unit* ru,
   float dist_y = 0.0f;
   if(sre.y - srs.y == 0 || rre.y - rrs.y == 0) { dist_y = 0.0f; }
   else { dist_y = fabsf(si_y - ri_y); }	// y distance
-  //dist_y /= (float)MAX(mxs_y, 1);		// normalize according to send layer scale - NO! already normalized!
+  //dist_y /= (float)fmaxf(mxs_y, 1);		// normalize according to send layer scale - NO! already normalized!
   if(dist_y > 0.5f) { dist_y = 1.0f; }
   else {
     if(dist_y == 0.5f) { dist_y = 0.99f; } // special case for small ranges - keep under 1.0f
@@ -562,8 +562,8 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru,
   // if in-range, normalize the send range (for topological congruence to recv range)
   si_pos.x -= srs.x;
   si_pos.y -= srs.y;
-  float mxs_x = (float)MAX((sre.x - srs.x), 1);
-  float mxs_y = (float)MAX((sre.y - srs.y), 1);
+  float mxs_x = (float)fmaxf((sre.x - srs.x), 1);
+  float mxs_y = (float)fmaxf((sre.y - srs.y), 1);
   float si_x = (float)si_pos.x / mxs_x;
   float si_y = (float)si_pos.y / mxs_y;
 
@@ -934,12 +934,12 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, ConGroup* cg,
   ri_pos.x -= rrs.x;
   ri_pos.y -= rrs.y;
 
-  float ri_x = (float)ri_pos.x / (float)MAX((rre.x - rrs.x), 1);
-  float ri_y = (float)ri_pos.y / (float)MAX((rre.y - rrs.y), 1);
+  float ri_x = (float)ri_pos.x / (float)fmaxf((rre.x - rrs.x), 1);
+  float ri_y = (float)ri_pos.y / (float)fmaxf((rre.y - rrs.y), 1);
 
   // now compute the send maximum distance in each dimension
-  float mxs_x = (float)MAX((sre.x - srs.x), 1);
-  float mxs_y = (float)MAX((sre.y - srs.y), 1);
+  float mxs_x = (float)fmaxf((sre.x - srs.x), 1);
+  float mxs_y = (float)fmaxf((sre.y - srs.y), 1);
 
   for(int i=0; i<cg->size; i++) {
     dist = ComputeTopoDist(prjn, cg, ru, i, ri_x, ri_y, srs, sre, rrs, rre, ri_pos);
@@ -1066,12 +1066,12 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn, ConGroup* cg
   ri_pos.x -= rrs.x; 	// start at start-indexed units!
   ri_pos.y -= rrs.y;
 
-  float ri_x = (float)ri_pos.x / (float)MAX((rre.x - rrs.x), 1);
-  float ri_y = (float)ri_pos.y / (float)MAX((rre.y - rrs.y), 1);
+  float ri_x = (float)ri_pos.x / (float)fmaxf((rre.x - rrs.x), 1);
+  float ri_y = (float)ri_pos.y / (float)fmaxf((rre.y - rrs.y), 1);
 
   // now normalize send groups and correct for any offsets!
-  float mxs_x = (float)MAX((sre.x - srs.x), 1);
-  float mxs_y = (float)MAX((sre.y - srs.y), 1);
+  float mxs_x = (float)fmaxf((sre.x - srs.x), 1);
+  float mxs_y = (float)fmaxf((sre.y - srs.y), 1);
 
   for(int i=0; i<cg->size; i++) {
     dist = ComputeTopoDist(prjn, cg, ru, i, ri_x, ri_y, srs, sre, rrs, rre, ri_pos);
@@ -1238,11 +1238,11 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, ConGroup* cg
   ri_pos.x -= rrs.x;
   ri_pos.y -= rrs.y;
 
-  float ri_x = (float)ri_pos.x / (float)MAX((rre.x - rrs.x), 1);
-  float ri_y = (float)ri_pos.y / (float)MAX((rre.y - rrs.y), 1);
+  float ri_x = (float)ri_pos.x / (float)fmaxf((rre.x - rrs.x), 1);
+  float ri_y = (float)ri_pos.y / (float)fmaxf((rre.y - rrs.y), 1);
 
-  float mxs_x = (float)MAX((sre.x - srs.x), 1);
-  float mxs_y = (float)MAX((sre.y - srs.y), 1);
+  float mxs_x = (float)fmaxf((sre.x - srs.x), 1);
+  float mxs_y = (float)fmaxf((sre.y - srs.y), 1);
 
   for(int i=0; i<cg->size; i++) {
     dist = ComputeTopoDist(prjn, cg, ru, i, ri_x, ri_y, srs, sre, rrs, rre, ri_pos);
@@ -1336,10 +1336,10 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, ConGroup* c
     //ru_pos.y = ru_pos.y - rrs.y;
     ru_pos.y -= rrs.y;
 
-    //float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom.x-1, 1); // original guys..
-    //float ru_y = (float)ru_pos.y / (float)MAX(recv_lay->flat_geom.y-1, 1);
-    ru_x = (float)ru_pos.x / (float)MAX((rre.x - rrs.x), 1);
-    ru_y = (float)ru_pos.y / (float)MAX((rre.y - rrs.y), 1);
+    //float ru_x = (float)ru_pos.x / (float)fmaxf(recv_lay->flat_geom.x-1, 1); // original guys..
+    //float ru_y = (float)ru_pos.y / (float)fmaxf(recv_lay->flat_geom.y-1, 1);
+    ru_x = (float)ru_pos.x / (float)fmaxf((rre.x - rrs.x), 1);
+    ru_y = (float)ru_pos.y / (float)fmaxf((rre.y - rrs.y), 1);
   }
   else { // recv_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
     //taVector2i ru_pos; // hold planar Cartesian coordinates within unit group
@@ -1370,17 +1370,17 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, ConGroup* c
     ru_pos.x -= rrs.x;		  // start at start-indexed units!
     ru_pos.y -= rrs.y;
 
-    //float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom.x-1, 1); // original guys..
-    ru_x = (float)ru_pos.x / (float)MAX((rre.x - rrs.x), 1);
-    ru_y = (float)ru_pos.y / (float)MAX((rre.y - rrs.y), 1);
+    //float ru_x = (float)ru_pos.x / (float)fmaxf(recv_lay->flat_geom.x-1, 1); // original guys..
+    ru_x = (float)ru_pos.x / (float)fmaxf((rre.x - rrs.x), 1);
+    ru_y = (float)ru_pos.y / (float)fmaxf((rre.y - rrs.y), 1);
   }
 
   taVector2i ri_pos = ru_pos;
   float ri_x = ru_x;
   float ri_y = ru_y;
 
-  float mxs_x = (float)MAX((sre.x - srs.x), 1);
-  float mxs_y = (float)MAX((sre.y - srs.y), 1);
+  float mxs_x = (float)fmaxf((sre.x - srs.x), 1);
+  float mxs_y = (float)fmaxf((sre.y - srs.y), 1);
 
   for(int i=0; i<cg->size; i++) {
     dist = ComputeTopoDist(prjn, cg, ru, i, ri_x, ri_y, srs, sre, rrs, rre, ri_pos);

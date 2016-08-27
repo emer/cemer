@@ -57,7 +57,7 @@ void TANUnitSpec::Compute_PlusPhase(LeabraUnitVars* u, LeabraNetwork* net, int t
     const int sz = recv_gp->size;
     for(int i=0; i< sz; i++) {
       const float act_eq = ((LeabraUnitVars*)recv_gp->UnVars(i,net))->act_eq;
-      max_send_act = MAX(act_eq, max_send_act);
+      max_send_act = fmaxf(act_eq, max_send_act);
     }
   }
   u->ext = max_send_act;

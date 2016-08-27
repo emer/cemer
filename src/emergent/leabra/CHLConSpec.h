@@ -58,7 +58,7 @@ public:
   inline float Compute_SAvgCor(LeabraConGroup* cg, LeabraNetwork* net, int thr_no) {
     LeabraLayer* fm = (LeabraLayer*)cg->prjn->from.ptr();
     float savg = .5f + chl.savg_cor * (fm->acts_p_avg_eff - .5f);
-    savg = MAX(chl.savg_thresh, savg); // keep this computed value within bounds
+    savg = fmaxf(chl.savg_thresh, savg); // keep this computed value within bounds
     return .5f / savg;
   }
   // #IGNORE compute sending average activation, corrected

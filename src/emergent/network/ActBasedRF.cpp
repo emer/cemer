@@ -185,7 +185,7 @@ bool ActBasedRF::ComputeRF() {
         float_Matrix* mat = (float_Matrix*)rf_da->GetValAsMatrix(r);
         taBase::Ref(mat);
         float mx = taMath_float::vec_abs_max(mat, idx);
-        max_val = MAX(mx, max_val);
+        max_val = fmaxf(mx, max_val);
         taBase::unRefDone(mat);
       }
       float sc = 1.0f;
@@ -207,7 +207,7 @@ bool ActBasedRF::ComputeRF() {
     for(int i=0;i<rf_data->data.size; i++) {
       DataCol* rf_da = rf_data->data.FastEl(i);
       float mx = taMath_float::vec_abs_max((float_Matrix*)rf_da->AR(), idx);
-      max_val = MAX(mx, max_val);
+      max_val = fmaxf(mx, max_val);
     }
     float sc = 1.0f;
     if(max_val > 0.0f)

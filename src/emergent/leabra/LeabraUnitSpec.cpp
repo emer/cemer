@@ -510,7 +510,7 @@ void LeabraUnitSpec::CreateNXX1Fun(LeabraActFunSpec& act_spec, FunLookup& nxx1_f
 
   noise_fl.AllocForRange();
   int i;
-  float eff_nvar = MAX(act_spec.nvar, 1.0e-6f); // just too lazy to do proper conditional for 0..
+  float eff_nvar = fmaxf(act_spec.nvar, 1.0e-6f); // just too lazy to do proper conditional for 0..
   float var = eff_nvar * eff_nvar;
   for(i=0; i < noise_fl.size; i++) {
     float x = noise_fl.Xval(i);
@@ -887,7 +887,7 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int
   }
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   if(avg_l_2.err_mod) {
-    float eff_err = MAX(lay->cos_diff_avg_lrn, avg_l_2.err_min);
+    float eff_err = fmaxf(lay->cos_diff_avg_lrn, avg_l_2.err_min);
     u->avg_l_lrn *= eff_err;
   }
   if(lay->layer_type != Layer::HIDDEN || deep.IsTRC()) {
@@ -1301,12 +1301,12 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
   if(net->net_misc.inhib_cons) {
     u->gi_raw += gi_delta;
     if(act_fun == SPIKE) {
-      u->gi_syn = MAX(u->gi_syn, 0.0f);
+      u->gi_syn = fmaxf(u->gi_syn, 0.0f);
       Compute_NetinInteg_Spike_i(u, net, thr_no);
     }
     else {
       u->gi_syn += dt.integ * dt.net_dt * (u->gi_raw - u->gi_syn);
-      u->gi_syn = MAX(u->gi_syn, 0.0f); // negative netin doesn't make any sense
+      u->gi_syn = fmaxf(u->gi_syn, 0.0f); // negative netin doesn't make any sense
     }
   }
   else {
@@ -1376,7 +1376,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
 
   if(act_fun == SPIKE) {
     // todo: need a mech for inhib spiking
-    u->net = MAX(net_tot, 0.0f); // store directly for integration
+    u->net = fmaxf(net_tot, 0.0f); // store directly for integration
     Compute_NetinInteg_Spike_e(u, net, thr_no);
   }
   else {
@@ -1448,7 +1448,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnitVars* u, LeabraNetwork
   //   // from compute_netinavg
   //   u->net += dt.integ * dt.net_dt * (sum - u->net);
   // }
-  // u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
+  // u->net = fmaxf(u->net, 0.0f); // negative netin doesn't make any sense
 }
 
 void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnitVars* u, LeabraNetwork* net,
@@ -1475,7 +1475,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnitVars* u, LeabraNetwork
   //   }
   //   u->gi_syn += dt.integ * dt.net_dt * (sum - u->gi_syn);
   // }
-  // u->gi_syn = MAX(u->gi_syn, 0.0f); // negative netin doesn't make any sense
+  // u->gi_syn = fmaxf(u->gi_syn, 0.0f); // negative netin doesn't make any sense
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1595,7 +1595,7 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
   }
   if(deep.IsTRC() && Quarter_DeepRawNow(net->quarter)) {
     if(deep.trc_trace) {
-      new_act = MAX(u->act_q0, new_act);
+      new_act = fmaxf(u->act_q0, new_act);
     }
   }
   u->act_nd = act_range.Clip(new_act);
@@ -1928,7 +1928,7 @@ void LeabraUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int 
   
   float thr_cmp = lay->acts_raw.avg +
     deep.raw_thr_rel * (lay->acts_raw.max - lay->acts_raw.avg);
-  thr_cmp = MAX(thr_cmp, deep.raw_thr_abs);
+  thr_cmp = fmaxf(thr_cmp, deep.raw_thr_abs);
   float draw = 0.0f;
   if(u->act_raw >= thr_cmp) {
     draw = u->act_raw;
@@ -2166,7 +2166,7 @@ void LeabraUnitSpec::GraphVmFun(DataTable* graph_data, float g_i, float min, flo
   DataCol* nt = graph_data->FindMakeColName("Net", idx, VT_FLOAT);
   DataCol* vm = graph_data->FindMakeColName("Vm", idx, VT_FLOAT);
   
-  incr = MAX(0.001f, incr);	// must be pos
+  incr = fmaxf(0.001f, incr);	// must be pos
 
   for(float x = min; x <= max; x += incr) {
     float y = ((g_bar.e * x * e_rev.e) + (g_bar.i * g_i * e_rev.i) + (g_bar.l * e_rev.l)) /
@@ -2200,7 +2200,7 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
 
 //  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
 
-  incr = MAX(0.001f, incr);	// must be pos
+  incr = fmaxf(0.001f, incr);	// must be pos
   float x;
   for(x = min; x <= max; x += incr) {
     float aval;
@@ -2283,7 +2283,7 @@ void LeabraUnitSpec::GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha)
   DataCol* t = graph_data->FindMakeColName("time_fm_spike", idx, VT_FLOAT);
   DataCol* g = graph_data->FindMakeColName("conductance", idx, VT_FLOAT);
 
-  float tmax = MAX(spike.window, 2.0f);
+  float tmax = fmaxf(spike.window, 2.0f);
 
   float sumg = 0.0f;
   float x;

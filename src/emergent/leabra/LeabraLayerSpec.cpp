@@ -646,7 +646,7 @@ void LeabraLayerSpec::Compute_Inhib_FfFb
 
 void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay_gp_inhib.on) {
-    lay->i_val.g_i = MAX(lay->i_val.g_i, lay->laygp_data.i_val.g_i);
+    lay->i_val.g_i = fmaxf(lay->i_val.g_i, lay->laygp_data.i_val.g_i);
   }
   
   if(!lay->unit_groups) return;
@@ -656,14 +656,14 @@ void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->i_val.lay_g_i = lay->i_val.g_i;
       if(unit_gp_inhib.on ) {
-        gpd->i_val.g_i = MAX(gpd->i_val.g_i, lay->i_val.g_i);
+        gpd->i_val.g_i = fmaxf(gpd->i_val.g_i, lay->i_val.g_i);
       }
       else {
         gpd->i_val.g_i = 0.0f;
       }
       if(multi_gp_inhib.on) {
         LeabraUnGpData* mgpd = lay->multigp_data.FastEl(g);
-        gpd->i_val.g_i = MAX(gpd->i_val.g_i, mgpd->i_val.g_i);
+        gpd->i_val.g_i = fmaxf(gpd->i_val.g_i, mgpd->i_val.g_i);
       }
     }
   }

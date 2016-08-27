@@ -146,7 +146,7 @@ void TDRewIntegUnitSpec::Compute_TDRewInteg(LeabraUnitVars* u, LeabraNetwork* ne
   }
   else {
     if(rew_integ.max_r_v) {
-      new_val = MAX(rew_integ.discount * rew_pred_val, ext_rew_val);
+      new_val = fmaxf(rew_integ.discount * rew_pred_val, ext_rew_val);
     }
     else {
       new_val = rew_integ.discount * rew_pred_val + ext_rew_val; // now discount new rewpred!

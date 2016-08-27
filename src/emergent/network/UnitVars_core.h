@@ -30,6 +30,10 @@ public:
     COMP_EXT            = 0x0006, // #NO_BIT as a comparison and external input layer
     COMP_TARG_EXT       = 0x0007, // #NO_BIT as a comparison, target, and external input layer
     LESIONED            = 0x0010, // #READ_ONLY unit is temporarily lesioned (inactivated for all network-level processing functions) -- copied from Unit -- should not be set directly here
+    UN_FLAG_1           = 0x0100, // #READ_ONLY misc unit-level flag for use by algorithms to set binary state (e.g., used in backprop to mark units that have been dropped)
+    UN_FLAG_2           = 0x0200, // #READ_ONLY misc unit-level flag for use by algorithms to set binary state
+    UN_FLAG_3           = 0x0400, // #READ_ONLY misc unit-level flag for use by algorithms to set binary state
+    UN_FLAG_4           = 0x0800, // #READ_ONLY misc unit-level flag for use by algorithms to set binary state
   };
 
   ExtFlags      ext_flag;
@@ -50,6 +54,10 @@ public:
   // #VIEW_HOT #CAT_Bias bias weight value -- the bias weight acts like a connection from a unit that is always active with a constant value of 1 -- reflects intrinsic excitability from a biological perspective
   float         bias_dwt;
   // #VIEW_HOT #CAT_Bias change in bias weight value as computed by a learning mechanism
+#ifdef CUDA_COMPILE
+  int           cuda_unit_spec_idx;
+  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE for cuda build, this is index of unit spec -- can't use the unit spec pointer
+#endif  
 
   inline void   SetExtFlag(int flg)   { ext_flag = (ExtFlags)(ext_flag | flg); }
   // set flag state on

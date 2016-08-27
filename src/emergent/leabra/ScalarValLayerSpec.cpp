@@ -422,7 +422,7 @@ float ScalarValLayerSpec::ReadValue_ugp
     avg += cur * act_val;
     sum_act += act_val;
   }
-  sum_act = MAX(sum_act, scalar.min_sum_act);
+  sum_act = fmaxf(sum_act, scalar.min_sum_act);
   if(scalar.rep == ScalarValSpec::AVG_ACT) {
     sum_act /= (float)nunits;
     avg = val_range.Project(avg_act_range.Normalize(sum_act));

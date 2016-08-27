@@ -74,7 +74,7 @@ void CerebGranuleUnitSpec::Compute_GranLearnAct(LeabraUnitVars* u, LeabraNetwork
   else {      // if we get here, we've crossed threshold
     time_since_thr++;
     if(time_since_thr < cereb.inhib_start_time) {
-      act_max = MAX(act_max, u->act); // get max within time window
+      act_max = fmaxf(act_max, u->act); // get max within time window
       act_lag = 0.0f;        // no learning yet
     }
     else if(time_since_thr < cereb.lrn_start_time) {
