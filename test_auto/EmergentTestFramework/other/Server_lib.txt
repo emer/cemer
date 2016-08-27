@@ -155,7 +155,7 @@ Read till non empty
      [Arguments]	${err_message}
      Sleep              1000ms
      ${output} =        Read
-     :FOR      ${j}     IN RANGE		10
+     :FOR      ${j}     IN RANGE		60
      \	      ${strlen} = 	Get Length 		${output}
      \	      Exit For Loop If		${strlen} > 0
      \	      Log  "Output from telnet was null, when it shouldn't have been"	WARN
