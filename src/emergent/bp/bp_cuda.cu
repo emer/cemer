@@ -51,7 +51,7 @@ __global__ void Kernel_Compute_Netin_ConGroup
   float sum = 0.0f;
 
   while(st < ed) {
-    UnitVars_cuda* su = cg->UnVars(recv_cons_mem, st, units_mem, unit_vars_size);
+    UnitVars_cuda* su = cg->UnVars(recv_cons_mem, units_mem, unit_vars_size, st);
     sum += wts[st] * su->act;
     st++;
   }
@@ -123,6 +123,9 @@ __global__ void Kernel_Compute_Act_Bp
 
 void Bp_cuda::Compute_NetinAct() {
   ExtInputToDevice(true);       // external input comes from host..
+      
+  // copy unit spec mem to constant
+  cudaMemcpyToSymbol(const_spec_mem, unit_spec_mem_d, unit_spec_mem_tot);
   
   const int nlay = n_layers_built;
   for(int li=0; li < nlay; li++) {
@@ -133,23 +136,18 @@ void Bp_cuda::Compute_NetinAct() {
     if(nu > 0) {
 
       const int n_cgps = units_n_recv_cgps_h[st_ui]; // assume same for all..
-      
       if(n_cgps > 0) {
         for(int cgi = 0; cgi < n_cgps; cgi++) {
           //  Invoke kernel -- 3rd arg is size of memory to allocate to shared
           Kernel_Compute_Netin_ConGroup<<<nu, n_threads, n_threads * sizeof(float), strm_compute_netin>>>
             (st_ui, cgi, recv_cgp_start_d, recv_cgp_mem_d, con_group_size,
              recv_cons_mem_d, units_mem_d, unit_vars_size);
-          cudaSafeCall(cudaStreamSynchronize(strm_compute_netin));
         }
-        // then aggregate netins and compute activations
+        cudaSafeCall(cudaStreamSynchronize(strm_compute_netin));
       }
 
       // b/c units are accessed each per a diff thread, the n blocks is divided by threads
       const int n_blocks = (int)ceil((float)nu / (float)n_threads);
-      
-      // copy unit spec mem to constant
-      cudaMemcpyToSymbol(const_spec_mem, unit_spec_mem_d, unit_spec_mem_tot);
 
       Kernel_Compute_Act_Bp<<<n_blocks, n_threads, 0, strm_compute_act>>>
         (st_ui, ed_ui, units_mem_d, unit_vars_size, unit_spec_size,
@@ -167,7 +165,7 @@ void Bp_cuda::Compute_NetinAct() {
 __global__ void Kernel_Compute_dEdA_ConGroup
 (const int st_ui, const int cgp_idx, int* send_cgp_start, char* send_cgp_mem,
  const int con_group_size, float* send_cons_mem, char* units_mem, const int unit_vars_size,
- int* recv_cgp_start, float* recv_cons_mem)
+ int* recv_cgp_start, char* recv_cgp_mem, float* recv_cons_mem)
 {
 
   extern __shared__ float temp_sums[]; // third arg to kernel specifies size of this!
@@ -188,11 +186,11 @@ __global__ void Kernel_Compute_dEdA_ConGroup
 
   while(st < ed) {
     BpUnitVars_cuda* ru = (BpUnitVars_cuda*)cg->UnVars
-      (send_cons_mem, st, units_mem, unit_vars_size);
+      (send_cons_mem, units_mem, unit_vars_size, st);
     // this is super deadly slow:
     const float wt = cg->PtrCn
-      (send_cons_mem, send_cgp_mem, con_group_size, recv_cgp_start, st,
-       recv_cons_mem, ConGroup_cuda::WT);
+      (send_cons_mem, con_group_size, recv_cgp_start, recv_cgp_mem, recv_cons_mem, st,
+       ConGroup_cuda::WT);
     sum += wt * ru->dEdNet;
     st++;
   }
@@ -275,6 +273,9 @@ __global__ void Kernel_Compute_Err_dEdNet
 }
 
 void Bp_cuda::Compute_dEdA_dEdNet() {
+  // copy unit spec mem to constant
+  cudaMemcpyToSymbol(const_spec_mem, unit_spec_mem_d, unit_spec_mem_tot);
+    
   const int nlay = n_layers_built;
   for(int li = nlay-1; li >= 0; li--) { // go in reverse order!
     const int st_ui = LayUnStart(lay_unit_idxs_h, li);
@@ -294,18 +295,14 @@ void Bp_cuda::Compute_dEdA_dEdNet() {
           Kernel_Compute_dEdA_ConGroup<<<nu, n_threads, n_threads * sizeof(float), strm_compute_netin>>>
             (st_ui, cgi, send_cgp_start_d, send_cgp_mem_d, con_group_size,
              send_cons_mem_d, units_mem_d, unit_vars_size,
-             recv_cgp_start_d, recv_cons_mem_d);
-          cudaSafeCall(cudaStreamSynchronize(strm_compute_netin));
+             recv_cgp_start_d, recv_cgp_mem_d, recv_cons_mem_d);
         }
-        // then aggregate netins and compute activations
+        cudaSafeCall(cudaStreamSynchronize(strm_compute_netin));
       }
 
       // b/c units are accessed each per a diff thread, the n blocks is divided by threads
       const int n_blocks = (int)ceil((float)nu / (float)n_threads);
 
-      // copy unit spec mem to constant
-      cudaMemcpyToSymbol(const_spec_mem, unit_spec_mem_d, unit_spec_mem_tot);
-    
       Kernel_Compute_Err_dEdNet<<<n_blocks, n_threads, 0, strm_compute_act>>>
         (st_ui, ed_ui, units_mem_d, unit_vars_size, unit_spec_size,
          send_cgp_start_d, units_n_send_cgps_d, send_cgp_mem_d, con_group_size);
@@ -343,7 +340,7 @@ __global__ void Kernel_Compute_dWt_Bp
   float* dwts = cg->OwnCnVar(recv_cons_mem, ConGroup_cuda::DWT);
 
   while(st < ed) {
-    UnitVars_cuda* su = cg->UnVars(recv_cons_mem, st, units_mem, unit_vars_size);
+    UnitVars_cuda* su = cg->UnVars(recv_cons_mem, units_mem, unit_vars_size, st);
     dwts[st] += su->act * ru_dEdNet;
     st++;
   }
@@ -360,7 +357,7 @@ __global__ void Kernel_Compute_dWt_Bp_Bias
   if(un_idx < ed_ui) {
     BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
       (units_mem, unit_vars_size, un_idx);
-    u->bias_dwt += u->dEdNet;
+    u->bias_dwt = u->dEdNet;
   }
 }
 
