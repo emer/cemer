@@ -9,13 +9,21 @@ FIND_PATH(SNDFILE_INCLUDE_DIR sndfile.hh
         /usr/local/include
 	/opt/local/include
     $ENV{INCLUDE}
-)
+    ${EMER_MISC_LIBS_DIR}/include
+) 
 
-FIND_LIBRARY(SNDFILE_LIBRARY NAMES sndfile PATHS
+if (WIN32)
+  FIND_LIBRARY(SNDFILE_LIBRARY NAMES libsndfile-1 PATHS
+    ${EMER_MISC_LIBS_DIR}/lib
+  )
+else (WIN32)
+  FIND_LIBRARY(SNDFILE_LIBRARY NAMES sndfile PATHS
    /usr/lib
    /usr/local/lib
    /opt/local/lib
-) 
+   ${EMER_MISC_LIBS_DIR}/lib
+  )
+endif (WIN32)
 
 # handle the QUIETLY and REQUIRED arguments and set x_FOUND to TRUE if 
 # all listed variables are TRUE
