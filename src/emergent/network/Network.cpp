@@ -1929,6 +1929,7 @@ void Network::Init_Weights() {
   UpdateAllViews();
 
   Cuda_ConStateToDevice();
+  Cuda_UnitVarsToDevice();      // also need the bias weights!!!
 
   param_seqs.SetParamsAtEpoch(0);
   
@@ -4213,9 +4214,10 @@ void Network::Cuda_BuildNet() {
   Cuda_MakeCudaNet();
   
   // note: we use thread 0 for all of these things b/c there is only 1 and that's it!
+  // n_units_built on network includes first full unit, not in cuda side..
   
   cuda_net->NetAlloc
-    (unit_vars_size, n_units_built, n_layers_built, n_ungps_built,
+    (unit_vars_size, n_units_built-1, n_layers_built, n_ungps_built,
      thrs_units_mem[0], thrs_lay_unit_idxs[0], thrs_ungp_unit_idxs[0],
      n_lay_stats, n_lay_stats_vars, thrs_lay_stats[0], RecvOwnsCons(),
      thrs_units_n_recv_cgps[0], thrs_units_n_send_cgps[0], n_recv_cgps, n_send_cgps, 
@@ -4238,7 +4240,7 @@ void Network::Cuda_BuildNet() {
   cuda_net->OwnCons_HostToDevice(true); // sync
   cuda_net->UnitVars_HostToDevice(true); // sync
 
-  Cuda_MakeUnitSpecs();         // make and copy to device
+  Cuda_MakeUnitSpecs();         // make and copy to device -- also does bias specs as start to make con specs!
   Cuda_MakeConSpecs();
 }
 
@@ -4292,6 +4294,27 @@ void Network::Cuda_MakeUnitSpecs() {
                taMisc::GetSizeString(cuda_net->unit_spec_mem_tot))) {
     ClearIntact();
   }
+
+  // now we start on the conspecs by getting all the bias specs
+  cuda_con_specs.Reset();
+  for(int usi=0; usi < cuda_unit_specs.size; usi++) {
+    UnitSpec* us = (UnitSpec*)cuda_unit_specs[usi];
+    UnitSpec_cuda* cuda_us = cuda_net->GetUnitSpec
+      (cuda_net->unit_spec_mem_h, cuda_net->unit_spec_size, usi);
+    ConSpec* bs = us->bias_spec;
+    if(bs) {
+      int cs_idx = cuda_con_specs.FindEl(bs);
+      if(cs_idx < 0) {
+        cuda_con_specs.Add(bs); // does ref
+        cs_idx = cuda_con_specs.size-1;
+      }
+      cuda_us->bias_spec_idx = cs_idx;
+    }
+    else {
+      cuda_us->bias_spec_idx = -1;
+    }
+  }
+
   Cuda_UpdateUnitSpecs();
 }
 
@@ -4313,7 +4336,7 @@ void Network::Cuda_UpdateUnitSpecs() {
 }
 
 void Network::Cuda_MakeConSpecs() {
-  cuda_con_specs.Reset();
+  //   cuda_con_specs.Reset();  this was reset in unit specs for bias specs
   for(int li=0; li < n_layers_built; li++) {
     int st_ui = ThrLayUnStart(0, li);
     int ed_ui = ThrLayUnEnd(0, li);

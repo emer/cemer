@@ -77,6 +77,7 @@
 class UnitSpec_cuda {
   // cuda unitspec -- empty base class 
 public:
+  int   bias_spec_idx;           // index to con spec holding the bias connection specs
 };
 
 class ConSpec_cuda {

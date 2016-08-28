@@ -106,6 +106,8 @@ __global__ void Kernel_Compute_Act_Bp
         netin += cg->temp1;
       }
 
+      netin += u->bias_wt;      // assume bias specs..
+      
       BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec
         (const_spec_mem, unit_spec_size, u->cuda_unit_spec_idx);
 
@@ -345,15 +347,30 @@ __global__ void Kernel_Compute_dWt_Bp
     dwts[st] += su->act * ru_dEdNet;
     st++;
   }
+}
 
-  // todo: needs a separate kernel for bias weights!
-  
+__global__ void Kernel_Compute_dWt_Bp_Bias
+(const int st_ui, const int ed_ui, char* units_mem, const int unit_vars_size)
+{
+
+  // each thread just gets a different unit -- doesn't do multiple units
+  const int nthrs = blockDim.x;
+  const int thr_no = threadIdx.x;
+  const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
+  if(un_idx < ed_ui) {
+    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+      (units_mem, unit_vars_size, un_idx);
+    u->bias_dwt += u->dEdNet;
+  }
 }
 
 void Bp_cuda::Compute_dWt(bool sync) {
   // just throw the whole set of recv_cgps at it!
   Kernel_Compute_dWt_Bp<<<n_recv_cgps, n_threads, 0, strm_compute_dwt>>>
     (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, units_mem_d, unit_vars_size);
+
+  Kernel_Compute_dWt_Bp_Bias<<<n_units_built, n_threads, 0, strm_compute_dwt>>>
+    (0, n_units_built, units_mem_d, unit_vars_size);
 
   if(sync) {  
     cudaSafeCall(cudaStreamSynchronize(strm_compute_dwt));
@@ -391,10 +408,37 @@ __global__ void Kernel_Compute_Weights_Bp_dWtOnly
   }
 }
 
+__global__ void Kernel_Compute_Weights_Bp_Bias_dWtOnly
+(const int st_ui, const int ed_ui, char* units_mem, const int unit_vars_size,
+ const int unit_spec_size, const int con_spec_mem_tot, const int con_spec_size)
+{
+  // each thread just gets a different unit -- doesn't do multiple units
+  const int nthrs = blockDim.x;
+  const int thr_no = threadIdx.x;
+  const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
+  if(un_idx < ed_ui) {
+    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+      (units_mem, unit_vars_size, un_idx);
+
+    BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec
+      (const_spec_mem + con_spec_mem_tot, unit_spec_size, u->cuda_unit_spec_idx);
+
+    if(us->bias_spec_idx >= 0) {
+      BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
+        (const_spec_mem, con_spec_size, us->bias_spec_idx);
+      
+      u->bias_wt += cs->cur_lrate * u->bias_dwt;
+    }
+  }
+}
+
 void Bp_cuda::Compute_Weights(bool sync) {
   // copy con spec mem to constant
   cudaMemcpyToSymbol(const_spec_mem, con_spec_mem_d, con_spec_mem_tot);
 
+  // copy unit spec mem to constant, position AFTER con specs (4th arg)
+  cudaMemcpyToSymbol(const_spec_mem, unit_spec_mem_d, unit_spec_mem_tot, con_spec_mem_tot);
+  
   BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
     (con_spec_mem_h, con_spec_size, 0);
 
@@ -402,6 +446,9 @@ void Bp_cuda::Compute_Weights(bool sync) {
   case BpConSpec_cuda::WU_DWT_ONLY: {
     Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_wt>>>
       (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, con_spec_size);
+    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_built, n_threads, 0, strm_compute_wt>>>
+      (0, n_units_built, units_mem_d, unit_vars_size, unit_spec_size, con_spec_mem_tot,
+       con_spec_size);
     break;
   }
   case BpConSpec_cuda::WU_SIMPLE_DECAY: {
