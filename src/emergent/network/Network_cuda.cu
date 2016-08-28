@@ -408,7 +408,7 @@ void Network_cuda::UnitSpecs_HostToDevice() {
   
   cudaSafeCall
     (cudaMemcpy(unit_spec_mem_d, unit_spec_mem_h, n_unit_specs * unit_spec_size,
-                cudaMemcpyDeviceToHost));
+                cudaMemcpyHostToDevice));
 }
 
 bool Network_cuda::AllocConSpecs(int n_us) {
@@ -435,7 +435,7 @@ void Network_cuda::ConSpecs_HostToDevice() {
   
   cudaSafeCall
     (cudaMemcpy(con_spec_mem_d, con_spec_mem_h, n_con_specs * con_spec_size,
-                cudaMemcpyDeviceToHost));
+                cudaMemcpyHostToDevice));
 }
 
 

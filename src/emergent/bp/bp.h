@@ -971,6 +971,8 @@ public:
   void  BuildNullUnit() override;
 
 #ifdef CUDA_COMPILE
+  bool  Cuda_MakeCudaNet() override;
+
   void  Cuda_CopyUnitSpec(void* cuda_us, const UnitSpec* source) override;
   void  Cuda_CopyConSpec(void* cuda_cs, const ConSpec* source) override;
 
@@ -979,6 +981,10 @@ public:
   virtual void  Cuda_Compute_NetinAct();
   // #IGNORE
   virtual void  Cuda_Compute_dEdA_dEdNet();
+  // #IGNORE
+  virtual void  Cuda_Compute_dWt();
+  // #IGNORE
+  virtual void  Cuda_Compute_Weights();
   // #IGNORE
 #endif
   

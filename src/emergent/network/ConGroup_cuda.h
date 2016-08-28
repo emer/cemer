@@ -54,17 +54,16 @@ public:
   { return cons_mem[cnmem_idx + (alloc_size * var_no) + idx]; }
   // #CAT_Access fast access (no range checking) to owned connection variable value at given index -- OwnCnVar with index in loop is preferred for fastest access -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
 
-  CUDAFUN inline const int32_t& UnIdx(float* cons_mem, int idx) const
-  { return ((int32_t*)cons_mem)[mem_idx + idx]; }
-  // #CAT_Access fast access (no range checking) to unit flat index at given connection index
-  CUDAFUN inline int32_t&       UnIdx(float* cons_mem, int idx)
-  { return ((int32_t*)cons_mem)[mem_idx + idx]; }
-  // #CAT_Access fast access (no range checking) to unit flat index at given connection index
+  CUDAFUN inline int32_t        UnIdx(float* cons_mem, int idx) const
+  { return ((int32_t*)cons_mem)[mem_idx + idx] -1; }
+  // #CAT_Access fast access (no range checking) to unit *cuda* index at given connection index (subtracts 1 automatically from stored flat index!)
 
-  CUDAFUN inline const int32_t& PtrCnIdx(float* cons_mem, int idx) const
-  { return ((int32_t*)cons_mem)[mem_idx + alloc_size + idx]; }
-  // #CAT_Access fast access (no range checking) to index of connection within unit cons on other side of connection -- needs appropriate network cons_mem block
-  CUDAFUN inline int32_t&    PtrCnIdx(float* cons_mem, int idx)
+  CUDAFUN inline UnitVars_cuda* UnVars(float* cons_mem, int idx, char* units_mem,
+                                       const int unit_vars_size)
+  { return (UnitVars_cuda*)(units_mem + (UnIdx(cons_mem, idx) * unit_vars_size)); }
+  // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level) -- this is the unit on the other end of this connection 
+
+  CUDAFUN inline int32_t        PtrCnIdx(float* cons_mem, int idx) const
   { return ((int32_t*)cons_mem)[mem_idx + alloc_size + idx]; }
   // #CAT_Access fast access (no range checking) to index of connection within unit cons on other side of connection -- needs appropriate network cons_mem block
 
@@ -72,9 +71,9 @@ public:
   (float* cons_mem, char* cgp_mem, const int con_group_size,
    int* oth_cgp_start, int idx) const 
   { return (ConGroup_cuda*)
-      (cgp_mem + ((oth_cgp_start[UnIdx(cons_mem, idx)-1] + other_idx) *
+      (cgp_mem + ((oth_cgp_start[UnIdx(cons_mem, idx)] + other_idx) *
                       con_group_size)); }
-  // get ConGroup for this projection in unit at given index at other end of this connection -- have to convert flat to thread index by -1
+  // get ConGroup for this projection in unit at given index at other end of this connection
   
   CUDAFUN inline float&  PtrCn
   (float* cons_mem, char* cgp_mem, const int con_group_size,

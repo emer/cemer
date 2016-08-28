@@ -79,7 +79,8 @@ do
 
     --enable-cuda | --cuda | cuda | enable-cuda | -cuda | -enable-cuda)
       cuda=true
-      cmake_cmd="$cmake_cmd -DCUDA_BUILD=true"
+      extra_suffix="_cuda"
+      cmake_cmd="$cmake_cmd -DCUDA_BUILD=true -DEXTRA_SUFFIX=$extra_suffix"
       build_dir="${build_dir}_cuda"
       shift 1
     ;;

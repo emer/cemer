@@ -188,8 +188,8 @@ public:
   //   inside a kernel
   
   CUDAFUN static inline UnitVars_cuda*  GetUnitVars
-  (char* net_units_mem, const int unit_vars_size, const int unit_idx)
-  { return (UnitVars_cuda*)(net_units_mem + (unit_idx * unit_vars_size)); }
+  (char* units_mem, const int unit_vars_size, const int unit_idx)
+  { return (UnitVars_cuda*)(units_mem + (unit_idx * unit_vars_size)); }
   // #CAT_Structure unit variables for unit at given unit at unit flat_idx  -- cast into proper algo class
 
   CUDAFUN static inline UnitSpec_cuda*  GetUnitSpec
@@ -198,20 +198,20 @@ public:
   // #CAT_Structure unit spec from unique unitspec index -- cast into proper algo class
   
   CUDAFUN static inline int GetNConGroups
-  (const int* net_n_recv_cgps, const int unit_idx)
-  { return net_n_recv_cgps[unit_idx]; }
+  (const int* n_recv_cgps, const int unit_idx)
+  { return n_recv_cgps[unit_idx]; }
   // #CAT_Structure number of congroups for given unit index -- pass in appropriate recv or send memory
 
   CUDAFUN static inline ConGroup_cuda*  GetUnConGroup
-  (char* net_cgp_mem, const int* net_cgp_start, const int con_group_size,
+  (char* cgp_mem, const int* cgp_start, const int con_group_size,
    const int unit_idx, const int cgp_idx)
   { return (ConGroup_cuda*)
-      (net_cgp_mem + ((net_cgp_start[unit_idx] + cgp_idx) * con_group_size)); }
+      (cgp_mem + ((cgp_start[unit_idx] + cgp_idx) * con_group_size)); }
   // #CAT_Structure connection group for given unit flat index, con group index, pass in appropriate recv or send cgp_mem and cgp_start from network
 
   CUDAFUN static inline ConGroup_cuda*  GetConGroup_Flat
-  (char* net_cgp_mem, const int con_group_size, const int cgp_idx)
-  { return (ConGroup_cuda*)(net_cgp_mem + (cgp_idx * con_group_size)); }
+  (char* cgp_mem, const int con_group_size, const int cgp_idx)
+  { return (ConGroup_cuda*)(cgp_mem + (cgp_idx * con_group_size)); }
   // #CAT_Structure connection group for given global con group index, pass in appropriate recv or send cgp_mem and cgp_start from network
   
   // once you have the con group, use accessor routines there for further con access
@@ -221,11 +221,11 @@ public:
   { return (ConSpec_cuda*)(con_spec_mem + (cs_idx * con_spec_size)); }
   // #CAT_Structure con spec from unique conspec index -- cast into proper algo class
   
-  CUDAFUN static inline int  LayUnStart(const int* net_lay_unit_idxs, const int lay_no)
-  { return net_lay_unit_idxs[2*lay_no]; }
+  CUDAFUN static inline int  LayUnStart(const int* lay_unit_idxs, const int lay_no)
+  { return lay_unit_idxs[2*lay_no]; }
   // #CAT_Structure starting unit index for given layer (from active_layers list)
-  CUDAFUN static inline int  LayUnEnd(const int* net_lay_unit_idxs, const int lay_no)
-  { return net_lay_unit_idxs[2*lay_no + 1]; }
+  CUDAFUN static inline int  LayUnEnd(const int* lay_unit_idxs, const int lay_no)
+  { return lay_unit_idxs[2*lay_no + 1]; }
   // #CAT_Structure ending unit index for given layer (from active_layers list) -- this is like the max in a for loop -- valid indexes are < end
 
 

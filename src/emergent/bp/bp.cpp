@@ -702,6 +702,14 @@ void BpNetwork::Compute_Weights_Thr(int thr_no) {
   if(threads.get_timing)
     net_timing[thr_no]->wt.StartTimer(true); // reset
 
+#ifdef CUDA_COMPILE
+  if(cuda.on) {
+    Cuda_Compute_Weights();
+    if(threads.get_timing)
+      net_timing[thr_no]->wt.EndIncrAvg();
+    return;
+  }
+#endif
   const int nrcg = ThrNRecvConGps(thr_no);
   for(int i=0; i<nrcg; i++) {
     ConGroup* rcg = ThrRecvConGroup(thr_no, i);
@@ -759,12 +767,18 @@ void BpNetwork::Trial_Run_Thr(int thr_no) {
 
 #ifdef CUDA_COMPILE
 
+bool BpNetwork::Cuda_MakeCudaNet() {
+  if(cuda_net) return false;
+  cuda_net = new Bp_cuda;  // note: this will leak memory..
+  return true;
+}
+
 void BpNetwork::Cuda_CopyUnitSpec(void* cuda_us, const UnitSpec* src) {
   BpUnitSpec_cuda* cus = (BpUnitSpec_cuda*)cuda_us;
   BpUnitSpec* us = (BpUnitSpec*)src;
   cus->act_fun = (BpUnitSpec_cuda::BpActFun)us->act_fun;
   cus->error_fun = (BpUnitSpec_cuda::BpErrFun)us->error_fun;
-  cus->err_tol = (BpUnitSpec_cuda::BpActFun)us->err_tol;
+  cus->err_tol = us->err_tol;
 }
 
 void BpNetwork::Cuda_CopyConSpec(void* cuda_cs, const ConSpec* src) {
@@ -780,11 +794,9 @@ void BpNetwork::Cuda_CopyConSpec(void* cuda_cs, const ConSpec* src) {
 void BpNetwork::Cuda_Trial_Run() {
   Cuda_Compute_NetinAct();
   Cuda_Compute_dEdA_dEdNet();
+  Cuda_Compute_dWt();
   if(cuda.sync_units) {
     Cuda_UnitVarsToHost();
-  }
-  if(cuda.sync_cons) {
-    Cuda_ConStateToHost();
   }
 }
 
@@ -794,6 +806,23 @@ void BpNetwork::Cuda_Compute_NetinAct() {
 
 void BpNetwork::Cuda_Compute_dEdA_dEdNet() {
   ((Bp_cuda*)cuda_net)->Compute_dEdA_dEdNet();
+}
+
+void BpNetwork::Cuda_Compute_dWt() {
+  if(cuda.timers_on)
+    net_timing[0]->dwt.StartTimer(true); // reset
+
+  ((Bp_cuda*)cuda_net)->Compute_dWt(true); // sync
+
+  if(cuda.timers_on)
+    net_timing[0]->dwt.EndIncrAvg();
+}
+
+void BpNetwork::Cuda_Compute_Weights() {
+  ((Bp_cuda*)cuda_net)->Compute_Weights(true); // sync
+  if(cuda.sync_cons) {
+    Cuda_ConStateToHost();
+  }
 }
 
 

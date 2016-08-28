@@ -171,9 +171,11 @@ public:
 class Bp_cuda : public Network_cuda {
   // NVIDIA CUDA support for backprop computation
 public:
-  
+
   void  Compute_NetinAct();
   void  Compute_dEdA_dEdNet();
+  void  Compute_dWt(bool sync = true); // could get away without sync..
+  void  Compute_Weights(bool sync = true); // could get away without sync..
 
   Bp_cuda();
 };

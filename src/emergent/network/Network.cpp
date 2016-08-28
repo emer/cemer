@@ -65,6 +65,15 @@ void NetworkCudaSpec::Initialize() {
   n_threads = min_threads;
 }
 
+void NetworkCudaSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+#ifndef CUDA_COMPILE
+  on = false;                   // can never be on!
+#endif
+}
+
+
 void NetStatsSpecs::Initialize() {
   sse_unit_avg = false;
   sse_sqrt = false;
@@ -4209,7 +4218,7 @@ void Network::Cuda_BuildNet() {
     (unit_vars_size, n_units_built, n_layers_built, n_ungps_built,
      thrs_units_mem[0], thrs_lay_unit_idxs[0], thrs_ungp_unit_idxs[0],
      n_lay_stats, n_lay_stats_vars, thrs_lay_stats[0], RecvOwnsCons(),
-     units_n_recv_cgps, units_n_send_cgps, n_recv_cgps, n_send_cgps, 
+     thrs_units_n_recv_cgps[0], thrs_units_n_send_cgps[0], n_recv_cgps, n_send_cgps, 
      thrs_recv_cgp_start[0], thrs_send_cgp_start[0],
      thrs_recv_cons_cnt[0], thrs_send_cons_cnt[0], 
      thrs_recv_cons_mem[0], thrs_send_cons_mem[0]);
@@ -4227,6 +4236,7 @@ void Network::Cuda_BuildNet() {
   cuda_net->NetToDevice();  // copy everything over to the device
   
   cuda_net->OwnCons_HostToDevice(true); // sync
+  cuda_net->UnitVars_HostToDevice(true); // sync
 
   Cuda_MakeUnitSpecs();         // make and copy to device
   Cuda_MakeConSpecs();
