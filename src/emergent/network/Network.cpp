@@ -667,7 +667,10 @@ void Network::BuildUnitsFlatList() {
 void Network::FreeUnitConGpThreadMem() {
   if(!units_thrs) return; // nothing allocated yet -- otherwise assume EVERYTHING is
 
+
+#ifdef CUDA_COMPILE
   Cuda_FreeNet();
+#endif
   
   FreeConThreadMem();           // this must go first!
 
