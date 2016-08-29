@@ -1,6 +1,12 @@
-// ta_Dump File v3.0 -- code v7.8.5.0 rev9145
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9947
 LeabraProject .projects["sound_object"] { 
- Doc_Group @.docs = [0] {
+ Doc_Group @.docs = [2] {
+  taDoc @["ProjectDocs"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+  };
+  taDoc @["ChangeLog"] { };
  };
 
  Wizard_Group @.wizards = [1] {
@@ -35,13 +41,13 @@ LeabraProject .projects["sound_object"] {
    EditMthItem_Group @.mths = [0] {
    };
 
-   DataTableCols @.jobs_running.data = [31] {
+   DataTableCols @.jobs_running.data = [33] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["status"] { };
-    String_Data @["notes"] { };
     String_Data @["label"] { };
+    String_Data @["notes"] { };
     String_Data @["filename"] { };
     String_Data @["params"] { };
     String_Data @["status_info"] { };
@@ -95,6 +101,8 @@ LeabraProject .projects["sound_object"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
    DataOpList @.jobs_running.last_sort_spec.ops = [0] {
@@ -103,13 +111,13 @@ LeabraProject .projects["sound_object"] {
    DataTableCell_List @.jobs_running.control_panel_cells = [0] {
    };
 
-   DataTableCols @.jobs_done.data = [31] {
+   DataTableCols @.jobs_done.data = [33] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["status"] { };
-    String_Data @["notes"] { };
     String_Data @["label"] { };
+    String_Data @["notes"] { };
     String_Data @["filename"] { };
     String_Data @["params"] { };
     String_Data @["status_info"] { };
@@ -163,6 +171,8 @@ LeabraProject .projects["sound_object"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
    DataOpList @.jobs_done.last_sort_spec.ops = [0] {
@@ -171,13 +181,13 @@ LeabraProject .projects["sound_object"] {
    DataTableCell_List @.jobs_done.control_panel_cells = [0] {
    };
 
-   DataTableCols @.jobs_archive.data = [31] {
+   DataTableCols @.jobs_deleted.data = [33] {
     String_Data @["cluster"] { };
     String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["status"] { };
-    String_Data @["notes"] { };
     String_Data @["label"] { };
+    String_Data @["notes"] { };
     String_Data @["filename"] { };
     String_Data @["params"] { };
     String_Data @["status_info"] { };
@@ -231,6 +241,78 @@ LeabraProject .projects["sound_object"] {
     };
     String_Data @["submit_svn"] { };
     String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
+   };
+
+   DataOpList @.jobs_deleted.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCell_List @.jobs_deleted.control_panel_cells = [0] {
+   };
+
+   DataTableCols @.jobs_archive.data = [33] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
+    String_Data @["tag"] { };
+    String_Data @["status"] { };
+    String_Data @["label"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+    String_Data @["done_svn"] { };
+    String_Data @["last_svn"] { };
    };
 
    DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
@@ -309,6 +391,10 @@ LeabraProject .projects["sound_object"] {
 
  Program_TopGroup @.programs = [2] {
   Program @["SoundObjTest"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [3] {
     taSound @["first_sound"] { };
     taSound @["second_sound"] { };
@@ -425,6 +511,10 @@ LeabraProject .projects["sound_object"] {
    };
   };
   Program @["AuditoryProcTest"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserData_DocLink @["DocLink"] { };
+   };
+
    ProgObjList @.objs = [3] {
     taSound @["input_sound"] { };
     AuditoryProc @["AuditoryProc_1"] { };
@@ -732,26 +822,86 @@ LeabraProject .projects["sound_object"] {
  version {
   major=0;
   minor=0;
-  step=0;
+  step=1;
  };
- author=;
- email=;
+ author="Randall C. O'Reilly";
+ email="randy.oreilly@colorado.edu";
  license {
-  owner="Regents of the University of Colorado";
-  license=NO_LIC;
+  license=GPLv2;
+  owner_name="Regents of the University of Colorado";
   org="CCNLab at the University of Colorado Boulder";
-  year="2011";
+  year="2016";
   custom=;
  };
- wiki_url {
-  sync=0;
+ pub_cite=;
+ wiki {
   wiki=;
-  url=;
+  page_name=;
  };
  docs {
   name="docs";
   el_typ=taDoc;
   el_def=0;
+  taDoc @["ProjectDocs"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_106";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ProjectDocs";
+   desc=;
+   web_doc=1;
+   wiki="emergent";
+   url="AuditoryProc";
+   full_url="https://grey.colorado.edu/emergent/index.php/AuditoryProc";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text=;
+  };
+  taDoc @["ChangeLog"] {
+   name="ChangeLog";
+   desc=;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+<li>Mon Aug 29 17:06:09 2016 version: 0.0.1 user: oreilly file_name: <code>sound_object.proj</code> <br>
+svn rev: 9949 doc and version updt
+</ul>
+</body>
+</html>
+";
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+<P>
+<li>Mon Aug 29 17:06:09 2016 version: 0.0.1 user: oreilly file_name: <code>sound_object.proj</code> <br>
+svn rev: 9949 doc and version updt
+</ul>
+</body>
+</html>
+";
+  };
  };
  wizards {
   name="wizards";
@@ -792,7 +942,7 @@ LeabraProject .projects["sound_object"] {
     };
    };
    name="ControlPanel";
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -818,7 +968,7 @@ LeabraProject .projects["sound_object"] {
     };
    };
    name="ClusterRun";
-   running_updt=0;
+   updt_while_running=0;
    desc=;
    mbrs {
     name="mbrs";
@@ -841,9 +991,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -855,9 +1005,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -869,9 +1019,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -883,9 +1033,23 @@ LeabraProject .projects["sound_object"] {
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -897,23 +1061,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["label"] {
-      name="label";
-      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -925,9 +1075,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -939,9 +1089,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -953,9 +1103,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -967,9 +1117,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -981,9 +1131,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -995,9 +1145,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1009,9 +1159,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1023,9 +1173,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1037,9 +1187,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1051,9 +1201,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1065,9 +1215,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1079,9 +1229,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1103,9 +1253,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1117,9 +1267,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1131,9 +1281,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1145,9 +1295,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1159,9 +1309,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1183,9 +1333,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1207,9 +1357,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1230,10 +1380,10 @@ LeabraProject .projects["sound_object"] {
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1255,9 +1405,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1279,9 +1429,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1302,10 +1452,10 @@ LeabraProject .projects["sound_object"] {
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1317,9 +1467,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1331,7 +1481,35 @@ LeabraProject .projects["sound_object"] {
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -1374,9 +1552,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1388,9 +1566,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1402,9 +1580,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1416,9 +1594,23 @@ LeabraProject .projects["sound_object"] {
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1430,23 +1622,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["label"] {
-      name="label";
-      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1458,9 +1636,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1472,9 +1650,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1486,9 +1664,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1500,9 +1678,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1514,9 +1692,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1528,9 +1706,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1542,9 +1720,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1556,9 +1734,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1570,9 +1748,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1584,9 +1762,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1598,9 +1776,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1612,9 +1790,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1636,9 +1814,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1650,9 +1828,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1664,9 +1842,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1678,9 +1856,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1692,9 +1870,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1716,9 +1894,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1740,9 +1918,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1763,10 +1941,10 @@ LeabraProject .projects["sound_object"] {
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1788,9 +1966,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1812,9 +1990,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1835,10 +2013,10 @@ LeabraProject .projects["sound_object"] {
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1850,9 +2028,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1864,9 +2042,598 @@ LeabraProject .projects["sound_object"] {
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
+    control_panel_cells {
+     name="control_panel_cells";
+     el_typ=DataTableCell;
+     el_def=0;
+    };
+   };
+   jobs_deleted {
+    name="jobs_deleted";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1907,9 +2674,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["cluster"] {
       name="cluster";
       desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1921,9 +2688,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1935,9 +2702,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1949,9 +2716,23 @@ LeabraProject .projects["sound_object"] {
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["label"] {
+      name="label";
+      desc="label for the job -- a brief description that you can use to label this job's results on your graph -- in general notes should have more general info and then label should JUST describe what is unique about the current run";
+      col_flags=SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1963,23 +2744,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["notes"] {
       name="notes";
       desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["label"] {
-      name="label";
-      desc="label for the job -- a brief description that you can use to label this job's results on your graph";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -1991,9 +2758,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["filename"] {
       name="filename";
       desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2005,9 +2772,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["params"] {
       name="params";
       desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2019,9 +2786,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["status_info"] {
       name="status_info";
       desc="more detailed information about status";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2033,9 +2800,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["submit_time"] {
       name="submit_time";
       desc="when was the job submitted (tracks time from emergent client submission)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2047,9 +2814,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2061,9 +2828,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2075,9 +2842,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["running_time"] {
       name="running_time";
       desc="total running time in days/hours/minutes";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2089,9 +2856,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2103,9 +2870,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["job_out"] {
       name="job_out";
       desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2117,9 +2884,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["job_out_file"] {
       name="job_out_file";
       desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2131,9 +2898,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["dat_files"] {
       name="dat_files";
       desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2145,9 +2912,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["other_files"] {
       name="other_files";
       desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2169,9 +2936,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="command_id";
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2183,9 +2950,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["command"] {
       name="command";
       desc="emergent command line, up to point of parameters";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2197,9 +2964,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2211,9 +2978,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2225,9 +2992,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["run_time"] {
       name="run_time";
       desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2249,9 +3016,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="ram_gb";
       desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2273,9 +3040,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="n_threads";
       desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2296,10 +3063,10 @@ LeabraProject .projects["sound_object"] {
        };
       };
       name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2321,9 +3088,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="mpi_per_node";
       desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2345,9 +3112,9 @@ LeabraProject .projects["sound_object"] {
       };
       name="pb_batches";
       desc="if > 0, use parallel batch mode with this number of batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2368,10 +3135,10 @@ LeabraProject .projects["sound_object"] {
        };
       };
       name="pb_nodes";
-      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      desc="actually pb_n_batches_per -- re-using this parameter that was previously used for a different purpose -- number of batches to run sequentially within a single job";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2383,9 +3150,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["submit_svn"] {
       name="submit_svn";
       desc="svn revision for the original job submission";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2397,7 +3164,35 @@ LeabraProject .projects["sound_object"] {
      String_Data @["submit_job"] {
       name="submit_job";
       desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["done_svn"] {
+      name="done_svn";
+      desc="svn revision when this job was moved from running to done -- this will contain full set of files generated when running -- for deleted jobs can also recover to this";
+      col_flags=SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["last_svn"] {
+      name="last_svn";
+      desc="last svn revision for command submission that affected this job in some significant way -- for deleted jobs, this is the svn revision that we recover to";
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -2440,9 +3235,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["cluster"] {
       name="cluster";
       desc="cluster where this job was submitted / run";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2454,9 +3249,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["user"] {
       name="user";
       desc="user who ran this job";
-      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY|CHECKBOX;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2468,9 +3263,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["file_name"] {
       name="file_name";
       desc="name of file -- does not include any path information";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2482,9 +3277,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["tag"] {
       name="tag";
       desc="job tag associated with this file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2496,9 +3291,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["size"] {
       name="size";
       desc="size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2510,9 +3305,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["kind"] {
       name="kind";
       desc="type of file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2524,9 +3319,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["date_modified"] {
       name="date_modified";
       desc="timestamp for when the file was last modified";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2538,9 +3333,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["date_created"] {
       name="date_created";
       desc="timestamp for when the file was first created";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2552,9 +3347,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["svn_file_path"] {
       name="svn_file_path";
       desc="path to file in SVN repository, relative to root of svn_repo repository";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2566,9 +3361,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["proj_file_path"] {
       name="proj_file_path";
       desc="path to file relative to the parent project directory -- e.g., results/filename.dat";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2580,9 +3375,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["file_path"] {
       name="file_path";
       desc="full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2623,9 +3418,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["queue"] {
       name="queue";
       desc="queue that this info relates to";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2637,9 +3432,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["job_no"] {
       name="job_no";
       desc="job number or total number of actve jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2651,9 +3446,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["user"] {
       name="user";
       desc="user name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2665,9 +3460,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["state"] {
       name="state";
       desc="current scheduler state -- or description of global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2679,9 +3474,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["procs"] {
       name="procs";
       desc="number of processors for this job or for global state info";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2693,9 +3488,9 @@ LeabraProject .projects["sound_object"] {
      String_Data @["start_time"] {
       name="start_time";
       desc="timestamp for when the job was submitted or started running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_DATA|READ_ONLY;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2737,6 +3532,7 @@ LeabraProject .projects["sound_object"] {
    proj_name=;
    auto_updt_interval=10;
    auto_updt_timeout=30;
+   cluster=;
    clusters=;
    users=;
    last_submit_time=;
@@ -2745,7 +3541,6 @@ LeabraProject .projects["sound_object"] {
    extra_files=;
    svn_repo=;
    repo_url=;
-   cluster=;
    queue=;
    run_time=;
    exe_cmd="emergent";
@@ -2809,7 +3604,7 @@ LeabraProject .projects["sound_object"] {
        };
       };
       name="Bin";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
       calc_expr {
@@ -2845,7 +3640,7 @@ LeabraProject .projects["sound_object"] {
      };
      float_Data @["Filters"] {
       name="Filters";
-      col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+      col_flags=SAVE_DATA;
       is_matrix=1;
       cell_geom{ 26;      };
       calc_expr {
@@ -3433,10 +4228,26 @@ LeabraProject .projects["sound_object"] {
   desc=;
   debug_mode=0;
   Program @["SoundObjTest"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["sound_object"].programs["SoundObjTest"].doc$$;
+    };
+   };
    name="SoundObjTest";
    short_nm="ndbTst";
    tags=;
    desc="test s for the sound object";
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author=;
+   email=;
    flags=NO_STOP_STEP;
    stop_step_cond {
     expr=;
@@ -3470,7 +4281,7 @@ LeabraProject .projects["sound_object"] {
 	};
        };
        name="frame";
-       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=0;
        cell_geom{ 1;       };
        calc_expr {
@@ -3493,7 +4304,7 @@ LeabraProject .projects["sound_object"] {
 	};
        };
        name="sound";
-       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=0;
        cell_geom{ 1;       };
        calc_expr {
@@ -3556,7 +4367,6 @@ LeabraProject .projects["sound_object"] {
      name="sound_file_name";
      var_type=T_String;
      string_val="arctic_a0001.wav";
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -3588,7 +4398,6 @@ LeabraProject .projects["sound_object"] {
      name="play_sound";
      var_type=T_Int;
      int_val=2;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="which sound to play (1 or 2)";
@@ -3598,7 +4407,6 @@ LeabraProject .projects["sound_object"] {
      name="noise_level";
      var_type=T_Real;
      real_val=0.05;
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -3632,8 +4440,7 @@ LeabraProject .projects["sound_object"] {
        name="i";
        var_type=T_Int;
        int_val=0;
-       objs_ptr=0;
-       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+       flags=LOCAL_VAR|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -3998,12 +4805,39 @@ LeabraProject .projects["sound_object"] {
    };
    step_prog=NULL;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
   Program @["AuditoryProcTest"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @["DocLink"] {
+     name="DocLink";
+     doc=.projects["sound_object"].programs["AuditoryProcTest"].doc$$;
+    };
+   };
    name="AuditoryProcTest";
    short_nm="dtrPrT";
    tags=;
    desc="test s for the auditory processing system";
+   version {
+    major=0;
+    minor=0;
+    step=0;
+   };
+   author=;
+   email=;
    flags=NO_STOP_STEP;
    stop_step_cond {
     expr=;
@@ -4028,12 +4862,18 @@ LeabraProject .projects["sound_object"] {
      };
      data_table=.projects["sound_object"].programs["AuditoryProcTest"].objs["AuditoryOutTable"]$$;
      save_mode=FIRST_ROW;
-     input_save=0;
-     input {win_msec=25: step_msec=12.5: trial_msec=100: sample_rate=16000: channels=1: channel=0: win_samples=400: step_samples=200: trial_samples=1600: trial_steps=8: };
+     input {win_msec=25: step_msec=12.5: trial_msec=100: border_steps=12: sample_rate=16000: channels=1: channel=0: win_samples=400: step_samples=200: trial_samples=1600: trial_steps=8: total_steps=32: };
+     dft {prv_smooth=0: log_pow=1: log_off=0: log_min=-100: cur_smooth=1: };
      mel_fbank {on=1: lo_hz=300: hi_hz=8000: n_filters=26: log_off=0: log_min=-10: lo_mel=401.9727: hi_mel=2840.038: };
      fbank_renorm {on=1: ren_min=-10: ren_max=7: ren_scale=0.05882353: };
-     fbank_delta {on=1: n_steps=2: avg=0: xx1_norm=1: xx1_gain=10: };
+     gabor1 {on=1: sz_time=6: sz_freq=6: spc_time=2: spc_freq=2: wvlen=1.5: sig_len=0.6: sig_wd=0.3: sig_hor_len=0.3: sig_hor_wd=0.1: gain=2: n_horiz=4: phase_off=0: circle_edge=1: n_filters=7: };
+     gabor2 {on=1: sz_time=12: sz_freq=12: spc_time=4: spc_freq=4: wvlen=1.5: sig_len=0.6: sig_wd=0.3: sig_hor_len=0.3: sig_hor_wd=0.1: gain=2: n_horiz=4: phase_off=0: circle_edge=1: n_filters=7: };
+     gabor3 {on=0: sz_time=6: sz_freq=6: spc_time=1651461152: spc_freq=1968385893: wvlen=1.5: sig_len=0.6: sig_wd=0.3: sig_hor_len=0.3: sig_hor_wd=0.1: gain=2: n_horiz=4: phase_off=0: circle_edge=1: n_filters=7: };
      mfcc {on=0: n_coeff=13: };
+     gabor_kwta {on=1: gi=2: lay_gi=1.5: gain=80: nvar=0.01: g_bar_l=0.1: };
+     gabor1_geom {x=4: y=10: n_not_xy=0: n=40: };
+     gabor2_geom {x=2: y=4: n_not_xy=0: n=8: };
+     gabor3_geom {x=1: y=1: n_not_xy=0: n=1: };
     };
     DataTable @["AuditoryOutTable"] {
      name="AuditoryOutTable";
@@ -4054,7 +4894,7 @@ LeabraProject .projects["sound_object"] {
 	};
        };
        name="AuditoryProc_1_dft_pow";
-       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 8;201;       };
        calc_expr {
@@ -4240,7 +5080,7 @@ LeabraProject .projects["sound_object"] {
 	};
        };
        name="AuditoryProc_1_mel_fbank";
-       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 8;26;       };
        calc_expr {
@@ -4286,7 +5126,7 @@ LeabraProject .projects["sound_object"] {
 	};
        };
        name="AuditoryProc_1_mel_fbank_tavg";
-       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 1;2;8;26;       };
        calc_expr {
@@ -4353,7 +5193,7 @@ LeabraProject .projects["sound_object"] {
 	};
        };
        name="AuditoryProc_1_mel_fbank_delta";
-       col_flags=SAVE_ROWS|SAVE_DATA|CHECKBOX;
+       col_flags=SAVE_DATA;
        is_matrix=1;
        cell_geom{ 1;5;8;26;       };
        calc_expr {
@@ -4523,7 +5363,6 @@ LeabraProject .projects["sound_object"] {
      name="sound_file_name";
      var_type=T_String;
      string_val="arctic_a0001.wav";
-     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
@@ -4677,6 +5516,17 @@ LeabraProject .projects["sound_object"] {
    };
    step_prog=NULL;
    step_n=1;
+   doc {
+    name="doc";
+    desc=;
+    web_doc=0;
+    wiki=;
+    url="local";
+    full_url="local";
+    text_size=1;
+    text=;
+    html_text=;
+   };
   };
  };
  viewers {
@@ -4690,7 +5540,7 @@ LeabraProject .projects["sound_object"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 8 0=0.002651114;
+     value 8 0=0.001592357;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -4700,7 +5550,7 @@ LeabraProject .projects["sound_object"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 8 0=0.9973489;
+     value 8 0=0.9973461;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -4721,6 +5571,7 @@ LeabraProject .projects["sound_object"] {
    };
    name="Browser2";
    m_data=.projects["sound_object"]$$;
+   cur_font_size=12;
    visible=1;
    win_name=".projects[\"sound_object\"] - sound_object.proj";
    m_is_root=0;
@@ -4744,6 +5595,7 @@ LeabraProject .projects["sound_object"] {
      };
      name="Application";
      m_data=NULL;
+     cur_font_size=12;
      visible=0;
      lft=0;
      top=0;
@@ -4757,6 +5609,7 @@ LeabraProject .projects["sound_object"] {
     BrowseViewerTaBase @["Navigator"] {
      name="Navigator";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
@@ -4765,6 +5618,7 @@ LeabraProject .projects["sound_object"] {
     PanelViewer @["Editor"] {
      name="Editor";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
     };
     T3PanelViewer @["T3Frames"] {
@@ -4780,6 +5634,7 @@ LeabraProject .projects["sound_object"] {
      };
      name="T3Frames";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      panels {
       name="panels";
@@ -4788,10 +5643,12 @@ LeabraProject .projects["sound_object"] {
       T3Panel @["RawSound"] {
        name="RawSound";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -4800,6 +5657,7 @@ LeabraProject .projects["sound_object"] {
 	 GraphTableView @["RawSound_Graph"] {
 	  name="RawSound_Graph";
 	  m_data=$.projects["sound_object"].programs["SoundObjTest"].objs["RawSound"]$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  children {
 	   name="children";
@@ -4808,6 +5666,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["frame"] {
 	    name="frame";
 	    m_data=.projects["sound_object"].programs["SoundObjTest"].objs["RawSound"].data["frame"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=51760: };
@@ -4816,6 +5675,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["sound"] {
 	    name="sound";
 	    m_data=.projects["sound_object"].programs["SoundObjTest"].objs["RawSound"].data["sound"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=-0.551462: fix_max=0: max=0.657895: };
@@ -4845,6 +5705,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  line_width=1;
 	  point_size=0.01;
 	  point_spacing=1;
+	  solid_lines=0;
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
@@ -4855,6 +5716,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  x_axis {
 	   name="x_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=1;
 	   axis=X;
@@ -4874,6 +5736,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  z_axis {
 	   name="z_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Z;
@@ -4898,6 +5761,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["RawSound_Graph_plot_1"] {
 	    name="RawSound_Graph_plot_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -4919,6 +5783,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["RawSound_Graph_plot_2"] {
 	    name="RawSound_Graph_plot_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4940,6 +5805,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["RawSound_Graph_plot_3"] {
 	    name="RawSound_Graph_plot_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4961,6 +5827,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["RawSound_Graph_plot_4"] {
 	    name="RawSound_Graph_plot_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -4982,6 +5849,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["RawSound_Graph_plot_5"] {
 	    name="RawSound_Graph_plot_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5003,6 +5871,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["RawSound_Graph_plot_6"] {
 	    name="RawSound_Graph_plot_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5029,6 +5898,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["RawSound_Graph_err_1"] {
 	    name="RawSound_Graph_err_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5050,6 +5920,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["RawSound_Graph_err_2"] {
 	    name="RawSound_Graph_err_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5071,6 +5942,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["RawSound_Graph_err_3"] {
 	    name="RawSound_Graph_err_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5092,6 +5964,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["RawSound_Graph_err_4"] {
 	    name="RawSound_Graph_err_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5113,6 +5986,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["RawSound_Graph_err_5"] {
 	    name="RawSound_Graph_err_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5134,6 +6008,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["RawSound_Graph_err_6"] {
 	    name="RawSound_Graph_err_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5159,6 +6034,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -5190,6 +6066,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  raster_axis {
 	   name="raster_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -5219,11 +6096,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -5305,10 +6184,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       T3Panel @["AuditoryProc_1_MelFilters"] {
        name="AuditoryProc_1_MelFilters";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -5317,6 +6198,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 GraphTableView @["AuditoryProc_1_MelFilters_Graph"] {
 	  name="AuditoryProc_1_MelFilters_Graph";
 	  m_data=.projects["sound_object"].data.gp["AnalysisData"]["AuditoryProc_1_MelFilters"]$$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  children {
 	   name="children";
@@ -5325,6 +6207,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Bin"] {
 	    name="Bin";
 	    m_data=.projects["sound_object"].data.gp["AnalysisData"]["AuditoryProc_1_MelFilters"].data["Bin"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=200: };
@@ -5333,6 +6216,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Filters"] {
 	    name="Filters";
 	    m_data=.projects["sound_object"].data.gp["AnalysisData"]["AuditoryProc_1_MelFilters"].data["Filters"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
@@ -5362,6 +6246,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  line_width=1;
 	  point_size=0.01;
 	  point_spacing=1;
+	  solid_lines=0;
 	  bar_space=0.2;
 	  bar_depth=0.01;
 	  label_spacing=-1;
@@ -5372,6 +6257,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  x_axis {
 	   name="x_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=1;
 	   axis=X;
@@ -5391,6 +6277,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  z_axis {
 	   name="z_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Z;
@@ -5415,6 +6302,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_1"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5436,6 +6324,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_2"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5457,6 +6346,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_3"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5478,6 +6368,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_4"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5499,6 +6390,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_5"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5520,6 +6412,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_6"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5541,6 +6434,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_7"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_7";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5562,6 +6456,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_8"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_8";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5583,6 +6478,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_9"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_9";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5604,6 +6500,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_10"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_10";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5625,6 +6522,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_11"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_11";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5646,6 +6544,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_12"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_12";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5667,6 +6566,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_13"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_13";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5688,6 +6588,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_14"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_14";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5709,6 +6610,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_15"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_15";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5730,6 +6632,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_16"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_16";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5751,6 +6654,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_17"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_17";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5772,6 +6676,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_18"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_18";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5793,6 +6698,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_19"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_19";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5814,6 +6720,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_20"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_20";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5835,6 +6742,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_21"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_21";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5856,6 +6764,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_22"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_22";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5877,6 +6786,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_23"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_23";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5898,6 +6808,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_24"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_24";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5919,6 +6830,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_25"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_25";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5940,6 +6852,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_plot_26"] {
 	    name="AuditoryProc_1_MelFilters_Graph_plot_26";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
@@ -5966,6 +6879,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_1"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_1";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -5987,6 +6901,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_2"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_2";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6008,6 +6923,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_3"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_3";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6029,6 +6945,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_4"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_4";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6050,6 +6967,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_5"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_5";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6071,6 +6989,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_6"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_6";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6092,6 +7011,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_7"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_7";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6113,6 +7033,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_8"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_8";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6134,6 +7055,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_9"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_9";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6155,6 +7077,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_10"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_10";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6176,6 +7099,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_11"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_11";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6197,6 +7121,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_12"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_12";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6218,6 +7143,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_13"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_13";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6239,6 +7165,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_14"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_14";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6260,6 +7187,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_15"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_15";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6281,6 +7209,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_16"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_16";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6302,6 +7231,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_17"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_17";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6323,6 +7253,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_18"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_18";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6344,6 +7275,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_19"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_19";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6365,6 +7297,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_20"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_20";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6386,6 +7319,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_21"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_21";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6407,6 +7341,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_22"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_22";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6428,6 +7363,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_23"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_23";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6449,6 +7385,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_24"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_24";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6470,6 +7407,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_25"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_25";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6491,6 +7429,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphPlotView @["AuditoryProc_1_MelFilters_Graph_err_26"] {
 	    name="AuditoryProc_1_MelFilters_Graph_err_26";
 	    m_data=NULL;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
@@ -6516,6 +7455,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -6547,6 +7487,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  raster_axis {
 	   name="raster_axis";
 	   m_data=NULL;
+	   cur_font_size=12;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
@@ -6576,11 +7517,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -6662,10 +7605,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       T3Panel @["AuditoryOutTable"] {
        name="AuditoryOutTable";
        m_data=NULL;
+       cur_font_size=12;
        visible=1;
        root_view {
 	name="root_view";
 	m_data=NULL;
+	cur_font_size=12;
 	m_transform=NULL;
 	children {
 	 name="children";
@@ -6674,6 +7619,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 GridTableView @["AuditoryOutTable_Grid"] {
 	  name="AuditoryOutTable_Grid";
 	  m_data=$.projects["sound_object"].programs["AuditoryProcTest"].objs["AuditoryOutTable"]$;
+	  cur_font_size=12;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  children {
 	   name="children";
@@ -6682,6 +7628,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GridColView @["AuditoryProc_1_dft_pow"] {
 	    name="AuditoryProc_1_dft_pow";
 	    m_data=.projects["sound_object"].programs["AuditoryProcTest"].objs["AuditoryOutTable"].data["AuditoryProc_1_dft_pow"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=8;
@@ -6693,6 +7640,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GridColView @["AuditoryProc_1_mel_fbank"] {
 	    name="AuditoryProc_1_mel_fbank";
 	    m_data=.projects["sound_object"].programs["AuditoryProcTest"].objs["AuditoryOutTable"].data["AuditoryProc_1_mel_fbank"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=8;
@@ -6704,6 +7652,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GridColView @["AuditoryProc_1_mel_fbank_tavg"] {
 	    name="AuditoryProc_1_mel_fbank_tavg";
 	    m_data=.projects["sound_object"].programs["AuditoryProcTest"].objs["AuditoryOutTable"].data["AuditoryProc_1_mel_fbank_tavg"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=2;
@@ -6715,6 +7664,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GridColView @["AuditoryProc_1_mel_fbank_delta"] {
 	    name="AuditoryProc_1_mel_fbank_delta";
 	    m_data=.projects["sound_object"].programs["AuditoryProcTest"].objs["AuditoryOutTable"].data["AuditoryProc_1_mel_fbank_delta"]$$;
+	    cur_font_size=12;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=2;
@@ -6769,7 +7719,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  mat_block_spc=0.1;
 	  mat_block_height=0;
 	  mat_rot=0;
-	  mat_trans=0.6;
+	  mat_trans=0.4;
 	  mat_size_range {min=4: max=16: };
 	  text_size_range {min=0.02: max=0.05: };
 	  click_vals=0;
@@ -6782,11 +7732,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
+       headlight_intensity=1;
+       ambient_light=0;
        camera_params {
 	field_of_view=45;
-	near=0.1;
+	near_distance=0.1;
 	focal=5;
-	far=1000;
+	far_distance=1000;
        };
        stereo_view=STEREO_NONE;
        saved_views {
@@ -6889,7 +7841,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.04347826;
+       value 8 0=0.04352442;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -6910,6 +7862,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      name="Tools";
      m_data=NULL;
+     cur_font_size=12;
      visible=1;
      win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
@@ -6921,7 +7874,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_view=1;
  save_as_only=0;
  auto_name=1;
- last_change_desc=;
+ last_change_desc="svn rev: 9949 doc and version updt";
+ tree_state{ .;.docs;.ctrl_panels;.param_sets;.data;.data.gp[0];.data.gp[1];.data.gp[2];.programs;.programs[1];.programs[1].objs;.programs[1].objs[1];.programs[1].functions;.networks; };
  networks {
   name="networks";
   el_typ=LeabraNetwork;
