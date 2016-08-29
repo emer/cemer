@@ -667,6 +667,8 @@ void Network::BuildUnitsFlatList() {
 void Network::FreeUnitConGpThreadMem() {
   if(!units_thrs) return; // nothing allocated yet -- otherwise assume EVERYTHING is
 
+  Cuda_FreeNet();
+  
   FreeConThreadMem();           // this must go first!
 
   for(int i=0; i<n_thrs_built; i++) {
@@ -1930,7 +1932,8 @@ void Network::Init_Weights() {
 
   Cuda_ConStateToDevice();
   Cuda_UnitVarsToDevice();      // also need the bias weights!!!
-
+  Cuda_UpdateSpecs();
+  
   param_seqs.SetParamsAtEpoch(0);
   
   taMisc::DoneBusy();
@@ -4207,6 +4210,14 @@ bool Network::Cuda_MakeCudaNet() {
   return true;
 }
 
+
+void Network::Cuda_FreeNet() {
+  if(!cuda_net) return;
+  cuda_net->NetFree();
+  cuda_unit_specs.Reset();
+  cuda_con_specs.Reset();
+}
+
 void Network::Cuda_BuildNet() {
   if(taMisc::is_loading)        // ignore all the loading-time ones
     return;
@@ -4237,11 +4248,12 @@ void Network::Cuda_BuildNet() {
 
   cuda_net->NetToDevice();  // copy everything over to the device
   
-  cuda_net->OwnCons_HostToDevice(true); // sync
-  cuda_net->UnitVars_HostToDevice(true); // sync
-
   Cuda_MakeUnitSpecs();         // make and copy to device -- also does bias specs as start to make con specs!
   Cuda_MakeConSpecs();
+
+  // essential to copy AFTER making specs so spec indexes get copied over!
+  cuda_net->OwnCons_HostToDevice(true); // sync
+  cuda_net->UnitVars_HostToDevice(true); // sync
 }
 
 void Network::Cuda_InitConGroups() {
@@ -4423,6 +4435,11 @@ void Network::Cuda_ConStateToDevice() {
   cuda_net->OwnCons_HostToDevice(true); // sync
 }
 
+void Network::Cuda_UpdateSpecs() {
+  Cuda_UpdateUnitSpecs();
+  Cuda_UpdateConSpecs();
+}
+
 String Network::Cuda_TimingReport(bool print) {
   String report = "CUDA timing report:\n\
 numbers are average microseconds per call of a given type\n\n";
@@ -4446,6 +4463,9 @@ void Network::Cuda_ConStateToHost() {
 }
 
 void Network::Cuda_ConStateToDevice() {
+}
+
+void Network::Cuda_UpdateSpecs() {
 }
 
 String Network::Cuda_TimingReport(bool print) {

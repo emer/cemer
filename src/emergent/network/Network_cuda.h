@@ -71,6 +71,18 @@
 //   each thread then gets unit at blockIdx.x * blockDim.x + threadIdx.x index
 //   and just does that stuff for that one unit
 
+// general GPU notes:
+// http://on-demand.gputechconf.com/gtc/2014/presentations/S4158-cuda-streams-best-practices-common-pitfalls.pdf
+// key points:
+// * use separate streams for everything -- never use the default stream
+// * use *the same* stream for memory copy and computation that uses that memory -- then it can parallelize that at a fine-grained level
+// * otherwise, calling different kernels on the same stream is bad b/c they will be sync
+// * calling cudaHostRegister "page locks" ram, so that device can copy faster -- prevents
+//   host from swapping it out.. apparently needs to be aligned on page boundary on mac = 4096-
+//   IF everything just computes on device, this is not important -- but for key temp netin buffers
+//   etc, it could be important
+
+
 #include <ConGroup_cuda.h>
 #include <UnitVars_cuda.h>
 
@@ -106,7 +118,9 @@ public:
   cudaStream_t  strm_compute_netin; // for Compute_Netin
   cudaStream_t  strm_compute_act;  // for Compute_Act
   cudaStream_t  strm_compute_dwt; // for Compute_dWt
-  cudaStream_t  strm_compute_wt;  // for Compute_Wt
+  cudaStream_t  strm_compute_dwt_bias; // for B_Compute_dWt
+  cudaStream_t  strm_compute_weights;  // for Compute_Weights
+  cudaStream_t  strm_compute_weights_bias;  // for B_Compute_Weights
 
 
   ///////////////////////////////////////////////////////////////////////////
@@ -157,13 +171,6 @@ public:
   float*        recv_cons_mem_d;
   float*        send_cons_mem_h; // bulk memory allocated for all of the send connections, array of float[send_cons_cnt]
   float*        send_cons_mem_d;
-
-  // int           own_cons_max_size; // maximum alloc_size of any owning connection group -- for allocating temp structures..
-  // cudabigint    own_cons_tot_size; // total number of owned connections
-  // cudabigint    own_cons_tot_size_nonshared; // total number of owned connections, by thread, non-shared
-  // int           own_cons_avg_size; // average size of any owning connection group -- for optimizing computation
-  // int           own_cons_max_vars; // maximum NConVars of any owning connection group -- for allocating temp structures..
-
 
   // specs are defined  entirely in algorithm-specific code -- we just have the
   // overall data structures here to hold them 

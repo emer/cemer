@@ -403,9 +403,9 @@ void BpUnitSpec::Compute_Error(BpUnitVars* u, BpNetwork* net, int thr_no) {
 void BpUnitSpec::Compute_dEdA(BpUnitVars* u, BpNetwork* net, int thr_no) {
   // note: this has to be done at unit level b/c of sequencing with dEdNet etc
   // don't compute to inputs by default
-  if(net->bp_to_inputs || (u->ext_flag & UnitVars::EXT)) return;
   u->dEdA = 0.0f;
   u->err = 0.0f;
+  if((u->ext_flag & UnitVars::EXT) && !net->bp_to_inputs) return;
   if(u->ext_flag & UnitVars::UN_FLAG_1) return; // dropout flag
   const int nscg = net->ThrUnNSendConGps(thr_no, u->thr_un_idx);
   for(int g=0; g<nscg; g++) {
@@ -428,6 +428,10 @@ void BpUnitSpec::Compute_dEdA(BpUnitVars* u, BpNetwork* net, int thr_no) {
 }
 
 void BpUnitSpec::Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) {
+  if((u->ext_flag & UnitVars::EXT) && !net->bp_to_inputs) {
+    u->dEdNet = 0.0f;
+    return;
+  }
   if(u->ext_flag & UnitVars::UN_FLAG_1) { // dropout flag
     u->dEdNet = 0.0f;
     return;
@@ -798,6 +802,9 @@ void BpNetwork::Cuda_Trial_Run() {
   if(cuda.sync_units) {
     Cuda_UnitVarsToHost();
   }
+  else {
+    cuda_net->TargUnitsToHost(true);       // send output layer data back to host for stats..
+  }
 }
 
 void BpNetwork::Cuda_Compute_NetinAct() {
@@ -822,6 +829,8 @@ void BpNetwork::Cuda_Compute_Weights() {
   ((Bp_cuda*)cuda_net)->Compute_Weights(true); // sync
   if(cuda.sync_cons) {
     Cuda_ConStateToHost();
+    cuda_net->TargUnitsToHost(true);       // send output layer data back to host for stats..
+    // important to send target units back to host so that their bias weights can update!!      
   }
 }
 

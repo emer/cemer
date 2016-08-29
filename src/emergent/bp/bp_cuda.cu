@@ -60,25 +60,25 @@ __global__ void Kernel_Compute_Netin_ConGroup
 
   __syncthreads();            // make sure all threads have written to temp_sums
 
-  if(thr_no == 0) {
-    sum = 0.0f;
-    for(int i=0; i<nthrs; i++) {
-      sum += temp_sums[i];
+  // if(thr_no == 0) {
+  //   sum = 0.0f;
+  //   for(int i=0; i<nthrs; i++) {
+  //     sum += temp_sums[i];
+  //   }
+  //   cg->temp1 = sum;
+  // }
+  int i = nthrs / 2;            // now use a binary tree aggregation of temp_sums
+  while( i!=0 ) {
+    if(thr_no < i) {
+      temp_sums[thr_no] += temp_sums[thr_no + i]; // get from next up
     }
-    cg->temp1 = sum;
+    __syncthreads();
+    i /= 2;                     // binary tree -- only earlier and earlier threads get it
   }
-  //   int i = nthrs / 2;            // now use a binary tree aggregation of temp_sums
-  //   while( i!=0 ) {
-  //     if(thr_no < i) {
-  //       temp_sums[thr_no] += temp_sums[thr_no + i]; // get from next up
-  //     }
-  //     __syncthreads();
-  //     i /= 2;                     // binary tree -- only earlier and earlier threads get it
-  //   }
 
-  //   if(thr_no == 0) {
-  //     cg->temp1 = temp_sums[0]; // first guy has it all, store into our con group for later summation
-  //   }
+  if(thr_no == 0) {
+    cg->temp1 = temp_sums[0]; // first guy has it all, store into our con group for later summation
+  }
 }
 
 
@@ -123,6 +123,8 @@ __global__ void Kernel_Compute_Act_Bp
 
 void Bp_cuda::Compute_NetinAct() {
   ExtInputToDevice(true);       // external input comes from host..
+  // IMPORTANT: this means that these layers MUST be sync'd *back to the host* for any
+  // important changes, e.g., bias weights..
       
   // copy unit spec mem to constant
   cudaMemcpyToSymbol(const_spec_mem, unit_spec_mem_d, unit_spec_mem_tot);
@@ -139,11 +141,11 @@ void Bp_cuda::Compute_NetinAct() {
       if(n_cgps > 0) {
         for(int cgi = 0; cgi < n_cgps; cgi++) {
           //  Invoke kernel -- 3rd arg is size of memory to allocate to shared
-          Kernel_Compute_Netin_ConGroup<<<nu, n_threads, n_threads * sizeof(float), strm_compute_netin>>>
+          // use act stream here so netin and act are fully sync'd automatically
+          Kernel_Compute_Netin_ConGroup<<<nu, n_threads, n_threads * sizeof(float), strm_compute_act>>>
             (st_ui, cgi, recv_cgp_start_d, recv_cgp_mem_d, con_group_size,
              recv_cons_mem_d, units_mem_d, unit_vars_size);
         }
-        cudaSafeCall(cudaStreamSynchronize(strm_compute_netin));
       }
 
       // b/c units are accessed each per a diff thread, the n blocks is divided by threads
@@ -199,25 +201,25 @@ __global__ void Kernel_Compute_dEdA_ConGroup
 
   __syncthreads();            // make sure all threads have written to temp_sums
 
-  if(thr_no == 0) {
-    sum = 0;
-    for(int i=0; i<nthrs; i++) {
-      sum += temp_sums[i];
-    }
-    cg->temp1 = sum;
-  }
-  // int i = nthrs / 2;            // now use a binary tree aggregation of temp_sums
-  // while( i!=0 ) {
-  //   if(thr_no < i) {
-  //     temp_sums[thr_no] += temp_sums[thr_no + i]; // get from next up
-  //   }
-  //   __syncthreads();
-  //   i /= 2;                     // binary tree -- only earlier and earlier threads get it
-  // }
-
   // if(thr_no == 0) {
-  //   cg->temp1 = temp_sums[0]; // first guy has it all, store into our con group for later summation
+  //   sum = 0;
+  //   for(int i=0; i<nthrs; i++) {
+  //     sum += temp_sums[i];
+  //   }
+  //   cg->temp1 = sum;
   // }
+  int i = nthrs / 2;            // now use a binary tree aggregation of temp_sums
+  while( i!=0 ) {
+    if(thr_no < i) {
+      temp_sums[thr_no] += temp_sums[thr_no + i]; // get from next up
+    }
+    __syncthreads();
+    i /= 2;                     // binary tree -- only earlier and earlier threads get it
+  }
+
+  if(thr_no == 0) {
+    cg->temp1 = temp_sums[0]; // first guy has it all, store into our con group for later summation
+  }
 }
 
 __global__ void Kernel_Compute_Err_dEdNet
@@ -291,8 +293,9 @@ void Bp_cuda::Compute_dEdA_dEdNet() {
       const int n_cgps = units_n_send_cgps_h[st_ui]; // assume same for all..
       if(n_cgps > 0) {
         for(int cgi = 0; cgi < n_cgps; cgi++) {
-          //  Invoke kernel -- 3rd arg is size of memory to allocate to shared
-          Kernel_Compute_dEdA_ConGroup<<<nu, n_threads, n_threads * sizeof(float), strm_compute_netin>>>
+          // Invoke kernel -- 3rd arg is size of memory to allocate to shared
+          // use "act" stream to keep deda and dednet synchronized..
+          Kernel_Compute_dEdA_ConGroup<<<nu, n_threads, n_threads * sizeof(float), strm_compute_act>>>
             (st_ui, cgi, send_cgp_start_d, send_cgp_mem_d, con_group_size,
              send_cons_mem_d, units_mem_d, unit_vars_size,
              recv_cgp_start_d, recv_cgp_mem_d, recv_cons_mem_d);
@@ -309,8 +312,6 @@ void Bp_cuda::Compute_dEdA_dEdNet() {
       cudaSafeCall(cudaStreamSynchronize(strm_compute_act));
     }
   }
-
-  TargUnitsToHost(true);       // send output layer data back to host for stats..
 }
 
 
@@ -357,20 +358,24 @@ __global__ void Kernel_Compute_dWt_Bp_Bias
   if(un_idx < ed_ui) {
     BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
       (units_mem, unit_vars_size, un_idx);
-    u->bias_dwt = u->dEdNet;
+    u->bias_dwt += u->dEdNet;
   }
 }
 
 void Bp_cuda::Compute_dWt(bool sync) {
   // just throw the whole set of recv_cgps at it!
+
+  int n_units_blocks = (int)ceil((float)n_units_built / (float)n_threads);
+  
   Kernel_Compute_dWt_Bp<<<n_recv_cgps, n_threads, 0, strm_compute_dwt>>>
     (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, units_mem_d, unit_vars_size);
 
-  Kernel_Compute_dWt_Bp_Bias<<<n_units_built, n_threads, 0, strm_compute_dwt>>>
+  Kernel_Compute_dWt_Bp_Bias<<<n_units_blocks, n_threads, 0, strm_compute_dwt_bias>>>
     (0, n_units_built, units_mem_d, unit_vars_size);
 
   if(sync) {  
     cudaSafeCall(cudaStreamSynchronize(strm_compute_dwt));
+    cudaSafeCall(cudaStreamSynchronize(strm_compute_dwt_bias));
   }
 }
 
@@ -425,6 +430,7 @@ __global__ void Kernel_Compute_Weights_Bp_Bias_dWtOnly
         (const_spec_mem, con_spec_size, us->bias_spec_idx);
       
       u->bias_wt += cs->cur_lrate * u->bias_dwt;
+      u->bias_dwt = 0.0f;
     }
   }
 }
@@ -432,50 +438,67 @@ __global__ void Kernel_Compute_Weights_Bp_Bias_dWtOnly
 void Bp_cuda::Compute_Weights(bool sync) {
   // copy con spec mem to constant
   cudaMemcpyToSymbol(const_spec_mem, con_spec_mem_d, con_spec_mem_tot);
-
   // copy unit spec mem to constant, position AFTER con specs (4th arg)
   cudaMemcpyToSymbol(const_spec_mem, unit_spec_mem_d, unit_spec_mem_tot, con_spec_mem_tot);
   
   BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
     (con_spec_mem_h, con_spec_size, 0);
 
+  int n_units_blocks = (int)ceil((float)n_units_built / (float)n_threads);
+  
   switch(cs->wt_updt) {
   case BpConSpec_cuda::WU_DWT_ONLY: {
-    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_wt>>>
+    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
       (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, con_spec_size);
-    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_built, n_threads, 0, strm_compute_wt>>>
+    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
       (0, n_units_built, units_mem_d, unit_vars_size, unit_spec_size, con_spec_mem_tot,
        con_spec_size);
     break;
   }
   case BpConSpec_cuda::WU_SIMPLE_DECAY: {
-    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_wt>>>
+    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
       (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, con_spec_size);
+    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
+      (0, n_units_built, units_mem_d, unit_vars_size, unit_spec_size, con_spec_mem_tot,
+       con_spec_size);
     break;
   }
   case BpConSpec_cuda::WU_ELIMINATION: {
-    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_wt>>>
+    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
       (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, con_spec_size);
+    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
+      (0, n_units_built, units_mem_d, unit_vars_size, unit_spec_size, con_spec_mem_tot,
+       con_spec_size);
     break;
   }
   case BpConSpec_cuda::WU_MOMENT: {
-    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_wt>>>
+    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
       (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, con_spec_size);
+    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
+      (0, n_units_built, units_mem_d, unit_vars_size, unit_spec_size, con_spec_mem_tot,
+       con_spec_size);
     break;
   }
   case BpConSpec_cuda::WU_MOMENT_SIMPLE: {
-    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_wt>>>
+    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
       (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, con_spec_size);
+    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
+      (0, n_units_built, units_mem_d, unit_vars_size, unit_spec_size, con_spec_mem_tot,
+       con_spec_size);
     break;
   }
   case BpConSpec_cuda::WU_MOMENT_ELIM: {
-    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_wt>>>
+    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
       (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, con_spec_size);
+    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
+      (0, n_units_built, units_mem_d, unit_vars_size, unit_spec_size, con_spec_mem_tot,
+       con_spec_size);
     break;
   }
   }
 
   if(sync) {                    // generally doesn't have to be sync..
-    cudaSafeCall(cudaStreamSynchronize(strm_compute_wt));
+    cudaSafeCall(cudaStreamSynchronize(strm_compute_weights));
+    cudaSafeCall(cudaStreamSynchronize(strm_compute_weights_bias));
   }
 }

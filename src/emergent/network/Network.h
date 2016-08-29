@@ -1162,6 +1162,8 @@ public:
   
   virtual void  Cuda_BuildNet();
   // #IGNORE build all the network structures for cuda -- called after regular network build
+  virtual void  Cuda_FreeNet();
+  // #IGNORE build all the network structures for cuda -- called after regular network build
   virtual void  Cuda_InitConGroups();
   // #IGNORE transfer C++ con group info over to cuda con groups -- they are different!  called in Cuda_BuildNet()
 
@@ -1197,6 +1199,8 @@ public:
   // #CAT_CUDA get all the connection state variables (weights, dwts, etc) back from the GPU device to the host -- this is done automatically before SaveWeights*
   virtual void  Cuda_ConStateToDevice();
   // #CAT_CUDA send all the connection state variables (weights, dwts, etc) to the GPU device from the host -- this is done automatically after Init_Weights and LoadWeights*
+  virtual void  Cuda_UpdateSpecs();
+  // #CAT_CUDA update all the specs stored in the cuda device, based on current settings -- called automatically after Init_Weights, but needs to be called manually when specs are changed
   virtual String Cuda_TimingReport(bool print = true);
   // #CAT_CUDA report time used statistics for CUDA operations (only does something for cuda compiled version)
 

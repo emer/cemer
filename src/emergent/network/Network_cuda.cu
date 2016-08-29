@@ -29,18 +29,27 @@ Network_cuda::~Network_cuda() {
 void Network_cuda::Initialize() {
   strms_created = false;
 
-  con_group_size = 0;
+  min_threads = 0;
+  max_threads = 0;
+  cons_per_thread = 0;
+  n_threads = 0;
+  
   unit_vars_size = 0;
   n_units_built = 0;
   n_layers_built = 0;
   n_ungps_built = 0;
   units_mem_h = NULL;
   units_mem_d = NULL;
+  lay_unit_idxs_h = NULL;
+  lay_unit_idxs_d = NULL;
+  ungp_unit_idxs_h = NULL;
+  ungp_unit_idxs_d = NULL;
   n_lay_stats = 0;
   n_lay_stats_vars = 0;
   lay_stats_h = NULL;
   lay_stats_d = NULL;
   recv_owns_cons = true;
+  con_group_size = 0;
   units_n_recv_cgps_h = NULL;
   units_n_recv_cgps_d = NULL;
   units_n_send_cgps_h = NULL;
@@ -62,19 +71,12 @@ void Network_cuda::Initialize() {
   send_cons_mem_h = NULL;
   send_cons_mem_d = NULL;
   
-  // own_cons_max_size = 0;
-  // own_cons_tot_size = 0;
-  // own_cons_tot_size_nonshared = 0;
-  // own_cons_avg_size = 0;
-  // own_cons_max_vars = 0;
-
   n_unit_specs = 0;
-  unit_spec_size = 0;
   unit_spec_mem_tot = 0;
   unit_spec_mem_h = NULL;
   unit_spec_mem_d = NULL;
+
   n_con_specs = 0;
-  con_spec_size = 0;
   con_spec_mem_tot = 0;
   con_spec_mem_h = NULL;
   con_spec_mem_d = NULL;
@@ -90,6 +92,10 @@ void Network_cuda::NetFree() {
     cudaFree(recv_cgp_mem_d);
   if(send_cgp_mem_d)
     cudaFree(send_cgp_mem_d);
+  if(recv_cgp_mem_h)
+    free(recv_cgp_mem_h);
+  if(send_cgp_mem_h)
+    free(send_cgp_mem_h);
   if(recv_cgp_start_d)
     cudaFree(recv_cgp_start_d);
   if(send_cgp_start_d)
@@ -103,25 +109,32 @@ void Network_cuda::NetFree() {
   if(lay_stats_d)
     cudaFree(lay_stats_d);
   
+  if(lay_unit_idxs_d)
+    cudaFree(lay_unit_idxs_d);
+  if(ungp_unit_idxs_d)
+    cudaFree(ungp_unit_idxs_d);
+  
   if(units_mem_d)
     cudaFree(units_mem_d);
 
-  if(unit_spec_mem_h)
-    free(unit_spec_mem_h);
   if(unit_spec_mem_d)
     cudaFree(unit_spec_mem_d);
+  if(unit_spec_mem_h)
+    free(unit_spec_mem_h);
 
-  if(con_spec_mem_h)
-    free(con_spec_mem_h);
   if(con_spec_mem_d)
     cudaFree(con_spec_mem_d);
+  if(con_spec_mem_h)
+    free(con_spec_mem_h);
 
   if(strms_created) {
     cudaStreamDestroy(strm_memcpy_cons);
     cudaStreamDestroy(strm_memcpy_units);
     cudaStreamDestroy(strm_compute_netin);
     cudaStreamDestroy(strm_compute_dwt);
-    cudaStreamDestroy(strm_compute_wt);
+    cudaStreamDestroy(strm_compute_dwt_bias);
+    cudaStreamDestroy(strm_compute_weights);
+    cudaStreamDestroy(strm_compute_weights_bias);
     strms_created = false;
   }
 
@@ -161,7 +174,9 @@ void Network_cuda::NetAlloc
     cudaStreamCreate(&strm_compute_netin);
     cudaStreamCreate(&strm_compute_act);
     cudaStreamCreate(&strm_compute_dwt);
-    cudaStreamCreate(&strm_compute_wt);
+    cudaStreamCreate(&strm_compute_dwt_bias);
+    cudaStreamCreate(&strm_compute_weights);
+    cudaStreamCreate(&strm_compute_weights_bias);
     strms_created = true;
   }
   
@@ -399,7 +414,7 @@ bool Network_cuda::AllocUnitSpecs(int n_us) {
     return false;
   
   unit_spec_mem_h = (char*)malloc(unit_spec_mem_tot);
-  cudaSafeCall(cudaMalloc(&unit_spec_mem_d, n_unit_specs * unit_spec_size));
+  cudaSafeCall(cudaMalloc(&unit_spec_mem_d, unit_spec_mem_tot));
   return true;
 }
 
@@ -407,7 +422,7 @@ void Network_cuda::UnitSpecs_HostToDevice() {
   if(!(unit_spec_mem_h && unit_spec_mem_d)) return;
   
   cudaSafeCall
-    (cudaMemcpy(unit_spec_mem_d, unit_spec_mem_h, n_unit_specs * unit_spec_size,
+    (cudaMemcpy(unit_spec_mem_d, unit_spec_mem_h, unit_spec_mem_tot,
                 cudaMemcpyHostToDevice));
 }
 
@@ -426,7 +441,16 @@ bool Network_cuda::AllocConSpecs(int n_us) {
     return false;
   
   con_spec_mem_h = (char*)malloc(con_spec_mem_tot);
-  cudaSafeCall(cudaMalloc(&con_spec_mem_d, n_con_specs * con_spec_size));
+  cudaSafeCall(cudaMalloc(&con_spec_mem_d, con_spec_mem_tot));
+
+  // host-side updated the con_spec_idx settings in all the congroups -- need to
+  // re-copy that over again
+  cudaSafeCall
+    (cudaMemcpy(recv_cgp_mem_d, recv_cgp_mem_h, n_recv_cgps * con_group_size,
+                          cudaMemcpyHostToDevice));
+  cudaSafeCall
+    (cudaMemcpy(send_cgp_mem_d, send_cgp_mem_h, n_send_cgps * con_group_size,
+                          cudaMemcpyHostToDevice));
   return true;
 }
 
@@ -434,7 +458,7 @@ void Network_cuda::ConSpecs_HostToDevice() {
   if(!(con_spec_mem_h && con_spec_mem_d)) return;
   
   cudaSafeCall
-    (cudaMemcpy(con_spec_mem_d, con_spec_mem_h, n_con_specs * con_spec_size,
+    (cudaMemcpy(con_spec_mem_d, con_spec_mem_h, con_spec_mem_tot,
                 cudaMemcpyHostToDevice));
 }
 
