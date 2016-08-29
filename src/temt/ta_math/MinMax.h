@@ -66,25 +66,25 @@ public:
   // returns the range between the min and the max
 
   void  UpdateRange(MinMax& it)
-  { min = MIN(it.min, min); max = MAX(it.max, max); }
+  { min = fminf(it.min, min); max = fmaxf(it.max, max); }
 
   void  UpdateRange(float it)
-  { min = MIN(it, min); max = MAX(it, max); }  // updates the range
+  { min = fminf(it, min); max = fmaxf(it, max); }  // updates the range
 
   void  SetRange(float_Matrix& mat); // set the range from a matrix
 
-  void  MaxLT(float it)         { max = MIN(it, max); }
+  void  MaxLT(float it)         { max = fminf(it, max); }
   // max less than (or equal)
 
-  void  MinGT(float it)         { min = MAX(it, min); }
+  void  MinGT(float it)         { min = fmaxf(it, min); }
   // min greater than (or equal)
 
   void  WithinRange(MinMax& it)         // put my range within given one
-  { min = MAX(it.min, min); max = MIN(it.max, max); }
+  { min = fmaxf(it.min, min); max = fminf(it.max, max); }
   void  WithinRange(float min_, float max_) // #IGNORE put my range within given one
-  { min = MAX(min_, min); max = MIN(max_, max); }
+  { min = fmaxf(min_, min); max = fminf(max_, max); }
   void  SymRange() // symmetrize my range around zero, with max abs value of current min, max
-  { float mxabs = MAX(fabsf(min), fabsf(max)); min = -mxabs; max = mxabs; }
+  { float mxabs = fmaxf(fabsf(min), fabsf(max)); min = -mxabs; max = mxabs; }
 
   float Normalize(float val) const      { return (val - min) * Scale(); }
   // normalize given value to 0-1 range given current in max
@@ -93,7 +93,7 @@ public:
   // project a normalized value into the current min-max range
 
   float Clip(float val) const
-  { val = MIN(max,val); val = MAX(min,val); return val; }
+  { val = fminf(max,val); val = fmaxf(min,val); return val; }
   // clip given value within current range
 
   TA_BASEFUNS_LITE(MinMax);

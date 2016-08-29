@@ -152,8 +152,8 @@ public:
   inline void   SumNorm()       { float mg = Sum(); if(mg != 0.0) *this /= mg; }
   inline void   Abs()           { x = fabs(x); y = fabs(y); z = fabs(z); }
 
-  inline float MaxVal() const   { float mx = MAX(x, y); mx = MAX(mx, z); return mx; }
-  inline float MinVal() const   { float mn = MIN(x, y); mn = MIN(mn, z); return mn; }
+  inline float MaxVal() const   { float mx = fmaxf(x, y); mx = fmaxf(mx, z); return mx; }
+  inline float MinVal() const   { float mn = fminf(x, y); mn = fminf(mn, z); return mn; }
 
   static inline float Sgn(float val) { return (val >= 0.0) ? 1.0 : -1.0; }
 

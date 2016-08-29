@@ -125,8 +125,8 @@ public:
   inline void   SumNorm()       { float mg = Sum(); if(mg != 0.0) *this /= mg; }
   inline void   Abs()           { x = fabs(x); y = fabs(y); }
 
-  inline float MaxVal() const   { float mx = MAX(x, y); return mx; }
-  inline float MinVal() const   { float mn = MIN(x, y); return mn; }
+  inline float MaxVal() const   { float mx = fmaxf(x, y); return mx; }
+  inline float MinVal() const   { float mn = fminf(x, y); return mn; }
 
   inline String GetStr() const { return String(x) + ", " + String(y); }
 private:

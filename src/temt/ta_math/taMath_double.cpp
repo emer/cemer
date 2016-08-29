@@ -3399,7 +3399,7 @@ bool taMath_double::mat_frame_max(double_Matrix* out_mat, const double_Matrix* i
     double mx = in_mat->FastEl_Flat(fsi + i);
     for(int j=1;j<frn;j++) {
       fsi = in_mat->FrameStartIdx(j);
-      mx = MAX(in_mat->FastEl_Flat(fsi + i), mx);
+      mx = fmax(in_mat->FastEl_Flat(fsi + i), mx);
     }
     out_mat->FastEl_Flat(i) = mx;
   }
@@ -3415,7 +3415,7 @@ bool taMath_double::mat_frame_abs_max(double_Matrix* out_mat, const double_Matri
     double mx = fabs(in_mat->FastEl_Flat(fsi + i));
     for(int j=1;j<frn;j++) {
       fsi = in_mat->FrameStartIdx(j);
-      mx = MAX(fabs(in_mat->FastEl_Flat(fsi + i)), mx);
+      mx = fmax(fabs(in_mat->FastEl_Flat(fsi + i)), mx);
     }
     out_mat->FastEl_Flat(i) = mx;
   }
@@ -3431,7 +3431,7 @@ bool taMath_double::mat_frame_min(double_Matrix* out_mat, const double_Matrix* i
     double mx = in_mat->FastEl_Flat(fsi + i);
     for(int j=1;j<frn;j++) {
       fsi = in_mat->FrameStartIdx(j);
-      mx = MIN(in_mat->FastEl_Flat(fsi + i), mx);
+      mx = fmin(in_mat->FastEl_Flat(fsi + i), mx);
     }
     out_mat->FastEl_Flat(i) = mx;
   }
@@ -3447,7 +3447,7 @@ bool taMath_double::mat_frame_abs_min(double_Matrix* out_mat, const double_Matri
     double mx = fabs(in_mat->FastEl_Flat(fsi + i));
     for(int j=1;j<frn;j++) {
       fsi = in_mat->FrameStartIdx(j);
-      mx = MIN(fabs(in_mat->FastEl_Flat(fsi + i)), mx);
+      mx = fmin(fabs(in_mat->FastEl_Flat(fsi + i)), mx);
     }
     out_mat->FastEl_Flat(i) = mx;
   }

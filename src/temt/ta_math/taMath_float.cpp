@@ -3381,7 +3381,7 @@ bool taMath_float::mat_frame_max(float_Matrix* out_mat, const float_Matrix* in_m
     float mx = in_mat->FastEl_Flat(fsi + i);
     for(int j=1;j<frn;j++) {
       fsi = in_mat->FrameStartIdx(j);
-      mx = MAX(in_mat->FastEl_Flat(fsi + i), mx);
+      mx = fmaxf(in_mat->FastEl_Flat(fsi + i), mx);
     }
     out_mat->FastEl_Flat(i) = mx;
   }
@@ -3397,7 +3397,7 @@ bool taMath_float::mat_frame_abs_max(float_Matrix* out_mat, const float_Matrix* 
     float mx = fabs(in_mat->FastEl_Flat(fsi + i));
     for(int j=1;j<frn;j++) {
       fsi = in_mat->FrameStartIdx(j);
-      mx = MAX(fabs(in_mat->FastEl_Flat(fsi + i)), mx);
+      mx = fmaxf(fabs(in_mat->FastEl_Flat(fsi + i)), mx);
     }
     out_mat->FastEl_Flat(i) = mx;
   }
@@ -3413,7 +3413,7 @@ bool taMath_float::mat_frame_min(float_Matrix* out_mat, const float_Matrix* in_m
     float mx = in_mat->FastEl_Flat(fsi + i);
     for(int j=1;j<frn;j++) {
       fsi = in_mat->FrameStartIdx(j);
-      mx = MIN(in_mat->FastEl_Flat(fsi + i), mx);
+      mx = fminf(in_mat->FastEl_Flat(fsi + i), mx);
     }
     out_mat->FastEl_Flat(i) = mx;
   }
@@ -3429,7 +3429,7 @@ bool taMath_float::mat_frame_abs_min(float_Matrix* out_mat, const float_Matrix* 
     float mx = fabs(in_mat->FastEl_Flat(fsi + i));
     for(int j=1;j<frn;j++) {
       fsi = in_mat->FrameStartIdx(j);
-      mx = MIN(fabs(in_mat->FastEl_Flat(fsi + i)), mx);
+      mx = fminf(fabs(in_mat->FastEl_Flat(fsi + i)), mx);
     }
     out_mat->FastEl_Flat(i) = mx;
   }
@@ -3469,7 +3469,7 @@ bool taMath_float::mat_frame_prod(float_Matrix* out_mat, const float_Matrix* in_
 
 bool taMath_float::mat_frame_mean(float_Matrix* out_mat, const float_Matrix* in_mat) {
   if(!mat_frame_sum(out_mat, in_mat)) return false;
-  float nrm = 1.0 / (float)(MAX(in_mat->Frames(),1));
+  float nrm = 1.0f / (float)(MAX(in_mat->Frames(),1));
   int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     out_mat->FastEl_Flat(i) *= nrm;

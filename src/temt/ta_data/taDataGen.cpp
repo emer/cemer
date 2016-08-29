@@ -998,8 +998,8 @@ float taDataGen::LastMinMaxDist(DataCol* da, int row, float& max_dist,
     float_Matrix* o_mat = (float_Matrix*)da->GetValAsMatrix(i);
     taBase::Ref(o_mat);
     float dst = taMath_float::vec_dist(mat, o_mat, metric, norm, tol);
-    rval = MIN(dst, rval);
-    max_dist = MAX(dst, max_dist);
+    rval = fminf(dst, rval);
+    max_dist = fmaxf(dst, max_dist);
     taBase::unRefDone(o_mat);
   }
   taBase::unRefDone(mat);
@@ -1101,8 +1101,8 @@ float taDataGen::LastMinMaxDist(DataCol* da, int row, float& max_dist,
 //       return rval;
 //     }
 //     float dst = trg_pat->value.Dist(pat->value, metric, norm, tol);
-//     rval = MIN(dst, rval);
-//     max_dist = MAX(dst, max_dist);
+//     rval = fminf(dst, rval);
+//     max_dist = fmaxf(dst, max_dist);
 //   }
 //   return rval;
 // }
@@ -1119,8 +1119,8 @@ float taDataGen::LastMinMaxDist(DataCol* da, int row, float& max_dist,
 //       return rval;
 //     }
 //     float dst = trg_pat->value.Dist(pat->value, metric, norm, tol);
-//     rval = MIN(dst, rval);
-//     max_dist = MAX(dst, max_dist);
+//     rval = fminf(dst, rval);
+//     max_dist = fmaxf(dst, max_dist);
 //   }
 //   return rval;
 // }
@@ -1136,8 +1136,8 @@ float taDataGen::LastMinMaxDist(DataCol* da, int row, float& max_dist,
 //     Event_MGroup* gp = (Event_MGroup*)events.gp.FastEl(g);
 //     float mx_dst;
 //     float dst = GpMinMaxDist(gp, trg_pat, pat_no, mx_dst, metric, norm, tol);
-//     rval = MIN(dst, rval);
-//     max_dist = MAX(mx_dst, max_dist);
+//     rval = fminf(dst, rval);
+//     max_dist = fmaxf(mx_dst, max_dist);
 //   }
 //   return rval;
 // }

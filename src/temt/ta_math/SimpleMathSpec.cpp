@@ -57,12 +57,12 @@ double SimpleMathSpec::Evaluate(double val) const {
   case POWER:
     return powf(val, arg);
   case MAX:
-    return MAX(val, arg);
+    return fmax(val, arg);
   case MIN:
-    return MIN(val, arg);
+    return fmin(val, arg);
   case MINMAX:
-    val = MIN(val, hi);
-    return MAX(val, lw);
+    val = fmin(val, hi);
+    return fmax(val, lw);
   case REPLACE:
     return (val == arg) ? lw : val;
   }

@@ -1759,8 +1759,8 @@ void taMatrix::ResetColorScale() {
   float min = FastElAsFloat_Flat(0);
   float max = FastElAsFloat_Flat(0);
   for(int i=1; i<size; i++) {
-    min = MIN(min, FastElAsFloat_Flat(i));
-    max = MAX(max, FastElAsFloat_Flat(i));
+    min = fminf(min, FastElAsFloat_Flat(i));
+    max = fmaxf(max, FastElAsFloat_Flat(i));
   }
   colorscale->SetMinMax(min, max);
 }
@@ -1987,10 +1987,10 @@ Variant taMatrix::RenderValue(const Variant& dest_val, const Variant& src_val, R
       rval = dest_val.toDouble() / src_val.toDouble();
       break;
     case MAX:
-      rval = MAX(dest_val.toDouble(), src_val.toDouble());
+      rval = fmax(dest_val.toDouble(), src_val.toDouble());
       break;
     case MIN:
-      rval = MIN(dest_val.toDouble(), src_val.toDouble());
+      rval = fmin(dest_val.toDouble(), src_val.toDouble());
       break;
   }
   return rval;
@@ -2618,7 +2618,7 @@ taMatrix* taMatrix::Max(const taMatrix& t) const {
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
       if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
-      rval->FastEl_Flat(mi) = MAX(((float_Matrix*)this)->FastEl_Flat(mi), 
+      rval->FastEl_Flat(mi) = fmaxf(((float_Matrix*)this)->FastEl_Flat(mi), 
                                   ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
     return rval;
@@ -2628,7 +2628,7 @@ taMatrix* taMatrix::Max(const taMatrix& t) const {
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
       if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
-      rval->FastEl_Flat(mi) = MAX(((double_Matrix*)this)->FastEl_Flat(mi),
+      rval->FastEl_Flat(mi) = fmax(((double_Matrix*)this)->FastEl_Flat(mi),
                                   ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
     return rval;
@@ -2655,7 +2655,7 @@ taMatrix* taMatrix::Max(const Variant& t) const {
     rval->CopyElView(*this);
     float vt = t.toFloat();
     TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = MAX(((float_Matrix*)this)->FastEl_Flat(i), vt);
+      rval->FastEl_Flat(i) = fmaxf(((float_Matrix*)this)->FastEl_Flat(i), vt);
     }
     return rval;
   }
@@ -2664,7 +2664,7 @@ taMatrix* taMatrix::Max(const Variant& t) const {
     rval->CopyElView(*this);
     double vt = t.toDouble();
     TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = MAX(((double_Matrix*)this)->FastEl_Flat(i), vt);
+      rval->FastEl_Flat(i) = fmax(((double_Matrix*)this)->FastEl_Flat(i), vt);
     }
     return rval;
   }
@@ -2690,7 +2690,7 @@ Variant taMatrix::Max() const {
         first = false;
       }
       else {
-        rval = MAX(((float_Matrix*)this)->FastEl_Flat(i), rval);
+        rval = fmaxf(((float_Matrix*)this)->FastEl_Flat(i), rval);
       }
     }
     return Variant(rval);
@@ -2704,7 +2704,7 @@ Variant taMatrix::Max() const {
         first = false;
       }
       else {
-        rval = MAX(((double_Matrix*)this)->FastEl_Flat(i), rval);
+        rval = fmax(((double_Matrix*)this)->FastEl_Flat(i), rval);
       }
     }
     return Variant(rval);
@@ -2735,7 +2735,7 @@ taMatrix* taMatrix::Min(const taMatrix& t) const {
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
       if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
-      rval->FastEl_Flat(mi) = MIN(((float_Matrix*)this)->FastEl_Flat(mi), 
+      rval->FastEl_Flat(mi) = fminf(((float_Matrix*)this)->FastEl_Flat(mi), 
                                   ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
     return rval;
@@ -2745,7 +2745,7 @@ taMatrix* taMatrix::Min(const taMatrix& t) const {
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
       if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
-      rval->FastEl_Flat(mi) = MIN(((double_Matrix*)this)->FastEl_Flat(mi),
+      rval->FastEl_Flat(mi) = fmin(((double_Matrix*)this)->FastEl_Flat(mi),
                                   ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
     return rval;
@@ -2772,7 +2772,7 @@ taMatrix* taMatrix::Min(const Variant& t) const {
     rval->CopyElView(*this);
     float vt = t.toFloat();
     TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = MIN(((float_Matrix*)this)->FastEl_Flat(i), vt);
+      rval->FastEl_Flat(i) = fminf(((float_Matrix*)this)->FastEl_Flat(i), vt);
     }
     return rval;
   }
@@ -2781,7 +2781,7 @@ taMatrix* taMatrix::Min(const Variant& t) const {
     rval->CopyElView(*this);
     double vt = t.toDouble();
     TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = MIN(((double_Matrix*)this)->FastEl_Flat(i), vt);
+      rval->FastEl_Flat(i) = fmin(((double_Matrix*)this)->FastEl_Flat(i), vt);
     }
     return rval;
   }
@@ -2807,7 +2807,7 @@ Variant taMatrix::Min() const {
         first = false;
       }
       else {
-        rval = MIN(((float_Matrix*)this)->FastEl_Flat(i), rval);
+        rval = fminf(((float_Matrix*)this)->FastEl_Flat(i), rval);
       }
     }
     return Variant(rval);
@@ -2821,7 +2821,7 @@ Variant taMatrix::Min() const {
         first = false;
       }
       else {
-        rval = MIN(((double_Matrix*)this)->FastEl_Flat(i), rval);
+        rval = fmin(((double_Matrix*)this)->FastEl_Flat(i), rval);
       }
     }
     return Variant(rval);
