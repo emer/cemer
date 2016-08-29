@@ -50,6 +50,7 @@ General RunState
 
 TestInitialiseIdentical
     Ensure Emergent Free
+    Set Emergent Var		TestInitialiseWeights	single_threaded_init	true
     Set Emergent Var		TestInitialiseWeights	batch_no	0
     Set Emergent Var		TestInitialiseWeights	test_no		0
     Run Emergent Program	TestInitialiseWeights
@@ -67,6 +68,7 @@ TestInitialiseIdentical
 
     Restart Emergent
 
+    Set Emergent Var		TestInitialiseWeights	single_threaded_init	true
     Set Emergent Var		TestInitialiseWeights	batch_no	0
     Set Emergent Var		TestInitialiseWeights	test_no		3
     Run Emergent Program	TestInitialiseWeights

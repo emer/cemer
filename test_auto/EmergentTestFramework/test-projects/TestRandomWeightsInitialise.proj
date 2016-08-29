@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v8.0.0.0 rev9877
+// ta_Dump File v3.0 -- code v8.0.0.0 rev9940
 LeabraProject .projects["TestRandomWeightsInitialise"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -3501,11 +3501,12 @@ LeabraProject .projects["TestRandomWeightsInitialise"] {
     ProgVar_List @.args = [0] {
     };
 
-    ProgVar_List @.vars = [4] {
+    ProgVar_List @.vars = [5] {
      ProgVar @["network_0"] { };
      ProgVar @["batch_no"] { };
      ProgVar @["test_no"] { };
      ProgVar @["weight_name"] { };
+     ProgVar @["single_threaded_init"] { };
     };
 
     Function_List @.functions = [0] {
@@ -3514,23 +3515,29 @@ LeabraProject .projects["TestRandomWeightsInitialise"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [6] {
+    ProgEl_List @.prog_code = [7] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [0] {
       };
      };
      MemberAssign @[1] { };
-     ProgramCall @[2] { 
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     ProgramCall @[3] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[3] { 
+     MethodCall @[4] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     AssignExpr @[4] { };
-     MethodCall @[5] { 
+     AssignExpr @[5] { };
+     MethodCall @[6] { 
       ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
@@ -13026,7 +13033,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	use_layer_type=1;
 	quiet=0;
 	na_by_range=0;
-	ext_flags=EXT;
 	noise {name="RandomSpec_7": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
@@ -13037,7 +13043,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	use_layer_type=1;
 	quiet=0;
 	na_by_range=0;
-	ext_flags=TARG;
 	noise {name="RandomSpec_8": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[2] {
@@ -13048,7 +13053,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	use_layer_type=1;
 	quiet=0;
 	na_by_range=0;
-	ext_flags=0;
 	noise {name="RandomSpec_9": type=NONE: mean=0: var=0.5: par=1: };
        };
       };
@@ -23957,6 +23961,14 @@ and the testing data is updated.  The first epoch monitor should have all the it
       desc=;
       init_from=NULL;
      };
+     ProgVar @["single_threaded_init"] {
+      name="single_threaded_init";
+      var_type=T_Bool;
+      flags=NULL_CHECK|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     functions {
      name="functions";
@@ -23974,9 +23986,9 @@ and the testing data is updated.  The first epoch monitor should have all the it
      el_def=0;
      LocalVars @[0] {
       desc=;
-      flags=0;
-      code_string=;
-      pre_compile_code_string=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="LocalVars (0 vars)";
+      pre_compile_code_string="LocalVars (0 vars)";
       local_vars {
        name="local_vars";
        el_typ=ProgVar;
@@ -23995,11 +24007,49 @@ and the testing data is updated.  The first epoch monitor should have all the it
       };
       update_after=0;
      };
-     ProgramCall @[2] {
+     MethodCall @[2] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="BatchRndSeed()";
-      pre_compile_code_string="BatchRndSeed()";
+      code_string="network_0->SetNetFlagState(Network::INIT_WTS_1_THREAD, single_threaded_init)";
+      pre_compile_code_string="network_0->SetNetFlagState(Network::INIT_WTS_1_THREAD, single_threaded_init)";
+      result_var=NULL;
+      obj=$.projects["TestRandomWeightsInitialise"].programs.gp["TestPrograms"]["TestInitialiseWeights"].vars["network_0"]$;
+      method=Network::SetNetFlagState;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=Network::NetFlags;
+	type="Network::NetFlags";
+	name="flg";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="Network::INIT_WTS_1_THREAD";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=bool;
+	type="bool";
+	name="on";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="single_threaded_init";
+	};
+       };
+      };
+      meth_sig="void SetNetFlagState(Network::NetFlags flg, bool on)";
+      meth_desc=" set flag state according to on bool (if true, set flag, if false, clear it)";
+     };
+     ProgramCall @[3] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      code_string="BatchRndSeed(network_0)";
+      pre_compile_code_string="BatchRndSeed(network_0)";
       prog_args {
        name="prog_args";
        el_typ=ProgArg;
@@ -24019,10 +24069,10 @@ and the testing data is updated.  The first epoch monitor should have all the it
       target=$.projects["TestRandomWeightsInitialise"].programs.gp["UtilProgs"]["BatchRndSeed"]$;
       targ_ld_init="*BatchRndSeed*";
      };
-     MethodCall @[3] {
+     MethodCall @[4] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="network_0.Init_Weights()";
+      code_string="network_0->Init_Weights()";
       pre_compile_code_string="network_0->Init_Weights()";
       result_var=NULL;
       obj=$.projects["TestRandomWeightsInitialise"].programs.gp["TestPrograms"]["TestInitialiseWeights"].vars["network_0"]$;
@@ -24035,7 +24085,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       meth_sig="void Init_Weights()";
       meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
      };
-     AssignExpr @[4] {
+     AssignExpr @[5] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       code_string="weight_name = \"TestRandomWeightsInitialise\" + test_no + \"_\" + batch_no";
@@ -24045,10 +24095,10 @@ and the testing data is updated.  The first epoch monitor should have all the it
        expr="\"TestRandomWeightsInitialise\" + test_no + \"_\" + batch_no";
       };
      };
-     MethodCall @[5] {
+     MethodCall @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      code_string="network_0->SaveWeights()";
+      code_string="network_0->SaveWeights(weight_name, )";
       pre_compile_code_string="network_0->SaveWeights(weight_name, )";
       result_var=NULL;
       obj=$.projects["TestRandomWeightsInitialise"].programs.gp["TestPrograms"]["TestInitialiseWeights"].vars["network_0"]$;
@@ -24101,7 +24151,13 @@ and the testing data is updated.  The first epoch monitor should have all the it
 </body>
 </html>
 ";
-     html_text=;
+     html_text="<html>
+<head></head>
+<body>
+<h2> Enter Title Here </h2>
+</body>
+</html>
+";
     };
    };
   };
@@ -24132,7 +24188,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 8 0=0.7993158;
+     value 8 0=0.7984863;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -24142,7 +24198,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAABRAAAAc8AAAIoAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAABuAAAAqYAAAK9AQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -24260,6 +24316,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
+	  hot_vars{ targ;ext;act;net;bias_wt;bias_dwt;act_eq;act_m;act_p;act_dif;avg_m;avg_l;act_avg;r.wt;r.wt*act;s.wt;r.dwt;s.dwt;	  };
 	  unit_src_path=".layers[2].units[0]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
@@ -25754,22 +25811,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 8 0=-0.002785515;
+       value 8 0=-0.002087683;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 8 0=0.03078677;
+       value 8 0=0.02554399;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 8 0=0.05710306;
+       value 8 0=0.04279749;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 8 0=0.6944128;
+       value 8 0=0.7114475;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -26098,11 +26155,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      syn_delay {
       on=0;
       delay=4;
-     };
-     r_lrate {
-      on=0;
-      base=0.5;
-      act_thr=0.2;
      };
      deep_raw_qtr=0;
      deep {on=0: role=SUPER: raw_thr_rel=0.1: raw_thr_abs=0.1: mod_min=0.8: trc_p_only_m=0: trc_thal_gate=0: trc_trace=0: mod_range=0.2: };
@@ -26648,6 +26700,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     sync_time_pct=0;
     wake_in_sync_pct=1.216681899864304e+285;
    };
+   cuda {
+    sync_units=0;
+    sync_cons=0;
+    min_threads=32;
+    max_threads=1024;
+    cons_per_thread=2;
+    timers_on=0;
+    n_threads=32;
+   };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=3151;
@@ -26655,12 +26716,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_prjns=2;
    max_disp_size {x=50: y=50: z=3: };
    max_disp_size2d {x=50: y=63: };
-   cuda {
-    min_threads=32;
-    max_threads=1024;
-    cons_per_thread=2;
-    timers_on=0;
-   };
    times {
     quarter=25;
     gate_cyc=18;
