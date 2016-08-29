@@ -383,7 +383,7 @@ public:
     float* dwts = cg->OwnCnVar(DWT);
     float* scales = cg->OwnCnVar(SCALE);
 
-    bool eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
+    int eff_thr_no = net->HasNetFlag(Network::INIT_WTS_1_THREAD) ? 0 : thr_no;
     
     for(int i=0; i<cg->size; i++) {
       scales[i] = 1.0f;         // default -- must be set in prjn spec if different
