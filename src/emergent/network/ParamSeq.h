@@ -37,8 +37,8 @@ public:
   ParamStep_List  steps;          // parameter steps to take
 
 
-  virtual void    SetParamsAtEpoch(int epoch);
-  // #BUTTON set parameters at given epoch
+  virtual bool    SetParamsAtEpoch(int epoch);
+  // #BUTTON set parameters at given epoch -- returns true if some params were changed
   virtual void    MakeEpochSteps(int epcs_per_step = 50, int n_steps=4,
                                  bool copy_first = true);
   // #BUTTON make regular epoch steps, optionally copying the parameters present in the first step if it is already present

@@ -1832,7 +1832,10 @@ void Network::Init_Epoch() {
                "Network is not built or is not intact -- must Build first")) {
     return;
   }
-  param_seqs.SetParamsAtEpoch(epoch);
+  bool got_some = param_seqs.SetParamsAtEpoch(epoch);
+  if(got_some) {
+    Cuda_UpdateSpecs(); 
+  }
 }
 
 void Network::Init_InputData() {

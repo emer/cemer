@@ -35,10 +35,12 @@ void ParamSeq::UpdateAfterEdit_impl() {
   steps.Sort();                 // should sort by name!
 }
 
-void ParamSeq::SetParamsAtEpoch(int epoch) {
+bool ParamSeq::SetParamsAtEpoch(int epoch) {
+  bool got_some = false;
   for(int i=0; i<steps.size; i++) {
     ParamStep* ps = steps[i];
     if(ps->epoch == epoch) {
+      got_some = true;
       if(verbose) {
         FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, ps->mbrs) {
           String cur_val = sei->CurValAsString();
@@ -54,6 +56,7 @@ void ParamSeq::SetParamsAtEpoch(int epoch) {
       }
     }
   }
+  return got_some;
 }
 
 void ParamSeq::MakeEpochSteps(int epcs_per_step, int n_steps, bool copy_first) {

@@ -1703,13 +1703,11 @@ SubversionClient::Add(const String& f_or_d, bool recurse, bool add_parents)
 
   apr_pool_t* m_pool = svn_pool_create(0);
 
-  String file_or_dir = f_or_d;
-  
   // canonicalize the path
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
-  file_or_dir = svn_path_canonicalize(file_or_dir, m_pool);
+  const char* file_or_dir = svn_path_canonicalize(f_or_d, m_pool);
 #else
-  file_or_dir = svn_dirent_canonicalize(file_or_dir, m_pool);
+  const char* file_or_dir = svn_dirent_canonicalize(f_or_d, m_pool);
 #endif
 
   // if adding dir, the depth of subdirectories to be added
@@ -1799,11 +1797,10 @@ SubversionClient::MoveFile(const String_PArray& from_nms, String& to_nm, bool fo
   }
 
   // canonicalize the path
-  String to_can;
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
-  to_can = svn_path_canonicalize(to_nm, m_pool);
+  const char* to_can = svn_path_canonicalize(to_nm, m_pool);
 #else
-  to_can = svn_dirent_canonicalize(to_nm, m_pool);
+  const char* to_can = svn_dirent_canonicalize(to_nm, m_pool);
 #endif
 
   svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
@@ -1839,6 +1836,9 @@ void
 SubversionClient::CopyFile(const String_PArray& from_nms, String& to_nm) {
   m_cancelled = false;
 
+  taMisc::Confirm("Sorry, as of now there is an intractible bug in our use of svn_client_copy in subversion -- we're trying to fix it -- please use the command line in the meantime.");
+  return;
+  
   apr_pool_t* m_pool = svn_pool_create(0);
 
   // create an array containing a single path to be created
@@ -1852,11 +1852,10 @@ SubversionClient::CopyFile(const String_PArray& from_nms, String& to_nm) {
   }
 
   // canonicalize the path
-  String to_can;
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
-  to_can = svn_path_canonicalize(to_nm, m_pool);
+  const char* to_can = svn_path_canonicalize(to_nm, m_pool);
 #else
-  to_can = svn_dirent_canonicalize(to_nm, m_pool);
+  const char* to_can = svn_dirent_canonicalize(to_nm, m_pool);
 #endif
 
   svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
@@ -1880,10 +1879,29 @@ SubversionClient::CopyFile(const String_PArray& from_nms, String& to_nm) {
        revprop_table,
        m_ctx,
        m_pool))
-  {
-    svn_pool_destroy(m_pool);
-    throw Exception("Subversion error copying files", error);
-  }
+    {
+      svn_pool_destroy(m_pool);
+      throw Exception("Subversion error copying files", error);
+    }
+
+  // get the exact same crash here:
+  // if (svn_error_t *error = svn_client_copy6
+  //     (
+  //      paths,
+  //      to_can,
+  //      svn_copy_as_child,
+  //      svn_make_parents,
+  //      svn_ignore_externals,
+  //      revprop_table,
+  //      NULL,                    // no commit callback
+  //      NULL,                    // no commit baton
+  //      m_ctx,
+  //      m_pool))
+  // {
+  //   svn_pool_destroy(m_pool);
+  //   throw Exception("Subversion error copying files", error);
+  // }
+
   svn_pool_destroy(m_pool);
 }
 

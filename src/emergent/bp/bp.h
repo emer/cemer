@@ -352,7 +352,7 @@ public:
   virtual void	LogLrateSched(int epcs_per_step = 50, float n_steps=7);
   // #BUTTON #CAT_Learning establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks
 
-  virtual void	SetCurLrate(int epoch);
+  virtual void	SetCurLrate(BpNetwork* net);
   // set current learning rate based on schedule given epoch
 
   void InitLinks() override;
@@ -949,7 +949,8 @@ class E_API BpNetwork : public Network {
 INHERITED(Network)
 public:
   bool	bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
-  int   prev_epoch;     // #NO_SAVE #HIDDEN previous epoch counter -- for detecting changes
+  int   prev_epoch;     // #NO_SAVE #HIDDEN #READ_ONLY previous epoch counter -- for detecting changes
+  bool  lrate_updtd;    // #NO_SAVE #HIDDEN #READ_ONLY if learning rate was updated..
     
   virtual void	SetCurLrate_Thr(int thr_no);
   // #IGNORE set current learning rate, based on network epoch counter

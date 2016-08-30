@@ -34,8 +34,8 @@ public:
 
   String          GetTypeDecoKey() const override { return "ControlPanel"; }
 
-  virtual void    SetParamsAtEpoch(int epoch);
-  // #BUTTON set all parameter sequence values at given epoch
+  virtual bool    SetParamsAtEpoch(int epoch);
+  // #BUTTON set all parameter sequence values at given epoch -- returns true if any changed
  
   TA_BASEFUNS_NOCOPY(ParamSeq_Group);
 private:

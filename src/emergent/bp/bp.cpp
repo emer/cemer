@@ -138,8 +138,12 @@ void BpConSpec::UpdateAfterEdit_impl() {
   }
 }
 
-void BpConSpec::SetCurLrate(int epoch) {
-  cur_lrate = lrate * lrate_sched.GetVal(epoch);
+void BpConSpec::SetCurLrate(BpNetwork* net) {
+  float prv_cur_lrate = cur_lrate;
+  cur_lrate = lrate * lrate_sched.GetVal(net->epoch);
+  if(cur_lrate != prv_cur_lrate) {
+    net->lrate_updtd = true;
+  }
 }
 
 void BpConSpec::LogLrateSched(int epcs_per_step, float n_steps) {
@@ -277,13 +281,13 @@ void BpUnitSpec::UpdateAfterEdit_impl() {
 
 void BpUnitSpec::SetCurLrate(BpUnitVars* uv, BpNetwork* net, int thr_no) {
   if(bias_spec) {
-    ((BpConSpec*)bias_spec.SPtr())->SetCurLrate(net->epoch);
+    ((BpConSpec*)bias_spec.SPtr())->SetCurLrate(net);
   }
   const int nrcg = net->ThrUnNRecvConGps(thr_no, uv->thr_un_idx);
   for(int g=0; g<nrcg; g++) {
     ConGroup* rgp = net->ThrUnRecvConGroup(thr_no, uv->thr_un_idx, g);
     if(rgp->NotActive()) continue;
-    ((BpConSpec*)rgp->con_spec)->SetCurLrate(net->epoch);
+    ((BpConSpec*)rgp->con_spec)->SetCurLrate(net);
   }
 }
 
@@ -582,6 +586,7 @@ void BpNetwork::Initialize() {
   con_group_type = &TA_ConGroup;
   bp_to_inputs = false;
   prev_epoch = -1;
+  lrate_updtd = false;
 }
 
 void BpNetwork::UpdateAfterEdit_impl() {
@@ -733,8 +738,13 @@ void BpNetwork::Compute_Weights_Thr(int thr_no) {
 
 void BpNetwork::Trial_Run() {
   if(prev_epoch != epoch) {
+    lrate_updtd = false;
     NET_THREAD_CALL(BpNetwork::SetCurLrate_Thr);
     prev_epoch = epoch;
+    if(lrate_updtd) {
+      taMisc::Info("cur_lrate updated at epoch:", String(epoch));
+      Cuda_UpdateSpecs();
+    }
   }
 #ifdef CUDA_COMPILE
   if(cuda.on) {

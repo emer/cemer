@@ -400,8 +400,8 @@ __global__ void Kernel_Compute_Weights_Bp_dWtOnly
   int st, ed;
   Network_cuda::GetThreadCons(nthrs, thr_no, sz, st, ed);
      
-  float* wts = cg->OwnCnVar(recv_cons_mem, ConGroup_cuda::WT);
-  float* dwts = cg->OwnCnVar(recv_cons_mem, ConGroup_cuda::DWT);
+  float* wts = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::WT);
+  float* dwts = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::DWT);
 
   while(st < ed) {
     wts[st] += cs->cur_lrate * dwts[st];
@@ -435,6 +435,281 @@ __global__ void Kernel_Compute_Weights_Bp_Bias_dWtOnly
   }
 }
 
+__global__ void Kernel_Compute_Weights_Bp_SimpleDecay
+(char* recv_cgp_mem, const int con_group_size, float* recv_cons_mem, int con_spec_size) {
+
+  const int cgp_idx = blockIdx.x; // blocks are connection groups
+  const int nthrs = blockDim.x; // threads are connections
+  const int thr_no = threadIdx.x;
+    
+  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(recv_cgp_mem, con_group_size, cgp_idx);
+
+  BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
+    (const_spec_mem, con_spec_size, cg->con_spec_idx);
+    
+  const int sz = cg->size;
+  int st, ed;
+  Network_cuda::GetThreadCons(nthrs, thr_no, sz, st, ed);
+     
+  float* wts = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::WT);
+  float* dwts = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::DWT);
+
+  while(st < ed) {
+    wts[st] += cs->cur_lrate * (dwts[st] - cs->decay * wts[st]);
+    dwts[st] = 0.0f;
+    st++;
+  }
+}
+
+__global__ void Kernel_Compute_Weights_Bp_Bias_SimpleDecay
+(const int st_ui, const int ed_ui, char* units_mem, const int unit_vars_size,
+ const int unit_spec_size, const int con_spec_mem_tot, const int con_spec_size)
+{
+  // each thread just gets a different unit -- doesn't do multiple units
+  const int nthrs = blockDim.x;
+  const int thr_no = threadIdx.x;
+  const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
+  if(un_idx < ed_ui) {
+    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+      (units_mem, unit_vars_size, un_idx);
+
+    BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec
+      (const_spec_mem + con_spec_mem_tot, unit_spec_size, u->cuda_unit_spec_idx);
+
+    if(us->bias_spec_idx >= 0) {
+      BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
+        (const_spec_mem, con_spec_size, us->bias_spec_idx);
+      
+      u->bias_wt += cs->cur_lrate * (u->bias_dwt - cs->decay * u->bias_wt);
+      u->bias_dwt = 0.0f;
+    }
+  }
+}
+
+__global__ void Kernel_Compute_Weights_Bp_Elimination
+(char* recv_cgp_mem, const int con_group_size, float* recv_cons_mem, int con_spec_size) {
+
+  const int cgp_idx = blockIdx.x; // blocks are connection groups
+  const int nthrs = blockDim.x; // threads are connections
+  const int thr_no = threadIdx.x;
+    
+  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(recv_cgp_mem, con_group_size, cgp_idx);
+
+  BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
+    (const_spec_mem, con_spec_size, cg->con_spec_idx);
+    
+  const int sz = cg->size;
+  int st, ed;
+  Network_cuda::GetThreadCons(nthrs, thr_no, sz, st, ed);
+     
+  float* wts = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::WT);
+  float* dwts = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::DWT);
+
+  while(st < ed) {
+    const float wt = wts[st];
+    float denom = (1.0f + wt * wt);
+    wts[st] += cs->cur_lrate * (dwts[st] - ((cs->decay * wt) / (denom * denom)));
+    dwts[st] = 0.0f;
+    st++;
+  }
+}
+
+__global__ void Kernel_Compute_Weights_Bp_Bias_Elimination
+(const int st_ui, const int ed_ui, char* units_mem, const int unit_vars_size,
+ const int unit_spec_size, const int con_spec_mem_tot, const int con_spec_size)
+{
+  // each thread just gets a different unit -- doesn't do multiple units
+  const int nthrs = blockDim.x;
+  const int thr_no = threadIdx.x;
+  const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
+  if(un_idx < ed_ui) {
+    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+      (units_mem, unit_vars_size, un_idx);
+
+    BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec
+      (const_spec_mem + con_spec_mem_tot, unit_spec_size, u->cuda_unit_spec_idx);
+
+    if(us->bias_spec_idx >= 0) {
+      BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
+        (const_spec_mem, con_spec_size, us->bias_spec_idx);
+      
+      const float wt = u->bias_wt;
+      float denom = (1.0f + wt * wt);
+      u->bias_wt += cs->cur_lrate * (u->bias_dwt - ((cs->decay * wt) / (denom * denom)));
+      u->bias_dwt = 0.0f;
+    }
+  }
+}
+
+__global__ void Kernel_Compute_Weights_Bp_Moment
+(char* recv_cgp_mem, const int con_group_size, float* recv_cons_mem, int con_spec_size) {
+
+  const int cgp_idx = blockIdx.x; // blocks are connection groups
+  const int nthrs = blockDim.x; // threads are connections
+  const int thr_no = threadIdx.x;
+    
+  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(recv_cgp_mem, con_group_size, cgp_idx);
+
+  BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
+    (const_spec_mem, con_spec_size, cg->con_spec_idx);
+    
+  const int sz = cg->size;
+  int st, ed;
+  Network_cuda::GetThreadCons(nthrs, thr_no, sz, st, ed);
+     
+  float* wts = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::WT);
+  float* dwts = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::DWT);
+  float* pdws = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::PDW);
+
+  while(st < ed) {
+    pdws[st] = cs->cur_lrate * dwts[st] + cs->momentum * pdws[st];
+    wts[st] += pdws[st];
+    dwts[st] = 0.0f;
+    st++;
+  }
+}
+
+__global__ void Kernel_Compute_Weights_Bp_Bias_Moment
+(const int st_ui, const int ed_ui, char* units_mem, const int unit_vars_size,
+ const int unit_spec_size, const int con_spec_mem_tot, const int con_spec_size)
+{
+  // each thread just gets a different unit -- doesn't do multiple units
+  const int nthrs = blockDim.x;
+  const int thr_no = threadIdx.x;
+  const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
+  if(un_idx < ed_ui) {
+    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+      (units_mem, unit_vars_size, un_idx);
+
+    BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec
+      (const_spec_mem + con_spec_mem_tot, unit_spec_size, u->cuda_unit_spec_idx);
+
+    if(us->bias_spec_idx >= 0) {
+      BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
+        (const_spec_mem, con_spec_size, us->bias_spec_idx);
+
+      u->bias_pdw = cs->cur_lrate * u->bias_dwt + cs->momentum * u->bias_pdw;
+      u->bias_wt += u->bias_pdw;
+      u->bias_dwt = 0.0f;
+    }
+  }
+}
+
+__global__ void Kernel_Compute_Weights_Bp_Moment_Simple
+(char* recv_cgp_mem, const int con_group_size, float* recv_cons_mem, int con_spec_size) {
+
+  const int cgp_idx = blockIdx.x; // blocks are connection groups
+  const int nthrs = blockDim.x; // threads are connections
+  const int thr_no = threadIdx.x;
+    
+  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(recv_cgp_mem, con_group_size, cgp_idx);
+
+  BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
+    (const_spec_mem, con_spec_size, cg->con_spec_idx);
+    
+  const int sz = cg->size;
+  int st, ed;
+  Network_cuda::GetThreadCons(nthrs, thr_no, sz, st, ed);
+     
+  float* wts = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::WT);
+  float* dwts = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::DWT);
+  float* pdws = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::PDW);
+
+  while(st < ed) {
+    pdws[st] = cs->cur_lrate * (dwts[st] - cs->decay * wts[st]) + cs->momentum * pdws[st];
+    wts[st] += pdws[st];
+    dwts[st] = 0.0f;
+    st++;
+  }
+}
+
+__global__ void Kernel_Compute_Weights_Bp_Bias_Moment_Simple
+(const int st_ui, const int ed_ui, char* units_mem, const int unit_vars_size,
+ const int unit_spec_size, const int con_spec_mem_tot, const int con_spec_size)
+{
+  // each thread just gets a different unit -- doesn't do multiple units
+  const int nthrs = blockDim.x;
+  const int thr_no = threadIdx.x;
+  const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
+  if(un_idx < ed_ui) {
+    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+      (units_mem, unit_vars_size, un_idx);
+
+    BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec
+      (const_spec_mem + con_spec_mem_tot, unit_spec_size, u->cuda_unit_spec_idx);
+
+    if(us->bias_spec_idx >= 0) {
+      BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
+        (const_spec_mem, con_spec_size, us->bias_spec_idx);
+      
+      u->bias_pdw = cs->cur_lrate * (u->bias_dwt - cs->decay * u->bias_wt) +
+        cs->momentum * u->bias_pdw;
+      u->bias_wt += u->bias_pdw;
+      u->bias_dwt = 0.0f;
+    }
+  }
+}
+
+__global__ void Kernel_Compute_Weights_Bp_Moment_Elim
+(char* recv_cgp_mem, const int con_group_size, float* recv_cons_mem, int con_spec_size) {
+
+  const int cgp_idx = blockIdx.x; // blocks are connection groups
+  const int nthrs = blockDim.x; // threads are connections
+  const int thr_no = threadIdx.x;
+    
+  ConGroup_cuda* cg = Network_cuda::GetConGroup_Flat(recv_cgp_mem, con_group_size, cgp_idx);
+
+  BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
+    (const_spec_mem, con_spec_size, cg->con_spec_idx);
+    
+  const int sz = cg->size;
+  int st, ed;
+  Network_cuda::GetThreadCons(nthrs, thr_no, sz, st, ed);
+     
+  float* wts = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::WT);
+  float* dwts = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::DWT);
+  float* pdws = cg->OwnCnVar(recv_cons_mem, BpConSpec_cuda::PDW);
+
+  while(st < ed) {
+    const float wt = wts[st];
+    float denom = (1.0f + wt * wt);
+    pdws[st] += cs->cur_lrate * (dwts[st] - ((cs->decay * wt) / (denom * denom))) +
+      cs->momentum * pdws[st];
+    wts[st] += pdws[st];
+    dwts[st] = 0.0f;
+    st++;
+  }
+}
+
+__global__ void Kernel_Compute_Weights_Bp_Bias_Moment_Elim
+(const int st_ui, const int ed_ui, char* units_mem, const int unit_vars_size,
+ const int unit_spec_size, const int con_spec_mem_tot, const int con_spec_size)
+{
+  // each thread just gets a different unit -- doesn't do multiple units
+  const int nthrs = blockDim.x;
+  const int thr_no = threadIdx.x;
+  const int un_idx = st_ui + blockIdx.x * nthrs + thr_no;
+  if(un_idx < ed_ui) {
+    BpUnitVars_cuda* u = (BpUnitVars_cuda*)Network_cuda::GetUnitVars
+      (units_mem, unit_vars_size, un_idx);
+
+    BpUnitSpec_cuda* us = (BpUnitSpec_cuda*)Network_cuda::GetUnitSpec
+      (const_spec_mem + con_spec_mem_tot, unit_spec_size, u->cuda_unit_spec_idx);
+
+    if(us->bias_spec_idx >= 0) {
+      BpConSpec_cuda* cs = (BpConSpec_cuda*)Network_cuda::GetConSpec
+        (const_spec_mem, con_spec_size, us->bias_spec_idx);
+      
+      const float wt = u->bias_wt;
+      float denom = (1.0f + wt * wt);
+      u->bias_pdw = cs->cur_lrate * (u->bias_dwt - ((cs->decay * wt) / (denom * denom))) +
+        cs->momentum * u->bias_pdw;
+      u->bias_wt += u->bias_pdw;
+      u->bias_dwt = 0.0f;
+    }
+  }
+}
+
 void Bp_cuda::Compute_Weights(bool sync) {
   // copy con spec mem to constant
   cudaMemcpyToSymbol(const_spec_mem, con_spec_mem_d, con_spec_mem_tot);
@@ -456,41 +731,41 @@ void Bp_cuda::Compute_Weights(bool sync) {
     break;
   }
   case BpConSpec_cuda::WU_SIMPLE_DECAY: {
-    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
+    Kernel_Compute_Weights_Bp_SimpleDecay<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
       (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, con_spec_size);
-    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
+    Kernel_Compute_Weights_Bp_Bias_SimpleDecay<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
       (0, n_units_built, units_mem_d, unit_vars_size, unit_spec_size, con_spec_mem_tot,
        con_spec_size);
     break;
   }
   case BpConSpec_cuda::WU_ELIMINATION: {
-    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
+    Kernel_Compute_Weights_Bp_Elimination<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
       (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, con_spec_size);
-    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
+    Kernel_Compute_Weights_Bp_Bias_Elimination<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
       (0, n_units_built, units_mem_d, unit_vars_size, unit_spec_size, con_spec_mem_tot,
        con_spec_size);
     break;
   }
   case BpConSpec_cuda::WU_MOMENT: {
-    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
+    Kernel_Compute_Weights_Bp_Moment<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
       (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, con_spec_size);
-    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
+    Kernel_Compute_Weights_Bp_Bias_Moment<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
       (0, n_units_built, units_mem_d, unit_vars_size, unit_spec_size, con_spec_mem_tot,
        con_spec_size);
     break;
   }
   case BpConSpec_cuda::WU_MOMENT_SIMPLE: {
-    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
+    Kernel_Compute_Weights_Bp_Moment_Simple<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
       (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, con_spec_size);
-    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
+    Kernel_Compute_Weights_Bp_Bias_Moment_Simple<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
       (0, n_units_built, units_mem_d, unit_vars_size, unit_spec_size, con_spec_mem_tot,
        con_spec_size);
     break;
   }
   case BpConSpec_cuda::WU_MOMENT_ELIM: {
-    Kernel_Compute_Weights_Bp_dWtOnly<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
+    Kernel_Compute_Weights_Bp_Moment_Elim<<<n_recv_cgps, n_threads, 0, strm_compute_weights>>>
       (recv_cgp_mem_d, con_group_size, recv_cons_mem_d, con_spec_size);
-    Kernel_Compute_Weights_Bp_Bias_dWtOnly<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
+    Kernel_Compute_Weights_Bp_Bias_Moment_Elim<<<n_units_blocks, n_threads, 0, strm_compute_weights_bias>>>
       (0, n_units_built, units_mem_d, unit_vars_size, unit_spec_size, con_spec_mem_tot,
        con_spec_size);
     break;

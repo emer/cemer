@@ -4,7 +4,7 @@
 # see http://grey.colorado.edu/emergent
 
 # this should be the only thing you need to update: grab the latest versions
-QT_DMG=qt52_mac64.dmg
+QT_DMG=qt561_mac64.dmg
 COIN_QUARTER_DMG=coin_quarter_mac64_qt52.dmg
 CMAKE_DMG=cmake-2.8.12.2-Darwin64-universal.dmg
 SVN_DMG=Subversion-1.9.0_10.10.x.dmg
@@ -19,12 +19,22 @@ if [[ "$OS_VERS" == "10.7" ]]; then
 fi
 
 if [[ "$OS_VERS" == "10.8" ]]; then
-    echo "Note: updating the dependencies for 10.8"
+    echo "SORRY: version 10.8 of Mac OSX is not supported for this version of the software"
+    exit 1
+fi
+
+if [[ "$OS_VERS" == "10.9" ]]; then
+    echo "SORRY: version 10.9 of Mac OSX is not supported for this version of the software"
+    exit 1
+fi
+
+if [[ "$OS_VERS" == "10.10" ]]; then
+    echo "Note: updating the dependencies for 10.10"
     COIN_QUARTER_DMG=coin_quarter_mac64_qt52_10_8.dmg
     SVN_DMG=Subversion-1.7.8_10.8.x.dmg
 fi
 
-if [[ "$OS_VERS" == "10.9" ]]; then
+if [[ "$OS_VERS" == "10.11" ]]; then
     echo "Note: updating the dependencies for 10.9"
     SVN_DMG=Subversion-1.8.8_10.9.x.dmg
 fi
