@@ -111,9 +111,9 @@ TestInitialiseIdenticalMultiThreaded
     Set Emergent Var		TestInitialiseWeights	test_no		9
     Run Emergent Program	TestInitialiseWeights
 
-    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise0_0.wts		./test-projects/TestRandomWeightsInitialise8_0.wts
+    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise5_0.wts		./test-projects/TestRandomWeightsInitialise8_0.wts
     Should Match	"${diff.stdout}"		""
-    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise2_1.wts		./test-projects/TestRandomWeightsInitialise9_1.wts
+    ${diff}=	Run Process		/usr/bin/diff	-q	./test-projects/TestRandomWeightsInitialise7_1.wts		./test-projects/TestRandomWeightsInitialise9_1.wts
     Should Match	"${diff.stdout}"		""
 
 
