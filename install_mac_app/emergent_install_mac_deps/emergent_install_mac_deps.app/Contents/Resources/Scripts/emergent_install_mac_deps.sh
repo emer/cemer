@@ -5,10 +5,11 @@
 
 # this should be the only thing you need to update: grab the latest versions
 QT_DMG=qt561_mac64.dmg
-COIN_QUARTER_DMG=coin_quarter_mac64_qt52.dmg
-CMAKE_DMG=cmake-2.8.12.2-Darwin64-universal.dmg
-SVN_DMG=Subversion-1.9.0_10.10.x.dmg
-MISC_DMG=emergent_misc_deps_mac64.dmg
+COIN_DMG=coin_mac64_4_0.dmg
+QUARTER_DMG=quarter_mac64_qt56.dmg
+CMAKE_DMG=cmake-3.6.1_mac64.dmg
+SVN_DMG=Subversion-1.9.4_10.11.x.pkg
+MISC_DMG=misclibs_mac64_8_0.dmg
 
 OS_VERS=`sw_vers | grep ProductVersion | cut -f2 | cut -f1,2 -d.`
 echo "installing on OSX version: $OS_VERS"
@@ -30,15 +31,8 @@ fi
 
 if [[ "$OS_VERS" == "10.10" ]]; then
     echo "Note: updating the dependencies for 10.10"
-    COIN_QUARTER_DMG=coin_quarter_mac64_qt52_10_8.dmg
     SVN_DMG=Subversion-1.7.8_10.8.x.dmg
 fi
-
-if [[ "$OS_VERS" == "10.11" ]]; then
-    echo "Note: updating the dependencies for 10.9"
-    SVN_DMG=Subversion-1.8.8_10.9.x.dmg
-fi
-
 
 FTP_REPO=ftp://grey.colorado.edu/pub/emergent
 FTP_CMD="/usr/bin/ftp -ai"
@@ -69,7 +63,8 @@ echo "================================================="
 echo " "
 
 downloadFTP ${MISC_DMG}
-downloadFTP ${COIN_QUARTER_DMG}
+downloadFTP ${COIN_DMG}
+downloadFTP ${QUARTER_DMG}
 downloadFTP ${CMAKE_DMG}
 downloadFTP ${SVN_DMG}
 downloadFTP ${QT_DMG}
@@ -143,7 +138,7 @@ function installPKGinDMG {
 function removeCMakeLinks {
   # This is a major annoying bug in the cmake installer
   # http://public.kitware.com/Bug/view.php?id=10056
-  sudo /bin/rm /usr/bin/ccmake /usr/bin/cmake /usr/bin/cmake-gui /usr/bin/cmakexbuild /usr/bin/cpack /usr/bin/ctest
+  sudo /bin/rm /usr/local/bin/ccmake /usr/local/bin/cmake /usr/local/bin/cmake-gui /usr/local/bin/cmakexbuild /usr/local/bin/cpack /usr/local/bin/ctest
 }
 
 function installCMAKEinDMG {
@@ -164,6 +159,8 @@ function installCMAKEinDMG {
   echo "**THE INSTALL PROCESS WILL STALL UNTIL YOU DO THE AVOVE!!**"
   sudo /usr/sbin/installer -target / -pkg "${DMG_PKG}"
   unmountDMG $DMG_MNT
+  # make new links:
+  sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install 
 }
 
 echo " "
@@ -180,7 +177,8 @@ installPKGinDMG ${MISC_DMG}
 installPKGinDMG ${SVN_DMG}
 installCMAKEinDMG ${CMAKE_DMG}
 installPKGinDMG ${QT_DMG}
-installPKGinDMG ${COIN_QUARTER_DMG}
+installPKGinDMG ${COIN_DMG}
+installPKGinDMG ${QUARTER_DMG}
 
 echo " "
 echo "================================================="
